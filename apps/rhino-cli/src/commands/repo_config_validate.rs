@@ -12,10 +12,12 @@
 //! against its own copy of that struct is equivalent to all three files carrying
 //! an identical key set (values may differ).
 
+use std::collections::HashSet;
+
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, RepoConfig};
+use crate::application::repo_config::{self, GateType, RepoConfig};
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -115,6 +117,34 @@ fn semantic_findings(config: &RepoConfig) -> Vec<String> {
                     VALID_LEVELS.join(" | ")
                 ));
             }
+        }
+    }
+
+    let mut gate_ids = HashSet::new();
+    for (i, gate) in config.gates.iter().enumerate() {
+        if !gate_ids.insert(gate.id.as_str()) {
+            findings.push(format!("gates[{i}].id: duplicate gate id {:?}", gate.id));
+        }
+        if gate.surfaces.is_empty() {
+            findings.push(format!(
+                "gates[{i}] ({:?}).surfaces: at least one surface is required",
+                gate.id
+            ));
+        }
+        if gate.wiring.is_some() && gate.gate_type != GateType::Check {
+            findings.push(format!(
+                "gates[{i}].wiring: only valid for type \"check\" (found type \"mutation\")"
+            ));
+        }
+        if gate.restages && gate.gate_type != GateType::Mutation {
+            findings.push(format!(
+                "gates[{i}].restages: only valid for type \"mutation\" (found type \"check\")"
+            ));
+        }
+        if gate.carve_out.is_some() && gate.gate_type != GateType::Check {
+            findings.push(format!(
+                "gates[{i}].carve-out: only valid for type \"check\" (found type \"mutation\")"
+            ));
         }
     }
 

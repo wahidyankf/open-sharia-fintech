@@ -513,15 +513,23 @@ Every code step below uses the RED / GREEN / REFACTOR template.
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (resumed-worktree contract)
   - Notes: Fetched `origin/main`; the declared worktree is clean, contains current trunk, and is nine commits ahead solely for recorded plan-validation, Phase 0 evidence, and the Phase 0 Fantomas regression repair. `git merge-base --is-ancestor origin/main HEAD` exits 0; the strict detached plan check is clean (report `plan__439846__2026-08-04--16-01__audit.md`).
-- [ ] [AI] Install the Phase 1 worktree dependencies — command:
+- [x] [AI] Install the Phase 1 worktree dependencies — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement install` — acceptance: exits 0.
-- [ ] [AI] Initialize the Phase 1 worktree toolchain — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation exited 0 in the declared worktree; its postinstall doctor confirmed all 16 required tools, no warnings, and no missing tools.
+- [x] [AI] Initialize the Phase 1 worktree toolchain — command:
       `(cd worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)` — acceptance: exits
       0 and a subsequent doctor run reports no missing tool.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: `npm run doctor -- --fix` found nothing to repair; the following check-only doctor run reported 16/16 tools OK, zero warnings, and zero missing tools.
 
 ### 1.1 Registry schema in `repo-config.yml`
 
-- [ ] [AI] **RED** — add a failing test at
+- [x] [AI] **RED** — add a failing test at
       `apps/rhino-cli/tests/repo_config_data_driven.rs` asserting that a `gates:` section
       deserializes into a `Vec<GateEntry>` with `id`, `type`, `command`, `kind`, `surfaces` —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven`
@@ -532,17 +540,29 @@ Every code step below uses the RED / GREEN / REFACTOR template.
   declared, whatever its type"; "An unknown scope value is rejected at parse time"; "A duplicate gate
   id is rejected"; "An unknown type value is rejected at parse time"; "A mutation may not declare a
   wiring value"
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a synthetic `gates:` fixture carrying `id`, `type`, `command`, `kind`, and per-surface `scope`. The exact test command exits 101 because strict deserialization reports `unknown field gates`; that is the intended missing-model failure.
 
-- [ ] [AI] **GREEN** — add the `gates` field and the `GateEntry` / `SurfaceScope` types to the
+- [x] [AI] **GREEN** — add the `gates` field and the `GateEntry` / `SurfaceScope` types to the
       `repo-config` domain model, per the field contract in
       [tech-docs §2.2](./tech-docs.md#22-registry-location-and-shape) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: exits 0.
-- [ ] [AI] **REFACTOR** — enum values for `type`, `kind`, `wiring`, `carve-out`, surface name, and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/repo_config/mod.rs`
+  - Notes: Added the `gates` registry field plus deserializable gate and per-surface scope models. The RED fixture now deserializes and the exact integration test exits 0.
+- [x] [AI] **REFACTOR** — enum values for `type`, `kind`, `wiring`, `carve-out`, surface name, and
       `scope` are `#[serde(rename_all)]` strict variants with deny-unknown-fields, so a typo fails
       rather than defaulting — acceptance: a test asserting `scope: sometimes` is rejected exits 0,
       and the rejection message names the allowed values. Same for `type: cleanup`.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`: a
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Replaced permissive registry strings with strict serde enums and deny-unknown-fields gate/scope records. The focused integration test rejects both invalid values while naming the accepted vocabulary; the repo-config library suite reports 18 passing tests.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`: a
       `wiring` value declared on `type: mutation` is rejected (`wiring` is valid only on
       `type: check`) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
@@ -558,12 +578,21 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message states that wiring applies to checks only
   ```
 
-- [ ] [AI] **GREEN** — implement field-applicability validation for `wiring` so the misapplication
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a schema-valid mutation fixture with `wiring: matrix` and invoked the real `repo-config validate` path. The focused test exits 101 because the command wrongly reports the config valid, isolating the absent applicability rule.
+
+- [x] [AI] **GREEN** — implement field-applicability validation for `wiring` so the misapplication
       test asserts non-zero exit with a message naming the field and the type it does not apply to,
       and the inverse (correctly-applied `wiring`) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: the
       new test passes plus the correctly-applied case exits 0, no other tests broken.
-- [ ] [AI] **RED** — add two failing tests at `apps/rhino-cli/tests/repo_config_data_driven.rs` for
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: `repo-config validate` now rejects `gates[0].wiring` for `type mutation` while accepting `wiring: matrix` for a check. The data-driven integration test and eight focused validator unit tests pass.
+- [x] [AI] **RED** — add two failing tests at `apps/rhino-cli/tests/repo_config_data_driven.rs` for
       the remaining field-applicability rules: `restages` declared on `type: check`, and `carve-out`
       declared on `type: mutation` — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
@@ -586,12 +615,21 @@ Every code step below uses the RED / GREEN / REFACTOR template.
       | mutation | carve-out |
   ```
 
-- [ ] [AI] **GREEN** — extend field-applicability validation to `restages` (valid only on
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added two schema-valid invalid-applicability fixtures and exercised the actual validator. The focused test exits 101 because both configurations incorrectly pass, isolating the two absent rules.
+
+- [x] [AI] **GREEN** — extend field-applicability validation to `restages` (valid only on
       `type: mutation`) and `carve-out` (valid only on `type: check`), matching the message shape
       from the `wiring` case — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: both new tests pass plus the
       correctly-applied cases exit 0, no other tests broken.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: The validator now rejects `restages` on checks and `carve-out` on mutations, and the inverse legal configurations pass. The focused integration test and focused validator unit suite are green.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
       `rhino-cli repo-config validate` must reject a registry with duplicate gate ids — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: fails because `repo-config validate` does not yet reject duplicate ids.
@@ -606,11 +644,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message names the duplicated id
   ```
 
-- [ ] [AI] **GREEN** — implement duplicate-id rejection in `rhino-cli repo-config validate`, the
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added two schema-valid gates with the same identifier and ran the real validator. The focused test exits 101 because duplicate IDs still pass, isolating the required uniqueness validation.
+
+- [x] [AI] **GREEN** — implement duplicate-id rejection in `rhino-cli repo-config validate`, the
       failure naming the offending id, and confirm the inverse (unique ids) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: the new test passes and the inverse case exits 0, no other tests broken.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: The validator now reports the second duplicate as `gates[1].id` and names its repeated value. The data-driven suite verifies rejection and a distinct-ID inverse; focused validator tests pass.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
       `rhino-cli repo-config validate` must reject a gate declaring an empty `surfaces` map —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven`
       — acceptance: fails because `repo-config validate` does not yet reject an empty `surfaces`
@@ -627,11 +674,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message states that a gate must declare at least one surface
   ```
 
-- [ ] [AI] **GREEN** — implement empty-`surfaces`-map rejection in `rhino-cli repo-config validate`,
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a schema-valid `surfaces: {}` fixture and invoked the real validator. The focused test exits 101 because it is accepted, isolating the required non-empty invariant.
+
+- [x] [AI] **GREEN** — implement empty-`surfaces`-map rejection in `rhino-cli repo-config validate`,
       the failure naming the gate id and stating a gate must declare at least one surface, and
       confirm the inverse (non-empty surfaces) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: the new
       test passes and the inverse case exits 0, no other tests broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: A gate with no surfaces now yields a message naming `no-surfaces` and requiring at least one surface; the non-empty inverse is covered. The data-driven integration and focused validator unit tests pass.
 
 ### 1.2 `gate list`
 

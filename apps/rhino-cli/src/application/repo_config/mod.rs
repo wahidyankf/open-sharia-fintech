@@ -5,6 +5,7 @@
 //! is byte-identical across all three repos (ose-public, ose-primer, ose-private);
 //! only the per-repo values differ.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 
@@ -96,6 +97,130 @@ impl HarnessEntry {
     }
 }
 
+/// Whether a gate validates or mutates repository content.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateType {
+    /// A non-mutating validation gate.
+    Check,
+    /// A gate that changes repository content.
+    Mutation,
+}
+
+/// Command runner for a gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateKind {
+    /// A command implemented by rhino-cli.
+    RhinoCli,
+    /// A command available on `PATH`.
+    External,
+    /// An Nx target.
+    Nx,
+}
+
+/// Execution wiring for a check gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateWiring {
+    /// Emit one CI job for this gate.
+    Matrix,
+    /// A workflow declares this gate directly.
+    HandWired,
+}
+
+/// A composition-rule exemption for a gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateCarveOut {
+    /// The check reads the Git index and therefore has no CI counterpart.
+    StagedOnly,
+}
+
+/// A gate execution surface.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateSurface {
+    /// The commit-message hook.
+    CommitMsg,
+    /// The pre-commit hook.
+    PreCommit,
+    /// The pre-push hook.
+    PrePush,
+    /// Continuous integration.
+    Ci,
+}
+
+/// The scope that determines a gate's inputs on a surface.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScopeKind {
+    /// Files of a matching type in the change.
+    AffectedFileType,
+    /// All files of a matching type in the repository.
+    AllFileType,
+    /// Projects affected by the change.
+    AffectedProjects,
+    /// Every project in the repository.
+    AllProjects,
+    /// Gate-specific input handling.
+    Other,
+    /// A check activated only by matching paths.
+    PathGated,
+}
+
+/// One entry in the `gates:` registry of `repo-config.yml`.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateEntry {
+    /// Stable, unique gate identifier.
+    pub id: String,
+    /// Whether the entry checks or mutates repository content.
+    #[serde(rename = "type")]
+    pub gate_type: GateType,
+    /// Leaf command run for this gate.
+    pub command: String,
+    /// Command runner (`rhino-cli`, `external`, or `nx`).
+    pub kind: GateKind,
+    /// Optional execution-wiring override for checks.
+    #[serde(default)]
+    pub wiring: Option<GateWiring>,
+    /// Whether a mutation must re-stage its generated output.
+    #[serde(default)]
+    pub restages: bool,
+    /// Command-specific arguments, such as exclusion lists.
+    #[serde(default)]
+    pub args: BTreeMap<String, Vec<String>>,
+    /// Per-surface execution scopes.
+    pub surfaces: BTreeMap<GateSurface, SurfaceScope>,
+    /// Exemption from the cross-surface composition rule.
+    #[serde(rename = "carve-out", default)]
+    pub carve_out: Option<GateCarveOut>,
+    /// Mutation gate verified by this check.
+    #[serde(default)]
+    pub verifies: Option<String>,
+    /// Mutation category, such as `formatter`.
+    #[serde(default)]
+    pub category: Option<String>,
+}
+
+/// A gate's scope on one execution surface.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SurfaceScope {
+    /// Scope descriptor for the surface.
+    pub scope: ScopeKind,
+    /// Single file glob for an affected-file-type scope.
+    #[serde(default)]
+    pub glob: Option<String>,
+    /// Multiple file globs for an affected-file-type scope.
+    #[serde(default)]
+    pub globs: Vec<String>,
+    /// Paths that activate a path-gated scope.
+    #[serde(default)]
+    pub trigger: Vec<String>,
+}
+
 /// The `doctor:` section of `repo-config.yml`.
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
@@ -124,6 +249,9 @@ pub struct RepoConfig {
     /// All-harness binding registry (§3.2); every `harness` command reads this list.
     #[serde(default)]
     pub harness: Vec<HarnessEntry>,
+    /// Gate registry declaring checks and mutations on every execution surface.
+    #[serde(default)]
+    pub gates: Vec<GateEntry>,
     /// Per-project test-level registry for the spec coverage validators.
     #[serde(default)]
     pub coverage: CoverageConfig,
