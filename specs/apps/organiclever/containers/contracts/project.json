@@ -3,7 +3,7 @@
   "root": "specs/apps/organiclever/containers/contracts",
   "targets": {
     "lint": {
-      "command": "mkdir -p specs/apps/organiclever/containers/contracts/generated && npx @redocly/cli bundle specs/apps/organiclever/containers/contracts/openapi.yaml -o specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/organiclever/containers/contracts/openapi.yaml -o specs/apps/organiclever/containers/contracts/generated/openapi-bundled.json && npx @stoplight/spectral-cli lint specs/apps/organiclever/containers/contracts/generated/openapi-bundled.yaml --ruleset specs/apps/organiclever/containers/contracts/.spectral.yaml",
+      "command": "lint_file=\"$(mktemp).yaml\"; trap 'rm -f \"$lint_file\"' EXIT; npx @redocly/cli bundle specs/apps/organiclever/containers/contracts/openapi.yaml -o \"$lint_file\" && npx @stoplight/spectral-cli lint \"$lint_file\" --ruleset specs/apps/organiclever/containers/contracts/.spectral.yaml",
       "cache": true,
       "inputs": ["{projectRoot}/**/*.yaml", "!{projectRoot}/generated/**", "!{projectRoot}/examples/**"]
     },
