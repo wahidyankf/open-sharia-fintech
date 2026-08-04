@@ -8,7 +8,7 @@
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::panic, clippy::unwrap_used)]
 
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -65,18 +65,73 @@ impl GateWorld {
         std::fs::write(path, content).expect("write fixture file");
     }
 
-    fn git_command(&self) -> Command {
+    fn fixture_git_command(&self) -> Command {
+        if self.root().join(".git").exists() {
+            let output = Command::new("git")
+                .args(["rev-parse", "--show-toplevel"])
+                .current_dir(self.root())
+                .env("GIT_DIR", self.root().join(".git"))
+                .env("GIT_CEILING_DIRECTORIES", self.root())
+                .env("GIT_CONFIG_GLOBAL", "/dev/null")
+                .env("GIT_CONFIG_SYSTEM", "/dev/null")
+                .output()
+                .expect("fixture escape guard must start git");
+            assert!(
+                output.status.success(),
+                "fixture escape guard must find its repository"
+            );
+            assert_eq!(
+                std::fs::canonicalize(String::from_utf8_lossy(&output.stdout).trim())
+                    .expect("fixture escape guard must return a canonical repository root"),
+                std::fs::canonicalize(self.root())
+                    .expect("fixture repository root must be canonicalizable"),
+                "fixture escape guard must refuse a Git command outside its temporary repository"
+            );
+        }
         let mut command = Command::new("git");
         command
             .current_dir(self.root())
-            .env_remove("GIT_DIR")
-            .env_remove("GIT_WORK_TREE");
+            .env("GIT_DIR", self.root().join(".git"))
+            .env("GIT_CEILING_DIRECTORIES", self.root())
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null");
+        assert_fixture_isolation(
+            &command,
+            [
+                "GIT_DIR",
+                "GIT_CEILING_DIRECTORIES",
+                "GIT_CONFIG_GLOBAL",
+                "GIT_CONFIG_SYSTEM",
+            ],
+        );
+        command
+    }
+
+    fn fixture_rhino_command(&self) -> Command {
+        let mut command = Command::new(cargo_bin("rhino-cli"));
+        command
+            .current_dir(self.root())
+            .env("GIT_DIR", self.root().join(".git"))
+            .env("GIT_WORK_TREE", self.root())
+            .env("GIT_CEILING_DIRECTORIES", self.root())
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null");
+        assert_fixture_isolation(
+            &command,
+            [
+                "GIT_DIR",
+                "GIT_WORK_TREE",
+                "GIT_CEILING_DIRECTORIES",
+                "GIT_CONFIG_GLOBAL",
+                "GIT_CONFIG_SYSTEM",
+            ],
+        );
         command
     }
 
     fn init_git(&self) {
         let output = self
-            .git_command()
+            .fixture_git_command()
             .args(["init", "--quiet"])
             .output()
             .expect("initialize fixture git repository");
@@ -85,7 +140,7 @@ impl GateWorld {
 
     fn stage(&self, paths: &[&str]) {
         let output = self
-            .git_command()
+            .fixture_git_command()
             .arg("add")
             .args(paths)
             .output()
@@ -152,11 +207,10 @@ impl GateWorld {
     }
 
     fn run_gate(&mut self, surface: &str, only: Option<&str>) {
-        let mut command = Command::new(cargo_bin("rhino-cli"));
+        let mut command = self.fixture_rhino_command();
         command
             .args(["gate", "run"])
-            .arg(format!("--surface={surface}"))
-            .current_dir(self.root());
+            .arg(format!("--surface={surface}"));
         if let Some(id) = only {
             command.arg(format!("--only={id}"));
         }
@@ -179,6 +233,17 @@ impl GateWorld {
 
     fn is_success(&self) -> bool {
         self.succeeded.expect("scenario command ran")
+    }
+}
+
+fn assert_fixture_isolation<const N: usize>(command: &Command, variables: [&str; N]) {
+    for variable in variables {
+        assert!(
+            command
+                .get_envs()
+                .any(|(name, value)| name == OsStr::new(variable) && value.is_some()),
+            "fixture command must explicitly isolate {variable}"
+        );
     }
 }
 
@@ -800,7 +865,7 @@ fn when_successful_restage_runs(w: &mut GateWorld) {
 fn then_only_mutation_output_is_staged(w: &mut GateWorld) {
     assert!(w.is_success(), "restaging failed: {}", w.output);
     let output = w
-        .git_command()
+        .fixture_git_command()
         .args(["diff", "--cached", "--name-only"])
         .output()
         .expect("list staged outputs");
@@ -839,7 +904,7 @@ fn when_failed_restage_runs(w: &mut GateWorld) {
 fn then_failed_restage_does_not_stage(w: &mut GateWorld) {
     assert!(!w.is_success());
     let output = w
-        .git_command()
+        .fixture_git_command()
         .args(["diff", "--cached", "--name-only"])
         .output()
         .expect("list staged outputs");
@@ -1282,7 +1347,7 @@ fn then_json_entries_have_matrix_keys(w: &mut GateWorld) {
     }
 }
 
-#[then("the array contains exactly the gates declaring surface \"ci\"")]
+#[then("the array contains exactly the matrix-wired gates declaring surface \"ci\"")]
 fn then_json_is_ci_projection(w: &mut GateWorld) {
     let ids = w
         .json_output
@@ -1440,7 +1505,7 @@ fn then_no_extra_lockfile_is_staged(w: &mut GateWorld) {
 
 fn staged_paths(w: &GateWorld) -> String {
     let output = w
-        .git_command()
+        .fixture_git_command()
         .args(["diff", "--cached", "--name-only"])
         .output()
         .expect("list staged fixture paths");

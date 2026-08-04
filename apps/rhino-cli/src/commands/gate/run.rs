@@ -9,6 +9,7 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::repo_config::{self, GateKind, GateSurface, GateType, ScopeKind};
+use crate::commands::repo_config_validate;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -110,6 +111,7 @@ fn run_at_root_with_only_and_message_file(
     if only.is_some() {
         list::validate_gate_ids(&surface_gates, only)?;
     }
+    validate_registry_semantics(&config, writer)?;
     let selected_gates = surface_gates
         .into_iter()
         .filter(|gate| only.is_none_or(|id| gate.id == id))
@@ -134,13 +136,19 @@ fn run_at_root_with_only_and_message_file(
                 excludes,
             ),
             CandidateScope::TrackedFiles => matching_files(
-                tracked_paths.as_deref().unwrap_or_default(),
+                if scope_has_file_patterns(scope) {
+                    tracked_paths.as_deref().unwrap_or_default()
+                } else {
+                    &[]
+                },
                 scope,
                 excludes,
             ),
             _ => Vec::new(),
         };
-        if report_empty_scope_skip(writer, &gate.id, candidate_scope, &files)? {
+        if scope_has_file_patterns(scope)
+            && report_empty_scope_skip(writer, &gate.id, candidate_scope, &files)?
+        {
             continue;
         }
         if is_pre_commit_batch_eligible(gate, scope, &surface, only) {
@@ -208,10 +216,31 @@ fn candidate_paths(
         .transpose()?;
     let tracked_paths = scopes
         .iter()
-        .any(|scope| candidate_scope(&scope.scope) == CandidateScope::TrackedFiles)
+        .any(|scope| {
+            candidate_scope(&scope.scope) == CandidateScope::TrackedFiles
+                && scope_has_file_patterns(scope)
+        })
         .then(|| tracked_paths(repo_root))
         .transpose()?;
     Ok((changed_paths, tracked_paths))
+}
+
+/// Reject malformed gate configuration before selecting a gate or starting a leaf.
+fn validate_registry_semantics(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let findings = repo_config_validate::gate_semantic_findings(config);
+    if findings.is_empty() {
+        return Ok(());
+    }
+    for finding in &findings {
+        writeln!(writer, "{finding}")?;
+    }
+    Err(anyhow!(
+        "gate run: {} registry semantic finding(s); fix the key(s) listed above",
+        findings.len()
+    ))
 }
 
 /// Returns whether this entry belongs to the single aggregate pre-commit batch.
@@ -298,6 +327,11 @@ fn matching_files(
 ) -> Vec<String> {
     let patterns = scope.glob.iter().chain(&scope.globs).collect::<Vec<_>>();
     filter_candidates(changed_paths, &patterns, excludes)
+}
+
+/// Returns whether a file-scoped gate declares candidate-path patterns.
+fn scope_has_file_patterns(scope: &repo_config::SurfaceScope) -> bool {
+    scope.glob.is_some() || !scope.globs.is_empty()
 }
 
 /// Filters candidate paths by configured glob patterns and exclusions.
@@ -739,13 +773,110 @@ fn stop_at_first_failure() {
         ),
     )
     .unwrap();
-
     let result = run_at_root(repo.path(), "pre-push", &mut Vec::new());
     let second_ran = repo.path().join("should-not-run.txt").exists();
     assert!(
         result.is_err() && !second_ran,
         "a failing first gate must fail the run and prevent the second gate; result_ok={}, second_ran={second_ran}",
         result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn invalid_registry_glob_blocks_dispatch_before_a_leaf_runs() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: malformed-glob\n",
+            "    type: check\n",
+            "    command: touch must-not-run.txt\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: affected-file-type, glob: '[' }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(repo.path().join("candidate.md"), "fixture\n").unwrap();
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .status()
+            .unwrap()
+            .success(),
+        "initialize fixture repository"
+    );
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["add", "candidate.md"])
+            .status()
+            .unwrap()
+            .success(),
+        "stage fixture candidate"
+    );
+
+    let result = run_at_root(repo.path(), "pre-push", &mut Vec::new());
+
+    assert!(
+        result.is_err(),
+        "a malformed registry glob must reject dispatch"
+    );
+    assert!(
+        !repo.path().join("must-not-run.txt").exists(),
+        "semantic validation must run before a malformed registry can invoke a leaf"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn repository_wide_all_file_type_gate_without_glob_receives_no_paths() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("capture.sh"),
+        "#!/bin/sh\nprintf '%s' \"$*\" > argv.txt\n",
+    )
+    .unwrap();
+    std::fs::write(repo.path().join("tracked.md"), "fixture\n").unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: repo-wide\n",
+            "    type: check\n",
+            "    command: sh capture.sh\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: all-file-type }\n",
+        ),
+    )
+    .unwrap();
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .status()
+            .unwrap()
+            .success(),
+        "initialize fixture repository"
+    );
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["add", "capture.sh", "tracked.md", "repo-config.yml"])
+            .status()
+            .unwrap()
+            .success(),
+        "stage fixture files"
+    );
+
+    run_at_root(repo.path(), "pre-push", &mut Vec::new()).expect("repository-wide gate must run");
+
+    assert_eq!(
+        std::fs::read_to_string(repo.path().join("argv.txt")).unwrap(),
+        "",
+        "an all-file-type gate without a glob must retain its no-argument repository-wide mode"
     );
 }
 

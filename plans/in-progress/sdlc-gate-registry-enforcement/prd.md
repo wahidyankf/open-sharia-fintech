@@ -130,23 +130,22 @@ Feature: Gate registry declaration
     Then it exits non-zero
     And the message names the duplicated id
 
-  Scenario Outline: Every surface step is declared, whatever its type
+  Scenario Outline: Every matrix-wired CI gate is declared, whatever its type
     Given the surfaces as shipped by this plan
     When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output contains an entry with id "<id>"
     And that entry reports type "<type>"
 
     Examples:
-      | id                        | type     |
-      | env-staged-guard          | check    |
-      | commitlint                | check    |
-      | format-prettier           | mutation |
-      | format-rustfmt            | mutation |
-      | format-verify-prettier    | check    |
-      | format-verify-rustfmt     | check    |
-      | harness-bindings-generate | mutation |
-      | lockfile-sync             | mutation |
-      | test-quick                | check    |
+      | id                     | type  |
+      | repo-config-schema     | check |
+      | format-verify-prettier | check |
+      | format-verify-rustfmt  | check |
+
+  # The JSON projection feeds the CI matrix, so it contains exactly CI gates
+  # whose wiring is not hand-wired. `test-quick` is deliberately hand-wired
+  # and is asserted through the textual projection and its workflow job;
+  # commit-msg and pre-commit-only gates are listed on their own surfaces.
 
   Scenario: An unknown type value is rejected at parse time
     Given repo-config.yml declares a gate with type "cleanup"

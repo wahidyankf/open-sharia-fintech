@@ -6,7 +6,7 @@ Feature: Gate enumeration
     When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output is a JSON array
     And every element carries "id", "command", and "scope" keys
-    And the array contains exactly the gates declaring surface "ci"
+    And the array contains exactly the matrix-wired gates declaring surface "ci"
 
   Scenario: A surface with no declared gates yields an empty array, not an error
     Given no gate declares surface "commit-msg"

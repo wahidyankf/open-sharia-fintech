@@ -113,6 +113,7 @@
           "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs",
           "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch"
         ],
+        "cwd": "{workspaceRoot}",
         "parallel": false
       },
       "cache": true,
