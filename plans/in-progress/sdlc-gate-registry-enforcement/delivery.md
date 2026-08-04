@@ -1030,7 +1030,7 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
 All selectors below are **new tests** in `apps/rhino-cli/tests/gate_dispatch.rs` (**new file**).
 Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r-3--execution-from-the-hooks).
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-RED** (`blocks: P1-DISPATCH-KIND-RHINO-GREEN`) — RED: in
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-RED** (`blocks: P1-DISPATCH-KIND-RHINO-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `rhino_cli_kind_receives_derived_files` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
@@ -1046,22 +1046,35 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the local rhino-cli leaf receives only "a.md" and "b.md" and its exit code is propagated
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-GREEN** (`blockedBy: P1-DISPATCH-KIND-RHINO-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a staged two-markdown-file fixture with an untracked invalid markdown decoy. The exact integration test fails at runtime on the absent `--only` selector, proving kind dispatch is not implemented rather than masking a compile failure.
+
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-GREEN** (`blockedBy: P1-DISPATCH-KIND-RHINO-RED`;
       `blocks: P1-DISPATCH-KIND-RHINO-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only `rhino-cli` kind derived-file argv and exit
       propagation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
       — acceptance: exits 0 and proves that the local leaf receives only `a.md` and `b.md` and its
       fixture exit code is propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added `--only`, staged affected-file-type derivation, and local Rhino CLI dispatch with non-zero exit propagation. The exact integration test proves the leaf receives only the two staged markdown files; core gate-run tests and formatting pass.
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-RHINO-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-RHINO-GREEN`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract the `rhino-cli` argv assembly without adding another
       kind. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
       — acceptance: exits 0 with the same derived-file order and exit propagation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted `rhino_cli_arguments`, preserving command tokens followed by derived files. The exact dispatch test remains green.
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-RED** (`blockedBy: P1-DISPATCH-KIND-RHINO-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-RED** (`blockedBy: P1-DISPATCH-KIND-RHINO-REFACTOR`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `external_kind_preserves_fixed_argv_before_files` (**new test**). Run
@@ -1078,21 +1091,34 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then PATH-resolved shellcheck receives "--severity=warning" then "tool.sh"
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-GREEN** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a PATH-resolved shellcheck stub. The exact test exits 101 because it receives the fixed severity argument but not the derived staged file, isolating missing external dispatch.
+
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-GREEN** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-RED`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only PATH-resolved external dispatch with declared
       argv preceding derived files. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch external_kind_preserves_fixed_argv_before_files`
       — acceptance: exits 0 and records `--severity=warning` before `tool.sh`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: External gates now resolve through PATH, preserve fixed arguments before derived staged files, and propagate exits. The exact shellcheck-stub integration test passes.
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-GREEN`;
       `blocks: P1-DISPATCH-KIND-NX-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, reuse argv assembly for the external branch without adding
       Nx behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch external_kind_preserves_fixed_argv_before_files`
       — acceptance: exits 0 with the same PATH resolution and exact argv order.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Renamed shared fixed-argv-plus-derived-files assembly for the Rhino and external branches. External ordering and PATH resolution remain covered by the exact integration test.
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-RED** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-KIND-NX-RED** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`;
       `blocks: P1-DISPATCH-KIND-NX-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `nx_kind_delegates_affected_project_graph` (**new test**). Run
@@ -1109,20 +1135,33 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then "npm exec nx -- affected -t test:quick" runs and its exit code is propagated
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-GREEN** (`blockedBy: P1-DISPATCH-KIND-NX-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an affected-projects fixture with a PATH `npm` recorder. The exact integration test exits 101 because no Nx delegation occurs, isolating the missing command contract.
+
+- [x] [AI] **P1-DISPATCH-KIND-NX-GREEN** (`blockedBy: P1-DISPATCH-KIND-NX-RED`;
       `blocks: P1-DISPATCH-KIND-NX-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only Nx affected-target delegation and exit
       propagation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch nx_kind_delegates_affected_project_graph`
       — acceptance: exits 0 and records exactly `npm exec nx -- affected -t test:quick` with the
       fixture exit code propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Nx gates now run `npm exec nx -- affected -t <target>` and propagate failure statuses. The exact integration test records the required argv and passes.
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-NX-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-NX-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-NX-GREEN`;
       `blocks: P1-DISPATCH-SCOPES-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, centralize completed kind selection without changing any
       kind contract. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch nx_kind_delegates_affected_project_graph`
       — acceptance: exits 0 with the exact Nx argv and exit propagation unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Centralized Rhino, external, and Nx selection in `run_leaf` while retaining each contract. The exact Nx dispatch test remains green.
 
 - [ ] [AI] **P1-DISPATCH-SCOPES-RED** (`blockedBy: P1-DISPATCH-KIND-NX-REFACTOR`;
       `blocks: P1-DISPATCH-SCOPES-GREEN`) — RED: in

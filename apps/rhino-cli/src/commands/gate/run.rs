@@ -8,7 +8,7 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::git::port::StagedFileProvider;
-use crate::application::repo_config::{self, GateSurface, ScopeKind};
+use crate::application::repo_config::{self, GateKind, GateSurface, ScopeKind};
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::git::staged_files::GitStagedFileProvider;
 use crate::internal::git;
@@ -19,6 +19,9 @@ pub struct RunArgs {
     /// Surface whose declared gates to run.
     #[arg(long)]
     pub surface: String,
+    /// Run only the gate with this id.
+    #[arg(long)]
+    pub only: Option<String>,
 }
 
 /// Run gates declared on a surface from the current repository root.
@@ -30,7 +33,12 @@ pub struct RunArgs {
 pub fn run(args: &RunArgs, _output_format: OutputFormat) -> Result<(), Error> {
     let repo_root = git::root::find_root()
         .map_err(|error| anyhow!("failed to find git repository root: {error}"))?;
-    run_at_root(&repo_root, &args.surface, &mut std::io::stdout())
+    run_at_root_with_only(
+        &repo_root,
+        &args.surface,
+        args.only.as_deref(),
+        &mut std::io::stdout(),
+    )
 }
 
 /// Run gates declared on a surface at a known repository root.
@@ -40,19 +48,38 @@ pub fn run(args: &RunArgs, _output_format: OutputFormat) -> Result<(), Error> {
 /// Returns an error when the surface is invalid, `repo-config.yml` cannot be
 /// read, or a declared command cannot be started.
 pub fn run_at_root(repo_root: &Path, surface: &str, writer: &mut dyn Write) -> Result<(), Error> {
+    run_at_root_with_only(repo_root, surface, None, writer)
+}
+
+/// Run gates declared on a surface at a known root, optionally selecting one gate.
+///
+/// # Errors
+///
+/// Returns an error when the surface is invalid, `repo-config.yml` cannot be
+/// read, a command cannot be started, or a selected gate fails.
+pub fn run_at_root_with_only(
+    repo_root: &Path,
+    surface: &str,
+    only: Option<&str>,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
     let surface = parse_surface(surface)?;
     let config = repo_config::load(repo_root)?;
     let changed_paths = config
         .gates
         .iter()
+        .filter(|gate| only.is_none_or(|id| gate.id == id))
         .filter_map(|gate| gate.surfaces.get(&surface))
-        .any(|scope| scope.scope == ScopeKind::PathGated)
+        .any(|scope| {
+            scope.scope == ScopeKind::PathGated || scope.scope == ScopeKind::AffectedFileType
+        })
         .then(|| changed_paths(repo_root, &surface))
         .transpose()?;
     for gate in config
         .gates
         .iter()
         .filter(|gate| gate.surfaces.contains_key(&surface))
+        .filter(|gate| only.is_none_or(|id| gate.id == id))
     {
         let scope = &gate.surfaces[&surface];
         if scope.scope == ScopeKind::PathGated
@@ -62,16 +89,105 @@ pub fn run_at_root(repo_root: &Path, surface: &str, writer: &mut dyn Write) -> R
         {
             continue;
         }
+        let files = if scope.scope == ScopeKind::AffectedFileType {
+            matching_files(changed_paths.as_deref().unwrap_or_default(), scope)?
+        } else {
+            Vec::new()
+        };
+        if scope.scope == ScopeKind::AffectedFileType && files.is_empty() {
+            continue;
+        }
         writeln!(writer, "Running gate {}", gate.id)?;
-        let status = Command::new("sh")
-            .args(["-c", &gate.command])
-            .current_dir(repo_root)
-            .status()?;
+        let status = run_leaf(&gate.kind, &gate.command, &files, repo_root)?;
         if !status.success() {
             return Err(anyhow!("gate {} failed", gate.id));
         }
     }
     Ok(())
+}
+
+fn run_leaf(
+    kind: &GateKind,
+    command: &str,
+    files: &[String],
+    repo_root: &Path,
+) -> Result<std::process::ExitStatus, Error> {
+    match kind {
+        GateKind::RhinoCli => run_rhino_cli_leaf(command, files, repo_root),
+        GateKind::External => run_external_leaf(command, files, repo_root),
+        GateKind::Nx => run_nx_affected_leaf(command, repo_root),
+    }
+}
+
+fn matching_files(
+    changed_paths: &[String],
+    scope: &repo_config::SurfaceScope,
+) -> Result<Vec<String>, Error> {
+    let patterns = scope.glob.iter().chain(&scope.globs).collect::<Vec<_>>();
+    if patterns.is_empty() {
+        return Ok(changed_paths.to_vec());
+    }
+    let matches = changed_paths
+        .iter()
+        .filter(|path| {
+            patterns.iter().any(|pattern| {
+                glob::Pattern::new(pattern)
+                    .map(|pattern| pattern.matches(path))
+                    .unwrap_or(false)
+            })
+        })
+        .cloned()
+        .collect();
+    Ok(matches)
+}
+
+fn run_rhino_cli_leaf(
+    command: &str,
+    files: &[String],
+    repo_root: &Path,
+) -> Result<std::process::ExitStatus, Error> {
+    let arguments = arguments_with_derived_files(command, files)?;
+    Command::new(std::env::current_exe()?)
+        .args(arguments)
+        .current_dir(repo_root)
+        .status()
+        .map_err(Error::from)
+}
+
+fn run_external_leaf(
+    command: &str,
+    files: &[String],
+    repo_root: &Path,
+) -> Result<std::process::ExitStatus, Error> {
+    let arguments = arguments_with_derived_files(command, files)?;
+    let (program, arguments) = arguments
+        .split_first()
+        .ok_or_else(|| anyhow!("external gate command cannot be empty"))?;
+    Command::new(program)
+        .args(arguments)
+        .current_dir(repo_root)
+        .status()
+        .map_err(Error::from)
+}
+
+fn run_nx_affected_leaf(target: &str, repo_root: &Path) -> Result<std::process::ExitStatus, Error> {
+    Command::new("npm")
+        .args(["exec", "nx", "--", "affected", "-t", target])
+        .current_dir(repo_root)
+        .status()
+        .map_err(Error::from)
+}
+
+fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<String>, Error> {
+    let mut arguments = command
+        .split_whitespace()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<_>>();
+    if arguments.is_empty() {
+        return Err(anyhow!("gate command cannot be empty"));
+    }
+    arguments.extend(files.iter().cloned());
+    Ok(arguments)
 }
 
 fn changed_paths(repo_root: &Path, _surface: &GateSurface) -> Result<Vec<String>, Error> {
@@ -322,6 +438,7 @@ fn linked_worktree_uses_its_own_repo_config() {
     run(
         &RunArgs {
             surface: "pre-push".to_string(),
+            only: None,
         },
         OutputFormat::Text,
     )
