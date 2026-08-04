@@ -44,7 +44,7 @@ solo-maintainer's own hats and the agents that consume the registry on their beh
 - **Repo maintainer (local)** — runs hooks and the `gate` CLI directly on a workstation, authors new
   `repo-config.yml` `gates:` entries, and wants one place that answers "what will gate my change, and
   where" (see [brd.md §Stakeholders](./brd.md#stakeholders)).
-- **CI runner (`pr-quality-gate.yml`)** — invokes `gate list --format=json` to build its job matrix
+- **CI runner (`pr-quality-gate.yml`)** — invokes `gate list --surface=ci --format=json` to build its job matrix
   and `gate validate` to assert the composition rule holds server-side (R-2, R-4).
 - **Contributing agent authoring a gate** — an agent (e.g. `repo-rules-maker`, or a plan executor)
   adding or editing a `gates:` entry, relying on `repo-config validate` / `gate validate` to catch a
@@ -132,7 +132,7 @@ Feature: Gate registry declaration
 
   Scenario Outline: Every surface step is declared, whatever its type
     Given the surfaces as shipped by this plan
-    When "rhino-cli gate list --format=json" runs
+    When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output contains an entry with id "<id>"
     And that entry reports type "<type>"
 

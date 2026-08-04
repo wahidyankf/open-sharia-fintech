@@ -69,7 +69,7 @@ into pre-commit/pre-push hooks and CI as raw `cargo run` invocations — not Nx 
 
 Shell scripts, Dockerfiles, GitHub Actions, and F# gated at **warning-and-above** (CI + Husky hooks).
 Linters: shellcheck (`--severity=warning`), hadolint (`--failure-threshold warning`), actionlint,
-F# strict (`TreatWarningsAsErrors` + G-Research.FSharp.Analyzers + `fantomas --check`).
+F# strict (`TreatWarningsAsErrors` + G-Research.FSharp.Analyzers + `dotnet tool run fantomas --check`).
 All installed by `npm run doctor -- --fix`.
 
 **Instruction-file size budget** (`nx run rhino-cli:instruction-size:validation`): per-surface byte

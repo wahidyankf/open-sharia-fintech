@@ -126,26 +126,33 @@ fn lockfile_is_current(package_json: &Path, package_lock: &Path) -> Result<bool,
         .all(|field| package.get(*field) == lock_root.get(*field)))
 }
 
-/// Creates a Git command rooted at the target repository without hook routing.
+/// Creates a Git command explicitly rooted at the target repository.
 fn git_command(repo_root: &Path) -> Command {
     let mut command = Command::new("git");
     command
         .current_dir(repo_root)
-        .env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE");
+        .env("GIT_DIR", repo_root.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", repo_root)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null");
     command
 }
 
 #[cfg(test)]
 #[test]
-fn git_command_clears_git_routing_variables() {
+fn git_command_targets_the_given_repository() {
     let command = git_command(Path::new("fixture"));
-    for variable in ["GIT_DIR", "GIT_WORK_TREE"] {
+    for variable in [
+        "GIT_DIR",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_CONFIG_GLOBAL",
+        "GIT_CONFIG_SYSTEM",
+    ] {
         assert!(
             command
                 .get_envs()
-                .any(|(name, value)| name == std::ffi::OsStr::new(variable) && value.is_none()),
-            "fixture Git command must remove inherited {variable}"
+                .any(|(name, value)| name == std::ffi::OsStr::new(variable) && value.is_some()),
+            "Git command must explicitly set {variable}"
         );
     }
 }

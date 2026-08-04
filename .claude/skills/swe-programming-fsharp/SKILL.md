@@ -135,7 +135,7 @@ let calculate (wealth: decimal) (nisab: decimal) =
         0m
 
 // Run: dotnet fantomas . (formats all F# files)
-// Pre-commit: fantomas --check . (fails if not formatted)
+// Pre-commit: dotnet tool run fantomas --check . (fails if not formatted)
 ```
 
 ### Testing with Expecto

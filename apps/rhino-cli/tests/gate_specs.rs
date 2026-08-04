@@ -264,7 +264,10 @@ fn given_non_delegating_pre_push_hook(w: &mut GateWorld) {
             "check",
             "test:quick",
             "nx",
-            "      pre-push: { scope: affected-projects }\n",
+            concat!(
+                "      pre-push: { scope: affected-projects }\n",
+                "      ci: { scope: affected-projects }\n",
+            ),
         )),
     );
     w.write(".husky/pre-push", "#!/bin/sh\necho stale\n");

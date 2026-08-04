@@ -2,16 +2,14 @@
 
 use std::collections::BTreeSet;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::git::port::StagedFileProvider;
 use crate::application::repo_config::{self, GateKind, GateSurface, GateType, ScopeKind};
 use crate::domain::cliout::OutputFormat;
-use crate::infrastructure::git::staged_files::GitStagedFileProvider;
 use crate::internal::git;
 
 use super::list;
@@ -38,6 +36,9 @@ pub struct RunArgs {
     /// Run only the gate with this id.
     #[arg(long)]
     pub only: Option<String>,
+    /// Commit-message file forwarded only to the `commit-msg` surface.
+    #[arg(last = true)]
+    pub commit_message_file: Option<PathBuf>,
 }
 
 /// Run gates declared on a surface from the current repository root.
@@ -49,10 +50,11 @@ pub struct RunArgs {
 pub fn run(args: &RunArgs, _output_format: OutputFormat) -> Result<(), Error> {
     let repo_root = git::root::find_root()
         .map_err(|error| anyhow!("failed to find git repository root: {error}"))?;
-    run_at_root_with_only(
+    run_at_root_with_only_and_message_file(
         &repo_root,
         &args.surface,
         args.only.as_deref(),
+        args.commit_message_file.as_deref(),
         &mut std::io::stdout(),
     )
 }
@@ -79,7 +81,23 @@ pub fn run_at_root_with_only(
     only: Option<&str>,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
+    run_at_root_with_only_and_message_file(repo_root, surface, only, None, writer)
+}
+
+/// Run gates declared on a surface, optionally selecting one gate and forwarding a commit message.
+fn run_at_root_with_only_and_message_file(
+    repo_root: &Path,
+    surface: &str,
+    only: Option<&str>,
+    commit_message_file: Option<&Path>,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
     let surface = parse_surface(surface)?;
+    if commit_message_file.is_some() && surface != GateSurface::CommitMsg {
+        return Err(anyhow!(
+            "a commit-message file is only valid for the commit-msg surface"
+        ));
+    }
     let config = repo_config::load(repo_root)?;
     let surface_gates = config
         .gates
@@ -158,7 +176,14 @@ pub fn run_at_root_with_only(
             .restages
             .then(|| worktree_changed_paths(repo_root))
             .transpose()?;
-        let status = run_leaf(&gate.kind, &gate.command, &files, &scope.scope, repo_root)?;
+        let status = run_leaf(
+            &gate.kind,
+            &gate.command,
+            &files,
+            &scope.scope,
+            commit_message_file,
+            repo_root,
+        )?;
         if !status.success() {
             return Err(anyhow!("gate {} failed", gate.id));
         }
@@ -228,11 +253,12 @@ fn run_leaf(
     command: &str,
     files: &[String],
     scope: &ScopeKind,
+    commit_message_file: Option<&Path>,
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
     match kind {
         GateKind::RhinoCli => run_rhino_cli_leaf(command, files, repo_root),
-        GateKind::External => run_external_leaf(command, files, repo_root),
+        GateKind::External => run_external_leaf(command, files, commit_message_file, repo_root),
         GateKind::Nx => run_nx_leaf(command, scope, repo_root),
     }
 }
@@ -259,9 +285,7 @@ fn filter_candidates(
             !is_excluded(path, excludes)
                 && (patterns.is_empty()
                     || patterns.iter().any(|pattern| {
-                        glob::Pattern::new(pattern)
-                            .map(|pattern| pattern.matches(path))
-                            .unwrap_or(false)
+                        glob::Pattern::new(pattern).is_ok_and(|pattern| pattern.matches(path))
                     }))
         })
         .cloned()
@@ -305,15 +329,28 @@ fn run_rhino_cli_leaf(
 fn run_external_leaf(
     command: &str,
     files: &[String],
+    commit_message_file: Option<&Path>,
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
     if command.trim().is_empty() {
         return Err(anyhow!("external gate command cannot be empty"));
     }
     let command_with_files = format!("{command} \"$@\"");
+    let mut arguments = files.to_vec();
+    if let Some(commit_message_file) = commit_message_file {
+        arguments.push(commit_message_file.to_string_lossy().into_owned());
+    }
     Command::new("sh")
-        .args(["-c", &command_with_files, "gate-external"])
-        .args(files)
+        .args([
+            "-c",
+            if commit_message_file.is_some() {
+                command
+            } else {
+                &command_with_files
+            },
+            "gate-external",
+        ])
+        .args(arguments)
         .current_dir(repo_root)
         .status()
         .map_err(Error::from)
@@ -362,8 +399,56 @@ fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<S
 /// # Errors
 ///
 /// Returns an error when Git cannot provide the staged files.
-fn changed_paths(repo_root: &Path, _surface: &GateSurface) -> Result<Vec<String>, Error> {
-    GitStagedFileProvider.get_staged(repo_root)
+fn changed_paths(repo_root: &Path, surface: &GateSurface) -> Result<Vec<String>, Error> {
+    if *surface == GateSurface::PreCommit {
+        return staged_paths(repo_root);
+    }
+    if matches!(surface, GateSurface::PrePush | GateSurface::Ci) {
+        return merge_base_paths(repo_root);
+    }
+    Ok(Vec::new())
+}
+
+/// Returns paths changed from the branch merge base to `HEAD`.
+fn merge_base_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
+    let merge_base = Command::new("git")
+        .args(["merge-base", "origin/main", "HEAD"])
+        .current_dir(repo_root)
+        .output()?;
+    if !merge_base.status.success() {
+        // Disposable fixtures may not configure an origin or make an initial commit. They have no
+        // merge base, so use their staged setup state rather than treating it as a production base.
+        return staged_paths(repo_root);
+    }
+    let base = String::from_utf8(merge_base.stdout)?;
+    let output = Command::new("git")
+        .args(["diff", "--name-only", base.trim(), "HEAD"])
+        .current_dir(repo_root)
+        .output()?;
+    if !output.status.success() {
+        return Err(anyhow!("git diff from merge base to HEAD failed"));
+    }
+    Ok(String::from_utf8(output.stdout)?
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect())
+}
+
+/// Returns paths staged in the Git index at the explicit repository root.
+fn staged_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
+    let output = Command::new("git")
+        .args(["diff", "--cached", "--name-only"])
+        .current_dir(repo_root)
+        .env("GIT_DIR", repo_root.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", repo_root)
+        .output()?;
+    if !output.status.success() {
+        return Err(anyhow!("git diff --cached --name-only failed"));
+    }
+    Ok(String::from_utf8(output.stdout)?
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect())
 }
 
 /// Returns paths tracked by Git at the repository root.
@@ -482,11 +567,35 @@ fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
 
 #[cfg(test)]
 fn fixture_git_command(repo_root: &Path) -> Command {
+    if repo_root.join(".git").exists() {
+        let output = Command::new("git")
+            .args(["rev-parse", "--show-toplevel"])
+            .current_dir(repo_root)
+            .env("GIT_DIR", repo_root.join(".git"))
+            .env("GIT_CEILING_DIRECTORIES", repo_root)
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null")
+            .output()
+            .expect("fixture escape guard must start git");
+        assert!(
+            output.status.success(),
+            "fixture escape guard must find its repository"
+        );
+        assert_eq!(
+            std::fs::canonicalize(String::from_utf8_lossy(&output.stdout).trim())
+                .expect("fixture escape guard must return a canonical repository root"),
+            std::fs::canonicalize(repo_root)
+                .expect("fixture repository root must be canonicalizable"),
+            "fixture escape guard must refuse a Git command outside its temporary repository"
+        );
+    }
     let mut command = Command::new("git");
     command
         .current_dir(repo_root)
-        .env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE");
+        .env("GIT_DIR", repo_root.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", repo_root)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null");
     command
 }
 
@@ -533,6 +642,7 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
     let status = run_external_leaf(
         "printf '%s\\n' > received-files.txt",
         std::slice::from_ref(&path),
+        None,
         repo.path(),
     )
     .expect("external shell command must start");
@@ -543,6 +653,29 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
         format!("{path}\n")
     );
     assert!(!repo.path().join("must-not-run.txt").exists());
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn commit_message_file_is_forwarded_to_external_gate() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let message = repo.path().join("message.txt");
+    std::fs::write(&message, "feat: fixture\n").unwrap();
+
+    let status = run_external_leaf(
+        "printf '%s\\n' \"$1\" > received-message-file.txt",
+        &[],
+        Some(&message),
+        repo.path(),
+    )
+    .expect("commit-msg external gate must start");
+
+    assert!(status.success());
+    assert_eq!(
+        std::fs::read_to_string(repo.path().join("received-message-file.txt")).unwrap(),
+        format!("{}\n", message.display())
+    );
 }
 
 #[cfg(test)]
@@ -733,6 +866,7 @@ fn linked_worktree_uses_its_own_repo_config() {
         &RunArgs {
             surface: "pre-push".to_string(),
             only: None,
+            commit_message_file: None,
         },
         OutputFormat::Text,
     )

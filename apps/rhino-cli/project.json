@@ -109,7 +109,9 @@
           "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance",
           "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env_contract",
           "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation"
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation",
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs",
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch"
         ],
         "parallel": false
       },
@@ -121,10 +123,13 @@
         "{projectRoot}/tests/env_contract.rs",
         "{projectRoot}/tests/repo_config_data_driven.rs",
         "{projectRoot}/tests/fsharp_tool_invocation.rs",
+        "{projectRoot}/tests/gate_specs.rs",
+        "{projectRoot}/tests/gate_dispatch.rs",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/**/*.feature",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract/**/*.feature",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/**/*.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature"
+        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature",
+        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**/*.feature"
       ]
     },
     "typecheck": {

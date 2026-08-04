@@ -34,5 +34,5 @@ Feature: Gate enumeration
   Scenario: Shipped CI surface entries retain their declared type
     Given the surfaces as shipped by this plan
     When "rhino-cli gate list --surface=ci --format=json" runs
-    Then the output contains an entry with id "test-quick"
+    Then the output contains an entry with id "format-verify-rustfmt"
     And that entry reports type "check"

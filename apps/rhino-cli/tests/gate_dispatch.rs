@@ -7,23 +7,86 @@ use std::process::Command;
 use assert_cmd::cargo::cargo_bin;
 
 fn fixture_git_command(repo_root: &Path) -> Command {
+    if repo_root.join(".git").exists() {
+        let output = Command::new("git")
+            .args(["rev-parse", "--show-toplevel"])
+            .current_dir(repo_root)
+            .env("GIT_DIR", repo_root.join(".git"))
+            .env("GIT_WORK_TREE", repo_root)
+            .env("GIT_CEILING_DIRECTORIES", repo_root)
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null")
+            .output()
+            .expect("fixture escape guard must start git");
+        assert!(
+            output.status.success(),
+            "fixture escape guard must find its repository"
+        );
+        assert_eq!(
+            std::fs::canonicalize(String::from_utf8_lossy(&output.stdout).trim())
+                .expect("fixture escape guard must return a canonical repository root"),
+            std::fs::canonicalize(repo_root)
+                .expect("fixture repository root must be canonicalizable"),
+            "fixture escape guard must refuse a Git command outside its temporary repository"
+        );
+    }
     let mut command = Command::new("git");
     command
         .current_dir(repo_root)
-        .env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE");
+        .env("GIT_DIR", repo_root.join(".git"))
+        .env("GIT_WORK_TREE", repo_root)
+        .env("GIT_CEILING_DIRECTORIES", repo_root)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null");
+    command
+}
+
+fn fixture_rhino_command(repo_root: &Path) -> Command {
+    let mut command = Command::new(cargo_bin("rhino-cli"));
+    command
+        .current_dir(repo_root)
+        .env("GIT_DIR", repo_root.join(".git"))
+        .env("GIT_WORK_TREE", repo_root)
+        .env("GIT_CEILING_DIRECTORIES", repo_root)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null");
     command
 }
 
 #[test]
-fn fixture_git_command_clears_git_routing_variables() {
+fn fixture_git_command_uses_explicit_isolation() {
     let command = fixture_git_command(Path::new("fixture"));
-    for variable in ["GIT_DIR", "GIT_WORK_TREE"] {
+    for variable in [
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_CONFIG_GLOBAL",
+        "GIT_CONFIG_SYSTEM",
+    ] {
         assert!(
             command
                 .get_envs()
-                .any(|(name, value)| name == OsStr::new(variable) && value.is_none()),
-            "fixture Git command must remove inherited {variable}"
+                .any(|(name, value)| name == OsStr::new(variable) && value.is_some()),
+            "fixture Git command must explicitly isolate {variable}"
+        );
+    }
+}
+
+#[test]
+fn fixture_rhino_command_uses_explicit_git_routing() {
+    let command = fixture_rhino_command(Path::new("fixture"));
+    for variable in [
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_CONFIG_GLOBAL",
+        "GIT_CONFIG_SYSTEM",
+    ] {
+        assert!(
+            command
+                .get_envs()
+                .any(|(name, value)| name == OsStr::new(variable) && value.is_some()),
+            "fixture rhino command must explicitly isolate {variable}"
         );
     }
 }
@@ -180,7 +243,7 @@ fn rhino_cli_kind_receives_derived_files() {
         "git add must succeed"
     );
 
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-commit", "--only=md-naming"])
         .current_dir(repo.path())
         .output()
@@ -254,7 +317,7 @@ fn external_kind_preserves_fixed_argv_before_files() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-commit", "--only=shellcheck"])
         .current_dir(repo.path())
         .env("PATH", path)
@@ -325,7 +388,7 @@ fn nx_kind_delegates_affected_project_graph() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-push", "--only=test-quick"])
         .current_dir(repo.path())
         .env("PATH", path)
@@ -415,7 +478,7 @@ fn all_supported_scopes_derive_specified_inputs() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-push"])
         .current_dir(repo.path())
         .env("PATH", path)
@@ -507,7 +570,7 @@ fn glob_lists_and_excludes_apply_before_invocation() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args([
             "gate",
             "run",
@@ -589,7 +652,7 @@ fn empty_scoped_match_is_successful_skip() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-commit", "--only=empty-match"])
         .current_dir(repo.path())
         .env("PATH", path)
@@ -691,7 +754,7 @@ fn only_executes_exactly_one_direct_leaf() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-commit", "--only=md-mermaid"])
         .current_dir(repo.path())
         .env("PATH", path)
@@ -776,7 +839,7 @@ fn unknown_or_duplicate_only_ids_fail_before_execution() {
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
     let run_only = |id: &str| {
-        Command::new(cargo_bin("rhino-cli"))
+        fixture_rhino_command(repo.path())
             .args(["gate", "run", "--surface=pre-commit", "--only", id])
             .current_dir(repo.path())
             .env("PATH", &path)
@@ -870,7 +933,7 @@ fn restaging_mutation_stages_only_outputs() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args([
             "gate",
             "run",
@@ -965,7 +1028,7 @@ fn failed_mutation_never_restages_output() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args([
             "gate",
             "run",
@@ -1059,7 +1122,7 @@ fn precommit_has_one_ordered_file_batch() {
     let path =
         std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
             .expect("join fixture PATH");
-    let output = Command::new(cargo_bin("rhino-cli"))
+    let output = fixture_rhino_command(repo.path())
         .args(["gate", "run", "--surface=pre-commit"])
         .current_dir(repo.path())
         .env("PATH", path)

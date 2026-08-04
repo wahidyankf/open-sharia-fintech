@@ -52,11 +52,11 @@ fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
     for (project_path, source_path) in targets {
         let project = fs::read_to_string(workspace_root.join(project_path))
             .unwrap_or_else(|error| panic!("read {project_path}: {error}"));
-        let manifest_command =
-            format!("dotnet tool restore && dotnet tool run fantomas --check {source_path}");
+        let manifest_restore = "\"dotnet tool restore\"";
+        let manifest_command = format!("dotnet tool run fantomas --check {source_path}");
         let bare_global_command = format!("\"fantomas --check {source_path}\"");
 
-        if project.contains(&manifest_command) {
+        if project.contains(manifest_restore) && project.contains(&manifest_command) {
             w.manifest += 1;
         }
         if project.contains(&bare_global_command) {

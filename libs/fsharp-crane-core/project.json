@@ -26,9 +26,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet tool restore && dotnet tool run fantomas --check libs/fsharp-crane-core/src",
-          "dotnet tool restore && dotnet fsharplint lint libs/fsharp-crane-core/fsharp-crane-core.fsproj --lint-config libs/fsharp-crane-core/fsharplint.json",
-          "dotnet tool restore && dotnet fsharp-analyzers --project libs/fsharp-crane-core/fsharp-crane-core.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001"
+          "dotnet tool restore",
+          "dotnet tool run fantomas --check libs/fsharp-crane-core/src",
+          "dotnet fsharplint lint libs/fsharp-crane-core/fsharp-crane-core.fsproj --lint-config libs/fsharp-crane-core/fsharplint.json",
+          "dotnet fsharp-analyzers --project libs/fsharp-crane-core/fsharp-crane-core.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001"
         ],
         "parallel": false
       },

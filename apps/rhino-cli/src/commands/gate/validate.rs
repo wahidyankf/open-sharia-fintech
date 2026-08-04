@@ -32,11 +32,11 @@ pub fn run(_args: &ValidateArgs, _output_format: OutputFormat) -> Result<(), Err
 /// # Errors
 ///
 /// Returns an error when `repo-config.yml` cannot be read or when a check gate
-/// declared for pre-commit is missing its CI declaration.
+/// declared for a local hook surface is missing its CI declaration.
 pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
     let config = repo_config::load(repo_root)?;
 
-    validate_pre_commit_composition(&config, writer)?;
+    validate_local_hook_composition(&config, writer)?;
     validate_verifies_references(&config, writer)?;
     validate_formatter_verification(&config, writer)?;
     validate_pre_push_shim(repo_root, &config, writer)?;
@@ -44,24 +44,25 @@ pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error
     validate_lint_staged(repo_root, &config, writer)
 }
 
-/// Validates the pre-commit check-to-CI composition rule.
+/// Validates the local-hook check-to-CI composition rule.
 ///
 /// # Errors
 ///
-/// Returns an error when a check gate declares pre-commit without CI and lacks
+/// Returns an error when a check gate declares pre-commit or pre-push without CI and lacks
 /// the `staged-only` carve-out, or when the diagnostic cannot be written.
-fn validate_pre_commit_composition(
+fn validate_local_hook_composition(
     config: &repo_config::RepoConfig,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
     for gate in &config.gates {
-        let is_pre_commit_check_without_ci = gate.gate_type == GateType::Check
-            && gate.surfaces.contains_key(&GateSurface::PreCommit)
+        let is_local_hook_check_without_ci = gate.gate_type == GateType::Check
+            && (gate.surfaces.contains_key(&GateSurface::PreCommit)
+                || gate.surfaces.contains_key(&GateSurface::PrePush))
             && !gate.surfaces.contains_key(&GateSurface::Ci)
             && gate.carve_out.as_ref() != Some(&GateCarveOut::StagedOnly);
-        if is_pre_commit_check_without_ci {
+        if is_local_hook_check_without_ci {
             let message = format!(
-                "Gate Composition Rule violation: gate {:?} declares pre-commit but is missing ci",
+                "Gate Composition Rule violation: gate {:?} declares a local hook surface but is missing ci",
                 gate.id
             );
             writeln!(writer, "{message}")?;
@@ -308,6 +309,39 @@ fn composition_rule_violation() {
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
+fn pre_push_composition_rule_violation() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: missing-ci\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("Gate Composition Rule")
+            && rendered.contains("missing-ci")
+            && rendered.contains("ci"),
+        "a pre-push check without ci and no carve-out must violate the Gate Composition Rule; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
 fn mutation_pre_commit_only_passes() {
     let repo = tempfile::TempDir::new().unwrap();
     std::fs::write(
@@ -373,6 +407,7 @@ fn missing_surface_shim() {
             "    kind: nx\n",
             "    surfaces:\n",
             "      pre-push: { scope: affected-projects }\n",
+            "      ci: { scope: affected-projects }\n",
         ),
     )
     .unwrap();
