@@ -437,9 +437,17 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] **Hard gate — re-confirm `build-your-own-raft`'s two external prerequisite bodies are
       present** (immediately before its own sub-phase; STOP and surface to the user if either is
       absent, rather than authoring a dangling prerequisite edge) — command:
-      `for s in just-enough-go distributed-systems; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
-      — acceptance: returns **0**. If it returns non-zero, this checklist item is **not** ticked and
-      execution pauses here until plans `05`/`06` merge the missing body/bodies.
+
+  ```bash
+  test "$(gh pr view 133 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
+  for s in just-enough-go distributed-systems; do
+    test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"
+  done | grep -c .
+  ```
+
+  — acceptance: the merge assertion exits **0** and the directory check returns **0**. If either
+  fails, this checklist item is **not** ticked and execution pauses here until plan `05` is merged
+  and plans `05`/`06` provide the required bodies.
 
   **Gherkin (binds) →** "build-your-own-raft's two external prerequisite bodies are confirmed present before authoring"
 

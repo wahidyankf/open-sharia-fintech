@@ -101,9 +101,10 @@ sibling plan can never change this plan's own gate results.
 
 The original single course-authoring plan is now seven successor plans. Each still records a
 **band-completion signal** (the same 5-field contract: `BAND` / `PLAN` / `LANDED_COURSE_IDS` /
-`GROW_MANIFESTS`) in its own `delivery.md`, naming every manifest that must grow, by
+`GROW_MANIFESTS` / `FINAL_PR`) in its own `delivery.md`, naming every manifest that must grow, by
 full path. This plan's [Phase 4](./delivery.md#phase-4-manifest-growth-as-backfill-lands) processes
-each signal **as it arrives** — one sub-phase per source plan — rather than waiting for all seven.
+each signal **as it arrives** — one sub-phase per source plan — rather than waiting for all seven;
+it processes a signal only after verifying that its `FINAL_PR` is merged.
 
 | Source plan                                                                                                                                                                                    | Grows this plan's 3 manifests?                                                                                                   | Grows the sibling's `ai-engineer` manifest?                    |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |

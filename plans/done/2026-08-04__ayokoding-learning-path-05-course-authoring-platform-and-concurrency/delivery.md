@@ -592,6 +592,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+  FINAL_PR: #133 (downstream consumption requires merge verification)
   ```
 
   **Prepared terminal signal — consumers must verify PR #133 is merged before using it**
@@ -721,6 +722,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+  FINAL_PR: #133 (downstream consumption requires merge verification)
   ```
 
   **Prepared terminal signal — consumers must verify PR #133 is merged before using it**

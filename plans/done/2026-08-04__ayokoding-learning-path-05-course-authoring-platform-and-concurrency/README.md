@@ -227,7 +227,7 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-FINAL_PR: <filled only after the terminal PR merges>
+FINAL_PR: #133 (downstream consumption requires merge verification)
 ```
 
 ```text
@@ -242,7 +242,7 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-FINAL_PR: <filled only after the terminal PR merges>
+FINAL_PR: #133 (downstream consumption requires merge verification)
 ```
 
 A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving
