@@ -500,7 +500,7 @@ Its merge opens the bounded propagation transaction; it is not an invariant-rest
 
 Every code step below uses the RED / GREEN / REFACTOR template.
 
-- [ ] [AI] Enter the pre-provisioned declared worktree or create it from fresh `origin/main` —
+- [x] [AI] Enter the pre-provisioned declared worktree or create it from fresh `origin/main` —
       commands: `git fetch origin main` and, only when the declared worktree does not already
       exist, `git worktree add -b sdlc-gate-registry-enforcement worktrees/sdlc-gate-registry-enforcement origin/main`
       — acceptance: `git -C worktrees/sdlc-gate-registry-enforcement status --short --branch` is
@@ -509,6 +509,10 @@ Every code step below uses the RED / GREEN / REFACTOR template.
       plan-owned Phase 0 evidence; enumerate `origin/main..HEAD` and verify that every commit is
       recorded by the Phase 0 checklist before continuing. A freshly provisioned worktree instead
       reports `0 0` for `git rev-list --left-right --count HEAD...origin/main`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (resumed-worktree contract)
+  - Notes: Fetched `origin/main`; the declared worktree is clean, contains current trunk, and is nine commits ahead solely for recorded plan-validation, Phase 0 evidence, and the Phase 0 Fantomas regression repair. `git merge-base --is-ancestor origin/main HEAD` exits 0; the strict detached plan check is clean (report `plan__439846__2026-08-04--16-01__audit.md`).
 - [ ] [AI] Install the Phase 1 worktree dependencies — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement install` — acceptance: exits 0.
 - [ ] [AI] Initialize the Phase 1 worktree toolchain — command:
