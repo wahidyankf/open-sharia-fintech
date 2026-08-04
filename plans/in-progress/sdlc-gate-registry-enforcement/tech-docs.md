@@ -137,6 +137,10 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │   ├── [D] deps-audit.yml
 │   ├── [N] dependency-vulnerability-audit.yml
 │   └── [N] rhino-cli-parity-audit.yml
+├── [E] apps/crane-cli/project.json
+├── [E] apps/ose-be/project.json
+├── [E] apps/organiclever-be/project.json
+├── [E] libs/fsharp-crane-core/project.json
 ├── apps/rhino-cli/
 │   ├── [E] Cargo.toml
 │   ├── [E] Cargo.lock
@@ -159,6 +163,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │   │   ├── [N] gate_dispatch.rs
 │   │   ├── [N] gate_emit.rs
 │   │   ├── [N] gate_validate.rs
+│   │   ├── [N] fsharp_tool_invocation.rs
 │   │   ├── [E] agents.rs
 │   │   ├── [E] cargo_target_share.rs
 │   │   ├── [E] docs.rs
@@ -168,7 +173,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │       `git ls-files apps/rhino-cli/tests apps/rhino-cli/src`
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/
 │   ├── [N] gate/*.feature
-│   └── [E] env/**, harness/**, and md/**
+│   └── [E] env/**, harness/**, md/**, and system/{README.md,fsharp-tool-invocation.feature}
 ├── docs/reference/
 │   ├── [E] sdlc-gate-standard.md
 │   ├── [E] related-repositories.md
