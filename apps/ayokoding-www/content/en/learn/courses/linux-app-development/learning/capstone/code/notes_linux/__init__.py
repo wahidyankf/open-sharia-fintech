@@ -1,1 +1,0 @@
-"""Notes Linux capstone package."""

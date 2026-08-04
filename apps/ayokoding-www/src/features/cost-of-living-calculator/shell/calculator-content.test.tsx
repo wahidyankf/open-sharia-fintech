@@ -709,6 +709,7 @@ describe("Phase 2e — canonicalize on mount", () => {
     render(<CostOfLivingCalculatorContent />);
 
     await waitFor(() => {
+      // router.replace should have been called to canonicalize (remove invalid city)
       expect(mockRouterReplace).toHaveBeenCalled();
       const replaceArg = mockRouterReplace.mock.calls[0]?.[0] as string;
       expect(replaceArg).not.toContain("atlantis");

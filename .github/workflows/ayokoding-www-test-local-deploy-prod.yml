@@ -21,4 +21,3 @@ jobs:
       prod-branch: prod-ayokoding-www
       health-url: http://localhost:3101/api/trpc/meta.health
       health-timeout: 150
-      copy-prerender-manifest-for-e2e: true

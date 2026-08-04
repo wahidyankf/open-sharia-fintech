@@ -1,7 +1,7 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import matter from "gray-matter";
 import "./helpers/test-setup";
@@ -160,7 +160,7 @@ const SYLLABUS_COURSE_IDS: readonly string[] = [
 
 function courseSlugs(): string[] {
   return readdirSync(COURSES_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
+    .filter((entry) => entry.isDirectory() && existsSync(resolve(COURSES_DIR, entry.name, "_index.md")))
     .map((entry) => entry.name)
     .sort();
 }

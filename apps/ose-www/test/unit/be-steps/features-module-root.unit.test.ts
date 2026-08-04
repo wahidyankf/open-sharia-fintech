@@ -33,7 +33,7 @@ describe("ose-www features module root", () => {
   it("keeps the tRPC app router reachable from features/", async () => {
     const mod = await import("@/features/app-shell/shell/root-router");
     expect(mod.appRouter).toBeDefined();
-  }, 30_000);
+  });
 
   it("keeps the content service (feed source) reachable from features/", async () => {
     const mod = await import("@/features/content/shell/service");

@@ -568,8 +568,6 @@ mod tests {
         let status = Command::new("git")
             .args(["init"])
             .current_dir(root)
-            .env_remove("GIT_DIR")
-            .env_remove("GIT_WORK_TREE")
             .status()
             .expect("git init");
         assert!(status.success(), "git init must succeed");
