@@ -266,6 +266,11 @@ fn live_referenced_entries(repo_root: &Path) -> Option<HashSet<PathBuf>> {
     let Ok(output) = std::process::Command::new("git")
         .args(["worktree", "list", "--porcelain"])
         .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .env_remove("GIT_INDEX_FILE")
+        .env_remove("GIT_OBJECT_DIRECTORY")
+        .env_remove("GIT_COMMON_DIR")
         .output()
     else {
         return None;
