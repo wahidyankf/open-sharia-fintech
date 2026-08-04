@@ -390,6 +390,9 @@ apps/organiclever-be/src`, and
       reproduce the runtime-discovery failure with the prior bare global Fantomas command and add a
       check-mode scenario using a deliberately unformatted temporary F# fixture — acceptance: the
       pre-repair target command exits non-zero and the fixture makes manifest Fantomas exit non-zero.
+      File: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`. Command:
+      `fantomas --check libs/fsharp-crane-core/src` — acceptance: exits non-zero before the repair
+      because the global app host cannot discover its runtime.
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`
