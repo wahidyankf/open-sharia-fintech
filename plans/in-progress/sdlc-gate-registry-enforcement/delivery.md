@@ -904,7 +904,7 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
 
 ### 1.3 `gate run`
 
-- [ ] [AI] **RED** — failing test: gates declared for a surface are invoked in declaration order —
+- [x] [AI] **RED** — failing test: gates declared for a surface are invoked in declaration order —
       command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::declaration_order` —
       acceptance: fails because the command does not exist.
@@ -919,10 +919,19 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And they are invoked in declaration order
   ```
 
-- [ ] [AI] **GREEN** — implement `gate run --surface=<name>` so it invokes every gate declared for
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a real synthetic registry whose two external commands append `first` then `second`. The focused test exits 101 because `gate run` is unimplemented, not because the test is absent.
+
+- [x] [AI] **GREEN** — implement `gate run --surface=<name>` so it invokes every gate declared for
       that surface, in declaration order — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::declaration_order` — acceptance: the new test passes.
-- [ ] [AI] **RED** — add a failing test: execution stops at the first failing gate and the next
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Implemented surface selection and sequential registry-order execution. The focused declaration-order test and formatter/diff checks pass; later behavior remains intentionally deferred to its dedicated tasks.
+- [x] [AI] **RED** — add a failing test: execution stops at the first failing gate and the next
       declared gate is not invoked — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::stop_at_first_failure`
       — acceptance: fails because `gate run` does not yet stop at the first failure.
@@ -938,11 +947,20 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And gate "second" is not invoked
   ```
 
-- [ ] [AI] **GREEN** — implement stop-at-first-failure — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a two-gate fixture whose first command fails and second is observable. The exact test exits 101 because the runner currently returns success and invokes the second gate.
+
+- [x] [AI] **GREEN** — implement stop-at-first-failure — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::stop_at_first_failure`
       — acceptance: the new
       test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test: a `scope: path-gated` gate is skipped when its trigger
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: The runner now returns immediately on the first non-zero status. Focused fail-fast and declaration-order tests both pass.
+- [x] [AI] **RED** — add a failing test: a `scope: path-gated` gate is skipped when its trigger
       paths do not intersect the changed set — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_skip` —
       acceptance: fails because path-gating does not exist yet.
@@ -958,10 +976,19 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And the run exits zero
   ```
 
-- [ ] [AI] **GREEN** — implement the path-gated skip path — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a staged `docs/untouched.md` fixture against a `.claude/` path-gated gate. The focused test exits 101 because execution currently runs the unrelated gate.
+
+- [x] [AI] **GREEN** — implement the path-gated skip path — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_skip` — acceptance: the
       new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test: a `scope: path-gated` gate is invoked when a file under
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Path-gated entries now derive staged paths and run only on trigger-prefix intersection. The untouched path case and full focused gate-run suite pass.
+- [x] [AI] **RED** — add a failing test: a `scope: path-gated` gate is invoked when a file under
       its trigger paths is in the changed set — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_run` —
       acceptance: fails because a path-gated gate is never invoked yet.
@@ -976,14 +1003,27 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     Then gate "harness-bindings" is invoked
   ```
 
-- [ ] [AI] **GREEN** — implement the path-gated run path — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a staged `.claude/agents/example.md` fixture against a `.claude/` trigger. The focused test exits 101 because the touched gate is incorrectly skipped.
+
+- [x] [AI] **GREEN** — implement the path-gated run path — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_run` — acceptance: the
       new test passes, no other tests broken.
-- [ ] [AI] **REFACTOR** — resolve `repo-config.yml` and all exclude paths from
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Path-gated gates now use staged changed paths on every surface. Touched triggers run, unrelated paths skip, and the four-test gate-run suite passes.
+- [x] [AI] **REFACTOR** — resolve `repo-config.yml` and all exclude paths from
       `git rev-parse --show-toplevel`, never the main checkout; never call
       `git rev-parse --is-bare-repository` — acceptance: a regression test that runs `gate run` from a
       synthetic linked worktree exits 0 and reads the worktree's own config; and
       `grep -rn "is-bare-repository" apps/rhino-cli/src/` returns no match.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a synthetic main-repository/linked-worktree test with divergent configs; `gate run` uses the linked worktree’s own config. The root adapter uses show-toplevel and the forbidden bare-repository probe is absent; focused gate-run tests pass.
 
 #### 1.3a Complete dispatch-contract TDD
 

@@ -145,6 +145,8 @@ pub enum GateCommands {
     List(gate::list::ListArgs),
     /// Emit the generated artifact for a gate surface.
     Emit(gate::emit::EmitArgs),
+    /// Run declared gates for an execution surface.
+    Run(gate::run::RunArgs),
 }
 
 /// Git workflow helper subcommands.
@@ -667,6 +669,7 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Gate(gc) => match gc {
             GateCommands::List(args) => gate::list::run(args, output_format),
             GateCommands::Emit(args) => gate::emit::run(args, output_format),
+            GateCommands::Run(args) => gate::run::run(args, output_format),
         },
         Commands::Git(gc) => match gc {
             GitCommands::Lockfile(lc) => match lc {
