@@ -295,13 +295,15 @@ Framework-dependent publishing relies on an installed compatible runtime, while 
 
 ## Hands-on Katas
 
-Run each before file, describe the failure, then compare it with after. Use `dotnet run kata.cs`.
+Run each `before/kata.cs` file, describe the failure, then compare it with the matching
+`after/kata.cs` file. The source is intentionally a repository artifact rather than a public content
+route; use `dotnet run kata.cs` from its kata directory.
 
-- [Kata 1: Blocking load](./code/kata-01-blocking-load/before/kata.cs)
-- [Kata 2: Missing PropertyChanged](./code/kata-02-missing-propertychanged/before/kata.cs)
-- [Kata 3: Command ignores CanExecute](./code/kata-03-command-ignores-canexecute/before/kata.cs)
-- [Kata 4: Cancellation swallowed](./code/kata-04-cancellation-swallowed/before/kata.cs)
-- [Kata 5: Persistence error crashes](./code/kata-05-persistence-error-crashes/before/kata.cs)
+- [Kata 1: Blocking load](https://github.com/wahidyankf/ose-public/blob/main/apps/ayokoding-www/content/en/learn/courses/windows-app-development/drilling/code/kata-01-blocking-load/before/kata.cs)
+- [Kata 2: Missing PropertyChanged](https://github.com/wahidyankf/ose-public/blob/main/apps/ayokoding-www/content/en/learn/courses/windows-app-development/drilling/code/kata-02-missing-propertychanged/before/kata.cs)
+- [Kata 3: Command ignores CanExecute](https://github.com/wahidyankf/ose-public/blob/main/apps/ayokoding-www/content/en/learn/courses/windows-app-development/drilling/code/kata-03-command-ignores-canexecute/before/kata.cs)
+- [Kata 4: Cancellation swallowed](https://github.com/wahidyankf/ose-public/blob/main/apps/ayokoding-www/content/en/learn/courses/windows-app-development/drilling/code/kata-04-cancellation-swallowed/before/kata.cs)
+- [Kata 5: Persistence error crashes](https://github.com/wahidyankf/ose-public/blob/main/apps/ayokoding-www/content/en/learn/courses/windows-app-development/drilling/code/kata-05-persistence-error-crashes/before/kata.cs)
 
 ## Self-Check Checklist
 

@@ -152,6 +152,7 @@ weight: 95
   - [Learning](/en/learn/courses/advanced-algorithms/learning)
   - [Drilling](/en/learn/courses/advanced-algorithms/drilling)
 - [Building Production CLI Tools](/en/learn/courses/building-production-cli-tools)
+  - [Overview](/en/learn/courses/building-production-cli-tools/overview)
   - [Learning](/en/learn/courses/building-production-cli-tools/learning)
   - [Drilling](/en/learn/courses/building-production-cli-tools/drilling)
 - [26 · Advanced SQL & Query Performance](/en/learn/courses/advanced-sql-and-query-performance)

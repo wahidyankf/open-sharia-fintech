@@ -6,6 +6,7 @@ weight: 1
 ---
 
 - [Beginner Actor Model](/en/learn/courses/actor-model-concurrency/learning/beginner)
+- [Overview](/en/learn/courses/actor-model-concurrency/learning/overview)
 - [Intermediate Actor Model](/en/learn/courses/actor-model-concurrency/learning/intermediate)
 - [Advanced Actor Model](/en/learn/courses/actor-model-concurrency/learning/advanced)
 - [Capstone](/en/learn/courses/actor-model-concurrency/learning/capstone)

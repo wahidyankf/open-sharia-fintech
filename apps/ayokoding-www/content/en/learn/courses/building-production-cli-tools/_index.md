@@ -6,6 +6,7 @@ weight: 350
 prerequisites: ["just-enough-go", "just-enough-rust"]
 ---
 
+- [Overview](/en/learn/courses/building-production-cli-tools/overview)
 - [Learning](/en/learn/courses/building-production-cli-tools/learning)
   - [Overview](/en/learn/courses/building-production-cli-tools/learning/overview)
   - [Beginner Examples](/en/learn/courses/building-production-cli-tools/learning/beginner)
