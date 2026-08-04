@@ -26,11 +26,7 @@ pub fn find_root_from(cwd: Option<&std::path::Path>) -> std::result::Result<Path
     // cwd when none is supplied). Git hooks export these variables for the
     // hook's repository, which would otherwise override that starting point.
     // Scrub them even for `find_root()`: its ambient cwd is still authoritative.
-    cmd.env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE")
-        .env_remove("GIT_INDEX_FILE")
-        .env_remove("GIT_OBJECT_DIRECTORY")
-        .env_remove("GIT_COMMON_DIR");
+    cmd.env_remove("GIT_DIR").env_remove("GIT_WORK_TREE");
     let output = cmd.output().context("failed to invoke git rev-parse")?;
     if !output.status.success() {
         return Err(anyhow!(
