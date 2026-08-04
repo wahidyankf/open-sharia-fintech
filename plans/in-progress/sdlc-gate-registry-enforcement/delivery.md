@@ -501,11 +501,14 @@ Its merge opens the bounded propagation transaction; it is not an invariant-rest
 Every code step below uses the RED / GREEN / REFACTOR template.
 
 - [ ] [AI] Enter the pre-provisioned declared worktree or create it from fresh `origin/main` —
-      commands: `git fetch origin main` and
-      `git worktree add -b sdlc-gate-registry-enforcement worktrees/sdlc-gate-registry-enforcement origin/main`
+      commands: `git fetch origin main` and, only when the declared worktree does not already
+      exist, `git worktree add -b sdlc-gate-registry-enforcement worktrees/sdlc-gate-registry-enforcement origin/main`
       — acceptance: `git -C worktrees/sdlc-gate-registry-enforcement status --short --branch` is
-      clean and `git -C worktrees/sdlc-gate-registry-enforcement rev-list --left-right --count HEAD...origin/main`
-      reports `0 0`.
+      clean and `git -C worktrees/sdlc-gate-registry-enforcement merge-base --is-ancestor origin/main HEAD`
+      succeeds. A resumed execution branch may be ahead of `origin/main` only by its committed,
+      plan-owned Phase 0 evidence; enumerate `origin/main..HEAD` and verify that every commit is
+      recorded by the Phase 0 checklist before continuing. A freshly provisioned worktree instead
+      reports `0 0` for `git rev-list --left-right --count HEAD...origin/main`.
 - [ ] [AI] Install the Phase 1 worktree dependencies — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement install` — acceptance: exits 0.
 - [ ] [AI] Initialize the Phase 1 worktree toolchain — command:
