@@ -102,3 +102,9 @@ in the destination.
 - [ ] I can explain actor isolation, main-actor isolation, task lifetime, and cancellation separately.
 - [ ] I can use a stable navigation value and persist durable data with SwiftData.
 - [ ] I can choose XCTest or XCUITest based on the claim each test must prove.
+
+## Elaborative interrogation and self-explanation
+
+1. Why does making state ownership explicit prevent a SwiftUI child and parent from drifting apart?
+2. Why is an actor boundary different from simply making every call asynchronous?
+3. Why must permission denial be a durable rendered state rather than an exceptional side path?

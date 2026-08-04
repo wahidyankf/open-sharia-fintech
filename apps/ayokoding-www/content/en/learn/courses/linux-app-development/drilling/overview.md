@@ -27,7 +27,14 @@ A service must expose local status: use a small Unix-domain socket request/reply
 4. Enforce `0600` on a private config file.
 5. Add a `[project.scripts]` console entry point.
 
-## Explain your reasoning
+## Self-check checklist
+
+- [ ] I can define CLI arguments, streams, and exit statuses.
+- [ ] I can use XDG paths, safe modes, temporary files, and atomic replacement.
+- [ ] I can handle subprocess failures, pipes, signals, and daemon shutdown.
+- [ ] I can package and test a Python CLI and daemon.
+
+## Elaborative interrogation and self-explanation
 
 After each kata, answer these prompts aloud or in writing before checking the solution:
 
@@ -38,10 +45,3 @@ After each kata, answer these prompts aloud or in writing before checking the so
 5. Which behavior belongs in the shared core, and which belongs at the CLI or daemon boundary?
 
 For each answer, name the observable contract (stream, exit code, file mode, signal, or socket reply), then explain the failure that the contract prevents.
-
-## Self-check checklist
-
-- [ ] I can define CLI arguments, streams, and exit statuses.
-- [ ] I can use XDG paths, safe modes, temporary files, and atomic replacement.
-- [ ] I can handle subprocess failures, pipes, signals, and daemon shutdown.
-- [ ] I can package and test a Python CLI and daemon.

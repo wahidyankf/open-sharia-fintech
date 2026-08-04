@@ -11,7 +11,7 @@ supervision trees.
 
 ## Prerequisites
 
-- Complete [Just Enough Elixir](../../just-enough-elixir/learning/overview.md) for pattern matching,
+- Complete [Just Enough Elixir](../just-enough-elixir/learning/overview.md) for pattern matching,
   functions, processes, and the `mix` workflow.
 - Complete the shared `concurrency-and-parallelism` course for the vocabulary of safety, liveness,
   back-pressure, and cancellation.

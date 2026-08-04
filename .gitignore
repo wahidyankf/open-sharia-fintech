@@ -56,6 +56,7 @@ jest.config.js.bak
 # Playwright output
 playwright-report/
 test-results/
+apps/ayokoding-www-fe-e2e/.e2e-artifacts/
 
 # Runtime data
 pids/
