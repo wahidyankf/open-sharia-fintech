@@ -189,7 +189,7 @@ flowchart LR
         CA1["04 · Bands 1-2<br/>+ 6 AI courses — done"]:::done
     end
     subgraph CAEarly["Successors 05-08 (in flight)"]
-        CA2["05 · platform-and-concurrency"]:::ca
+        CA2["05 · platform-and-concurrency<br/>terminal PR #133"]:::ca
         CA3["06 · architecture-<br/>and-ai-harness"]:::ca
         CA4["07 · low-level-systems"]:::ca
         CA5["08 · security-and-ops"]:::ca
@@ -292,7 +292,7 @@ phases to delivery units, branches, and PRs.
 | `blockedBy` | `ayokoding-learning-path-01-url-restructure`                                                                                                                                    | transitive, via the navigation plan (done)                                                                                         |
 | `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                        | transitive, via the navigation plan (done)                                                                                         |
 | `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)                                                                                                             | hard, satisfied — Plan 04's Bands 1,2 and Phase 1 merged before its 2026-08-02 archival, so Phase 4.1 may process their signal     |
-| `blockedBy` | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) | hard, satisfied for growth — old Band 3+4 signal delivered                                                                         |
+| `blockedBy` | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) | hard — terminal delivery PR #133; process the Band 3+4 signal only after merge verification                                        |
 | `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                                                                       | hard for growth — old Band 5 (this plan's SE-manifest slice only; the AI-manifest slice is plan 13's)                              |
 | `blockedBy` | `ayokoding-learning-path-07-course-authoring-low-level-systems`                                                                                                                 | hard for growth — old Band 6 (half)                                                                                                |
 | `blockedBy` | `ayokoding-learning-path-08-course-authoring-security-and-ops`                                                                                                                  | hard for growth — old Band 7                                                                                                       |

@@ -218,8 +218,8 @@ course's format, language, and prerequisites; the catalog remains the source of 
 - **`linux-app-development`** (By Example · Python) — native Linux desktop, packaging; prereq
   `just-enough-python` (library course, authored elsewhere).
 - **`building-production-cli-tools`** (By Example · Go + Rust) — distributable CLI tools; prereqs
-  `just-enough-go`, `just-enough-rust` (both library courses; `just-enough-go` is also authored in
-  this plan's Band 4).
+  `just-enough-go`, `just-enough-rust` (library courses; `just-enough-go` is also authored in this
+  plan's Band 4, while `just-enough-rust` is scheduled independently).
 
 ### Concurrency languages (Band 4, 4 courses)
 

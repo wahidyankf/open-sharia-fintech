@@ -2,6 +2,9 @@
 
 **Status**: Completed 2026-08-04
 
+**Terminal delivery:** [PR #133](https://github.com/wahidyankf/ose-public/pull/133). A downstream
+plan may consume this plan's band-completion signals only after verifying that this PR is merged.
+
 ## Delivery amendment — one final PR
 
 All 14 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
@@ -80,7 +83,7 @@ flowchart LR
     P1["01 · url-restructure<br/>(done)"]:::upstream
     P2["02 · schema-and-<br/>prerequisite-dag (done)"]:::upstream
     P4["04 · course-authoring<br/>(completed 21-course baseline;<br/>courses/ populated)"]:::upstream
-    VFR["vercel-function-<br/>cost-reduction (in-progress)"]:::upstream
+    VFR["vercel-function-<br/>cost-reduction (done)"]:::upstream
 
     THIS(["THIS PLAN · 05-course-<br/>authoring-platform-and-<br/>concurrency<br/>14 bodies (Band 3+4)"]):::this
 

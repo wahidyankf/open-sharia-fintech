@@ -15,8 +15,9 @@ Concretely it authors, in five paired-and-standalone groups:
   paired platform course.
 - **Two standalone platform courses** — `linux-app-development` (Python, native Linux desktop +
   packaging) and `building-production-cli-tools` (Go + Rust, distributable CLI tools) — neither pairs
-  with a net-new primer because their prerequisite primers (`just-enough-python`, `just-enough-go`,
-  `just-enough-rust`) already exist elsewhere in the library.
+  with a net-new primer here because their prerequisite primers (`just-enough-python`, `just-enough-go`,
+  `just-enough-rust`) are delivered elsewhere in the programme; `just-enough-rust` is scheduled
+  independently.
 - **Two `just-enough-<language>` primer + concurrency-paradigm pairs** — Go/CSP-style channels,
   Elixir/actor-model supervision trees — the library's two concrete concurrency paradigms, each
   built on the shared `concurrency-and-parallelism` foundation course plan04 already authored.

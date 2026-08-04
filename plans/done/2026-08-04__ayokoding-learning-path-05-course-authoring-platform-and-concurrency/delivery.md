@@ -554,7 +554,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   - **Date**: 2026-08-03
   - **Status**: complete
   - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/building-production-cli-tools/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
-  - **Notes**: Authored and independently remediated the Go/Rust CLI course with 78 source-matched examples, a standalone TTY-aware capstone, successful two-target cross-build verification, and five-section drilling. Final review found zero CRITICAL/HIGH/MEDIUM findings; scoped checks, capstone tests, and Go/Rust compilation pass.
+  - **Notes**: Authored and independently remediated the Go/Rust CLI course with 78 source-matched examples, a standalone TTY-aware capstone, successful two-target cross-build verification, and five-section drilling. Terminal PR review added the missing course overview and made its scheduled, independently delivered Just Enough Rust prerequisite explicit. Scoped checks, capstone tests, and Go/Rust compilation pass.
 
   **Gherkin (binds) →** "building-production-cli-tools builds on both Go and Rust primers"
 
@@ -594,14 +594,27 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
   ```
 
-  **Recorded signal**
+  **Prepared terminal signal — consumers must verify PR #133 is merged before using it**
 
   ```text
   BAND: Band 3 — Mobile & desktop platforms
   PLAN: ayokoding-learning-path-05-course-authoring-platform-and-concurrency
-  LANDED_COURSE_IDS: just-enough-kotlin, android-app-development, just-enough-swift, ios-app-development, just-enough-dart, hybrid-app-development, just-enough-csharp, windows-app-development, linux-app-development, building-production-cli-tools
-  GROW_MANIFESTS: unchanged (zero files touched)
-  CATALOG: generated indexes validated; settled catalog rows confirmed
+  LANDED_COURSE_IDS:
+  just-enough-kotlin
+  android-app-development
+  just-enough-swift
+  ios-app-development
+  just-enough-dart
+  hybrid-app-development
+  just-enough-csharp
+  windows-app-development
+  linux-app-development
+  building-production-cli-tools
+  GROW_MANIFESTS:
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+  FINAL_PR: #133 (downstream consumption requires merge verification)
   ```
 
 - [x] [AI] Confirm zero manifest files were touched:
@@ -710,14 +723,21 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
   ```
 
-  **Recorded signal**
+  **Prepared terminal signal — consumers must verify PR #133 is merged before using it**
 
   ```text
   BAND: Band 4 — Concurrency languages
   PLAN: ayokoding-learning-path-05-course-authoring-platform-and-concurrency
-  LANDED_COURSE_IDS: just-enough-go, csp-style-concurrency, just-enough-elixir, actor-model-concurrency
-  GROW_MANIFESTS: unchanged (zero files touched)
-  CATALOG: generated indexes validated; settled catalog rows confirmed
+  LANDED_COURSE_IDS:
+  just-enough-go
+  csp-style-concurrency
+  just-enough-elixir
+  actor-model-concurrency
+  GROW_MANIFESTS:
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+  FINAL_PR: #133 (downstream consumption requires merge verification)
   ```
 
 - [x] [AI] Confirm zero manifest files were touched:
@@ -963,7 +983,8 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — the dated move and
       index updates are included in the same archival commit.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Open exactly one draft PR from that branch — [PR #133](https://github.com/wahidyankf/ose-public/pull/133) is the only PR for this plan.
+- [ ] [AI] Run the PR-Review Maker→Fixer Cycle plus every local and CI gate for PR #133.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
@@ -1007,6 +1028,21 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 - [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-05-course-authoring-platform-and-concurrency to done`.
 
+**PR #133 remediation record (pre-merge)**
+
+- Removed six tracked `.dart_tool` artifacts from the Dart capstones and added `**/.dart_tool/` to the
+  repository ignore rules; they embedded local machine paths and are reproducible from the checked-in
+  Dart project inputs.
+- Added the missing course and learning overviews, restored actor-model drilling navigation with
+  generated section indexes, and replaced non-served Windows `.cs` links with durable repository URLs.
+- Regenerated and validated course indexes. The narrow Playwright MCP retest on 2026-08-04 used a
+  clean polling development server on port 3102 because the protected port-3101 process held its
+  watcher state. It returned HTTP 200 for the Building Production CLI overview; the actor-model
+  drilling overview and all five kata routes; and the Windows drilling overview. The actor overview
+  rendered all five required section headings and canonical kata links; the Windows overview rendered
+  five durable `blob/main` source links and no `./code/` links. The development-only HMR WebSocket
+  handshake error is a local browser-harness limitation, not a page-rendering error.
+
 ### Phase 7 Gate
 
 - [x] [AI] All 14 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline
@@ -1019,8 +1055,8 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 - [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
-> **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
-> resume: nothing — the plan is complete.
+> **Terminal delivery:** [PR #133](https://github.com/wahidyankf/ose-public/pull/133). A downstream
+> plan may consume this plan's band-completion signals only after verifying that this PR is merged.
 
 ---
 

@@ -216,7 +216,8 @@ sequenceDiagram
 ```
 
 Two signals are recorded in this plan's `delivery.md` — one per band (Band 3, Band 4) — each with all
-five fields, `GROW_MANIFESTS` naming exactly the three software-engineer-role manifests.
+five fields, `GROW_MANIFESTS` naming exactly the three software-engineer-role manifests, and
+`FINAL_PR: #133 (downstream consumption requires merge verification)`.
 
 ### Delivery flow across the two bands
 
