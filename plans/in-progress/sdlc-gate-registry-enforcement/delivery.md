@@ -376,8 +376,10 @@ unchanged; no repository-settings change is expected.
 
 - [x] [AI] **P0-DOTNET-FANTOMAS-REPAIR** (`blocks: P1`) — diagnose and repair the public worktree's
       Fantomas runtime discovery, then rerun the affected F# lint targets and the all-project quick
-      gate — acceptance: `fantomas --check libs/fsharp-crane-core/src`, `fantomas --check
-apps/ose-be/src`, `fantomas --check apps/organiclever-be/src`, and
+      gate — acceptance: `dotnet tool restore && dotnet tool run fantomas --check
+    libs/fsharp-crane-core/src`, `dotnet tool restore && dotnet tool run fantomas --check
+    apps/ose-be/src`, `dotnet tool restore && dotnet tool run fantomas --check
+    apps/organiclever-be/src`, and
       `npx nx run-many --all -t test:quick` each exit 0 without suppressing a linter failure.
   - Date: 2026-08-04
   - Status: complete
