@@ -867,7 +867,7 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
 
 ### 1.2b `gate emit`
 
-- [ ] [AI] **RED** — failing test: `gate emit --surface=pre-commit` writes a `lint-staged` block
+- [x] [AI] **RED** — failing test: `gate emit --surface=pre-commit` writes a `lint-staged` block
       matching the registry's per-file gates — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::emit` — acceptance: fails
       because the command does not exist.
@@ -882,12 +882,25 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And each key lists that glob's commands in declaration order
   ```
 
-- [ ] [AI] **GREEN** — implement `gate emit --surface=pre-commit` — acceptance: same command exits 0.
-- [ ] [AI] **REFACTOR** — the emitter is **marker-first**: it locates the already-applied marker
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/emit.rs`
+  - Notes: Added one real emitter assertion with two ordered markdown gates and an unrelated CI gate. The focused test exits 101 solely because the emitter path is not implemented.
+
+- [x] [AI] **GREEN** — implement `gate emit --surface=pre-commit` — acceptance: same command exits 0.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Emission selects affected-file-type pre-commit gates, expands globs, preserves declaration order per glob, and replaces the lint-staged object. The focused test passes; Rust formatting and diff validation pass. Help is available when supplied with the required surface argument.
+- [x] [AI] **REFACTOR** — the emitter is **marker-first**: it locates the already-applied marker
       before the anchor, so a re-run replaces rather than appends — acceptance: a test running the
       emitter twice asserts the second result is byte-identical to the first **and** that the block
       appears exactly once. A test that only checks byte-equality would pass on a duplicated block if
       both runs duplicated identically, so the occurrence count is required.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`
+  - Notes: Existing `lint-staged` is now the marker and its value is replaced before insertion is considered. Two-emission coverage asserts both byte identity and exactly one generated key; the emitter suite passes.
 
 ### 1.3 `gate run`
 
