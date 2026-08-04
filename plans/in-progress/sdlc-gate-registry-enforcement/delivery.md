@@ -1786,13 +1786,27 @@ checkbox remains the separately authorized integration action after its precedin
 - [x] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
   - Status: complete
   - Evidence: Draft PR [#134](https://github.com/wahidyankf/ose-public/pull/134) targets `main` from `sdlc-gate-registry-enforcement`.
-- [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
-- [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` on those reports — acceptance: one review of record is posted.
-- [ ] [AI] Cycle 1 fixer — invoke `pr-review-fixer` on that review — acceptance: every accepted finding is fixed, committed, and pushed.
-- [ ] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all failures, commit, push, and repeat before Cycle 2.
-- [ ] [AI] Cycle 2 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
-- [ ] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
-- [ ] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
+- [x] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
+  - Status: complete
+  - Evidence: Eight raw reports were written under `generated-reports/pr-review-*-maker__*cycle1*` for PR #134 at pinned head `7fd03c3`.
+- [x] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` on those reports — acceptance: one review of record is posted.
+  - Status: complete
+  - Evidence: Consolidated COMMENT review [4854938060](https://github.com/wahidyankf/ose-public/pull/134#pullrequestreview-4854938060) posted with 13 verified inline findings.
+- [x] [AI] Cycle 1 fixer — invoke `pr-review-fixer` on that review — acceptance: every accepted finding is fixed, committed, and pushed.
+  - Status: complete
+  - Evidence: All 13 findings were fixed in `301799d0a8e8afe53d60916d415f824d923b84d6`, replied to, and resolved; the Reviews API reports zero unresolved threads.
+- [x] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all failures, commit, push, and repeat before Cycle 2.
+  - Status: complete
+  - Evidence: Run `30919227197` completed with conclusion `success` for PR head `79ec4d558d85afb0bc2f35323f2a259c1ae68139`.
+- [x] [AI] Cycle 2 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
+  - Status: complete
+  - Evidence: Eight fresh raw reports were written under `generated-reports/` for PR #134 at pinned head `79ec4d558d85afb0bc2f35323f2a259c1ae68139`; architecture, logic, governance, security, integrity, performance, docs, and instruction disciplines were all represented.
+- [x] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
+  - Status: complete
+  - Evidence: Consolidated COMMENT review [4856027518](https://github.com/wahidyankf/ose-public/pull/134#pullrequestreview-4856027518) posted at pinned head `79ec4d558d85afb0bc2f35323f2a259c1ae68139` with five tool-verified inline findings; the initial rejected payload created no review, and the retry is the cycle's sole review of record.
+- [x] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
+  - Status: complete
+  - Evidence: Four implementation findings were fixed and pushed in `d3e82d0c43d567eaf8db8a16d8d316172a43fa16`; the remaining documentation command was corrected in this delivery ledger before its review thread is resolved. The scoped `rhino-cli:test:quick`, focused regressions, and enforced pre-push suite passed.
 - [ ] [AI] Cycle 2 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before Cycle 3.
 - [ ] [AI] Cycle 3 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
 - [ ] [AI] Cycle 3 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
@@ -2213,8 +2227,7 @@ mandatory before the byte-identity invariant is restored.
 - [ ] [AI] Confirm the registry covers every row of the audit table in
       [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today), with each check's
       current excludes preserved verbatim in `args.exclude` — acceptance: every audit-table command
-      appears in `... -- gate list --format=json`, checked row by row with a per-row verdict rather
-      than a single count comparison. A count match can hide one missing check offsetting one extra.
+      appears in `for surface in ci pre-commit pre-push commit-msg; do cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface="$surface" --format=json; done`, checked row by row with a per-row verdict rather than a single count comparison. A count match can hide one missing check offsetting one extra.
 - [ ] [AI] Prune the one formatter entry `ose-public` declares for a language it does not track
       (Clojure) — acceptance:
       `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 13'`
