@@ -97,6 +97,148 @@ impl HarnessEntry {
     }
 }
 
+/// Whether a gate validates or mutates repository content.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateType {
+    /// A non-mutating validation gate.
+    Check,
+    /// A gate that changes repository content.
+    Mutation,
+}
+
+/// Command runner for a gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateKind {
+    /// A command implemented by rhino-cli.
+    RhinoCli,
+    /// A command available on `PATH`.
+    External,
+    /// An Nx target.
+    Nx,
+}
+
+/// Execution wiring for a check gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateWiring {
+    /// Emit one CI job for this gate.
+    Matrix,
+    /// A workflow declares this gate directly.
+    HandWired,
+}
+
+/// A composition-rule exemption for a gate.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateCarveOut {
+    /// The check reads the Git index and therefore has no CI counterpart.
+    StagedOnly,
+}
+
+/// A gate execution surface.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateSurface {
+    /// The commit-message hook.
+    CommitMsg,
+    /// The pre-commit hook.
+    PreCommit,
+    /// The pre-push hook.
+    PrePush,
+    /// Continuous integration.
+    Ci,
+}
+
+/// The scope that determines a gate's inputs on a surface.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScopeKind {
+    /// Files of a matching type in the change.
+    AffectedFileType,
+    /// All files of a matching type in the repository.
+    AllFileType,
+    /// Projects affected by the change.
+    AffectedProjects,
+    /// Every project in the repository.
+    AllProjects,
+    /// Gate-specific input handling.
+    Other,
+    /// A check activated only by matching paths.
+    PathGated,
+}
+
+/// One entry in the `gates:` registry of `repo-config.yml`.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateEntry {
+    /// Stable, unique gate identifier.
+    pub id: String,
+    /// Whether the entry checks or mutates repository content.
+    #[serde(rename = "type")]
+    pub gate_type: GateType,
+    /// Leaf command run for this gate.
+    pub command: String,
+    /// Command runner (`rhino-cli`, `external`, or `nx`).
+    pub kind: GateKind,
+    /// Optional execution-wiring override for checks.
+    #[serde(default)]
+    pub wiring: Option<GateWiring>,
+    /// Whether a mutation must re-stage its generated output.
+    #[serde(default)]
+    pub restages: bool,
+    /// Command-specific arguments, such as exclusion lists.
+    #[serde(default)]
+    pub args: BTreeMap<String, Vec<String>>,
+    /// Per-surface execution scopes.
+    pub surfaces: BTreeMap<GateSurface, SurfaceScope>,
+    /// Exemption from the cross-surface composition rule.
+    #[serde(rename = "carve-out", default)]
+    pub carve_out: Option<GateCarveOut>,
+    /// Mutation gate verified by this check.
+    #[serde(default)]
+    pub verifies: Option<String>,
+    /// Mutation category, such as `formatter`.
+    #[serde(default)]
+    pub category: Option<String>,
+}
+
+/// Return registry arguments that are forwarded to the declared gate command.
+///
+/// Every key becomes a repeatable long option, preserving the configuration's
+/// deterministic key and value ordering. `exclude` also shapes candidate-path
+/// selection, but remains a fixed argument for commands that enforce their own
+/// exclusion semantics.
+#[must_use]
+pub fn fixed_arguments(gate: &GateEntry) -> Vec<String> {
+    gate.args
+        .iter()
+        .flat_map(|(key, values)| {
+            values
+                .iter()
+                .flat_map(move |value| [format!("--{key}"), value.clone()])
+        })
+        .collect()
+}
+
+/// A gate's scope on one execution surface.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SurfaceScope {
+    /// Scope descriptor for the surface.
+    pub scope: ScopeKind,
+    /// Single file glob for an affected-file-type scope.
+    #[serde(default)]
+    pub glob: Option<String>,
+    /// Multiple file globs for an affected-file-type scope.
+    #[serde(default)]
+    pub globs: Vec<String>,
+    /// Paths that activate a path-gated scope.
+    #[serde(default)]
+    pub trigger: Vec<String>,
+}
+
 /// The `doctor:` section of `repo-config.yml`.
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
@@ -112,103 +254,6 @@ pub struct DoctorConfig {
     pub skip_tools: Vec<String>,
 }
 
-/// Whether a gate checks repository state or mutates files into canonical state.
-#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "kebab-case")]
-pub enum GateType {
-    /// A pass/fail quality check.
-    Check,
-    /// A file-rewriting operation.
-    Mutation,
-}
-
-/// How rhino-cli interprets a gate's leaf command.
-#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "kebab-case")]
-pub enum GateKind {
-    /// A rhino-cli subcommand.
-    RhinoCli,
-    /// An executable available on `PATH`.
-    External,
-    /// An Nx target.
-    Nx,
-}
-
-/// One of the four repository quality-gate surfaces.
-#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
-#[serde(rename_all = "kebab-case")]
-pub enum GateSurface {
-    /// Commit-message validation.
-    CommitMsg,
-    /// Checks and mutations run before a commit is created.
-    PreCommit,
-    /// Checks run before commits are pushed.
-    PrePush,
-    /// Checks run in continuous integration.
-    Ci,
-}
-
-/// The controlled scope vocabulary for a gate on one surface.
-#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "kebab-case")]
-pub enum GateScope {
-    /// Changed files matching the declared file type.
-    AffectedFileType,
-    /// Every tracked file matching the declared file type.
-    AllFileType,
-    /// Nx projects affected by the change.
-    AffectedProjects,
-    /// Every applicable Nx project.
-    AllProjects,
-    /// A gate with command-specific scope semantics.
-    Other,
-    /// A gate enabled only when one of its trigger paths changes.
-    PathGated,
-}
-
-/// Scope and optional dispatch selectors for a gate on one surface.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct SurfaceScope {
-    /// Controlled scope value.
-    pub scope: GateScope,
-    /// One file glob used for per-file dispatch.
-    #[serde(default)]
-    pub glob: Option<String>,
-    /// Several file globs used for ordered per-file dispatch.
-    #[serde(default)]
-    pub globs: Vec<String>,
-    /// Paths that activate a path-gated check.
-    #[serde(default)]
-    pub trigger: Vec<String>,
-}
-
-/// Command-shaped arguments that legitimately differ between repositories.
-#[derive(Debug, Clone, Deserialize, Default, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct GateArgs {
-    /// Paths excluded from the command's input set.
-    #[serde(default)]
-    pub exclude: Vec<String>,
-}
-
-/// One declared quality-gate operation from the `gates:` registry.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct GateEntry {
-    /// Stable kebab-case gate identifier.
-    pub id: String,
-    /// Whether the gate checks state or rewrites files.
-    #[serde(rename = "type")]
-    pub gate_type: GateType,
-    /// Leaf command interpreted according to `kind`.
-    pub command: String,
-    /// Command execution mechanism.
-    pub kind: GateKind,
-    /// Per-surface scope descriptors.
-    pub surfaces: BTreeMap<GateSurface, SurfaceScope>,
-}
-
 /// Parsed `repo-config.yml` — the canonical schema, byte-identical across all
 /// three repos. Every top-level section is modeled here, and both this struct
 /// and its nested structs use `#[serde(deny_unknown_fields)]`: an unknown or
@@ -222,6 +267,9 @@ pub struct RepoConfig {
     /// All-harness binding registry (§3.2); every `harness` command reads this list.
     #[serde(default)]
     pub harness: Vec<HarnessEntry>,
+    /// Gate registry declaring checks and mutations on every execution surface.
+    #[serde(default)]
+    pub gates: Vec<GateEntry>,
     /// Per-project test-level registry for the spec coverage validators.
     #[serde(default)]
     pub coverage: CoverageConfig,
@@ -240,9 +288,6 @@ pub struct RepoConfig {
     /// Tools the `doctor` check should skip as inapplicable to this repo.
     #[serde(default)]
     pub doctor: DoctorConfig,
-    /// Complete declaration of checks and mutations on all gate surfaces.
-    #[serde(default)]
-    pub gates: Vec<GateEntry>,
 }
 
 /// Load and parse `repo-config.yml` at `repo_root`.
@@ -255,7 +300,30 @@ pub fn load(repo_root: &Path) -> Result<RepoConfig, Error> {
     let data = fs::read_to_string(&path)
         .with_context(|| format!("cannot read repo-config.yml at {}", path.display()))?;
     serde_norway::from_str(&data)
+        .map_err(|error| {
+            let parse_error = error.to_string();
+            if let Some(gate_id) = gate_id_from_parse_error(&data, &parse_error) {
+                Error::msg(format!("{parse_error} (gate id {gate_id:?})"))
+            } else {
+                Error::msg(parse_error)
+            }
+        })
         .with_context(|| format!("failed to parse repo-config.yml at {}", path.display()))
+}
+
+/// Finds a gate identifier for a Serde error scoped to a `gates[index]` path.
+fn gate_id_from_parse_error(data: &str, parse_error: &str) -> Option<String> {
+    let index = parse_error
+        .split_once("gates[")?
+        .1
+        .split_once(']')?
+        .0
+        .parse::<usize>()
+        .ok()?;
+    data.lines()
+        .filter_map(|line| line.trim_start().strip_prefix("- id: "))
+        .map(|id| id.trim().trim_matches(['\'', '"']).to_owned())
+        .nth(index)
 }
 
 /// Load `repo-config.yml` at `repo_root`, returning an empty default if the file is absent or

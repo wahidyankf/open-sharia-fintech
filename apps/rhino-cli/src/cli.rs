@@ -4,7 +4,7 @@ use clap::{Parser, Subcommand};
 
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
-    env_init, env_restore, env_staged_guard, env_validate, governance_audit,
+    env_init, env_restore, env_staged_guard, env_validate, gate, git, governance_audit,
     governance_layer_coherence, governance_traceability_audit, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
     harness_validate_duplication, harness_validate_instruction_size, harness_validate_naming,
@@ -102,6 +102,12 @@ pub enum Commands {
     /// Environment file helpers (init, backup, restore, validate, staged-guard).
     #[command(name = "env", subcommand)]
     Env(EnvCommands),
+    /// Gate-registry commands.
+    #[command(name = "gate", subcommand)]
+    Gate(GateCommands),
+    /// Git workflow helpers.
+    #[command(name = "git", subcommand)]
+    Git(GitCommands),
     /// Check required tool versions are installed and correct.
     #[command(name = "doctor")]
     Doctor(doctor::DoctorArgs),
@@ -130,6 +136,34 @@ pub enum TestCoverageCommands {
 pub enum RepoConfigCommands {
     /// Strict-deserialize `repo-config.yml` against the canonical schema (key-set + enum parity).
     Validate(repo_config_validate::ValidateArgs),
+}
+
+/// Gate-registry subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GateCommands {
+    /// List declared gates for an execution surface.
+    List(gate::list::ListArgs),
+    /// Emit the generated artifact for a gate surface.
+    Emit(gate::emit::EmitArgs),
+    /// Run declared gates for an execution surface.
+    Run(gate::run::RunArgs),
+    /// Validate gate-registry composition rules.
+    Validate(gate::validate::ValidateArgs),
+}
+
+/// Git workflow helper subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GitCommands {
+    /// Lockfile synchronization commands.
+    #[command(subcommand)]
+    Lockfile(GitLockfileCommands),
+}
+
+/// Lockfile synchronization subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GitLockfileCommands {
+    /// Regenerate and stage lockfiles for staged app manifests.
+    Sync(git::lockfile::SyncArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -633,6 +667,17 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Lang(lc) => dispatch_lang(lc, output_format),
         Commands::RepoConfig(rc) => match rc {
             RepoConfigCommands::Validate(args) => repo_config_validate::run(args, output_format),
+        },
+        Commands::Gate(gc) => match gc {
+            GateCommands::List(args) => gate::list::run(args, output_format),
+            GateCommands::Emit(args) => gate::emit::run(args, output_format),
+            GateCommands::Run(args) => gate::run::run(args, output_format),
+            GateCommands::Validate(args) => gate::validate::run(args, output_format),
+        },
+        Commands::Git(gc) => match gc {
+            GitCommands::Lockfile(lc) => match lc {
+                GitLockfileCommands::Sync(args) => git::lockfile::run(args, output_format),
+            },
         },
         Commands::Env(ec) => match ec {
             EnvCommands::Init(args) => env_init::run(args, output_format),

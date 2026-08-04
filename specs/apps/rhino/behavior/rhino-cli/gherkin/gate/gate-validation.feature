@@ -1,0 +1,57 @@
+@gate @unit
+Feature: Gate conformance validation
+
+  Scenario: A check declared for pre-commit but not for ci violates the composition rule
+    Given a check declares pre-commit but no ci surface or carve-out
+    When "rhino-cli gate validate" runs
+    Then it fails and names the Gate Composition Rule, gate, and ci surface
+
+  Scenario: A mutation at pre-commit does not require a ci counterpart
+    Given a mutation declares pre-commit but no ci surface
+    When gate validate runs
+    Then it succeeds
+
+  Scenario: The staged-only carve-out exempts a check that cannot have a CI counterpart
+    Given a staged-only check declares pre-commit but no ci surface
+    When gate validate runs
+    Then it succeeds and gate list reports the exemption
+
+  Scenario: A surface file that stops invoking the registry is caught
+    Given a declared pre-push surface has a non-delegating hook
+    When gate validate runs
+    Then it fails and names the hook file
+
+  Scenario: A CI workflow that hardcodes a check instead of deriving it is caught
+    Given a workflow command is absent from the CI registry
+    When gate validate runs
+    Then it fails and names that command
+
+  Scenario: A verifies field naming no existing gate is caught
+    Given a gate verifies a missing gate id
+    When gate validate runs
+    Then it fails and names both IDs
+
+  Scenario: A hand-edited lint-staged block is caught
+    Given package.json lint-staged differs from the registry projection
+    When gate validate runs
+    Then it names package.json and the emit command
+
+  Scenario: A formatter without a verifying check fails validation
+    Given a formatter mutation has no verifying check
+    When gate validate runs
+    Then it fails and names the formatter
+
+  Scenario: A hand-wired gate is asserted present but not matrix-derived
+    Given a hand-wired CI gate has its matching workflow job
+    When gate validate runs
+    Then it succeeds
+
+  Scenario: A hand-wired gate whose job was deleted is caught
+    Given a hand-wired CI gate has no matching workflow job
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: The shipped configuration passes
+    Given the registry and surfaces as shipped by this plan
+    When "rhino-cli gate validate" runs
+    Then it exits zero

@@ -44,7 +44,7 @@ solo-maintainer's own hats and the agents that consume the registry on their beh
 - **Repo maintainer (local)** — runs hooks and the `gate` CLI directly on a workstation, authors new
   `repo-config.yml` `gates:` entries, and wants one place that answers "what will gate my change, and
   where" (see [brd.md §Stakeholders](./brd.md#stakeholders)).
-- **CI runner (`pr-quality-gate.yml`)** — invokes `gate list --format=json` to build its job matrix
+- **CI runner (`pr-quality-gate.yml`)** — invokes `gate list --surface=ci --format=json` to build its job matrix
   and `gate validate` to assert the composition rule holds server-side (R-2, R-4).
 - **Contributing agent authoring a gate** — an agent (e.g. `repo-rules-maker`, or a plan executor)
   adding or editing a `gates:` entry, relying on `repo-config validate` / `gate validate` to catch a
@@ -130,23 +130,22 @@ Feature: Gate registry declaration
     Then it exits non-zero
     And the message names the duplicated id
 
-  Scenario Outline: Every surface step is declared, whatever its type
+  Scenario Outline: Every matrix-wired CI gate is declared, whatever its type
     Given the surfaces as shipped by this plan
-    When "rhino-cli gate list --format=json" runs
+    When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output contains an entry with id "<id>"
     And that entry reports type "<type>"
 
     Examples:
-      | id                        | type     |
-      | env-staged-guard          | check    |
-      | commitlint                | check    |
-      | format-prettier           | mutation |
-      | format-rustfmt            | mutation |
-      | format-verify-prettier    | check    |
-      | format-verify-rustfmt     | check    |
-      | harness-bindings-generate | mutation |
-      | lockfile-sync             | mutation |
-      | test-quick                | check    |
+      | id                     | type  |
+      | repo-config-schema     | check |
+      | format-verify-prettier | check |
+      | format-verify-rustfmt  | check |
+
+  # The JSON projection feeds the CI matrix, so it contains exactly CI gates
+  # whose wiring is not hand-wired. `test-quick` is deliberately hand-wired
+  # and is asserted through the textual projection and its workflow job;
+  # commit-msg and pre-commit-only gates are listed on their own surfaces.
 
   Scenario: An unknown type value is rejected at parse time
     Given repo-config.yml declares a gate with type "cleanup"
@@ -855,7 +854,7 @@ Feature: Repo-specific data lives in configuration
   Scenario: beaver-nest's naming exemptions are upstreamed before any copy
     Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
     And canonical ose-public does not
-    When Phase 1b completes
+    When Phase 11 completes
     Then canonical exempts both
     And "md naming validate" passes on a ROADMAP.md fixture in ose-public
     And this holds before any downstream repo copies canonical
@@ -863,7 +862,7 @@ Feature: Repo-specific data lives in configuration
   Scenario: F# environment wrapper reads remain detectable after convergence
     Given beaver-nest detects app-owned keys passed to a pure readEnvironment wrapper
     And it excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER signal
-    When Phase 1b upstreams the scanner into canonical
+    When Phase 11 upstreams the scanner into canonical
     Then canonical retains both behaviors with regression tests
     And the generic Gherkin scenario lands before any downstream copy
 

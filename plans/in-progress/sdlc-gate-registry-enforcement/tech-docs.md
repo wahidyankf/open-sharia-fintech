@@ -90,7 +90,7 @@ after the final 2026-08-02 audit. The table's gate-surface verdicts therefore re
 - its complete target `package.json` now preserves the latest development script, dependency pins,
   optional dependencies, and security overrides while changing only `lint-staged` during execution;
 - its `rhino-cli` fork gained upstream-worthy F# environment scanning and Git-fixture isolation
-  changes, which Phase 1b must absorb before Phase 5 copies canonical down; and
+  changes, which Phase 11 must absorb before Phase 5 copies canonical down; and
 - its repository root is intentionally bare, so Phase 0 and post-merge verification must use an
   attached baseline worktree or ref-level commands rather than root-worktree commands.
 
@@ -116,6 +116,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 ├── [E] AGENTS.md
 ├── [E] package.json
 ├── [E] repo-config.yml
+├── [E] scripts/format-elixir.sh
 ├── .claude/
 │   ├── [E] agents/README.md
 │   └── [E] skills/README.md
@@ -136,6 +137,10 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │   ├── [D] deps-audit.yml
 │   ├── [N] dependency-vulnerability-audit.yml
 │   └── [N] rhino-cli-parity-audit.yml
+├── [E] apps/crane-cli/project.json
+├── [E] apps/ose-be/project.json
+├── [E] apps/organiclever-be/project.json
+├── [E] libs/fsharp-crane-core/project.json
 ├── apps/rhino-cli/
 │   ├── [E] Cargo.toml
 │   ├── [E] Cargo.lock
@@ -158,6 +163,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │   │   ├── [N] gate_dispatch.rs
 │   │   ├── [N] gate_emit.rs
 │   │   ├── [N] gate_validate.rs
+│   │   ├── [N] fsharp_tool_invocation.rs
 │   │   ├── [E] agents.rs
 │   │   ├── [E] cargo_target_share.rs
 │   │   ├── [E] docs.rs
@@ -167,7 +173,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 │       `git ls-files apps/rhino-cli/tests apps/rhino-cli/src`
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/
 │   ├── [N] gate/*.feature
-│   └── [E] env/**, harness/**, and md/**
+│   └── [E] env/**, harness/**, md/**, and system/{README.md,fsharp-tool-invocation.feature}
 ├── docs/reference/
 │   ├── [E] sdlc-gate-standard.md
 │   ├── [E] related-repositories.md
@@ -546,11 +552,11 @@ as a gate.
 | `shfmt -w`                 | `shfmt -d`                                  | non-zero, prints a diff       | keep     | **add** | **add**  | keep        |
 | `fantomas`                 | `fantomas --check`                          | **99** (1 = internal error)   | keep     | keep    | **drop** | keep        |
 | `ruff format`              | `ruff format --check`                       | non-zero                      | keep     | keep    | **drop** | keep        |
-| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | **drop** | keep    | —        | **drop**    |
-| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | **drop** | keep    | —        | **drop**    |
-| `dotnet csharpier format`  | `dotnet csharpier check`                    | 1                             | **drop** | keep    | **drop** | **drop**    |
+| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | keep     | keep    | —        | **drop**    |
+| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | keep     | keep    | —        | **drop**    |
+| `dotnet csharpier format`  | `dotnet csharpier check`                    | 1                             | keep     | keep    | **drop** | **drop**    |
 | `cljfmt fix`               | `cljfmt check`                              | non-zero                      | **drop** | keep    | **drop** | **drop**    |
-| `dart format`              | `dart format -o none --set-exit-if-changed` | 1                             | **drop** | keep    | **drop** | **drop**    |
+| `dart format`              | `dart format -o none --set-exit-if-changed` | 1                             | keep     | keep    | **drop** | **drop**    |
 | `tofu fmt`                 | `tofu fmt -check`                           | non-zero                      | keep     | —       | **add**  | **drop**    |
 | `stylua`                   | `stylua --check`                            | 1                             | keep     | —       | —        | **drop**    |
 | `clang-format -i`          | `clang-format --dry-run --Werror`           | non-zero                      | keep     | —       | —        | **drop**    |
@@ -588,25 +594,28 @@ extension in each repo on 2026-08-02; Phase 0 re-verifies these before Phase 1 b
 
 | Language  | public | primer | private | beaver-nest |
 | --------- | ------ | ------ | ------- | ----------- |
-| Rust      | 237    | 284    | 234     | 217         |
-| Shell     | 389    | 8      | 13      | 36          |
+| Rust      | 273    | 284    | 234     | 217         |
+| Shell     | 392    | 8      | 13      | 36          |
 | F#        | 152    | 43     | **0**   | 36          |
-| Python    | 3552   | 74     | **0**   | 14          |
-| Go        | **0**  | 75     | **0**   | **0**       |
-| Elixir    | **0**  | 154    | **0**   | **0**       |
-| C#        | **0**  | 74     | **0**   | **0**       |
+| Python    | 3636   | 74     | **0**   | 14          |
+| Go        | 230    | 75     | **0**   | **0**       |
+| Elixir    | 188    | 154    | **0**   | **0**       |
+| C#        | 199    | 74     | **0**   | **0**       |
 | Clojure   | **0**  | 57     | **0**   | **0**       |
-| Dart      | **0**  | 44     | **0**   | **0**       |
+| Dart      | 4      | 44     | **0**   | **0**       |
 | Terraform | 17     | **0**  | 3       | **0**       |
 | Lua       | 318    | **0**  | **0**   | **0**       |
 | C         | 94     | **0**  | **0**   | **0**       |
 | Bazel     | 2      | **0**  | **0**   | **0**       |
 
 The first 2026-08-04 refresh changed `beaver-nest`'s Shell (10 → 13) and F# (15 → 34) counts. After
-`beaver-nest` advanced again to `cd2ec0e4`, the current counts are Shell 36 and F# 36. Both language
-families already had formatters in its target registry, so the five-formatter decision is unchanged.
+`beaver-nest` advanced again to `cd2ec0e4`, the current counts are Shell 36 and F# 36. The public
+refresh also found tracked Go, Elixir, C#, and Dart files, all under `apps/ayokoding-www/content/`.
+Those are publishable course artifacts and its existing `lint-staged` entries already format them, so
+the public target retains the four formatter/verifier pairs rather than treating the content tree as
+out of scope. No zero-file formatter is retained for public.
 
-**Nineteen declared formatter entries across the four repos run against zero files.** `beaver-nest`
+**Eleven declared formatter entries across the four repos run against zero files.** `beaver-nest`
 alone carries nine, plus a `*.sql` prettier glob matching nothing. They are not harmless: each one is a `lint-staged` key a maintainer reads as
 "this repo formats Dart", a tool `npm run doctor` may install, and — under this plan — a formatter
 that would demand a `verifies`-linked CI job for a language the repo does not have.
@@ -723,15 +732,15 @@ This plan states the rule for `gates:` explicitly, because it is a list rather t
 Four new leaf commands under a `gate` domain, following the ratified verb-last naming
 (`{domain} {sub-domain} {verb}`), plus one supporting command extracted from the pre-commit hook:
 
-| Command                                                        | Purpose                                                                                                                                                                                             |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rhino-cli gate list [--surface=<name>] [--format=json\|text]` | Enumerate declared gates, optionally projected onto one surface. JSON feeds the CI matrix.                                                                                                          |
-| `rhino-cli gate run --surface=<name> [--only=<id>]`            | Execute every gate on that surface in declaration order, stopping at first failure. Path-gated entries are skipped when their triggers miss the changed set.                                        |
-| `rhino-cli gate emit --surface=pre-commit`                     | Regenerate the `lint-staged` block in `package.json` from the registry, marker-first. The generate half of the generate-and-validate pair.                                                          |
-| `rhino-cli gate validate`                                      | The conformance gate. Fails on composition-rule violations and on surface files that no longer agree with the registry.                                                                             |
-| `rhino-cli git lockfile sync`                                  | The lockfile-sync step, extracted from inline shell so it can be declared as a `type: mutation` gate.                                                                                               |
-| `rhino-cli parity manifest generate`                           | Write `apps/rhino-cli/parity-manifest.sha256` from the boundary file set. **Explicit only** — never auto-run at pre-commit ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)). |
-| `rhino-cli parity manifest validate`                           | Recompute the boundary hashes and compare against the committed manifest. Declared as an ordinary `type: check` gate on `pre-push` and `ci`.                                                        |
+| Command                                                      | Purpose                                                                                                                                                                                             |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rhino-cli gate list --surface=<name> [--format=json\|text]` | Enumerate the gates declared on one surface. JSON feeds the CI matrix.                                                                                                                              |
+| `rhino-cli gate run --surface=<name> [--only=<id>]`          | Execute every gate on that surface in declaration order, stopping at first failure. Path-gated entries are skipped when their triggers miss the changed set.                                        |
+| `rhino-cli gate emit --surface=pre-commit`                   | Regenerate the `lint-staged` block in `package.json` from the registry, marker-first. The generate half of the generate-and-validate pair.                                                          |
+| `rhino-cli gate validate`                                    | The conformance gate. Fails on composition-rule violations and on surface files that no longer agree with the registry.                                                                             |
+| `rhino-cli git lockfile sync`                                | The lockfile-sync step, extracted from inline shell so it can be declared as a `type: mutation` gate.                                                                                               |
+| `rhino-cli parity manifest generate`                         | Write `apps/rhino-cli/parity-manifest.sha256` from the boundary file set. **Explicit only** — never auto-run at pre-commit ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)). |
+| `rhino-cli parity manifest validate`                         | Recompute the boundary hashes and compare against the committed manifest. Declared as an ordinary `type: check` gate on `pre-push` and `ci`.                                                        |
 
 #### Deterministic `gate run` dispatch contract
 
@@ -1026,23 +1035,28 @@ workflow. `name: Rhino CLI Parity Audit` derives mechanically to `rhino-cli-pari
 Order is load-bearing. Copying canonical over `beaver-nest` before upstreaming its improvements
 destroys them, and extracting the data after the copies means doing it four times.
 
-1. **De-fork the canonical source in `ose-public`** — delete the dead pipeline (§2.8.2), extract the
+1. **Preserve current canonical fixes while composing the upstreamed changes** — retain public's
+   scope-correct non-discovery Git-state handling, `CwdLock` around repo-config reads, and serialized
+   Git-sensitive unit-test layout. The inherited-Git-variable prefix from `beaver-nest` composes with
+   the serialized commands; it must not replace them. Regression coverage proves each behavior before
+   downstream copying.
+2. **De-fork the canonical source in `ose-public`** — delete the dead pipeline (§2.8.2), extract the
    eight data sites into `repo-config.yml` (`WEBSITE_APP_PREFIXES` and the surviving skip prefixes
    become `args.exclude` on their gates; the Amazon Q agent name joins the existing `harness`
    section; test fixtures switch to synthetic names that name no real repo's apps).
-2. **Upstream `beaver-nest`'s improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions,
+3. **Upstream `beaver-nest`'s improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions,
    corrected frontmatter-audit test, F# environment-wrapper detection with framework-owned-key
    exclusion, and inherited-Git-state isolation for Rust test targets — into canonical, each with a
    regression test.
-3. **Resolve the live three-repo violation** — adopt `zai-coding-plan/wrong` in `sync_validator.rs`.
+4. **Resolve the live three-repo violation** — adopt `zai-coding-plan/wrong` in `sync_validator.rs`.
    Two of three repos already carry it and it matches the primary provider documented in `CLAUDE.md`;
    both strings exercise the same branch, so this is a naming convergence, not a behaviour change.
-4. **Generate the manifest** in `ose-public` and declare its gate.
-5. **Copy down** to all three downstream repos. Only now is the copy a dumb, verifiable operation:
+5. **Generate the manifest** in `ose-public` and declare its gate.
+6. **Copy down** to all three downstream repos. Only now is the copy a dumb, verifiable operation:
    after it, `diff -r` over the boundary set is empty and each repo's `parity manifest validate`
    passes against the identical manifest.
 
-Steps 1–3 must complete before any downstream copy. This reorders the existing phase plan: Phases 3
+Steps 1–4 must complete before any downstream copy. This reorders the existing phase plan: Phases 3
 and 4 currently say "copy `apps/rhino-cli` from the merged `ose-public` Phase 1 result", which is
 only safe once canonical is de-forked.
 
@@ -1095,7 +1109,7 @@ carve-out.
 | Registry becomes a second source of truth beside the standard doc                                | Medium   | The standard doc stops enumerating commands and points at `gate list`; `gate validate` is the enforcement, prose is the explanation                                                                                                                                      |
 | Byte-identity window while the engine lands in `ose-public` before the other repos               | Medium   | Phase 2 finalizes the copy source and governance documents; Phases 3, 4, and 5 then run in parallel, and all-four convergence is a Phase 6 precondition                                                                                                                  |
 | `beaver-nest`'s fork diverges from the engine                                                    | Medium   | Phase 5 copies only after its listed capabilities are upstreamed and verified; `gate validate` exiting zero in `beaver-nest` is a phase-gate condition                                                                                                                   |
-| Copying canonical over `beaver-nest` deletes its naming, F# env-scanning, or Git-isolation fixes | High     | Sequencing, not vigilance: every listed improvement is upstreamed into canonical with regression coverage in Phase 1b **before** any downstream copy ([§2.8.5](#285-convergence-sequence--upstream-before-downstream))                                                   |
+| Copying canonical over `beaver-nest` deletes its naming, F# env-scanning, or Git-isolation fixes | High     | Sequencing, not vigilance: every listed improvement is upstreamed into canonical with regression coverage in Phase 11 **before** any downstream copy ([§2.8.5](#285-convergence-sequence--upstream-before-downstream))                                                   |
 | Deleting the dead pre-commit pipeline breaks something grep did not reveal                       | Medium   | The blast-radius table in [§2.8.2](#282-the-dead-pre-commit-pipeline) enumerates all seven sites; acceptance is a clean build, an unchanged full test suite, and byte-identical `rhino-cli --help` output before and after                                               |
 | The manifest gate self-heals drift instead of reporting it                                       | Medium   | `parity manifest generate` is deliberately excluded from the pre-commit mutation set, so it never auto-runs; regeneration is an explicit act and the gate fails loudly until someone performs it ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) |
 | Coordinated drift (source **and** manifest edited together) passes every gate                    | Accepted | Undetectable hermetically, by construction. The scheduled `rhino-cli-parity-audit.yml` is the only detector, and it is non-blocking — drift is reported, not prevented                                                                                                   |
@@ -1110,7 +1124,7 @@ carve-out.
 graph TD
     P0["Phase 0<br/>Baseline convergence<br/>(no PR)"]
     P1["Phase 1<br/>Gate engine<br/>ose-public"]
-    P1B["Phase 1b<br/>De-fork canonical source<br/>+ parity manifest<br/>ose-public"]
+    P1B["Phase 11<br/>De-fork canonical source<br/>+ parity manifest<br/>ose-public"]
     P2["Phase 2<br/>Rewire + retire main-ci<br/>ose-public"]
     P3["Phase 3<br/>Propagate + rewire<br/>ose-primer"]
     P4["Phase 4<br/>Propagate + rewire<br/>ose-private"]
@@ -1137,13 +1151,13 @@ graph TD
     style P6 fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
-**Phase 1b is a new blocking node, and it is where the byte-identity work concentrates.** The engine
+**Phase 11 is a new blocking node, and it is where the byte-identity work concentrates.** The engine
 must be final before any repo copies it, and — added by the byte-identity scope — the canonical source
 must be **de-forked** before any repo copies it too. Copying a canonical that still hardcodes
 `ose-public`'s app names into `beaver-nest` would either recreate the fork or delete `beaver-nest`'s
 `ROADMAP.md`/`SECURITY.md` exemptions, so §2.8.5's steps 1 through 4 all land here.
 
-Phase 2 serializes after Phase 1b because it finalizes governance files the downstream nodes copy.
+Phase 2 serializes after Phase 11 because it finalizes governance files the downstream nodes copy.
 Phases 3 through 5 then become mutually independent and fan out up to N=3. Phase 6 is the terminal
 knowledge-capture and archival node; prompted cleanup follows it as the final DAG node.
 
@@ -1168,7 +1182,7 @@ either from the current checkout.
 | Phase | Repository worktree                                                                         | Delivery branch                            |
 | ----- | ------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | 1     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
-| 1b    | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-defork`        | `sdlc-gate-registry-enforcement-defork`    |
+| 11    | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-defork`        | `sdlc-gate-registry-enforcement-defork`    |
 | 2     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public` | `sdlc-gate-registry-enforcement-rewire`    |
 | 3     | `/Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
 | 4     | `/Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement`              | `sdlc-gate-registry-enforcement`           |
@@ -1212,7 +1226,7 @@ commit (`7d3034a76`) returned `2`.
 | ------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 0       | None needed — no PR, no merge                                                           | n/a                                                                                           | Baseline notes in the plan folder only                                                                                              |
 | 1       | Run the resolution-and-revert procedure with the Phase 1 row                            | The `gate` subcommand disappears; hooks were not yet rewired, so nothing depended on it       | None                                                                                                                                |
-| 1b      | Run the resolution-and-revert procedure with the Phase 1b row                           | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
+| 11      | Run the resolution-and-revert procedure with the Phase 11 row                           | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
 | 2       | Run the resolution-and-revert procedure with the Phase 2 row                            | Hand-written hooks and `main-ci.yml` return verbatim; the registry stays but nothing reads it | Branch protection still names `"Quality gate"`, which is correct in both states                                                     |
 | 3, 4, 5 | Run the procedure with that phase's literal repository and branch row                   | That repo's hooks and workflows return; the other repos are unaffected                        | `apps/rhino-cli` in that repo now diverges from canonical — the parity gate fails there until re-propagated or `ose-public` reverts |
 | 6       | Run the procedure with the Phase 6 row, then move the plan back to `plans/in-progress/` | Plan-folder-only change; no executable surface                                                | None                                                                                                                                |
@@ -1228,11 +1242,11 @@ was independently reproduced against this repo's own merged-PR history on 2026-0
 
 ### The one asymmetry worth stating
 
-Reverting Phase 1b **after** Phases 3, 4, or 5 have merged does not restore a consistent world: those
+Reverting Phase 11 **after** Phases 3, 4, or 5 have merged does not restore a consistent world: those
 repos now hold the de-forked canonical while `ose-public` holds the forked one, so
 `parity manifest validate` fails everywhere. The correct rollback in that situation is to revert the
 downstream phases **first**, then 1b — the reverse of the DAG edge order in §5. This is the same
-sequencing constraint that made Phase 1b blocking in the first place, applied backwards.
+sequencing constraint that made Phase 11 blocking in the first place, applied backwards.
 
 ### What rollback does not need to undo
 

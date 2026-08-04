@@ -10,6 +10,8 @@ pub mod env_init;
 pub mod env_restore;
 pub mod env_staged_guard;
 pub mod env_validate;
+pub mod gate;
+pub mod git;
 pub mod git_pre_commit;
 pub mod governance_audit;
 pub mod governance_layer_coherence;

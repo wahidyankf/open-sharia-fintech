@@ -90,7 +90,7 @@ of which discipline would otherwise plausibly own them:
 
 - Any nitpick already caught and auto-fixed by a mechanical gate this repo runs pre-commit/pre-push/CI
   (Prettier, markdownlint-cli2, `rhino-cli md mermaid validate`, `md links validate`,
-  `md heading-hierarchy validate`, shellcheck, hadolint, actionlint, `fantomas --check`) — flagging
+  `md heading-hierarchy validate`, shellcheck, hadolint, actionlint, `dotnet tool run fantomas --check`) — flagging
   something the pipeline already auto-fixes or auto-blocks is pure noise.
 - Whether a new governance rule should exist — that is architecture's territory, not this agent's.
 - Domain-scenario completeness inside a spec file — that is logic's territory, not this agent's.

@@ -12,10 +12,12 @@
 //! against its own copy of that struct is equivalent to all three files carrying
 //! an identical key set (values may differ).
 
+use std::collections::HashSet;
+
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, RepoConfig};
+use crate::application::repo_config::{self, GateKind, GateType, RepoConfig, ScopeKind};
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -79,7 +81,7 @@ pub fn run_at_root(
 /// Collect semantic findings (required-non-empty + enum checks) for `config`.
 ///
 /// Each finding names the offending key and its path.
-fn semantic_findings(config: &RepoConfig) -> Vec<String> {
+pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
     let mut findings = Vec::new();
 
     if config.harness.is_empty() {
@@ -113,6 +115,97 @@ fn semantic_findings(config: &RepoConfig) -> Vec<String> {
                     "coverage.projects[{i}].levels: invalid value {:?} (expected one of {})",
                     level,
                     VALID_LEVELS.join(" | ")
+                ));
+            }
+        }
+    }
+
+    findings.extend(gate_semantic_findings(config));
+
+    findings
+}
+
+/// Collect semantic findings that apply specifically to the gate registry.
+///
+/// This is shared by `repo-config validate` and `gate run`, so dispatch rejects
+/// malformed registry entries before it selects or invokes a leaf.
+pub(crate) fn gate_semantic_findings(config: &RepoConfig) -> Vec<String> {
+    let mut findings = Vec::new();
+    let mut gate_ids = HashSet::new();
+    for (i, gate) in config.gates.iter().enumerate() {
+        if !gate_ids.insert(gate.id.as_str()) {
+            findings.push(format!("gates[{i}].id: duplicate gate id {:?}", gate.id));
+        }
+        if gate.surfaces.is_empty() {
+            findings.push(format!(
+                "gates[{i}] (gate id {:?}).surfaces: at least one surface is required",
+                gate.id
+            ));
+        }
+        if gate.wiring.is_some() && gate.gate_type != GateType::Check {
+            findings.push(format!(
+                "gates[{i}] (gate id {:?}).wiring: only valid for type \"check\" (found type \"mutation\")",
+                gate.id
+            ));
+        }
+        if gate.restages && gate.gate_type != GateType::Mutation {
+            findings.push(format!(
+                "gates[{i}] (gate id {:?}).restages: only valid for type \"mutation\" (found type \"check\")",
+                gate.id
+            ));
+        }
+        if gate.carve_out.is_some() && gate.gate_type != GateType::Check {
+            findings.push(format!(
+                "gates[{i}] (gate id {:?}).carve-out: only valid for type \"check\" (found type \"mutation\")",
+                gate.id
+            ));
+        }
+        for (surface, scope) in &gate.surfaces {
+            let is_file_scope = matches!(
+                scope.scope,
+                ScopeKind::AffectedFileType | ScopeKind::AllFileType
+            );
+            let has_globs = scope.glob.is_some() || !scope.globs.is_empty();
+            if has_globs && !is_file_scope {
+                findings.push(format!(
+                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: glob and globs require a file scope",
+                    gate.id
+                ));
+            }
+            if !scope.trigger.is_empty() && scope.scope != ScopeKind::PathGated {
+                findings.push(format!(
+                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}.trigger: only valid for path-gated scope",
+                    gate.id
+                ));
+            }
+            if scope.scope == ScopeKind::PathGated && scope.trigger.is_empty() {
+                findings.push(format!(
+                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}.trigger: path-gated scope requires at least one trigger",
+                    gate.id
+                ));
+            }
+            for glob in scope.glob.iter().chain(&scope.globs) {
+                if let Err(error) = glob::Pattern::new(glob) {
+                    findings.push(format!(
+                        "gates[{i}] (gate id {:?}).surfaces.{surface:?}: invalid glob {glob:?}: {error}",
+                        gate.id
+                    ));
+                }
+            }
+            let is_project_scope = matches!(
+                scope.scope,
+                ScopeKind::AffectedProjects | ScopeKind::AllProjects
+            );
+            if gate.kind == GateKind::Nx && !is_project_scope {
+                findings.push(format!(
+                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: nx kind requires an affected-projects or all-projects scope",
+                    gate.id
+                ));
+            }
+            if gate.kind != GateKind::Nx && is_project_scope {
+                findings.push(format!(
+                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: project scopes require kind nx",
+                    gate.id
                 ));
             }
         }
@@ -223,5 +316,31 @@ mod tests {
     #[test]
     fn args_constructible() {
         let _ = ValidateArgs {};
+    }
+
+    #[test]
+    fn malformed_gate_glob_is_a_semantic_finding() {
+        let tmp = TempDir::new().expect("create registry fixture");
+        fs::write(
+            tmp.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: malformed-glob\n",
+                "    type: check\n",
+                "    command: true\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      ci: { scope: affected-file-type, glob: '[' }\n",
+            ),
+        )
+        .expect("write registry fixture");
+        let config = repo_config::load(tmp.path()).expect("fixture config must deserialize");
+
+        assert!(
+            semantic_findings(&config)
+                .iter()
+                .any(|finding| finding.contains("malformed-glob") && finding.contains("glob")),
+            "a malformed gate glob must be reported before dispatch"
+        );
     }
 }

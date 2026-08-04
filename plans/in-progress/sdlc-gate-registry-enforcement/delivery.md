@@ -41,23 +41,26 @@ there by the repo-local `WorktreeCreate` hook. Because `ose-public` has four dis
 units, its later units use plan-slug suffixes to preserve strict 1-PR to 1-worktree ownership. The
 same exact plan-slug path may exist independently in different repository roots.
 
-| Phase | Worktree                                                  | Branch                                     | Repo                    |
-| ----- | --------------------------------------------------------- | ------------------------------------------ | ----------------------- |
-| 0     | none (primary checkout)                                   | `main`                                     | public, primer, private |
-| 0     | `worktrees/gate-baseline-beaver/`                         | `main`                                     | `beaver-nest`           |
-| 1     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`            |
-| 1b    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`            |
-| 2     | `worktrees/sdlc-gate-registry-enforcement-rewire-public/` | `sdlc-gate-registry-enforcement-rewire`    | `ose-public`            |
-| 3     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-primer`            |
-| 4     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-private`           |
-| 5     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `beaver-nest`           |
-| 6     | `worktrees/sdlc-gate-registry-enforcement-knowledge/`     | `sdlc-gate-registry-enforcement-knowledge` | `ose-public`            |
+| Phase | Worktree                                                  | Branch                                     | Repo                        |
+| ----- | --------------------------------------------------------- | ------------------------------------------ | --------------------------- |
+| 0     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`                |
+| 0     | none (primary checkout)                                   | `main`                                     | `ose-primer`, `ose-private` |
+| 0     | `worktrees/gate-baseline-beaver/`                         | `main`                                     | `beaver-nest`               |
+| 1     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`                |
+| 11    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`                |
+| 2     | `worktrees/sdlc-gate-registry-enforcement-rewire-public/` | `sdlc-gate-registry-enforcement-rewire`    | `ose-public`                |
+| 3     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-primer`                |
+| 4     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-private`               |
+| 5     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `beaver-nest`               |
+| 6     | `worktrees/sdlc-gate-registry-enforcement-knowledge/`     | `sdlc-gate-registry-enforcement-knowledge` | `ose-public`                |
 
-`beaver-nest`'s repository root is intentionally bare, so commands requiring a working tree cannot
-run there. Phase 0 creates the attached `gate-baseline-beaver` worktree from local `main`, records
-the baseline, then removes only that task-owned worktree. Ref-level commands continue to run from
-the bare root. Phase 5 likewise updates local `main` at the ref level after merge rather than trying
-to check it out in the bare root.
+`ose-public` and `beaver-nest` repository roots are intentionally bare, so commands requiring a
+working tree cannot run there. Phase 0 uses the already-declared attached `ose-public` execution
+worktree and creates `gate-baseline-beaver` from local `main`, records the baseline, then removes
+only that task-owned Beaver worktree. Ref-level commands continue to run from the bare roots. Phase
+5 likewise updates local `main` at the ref level after merge rather than trying to check it out in a
+bare root. During Phase 0, the plan-owned `delivery.md` execution evidence is the sole permitted
+public-worktree modification; every baseline cleanliness assertion excludes that exact path.
 
 Optional manual pre-provisioning of the mandatory plan worktree (run from the repo root):
 
@@ -78,7 +81,7 @@ Chosen capacity is **N=3 background agents plus one main-thread orchestrator**, 
 default. The main thread owns the live task list, file-touch ledgers, dependency gates, and merges;
 it does not take an implementation leaf while independent background work is available.
 
-The serial spine is `Phase 0 → Phase 1 → Phase 1b → Phase 2`. Each node reads the source of truth
+The serial spine is `Phase 0 → Phase 1 → Phase 11 → Phase 2`. Each node reads the source of truth
 written by its predecessor. After Phase 2 merges, Phases 3, 4, and 5 are mutually independent because
 they write different repositories while reading the same merged canonical engine and finalized
 governance documents; they fan out concurrently up to N=3. Phase 6 is blocked by Phases 3, 4, and 5.
@@ -89,8 +92,8 @@ node may still need them.
 Dependency edges:
 
 - `P0 blocks P1`.
-- `P1 blocks P1b`.
-- `P1b blocks P2`.
+- `P1 blocks P11`.
+- `P11 blocks P2`.
 - `P2 blocks P3`, `P4`, and `P5` because those nodes propagate Phase 2's finalized governance files.
 - `P3`, `P4`, and `P5` each block `P6`; none blocks another.
 - `P6 blocks cleanup`; cleanup has no outgoing edge.
@@ -106,13 +109,13 @@ See [README.md §Delivery Units](./README.md#delivery-units) for the canonical t
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | Yes                       |
-| 1b    | De-fork canonical source + parity manifest               | `ose-public`  | Yes                       |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | Yes                       |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | Yes                       |
-| 4     | Engine propagation + rewire                              | `ose-private` | Yes                       |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | Yes                       |
-| 6     | Knowledge capture                                        | `ose-public`  | Yes                       |
+| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes                       |
+| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes                       |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes                       |
+| 3     | Engine propagation + rewire                              | `ose-primer`  | yes                       |
+| 4     | Engine propagation + rewire                              | `ose-private` | yes                       |
+| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes                       |
+| 6     | Knowledge capture                                        | `ose-public`  | yes                       |
 
 Phases 3, 4, and 5 are independent of one another after Phase 2 and fan out up to N=3.
 
@@ -201,90 +204,284 @@ Markdown, or baseline command. A failure blocks push, review, merge readiness, a
 
 **Opens no PR.** Phase 0 evidence rides the Phase 1 PR.
 
-- [ ] [AI] Create `beaver-nest`'s baseline worktree from its bare root — command:
+- [x] [AI] Create `beaver-nest`'s baseline worktree from its bare root — command:
       `git -C /Users/wkf/ose-projects/beaver-nest worktree add worktrees/gate-baseline-beaver main` — acceptance:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver status --short --branch` reports
       a clean `main` level with `origin/main`.
-- [ ] [AI] **P0-PUBLIC-INSTALL** (`blocks: P0-PUBLIC-DOCTOR`) — command:
-      `npm --prefix /Users/wkf/ose-projects/ose-public install` — acceptance: exits 0.
-- [ ] [AI] **P0-PUBLIC-DOCTOR** (`blockedBy: P0-PUBLIC-INSTALL`) — command:
-      `(cd /Users/wkf/ose-projects/ose-public && npm run doctor -- --fix)` — acceptance: exits 0 and
-      a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-PRIMER-INSTALL** (`blocks: P0-PRIMER-DOCTOR`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (execution evidence)
+  - Notes: Created the task-owned Beaver baseline worktree; it is clean on `main` and `HEAD...origin/main` is `0 0`.
+
+- [x] [AI] **P0-PUBLIC-INSTALL** (`blocks: P0-PUBLIC-DOCTOR`) — command:
+      `npm --prefix /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement install`
+      — acceptance: exits 0 in the declared attached public worktree; never run it in the bare root.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Worktree-scoped installation exited 0; postinstall doctor completed.
+
+- [x] [AI] **P0-PUBLIC-DOCTOR** (`blockedBy: P0-PUBLIC-INSTALL`) — command:
+      `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
+      — acceptance: exits 0 and a check-only rerun reports no missing tool.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: Doctor setup and check-only verification reported 16/16 tools OK with no warnings or missing tools; target sharing was initialized for four crates.
+
+- [x] [AI] **P0-PRIMER-INSTALL** (`blocks: P0-PRIMER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-primer install` — acceptance: exits 0.
-- [ ] [AI] **P0-PRIMER-DOCTOR** (`blockedBy: P0-PRIMER-INSTALL`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation exited 0. Its postinstall doctor found no missing tools; it reported the pre-existing npm `11.11.0` versus `11.10.1` version warning.
+
+- [x] [AI] **P0-PRIMER-DOCTOR** (`blockedBy: P0-PRIMER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-primer && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-PRIVATE-INSTALL** (`blocks: P0-PRIVATE-DOCTOR`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: `npm run doctor -- --fix` repaired the Volta npm selection; the check-only rerun reported 13/13 tools OK with no warnings or missing tools.
+
+- [x] [AI] **P0-PRIVATE-INSTALL** (`blocks: P0-PRIVATE-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-private install` — acceptance: exits 0.
-- [ ] [AI] **P0-PRIVATE-DOCTOR** (`blockedBy: P0-PRIVATE-INSTALL`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation and local build only)
+  - Notes: Installation exited 0. Its postinstall doctor found no missing tools and reported the pre-existing npm `11.11.0` versus required `11.16.0` version warning.
+
+- [x] [AI] **P0-PRIVATE-DOCTOR** (`blockedBy: P0-PRIVATE-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-private && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-BEAVER-INSTALL** (`blocks: P0-BEAVER-DOCTOR`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: The fix and check-only doctor runs both reported 16/16 tools OK with no warnings or missing tools. Nx also emitted its non-blocking AI-agent configuration update notice.
+
+- [x] [AI] **P0-BEAVER-INSTALL** (`blocks: P0-BEAVER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver install` —
       acceptance: exits 0; never run it in the bare root.
-- [ ] [AI] **P0-BEAVER-DOCTOR** (`blockedBy: P0-BEAVER-INSTALL`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation in the attached task-owned worktree exited 0; postinstall doctor completed.
+
+- [x] [AI] **P0-BEAVER-DOCTOR** (`blockedBy: P0-BEAVER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver && npm run doctor -- --fix)`
       — acceptance: exits 0 and a check-only rerun reports no missing tool.
-- [ ] [AI] Establish a green baseline in `ose-public`: `npx nx run-many --all -t test:quick` —
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: Doctor setup and check-only verification reported 16/16 tools OK with no warnings or missing tools; target sharing was initialized for two crates.
+
+- [x] [AI] Establish a green baseline in `ose-public`: `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npx nx run-many --all -t test:quick)` —
       acceptance: exits 0. If any project fails, fix it before Phase 1 (preexisting failures are in
       scope per Root Cause Orientation); record each fix in this checklist as a discovered task.
-- [ ] [AI] Confirm every working checkout is clean and level with origin: use the three primary
-      checkouts plus the `beaver-nest` baseline worktree. In each, `git status --porcelain` produces
-      no output and `git rev-list --left-right --count HEAD...origin/main` reports `0 0` — acceptance:
-      both hold in all four working checkouts. If one is dirty, the uncommitted work belongs to
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (baseline validation only)
+  - Notes: `npx nx run-many --all -t test:quick` exited 0 for the public execution worktree.
+
+- [x] [AI] Confirm every working checkout is clean and level with origin: use the declared attached
+      `ose-public` worktree, the `ose-primer` and `ose-private` primary checkouts, plus the
+      `beaver-nest` baseline worktree. In the public worktree,
+      `git status --porcelain -- . ':(exclude)plans/in-progress/sdlc-gate-registry-enforcement/delivery.md'`
+      produces no output and `git merge-base --is-ancestor origin/main HEAD` succeeds; this permits
+      only the plan-owned committed execution evidence to be ahead of trunk. In the other three,
+      `git status --porcelain` produces no output and `git rev-list --left-right --count
+HEAD...origin/main` reports `0 0` — acceptance: every checkout is clean outside plan-owned
+      evidence and based on current trunk. If another path is dirty, the uncommitted work belongs to
       another actor: leave it untouched and record it here rather than staging it.
-- [ ] [AI] Re-capture the audit table in [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md` (execution evidence)
+  - Notes: The public worktree had no changes outside plan-owned execution evidence and contains current `origin/main`; primer, private, and Beaver baseline worktree were clean and each reported `0 0`.
+
+- [x] [AI] Re-capture the audit table in [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)
       against current `main` in all four repos — acceptance: every row's verdict still holds, or the
       table is amended in the same commit with the row that changed and why.
-- [ ] [AI] Record public branch protection — command: `gh api repos/wahidyankf/ose-public/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record primer branch protection — command: `gh api repos/wahidyankf/ose-primer/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record private branch protection — command: `gh api repos/wahidyankf/ose-private/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record beaver branch protection — command: `gh api repos/wahidyankf/beaver-nest/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (audit validation only)
+  - Notes: Re-fetched all four `origin/main` refs and diffed the audited hook, package, workflow, and repo-config paths against the recorded baselines. Primer, private, and Beaver have no relevant path changes; public only added two unrelated website local-deploy workflows. Every §1 gate-surface verdict remains current.
+
+- [x] [AI] Record public branch protection — command: `gh api repos/wahidyankf/ose-public/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned required contexts `["Quality gate"]`, unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record primer branch protection — command: `gh api repos/wahidyankf/ose-primer/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned `Branch not protected` (HTTP 404), unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record private branch protection — command: `gh api repos/wahidyankf/ose-private/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned branch-protection unavailable for this private repository (HTTP 403), unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record beaver branch protection — command: `gh api repos/wahidyankf/beaver-nest/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned `Branch not protected` (HTTP 404), unchanged from the recorded readiness baseline.
 
 `[Repo-grounded]` The 2026-08-04 refresh returned `["Quality gate"]` for `ose-public`, 404 for
 `ose-primer` and `beaver-nest`, and 403 for `ose-private`. Phase 6 verifies the configured state is
 unchanged; no repository-settings change is expected.
 
-- [ ] [AI] Record the byte-identity baseline across all four repos — acceptance: `diff -rq` output
+- [x] [AI] Record the byte-identity baseline across all four repos — acceptance: `diff -rq` output
       over `apps/rhino-cli/{src,tests}` and the gherkin tree is written into this checklist for every
       pair. The 2026-08-04 refresh found `sync_validator.rs` as the only three-repo difference and,
       relative to `ose-public`, ten source differences, four integration-test differences, three
       Gherkin differences, and a `project.json` difference in `beaver-nest`; re-verify rather than
       assume, since these repos are edited concurrently by other actors.
-- [ ] [AI] Record the tracked-file counts per language per repo that drive formatter pruning —
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md` (execution evidence)
+  - Notes: `diff -rq` baseline recorded: public–primer `src=7 tests=2 gherkin=0`; public–private `src=7 tests=2 gherkin=0`; public–Beaver `src=15 tests=4 gherkin=3`; primer–private `src=0 tests=0 gherkin=0`; primer–Beaver `src=11 tests=6 gherkin=3`; private–Beaver `src=11 tests=6 gherkin=3`. Public differs from the identical primer/private pair in `sync_validator`, `target_share`, repo-config/audit orchestration, specs coverage, and Git root/staged-file paths. Beaver has the additional source/test/Gherkin divergences listed in P0-DRIFT-PRESERVATION.
+
+- [x] [AI] **P0-DRIFT-PRESERVATION** (`blocks: P1`) — classify every newly observed Rhino source,
+      test, and Gherkin divergence before canonical copying; upstream each required capability or
+      explicitly prove it obsolete — acceptance: no Phase 1, 11, 3, 4, or 5 copy/overwrite can
+      discard a currently unique behavior, and the final Phase 11 scope names every retained change.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`, `tech-docs.md`
+  - Notes: Classification preserves Beaver's F# wrapper scanner/framework-key exclusion, naming exemptions, and inherited-Git test isolation; preserves public's later scope-correct Git-state handling, `CwdLock`, and serial test layout; extracts repository-specific Amazon-Q/frontmatter/fixture data; deletes the dead pipeline; and normalizes the equivalent sync-validator mismatch fixture. The Phase 11 canonical-preservation task and §2.8.5 now require the safe composition before any copy.
+
+- [x] [AI] Record the tracked-file counts per language per repo that drive formatter pruning —
       `git ls-files` by extension — acceptance: the counts in
       [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory) still hold, or
       the table is amended in the same commit. A language gaining its first file changes which
       formatters a repo must declare.
-- [ ] [AI] Remove only the task-owned `beaver-nest` baseline worktree after all Phase 0 evidence is
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: Recounted all listed extensions in all four repositories. The table now records the live totals; public Go (230), Elixir (188), C# (199), and Dart (4) are tracked course-content artifacts and require retained formatter/verifier pairs. The follow-on P0-PUBLIC-CONTENT-FORMATTERS task updates the public target artifacts accordingly.
+
+- [x] [AI] **P0-PUBLIC-CONTENT-FORMATTERS** (`blocks: P1`) — update the authored public registry,
+      package, hook, and target artifacts for tracked Go, Elixir, C#, and Dart course-content files;
+      preserve existing formatting behavior while adding a paired non-mutating verifier for every
+      retained formatter — acceptance: all four formatter/verify pairs appear in the public target
+      registry and emitted `lint-staged` block, and target artifacts remain complete-file JSON/YAML.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `repo-configs/repo-config-ose-public.yml`, `repo-configs/README.md`, `package-json/package-ose-public.json`, `package-json/lint-staged-ose-public.json`, `package-json/README.md`, `tech-docs.md`, `delivery.md`
+  - Notes: Parsed target YAML/JSON successfully: the registry has 13 formatter mutations with unique IDs; Go, Elixir, C#, and Dart each have an exactly paired verifier; the 25-key emitted block exactly matches the complete package target; and the dead Clojure key is absent. The generated pre-commit hook remains intentionally unchanged because it delegates every declared formatter through `gate run` and `lint-staged`.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REPAIR** (`blocks: P1`) — diagnose and repair the public worktree's
+      Fantomas runtime discovery, then rerun the affected F# lint targets and the all-project quick
+      gate — acceptance: `dotnet tool restore && dotnet tool run fantomas --check
+libs/fsharp-crane-core/src`, `dotnet tool restore && dotnet tool run fantomas --check
+apps/ose-be/src`, `dotnet tool restore && dotnet tool run fantomas --check
+apps/organiclever-be/src`, and
+      `npx nx run-many --all -t test:quick` each exit 0 without suppressing a linter failure.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/crane-cli/project.json`, `apps/ose-be/project.json`, `apps/organiclever-be/project.json`, `libs/fsharp-crane-core/project.json`, `delivery.md`
+  - Notes: RED: every bare global `fantomas --check` failed because its app host received no runtime root. GREEN: all F# lint targets now restore and invoke the pinned local manifest tool using `dotnet tool restore && dotnet tool run fantomas --check`; `npx nx run-many --all -t test:quick` then exited 0 for all 29 projects and dependencies. The fix retains actual formatting failures as non-zero exits.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-RED** (`blocks: P0-DOTNET-FANTOMAS-REGRESSION-GREEN`) —
+      reproduce the runtime-discovery failure with the prior bare global Fantomas command and add a
+      check-mode scenario using a deliberately unformatted temporary F# fixture — acceptance: the
+      pre-repair target command exits non-zero and the fixture makes manifest Fantomas exit non-zero.
+      File: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`. Command:
+      `fantomas --check libs/fsharp-crane-core/src` — acceptance: exits non-zero before the repair
+      because the global app host cannot discover its runtime.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`
+  - Notes: The pre-repair global command failed with exit 131 because its app host could not discover .NET. The new scenario creates an unformatted temporary `.fs` fixture; manifest Fantomas reports it needs formatting and exits non-zero.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-GREEN** (`blockedBy: P0-DOTNET-FANTOMAS-REGRESSION-RED`; `blocks: P0-DOTNET-FANTOMAS-REGRESSION-REFACTOR`) —
+      wire the Cucumber harness into Rhino's unit target and assert all four F# lint targets use the
+      restored local manifest tool — acceptance: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation` exits 0 while observing the fixture's expected non-zero check.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/Cargo.toml`, `apps/rhino-cli/project.json`, `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/README.md`
+  - Notes: The `harness = false` target executes one Cucumber scenario and five steps rather than silently reporting zero tests; all passed while emitting the expected `needs formatting` fixture result.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-REFACTOR** (`blockedBy: P0-DOTNET-FANTOMAS-REGRESSION-GREEN`; `blocks: P1`) —
+      keep the fixture temporary, preserve strict formatter exit behavior, and verify formatting,
+      Clippy, and behavior-spec coverage — acceptance: `cargo fmt --check`,
+      `cargo clippy --all-targets -- -D warnings`, and `npx nx run rhino-cli:specs:behavior:coverage`
+      each exit 0.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: All three validation commands passed; behavior coverage reports 61 specs, 374 scenarios, and 1,557 covered steps. The fixture lives in the system temp directory and is automatically removed.
+
+- [x] [AI] Remove only the task-owned `beaver-nest` baseline worktree after all Phase 0 evidence is
       captured — command:
       `git -C /Users/wkf/ose-projects/beaver-nest worktree remove worktrees/gate-baseline-beaver && git -C /Users/wkf/ose-projects/beaver-nest worktree prune`
       — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest worktree list --porcelain` contains no
       `gate-baseline-beaver`, while unrelated worktrees remain untouched, and
       `git -C /Users/wkf/ose-projects/beaver-nest rev-list --left-right --count main...origin/main` reports `0 0`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (worktree cleanup only)
+  - Notes: Verified the exact path was a clean `main` worktree at `cd2ec0e4`, removed only that path, pruned stale records, and confirmed `git worktree list --porcelain` now reports solely the bare repository root.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npx nx run-many --all -t test:quick` exits 0 in `ose-public` — green baseline
+- [x] [AI] `npx nx run-many --all -t test:quick` exits 0 in `ose-public` — green baseline
       established.
-- [ ] [AI] `git status --porcelain` is empty and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: After the manifest-based Fantomas repair, the complete command exited 0 for all 29 projects and 13 dependent targets; 41 of 42 tasks were valid cache hits on the final rerun.
+
+- [x] [AI] `git status --porcelain` is empty and
       `git rev-list --left-right --count HEAD...origin/main` reports `0 0` in the three primary
       checkouts; the captured `beaver-nest` baseline showed the same before removal, and its bare-root
       `main...origin/main` ref comparison still reports `0 0`.
-- [ ] [AI] [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)'s audit table
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Primer and private primary worktrees remain clean and each reports `0 0`; Beaver's bare-root `main...origin/main` reports `0 0` after the task-owned baseline worktree removal.
+
+- [x] [AI] [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)'s audit table
       re-verified against current `main` in all four repos — every row's verdict still holds, or the
       table is amended in the same commit.
-- [ ] [AI] Branch-protection required-status-check names recorded for each repo (written into this
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: The current-main comparison was captured after fetching all four origins; every audited gate-surface verdict remains current, with only unrelated public website local-deploy workflows added.
+
+- [x] [AI] Branch-protection required-status-check names recorded for each repo (written into this
       checklist).
-- [ ] [AI] Byte-identity baseline captured across all four repos (`diff -rq` output recorded into
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: Recorded `ose-public` required context `Quality gate`; Primer and Beaver returned HTTP 404 (not protected); private returned HTTP 403 (unavailable to the current token). Each result is preserved in the Phase 0 task evidence.
+
+- [x] [AI] Byte-identity baseline captured across all four repos (`diff -rq` output recorded into
       this checklist).
-- [ ] [AI] Per-language tracked-file counts confirmed against
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Every pairwise source, test, and Gherkin boundary count is recorded in the baseline task; P0-DRIFT-PRESERVATION classifies every non-identical path before canonical copying can begin.
+
+- [x] [AI] Per-language tracked-file counts confirmed against
       [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory).
-- [ ] [AI] The task-owned `beaver-nest` baseline worktree is removed and unrelated worktrees are
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Live counts amend §2.2.4, including public course-content Go, Elixir, C#, and Dart files; target formatter coverage now retains their four pairs and removes only untracked Clojure.
+
+- [x] [AI] The task-owned `beaver-nest` baseline worktree is removed and unrelated worktrees are
       unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: The exact baseline path is absent after `git worktree remove` and prune; `beaver-nest` reports only its bare root, so no unrelated attached worktree was removed.
 
 > **Pause Safety**: the three primary checkouts are clean; `beaver-nest`'s local `main` ref is level
 > with `origin/main`; and all four repos' baseline state
@@ -303,21 +500,36 @@ Its merge opens the bounded propagation transaction; it is not an invariant-rest
 
 Every code step below uses the RED / GREEN / REFACTOR template.
 
-- [ ] [AI] Enter the pre-provisioned declared worktree or create it from fresh `origin/main` —
-      commands: `git fetch origin main` and
-      `git worktree add -b sdlc-gate-registry-enforcement worktrees/sdlc-gate-registry-enforcement origin/main`
+- [x] [AI] Enter the pre-provisioned declared worktree or create it from fresh `origin/main` —
+      commands: `git fetch origin main` and, only when the declared worktree does not already
+      exist, `git worktree add -b sdlc-gate-registry-enforcement worktrees/sdlc-gate-registry-enforcement origin/main`
       — acceptance: `git -C worktrees/sdlc-gate-registry-enforcement status --short --branch` is
-      clean and `git -C worktrees/sdlc-gate-registry-enforcement rev-list --left-right --count HEAD...origin/main`
-      reports `0 0`.
-- [ ] [AI] Install the Phase 1 worktree dependencies — command:
+      clean and `git -C worktrees/sdlc-gate-registry-enforcement merge-base --is-ancestor origin/main HEAD`
+      succeeds. A resumed execution branch may be ahead of `origin/main` only by its committed,
+      plan-owned Phase 0 evidence; enumerate `origin/main..HEAD` and verify that every commit is
+      recorded by the Phase 0 checklist before continuing. A freshly provisioned worktree instead
+      reports `0 0` for `git rev-list --left-right --count HEAD...origin/main`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (resumed-worktree contract)
+  - Notes: Fetched `origin/main`; the declared worktree is clean, contains current trunk, and is nine commits ahead solely for recorded plan-validation, Phase 0 evidence, and the Phase 0 Fantomas regression repair. `git merge-base --is-ancestor origin/main HEAD` exits 0; the strict detached plan check is clean (report `plan__439846__2026-08-04--16-01__audit.md`).
+- [x] [AI] Install the Phase 1 worktree dependencies — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement install` — acceptance: exits 0.
-- [ ] [AI] Initialize the Phase 1 worktree toolchain — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation exited 0 in the declared worktree; its postinstall doctor confirmed all 16 required tools, no warnings, and no missing tools.
+- [x] [AI] Initialize the Phase 1 worktree toolchain — command:
       `(cd worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)` — acceptance: exits
       0 and a subsequent doctor run reports no missing tool.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: `npm run doctor -- --fix` found nothing to repair; the following check-only doctor run reported 16/16 tools OK, zero warnings, and zero missing tools.
 
 ### 1.1 Registry schema in `repo-config.yml`
 
-- [ ] [AI] **RED** — add a failing test at
+- [x] [AI] **RED** — add a failing test at
       `apps/rhino-cli/tests/repo_config_data_driven.rs` asserting that a `gates:` section
       deserializes into a `Vec<GateEntry>` with `id`, `type`, `command`, `kind`, `surfaces` —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven`
@@ -328,17 +540,29 @@ Every code step below uses the RED / GREEN / REFACTOR template.
   declared, whatever its type"; "An unknown scope value is rejected at parse time"; "A duplicate gate
   id is rejected"; "An unknown type value is rejected at parse time"; "A mutation may not declare a
   wiring value"
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a synthetic `gates:` fixture carrying `id`, `type`, `command`, `kind`, and per-surface `scope`. The exact test command exits 101 because strict deserialization reports `unknown field gates`; that is the intended missing-model failure.
 
-- [ ] [AI] **GREEN** — add the `gates` field and the `GateEntry` / `SurfaceScope` types to the
+- [x] [AI] **GREEN** — add the `gates` field and the `GateEntry` / `SurfaceScope` types to the
       `repo-config` domain model, per the field contract in
       [tech-docs §2.2](./tech-docs.md#22-registry-location-and-shape) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: exits 0.
-- [ ] [AI] **REFACTOR** — enum values for `type`, `kind`, `wiring`, `carve-out`, surface name, and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/repo_config/mod.rs`
+  - Notes: Added the `gates` registry field plus deserializable gate and per-surface scope models. The RED fixture now deserializes and the exact integration test exits 0.
+- [x] [AI] **REFACTOR** — enum values for `type`, `kind`, `wiring`, `carve-out`, surface name, and
       `scope` are `#[serde(rename_all)]` strict variants with deny-unknown-fields, so a typo fails
       rather than defaulting — acceptance: a test asserting `scope: sometimes` is rejected exits 0,
       and the rejection message names the allowed values. Same for `type: cleanup`.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`: a
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Replaced permissive registry strings with strict serde enums and deny-unknown-fields gate/scope records. The focused integration test rejects both invalid values while naming the accepted vocabulary; the repo-config library suite reports 18 passing tests.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`: a
       `wiring` value declared on `type: mutation` is rejected (`wiring` is valid only on
       `type: check`) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
@@ -354,12 +578,21 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message states that wiring applies to checks only
   ```
 
-- [ ] [AI] **GREEN** — implement field-applicability validation for `wiring` so the misapplication
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a schema-valid mutation fixture with `wiring: matrix` and invoked the real `repo-config validate` path. The focused test exits 101 because the command wrongly reports the config valid, isolating the absent applicability rule.
+
+- [x] [AI] **GREEN** — implement field-applicability validation for `wiring` so the misapplication
       test asserts non-zero exit with a message naming the field and the type it does not apply to,
       and the inverse (correctly-applied `wiring`) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: the
       new test passes plus the correctly-applied case exits 0, no other tests broken.
-- [ ] [AI] **RED** — add two failing tests at `apps/rhino-cli/tests/repo_config_data_driven.rs` for
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: `repo-config validate` now rejects `gates[0].wiring` for `type mutation` while accepting `wiring: matrix` for a check. The data-driven integration test and eight focused validator unit tests pass.
+- [x] [AI] **RED** — add two failing tests at `apps/rhino-cli/tests/repo_config_data_driven.rs` for
       the remaining field-applicability rules: `restages` declared on `type: check`, and `carve-out`
       declared on `type: mutation` — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
@@ -382,12 +615,21 @@ Every code step below uses the RED / GREEN / REFACTOR template.
       | mutation | carve-out |
   ```
 
-- [ ] [AI] **GREEN** — extend field-applicability validation to `restages` (valid only on
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added two schema-valid invalid-applicability fixtures and exercised the actual validator. The focused test exits 101 because both configurations incorrectly pass, isolating the two absent rules.
+
+- [x] [AI] **GREEN** — extend field-applicability validation to `restages` (valid only on
       `type: mutation`) and `carve-out` (valid only on `type: check`), matching the message shape
       from the `wiring` case — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: both new tests pass plus the
       correctly-applied cases exit 0, no other tests broken.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: The validator now rejects `restages` on checks and `carve-out` on mutations, and the inverse legal configurations pass. The focused integration test and focused validator unit suite are green.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
       `rhino-cli repo-config validate` must reject a registry with duplicate gate ids — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: fails because `repo-config validate` does not yet reject duplicate ids.
@@ -402,11 +644,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message names the duplicated id
   ```
 
-- [ ] [AI] **GREEN** — implement duplicate-id rejection in `rhino-cli repo-config validate`, the
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added two schema-valid gates with the same identifier and ran the real validator. The focused test exits 101 because duplicate IDs still pass, isolating the required uniqueness validation.
+
+- [x] [AI] **GREEN** — implement duplicate-id rejection in `rhino-cli repo-config validate`, the
       failure naming the offending id, and confirm the inverse (unique ids) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` —
       acceptance: the new test passes and the inverse case exits 0, no other tests broken.
-- [ ] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: The validator now reports the second duplicate as `gates[1].id` and names its repeated value. The data-driven suite verifies rejection and a distinct-ID inverse; focused validator tests pass.
+- [x] [AI] **RED** — add a failing test at `apps/rhino-cli/tests/repo_config_data_driven.rs`:
       `rhino-cli repo-config validate` must reject a gate declaring an empty `surfaces` map —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven`
       — acceptance: fails because `repo-config validate` does not yet reject an empty `surfaces`
@@ -423,15 +674,24 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the message states that a gate must declare at least one surface
   ```
 
-- [ ] [AI] **GREEN** — implement empty-`surfaces`-map rejection in `rhino-cli repo-config validate`,
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Added a schema-valid `surfaces: {}` fixture and invoked the real validator. The focused test exits 101 because it is accepted, isolating the required non-empty invariant.
+
+- [x] [AI] **GREEN** — implement empty-`surfaces`-map rejection in `rhino-cli repo-config validate`,
       the failure naming the gate id and stating a gate must declare at least one surface, and
       confirm the inverse (non-empty surfaces) exits 0 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` — acceptance: the new
       test passes and the inverse case exits 0, no other tests broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: A gate with no surfaces now yields a message naming `no-surfaces` and requiring at least one surface; the non-empty inverse is covered. The data-driven integration and focused validator unit tests pass.
 
 ### 1.2 `gate list`
 
-- [ ] [AI] **RED** — failing test: `gate list --surface=ci --format=json` returns only the gates
+- [x] [AI] **RED** — failing test: `gate list --surface=ci --format=json` returns only the gates
       declaring the `ci` surface, each carrying `id`, `type`, `command`, `scope` — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list` — acceptance: fails
       because the command does not exist.
@@ -447,15 +707,28 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the array contains exactly the gates declaring surface "ci"
   ```
 
-- [ ] [AI] **GREEN** — implement `gate list` and wire it into `cli.rs` — acceptance: same command
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added one real lib assertion with a synthetic registry containing two CI gates and one pre-commit-only gate. `cargo test --lib gate::list` runs that assertion and exits 101 because the command path is deliberately unimplemented, not because Cargo filtered it away.
+
+- [x] [AI] **GREEN** — implement `gate list` and wire it into `cli.rs` — acceptance: same command
       exits 0; `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json | jq -e 'type == "array"'`
       exits 0.
-- [ ] [AI] **REFACTOR** — a valid surface with no declared gates returns `[]` and exit 0, while an
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Added `gate list` CLI dispatch, registry filtering by surface, and JSON projections with `id`, `type`, `command`, and `scope`. The focused test passes; the release command emits an empty JSON array against the current pre-rewire config and passes `jq` type validation.
+- [x] [AI] **REFACTOR** — a valid surface with no declared gates returns `[]` and exit 0, while an
       unknown surface is rejected — acceptance: a synthetic registry with no `commit-msg` gates
       makes `... -- gate list --surface=commit-msg --format=json` print `[]` and exit 0;
       `... -- gate list --surface=cron --format=json` exits non-zero and names the four allowed
       surfaces.
-- [ ] [AI] **RED** — add a failing test in the `gate::list` module: `--format=json` must omit
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Focused gate-list tests cover all valid empty surfaces and reject `cron` while naming `commit-msg`, `pre-commit`, `pre-push`, and `ci`. The empty-surface JSON command passes its array contract.
+- [x] [AI] **RED** — add a failing test in the `gate::list` module: `--format=json` must omit
       `wiring: hand-wired` gates (asserting `test-quick` is absent from
       `gate list --surface=ci --format=json`) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_json_omits_hand_wired`
@@ -470,11 +743,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     Then the output contains no entry with id "test-quick"
   ```
 
-- [ ] [AI] **GREEN** — implement the `--format=json` projection so it excludes `wiring: hand-wired`
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added a focused projection fixture with a matrix CI gate and hand-wired `test-quick`. The exact single-test command exits 101 because JSON currently includes the hand-wired entry.
+
+- [x] [AI] **GREEN** — implement the `--format=json` projection so it excludes `wiring: hand-wired`
       gates — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_json_omits_hand_wired`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test in the `gate::list` module: `--format=text` must still
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: JSON matrix projection now omits hand-wired gates. The exact focused test and the full gate-list unit set (four tests) pass.
+- [x] [AI] **RED** — add a failing test in the `gate::list` module: `--format=text` must still
       include `wiring: hand-wired` gates, each marked as hand-wired (asserting `test-quick` is
       present in `gate list --surface=ci --format=text` and flagged) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_text_includes_hand_wired`
@@ -492,18 +774,27 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     # matrix, which must not double-run a job that already exists by hand.
   ```
 
-- [ ] [AI] **GREEN** — implement the `--format=text` projection so hand-wired gates are included and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added a focused text-output assertion. It executes and exits 101 only because the otherwise listed hand-wired gate lacks its required marker.
+
+- [x] [AI] **GREEN** — implement the `--format=text` projection so hand-wired gates are included and
       marked as hand-wired — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_text_includes_hand_wired`
       — acceptance: the new test passes, no other tests
       broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Human-readable list output now retains hand-wired gates and marks them, while JSON remains matrix-only. The exact test and five-test gate-list suite pass.
 
 ### 1.2a `git lockfile sync`
 
 The lockfile-sync step is inline shell in `.husky/pre-commit` today and cannot be declared until it
 is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-in-the-registry).
 
-- [ ] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose dependency change
+- [x] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose dependency change
       leaves `apps/<x>/package-lock.json` stale, the command regenerates and stages
       `apps/<x>/package-lock.json`, with both files landing in the same commit — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::regenerates_when_stale`
@@ -521,12 +812,21 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And the commit proceeds with both files in the same commit
   ```
 
-- [ ] [AI] **GREEN** — implement `rhino-cli git lockfile sync`, porting the hook's existing logic
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/git/mod.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: Grounded the scenario in the existing hook’s staged-app and existing-lockfile behavior. The real filtered unit test stages a stale fixture and exits 101 solely because the command path is unimplemented.
+
+- [x] [AI] **GREEN** — implement `rhino-cli git lockfile sync`, porting the hook's existing logic
       verbatim, so a stale lockfile is regenerated and staged alongside the staged `package.json` —
       command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::regenerates_when_stale`
       — acceptance: the new test passes.
-- [ ] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/git/mod.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Implemented staged-app discovery, existing-lockfile guard, lockfile-only npm regeneration, and restaging. The stale-lockfile test passes alongside format and diff checks.
+- [x] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose
       `apps/<x>/package-lock.json` is already current, the command leaves the lockfile unchanged and
       stages nothing additional — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::noop_when_current`
@@ -543,18 +843,31 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And nothing additional is staged
   ```
 
-- [ ] [AI] **GREEN** — implement the already-current no-op path so a matching lockfile is left
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: Added an indexed current-lockfile fixture with matching package metadata. The exact filtered test exits 101 because the command still runs a sync action instead of no-oping.
+
+- [x] [AI] **GREEN** — implement the already-current no-op path so a matching lockfile is left
       byte-unchanged and nothing extra is staged — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::noop_when_current`
       — acceptance: the new test
       passes, no other tests broken.
-- [ ] [AI] **REFACTOR** — no-op cleanly when no `package.json` is staged at all (a third, distinct
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: The command compares lock-relevant manifest and root-lock metadata before invoking npm. Current files remain byte-identical and unstaged; stale lockfiles still regenerate. Both focused tests and formatter check pass.
+- [x] [AI] **REFACTOR** — no-op cleanly when no `package.json` is staged at all (a third, distinct
       condition from the stale/current cases above) — acceptance: a test asserting exit 0 with no
       git index mutation passes.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: No staged app manifest now returns success before any mutation. A staged README fixture confirms no output and unchanged index; all three lockfile cases pass.
 
 ### 1.2b `gate emit`
 
-- [ ] [AI] **RED** — failing test: `gate emit --surface=pre-commit` writes a `lint-staged` block
+- [x] [AI] **RED** — failing test: `gate emit --surface=pre-commit` writes a `lint-staged` block
       matching the registry's per-file gates — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::emit` — acceptance: fails
       because the command does not exist.
@@ -569,16 +882,29 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And each key lists that glob's commands in declaration order
   ```
 
-- [ ] [AI] **GREEN** — implement `gate emit --surface=pre-commit` — acceptance: same command exits 0.
-- [ ] [AI] **REFACTOR** — the emitter is **marker-first**: it locates the already-applied marker
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/emit.rs`
+  - Notes: Added one real emitter assertion with two ordered markdown gates and an unrelated CI gate. The focused test exits 101 solely because the emitter path is not implemented.
+
+- [x] [AI] **GREEN** — implement `gate emit --surface=pre-commit` — acceptance: same command exits 0.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Emission selects affected-file-type pre-commit gates, expands globs, preserves declaration order per glob, and replaces the lint-staged object. The focused test passes; Rust formatting and diff validation pass. Help is available when supplied with the required surface argument.
+- [x] [AI] **REFACTOR** — the emitter is **marker-first**: it locates the already-applied marker
       before the anchor, so a re-run replaces rather than appends — acceptance: a test running the
       emitter twice asserts the second result is byte-identical to the first **and** that the block
       appears exactly once. A test that only checks byte-equality would pass on a duplicated block if
       both runs duplicated identically, so the occurrence count is required.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`
+  - Notes: Existing `lint-staged` is now the marker and its value is replaced before insertion is considered. Two-emission coverage asserts both byte identity and exactly one generated key; the emitter suite passes.
 
 ### 1.3 `gate run`
 
-- [ ] [AI] **RED** — failing test: gates declared for a surface are invoked in declaration order —
+- [x] [AI] **RED** — failing test: gates declared for a surface are invoked in declaration order —
       command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::declaration_order` —
       acceptance: fails because the command does not exist.
@@ -593,10 +919,19 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And they are invoked in declaration order
   ```
 
-- [ ] [AI] **GREEN** — implement `gate run --surface=<name>` so it invokes every gate declared for
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a real synthetic registry whose two external commands append `first` then `second`. The focused test exits 101 because `gate run` is unimplemented, not because the test is absent.
+
+- [x] [AI] **GREEN** — implement `gate run --surface=<name>` so it invokes every gate declared for
       that surface, in declaration order — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::declaration_order` — acceptance: the new test passes.
-- [ ] [AI] **RED** — add a failing test: execution stops at the first failing gate and the next
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Implemented surface selection and sequential registry-order execution. The focused declaration-order test and formatter/diff checks pass; later behavior remains intentionally deferred to its dedicated tasks.
+- [x] [AI] **RED** — add a failing test: execution stops at the first failing gate and the next
       declared gate is not invoked — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::stop_at_first_failure`
       — acceptance: fails because `gate run` does not yet stop at the first failure.
@@ -612,11 +947,20 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And gate "second" is not invoked
   ```
 
-- [ ] [AI] **GREEN** — implement stop-at-first-failure — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a two-gate fixture whose first command fails and second is observable. The exact test exits 101 because the runner currently returns success and invokes the second gate.
+
+- [x] [AI] **GREEN** — implement stop-at-first-failure — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::stop_at_first_failure`
       — acceptance: the new
       test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test: a `scope: path-gated` gate is skipped when its trigger
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: The runner now returns immediately on the first non-zero status. Focused fail-fast and declaration-order tests both pass.
+- [x] [AI] **RED** — add a failing test: a `scope: path-gated` gate is skipped when its trigger
       paths do not intersect the changed set — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_skip` —
       acceptance: fails because path-gating does not exist yet.
@@ -632,10 +976,19 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And the run exits zero
   ```
 
-- [ ] [AI] **GREEN** — implement the path-gated skip path — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a staged `docs/untouched.md` fixture against a `.claude/` path-gated gate. The focused test exits 101 because execution currently runs the unrelated gate.
+
+- [x] [AI] **GREEN** — implement the path-gated skip path — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_skip` — acceptance: the
       new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test: a `scope: path-gated` gate is invoked when a file under
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Path-gated entries now derive staged paths and run only on trigger-prefix intersection. The untouched path case and full focused gate-run suite pass.
+- [x] [AI] **RED** — add a failing test: a `scope: path-gated` gate is invoked when a file under
       its trigger paths is in the changed set — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_run` —
       acceptance: fails because a path-gated gate is never invoked yet.
@@ -650,21 +1003,34 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     Then gate "harness-bindings" is invoked
   ```
 
-- [ ] [AI] **GREEN** — implement the path-gated run path — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a staged `.claude/agents/example.md` fixture against a `.claude/` trigger. The focused test exits 101 because the touched gate is incorrectly skipped.
+
+- [x] [AI] **GREEN** — implement the path-gated run path — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run::path_gated_run` — acceptance: the
       new test passes, no other tests broken.
-- [ ] [AI] **REFACTOR** — resolve `repo-config.yml` and all exclude paths from
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Path-gated gates now use staged changed paths on every surface. Touched triggers run, unrelated paths skip, and the four-test gate-run suite passes.
+- [x] [AI] **REFACTOR** — resolve `repo-config.yml` and all exclude paths from
       `git rev-parse --show-toplevel`, never the main checkout; never call
       `git rev-parse --is-bare-repository` — acceptance: a regression test that runs `gate run` from a
       synthetic linked worktree exits 0 and reads the worktree's own config; and
       `grep -rn "is-bare-repository" apps/rhino-cli/src/` returns no match.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added a synthetic main-repository/linked-worktree test with divergent configs; `gate run` uses the linked worktree’s own config. The root adapter uses show-toplevel and the forbidden bare-repository probe is absent; focused gate-run tests pass.
 
 #### 1.3a Complete dispatch-contract TDD
 
 All selectors below are **new tests** in `apps/rhino-cli/tests/gate_dispatch.rs` (**new file**).
 Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r-3--execution-from-the-hooks).
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-RED** (`blocks: P1-DISPATCH-KIND-RHINO-GREEN`) — RED: in
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-RED** (`blocks: P1-DISPATCH-KIND-RHINO-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `rhino_cli_kind_receives_derived_files` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
@@ -680,22 +1046,35 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the local rhino-cli leaf receives only "a.md" and "b.md" and its exit code is propagated
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-GREEN** (`blockedBy: P1-DISPATCH-KIND-RHINO-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a staged two-markdown-file fixture with an untracked invalid markdown decoy. The exact integration test fails at runtime on the absent `--only` selector, proving kind dispatch is not implemented rather than masking a compile failure.
+
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-GREEN** (`blockedBy: P1-DISPATCH-KIND-RHINO-RED`;
       `blocks: P1-DISPATCH-KIND-RHINO-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only `rhino-cli` kind derived-file argv and exit
       propagation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
       — acceptance: exits 0 and proves that the local leaf receives only `a.md` and `b.md` and its
       fixture exit code is propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added `--only`, staged affected-file-type derivation, and local Rhino CLI dispatch with non-zero exit propagation. The exact integration test proves the leaf receives only the two staged markdown files; core gate-run tests and formatting pass.
 
-- [ ] [AI] **P1-DISPATCH-KIND-RHINO-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-RHINO-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-RHINO-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-RHINO-GREEN`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract the `rhino-cli` argv assembly without adding another
       kind. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch rhino_cli_kind_receives_derived_files`
       — acceptance: exits 0 with the same derived-file order and exit propagation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted `rhino_cli_arguments`, preserving command tokens followed by derived files. The exact dispatch test remains green.
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-RED** (`blockedBy: P1-DISPATCH-KIND-RHINO-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-RED** (`blockedBy: P1-DISPATCH-KIND-RHINO-REFACTOR`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `external_kind_preserves_fixed_argv_before_files` (**new test**). Run
@@ -712,21 +1091,34 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then PATH-resolved shellcheck receives "--severity=warning" then "tool.sh"
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-GREEN** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a PATH-resolved shellcheck stub. The exact test exits 101 because it receives the fixed severity argument but not the derived staged file, isolating missing external dispatch.
+
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-GREEN** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-RED`;
       `blocks: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only PATH-resolved external dispatch with declared
       argv preceding derived files. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch external_kind_preserves_fixed_argv_before_files`
       — acceptance: exits 0 and records `--severity=warning` before `tool.sh`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: External gates now resolve through PATH, preserve fixed arguments before derived staged files, and propagate exits. The exact shellcheck-stub integration test passes.
 
-- [ ] [AI] **P1-DISPATCH-KIND-EXTERNAL-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-EXTERNAL-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-GREEN`;
       `blocks: P1-DISPATCH-KIND-NX-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, reuse argv assembly for the external branch without adding
       Nx behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch external_kind_preserves_fixed_argv_before_files`
       — acceptance: exits 0 with the same PATH resolution and exact argv order.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Renamed shared fixed-argv-plus-derived-files assembly for the Rhino and external branches. External ordering and PATH resolution remain covered by the exact integration test.
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-RED** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-KIND-NX-RED** (`blockedBy: P1-DISPATCH-KIND-EXTERNAL-REFACTOR`;
       `blocks: P1-DISPATCH-KIND-NX-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `nx_kind_delegates_affected_project_graph` (**new test**). Run
@@ -743,22 +1135,35 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then "npm exec nx -- affected -t test:quick" runs and its exit code is propagated
   ```
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-GREEN** (`blockedBy: P1-DISPATCH-KIND-NX-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an affected-projects fixture with a PATH `npm` recorder. The exact integration test exits 101 because no Nx delegation occurs, isolating the missing command contract.
+
+- [x] [AI] **P1-DISPATCH-KIND-NX-GREEN** (`blockedBy: P1-DISPATCH-KIND-NX-RED`;
       `blocks: P1-DISPATCH-KIND-NX-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only Nx affected-target delegation and exit
       propagation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch nx_kind_delegates_affected_project_graph`
       — acceptance: exits 0 and records exactly `npm exec nx -- affected -t test:quick` with the
       fixture exit code propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Nx gates now run `npm exec nx -- affected -t <target>` and propagate failure statuses. The exact integration test records the required argv and passes.
 
-- [ ] [AI] **P1-DISPATCH-KIND-NX-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-NX-GREEN`;
+- [x] [AI] **P1-DISPATCH-KIND-NX-REFACTOR** (`blockedBy: P1-DISPATCH-KIND-NX-GREEN`;
       `blocks: P1-DISPATCH-SCOPES-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, centralize completed kind selection without changing any
       kind contract. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch nx_kind_delegates_affected_project_graph`
       — acceptance: exits 0 with the exact Nx argv and exit propagation unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Centralized Rhino, external, and Nx selection in `run_leaf` while retaining each contract. The exact Nx dispatch test remains green.
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-RED** (`blockedBy: P1-DISPATCH-KIND-NX-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-SCOPES-RED** (`blockedBy: P1-DISPATCH-KIND-NX-REFACTOR`;
       `blocks: P1-DISPATCH-SCOPES-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `all_supported_scopes_derive_specified_inputs` (**new test**). Run
@@ -774,21 +1179,34 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then each leaf receives exactly its staged, tracked, affected, complete, empty, or trigger-intersection input contract
   ```
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-GREEN** (`blockedBy: P1-DISPATCH-SCOPES-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added one fixture covering every declared scope. The exact test exits 101 at runtime because all-file-type receives no tracked glob match, isolating missing scope derivation.
+
+- [x] [AI] **P1-DISPATCH-SCOPES-GREEN** (`blockedBy: P1-DISPATCH-SCOPES-RED`;
       `blocks: P1-DISPATCH-SCOPES-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only the six declared scope derivations. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch all_supported_scopes_derive_specified_inputs`
       — acceptance: exits 0 and every leaf receives exactly its staged, tracked, affected,
       complete, empty, or trigger-intersection repository-relative input set.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Implemented all six scope candidate derivations, including tracked all-file-type and exact Nx affected/all project delegation. The exact scope test and full dispatch suite pass.
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-REFACTOR** (`blockedBy: P1-DISPATCH-SCOPES-GREEN`;
+- [x] [AI] **P1-DISPATCH-SCOPES-REFACTOR** (`blockedBy: P1-DISPATCH-SCOPES-GREEN`;
       `blocks: P1-DISPATCH-FILTER-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract pure scope candidate derivation without applying
       glob/exclude filtering. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch all_supported_scopes_derive_specified_inputs`
       — acceptance: exits 0 with all six exact input contracts unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure staged/tracked/path-trigger/none candidate classification. The six-scope integration test remains green; filtering and empty-match behavior stay in the dispatch loop.
 
-- [ ] [AI] **P1-DISPATCH-FILTER-RED** (`blockedBy: P1-DISPATCH-SCOPES-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-FILTER-RED** (`blockedBy: P1-DISPATCH-SCOPES-REFACTOR`;
       `blocks: P1-DISPATCH-FILTER-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `glob_lists_and_excludes_apply_before_invocation` (**new test**). Run
@@ -805,28 +1223,45 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the leaf receives only matching non-excluded repository-relative paths
   ```
 
-- [ ] [AI] **P1-DISPATCH-FILTER-GREEN** (`blockedBy: P1-DISPATCH-FILTER-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added staged markdown/YAML, nonmatching, and `plans/done` candidates. The exact test exits 101 because the excluded markdown path reaches the leaf, isolating pre-invocation exclusion handling.
+
+- [x] [AI] **P1-DISPATCH-FILTER-GREEN** (`blockedBy: P1-DISPATCH-FILTER-RED`;
       `blocks: P1-DISPATCH-FILTER-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only glob/globs and exclude filtering before
       invocation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch glob_lists_and_excludes_apply_before_invocation`
       — acceptance: exits 0 and the leaf receives only matching, non-excluded,
       repository-relative fixture paths.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added pre-invocation support for `glob`, `globs`, and excluded-prefix filtering. The selected leaf receives only allowed repository-relative inputs; the filtering test and full dispatch suite pass.
 
-- [ ] [AI] **P1-DISPATCH-FILTER-REFACTOR** (`blockedBy: P1-DISPATCH-FILTER-GREEN`;
+- [x] [AI] **P1-DISPATCH-FILTER-REFACTOR** (`blockedBy: P1-DISPATCH-FILTER-GREEN`;
       `blocks: P1-DISPATCH-EMPTY-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract pure candidate filtering without adding empty-set
       skip behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch glob_lists_and_excludes_apply_before_invocation`
       — acceptance: exits 0 with the same exact filtered path set and pre-invocation ordering.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure `filter_candidates`, retaining glob/globs and exclusion order. Empty candidates deliberately remain delegated until the next cycle; the exact filtering test passes.
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-RED** (`blockedBy: P1-DISPATCH-FILTER-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-EMPTY-RED** (`blockedBy: P1-DISPATCH-FILTER-REFACTOR`;
       `blocks: P1-DISPATCH-EMPTY-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `empty_scoped_match_is_successful_skip` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: fails because a filtered empty file set still invokes the leaf or exits
       non-zero.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an empty scoped-match fixture. The exact test exits 101 because the filtered empty set still invokes its failing leaf, isolating the missing successful-skip behavior.
 
   **Gherkin (binds) →** "An empty scoped match is a successful skip"
 
@@ -837,27 +1272,39 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits zero without invoking the leaf and reports the skip
   ```
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-GREEN** (`blockedBy: P1-DISPATCH-EMPTY-RED`;
+- [x] [AI] **P1-DISPATCH-EMPTY-GREEN** (`blockedBy: P1-DISPATCH-EMPTY-RED`;
       `blocks: P1-DISPATCH-EMPTY-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only successful empty-set skipping and reporting.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: exits 0, invokes no leaf, and records the fixture skip.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: File-scoped staged and tracked empty matches now report `Skipping gate <id>` and return success before leaf invocation. The exact fixture test passes.
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-REFACTOR** (`blockedBy: P1-DISPATCH-EMPTY-GREEN`;
+- [x] [AI] **P1-DISPATCH-EMPTY-REFACTOR** (`blockedBy: P1-DISPATCH-EMPTY-GREEN`;
       `blocks: P1-DISPATCH-ONLY-VALID-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, isolate empty-set reporting without changing invocation
       behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: exits 0 with no leaf invocation and the same skip record.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Isolated `report_empty_scope_skip` while preserving the successful empty-set skip boundary. The focused regression remains green.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-RED** (`blockedBy: P1-DISPATCH-EMPTY-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-RED** (`blockedBy: P1-DISPATCH-EMPTY-REFACTOR`;
       `blocks: P1-DISPATCH-ONLY-VALID-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `only_executes_exactly_one_direct_leaf` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: fails because a valid `--only` request executes an unrelated batch or
       mutation, or passes inputs outside the selected leaf's match.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added the exact-one direct-leaf fixture. It passes immediately because existing `--only` selection filters the registry before candidate derivation and invocation; selected inputs stay bounded and unrelated batch/mutation leaves remain untouched.
 
   **Gherkin (binds) →** "Only executes exactly one direct leaf"
 
@@ -868,28 +1315,40 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then only md-mermaid runs directly with its matching files and no batch or mutation runs
   ```
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-VALID-RED`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-VALID-RED`;
       `blocks: P1-DISPATCH-ONLY-VALID-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only valid direct exactly-one selection. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: exits 0 and runs only `md-mermaid` directly with its matching files, spawning
       no batch or mutation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: Existing `run_at_root_with_only` selection already filters gates before both candidate derivation and execution. The new exact selector regression passes with no production change.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-VALID-GREEN`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-VALID-GREEN`;
       `blocks: P1-DISPATCH-ONLY-INVALID-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract selected-leaf dispatch without adding invalid-id
       handling. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: exits 0 with one direct leaf, its bounded inputs, and no aggregate lint-staged
       process.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Collected selected surface gates once and reused them for candidate derivation and dispatch. The refactor retains valid-only selection without invalid-id handling; the focused fixture passes.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-RED** (`blockedBy: P1-DISPATCH-ONLY-VALID-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-RED** (`blockedBy: P1-DISPATCH-ONLY-VALID-REFACTOR`;
       `blocks: P1-DISPATCH-ONLY-INVALID-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `unknown_or_duplicate_only_ids_fail_before_execution` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: fails because an absent or duplicate `--only` id reaches leaf execution or
       does not name the invalid id.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added absent and duplicate selector fixtures. The exact test fails because unknown selectors silently succeed and duplicate selectors execute their leaf twice without naming the invalid id.
 
   **Gherkin (binds) →** "Unknown or duplicate only ids fail before execution"
 
@@ -900,29 +1359,41 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits non-zero before invoking any leaf and names the invalid id
   ```
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-INVALID-RED`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-INVALID-RED`;
       `blocks: P1-DISPATCH-ONLY-INVALID-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only pre-execution absent/duplicate id rejection.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: exits 0 as a test and proves both invalid fixtures return non-zero, invoke no
       leaf, and name the invalid id.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Supplied `--only` values must now select exactly one gate on the requested surface; absent and duplicate IDs fail with the named ID before any candidate derivation or leaf invocation. The focused regression passes.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-INVALID-GREEN`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-INVALID-GREEN`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, share id validation between list/run without changing the
       failure boundary. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: exits 0 and both invalid fixtures still fail before any leaf invocation with
       the invalid id named.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Shared `validate_gate_ids` between list and run. List rejects duplicate surface IDs, while run reuses the exact-one selector validation before candidate derivation; invalid-only regression remains green.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-RED** (`blockedBy: P1-DISPATCH-ONLY-INVALID-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-RED** (`blockedBy: P1-DISPATCH-ONLY-INVALID-REFACTOR`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `restaging_mutation_stages_only_outputs` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: fails because successful mutation output isolation/restaging is absent or
       stages the unrelated worktree edit.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a successful `restages: true` mutation fixture with a generated output and unrelated untracked edit. The exact test fails because the mutation leaves the generated output unstaged and the index unchanged.
 
   **Gherkin (binds) →** "A re-staging mutation stages only its outputs"
 
@@ -933,28 +1404,40 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then git adds only the mutation output paths and preserves the unrelated edit unstaged
   ```
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-RED`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-RED`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only exact-output restaging after a zero exit.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: exits 0, `git add --` receives only mutation output paths, and the unrelated
       edit remains unstaged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Successful `restages: true` mutations now snapshot Git-visible working-tree paths and add only paths newly changed by the mutation. The focused fixture stages its generated output while preserving unrelated work.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract the successful index snapshot/delta calculation
       without adding failure handling. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: exits 0 and `git add --` still receives only explicit mutation output paths.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure `mutation_output_delta` from restaging. Successful output-only restaging remains unchanged and its focused regression passes.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-RED** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-RED** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `failed_mutation_never_restages_output` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: fails because a non-zero mutation still reaches restaging or its failure is
       not propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a mutation that changes output and fails. It passes immediately because the existing non-zero status check returns before restaging; the failure is propagated and no `git add` occurs.
 
   **Gherkin (binds) →** "A failed mutation never re-stages output"
 
@@ -965,26 +1448,38 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the dispatcher exits non-zero and does not git-add that path
   ```
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-RED`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-RED`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only the non-zero mutation short-circuit before
       restaging. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: exits 0 as a test and proves the dispatcher returns the fixture failure while
       `git add --` receives no path.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: Existing non-zero status handling returns before the restaging block. The new failure fixture confirms the propagated error and zero `git add` invocation without a redundant production edit.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-GREEN`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-GREEN`;
       `blocks: P1-DISPATCH-BATCH-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, make the success-only restaging boundary explicit without
       changing failure behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: exits 0 and the failing mutation still returns non-zero without any `git add`
       invocation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: The existing non-zero return already precedes the restaging block, making success-only restaging explicit. The focused failure fixture remains green.
 
-- [ ] [AI] **P1-DISPATCH-BATCH-RED** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`; `blocks: P1-DISPATCH-BATCH-GREEN`) — RED: add failing
+- [x] [AI] **P1-DISPATCH-BATCH-RED** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`; `blocks: P1-DISPATCH-BATCH-GREEN`) — RED: add failing
       `precommit_has_one_ordered_file_batch` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: fails because the aggregate batch position/consumption rule is absent.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an ordered pre-commit batch fixture. It fails because eligible leaves run individually and no aggregate `npx lint-staged` invocation occurs at the batch declaration position.
 
   **Gherkin (binds) →** "Pre-commit has one declaration-positioned batch"
 
@@ -995,23 +1490,35 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then staged guard, exactly one lint-staged batch, harness generation, and lockfile sync run in that order
   ```
 
-- [ ] [AI] **P1-DISPATCH-BATCH-GREEN** (`blockedBy: P1-DISPATCH-BATCH-RED`; `blocks: P1-DISPATCH-BATCH-REFACTOR`) — GREEN:
+- [x] [AI] **P1-DISPATCH-BATCH-GREEN** (`blockedBy: P1-DISPATCH-BATCH-RED`; `blocks: P1-DISPATCH-BATCH-REFACTOR`) — GREEN:
       implement one batch at the first eligible declaration and direct trailing mutations. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: exits 0 and records staged guard → one lint-staged process → harness generation
       → lockfile sync, with no direct duplicate file leaf.
-- [ ] [AI] **P1-DISPATCH-BATCH-REFACTOR** (`blockedBy: P1-DISPATCH-BATCH-GREEN`; `blocks: P1-VALIDATE`) — REFACTOR:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Pre-commit now runs a single `npx --no -- lint-staged` process at the first eligible file-gate declaration, consumes later eligible entries, and retains direct declaration order. The ordered batch fixture passes.
+- [x] [AI] **P1-DISPATCH-BATCH-REFACTOR** (`blockedBy: P1-DISPATCH-BATCH-GREEN`; `blocks: P1-VALIDATE`) — REFACTOR:
       name and document the batch eligibility predicate. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: exits 0 and lockfile sync is absent from emitted lint-staged JSON.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted and documented `is_pre_commit_batch_eligible` with no batch behavior change. The ordered batch regression remains green.
 
 ### 1.4 `gate validate`
 
-- [ ] [AI] **RED** — failing test for check 1 in
+- [x] [AI] **RED** — failing test for check 1 in
       [tech-docs §2.4](./tech-docs.md#24-command-surface): a `type: check` gate declared for
       `pre-commit` but not for `ci`, with no carve-out, violates the composition rule — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::composition_rule_violation`
       — acceptance: fails because the command does not exist.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added test-only validator scaffolding and the composition-rule regression. It fails because the inert validator accepts the missing-CI check instead of reporting the Gate Composition Rule, gate ID, and missing `ci` surface.
 
   **Gherkin (binds) →** "A check declared for pre-commit but not for ci violates the composition rule"
 
@@ -1026,19 +1533,31 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the gate id and the missing surface
   ```
 
-- [ ] [AI] **GREEN** — implement `gate validate` with the composition-rule check — command:
+- [x] [AI] **GREEN** — implement `gate validate` with the composition-rule check — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::composition_rule_violation`
       — acceptance: the new test passes.
-- [ ] [AI] **REFACTOR** — the composition-rule check applies to `type: check` only, and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/cli.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Routed `gate validate` through the CLI and implemented the pre-commit check missing CI composition error. The diagnostic names the Gate Composition Rule, gate ID, and `ci`; the focused test passes.
+- [x] [AI] **REFACTOR** — the composition-rule check applies to `type: check` only, and
       `carve-out: staged-only` exempts a check from it — acceptance: four tests, all required
       because each covers a direction the others do not: a `type: mutation` gate with `pre-commit`
       only **passes**; a `carve-out: staged-only` check with `pre-commit` only **passes**; an
       unmarked `type: check` with `pre-commit` only **fails**; and `gate list` reports the
       exemption. A one-direction test set would pass on a validator that never fires.
-- [ ] [AI] **RED** — failing test for check 2: a surface file that stops invoking the registry is
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added directional validation coverage: mutations pass, only `carve-out: staged-only` checks are exempt, unmarked checks fail, and list text reports the exemption. Focused validate and list tests pass.
+- [x] [AI] **RED** — failing test for check 2: a surface file that stops invoking the registry is
       caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::missing_surface_shim`
       — acceptance: fails because check 2 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added declared-pre-push fixture whose `.husky/pre-push` omits registry invocation. The exact test fails because validation accepts the missing shim without naming the surface file.
 
   **Gherkin (binds) →** "A surface file that stops invoking the registry is caught"
 
@@ -1051,13 +1570,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the surface file
   ```
 
-- [ ] [AI] **GREEN** — implement check 2 (missing surface shim) — command:
+- [x] [AI] **GREEN** — implement check 2 (missing surface shim) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::missing_surface_shim` — acceptance:
       the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 3's undeclared-command half: a CI workflow that
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now requires `.husky/pre-push` to contain `gate run --surface=pre-push` when the registry declares pre-push gates. Missing or non-delegating shims name the hook file; the focused test passes.
+- [x] [AI] **RED** — failing test for check 3's undeclared-command half: a CI workflow that
       hardcodes a check instead of deriving it is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::undeclared_ci_command`
       — acceptance: fails because check 3 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a workflow fixture that hardcodes `npm run unregistered-check` absent from the CI registry. The exact test fails because validation does not inspect workflow commands.
 
   **Gherkin (binds) →** "A CI workflow that hardcodes a check instead of deriving it is caught"
 
@@ -1069,13 +1596,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the undeclared command
   ```
 
-- [ ] [AI] **GREEN** — implement the undeclared-CI-command half of check 3 — command:
+- [x] [AI] **GREEN** — implement the undeclared-CI-command half of check 3 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::undeclared_ci_command` —
       acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 4: a `verifies` field naming no existing gate is caught
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation scans `.github/workflows/pr-quality-gate.yml` when present and rejects inline `run:` commands absent from the registry. The focused test passes with the undeclared command named.
+- [x] [AI] **RED** — failing test for check 4: a `verifies` field naming no existing gate is caught
       — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::orphan_verifies_reference`
       — acceptance: fails because check 4 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added `verify-format` with `verifies: missing-format`. The exact test fails because validation does not resolve references or name the referring and orphan IDs.
 
   **Gherkin (binds) →** "A verifies field naming no existing gate is caught"
 
@@ -1087,13 +1622,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names both the referring gate id and the orphan id
   ```
 
-- [ ] [AI] **GREEN** — implement check 4 (orphan `verifies` reference) — command:
+- [x] [AI] **GREEN** — implement check 4 (orphan `verifies` reference) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::orphan_verifies_reference` —
       acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 5: a hand-edited `lint-staged` block (diverging from
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now resolves every `verifies` target against declared gate IDs and names both the referring gate and missing target for orphan references. The focused test passes.
+- [x] [AI] **RED** — failing test for check 5: a hand-edited `lint-staged` block (diverging from
       what the registry would emit) is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::stale_lint_staged_block`
       — acceptance: fails because check 5 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a package fixture with `prettier --check` while the registry emits `prettier --write`. The exact test fails because validation does not compare generated and committed lint-staged data.
 
   **Gherkin (binds) →** "A hand-edited lint-staged block is caught"
 
@@ -1105,13 +1648,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names package.json and instructs to run "gate emit --surface=pre-commit"
   ```
 
-- [ ] [AI] **GREEN** — implement check 5 (stale emitted `lint-staged` block) — command:
+- [x] [AI] **GREEN** — implement check 5 (stale emitted `lint-staged` block) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::stale_lint_staged_block`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 6: a formatter mutation gate with no `verifies`-linked
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Extracted the registry-to-lint-staged projection and compare it against package.json without mutation. Drift names package.json and `gate emit --surface=pre-commit`; focused test passes.
+- [x] [AI] **RED** — failing test for check 6: a formatter mutation gate with no `verifies`-linked
       check is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::unverified_formatter`
       — acceptance: fails because check 6 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a formatter mutation without a check whose `verifies` target names it. The exact test fails because formatter verification coverage is not yet validated.
 
   **Gherkin (binds) →** "A formatter without a verifying check fails validation"
 
@@ -1124,14 +1675,22 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the unverified formatter
   ```
 
-- [ ] [AI] **GREEN** — implement check 6 (unverified formatter) — command:
+- [x] [AI] **GREEN** — implement check 6 (unverified formatter) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::unverified_formatter` — acceptance:
       the new test passes, no other tests broken, and `nx run rhino-cli:test:quick` still exits 0 for
       the six checks introduced across this section.
-- [ ] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Formatter mutations now require a `type: check` gate whose `verifies` includes the formatter ID. Missing coverage names the formatter and `verifies`; focused regression passes.
+- [x] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
       a `hand-wired` gate with a matching workflow job must pass validation — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_present`
       — acceptance: fails because the `wiring: hand-wired` check-3 split does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a hand-wired `test-quick` CI gate with matching workflow job. The exact test fails because the generic command check rejects the derived invocation instead of recognizing the hand-wired declaration.
 
   **Gherkin (binds) →** "A hand-wired gate is asserted present but not matrix-derived"
 
@@ -1143,14 +1702,22 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits zero
   ```
 
-- [ ] [AI] **GREEN** — implement the `hand-wired`-present-and-matched half of check 3's `wiring`
+- [x] [AI] **GREEN** — implement the `hand-wired`-present-and-matched half of check 3's `wiring`
       split — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_present`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: CI workflow scanning now tracks job IDs and accepts derived commands only when they match a CI gate marked `wiring: hand-wired`. Generic commands remain registry-checked; focused test passes.
+- [x] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
       the same `hand-wired` gate with its workflow job deleted must fail validation — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_job_deleted`
       — acceptance: fails because the job-deleted half of the split does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a registry hand-wired `test-quick` CI gate with no matching workflow job. The exact test fails because validation does not yet require hand-wired job presence.
 
   **Gherkin (binds) →** "A hand-wired gate whose job was deleted is caught"
 
@@ -1163,49 +1730,98 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the gate id and the surface file
   ```
 
-- [ ] [AI] **GREEN** — implement the job-deleted half of check 3's `wiring` split — command:
+- [x] [AI] **GREEN** — implement the job-deleted half of check 3's `wiring` split — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_job_deleted`
       — acceptance: the new test passes and each command that runs the check-3 tests exits 0, no
       other tests broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now requires every CI `wiring: hand-wired` gate ID to exist as a job in `pr-quality-gate.yml`. Missing jobs name the gate and workflow file; the focused test passes.
 
 ### 1.5 Specs and coverage
 
-- [ ] [AI] Author the Gherkin feature files under
+- [x] [AI] Author the Gherkin feature files under
       `specs/apps/rhino/behavior/rhino-cli/gherkin/` from the scenarios in
       [prd.md](./prd.md), with `@covers` markers — acceptance:
       `npx nx run rhino-cli:specs:behavior:coverage` exits 0.
-- [ ] [AI] **P1-SPECS** — Verify structural specs and coverage floor — acceptance:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/Cargo.toml`, `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Notes: Added executable Cucumber coverage for the Phase 1 registry declaration, enumeration, execution, conformance, and emitter scenarios. Strict and semantic schema diagnostics now name their gate IDs. All gate scenarios and behavior coverage pass.
+- [x] [AI] **P1-SPECS** — Verify structural specs and coverage floor — acceptance:
       `npx nx run rhino-cli:test:quick` exits 0 (this chains typecheck, lint, unit, coverage, specs).
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Resolved strict formatter and Clippy findings without suppressions, including fixture factoring and batch-isolated scope coverage. `npx nx run rhino-cli:test:quick` passes.
 
 ### Phase 1 Execution-Ready Gate
 
-- [ ] [AI] **P1-READY** (`blockedBy: P1-SPECS`; `blocks: P1-LAND`) — command:
+- [x] [AI] **P1-READY** (`blockedBy: P1-SPECS`; `blocks: P1-LAND`) — command:
       `git status --short && npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` —
       acceptance: the reconciled task ledger is clean and every command exits 0 before any Land
       action begins.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/**`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Reconciled all modified and new paths to the Phase 1 ledger. `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` exits 0.
 
 ### 1.6 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P1-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit the Phase 1 theme — command:
-      `git add -- apps/rhino-cli docs/reference/sdlc-gate-standard.md docs/reference/related-repositories.md && git commit -m 'feat(rhino-cli): add registry-driven gate engine'` — acceptance: commitlint and
-      `npm run validate:sync` exit 0; generated mirrors, if changed, are included in this commit.
-- [ ] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
-- [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
-- [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
-- [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` on those reports — acceptance: one review of record is posted.
-- [ ] [AI] Cycle 1 fixer — invoke `pr-review-fixer` on that review — acceptance: every accepted finding is fixed, committed, and pushed.
-- [ ] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all failures, commit, push, and repeat before Cycle 2.
-- [ ] [AI] Cycle 2 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
-- [ ] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
-- [ ] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
-- [ ] [AI] Cycle 2 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before Cycle 3.
-- [ ] [AI] Cycle 3 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
-- [ ] [AI] Cycle 3 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
-- [ ] [AI] Cycle 3 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
-- [ ] [AI] Cycle 3 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before readiness.
+- [x] [AI] Commit the Phase 1 theme — command:
+      `git add -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin docs/reference/sdlc-gate-standard.md docs/reference/related-repositories.md && git diff --cached --name-only -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin | grep -q . && git commit -m 'feat(rhino-cli): add registry-driven gate engine'` — acceptance:
+      commitlint and `npm run validate:sync` exit 0; the staged diff contains both the engine and
+      its required Gherkin, and generated mirrors, if changed, are included in this commit.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/**`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Committed the registry gate engine and executable Gherkin coverage as `8cd8af7` before the unpushed evidence amend. Fixture Git commands clear hook-provided `GIT_DIR` and `GIT_WORK_TREE`, preventing temporary test commits from targeting the delivery worktree.
+- [x] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
+  - Status: complete
+  - Evidence: Full pre-push quality gate exited 0; remote `sdlc-gate-registry-enforcement` and local tracking ref both resolve to `830d1578d0d531cfea627a91ff172057fb110d14`.
+- [x] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
+  - Status: complete
+  - Evidence: Draft PR [#134](https://github.com/wahidyankf/ose-public/pull/134) targets `main` from `sdlc-gate-registry-enforcement`.
+- [x] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
+  - Status: complete
+  - Evidence: Eight raw reports were written under `generated-reports/pr-review-*-maker__*cycle1*` for PR #134 at pinned head `7fd03c3`.
+- [x] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` on those reports — acceptance: one review of record is posted.
+  - Status: complete
+  - Evidence: Consolidated COMMENT review [4854938060](https://github.com/wahidyankf/ose-public/pull/134#pullrequestreview-4854938060) posted with 13 verified inline findings.
+- [x] [AI] Cycle 1 fixer — invoke `pr-review-fixer` on that review — acceptance: every accepted finding is fixed, committed, and pushed.
+  - Status: complete
+  - Evidence: All 13 findings were fixed in `301799d0a8e8afe53d60916d415f824d923b84d6`, replied to, and resolved; the Reviews API reports zero unresolved threads.
+- [x] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all failures, commit, push, and repeat before Cycle 2.
+  - Status: complete
+  - Evidence: Run `30919227197` completed with conclusion `success` for PR head `79ec4d558d85afb0bc2f35323f2a259c1ae68139`.
+- [x] [AI] Cycle 2 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
+  - Status: complete
+  - Evidence: Eight fresh raw reports were written under `generated-reports/` for PR #134 at pinned head `79ec4d558d85afb0bc2f35323f2a259c1ae68139`; architecture, logic, governance, security, integrity, performance, docs, and instruction disciplines were all represented.
+- [x] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
+  - Status: complete
+  - Evidence: Consolidated COMMENT review [4856027518](https://github.com/wahidyankf/ose-public/pull/134#pullrequestreview-4856027518) posted at pinned head `79ec4d558d85afb0bc2f35323f2a259c1ae68139` with five tool-verified inline findings; the initial rejected payload created no review, and the retry is the cycle's sole review of record.
+- [x] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
+  - Status: complete
+  - Evidence: Four implementation findings were fixed and pushed in `d3e82d0c43d567eaf8db8a16d8d316172a43fa16`; the remaining documentation command was corrected in this delivery ledger before its review thread is resolved. The scoped `rhino-cli:test:quick`, focused regressions, and enforced pre-push suite passed.
+- [x] [AI] Cycle 2 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before Cycle 3.
+  - Status: complete
+  - Evidence: After resolving the main-branch merge conflict and pushing `c4ee17e0a106c3084acc3939be71ecb10124e59a`, [pr-quality-gate run 30948545095](https://github.com/wahidyankf/ose-public/actions/runs/30948545095) completed with conclusion `success`; companion `validate-env` run `30948545416` also completed with conclusion `success`.
+- [x] [AI] Cycle 3 maker fan-out — invoke all eight `pr-review-*-maker` disciplines on the updated PR — acceptance: eight fresh reports exist.
+  - Status: complete
+  - Evidence: Eight fresh raw reports were written under `generated-reports/` for PR #134 at conflict-resolved head `c4ee17e0a106c3084acc3939be71ecb10124e59a`; architecture, logic, governance, security, integrity, performance, docs, and instruction disciplines were all represented.
+- [x] [AI] Cycle 3 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one fresh review of record is posted.
+  - Status: complete
+  - Evidence: Consolidated COMMENT review [4859060656](https://github.com/wahidyankf/ose-public/pull/134#pullrequestreview-4859060656) posted at pinned head `c4ee17e0a106c3084acc3939be71ecb10124e59a` with nine tool-verified inline findings. The rejected first API payload created no review; the retry is the cycle's sole review of record.
+- [x] [AI] Cycle 3 fixer — invoke `pr-review-fixer` — acceptance: every accepted finding is fixed, committed, and pushed.
+  - Status: complete
+  - Evidence: Accepted Cycle 3 findings were fixed in `09d07a6b4fafe8f7abebdebdd59aed99b3dde2a6` and pushed to PR #134. The exact serial pre-push hook completed successfully after cache warming; its fresh uncached Rhino target passed 1,292 library tests and the declared integration suites.
+- [x] [AI] Cycle 3 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before readiness.
+  - Status: complete
+  - Evidence: Final-head [pr-quality-gate run 30956676176](https://github.com/wahidyankf/ose-public/actions/runs/30956676176) completed with conclusion `success` for `854f0936c08ff75908c539ddccd942a9dd1f198b`; companion [validate-env run 30956676188](https://github.com/wahidyankf/ose-public/actions/runs/30956676188) also completed with conclusion `success` for the same head.
 - [ ] [AI] Mark ready — command: `gh pr ready` — acceptance: `gh pr view --json isDraft --jq .isDraft` prints `false` and all five hardened merge preconditions pass.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
@@ -1217,8 +1833,8 @@ checkbox remains the separately authorized integration action after its precedin
 > These checks verify the authorized integration after Land completes.
 > **Byte-identity transaction opened at integration** —
 > `apps/rhino-cli` in `ose-public` now differs from every other repo. Do **not** start Phases 2, 3,
-> 4 or 5 from this gate, only from the Phase 1b gate — copying canonical now would propagate the
-> hardcoded app names Phase 1b exists to remove.
+> 4 or 5 from this gate, only from the Phase 11 gate — copying canonical now would propagate the
+> hardcoded app names Phase 11 exists to remove.
 
 - [ ] [AI] `gate list`, `gate run`, `gate emit`, `gate validate`, and `git lockfile sync` all exist
       and are tested — acceptance: `npx nx run rhino-cli:test:quick` exits 0.
@@ -1229,14 +1845,14 @@ checkbox remains the separately authorized integration action after its precedin
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
 
 > **Pause Safety**: the integrated gate engine is inert, the phase checks are green, and the four
-> refs plus Phase 1b as the next node are recorded in the bounded transaction ledger. This controlled
+> refs plus Phase 11 as the next node are recorded in the bounded transaction ledger. This controlled
 > checkpoint is safe to stop, but not safe for unrelated boundary work or an identity-restored claim.
 > To resume: run the four exact `rev-parse origin/main` commands in the transaction protocol, compare
-> them with the ledger, and continue Phase 1b.
+> them with the ledger, and continue Phase 11.
 
 ---
 
-## Phase 1b — De-fork Canonical Source and Add the Parity Manifest (`ose-public`, PR #1b)
+## Phase 11 — De-fork Canonical Source and Add the Parity Manifest (`ose-public`, PR #1b)
 
 Delivery unit: `apps/rhino-cli`'s canonical source contains no repository's app names, the dead
 pre-commit pipeline is gone, `beaver-nest`'s general improvements are upstreamed, and a checksum
@@ -1249,17 +1865,25 @@ that still hardcodes `ose-public`'s app names would either recreate `beaver-nest
 capabilities it depends on. See
 [tech-docs §2.8.5](./tech-docs.md#285-convergence-sequence--upstream-before-downstream).
 
-- [ ] [AI] Create the Phase 1b worktree from the merged Phase 1 state — commands:
+- [ ] [AI] Create the Phase 11 worktree from the merged Phase 1 state — commands:
       `git fetch origin main` and
       `git worktree add -b sdlc-gate-registry-enforcement-defork worktrees/sdlc-gate-registry-enforcement-defork origin/main`
       — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
-- [ ] [AI] Install dependencies in the Phase 1b worktree — command:
+- [ ] [AI] Install dependencies in the Phase 11 worktree — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement-defork install` — acceptance: exits 0.
 - [ ] [AI] Initialize its toolchain — command:
       `(cd worktrees/sdlc-gate-registry-enforcement-defork && npm run doctor -- --fix)` — acceptance:
       exits 0 and the follow-up doctor check reports no missing tool.
+- [ ] [AI] **P11-PRESERVE-CANONICAL-FIXES** — before composing Beaver's improvements, retain
+      public's scope-correct non-discovery Git-state handling, `CwdLock` repo-config reads, and
+      serialized Git-sensitive unit-test layout; add inherited-Git-variable clearing to each
+      serialized test command without collapsing them into a parallel command — acceptance:
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` and
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` exit 0;
+      `project.json` retains sequential `test:unit` commands, each prefixed with all three `env -u`
+      variables, and focused Git-state regressions remain green.
 
-### 1b.1 Delete the dead pre-commit pipeline
+### 11.1 Delete the dead pre-commit pipeline
 
 Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-pre-commit-pipeline).
 
@@ -1308,7 +1932,7 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
       `/usr/bin/grep -rn "ayokoding" apps/rhino-cli/src/` returns no match. Verify the inverse holds
       pre-edit: the same command returns matches before the deletion.
 
-### 1b.2 Extract repo-specific data into `repo-config.yml`
+### 11.2 Extract repo-specific data into `repo-config.yml`
 
 - [ ] [AI] **P1B-WEBSITE-RED** (`blocks: P1B-WEBSITE-GREEN`) — RED: add
       `website_prefix_exclusions_are_runtime_config` (**new test**) to
@@ -1373,7 +1997,7 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
       — acceptance: exits 1 with no matches. The gate is intentionally bounded to the enumerated
       shared-data sites; unrelated environment-contract examples are outside this extraction.
 
-### 1b.3 Upstream `beaver-nest`'s improvements
+### 11.3 Upstream `beaver-nest`'s improvements
 
 Direction matters: these flow **up** into canonical before any repo copies canonical **down**.
 
@@ -1388,7 +2012,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
   Scenario: beaver-nest's naming exemptions are upstreamed before any copy
     Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
     And canonical ose-public does not
-    When Phase 1b completes
+    When Phase 11 completes
     Then canonical exempts both
     And "md naming validate" passes on a ROADMAP.md fixture in ose-public
     And this holds before any downstream repo copies canonical
@@ -1414,7 +2038,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
   Scenario: F# environment wrapper reads remain detectable after convergence
     Given beaver-nest detects app-owned keys passed to a pure readEnvironment wrapper
     And it excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER signal
-    When Phase 1b upstreams the scanner into canonical
+    When Phase 11 upstreams the scanner into canonical
     Then canonical retains both behaviors with regression tests
     And the generic Gherkin scenario lands before any downstream copy
   ```
@@ -1457,7 +2081,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
       — acceptance: exits 0, temporary Git-fixture tests create and inspect only their own repos, and
       the focused regression remains green.
 
-### 1b.4 Close the live three-repo violation
+### 11.4 Close the live three-repo violation
 
 - [ ] [AI] Adopt `zai-coding-plan/wrong` in `sync_validator.rs`'s
       `validate_agent_equivalence_fails_on_model_mismatch` fixture, matching `ose-primer` and
@@ -1466,7 +2090,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
       shows exactly one changed line, and the model-mismatch test still **fails** on a mismatched
       model (verify by temporarily supplying a matching model and observing the test fail to fire).
 
-### 1b.5 Parity manifest and its gate
+### 11.5 Parity manifest and its gate
 
 - [ ] [AI] **RED** — failing tests for `parity manifest generate` and `parity manifest validate` —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
@@ -1517,19 +2141,19 @@ Direction matters: these flow **up** into canonical before any repo copies canon
 - [ ] [AI] **P1B-MANIFEST** — Generate the manifest and commit it — acceptance:
       `... -- parity manifest validate` exits 0, and re-running `generate` leaves the file unchanged.
 
-### Phase 1b Execution-Ready Gate
+### Phase 11 Execution-Ready Gate
 
 - [ ] [AI] **P1B-READY** (`blockedBy: P1B-MANIFEST`; `blocks: P1B-LAND`) — command:
       `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: exits 0
-      before any Phase 1b Land action begins, with the parity manifest present and valid.
+      before any Phase 11 Land action begins, with the parity manifest present and valid.
 
-### 1b.6 Land
+### 11.6 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P1B-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit Phase 1b — command: `git add -- apps/rhino-cli specs/apps/rhino && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0.
-- [ ] [AI] Push Phase 1b — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
+- [ ] [AI] Commit Phase 11 — command: `git add -- apps/rhino-cli specs/apps/rhino repo-config.yml && git diff --cached --name-only -- apps/rhino-cli repo-config.yml | grep -q '^repo-config.yml$' && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0; the staged diff contains both the shared-source removal and its paired `repo-config.yml` extraction.
+- [ ] [AI] Push Phase 11 — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-defork --fill` — acceptance: `gh pr view --json number,url` returns one PR.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines — acceptance: eight reports exist.
 - [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review of record is posted.
@@ -1549,7 +2173,7 @@ checkbox remains the separately authorized integration action after its precedin
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
       `git rev-list --left-right --count HEAD...origin/main` reports `0 0`.
 
-### Phase 1b Gate
+### Phase 11 Gate
 
 > These post-integration checks must pass before starting Phase 2. Canonical is technically copyable at this
 > point, but Phases 3, 4, and 5 stay blocked until Phase 2 finalizes the governance files they also
@@ -1589,7 +2213,7 @@ Delivery unit: `ose-public`'s four surfaces derive from the registry, `main-ci.y
 documents agree. This is the final canonical transaction checkpoint; downstream propagation remains
 mandatory before the byte-identity invariant is restored.
 
-- [ ] [AI] Create the Phase 2 worktree from the merged Phase 1b state — commands:
+- [ ] [AI] Create the Phase 2 worktree from the merged Phase 11 state — commands:
       `git fetch origin main` and
       `git worktree add -b sdlc-gate-registry-enforcement-rewire worktrees/sdlc-gate-registry-enforcement-rewire-public origin/main`
       — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
@@ -1613,13 +2237,12 @@ mandatory before the byte-identity invariant is restored.
 - [ ] [AI] Confirm the registry covers every row of the audit table in
       [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today), with each check's
       current excludes preserved verbatim in `args.exclude` — acceptance: every audit-table command
-      appears in `... -- gate list --format=json`, checked row by row with a per-row verdict rather
-      than a single count comparison. A count match can hide one missing check offsetting one extra.
-- [ ] [AI] Prune the five formatter entries `ose-public` declares for languages it does not track
-      (Go, Elixir, C#, Clojure, Dart) — acceptance:
-      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 9'`
+      appears in `for surface in ci pre-commit pre-push commit-msg; do cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface="$surface" --format=json; done`, checked row by row with a per-row verdict rather than a single count comparison. A count match can hide one missing check offsetting one extra.
+- [ ] [AI] Prune the one formatter entry `ose-public` declares for a language it does not track
+      (Clojure) — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 13'`
       exits 0, and every surviving formatter's glob matches at least one path in `git ls-files`.
-      Verify the inverse: the pre-edit registry fails that same glob-coverage check for exactly five
+      Verify the inverse: the pre-edit registry fails that same glob-coverage check for exactly one
       entries.
 - [ ] [AI] Verify the emitted `lint-staged` block matches the authored target — acceptance:
       `... -- gate emit --surface=pre-commit` then
@@ -1939,9 +2562,10 @@ Ordered — do not delete before the fold-in is verified.
       — acceptance: exits 0 with `GOVERNANCE VENDOR AUDIT PASSED`; vendor-specific examples remain
       only under explicitly named `Platform Binding Examples` sections.
 - [ ] [AI] **P2-HN-3** (`blockedBy: P2-HN-2`; `blocks: P2-HN-4`) — regenerate bindings only from
-      canonical `.claude/` sources with `npm run generate:bindings` — acceptance: exits 0; every
-      changed `.opencode/`, `.cursor/`, or `.amazonq/` path is generated output and is added to the
-      same file-touch ledger and commit as its source.
+      canonical `.claude/` sources with `npm run generate:bindings && git add -- .claude .opencode .cursor .amazonq`
+      — acceptance: both commands exit 0; every changed `.opencode/`, `.cursor/`, or `.amazonq/`
+      path is generated output, is added to the same file-touch ledger and staged with its source,
+      and remains staged for the Phase 2 commit.
 - [ ] [AI] **P2-HN-4** (`blockedBy: P2-HN-3`; `blocks: P2-READY`) — run
       `npm run validate:sync` — acceptance: exits 0 and reports no source/mirror divergence; static
       inspection of generated files alone does not satisfy this gate.
@@ -1959,7 +2583,7 @@ Every non-merge checkbox in this subsection is `blockedBy: P2-READY`; the untagg
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
 - [ ] [AI] `... -- gate validate` exits 0 — this is the plan's central acceptance criterion.
-- [ ] [AI] Commit Phase 2 — command: `git add -- .husky .github package.json repo-config.yml AGENTS.md docs repo-governance && git commit -m 'feat(ci): derive quality surfaces from gate registry'` — acceptance: commitlint and `npm run validate:sync` exit 0.
+- [ ] [AI] Commit Phase 2 — command: `git add -- .husky .github .claude .opencode .cursor .amazonq package.json repo-config.yml AGENTS.md scripts/format-elixir.sh docs repo-governance && git diff --cached --name-only -- scripts/format-elixir.sh | grep -qx 'scripts/format-elixir.sh' && git commit -m 'feat(ci): derive quality surfaces from gate registry'` — acceptance: commitlint and `npm run validate:sync` exit 0; the formatter wrapper and any generated binding source/mirror paths are staged in this same commit.
 - [ ] [AI] Push Phase 2 — command: `git push -u origin sdlc-gate-registry-enforcement-rewire` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-rewire --fill` — acceptance: one PR URL is returned.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight makers — acceptance: eight reports exist.
@@ -1994,6 +2618,11 @@ checkbox remains the separately authorized integration action after its precedin
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
 
+- [ ] [AI] Verify the canonical downstream source worktree — command:
+      `git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public status --porcelain && git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public rev-list --left-right --count HEAD...origin/main`
+      — acceptance: status is empty and the ref count is `0 0`; Phases 3–5 copy only from this
+      attached, merged canonical path and never from the bare root.
+
 > **Pause Safety**: `ose-public`'s hooks and CI derive from the registry; `main-ci.yml` is gone; the
 > merge is on `main`. Safe to stop. To resume: `... -- gate validate` to confirm the merged state
 > still passes, then start Phase 6 once Phases 3, 4, and 5 also merge.
@@ -2017,15 +2646,15 @@ with those nodes; it does not close the all-four target by itself.
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool. The polyglot demo
       apps require their language toolchains before pre-push can pass in a fresh worktree.
 - [ ] [AI] Copy `apps/rhino-cli` from merged canonical — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
       `src/`, `tests/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`,
       `parity-manifest.sha256` and `specs/apps/rhino/behavior/rhino-cli/gherkin/` are byte-identical
       to `ose-public`, verified by `diff -r`, and `... -- parity manifest validate` exits 0 against
       the copied manifest without regenerating it. Copying from the Phase 1 result instead would
-      reintroduce the hardcoded app names Phase 1b removed.
+      reintroduce the hardcoded app names Phase 11 removed.
 - [ ] [AI] Copy the boundary Gherkin tree — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin/`
-      — acceptance: `diff -r /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin` exits 0.
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/specs/apps/rhino/behavior/rhino-cli/gherkin/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin/`
+      — acceptance: `diff -r /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/specs/apps/rhino/behavior/rhino-cli/gherkin /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin` exits 0.
 - [ ] [AI] Author `ose-primer`'s `gates:` section, preserving its own excludes (its `md links validate`
       carries the polyglot `deps`/`build`/`target` excludes) and adding its per-language gates —
       acceptance: `... -- repo-config validate` exits 0.
@@ -2042,15 +2671,15 @@ with those nodes; it does not close the all-four target by itself.
       formatters needing wrapper work — `gofmt` (prints paths, exits 0) and the Elixir script (no
       check mode) — are `ose-primer`-only, so that work lands here and nowhere else.
 - [ ] [AI] **P3-CONFIG-COPY** — install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-primer.yml > /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-primer.yml > /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `npm exec nx -- run rhino-cli:repo-config-validation` exits 0.
 - [ ] [AI] **P3-PACKAGE-COPY** — command:
-      `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-primer.json /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/package.json`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-primer.json /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty package.json` exits 0.
 - [ ] [AI] **P3-HOOK-COMMIT-MSG** — copy `husky-hooks/commit-msg-ose-primer.sh` to `.husky/commit-msg` — command:
-      `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-primer.sh .husky/commit-msg` — acceptance: `sh -n .husky/commit-msg` exits 0.
-- [ ] [AI] **P3-HOOK-PRE-COMMIT** — command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-primer.sh .husky/pre-commit` — acceptance: `sh -n .husky/pre-commit` exits 0.
-- [ ] [AI] **P3-HOOK-PRE-PUSH** — command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-primer.sh .husky/pre-push` — acceptance: `sh -n .husky/pre-push` exits 0.
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-primer.sh .husky/commit-msg` — acceptance: `sh -n .husky/commit-msg` exits 0.
+- [ ] [AI] **P3-HOOK-PRE-COMMIT** — command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-primer.sh .husky/pre-commit` — acceptance: `sh -n .husky/pre-commit` exits 0.
+- [ ] [AI] **P3-HOOK-PRE-PUSH** — command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-primer.sh .husky/pre-push` — acceptance: `sh -n .husky/pre-push` exits 0.
 - [ ] [AI] **P3-PR-WORKFLOW** — replace the hand-written gate list in
       `.github/workflows/pr-quality-gate.yml` with enumerate/matrix jobs while preserving primer's
       exact toolchain setup jobs and `name: Quality gate` join job — command:
@@ -2060,16 +2689,16 @@ with those nodes; it does not close the all-four target by itself.
       `test ! -f .github/workflows/main-ci.yml` exits 0.
 - [ ] [AI] **P3-DEPS-RENAME** — create `.github/workflows/dependency-vulnerability-audit.yml`
       (**new file**) from the finalized public workflow, then delete `.github/workflows/deps-audit.yml` — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml .github/workflows/dependency-vulnerability-audit.yml && git rm .github/workflows/deps-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml .github/workflows/dependency-vulnerability-audit.yml && git rm .github/workflows/deps-audit.yml`
       — acceptance: `actionlint .github/workflows/dependency-vulnerability-audit.yml` exits 0 and
       the new `name:` matches its filename. This repo is the one that also fixes a
       standing convention violation — it ships `name: Nightly Dependency Audit` inside a file named
       `deps-audit.yml`, which the `name:`-mirrors-filename rule forbids.
 - [ ] [AI] Copy the amended `docs/reference/sdlc-gate-standard.md` — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md docs/reference/sdlc-gate-standard.md`
       — acceptance: `npm run lint:md` exits 0.
 - [ ] [AI] **P3-PROPAGATION** — Copy rewritten `repo-governance/development/workflow/git-hook-lifecycle.md` — command:
-      `cp /Users/wkf/ose-projects/ose-public/repo-governance/development/workflow/git-hook-lifecycle.md repo-governance/development/workflow/git-hook-lifecycle.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/repo-governance/development/workflow/git-hook-lifecycle.md repo-governance/development/workflow/git-hook-lifecycle.md`
       — acceptance: `grep -c 'validate-markdown.yml' repo-governance/development/workflow/git-hook-lifecycle.md`
       returns 0 (this repo's copy cites that non-existent workflow today).
 
@@ -2110,7 +2739,7 @@ remains the separately authorized integration action after its preceding Land ta
 > Phases 4 and 5, and one of three nodes that block Phase 6).
 
 - [ ] [AI] `... -- gate validate` exits 0 in `ose-primer`.
-- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 1b result — acceptance: `diff -r`
+- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 11 result — acceptance: `diff -r`
       over the boundary set reports zero differences.
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
@@ -2137,7 +2766,7 @@ all-four closure still depends on Phase 5.
       `(cd /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool.
 - [ ] [AI] Copy canonical `apps/rhino-cli` — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
       `diff -r` reports no difference across the byte-identity file set (now including `tests/` and
       `parity-manifest.sha256`), and `... -- parity manifest validate` exits 0 without regenerating.
 - [ ] [AI] **P4-REGISTRY-AUTHORING** — Author `ose-private`'s `gates:` section. It carries entries the others do not — the
@@ -2172,19 +2801,19 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       `... -- gate list --surface=pre-push --format=json`.
 - [ ] [AI] **P4-CONFIG-COPY** (`blockedBy: P4-REGISTRY-AUTHORING`; `blocks: P4-PACKAGE-COPY`) —
       install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-private.yml > /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-private.yml > /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `(cd /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement && npm exec nx -- run rhino-cli:repo-config-validation)` exits 0.
 - [ ] [AI] **P4-PACKAGE-COPY** (`blockedBy: P4-CONFIG-COPY`; `blocks: P4-HOOK-COMMIT-MSG`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-private.json /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-private.json /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json` exits 0.
 - [ ] [AI] **P4-HOOK-COMMIT-MSG** (`blockedBy: P4-PACKAGE-COPY`; `blocks: P4-HOOK-PRE-COMMIT`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg` exits 0.
 - [ ] [AI] **P4-HOOK-PRE-COMMIT** (`blockedBy: P4-HOOK-COMMIT-MSG`; `blocks: P4-HOOK-PRE-PUSH`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit` exits 0.
 - [ ] [AI] **P4-HOOK-PRE-PUSH** (`blockedBy: P4-HOOK-PRE-COMMIT`; `blocks: P4-PR-WORKFLOW`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push` exits 0.
 - [ ] [AI] **P4-PR-WORKFLOW** (`blockedBy: P4-HOOK-PRE-PUSH`; `blocks: P4-DEPS-COPY`) — replace
       the hand-written gate list in the exact destination
@@ -2192,13 +2821,13 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       with enumerate/matrix jobs while preserving private's toolchain setup and `name: Quality gate`
       join job — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/pr-quality-gate.yml` exits 0.
 - [ ] [AI] **P4-DEPS-COPY** (`blockedBy: P4-PR-WORKFLOW`; `blocks: P4-DEPS-DELETE`) — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml` exits 0.
 - [ ] [AI] **P4-DEPS-DELETE** (`blockedBy: P4-DEPS-COPY`; `blocks: P4-PARITY-WORKFLOW`) — command:
       `git -C /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/deps-audit.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/deps-audit.yml` exits 0.
 - [ ] [AI] **P4-PARITY-WORKFLOW** (`blockedBy: P4-DEPS-DELETE`; `blocks: P4-MAIN-CI-DELETE`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml` exits 0.
 - [ ] [AI] **P4-MAIN-CI-DELETE** (`blockedBy: P4-PARITY-WORKFLOW`; `blocks: P4-DOCS`) — command:
       `git -C /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/main-ci.yml`
@@ -2208,7 +2837,7 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       exits 0 (the new file must be indexed).
 - [ ] [AI] **P4-PROPAGATION** — Copy the finalized amended SDLC standard — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
       — acceptance: `npm run lint:md` exits 0 from the private worktree.
 
 ### Phase 4 Execution-Ready Gate
@@ -2265,10 +2894,10 @@ remains the separately authorized integration action after its preceding Land ta
 
 Blocked by Phase 2; independent of Phases 3 and 4.
 
-`beaver-nest` **stops being a fork**. Phase 1b removes the defects that forced the fork and upstreams
+`beaver-nest` **stops being a fork**. Phase 11 removes the defects that forced the fork and upstreams
 the capabilities that accumulated there: eight of ten source divergences are repo-specific data or
 fixtures hardcoded into shared source; the other two are the `ROADMAP.md`/`SECURITY.md` naming
-exemptions and F# environment-wrapper detection. Phase 1b also absorbs the fork's inherited-Git-state
+exemptions and F# environment-wrapper detection. Phase 11 also absorbs the fork's inherited-Git-state
 isolation in `project.json`, its corresponding integration tests, and its Gherkin coverage. This
 therefore becomes a copy like Phases 3 and 4, not a port. See
 [tech-docs §2.8.6](./tech-docs.md#286-the-governance-change-this-requires) for the governance
@@ -2287,20 +2916,20 @@ amendment this depends on.
 - [ ] [AI] Initialize its toolchain — command:
       `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool.
-- [ ] [AI] **Verify Phase 1b actually absorbed the fork before overwriting anything.** Diff the
+- [ ] [AI] **Verify Phase 11 actually absorbed the fork before overwriting anything.** Diff the
       current `beaver-nest` source against merged canonical and confirm every remaining difference is
-      one Phase 1b intended to erase — acceptance: `diff -rq` over the boundary set reports only
+      one Phase 11 intended to erase — acceptance: `diff -rq` over the boundary set reports only
       files whose divergence is listed in
       [tech-docs §2.8.1](./tech-docs.md#281-audit-result), and **zero** unlisted differences. Any
       unlisted difference is an unmigrated capability: stop, upstream it into `ose-public` first, and
       re-run. This step is the guard against silently deleting work.
 - [ ] [AI] Confirm every upstreamed capability is present in canonical **before** the copy —
-      commands: `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml --lib docs::naming`,
-      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml scan_fsharp`, and
-      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml --test cargo_target_share`
+      commands: `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml --lib docs::naming`,
+      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml scan_fsharp`, and
+      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml --test cargo_target_share`
       — acceptance: all exit 0 and `project.json` clears all three inherited Git variables.
 - [ ] [AI] Copy canonical `apps/rhino-cli` — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance: `diff -r`
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance: `diff -r`
       reports no difference across the boundary set, and `... -- parity manifest validate` exits 0
       without regenerating.
 - [ ] [AI] Confirm `md naming validate` still passes on this repo's own `ROADMAP.md` and
@@ -2316,19 +2945,19 @@ amendment this depends on.
       exits 0 (prettier, rustfmt, shfmt, fantomas, ruff — the five languages it actually tracks).
 - [ ] [AI] **P5-CONFIG-COPY** (`blockedBy: P5-REGISTRY-AUTHORING`; `blocks: P5-PACKAGE-COPY`) —
       install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-beaver-nest.yml > /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-beaver-nest.yml > /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement && npm exec nx -- run rhino-cli:repo-config-validation)` exits 0.
 - [ ] [AI] **P5-PACKAGE-COPY** (`blockedBy: P5-CONFIG-COPY`; `blocks: P5-HOOK-COMMIT-MSG`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-beaver-nest.json /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-beaver-nest.json /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json` exits 0.
 - [ ] [AI] **P5-HOOK-COMMIT-MSG** (`blockedBy: P5-PACKAGE-COPY`; `blocks: P5-HOOK-PRE-COMMIT`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg` exits 0.
 - [ ] [AI] **P5-HOOK-PRE-COMMIT** (`blockedBy: P5-HOOK-COMMIT-MSG`; `blocks: P5-HOOK-PRE-PUSH`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit` exits 0.
 - [ ] [AI] **P5-HOOK-PRE-PUSH** (`blockedBy: P5-HOOK-PRE-COMMIT`; `blocks: P5-PR-WORKFLOW`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push` exits 0.
 - [ ] [AI] **P5-PR-WORKFLOW** (`blockedBy: P5-HOOK-PRE-PUSH`; `blocks: P5-DEPS-COPY`) — replace
       the hand-written gate list in the exact destination
@@ -2336,25 +2965,25 @@ amendment this depends on.
       with enumerate/matrix jobs while preserving Beaver's toolchain setup and `name: Quality gate`
       join job — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/pr-quality-gate.yml` exits 0.
 - [ ] [AI] **P5-DEPS-COPY** (`blockedBy: P5-PR-WORKFLOW`; `blocks: P5-DEPS-DELETE`) — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml` exits 0.
 - [ ] [AI] **P5-DEPS-DELETE** (`blockedBy: P5-DEPS-COPY`; `blocks: P5-PARITY-WORKFLOW`) — command:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/deps-audit.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/deps-audit.yml` exits 0.
 - [ ] [AI] **P5-PARITY-WORKFLOW** (`blockedBy: P5-DEPS-DELETE`; `blocks: P5-MAIN-CI-DELETE`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml` exits 0.
 - [ ] [AI] **P5-MAIN-CI-DELETE** (`blockedBy: P5-PARITY-WORKFLOW`; `blocks: P5-DOCS`) — command:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/main-ci.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/main-ci.yml` exits 0.
 - [ ] [AI] Copy finalized standard — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
       — acceptance: destination exists.
 - [ ] [AI] Copy rewritten hook lifecycle — command:
-      `cp /Users/wkf/ose-projects/ose-public/repo-governance/development/workflow/git-hook-lifecycle.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-governance/development/workflow/git-hook-lifecycle.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/repo-governance/development/workflow/git-hook-lifecycle.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-governance/development/workflow/git-hook-lifecycle.md`
       — acceptance: destination exists.
 - [ ] [AI] **P5-PROPAGATION** — Copy fork-removal related-repositories amendment — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/related-repositories.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/related-repositories.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/related-repositories.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/related-repositories.md`
       — acceptance: `npm run lint:md` exits 0 and no in-progress plan folder is added to `beaver-nest`.
 
 ### Phase 5 Execution-Ready Gate
@@ -2401,7 +3030,7 @@ remains the separately authorized integration action after its preceding Land ta
 > Phases 3 and 4, and one of three nodes that block Phase 6).
 
 - [ ] [AI] `... -- gate validate` exits 0 in `beaver-nest`.
-- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 1b result — acceptance: `diff -r`
+- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 11 result — acceptance: `diff -r`
       over the boundary set reports zero differences.
 - [ ] [AI] `... -- parity manifest validate` exits 0.
 - [ ] [AI] `md naming validate` passes on this repo's `ROADMAP.md` and `SECURITY.md`.
@@ -2861,6 +3490,84 @@ is not applicable. The authoritative plan is archived in `ose-public` inside PR 
 > Resume by re-running this gate; cleanup removes only explicitly confirmed task-owned worktrees.
 
 ---
+
+## Strict Plan-Checker Remediation
+
+These tasks were added from the 2026-08-04 strict pre-execution report
+`plan__1c0563__2026-08-04--14-24__audit.md`. They block all remaining Phase 0 work and every
+change-producing phase until the report is clean.
+
+- [x] [AI] **R10-PUBLIC-WORKTREE** — amend Phase 0 to use a declared attached `ose-public`
+      worktree for every public working-tree command, and preserve the bare root for ref-only
+      operations — acceptance: no Phase 0 public command invokes `git status` in the bare root.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Declared the existing attached public worktree as Phase 0's public root, reopened its initialization tasks with worktree-scoped commands, and made the baseline cleanliness check exclude only plan-owned execution evidence.
+
+- [x] [AI] **R10-P1-STAGING** — include the required Rhino Gherkin directory in the Phase 1 Land
+      staging command — acceptance: the staged-diff assertion names both `apps/rhino-cli` and the
+      Phase 1 Gherkin tree.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Phase 1 Land now stages the bounded Gherkin tree and asserts that both the engine and Gherkin have staged paths before committing.
+
+- [x] [AI] **R10-P1B-STAGING** — include `repo-config.yml` in the Phase 11 Land staging command
+      and its staged-diff assertion — acceptance: the paired source/configuration change is
+      mechanically required before the PR opens.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Phase 11 Land now stages `repo-config.yml` and mechanically asserts it is paired with the shared-source change.
+
+- [x] [AI] **R10-CANONICAL-SOURCE** — define one clean, merged, attached canonical `ose-public`
+      source worktree and replace downstream reads from the bare root — acceptance: Phases 3–5
+      copy only from that path after it proves `HEAD...origin/main` is `0 0`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: All Phase 3–5 canonical file reads now target the merged Phase 2 rewire worktree; Phase 2's gate proves that exact source path clean and level before any downstream copy.
+
+- [x] [AI] **R10-BOUNDARY-IDENTIFIERS** — make all PR-bearing phases mechanically distinct to the
+      numeric boundary detector and use the detector's exact lowercase `yes` token — acceptance:
+      declared and actual PR-bearing phase sets compare equal, including the de-fork phase.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`
+  - Notes: Renamed the de-fork delivery phase from non-numeric Phase 1b to numeric Phase 11 across the plan and changed PR-bearing boundary table values to the detector's lowercase `yes` token.
+
+- [x] [AI] **R10-CLEAN-CHECK** — run strict plan validation from a clean detached checker worktree
+      at the candidate plan commit — acceptance: the report has zero findings and does not confuse
+      in-progress execution evidence with the pre-execution freshness gate.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Detached checker worktree at `20f63cce6d049ab9c0fa82f9453dcd234a89454e` produced `plan__54b995__2026-08-04--14-53__audit.md` with zero findings.
+
+- [x] [AI] **R10-P2-FORMATTER-WRAPPER** — declare `scripts/format-elixir.sh` in the File-Impact
+      Analysis and stage it in Phase 2 Land — acceptance: the wrapper and its test are authorized
+      and reach the Phase 2 PR together.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: Added the exact formatter-wrapper path to the declared footprint and made Phase 2 Land assert it is staged.
+
+- [x] [AI] **R10-P2-HARNESS-STAGING** — stage every Phase 2 `.claude/` source and generated
+      `.opencode/`, `.cursor/`, and `.amazonq/` mirror path — acceptance: the Phase 2 commit carries
+      the generated binding set and `npm run validate:sync` confirms no divergence.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`
+  - Notes: P2-HN-3 now stages the bounded canonical source and generated mirror directories immediately after generation; Phase 2 Land stages the same bounded set again defensively.
+
+- [x] [AI] **R10-CANONICAL-GATE-ORDER** — move the canonical-source assertion from the Phase 1
+      Gate to the Phase 2 Gate after its worktree exists — acceptance: no phase gate requires a
+      future phase's worktree.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`
+  - Notes: Moved the canonical-source prerequisite into the Phase 2 Gate, after the rewire worktree has been created and merged.
 
 ## Settled Decisions
 

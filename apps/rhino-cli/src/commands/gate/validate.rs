@@ -1,0 +1,960 @@
+//! `gate validate` command adapter.
+
+use std::collections::BTreeMap;
+use std::io::Write;
+use std::path::Path;
+
+use anyhow::{Error, anyhow};
+use clap::Args;
+use serde::Deserialize;
+
+use crate::application::repo_config::{self, GateCarveOut, GateSurface, GateType, GateWiring};
+use crate::domain::cliout::OutputFormat;
+use crate::internal::git;
+
+use super::emit;
+
+/// Arguments for `gate validate`.
+#[derive(Args, Debug)]
+pub struct ValidateArgs {}
+
+/// Validate gate-registry composition rules.
+///
+/// # Errors
+///
+/// Returns an error when the repository root or `repo-config.yml` cannot be
+/// read, or when a composition rule is violated.
+pub fn run(_args: &ValidateArgs, _output_format: OutputFormat) -> Result<(), Error> {
+    let repo_root = git::root::find_root()?;
+    run_at_root(&repo_root, &mut std::io::stdout())
+}
+
+/// Validate gate-registry composition rules at a known repository root.
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` cannot be read or when a check gate
+/// declared for a local hook surface is missing its CI declaration.
+pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
+    let config = repo_config::load(repo_root)?;
+
+    validate_local_hook_composition(&config, writer)?;
+    validate_verifies_references(&config, writer)?;
+    validate_formatter_verification(&config, writer)?;
+    validate_local_hook_shims(repo_root, &config, writer)?;
+    validate_ci_workflow(repo_root, &config, writer)?;
+    validate_lint_staged(repo_root, &config, writer)
+}
+
+/// Validates the local-hook check-to-CI composition rule.
+///
+/// # Errors
+///
+/// Returns an error when a check gate declares pre-commit or pre-push without CI and lacks
+/// the `staged-only` carve-out, or when the diagnostic cannot be written.
+fn validate_local_hook_composition(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for gate in &config.gates {
+        let is_local_hook_check_without_ci = gate.gate_type == GateType::Check
+            && (gate.surfaces.contains_key(&GateSurface::PreCommit)
+                || gate.surfaces.contains_key(&GateSurface::PrePush))
+            && !gate.surfaces.contains_key(&GateSurface::Ci)
+            && gate.carve_out.as_ref() != Some(&GateCarveOut::StagedOnly);
+        if is_local_hook_check_without_ci {
+            let message = format!(
+                "Gate Composition Rule violation: gate {:?} declares a local hook surface but is missing ci",
+                gate.id
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
+}
+
+/// Validates that every `verifies` reference names a declared gate.
+///
+/// # Errors
+///
+/// Returns an error when a gate verifies an undeclared gate or the diagnostic
+/// cannot be written.
+fn validate_verifies_references(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for gate in &config.gates {
+        if let Some(verified_gate) = &gate.verifies {
+            let target = config
+                .gates
+                .iter()
+                .find(|candidate| candidate.id == *verified_gate);
+            let Some(target) = target else {
+                let message = format!(
+                    "Gate {:?} verifies orphan gate {:?}",
+                    gate.id, verified_gate
+                );
+                writeln!(writer, "{message}")?;
+                return Err(anyhow!(message));
+            };
+            if gate.gate_type != GateType::Check
+                || target.gate_type != GateType::Mutation
+                || target.category.as_deref() != Some("formatter")
+            {
+                let message = format!(
+                    "Gate {:?}.verifies must link a check to a formatter mutation, not {:?}",
+                    gate.id, verified_gate
+                );
+                writeln!(writer, "{message}")?;
+                return Err(anyhow!(message));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Validates that each formatter mutation is covered by a check gate.
+///
+/// # Errors
+///
+/// Returns an error when a formatter lacks a verifying check or the diagnostic
+/// cannot be written.
+fn validate_formatter_verification(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for formatter in config.gates.iter().filter(|gate| {
+        gate.gate_type == GateType::Mutation && gate.category.as_deref() == Some("formatter")
+    }) {
+        let verifier_count = config
+            .gates
+            .iter()
+            .filter(|gate| {
+                gate.gate_type == GateType::Check
+                    && gate.verifies.as_deref() == Some(formatter.id.as_str())
+            })
+            .count();
+        if verifier_count != 1 {
+            let message = format!(
+                "Formatter mutation {:?} requires exactly one check gate whose verifies field names it; found {verifier_count}",
+                formatter.id,
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
+}
+
+/// Validates every generated Husky shim required by declared local-hook gates.
+///
+/// # Errors
+///
+/// Returns an error when the required registry invocation is absent or the
+/// diagnostic cannot be written.
+fn validate_local_hook_shims(
+    repo_root: &Path,
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for (surface, shim_name) in [
+        (GateSurface::PreCommit, "pre-commit"),
+        (GateSurface::PrePush, "pre-push"),
+    ] {
+        if !config
+            .gates
+            .iter()
+            .any(|gate| gate.surfaces.contains_key(&surface))
+        {
+            continue;
+        }
+        let shim = repo_root.join(".husky").join(shim_name);
+        let expected_invocation = format!("gate run --surface={shim_name}");
+        let has_registry_invocation = std::fs::read_to_string(&shim)
+            .is_ok_and(|contents| has_executable_shell_invocation(&contents, &expected_invocation));
+        if !has_registry_invocation {
+            let message = format!(
+                "Gate surface shim .husky/{shim_name} must invoke gate run --surface={shim_name}"
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
+}
+
+/// Returns whether a shell script contains a non-comment line with an invocation.
+fn has_executable_shell_invocation(contents: &str, expected_invocation: &str) -> bool {
+    contents.lines().any(|line| {
+        let trimmed = line.trim_start();
+        !trimmed.starts_with('#') && trimmed.contains(expected_invocation)
+    })
+}
+
+/// Validates registry-backed commands and hand-wired jobs in the CI workflow.
+///
+/// # Errors
+///
+/// Returns an error when the workflow declares an unknown command, omits a
+/// required hand-wired gate, or a diagnostic cannot be written.
+fn validate_ci_workflow(
+    repo_root: &Path,
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let workflow_jobs = workflow_jobs(repo_root, config, writer)?;
+    validate_hand_wired_ci_jobs(config, &workflow_jobs, writer)
+}
+
+/// Collects CI workflow job names after checking registry-backed commands.
+///
+/// # Errors
+///
+/// Returns an error when the workflow declares a command absent from the gate
+/// registry or its diagnostic cannot be written.
+fn workflow_jobs(
+    repo_root: &Path,
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<Vec<String>, Error> {
+    let pr_workflow = repo_root.join(".github/workflows/pr-quality-gate.yml");
+    let has_ci_gates = config
+        .gates
+        .iter()
+        .any(|gate| gate.surfaces.contains_key(&GateSurface::Ci));
+    if !has_ci_gates {
+        return Ok(Vec::new());
+    }
+    let workflow_source = match std::fs::read_to_string(&pr_workflow) {
+        Ok(workflow) => workflow,
+        Err(error) => {
+            let message = format!(
+                "CI workflow pr-quality-gate.yml is required for declared CI gates: {error}"
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    };
+    let workflow: Workflow = match serde_norway::from_str(&workflow_source) {
+        Ok(workflow) => workflow,
+        Err(error) => {
+            let message = format!("CI workflow pr-quality-gate.yml is not valid YAML: {error}");
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    };
+    if workflow.jobs.is_empty() {
+        let hand_wired_ids = config
+            .gates
+            .iter()
+            .filter(|gate| {
+                gate.wiring.as_ref() == Some(&GateWiring::HandWired)
+                    && gate.surfaces.contains_key(&GateSurface::Ci)
+            })
+            .map(|gate| gate.id.as_str())
+            .collect::<Vec<_>>();
+        let suffix = if hand_wired_ids.is_empty() {
+            String::new()
+        } else {
+            format!(
+                "; missing hand-wired gate job(s): {}",
+                hand_wired_ids.join(", ")
+            )
+        };
+        let message = format!(
+            "CI workflow pr-quality-gate.yml must declare at least one job for declared CI gates{suffix}"
+        );
+        writeln!(writer, "{message}")?;
+        return Err(anyhow!(message));
+    }
+    let has_ci_matrix_enumeration = workflow_source.contains("rhino-cli gate list --surface=ci")
+        && workflow_source.contains("fromJson(needs.enumerate.outputs.gates)");
+    let mut workflow_jobs = Vec::new();
+    for (job, definition) in workflow.jobs {
+        workflow_jobs.push(job.clone());
+        for command in definition
+            .steps
+            .iter()
+            .filter_map(|step| step.run.as_deref())
+        {
+            let command = command.trim();
+            let is_declared_command = config.gates.iter().any(|gate| gate.command == command);
+            let is_ci_matrix_command = has_ci_matrix_enumeration
+                && (command.starts_with("rhino-cli gate list --surface=ci")
+                    || command == "rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}");
+            let is_hand_wired_job = config.gates.iter().any(|gate| {
+                gate.id == job
+                    && gate.wiring.as_ref() == Some(&GateWiring::HandWired)
+                    && gate.surfaces.contains_key(&GateSurface::Ci)
+            });
+            if !is_declared_command && !is_ci_matrix_command && !is_hand_wired_job {
+                let message = format!(
+                    "CI workflow pr-quality-gate.yml declares command {command:?} absent from the gate registry"
+                );
+                writeln!(writer, "{message}")?;
+                return Err(anyhow!(message));
+            }
+        }
+    }
+    Ok(workflow_jobs)
+}
+
+/// The small subset of GitHub Actions workflow YAML needed for CI derivation checks.
+#[derive(Deserialize)]
+struct Workflow {
+    /// All named workflow jobs.
+    #[serde(default)]
+    jobs: BTreeMap<String, WorkflowJob>,
+}
+
+/// A workflow job and the steps that can execute a command.
+#[derive(Deserialize)]
+struct WorkflowJob {
+    /// Shell or action steps configured for this job.
+    #[serde(default)]
+    steps: Vec<WorkflowStep>,
+}
+
+/// A workflow step's optional shell command.
+#[derive(Deserialize)]
+struct WorkflowStep {
+    /// Optional shell command, including YAML block scalars.
+    #[serde(default)]
+    run: Option<String>,
+}
+
+/// Validates that every hand-wired CI gate has a workflow job of the same id.
+///
+/// # Errors
+///
+/// Returns an error when a hand-wired CI gate is missing or its diagnostic
+/// cannot be written.
+fn validate_hand_wired_ci_jobs(
+    config: &repo_config::RepoConfig,
+    workflow_jobs: &[String],
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for hand_wired_gate in config.gates.iter().filter(|gate| {
+        gate.wiring.as_ref() == Some(&GateWiring::HandWired)
+            && gate.surfaces.contains_key(&GateSurface::Ci)
+    }) {
+        if !workflow_jobs.iter().any(|job| job == &hand_wired_gate.id) {
+            let message = format!(
+                "Hand-wired CI gate {:?} is missing from pr-quality-gate.yml",
+                hand_wired_gate.id
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
+}
+
+/// Validates that `package.json` contains the generated lint-staged block.
+///
+/// # Errors
+///
+/// Returns an error when `package.json` cannot be parsed, the generated block
+/// differs, or the diagnostic cannot be written.
+fn validate_lint_staged(
+    repo_root: &Path,
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let package_path = repo_root.join("package.json");
+    if let Ok(package_data) = std::fs::read(&package_path) {
+        let package: serde_json::Value = serde_json::from_slice(&package_data)?;
+        let committed = package.get("lint-staged").cloned().unwrap_or_default();
+        let expected = serde_json::Value::Object(emit::lint_staged_from_config(config));
+        if committed != expected {
+            let message = "package.json lint-staged differs from the gate registry; run gate emit --surface=pre-commit";
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn composition_rule_violation() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: missing-ci\n",
+            "    type: check\n",
+            "    command: repo-config validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("Gate Composition Rule")
+            && rendered.contains("missing-ci")
+            && rendered.contains("ci"),
+        "a pre-commit check without ci and no carve-out must violate the Gate Composition Rule; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn pre_push_composition_rule_violation() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: missing-ci\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("Gate Composition Rule")
+            && rendered.contains("missing-ci")
+            && rendered.contains("ci"),
+        "a pre-push check without ci and no carve-out must violate the Gate Composition Rule; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn mutation_pre_commit_only_passes() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: format\n",
+            "    type: mutation\n",
+            "    command: prettier --write\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "a pre-commit-only mutation is outside the check composition rule"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn staged_only_carve_out_exempts_pre_commit_check() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: index-guard\n",
+            "    type: check\n",
+            "    command: index validate\n",
+            "    kind: rhino-cli\n",
+            "    carve-out: staged-only\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "the staged-only carve-out exempts this pre-commit-only check"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn missing_surface_shim() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let husky = repo.path().join(".husky");
+    std::fs::create_dir(&husky).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: pre-push-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: affected-projects }\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(husky.join("pre-push"), "#!/bin/sh\necho stale hook\n").unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err() && rendered.contains(".husky/pre-push") && rendered.contains("pre-push"),
+        "a declared pre-push surface without its registry shim must name the surface file; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn missing_pre_commit_surface_shim() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: pre-commit-check\n",
+            "    type: check\n",
+            "    command: md naming validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "      ci: { scope: all-file-type }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains(".husky/pre-commit")
+            && rendered.contains("pre-commit"),
+        "a declared pre-commit surface without its registry shim must name the surface file; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn commented_surface_shim_is_not_a_registry_delegation() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: pre-commit-check\n",
+            "    type: check\n",
+            "    command: md naming validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "      ci: { scope: all-file-type }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\n# rhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+
+    let result = run_at_root(repo.path(), &mut Vec::new());
+
+    assert!(
+        result.is_err(),
+        "a commented-out registry invocation must not validate a hook shim"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn formatter_requires_exactly_one_verifying_check() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: format-markdown\n",
+            "    type: mutation\n",
+            "    command: prettier --write\n",
+            "    kind: external\n",
+            "    category: formatter\n",
+            "    surfaces:\n",
+            "      ci: { scope: all-file-type }\n",
+            "  - id: verify-format-one\n",
+            "    type: check\n",
+            "    command: prettier --check\n",
+            "    kind: external\n",
+            "    verifies: format-markdown\n",
+            "    surfaces:\n",
+            "      ci: { scope: all-file-type }\n",
+            "  - id: verify-format-two\n",
+            "    type: check\n",
+            "    command: prettier --check\n",
+            "    kind: external\n",
+            "    verifies: format-markdown\n",
+            "    surfaces:\n",
+            "      ci: { scope: all-file-type }\n",
+        ),
+    )
+    .unwrap();
+
+    let result = run_at_root(repo.path(), &mut Vec::new());
+
+    assert!(
+        result.is_err(),
+        "a formatter must not accept multiple verifying checks"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+        ),
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "the registry-derived CI matrix dispatcher must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn undeclared_ci_command() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "name: PR quality gate\n",
+            "jobs:\n",
+            "  quality:\n",
+            "    steps:\n",
+            "      - run: npm run unregistered-check\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err() && rendered.contains("npm run unregistered-check"),
+        "a hard-coded CI check absent from the registry must name the undeclared command; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn named_block_ci_step_is_checked_against_the_registry() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  quality:\n",
+            "    steps:\n",
+            "      - name: undeclared block command\n",
+            "        run: |\n",
+            "          npm run unregistered-check\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err() && rendered.contains("npm run unregistered-check"),
+        "a named block CI step must not bypass registry command validation; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn orphan_verifies_reference() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: verify-format\n",
+            "    type: check\n",
+            "    command: prettier --check\n",
+            "    kind: external\n",
+            "    verifies: missing-format\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-file-type, glob: '*.md' }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("verify-format")
+            && rendered.contains("missing-format"),
+        "an orphan verifies reference must name the referring gate and missing gate; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn stale_lint_staged_block() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: format-markdown\n",
+            "    type: mutation\n",
+            "    command: prettier --write\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        repo.path().join("package.json"),
+        r#"{"lint-staged":{"*.md":"prettier --check"}}"#,
+    )
+    .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("package.json")
+            && rendered.contains("gate emit --surface=pre-commit"),
+        "a stale lint-staged block must name package.json and its registry regeneration command; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn unverified_formatter() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: format-markdown\n",
+            "    type: mutation\n",
+            "    command: prettier --write\n",
+            "    kind: external\n",
+            "    category: formatter\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err() && rendered.contains("format-markdown") && rendered.contains("verifies"),
+        "a formatter mutation without a verifies-linked check must name the formatter; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn hand_wired_present() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: test-quick\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n",
+            "    steps:\n",
+            "      - run: npx nx affected -t test:quick\n",
+        ),
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "a hand-wired CI gate with its matching workflow job must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn hand_wired_job_deleted() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: test-quick\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(workflows.join("pr-quality-gate.yml"), "jobs: {}\n").unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("test-quick")
+            && rendered.contains("pr-quality-gate.yml"),
+        "a deleted hand-wired job must name its gate id and CI workflow file; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}

@@ -19,7 +19,7 @@ any repo is touched.
 
 | File                                                           | Repo          | Formatters | Registry notes                                             |
 | -------------------------------------------------------------- | ------------- | ---------- | ---------------------------------------------------------- |
-| [`repo-config-ose-public.yml`](./repo-config-ose-public.yml)   | `ose-public`  | 9          | Canonical. Prunes 5 dead entries                           |
+| [`repo-config-ose-public.yml`](./repo-config-ose-public.yml)   | `ose-public`  | 13         | Canonical. Prunes the one dead Clojure entry               |
 | [`repo-config-ose-primer.yml`](./repo-config-ose-primer.yml)   | `ose-primer`  | 10         | Polyglot. Prunes 0, **adds** shfmt and sql/html globs      |
 | [`repo-config-ose-private.yml`](./repo-config-ose-private.yml) | `ose-private` | 4          | Prunes 5, adds shfmt and tofu. Carries the `iac-lint` pair |
 | [`repo-config-beaver-nest.yml`](./repo-config-beaver-nest.yml) | `beaver-nest` | 5          | Prunes 9                                                   |
