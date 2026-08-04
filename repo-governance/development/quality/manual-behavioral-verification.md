@@ -51,7 +51,13 @@ This applies to:
 
 ## UI Verification
 
-Use Playwright MCP tools to verify UI features and bugs in a real browser environment.
+Before browser-facing verification, discover the real-browser integrations installed on the machine
+and confirm which are healthy and callable in the current harness. Prefer Chrome/Chromium through
+Chrome DevTools MCP or Playwright MCP; if neither is available, use an equivalent installed
+browser-driving tool. Record the selected tool, any fallback, browser/version when available, and
+capability gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl
+inspection are useful baselines, but do not count as live-browser verification when a working browser
+integration exists.
 
 ### Required Tools
 
@@ -235,7 +241,8 @@ It does not apply to:
 
 ## Tools and Automation
 
-- **Playwright MCP tools**: Available to all agents for browser-based verification
+- **Browser MCP tools**: Discover installed integrations first; prefer Chrome DevTools MCP or
+  Playwright MCP, then equivalent available real-browser tooling
 - **curl**: Available via Bash for API verification
 - **jq**: Available via Bash for JSON response inspection
 
