@@ -6,9 +6,7 @@ import { getResilient } from "../support/resilient-request";
 
 const { Given, When, Then } = createBdd();
 const lessonUrl = "/en/learn/overview";
-const prerenderManifestPath = process.env.CI
-  ? path.resolve(process.cwd(), ".e2e-artifacts/prerender-manifest.json")
-  : path.resolve(process.cwd(), "../ayokoding-www/.next/prerender-manifest.json");
+const prerenderManifestPath = path.resolve(process.cwd(), "../ayokoding-www/.next/prerender-manifest.json");
 
 interface StaticDeliveryState {
   firstResponse?: import("@playwright/test").APIResponse;
@@ -119,15 +117,15 @@ Then("every runtime data endpoint responds successfully", async ({ page }) => {
   }
 });
 
-Given("a visitor opens a localized page in the {string} locale", async ({ page }, locale: string) => {
-  await page.goto(`/${locale}`);
+Given("a visitor opens a content page in the {string} locale", async ({ page }, locale: string) => {
+  await page.goto(`/${locale}/learn/overview`);
 });
 
-When("the localized page renders", async ({ page }) => {
-  await expect(page.getByRole("main")).toBeVisible();
+When("the content page renders", async ({ page }) => {
+  await expect(page.getByRole("article")).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the localized page locale
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the content-page locale
 Then("the html element declares the {string} language code", async ({ page }, languageCode: string) => {
   await expect(page.locator("html")).toHaveAttribute("lang", languageCode);
 });

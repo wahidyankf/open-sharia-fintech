@@ -43,11 +43,11 @@ own baseline (`04`), this plan's `build-your-own-raft` course carries two genuin
 prerequisites — `just-enough-go` (Band 4) and `distributed-systems` (Band 5) — and
 `enterprise-java-and-the-jvm` carries a third, `software-architecture` (also Band 5, and previously
 undeclared in this plan's own catalog — see
-[tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog)). All three belong to
-two sibling plans, `05` and `06`: `05` is archived under its dated `plans/done/` path with terminal
-delivery PR #133, whose merged state must be verified before its body is consumed; `06` remains under
-`plans/backlog/` with a full five-file plan structure `[Repo-grounded — confirmed via directory listing
-and direct file read]`. Reading `06` directly surfaced the previously-missed
+[tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog)). All three now live in
+two sibling plans, `05` and `06` respectively, both of which **exist on disk** under `plans/backlog/`
+with a full five-file plan structure `[Repo-grounded — confirmed via directory listing and direct file
+read]` — an earlier version of this section treated them as not-yet-on-disk presumptions; both are now
+directly readable, and reading `06` directly is what surfaced the previously-missed
 `software-architecture` edge. This plan also inherits a new, non-content dependency:
 `vercel-function-cost-reduction`, because every delivery boundary in this plan's `worktree-to-pr` mode
 deploys to production, and deploying before that plan's prerendering fix lands would compound the

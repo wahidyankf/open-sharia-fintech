@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { dataset } from "@/features/cost-of-living-calculator/core/data/cities";
 import { roleMatrix } from "@/features/cost-of-living-calculator/core/data/roles";
 import type { Household } from "@/features/cost-of-living-calculator/core/data/cities";
@@ -30,42 +30,33 @@ import type { CalculatorState } from "@/features/cost-of-living-calculator/core/
 export function CostOfLivingCalculatorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
   const locale = useLocale();
-  const rawSearchParams = searchParams.toString();
 
   // URL is the single source of truth. Derive ALL state from decoded URL params.
-  const currentState = decodeState(new URLSearchParams(rawSearchParams), dataset);
+  const currentState = decodeState(new URLSearchParams(searchParams.toString()), dataset);
 
   // UWT-015 (A-3): capture, at mount, whether the region/country were auto-derived
   // solely from a city deep link (raw URL has `city` but no explicit
   // `region`/`country`). Mount-time capture so the mount canonicalization — which
   // injects region/country into the URL — does not flip this back to false.
   const [regionAutoDerivedFromCity] = useState(() => {
-    const raw = new URLSearchParams(rawSearchParams);
+    const raw = new URLSearchParams(searchParams.toString());
     return raw.has(PARAM_KEYS.city) && !raw.has(PARAM_KEYS.region) && !raw.has(PARAM_KEYS.country);
   });
 
   const { tab: activeTab, region, countryId, cityId, household, schoolType, area } = currentState;
 
-  // Canonicalize the browser URL after hydration. A statically exported route can
-  // ignore its first App Router replace, even when useSearchParams has the browser
-  // query. Production therefore replaces the current browser entry directly;
-  // normal test and development routing continues to use the App Router.
+  // Canonicalize on mount: if decoded state differs from raw URL, replace with canonical form.
   useEffect(() => {
-    const isProduction = process.env.NODE_ENV === "production";
-    const rawParams = new URLSearchParams(isProduction ? window.location.search : rawSearchParams);
-    const canonicalParams = encodeState(decodeState(rawParams, dataset));
+    const rawParams = new URLSearchParams(searchParams.toString());
+    const canonicalParams = encodeState(currentState);
     if (rawParams.toString() !== canonicalParams.toString()) {
       const qs = canonicalParams.toString();
-      if (isProduction) {
-        // Replacing the current entry means Back skips the dirty URL.
-        window.history.replaceState(window.history.state, "", qs ? `${pathname}?${qs}` : pathname);
-      } else {
-        router.replace(qs ? `?${qs}` : "?", { scroll: false });
-      }
+      router.replace(qs ? `?${qs}` : "?", { scroll: false });
     }
-  }, [pathname, rawSearchParams, router]);
+    // Run only on mount — exhaustive deps would cause loops; eslint-disable is intentional.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Helper: encode new state and push to URL history.
   //

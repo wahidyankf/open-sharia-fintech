@@ -137,8 +137,30 @@ fn then_cursor_entry_mirror_source(w: &mut RepoConfigDataWorld) {
     assert_eq!(entry.mirrors.as_deref(), Some(".claude/agents"));
 }
 
+fn gates_section_deserializes_gate_entries() {
+    let repo = TempDir::new().expect("temp repo");
+    write(
+        repo.path(),
+        "repo-config.yml",
+        concat!(
+            "gates:\n",
+            "  - id: repo-config-validate\n",
+            "    type: check\n",
+            "    command: repo-config validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: all-file-type }\n",
+        ),
+    );
+
+    repo_config::load(repo.path()).expect(
+        "a gates section must deserialize as gate entries with id, type, command, kind, and surfaces",
+    );
+}
+
 #[tokio::main]
 async fn main() {
+    gates_section_deserializes_gate_entries();
     RepoConfigDataWorld::cucumber()
         .fail_on_skipped()
         .run_and_exit(feature_dir())

@@ -5,6 +5,7 @@
 //! is byte-identical across all three repos (ose-public, ose-primer, ose-private);
 //! only the per-repo values differ.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 
@@ -111,6 +112,103 @@ pub struct DoctorConfig {
     pub skip_tools: Vec<String>,
 }
 
+/// Whether a gate checks repository state or mutates files into canonical state.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateType {
+    /// A pass/fail quality check.
+    Check,
+    /// A file-rewriting operation.
+    Mutation,
+}
+
+/// How rhino-cli interprets a gate's leaf command.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateKind {
+    /// A rhino-cli subcommand.
+    RhinoCli,
+    /// An executable available on `PATH`.
+    External,
+    /// An Nx target.
+    Nx,
+}
+
+/// One of the four repository quality-gate surfaces.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateSurface {
+    /// Commit-message validation.
+    CommitMsg,
+    /// Checks and mutations run before a commit is created.
+    PreCommit,
+    /// Checks run before commits are pushed.
+    PrePush,
+    /// Checks run in continuous integration.
+    Ci,
+}
+
+/// The controlled scope vocabulary for a gate on one surface.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GateScope {
+    /// Changed files matching the declared file type.
+    AffectedFileType,
+    /// Every tracked file matching the declared file type.
+    AllFileType,
+    /// Nx projects affected by the change.
+    AffectedProjects,
+    /// Every applicable Nx project.
+    AllProjects,
+    /// A gate with command-specific scope semantics.
+    Other,
+    /// A gate enabled only when one of its trigger paths changes.
+    PathGated,
+}
+
+/// Scope and optional dispatch selectors for a gate on one surface.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct SurfaceScope {
+    /// Controlled scope value.
+    pub scope: GateScope,
+    /// One file glob used for per-file dispatch.
+    #[serde(default)]
+    pub glob: Option<String>,
+    /// Several file globs used for ordered per-file dispatch.
+    #[serde(default)]
+    pub globs: Vec<String>,
+    /// Paths that activate a path-gated check.
+    #[serde(default)]
+    pub trigger: Vec<String>,
+}
+
+/// Command-shaped arguments that legitimately differ between repositories.
+#[derive(Debug, Clone, Deserialize, Default, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct GateArgs {
+    /// Paths excluded from the command's input set.
+    #[serde(default)]
+    pub exclude: Vec<String>,
+}
+
+/// One declared quality-gate operation from the `gates:` registry.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct GateEntry {
+    /// Stable kebab-case gate identifier.
+    pub id: String,
+    /// Whether the gate checks state or rewrites files.
+    #[serde(rename = "type")]
+    pub gate_type: GateType,
+    /// Leaf command interpreted according to `kind`.
+    pub command: String,
+    /// Command execution mechanism.
+    pub kind: GateKind,
+    /// Per-surface scope descriptors.
+    pub surfaces: BTreeMap<GateSurface, SurfaceScope>,
+}
+
 /// Parsed `repo-config.yml` — the canonical schema, byte-identical across all
 /// three repos. Every top-level section is modeled here, and both this struct
 /// and its nested structs use `#[serde(deny_unknown_fields)]`: an unknown or
@@ -142,6 +240,9 @@ pub struct RepoConfig {
     /// Tools the `doctor` check should skip as inapplicable to this repo.
     #[serde(default)]
     pub doctor: DoctorConfig,
+    /// Complete declaration of checks and mutations on all gate surfaces.
+    #[serde(default)]
+    pub gates: Vec<GateEntry>,
 }
 
 /// Load and parse `repo-config.yml` at `repo_root`.
