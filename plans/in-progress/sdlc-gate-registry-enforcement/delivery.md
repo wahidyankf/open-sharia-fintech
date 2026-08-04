@@ -1780,7 +1780,9 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/**`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Notes: Committed the registry gate engine and executable Gherkin coverage as `8cd8af7` before the unpushed evidence amend. Fixture Git commands clear hook-provided `GIT_DIR` and `GIT_WORK_TREE`, preventing temporary test commits from targeting the delivery worktree.
-- [ ] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
+- [x] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
+  - Status: complete
+  - Evidence: Full pre-push quality gate exited 0; remote `sdlc-gate-registry-enforcement` and local tracking ref both resolve to `830d1578d0d531cfea627a91ff172057fb110d14`.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
 - [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` on those reports — acceptance: one review of record is posted.
