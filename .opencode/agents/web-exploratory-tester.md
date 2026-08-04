@@ -323,6 +323,14 @@ that workflow also carries a cross-tester completeness critic and a recurrence/d
 
 ## How to Drive the Browser
 
+Before browser-facing verification, discover the real-browser integrations installed on the machine
+and confirm which are healthy and callable in the current harness. Prefer Chrome/Chromium through
+Chrome DevTools MCP or Playwright MCP; if neither is available, use an equivalent installed
+browser-driving tool. Record the selected tool, any fallback, browser/version when available, and
+capability gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl
+inspection are useful baselines, but do not count as live-browser verification when a working browser
+integration exists.
+
 1. **Baseline (always available)** — `WebFetch` the target(s) for rendered HTML, meta, and link
    discovery; `Bash curl -sS -D - -o /dev/null` for headers/redirects/TLS/status; `curl` each
    discovered link for status codes; fetch `robots.txt`/`sitemap.xml`.

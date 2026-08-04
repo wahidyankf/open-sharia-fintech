@@ -305,7 +305,7 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 
 ### Manual Verification & CI Blockers
 
-- **Verify behavior**: Playwright MCP for UI, curl for API.
+- **Verify behavior**: Prefer available Chrome DevTools/Playwright MCP or equivalent for UI; curl for API.
   See [manual-behavioral-verification.md](./repo-governance/development/quality/manual-behavioral-verification.md)
 - **User-facing delivery hardening**: Sixteen rules; near-end EWT/UWT/DWT retest for UI plans, AET
   for API plans. See [user-facing-delivery-hardening.md](./repo-governance/development/quality/user-facing-delivery-hardening.md)

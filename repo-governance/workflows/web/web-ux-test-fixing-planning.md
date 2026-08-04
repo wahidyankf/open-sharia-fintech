@@ -230,6 +230,13 @@ cross-tester completeness critic in Phase 3.5.
 - Confirm the `ose-public` working tree is clean (`git status --porcelain` empty).
 - Verify every URL in `target-urls` returns HTTP 200 (curl). If the server is down, abort and ask
   the user to start it — the testers cannot run against a dead target.
+- **Browser-tool preflight** — before browser-facing verification, discover the real-browser
+  integrations installed on the machine and confirm which are healthy and callable in the current
+  harness. Prefer Chrome/Chromium through Chrome DevTools MCP or Playwright MCP; if neither is
+  available, use an equivalent installed browser-driving tool. Record the selected tool, any fallback,
+  browser/version when available, and capability gaps in the verification evidence. Static source,
+  fetched HTML, WebFetch, and curl inspection are useful baselines, but do not count as live-browser
+  verification when a working browser integration exists.
 - Resolve `plan-mode`. For `new`, resolve `plan-identifier` (input, else derive from the target,
   e.g. `ayokoding-www-calc-test-fixing`). For `merge`, require `target-plan-path` to point at an
   existing folder under `plans/in-progress/`; abort if absent.

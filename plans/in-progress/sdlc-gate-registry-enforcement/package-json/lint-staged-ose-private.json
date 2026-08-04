@@ -27,6 +27,5 @@
   "*.feature": [
     "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
   ],
-  "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"],
-  "apps/*/package.json": ["cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git lockfile sync"]
+  "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"]
 }

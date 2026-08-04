@@ -286,6 +286,14 @@ Industry practice for this is visual-regression baselining (e.g. Chromatic); abs
 
 ## How to Drive the Browser
 
+Before browser-facing verification, discover the real-browser integrations installed on the machine
+and confirm which are healthy and callable in the current harness. Prefer Chrome/Chromium through
+Chrome DevTools MCP or Playwright MCP; if neither is available, use an equivalent installed
+browser-driving tool. Record the selected tool, any fallback, browser/version when available, and
+capability gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl
+inspection are useful baselines, but do not count as live-browser verification when a working browser
+integration exists.
+
 1. **Baseline** — `WebFetch` the target(s) for rendered HTML/CSS and link discovery; identify the routes
    and the locale-prefix structure.
 2. **Render, measure, screenshot (per breakpoint × per locale)** — write a Playwright script to
