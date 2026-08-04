@@ -5,9 +5,12 @@
 #![allow(clippy::panic, clippy::unwrap_used)]
 
 use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
+use std::process::Command;
 
 use cucumber::{World as _, given, then, when};
+use tempfile::Builder;
 
 #[derive(Debug, cucumber::World)]
 #[world(init = Self::new)]
@@ -15,6 +18,7 @@ struct FsharpToolInvocationWorld {
     configured: usize,
     manifest: usize,
     bare_global: usize,
+    malformed_source_rejected: bool,
 }
 
 impl FsharpToolInvocationWorld {
@@ -23,6 +27,7 @@ impl FsharpToolInvocationWorld {
             configured: 0,
             manifest: 0,
             bare_global: 0,
+            malformed_source_rejected: false,
         }
     }
 }
@@ -61,7 +66,32 @@ fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
 }
 
 #[when("the configured F# lint targets are inspected")]
-fn when_fsharp_lint_targets_are_inspected(_: &mut FsharpToolInvocationWorld) {}
+fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
+    let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let mut malformed_source = Builder::new()
+        .prefix("fantomas-regression-")
+        .suffix(".fs")
+        .tempfile()
+        .expect("create malformed F# fixture");
+    writeln!(malformed_source, "module Malformed\nlet value= 1")
+        .expect("write malformed F# fixture");
+
+    let status = Command::new("dotnet")
+        .current_dir(workspace_root)
+        .args([
+            "tool",
+            "run",
+            "fantomas",
+            "--check",
+            malformed_source
+                .path()
+                .to_str()
+                .expect("UTF-8 fixture path"),
+        ])
+        .status()
+        .expect("run manifest Fantomas check");
+    w.malformed_source_rejected = !status.success();
+}
 
 #[then("each target restores the local .NET tool manifest before running Fantomas")]
 fn then_targets_restore_manifest(w: &mut FsharpToolInvocationWorld) {
@@ -75,7 +105,10 @@ fn then_targets_do_not_use_global_fantomas(w: &mut FsharpToolInvocationWorld) {
 
 #[then("an unformatted source file still makes the lint target fail")]
 fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
-    assert_eq!(w.manifest, w.configured);
+    assert!(
+        w.malformed_source_rejected,
+        "the manifest-backed Fantomas check must reject malformed source"
+    );
 }
 
 #[tokio::main]

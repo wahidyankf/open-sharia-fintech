@@ -377,25 +377,41 @@ unchanged; no repository-settings change is expected.
 - [x] [AI] **P0-DOTNET-FANTOMAS-REPAIR** (`blocks: P1`) — diagnose and repair the public worktree's
       Fantomas runtime discovery, then rerun the affected F# lint targets and the all-project quick
       gate — acceptance: `dotnet tool restore && dotnet tool run fantomas --check
-  libs/fsharp-crane-core/src`, `dotnet tool restore && dotnet tool run fantomas --check
-  apps/ose-be/src`, `dotnet tool restore && dotnet tool run fantomas --check
-  apps/organiclever-be/src`, and
+libs/fsharp-crane-core/src`, `dotnet tool restore && dotnet tool run fantomas --check
+apps/ose-be/src`, `dotnet tool restore && dotnet tool run fantomas --check
+apps/organiclever-be/src`, and
       `npx nx run-many --all -t test:quick` each exit 0 without suppressing a linter failure.
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `apps/crane-cli/project.json`, `apps/ose-be/project.json`, `apps/organiclever-be/project.json`, `libs/fsharp-crane-core/project.json`, `delivery.md`
   - Notes: RED: every bare global `fantomas --check` failed because its app host received no runtime root. GREEN: all F# lint targets now restore and invoke the pinned local manifest tool using `dotnet tool restore && dotnet tool run fantomas --check`; `npx nx run-many --all -t test:quick` then exited 0 for all 29 projects and dependencies. The fix retains actual formatting failures as non-zero exits.
 
-- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION** (`blocks: P1`) — add failing-first regression coverage
-      at `apps/rhino-cli/tests/fsharp_tool_invocation.rs` and
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`, then
-      include the test in Rhino's unit target — acceptance: the test rejects every bare
-      `fantomas --check` F# target and requires the exact manifest-restored invocation; it passes
-      with the repair and would fail on the pre-repair `project.json` commands.
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-RED** (`blocks: P0-DOTNET-FANTOMAS-REGRESSION-GREEN`) —
+      reproduce the runtime-discovery failure with the prior bare global Fantomas command and add a
+      check-mode scenario using a deliberately unformatted temporary F# fixture — acceptance: the
+      pre-repair target command exits non-zero and the fixture makes manifest Fantomas exit non-zero.
   - Date: 2026-08-04
   - Status: complete
-  - Files Changed: `apps/rhino-cli/Cargo.toml`, `apps/rhino-cli/project.json`, `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/README.md`, `tech-docs.md`, `delivery.md`
-  - Notes: RED proved every `dc1bf1b08^` pre-repair target lacks the required manifest command. GREEN: the focused Cucumber harness exited 0 (one scenario, five steps) and `npx nx run rhino-cli:specs:behavior:coverage` reports 61 specs, 374 scenarios, and 1,557 covered steps. The target is declared `harness = false`, so the Cucumber executable is actually run by Cargo rather than silently reporting zero tests.
+  - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature`
+  - Notes: The pre-repair global command failed with exit 131 because its app host could not discover .NET. The new scenario creates an unformatted temporary `.fs` fixture; manifest Fantomas reports it needs formatting and exits non-zero.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-GREEN** (`blockedBy: P0-DOTNET-FANTOMAS-REGRESSION-RED`; `blocks: P0-DOTNET-FANTOMAS-REGRESSION-REFACTOR`) —
+      wire the Cucumber harness into Rhino's unit target and assert all four F# lint targets use the
+      restored local manifest tool — acceptance: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation` exits 0 while observing the fixture's expected non-zero check.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/Cargo.toml`, `apps/rhino-cli/project.json`, `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/README.md`
+  - Notes: The `harness = false` target executes one Cucumber scenario and five steps rather than silently reporting zero tests; all passed while emitting the expected `needs formatting` fixture result.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REGRESSION-REFACTOR** (`blockedBy: P0-DOTNET-FANTOMAS-REGRESSION-GREEN`; `blocks: P1`) —
+      keep the fixture temporary, preserve strict formatter exit behavior, and verify formatting,
+      Clippy, and behavior-spec coverage — acceptance: `cargo fmt --check`,
+      `cargo clippy --all-targets -- -D warnings`, and `npx nx run rhino-cli:specs:behavior:coverage`
+      each exit 0.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: All three validation commands passed; behavior coverage reports 61 specs, 374 scenarios, and 1,557 covered steps. The fixture lives in the system temp directory and is automatically removed.
 
 - [x] [AI] Remove only the task-owned `beaver-nest` baseline worktree after all Phase 0 evidence is
       captured — command:
