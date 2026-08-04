@@ -24,7 +24,8 @@ are done; 04 delivered its 21-course retained scope (a documented exception to t
 execution history, not new backlog scoping).
 
 **Course-authoring backlog** (the remaining 55 of `04`'s original Bands 3-9 + course-surgery
-contracts; Plan 04's retained baseline is complete and Plan 05 is active):
+contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
+are complete; Plan 05's terminal delivery is PR #133 and its downstream signals require merge verification):
 
 - [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   — 15 courses (old Band 5 + the three course-surgery scope contracts): software architecture,

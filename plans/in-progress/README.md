@@ -4,9 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
-  — Authors 14 course bodies from the original course-authoring plan's mobile/desktop and concurrency
-  bands.
 - [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md) — Four
   authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
   pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied

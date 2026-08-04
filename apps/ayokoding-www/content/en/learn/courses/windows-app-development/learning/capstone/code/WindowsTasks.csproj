@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+    <Compile Remove="core/**/*.cs" />
+    <Compile Remove="TaskItem.cs" />
+    <Compile Remove="RelayCommand.cs" />
+    <Compile Remove="SettingsStore.cs" />
+    <Compile Remove="TaskRepository.cs" />
+    <Compile Remove="TaskViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="core/WindowsTasks.Core.csproj" />
+  </ItemGroup>
+</Project>

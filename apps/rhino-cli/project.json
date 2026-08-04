@@ -104,7 +104,13 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib --test repo_governance --test env_contract --test repo_config_data_driven"
+        "commands": [
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance",
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env_contract",
+          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven"
+        ],
+        "parallel": false
       },
       "cache": true,
       "inputs": [
