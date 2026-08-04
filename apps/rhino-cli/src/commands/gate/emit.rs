@@ -7,7 +7,7 @@ use std::path::Path;
 use anyhow::{Context, Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, GateSurface, ScopeKind};
+use crate::application::repo_config::{self, GateSurface, RepoConfig, ScopeKind};
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -45,6 +45,27 @@ pub fn emit_at_root(repo_root: &Path, surface: &str, writer: &mut dyn Write) -> 
     }
 
     let config = repo_config::load(repo_root)?;
+    let lint_staged = lint_staged_from_config(&config);
+    let package_path = repo_root.join("package.json");
+    let mut package: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(&package_path)
+            .with_context(|| format!("cannot read {}", package_path.display()))?,
+    )?;
+    replace_lint_staged_marker_first(&mut package, lint_staged)?;
+    std::fs::write(
+        &package_path,
+        format!("{}\n", serde_json::to_string_pretty(&package)?),
+    )
+    .with_context(|| format!("cannot write {}", package_path.display()))?;
+    writeln!(writer, "Emitted lint-staged from gate surface pre-commit")?;
+    Ok(())
+}
+
+/// Derive the `lint-staged` JSON block from pre-commit affected-file gates.
+#[must_use]
+pub(crate) fn lint_staged_from_config(
+    config: &RepoConfig,
+) -> serde_json::Map<String, serde_json::Value> {
     let mut commands_by_glob: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for gate in &config.gates {
         let Some(scope) = gate.surfaces.get(&GateSurface::PreCommit) else {
@@ -61,25 +82,17 @@ pub fn emit_at_root(repo_root: &Path, surface: &str, writer: &mut dyn Write) -> 
         }
     }
 
-    let lint_staged = commands_by_glob
+    commands_by_glob
         .into_iter()
         .map(|(glob, commands)| (glob, serde_json::json!(commands)))
-        .collect();
-    let package_path = repo_root.join("package.json");
-    let mut package: serde_json::Value = serde_json::from_slice(
-        &std::fs::read(&package_path)
-            .with_context(|| format!("cannot read {}", package_path.display()))?,
-    )?;
-    replace_lint_staged_marker_first(&mut package, lint_staged)?;
-    std::fs::write(
-        &package_path,
-        format!("{}\n", serde_json::to_string_pretty(&package)?),
-    )
-    .with_context(|| format!("cannot write {}", package_path.display()))?;
-    writeln!(writer, "Emitted lint-staged from gate surface pre-commit")?;
-    Ok(())
+        .collect()
 }
 
+/// Replaces or inserts the generated `lint-staged` entry in a package object.
+///
+/// # Errors
+///
+/// Returns an error when the provided package value is not a JSON object.
 fn replace_lint_staged_marker_first(
     package: &mut serde_json::Value,
     lint_staged: serde_json::Map<String, serde_json::Value>,

@@ -10,6 +10,23 @@ use clap::Args;
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::git::root::find_root;
 
+/// Root package fields that must agree with the lockfile's root package entry.
+const LOCKFILE_ROOT_FIELDS: &[&str] = &[
+    "name",
+    "version",
+    "license",
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+    "peerDependenciesMeta",
+    "engines",
+    "bin",
+    "workspaces",
+    "os",
+    "cpu",
+];
+
 /// Arguments for `git lockfile sync`.
 #[derive(Args, Debug)]
 pub struct SyncArgs {}
@@ -32,10 +49,14 @@ pub fn run(_args: &SyncArgs, _output_format: OutputFormat) -> Result<(), Error> 
 ///
 /// Returns an error when Git cannot list staged paths, npm cannot regenerate a
 /// lockfile, or Git cannot stage the regenerated lockfile.
+///
+/// # Panics
+///
+/// Panics if a staged path accepted as an app `package.json` has no parent
+/// directory or that directory cannot be represented as UTF-8.
 pub fn sync_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
-    let staged = Command::new("git")
+    let staged = git_command(repo_root)
         .args(["diff", "--cached", "--name-only", "--diff-filter=ACM"])
-        .current_dir(repo_root)
         .output()?;
     if !staged.status.success() {
         return Err(anyhow!("git diff --cached failed"));
@@ -77,11 +98,7 @@ pub fn sync_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Erro
             return Err(anyhow!("failed to regenerate {}", lockfile.display()));
         }
 
-        let add = Command::new("git")
-            .arg("add")
-            .arg(&lockfile)
-            .current_dir(repo_root)
-            .status()?;
+        let add = git_command(repo_root).arg("add").arg(&lockfile).status()?;
         if !add.success() {
             return Err(anyhow!("failed to stage {}", lockfile.display()));
         }
@@ -90,6 +107,11 @@ pub fn sync_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Erro
     Ok(())
 }
 
+/// Determines whether a package lockfile reflects its package manifest fields.
+///
+/// # Errors
+///
+/// Returns an error when either JSON file cannot be read or parsed.
 fn lockfile_is_current(package_json: &Path, package_lock: &Path) -> Result<bool, Error> {
     let package: serde_json::Value = serde_json::from_slice(&std::fs::read(package_json)?)?;
     let lockfile: serde_json::Value = serde_json::from_slice(&std::fs::read(package_lock)?)?;
@@ -99,36 +121,42 @@ fn lockfile_is_current(package_json: &Path, package_lock: &Path) -> Result<bool,
         .and_then(|packages| packages.get(""))
         .unwrap_or(&lockfile);
 
-    const LOCKFILE_ROOT_FIELDS: &[&str] = &[
-        "name",
-        "version",
-        "license",
-        "dependencies",
-        "devDependencies",
-        "optionalDependencies",
-        "peerDependencies",
-        "peerDependenciesMeta",
-        "engines",
-        "bin",
-        "workspaces",
-        "os",
-        "cpu",
-    ];
-
     Ok(LOCKFILE_ROOT_FIELDS
         .iter()
         .all(|field| package.get(*field) == lock_root.get(*field)))
+}
+
+/// Creates a Git command rooted at the target repository without hook routing.
+fn git_command(repo_root: &Path) -> Command {
+    let mut command = Command::new("git");
+    command
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE");
+    command
+}
+
+#[cfg(test)]
+#[test]
+fn git_command_clears_git_routing_variables() {
+    let command = git_command(Path::new("fixture"));
+    for variable in ["GIT_DIR", "GIT_WORK_TREE"] {
+        assert!(
+            command
+                .get_envs()
+                .any(|(name, value)| name == std::ffi::OsStr::new(variable) && value.is_none()),
+            "fixture Git command must remove inherited {variable}"
+        );
+    }
 }
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn regenerates_when_stale() {
-    use std::process::Command;
-
     let repo = tempfile::TempDir::new().unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["init", "--quiet"])
             .current_dir(repo.path())
             .status()
@@ -158,7 +186,7 @@ fn regenerates_when_stale() {
     )
     .unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["add", "apps/sample-app/package.json"])
             .current_dir(repo.path())
             .status()
@@ -172,7 +200,7 @@ fn regenerates_when_stale() {
 
     let lockfile = std::fs::read_to_string(app_dir.join("package-lock.json")).unwrap();
     assert!(lockfile.contains("\"version\": \"1.1.0\""));
-    let staged = Command::new("git")
+    let staged = git_command(repo.path())
         .args(["diff", "--cached", "--name-only"])
         .current_dir(repo.path())
         .output()
@@ -188,11 +216,9 @@ fn regenerates_when_stale() {
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn noop_when_current() {
-    use std::process::Command;
-
     let repo = tempfile::TempDir::new().unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["init", "--quiet"])
             .current_dir(repo.path())
             .status()
@@ -222,7 +248,7 @@ fn noop_when_current() {
     )
     .unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["add", "apps/current-app/package.json"])
             .current_dir(repo.path())
             .status()
@@ -241,7 +267,7 @@ fn noop_when_current() {
         std::fs::read_to_string(app_dir.join("package-lock.json")).unwrap(),
         before
     );
-    let staged = Command::new("git")
+    let staged = git_command(repo.path())
         .args(["diff", "--cached", "--name-only"])
         .current_dir(repo.path())
         .output()
@@ -256,11 +282,9 @@ fn noop_when_current() {
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn noop_when_no_package_json_is_staged() {
-    use std::process::Command;
-
     let repo = tempfile::TempDir::new().unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["init", "--quiet"])
             .current_dir(repo.path())
             .status()
@@ -269,7 +293,7 @@ fn noop_when_no_package_json_is_staged() {
     );
     std::fs::write(repo.path().join("README.md"), "staged non-package file\n").unwrap();
     assert!(
-        Command::new("git")
+        git_command(repo.path())
             .args(["add", "README.md"])
             .current_dir(repo.path())
             .status()
@@ -277,7 +301,7 @@ fn noop_when_no_package_json_is_staged() {
             .success()
     );
 
-    let staged_before = Command::new("git")
+    let staged_before = git_command(repo.path())
         .args(["diff", "--cached", "--name-only"])
         .current_dir(repo.path())
         .output()
@@ -285,7 +309,7 @@ fn noop_when_no_package_json_is_staged() {
         .stdout;
     let mut output = Vec::new();
     sync_at_root(repo.path(), &mut output).unwrap();
-    let staged_after = Command::new("git")
+    let staged_after = git_command(repo.path())
         .args(["diff", "--cached", "--name-only"])
         .current_dir(repo.path())
         .output()

@@ -1,5 +1,6 @@
 //! `gate list` command adapter.
 
+use std::collections::HashSet;
 use std::io::Write;
 use std::path::Path;
 
@@ -7,7 +8,9 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 use serde::Serialize;
 
-use crate::application::repo_config::{self, GateSurface, GateType, GateWiring, ScopeKind};
+use crate::application::repo_config::{
+    self, GateCarveOut, GateEntry, GateSurface, GateType, GateWiring, ScopeKind,
+};
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -25,11 +28,19 @@ pub struct ListArgs {
 /// JSON-friendly projection of one gate on one surface.
 #[derive(Serialize)]
 struct GateListEntry {
+    /// Stable identifier of the declared gate.
     id: String,
+    /// Declared gate type, serialized as the `type` field.
     #[serde(rename = "type")]
     gate_type: String,
+    /// Command declared for the gate.
     command: String,
+    /// Scope declared for this surface.
     scope: String,
+    /// Optional composition carve-out declared for the gate.
+    #[serde(rename = "carve-out", skip_serializing_if = "Option::is_none")]
+    carve_out: Option<String>,
+    /// Whether the gate is implemented directly by its workflow job.
     #[serde(skip_serializing)]
     hand_wired: bool,
 }
@@ -64,24 +75,28 @@ pub fn run_at_root(
 ) -> Result<(), Error> {
     let surface = parse_surface(surface)?;
     let config = repo_config::load(repo_root)?;
-    let entries: Vec<GateListEntry> = config
+    let surface_gates = config
         .gates
+        .iter()
+        .filter(|gate| gate.surfaces.contains_key(&surface))
+        .collect::<Vec<_>>();
+    validate_gate_ids(&surface_gates, None)?;
+    let entries: Vec<GateListEntry> = surface_gates
         .iter()
         .filter(|gate| {
             output_format != OutputFormat::Json
                 || gate.wiring.as_ref() != Some(&GateWiring::HandWired)
         })
-        .filter_map(|gate| {
-            gate.surfaces
-                .iter()
-                .find(|(declared_surface, _)| declared_surface == &&surface)
-                .map(|(_, scope)| GateListEntry {
-                    id: gate.id.clone(),
-                    gate_type: gate_type_name(&gate.gate_type).to_string(),
-                    command: gate.command.clone(),
-                    scope: scope_name(&scope.scope).to_string(),
-                    hand_wired: gate.wiring.as_ref() == Some(&GateWiring::HandWired),
-                })
+        .map(|gate| {
+            let scope = &gate.surfaces[&surface];
+            GateListEntry {
+                id: gate.id.clone(),
+                gate_type: gate_type_name(&gate.gate_type).to_string(),
+                command: gate.command.clone(),
+                scope: scope_name(&scope.scope).to_string(),
+                carve_out: carve_out_name(gate.carve_out.as_ref()).map(str::to_owned),
+                hand_wired: gate.wiring.as_ref() == Some(&GateWiring::HandWired),
+            }
         })
         .collect();
 
@@ -93,10 +108,14 @@ pub fn run_at_root(
         OutputFormat::Text | OutputFormat::Markdown => {
             for entry in entries {
                 let marker = if entry.hand_wired { "\thand-wired" } else { "" };
+                let carve_out = entry
+                    .carve_out
+                    .as_deref()
+                    .map_or(String::new(), |value| format!("\tcarve-out={value}"));
                 writeln!(
                     writer,
-                    "{}\t{}\t{}\t{}{marker}",
-                    entry.id, entry.gate_type, entry.command, entry.scope
+                    "{}\t{}\t{}\t{}{marker}{carve_out}",
+                    entry.id, entry.gate_type, entry.command, entry.scope,
                 )?;
             }
         }
@@ -104,6 +123,32 @@ pub fn run_at_root(
     Ok(())
 }
 
+/// Validates duplicate gate ids or an exact `--only` selector against one surface.
+pub(crate) fn validate_gate_ids(gates: &[&GateEntry], only: Option<&str>) -> Result<(), Error> {
+    if let Some(id) = only {
+        let count = gates.iter().filter(|gate| gate.id == id).count();
+        if count != 1 {
+            return Err(anyhow!(
+                "--only gate id {id:?} must select exactly one gate, found {count}"
+            ));
+        }
+        return Ok(());
+    }
+
+    let mut ids = HashSet::new();
+    for gate in gates {
+        if !ids.insert(&gate.id) {
+            return Err(anyhow!("duplicate gate id {:?}", gate.id));
+        }
+    }
+    Ok(())
+}
+
+/// Parses a command-line surface name into its registry variant.
+///
+/// # Errors
+///
+/// Returns an error when the surface name is not supported by the registry.
 fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
     match surface {
         "commit-msg" => Ok(GateSurface::CommitMsg),
@@ -116,6 +161,7 @@ fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
     }
 }
 
+/// Returns the registry spelling for a gate type.
 fn gate_type_name(gate_type: &GateType) -> &'static str {
     match gate_type {
         GateType::Check => "check",
@@ -123,6 +169,15 @@ fn gate_type_name(gate_type: &GateType) -> &'static str {
     }
 }
 
+/// Returns the registry spelling for an optional composition carve-out.
+fn carve_out_name(carve_out: Option<&GateCarveOut>) -> Option<&'static str> {
+    match carve_out {
+        Some(GateCarveOut::StagedOnly) => Some("staged-only"),
+        None => None,
+    }
+}
+
+/// Returns the registry spelling for a surface scope.
 fn scope_name(scope: &ScopeKind) -> &'static str {
     match scope {
         ScopeKind::AffectedFileType => "affected-file-type",
@@ -136,7 +191,7 @@ fn scope_name(scope: &ScopeKind) -> &'static str {
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
-mod list {
+mod tests {
     use super::*;
     use tempfile::TempDir;
 
@@ -270,4 +325,31 @@ fn format_text_includes_hand_wired() {
     let output = String::from_utf8(output).unwrap();
     assert!(output.contains("test-quick"));
     assert!(output.contains("hand-wired"));
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_text_reports_staged_only_carve_out() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: index-guard\n",
+            "    type: check\n",
+            "    command: index validate\n",
+            "    kind: rhino-cli\n",
+            "    carve-out: staged-only\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    run_at_root(repo.path(), "pre-commit", OutputFormat::Text, &mut output).unwrap();
+    let output = String::from_utf8(output).unwrap();
+    assert!(output.contains("index-guard"));
+    assert!(output.contains("carve-out=staged-only"));
 }

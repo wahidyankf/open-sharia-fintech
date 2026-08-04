@@ -175,6 +175,10 @@ fn invalid_gate_enum_values_are_rejected() {
         "    surfaces:\n",
         "      pre-push: { scope: sometimes }\n",
     ));
+    assert!(
+        scope_error.contains("invalid-scope"),
+        "an invalid gate scope must name the nearest gate id; got: {scope_error}"
+    );
     assert!(scope_error.contains("unknown variant `sometimes`"));
     assert!(scope_error.contains("affected-file-type"));
     assert!(scope_error.contains("all-file-type"));
@@ -226,10 +230,12 @@ fn mutation_gate_wiring_is_rejected() {
     let output = String::from_utf8_lossy(&output);
     assert!(
         result.is_err(),
-        "a type: mutation gate declaring wiring: matrix must be rejected by repo-config validate; output: {}",
-        output
+        "a type: mutation gate declaring wiring: matrix must be rejected by repo-config validate; output: {output}"
     );
-    assert!(output.contains("gates[0].wiring"));
+    assert!(
+        output.contains("gates[0] (gate id \"invalid-mutation-wiring\").wiring"),
+        "the wiring finding must identify its gate; output: {output}"
+    );
     assert!(output.contains("type \"check\""));
     assert!(output.contains("type \"mutation\""));
 }
@@ -329,10 +335,16 @@ fn restages_and_carve_out_require_their_applicable_gate_types() {
         String::from_utf8_lossy(&restages_output),
         String::from_utf8_lossy(&carve_out_output)
     );
-    assert!(String::from_utf8_lossy(&restages_output).contains("gates[0].restages"));
+    assert!(
+        String::from_utf8_lossy(&restages_output)
+            .contains("gates[0] (gate id \"invalid-check-restages\").restages")
+    );
     assert!(String::from_utf8_lossy(&restages_output).contains("type \"mutation\""));
     assert!(String::from_utf8_lossy(&restages_output).contains("type \"check\""));
-    assert!(String::from_utf8_lossy(&carve_out_output).contains("gates[0].carve-out"));
+    assert!(
+        String::from_utf8_lossy(&carve_out_output)
+            .contains("gates[0] (gate id \"invalid-mutation-carve-out\").carve-out")
+    );
     assert!(String::from_utf8_lossy(&carve_out_output).contains("type \"check\""));
     assert!(String::from_utf8_lossy(&carve_out_output).contains("type \"mutation\""));
 }

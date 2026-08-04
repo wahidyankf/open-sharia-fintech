@@ -147,6 +147,8 @@ pub enum GateCommands {
     Emit(gate::emit::EmitArgs),
     /// Run declared gates for an execution surface.
     Run(gate::run::RunArgs),
+    /// Validate gate-registry composition rules.
+    Validate(gate::validate::ValidateArgs),
 }
 
 /// Git workflow helper subcommands.
@@ -670,6 +672,7 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
             GateCommands::List(args) => gate::list::run(args, output_format),
             GateCommands::Emit(args) => gate::emit::run(args, output_format),
             GateCommands::Run(args) => gate::run::run(args, output_format),
+            GateCommands::Validate(args) => gate::validate::run(args, output_format),
         },
         Commands::Git(gc) => match gc {
             GitCommands::Lockfile(lc) => match lc {

@@ -1,5 +1,6 @@
 //! `gate run` command adapter.
 
+use std::collections::BTreeSet;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
@@ -8,10 +9,25 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::git::port::StagedFileProvider;
-use crate::application::repo_config::{self, GateKind, GateSurface, ScopeKind};
+use crate::application::repo_config::{self, GateKind, GateSurface, GateType, ScopeKind};
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::git::staged_files::GitStagedFileProvider;
 use crate::internal::git;
+
+use super::list;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Source of candidate paths used by a gate scope.
+enum CandidateScope {
+    /// Files staged for the current Git operation.
+    StagedFiles,
+    /// Files tracked by Git in the repository.
+    TrackedFiles,
+    /// Paths whose changes are tested against configured triggers.
+    PathTriggers,
+    /// A scope that does not require candidate paths.
+    None,
+}
 
 /// Arguments for `gate run`.
 #[derive(Args, Debug)]
@@ -65,22 +81,37 @@ pub fn run_at_root_with_only(
 ) -> Result<(), Error> {
     let surface = parse_surface(surface)?;
     let config = repo_config::load(repo_root)?;
-    let changed_paths = config
-        .gates
-        .iter()
-        .filter(|gate| only.is_none_or(|id| gate.id == id))
-        .filter_map(|gate| gate.surfaces.get(&surface))
-        .any(|scope| {
-            scope.scope == ScopeKind::PathGated || scope.scope == ScopeKind::AffectedFileType
-        })
-        .then(|| changed_paths(repo_root, &surface))
-        .transpose()?;
-    for gate in config
+    let surface_gates = config
         .gates
         .iter()
         .filter(|gate| gate.surfaces.contains_key(&surface))
+        .collect::<Vec<_>>();
+    if only.is_some() {
+        list::validate_gate_ids(&surface_gates, only)?;
+    }
+    let selected_gates = surface_gates
+        .into_iter()
         .filter(|gate| only.is_none_or(|id| gate.id == id))
-    {
+        .collect::<Vec<_>>();
+    let changed_paths = selected_gates
+        .iter()
+        .map(|gate| &gate.surfaces[&surface])
+        .any(|scope| {
+            matches!(
+                candidate_scope(&scope.scope),
+                CandidateScope::StagedFiles | CandidateScope::PathTriggers
+            )
+        })
+        .then(|| changed_paths(repo_root, &surface))
+        .transpose()?;
+    let tracked_paths = selected_gates
+        .iter()
+        .map(|gate| &gate.surfaces[&surface])
+        .any(|scope| candidate_scope(&scope.scope) == CandidateScope::TrackedFiles)
+        .then(|| tracked_paths(repo_root))
+        .transpose()?;
+    let mut batch_ran = false;
+    for gate in selected_gates {
         let scope = &gate.surfaces[&surface];
         if scope.scope == ScopeKind::PathGated
             && !changed_paths
@@ -89,58 +120,170 @@ pub fn run_at_root_with_only(
         {
             continue;
         }
-        let files = if scope.scope == ScopeKind::AffectedFileType {
-            matching_files(changed_paths.as_deref().unwrap_or_default(), scope)?
-        } else {
-            Vec::new()
+        let candidate_scope = candidate_scope(&scope.scope);
+        let excludes = gate.args.get("exclude").map_or(&[][..], Vec::as_slice);
+        let files = match candidate_scope {
+            CandidateScope::StagedFiles => matching_files(
+                changed_paths.as_deref().unwrap_or_default(),
+                scope,
+                excludes,
+            ),
+            CandidateScope::TrackedFiles => matching_files(
+                tracked_paths.as_deref().unwrap_or_default(),
+                scope,
+                excludes,
+            ),
+            _ => Vec::new(),
         };
-        if scope.scope == ScopeKind::AffectedFileType && files.is_empty() {
+        if report_empty_scope_skip(writer, &gate.id, candidate_scope, &files)? {
+            continue;
+        }
+        if is_pre_commit_batch_eligible(gate, scope, &surface, only) {
+            if batch_ran {
+                continue;
+            }
+            writeln!(writer, "Running lint-staged batch")?;
+            let status = Command::new("npx")
+                .args(["--no", "--", "lint-staged"])
+                .current_dir(repo_root)
+                .status()?;
+            if !status.success() {
+                return Err(anyhow!("lint-staged batch failed"));
+            }
+            batch_ran = true;
             continue;
         }
         writeln!(writer, "Running gate {}", gate.id)?;
-        let status = run_leaf(&gate.kind, &gate.command, &files, repo_root)?;
+        let changed_before = gate
+            .restages
+            .then(|| worktree_changed_paths(repo_root))
+            .transpose()?;
+        let status = run_leaf(&gate.kind, &gate.command, &files, &scope.scope, repo_root)?;
         if !status.success() {
             return Err(anyhow!("gate {} failed", gate.id));
+        }
+        if let Some(changed_before) = changed_before {
+            restage_mutation_outputs(repo_root, &changed_before)?;
         }
     }
     Ok(())
 }
 
+/// Returns whether this entry belongs to the single aggregate pre-commit batch.
+fn is_pre_commit_batch_eligible(
+    gate: &repo_config::GateEntry,
+    scope: &repo_config::SurfaceScope,
+    surface: &GateSurface,
+    only: Option<&str>,
+) -> bool {
+    *surface == GateSurface::PreCommit
+        && only.is_none()
+        && scope.scope == ScopeKind::AffectedFileType
+        && (gate.gate_type == GateType::Check
+            || (gate.gate_type == GateType::Mutation
+                && gate.category.as_deref() == Some("formatter")))
+}
+
+/// Reports and signals when a file-scoped gate has no matching candidates.
+///
+/// # Errors
+///
+/// Returns an error when the skip message cannot be written.
+fn report_empty_scope_skip(
+    writer: &mut dyn Write,
+    gate_id: &str,
+    candidate_scope: CandidateScope,
+    files: &[String],
+) -> Result<bool, Error> {
+    if matches!(
+        candidate_scope,
+        CandidateScope::StagedFiles | CandidateScope::TrackedFiles
+    ) && files.is_empty()
+    {
+        writeln!(writer, "Skipping gate {gate_id}")?;
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// Maps a registry scope to its candidate-path source.
+fn candidate_scope(scope: &ScopeKind) -> CandidateScope {
+    match scope {
+        ScopeKind::AffectedFileType => CandidateScope::StagedFiles,
+        ScopeKind::AllFileType => CandidateScope::TrackedFiles,
+        ScopeKind::PathGated => CandidateScope::PathTriggers,
+        ScopeKind::AffectedProjects | ScopeKind::AllProjects | ScopeKind::Other => {
+            CandidateScope::None
+        }
+    }
+}
+
+/// Runs one declared gate through the executor for its declared kind.
+///
+/// # Errors
+///
+/// Returns an error when the selected executor cannot prepare or start its command.
 fn run_leaf(
     kind: &GateKind,
     command: &str,
     files: &[String],
+    scope: &ScopeKind,
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
     match kind {
         GateKind::RhinoCli => run_rhino_cli_leaf(command, files, repo_root),
         GateKind::External => run_external_leaf(command, files, repo_root),
-        GateKind::Nx => run_nx_affected_leaf(command, repo_root),
+        GateKind::Nx => run_nx_leaf(command, scope, repo_root),
     }
 }
 
+/// Selects candidate paths matching a surface scope and gate exclusions.
 fn matching_files(
     changed_paths: &[String],
     scope: &repo_config::SurfaceScope,
-) -> Result<Vec<String>, Error> {
+    excludes: &[String],
+) -> Vec<String> {
     let patterns = scope.glob.iter().chain(&scope.globs).collect::<Vec<_>>();
-    if patterns.is_empty() {
-        return Ok(changed_paths.to_vec());
-    }
-    let matches = changed_paths
-        .iter()
-        .filter(|path| {
-            patterns.iter().any(|pattern| {
-                glob::Pattern::new(pattern)
-                    .map(|pattern| pattern.matches(path))
-                    .unwrap_or(false)
-            })
-        })
-        .cloned()
-        .collect();
-    Ok(matches)
+    filter_candidates(changed_paths, &patterns, excludes)
 }
 
+/// Filters candidate paths by configured glob patterns and exclusions.
+fn filter_candidates(
+    candidates: &[String],
+    patterns: &[&String],
+    excludes: &[String],
+) -> Vec<String> {
+    candidates
+        .iter()
+        .filter(|path| {
+            !is_excluded(path, excludes)
+                && (patterns.is_empty()
+                    || patterns.iter().any(|pattern| {
+                        glob::Pattern::new(pattern)
+                            .map(|pattern| pattern.matches(path))
+                            .unwrap_or(false)
+                    }))
+        })
+        .cloned()
+        .collect()
+}
+
+/// Returns whether a path is equal to or below a configured exclusion.
+fn is_excluded(path: &str, excludes: &[String]) -> bool {
+    excludes.iter().any(|exclude| {
+        let prefix = exclude.trim_end_matches('/');
+        path == prefix
+            || path
+                .strip_prefix(prefix)
+                .is_some_and(|suffix| suffix.starts_with('/'))
+    })
+}
+
+/// Runs a Rhino CLI gate with any matching files appended as arguments.
+///
+/// # Errors
+///
+/// Returns an error when its argument list is empty or the current executable cannot run.
 fn run_rhino_cli_leaf(
     command: &str,
     files: &[String],
@@ -154,30 +297,54 @@ fn run_rhino_cli_leaf(
         .map_err(Error::from)
 }
 
+/// Runs an external shell command with matching files appended as arguments.
+///
+/// # Errors
+///
+/// Returns an error when its command is empty or the shell cannot run.
 fn run_external_leaf(
     command: &str,
     files: &[String],
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
-    let arguments = arguments_with_derived_files(command, files)?;
-    let (program, arguments) = arguments
-        .split_first()
-        .ok_or_else(|| anyhow!("external gate command cannot be empty"))?;
-    Command::new(program)
+    if command.trim().is_empty() {
+        return Err(anyhow!("external gate command cannot be empty"));
+    }
+    let command_with_files = format!("{command} \"$@\"");
+    Command::new("sh")
+        .args(["-c", &command_with_files, "gate-external"])
+        .args(files)
+        .current_dir(repo_root)
+        .status()
+        .map_err(Error::from)
+}
+
+/// Runs an Nx target over all or affected projects for the declared scope.
+///
+/// # Errors
+///
+/// Returns an error when npm cannot start the selected Nx command.
+fn run_nx_leaf(
+    target: &str,
+    scope: &ScopeKind,
+    repo_root: &Path,
+) -> Result<std::process::ExitStatus, Error> {
+    let arguments = match scope {
+        ScopeKind::AllProjects => vec!["exec", "nx", "--", "run-many", "--all", "-t", target],
+        _ => vec!["exec", "nx", "--", "affected", "-t", target],
+    };
+    Command::new("npm")
         .args(arguments)
         .current_dir(repo_root)
         .status()
         .map_err(Error::from)
 }
 
-fn run_nx_affected_leaf(target: &str, repo_root: &Path) -> Result<std::process::ExitStatus, Error> {
-    Command::new("npm")
-        .args(["exec", "nx", "--", "affected", "-t", target])
-        .current_dir(repo_root)
-        .status()
-        .map_err(Error::from)
-}
-
+/// Splits a declared command and appends files derived from its scope.
+///
+/// # Errors
+///
+/// Returns an error when the declared command is empty.
 fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<String>, Error> {
     let mut arguments = command
         .split_whitespace()
@@ -190,10 +357,105 @@ fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<S
     Ok(arguments)
 }
 
+/// Returns files staged in the Git index for a file-scoped surface.
+///
+/// # Errors
+///
+/// Returns an error when Git cannot provide the staged files.
 fn changed_paths(repo_root: &Path, _surface: &GateSurface) -> Result<Vec<String>, Error> {
     GitStagedFileProvider.get_staged(repo_root)
 }
 
+/// Returns paths tracked by Git at the repository root.
+///
+/// # Errors
+///
+/// Returns an error when Git cannot list tracked paths or its output is not UTF-8.
+fn tracked_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
+    let output = Command::new("git")
+        .args(["ls-files"])
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .output()?;
+    if !output.status.success() {
+        return Err(anyhow!("git ls-files failed"));
+    }
+    Ok(String::from_utf8(output.stdout)?
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect())
+}
+
+/// Returns modified and untracked worktree paths for mutation output detection.
+///
+/// # Errors
+///
+/// Returns an error when Git cannot list either path set.
+fn worktree_changed_paths(repo_root: &Path) -> Result<BTreeSet<String>, Error> {
+    let modified = git_path_set(repo_root, &["diff", "--name-only"])?;
+    let untracked = git_path_set(repo_root, &["ls-files", "--others", "--exclude-standard"])?;
+    Ok(modified.union(&untracked).cloned().collect())
+}
+
+/// Stages files newly changed by a successful mutation gate.
+///
+/// # Errors
+///
+/// Returns an error when Git cannot inspect or stage mutation outputs.
+fn restage_mutation_outputs(
+    repo_root: &Path,
+    changed_before: &BTreeSet<String>,
+) -> Result<(), Error> {
+    let changed_after = worktree_changed_paths(repo_root)?;
+    let outputs = mutation_output_delta(changed_before, &changed_after);
+    if outputs.is_empty() {
+        return Ok(());
+    }
+    let status = Command::new("git")
+        .arg("add")
+        .arg("--")
+        .args(outputs)
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .status()?;
+    if !status.success() {
+        return Err(anyhow!("git add mutation outputs failed"));
+    }
+    Ok(())
+}
+
+/// Returns paths introduced into the worktree after a mutation gate runs.
+fn mutation_output_delta(
+    changed_before: &BTreeSet<String>,
+    changed_after: &BTreeSet<String>,
+) -> Vec<String> {
+    changed_after.difference(changed_before).cloned().collect()
+}
+
+/// Runs Git and parses its line-oriented path output into a set.
+///
+/// # Errors
+///
+/// Returns an error when Git fails or writes non-UTF-8 output.
+fn git_path_set(repo_root: &Path, args: &[&str]) -> Result<BTreeSet<String>, Error> {
+    let output = Command::new("git")
+        .args(args)
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .output()?;
+    if !output.status.success() {
+        return Err(anyhow!("git {args:?} failed"));
+    }
+    Ok(String::from_utf8(output.stdout)?
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect())
+}
+
+/// Returns whether any changed path is equal to or under a configured trigger.
 fn trigger_matches(paths: &[String], triggers: &[String]) -> bool {
     paths.iter().any(|path| {
         triggers.iter().any(|trigger| {
@@ -203,6 +465,11 @@ fn trigger_matches(paths: &[String], triggers: &[String]) -> bool {
     })
 }
 
+/// Parses a command-line surface name into its registry variant.
+///
+/// # Errors
+///
+/// Returns an error when the surface name is not supported by the registry.
 fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
     match surface {
         "commit-msg" => Ok(GateSurface::CommitMsg),
@@ -211,6 +478,16 @@ fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
         "ci" => Ok(GateSurface::Ci),
         _ => Err(anyhow!("unknown gate surface {surface:?}")),
     }
+}
+
+#[cfg(test)]
+fn fixture_git_command(repo_root: &Path) -> Command {
+    let mut command = Command::new("git");
+    command
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE");
+    command
 }
 
 #[cfg(test)]
@@ -244,6 +521,28 @@ fn declaration_order() {
         std::fs::read_to_string(repo.path().join("execution-order.txt")).unwrap(),
         "first\nsecond\n"
     );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let path = "derived path; touch must-not-run.txt".to_string();
+
+    let status = run_external_leaf(
+        "printf '%s\\n' > received-files.txt",
+        std::slice::from_ref(&path),
+        repo.path(),
+    )
+    .expect("external shell command must start");
+
+    assert!(status.success());
+    assert_eq!(
+        std::fs::read_to_string(repo.path().join("received-files.txt")).unwrap(),
+        format!("{path}\n")
+    );
+    assert!(!repo.path().join("must-not-run.txt").exists());
 }
 
 #[cfg(test)]
@@ -288,17 +587,15 @@ fn path_gated_skip() {
     std::fs::create_dir_all(repo.path().join("docs")).unwrap();
     std::fs::write(repo.path().join("docs/untouched.md"), "unrelated change\n").unwrap();
     assert!(
-        Command::new("git")
+        fixture_git_command(repo.path())
             .args(["init", "--quiet"])
-            .current_dir(repo.path())
             .status()
             .unwrap()
             .success()
     );
     assert!(
-        Command::new("git")
+        fixture_git_command(repo.path())
             .args(["add", "docs/untouched.md"])
-            .current_dir(repo.path())
             .status()
             .unwrap()
             .success()
@@ -341,17 +638,15 @@ fn path_gated_run() {
     )
     .unwrap();
     assert!(
-        Command::new("git")
+        fixture_git_command(repo.path())
             .args(["init", "--quiet"])
-            .current_dir(repo.path())
             .status()
             .unwrap()
             .success()
     );
     assert!(
-        Command::new("git")
+        fixture_git_command(repo.path())
             .args(["add", ".claude/agents/example.md"])
-            .current_dir(repo.path())
             .status()
             .unwrap()
             .success()
@@ -393,9 +688,8 @@ fn linked_worktree_uses_its_own_repo_config() {
     std::fs::create_dir(&main).unwrap();
 
     let git = |args: &[&str]| {
-        let status = Command::new("git")
+        let status = fixture_git_command(&main)
             .args(args)
-            .current_dir(&main)
             .env("GIT_CEILING_DIRECTORIES", &main)
             .env("GIT_CONFIG_GLOBAL", "/dev/null")
             .env("GIT_CONFIG_SYSTEM", "/dev/null")

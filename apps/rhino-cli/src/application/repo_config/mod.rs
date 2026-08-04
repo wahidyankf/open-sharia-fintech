@@ -282,7 +282,30 @@ pub fn load(repo_root: &Path) -> Result<RepoConfig, Error> {
     let data = fs::read_to_string(&path)
         .with_context(|| format!("cannot read repo-config.yml at {}", path.display()))?;
     serde_norway::from_str(&data)
+        .map_err(|error| {
+            let parse_error = error.to_string();
+            if let Some(gate_id) = gate_id_from_parse_error(&data, &parse_error) {
+                Error::msg(format!("{parse_error} (gate id {gate_id:?})"))
+            } else {
+                Error::msg(parse_error)
+            }
+        })
         .with_context(|| format!("failed to parse repo-config.yml at {}", path.display()))
+}
+
+/// Finds a gate identifier for a Serde error scoped to a `gates[index]` path.
+fn gate_id_from_parse_error(data: &str, parse_error: &str) -> Option<String> {
+    let index = parse_error
+        .split_once("gates[")?
+        .1
+        .split_once(']')?
+        .0
+        .parse::<usize>()
+        .ok()?;
+    data.lines()
+        .filter_map(|line| line.trim_start().strip_prefix("- id: "))
+        .map(|id| id.trim().trim_matches(['\'', '"']).to_owned())
+        .nth(index)
 }
 
 /// Load `repo-config.yml` at `repo_root`, returning an empty default if the file is absent or

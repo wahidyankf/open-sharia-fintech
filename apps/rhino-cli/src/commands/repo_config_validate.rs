@@ -127,23 +127,26 @@ fn semantic_findings(config: &RepoConfig) -> Vec<String> {
         }
         if gate.surfaces.is_empty() {
             findings.push(format!(
-                "gates[{i}] ({:?}).surfaces: at least one surface is required",
+                "gates[{i}] (gate id {:?}).surfaces: at least one surface is required",
                 gate.id
             ));
         }
         if gate.wiring.is_some() && gate.gate_type != GateType::Check {
             findings.push(format!(
-                "gates[{i}].wiring: only valid for type \"check\" (found type \"mutation\")"
+                "gates[{i}] (gate id {:?}).wiring: only valid for type \"check\" (found type \"mutation\")",
+                gate.id
             ));
         }
         if gate.restages && gate.gate_type != GateType::Mutation {
             findings.push(format!(
-                "gates[{i}].restages: only valid for type \"mutation\" (found type \"check\")"
+                "gates[{i}] (gate id {:?}).restages: only valid for type \"mutation\" (found type \"check\")",
+                gate.id
             ));
         }
         if gate.carve_out.is_some() && gate.gate_type != GateType::Check {
             findings.push(format!(
-                "gates[{i}].carve-out: only valid for type \"check\" (found type \"mutation\")"
+                "gates[{i}] (gate id {:?}).carve-out: only valid for type \"check\" (found type \"mutation\")",
+                gate.id
             ));
         }
     }

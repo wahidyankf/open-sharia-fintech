@@ -1163,7 +1163,7 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
   - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
   - Notes: Centralized Rhino, external, and Nx selection in `run_leaf` while retaining each contract. The exact Nx dispatch test remains green.
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-RED** (`blockedBy: P1-DISPATCH-KIND-NX-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-SCOPES-RED** (`blockedBy: P1-DISPATCH-KIND-NX-REFACTOR`;
       `blocks: P1-DISPATCH-SCOPES-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `all_supported_scopes_derive_specified_inputs` (**new test**). Run
@@ -1179,21 +1179,34 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then each leaf receives exactly its staged, tracked, affected, complete, empty, or trigger-intersection input contract
   ```
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-GREEN** (`blockedBy: P1-DISPATCH-SCOPES-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added one fixture covering every declared scope. The exact test exits 101 at runtime because all-file-type receives no tracked glob match, isolating missing scope derivation.
+
+- [x] [AI] **P1-DISPATCH-SCOPES-GREEN** (`blockedBy: P1-DISPATCH-SCOPES-RED`;
       `blocks: P1-DISPATCH-SCOPES-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only the six declared scope derivations. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch all_supported_scopes_derive_specified_inputs`
       — acceptance: exits 0 and every leaf receives exactly its staged, tracked, affected,
       complete, empty, or trigger-intersection repository-relative input set.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Implemented all six scope candidate derivations, including tracked all-file-type and exact Nx affected/all project delegation. The exact scope test and full dispatch suite pass.
 
-- [ ] [AI] **P1-DISPATCH-SCOPES-REFACTOR** (`blockedBy: P1-DISPATCH-SCOPES-GREEN`;
+- [x] [AI] **P1-DISPATCH-SCOPES-REFACTOR** (`blockedBy: P1-DISPATCH-SCOPES-GREEN`;
       `blocks: P1-DISPATCH-FILTER-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract pure scope candidate derivation without applying
       glob/exclude filtering. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch all_supported_scopes_derive_specified_inputs`
       — acceptance: exits 0 with all six exact input contracts unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure staged/tracked/path-trigger/none candidate classification. The six-scope integration test remains green; filtering and empty-match behavior stay in the dispatch loop.
 
-- [ ] [AI] **P1-DISPATCH-FILTER-RED** (`blockedBy: P1-DISPATCH-SCOPES-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-FILTER-RED** (`blockedBy: P1-DISPATCH-SCOPES-REFACTOR`;
       `blocks: P1-DISPATCH-FILTER-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `glob_lists_and_excludes_apply_before_invocation` (**new test**). Run
@@ -1210,28 +1223,45 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the leaf receives only matching non-excluded repository-relative paths
   ```
 
-- [ ] [AI] **P1-DISPATCH-FILTER-GREEN** (`blockedBy: P1-DISPATCH-FILTER-RED`;
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added staged markdown/YAML, nonmatching, and `plans/done` candidates. The exact test exits 101 because the excluded markdown path reaches the leaf, isolating pre-invocation exclusion handling.
+
+- [x] [AI] **P1-DISPATCH-FILTER-GREEN** (`blockedBy: P1-DISPATCH-FILTER-RED`;
       `blocks: P1-DISPATCH-FILTER-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only glob/globs and exclude filtering before
       invocation. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch glob_lists_and_excludes_apply_before_invocation`
       — acceptance: exits 0 and the leaf receives only matching, non-excluded,
       repository-relative fixture paths.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Added pre-invocation support for `glob`, `globs`, and excluded-prefix filtering. The selected leaf receives only allowed repository-relative inputs; the filtering test and full dispatch suite pass.
 
-- [ ] [AI] **P1-DISPATCH-FILTER-REFACTOR** (`blockedBy: P1-DISPATCH-FILTER-GREEN`;
+- [x] [AI] **P1-DISPATCH-FILTER-REFACTOR** (`blockedBy: P1-DISPATCH-FILTER-GREEN`;
       `blocks: P1-DISPATCH-EMPTY-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract pure candidate filtering without adding empty-set
       skip behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch glob_lists_and_excludes_apply_before_invocation`
       — acceptance: exits 0 with the same exact filtered path set and pre-invocation ordering.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure `filter_candidates`, retaining glob/globs and exclusion order. Empty candidates deliberately remain delegated until the next cycle; the exact filtering test passes.
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-RED** (`blockedBy: P1-DISPATCH-FILTER-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-EMPTY-RED** (`blockedBy: P1-DISPATCH-FILTER-REFACTOR`;
       `blocks: P1-DISPATCH-EMPTY-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `empty_scoped_match_is_successful_skip` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: fails because a filtered empty file set still invokes the leaf or exits
       non-zero.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an empty scoped-match fixture. The exact test exits 101 because the filtered empty set still invokes its failing leaf, isolating the missing successful-skip behavior.
 
   **Gherkin (binds) →** "An empty scoped match is a successful skip"
 
@@ -1242,27 +1272,39 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits zero without invoking the leaf and reports the skip
   ```
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-GREEN** (`blockedBy: P1-DISPATCH-EMPTY-RED`;
+- [x] [AI] **P1-DISPATCH-EMPTY-GREEN** (`blockedBy: P1-DISPATCH-EMPTY-RED`;
       `blocks: P1-DISPATCH-EMPTY-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only successful empty-set skipping and reporting.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: exits 0, invokes no leaf, and records the fixture skip.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: File-scoped staged and tracked empty matches now report `Skipping gate <id>` and return success before leaf invocation. The exact fixture test passes.
 
-- [ ] [AI] **P1-DISPATCH-EMPTY-REFACTOR** (`blockedBy: P1-DISPATCH-EMPTY-GREEN`;
+- [x] [AI] **P1-DISPATCH-EMPTY-REFACTOR** (`blockedBy: P1-DISPATCH-EMPTY-GREEN`;
       `blocks: P1-DISPATCH-ONLY-VALID-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, isolate empty-set reporting without changing invocation
       behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch empty_scoped_match_is_successful_skip`
       — acceptance: exits 0 with no leaf invocation and the same skip record.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Isolated `report_empty_scope_skip` while preserving the successful empty-set skip boundary. The focused regression remains green.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-RED** (`blockedBy: P1-DISPATCH-EMPTY-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-RED** (`blockedBy: P1-DISPATCH-EMPTY-REFACTOR`;
       `blocks: P1-DISPATCH-ONLY-VALID-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `only_executes_exactly_one_direct_leaf` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: fails because a valid `--only` request executes an unrelated batch or
       mutation, or passes inputs outside the selected leaf's match.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added the exact-one direct-leaf fixture. It passes immediately because existing `--only` selection filters the registry before candidate derivation and invocation; selected inputs stay bounded and unrelated batch/mutation leaves remain untouched.
 
   **Gherkin (binds) →** "Only executes exactly one direct leaf"
 
@@ -1273,28 +1315,40 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then only md-mermaid runs directly with its matching files and no batch or mutation runs
   ```
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-VALID-RED`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-VALID-RED`;
       `blocks: P1-DISPATCH-ONLY-VALID-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only valid direct exactly-one selection. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: exits 0 and runs only `md-mermaid` directly with its matching files, spawning
       no batch or mutation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: Existing `run_at_root_with_only` selection already filters gates before both candidate derivation and execution. The new exact selector regression passes with no production change.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-VALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-VALID-GREEN`;
+- [x] [AI] **P1-DISPATCH-ONLY-VALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-VALID-GREEN`;
       `blocks: P1-DISPATCH-ONLY-INVALID-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract selected-leaf dispatch without adding invalid-id
       handling. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch only_executes_exactly_one_direct_leaf`
       — acceptance: exits 0 with one direct leaf, its bounded inputs, and no aggregate lint-staged
       process.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Collected selected surface gates once and reused them for candidate derivation and dispatch. The refactor retains valid-only selection without invalid-id handling; the focused fixture passes.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-RED** (`blockedBy: P1-DISPATCH-ONLY-VALID-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-RED** (`blockedBy: P1-DISPATCH-ONLY-VALID-REFACTOR`;
       `blocks: P1-DISPATCH-ONLY-INVALID-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `unknown_or_duplicate_only_ids_fail_before_execution` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: fails because an absent or duplicate `--only` id reaches leaf execution or
       does not name the invalid id.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added absent and duplicate selector fixtures. The exact test fails because unknown selectors silently succeed and duplicate selectors execute their leaf twice without naming the invalid id.
 
   **Gherkin (binds) →** "Unknown or duplicate only ids fail before execution"
 
@@ -1305,29 +1359,41 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits non-zero before invoking any leaf and names the invalid id
   ```
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-INVALID-RED`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-GREEN** (`blockedBy: P1-DISPATCH-ONLY-INVALID-RED`;
       `blocks: P1-DISPATCH-ONLY-INVALID-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only pre-execution absent/duplicate id rejection.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: exits 0 as a test and proves both invalid fixtures return non-zero, invoke no
       leaf, and name the invalid id.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Supplied `--only` values must now select exactly one gate on the requested surface; absent and duplicate IDs fail with the named ID before any candidate derivation or leaf invocation. The focused regression passes.
 
-- [ ] [AI] **P1-DISPATCH-ONLY-INVALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-INVALID-GREEN`;
+- [x] [AI] **P1-DISPATCH-ONLY-INVALID-REFACTOR** (`blockedBy: P1-DISPATCH-ONLY-INVALID-GREEN`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, share id validation between list/run without changing the
       failure boundary. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch unknown_or_duplicate_only_ids_fail_before_execution`
       — acceptance: exits 0 and both invalid fixtures still fail before any leaf invocation with
       the invalid id named.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Shared `validate_gate_ids` between list and run. List rejects duplicate surface IDs, while run reuses the exact-one selector validation before candidate derivation; invalid-only regression remains green.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-RED** (`blockedBy: P1-DISPATCH-ONLY-INVALID-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-RED** (`blockedBy: P1-DISPATCH-ONLY-INVALID-REFACTOR`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `restaging_mutation_stages_only_outputs` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: fails because successful mutation output isolation/restaging is absent or
       stages the unrelated worktree edit.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a successful `restages: true` mutation fixture with a generated output and unrelated untracked edit. The exact test fails because the mutation leaves the generated output unstaged and the index unchanged.
 
   **Gherkin (binds) →** "A re-staging mutation stages only its outputs"
 
@@ -1338,28 +1404,40 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then git adds only the mutation output paths and preserves the unrelated edit unstaged
   ```
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-RED`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-RED`;
       `blocks: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only exact-output restaging after a zero exit.
       Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: exits 0, `git add --` receives only mutation output paths, and the unrelated
       edit remains unstaged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Successful `restages: true` mutations now snapshot Git-visible working-tree paths and add only paths newly changed by the mutation. The focused fixture stages its generated output while preserving unrelated work.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-GREEN`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, extract the successful index snapshot/delta calculation
       without adding failure handling. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch restaging_mutation_stages_only_outputs`
       — acceptance: exits 0 and `git add --` still receives only explicit mutation output paths.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted pure `mutation_output_delta` from restaging. Successful output-only restaging remains unchanged and its focused regression passes.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-RED** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-RED** (`blockedBy: P1-DISPATCH-RESTAGE-SUCCESS-REFACTOR`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-GREEN`) — RED: in
       `apps/rhino-cli/tests/gate_dispatch.rs`, add failing
       `failed_mutation_never_restages_output` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: fails because a non-zero mutation still reaches restaging or its failure is
       not propagated.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added a mutation that changes output and fails. It passes immediately because the existing non-zero status check returns before restaging; the failure is propagated and no `git add` occurs.
 
   **Gherkin (binds) →** "A failed mutation never re-stages output"
 
@@ -1370,26 +1448,38 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then the dispatcher exits non-zero and does not git-add that path
   ```
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-RED`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-GREEN** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-RED`;
       `blocks: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`) — GREEN: in
       `apps/rhino-cli/src/commands.rs`, implement only the non-zero mutation short-circuit before
       restaging. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: exits 0 as a test and proves the dispatcher returns the fixture failure while
       `git add --` receives no path.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: Existing non-zero status handling returns before the restaging block. The new failure fixture confirms the propagated error and zero `git add` invocation without a redundant production edit.
 
-- [ ] [AI] **P1-DISPATCH-RESTAGE-FAILURE-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-GREEN`;
+- [x] [AI] **P1-DISPATCH-RESTAGE-FAILURE-REFACTOR** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-GREEN`;
       `blocks: P1-DISPATCH-BATCH-RED`) — REFACTOR: in
       `apps/rhino-cli/src/commands.rs`, make the success-only restaging boundary explicit without
       changing failure behavior. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch failed_mutation_never_restages_output`
       — acceptance: exits 0 and the failing mutation still returns non-zero without any `git add`
       invocation.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none
+  - Notes: The existing non-zero return already precedes the restaging block, making success-only restaging explicit. The focused failure fixture remains green.
 
-- [ ] [AI] **P1-DISPATCH-BATCH-RED** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`; `blocks: P1-DISPATCH-BATCH-GREEN`) — RED: add failing
+- [x] [AI] **P1-DISPATCH-BATCH-RED** (`blockedBy: P1-DISPATCH-RESTAGE-FAILURE-REFACTOR`; `blocks: P1-DISPATCH-BATCH-GREEN`) — RED: add failing
       `precommit_has_one_ordered_file_batch` (**new test**). Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: fails because the aggregate batch position/consumption rule is absent.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`
+  - Notes: Added an ordered pre-commit batch fixture. It fails because eligible leaves run individually and no aggregate `npx lint-staged` invocation occurs at the batch declaration position.
 
   **Gherkin (binds) →** "Pre-commit has one declaration-positioned batch"
 
@@ -1400,23 +1490,35 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then staged guard, exactly one lint-staged batch, harness generation, and lockfile sync run in that order
   ```
 
-- [ ] [AI] **P1-DISPATCH-BATCH-GREEN** (`blockedBy: P1-DISPATCH-BATCH-RED`; `blocks: P1-DISPATCH-BATCH-REFACTOR`) — GREEN:
+- [x] [AI] **P1-DISPATCH-BATCH-GREEN** (`blockedBy: P1-DISPATCH-BATCH-RED`; `blocks: P1-DISPATCH-BATCH-REFACTOR`) — GREEN:
       implement one batch at the first eligible declaration and direct trailing mutations. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: exits 0 and records staged guard → one lint-staged process → harness generation
       → lockfile sync, with no direct duplicate file leaf.
-- [ ] [AI] **P1-DISPATCH-BATCH-REFACTOR** (`blockedBy: P1-DISPATCH-BATCH-GREEN`; `blocks: P1-VALIDATE`) — REFACTOR:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Pre-commit now runs a single `npx --no -- lint-staged` process at the first eligible file-gate declaration, consumes later eligible entries, and retains direct declaration order. The ordered batch fixture passes.
+- [x] [AI] **P1-DISPATCH-BATCH-REFACTOR** (`blockedBy: P1-DISPATCH-BATCH-GREEN`; `blocks: P1-VALIDATE`) — REFACTOR:
       name and document the batch eligibility predicate. Run
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch precommit_has_one_ordered_file_batch`
       — acceptance: exits 0 and lockfile sync is absent from emitted lint-staged JSON.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/run.rs`
+  - Notes: Extracted and documented `is_pre_commit_batch_eligible` with no batch behavior change. The ordered batch regression remains green.
 
 ### 1.4 `gate validate`
 
-- [ ] [AI] **RED** — failing test for check 1 in
+- [x] [AI] **RED** — failing test for check 1 in
       [tech-docs §2.4](./tech-docs.md#24-command-surface): a `type: check` gate declared for
       `pre-commit` but not for `ci`, with no carve-out, violates the composition rule — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::composition_rule_violation`
       — acceptance: fails because the command does not exist.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added test-only validator scaffolding and the composition-rule regression. It fails because the inert validator accepts the missing-CI check instead of reporting the Gate Composition Rule, gate ID, and missing `ci` surface.
 
   **Gherkin (binds) →** "A check declared for pre-commit but not for ci violates the composition rule"
 
@@ -1431,19 +1533,31 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the gate id and the missing surface
   ```
 
-- [ ] [AI] **GREEN** — implement `gate validate` with the composition-rule check — command:
+- [x] [AI] **GREEN** — implement `gate validate` with the composition-rule check — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::composition_rule_violation`
       — acceptance: the new test passes.
-- [ ] [AI] **REFACTOR** — the composition-rule check applies to `type: check` only, and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/cli.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Routed `gate validate` through the CLI and implemented the pre-commit check missing CI composition error. The diagnostic names the Gate Composition Rule, gate ID, and `ci`; the focused test passes.
+- [x] [AI] **REFACTOR** — the composition-rule check applies to `type: check` only, and
       `carve-out: staged-only` exempts a check from it — acceptance: four tests, all required
       because each covers a direction the others do not: a `type: mutation` gate with `pre-commit`
       only **passes**; a `carve-out: staged-only` check with `pre-commit` only **passes**; an
       unmarked `type: check` with `pre-commit` only **fails**; and `gate list` reports the
       exemption. A one-direction test set would pass on a validator that never fires.
-- [ ] [AI] **RED** — failing test for check 2: a surface file that stops invoking the registry is
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added directional validation coverage: mutations pass, only `carve-out: staged-only` checks are exempt, unmarked checks fail, and list text reports the exemption. Focused validate and list tests pass.
+- [x] [AI] **RED** — failing test for check 2: a surface file that stops invoking the registry is
       caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::missing_surface_shim`
       — acceptance: fails because check 2 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added declared-pre-push fixture whose `.husky/pre-push` omits registry invocation. The exact test fails because validation accepts the missing shim without naming the surface file.
 
   **Gherkin (binds) →** "A surface file that stops invoking the registry is caught"
 
@@ -1456,13 +1570,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the surface file
   ```
 
-- [ ] [AI] **GREEN** — implement check 2 (missing surface shim) — command:
+- [x] [AI] **GREEN** — implement check 2 (missing surface shim) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::missing_surface_shim` — acceptance:
       the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 3's undeclared-command half: a CI workflow that
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now requires `.husky/pre-push` to contain `gate run --surface=pre-push` when the registry declares pre-push gates. Missing or non-delegating shims name the hook file; the focused test passes.
+- [x] [AI] **RED** — failing test for check 3's undeclared-command half: a CI workflow that
       hardcodes a check instead of deriving it is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::undeclared_ci_command`
       — acceptance: fails because check 3 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a workflow fixture that hardcodes `npm run unregistered-check` absent from the CI registry. The exact test fails because validation does not inspect workflow commands.
 
   **Gherkin (binds) →** "A CI workflow that hardcodes a check instead of deriving it is caught"
 
@@ -1474,13 +1596,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the undeclared command
   ```
 
-- [ ] [AI] **GREEN** — implement the undeclared-CI-command half of check 3 — command:
+- [x] [AI] **GREEN** — implement the undeclared-CI-command half of check 3 — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::undeclared_ci_command` —
       acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 4: a `verifies` field naming no existing gate is caught
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation scans `.github/workflows/pr-quality-gate.yml` when present and rejects inline `run:` commands absent from the registry. The focused test passes with the undeclared command named.
+- [x] [AI] **RED** — failing test for check 4: a `verifies` field naming no existing gate is caught
       — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::orphan_verifies_reference`
       — acceptance: fails because check 4 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added `verify-format` with `verifies: missing-format`. The exact test fails because validation does not resolve references or name the referring and orphan IDs.
 
   **Gherkin (binds) →** "A verifies field naming no existing gate is caught"
 
@@ -1492,13 +1622,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names both the referring gate id and the orphan id
   ```
 
-- [ ] [AI] **GREEN** — implement check 4 (orphan `verifies` reference) — command:
+- [x] [AI] **GREEN** — implement check 4 (orphan `verifies` reference) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::orphan_verifies_reference` —
       acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 5: a hand-edited `lint-staged` block (diverging from
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now resolves every `verifies` target against declared gate IDs and names both the referring gate and missing target for orphan references. The focused test passes.
+- [x] [AI] **RED** — failing test for check 5: a hand-edited `lint-staged` block (diverging from
       what the registry would emit) is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::stale_lint_staged_block`
       — acceptance: fails because check 5 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a package fixture with `prettier --check` while the registry emits `prettier --write`. The exact test fails because validation does not compare generated and committed lint-staged data.
 
   **Gherkin (binds) →** "A hand-edited lint-staged block is caught"
 
@@ -1510,13 +1648,21 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names package.json and instructs to run "gate emit --surface=pre-commit"
   ```
 
-- [ ] [AI] **GREEN** — implement check 5 (stale emitted `lint-staged` block) — command:
+- [x] [AI] **GREEN** — implement check 5 (stale emitted `lint-staged` block) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::stale_lint_staged_block`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — failing test for check 6: a formatter mutation gate with no `verifies`-linked
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Extracted the registry-to-lint-staged projection and compare it against package.json without mutation. Drift names package.json and `gate emit --surface=pre-commit`; focused test passes.
+- [x] [AI] **RED** — failing test for check 6: a formatter mutation gate with no `verifies`-linked
       check is caught — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::unverified_formatter`
       — acceptance: fails because check 6 does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a formatter mutation without a check whose `verifies` target names it. The exact test fails because formatter verification coverage is not yet validated.
 
   **Gherkin (binds) →** "A formatter without a verifying check fails validation"
 
@@ -1529,14 +1675,22 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the unverified formatter
   ```
 
-- [ ] [AI] **GREEN** — implement check 6 (unverified formatter) — command:
+- [x] [AI] **GREEN** — implement check 6 (unverified formatter) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::unverified_formatter` — acceptance:
       the new test passes, no other tests broken, and `nx run rhino-cli:test:quick` still exits 0 for
       the six checks introduced across this section.
-- [ ] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Formatter mutations now require a `type: check` gate whose `verifies` includes the formatter ID. Missing coverage names the formatter and `verifies`; focused regression passes.
+- [x] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
       a `hand-wired` gate with a matching workflow job must pass validation — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_present`
       — acceptance: fails because the `wiring: hand-wired` check-3 split does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a hand-wired `test-quick` CI gate with matching workflow job. The exact test fails because the generic command check rejects the derived invocation instead of recognizing the hand-wired declaration.
 
   **Gherkin (binds) →** "A hand-wired gate is asserted present but not matrix-derived"
 
@@ -1548,14 +1702,22 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     Then it exits zero
   ```
 
-- [ ] [AI] **GREEN** — implement the `hand-wired`-present-and-matched half of check 3's `wiring`
+- [x] [AI] **GREEN** — implement the `hand-wired`-present-and-matched half of check 3's `wiring`
       split — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_present`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: CI workflow scanning now tracks job IDs and accepts derived commands only when they match a CI gate marked `wiring: hand-wired`. Generic commands remain registry-checked; focused test passes.
+- [x] [AI] **RED** — add a failing test in the `gate::validate` module for check 3's `wiring` split:
       the same `hand-wired` gate with its workflow job deleted must fail validation — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_job_deleted`
       — acceptance: fails because the job-deleted half of the split does not exist yet.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Added a registry hand-wired `test-quick` CI gate with no matching workflow job. The exact test fails because validation does not yet require hand-wired job presence.
 
   **Gherkin (binds) →** "A hand-wired gate whose job was deleted is caught"
 
@@ -1568,36 +1730,56 @@ Every cycle is bound to the matching R-3 Gherkin scenario in [prd.md](./prd.md#r
     And the message names the gate id and the surface file
   ```
 
-- [ ] [AI] **GREEN** — implement the job-deleted half of check 3's `wiring` split — command:
+- [x] [AI] **GREEN** — implement the job-deleted half of check 3's `wiring` split — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate::hand_wired_job_deleted`
       — acceptance: the new test passes and each command that runs the check-3 tests exits 0, no
       other tests broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Notes: Validation now requires every CI `wiring: hand-wired` gate ID to exist as a job in `pr-quality-gate.yml`. Missing jobs name the gate and workflow file; the focused test passes.
 
 ### 1.5 Specs and coverage
 
-- [ ] [AI] Author the Gherkin feature files under
+- [x] [AI] Author the Gherkin feature files under
       `specs/apps/rhino/behavior/rhino-cli/gherkin/` from the scenarios in
       [prd.md](./prd.md), with `@covers` markers — acceptance:
       `npx nx run rhino-cli:specs:behavior:coverage` exits 0.
-- [ ] [AI] **P1-SPECS** — Verify structural specs and coverage floor — acceptance:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/Cargo.toml`, `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Notes: Added executable Cucumber coverage for the Phase 1 registry declaration, enumeration, execution, conformance, and emitter scenarios. Strict and semantic schema diagnostics now name their gate IDs. All gate scenarios and behavior coverage pass.
+- [x] [AI] **P1-SPECS** — Verify structural specs and coverage floor — acceptance:
       `npx nx run rhino-cli:test:quick` exits 0 (this chains typecheck, lint, unit, coverage, specs).
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/emit.rs`, `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `apps/rhino-cli/tests/repo_config_data_driven.rs`
+  - Notes: Resolved strict formatter and Clippy findings without suppressions, including fixture factoring and batch-isolated scope coverage. `npx nx run rhino-cli:test:quick` passes.
 
 ### Phase 1 Execution-Ready Gate
 
-- [ ] [AI] **P1-READY** (`blockedBy: P1-SPECS`; `blocks: P1-LAND`) — command:
+- [x] [AI] **P1-READY** (`blockedBy: P1-SPECS`; `blocks: P1-LAND`) — command:
       `git status --short && npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` —
       acceptance: the reconciled task ledger is clean and every command exits 0 before any Land
       action begins.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/**`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Reconciled all modified and new paths to the Phase 1 ledger. `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` exits 0.
 
 ### 1.6 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P1-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit the Phase 1 theme — command:
+- [x] [AI] Commit the Phase 1 theme — command:
       `git add -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin docs/reference/sdlc-gate-standard.md docs/reference/related-repositories.md && git diff --cached --name-only -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin | grep -q . && git commit -m 'feat(rhino-cli): add registry-driven gate engine'` — acceptance:
       commitlint and `npm run validate:sync` exit 0; the staged diff contains both the engine and
       its required Gherkin, and generated mirrors, if changed, are included in this commit.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/**`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Committed the registry gate engine and executable Gherkin coverage as `8cd8af7` before the unpushed evidence amend. Fixture Git commands clear hook-provided `GIT_DIR` and `GIT_WORK_TREE`, preventing temporary test commits from targeting the delivery worktree.
 - [ ] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
