@@ -26,7 +26,7 @@ something byte-exact to compare against.
 
 | Repo          | Complete file                                            | Emitted block                                                    | Glob keys (live → target) | Top-level keys |
 | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------- | -------------- |
-| `ose-public`  | [`package-ose-public.json`](./package-ose-public.json)   | [`lint-staged-ose-public.json`](./lint-staged-ose-public.json)   | 26 → 21                   | 15             |
+| `ose-public`  | [`package-ose-public.json`](./package-ose-public.json)   | [`lint-staged-ose-public.json`](./lint-staged-ose-public.json)   | 26 → 25                   | 15             |
 | `ose-primer`  | [`package-ose-primer.json`](./package-ose-primer.json)   | [`lint-staged-ose-primer.json`](./lint-staged-ose-primer.json)   | 20 → 22                   | 14             |
 | `ose-private` | [`package-ose-private.json`](./package-ose-private.json) | [`lint-staged-ose-private.json`](./lint-staged-ose-private.json) | 18 → 16                   | 14             |
 | `beaver-nest` | [`package-beaver-nest.json`](./package-beaver-nest.json) | [`lint-staged-beaver-nest.json`](./lint-staged-beaver-nest.json) | 26 → 16                   | 16             |
@@ -110,7 +110,7 @@ For `ose-public`, comparing the generated block to the live one in `package.json
 
 | Change                                                          | Deliberate?                                                                  |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Removed `*.go`, `*.{ex,exs}`, `*.cs`, `*.clj`, `*.dart`         | Yes — those five languages have zero tracked files here                      |
+| Removed `*.clj`                                                 | Yes — Clojure is the only declared formatter with zero tracked files here    |
 | Removed lockfile sync from `lint-staged`                        | Yes — it is a declared direct mutation after the single per-file batch       |
 | `--quiet` added to 7 `cargo run` invocations across 4 glob keys | Yes — normalization; the hooks already used `--quiet`, `lint-staged` did not |
 | `--exclude apps/ayokoding-www/content` gains quotes             | Yes — an unquoted glob-shaped argument is shell-expandable                   |

@@ -41,18 +41,18 @@ there by the repo-local `WorktreeCreate` hook. Because `ose-public` has four dis
 units, its later units use plan-slug suffixes to preserve strict 1-PR to 1-worktree ownership. The
 same exact plan-slug path may exist independently in different repository roots.
 
-| Phase | Worktree                                                  | Branch                                     | Repo                    |
-| ----- | --------------------------------------------------------- | ------------------------------------------ | ----------------------- |
-| 0     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`            |
+| Phase | Worktree                                                  | Branch                                     | Repo                        |
+| ----- | --------------------------------------------------------- | ------------------------------------------ | --------------------------- |
+| 0     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`                |
 | 0     | none (primary checkout)                                   | `main`                                     | `ose-primer`, `ose-private` |
-| 0     | `worktrees/gate-baseline-beaver/`                         | `main`                                     | `beaver-nest`           |
-| 1     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`            |
-| 11    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`            |
-| 2     | `worktrees/sdlc-gate-registry-enforcement-rewire-public/` | `sdlc-gate-registry-enforcement-rewire`    | `ose-public`            |
-| 3     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-primer`            |
-| 4     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-private`           |
-| 5     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `beaver-nest`           |
-| 6     | `worktrees/sdlc-gate-registry-enforcement-knowledge/`     | `sdlc-gate-registry-enforcement-knowledge` | `ose-public`            |
+| 0     | `worktrees/gate-baseline-beaver/`                         | `main`                                     | `beaver-nest`               |
+| 1     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`                |
+| 11    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`                |
+| 2     | `worktrees/sdlc-gate-registry-enforcement-rewire-public/` | `sdlc-gate-registry-enforcement-rewire`    | `ose-public`                |
+| 3     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-primer`                |
+| 4     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-private`               |
+| 5     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `beaver-nest`               |
+| 6     | `worktrees/sdlc-gate-registry-enforcement-knowledge/`     | `sdlc-gate-registry-enforcement-knowledge` | `ose-public`                |
 
 `ose-public` and `beaver-nest` repository roots are intentionally bare, so commands requiring a
 working tree cannot run there. Phase 0 uses the already-declared attached `ose-public` execution
@@ -109,13 +109,13 @@ See [README.md §Delivery Units](./README.md#delivery-units) for the canonical t
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes |
-| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | yes |
-| 4     | Engine propagation + rewire                              | `ose-private` | yes |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes |
-| 6     | Knowledge capture                                        | `ose-public`  | yes |
+| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes                       |
+| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes                       |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes                       |
+| 3     | Engine propagation + rewire                              | `ose-primer`  | yes                       |
+| 4     | Engine propagation + rewire                              | `ose-private` | yes                       |
+| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes                       |
+| 6     | Knowledge capture                                        | `ose-public`  | yes                       |
 
 Phases 3, 4, and 5 are independent of one another after Phase 2 and fan out up to N=3.
 
@@ -208,120 +208,248 @@ Markdown, or baseline command. A failure blocks push, review, merge readiness, a
       `git -C /Users/wkf/ose-projects/beaver-nest worktree add worktrees/gate-baseline-beaver main` — acceptance:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver status --short --branch` reports
       a clean `main` level with `origin/main`.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (execution evidence)
   - Notes: Created the task-owned Beaver baseline worktree; it is clean on `main` and `HEAD...origin/main` is `0 0`.
-- [ ] [AI] **P0-PUBLIC-INSTALL** (`blocks: P0-PUBLIC-DOCTOR`) — command:
+
+- [x] [AI] **P0-PUBLIC-INSTALL** (`blocks: P0-PUBLIC-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement install`
       — acceptance: exits 0 in the declared attached public worktree; never run it in the bare root.
-- [ ] [AI] **P0-PUBLIC-DOCTOR** (`blockedBy: P0-PUBLIC-INSTALL`) — command:
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Worktree-scoped installation exited 0; postinstall doctor completed.
+
+- [x] [AI] **P0-PUBLIC-DOCTOR** (`blockedBy: P0-PUBLIC-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
       — acceptance: exits 0 and a check-only rerun reports no missing tool.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: Doctor setup and check-only verification reported 16/16 tools OK with no warnings or missing tools; target sharing was initialized for four crates.
+
 - [x] [AI] **P0-PRIMER-INSTALL** (`blocks: P0-PRIMER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-primer install` — acceptance: exits 0.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: none (dependency installation only)
   - Notes: Installation exited 0. Its postinstall doctor found no missing tools; it reported the pre-existing npm `11.11.0` versus `11.10.1` version warning.
+
 - [x] [AI] **P0-PRIMER-DOCTOR** (`blockedBy: P0-PRIMER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-primer && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: none (toolchain setup only)
   - Notes: `npm run doctor -- --fix` repaired the Volta npm selection; the check-only rerun reported 13/13 tools OK with no warnings or missing tools.
+
 - [x] [AI] **P0-PRIVATE-INSTALL** (`blocks: P0-PRIVATE-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-private install` — acceptance: exits 0.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: none (dependency installation and local build only)
   - Notes: Installation exited 0. Its postinstall doctor found no missing tools and reported the pre-existing npm `11.11.0` versus required `11.16.0` version warning.
+
 - [x] [AI] **P0-PRIVATE-DOCTOR** (`blockedBy: P0-PRIVATE-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-private && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: none (toolchain setup only)
   - Notes: The fix and check-only doctor runs both reported 16/16 tools OK with no warnings or missing tools. Nx also emitted its non-blocking AI-agent configuration update notice.
+
 - [x] [AI] **P0-BEAVER-INSTALL** (`blocks: P0-BEAVER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver install` —
       acceptance: exits 0; never run it in the bare root.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: none (dependency installation only)
   - Notes: Installation in the attached task-owned worktree exited 0; postinstall doctor completed.
-- [ ] [AI] **P0-BEAVER-DOCTOR** (`blockedBy: P0-BEAVER-INSTALL`) — command:
+
+- [x] [AI] **P0-BEAVER-DOCTOR** (`blockedBy: P0-BEAVER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver && npm run doctor -- --fix)`
       — acceptance: exits 0 and a check-only rerun reports no missing tool.
-- [ ] [AI] Establish a green baseline in `ose-public`: `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npx nx run-many --all -t test:quick)` —
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: Doctor setup and check-only verification reported 16/16 tools OK with no warnings or missing tools; target sharing was initialized for two crates.
+
+- [x] [AI] Establish a green baseline in `ose-public`: `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npx nx run-many --all -t test:quick)` —
       acceptance: exits 0. If any project fails, fix it before Phase 1 (preexisting failures are in
       scope per Root Cause Orientation); record each fix in this checklist as a discovered task.
-- [ ] [AI] Confirm every working checkout is clean and level with origin: use the declared attached
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (baseline validation only)
+  - Notes: `npx nx run-many --all -t test:quick` exited 0 for the public execution worktree.
+
+- [x] [AI] Confirm every working checkout is clean and level with origin: use the declared attached
       `ose-public` worktree, the `ose-primer` and `ose-private` primary checkouts, plus the
       `beaver-nest` baseline worktree. In the public worktree,
       `git status --porcelain -- . ':(exclude)plans/in-progress/sdlc-gate-registry-enforcement/delivery.md'`
-      produces no output; in the other three, `git status --porcelain` produces no output. In all
-      four, `git rev-list --left-right --count HEAD...origin/main` reports `0 0` — acceptance: both
-      hold in all four working checkouts. If another path is dirty, the uncommitted work belongs to
+      produces no output and `git merge-base --is-ancestor origin/main HEAD` succeeds; this permits
+      only the plan-owned committed execution evidence to be ahead of trunk. In the other three,
+      `git status --porcelain` produces no output and `git rev-list --left-right --count
+HEAD...origin/main` reports `0 0` — acceptance: every checkout is clean outside plan-owned
+      evidence and based on current trunk. If another path is dirty, the uncommitted work belongs to
       another actor: leave it untouched and record it here rather than staging it.
-- [ ] [AI] Re-capture the audit table in [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md` (execution evidence)
+  - Notes: The public worktree had no changes outside plan-owned execution evidence and contains current `origin/main`; primer, private, and Beaver baseline worktree were clean and each reported `0 0`.
+
+- [x] [AI] Re-capture the audit table in [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)
       against current `main` in all four repos — acceptance: every row's verdict still holds, or the
       table is amended in the same commit with the row that changed and why.
-- [ ] [AI] Record public branch protection — command: `gh api repos/wahidyankf/ose-public/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record primer branch protection — command: `gh api repos/wahidyankf/ose-primer/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record private branch protection — command: `gh api repos/wahidyankf/ose-private/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
-- [ ] [AI] Record beaver branch protection — command: `gh api repos/wahidyankf/beaver-nest/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (audit validation only)
+  - Notes: Re-fetched all four `origin/main` refs and diffed the audited hook, package, workflow, and repo-config paths against the recorded baselines. Primer, private, and Beaver have no relevant path changes; public only added two unrelated website local-deploy workflows. Every §1 gate-surface verdict remains current.
+
+- [x] [AI] Record public branch protection — command: `gh api repos/wahidyankf/ose-public/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned required contexts `["Quality gate"]`, unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record primer branch protection — command: `gh api repos/wahidyankf/ose-primer/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned `Branch not protected` (HTTP 404), unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record private branch protection — command: `gh api repos/wahidyankf/ose-private/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned branch-protection unavailable for this private repository (HTTP 403), unchanged from the recorded readiness baseline.
+
+- [x] [AI] Record beaver branch protection — command: `gh api repos/wahidyankf/beaver-nest/branches/main/protection --jq '.required_status_checks.contexts'` — acceptance: context list or explicit API result is recorded.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: GitHub returned `Branch not protected` (HTTP 404), unchanged from the recorded readiness baseline.
 
 `[Repo-grounded]` The 2026-08-04 refresh returned `["Quality gate"]` for `ose-public`, 404 for
 `ose-primer` and `beaver-nest`, and 403 for `ose-private`. Phase 6 verifies the configured state is
 unchanged; no repository-settings change is expected.
 
-- [ ] [AI] Record the byte-identity baseline across all four repos — acceptance: `diff -rq` output
+- [x] [AI] Record the byte-identity baseline across all four repos — acceptance: `diff -rq` output
       over `apps/rhino-cli/{src,tests}` and the gherkin tree is written into this checklist for every
       pair. The 2026-08-04 refresh found `sync_validator.rs` as the only three-repo difference and,
       relative to `ose-public`, ten source differences, four integration-test differences, three
       Gherkin differences, and a `project.json` difference in `beaver-nest`; re-verify rather than
       assume, since these repos are edited concurrently by other actors.
-- [ ] [AI] Record the tracked-file counts per language per repo that drive formatter pruning —
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md` (execution evidence)
+  - Notes: `diff -rq` baseline recorded: public–primer `src=7 tests=2 gherkin=0`; public–private `src=7 tests=2 gherkin=0`; public–Beaver `src=15 tests=4 gherkin=3`; primer–private `src=0 tests=0 gherkin=0`; primer–Beaver `src=11 tests=6 gherkin=3`; private–Beaver `src=11 tests=6 gherkin=3`. Public differs from the identical primer/private pair in `sync_validator`, `target_share`, repo-config/audit orchestration, specs coverage, and Git root/staged-file paths. Beaver has the additional source/test/Gherkin divergences listed in P0-DRIFT-PRESERVATION.
+
+- [x] [AI] **P0-DRIFT-PRESERVATION** (`blocks: P1`) — classify every newly observed Rhino source,
+      test, and Gherkin divergence before canonical copying; upstream each required capability or
+      explicitly prove it obsolete — acceptance: no Phase 1, 11, 3, 4, or 5 copy/overwrite can
+      discard a currently unique behavior, and the final Phase 11 scope names every retained change.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`, `tech-docs.md`
+  - Notes: Classification preserves Beaver's F# wrapper scanner/framework-key exclusion, naming exemptions, and inherited-Git test isolation; preserves public's later scope-correct Git-state handling, `CwdLock`, and serial test layout; extracts repository-specific Amazon-Q/frontmatter/fixture data; deletes the dead pipeline; and normalizes the equivalent sync-validator mismatch fixture. The Phase 11 canonical-preservation task and §2.8.5 now require the safe composition before any copy.
+
+- [x] [AI] Record the tracked-file counts per language per repo that drive formatter pruning —
       `git ls-files` by extension — acceptance: the counts in
       [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory) still hold, or
       the table is amended in the same commit. A language gaining its first file changes which
       formatters a repo must declare.
-- [ ] [AI] Remove only the task-owned `beaver-nest` baseline worktree after all Phase 0 evidence is
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: Recounted all listed extensions in all four repositories. The table now records the live totals; public Go (230), Elixir (188), C# (199), and Dart (4) are tracked course-content artifacts and require retained formatter/verifier pairs. The follow-on P0-PUBLIC-CONTENT-FORMATTERS task updates the public target artifacts accordingly.
+
+- [x] [AI] **P0-PUBLIC-CONTENT-FORMATTERS** (`blocks: P1`) — update the authored public registry,
+      package, hook, and target artifacts for tracked Go, Elixir, C#, and Dart course-content files;
+      preserve existing formatting behavior while adding a paired non-mutating verifier for every
+      retained formatter — acceptance: all four formatter/verify pairs appear in the public target
+      registry and emitted `lint-staged` block, and target artifacts remain complete-file JSON/YAML.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `repo-configs/repo-config-ose-public.yml`, `repo-configs/README.md`, `package-json/package-ose-public.json`, `package-json/lint-staged-ose-public.json`, `package-json/README.md`, `tech-docs.md`, `delivery.md`
+  - Notes: Parsed target YAML/JSON successfully: the registry has 13 formatter mutations with unique IDs; Go, Elixir, C#, and Dart each have an exactly paired verifier; the 25-key emitted block exactly matches the complete package target; and the dead Clojure key is absent. The generated pre-commit hook remains intentionally unchanged because it delegates every declared formatter through `gate run` and `lint-staged`.
+
+- [x] [AI] **P0-DOTNET-FANTOMAS-REPAIR** (`blocks: P1`) — diagnose and repair the public worktree's
+      Fantomas runtime discovery, then rerun the affected F# lint targets and the all-project quick
+      gate — acceptance: `fantomas --check libs/fsharp-crane-core/src`, `fantomas --check
+apps/ose-be/src`, `fantomas --check apps/organiclever-be/src`, and
+      `npx nx run-many --all -t test:quick` each exit 0 without suppressing a linter failure.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/crane-cli/project.json`, `apps/ose-be/project.json`, `apps/organiclever-be/project.json`, `libs/fsharp-crane-core/project.json`, `delivery.md`
+  - Notes: RED: every bare global `fantomas --check` failed because its app host received no runtime root. GREEN: all F# lint targets now restore and invoke the pinned local manifest tool using `dotnet tool restore && dotnet tool run fantomas --check`; `npx nx run-many --all -t test:quick` then exited 0 for all 29 projects and dependencies. The fix retains actual formatting failures as non-zero exits.
+
+- [x] [AI] Remove only the task-owned `beaver-nest` baseline worktree after all Phase 0 evidence is
       captured — command:
       `git -C /Users/wkf/ose-projects/beaver-nest worktree remove worktrees/gate-baseline-beaver && git -C /Users/wkf/ose-projects/beaver-nest worktree prune`
       — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest worktree list --porcelain` contains no
       `gate-baseline-beaver`, while unrelated worktrees remain untouched, and
       `git -C /Users/wkf/ose-projects/beaver-nest rev-list --left-right --count main...origin/main` reports `0 0`.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (worktree cleanup only)
+  - Notes: Verified the exact path was a clean `main` worktree at `cd2ec0e4`, removed only that path, pruned stale records, and confirmed `git worktree list --porcelain` now reports solely the bare repository root.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npx nx run-many --all -t test:quick` exits 0 in `ose-public` — green baseline
+- [x] [AI] `npx nx run-many --all -t test:quick` exits 0 in `ose-public` — green baseline
       established.
-- [ ] [AI] `git status --porcelain` is empty and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: After the manifest-based Fantomas repair, the complete command exited 0 for all 29 projects and 13 dependent targets; 41 of 42 tasks were valid cache hits on the final rerun.
+
+- [x] [AI] `git status --porcelain` is empty and
       `git rev-list --left-right --count HEAD...origin/main` reports `0 0` in the three primary
       checkouts; the captured `beaver-nest` baseline showed the same before removal, and its bare-root
       `main...origin/main` ref comparison still reports `0 0`.
-- [ ] [AI] [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)'s audit table
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Primer and private primary worktrees remain clean and each reports `0 0`; Beaver's bare-root `main...origin/main` reports `0 0` after the task-owned baseline worktree removal.
+
+- [x] [AI] [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)'s audit table
       re-verified against current `main` in all four repos — every row's verdict still holds, or the
       table is amended in the same commit.
-- [ ] [AI] Branch-protection required-status-check names recorded for each repo (written into this
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: The current-main comparison was captured after fetching all four origins; every audited gate-surface verdict remains current, with only unrelated public website local-deploy workflows added.
+
+- [x] [AI] Branch-protection required-status-check names recorded for each repo (written into this
       checklist).
-- [ ] [AI] Byte-identity baseline captured across all four repos (`diff -rq` output recorded into
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (GitHub configuration observation only)
+  - Notes: Recorded `ose-public` required context `Quality gate`; Primer and Beaver returned HTTP 404 (not protected); private returned HTTP 403 (unavailable to the current token). Each result is preserved in the Phase 0 task evidence.
+
+- [x] [AI] Byte-identity baseline captured across all four repos (`diff -rq` output recorded into
       this checklist).
-- [ ] [AI] Per-language tracked-file counts confirmed against
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Every pairwise source, test, and Gherkin boundary count is recorded in the baseline task; P0-DRIFT-PRESERVATION classifies every non-identical path before canonical copying can begin.
+
+- [x] [AI] Per-language tracked-file counts confirmed against
       [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory).
-- [ ] [AI] The task-owned `beaver-nest` baseline worktree is removed and unrelated worktrees are
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Live counts amend §2.2.4, including public course-content Go, Elixir, C#, and Dart files; target formatter coverage now retains their four pairs and removes only untracked Clojure.
+
+- [x] [AI] The task-owned `beaver-nest` baseline worktree is removed and unrelated worktrees are
       unchanged.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: The exact baseline path is absent after `git worktree remove` and prune; `beaver-nest` reports only its bare root, so no unrelated attached worktree was removed.
 
 > **Pause Safety**: the three primary checkouts are clean; `beaver-nest`'s local `main` ref is level
 > with `origin/main`; and all four repos' baseline state
@@ -1296,6 +1424,14 @@ capabilities it depends on. See
 - [ ] [AI] Initialize its toolchain — command:
       `(cd worktrees/sdlc-gate-registry-enforcement-defork && npm run doctor -- --fix)` — acceptance:
       exits 0 and the follow-up doctor check reports no missing tool.
+- [ ] [AI] **P11-PRESERVE-CANONICAL-FIXES** — before composing Beaver's improvements, retain
+      public's scope-correct non-discovery Git-state handling, `CwdLock` repo-config reads, and
+      serialized Git-sensitive unit-test layout; add inherited-Git-variable clearing to each
+      serialized test command without collapsing them into a parallel command — acceptance:
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` and
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` exit 0;
+      `project.json` retains sequential `test:unit` commands, each prefixed with all three `env -u`
+      variables, and focused Git-state regressions remain green.
 
 ### 11.1 Delete the dead pre-commit pipeline
 
@@ -1653,11 +1789,11 @@ mandatory before the byte-identity invariant is restored.
       current excludes preserved verbatim in `args.exclude` — acceptance: every audit-table command
       appears in `... -- gate list --format=json`, checked row by row with a per-row verdict rather
       than a single count comparison. A count match can hide one missing check offsetting one extra.
-- [ ] [AI] Prune the five formatter entries `ose-public` declares for languages it does not track
-      (Go, Elixir, C#, Clojure, Dart) — acceptance:
-      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 9'`
+- [ ] [AI] Prune the one formatter entry `ose-public` declares for a language it does not track
+      (Clojure) — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 13'`
       exits 0, and every surviving formatter's glob matches at least one path in `git ls-files`.
-      Verify the inverse: the pre-edit registry fails that same glob-coverage check for exactly five
+      Verify the inverse: the pre-edit registry fails that same glob-coverage check for exactly one
       entries.
 - [ ] [AI] Verify the emitted `lint-staged` block matches the authored target — acceptance:
       `... -- gate emit --surface=pre-commit` then
@@ -2915,67 +3051,70 @@ change-producing phase until the report is clean.
 - [x] [AI] **R10-PUBLIC-WORKTREE** — amend Phase 0 to use a declared attached `ose-public`
       worktree for every public working-tree command, and preserve the bare root for ref-only
       operations — acceptance: no Phase 0 public command invokes `git status` in the bare root.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Notes: Declared the existing attached public worktree as Phase 0's public root, reopened its initialization tasks with worktree-scoped commands, and made the baseline cleanliness check exclude only plan-owned execution evidence.
+
 - [x] [AI] **R10-P1-STAGING** — include the required Rhino Gherkin directory in the Phase 1 Land
       staging command — acceptance: the staged-diff assertion names both `apps/rhino-cli` and the
       Phase 1 Gherkin tree.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Notes: Phase 1 Land now stages the bounded Gherkin tree and asserts that both the engine and Gherkin have staged paths before committing.
+
 - [x] [AI] **R10-P1B-STAGING** — include `repo-config.yml` in the Phase 11 Land staging command
       and its staged-diff assertion — acceptance: the paired source/configuration change is
       mechanically required before the PR opens.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Notes: Phase 11 Land now stages `repo-config.yml` and mechanically asserts it is paired with the shared-source change.
+
 - [x] [AI] **R10-CANONICAL-SOURCE** — define one clean, merged, attached canonical `ose-public`
       source worktree and replace downstream reads from the bare root — acceptance: Phases 3–5
       copy only from that path after it proves `HEAD...origin/main` is `0 0`.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Notes: All Phase 3–5 canonical file reads now target the merged Phase 2 rewire worktree; Phase 2's gate proves that exact source path clean and level before any downstream copy.
+
 - [x] [AI] **R10-BOUNDARY-IDENTIFIERS** — make all PR-bearing phases mechanically distinct to the
       numeric boundary detector and use the detector's exact lowercase `yes` token — acceptance:
       declared and actual PR-bearing phase sets compare equal, including the de-fork phase.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`
   - Notes: Renamed the de-fork delivery phase from non-numeric Phase 1b to numeric Phase 11 across the plan and changed PR-bearing boundary table values to the detector's lowercase `yes` token.
-- [ ] [AI] **R10-CLEAN-CHECK** — run strict plan validation from a clean detached checker worktree
+
+- [x] [AI] **R10-CLEAN-CHECK** — run strict plan validation from a clean detached checker worktree
       at the candidate plan commit — acceptance: the report has zero findings and does not confuse
       in-progress execution evidence with the pre-execution freshness gate.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (validation only)
+  - Notes: Detached checker worktree at `20f63cce6d049ab9c0fa82f9453dcd234a89454e` produced `plan__54b995__2026-08-04--14-53__audit.md` with zero findings.
 
 - [x] [AI] **R10-P2-FORMATTER-WRAPPER** — declare `scripts/format-elixir.sh` in the File-Impact
       Analysis and stage it in Phase 2 Land — acceptance: the wrapper and its test are authorized
       and reach the Phase 2 PR together.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `tech-docs.md`, `delivery.md`
   - Notes: Added the exact formatter-wrapper path to the declared footprint and made Phase 2 Land assert it is staged.
+
 - [x] [AI] **R10-P2-HARNESS-STAGING** — stage every Phase 2 `.claude/` source and generated
       `.opencode/`, `.cursor/`, and `.amazonq/` mirror path — acceptance: the Phase 2 commit carries
       the generated binding set and `npm run validate:sync` confirms no divergence.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `delivery.md`
   - Notes: P2-HN-3 now stages the bounded canonical source and generated mirror directories immediately after generation; Phase 2 Land stages the same bounded set again defensively.
+
 - [x] [AI] **R10-CANONICAL-GATE-ORDER** — move the canonical-source assertion from the Phase 1
       Gate to the Phase 2 Gate after its worktree exists — acceptance: no phase gate requires a
       future phase's worktree.
-
   - Date: 2026-08-04
   - Status: complete
   - Files Changed: `delivery.md`

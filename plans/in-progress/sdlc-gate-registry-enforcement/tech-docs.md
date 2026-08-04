@@ -547,11 +547,11 @@ as a gate.
 | `shfmt -w`                 | `shfmt -d`                                  | non-zero, prints a diff       | keep     | **add** | **add**  | keep        |
 | `fantomas`                 | `fantomas --check`                          | **99** (1 = internal error)   | keep     | keep    | **drop** | keep        |
 | `ruff format`              | `ruff format --check`                       | non-zero                      | keep     | keep    | **drop** | keep        |
-| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | **drop** | keep    | —        | **drop**    |
-| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | **drop** | keep    | —        | **drop**    |
-| `dotnet csharpier format`  | `dotnet csharpier check`                    | 1                             | **drop** | keep    | **drop** | **drop**    |
+| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | keep     | keep    | —        | **drop**    |
+| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | keep     | keep    | —        | **drop**    |
+| `dotnet csharpier format`  | `dotnet csharpier check`                    | 1                             | keep     | keep    | **drop** | **drop**    |
 | `cljfmt fix`               | `cljfmt check`                              | non-zero                      | **drop** | keep    | **drop** | **drop**    |
-| `dart format`              | `dart format -o none --set-exit-if-changed` | 1                             | **drop** | keep    | **drop** | **drop**    |
+| `dart format`              | `dart format -o none --set-exit-if-changed` | 1                             | keep     | keep    | **drop** | **drop**    |
 | `tofu fmt`                 | `tofu fmt -check`                           | non-zero                      | keep     | —       | **add**  | **drop**    |
 | `stylua`                   | `stylua --check`                            | 1                             | keep     | —       | —        | **drop**    |
 | `clang-format -i`          | `clang-format --dry-run --Werror`           | non-zero                      | keep     | —       | —        | **drop**    |
@@ -589,25 +589,28 @@ extension in each repo on 2026-08-02; Phase 0 re-verifies these before Phase 1 b
 
 | Language  | public | primer | private | beaver-nest |
 | --------- | ------ | ------ | ------- | ----------- |
-| Rust      | 237    | 284    | 234     | 217         |
-| Shell     | 389    | 8      | 13      | 36          |
+| Rust      | 273    | 284    | 234     | 217         |
+| Shell     | 392    | 8      | 13      | 36          |
 | F#        | 152    | 43     | **0**   | 36          |
-| Python    | 3552   | 74     | **0**   | 14          |
-| Go        | **0**  | 75     | **0**   | **0**       |
-| Elixir    | **0**  | 154    | **0**   | **0**       |
-| C#        | **0**  | 74     | **0**   | **0**       |
+| Python    | 3636   | 74     | **0**   | 14          |
+| Go        | 230    | 75     | **0**   | **0**       |
+| Elixir    | 188    | 154    | **0**   | **0**       |
+| C#        | 199    | 74     | **0**   | **0**       |
 | Clojure   | **0**  | 57     | **0**   | **0**       |
-| Dart      | **0**  | 44     | **0**   | **0**       |
+| Dart      | 4      | 44     | **0**   | **0**       |
 | Terraform | 17     | **0**  | 3       | **0**       |
 | Lua       | 318    | **0**  | **0**   | **0**       |
 | C         | 94     | **0**  | **0**   | **0**       |
 | Bazel     | 2      | **0**  | **0**   | **0**       |
 
 The first 2026-08-04 refresh changed `beaver-nest`'s Shell (10 → 13) and F# (15 → 34) counts. After
-`beaver-nest` advanced again to `cd2ec0e4`, the current counts are Shell 36 and F# 36. Both language
-families already had formatters in its target registry, so the five-formatter decision is unchanged.
+`beaver-nest` advanced again to `cd2ec0e4`, the current counts are Shell 36 and F# 36. The public
+refresh also found tracked Go, Elixir, C#, and Dart files, all under `apps/ayokoding-www/content/`.
+Those are publishable course artifacts and its existing `lint-staged` entries already format them, so
+the public target retains the four formatter/verifier pairs rather than treating the content tree as
+out of scope. No zero-file formatter is retained for public.
 
-**Nineteen declared formatter entries across the four repos run against zero files.** `beaver-nest`
+**Eleven declared formatter entries across the four repos run against zero files.** `beaver-nest`
 alone carries nine, plus a `*.sql` prettier glob matching nothing. They are not harmless: each one is a `lint-staged` key a maintainer reads as
 "this repo formats Dart", a tool `npm run doctor` may install, and — under this plan — a formatter
 that would demand a `verifies`-linked CI job for a language the repo does not have.
@@ -1027,23 +1030,28 @@ workflow. `name: Rhino CLI Parity Audit` derives mechanically to `rhino-cli-pari
 Order is load-bearing. Copying canonical over `beaver-nest` before upstreaming its improvements
 destroys them, and extracting the data after the copies means doing it four times.
 
-1. **De-fork the canonical source in `ose-public`** — delete the dead pipeline (§2.8.2), extract the
+1. **Preserve current canonical fixes while composing the upstreamed changes** — retain public's
+   scope-correct non-discovery Git-state handling, `CwdLock` around repo-config reads, and serialized
+   Git-sensitive unit-test layout. The inherited-Git-variable prefix from `beaver-nest` composes with
+   the serialized commands; it must not replace them. Regression coverage proves each behavior before
+   downstream copying.
+2. **De-fork the canonical source in `ose-public`** — delete the dead pipeline (§2.8.2), extract the
    eight data sites into `repo-config.yml` (`WEBSITE_APP_PREFIXES` and the surviving skip prefixes
    become `args.exclude` on their gates; the Amazon Q agent name joins the existing `harness`
    section; test fixtures switch to synthetic names that name no real repo's apps).
-2. **Upstream `beaver-nest`'s improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions,
+3. **Upstream `beaver-nest`'s improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions,
    corrected frontmatter-audit test, F# environment-wrapper detection with framework-owned-key
    exclusion, and inherited-Git-state isolation for Rust test targets — into canonical, each with a
    regression test.
-3. **Resolve the live three-repo violation** — adopt `zai-coding-plan/wrong` in `sync_validator.rs`.
+4. **Resolve the live three-repo violation** — adopt `zai-coding-plan/wrong` in `sync_validator.rs`.
    Two of three repos already carry it and it matches the primary provider documented in `CLAUDE.md`;
    both strings exercise the same branch, so this is a naming convergence, not a behaviour change.
-4. **Generate the manifest** in `ose-public` and declare its gate.
-5. **Copy down** to all three downstream repos. Only now is the copy a dumb, verifiable operation:
+5. **Generate the manifest** in `ose-public` and declare its gate.
+6. **Copy down** to all three downstream repos. Only now is the copy a dumb, verifiable operation:
    after it, `diff -r` over the boundary set is empty and each repo's `parity manifest validate`
    passes against the identical manifest.
 
-Steps 1–3 must complete before any downstream copy. This reorders the existing phase plan: Phases 3
+Steps 1–4 must complete before any downstream copy. This reorders the existing phase plan: Phases 3
 and 4 currently say "copy `apps/rhino-cli` from the merged `ose-public` Phase 1 result", which is
 only safe once canonical is de-forked.
 
