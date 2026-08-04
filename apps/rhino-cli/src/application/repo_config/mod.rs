@@ -168,6 +168,7 @@ pub fn load_or_default(repo_root: &Path) -> RepoConfig {
 mod tests {
     use super::*;
     use crate::internal::git;
+    use crate::test_support::CwdLock;
 
     // Regression: this test used to hard-assert repo-specific domain literals
     // ("organiclever", "ose-be", ...), which only hold in ose-public's own
@@ -179,6 +180,7 @@ mod tests {
     // project under test-level coverage (rhino-cli itself, at minimum).
     #[test]
     fn loads_repo_config_from_repo_root() {
+        let _cwd = CwdLock::acquire();
         let repo_root = git::root::find_root().expect("must be in a git repo");
         let config = load(&repo_root).expect("repo-config.yml must be loadable");
         assert!(
@@ -189,6 +191,7 @@ mod tests {
 
     #[test]
     fn coverage_project_has_correct_fields() {
+        let _cwd = CwdLock::acquire();
         let repo_root = git::root::find_root().expect("must be in a git repo");
         let config = load(&repo_root).expect("repo-config.yml must be loadable");
         let rhino = config
