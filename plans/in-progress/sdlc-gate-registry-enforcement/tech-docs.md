@@ -116,6 +116,7 @@ canonical source rather than hand-edited. Phases 3–5 apply the same listed roo
 ├── [E] AGENTS.md
 ├── [E] package.json
 ├── [E] repo-config.yml
+├── [E] scripts/format-elixir.sh
 ├── .claude/
 │   ├── [E] agents/README.md
 │   └── [E] skills/README.md

@@ -1265,10 +1265,6 @@ checkbox remains the separately authorized integration action after its precedin
       wires them).
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
-- [ ] [AI] Verify the canonical downstream source worktree — command:
-      `git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public status --porcelain && git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public rev-list --left-right --count HEAD...origin/main`
-      — acceptance: status is empty and the ref count is `0 0`; Phases 3–5 copy only from this
-      attached, merged canonical path and never from the bare root.
 
 > **Pause Safety**: the integrated gate engine is inert, the phase checks are green, and the four
 > refs plus Phase 11 as the next node are recorded in the bounded transaction ledger. This controlled
@@ -1981,9 +1977,10 @@ Ordered — do not delete before the fold-in is verified.
       — acceptance: exits 0 with `GOVERNANCE VENDOR AUDIT PASSED`; vendor-specific examples remain
       only under explicitly named `Platform Binding Examples` sections.
 - [ ] [AI] **P2-HN-3** (`blockedBy: P2-HN-2`; `blocks: P2-HN-4`) — regenerate bindings only from
-      canonical `.claude/` sources with `npm run generate:bindings` — acceptance: exits 0; every
-      changed `.opencode/`, `.cursor/`, or `.amazonq/` path is generated output and is added to the
-      same file-touch ledger and commit as its source.
+      canonical `.claude/` sources with `npm run generate:bindings && git add -- .claude .opencode .cursor .amazonq`
+      — acceptance: both commands exit 0; every changed `.opencode/`, `.cursor/`, or `.amazonq/`
+      path is generated output, is added to the same file-touch ledger and staged with its source,
+      and remains staged for the Phase 2 commit.
 - [ ] [AI] **P2-HN-4** (`blockedBy: P2-HN-3`; `blocks: P2-READY`) — run
       `npm run validate:sync` — acceptance: exits 0 and reports no source/mirror divergence; static
       inspection of generated files alone does not satisfy this gate.
@@ -2001,7 +1998,7 @@ Every non-merge checkbox in this subsection is `blockedBy: P2-READY`; the untagg
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
 - [ ] [AI] `... -- gate validate` exits 0 — this is the plan's central acceptance criterion.
-- [ ] [AI] Commit Phase 2 — command: `git add -- .husky .github package.json repo-config.yml AGENTS.md docs repo-governance && git commit -m 'feat(ci): derive quality surfaces from gate registry'` — acceptance: commitlint and `npm run validate:sync` exit 0.
+- [ ] [AI] Commit Phase 2 — command: `git add -- .husky .github .claude .opencode .cursor .amazonq package.json repo-config.yml AGENTS.md scripts/format-elixir.sh docs repo-governance && git diff --cached --name-only -- scripts/format-elixir.sh | grep -qx 'scripts/format-elixir.sh' && git commit -m 'feat(ci): derive quality surfaces from gate registry'` — acceptance: commitlint and `npm run validate:sync` exit 0; the formatter wrapper and any generated binding source/mirror paths are staged in this same commit.
 - [ ] [AI] Push Phase 2 — command: `git push -u origin sdlc-gate-registry-enforcement-rewire` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-rewire --fill` — acceptance: one PR URL is returned.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight makers — acceptance: eight reports exist.
@@ -2035,6 +2032,11 @@ checkbox remains the separately authorized integration action after its precedin
       unavailable repositories remain recorded as such rather than modified by this phase.
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
+
+- [ ] [AI] Verify the canonical downstream source worktree — command:
+      `git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public status --porcelain && git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public rev-list --left-right --count HEAD...origin/main`
+      — acceptance: status is empty and the ref count is `0 0`; Phases 3–5 copy only from this
+      attached, merged canonical path and never from the bare root.
 
 > **Pause Safety**: `ose-public`'s hooks and CI derive from the registry; `main-ci.yml` is gone; the
 > merge is on `main`. Safe to stop. To resume: `... -- gate validate` to confirm the merged state
@@ -2953,6 +2955,31 @@ change-producing phase until the report is clean.
 - [ ] [AI] **R10-CLEAN-CHECK** — run strict plan validation from a clean detached checker worktree
       at the candidate plan commit — acceptance: the report has zero findings and does not confuse
       in-progress execution evidence with the pre-execution freshness gate.
+
+- [x] [AI] **R10-P2-FORMATTER-WRAPPER** — declare `scripts/format-elixir.sh` in the File-Impact
+      Analysis and stage it in Phase 2 Land — acceptance: the wrapper and its test are authorized
+      and reach the Phase 2 PR together.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `tech-docs.md`, `delivery.md`
+  - Notes: Added the exact formatter-wrapper path to the declared footprint and made Phase 2 Land assert it is staged.
+- [x] [AI] **R10-P2-HARNESS-STAGING** — stage every Phase 2 `.claude/` source and generated
+      `.opencode/`, `.cursor/`, and `.amazonq/` mirror path — acceptance: the Phase 2 commit carries
+      the generated binding set and `npm run validate:sync` confirms no divergence.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`
+  - Notes: P2-HN-3 now stages the bounded canonical source and generated mirror directories immediately after generation; Phase 2 Land stages the same bounded set again defensively.
+- [x] [AI] **R10-CANONICAL-GATE-ORDER** — move the canonical-source assertion from the Phase 1
+      Gate to the Phase 2 Gate after its worktree exists — acceptance: no phase gate requires a
+      future phase's worktree.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `delivery.md`
+  - Notes: Moved the canonical-source prerequisite into the Phase 2 Gate, after the rewire worktree has been created and merged.
 
 ## Settled Decisions
 
