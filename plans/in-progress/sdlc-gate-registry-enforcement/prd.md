@@ -855,7 +855,7 @@ Feature: Repo-specific data lives in configuration
   Scenario: beaver-nest's naming exemptions are upstreamed before any copy
     Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
     And canonical ose-public does not
-    When Phase 1b completes
+    When Phase 11 completes
     Then canonical exempts both
     And "md naming validate" passes on a ROADMAP.md fixture in ose-public
     And this holds before any downstream repo copies canonical
@@ -863,7 +863,7 @@ Feature: Repo-specific data lives in configuration
   Scenario: F# environment wrapper reads remain detectable after convergence
     Given beaver-nest detects app-owned keys passed to a pure readEnvironment wrapper
     And it excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER signal
-    When Phase 1b upstreams the scanner into canonical
+    When Phase 11 upstreams the scanner into canonical
     Then canonical retains both behaviors with regression tests
     And the generic Gherkin scenario lands before any downstream copy
 

@@ -145,18 +145,18 @@ open, resume, close, and rollback commands are in
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | Yes                       |
-| 1b    | De-fork canonical source + parity manifest               | `ose-public`  | Yes                       |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | Yes                       |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | Yes                       |
-| 4     | Engine propagation + rewire                              | `ose-private` | Yes                       |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | Yes                       |
-| 6     | Knowledge capture                                        | `ose-public`  | Yes                       |
+| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes |
+| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes |
+| 3     | Engine propagation + rewire                              | `ose-primer`  | yes |
+| 4     | Engine propagation + rewire                              | `ose-private` | yes |
+| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes |
+| 6     | Knowledge capture                                        | `ose-public`  | yes |
 
 Phases 3, 4, and 5 have disjoint repository ownership and may fan out after Phase 2, but the
 transaction remains open until all three integrate.
 
-**Phase 1b blocks Phase 2; Phase 2 blocks the three downstream repository deliveries.** Canonical
+**Phase 11 blocks Phase 2; Phase 2 blocks the three downstream repository deliveries.** Canonical
 must first be de-forked — dead pipeline deleted, hardcoded app names extracted, and `beaver-nest`'s
 naming, F# environment-scanning, and Git-isolation improvements upstreamed. Phase 2 then finalizes
 the governance documents consumed by Phases 3, 4, and 5, which fan out independently.

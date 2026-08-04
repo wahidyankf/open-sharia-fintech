@@ -43,21 +43,24 @@ same exact plan-slug path may exist independently in different repository roots.
 
 | Phase | Worktree                                                  | Branch                                     | Repo                    |
 | ----- | --------------------------------------------------------- | ------------------------------------------ | ----------------------- |
-| 0     | none (primary checkout)                                   | `main`                                     | public, primer, private |
+| 0     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`            |
+| 0     | none (primary checkout)                                   | `main`                                     | `ose-primer`, `ose-private` |
 | 0     | `worktrees/gate-baseline-beaver/`                         | `main`                                     | `beaver-nest`           |
 | 1     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-public`            |
-| 1b    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`            |
+| 11    | `worktrees/sdlc-gate-registry-enforcement-defork/`        | `sdlc-gate-registry-enforcement-defork`    | `ose-public`            |
 | 2     | `worktrees/sdlc-gate-registry-enforcement-rewire-public/` | `sdlc-gate-registry-enforcement-rewire`    | `ose-public`            |
 | 3     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-primer`            |
 | 4     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `ose-private`           |
 | 5     | `worktrees/sdlc-gate-registry-enforcement/`               | `sdlc-gate-registry-enforcement`           | `beaver-nest`           |
 | 6     | `worktrees/sdlc-gate-registry-enforcement-knowledge/`     | `sdlc-gate-registry-enforcement-knowledge` | `ose-public`            |
 
-`beaver-nest`'s repository root is intentionally bare, so commands requiring a working tree cannot
-run there. Phase 0 creates the attached `gate-baseline-beaver` worktree from local `main`, records
-the baseline, then removes only that task-owned worktree. Ref-level commands continue to run from
-the bare root. Phase 5 likewise updates local `main` at the ref level after merge rather than trying
-to check it out in the bare root.
+`ose-public` and `beaver-nest` repository roots are intentionally bare, so commands requiring a
+working tree cannot run there. Phase 0 uses the already-declared attached `ose-public` execution
+worktree and creates `gate-baseline-beaver` from local `main`, records the baseline, then removes
+only that task-owned Beaver worktree. Ref-level commands continue to run from the bare roots. Phase
+5 likewise updates local `main` at the ref level after merge rather than trying to check it out in a
+bare root. During Phase 0, the plan-owned `delivery.md` execution evidence is the sole permitted
+public-worktree modification; every baseline cleanliness assertion excludes that exact path.
 
 Optional manual pre-provisioning of the mandatory plan worktree (run from the repo root):
 
@@ -78,7 +81,7 @@ Chosen capacity is **N=3 background agents plus one main-thread orchestrator**, 
 default. The main thread owns the live task list, file-touch ledgers, dependency gates, and merges;
 it does not take an implementation leaf while independent background work is available.
 
-The serial spine is `Phase 0 → Phase 1 → Phase 1b → Phase 2`. Each node reads the source of truth
+The serial spine is `Phase 0 → Phase 1 → Phase 11 → Phase 2`. Each node reads the source of truth
 written by its predecessor. After Phase 2 merges, Phases 3, 4, and 5 are mutually independent because
 they write different repositories while reading the same merged canonical engine and finalized
 governance documents; they fan out concurrently up to N=3. Phase 6 is blocked by Phases 3, 4, and 5.
@@ -106,13 +109,13 @@ See [README.md §Delivery Units](./README.md#delivery-units) for the canonical t
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | Yes                       |
-| 1b    | De-fork canonical source + parity manifest               | `ose-public`  | Yes                       |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | Yes                       |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | Yes                       |
-| 4     | Engine propagation + rewire                              | `ose-private` | Yes                       |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | Yes                       |
-| 6     | Knowledge capture                                        | `ose-public`  | Yes                       |
+| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes |
+| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes |
+| 3     | Engine propagation + rewire                              | `ose-primer`  | yes |
+| 4     | Engine propagation + rewire                              | `ose-private` | yes |
+| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes |
+| 6     | Knowledge capture                                        | `ose-public`  | yes |
 
 Phases 3, 4, and 5 are independent of one another after Phase 2 and fan out up to N=3.
 
@@ -201,38 +204,72 @@ Markdown, or baseline command. A failure blocks push, review, merge readiness, a
 
 **Opens no PR.** Phase 0 evidence rides the Phase 1 PR.
 
-- [ ] [AI] Create `beaver-nest`'s baseline worktree from its bare root — command:
+- [x] [AI] Create `beaver-nest`'s baseline worktree from its bare root — command:
       `git -C /Users/wkf/ose-projects/beaver-nest worktree add worktrees/gate-baseline-beaver main` — acceptance:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver status --short --branch` reports
       a clean `main` level with `origin/main`.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md` (execution evidence)
+  - Notes: Created the task-owned Beaver baseline worktree; it is clean on `main` and `HEAD...origin/main` is `0 0`.
 - [ ] [AI] **P0-PUBLIC-INSTALL** (`blocks: P0-PUBLIC-DOCTOR`) — command:
-      `npm --prefix /Users/wkf/ose-projects/ose-public install` — acceptance: exits 0.
+      `npm --prefix /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement install`
+      — acceptance: exits 0 in the declared attached public worktree; never run it in the bare root.
 - [ ] [AI] **P0-PUBLIC-DOCTOR** (`blockedBy: P0-PUBLIC-INSTALL`) — command:
-      `(cd /Users/wkf/ose-projects/ose-public && npm run doctor -- --fix)` — acceptance: exits 0 and
-      a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-PRIMER-INSTALL** (`blocks: P0-PRIMER-DOCTOR`) — command:
+      `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
+      — acceptance: exits 0 and a check-only rerun reports no missing tool.
+- [x] [AI] **P0-PRIMER-INSTALL** (`blocks: P0-PRIMER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-primer install` — acceptance: exits 0.
-- [ ] [AI] **P0-PRIMER-DOCTOR** (`blockedBy: P0-PRIMER-INSTALL`) — command:
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation exited 0. Its postinstall doctor found no missing tools; it reported the pre-existing npm `11.11.0` versus `11.10.1` version warning.
+- [x] [AI] **P0-PRIMER-DOCTOR** (`blockedBy: P0-PRIMER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-primer && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-PRIVATE-INSTALL** (`blocks: P0-PRIVATE-DOCTOR`) — command:
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: `npm run doctor -- --fix` repaired the Volta npm selection; the check-only rerun reported 13/13 tools OK with no warnings or missing tools.
+- [x] [AI] **P0-PRIVATE-INSTALL** (`blocks: P0-PRIVATE-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/ose-private install` — acceptance: exits 0.
-- [ ] [AI] **P0-PRIVATE-DOCTOR** (`blockedBy: P0-PRIVATE-INSTALL`) — command:
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation and local build only)
+  - Notes: Installation exited 0. Its postinstall doctor found no missing tools and reported the pre-existing npm `11.11.0` versus required `11.16.0` version warning.
+- [x] [AI] **P0-PRIVATE-DOCTOR** (`blockedBy: P0-PRIVATE-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/ose-private && npm run doctor -- --fix)` — acceptance: exits 0 and
       a check-only rerun reports no missing tool.
-- [ ] [AI] **P0-BEAVER-INSTALL** (`blocks: P0-BEAVER-DOCTOR`) — command:
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (toolchain setup only)
+  - Notes: The fix and check-only doctor runs both reported 16/16 tools OK with no warnings or missing tools. Nx also emitted its non-blocking AI-agent configuration update notice.
+- [x] [AI] **P0-BEAVER-INSTALL** (`blocks: P0-BEAVER-DOCTOR`) — command:
       `npm --prefix /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver install` —
       acceptance: exits 0; never run it in the bare root.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: none (dependency installation only)
+  - Notes: Installation in the attached task-owned worktree exited 0; postinstall doctor completed.
 - [ ] [AI] **P0-BEAVER-DOCTOR** (`blockedBy: P0-BEAVER-INSTALL`) — command:
       `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/gate-baseline-beaver && npm run doctor -- --fix)`
       — acceptance: exits 0 and a check-only rerun reports no missing tool.
-- [ ] [AI] Establish a green baseline in `ose-public`: `npx nx run-many --all -t test:quick` —
+- [ ] [AI] Establish a green baseline in `ose-public`: `(cd /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement && npx nx run-many --all -t test:quick)` —
       acceptance: exits 0. If any project fails, fix it before Phase 1 (preexisting failures are in
       scope per Root Cause Orientation); record each fix in this checklist as a discovered task.
-- [ ] [AI] Confirm every working checkout is clean and level with origin: use the three primary
-      checkouts plus the `beaver-nest` baseline worktree. In each, `git status --porcelain` produces
-      no output and `git rev-list --left-right --count HEAD...origin/main` reports `0 0` — acceptance:
-      both hold in all four working checkouts. If one is dirty, the uncommitted work belongs to
+- [ ] [AI] Confirm every working checkout is clean and level with origin: use the declared attached
+      `ose-public` worktree, the `ose-primer` and `ose-private` primary checkouts, plus the
+      `beaver-nest` baseline worktree. In the public worktree,
+      `git status --porcelain -- . ':(exclude)plans/in-progress/sdlc-gate-registry-enforcement/delivery.md'`
+      produces no output; in the other three, `git status --porcelain` produces no output. In all
+      four, `git rev-list --left-right --count HEAD...origin/main` reports `0 0` — acceptance: both
+      hold in all four working checkouts. If another path is dirty, the uncommitted work belongs to
       another actor: leave it untouched and record it here rather than staging it.
 - [ ] [AI] Re-capture the audit table in [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today)
       against current `main` in all four repos — acceptance: every row's verdict still holds, or the
@@ -1190,8 +1227,9 @@ Every non-merge checkbox in this subsection is `blockedBy: P1-READY`; the untagg
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
 - [ ] [AI] Commit the Phase 1 theme — command:
-      `git add -- apps/rhino-cli docs/reference/sdlc-gate-standard.md docs/reference/related-repositories.md && git commit -m 'feat(rhino-cli): add registry-driven gate engine'` — acceptance: commitlint and
-      `npm run validate:sync` exit 0; generated mirrors, if changed, are included in this commit.
+      `git add -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin docs/reference/sdlc-gate-standard.md docs/reference/related-repositories.md && git diff --cached --name-only -- apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin | grep -q . && git commit -m 'feat(rhino-cli): add registry-driven gate engine'` — acceptance:
+      commitlint and `npm run validate:sync` exit 0; the staged diff contains both the engine and
+      its required Gherkin, and generated mirrors, if changed, are included in this commit.
 - [ ] [AI] Push Phase 1 — command: `git push -u origin sdlc-gate-registry-enforcement` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: `gh pr view --json number,url` returns one PR.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines with the URL from `gh pr view --json url --jq .url` — acceptance: eight reports exist.
@@ -1217,8 +1255,8 @@ checkbox remains the separately authorized integration action after its precedin
 > These checks verify the authorized integration after Land completes.
 > **Byte-identity transaction opened at integration** —
 > `apps/rhino-cli` in `ose-public` now differs from every other repo. Do **not** start Phases 2, 3,
-> 4 or 5 from this gate, only from the Phase 1b gate — copying canonical now would propagate the
-> hardcoded app names Phase 1b exists to remove.
+> 4 or 5 from this gate, only from the Phase 11 gate — copying canonical now would propagate the
+> hardcoded app names Phase 11 exists to remove.
 
 - [ ] [AI] `gate list`, `gate run`, `gate emit`, `gate validate`, and `git lockfile sync` all exist
       and are tested — acceptance: `npx nx run rhino-cli:test:quick` exits 0.
@@ -1227,16 +1265,20 @@ checkbox remains the separately authorized integration action after its precedin
       wires them).
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
+- [ ] [AI] Verify the canonical downstream source worktree — command:
+      `git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public status --porcelain && git -C /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public rev-list --left-right --count HEAD...origin/main`
+      — acceptance: status is empty and the ref count is `0 0`; Phases 3–5 copy only from this
+      attached, merged canonical path and never from the bare root.
 
 > **Pause Safety**: the integrated gate engine is inert, the phase checks are green, and the four
-> refs plus Phase 1b as the next node are recorded in the bounded transaction ledger. This controlled
+> refs plus Phase 11 as the next node are recorded in the bounded transaction ledger. This controlled
 > checkpoint is safe to stop, but not safe for unrelated boundary work or an identity-restored claim.
 > To resume: run the four exact `rev-parse origin/main` commands in the transaction protocol, compare
-> them with the ledger, and continue Phase 1b.
+> them with the ledger, and continue Phase 11.
 
 ---
 
-## Phase 1b — De-fork Canonical Source and Add the Parity Manifest (`ose-public`, PR #1b)
+## Phase 11 — De-fork Canonical Source and Add the Parity Manifest (`ose-public`, PR #1b)
 
 Delivery unit: `apps/rhino-cli`'s canonical source contains no repository's app names, the dead
 pre-commit pipeline is gone, `beaver-nest`'s general improvements are upstreamed, and a checksum
@@ -1249,17 +1291,17 @@ that still hardcodes `ose-public`'s app names would either recreate `beaver-nest
 capabilities it depends on. See
 [tech-docs §2.8.5](./tech-docs.md#285-convergence-sequence--upstream-before-downstream).
 
-- [ ] [AI] Create the Phase 1b worktree from the merged Phase 1 state — commands:
+- [ ] [AI] Create the Phase 11 worktree from the merged Phase 1 state — commands:
       `git fetch origin main` and
       `git worktree add -b sdlc-gate-registry-enforcement-defork worktrees/sdlc-gate-registry-enforcement-defork origin/main`
       — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
-- [ ] [AI] Install dependencies in the Phase 1b worktree — command:
+- [ ] [AI] Install dependencies in the Phase 11 worktree — command:
       `npm --prefix worktrees/sdlc-gate-registry-enforcement-defork install` — acceptance: exits 0.
 - [ ] [AI] Initialize its toolchain — command:
       `(cd worktrees/sdlc-gate-registry-enforcement-defork && npm run doctor -- --fix)` — acceptance:
       exits 0 and the follow-up doctor check reports no missing tool.
 
-### 1b.1 Delete the dead pre-commit pipeline
+### 11.1 Delete the dead pre-commit pipeline
 
 Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-pre-commit-pipeline).
 
@@ -1308,7 +1350,7 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
       `/usr/bin/grep -rn "ayokoding" apps/rhino-cli/src/` returns no match. Verify the inverse holds
       pre-edit: the same command returns matches before the deletion.
 
-### 1b.2 Extract repo-specific data into `repo-config.yml`
+### 11.2 Extract repo-specific data into `repo-config.yml`
 
 - [ ] [AI] **P1B-WEBSITE-RED** (`blocks: P1B-WEBSITE-GREEN`) — RED: add
       `website_prefix_exclusions_are_runtime_config` (**new test**) to
@@ -1373,7 +1415,7 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
       — acceptance: exits 1 with no matches. The gate is intentionally bounded to the enumerated
       shared-data sites; unrelated environment-contract examples are outside this extraction.
 
-### 1b.3 Upstream `beaver-nest`'s improvements
+### 11.3 Upstream `beaver-nest`'s improvements
 
 Direction matters: these flow **up** into canonical before any repo copies canonical **down**.
 
@@ -1388,7 +1430,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
   Scenario: beaver-nest's naming exemptions are upstreamed before any copy
     Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
     And canonical ose-public does not
-    When Phase 1b completes
+    When Phase 11 completes
     Then canonical exempts both
     And "md naming validate" passes on a ROADMAP.md fixture in ose-public
     And this holds before any downstream repo copies canonical
@@ -1414,7 +1456,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
   Scenario: F# environment wrapper reads remain detectable after convergence
     Given beaver-nest detects app-owned keys passed to a pure readEnvironment wrapper
     And it excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER signal
-    When Phase 1b upstreams the scanner into canonical
+    When Phase 11 upstreams the scanner into canonical
     Then canonical retains both behaviors with regression tests
     And the generic Gherkin scenario lands before any downstream copy
   ```
@@ -1457,7 +1499,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
       — acceptance: exits 0, temporary Git-fixture tests create and inspect only their own repos, and
       the focused regression remains green.
 
-### 1b.4 Close the live three-repo violation
+### 11.4 Close the live three-repo violation
 
 - [ ] [AI] Adopt `zai-coding-plan/wrong` in `sync_validator.rs`'s
       `validate_agent_equivalence_fails_on_model_mismatch` fixture, matching `ose-primer` and
@@ -1466,7 +1508,7 @@ Direction matters: these flow **up** into canonical before any repo copies canon
       shows exactly one changed line, and the model-mismatch test still **fails** on a mismatched
       model (verify by temporarily supplying a matching model and observing the test fail to fire).
 
-### 1b.5 Parity manifest and its gate
+### 11.5 Parity manifest and its gate
 
 - [ ] [AI] **RED** — failing tests for `parity manifest generate` and `parity manifest validate` —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
@@ -1517,19 +1559,19 @@ Direction matters: these flow **up** into canonical before any repo copies canon
 - [ ] [AI] **P1B-MANIFEST** — Generate the manifest and commit it — acceptance:
       `... -- parity manifest validate` exits 0, and re-running `generate` leaves the file unchanged.
 
-### Phase 1b Execution-Ready Gate
+### Phase 11 Execution-Ready Gate
 
 - [ ] [AI] **P1B-READY** (`blockedBy: P1B-MANIFEST`; `blocks: P1B-LAND`) — command:
       `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: exits 0
-      before any Phase 1b Land action begins, with the parity manifest present and valid.
+      before any Phase 11 Land action begins, with the parity manifest present and valid.
 
-### 1b.6 Land
+### 11.6 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P1B-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit Phase 1b — command: `git add -- apps/rhino-cli specs/apps/rhino && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0.
-- [ ] [AI] Push Phase 1b — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
+- [ ] [AI] Commit Phase 11 — command: `git add -- apps/rhino-cli specs/apps/rhino repo-config.yml && git diff --cached --name-only -- apps/rhino-cli repo-config.yml | grep -q '^repo-config.yml$' && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0; the staged diff contains both the shared-source removal and its paired `repo-config.yml` extraction.
+- [ ] [AI] Push Phase 11 — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
 - [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-defork --fill` — acceptance: `gh pr view --json number,url` returns one PR.
 - [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines — acceptance: eight reports exist.
 - [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review of record is posted.
@@ -1549,7 +1591,7 @@ checkbox remains the separately authorized integration action after its precedin
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
       `git rev-list --left-right --count HEAD...origin/main` reports `0 0`.
 
-### Phase 1b Gate
+### Phase 11 Gate
 
 > These post-integration checks must pass before starting Phase 2. Canonical is technically copyable at this
 > point, but Phases 3, 4, and 5 stay blocked until Phase 2 finalizes the governance files they also
@@ -1589,7 +1631,7 @@ Delivery unit: `ose-public`'s four surfaces derive from the registry, `main-ci.y
 documents agree. This is the final canonical transaction checkpoint; downstream propagation remains
 mandatory before the byte-identity invariant is restored.
 
-- [ ] [AI] Create the Phase 2 worktree from the merged Phase 1b state — commands:
+- [ ] [AI] Create the Phase 2 worktree from the merged Phase 11 state — commands:
       `git fetch origin main` and
       `git worktree add -b sdlc-gate-registry-enforcement-rewire worktrees/sdlc-gate-registry-enforcement-rewire-public origin/main`
       — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
@@ -2017,15 +2059,15 @@ with those nodes; it does not close the all-four target by itself.
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool. The polyglot demo
       apps require their language toolchains before pre-push can pass in a fresh worktree.
 - [ ] [AI] Copy `apps/rhino-cli` from merged canonical — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
       `src/`, `tests/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`,
       `parity-manifest.sha256` and `specs/apps/rhino/behavior/rhino-cli/gherkin/` are byte-identical
       to `ose-public`, verified by `diff -r`, and `... -- parity manifest validate` exits 0 against
       the copied manifest without regenerating it. Copying from the Phase 1 result instead would
-      reintroduce the hardcoded app names Phase 1b removed.
+      reintroduce the hardcoded app names Phase 11 removed.
 - [ ] [AI] Copy the boundary Gherkin tree — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin/`
-      — acceptance: `diff -r /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin` exits 0.
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/specs/apps/rhino/behavior/rhino-cli/gherkin/ /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin/`
+      — acceptance: `diff -r /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/specs/apps/rhino/behavior/rhino-cli/gherkin /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/specs/apps/rhino/behavior/rhino-cli/gherkin` exits 0.
 - [ ] [AI] Author `ose-primer`'s `gates:` section, preserving its own excludes (its `md links validate`
       carries the polyglot `deps`/`build`/`target` excludes) and adding its per-language gates —
       acceptance: `... -- repo-config validate` exits 0.
@@ -2042,15 +2084,15 @@ with those nodes; it does not close the all-four target by itself.
       formatters needing wrapper work — `gofmt` (prints paths, exits 0) and the Elixir script (no
       check mode) — are `ose-primer`-only, so that work lands here and nowhere else.
 - [ ] [AI] **P3-CONFIG-COPY** — install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-primer.yml > /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-primer.yml > /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `npm exec nx -- run rhino-cli:repo-config-validation` exits 0.
 - [ ] [AI] **P3-PACKAGE-COPY** — command:
-      `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-primer.json /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/package.json`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-primer.json /Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty package.json` exits 0.
 - [ ] [AI] **P3-HOOK-COMMIT-MSG** — copy `husky-hooks/commit-msg-ose-primer.sh` to `.husky/commit-msg` — command:
-      `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-primer.sh .husky/commit-msg` — acceptance: `sh -n .husky/commit-msg` exits 0.
-- [ ] [AI] **P3-HOOK-PRE-COMMIT** — command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-primer.sh .husky/pre-commit` — acceptance: `sh -n .husky/pre-commit` exits 0.
-- [ ] [AI] **P3-HOOK-PRE-PUSH** — command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-primer.sh .husky/pre-push` — acceptance: `sh -n .husky/pre-push` exits 0.
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-primer.sh .husky/commit-msg` — acceptance: `sh -n .husky/commit-msg` exits 0.
+- [ ] [AI] **P3-HOOK-PRE-COMMIT** — command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-primer.sh .husky/pre-commit` — acceptance: `sh -n .husky/pre-commit` exits 0.
+- [ ] [AI] **P3-HOOK-PRE-PUSH** — command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-primer.sh .husky/pre-push` — acceptance: `sh -n .husky/pre-push` exits 0.
 - [ ] [AI] **P3-PR-WORKFLOW** — replace the hand-written gate list in
       `.github/workflows/pr-quality-gate.yml` with enumerate/matrix jobs while preserving primer's
       exact toolchain setup jobs and `name: Quality gate` join job — command:
@@ -2060,16 +2102,16 @@ with those nodes; it does not close the all-four target by itself.
       `test ! -f .github/workflows/main-ci.yml` exits 0.
 - [ ] [AI] **P3-DEPS-RENAME** — create `.github/workflows/dependency-vulnerability-audit.yml`
       (**new file**) from the finalized public workflow, then delete `.github/workflows/deps-audit.yml` — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml .github/workflows/dependency-vulnerability-audit.yml && git rm .github/workflows/deps-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml .github/workflows/dependency-vulnerability-audit.yml && git rm .github/workflows/deps-audit.yml`
       — acceptance: `actionlint .github/workflows/dependency-vulnerability-audit.yml` exits 0 and
       the new `name:` matches its filename. This repo is the one that also fixes a
       standing convention violation — it ships `name: Nightly Dependency Audit` inside a file named
       `deps-audit.yml`, which the `name:`-mirrors-filename rule forbids.
 - [ ] [AI] Copy the amended `docs/reference/sdlc-gate-standard.md` — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md docs/reference/sdlc-gate-standard.md`
       — acceptance: `npm run lint:md` exits 0.
 - [ ] [AI] **P3-PROPAGATION** — Copy rewritten `repo-governance/development/workflow/git-hook-lifecycle.md` — command:
-      `cp /Users/wkf/ose-projects/ose-public/repo-governance/development/workflow/git-hook-lifecycle.md repo-governance/development/workflow/git-hook-lifecycle.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/repo-governance/development/workflow/git-hook-lifecycle.md repo-governance/development/workflow/git-hook-lifecycle.md`
       — acceptance: `grep -c 'validate-markdown.yml' repo-governance/development/workflow/git-hook-lifecycle.md`
       returns 0 (this repo's copy cites that non-existent workflow today).
 
@@ -2110,7 +2152,7 @@ remains the separately authorized integration action after its preceding Land ta
 > Phases 4 and 5, and one of three nodes that block Phase 6).
 
 - [ ] [AI] `... -- gate validate` exits 0 in `ose-primer`.
-- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 1b result — acceptance: `diff -r`
+- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 11 result — acceptance: `diff -r`
       over the boundary set reports zero differences.
 - [ ] [AI] Confirm the landed ref matches `origin/main` — command:
       `git rev-list --left-right --count HEAD...origin/main` — acceptance: reports `0 0`.
@@ -2137,7 +2179,7 @@ all-four closure still depends on Phase 5.
       `(cd /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool.
 - [ ] [AI] Copy canonical `apps/rhino-cli` — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance:
       `diff -r` reports no difference across the byte-identity file set (now including `tests/` and
       `parity-manifest.sha256`), and `... -- parity manifest validate` exits 0 without regenerating.
 - [ ] [AI] **P4-REGISTRY-AUTHORING** — Author `ose-private`'s `gates:` section. It carries entries the others do not — the
@@ -2172,19 +2214,19 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       `... -- gate list --surface=pre-push --format=json`.
 - [ ] [AI] **P4-CONFIG-COPY** (`blockedBy: P4-REGISTRY-AUTHORING`; `blocks: P4-PACKAGE-COPY`) —
       install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-private.yml > /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-ose-private.yml > /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `(cd /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement && npm exec nx -- run rhino-cli:repo-config-validation)` exits 0.
 - [ ] [AI] **P4-PACKAGE-COPY** (`blockedBy: P4-CONFIG-COPY`; `blocks: P4-HOOK-COMMIT-MSG`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-private.json /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-ose-private.json /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/package.json` exits 0.
 - [ ] [AI] **P4-HOOK-COMMIT-MSG** (`blockedBy: P4-PACKAGE-COPY`; `blocks: P4-HOOK-PRE-COMMIT`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg` exits 0.
 - [ ] [AI] **P4-HOOK-PRE-COMMIT** (`blockedBy: P4-HOOK-COMMIT-MSG`; `blocks: P4-HOOK-PRE-PUSH`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit` exits 0.
 - [ ] [AI] **P4-HOOK-PRE-PUSH** (`blockedBy: P4-HOOK-PRE-COMMIT`; `blocks: P4-PR-WORKFLOW`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-ose-private.sh /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
       — acceptance: `sh -n /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push` exits 0.
 - [ ] [AI] **P4-PR-WORKFLOW** (`blockedBy: P4-HOOK-PRE-PUSH`; `blocks: P4-DEPS-COPY`) — replace
       the hand-written gate list in the exact destination
@@ -2192,13 +2234,13 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       with enumerate/matrix jobs while preserving private's toolchain setup and `name: Quality gate`
       join job — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/pr-quality-gate.yml` exits 0.
 - [ ] [AI] **P4-DEPS-COPY** (`blockedBy: P4-PR-WORKFLOW`; `blocks: P4-DEPS-DELETE`) — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml` exits 0.
 - [ ] [AI] **P4-DEPS-DELETE** (`blockedBy: P4-DEPS-COPY`; `blocks: P4-PARITY-WORKFLOW`) — command:
       `git -C /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/deps-audit.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/deps-audit.yml` exits 0.
 - [ ] [AI] **P4-PARITY-WORKFLOW** (`blockedBy: P4-DEPS-DELETE`; `blocks: P4-MAIN-CI-DELETE`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml` exits 0.
 - [ ] [AI] **P4-MAIN-CI-DELETE** (`blockedBy: P4-PARITY-WORKFLOW`; `blocks: P4-DOCS`) — command:
       `git -C /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/main-ci.yml`
@@ -2208,7 +2250,7 @@ infra/on-premise/terraform/`) through a hand-written hook block rather than `lin
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       exits 0 (the new file must be indexed).
 - [ ] [AI] **P4-PROPAGATION** — Copy the finalized amended SDLC standard — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
       — acceptance: `npm run lint:md` exits 0 from the private worktree.
 
 ### Phase 4 Execution-Ready Gate
@@ -2265,10 +2307,10 @@ remains the separately authorized integration action after its preceding Land ta
 
 Blocked by Phase 2; independent of Phases 3 and 4.
 
-`beaver-nest` **stops being a fork**. Phase 1b removes the defects that forced the fork and upstreams
+`beaver-nest` **stops being a fork**. Phase 11 removes the defects that forced the fork and upstreams
 the capabilities that accumulated there: eight of ten source divergences are repo-specific data or
 fixtures hardcoded into shared source; the other two are the `ROADMAP.md`/`SECURITY.md` naming
-exemptions and F# environment-wrapper detection. Phase 1b also absorbs the fork's inherited-Git-state
+exemptions and F# environment-wrapper detection. Phase 11 also absorbs the fork's inherited-Git-state
 isolation in `project.json`, its corresponding integration tests, and its Gherkin coverage. This
 therefore becomes a copy like Phases 3 and 4, not a port. See
 [tech-docs §2.8.6](./tech-docs.md#286-the-governance-change-this-requires) for the governance
@@ -2287,20 +2329,20 @@ amendment this depends on.
 - [ ] [AI] Initialize its toolchain — command:
       `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement && npm run doctor -- --fix)`
       — acceptance: exits 0 and a subsequent doctor check reports no missing tool.
-- [ ] [AI] **Verify Phase 1b actually absorbed the fork before overwriting anything.** Diff the
+- [ ] [AI] **Verify Phase 11 actually absorbed the fork before overwriting anything.** Diff the
       current `beaver-nest` source against merged canonical and confirm every remaining difference is
-      one Phase 1b intended to erase — acceptance: `diff -rq` over the boundary set reports only
+      one Phase 11 intended to erase — acceptance: `diff -rq` over the boundary set reports only
       files whose divergence is listed in
       [tech-docs §2.8.1](./tech-docs.md#281-audit-result), and **zero** unlisted differences. Any
       unlisted difference is an unmigrated capability: stop, upstream it into `ose-public` first, and
       re-run. This step is the guard against silently deleting work.
 - [ ] [AI] Confirm every upstreamed capability is present in canonical **before** the copy —
-      commands: `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml --lib docs::naming`,
-      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml scan_fsharp`, and
-      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/apps/rhino-cli/Cargo.toml --test cargo_target_share`
+      commands: `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml --lib docs::naming`,
+      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml scan_fsharp`, and
+      `cargo test --manifest-path /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/Cargo.toml --test cargo_target_share`
       — acceptance: all exit 0 and `project.json` clears all three inherited Git variables.
 - [ ] [AI] Copy canonical `apps/rhino-cli` — command:
-      `rsync -a --delete /Users/wkf/ose-projects/ose-public/apps/rhino-cli/ /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance: `diff -r`
+      `rsync -a --delete /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/apps/rhino-cli/ /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/apps/rhino-cli/` — acceptance: `diff -r`
       reports no difference across the boundary set, and `... -- parity manifest validate` exits 0
       without regenerating.
 - [ ] [AI] Confirm `md naming validate` still passes on this repo's own `ROADMAP.md` and
@@ -2316,19 +2358,19 @@ amendment this depends on.
       exits 0 (prettier, rustfmt, shfmt, fantomas, ruff — the five languages it actually tracks).
 - [ ] [AI] **P5-CONFIG-COPY** (`blockedBy: P5-REGISTRY-AUTHORING`; `blocks: P5-PACKAGE-COPY`) —
       install the authored registry without its audit banner — command:
-      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-beaver-nest.yml > /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
+      `sed -n '/^# repo-config.yml — schema:/,$p' /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/repo-configs/repo-config-beaver-nest.yml > /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-config.yml`
       — acceptance: `(cd /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement && npm exec nx -- run rhino-cli:repo-config-validation)` exits 0.
 - [ ] [AI] **P5-PACKAGE-COPY** (`blockedBy: P5-CONFIG-COPY`; `blocks: P5-HOOK-COMMIT-MSG`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-beaver-nest.json /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/package-beaver-nest.json /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json`
       — acceptance: `jq empty /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/package.json` exits 0.
 - [ ] [AI] **P5-HOOK-COMMIT-MSG** (`blockedBy: P5-PACKAGE-COPY`; `blocks: P5-HOOK-PRE-COMMIT`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/commit-msg-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/commit-msg` exits 0.
 - [ ] [AI] **P5-HOOK-PRE-COMMIT** (`blockedBy: P5-HOOK-COMMIT-MSG`; `blocks: P5-HOOK-PRE-PUSH`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-commit-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-commit` exits 0.
 - [ ] [AI] **P5-HOOK-PRE-PUSH** (`blockedBy: P5-HOOK-PRE-COMMIT`; `blocks: P5-PR-WORKFLOW`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/plans/in-progress/sdlc-gate-registry-enforcement/husky-hooks/pre-push-beaver-nest.sh /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push`
       — acceptance: `sh -n /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.husky/pre-push` exits 0.
 - [ ] [AI] **P5-PR-WORKFLOW** (`blockedBy: P5-HOOK-PRE-PUSH`; `blocks: P5-DEPS-COPY`) — replace
       the hand-written gate list in the exact destination
@@ -2336,25 +2378,25 @@ amendment this depends on.
       with enumerate/matrix jobs while preserving Beaver's toolchain setup and `name: Quality gate`
       join job — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/pr-quality-gate.yml` exits 0.
 - [ ] [AI] **P5-DEPS-COPY** (`blockedBy: P5-PR-WORKFLOW`; `blocks: P5-DEPS-DELETE`) — command:
-      `cp /Users/wkf/ose-projects/ose-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/dependency-vulnerability-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/dependency-vulnerability-audit.yml` exits 0.
 - [ ] [AI] **P5-DEPS-DELETE** (`blockedBy: P5-DEPS-COPY`; `blocks: P5-PARITY-WORKFLOW`) — command:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/deps-audit.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/deps-audit.yml` exits 0.
 - [ ] [AI] **P5-PARITY-WORKFLOW** (`blockedBy: P5-DEPS-DELETE`; `blocks: P5-MAIN-CI-DELETE`) —
-      command: `cp /Users/wkf/ose-projects/ose-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
+      command: `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/.github/workflows/rhino-cli-parity-audit.yml /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml`
       — acceptance: `actionlint /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/rhino-cli-parity-audit.yml` exits 0.
 - [ ] [AI] **P5-MAIN-CI-DELETE** (`blockedBy: P5-PARITY-WORKFLOW`; `blocks: P5-DOCS`) — command:
       `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement rm .github/workflows/main-ci.yml`
       — acceptance: `test ! -f /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/.github/workflows/main-ci.yml` exits 0.
 - [ ] [AI] Copy finalized standard — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/sdlc-gate-standard.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/sdlc-gate-standard.md`
       — acceptance: destination exists.
 - [ ] [AI] Copy rewritten hook lifecycle — command:
-      `cp /Users/wkf/ose-projects/ose-public/repo-governance/development/workflow/git-hook-lifecycle.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-governance/development/workflow/git-hook-lifecycle.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/repo-governance/development/workflow/git-hook-lifecycle.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/repo-governance/development/workflow/git-hook-lifecycle.md`
       — acceptance: destination exists.
 - [ ] [AI] **P5-PROPAGATION** — Copy fork-removal related-repositories amendment — command:
-      `cp /Users/wkf/ose-projects/ose-public/docs/reference/related-repositories.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/related-repositories.md`
+      `cp /Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public/docs/reference/related-repositories.md /Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement/docs/reference/related-repositories.md`
       — acceptance: `npm run lint:md` exits 0 and no in-progress plan folder is added to `beaver-nest`.
 
 ### Phase 5 Execution-Ready Gate
@@ -2401,7 +2443,7 @@ remains the separately authorized integration action after its preceding Land ta
 > Phases 3 and 4, and one of three nodes that block Phase 6).
 
 - [ ] [AI] `... -- gate validate` exits 0 in `beaver-nest`.
-- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 1b result — acceptance: `diff -r`
+- [ ] [AI] `apps/rhino-cli` byte-identical to `ose-public`'s Phase 11 result — acceptance: `diff -r`
       over the boundary set reports zero differences.
 - [ ] [AI] `... -- parity manifest validate` exits 0.
 - [ ] [AI] `md naming validate` passes on this repo's `ROADMAP.md` and `SECURITY.md`.
@@ -2861,6 +2903,56 @@ is not applicable. The authoritative plan is archived in `ose-public` inside PR 
 > Resume by re-running this gate; cleanup removes only explicitly confirmed task-owned worktrees.
 
 ---
+
+## Strict Plan-Checker Remediation
+
+These tasks were added from the 2026-08-04 strict pre-execution report
+`plan__1c0563__2026-08-04--14-24__audit.md`. They block all remaining Phase 0 work and every
+change-producing phase until the report is clean.
+
+- [x] [AI] **R10-PUBLIC-WORKTREE** — amend Phase 0 to use a declared attached `ose-public`
+      worktree for every public working-tree command, and preserve the bare root for ref-only
+      operations — acceptance: no Phase 0 public command invokes `git status` in the bare root.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Declared the existing attached public worktree as Phase 0's public root, reopened its initialization tasks with worktree-scoped commands, and made the baseline cleanliness check exclude only plan-owned execution evidence.
+- [x] [AI] **R10-P1-STAGING** — include the required Rhino Gherkin directory in the Phase 1 Land
+      staging command — acceptance: the staged-diff assertion names both `apps/rhino-cli` and the
+      Phase 1 Gherkin tree.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Phase 1 Land now stages the bounded Gherkin tree and asserts that both the engine and Gherkin have staged paths before committing.
+- [x] [AI] **R10-P1B-STAGING** — include `repo-config.yml` in the Phase 11 Land staging command
+      and its staged-diff assertion — acceptance: the paired source/configuration change is
+      mechanically required before the PR opens.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: Phase 11 Land now stages `repo-config.yml` and mechanically asserts it is paired with the shared-source change.
+- [x] [AI] **R10-CANONICAL-SOURCE** — define one clean, merged, attached canonical `ose-public`
+      source worktree and replace downstream reads from the bare root — acceptance: Phases 3–5
+      copy only from that path after it proves `HEAD...origin/main` is `0 0`.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Notes: All Phase 3–5 canonical file reads now target the merged Phase 2 rewire worktree; Phase 2's gate proves that exact source path clean and level before any downstream copy.
+- [x] [AI] **R10-BOUNDARY-IDENTIFIERS** — make all PR-bearing phases mechanically distinct to the
+      numeric boundary detector and use the detector's exact lowercase `yes` token — acceptance:
+      declared and actual PR-bearing phase sets compare equal, including the de-fork phase.
+
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`
+  - Notes: Renamed the de-fork delivery phase from non-numeric Phase 1b to numeric Phase 11 across the plan and changed PR-bearing boundary table values to the detector's lowercase `yes` token.
+- [ ] [AI] **R10-CLEAN-CHECK** — run strict plan validation from a clean detached checker worktree
+      at the candidate plan commit — acceptance: the report has zero findings and does not confuse
+      in-progress execution evidence with the pre-execution freshness gate.
 
 ## Settled Decisions
 

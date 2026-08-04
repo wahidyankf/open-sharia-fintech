@@ -90,7 +90,7 @@ after the final 2026-08-02 audit. The table's gate-surface verdicts therefore re
 - its complete target `package.json` now preserves the latest development script, dependency pins,
   optional dependencies, and security overrides while changing only `lint-staged` during execution;
 - its `rhino-cli` fork gained upstream-worthy F# environment scanning and Git-fixture isolation
-  changes, which Phase 1b must absorb before Phase 5 copies canonical down; and
+  changes, which Phase 11 must absorb before Phase 5 copies canonical down; and
 - its repository root is intentionally bare, so Phase 0 and post-merge verification must use an
   attached baseline worktree or ref-level commands rather than root-worktree commands.
 
@@ -1095,7 +1095,7 @@ carve-out.
 | Registry becomes a second source of truth beside the standard doc                                | Medium   | The standard doc stops enumerating commands and points at `gate list`; `gate validate` is the enforcement, prose is the explanation                                                                                                                                      |
 | Byte-identity window while the engine lands in `ose-public` before the other repos               | Medium   | Phase 2 finalizes the copy source and governance documents; Phases 3, 4, and 5 then run in parallel, and all-four convergence is a Phase 6 precondition                                                                                                                  |
 | `beaver-nest`'s fork diverges from the engine                                                    | Medium   | Phase 5 copies only after its listed capabilities are upstreamed and verified; `gate validate` exiting zero in `beaver-nest` is a phase-gate condition                                                                                                                   |
-| Copying canonical over `beaver-nest` deletes its naming, F# env-scanning, or Git-isolation fixes | High     | Sequencing, not vigilance: every listed improvement is upstreamed into canonical with regression coverage in Phase 1b **before** any downstream copy ([§2.8.5](#285-convergence-sequence--upstream-before-downstream))                                                   |
+| Copying canonical over `beaver-nest` deletes its naming, F# env-scanning, or Git-isolation fixes | High     | Sequencing, not vigilance: every listed improvement is upstreamed into canonical with regression coverage in Phase 11 **before** any downstream copy ([§2.8.5](#285-convergence-sequence--upstream-before-downstream))                                                   |
 | Deleting the dead pre-commit pipeline breaks something grep did not reveal                       | Medium   | The blast-radius table in [§2.8.2](#282-the-dead-pre-commit-pipeline) enumerates all seven sites; acceptance is a clean build, an unchanged full test suite, and byte-identical `rhino-cli --help` output before and after                                               |
 | The manifest gate self-heals drift instead of reporting it                                       | Medium   | `parity manifest generate` is deliberately excluded from the pre-commit mutation set, so it never auto-runs; regeneration is an explicit act and the gate fails loudly until someone performs it ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) |
 | Coordinated drift (source **and** manifest edited together) passes every gate                    | Accepted | Undetectable hermetically, by construction. The scheduled `rhino-cli-parity-audit.yml` is the only detector, and it is non-blocking — drift is reported, not prevented                                                                                                   |
@@ -1110,7 +1110,7 @@ carve-out.
 graph TD
     P0["Phase 0<br/>Baseline convergence<br/>(no PR)"]
     P1["Phase 1<br/>Gate engine<br/>ose-public"]
-    P1B["Phase 1b<br/>De-fork canonical source<br/>+ parity manifest<br/>ose-public"]
+    P1B["Phase 11<br/>De-fork canonical source<br/>+ parity manifest<br/>ose-public"]
     P2["Phase 2<br/>Rewire + retire main-ci<br/>ose-public"]
     P3["Phase 3<br/>Propagate + rewire<br/>ose-primer"]
     P4["Phase 4<br/>Propagate + rewire<br/>ose-private"]
@@ -1137,13 +1137,13 @@ graph TD
     style P6 fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
-**Phase 1b is a new blocking node, and it is where the byte-identity work concentrates.** The engine
+**Phase 11 is a new blocking node, and it is where the byte-identity work concentrates.** The engine
 must be final before any repo copies it, and — added by the byte-identity scope — the canonical source
 must be **de-forked** before any repo copies it too. Copying a canonical that still hardcodes
 `ose-public`'s app names into `beaver-nest` would either recreate the fork or delete `beaver-nest`'s
 `ROADMAP.md`/`SECURITY.md` exemptions, so §2.8.5's steps 1 through 4 all land here.
 
-Phase 2 serializes after Phase 1b because it finalizes governance files the downstream nodes copy.
+Phase 2 serializes after Phase 11 because it finalizes governance files the downstream nodes copy.
 Phases 3 through 5 then become mutually independent and fan out up to N=3. Phase 6 is the terminal
 knowledge-capture and archival node; prompted cleanup follows it as the final DAG node.
 
@@ -1168,7 +1168,7 @@ either from the current checkout.
 | Phase | Repository worktree                                                                         | Delivery branch                            |
 | ----- | ------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | 1     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
-| 1b    | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-defork`        | `sdlc-gate-registry-enforcement-defork`    |
+| 11    | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-defork`        | `sdlc-gate-registry-enforcement-defork`    |
 | 2     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public` | `sdlc-gate-registry-enforcement-rewire`    |
 | 3     | `/Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
 | 4     | `/Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement`              | `sdlc-gate-registry-enforcement`           |
@@ -1212,7 +1212,7 @@ commit (`7d3034a76`) returned `2`.
 | ------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 0       | None needed — no PR, no merge                                                           | n/a                                                                                           | Baseline notes in the plan folder only                                                                                              |
 | 1       | Run the resolution-and-revert procedure with the Phase 1 row                            | The `gate` subcommand disappears; hooks were not yet rewired, so nothing depended on it       | None                                                                                                                                |
-| 1b      | Run the resolution-and-revert procedure with the Phase 1b row                           | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
+| 11      | Run the resolution-and-revert procedure with the Phase 11 row                           | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
 | 2       | Run the resolution-and-revert procedure with the Phase 2 row                            | Hand-written hooks and `main-ci.yml` return verbatim; the registry stays but nothing reads it | Branch protection still names `"Quality gate"`, which is correct in both states                                                     |
 | 3, 4, 5 | Run the procedure with that phase's literal repository and branch row                   | That repo's hooks and workflows return; the other repos are unaffected                        | `apps/rhino-cli` in that repo now diverges from canonical — the parity gate fails there until re-propagated or `ose-public` reverts |
 | 6       | Run the procedure with the Phase 6 row, then move the plan back to `plans/in-progress/` | Plan-folder-only change; no executable surface                                                | None                                                                                                                                |
@@ -1228,11 +1228,11 @@ was independently reproduced against this repo's own merged-PR history on 2026-0
 
 ### The one asymmetry worth stating
 
-Reverting Phase 1b **after** Phases 3, 4, or 5 have merged does not restore a consistent world: those
+Reverting Phase 11 **after** Phases 3, 4, or 5 have merged does not restore a consistent world: those
 repos now hold the de-forked canonical while `ose-public` holds the forked one, so
 `parity manifest validate` fails everywhere. The correct rollback in that situation is to revert the
 downstream phases **first**, then 1b — the reverse of the DAG edge order in §5. This is the same
-sequencing constraint that made Phase 1b blocking in the first place, applied backwards.
+sequencing constraint that made Phase 11 blocking in the first place, applied backwards.
 
 ### What rollback does not need to undo
 
