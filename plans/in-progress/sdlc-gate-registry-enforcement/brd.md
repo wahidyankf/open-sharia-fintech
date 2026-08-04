@@ -69,11 +69,15 @@ nothing behaves differently — which is exactly why it survived a zero-carve-ou
 a **cross-repo** property, and every gate in this ecosystem runs inside a **single** repo. The rule was
 never enforceable as written, in any repo, by any surface that exists.
 
-The more consequential finding is what `beaver-nest`'s fork actually contains. Eight of its nine source
-divergences are `ose-public`'s own app names hardcoded into supposedly-shared source —
+The more consequential finding is what `beaver-nest`'s fork actually contains. As refreshed on
+2026-08-04, eight of its ten source divergences are `ose-public`'s own app names hardcoded into
+supposedly-shared source —
 `STAGED_SKIP_PREFIXES` naming `apps/ayokoding-www/content`, `WEBSITE_APP_PREFIXES` naming four `ose`
 websites, an Amazon Q agent definition named `ose-default`, and test fixtures asserting on
-`organiclever-be`. The fork was not buying `beaver-nest` a capability. It was absorbing a defect.
+`organiclever-be`. The other two source divergences are general capabilities worth upstreaming: the
+`ROADMAP.md`/`SECURITY.md` naming exemptions and F# environment-wrapper detection. Its
+`project.json` also isolates Rust test targets from inherited Git process state. Most of the fork was
+absorbing a defect; the remainder must flow upstream before canonical is copied back down.
 
 Roughly 700 lines of that hardcoding sit in `application/git/pre_commit.rs`, a pre-commit pipeline
 reachable only from a command wired to **no CLI subcommand** — dead code, replicated byte-for-byte
@@ -117,9 +121,10 @@ Three reinforcing reasons:
 - **Changing which checks exist.** This plan re-homes and enforces the existing check set; it does
   not add new categories of validation. Formatter _entries_ are pruned per repo to the languages each
   repo actually tracks, which removes dead declarations rather than removing validation.
-- **Changing the scope model.** The five controlled scope values in the SDLC Gate Standard
-  (`affected file-type`, `all file-type`, `affected projects`, `all projects`, `other`) stay exactly
-  as ratified. The registry encodes them; it does not redefine them.
+- **Changing scope semantics.** The five controlled scope values in the SDLC Gate Standard retain
+  their ratified meaning. This plan makes one existing prose qualifier mechanically explicit by
+  normalizing `path-gated` as a sixth controlled registry value; it does not invent a new execution
+  behavior.
 - **Generating the language-gate CI jobs.** Per-language jobs need their own toolchain setup actions
   (`setup-dotnet`, `setup-rust`, …) and stay hand-written. `gate validate` asserts their presence
   rather than emitting them.
@@ -165,10 +170,12 @@ and the SDLC Gate Standard's boundary section.
 in `ose-public` first and propagates, exactly as for the other two downstream repos. That is a real
 constraint and should be weighed as one.
 
-It is worth accepting because the audit shows the fork was not exercising that right for anything
-`beaver-nest` wanted. Its one genuine divergence — exempting `ROADMAP.md` and `SECURITY.md` from
-`md naming validate` — is a plain improvement that every repo should have, and the plan upstreams it
-into canonical **before** any repo copies canonical down. The rest was inherited defect.
+It is worth accepting because the audit shows most fork drift is repo-specific data hardcoded in
+canonical. The current fork also carries general improvements: `ROADMAP.md`/`SECURITY.md` naming
+exemptions, F# environment-wrapper detection with framework-owned-key exclusion, and isolation from
+inherited Git state in Rust test targets. The plan upstreams all of them with regression coverage
+**before** any repo copies canonical down. The remaining divergence is inherited defect or declared
+per-repo data.
 
 A second, smaller acceptance: **coordinated drift stays undetectable by any gate.** A repo that edits
 boundary source and regenerates its manifest in the same commit passes its own checks. Only the

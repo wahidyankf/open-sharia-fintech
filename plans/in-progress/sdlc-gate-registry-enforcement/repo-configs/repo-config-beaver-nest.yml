@@ -2,23 +2,23 @@
 #
 # This is the COMPLETE repo-config.yml as it should look in beaver-nest AFTER the
 # sdlc-gate-registry-enforcement plan lands. Everything above the `gates:`
-# section is this repo's CURRENT content, reproduced verbatim as of 2026-08-02
-# and unchanged by this plan. The `gates:` section at the end is what the plan
-# adds.
+# section is this repo's CURRENT YAML content, reproduced verbatim as of
+# 2026-08-04. This plan also corrects the stale header below and adds the
+# `gates:` section at the end.
 #
 # Before copying, re-verify the unchanged part still matches:
-#   diff <(sed -n '/^# repo-config.yml/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
-#        beaver-nest/repo-config.yml
-# The range starts at the schema line, skipping this banner; the two `sed '$d'`
-# passes drop the trailing `gates:` line and the blank line separating it.
-# A non-empty diff means another change landed since 2026-08-02 — reconcile
+#   diff <(sed -n '/^harness:/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
+#        <(sed -n '/^harness:/,$p' beaver-nest/repo-config.yml)
+# The range compares existing YAML while excluding this banner, the deliberately
+# corrected header, and the new `gates:` section.
+# A non-empty diff means another change landed since 2026-08-04 — reconcile
 # rather than overwrite.
 #
 # repo-config.yml — schema: rhino-cli/repo-config/v1
 #
-# Unified repository configuration. Structure is byte-identical across all three
-# repos (ose-public, ose-primer, ose-private); values reflect each repo's actual
-# project set and surfaces. rhino-cli commands read their relevant section.
+# Unified repository configuration. All four OSE repositories share the same
+# rhino-cli schema; section presence and values reflect each repo's actual project
+# set and surfaces. rhino-cli commands read their relevant section.
 #
 # Sections defined here:
 #   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
@@ -27,6 +27,7 @@
 #   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   gates            — executable SDLC gate registry and per-surface composition data
 
 harness:
   # Authoritative harness registry — all 11 supported coding-agent harnesses.
@@ -182,16 +183,14 @@ env-contract:
       kind: app
       lang: fsharp
       allowlist:
-        # Forward-declared config not yet consumed by the Phase 1 F# shell
-        # (browser-facing CORS isn't needed yet — beaver-nest-fe fetches server-side).
-        - BEAVER_NEST_BE_CORS_ORIGINS
-
-    - root: apps/beaver-nest-fe
-      kind: app
-      lang: typescript
-      allowlist:
-        - PORT
-        - HOSTNAME
+        # External operator and wrapper inputs are declared here but consumed
+        # outside the F# process. Source-consumed listener and SQLite keys are
+        # intentionally not allowlisted so env validation detects drift.
+        - BEAVER_NEST_BE_DEVELOPMENT_DATA_DIRECTORY
+        - BEAVER_NEST_BE_HOST_DATA_DIRECTORY
+        - BEAVER_NEST_BE_VPN_HOST_IP
+        - BEAVER_NEST_BE_PUBLIC_PORT
+        - BEAVER_NEST_BE_BACKUP_DIRECTORY
 
 env-injection:
   # Value-less injection contract (extends env-contract:).
@@ -207,11 +206,7 @@ env-injection:
   apps:
     - app: beaver-nest-be
       keys-from: apps/beaver-nest-be/.env.example
-      runtime: { local-ci: compose }
-
-    - app: beaver-nest-fe
-      keys-from: apps/beaver-nest-fe/.env.example
-      runtime: { local-ci: compose }
+      runtime: { local: env-local, local-ci: compose }
 
   # CI test-harness keys — test-only, NEVER in any apps/<app>/.env.example.
   ci-harness:
@@ -264,7 +259,7 @@ gates:
     surfaces:
       pre-commit:
         scope: affected-file-type
-        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+        glob: "*.{md,json,yml,yaml,css,scss,html,ts,tsx,js,jsx,mjs,cjs}"
 
   - id: format-verify-prettier
     type: check
@@ -274,7 +269,7 @@ gates:
     surfaces:
       ci:
         scope: affected-file-type
-        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+        glob: "*.{md,json,yml,yaml,css,scss,html,ts,tsx,js,jsx,mjs,cjs}"
 
   - id: format-rustfmt
     type: mutation

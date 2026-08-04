@@ -27,19 +27,27 @@ any repo is touched.
 ## Before copying, re-verify the unchanged part
 
 Each file opens with a `# TARGET STATE` banner that must **not** be copied into the repo. Everything
-between the banner and `gates:` is that repo's content as of 2026-08-02. These repos are edited
-concurrently by other actors, so confirm nothing else has landed since:
+between the banner and `gates:` is that repo's current content. The three OSE target files retain the
+content captured on 2026-08-02 and were reverified on 2026-08-04; the `beaver-nest` target was
+refreshed twice on 2026-08-04: first after its backend allowlist/runtime changes, then at
+`cd2ec0e4d` after the Vite migration removed its frontend environment-contract and injection data.
+These repos are edited concurrently by other actors, so confirm nothing else has landed since:
 
-```sh
-# Strip the banner and the gates section, then compare against the live file.
-# The range starts at the schema line, so the `# TARGET STATE` banner is skipped;
-# the two `sed '$d'` passes drop the trailing `gates:` line and its blank separator.
-diff <(sed -n '/^# repo-config.yml/,/^gates:/p' repo-config-<repo>.yml | sed '$d' | sed '$d') \
-     <repo>/repo-config.yml
+```bash
+# Compare existing YAML while excluding the target-state banner, the deliberately
+# amended header comments, and the new gates section.
+TARGET_REPO=ose-public
+TARGET_ARTIFACT=repo-config-ose-public.yml
+diff <(sed -n '/^harness:/,/^gates:/p' "$TARGET_ARTIFACT" | sed '$d' | sed '$d') \
+     <(sed -n '/^harness:/,$p' "/Users/wkf/ose-projects/$TARGET_REPO/repo-config.yml")
 ```
 
-Verified against `ose-public` at authoring time: the command above prints nothing. Each per-repo
-file carries the same command in its own banner.
+Repeat with the explicit pairs `ose-primer`/`repo-config-ose-primer.yml`,
+`ose-private`/`repo-config-ose-private.yml`, and
+`beaver-nest`/`repo-config-beaver-nest.yml`.
+
+Verified against all four current `main` refs on 2026-08-04: the command above prints nothing. Each
+per-repo file carries the same command in its own banner.
 
 A non-empty diff is a Phase 0 finding: reconcile it rather than overwriting, or the copy silently
 reverts someone else's change.
@@ -56,27 +64,29 @@ has at least one tracked file matching its glob, measured by `git ls-files`. The
 number above are in
 [tech-docs §2.2.4](../tech-docs.md#224-the-full-formatter-and-per-file-inventory).
 
-**One deliberate exception.** `sql` stays in every repo's prettier glob, including the two repos with
-zero tracked `.sql` files, because SQL is expected in their future and a prettier extension carries no
-tool cost. This is user-directed and recorded rather than inferred.
+The presence rule also applies to each extension inside a multi-extension prettier glob. Therefore
+`sql` is absent from Beaver's prettier mutation and verifier because Beaver tracks zero `.sql`
+files; expected future use does not satisfy the current tracked-file requirement.
 
 ## Two structural findings these files surfaced
 
-- **`ose-primer` carries a `doctor:` section the other three lack.** The header comment in every
+- **`ose-primer` carries a `doctor:` section the other three lack.** The live header comment in every
   repo's `repo-config.yml` claims the structure is "byte-identical across all three repos" — that
-  claim is already false. The schema-parity gate does not catch it, because it validates each file
-  against the schema rather than against the other repos.
-- **Every repo's header comment says "all three repos"**, and the section list is already
-  inconsistent between them: `ose-public`, `ose-private`, and `beaver-nest` list six, while
-  `ose-primer` lists seven — it documents its own extra `doctor:` section. With `beaver-nest` joining
-  the byte-identity boundary and `gates:` being added, the comment is wrong on the repo count in all
-  four and on the section count in all four, and is corrected as part of this plan. Measure with:
+  claim is already false. The target headers correctly promise a shared schema across four repos,
+  not byte-identical data. The schema-parity gate validates each file against the schema rather than
+  requiring identical section presence.
+- **Every live repo header says "all three repos"**, and the section list is already inconsistent:
+  `ose-public`, `ose-private`, and `beaver-nest` list six, while `ose-primer` lists seven because it
+  documents its extra `doctor:` section. The targets add `gates` and therefore list 7, 8, 7, and 7
+  sections respectively. Measure after copying with:
 
   ```sh
-  sed -n '/Sections defined here/,/^$/p' <repo>/repo-config.yml | grep -c '^#   [a-z]'
+  for TARGET_REPO in ose-public ose-primer ose-private beaver-nest; do
+    sed -n '/Sections defined here/,/^$/p' "/Users/wkf/ose-projects/$TARGET_REPO/repo-config.yml" | grep -c '^#   [a-z]'
+  done
   ```
 
-  `[Repo-grounded]` Returns 6, 7, 6, 6 for `ose-public`, `ose-primer`, `ose-private`, `beaver-nest`.
+  Acceptance: returns 7, 8, 7, 7 for `ose-public`, `ose-primer`, `ose-private`, `beaver-nest`.
 
 ## Related
 

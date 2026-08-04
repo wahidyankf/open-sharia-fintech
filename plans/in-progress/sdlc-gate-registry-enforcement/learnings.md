@@ -26,6 +26,23 @@ Populated during execution. Each entry is triaged in Phase 6 to a home in `docs/
 
 ## Entries
 
+### Revalidate executable plan artifacts immediately before readiness review
+
+**Observed**: The 2026-08-02 plan passed its checker, but by 2026-08-04 `beaver-nest` had changed its
+repository allowlist, runtime configuration, F# source footprint, test-target isolation, environment
+scanner, tests, and Gherkin coverage. During this readiness refresh it advanced again to
+`cd2ec0e4d`, changing its complete package baseline, removing the Vite frontend's environment
+contract, and increasing its Shell/F# inventory. Its root is also a bare repository, so
+primary-checkout commands in the original Phase 0 and Phase 5 procedures were not executable there.
+
+**Why it matters**: A clean planning audit is a point-in-time result. Plans that carry copy-ready
+artifacts or cross-repository assumptions need an explicit live-state reconciliation before execution;
+otherwise a mechanically correct copy step can revert newer work or fail before establishing its
+baseline.
+
+**Home**: to be triaged in Phase 6 — candidate is the plans convention's readiness or Phase 0
+guidance.
+
 ### Pre-seeded from the 2026-08-02 audit
 
 **Observed**: The Gate Composition Rule was ratified as prose plus markdown tables and drifted in

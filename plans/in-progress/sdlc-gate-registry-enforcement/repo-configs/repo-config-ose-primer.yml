@@ -2,23 +2,23 @@
 #
 # This is the COMPLETE repo-config.yml as it should look in ose-primer AFTER the
 # sdlc-gate-registry-enforcement plan lands. Everything above the `gates:`
-# section is this repo's CURRENT content, reproduced verbatim as of 2026-08-02
-# and unchanged by this plan. The `gates:` section at the end is what the plan
-# adds.
+# section is this repo's CURRENT YAML content, reproduced verbatim as of
+# 2026-08-02. This plan also corrects the stale header below and adds the
+# `gates:` section at the end.
 #
 # Before copying, re-verify the unchanged part still matches:
-#   diff <(sed -n '/^# repo-config.yml/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
-#        ose-primer/repo-config.yml
-# The range starts at the schema line, skipping this banner; the two `sed '$d'`
-# passes drop the trailing `gates:` line and the blank line separating it.
+#   diff <(sed -n '/^harness:/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
+#        <(sed -n '/^harness:/,$p' ose-primer/repo-config.yml)
+# The range compares existing YAML while excluding this banner, the deliberately
+# corrected header, and the new `gates:` section.
 # A non-empty diff means another change landed since 2026-08-02 — reconcile
 # rather than overwrite.
 #
 # repo-config.yml — schema: rhino-cli/repo-config/v1
 #
-# Unified repository configuration. Structure is byte-identical across all three
-# repos (ose-public, ose-primer, ose-private); values reflect each repo's actual
-# project set and surfaces. rhino-cli commands read their relevant section.
+# Unified repository configuration. All four OSE repositories share the same
+# rhino-cli schema; section presence and values reflect each repo's actual project
+# set and surfaces. rhino-cli commands read their relevant section.
 #
 # Sections defined here:
 #   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
@@ -28,6 +28,7 @@
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
 #   doctor           — tools from doctor's full roster this repo's toolchain does not need (rhino-cli doctor)
+#   gates            — executable SDLC gate registry and per-surface composition data
 
 harness:
   # Authoritative harness registry — all 11 supported coding-agent harnesses.

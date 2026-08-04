@@ -13,6 +13,13 @@ created: 2026-08-02
 
 # Tech Docs — SDLC Gate Registry Enforcement
 
+> **Planned-path annotation**: `apps/rhino-cli/parity-manifest.sha256`,
+> `.github/workflows/dependency-vulnerability-audit.yml`,
+> `.github/workflows/rhino-cli-parity-audit.yml`, `apps/rhino-cli/tests/gate_dispatch.rs`,
+> `apps/rhino-cli/tests/gate_emit.rs`, `apps/rhino-cli/tests/gate_validate.rs`, and the gate Gherkin
+> feature files are **new files**. Named selectors designed by this plan are **new tests** unless
+> explicitly identified as current baseline tests.
+
 ## 1. Audit Baseline — What Actually Runs Today
 
 Captured 2026-08-02 across all four repos. This table is the conformance baseline the plan closes.
@@ -66,6 +73,122 @@ Per-repo variation on the above is small and does not change any verdict:
 - `beaver-nest` is near-identical to `ose-public` and today carries a **fork** of `rhino-cli`. §2.8
   shows that fork is almost entirely `ose-public`'s app names hardcoded into shared source, and this
   plan ends it.
+
+### 1.1 Readiness refresh — 2026-08-04
+
+`[Repo-grounded]` Re-verified against current `main` at `f60b711f3` (`ose-public`), `0b67746b2` (`ose-primer`),
+`346209fc4` (`ose-private`), and `cd2ec0e4d` (`beaver-nest`). The hook captures still match all twelve
+live hooks; every target `package.json` now matches its live file outside `lint-staged`; the live
+`lint-staged` blocks are unchanged; and none of the gate workflow files in the audit table changed
+after the final 2026-08-02 audit. The table's gate-surface verdicts therefore remain current.
+
+`beaver-nest` did change in load-bearing ways after that audit, all now reflected in this plan:
+
+- its non-gate `repo-config.yml` data changed with the backend readiness work, so the authored target
+  file was refreshed rather than allowed to overwrite those values; the later Vite migration also
+  removed the frontend environment-contract and injection entries;
+- its complete target `package.json` now preserves the latest development script, dependency pins,
+  optional dependencies, and security overrides while changing only `lint-staged` during execution;
+- its `rhino-cli` fork gained upstream-worthy F# environment scanning and Git-fixture isolation
+  changes, which Phase 1b must absorb before Phase 5 copies canonical down; and
+- its repository root is intentionally bare, so Phase 0 and post-merge verification must use an
+  attached baseline worktree or ref-level commands rather than root-worktree commands.
+
+`[Repo-grounded]` The latest six-commit advance from `90ba918df` to `cd2ec0e4d` did not touch `apps/rhino-cli`, its
+Gherkin tree, or the Husky hooks. It did increase the tracked Shell and F# counts, refresh the two
+complete-file targets above, and leave the five-formatter decision unchanged.
+
+`[Repo-grounded]` Current branch-protection observations are also asymmetric: `ose-public` requires the single
+`Quality gate` context; `ose-primer` and `beaver-nest` report an unprotected branch (HTTP 404); and
+GitHub reports branch protection unavailable for the private repo at its current plan (HTTP 403).
+Execution preserves these conditions; changing repository settings is not part of this plan.
+
+## File-Impact Analysis
+
+The tree below is root-relative in each affected repository. A bounded pattern is used only where
+the exact set is discovered with `git ls-files` before editing; Phase 0 records that expansion in
+the file-touch ledger. `[E]` means edit, `[N]` new, `[D]` delete, and `[G]` generated from the named
+canonical source rather than hand-edited. Phases 3–5 apply the same listed root-relative targets in
+`ose-primer`, `ose-private`, and `beaver-nest` after the canonical `ose-public` changes merge.
+
+```text
+.
+├── [E] AGENTS.md
+├── [E] package.json
+├── [E] repo-config.yml
+├── .claude/
+│   ├── [E] agents/README.md
+│   └── [E] skills/README.md
+├── .amazonq/
+│   └── [G] rules/** and cli-agents/** from AGENTS.md and .claude/**
+├── .cursor/
+│   └── [G] agents/** from .claude/agents/**
+├── .opencode/
+│   └── [G] agents/** from .claude/agents/**
+├── .husky/
+│   ├── [E] commit-msg
+│   ├── [E] pre-commit
+│   └── [E] pre-push
+├── .github/workflows/
+│   ├── [E] README.md
+│   ├── [E] pr-quality-gate.yml
+│   ├── [D] main-ci.yml
+│   ├── [D] deps-audit.yml
+│   ├── [N] dependency-vulnerability-audit.yml
+│   └── [N] rhino-cli-parity-audit.yml
+├── apps/rhino-cli/
+│   ├── [E] Cargo.toml
+│   ├── [E] Cargo.lock
+│   ├── [E] project.json
+│   ├── [N] parity-manifest.sha256
+│   ├── src/
+│   │   ├── [E] cli.rs
+│   │   ├── [E] commands.rs
+│   │   ├── [D] commands/git_pre_commit.rs
+│   │   ├── [D] application/git/pre_commit.rs
+│   │   ├── [D] domain/git/staged_files.rs
+│   │   ├── [E] internal/git.rs
+│   │   ├── [E] infrastructure/git/mod.rs
+│   │   ├── [E] application/fs/mock.rs
+│   │   ├── [E] application/agents/{bindings.rs,sync_validator.rs}
+│   │   ├── [E] application/repo_governance/frontmatter_audit.rs
+│   │   ├── [E] application/{domain_coverage/mod.rs,doctor/tools.rs,docs/naming.rs,env/validate.rs}
+│   │   └── [E] commands/{specs_validate_counts.rs,specs_coverage.rs}
+│   ├── tests/
+│   │   ├── [N] gate_dispatch.rs
+│   │   ├── [N] gate_emit.rs
+│   │   ├── [N] gate_validate.rs
+│   │   ├── [E] agents.rs
+│   │   ├── [E] cargo_target_share.rs
+│   │   ├── [E] docs.rs
+│   │   ├── [E] env.rs
+│   │   └── [E] repo_config_data_driven.rs
+│   └── [E] tests/** and src/** discovered by
+│       `git ls-files apps/rhino-cli/tests apps/rhino-cli/src`
+├── specs/apps/rhino/behavior/rhino-cli/gherkin/
+│   ├── [N] gate/*.feature
+│   └── [E] env/**, harness/**, and md/**
+├── docs/reference/
+│   ├── [E] sdlc-gate-standard.md
+│   ├── [E] related-repositories.md
+│   ├── [E] platform-bindings.md
+│   └── [E] system-architecture/ci-cd.md
+├── repo-governance/
+│   ├── [E] development/infra/{nx-targets.md,github-actions-workflow-naming.md}
+│   ├── [E] development/workflow/git-hook-lifecycle.md
+│   └── [E] workflows/plan/{multi-plans-execution.md,plan-multi-repo-parity-planning.md,plan-multi-repo-parity-planning-and-execution.md}
+├── plans/ideas/
+│   └── [D] tri-repo-rhino-cli-byte-identity-gate.md
+└── plans/in-progress/sdlc-gate-registry-enforcement/
+    ├── [E] README.md, brd.md, prd.md, tech-docs.md, delivery.md, and learnings.md
+    ├── [E] repo-configs/**, husky-hooks/**, and package-json/** target artifacts
+    └── [E] execution tick marks before archival
+```
+
+`dependency-vulnerability-audit.yml`, `rhino-cli-parity-audit.yml`,
+`parity-manifest.sha256`, the three gate integration tests, and gate Gherkin files are all **new
+files**. Every other bounded-pattern expansion must resolve to tracked files before it can enter an
+edit ledger.
 
 ## 2. Design
 
@@ -228,9 +351,9 @@ folders hold the actual post-change files, one per repo:
 
 | Folder                                      | Contents                                                                                          |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [`repo-configs/`](./repo-configs/README.md) | `repo-config-<repo>.yml` — the full registry plus every existing section                          |
-| [`husky-hooks/`](./husky-hooks/README.md)   | `<hook>-<repo>.sh` — the post-rewire shims, plus `current/` holding the twelve hooks they replace |
-| [`package-json/`](./package-json/README.md) | `package-<repo>.json` — the full post-change file; `lint-staged-<repo>.json` — the emitted block  |
+| [`repo-configs/`](./repo-configs/README.md) | `repo-config-{repo}.yml` — the full registry plus every existing section                          |
+| [`husky-hooks/`](./husky-hooks/README.md)   | `{hook}-{repo}.sh` — the post-rewire shims, plus `current/` holding the twelve hooks they replace |
+| [`package-json/`](./package-json/README.md) | `package-{repo}.json` — the full post-change file; `lint-staged-{repo}.json` — the emitted block  |
 
 Execution copies from these rather than re-deriving each surface per repo. Every artifact is a
 **complete file**, never an excerpt — the whole `repo-config.yml`, the whole `package.json`, the
@@ -242,7 +365,7 @@ of asserted in prose. `husky-hooks/current/` makes the before-state auditable to
 proves the drift this plan exists to stop: `pre-push` currently differs from `ose-public`'s copy in
 **all three** downstream repos (`ose-primer` 4 lines, `beaver-nest` 2, `ose-private` 56), and nothing
 detects it. And the `lint-staged` artifacts are a **falsifiable target**: Phase 1's emitter is correct
-when its output is byte-identical to the committed `package-json/lint-staged-<repo>.json`, which is a
+when its output is byte-identical to the committed `package-json/lint-staged-{repo}.json`, which is a
 diff, not a judgement.
 
 Field contract:
@@ -266,7 +389,8 @@ Surface names are `commit-msg`, `pre-commit`, `pre-push`, and `ci` — **the fou
 only those**. Scope values are the five already ratified in the SDLC Gate Standard —
 `affected-file-type`, `all-file-type`, `affected-projects`, `all-projects`, `other` — plus
 `path-gated`, which is the qualifier the standard already applies in prose to the governance
-validators. No new scope vocabulary is introduced.
+validators. The standard amendment in Phase 2 makes that qualifier a sixth controlled value; this is
+a vocabulary normalization, not a new execution semantic.
 
 **Declaration order is execution order.** `gate run` executes a surface's entries top to bottom, so
 the registry preserves the ordering the hooks have today: the staged guard first, then the
@@ -303,8 +427,9 @@ dispatch — it invokes `npx lint-staged`, and the `lint-staged` block in `packa
 
 This reuses the machinery the repo already trusts: hand-authored source, generated consumer,
 validator that fails on divergence — the same shape as `harness bindings generate` plus
-`harness bindings validate`. It also preserves `lint-staged`'s stash-and-restore safety, which a
-bespoke dispatcher would have to re-earn.
+`harness bindings validate`. `[Web-cited]` It also preserves `lint-staged`'s default stash backup
+and error restore, documented in its official [README](https://github.com/lint-staged/lint-staged)
+(accessed 2026-08-04: it creates a stash backup by default and reverts task changes after failure).
 
 The emitter writes marker-first: it checks for the already-applied marker **before** locating the
 anchor, so a re-run replaces the block rather than appending a second copy.
@@ -445,10 +570,12 @@ Five of these carry a trap that a naive implementation walks into:
 5. **`dart format` rewrites files unless given `-o none`**, so a verify pass without it mutates the
    working tree before failing.
 
-Two invocation caveats, both `ose-primer`-only after pruning: bare `fantomas` requires a **global**
-dotnet tool install (a local manifest install needs `dotnet fantomas`), and bare `cljfmt` requires the
-standalone binary rather than `clj -Tcljfmt` / `lein cljfmt`. Both hold today because the existing
-mutation commands already rely on them, but Phase 0 confirms rather than assumes.
+`[Web-cited]` Two invocation caveats are `ose-primer`-only after pruning. Fantomas's official
+[Getting Started](https://fsprojects.github.io/fantomas/docs/end-users/GettingStarted.html)
+(accessed 2026-08-04) documents local and global .NET-tool installs and usage as `dotnet fantomas`.
+cljfmt's official [README](https://github.com/weavejester/cljfmt) (accessed 2026-08-04) distinguishes
+standalone `cljfmt check` from `clj -Tcljfmt check` and `lein cljfmt check`. Bare invocations
+therefore require globally invocable tool forms; Phase 0 confirms their availability.
 
 `keep` = declared and needed. `drop` = **declared but the repo has zero tracked files of that type**.
 `add` = files exist with no formatter declared. `—` = correctly absent — note `ose-private` never
@@ -462,8 +589,8 @@ extension in each repo on 2026-08-02; Phase 0 re-verifies these before Phase 1 b
 | Language  | public | primer | private | beaver-nest |
 | --------- | ------ | ------ | ------- | ----------- |
 | Rust      | 237    | 284    | 234     | 217         |
-| Shell     | 389    | 8      | 13      | 10          |
-| F#        | 152    | 43     | **0**   | 15          |
+| Shell     | 389    | 8      | 13      | 36          |
+| F#        | 152    | 43     | **0**   | 36          |
 | Python    | 3552   | 74     | **0**   | 14          |
 | Go        | **0**  | 75     | **0**   | **0**       |
 | Elixir    | **0**  | 154    | **0**   | **0**       |
@@ -474,6 +601,10 @@ extension in each repo on 2026-08-02; Phase 0 re-verifies these before Phase 1 b
 | Lua       | 318    | **0**  | **0**   | **0**       |
 | C         | 94     | **0**  | **0**   | **0**       |
 | Bazel     | 2      | **0**  | **0**   | **0**       |
+
+The first 2026-08-04 refresh changed `beaver-nest`'s Shell (10 → 13) and F# (15 → 34) counts. After
+`beaver-nest` advanced again to `cd2ec0e4`, the current counts are Shell 36 and F# 36. Both language
+families already had formatters in its target registry, so the five-formatter decision is unchanged.
 
 **Nineteen declared formatter entries across the four repos run against zero files.** `beaver-nest`
 alone carries nine, plus a `*.sql` prettier glob matching nothing. They are not harmless: each one is a `lint-staged` key a maintainer reads as
@@ -560,13 +691,15 @@ per-file registry would not reproduce it. It must be declared as an ordinary
 `scope: affected-file-type, glob: "*.tf"` mutation like every other formatter, and the inline hook
 block deleted — otherwise the registry's completeness claim is false in that repo on day one.
 
-**This deliberately substitutes `tofu` for `terraform`.** `ose-private`'s current
+`[Repo-grounded]` **This deliberately substitutes `tofu` for `terraform`.** `ose-private`'s current
 `.husky/pre-commit` invokes the HashiCorp `terraform` binary (`terraform fmt -check -recursive
 infra/on-premise/terraform/`), not OpenTofu. Phase 4 declares the new `lint-staged`/registry mutation
 as `tofu fmt` / `tofu fmt -check` instead, matching `ose-public`'s existing choice and the `tofu`
-binary `npm run doctor -- --fix` already provisions in every repo (Phase 0). `tofu` and `terraform`
-are drop-in CLI-compatible for `.tf` files, so this is a tool-name standardization, not a behavior
-change.
+binary `npm run doctor -- --fix` provisions in every repo (confirmed in Phase 0). `[Web-cited]`
+OpenTofu's official [migration overview](https://opentofu.org/docs/intro/migration/)
+(accessed 2026-08-04) says it aims to maintain Terraform-configuration compatibility and most code
+works unchanged, while still requiring migration verification. Phase 4 therefore runs both format
+checks and treats any difference as blocking; this is not an unsupported blanket "drop-in" claim.
 
 ### 2.3 Why gate sets may differ per repo but the schema may not
 
@@ -599,6 +732,48 @@ Four new leaf commands under a `gate` domain, following the ratified verb-last n
 | `rhino-cli git lockfile sync`                                  | The lockfile-sync step, extracted from inline shell so it can be declared as a `type: mutation` gate.                                                                                               |
 | `rhino-cli parity manifest generate`                           | Write `apps/rhino-cli/parity-manifest.sha256` from the boundary file set. **Explicit only** — never auto-run at pre-commit ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)). |
 | `rhino-cli parity manifest validate`                           | Recompute the boundary hashes and compare against the committed manifest. Declared as an ordinary `type: check` gate on `pre-push` and `ci`.                                                        |
+
+#### Deterministic `gate run` dispatch contract
+
+The dispatcher uses one algorithm on every surface; pre-commit batching is a defined branch of
+that algorithm, not a second owner of the same entries.
+
+1. Deserialize and validate the registry before invoking any leaf. Reject an unknown surface,
+   unknown `--only` id, duplicate id, inapplicable field, or malformed glob with a non-zero exit.
+2. Derive the candidate set once: staged index paths for `pre-commit`; merge-base-to-`HEAD` paths
+   for `pre-push` and `ci`; tracked paths for `all-file-type`; Nx's affected graph for
+   `affected-projects`; Nx's complete graph for `all-projects`; no path/project arguments for
+   `other`; and trigger-intersection once for `path-gated`.
+3. Apply `glob` or every item in `globs`, then `args.exclude`, using repository-root-relative paths.
+   A file/project-scoped entry with an empty result is reported as skipped and succeeds without
+   invoking its leaf. `other` invokes once. `path-gated` invokes once only on intersection.
+4. Iterate entries in declaration order and stop at the first non-zero leaf. On `pre-commit`
+   without `--only`, the first batch-eligible entry runs exactly one
+   `npx --no -- lint-staged` process containing every `affected-file-type` check and every
+   `category: formatter` mutation in their declared order; all later batch entries are marked
+   consumed. Non-formatter mutations are never emitted into that batch, so staged guard remains
+   before it and `harness-bindings-generate` plus `lockfile-sync` remain direct mutations after it.
+5. `--only=<id>` selects exactly one entry, bypasses the aggregate batch, and invokes that leaf
+   directly with only its derived files/projects. It cannot run or restage an unrelated entry.
+6. For `restages: true`, snapshot the index before invocation, require a zero leaf exit, determine
+   only that leaf's generated/modified paths, and run `git add -- <exact paths>`. A restage failure
+   is a leaf failure; pre-existing unrelated worktree changes are neither staged nor rewritten.
+
+Kind-specific argv construction is equally strict:
+
+- `rhino-cli`: invoke the current repository's built `rhino-cli` executable, tokenize `command`
+  into subcommand argv, append fixed `args`, then append derived path arguments.
+- `external`: POSIX-shell-tokenize `command`, resolve argv[0] on `PATH`, preserve fixed argv, and
+  append derived paths. `commit-msg` passes the hook's message-file path as one argv item rather
+  than re-expanding `$1` through a shell.
+- `nx`: invoke `npm exec nx -- affected -t <target>` for `affected-projects` and
+  `npm exec nx -- run-many --all -t <target>` for `all-projects`; propagate Nx's exit code. Nx with
+  a file scope, and non-Nx kinds with a project scope, are schema errors.
+
+This contract fixes the apparent declaration-order/batch contradiction: declaration order owns the
+single batch position, while `lint-staged` owns file-to-command fan-out only inside that position.
+The emitted `lint-staged` artifacts therefore exclude `lockfile-sync`; its registry entry remains a
+direct, post-batch mutation.
 
 `gate validate` performs six checks:
 
@@ -708,7 +883,8 @@ gherkin behavior tree byte-identical across `ose-public`, `ose-primer`, and `ose
 **zero carve-outs**. `beaver-nest` is excluded as a declared fork.
 
 That rule has the identical defect as the Gate Composition Rule: it is ratified prose that nothing
-enforces. An audit on 2026-08-02 diffed all four repos.
+enforces. An audit on 2026-08-02 diffed all four repos; the `beaver-nest` side was refreshed against
+current `main` on 2026-08-04 after its backend-readiness work changed the fork.
 
 #### 2.8.1 Audit result
 
@@ -723,9 +899,9 @@ is a cross-repo property and every gate runs inside a single repo.
 Everything else in the three-repo set matches: no `Only in` files, `Cargo.toml`/`Cargo.lock`/
 `project.json`/`LICENSE` identical, gherkin tree identical, `tests/` identical.
 
-`beaver-nest` diverges in 9 source files, 2 gherkin files, and 3 test files. Crucially, **eight of
-the nine source divergences are repo-specific data hardcoded into shared source**, not behaviour the
-fork chose:
+`beaver-nest` now diverges in 10 source files, 3 Gherkin files, and 4 integration-test files, plus
+`project.json`. Crucially, **eight of the ten source divergences are repo-specific data hardcoded
+into shared source**, not behaviour the fork chose:
 
 | File                                               | Divergence                                                                                                                                                                                                                      | Class                           |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
@@ -738,16 +914,28 @@ fork chose:
 | `commands/specs_coverage.rs`                       | an integration test pinned to `ose-be` being present in `specs.domain-areas`                                                                                                                                                    | Test fixture data               |
 | `application/doctor/tools.rs`                      | a doc comment naming `apps/ose-be/global.json`                                                                                                                                                                                  | Doc comment                     |
 | `application/docs/naming.rs`                       | **beaver-nest adds `ROADMAP.md` and `SECURITY.md`** to the always-exempt basenames                                                                                                                                              | **Capability, upstream-worthy** |
+| `application/env/validate.rs`                      | **beaver-nest detects F# keys read through a pure `readEnvironment` wrapper and excludes the framework-owned `DOTNET_RUNNING_IN_CONTAINER` signal**                                                                             | **Capability, upstream-worthy** |
+
+The four differing integration-test files are `tests/agents.rs`, `tests/cargo_target_share.rs`,
+`tests/docs.rs`, and `tests/env.rs`. The three differing Gherkin files are
+`env/env-validate-app-drift.feature`, `harness/agents-bindings.feature`, and
+`md/repo-governance-frontmatter-audit.feature`. `project.json` additionally clears inherited
+`GIT_DIR`, `GIT_WORK_TREE`, and `GIT_COMMON_DIR` for the Rust test and coverage targets so temporary
+Git fixtures are isolated from the caller's worktree. The F# scanner and Git isolation are
+upstream-worthy bug fixes; copying canonical without absorbing them would reintroduce defects.
 
 The fork is therefore mostly an artefact of the canonical source hard-coding `ose-public`'s app
 names. Extract that data and the fork mostly dissolves — which is why this belongs in this plan
 rather than a separate one: `repo-config.yml` gaining a `gates:` section with per-repo `args.exclude`
 lists is already the mechanism two of these sites need.
 
-`naming.rs` is the exception and runs the other way: `ROADMAP.md` and `SECURITY.md` are
+`naming.rs` and `env/validate.rs` are the source exceptions and run the other way. `ROADMAP.md` and
+`SECURITY.md` are
 ecosystem-standard root filenames, exempt for the same reason `CONTRIBUTING.md` already is. That is a
 capability the canonical source lacks, and copying canonical over `beaver-nest` would delete it and
-immediately break `md naming validate` there.
+immediately break `md naming validate` there. The environment scanner's wrapper detection and
+framework-owned-key exclusion are equally general: they belong in canonical before convergence,
+along with the test-target Git isolation from `project.json`.
 
 #### 2.8.2 The dead pre-commit pipeline
 
@@ -777,7 +965,8 @@ lists the identical command set before and after.
 
 `apps/rhino-cli/tests/` **joins the boundary**, alongside the already-ratified set. Integration tests
 are source: excluding them lets divergence hide in exactly the place that proves behaviour, and
-`beaver-nest` already differs in `tests/agents.rs`, `tests/cargo_target_share.rs`, and `tests/docs.rs`.
+`beaver-nest` already differs in `tests/agents.rs`, `tests/cargo_target_share.rs`, `tests/docs.rs`,
+and `tests/env.rs`.
 
 The manifest is built from `git ls-files`, so untracked files cannot enter it. This matters
 concretely: `ose-public`'s working tree carries two untracked `.env` files under
@@ -841,8 +1030,10 @@ destroys them, and extracting the data after the copies means doing it four time
    eight data sites into `repo-config.yml` (`WEBSITE_APP_PREFIXES` and the surviving skip prefixes
    become `args.exclude` on their gates; the Amazon Q agent name joins the existing `harness`
    section; test fixtures switch to synthetic names that name no real repo's apps).
-2. **Upstream `beaver-nest`'s two improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions
-   and the corrected frontmatter-audit test — into canonical, each with its own test.
+2. **Upstream `beaver-nest`'s improvements** — the `ROADMAP.md`/`SECURITY.md` naming exemptions,
+   corrected frontmatter-audit test, F# environment-wrapper detection with framework-owned-key
+   exclusion, and inherited-Git-state isolation for Rust test targets — into canonical, each with a
+   regression test.
 3. **Resolve the live three-repo violation** — adopt `zai-coding-plan/wrong` in `sync_validator.rs`.
    Two of three repos already carry it and it matches the primary provider documented in `CLAUDE.md`;
    both strings exercise the same branch, so this is a naming convergence, not a behaviour change.
@@ -869,6 +1060,15 @@ this, a `rhino-cli` change it needs must land in `ose-public` first and propagat
 other two downstream repos. The audit is what makes that a defensible trade — the fork was not buying
 `beaver-nest` any capability it wanted, only absorbing `ose-public`'s hardcoded app names.
 
+The same amendment adds the bounded propagation transaction before the first canonical merge. An
+opening merge records all four locked baselines and blocks unrelated boundary edits; canonical
+Phases 1–2 and downstream Phases 3–5 are the only permitted window nodes. Intermediate PRs are
+reversible, controlled pause-safe checkpoints only when their four refs and next node are recorded;
+they are never invariant-restored states and never permit unrelated boundary work. The window closes
+only when all four merged manifests and bounded diffs agree; inability to integrate a downstream
+copy requires reverting the canonical transaction. This is a bounded protocol, not a permanent
+carve-out.
+
 ## 3. Document Amendments
 
 | Document                                                                          | Change                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -889,19 +1089,19 @@ other two downstream repos. The audit is what makes that a defensible trade — 
 
 ## 4. Risks and Mitigations
 
-| Risk                                                                                          | Severity | Mitigation                                                                                                                                                                                                                                                                             |
-| --------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cross-PR interaction breakage no longer swept                                                 | Accepted | Documented in [brd.md §Accepted Risk](./brd.md#accepted-risk) with the reopening trigger and the named remedy                                                                                                                                                                          |
-| Registry becomes a second source of truth beside the standard doc                             | Medium   | The standard doc stops enumerating commands and points at `gate list`; `gate validate` is the enforcement, prose is the explanation                                                                                                                                                    |
-| Byte-identity window while the engine lands in `ose-public` before the other repos            | Medium   | Phases 3 and 4 are the immediate next nodes and run in parallel; the window is stated in the delivery checklist and closed before Phase 6                                                                                                                                              |
-| `beaver-nest`'s fork diverges from the engine                                                 | Medium   | Phase 5 ports explicitly; `gate validate` exiting zero in `beaver-nest` is a phase-gate condition                                                                                                                                                                                      |
-| Copying canonical over `beaver-nest` deletes its `ROADMAP.md`/`SECURITY.md` naming exemptions | High     | Sequencing, not vigilance: those exemptions are upstreamed into canonical in Phase 1b **before** any downstream copy, and a Phase 1b acceptance clause asserts `md naming validate` passes on a `ROADMAP.md` fixture ([§2.8.5](#285-convergence-sequence--upstream-before-downstream)) |
-| Deleting the dead pre-commit pipeline breaks something grep did not reveal                    | Medium   | The blast-radius table in [§2.8.2](#282-the-dead-pre-commit-pipeline) enumerates all seven sites; acceptance is a clean build, an unchanged full test suite, and byte-identical `rhino-cli --help` output before and after                                                             |
-| The manifest gate self-heals drift instead of reporting it                                    | Medium   | `parity manifest generate` is deliberately excluded from the pre-commit mutation set, so it never auto-runs; regeneration is an explicit act and the gate fails loudly until someone performs it ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit))               |
-| Coordinated drift (source **and** manifest edited together) passes every gate                 | Accepted | Undetectable hermetically, by construction. The scheduled `rhino-cli-parity-audit.yml` is the only detector, and it is non-blocking — drift is reported, not prevented                                                                                                                 |
-| `beaver-nest` loses the ability to make a local `rhino-cli` change                            | Accepted | The deliberate cost of joining the boundary, stated in [§2.8.6](#286-the-governance-change-this-requires). Its changes now route through `ose-public` like the other two downstream repos                                                                                              |
-| Matrix job names change, breaking required-status-check configuration                         | Low      | Branch-protection required checks are re-pointed at the `quality-gate` join job, which is stable                                                                                                                                                                                       |
-| A re-runnable registry-emitting step duplicates on re-run                                     | Low      | Any generated block is written marker-first: check the applied marker before the anchor                                                                                                                                                                                                |
+| Risk                                                                                             | Severity | Mitigation                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cross-PR interaction breakage no longer swept                                                    | Accepted | Documented in [brd.md §Accepted Risk](./brd.md#accepted-risk) with the reopening trigger and the named remedy                                                                                                                                                            |
+| Registry becomes a second source of truth beside the standard doc                                | Medium   | The standard doc stops enumerating commands and points at `gate list`; `gate validate` is the enforcement, prose is the explanation                                                                                                                                      |
+| Byte-identity window while the engine lands in `ose-public` before the other repos               | Medium   | Phase 2 finalizes the copy source and governance documents; Phases 3, 4, and 5 then run in parallel, and all-four convergence is a Phase 6 precondition                                                                                                                  |
+| `beaver-nest`'s fork diverges from the engine                                                    | Medium   | Phase 5 copies only after its listed capabilities are upstreamed and verified; `gate validate` exiting zero in `beaver-nest` is a phase-gate condition                                                                                                                   |
+| Copying canonical over `beaver-nest` deletes its naming, F# env-scanning, or Git-isolation fixes | High     | Sequencing, not vigilance: every listed improvement is upstreamed into canonical with regression coverage in Phase 1b **before** any downstream copy ([§2.8.5](#285-convergence-sequence--upstream-before-downstream))                                                   |
+| Deleting the dead pre-commit pipeline breaks something grep did not reveal                       | Medium   | The blast-radius table in [§2.8.2](#282-the-dead-pre-commit-pipeline) enumerates all seven sites; acceptance is a clean build, an unchanged full test suite, and byte-identical `rhino-cli --help` output before and after                                               |
+| The manifest gate self-heals drift instead of reporting it                                       | Medium   | `parity manifest generate` is deliberately excluded from the pre-commit mutation set, so it never auto-runs; regeneration is an explicit act and the gate fails loudly until someone performs it ([§2.8.4](#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) |
+| Coordinated drift (source **and** manifest edited together) passes every gate                    | Accepted | Undetectable hermetically, by construction. The scheduled `rhino-cli-parity-audit.yml` is the only detector, and it is non-blocking — drift is reported, not prevented                                                                                                   |
+| `beaver-nest` loses the ability to make a local `rhino-cli` change                               | Accepted | The deliberate cost of joining the boundary, stated in [§2.8.6](#286-the-governance-change-this-requires). Its changes now route through `ose-public` like the other two downstream repos                                                                                |
+| Matrix job names change, breaking required-status-check configuration                            | Low      | The required `Quality gate` join-job name is preserved byte-for-byte; Phase 6 verifies accessible branch-protection state and makes no settings change when it still resolves                                                                                            |
+| A re-runnable registry-emitting step duplicates on re-run                                        | Low      | Any generated block is written marker-first: check the applied marker before the anchor                                                                                                                                                                                  |
 
 ## 5. Delivery DAG
 
@@ -920,10 +1120,9 @@ graph TD
     P0 --> P1
     P1 --> P1B
     P1B --> P2
-    P1B --> P3
-    P1B --> P4
-    P1B --> P5
-    P2 --> P6
+    P2 --> P3
+    P2 --> P4
+    P2 --> P5
     P3 --> P6
     P4 --> P6
     P5 --> P6
@@ -944,8 +1143,9 @@ must be **de-forked** before any repo copies it too. Copying a canonical that st
 `ose-public`'s app names into `beaver-nest` would either recreate the fork or delete `beaver-nest`'s
 `ROADMAP.md`/`SECURITY.md` exemptions, so §2.8.5's steps 1 through 4 all land here.
 
-Phases 2 through 5 remain mutually independent and fan out up to the plan's concurrency cap. Phase 6
-is the terminal cleanup node.
+Phase 2 serializes after Phase 1b because it finalizes governance files the downstream nodes copy.
+Phases 3 through 5 then become mutually independent and fan out up to N=3. Phase 6 is the terminal
+knowledge-capture and archival node; prompted cleanup follows it as the final DAG node.
 
 ## 6. Rollback
 
@@ -960,34 +1160,65 @@ _is_ the prior content of `.husky/`, `package.json`, and `.github/workflows/`.
 Both `allow_merge_commit` and `allow_squash_merge` are enabled on these repos, and recent history
 shows **most merged PRs land as single-parent squash commits**. `git revert -m 1` works only against
 a true two-parent merge commit and hard-fails on a squash commit with
-`error: mainline was specified but commit ... is not a merge`. So determine the shape first:
+`error: mainline was specified but commit ... is not a merge`. Resolve the exact landed commit from
+the exact delivery branch, prove that it belongs to `origin/main`, and determine its shape before
+reverting it. Select the literal repository path and branch from the table below; do not infer
+either from the current checkout.
+
+| Phase | Repository worktree                                                                         | Delivery branch                            |
+| ----- | ------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| 1     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
+| 1b    | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-defork`        | `sdlc-gate-registry-enforcement-defork`    |
+| 2     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-rewire-public` | `sdlc-gate-registry-enforcement-rewire`    |
+| 3     | `/Users/wkf/ose-projects/ose-primer/worktrees/sdlc-gate-registry-enforcement`               | `sdlc-gate-registry-enforcement`           |
+| 4     | `/Users/wkf/ose-projects/ose-private/worktrees/sdlc-gate-registry-enforcement`              | `sdlc-gate-registry-enforcement`           |
+| 5     | `/Users/wkf/ose-projects/beaver-nest/worktrees/sdlc-gate-registry-enforcement`              | `sdlc-gate-registry-enforcement`           |
+| 6     | `/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement-knowledge`     | `sdlc-gate-registry-enforcement-knowledge` |
+
+For example, Phase 1 uses the first two assignments below. For any other phase, replace both
+assignments with the literal values from its row before running the remainder unchanged:
 
 ```sh
-# Prints the sha plus its parents, so: 3 = merge commit (use -m 1); 2 = squash commit (omit -m).
-git rev-list --parents -n 1 <sha> | wc -w
+ROLLBACK_REPO=/Users/wkf/ose-projects/ose-public/worktrees/sdlc-gate-registry-enforcement
+ROLLBACK_BRANCH=sdlc-gate-registry-enforcement
+test -d "$ROLLBACK_REPO"
+git -C "$ROLLBACK_REPO" fetch origin main
+PHASE_PR=$(cd "$ROLLBACK_REPO" && gh pr list --state merged --base main \
+  --head "$ROLLBACK_BRANCH" --limit 1 --json number --jq '.[0].number')
+test -n "$PHASE_PR"
+PHASE_SHA=$(cd "$ROLLBACK_REPO" && gh pr view "$PHASE_PR" \
+  --json mergeCommit --jq '.mergeCommit.oid')
+test -n "$PHASE_SHA"
+git -C "$ROLLBACK_REPO" merge-base --is-ancestor "$PHASE_SHA" origin/main
+PARENT_WORDS=$(git -C "$ROLLBACK_REPO" rev-list --parents -n 1 "$PHASE_SHA" | wc -w | tr -d ' ')
+case "$PARENT_WORDS" in
+  3) git -C "$ROLLBACK_REPO" revert -m 1 "$PHASE_SHA" ;;
+  2) git -C "$ROLLBACK_REPO" revert "$PHASE_SHA" ;;
+  *) printf '%s\n' "Unexpected parent-word count: $PARENT_WORDS" >&2; exit 1 ;;
+esac
 ```
 
-Throughout the table below, **`git revert <phase-sha>`** means: `git revert -m 1 <sha>` if that
-command reports 3 (sha plus two parents), and plain `git revert <sha>` if it reports 2. Never resolve
-this by trying `-m 1` and reacting to the error — check first, because a failed revert mid-rollback
-leaves a dirty tree that another actor may be sharing. `[Repo-grounded]` — the 3-vs-2 mapping was
+The procedure uses the merge-parent option only when the parent-word count is 3 (SHA plus two
+parents) and plain `git revert` when it is 2. Never resolve this by trying `-m 1` and reacting to
+the error — check first, because a failed revert mid-rollback leaves a dirty tree that another
+actor may be sharing. `[Repo-grounded]` — the 3-vs-2 mapping was
 independently re-verified against this repo's live history on 2026-08-02: `git rev-list --parents -n 1`
 on an actual two-parent merge commit (`3ac60d2e8`) returned `3`, and on an actual single-parent
 commit (`7d3034a76`) returned `2`.
 
 ### Per-phase rollback
 
-| Phase   | Rollback action                                                                       | What returns                                                                                  | Residue                                                                                                                             |
-| ------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 0       | None needed — no PR, no merge                                                         | n/a                                                                                           | Baseline notes in the plan folder only                                                                                              |
-| 1       | `git revert <phase-sha>` in `ose-public`                                              | The `gate` subcommand disappears; hooks were not yet rewired, so nothing depended on it       | None                                                                                                                                |
-| 1b      | `git revert <phase-sha>` in `ose-public`                                              | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
-| 2       | `git revert <phase-sha>` in `ose-public`                                              | Hand-written hooks and `main-ci.yml` return verbatim; the registry stays but nothing reads it | Branch protection still names `"Quality gate"`, which is correct in both states                                                     |
-| 3, 4, 5 | `git revert <phase-sha>` in that repo only                                            | That repo's hooks and workflows return; the other repos are unaffected                        | `apps/rhino-cli` in that repo now diverges from canonical — the parity gate fails there until re-propagated or `ose-public` reverts |
-| 6       | `git revert <phase-sha>` in `ose-public`; move the plan folder back to `in-progress/` | Plan-folder-only change; no executable surface                                                | None                                                                                                                                |
+| Phase   | Rollback action                                                                         | What returns                                                                                  | Residue                                                                                                                             |
+| ------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 0       | None needed — no PR, no merge                                                           | n/a                                                                                           | Baseline notes in the plan folder only                                                                                              |
+| 1       | Run the resolution-and-revert procedure with the Phase 1 row                            | The `gate` subcommand disappears; hooks were not yet rewired, so nothing depended on it       | None                                                                                                                                |
+| 1b      | Run the resolution-and-revert procedure with the Phase 1b row                           | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
+| 2       | Run the resolution-and-revert procedure with the Phase 2 row                            | Hand-written hooks and `main-ci.yml` return verbatim; the registry stays but nothing reads it | Branch protection still names `"Quality gate"`, which is correct in both states                                                     |
+| 3, 4, 5 | Run the procedure with that phase's literal repository and branch row                   | That repo's hooks and workflows return; the other repos are unaffected                        | `apps/rhino-cli` in that repo now diverges from canonical — the parity gate fails there until re-propagated or `ose-public` reverts |
+| 6       | Run the procedure with the Phase 6 row, then move the plan back to `plans/in-progress/` | Plan-folder-only change; no executable surface                                                | None                                                                                                                                |
 
-Locate a phase's landed sha with `gh pr list --head <branch> --state merged --json mergeCommit` —
-not `git merge-base --is-ancestor`, which false-negatives on squash-merged PRs in these repos.
+The procedure locates a phase's landed SHA with its exact delivery branch and then uses
+`git merge-base --is-ancestor` only to prove that the resolved SHA is on `origin/main`.
 `[Web-cited]` — `mergeCommit` is a valid `gh pr list --json` field per
 [the official `gh pr list` manual](https://cli.github.com/manual/gh_pr_list), checked 2026-08-02,
 which lists the accepted `--json` field names including `mergeCommit` (locally,

@@ -25,9 +25,11 @@ why they mirror the live hook filenames exactly. The trade is that `current/` is
 in this repo; that is fine, since each file is already gated by its own repo's `*.sh`-free hook path
 and these are evidence, not shipped code.
 
-A husky v9 hook is a plain script with no framework preamble, so each `.sh` here **is** the entire
-file, not an excerpt. That is worth stating because the after-state is only 13 lines and could
-otherwise read as a fragment.
+`[Web-cited]` A Husky v9 hook is the project-owned file under `.husky/`, so each `.sh` here **is**
+the entire file, not an excerpt. Husky's official [How To](https://typicode.github.io/husky/how-to.html)
+(accessed 2026-08-04) says adding a hook is simply creating that file and shows `.husky/pre-commit`
+containing the command. The official [v4 migration](https://typicode.github.io/husky/migrate-from-v4.html)
+(accessed 2026-08-04) likewise says to copy commands into the corresponding v9 hook.
 
 | Hook         | After (lines) | Before (lines, `ose-public`) | Replaces                                                       |
 | ------------ | ------------- | ---------------------------- | -------------------------------------------------------------- |
@@ -44,10 +46,10 @@ will too.
 
 `[Repo-grounded]` Captured 2026-08-02 from each repo's live `.husky/`. Two uses:
 
-1. **Phase 0 reconciliation.** Before overwriting, diff `current/<hook>-<repo>` against the live
-   file. A non-empty diff means someone else changed that hook after 2026-08-02 — reconcile it rather
-   than overwriting, exactly as [`repo-configs/`](../repo-configs/README.md) requires for the
-   registry.
+1. **Phase 0 reconciliation.** Before overwriting, diff `current/{hook}-{repo}` against the live
+   file. A non-empty diff means someone else changed that hook after the 2026-08-04 revalidation —
+   reconcile it rather than overwriting, exactly as
+   [`repo-configs/`](../repo-configs/README.md) requires for the registry.
 2. **Evidence for the central claim.** The plan asserts the four repos' hooks have silently diverged.
    `current/` is that assertion made checkable rather than asserted.
 
@@ -55,16 +57,18 @@ Both uses depend on the captures actually being verbatim, so verify that first �
 `identical` twelve times:
 
 ```sh
+SDLC_REPOS_ROOT=/Users/wkf/ose-projects
 for r in ose-public ose-primer ose-private beaver-nest; do
   for h in commit-msg pre-commit pre-push; do
-    diff -q "<repo-root>/$r/.husky/$h" "current/$h-$r" >/dev/null \
+    diff -q "$SDLC_REPOS_ROOT/$r/.husky/$h" "current/$h-$r" >/dev/null \
       && printf '%-13s %-11s identical\n' "$r" "$h" \
       || printf '%-13s %-11s DIFFERS\n' "$r" "$h"
   done
 done
 ```
 
-`[Repo-grounded]` Ran 2026-08-02: twelve `identical`. A `DIFFERS` has two possible causes and they
+`[Repo-grounded]` Ran 2026-08-02 and re-ran against all four current `main` refs on 2026-08-04:
+twelve `identical` both times. A `DIFFERS` has two possible causes and they
 need opposite responses — either the live hook changed since capture (reconcile, per use 1), or a
 formatter rewrote the capture (re-capture, and check what glob matched it).
 
@@ -140,9 +144,12 @@ The divergence table above is what that costs: `pre-push` differs in all three d
 ## What deliberately does not change
 
 `pre-commit` still delegates per-file work to `npx lint-staged`. `gate run --surface=pre-commit` does
-not reimplement file-type dispatch; it invokes `lint-staged`, whose block is itself generated from the
-registry. That preserves `lint-staged`'s stash-and-restore behaviour, which a bespoke dispatcher would
-have to re-earn — see [tech-docs §2.2.2](../tech-docs.md#222-lint-staged-is-generated-not-replaced).
+not reimplement file-type dispatch; it invokes `lint-staged`, whose block is itself generated from
+the registry. `[Web-cited]` That preserves its backup and restore behavior. The official
+[lint-staged README](https://github.com/lint-staged/lint-staged) (accessed 2026-08-04) states that it
+creates a stash backup by default and restores task modifications on error; a bespoke dispatcher
+would have to re-earn that safety. See
+[tech-docs §2.2.2](../tech-docs.md#222-lint-staged-is-generated-not-replaced).
 
 ## Related
 

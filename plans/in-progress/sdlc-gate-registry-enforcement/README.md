@@ -14,9 +14,33 @@ created: 2026-08-02
 
 # SDLC Gate Registry Enforcement
 
-**Status**: In Progress
+**Status**: In Progress — planning refresh; execution blocked
 **Delivery Mode**: `worktree-to-pr`
 **Repos in scope**: `ose-public`, `ose-primer`, `ose-private`, `beaver-nest` (all four)
+**Readiness baseline**: Refreshed 2026-08-04 against current `main` in all four repos
+
+## Readiness Review — 2026-08-04
+
+**Verdict: PREPARATION RESOLVED; STRICT CHECKER GATE PENDING.** The authored execution contracts,
+copy-ready artifacts, and locked cross-repository baselines are complete. R1–R9 are resolved. Do not
+begin a change-producing phase until R10 obtains the required clean strict plan-checker reports.
+
+| ID  | Status   | Blocked by         | Blocks     | Granular readiness task                                                                                                      |
+| --- | -------- | ------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Resolved | none               | R2, R3, R4 | `gate run` has one declaration-positioned batch and deterministic direct-entry semantics.                                    |
+| R2  | Resolved | R1                 | R5         | RED/GREEN/REFACTOR covers `rhino-cli`, `external`, and `nx` argv and exit behavior.                                          |
+| R3  | Resolved | R1                 | R5         | RED/GREEN/REFACTOR covers all six scopes, globs, excludes, empty sets, and worktree roots.                                   |
+| R4  | Resolved | R1                 | R5         | RED/GREEN/REFACTOR covers `--only`, fail-fast, restaging, and one ordered file batch.                                        |
+| R5  | Resolved | R2, R3, R4         | R10        | PRD, technical dispatch contract, and delivery TDD now agree.                                                                |
+| R6  | Resolved | none               | R10        | Affected Nx quality, fix-all, CI polling, and thematic Conventional Commit rules are explicit.                               |
+| R7  | Resolved | none               | R10        | Every PR boundary has three sequential maker→synthesis→fixer cycles with per-cycle CI gates.                                 |
+| R8  | Resolved | none               | R10        | All execution paths now use exact validated repository roots; generic filename notation uses braces, not shell placeholders. |
+| R9  | Resolved | none               | R10        | Pre-integration execution-ready gates authorize separately dependent Land and integration actions.                           |
+| R10 | Pending  | R5, R6, R7, R8, R9 | execution  | Rerun scoped validators and obtain the required clean strict plan-checker reports.                                           |
+
+Current refresh validations pass for Prettier, markdownlint, scoped Mermaid, links (excluding known
+out-of-scope `apps/` and archived-plan debt), heading hierarchy, Gherkin cardinality, target YAML/JSON
+parsing, hook captures, package artifact pairing, and unchanged live repository-config YAML.
 
 ## The One-Sentence Problem
 
@@ -35,21 +59,21 @@ satisfy. `[Repo-grounded]` — every row below was captured by reading each repo
 [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today) for the full per-check
 table this summarizes:
 
-| Drift                                                                         | Evidence                                                                                                                                            |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Six checks are **pre-commit-only** — they never reach any CI gate             | `md naming validate`, `md frontmatter validate`, `convention emoji validate`, `docker compose config`, every formatter, `env staged-guard validate` |
-| `harness bindings validate` is **pre-push-only** in all four repos            | Absent from `pr-quality-gate.yml` and `main-ci.yml`; `harness sync validate` / `npm run validate:sync` run in **zero** workflows                    |
-| `md mermaid validate` + `md heading-hierarchy validate` are **main-ci-only**  | Absent from the PR gate in `ose-public`, `ose-primer`, `beaver-nest` (`ose-private` alone has them)                                                 |
-| The PR gate's specs job is pinned to **one hardcoded project**                | `pr-quality-gate.yml` `specs-gate` runs `--projects=rhino-cli`; the standard says affected-scoped                                                   |
-| Formatting is **never verified** anywhere, in any of **14** languages         | The PR `format` job auto-commits fixes rather than failing; `main-ci.yml` has no format job                                                         |
-| Shell is linted but **never formatted** in two repos                          | `ose-primer` and `ose-private` run `shellcheck` with no `shfmt`; `ose-private` also formats terraform in a hook block, outside `lint-staged`        |
-| **19 declared formatters match zero tracked files**                           | `ose-public` declares Go/Elixir/C#/Clojure/Dart formatters for languages it has none of; `beaver-nest` declares nine                                |
-| The `rhino-cli` byte-identity boundary is **already violated**                | `src/application/agents/sync_validator.rs` differs between `ose-public` and the two other bound repos, under a **zero-carve-out** rule              |
-| **No surface in any repo can detect** that violation                          | Byte-identity is a cross-repo property; every gate runs inside one repo. There is no manifest, no comparison, and no validator anywhere             |
-| `beaver-nest`'s "fork" is mostly `ose-public`'s app names hardcoded in source | 8 of 9 divergences are repo-specific data (`STAGED_SKIP_PREFIXES`, `WEBSITE_APP_PREFIXES`, `.amazonq/cli-agents/ose-default.json`, test fixtures)   |
-| ~700 lines of **dead** pre-commit pipeline replicated byte-for-byte           | `application/git/pre_commit.rs` is reachable only from `commands/git_pre_commit.rs`, which no CLI subcommand dispatches to                          |
-| The PR gate's `format` job **does not run on push to `main`**                 | `if: github.event_name == 'pull_request'` — so a direct push to `main` skips the entire per-file validator set                                      |
-| The standard's own Stage 3/4 tables omit checks that really run               | `md readme-index validate`, `harness duplication validate`, `convention license validate`                                                           |
+| Drift                                                                         | Evidence                                                                                                                                             |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Six checks are **pre-commit-only** — they never reach any CI gate             | `md naming validate`, `md frontmatter validate`, `convention emoji validate`, `docker compose config`, every formatter, `env staged-guard validate`  |
+| `harness bindings validate` is **pre-push-only** in all four repos            | Absent from `pr-quality-gate.yml` and `main-ci.yml`; `harness sync validate` / `npm run validate:sync` run in **zero** workflows                     |
+| `md mermaid validate` + `md heading-hierarchy validate` are **main-ci-only**  | Absent from the PR gate in `ose-public`, `ose-primer`, `beaver-nest` (`ose-private` alone has them)                                                  |
+| The PR gate's specs job is pinned to **one hardcoded project**                | `pr-quality-gate.yml` `specs-gate` runs `--projects=rhino-cli`; the standard says affected-scoped                                                    |
+| Formatting is **never verified** anywhere, in any of **14** languages         | The PR `format` job auto-commits fixes rather than failing; `main-ci.yml` has no format job                                                          |
+| Shell is linted but **never formatted** in two repos                          | `ose-primer` and `ose-private` run `shellcheck` with no `shfmt`; `ose-private` also formats terraform in a hook block, outside `lint-staged`         |
+| **19 declared formatters match zero tracked files**                           | `ose-public` declares Go/Elixir/C#/Clojure/Dart formatters for languages it has none of; `beaver-nest` declares nine                                 |
+| The `rhino-cli` byte-identity boundary is **already violated**                | `src/application/agents/sync_validator.rs` differs between `ose-public` and the two other bound repos, under a **zero-carve-out** rule               |
+| **No surface in any repo can detect** that violation                          | Byte-identity is a cross-repo property; every gate runs inside one repo. There is no manifest, no comparison, and no validator anywhere              |
+| `beaver-nest`'s "fork" is mostly `ose-public`'s app names hardcoded in source | 8 of 10 current source divergences are repo-specific data; its newer F# env-scanning and test-isolation fixes must also be upstreamed before copying |
+| ~700 lines of **dead** pre-commit pipeline replicated byte-for-byte           | `application/git/pre_commit.rs` is reachable only from `commands/git_pre_commit.rs`, which no CLI subcommand dispatches to                           |
+| The PR gate's `format` job **does not run on push to `main`**                 | `if: github.event_name == 'pull_request'` — so a direct push to `main` skips the entire per-file validator set                                       |
+| The standard's own Stage 3/4 tables omit checks that really run               | `md readme-index validate`, `harness duplication validate`, `convention license validate`                                                            |
 
 The rule is right. The wiring is not. This plan makes the rule **impossible to violate** by moving the
 check set out of hand-written shell and YAML into a single declared registry that both hooks and CI
@@ -108,6 +132,16 @@ with the mitigation options that were considered and declined.
 Each unit is a delivery boundary — one worktree, one PR. See [delivery.md](./delivery.md) for the
 full DAG and the per-phase gates.
 
+Phases 1–5 form one bounded byte-identity propagation transaction. Phase 1 merges the governing
+protocol amendment together with the first canonical byte change; intermediate PRs are reversible
+integration checkpoints and controlled pause-safe states when their four refs and next node are
+recorded, not claims that four-repo identity is restored or permission for unrelated boundary work.
+The transaction blocks unrelated `apps/rhino-cli` edits and Phase 6, advances through canonical
+de-fork/rewire and downstream copy PRs, and closes only when all four merged manifests and bounded
+diffs agree. If downstream convergence fails, the canonical transaction commits are reverted. Exact
+open, resume, close, and rollback commands are in
+[delivery.md §Bounded Byte-Identity Propagation Transaction](./delivery.md#bounded-byte-identity-propagation-transaction).
+
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
@@ -119,12 +153,13 @@ full DAG and the per-phase gates.
 | 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | Yes                       |
 | 6     | Knowledge capture                                        | `ose-public`  | Yes                       |
 
-Phases 3, 4, and 5 are independent of one another and fan out up to the plan's concurrency cap.
+Phases 3, 4, and 5 have disjoint repository ownership and may fan out after Phase 2, but the
+transaction remains open until all three integrate.
 
-**Phase 1b blocks every downstream phase.** The canonical source must be de-forked — dead pipeline
-deleted, hardcoded app names extracted, `beaver-nest`'s `ROADMAP.md`/`SECURITY.md` exemptions
-upstreamed — _before_ any repo copies it. Copying first would either recreate the fork or silently
-delete capabilities `beaver-nest` depends on.
+**Phase 1b blocks Phase 2; Phase 2 blocks the three downstream repository deliveries.** Canonical
+must first be de-forked — dead pipeline deleted, hardcoded app names extracted, and `beaver-nest`'s
+naming, F# environment-scanning, and Git-isolation improvements upstreamed. Phase 2 then finalizes
+the governance documents consumed by Phases 3, 4, and 5, which fan out independently.
 
 ## Documents
 
@@ -137,12 +172,12 @@ delete capabilities `beaver-nest` depends on.
 Target-state artifacts, per repo. Each is a **complete file**, not a diff or an excerpt, so execution
 copies rather than reconstructs:
 
-- [repo-configs/](./repo-configs/README.md) — `repo-config-<repo>.yml`, the whole registry file
-- [husky-hooks/](./husky-hooks/README.md) — `commit-msg-<repo>.sh`, `pre-commit-<repo>.sh`,
-  `pre-push-<repo>.sh`, plus [`current/`](./husky-hooks/current/) holding the twelve hooks they
+- [repo-configs/](./repo-configs/README.md) — `repo-config-{repo}.yml`, the whole registry file
+- [husky-hooks/](./husky-hooks/README.md) — `commit-msg-{repo}.sh`, `pre-commit-{repo}.sh`,
+  `pre-push-{repo}.sh`, plus [`current/`](./husky-hooks/current/) holding the twelve hooks they
   replace, captured verbatim
-- [package-json/](./package-json/README.md) — `package-<repo>.json`, the whole post-change file, plus
-  `lint-staged-<repo>.json`, the block `gate emit` must produce
+- [package-json/](./package-json/README.md) — `package-{repo}.json`, the whole post-change file, plus
+  `lint-staged-{repo}.json`, the block `gate emit` must produce
 
 ## Related
 

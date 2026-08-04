@@ -12,6 +12,12 @@ created: 2026-08-02
 
 # PRD — SDLC Gate Registry Enforcement
 
+> **Planned-path annotation**: `apps/rhino-cli/parity-manifest.sha256`,
+> `.github/workflows/dependency-vulnerability-audit.yml`, and
+> `.github/workflows/rhino-cli-parity-audit.yml` are **new files** everywhere they appear below.
+> Every test selector introduced by this PRD is a **new test** unless it names a current baseline
+> test explicitly.
+
 All requirements are numbered `R-n` and referenced by the delivery checklist. Every requirement
 carries at least one Gherkin scenario. These scenarios are the source for the companion
 `specs/apps/rhino/behavior/rhino-cli/gherkin/**` feature files that ship with Phase 1 — code under
@@ -92,9 +98,10 @@ solo-maintainer's own hats and the agents that consume the registry on their beh
 
 `repo-config.yml` gains a `gates:` section declaring **everything any surface does** — every
 pass/fail check (`type: check`) and every file-rewriting step (`type: mutation`) — each with a stable
-`id`, its command, and the scope it carries **per surface**. Scope values are exactly the five
-controlled values already ratified in the SDLC Gate Standard, plus the path-gated qualifier. Surfaces
-are the four gate surfaces and only those: `commit-msg`, `pre-commit`, `pre-push`, `ci`. Scheduled
+`id`, its command, and the scope it carries **per surface**. Scope values are the five controlled
+values already ratified in the SDLC Gate Standard plus `path-gated`, the existing prose qualifier
+this plan normalizes as a sixth strict registry value. Surfaces are the four gate surfaces and only
+those: `commit-msg`, `pre-commit`, `pre-push`, `ci`. Scheduled
 non-gating pipelines are outside the registry by design — see R-8.
 
 The completeness property is the point: after this change, anything absent from `gates:` is run by no
@@ -199,7 +206,10 @@ Feature: Gate enumeration
 ## R-3 — Execution from the hooks
 
 `gate run --surface=<name>` executes every gate declared for that surface, in declaration order,
-stopping at the first failure. The hooks become invocation shims with no embedded check list.
+stopping at the first failure. On pre-commit the first batch-eligible declaration owns one
+`lint-staged` batch; staged guard stays before it and direct re-staging mutations stay after it.
+`--only` bypasses that aggregate batch and executes one direct leaf. The hooks become invocation
+shims with no embedded check list.
 
 ```gherkin
 Feature: Gate execution
@@ -235,6 +245,61 @@ Feature: Gate execution
     When "rhino-cli gate run --surface=pre-push" runs
     Then repo-config.yml resolves from the current worktree toplevel
     And the run behaves identically to the primary checkout
+
+  Scenario: Rhino CLI kind receives derived files
+    Given a rhino-cli gate matches staged files "a.md" and "b.md"
+    When "rhino-cli gate run --surface=pre-commit --only=md-naming" runs
+    Then the local rhino-cli leaf receives only "a.md" and "b.md" and its exit code is propagated
+
+  Scenario: External kind preserves fixed argv before files
+    Given an external gate declares "shellcheck --severity=warning" and matches "tool.sh"
+    When "rhino-cli gate run --surface=ci --only=shellcheck" runs
+    Then PATH-resolved shellcheck receives "--severity=warning" then "tool.sh"
+
+  Scenario: Nx kind delegates the affected project graph
+    Given an nx gate "test:quick" declares scope "affected-projects"
+    When "rhino-cli gate run --surface=pre-push --only=test-quick" runs
+    Then "npm exec nx -- affected -t test:quick" runs and its exit code is propagated
+
+  Scenario: All supported scopes derive their specified inputs
+    Given one fixture registry covers affected-file-type, all-file-type, affected-projects, all-projects, other, and path-gated
+    When each gate runs through "gate run --only" on its valid surface
+    Then each leaf receives exactly its staged, tracked, affected, complete, empty, or trigger-intersection input contract
+
+  Scenario: Glob lists and excludes are applied before invocation
+    Given a file gate has globs "*.md" and "*.yml" and excludes "plans/done"
+    When its candidate set contains matching, non-matching, and excluded paths
+    Then the leaf receives only matching non-excluded repository-relative paths
+
+  Scenario: An empty scoped match is a successful skip
+    Given a file-scoped gate has no path after glob and exclusion filtering
+    When that gate runs
+    Then it exits zero without invoking the leaf and reports the skip
+
+  Scenario: Only executes exactly one direct leaf
+    Given pre-commit declares two batch entries and one direct mutation
+    When "gate run --surface=pre-commit --only=md-mermaid" runs
+    Then only md-mermaid runs directly with its matching files and no batch or mutation runs
+
+  Scenario: Unknown or duplicate only ids fail before execution
+    Given the requested only id is absent or duplicated in the fixture registry
+    When "gate run --surface=ci --only=unknown" runs
+    Then it exits non-zero before invoking any leaf and names the invalid id
+
+  Scenario: A re-staging mutation stages only its outputs
+    Given an unrelated worktree edit exists and a successful restaging mutation changes generated paths
+    When the mutation runs through pre-commit
+    Then git adds only the mutation output paths and preserves the unrelated edit unstaged
+
+  Scenario: A failed mutation never re-stages output
+    Given a restaging mutation returns non-zero after changing a path
+    When the mutation runs through pre-commit
+    Then the dispatcher exits non-zero and does not git-add that path
+
+  Scenario: Pre-commit has one declaration-positioned batch
+    Given staged guard precedes file entries and two direct mutations follow them in declaration order
+    When "gate run --surface=pre-commit" runs
+    Then staged guard, exactly one lint-staged batch, harness generation, and lockfile sync run in that order
 ```
 
 ## R-4 — Conformance enforcement (the core requirement)
@@ -754,17 +819,19 @@ Feature: Cross-repo parity audit
 
 ## R-13 — Repo-specific data leaves shared source
 
-Eight of `beaver-nest`'s nine source divergences are `ose-public`'s app names hardcoded into
+Eight of `beaver-nest`'s ten current source divergences are `ose-public`'s app names hardcoded into
 byte-identical source. Until that data moves into `repo-config.yml`, byte-identity across four repos
-is unreachable — which is why this requirement is a precondition of R-11, not a companion to it.
+is unreachable. Its general F# environment-scanning and inherited-Git-state isolation fixes must
+also flow upstream before canonical is copied down. This requirement is therefore a precondition of
+R-11, not a companion to it.
 
 ```gherkin
 Feature: Repo-specific data lives in configuration
 
-  Scenario: No repo's app names appear in shared source
-    Given the byte-identity file set after convergence
-    When it is searched for "ayokoding", "organiclever", "wahidyankf" and "ose-www"
-    Then the only matches are in test fixtures that name no real repository's apps
+  Scenario: Enumerated shared-data sites contain no real app names
+    Given the bounded bindings, frontmatter, coverage, specs-count, specs-coverage and doctor source sites
+    When those sites are searched for "ayokoding", "organiclever", "wahidyankf", "ose-be" and "ose-www"
+    Then no match remains and unrelated environment-contract examples are outside this extraction
 
   Scenario: The dead pre-commit pipeline is removed
     Given commands/git_pre_commit.rs is wired to no CLI subcommand
@@ -779,6 +846,12 @@ Feature: Repo-specific data lives in configuration
     Then those paths are declared as "args.exclude" on the gate that consumes them
     And the const no longer exists in source
 
+  Scenario: Amazon Q definition name moves to harness configuration
+    Given bindings.rs hardcoded the Amazon Q definition name
+    When convergence completes
+    Then harness.amazonq.agent-name supplies the generated filename and embedded definition name
+    And the definition name no longer exists in shared Rust source
+
   Scenario: beaver-nest's naming exemptions are upstreamed before any copy
     Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
     And canonical ose-public does not
@@ -786,6 +859,19 @@ Feature: Repo-specific data lives in configuration
     Then canonical exempts both
     And "md naming validate" passes on a ROADMAP.md fixture in ose-public
     And this holds before any downstream repo copies canonical
+
+  Scenario: F# environment wrapper reads remain detectable after convergence
+    Given beaver-nest detects app-owned keys passed to a pure readEnvironment wrapper
+    And it excludes the framework-owned DOTNET_RUNNING_IN_CONTAINER signal
+    When Phase 1b upstreams the scanner into canonical
+    Then canonical retains both behaviors with regression tests
+    And the generic Gherkin scenario lands before any downstream copy
+
+  Scenario: Rust test targets ignore inherited Git process state
+    Given a rhino-cli test target is invoked with inherited GIT_DIR, GIT_WORK_TREE and GIT_COMMON_DIR
+    When Nx launches the Rust test or coverage command
+    Then all three inherited variables are cleared for that command
+    And a regression test protects the target configuration before any downstream copy
 ```
 
 ## Out of Scope
