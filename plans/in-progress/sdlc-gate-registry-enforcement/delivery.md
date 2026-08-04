@@ -794,7 +794,7 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 The lockfile-sync step is inline shell in `.husky/pre-commit` today and cannot be declared until it
 is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-in-the-registry).
 
-- [ ] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose dependency change
+- [x] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose dependency change
       leaves `apps/<x>/package-lock.json` stale, the command regenerates and stages
       `apps/<x>/package-lock.json`, with both files landing in the same commit — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::regenerates_when_stale`
@@ -812,12 +812,21 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And the commit proceeds with both files in the same commit
   ```
 
-- [ ] [AI] **GREEN** — implement `rhino-cli git lockfile sync`, porting the hook's existing logic
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/git/mod.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: Grounded the scenario in the existing hook’s staged-app and existing-lockfile behavior. The real filtered unit test stages a stale fixture and exits 101 solely because the command path is unimplemented.
+
+- [x] [AI] **GREEN** — implement `rhino-cli git lockfile sync`, porting the hook's existing logic
       verbatim, so a stale lockfile is regenerated and staged alongside the staged `package.json` —
       command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::regenerates_when_stale`
       — acceptance: the new test passes.
-- [ ] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/git/mod.rs`, `apps/rhino-cli/src/commands/git/lockfile.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Implemented staged-app discovery, existing-lockfile guard, lockfile-only npm regeneration, and restaging. The stale-lockfile test passes alongside format and diff checks.
+- [x] [AI] **RED** — failing test: given a staged `apps/<x>/package.json` whose
       `apps/<x>/package-lock.json` is already current, the command leaves the lockfile unchanged and
       stages nothing additional — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::noop_when_current`
@@ -834,14 +843,27 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
     And nothing additional is staged
   ```
 
-- [ ] [AI] **GREEN** — implement the already-current no-op path so a matching lockfile is left
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: Added an indexed current-lockfile fixture with matching package metadata. The exact filtered test exits 101 because the command still runs a sync action instead of no-oping.
+
+- [x] [AI] **GREEN** — implement the already-current no-op path so a matching lockfile is left
       byte-unchanged and nothing extra is staged — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile::noop_when_current`
       — acceptance: the new test
       passes, no other tests broken.
-- [ ] [AI] **REFACTOR** — no-op cleanly when no `package.json` is staged at all (a third, distinct
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: The command compares lock-relevant manifest and root-lock metadata before invoking npm. Current files remain byte-identical and unstaged; stale lockfiles still regenerate. Both focused tests and formatter check pass.
+- [x] [AI] **REFACTOR** — no-op cleanly when no `package.json` is staged at all (a third, distinct
       condition from the stale/current cases above) — acceptance: a test asserting exit 0 with no
       git index mutation passes.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/git/lockfile.rs`
+  - Notes: No staged app manifest now returns success before any mutation. A staged README fixture confirms no output and unchanged index; all three lockfile cases pass.
 
 ### 1.2b `gate emit`
 

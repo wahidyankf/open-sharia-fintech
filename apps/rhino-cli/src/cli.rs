@@ -4,7 +4,7 @@ use clap::{Parser, Subcommand};
 
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
-    env_init, env_restore, env_staged_guard, env_validate, gate, governance_audit,
+    env_init, env_restore, env_staged_guard, env_validate, gate, git, governance_audit,
     governance_layer_coherence, governance_traceability_audit, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
     harness_validate_duplication, harness_validate_instruction_size, harness_validate_naming,
@@ -105,6 +105,9 @@ pub enum Commands {
     /// Gate-registry commands.
     #[command(name = "gate", subcommand)]
     Gate(GateCommands),
+    /// Git workflow helpers.
+    #[command(name = "git", subcommand)]
+    Git(GitCommands),
     /// Check required tool versions are installed and correct.
     #[command(name = "doctor")]
     Doctor(doctor::DoctorArgs),
@@ -140,6 +143,21 @@ pub enum RepoConfigCommands {
 pub enum GateCommands {
     /// List declared gates for an execution surface.
     List(gate::list::ListArgs),
+}
+
+/// Git workflow helper subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GitCommands {
+    /// Lockfile synchronization commands.
+    #[command(subcommand)]
+    Lockfile(GitLockfileCommands),
+}
+
+/// Lockfile synchronization subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GitLockfileCommands {
+    /// Regenerate and stage lockfiles for staged app manifests.
+    Sync(git::lockfile::SyncArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -646,6 +664,11 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         },
         Commands::Gate(gc) => match gc {
             GateCommands::List(args) => gate::list::run(args, output_format),
+        },
+        Commands::Git(gc) => match gc {
+            GitCommands::Lockfile(lc) => match lc {
+                GitLockfileCommands::Sync(args) => git::lockfile::run(args, output_format),
+            },
         },
         Commands::Env(ec) => match ec {
             EnvCommands::Init(args) => env_init::run(args, output_format),
