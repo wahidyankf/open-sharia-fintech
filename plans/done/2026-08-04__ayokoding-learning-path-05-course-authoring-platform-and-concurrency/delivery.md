@@ -1044,6 +1044,9 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   rendered all five required section headings and canonical kata links; the Windows overview rendered
   five durable `blob/main` source links and no `./code/` links. The development-only HMR WebSocket
   handshake error is a local browser-harness limitation, not a page-rendering error.
+- A final Playwright MCP retest used the fresh production build on port 3102 after completing the
+  actor-model course root overview. It returned HTTP 200 and rendered `Prerequisites`, `What you will
+build`, and `Scope boundary`; it is independent of the protected port-3101 process.
 
 ### Phase 7 Gate
 
