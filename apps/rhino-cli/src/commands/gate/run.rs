@@ -27,6 +27,9 @@ enum CandidateScope {
     None,
 }
 
+/// Changed and tracked repository paths needed by a gate selection.
+type CandidatePaths = (Option<Vec<String>>, Option<Vec<String>>);
+
 /// Arguments for `gate run`.
 #[derive(Args, Debug)]
 pub struct RunArgs {
@@ -111,23 +114,7 @@ fn run_at_root_with_only_and_message_file(
         .into_iter()
         .filter(|gate| only.is_none_or(|id| gate.id == id))
         .collect::<Vec<_>>();
-    let changed_paths = selected_gates
-        .iter()
-        .map(|gate| &gate.surfaces[&surface])
-        .any(|scope| {
-            matches!(
-                candidate_scope(&scope.scope),
-                CandidateScope::StagedFiles | CandidateScope::PathTriggers
-            )
-        })
-        .then(|| changed_paths(repo_root, &surface))
-        .transpose()?;
-    let tracked_paths = selected_gates
-        .iter()
-        .map(|gate| &gate.surfaces[&surface])
-        .any(|scope| candidate_scope(&scope.scope) == CandidateScope::TrackedFiles)
-        .then(|| tracked_paths(repo_root))
-        .transpose()?;
+    let (changed_paths, tracked_paths) = candidate_paths(repo_root, &selected_gates, &surface)?;
     let mut batch_ran = false;
     for gate in selected_gates {
         let scope = &gate.surfaces[&surface];
@@ -179,6 +166,7 @@ fn run_at_root_with_only_and_message_file(
         let status = run_leaf(
             &gate.kind,
             &gate.command,
+            &repo_config::fixed_arguments(gate),
             &files,
             &scope.scope,
             commit_message_file,
@@ -192,6 +180,38 @@ fn run_at_root_with_only_and_message_file(
         }
     }
     Ok(())
+}
+
+/// Load the candidate paths required by a collection of selected gates.
+///
+/// # Errors
+///
+/// Returns an error when Git cannot derive the required changed or tracked paths.
+fn candidate_paths(
+    repo_root: &Path,
+    selected_gates: &[&repo_config::GateEntry],
+    surface: &GateSurface,
+) -> Result<CandidatePaths, Error> {
+    let scopes = selected_gates
+        .iter()
+        .map(|gate| &gate.surfaces[surface])
+        .collect::<Vec<_>>();
+    let changed_paths = scopes
+        .iter()
+        .any(|scope| {
+            matches!(
+                candidate_scope(&scope.scope),
+                CandidateScope::StagedFiles | CandidateScope::PathTriggers
+            )
+        })
+        .then(|| changed_paths(repo_root, surface))
+        .transpose()?;
+    let tracked_paths = scopes
+        .iter()
+        .any(|scope| candidate_scope(&scope.scope) == CandidateScope::TrackedFiles)
+        .then(|| tracked_paths(repo_root))
+        .transpose()?;
+    Ok((changed_paths, tracked_paths))
 }
 
 /// Returns whether this entry belongs to the single aggregate pre-commit batch.
@@ -251,14 +271,21 @@ fn candidate_scope(scope: &ScopeKind) -> CandidateScope {
 fn run_leaf(
     kind: &GateKind,
     command: &str,
+    fixed_arguments: &[String],
     files: &[String],
     scope: &ScopeKind,
     commit_message_file: Option<&Path>,
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
     match kind {
-        GateKind::RhinoCli => run_rhino_cli_leaf(command, files, repo_root),
-        GateKind::External => run_external_leaf(command, files, commit_message_file, repo_root),
+        GateKind::RhinoCli => run_rhino_cli_leaf(command, fixed_arguments, files, repo_root),
+        GateKind::External => run_external_leaf(
+            command,
+            fixed_arguments,
+            files,
+            commit_message_file,
+            repo_root,
+        ),
         GateKind::Nx => run_nx_leaf(command, scope, repo_root),
     }
 }
@@ -310,10 +337,11 @@ fn is_excluded(path: &str, excludes: &[String]) -> bool {
 /// Returns an error when its argument list is empty or the current executable cannot run.
 fn run_rhino_cli_leaf(
     command: &str,
+    fixed_arguments: &[String],
     files: &[String],
     repo_root: &Path,
 ) -> Result<std::process::ExitStatus, Error> {
-    let arguments = arguments_with_derived_files(command, files)?;
+    let arguments = arguments_with_derived_files(command, fixed_arguments, files)?;
     Command::new(std::env::current_exe()?)
         .args(arguments)
         .current_dir(repo_root)
@@ -328,6 +356,7 @@ fn run_rhino_cli_leaf(
 /// Returns an error when its command is empty or the shell cannot run.
 fn run_external_leaf(
     command: &str,
+    fixed_arguments: &[String],
     files: &[String],
     commit_message_file: Option<&Path>,
     repo_root: &Path,
@@ -336,7 +365,8 @@ fn run_external_leaf(
         return Err(anyhow!("external gate command cannot be empty"));
     }
     let command_with_files = format!("{command} \"$@\"");
-    let mut arguments = files.to_vec();
+    let mut arguments = fixed_arguments.to_vec();
+    arguments.extend(files.iter().cloned());
     if let Some(commit_message_file) = commit_message_file {
         arguments.push(commit_message_file.to_string_lossy().into_owned());
     }
@@ -382,7 +412,11 @@ fn run_nx_leaf(
 /// # Errors
 ///
 /// Returns an error when the declared command is empty.
-fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<String>, Error> {
+fn arguments_with_derived_files(
+    command: &str,
+    fixed_arguments: &[String],
+    files: &[String],
+) -> Result<Vec<String>, Error> {
     let mut arguments = command
         .split_whitespace()
         .map(std::string::ToString::to_string)
@@ -390,6 +424,7 @@ fn arguments_with_derived_files(command: &str, files: &[String]) -> Result<Vec<S
     if arguments.is_empty() {
         return Err(anyhow!("gate command cannot be empty"));
     }
+    arguments.extend(fixed_arguments.iter().cloned());
     arguments.extend(files.iter().cloned());
     Ok(arguments)
 }
@@ -641,6 +676,7 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
 
     let status = run_external_leaf(
         "printf '%s\\n' > received-files.txt",
+        &[],
         std::slice::from_ref(&path),
         None,
         repo.path(),
@@ -665,6 +701,7 @@ fn commit_message_file_is_forwarded_to_external_gate() {
 
     let status = run_external_leaf(
         "printf '%s\\n' \"$1\" > received-message-file.txt",
+        &[],
         &[],
         Some(&message),
         repo.path(),

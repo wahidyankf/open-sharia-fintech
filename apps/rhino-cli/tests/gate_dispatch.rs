@@ -12,7 +12,6 @@ fn fixture_git_command(repo_root: &Path) -> Command {
             .args(["rev-parse", "--show-toplevel"])
             .current_dir(repo_root)
             .env("GIT_DIR", repo_root.join(".git"))
-            .env("GIT_WORK_TREE", repo_root)
             .env("GIT_CEILING_DIRECTORIES", repo_root)
             .env("GIT_CONFIG_GLOBAL", "/dev/null")
             .env("GIT_CONFIG_SYSTEM", "/dev/null")
@@ -34,7 +33,6 @@ fn fixture_git_command(repo_root: &Path) -> Command {
     command
         .current_dir(repo_root)
         .env("GIT_DIR", repo_root.join(".git"))
-        .env("GIT_WORK_TREE", repo_root)
         .env("GIT_CEILING_DIRECTORIES", repo_root)
         .env("GIT_CONFIG_GLOBAL", "/dev/null")
         .env("GIT_CONFIG_SYSTEM", "/dev/null");
@@ -58,7 +56,6 @@ fn fixture_git_command_uses_explicit_isolation() {
     let command = fixture_git_command(Path::new("fixture"));
     for variable in [
         "GIT_DIR",
-        "GIT_WORK_TREE",
         "GIT_CEILING_DIRECTORIES",
         "GIT_CONFIG_GLOBAL",
         "GIT_CONFIG_SYSTEM",
@@ -206,7 +203,8 @@ fn rhino_cli_kind_receives_derived_files() {
     let repo = tempfile::TempDir::new().expect("create fixture repository");
     std::fs::create_dir_all(repo.path().join("docs")).expect("create untracked docs directory");
     std::fs::write(repo.path().join("a.md"), "# A\n").expect("write a.md");
-    std::fs::write(repo.path().join("b.md"), "# B\n").expect("write b.md");
+    std::fs::write(repo.path().join("Bad Name.md"), "# Exempted\n")
+        .expect("write exempted invalid markdown name");
     std::fs::write(repo.path().join("docs/Bad Name.md"), "# Unrelated\n")
         .expect("write unrelated invalid markdown name");
     std::fs::write(
@@ -217,6 +215,9 @@ fn rhino_cli_kind_receives_derived_files() {
             "    type: check\n",
             "    command: md naming validate\n",
             "    kind: rhino-cli\n",
+            "    args:\n",
+            "      exempt:\n",
+            "        - Bad Name.md\n",
             "    surfaces:\n",
             "      pre-commit:\n",
             "        scope: affected-file-type\n",
@@ -235,7 +236,7 @@ fn rhino_cli_kind_receives_derived_files() {
     );
     assert!(
         fixture_git_command(repo.path())
-            .args(["add", "a.md", "b.md"])
+            .args(["add", "a.md", "Bad Name.md"])
             .current_dir(repo.path())
             .status()
             .expect("stage derived markdown files")
@@ -251,8 +252,9 @@ fn rhino_cli_kind_receives_derived_files() {
 
     assert!(
         output.status.success(),
-        "the local rhino-cli leaf must receive only a.md and b.md, excluding the untracked \
-         docs/Bad Name.md, and its zero exit must propagate; stdout: {}; stderr: {}",
+        "the local rhino-cli leaf must preserve its fixed --exempt argument before its derived \
+         paths, excluding the untracked docs/Bad Name.md, and its zero exit must propagate; \
+         stdout: {}; stderr: {}",
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
     );
@@ -591,8 +593,8 @@ fn glob_lists_and_excludes_apply_before_invocation() {
     );
     assert_eq!(
         std::fs::read_to_string(arguments).expect("read captured filtered arguments"),
-        "config.yml\nkeep.md\n",
-        "glob lists must retain matching files and args.exclude must remove plans/done"
+        "--exclude\nplans/done\nconfig.yml\nkeep.md\n",
+        "glob lists must retain matching files, preserve args.exclude, and remove plans/done"
     );
 }
 

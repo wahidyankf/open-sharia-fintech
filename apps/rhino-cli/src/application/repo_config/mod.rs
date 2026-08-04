@@ -204,6 +204,24 @@ pub struct GateEntry {
     pub category: Option<String>,
 }
 
+/// Return registry arguments that are forwarded to the declared gate command.
+///
+/// Every key becomes a repeatable long option, preserving the configuration's
+/// deterministic key and value ordering. `exclude` also shapes candidate-path
+/// selection, but remains a fixed argument for commands that enforce their own
+/// exclusion semantics.
+#[must_use]
+pub fn fixed_arguments(gate: &GateEntry) -> Vec<String> {
+    gate.args
+        .iter()
+        .flat_map(|(key, values)| {
+            values
+                .iter()
+                .flat_map(move |value| [format!("--{key}"), value.clone()])
+        })
+        .collect()
+}
+
 /// A gate's scope on one execution surface.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]

@@ -39,7 +39,7 @@ pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error
     validate_local_hook_composition(&config, writer)?;
     validate_verifies_references(&config, writer)?;
     validate_formatter_verification(&config, writer)?;
-    validate_pre_push_shim(repo_root, &config, writer)?;
+    validate_local_hook_shims(repo_root, &config, writer)?;
     validate_ci_workflow(repo_root, &config, writer)?;
     validate_lint_staged(repo_root, &config, writer)
 }
@@ -129,28 +129,36 @@ fn validate_formatter_verification(
     Ok(())
 }
 
-/// Validates the generated Husky shim required by pre-push gates.
+/// Validates every generated Husky shim required by declared local-hook gates.
 ///
 /// # Errors
 ///
 /// Returns an error when the required registry invocation is absent or the
 /// diagnostic cannot be written.
-fn validate_pre_push_shim(
+fn validate_local_hook_shims(
     repo_root: &Path,
     config: &repo_config::RepoConfig,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
-    if config
-        .gates
-        .iter()
-        .any(|gate| gate.surfaces.contains_key(&GateSurface::PrePush))
-    {
-        let shim = repo_root.join(".husky/pre-push");
+    for (surface, shim_name) in [
+        (GateSurface::PreCommit, "pre-commit"),
+        (GateSurface::PrePush, "pre-push"),
+    ] {
+        if !config
+            .gates
+            .iter()
+            .any(|gate| gate.surfaces.contains_key(&surface))
+        {
+            continue;
+        }
+        let shim = repo_root.join(".husky").join(shim_name);
+        let expected_invocation = format!("gate run --surface={shim_name}");
         let has_registry_invocation = std::fs::read_to_string(&shim)
-            .is_ok_and(|contents| contents.contains("gate run --surface=pre-push"));
+            .is_ok_and(|contents| contents.contains(&expected_invocation));
         if !has_registry_invocation {
-            let message =
-                "Gate surface shim .husky/pre-push must invoke gate run --surface=pre-push";
+            let message = format!(
+                "Gate surface shim .husky/{shim_name} must invoke gate run --surface={shim_name}"
+            );
             writeln!(writer, "{message}")?;
             return Err(anyhow!(message));
         }
@@ -187,6 +195,8 @@ fn workflow_jobs(
     let pr_workflow = repo_root.join(".github/workflows/pr-quality-gate.yml");
     let mut workflow_jobs = Vec::new();
     if let Ok(workflow) = std::fs::read_to_string(&pr_workflow) {
+        let has_ci_matrix_enumeration = workflow.contains("rhino-cli gate list --surface=ci")
+            && workflow.contains("fromJson(needs.enumerate.outputs.gates)");
         let mut current_job = None;
         for line in workflow.lines() {
             if let Some(job) = line
@@ -202,6 +212,9 @@ fn workflow_jobs(
                 continue;
             };
             let is_declared_command = config.gates.iter().any(|gate| gate.command == command);
+            let is_ci_matrix_command = has_ci_matrix_enumeration
+                && (command.starts_with("rhino-cli gate list --surface=ci")
+                    || command == "rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}");
             let is_hand_wired_job = current_job.is_some_and(|job| {
                 config.gates.iter().any(|gate| {
                     gate.id == job
@@ -209,7 +222,7 @@ fn workflow_jobs(
                         && gate.surfaces.contains_key(&GateSurface::Ci)
                 })
             });
-            if !is_declared_command && !is_hand_wired_job {
+            if !is_declared_command && !is_ci_matrix_command && !is_hand_wired_job {
                 let message = format!(
                     "CI workflow pr-quality-gate.yml declares command {command:?} absent from the gate registry"
                 );
@@ -357,6 +370,12 @@ fn mutation_pre_commit_only_passes() {
         ),
     )
     .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
 
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
@@ -381,6 +400,12 @@ fn staged_only_carve_out_exempts_pre_commit_check() {
             "    surfaces:\n",
             "      pre-commit: { scope: other }\n",
         ),
+    )
+    .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     )
     .unwrap();
 
@@ -421,6 +446,82 @@ fn missing_surface_shim() {
         "a declared pre-push surface without its registry shim must name the surface file; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn missing_pre_commit_surface_shim() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: pre-commit-check\n",
+            "    type: check\n",
+            "    command: md naming validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "      ci: { scope: all-file-type }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains(".husky/pre-commit")
+            && rendered.contains("pre-commit"),
+        "a declared pre-commit surface without its registry shim must name the surface file; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+        ),
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "the registry-derived CI matrix dispatcher must validate"
     );
 }
 
@@ -521,6 +622,12 @@ fn stale_lint_staged_block() {
     std::fs::write(
         repo.path().join("package.json"),
         r#"{"lint-staged":{"*.md":"prettier --check"}}"#,
+    )
+    .unwrap();
+    std::fs::create_dir(repo.path().join(".husky")).unwrap();
+    std::fs::write(
+        repo.path().join(".husky/pre-commit"),
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     )
     .unwrap();
 

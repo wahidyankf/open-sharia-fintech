@@ -236,6 +236,10 @@ fn given_pre_commit_mutation(w: &mut GateWorld) {
             "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
         )),
     );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    );
 }
 
 #[given("a staged-only check declares pre-commit but no ci surface")]
@@ -252,6 +256,10 @@ fn given_staged_only_check(w: &mut GateWorld) {
                 "      pre-commit: { scope: other }\n",
             )
         )),
+    );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     );
 }
 
@@ -323,6 +331,10 @@ fn given_stale_lint_staged(w: &mut GateWorld) {
     w.write(
         "package.json",
         r#"{"lint-staged":{"*.md":"prettier --check"}}"#,
+    );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     );
 }
 
@@ -461,6 +473,10 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
     w.write(
         ".husky/pre-push",
         "#!/bin/sh\nrhino-cli gate run --surface=pre-push\n",
+    );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     );
     w.write(
         ".github/workflows/pr-quality-gate.yml",

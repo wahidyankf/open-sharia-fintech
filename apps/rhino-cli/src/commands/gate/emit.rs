@@ -78,7 +78,7 @@ pub(crate) fn lint_staged_from_config(
             commands_by_glob
                 .entry(glob.clone())
                 .or_default()
-                .push(gate.command.clone());
+                .push(command_with_fixed_arguments(gate));
         }
     }
 
@@ -86,6 +86,16 @@ pub(crate) fn lint_staged_from_config(
         .into_iter()
         .map(|(glob, commands)| (glob, serde_json::json!(commands)))
         .collect()
+}
+
+/// Render a registry command with its fixed arguments for a generated shell command.
+fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
+    let fixed_arguments = repo_config::fixed_arguments(gate);
+    if fixed_arguments.is_empty() {
+        gate.command.clone()
+    } else {
+        format!("{} {}", gate.command, fixed_arguments.join(" "))
+    }
 }
 
 /// Replaces or inserts the generated `lint-staged` entry in a package object.
@@ -123,6 +133,11 @@ fn pre_commit_emits_per_file_gates_in_declaration_order() {
             "    type: mutation\n",
             "    command: prettier --write\n",
             "    kind: external\n",
+            "    args:\n",
+            "      exempt:\n",
+            "        - generated.md\n",
+            "      exclude:\n",
+            "        - generated\n",
             "    surfaces:\n",
             "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
             "  - id: markdownlint\n",
@@ -153,7 +168,10 @@ fn pre_commit_emits_per_file_gates_in_declaration_order() {
         serde_json::from_slice(&std::fs::read(repo.path().join("package.json")).unwrap()).unwrap();
     assert_eq!(
         package["lint-staged"]["*.md"],
-        serde_json::json!(["prettier --write", "markdownlint-cli2"])
+        serde_json::json!([
+            "prettier --write --exclude generated --exempt generated.md",
+            "markdownlint-cli2"
+        ])
     );
     assert_eq!(package["lint-staged"].as_object().unwrap().len(), 1);
 }
