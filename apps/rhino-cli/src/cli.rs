@@ -4,7 +4,7 @@ use clap::{Parser, Subcommand};
 
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
-    env_init, env_restore, env_staged_guard, env_validate, governance_audit,
+    env_init, env_restore, env_staged_guard, env_validate, gate, governance_audit,
     governance_layer_coherence, governance_traceability_audit, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
     harness_validate_duplication, harness_validate_instruction_size, harness_validate_naming,
@@ -102,6 +102,9 @@ pub enum Commands {
     /// Environment file helpers (init, backup, restore, validate, staged-guard).
     #[command(name = "env", subcommand)]
     Env(EnvCommands),
+    /// Gate-registry commands.
+    #[command(name = "gate", subcommand)]
+    Gate(GateCommands),
     /// Check required tool versions are installed and correct.
     #[command(name = "doctor")]
     Doctor(doctor::DoctorArgs),
@@ -130,6 +133,13 @@ pub enum TestCoverageCommands {
 pub enum RepoConfigCommands {
     /// Strict-deserialize `repo-config.yml` against the canonical schema (key-set + enum parity).
     Validate(repo_config_validate::ValidateArgs),
+}
+
+/// Gate-registry subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GateCommands {
+    /// List declared gates for an execution surface.
+    List(gate::list::ListArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -633,6 +643,9 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Lang(lc) => dispatch_lang(lc, output_format),
         Commands::RepoConfig(rc) => match rc {
             RepoConfigCommands::Validate(args) => repo_config_validate::run(args, output_format),
+        },
+        Commands::Gate(gc) => match gc {
+            GateCommands::List(args) => gate::list::run(args, output_format),
         },
         Commands::Env(ec) => match ec {
             EnvCommands::Init(args) => env_init::run(args, output_format),

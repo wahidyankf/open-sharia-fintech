@@ -1,0 +1,273 @@
+//! `gate list` command adapter.
+
+use std::io::Write;
+use std::path::Path;
+
+use anyhow::{Error, anyhow};
+use clap::Args;
+use serde::Serialize;
+
+use crate::application::repo_config::{self, GateSurface, GateType, GateWiring, ScopeKind};
+use crate::domain::cliout::OutputFormat;
+use crate::internal::git;
+
+/// Arguments for `gate list`.
+#[derive(Args, Debug)]
+pub struct ListArgs {
+    /// Surface whose declared gates to list.
+    #[arg(long)]
+    pub surface: String,
+    /// Output format for the listed gates.
+    #[arg(long, default_value = "text")]
+    pub format: String,
+}
+
+/// JSON-friendly projection of one gate on one surface.
+#[derive(Serialize)]
+struct GateListEntry {
+    id: String,
+    #[serde(rename = "type")]
+    gate_type: String,
+    command: String,
+    scope: String,
+    #[serde(skip_serializing)]
+    hand_wired: bool,
+}
+
+/// List gates declared on one surface from `repo-config.yml`.
+///
+/// # Errors
+///
+/// Returns an error when the repository root cannot be found, the configured
+/// output format is invalid, or `repo-config.yml` cannot be read or rendered.
+pub fn run(args: &ListArgs, _output_format: OutputFormat) -> Result<(), Error> {
+    let repo_root = git::root::find_root()?;
+    let output_format = OutputFormat::parse(&args.format)?;
+    run_at_root(
+        &repo_root,
+        &args.surface,
+        output_format,
+        &mut std::io::stdout(),
+    )
+}
+
+/// List gates at a known repository root (testable entry point).
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` cannot be read or rendered.
+pub fn run_at_root(
+    repo_root: &Path,
+    surface: &str,
+    output_format: OutputFormat,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let surface = parse_surface(surface)?;
+    let config = repo_config::load(repo_root)?;
+    let entries: Vec<GateListEntry> = config
+        .gates
+        .iter()
+        .filter(|gate| {
+            output_format != OutputFormat::Json
+                || gate.wiring.as_ref() != Some(&GateWiring::HandWired)
+        })
+        .filter_map(|gate| {
+            gate.surfaces
+                .iter()
+                .find(|(declared_surface, _)| declared_surface == &&surface)
+                .map(|(_, scope)| GateListEntry {
+                    id: gate.id.clone(),
+                    gate_type: gate_type_name(&gate.gate_type).to_string(),
+                    command: gate.command.clone(),
+                    scope: scope_name(&scope.scope).to_string(),
+                    hand_wired: gate.wiring.as_ref() == Some(&GateWiring::HandWired),
+                })
+        })
+        .collect();
+
+    match output_format {
+        OutputFormat::Json => {
+            serde_json::to_writer_pretty(&mut *writer, &entries)?;
+            writeln!(writer)?;
+        }
+        OutputFormat::Text | OutputFormat::Markdown => {
+            for entry in entries {
+                let marker = if entry.hand_wired { "\thand-wired" } else { "" };
+                writeln!(
+                    writer,
+                    "{}\t{}\t{}\t{}{marker}",
+                    entry.id, entry.gate_type, entry.command, entry.scope
+                )?;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn parse_surface(surface: &str) -> Result<GateSurface, Error> {
+    match surface {
+        "commit-msg" => Ok(GateSurface::CommitMsg),
+        "pre-commit" => Ok(GateSurface::PreCommit),
+        "pre-push" => Ok(GateSurface::PrePush),
+        "ci" => Ok(GateSurface::Ci),
+        _ => Err(anyhow!(
+            "unknown gate surface {surface:?}: expected one of commit-msg, pre-commit, pre-push, ci"
+        )),
+    }
+}
+
+fn gate_type_name(gate_type: &GateType) -> &'static str {
+    match gate_type {
+        GateType::Check => "check",
+        GateType::Mutation => "mutation",
+    }
+}
+
+fn scope_name(scope: &ScopeKind) -> &'static str {
+    match scope {
+        ScopeKind::AffectedFileType => "affected-file-type",
+        ScopeKind::AllFileType => "all-file-type",
+        ScopeKind::AffectedProjects => "affected-projects",
+        ScopeKind::AllProjects => "all-projects",
+        ScopeKind::Other => "other",
+        ScopeKind::PathGated => "path-gated",
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+mod list {
+    use super::*;
+    use tempfile::TempDir;
+
+    #[test]
+    fn ci_json_lists_only_ci_gates_with_required_fields() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(
+            repo.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: ci-check\n",
+                "    type: check\n",
+                "    command: test:quick\n",
+                "    kind: nx\n",
+                "    surfaces:\n",
+                "      ci: { scope: affected-projects }\n",
+                "  - id: pre-commit-format\n",
+                "    type: mutation\n",
+                "    command: prettier --write\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+                "  - id: ci-links\n",
+                "    type: check\n",
+                "    command: md links validate\n",
+                "    kind: rhino-cli\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+            ),
+        )
+        .unwrap();
+
+        let mut output = Vec::new();
+        run_at_root(repo.path(), "ci", OutputFormat::Json, &mut output)
+            .expect("gate list command path must enumerate CI gates as JSON");
+
+        let entries: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0]["id"], "ci-check");
+        assert_eq!(entries[1]["id"], "ci-links");
+        for entry in entries {
+            assert!(entry.get("id").is_some());
+            assert!(entry.get("type").is_some());
+            assert!(entry.get("command").is_some());
+            assert!(entry.get("scope").is_some());
+        }
+    }
+
+    #[test]
+    fn valid_surfaces_without_gates_return_empty_json_arrays() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(repo.path().join("repo-config.yml"), "gates: []\n").unwrap();
+
+        for surface in ["commit-msg", "pre-commit", "pre-push", "ci"] {
+            let mut output = Vec::new();
+            run_at_root(repo.path(), surface, OutputFormat::Json, &mut output).unwrap();
+            assert_eq!(output, b"[]\n", "{surface} must return an empty array");
+        }
+    }
+
+    #[test]
+    fn unknown_surface_names_all_allowed_surfaces() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(repo.path().join("repo-config.yml"), "gates: []\n").unwrap();
+
+        let error = run_at_root(repo.path(), "cron", OutputFormat::Json, &mut Vec::new())
+            .unwrap_err()
+            .to_string();
+        assert!(error.contains("cron"));
+        assert!(error.contains("commit-msg"));
+        assert!(error.contains("pre-commit"));
+        assert!(error.contains("pre-push"));
+        assert!(error.contains("ci"));
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_json_omits_hand_wired() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: matrix-check\n",
+            "    type: check\n",
+            "    command: md links validate\n",
+            "    kind: rhino-cli\n",
+            "    surfaces:\n",
+            "      ci: { scope: all-file-type }\n",
+            "  - id: test-quick\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    run_at_root(repo.path(), "ci", OutputFormat::Json, &mut output).unwrap();
+    let entries: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
+    assert!(entries.iter().all(|entry| entry["id"] != "test-quick"));
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_text_includes_hand_wired() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: test-quick\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    run_at_root(repo.path(), "ci", OutputFormat::Text, &mut output).unwrap();
+    let output = String::from_utf8(output).unwrap();
+    assert!(output.contains("test-quick"));
+    assert!(output.contains("hand-wired"));
+}

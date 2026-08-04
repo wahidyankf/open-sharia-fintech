@@ -691,7 +691,7 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 
 ### 1.2 `gate list`
 
-- [ ] [AI] **RED** — failing test: `gate list --surface=ci --format=json` returns only the gates
+- [x] [AI] **RED** — failing test: `gate list --surface=ci --format=json` returns only the gates
       declaring the `ci` surface, each carrying `id`, `type`, `command`, `scope` — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list` — acceptance: fails
       because the command does not exist.
@@ -707,15 +707,28 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     And the array contains exactly the gates declaring surface "ci"
   ```
 
-- [ ] [AI] **GREEN** — implement `gate list` and wire it into `cli.rs` — acceptance: same command
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added one real lib assertion with a synthetic registry containing two CI gates and one pre-commit-only gate. `cargo test --lib gate::list` runs that assertion and exits 101 because the command path is deliberately unimplemented, not because Cargo filtered it away.
+
+- [x] [AI] **GREEN** — implement `gate list` and wire it into `cli.rs` — acceptance: same command
       exits 0; `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json | jq -e 'type == "array"'`
       exits 0.
-- [ ] [AI] **REFACTOR** — a valid surface with no declared gates returns `[]` and exit 0, while an
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands.rs`, `apps/rhino-cli/src/commands/gate/mod.rs`, `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/src/cli.rs`
+  - Notes: Added `gate list` CLI dispatch, registry filtering by surface, and JSON projections with `id`, `type`, `command`, and `scope`. The focused test passes; the release command emits an empty JSON array against the current pre-rewire config and passes `jq` type validation.
+- [x] [AI] **REFACTOR** — a valid surface with no declared gates returns `[]` and exit 0, while an
       unknown surface is rejected — acceptance: a synthetic registry with no `commit-msg` gates
       makes `... -- gate list --surface=commit-msg --format=json` print `[]` and exit 0;
       `... -- gate list --surface=cron --format=json` exits non-zero and names the four allowed
       surfaces.
-- [ ] [AI] **RED** — add a failing test in the `gate::list` module: `--format=json` must omit
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Focused gate-list tests cover all valid empty surfaces and reject `cron` while naming `commit-msg`, `pre-commit`, `pre-push`, and `ci`. The empty-surface JSON command passes its array contract.
+- [x] [AI] **RED** — add a failing test in the `gate::list` module: `--format=json` must omit
       `wiring: hand-wired` gates (asserting `test-quick` is absent from
       `gate list --surface=ci --format=json`) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_json_omits_hand_wired`
@@ -730,11 +743,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     Then the output contains no entry with id "test-quick"
   ```
 
-- [ ] [AI] **GREEN** — implement the `--format=json` projection so it excludes `wiring: hand-wired`
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added a focused projection fixture with a matrix CI gate and hand-wired `test-quick`. The exact single-test command exits 101 because JSON currently includes the hand-wired entry.
+
+- [x] [AI] **GREEN** — implement the `--format=json` projection so it excludes `wiring: hand-wired`
       gates — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_json_omits_hand_wired`
       — acceptance: the new test passes, no other tests broken.
-- [ ] [AI] **RED** — add a failing test in the `gate::list` module: `--format=text` must still
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: JSON matrix projection now omits hand-wired gates. The exact focused test and the full gate-list unit set (four tests) pass.
+- [x] [AI] **RED** — add a failing test in the `gate::list` module: `--format=text` must still
       include `wiring: hand-wired` gates, each marked as hand-wired (asserting `test-quick` is
       present in `gate list --surface=ci --format=text` and flagged) — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_text_includes_hand_wired`
@@ -752,11 +774,20 @@ Every code step below uses the RED / GREEN / REFACTOR template.
     # matrix, which must not double-run a job that already exists by hand.
   ```
 
-- [ ] [AI] **GREEN** — implement the `--format=text` projection so hand-wired gates are included and
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Added a focused text-output assertion. It executes and exits 101 only because the otherwise listed hand-wired gate lacks its required marker.
+
+- [x] [AI] **GREEN** — implement the `--format=text` projection so hand-wired gates are included and
       marked as hand-wired — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list::format_text_includes_hand_wired`
       — acceptance: the new test passes, no other tests
       broken.
+  - Date: 2026-08-04
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`
+  - Notes: Human-readable list output now retains hand-wired gates and marks them, while JSON remains matrix-only. The exact test and five-test gate-list suite pass.
 
 ### 1.2a `git lockfile sync`
 
