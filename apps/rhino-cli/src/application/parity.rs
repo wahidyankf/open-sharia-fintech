@@ -2,10 +2,12 @@
 
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
+#[cfg(unix)]
 use std::fs;
 use std::io::{BufRead, BufReader, Read, Write as IoWrite};
 use std::path::Path;
 use std::process::{Child, ChildStderr, ChildStdin, ChildStdout, Command, Stdio};
+#[cfg(unix)]
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use anyhow::{Context, Error, anyhow};
@@ -26,6 +28,7 @@ const BOUNDARY_PATHS: &[&str] = &[
 ];
 
 /// Per-process suffix for collision-free sibling manifest replacements.
+#[cfg(unix)]
 static TEMP_SEQUENCE: AtomicUsize = AtomicUsize::new(0);
 
 /// Generate `parity-manifest.sha256` from the tracked boundary files.
@@ -47,10 +50,8 @@ pub fn generate_at_root(repo_root: &Path) -> Result<(), Error> {
 /// Returns a deliberately actionable drift error if a boundary path has been
 /// added, removed, or edited since the manifest was generated.
 pub fn validate_at_root(repo_root: &Path) -> Result<(), Error> {
-    let manifest_path = repo_root.join(MANIFEST_PATH);
-    reject_symlink(repo_root, MANIFEST_PATH)?;
-    let manifest = fs::read_to_string(&manifest_path)
-        .with_context(|| format!("read {}", manifest_path.display()))?;
+    let manifest = String::from_utf8(read_relative_file_no_follow(repo_root, MANIFEST_PATH)?)
+        .with_context(|| format!("read {MANIFEST_PATH}"))?;
     let indexed_manifest = index_blob_for_path(repo_root, MANIFEST_PATH)?;
     if manifest.as_bytes() != indexed_manifest {
         return Err(anyhow!(
@@ -132,9 +133,7 @@ fn boundary_hashes(repo_root: &Path) -> Result<BTreeMap<String, String>, Error> 
                 "{path} is a symlink in the Git index; symlinks are not permitted in {MANIFEST_PATH}'s boundary"
             ));
         }
-        let full_path = repo_root.join(path);
-        reject_symlink(repo_root, path)?;
-        let worktree_contents = fs::read(&full_path)
+        let worktree_contents = read_relative_file_no_follow(repo_root, path)
             .with_context(|| format!("read staged parity boundary file {path}"))?;
         let contents = index_blobs.read_blob(object_id)?;
         if worktree_contents != contents {
@@ -354,72 +353,159 @@ fn index_blob_for_path(repo_root: &Path, path: &str) -> Result<Vec<u8>, Error> {
     Ok(contents)
 }
 
-/// Reject a symlink before any read or write that could leave the repository.
-fn reject_symlink(repo_root: &Path, relative_path: &str) -> Result<(), Error> {
-    let path = repo_root.join(relative_path);
-    match fs::symlink_metadata(&path) {
-        Ok(metadata) if metadata.file_type().is_symlink() => Err(anyhow!(
-            "{relative_path} is a symlink; symlinks are not permitted in {MANIFEST_PATH}'s boundary"
-        )),
-        Ok(metadata) if !metadata.file_type().is_file() => Err(anyhow!(
+/// Read a fixed repository-relative file without following a symlink in any
+/// component. Unix uses descriptor-relative lookups so a concurrent pathname
+/// replacement cannot redirect an already-started read outside the repository.
+#[cfg(unix)]
+fn read_relative_file_no_follow(repo_root: &Path, relative_path: &str) -> Result<Vec<u8>, Error> {
+    use rustix::fs::{Mode, OFlags, openat};
+
+    let root = open_repository_directory(repo_root)?;
+    let (parent, name) = open_parent_directory_no_follow(root, relative_path)?;
+    let file = openat(
+        &parent,
+        &name,
+        OFlags::RDONLY | OFlags::NONBLOCK | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::empty(),
+    )
+    .map_err(|error| {
+        anyhow!(
+            "{relative_path} is a symlink or could not be read with symlink protection: {error}"
+        )
+    })?;
+    let mut file = fs::File::from(file);
+    if !file
+        .metadata()
+        .with_context(|| format!("inspect opened parity boundary file {relative_path}"))?
+        .is_file()
+    {
+        return Err(anyhow!(
             "{relative_path} is not a regular file; only regular files are permitted in {MANIFEST_PATH}'s boundary"
-        )),
-        Ok(_) => Ok(()),
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
-        Err(error) => Err(error).with_context(|| format!("inspect {}", path.display())),
+        ));
     }
+    let mut contents = Vec::new();
+    file.read_to_end(&mut contents)
+        .with_context(|| format!("read parity boundary file {relative_path}"))?;
+    Ok(contents)
+}
+
+/// Open the configured repository root as a directory without following its
+/// final path component. Subsequent path components are descriptor-relative.
+#[cfg(unix)]
+fn open_repository_directory(repo_root: &Path) -> Result<std::os::fd::OwnedFd, Error> {
+    use rustix::fs::{CWD, Mode, OFlags, openat};
+
+    openat(
+        CWD,
+        repo_root,
+        OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::empty(),
+    )
+    .map_err(|error| {
+        anyhow!(
+            "open repository root {} with symlink protection: {error}",
+            repo_root.display()
+        )
+    })
+}
+
+/// Resolve every parent component from an already-open directory descriptor.
+/// Each `openat` rejects a final symlink, which also protects a component
+/// swapped after its predecessor was opened.
+#[cfg(unix)]
+fn open_parent_directory_no_follow(
+    mut parent: std::os::fd::OwnedFd,
+    relative_path: &str,
+) -> Result<(std::os::fd::OwnedFd, String), Error> {
+    use rustix::fs::{Mode, OFlags, openat};
+
+    let mut components = relative_path.split('/').peekable();
+    let mut final_name = None;
+    while let Some(component) = components.next() {
+        if component.is_empty() || component == "." || component == ".." {
+            return Err(anyhow!(
+                "invalid repository-relative parity path {relative_path:?}"
+            ));
+        }
+        if components.peek().is_none() {
+            final_name = Some(component.to_owned());
+            break;
+        }
+        parent = openat(
+            &parent,
+            component,
+            OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+            Mode::empty(),
+        )
+        .map_err(|error| {
+            anyhow!(
+                "refuse to resolve {relative_path} without symlink protection at {component}: {error}"
+            )
+        })?;
+    }
+    let final_name =
+        final_name.ok_or_else(|| anyhow!("invalid empty repository-relative parity path"))?;
+    Ok((parent, final_name))
+}
+
+/// Refuse on platforms without descriptor-relative, no-follow lookups.
+///
+/// A metadata check followed by a pathname read has an unavoidable TOCTOU
+/// window, so parity deliberately fails closed rather than claiming that a
+/// path-based fallback is safe.
+#[cfg(not(unix))]
+fn read_relative_file_no_follow(_repo_root: &Path, _relative_path: &str) -> Result<Vec<u8>, Error> {
+    Err(anyhow!(
+        "{MANIFEST_PATH} requires Unix descriptor-relative no-follow file access; parity generation and validation are unavailable on this platform"
+    ))
 }
 
 /// Replace the manifest through a new sibling file, never by opening the
-/// destination for writing.  The parent must canonicalize beneath the root, so
-/// an intermediate symlink cannot redirect the write outside the repository.
-/// Renaming a sibling over a destination swapped into a symlink is safe: the
-/// link itself is replaced rather than followed.
+/// destination for writing. Unix resolves the parent through directory
+/// descriptors; the final `renameat` replaces a swapped symlink rather than
+/// following it.
+#[cfg(unix)]
 fn write_manifest_atomically(repo_root: &Path, manifest: &str) -> Result<(), Error> {
-    let manifest_path = repo_root.join(MANIFEST_PATH);
-    let parent = manifest_path
-        .parent()
-        .ok_or_else(|| anyhow!("{MANIFEST_PATH} has no parent directory"))?;
-    let canonical_root = repo_root
-        .canonicalize()
-        .with_context(|| format!("canonicalize repository root {}", repo_root.display()))?;
-    let canonical_parent = parent
-        .canonicalize()
-        .with_context(|| format!("canonicalize parity manifest parent {}", parent.display()))?;
-    if !canonical_parent.starts_with(&canonical_root) {
-        return Err(anyhow!(
-            "{MANIFEST_PATH} parent escapes the repository root through a symlink"
-        ));
-    }
-    reject_symlink(repo_root, MANIFEST_PATH)?;
+    use rustix::fs::{AtFlags, Mode, OFlags, openat, renameat, unlinkat};
 
+    let root = open_repository_directory(repo_root)?;
+    let (parent, manifest_name) = open_parent_directory_no_follow(root, MANIFEST_PATH)?;
     let sequence = TEMP_SEQUENCE.fetch_add(1, Ordering::Relaxed);
-    let temp_path = parent.join(format!(
-        ".parity-manifest-{}-{sequence}.tmp",
-        std::process::id()
-    ));
-    let mut file = fs::OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&temp_path)
-        .with_context(|| format!("create temporary parity manifest {}", temp_path.display()))?;
-    if let Err(error) = std::io::Write::write_all(&mut file, manifest.as_bytes()) {
-        let _ = fs::remove_file(&temp_path);
-        return Err(error)
-            .with_context(|| format!("write temporary parity manifest {}", temp_path.display()));
+    let temp_name = format!(".parity-manifest-{}-{sequence}.tmp", std::process::id());
+    let file = openat(
+        &parent,
+        &temp_name,
+        OFlags::WRONLY | OFlags::CREATE | OFlags::EXCL | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::RUSR | Mode::WUSR,
+    )
+    .map_err(|error| {
+        anyhow!("create temporary parity manifest with symlink protection: {error}")
+    })?;
+    let mut file = fs::File::from(file);
+    if let Err(error) = file.write_all(manifest.as_bytes()) {
+        let _ = unlinkat(&parent, &temp_name, AtFlags::empty());
+        return Err(error).context("write temporary parity manifest");
     }
     if let Err(error) = file.sync_all() {
-        let _ = fs::remove_file(&temp_path);
-        return Err(error)
-            .with_context(|| format!("sync temporary parity manifest {}", temp_path.display()));
+        let _ = unlinkat(&parent, &temp_name, AtFlags::empty());
+        return Err(error).context("sync temporary parity manifest");
     }
-    fs::rename(&temp_path, &manifest_path).with_context(|| {
-        format!(
-            "atomically replace parity manifest {} from {}",
-            manifest_path.display(),
-            temp_path.display()
-        )
-    })
+    drop(file);
+    if let Err(error) = renameat(&parent, &temp_name, &parent, &manifest_name) {
+        let _ = unlinkat(&parent, &temp_name, AtFlags::empty());
+        return Err(anyhow!(
+            "atomically replace parity manifest with symlink protection: {error}"
+        ));
+    }
+    Ok(())
+}
+
+/// Refuse writes on platforms without POSIX descriptor-relative APIs.
+#[cfg(not(unix))]
+fn write_manifest_atomically(_repo_root: &Path, _manifest: &str) -> Result<(), Error> {
+    Err(anyhow!(
+        "{MANIFEST_PATH} requires Unix descriptor-relative no-follow file access; parity generation and validation are unavailable on this platform"
+    ))
 }
 
 /// Render the stable, newline-terminated manifest format.
@@ -610,6 +696,93 @@ mod tests {
 
         let error = generate_at_root(repo.path()).expect_err("symlinked boundary must fail");
         assert!(format!("{error:#}").contains("is a symlink"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn generation_rejects_a_fifo_boundary_file_without_blocking() {
+        let repo = fixture();
+        let source_path = repo.path().join("apps/rhino-cli/src/main.rs");
+        fs::remove_file(&source_path).expect("remove source file");
+        let status = Command::new("mkfifo")
+            .arg(&source_path)
+            .status()
+            .expect("run mkfifo");
+        assert!(status.success(), "mkfifo must create source FIFO");
+
+        let error = generate_at_root(repo.path()).expect_err("FIFO boundary must fail");
+        assert!(format!("{error:#}").contains("is not a regular file"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn generation_rejects_a_boundary_path_with_a_symlinked_parent() {
+        use std::os::unix::fs::symlink;
+
+        let repo = fixture();
+        let source_dir = repo.path().join("apps/rhino-cli/src");
+        let outside = tempfile::tempdir().expect("create outside source directory");
+        fs::write(outside.path().join("main.rs"), "fn outside() {}\n")
+            .expect("write outside source");
+        fs::remove_dir_all(&source_dir).expect("remove source directory");
+        symlink(outside.path(), &source_dir).expect("symlink source directory outside repository");
+
+        let error = generate_at_root(repo.path()).expect_err("symlinked parent must fail");
+        assert!(format!("{error:#}").contains("symlink protection"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn manifest_writer_rejects_a_symlinked_parent_directory() {
+        use std::os::unix::fs::symlink;
+
+        let repo = fixture();
+        let manifest_parent = repo.path().join("apps/rhino-cli");
+        let outside = tempfile::tempdir().expect("create outside manifest parent");
+        fs::remove_dir_all(&manifest_parent).expect("remove manifest parent");
+        symlink(outside.path(), &manifest_parent)
+            .expect("symlink manifest parent outside repository");
+
+        let error = write_manifest_atomically(repo.path(), "manifest\n")
+            .expect_err("symlinked manifest parent must fail");
+        assert!(format!("{error:#}").contains("symlink protection"));
+        assert!(!outside.path().join("parity-manifest.sha256").exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn manifest_writer_replaces_a_swapped_symlink_without_following_it() {
+        use std::os::unix::fs::symlink;
+
+        let repo = fixture();
+        let manifest_path = repo.path().join(MANIFEST_PATH);
+        let outside = tempfile::NamedTempFile::new().expect("create outside manifest");
+        fs::write(outside.path(), "outside\n").expect("write outside manifest");
+        symlink(outside.path(), &manifest_path).expect("create manifest symlink");
+
+        write_manifest_atomically(repo.path(), "replacement\n")
+            .expect("replace manifest symlink itself");
+
+        assert_eq!(
+            fs::read_to_string(&manifest_path).expect("read replacement"),
+            "replacement\n"
+        );
+        assert_eq!(
+            fs::read_to_string(outside.path()).expect("read outside manifest"),
+            "outside\n"
+        );
+    }
+
+    #[cfg(not(unix))]
+    #[test]
+    fn parity_refuses_path_based_file_access_without_descriptor_relative_apis() {
+        let error = read_relative_file_no_follow(Path::new("."), "boundary-file")
+            .expect_err("non-Unix reader must fail closed");
+        assert!(format!("{error:#}").contains("unavailable on this platform"));
+
+        let error = write_manifest_atomically(Path::new("."), "manifest\n")
+            .expect_err("non-Unix writer must fail closed");
+        assert!(format!("{error:#}").contains("unavailable on this platform"));
     }
 
     #[test]
