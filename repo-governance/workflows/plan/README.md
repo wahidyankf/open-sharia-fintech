@@ -52,6 +52,7 @@ validation at the end.
 - [Plan Multi-Repo Parity Planning](./plan-multi-repo-parity-planning.md) - Author aligned-but-deliberately-divergent plans across multiple sibling repositories for a shared objective: survey → deviation matrix → first grill (hard gate) → web research → second grill → author → gate → deliver. Every cross-repo deviation reaches a recorded decision before authoring begins
 - [Plan Multi-Repo Parity Planning and Execution](./plan-multi-repo-parity-planning-and-execution.md) - End-to-end composite: run the full parity planning workflow (both grills included), then a third pre-execution grill, then plan-execution per repo for every resulting plan — flattened granular Task list kept 1:1 with each delivery.md, archival, sibling-link repair, and prompted worktree cleanup
 - [Plan Quality Gate](./plan-quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan-checker and plan-fixer
+- [Plan Ideas Grooming](./plan-ideas-grooming.md) - Sweep and reorganize `plans/ideas/` across repos: merge/split/group two-pagers, sort into Eisenhower-matrix quadrant folders, reshape into the two-pager template, relocate cross-repo by scope, and rename stale filenames. Direct orchestration, no delegated agents — mechanical file operations only
 
 ## Orchestration Model Shared by These Workflows
 
