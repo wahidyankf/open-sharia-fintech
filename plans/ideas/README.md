@@ -52,6 +52,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [sibling-main-ci-never-runs-on-merge](./sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in both siblings, so a merge to their `main` gets no post-merge CI signal.
 - [simplify-ayokoding-ose-cli](./simplify-ayokoding-ose-cli.md) — simplify `ayokoding-cli` / `ose-cli`; fold overlaps into rhino-cli.
 - [source-code-credential-scanning](./source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
+- [stale-checkout-ref-advance-drift](./stale-checkout-ref-advance-drift.md) — a ref-advancing `fetch` moved a checked-out branch 9 commits without its index, and git reported the drift as 265 staged files two agent sessions deferred to.
 - [standardize-cis](./standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
 - [syllabus-conformance-validator](./syllabus-conformance-validator.md) — a deterministic `rhino-cli md syllabus validate` for course-file section conformance, deferred until the format settles.
 - [tri-repo-rhino-cli-byte-identity-gate](./tri-repo-rhino-cli-byte-identity-gate.md) — a standing diff gate over the `apps/rhino-cli` byte-identity boundary across all three repos.
