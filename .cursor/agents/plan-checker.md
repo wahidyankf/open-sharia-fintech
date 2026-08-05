@@ -453,7 +453,7 @@ After validating delivery checklist structure (Step 5), verify the plan includes
 
 2. **Post-Push CI/CD Verification**
    - Plan MUST include steps to manually verify related GitHub Actions/workflows pass after the push — against the plan's declared delivery target (the PR's check run under `*-to-pr`; `origin main` under the direct-push modes). A plan that hardcodes `main` while declaring a `*-to-pr` mode is itself a finding
-   - Must specify WHICH workflows to monitor (not just "check CI")
+   - Must specify WHICH workflows to monitor (not just "check CI") — `.github/workflows/main-ci.yml` must never be named: it's deprecated, schedule-only, and never triggered by a push
    - Must include instructions to watch for failures and fix them before moving on
 
 3. **Development Environment Setup**

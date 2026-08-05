@@ -837,7 +837,7 @@ pushes nothing):
 ### Post-Push CI Verification
 
 - [ ] Push changes to the delivery target for the declared Delivery Mode (the PR branch under `worktree-to-pr` / `main-to-pr`; `origin main` under the direct-push modes)
-- [ ] Monitor ALL GitHub Actions workflows triggered by that push (for `*-to-pr` modes this is the PR's own check run)
+- [ ] Monitor ALL GitHub Actions workflows triggered by that push (for `*-to-pr` modes this is the PR's own check run) — excludes `.github/workflows/main-ci.yml` (deprecated, schedule-only, never triggered by a push)
 - [ ] Verify ALL CI checks pass — no exceptions
 - [ ] If any CI check fails, fix immediately and push a follow-up commit
 - [ ] Repeat until ALL GitHub Actions pass with zero failures

@@ -207,7 +207,7 @@ After assessing code quality (Step 5), verify that the executor followed ALL ope
    - If ANY failure exists, report as CRITICAL finding
 
 2. **Post-Push CI Passed**
-   - Check if GitHub Actions workflows passed for the latest commits on the plan's delivery target — the PR branch under `*-to-pr` modes, `main` under the direct-push modes (resolve the mode first; do not assume `main`)
+   - Check if GitHub Actions workflows passed for the latest commits on the plan's delivery target — the PR branch under `*-to-pr` modes, `main` under the direct-push modes (resolve the mode first; do not assume `main`). Excludes `.github/workflows/main-ci.yml` (deprecated, schedule-only, never triggered by a push)
    - If CI status is not all-green, report as CRITICAL finding
    - This includes workflows that may have been failing before the plan execution
 

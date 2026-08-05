@@ -313,6 +313,9 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
   Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
+- **`main-ci.yml` deprecated**: schedule/dispatch-only (no push trigger), being retired. Never trigger,
+  monitor, or gate plan creation/checking/execution on it — pre-commit, pre-push, and the PR quality
+  gate are sufficient.
 
 ## AI Agents
 

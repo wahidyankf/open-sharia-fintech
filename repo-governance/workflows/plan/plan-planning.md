@@ -530,7 +530,8 @@ Commit and push the plan to the confirmed target, then remove the worktree.
 3. Push from the worktree to the confirmed target (default `origin main`):
    `git push <confirmed-target> HEAD:main`
 4. Monitor GitHub Actions: `gh run list --limit 5` — verify all triggered workflows complete
-   with `completed/success` conclusion
+   with `completed/success` conclusion. Excludes `.github/workflows/main-ci.yml` (deprecated,
+   schedule-only, never triggered by this push)
 5. If a CI workflow fails: diagnose root cause, fix, push a follow-up commit, re-monitor
 6. After CI passes, remove the worktree from the repo root:
 
