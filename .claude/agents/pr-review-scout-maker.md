@@ -255,4 +255,4 @@ agent's.
 
 **Plan Documentation**:
 
-- [PR Review Cycle Scout + Cycle-Number + Type-Soundness — README](../../plans/in-progress/pr-review-cycle-scout-and-typesafety/README.md) - The plan that introduced this agent
+- [PR Review Cycle Scout + Cycle-Number + Type-Soundness — README](../../plans/done/2026-08-06__pr-review-cycle-scout-and-typesafety/README.md) - The plan that introduced this agent
