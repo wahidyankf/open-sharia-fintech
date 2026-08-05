@@ -405,7 +405,10 @@ gates:
     command: repo-config validate
     kind: rhino-cli
     surfaces:
-      pre-commit: { scope: affected-file-type, glob: repo-config.yml }
+      pre-commit:
+        scope: affected-file-type
+        glob: repo-config.yml
+        lint-staged-shell: "{{command}}"
       ci: { scope: other }
 
   # ----------------------------------------------- formatters (13 mutations) +
@@ -419,7 +422,14 @@ gates:
     surfaces:
       pre-commit:
         scope: affected-file-type
-        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+        globs:
+          - "*.md"
+          - "*.{js,jsx,ts,tsx,mjs,cjs}"
+          - "*.json"
+          - "*.{yml,yaml}"
+          - "*.{css,scss}"
+          - "*.html"
+          - "*.sql"
 
   - id: format-verify-prettier
     type: check
@@ -497,9 +507,8 @@ gates:
 
   - id: format-verify-gofmt
     type: check
-    # `gofmt -l` always exits 0, including when it prints unformatted paths.
-    # The wrapper turns any output into a failing verifier result.
-    command: 'test -z "$(gofmt -l .)"'
+    # `gofmt -l` always exits 0; the wrapper converts non-empty output to failure.
+    command: scripts/verify-gofmt.sh
     kind: external
     verifies: format-gofmt
     surfaces:
@@ -516,8 +525,8 @@ gates:
 
   - id: format-verify-elixir
     type: check
-    # Do not add `--no-exit`; it suppresses the check failure.
-    command: mix format --check-formatted
+    # The wrapper discovers each mix project; do not add --no-exit.
+    command: scripts/format-elixir.sh --check
     kind: external
     verifies: format-elixir
     surfaces:
@@ -749,6 +758,7 @@ gates:
       pre-commit:
         scope: affected-file-type
         glob: "docker-compose*.{yml,yaml}"
+        lint-staged-shell: 'for f; do docker compose -f "$f" config > /dev/null; done'
       ci: { scope: all-file-type }
 
   # ------------------------------------- pre-commit mutations, run last (order)

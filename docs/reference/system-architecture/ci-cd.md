@@ -131,34 +131,25 @@ graph LR
 
 **Steps:**
 
-1. Checkout PR branch
-2. Setup language runtimes (Node.js, .NET, Rust)
-3. Install dependencies
-4. Run typecheck, lint, test:quick, specs:coverage for affected projects
-5. Validate agent naming and workflow naming conventions
-6. Run repo-wide markdown link validation (`md-links` gate job)
+1. Enumerate matrix-wired CI gates with `rhino-cli gate list --surface=ci --format=json`.
+2. Run one `gate run --surface=ci --only=<id>` matrix job per declared entry.
+3. Keep language-specific `test:quick`, compatibility, and structural-spec jobs hand-wired where
+   their toolchain setup is required.
+4. Make the stable `Quality gate` join depend on the matrix and every retained job.
 
-**Purpose**: Full quality gate on every PR — typecheck, lint, unit tests, coverage, naming
-validation, and repo-wide markdown link check
+**Purpose**: Full quality gate on every PR and push to `main`. The registry is the check-set source
+of truth; `gate validate` rejects a stale matrix or missing retained job.
 
 **Note**: The standalone `markdown-validate.yml` workflow has been deleted. Per-file markdown
 validators (mermaid, heading-hierarchy, markdownlint) now run via lint-staged at commit time; the
 repo-wide `md links validate` check runs as the `md-links` job in this workflow.
 
-### Main CI Workflow
+### Registry-derived CI matrix
 
-**File**: `.github/workflows/main-ci.yml`
-
-**Trigger**: Scheduled (4x/day: 06:00/12:00/18:00/00:00 WIB) or manual `workflow_dispatch` — no push
-trigger; `pr-quality-gate.yml` already covers push-to-`main`
-
-**Steps:** Same quality gate as the PR workflow — typecheck, lint, `test:quick`,
-`compat:min-version`, naming, instruction-size, specs, env/repo-config validation, md-links,
-harness-duplication, governance validation — but across **all** projects
-(`nx run-many --all`) rather than only affected ones
-
-**Purpose**: Catches drift that affected-only PR checks can miss, by re-running the full gate
-against the entire monorepo on a fixed cadence independent of any single PR
+The former scheduled whole-repository quality workflow is retired. Gate-surface checks run through
+`pr-quality-gate.yml`; scheduled service workflows retain only their explicit integration, E2E, audit,
+or deployment responsibilities. This deliberately trades periodic all-project revalidation for a
+single enforced gate definition on PRs and pushes to `main`.
 
 ### AyoKoding Web Test + Deploy Workflow
 

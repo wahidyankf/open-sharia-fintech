@@ -307,7 +307,10 @@ gates:
     command: repo-config validate
     kind: rhino-cli
     surfaces:
-      pre-commit: { scope: affected-file-type, glob: repo-config.yml }
+      pre-commit:
+        scope: affected-file-type
+        glob: repo-config.yml
+        lint-staged-shell: "{{command}}"
       ci: { scope: other }
 
   # ----------------------------------------- formatters (10) + verifiers (10)
@@ -324,7 +327,14 @@ gates:
     surfaces:
       pre-commit:
         scope: affected-file-type
-        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+        globs:
+          - "*.md"
+          - "*.{js,jsx,ts,tsx,mjs,cjs}"
+          - "*.json"
+          - "*.{yml,yaml}"
+          - "*.{css,scss}"
+          - "*.html"
+          - "*.sql"
 
   - id: format-verify-prettier
     type: check
@@ -417,10 +427,8 @@ gates:
 
   - id: format-verify-gofmt
     type: check
-    # gofmt has NO failing check mode: `gofmt -l` prints offending paths and
-    # exits 0 regardless. Two upstream feature requests to add one are still
-    # open. The wrapper below is mandatory — a bare `gofmt -l` gate never fails.
-    command: 'test -z "$(gofmt -l .)"'
+    # gofmt has no failing check mode; the wrapper rejects non-empty `gofmt -l` output.
+    command: scripts/verify-gofmt.sh
     kind: external
     verifies: format-gofmt
     surfaces:
@@ -437,8 +445,8 @@ gates:
 
   - id: format-verify-elixir
     type: check
-    # Non-zero by default. Do NOT add --no-exit, which suppresses the failure.
-    command: mix format --check-formatted
+    # The wrapper discovers the mix project; do not add --no-exit.
+    command: scripts/format-elixir.sh --check
     kind: external
     verifies: format-elixir
     surfaces:
@@ -594,6 +602,7 @@ gates:
       pre-commit:
         scope: affected-file-type
         glob: "docker-compose*.{yml,yaml}"
+        lint-staged-shell: 'for f; do docker compose -f "$f" config > /dev/null; done'
       ci: { scope: all-file-type }
 
   # ------------------------------------- pre-commit mutations, run last (order)

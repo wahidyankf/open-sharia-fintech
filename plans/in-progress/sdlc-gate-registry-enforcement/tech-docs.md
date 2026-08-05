@@ -376,20 +376,21 @@ diff, not a judgement.
 
 Field contract:
 
-| Field            | Required       | Meaning                                                                                                                                                            |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`             | yes            | Stable, unique, kebab-case. The job name in CI and the label in `gate run` output.                                                                                 |
-| `type`           | yes            | `check` (can fail; subject to the composition rule) or `mutation` (rewrites files; cannot fail on style; exempt from the rule).                                    |
-| `command`        | yes            | Leaf command. Interpretation depends on `kind`.                                                                                                                    |
-| `kind`           | yes            | `rhino-cli` (invoked through the local binary), `external` (a tool on `PATH`), or `nx` (an Nx target).                                                             |
-| `wiring`         | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares the job itself; validation asserts presence only).                           |
-| `restages`       | no (mutations) | `true` when the mutation's output must be `git add`-ed back, so generated files commit in lockstep.                                                                |
-| `args`           | no             | Command-shaped data that legitimately differs per repo — chiefly `exclude` lists.                                                                                  |
-| `surfaces`       | yes            | Map of surface name to scope descriptor. At least one entry.                                                                                                       |
-| `glob` / `globs` | no             | On an `affected-file-type` surface: one glob, or a **list** of globs when one command must be dispatched across several `lint-staged` keys (prettier). See §2.2.2. |
-| `carve-out`      | no (checks)    | `staged-only` — the check reads the git index, so no CI counterpart can exist. Exempts it from the composition rule.                                               |
-| `verifies`       | no (checks)    | The id of the `type: mutation` gate this check is the read-only counterpart of. Drives the every-mutation-is-verified rule (§2.2.4).                               |
-| `category`       | no (mutations) | `formatter` marks a mutation that rewrites source to a canonical form, so `gate validate` demands a `verifies`-linked check for it.                                |
+| Field               | Required       | Meaning                                                                                                                                                                                                    |
+| ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | yes            | Stable, unique, kebab-case. The job name in CI and the label in `gate run` output.                                                                                                                         |
+| `type`              | yes            | `check` (can fail; subject to the composition rule) or `mutation` (rewrites files; cannot fail on style; exempt from the rule).                                                                            |
+| `command`           | yes            | Leaf command. Interpretation depends on `kind`.                                                                                                                                                            |
+| `kind`              | yes            | `rhino-cli` (invoked through the local binary), `external` (a tool on `PATH`), or `nx` (an Nx target).                                                                                                     |
+| `wiring`            | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares the job itself; validation asserts presence only).                                                                   |
+| `restages`          | no (mutations) | `true` when the mutation's output must be `git add`-ed back, so generated files commit in lockstep.                                                                                                        |
+| `args`              | no             | Command-shaped data that legitimately differs per repo — chiefly `exclude` lists.                                                                                                                          |
+| `surfaces`          | yes            | Map of surface name to scope descriptor. At least one entry.                                                                                                                                               |
+| `glob` / `globs`    | no             | On an `affected-file-type` surface: one glob, or a **list** of globs when one command must be dispatched across several `lint-staged` keys (prettier). See §2.2.2.                                         |
+| `lint-staged-shell` | no             | On a pre-commit affected-file-type surface only: a shell body emitted as `bash -c '<body>' --`; `{{command}}` expands once to the kind-derived command, or a body may handle each lint-staged file itself. |
+| `carve-out`         | no (checks)    | `staged-only` — the check reads the git index, so no CI counterpart can exist. Exempts it from the composition rule.                                                                                       |
+| `verifies`          | no (checks)    | The id of the `type: mutation` gate this check is the read-only counterpart of. Drives the every-mutation-is-verified rule (§2.2.4).                                                                       |
+| `category`          | no (mutations) | `formatter` marks a mutation that rewrites source to a canonical form, so `gate validate` demands a `verifies`-linked check for it.                                                                        |
 
 Surface names are `commit-msg`, `pre-commit`, `pre-push`, and `ci` — **the four gate surfaces, and
 only those**. Scope values are the five already ratified in the SDLC Gate Standard —
@@ -439,6 +440,12 @@ and error restore, documented in its official [README](https://github.com/lint-s
 
 The emitter writes marker-first: it checks for the already-applied marker **before** locating the
 anchor, so a re-run replaces the block rather than appending a second copy.
+
+Most entries emit their kind-derived command directly. A pre-commit affected-file-type scope may
+instead declare `lint-staged-shell`: the emitter wraps its body as `bash -c '<body>' --` so lint-staged
+does not append its file list to commands that must either ignore it (`repo-config validate`) or loop
+over it with a different argument position (Docker Compose). `{{command}}` is a one-time placeholder
+for the normal kind-derived command; a shell body without that placeholder owns its file loop.
 
 **Why prettier declares `globs`, plural.** `lint-staged` runs the commands within one glob key
 **sequentially** but runs different glob keys **concurrently**. Today `*.md` is an ordered chain —

@@ -37,7 +37,10 @@ Create repository rules and conventions.
 
 ## Workflow
 
-Document standards following convention structure (Purpose, Standards, Examples, Validation).
+Document standards following convention structure (Purpose, Standards, Examples, Validation). For a
+gate-surface rule change, update the registry-managed documentation to use `gate list`, verify the
+registry with `gate validate`, update affected workflow and hook documentation plus their indexes,
+then regenerate harness bindings from the canonical `.claude/` source.
 
 ## Reference Documentation
 

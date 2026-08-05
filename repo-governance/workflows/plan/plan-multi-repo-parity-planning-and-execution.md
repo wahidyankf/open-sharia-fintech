@@ -12,7 +12,7 @@ inputs:
     type: string
     description: "Comma-separated target repository names or absolute paths in the parity set"
     required: false
-    default: "ose-public, ose-primer, ose-private"
+    default: "ose-public, ose-primer, ose-private, beaver-nest"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main]
@@ -270,14 +270,14 @@ Every plan-execution rule applies unchanged, including:
 repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
 
 **Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
-fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` / `ose-private` are
-**independent downstream nodes** that read from it without reading each other. Once `ose-public`
-reaches `pass`, the two downstream repos may run as concurrent DAG nodes under the N+1 model
+fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer`, `ose-private`, and
+`beaver-nest` are **independent downstream nodes** that read from it without reading each other. Once
+`ose-public` reaches `pass`, the downstream repos may run as concurrent DAG nodes under the N+1 model
 (`1 main thread + N background agents`, default **N=3**) rather than serialized behind one another.
 
 Two constraints override that fan-out and force strict serialization:
 
-- **`apps/rhino-cli` byte-identity** across all three repos — a plan touching it propagates one repo
+- **`apps/rhino-cli` byte-identity** across all four bound repos — a plan touching it propagates one repo
   at a time, never concurrently.
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
   dependency, but a shared write target is.
@@ -288,7 +288,7 @@ at its **delivery boundary** rather than at every phase or batched at composite 
 work merged-but-dark behind a **feature flag**. See
 [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
 
-**Shared-machine safety**: all three repos share one machine's disk and git object store, and two of
+**Shared-machine safety**: all four repos share one machine's disk and git object store, and two of
 them are bare repos driven through worktrees. The **no-destructive-git** rule binds every git action
 here — never discard a concurrent actor's uncommitted work, never remove a worktree or branch you
 did not create. See

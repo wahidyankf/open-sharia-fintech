@@ -129,10 +129,10 @@ and [§PRs Open at Delivery Boundaries](./repo-governance/conventions/structure/
 
 ## Git Hooks (Automated Quality)
 
-Pre-commit: format (Prettier/gofmt/rustfmt), validate markdown links + markdownlint, lint
-shell/Dockerfiles/workflows, auto-sync platform bindings, auto-stage. Commit-msg: Commitlint.
-Pre-push: `typecheck`, `lint`, `test:quick`, `specs:coverage` for affected projects (parallelism:
-cores-1); markdown linting. All four Nx targets cacheable — warm cache before push if timeout occurs.
+The three executable Husky files are registry shims: use
+`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=<surface> --format=text`
+to inspect their current commands and `gate validate` to verify shim, generated-artifact, and CI
+conformance. Do not hand-maintain command lists in hooks; `repo-config.yml` is authoritative.
 
 **See**: [code.md](./repo-governance/development/quality/code.md)
 

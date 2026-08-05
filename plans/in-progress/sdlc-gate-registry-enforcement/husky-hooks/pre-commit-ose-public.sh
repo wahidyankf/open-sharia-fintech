@@ -6,7 +6,7 @@ set -e
 # declaration order, which is why the registry lists the staged guard first,
 # then the per-file pass, then the re-staging mutations.
 #
-# `gate run --surface=pre-commit` delegates the per-file dispatch to
+# The registry dispatcher delegates the per-file pass to
 # `npx lint-staged`, whose block in package.json is itself generated from the
 # registry by `gate emit`. lint-staged keeps its stash-and-restore safety.
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- \
