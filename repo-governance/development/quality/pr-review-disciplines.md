@@ -217,12 +217,21 @@ accordingly:
 - **Lite** (≤100 lines AND ≤20 files) → a reduced specialist set of the four highest-yield lenses
   for this repo (governance, logic, security, integrity) plus the coordinator.
 - **Full** (>100 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
-  identity, CI/workflow, `pr-merge-protocol`) → all nine specialists plus the coordinator.
+  identity, CI/workflow, `pr-merge-protocol`) → all nine specialists plus the coordinator, minus the
+  Content-Type Applicability Filter (DD-10).
 
 **Security-sensitive paths force `full` regardless of size** — this repo's no-secrets iron rule and
 git-identity guardrail make that non-negotiable. The tier is computed once per PR, re-evaluated each
 cycle (since the fixer's commits change the diff), and recorded in the consolidated review header so
 the tier decision is auditable.
+
+**Content-type applicability filter (DD-10)**: within `full` tier, `pr-review-scout-maker` may skip
+`pr-review-types-maker` (no typed source in the diff) or `pr-review-integrity-maker` (no test/CI
+files in the diff) — the only two disciplines whose own charter is gated on a specific artifact class
+rather than being applicable to any changed content. The other seven specialists are never skipped by
+file type; see
+[`pr-review-scout-maker.md`'s own filter definition](../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)
+for the full rule and its fresh-per-cycle re-evaluation requirement.
 
 ### Shared-context extract-once + large-diff handling (D13)
 

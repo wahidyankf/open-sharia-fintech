@@ -171,6 +171,27 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   the role (see the original request) and reads unambiguously as "goes first, reports back" rather
   than "triage" (which could be misread as bug-severity triage, a different concept already covered
   by the Criticality Levels Convention).
+- **DD-10: Content-Type Applicability Filter, discovered during this PR's own Phase 5 cycle-1
+  dogfood, not pre-planned.** Cycle 1's fan-out against this plan's own delivering PR (a 38-file,
+  Markdown-only diff) surfaced that 7 of 9 specialists found real, high-confidence findings — including
+  a CRITICAL from `pr-review-security-maker` — while exactly 2 (`pr-review-types-maker`,
+  `pr-review-integrity-maker`) found nothing, both for a structural reason: their own charters are
+  gated on an artifact class (typed source; test/CI files) absent from this diff. The maintainer,
+  grilled on whether to react to this mid-dogfood, explicitly chose the broader of three offered
+  options — generalize `full`-tier fan-out to skip a specialist when its own charter's artifact-class
+  gate is unmet — over the narrower two-specialist-only option and over parking it for later
+  monitoring data, with one hard condition: the filter **must be re-derived fresh every cycle** from
+  that cycle's own current diff, never cached from a prior cycle, since the fixer's own pushed commits
+  between cycles can change the diff's file-type composition. Implemented as a `full`-tier-only
+  addendum to D12 (see [`pr-review-scout-maker.md`](../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)):
+  only `pr-review-types-maker` and `pr-review-integrity-maker` are ever skipped, and only when their
+  own declared artifact class is verifiably absent from the current cycle's diff; the other seven
+  specialists are never skipped by file type, since their charters — as this very cycle proved — reason
+  about intent, tradeoffs, and conventions in prose and prompts exactly as readily as in code. This
+  decision is intentionally conservative (2 of 9 candidates, default-to-include on any ambiguity) to
+  avoid the exact risk the maintainer flagged when choosing the broader option: an incorrectly
+  aggressive content-type skip could have suppressed `pr-review-security-maker` on this same diff and
+  never surfaced the CRITICAL untrusted-input-handling finding it actually caught.
 
 ## File-Impact Analysis
 
