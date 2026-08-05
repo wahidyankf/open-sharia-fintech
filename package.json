@@ -67,42 +67,87 @@
     "tsx": "4.21.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
-    "*.json": "prettier --write",
-    "*.html": "prettier --write",
-    "*.sql": "prettier --write",
-    "*.go": "gofmt -w",
-    "*.fs": "fantomas",
-    "*.{ex,exs}": "scripts/format-elixir.sh",
-    "*.py": "ruff format",
-    "*.rs": "rustfmt --edition 2024",
-    "*.cs": "dotnet csharpier format",
-    "*.clj": "cljfmt fix",
-    "*.dart": "dart format",
-    "*.lua": "stylua",
-    "*.{c,h}": "clang-format -i",
-    "{BUILD,BUILD.bazel,*.bzl}": "buildifier",
+    "repo-config.yml": [
+      "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+    ],
     "*.md": [
       "prettier --write",
       "markdownlint-cli2",
-      "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude apps/ayokoding-www/content",
-      "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
-      "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate --exempt \"*__linkedin__*.md\"",
-      "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude \"apps/rhino-cli/tests/fixtures\" --exclude \"plans/done\" --exclude \"apps/ayokoding-www/content\"",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate --exempt \"*__linkedin__*.md\"",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
     ],
-    "*.{yml,yaml}": "prettier --write",
-    ".github/workflows/*.{yml,yaml}": "actionlint",
-    "*.{css,scss}": "prettier --write",
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ],
+    "*.{yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ],
+    "*.html": [
+      "prettier --write"
+    ],
+    "*.sql": [
+      "prettier --write"
+    ],
+    "*.rs": [
+      "rustfmt --edition 2024"
+    ],
+    "*.fs": [
+      "fantomas"
+    ],
+    "*.py": [
+      "ruff format"
+    ],
+    "*.go": [
+      "gofmt -w"
+    ],
+    "*.{ex,exs}": [
+      "scripts/format-elixir.sh"
+    ],
+    "*.cs": [
+      "dotnet csharpier format"
+    ],
+    "*.dart": [
+      "dart format"
+    ],
     "*.sh": [
       "shfmt -w",
       "shellcheck --severity=warning"
     ],
-    "*.tf": "tofu fmt",
-    "**/Dockerfile*": "hadolint --failure-threshold warning",
-    "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate",
-    "*.feature": "cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate",
-    "repo-config.yml": "bash -c 'cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --",
-    "docker-compose*.{yml,yaml}": "bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"
+    "*.tf": [
+      "tofu fmt"
+    ],
+    "*.lua": [
+      "stylua"
+    ],
+    "*.{c,h}": [
+      "clang-format -i"
+    ],
+    "{BUILD,BUILD.bazel,*.bzl}": [
+      "buildifier"
+    ],
+    ".github/workflows/*.{yml,yaml}": [
+      "actionlint"
+    ],
+    "**/Dockerfile*": [
+      "hadolint --failure-threshold warning"
+    ],
+    "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate"
+    ],
+    "*.feature": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+    ],
+    "docker-compose*.{yml,yaml}": [
+      "bash -c 'set -e; for f; do base=${f%.ci.yml}.yml; if [ \"$base\" != \"$f\" ] && [ -f \"$base\" ]; then docker compose -f \"$base\" -f \"$f\" config > /dev/null; else docker compose -f \"$f\" config > /dev/null; fi; done' --"
+    ]
   },
   "dependencies": {
     "lucide-react": "0.577.0",

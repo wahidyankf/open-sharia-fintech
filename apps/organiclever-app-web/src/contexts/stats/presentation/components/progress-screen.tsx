@@ -265,7 +265,7 @@ export function ProgressScreen({ runtime, refreshKey }: ProgressScreenProps) {
           </div>
           <InfoTip
             title="Analytics"
-            text="Tracks your performance per entry type over the selected time range. Tap an exercise card to expand charts. ★ marks a personal record. 1RM estimated via Brzycki formula (valid 1–10 reps)."
+            text="Tracks your performance per entry type over the selected time range. Tap an exercise card to expand charts. PR marks a personal record. 1RM estimated via Brzycki formula (valid 1–10 reps)."
           />
         </div>
       </div>

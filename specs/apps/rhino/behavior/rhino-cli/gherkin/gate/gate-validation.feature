@@ -26,6 +26,11 @@ Feature: Gate conformance validation
     When gate validate runs
     Then it fails and names that command
 
+  Scenario: A registry matrix aggregate cannot omit its enumerator
+    Given a matrix-driven CI gate has an aggregate missing its enumerate dependency
+    When gate validate runs
+    Then it fails and names the enumerate dependency and quality-gate
+
   Scenario: A verifies field naming no existing gate is caught
     Given a gate verifies a missing gate id
     When gate validate runs
@@ -50,6 +55,42 @@ Feature: Gate conformance validation
     Given a hand-wired CI gate has no matching workflow job
     When gate validate runs
     Then it fails and names the gate and workflow file
+
+  Scenario: A commented hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command is only commented out
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: An inline-commented hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command is only inline-commented
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A quoted hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command is only quoted text
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A literal-disabled hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command has a literal-disabled step
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A normalized literal-disabled hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command has a normalized literal-disabled step
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A falsey literal-disabled hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command has falsey literal-disabled steps
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: Gate validation covers every hook surface
+    Given pre-commit and pre-push invoke their declared gate surfaces
+    And commit-msg is missing its declared gate surface invocation
+    When "rhino-cli gate validate" runs
+    Then validation fails and identifies the commit-msg hook
 
   Scenario: The shipped configuration passes
     Given the registry and surfaces as shipped by this plan

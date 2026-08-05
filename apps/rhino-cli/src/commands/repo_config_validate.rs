@@ -18,7 +18,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::repo_config::{
-    self, GateKind, GateType, RepoConfig, ScopeKind, validate_repo_relative_path,
+    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, RepoConfig, ScopeKind,
+    SurfaceScope, validate_repo_relative_path,
 };
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
@@ -177,58 +178,126 @@ pub(crate) fn gate_semantic_findings(config: &RepoConfig) -> Vec<String> {
                 gate.id
             ));
         }
+        findings.extend(doctor_tools_semantic_findings(i, gate));
         for (surface, scope) in &gate.surfaces {
-            let is_file_scope = matches!(
-                scope.scope,
-                ScopeKind::AffectedFileType | ScopeKind::AllFileType
-            );
-            let has_globs = scope.glob.is_some() || !scope.globs.is_empty();
-            if has_globs && !is_file_scope {
-                findings.push(format!(
-                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: glob and globs require a file scope",
-                    gate.id
-                ));
-            }
-            if !scope.trigger.is_empty() && scope.scope != ScopeKind::PathGated {
-                findings.push(format!(
-                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}.trigger: only valid for path-gated scope",
-                    gate.id
-                ));
-            }
-            if scope.scope == ScopeKind::PathGated && scope.trigger.is_empty() {
-                findings.push(format!(
-                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}.trigger: path-gated scope requires at least one trigger",
-                    gate.id
-                ));
-            }
-            for glob in scope.glob.iter().chain(&scope.globs) {
-                if let Err(error) = glob::Pattern::new(glob) {
-                    findings.push(format!(
-                        "gates[{i}] (gate id {:?}).surfaces.{surface:?}: invalid glob {glob:?}: {error}",
-                        gate.id
-                    ));
-                }
-            }
-            let is_project_scope = matches!(
-                scope.scope,
-                ScopeKind::AffectedProjects | ScopeKind::AllProjects
-            );
-            if gate.kind == GateKind::Nx && !is_project_scope {
-                findings.push(format!(
-                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: nx kind requires an affected-projects or all-projects scope",
-                    gate.id
-                ));
-            }
-            if gate.kind != GateKind::Nx && is_project_scope {
-                findings.push(format!(
-                    "gates[{i}] (gate id {:?}).surfaces.{surface:?}: project scopes require kind nx",
-                    gate.id
-                ));
-            }
+            findings.extend(gate_surface_semantic_findings(i, gate, surface, scope));
         }
     }
 
     findings
+}
+
+/// Collect semantic findings for a gate's optional ordered Doctor-tool list.
+fn doctor_tools_semantic_findings(index: usize, gate: &GateEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+    let mut declared = HashSet::new();
+
+    for tool in &gate.doctor_tools {
+        if !DOCTOR_TOOL_INVENTORY.contains(&tool.as_str()) {
+            findings.push(format!(
+                "gates[{index}] (gate id {:?}).doctor-tools: unknown Doctor tool {:?}",
+                gate.id, tool
+            ));
+        }
+        if !declared.insert(tool.as_str()) {
+            findings.push(format!(
+                "gates[{index}] (gate id {:?}).doctor-tools: duplicate Doctor tool {:?}",
+                gate.id, tool
+            ));
+        }
+    }
+
+    findings
+}
+
+/// Collect semantic findings for one gate on one declared surface.
+fn gate_surface_semantic_findings(
+    index: usize,
+    gate: &GateEntry,
+    surface: &GateSurface,
+    scope: &SurfaceScope,
+) -> Vec<String> {
+    let mut findings = Vec::new();
+    let is_file_scope = matches!(
+        scope.scope,
+        ScopeKind::AffectedFileType | ScopeKind::AllFileType
+    );
+    let has_globs = scope.glob.is_some() || !scope.globs.is_empty();
+    if has_globs && !is_file_scope {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}: glob and globs require a file scope",
+            gate.id
+        ));
+    }
+    lint_staged_shell_findings(&mut findings, index, gate, surface, scope);
+    if !scope.trigger.is_empty() && scope.scope != ScopeKind::PathGated {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}.trigger: only valid for path-gated scope",
+            gate.id
+        ));
+    }
+    if scope.scope == ScopeKind::PathGated && scope.trigger.is_empty() {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}.trigger: path-gated scope requires at least one trigger",
+            gate.id
+        ));
+    }
+    for glob in scope.glob.iter().chain(&scope.globs) {
+        if let Err(error) = glob::Pattern::new(glob) {
+            findings.push(format!(
+                "gates[{index}] (gate id {:?}).surfaces.{surface:?}: invalid glob {glob:?}: {error}",
+                gate.id
+            ));
+        }
+    }
+    let is_project_scope = matches!(
+        scope.scope,
+        ScopeKind::AffectedProjects | ScopeKind::AllProjects
+    );
+    if gate.kind == GateKind::Nx && !is_project_scope {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}: nx kind requires an affected-projects or all-projects scope",
+            gate.id
+        ));
+    }
+    if gate.kind != GateKind::Nx && is_project_scope {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}: project scopes require kind nx",
+            gate.id
+        ));
+    }
+    findings
+}
+
+/// Add findings for the pre-commit-only lint-staged shell override.
+fn lint_staged_shell_findings(
+    findings: &mut Vec<String>,
+    index: usize,
+    gate: &GateEntry,
+    surface: &GateSurface,
+    scope: &SurfaceScope,
+) {
+    let Some(shell) = &scope.lint_staged_shell else {
+        return;
+    };
+    if *surface != GateSurface::PreCommit || scope.scope != ScopeKind::AffectedFileType {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}.lint-staged-shell: only valid for pre-commit affected-file-type",
+            gate.id
+        ));
+    }
+    if shell.trim().is_empty() {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}.lint-staged-shell: must not be blank",
+            gate.id
+        ));
+    }
+    if shell.matches("{{command}}").count() > 1 {
+        findings.push(format!(
+            "gates[{index}] (gate id {:?}).surfaces.{surface:?}.lint-staged-shell: {{command}} may appear at most once",
+            gate.id
+        ));
+    }
 }
 
 #[cfg(test)]
@@ -400,5 +469,97 @@ mod tests {
                 .any(|finding| finding.contains("malformed-glob") && finding.contains("glob")),
             "a malformed gate glob must be reported before dispatch"
         );
+    }
+
+    #[test]
+    fn lint_staged_shell_is_valid_for_pre_commit_affected_file_type() {
+        let config = format!(
+            "{VALID}{}",
+            concat!(
+                "gates:\n",
+                "  - id: compose\n",
+                "    type: check\n",
+                "    command: docker compose config\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-commit:\n",
+                "        scope: affected-file-type\n",
+                "        glob: 'docker-compose*.{yml,yaml}'\n",
+                "        lint-staged-shell: \"bash -c 'for f; do {{command}} -f \\\"$f\\\"; done' --\"\n",
+            )
+        );
+        let (ok, output) = write_and_run(&config);
+
+        assert!(
+            ok,
+            "a pre-commit affected-file override must pass validation; got: {output}"
+        );
+    }
+
+    #[test]
+    fn lint_staged_shell_requires_pre_commit_affected_file_type() {
+        let config = format!(
+            "{VALID}{}",
+            concat!(
+                "gates:\n",
+                "  - id: compose\n",
+                "    type: check\n",
+                "    command: docker compose config\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      ci:\n",
+                "        scope: all-file-type\n",
+                "        lint-staged-shell: bash -c '{{command}}'\n",
+            )
+        );
+        let (ok, output) = write_and_run(&config);
+
+        assert!(!ok, "a CI shell override must be rejected");
+        assert!(
+            output.contains("lint-staged-shell") && output.contains("pre-commit"),
+            "finding must name the override and its only permitted surface; got: {output}"
+        );
+    }
+
+    #[test]
+    fn lint_staged_shell_preserves_existing_glob_and_globs_support() {
+        let config = format!(
+            "{VALID}{}",
+            concat!(
+                "gates:\n",
+                "  - id: multiple-inputs\n",
+                "    type: check\n",
+                "    command: formatter verify\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-commit:\n",
+                "        scope: affected-file-type\n",
+                "        glob: '*.md'\n",
+                "        globs: ['*.json', '*.{yml,yaml}']\n",
+                "        lint-staged-shell: \"sh -c 'formatter --staged' --\"\n",
+            )
+        );
+        let (ok, output) = write_and_run(&config);
+
+        assert!(
+            ok,
+            "the optional override must leave existing glob and globs forms valid; got: {output}"
+        );
+    }
+
+    #[test]
+    fn lint_staged_shell_rejects_blank_and_repeated_command_placeholders() {
+        for shell in ["   ", "sh -c '{{command}} && {{command}}' --"] {
+            let content = format!(
+                "{VALID}gates:\n  - id: override\n    type: check\n    command: true\n    kind: external\n    surfaces:\n      pre-commit:\n        scope: affected-file-type\n        glob: '*.txt'\n        lint-staged-shell: {shell:?}\n"
+            );
+            let (ok, output) = write_and_run(&content);
+
+            assert!(!ok, "invalid lint-staged-shell {shell:?} must fail");
+            assert!(
+                output.contains("lint-staged-shell"),
+                "finding must name the invalid override; got: {output}"
+            );
+        }
     }
 }

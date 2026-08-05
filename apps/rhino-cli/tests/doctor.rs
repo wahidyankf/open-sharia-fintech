@@ -50,7 +50,7 @@ const STUB_TOOLS: &[(&str, &str)] = &[
     ("hadolint", "Haskell Dockerfile Linter 2.12.0"),
     ("actionlint", "1.7.7"),
     ("shfmt", "v3.13.1"),
-    ("tofu", "OpenTofu v1.10.2"),
+    ("tofu", "OpenTofu v1.12.3"),
     ("clang-format", "clang-format version 18.1.0"),
     // npx playwright --version → "Version 1.58.0".
 ];
@@ -63,6 +63,7 @@ struct DoctorWorld {
     /// Override the node requirement to force a version mismatch (warning).
     node_req_override: Option<String>,
     scope: Option<String>,
+    tools: Vec<String>,
     fix: bool,
     dry_run: bool,
     json: bool,
@@ -84,6 +85,7 @@ impl DoctorWorld {
             bin: TempDir::new().expect("temp bin"),
             node_req_override: None,
             scope: None,
+            tools: Vec::new(),
             fix: false,
             dry_run: false,
             json: false,
@@ -209,6 +211,10 @@ impl DoctorWorld {
             args.push("--scope".to_string());
             args.push(s.clone());
         }
+        for tool in &self.tools {
+            args.push("--tools".to_string());
+            args.push(tool.clone());
+        }
         if self.fix {
             args.push("--fix".to_string());
         }
@@ -234,6 +240,10 @@ impl DoctorWorld {
 
     fn stdout(&self) -> String {
         String::from_utf8_lossy(&self.output.as_ref().expect("ran").stdout).into_owned()
+    }
+
+    fn stderr(&self) -> String {
+        String::from_utf8_lossy(&self.output.as_ref().expect("ran").stderr).into_owned()
     }
 
     fn exit_code(&self) -> i32 {
@@ -269,6 +279,28 @@ fn given_tool_missing(w: &mut DoctorWorld) {
     w.write_config("24.11.1");
     w.write_stubs();
     let _ = std::fs::remove_file(w.bin.path().join("shellcheck"));
+}
+
+#[given("the tofu tool is not found in the system PATH")]
+fn given_tofu_missing(w: &mut DoctorWorld) {
+    w.write_config("24.11.1");
+    w.write_stubs();
+    let _ = std::fs::remove_file(w.bin.path().join("tofu"));
+}
+
+#[given("the unselected shellcheck tool is not found in the system PATH")]
+fn given_unselected_shellcheck_missing(w: &mut DoctorWorld) {
+    let _ = std::fs::remove_file(w.bin.path().join("shellcheck"));
+}
+
+#[given("only the tofu tool is selected")]
+fn given_only_tofu_selected(w: &mut DoctorWorld) {
+    w.tools = vec!["tofu".to_string()];
+}
+
+#[given("an unknown Doctor tool is selected")]
+fn given_unknown_tool_selected(w: &mut DoctorWorld) {
+    w.tools = vec!["not-a-doctor-tool".to_string()];
 }
 
 #[given("a required development tool is installed with a non-matching version")]
@@ -424,6 +456,89 @@ fn then_dry_run_preview(w: &mut DoctorWorld) {
     assert!(
         out.contains("Would install") || out.contains("Skip:"),
         "got: {out}"
+    );
+}
+
+#[then("the output handles verified OpenTofu remediation safely")]
+fn then_verified_tofu_dry_run_preview(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    match std::env::consts::OS {
+        "macos" | "linux" => {
+            assert!(out.contains("Would install: tofu"), "got: {out}");
+            assert!(
+                out.contains("https://github.com/opentofu/opentofu/releases/download/v1.12.3"),
+                "missing pinned OpenTofu release: {out}"
+            );
+            assert!(
+                out.contains("tofu_1.12.3_"),
+                "missing exact OpenTofu archive pin: {out}"
+            );
+            assert!(
+                out.contains("expected_checksum="),
+                "missing committed OpenTofu archive checksum: {out}"
+            );
+            assert!(
+                out.contains("checksum mismatch"),
+                "OpenTofu remediation must reject a mismatched archive: {out}"
+            );
+            assert!(
+                !out.contains("install-opentofu.sh") && !out.contains("latest"),
+                "OpenTofu remediation must not execute a mutable installer script: {out}"
+            );
+        }
+        _ => assert!(
+            !out.contains("Would install: tofu"),
+            "unsupported platforms must not receive OpenTofu install steps: {out}"
+        ),
+    }
+}
+
+#[then("the output reports only the selected tofu tool")]
+fn then_reports_only_selected_tofu(w: &mut DoctorWorld) {
+    let report = w.stdout();
+    let checks = report
+        .lines()
+        .filter(|line| {
+            line.starts_with('\u{2713}')
+                || line.starts_with('\u{26a0}')
+                || line.starts_with('\u{2717}')
+        })
+        .collect::<Vec<_>>();
+
+    assert_eq!(
+        checks.len(),
+        1,
+        "expected one selected-tool check: {report}"
+    );
+    assert!(checks[0].contains("tofu"), "expected tofu check: {report}");
+    assert!(
+        !report.contains("shellcheck"),
+        "unselected tool was probed: {report}"
+    );
+    assert!(report.contains("Summary: 1/1 tools OK"), "got: {report}");
+}
+
+#[then("the selected tofu dry run previews only its remediation")]
+fn then_selected_tofu_dry_run_preview(w: &mut DoctorWorld) {
+    then_verified_tofu_dry_run_preview(w);
+    let out = w.stdout();
+    assert!(out.contains("Summary: 0/1 tools OK"), "got: {out}");
+    assert_eq!(out.matches("Would install:").count(), 1, "got: {out}");
+}
+
+#[then("the invalid selection is rejected before any tool is probed")]
+fn then_invalid_selection_rejected_before_probe(w: &mut DoctorWorld) {
+    let stdout = w.stdout();
+    let stderr = w.stderr();
+
+    assert!(
+        !stdout.contains("Doctor Report"),
+        "unexpected report: {stdout}"
+    );
+    assert!(!stdout.contains("Summary:"), "unexpected report: {stdout}");
+    assert!(
+        stderr.contains("unknown Doctor tool \"not-a-doctor-tool\""),
+        "unexpected CLI error: {stderr}"
     );
 }
 

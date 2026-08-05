@@ -42,6 +42,27 @@ Feature: Development Environment Health Check
     Then the command exits successfully
     And the output reports each tool as passing
 
+  Scenario: An explicit tool selection probes and reports only that tool
+    Given all required development tools are present with matching versions
+    And the unselected shellcheck tool is not found in the system PATH
+    And only the tofu tool is selected
+    When the developer runs the doctor command
+    Then the command exits successfully
+    And the output reports only the selected tofu tool
+
+  Scenario: A selected missing tool has only its remediation previewed
+    Given the tofu tool is not found in the system PATH
+    And only the tofu tool is selected
+    When the developer runs the doctor command with fix and dry-run flags
+    Then the command exits with a failure code
+    And the selected tofu dry run previews only its remediation
+
+  Scenario: An unknown selected tool is rejected before environment checks
+    Given an unknown Doctor tool is selected
+    When the developer runs the doctor command
+    Then the command exits with a failure code
+    And the invalid selection is rejected before any tool is probed
+
   Scenario: Fix installs missing tools
     Given a required development tool is not found in the system PATH
     When the developer runs the doctor command with the fix flag
@@ -52,6 +73,12 @@ Feature: Development Environment Health Check
     When the developer runs the doctor command with fix and dry-run flags
     Then the command exits with a failure code
     And the output contains a dry-run preview
+
+  Scenario: Fix dry-run previews a verified, platform-safe OpenTofu release archive
+    Given the tofu tool is not found in the system PATH
+    When the developer runs the doctor command with fix and dry-run flags
+    Then the command exits with a failure code
+    And the output handles verified OpenTofu remediation safely
 
   Scenario: Fix reports nothing to fix when all tools are present
     Given all required development tools are present with matching versions

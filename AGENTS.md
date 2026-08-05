@@ -129,10 +129,10 @@ and [§PRs Open at Delivery Boundaries](./repo-governance/conventions/structure/
 
 ## Git Hooks (Automated Quality)
 
-Pre-commit: format (Prettier/gofmt/rustfmt), validate markdown links + markdownlint, lint
-shell/Dockerfiles/workflows, auto-sync platform bindings, auto-stage. Commit-msg: Commitlint.
-Pre-push: `typecheck`, `lint`, `test:quick`, `specs:coverage` for affected projects (parallelism:
-cores-1); markdown linting. All four Nx targets cacheable — warm cache before push if timeout occurs.
+The three executable Husky files are registry shims: use
+`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=<surface> --format=text`
+to inspect their current commands and `gate validate` to verify shim, generated-artifact, and CI
+conformance. Do not hand-maintain command lists in hooks; `repo-config.yml` is authoritative.
 
 **See**: [code.md](./repo-governance/development/quality/code.md)
 
@@ -313,9 +313,6 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
   Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
-- **`main-ci.yml` deprecated**: schedule/dispatch-only (no push trigger), being retired. Never trigger,
-  monitor, or gate plan creation/checking/execution on it — pre-commit, pre-push, and the PR quality
-  gate are sufficient.
 
 ## AI Agents
 

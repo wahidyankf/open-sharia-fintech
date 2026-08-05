@@ -143,7 +143,7 @@ export function LandingHero({ onGoApp }: LandingHeroProps) {
               gap: 8,
             }}
           >
-            <span>⚡</span> Free · works offline · no sign-up
+            Free · works offline · no sign-up
           </div>
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>

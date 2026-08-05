@@ -28,6 +28,9 @@ enum CandidateScope {
     None,
 }
 
+/// CI event baseline supplied by the workflow for a push-to-main run.
+const GATE_CHANGED_BASE_ENV: &str = "GATE_CHANGED_BASE";
+
 /// Changed and tracked repository paths needed by a gate selection.
 type CandidatePaths = (Option<Vec<String>>, Option<Vec<String>>);
 
@@ -404,6 +407,8 @@ fn run_external_leaf(
     if let Some(commit_message_file) = commit_message_file {
         arguments.push(commit_message_file.to_string_lossy().into_owned());
     }
+    let inherited_path = std::env::var_os("PATH");
+    let path = external_command_path(repo_root, inherited_path.as_deref())?;
     Command::new("sh")
         .args([
             "-c",
@@ -416,8 +421,28 @@ fn run_external_leaf(
         ])
         .args(arguments)
         .current_dir(repo_root)
+        .env("PATH", path)
         .status()
         .map_err(Error::from)
+}
+
+/// Prepend the repository's local Node executable directory to a child PATH.
+///
+/// CI setup installs JavaScript tools in `node_modules/.bin`, but direct shell
+/// dispatch does not receive npm-script PATH augmentation. Keeping this child-
+/// only preserves the caller's process environment and gives generic external
+/// gates the same local-tool resolution as npm scripts.
+fn external_command_path(
+    repo_root: &Path,
+    inherited_path: Option<&std::ffi::OsStr>,
+) -> Result<std::ffi::OsString, Error> {
+    let mut paths = inherited_path
+        .map(std::env::split_paths)
+        .map(Iterator::collect::<Vec<_>>)
+        .unwrap_or_default();
+    paths.insert(0, repo_root.join("node_modules/.bin"));
+    std::env::join_paths(paths)
+        .map_err(|error| anyhow!("failed to construct external gate PATH: {error}"))
 }
 
 /// Runs an Nx target over all or affected projects for the declared scope.
@@ -472,6 +497,13 @@ fn changed_paths(repo_root: &Path, surface: &GateSurface) -> Result<Vec<String>,
     if *surface == GateSurface::PreCommit {
         return staged_paths(repo_root);
     }
+    if *surface == GateSurface::Ci
+        && let Some(base) = std::env::var(GATE_CHANGED_BASE_ENV)
+            .ok()
+            .filter(|base| !base.trim().is_empty())
+    {
+        return changed_paths_from_base(repo_root, base.trim(), GATE_CHANGED_BASE_ENV);
+    }
     if matches!(surface, GateSurface::PrePush | GateSurface::Ci) {
         return merge_base_paths(repo_root);
     }
@@ -490,12 +522,21 @@ fn merge_base_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
         return staged_paths(repo_root);
     }
     let base = String::from_utf8(merge_base.stdout)?;
+    changed_paths_from_base(repo_root, base.trim(), "the branch merge base")
+}
+
+/// Returns paths changed from an explicit baseline commit to `HEAD`.
+fn changed_paths_from_base(
+    repo_root: &Path,
+    base: &str,
+    label: &str,
+) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
         .args(["diff", "--name-only", base.trim(), "HEAD"])
         .current_dir(repo_root)
         .output()?;
     if !output.status.success() {
-        return Err(anyhow!("git diff from merge base to HEAD failed"));
+        return Err(anyhow!("git diff from {label} to HEAD failed"));
     }
     Ok(String::from_utf8(output.stdout)?
         .lines()
@@ -723,6 +764,46 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
         format!("{path}\n")
     );
     assert!(!repo.path().join("must-not-run.txt").exists());
+}
+
+#[cfg(unix)]
+#[test]
+#[allow(clippy::unwrap_used, clippy::panic)]
+fn external_leaf_resolves_repository_local_node_binary() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().unwrap();
+    let bin = repo.path().join("node_modules/.bin");
+    std::fs::create_dir_all(&bin).unwrap();
+    let executable = bin.join("p2-local-external-gate");
+    std::fs::write(
+        &executable,
+        "#!/usr/bin/env sh\nprintf 'local tool\\n' > local-tool-output.txt\n",
+    )
+    .unwrap();
+    let mut permissions = std::fs::metadata(&executable).unwrap().permissions();
+    permissions.set_mode(0o755);
+    std::fs::set_permissions(&executable, permissions).unwrap();
+
+    let status = run_external_leaf("p2-local-external-gate", &[], &[], None, repo.path())
+        .expect("repository-local external gate must start");
+
+    assert!(status.success());
+    assert_eq!(
+        std::fs::read_to_string(repo.path().join("local-tool-output.txt")).unwrap(),
+        "local tool\n"
+    );
+}
+
+#[test]
+#[allow(clippy::unwrap_used, clippy::panic)]
+fn external_command_path_precedes_inherited_path() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let inherited_path = std::ffi::OsStr::new("/usr/bin:/bin");
+    let path = external_command_path(repo.path(), Some(inherited_path)).unwrap();
+    let paths = std::env::split_paths(&path).collect::<Vec<_>>();
+    assert_eq!(paths.first(), Some(&repo.path().join("node_modules/.bin")));
+    assert_eq!(paths.get(1), Some(&std::path::PathBuf::from("/usr/bin")));
 }
 
 #[cfg(test)]

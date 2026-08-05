@@ -32,6 +32,8 @@ struct GateWorld {
     first_parity_manifest: Option<Vec<u8>>,
     pending_gate_type: Option<String>,
     path: Option<OsString>,
+    ci_changed_base: Option<String>,
+    ci_arguments: Option<PathBuf>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -42,7 +44,7 @@ impl std::fmt::Debug for GateWorld {
 
 impl GateWorld {
     fn new() -> Self {
-        Self {
+        let world = Self {
             repo: TempDir::new().expect("create gate fixture repository"),
             succeeded: None,
             output: String::new(),
@@ -52,7 +54,18 @@ impl GateWorld {
             first_parity_manifest: None,
             pending_gate_type: None,
             path: None,
+            ci_changed_base: None,
+            ci_arguments: None,
+        };
+        for hook in ["commit-msg", "pre-commit", "pre-push"] {
+            let path = world.root().join(".husky").join(hook);
+            world.write(
+                &format!(".husky/{hook}"),
+                &format!("#!/bin/sh\nrhino-cli gate run --surface={hook}\n"),
+            );
+            make_executable(path);
         }
+        world
     }
 
     fn root(&self) -> &Path {
@@ -150,6 +163,19 @@ impl GateWorld {
         assert!(output.status.success(), "git add failed: {output:?}");
     }
 
+    fn commit(&self, message: &str) {
+        let output = self
+            .fixture_git_command()
+            .args(["commit", "--quiet", "-m", message])
+            .env("GIT_AUTHOR_NAME", "gate-spec-fixture")
+            .env("GIT_AUTHOR_EMAIL", "gate-spec-fixture@example.invalid")
+            .env("GIT_COMMITTER_NAME", "gate-spec-fixture")
+            .env("GIT_COMMITTER_EMAIL", "gate-spec-fixture@example.invalid")
+            .output()
+            .expect("commit fixture state");
+        assert!(output.status.success(), "git commit failed: {output:?}");
+    }
+
     fn prepend_bin_to_path(&mut self, relative: &str) {
         let bin = self.root().join(relative);
         let existing = std::env::var_os("PATH").expect("PATH is available");
@@ -233,6 +259,32 @@ impl GateWorld {
         self.output.push('\n');
     }
 
+    fn run_ci_changed_base_gate(&mut self) {
+        let base = self
+            .ci_changed_base
+            .as_deref()
+            .expect("CI changed base must be configured");
+        let arguments = self
+            .ci_arguments
+            .as_ref()
+            .expect("CI arguments capture must be configured");
+        let mut command = self.fixture_rhino_command();
+        command
+            .args(["gate", "run", "--surface=ci", "--only=ci-markdown"])
+            .env("GATE_CHANGED_BASE", base)
+            .env("GATE_CI_ARGUMENTS", arguments);
+        if let Some(path) = &self.path {
+            command.env("PATH", path);
+        }
+        let output = command.output().expect("run CI changed-base gate");
+        self.succeeded = Some(output.status.success());
+        self.output = format!(
+            "{}{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
     fn is_success(&self) -> bool {
         self.succeeded.expect("scenario command ran")
     }
@@ -294,6 +346,54 @@ fn gate(id: &str, gate_type: &str, command: &str, kind: &str, surfaces: &str) ->
     format!(
         "  - id: {id}\n    type: {gate_type}\n    command: {command}\n    kind: {kind}\n    surfaces:\n{surfaces}"
     )
+}
+
+#[given("a CI event supplies its preceding commit as the changed base")]
+fn given_ci_changed_base(w: &mut GateWorld) {
+    use std::os::unix::fs::PermissionsExt;
+
+    let bin = w.root().join("bin");
+    let arguments = w.root().join("captured-ci-arguments.txt");
+    std::fs::create_dir_all(&bin).expect("create CI fixture bin directory");
+    w.write("changed.md", "# Before\n");
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "ci-markdown",
+            "check",
+            "capture",
+            "external",
+            "      ci: { scope: affected-file-type, glob: '*.md' }\n",
+        )),
+    );
+    let capture = bin.join("capture");
+    std::fs::write(
+        &capture,
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$GATE_CI_ARGUMENTS\"\n",
+    )
+    .expect("write CI capture stub");
+    std::fs::set_permissions(&capture, std::fs::Permissions::from_mode(0o755))
+        .expect("make CI capture stub executable");
+    w.init_git();
+    w.stage(&["repo-config.yml", "changed.md"]);
+    w.commit("test: baseline");
+    let base = w
+        .fixture_git_command()
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .expect("read CI fixture baseline");
+    assert!(base.status.success(), "git rev-parse HEAD must succeed");
+    w.ci_changed_base = Some(
+        String::from_utf8(base.stdout)
+            .expect("CI fixture base must be UTF-8")
+            .trim()
+            .to_owned(),
+    );
+    w.write("changed.md", "# After\n");
+    w.stage(&["changed.md"]);
+    w.commit("test: changed file");
+    w.prepend_bin_to_path("bin");
+    w.ci_arguments = Some(arguments);
 }
 
 #[given("a check declares pre-commit but no ci surface or carve-out")]
@@ -381,7 +481,35 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
     );
     w.write(
         ".github/workflows/pr-quality-gate.yml",
-        "jobs:\n  quality:\n    steps:\n      - run: unknown-check\n",
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n    needs: [enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
+        ),
+    );
+}
+
+#[given("a matrix-driven CI gate has an aggregate missing its enumerate dependency")]
+fn given_matrix_aggregate_missing_enumerate(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "known-check",
+            "check",
+            "known-check",
+            "external",
+            "      ci: { scope: affected-projects }\n",
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n    needs: gate\n",
+        ),
     );
 }
 
@@ -458,7 +586,13 @@ fn given_hand_wired_job(w: &mut GateWorld) {
     );
     w.write(
         ".github/workflows/pr-quality-gate.yml",
-        "jobs:\n  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
+        ),
     );
 }
 
@@ -480,10 +614,171 @@ fn given_deleted_hand_wired_job(w: &mut GateWorld) {
     w.write(".github/workflows/pr-quality-gate.yml", "jobs: {}\n");
 }
 
+#[given("a hand-wired CI command is only commented out")]
+fn given_commented_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - run: '# npx nx affected -t test:quick'\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command is only inline-commented")]
+fn given_inline_commented_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - run: echo disabled # npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command is only quoted text")]
+fn given_quoted_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - run: \"echo 'npx nx affected -t test:quick'\"\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command has a literal-disabled step")]
+fn given_disabled_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - if: false\n        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command has a normalized literal-disabled step")]
+fn given_normalized_disabled_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - if: ${{false}}\n        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command has falsey literal-disabled steps")]
+fn given_falsey_disabled_hand_wired_commands(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n",
+            "    steps:\n",
+            "      - if: |-\n          ${{ 0 }}\n        run: npx nx affected -t test:quick\n",
+            "      - if: |-\n          ${{ -0 }}\n        run: npx nx affected -t test:quick\n",
+            "      - if: |-\n          ${{ '' }}\n        run: npx nx affected -t test:quick\n",
+            "      - if: |-\n          ${{ \"\" }}\n        run: npx nx affected -t test:quick\n",
+            "      - if: |-\n          ${{ null }}\n        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
 #[when("\"rhino-cli gate validate\" runs")]
 #[when("gate validate runs")]
 fn when_gate_validate_runs(w: &mut GateWorld) {
     w.validate();
+}
+
+#[when("an affected-file-type CI gate runs after main advances")]
+fn when_ci_changed_base_gate_runs(w: &mut GateWorld) {
+    w.run_ci_changed_base_gate();
 }
 
 #[then("it fails and names the Gate Composition Rule, gate, and ci surface")]
@@ -497,6 +792,20 @@ fn then_composition_rule_fails(w: &mut GateWorld) {
 #[then("it succeeds")]
 fn then_validate_succeeds(w: &mut GateWorld) {
     assert!(w.is_success(), "gate validation failed: {}", w.output);
+}
+
+#[then("the gate receives the files changed from the supplied base")]
+fn then_ci_changed_base_gate_receives_changed_file(w: &mut GateWorld) {
+    assert!(w.is_success(), "CI gate failed: {}", w.output);
+    let arguments = w
+        .ci_arguments
+        .as_ref()
+        .expect("CI arguments capture must be configured");
+    assert_eq!(
+        std::fs::read_to_string(arguments).unwrap_or_default(),
+        "changed.md\n",
+        "the supplied CI event base must provide the committed changed path"
+    );
 }
 
 #[then("it succeeds and gate list reports the exemption")]
@@ -516,6 +825,13 @@ fn then_hook_file_is_named(w: &mut GateWorld) {
 fn then_undeclared_command_is_named(w: &mut GateWorld) {
     assert!(!w.is_success());
     assert!(w.output.contains("unknown-check"));
+}
+
+#[then("it fails and names the enumerate dependency and quality-gate")]
+fn then_matrix_aggregate_requires_enumerate(w: &mut GateWorld) {
+    assert!(!w.is_success());
+    assert!(w.output.contains("enumerate"));
+    assert!(w.output.contains("quality-gate"));
 }
 
 #[then("it fails and names both IDs")]
@@ -545,6 +861,29 @@ fn then_deleted_hand_wired_job_is_named(w: &mut GateWorld) {
     assert!(w.output.contains("pr-quality-gate.yml"));
 }
 
+#[given("pre-commit and pre-push invoke their declared gate surfaces")]
+fn given_delegating_hook_surfaces(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(concat!(
+            "  - id: commit-msg-mutation\n    type: mutation\n    command: commitlint --edit\n    kind: external\n    surfaces:\n      commit-msg: { scope: other }\n",
+            "  - id: pre-commit-mutation\n    type: mutation\n    command: prettier --write\n    kind: external\n    surfaces:\n      pre-commit: { scope: other }\n",
+            "  - id: pre-push-mutation\n    type: mutation\n    command: verify\n    kind: external\n    surfaces:\n      pre-push: { scope: other }\n",
+        )),
+    );
+}
+
+#[given("commit-msg is missing its declared gate surface invocation")]
+fn given_non_delegating_commit_msg_hook(w: &mut GateWorld) {
+    w.write(".husky/commit-msg", "#!/bin/sh\necho stale hook\n");
+}
+
+#[then("validation fails and identifies the commit-msg hook")]
+fn then_commit_msg_hook_is_named(w: &mut GateWorld) {
+    assert!(!w.is_success());
+    assert!(w.output.contains(".husky/commit-msg"));
+}
+
 #[given("the registry and surfaces as shipped by this plan")]
 fn given_complete_shipped_registry(w: &mut GateWorld) {
     w.write(
@@ -566,7 +905,13 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
     );
     w.write(
         ".github/workflows/pr-quality-gate.yml",
-        "jobs:\n  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
+        ),
     );
 }
 
@@ -634,6 +979,48 @@ fn then_external_arguments_are_ordered(w: &mut GateWorld) {
     assert_eq!(
         std::fs::read_to_string(w.root().join("arguments.txt")).expect("read captured arguments"),
         "--severity=warning\ntool.sh\n"
+    );
+}
+
+#[given("an external gate command exists only in the repository node_modules bin directory")]
+fn given_repository_local_external_gate(w: &mut GateWorld) {
+    w.init_git();
+    let executable = w
+        .root()
+        .join("node_modules/.bin/repository-local-external-gate");
+    w.write(
+        "node_modules/.bin/repository-local-external-gate",
+        "#!/bin/sh\nprintf 'repository local gate\\n' > repository-local-gate.txt\n",
+    );
+    make_executable(executable);
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "repository-local-external-gate",
+            "check",
+            "repository-local-external-gate",
+            "external",
+            "      pre-commit: { scope: other }\n",
+        )),
+    );
+}
+
+#[when("its repository-local external gate runs")]
+fn when_repository_local_external_gate_runs(w: &mut GateWorld) {
+    w.run_gate("pre-commit", Some("repository-local-external-gate"));
+}
+
+#[then("the repository-local external gate succeeds")]
+fn then_repository_local_external_gate_succeeds(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "repository-local external gate failed: {}",
+        w.output
+    );
+    assert_eq!(
+        std::fs::read_to_string(w.root().join("repository-local-gate.txt"))
+            .expect("read repository-local external gate output"),
+        "repository local gate\n"
     );
 }
 
@@ -764,7 +1151,7 @@ fn then_glob_filter_applies(w: &mut GateWorld) {
     assert!(!arguments.contains("docs/skip.md"));
 }
 
-#[given("the frontmatter-date gate declares website exclusions")]
+#[given("the frontmatter-date gate declares an excluded violating website path")]
 fn given_frontmatter_date_gate_with_exclusions(w: &mut GateWorld) {
     w.init_git();
     w.write(
@@ -774,7 +1161,15 @@ fn given_frontmatter_date_gate_with_exclusions(w: &mut GateWorld) {
         ),
     );
     w.write("repo-governance/clean.md", "# Clean\n");
-    w.stage(&["repo-config.yml", "repo-governance/clean.md"]);
+    w.write(
+        "repo-governance/apps/website/dated.md",
+        "---\ntitle: Excluded\nupdated: 2026-08-05\n---\n",
+    );
+    w.stage(&[
+        "repo-config.yml",
+        "repo-governance/clean.md",
+        "repo-governance/apps/website/dated.md",
+    ]);
 }
 
 #[when("its CI gate runs by id")]
@@ -782,11 +1177,16 @@ fn when_frontmatter_date_gate_runs(w: &mut GateWorld) {
     w.run_gate("ci", Some("md-frontmatter-dates"));
 }
 
-#[then("the frontmatter-date gate succeeds with those exclusions")]
+#[then("the frontmatter-date gate suppresses the excluded finding")]
 fn then_frontmatter_date_gate_accepts_exclusions(w: &mut GateWorld) {
     assert!(
         w.is_success(),
-        "frontmatter-date gate must accept configured exclusions: {}",
+        "frontmatter-date gate must pass --exclude to its leaf and suppress the excluded finding: {}",
+        w.output
+    );
+    assert!(
+        !w.output.contains("dated.md"),
+        "excluded path must not appear in frontmatter findings: {}",
         w.output
     );
 }
@@ -1103,9 +1503,9 @@ fn given_per_file_emit_registry(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(concat!(
-            "  - id: format-markdown\n    type: mutation\n    command: prettier --write\n    kind: external\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+            "  - id: format-markdown\n    type: mutation\n    command: prettier --write\n    kind: external\n    category: formatter\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
             "  - id: lint-markdown\n    type: check\n    command: markdownlint-cli2\n    kind: external\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
-            "  - id: format-rust\n    type: mutation\n    command: rustfmt\n    kind: external\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.rs' }\n",
+            "  - id: format-rust\n    type: mutation\n    command: rustfmt\n    kind: external\n    category: formatter\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.rs' }\n",
         )),
     );
     w.write(
@@ -1119,7 +1519,9 @@ fn when_emit_pre_commit(w: &mut GateWorld) {
     w.emit_pre_commit();
 }
 
-#[then("the \"lint-staged\" block in package.json contains one glob key per declared glob")]
+#[then(
+    "the \"lint-staged\" block in package.json contains one glob key per declared glob in registry declaration order"
+)]
 fn then_emit_has_glob_per_declared_glob(w: &mut GateWorld) {
     assert!(w.is_success(), "gate emit failed: {}", w.output);
     let package: serde_json::Value = serde_json::from_slice(
@@ -1148,6 +1550,50 @@ fn then_emit_preserves_declaration_order(w: &mut GateWorld) {
     assert_eq!(
         package["lint-staged"]["*.rs"],
         serde_json::json!(["rustfmt"])
+    );
+}
+
+#[given("a pre-commit gate declares an affected-file-type glob and a lint-staged shell template")]
+fn given_emit_shell_template_registry(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(concat!(
+            "  - id: repo-config-schema\n    type: check\n    command: repo-config validate\n    kind: rhino-cli\n    surfaces:\n      pre-commit:\n        scope: affected-file-type\n        glob: repo-config.yml\n        lint-staged-shell: '{{command}}'\n",
+            "  - id: docker-compose-config\n    type: check\n    command: docker compose config\n    kind: external\n    surfaces:\n      pre-commit:\n        scope: affected-file-type\n        glob: 'docker-compose*.{yml,yaml}'\n        lint-staged-shell: 'for f; do docker compose -f \"$f\" config > /dev/null; done'\n",
+        )),
+    );
+    w.write(
+        "package.json",
+        "{\"name\":\"fixture\",\"lint-staged\":{}}\n",
+    );
+}
+
+#[then("the generated lint-staged command uses the declared wrapper")]
+fn then_emit_uses_declared_shell_wrapper(w: &mut GateWorld) {
+    assert!(w.is_success(), "gate emit failed: {}", w.output);
+    let package: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(w.root().join("package.json")).expect("read emitted package"),
+    )
+    .expect("parse emitted package");
+    assert_eq!(
+        package["lint-staged"]["docker-compose*.{yml,yaml}"],
+        serde_json::json!([
+            "bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"
+        ])
+    );
+}
+
+#[then("a {{command}} placeholder expands to the gate's kind-derived command exactly once")]
+fn then_emit_expands_kind_derived_command_once(w: &mut GateWorld) {
+    let package: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(w.root().join("package.json")).expect("read emitted package"),
+    )
+    .expect("parse emitted package");
+    assert_eq!(
+        package["lint-staged"]["repo-config.yml"],
+        serde_json::json!([
+            "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+        ])
     );
 }
 
@@ -1359,7 +1805,7 @@ fn given_ci_registry(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(concat!(
-            "  - id: ci-one\n    type: check\n    command: one\n    kind: external\n    surfaces:\n      ci: { scope: affected-projects }\n",
+            "  - id: ci-one\n    type: check\n    command: one\n    kind: external\n    doctor-tools: [git, node]\n    surfaces:\n      ci: { scope: affected-projects }\n",
             "  - id: ci-two\n    type: check\n    command: two\n    kind: external\n    surfaces:\n      ci: { scope: all-file-type }\n",
             "  - id: local-only\n    type: check\n    command: local\n    kind: external\n    surfaces:\n      pre-commit: { scope: other }\n",
         )),
@@ -1381,7 +1827,7 @@ fn then_output_is_json_array(w: &mut GateWorld) {
     );
 }
 
-#[then("every element carries \"id\", \"command\", and \"scope\" keys")]
+#[then("every element carries \"id\", \"command\", \"scope\", and \"doctor_tools\" keys")]
 fn then_json_entries_have_matrix_keys(w: &mut GateWorld) {
     for entry in w
         .json_output
@@ -1389,10 +1835,39 @@ fn then_json_entries_have_matrix_keys(w: &mut GateWorld) {
         .and_then(serde_json::Value::as_array)
         .expect("JSON gate-list array")
     {
-        for key in ["id", "command", "scope"] {
+        for key in ["id", "command", "scope", "doctor_tools"] {
             assert!(entry.get(key).is_some(), "missing {key} in {entry}");
         }
+        assert!(
+            entry["doctor_tools"].is_array(),
+            "doctor_tools must be an array in {entry}"
+        );
     }
+}
+
+#[then(regex = r#"^entry "([^"]+)" reports doctor_tools "([^"]+)" and "([^"]+)"$"#)]
+fn then_entry_reports_doctor_tools(
+    w: &mut GateWorld,
+    id: String,
+    first_tool: String,
+    second_tool: String,
+) {
+    let id_value = serde_json::Value::String(id);
+    let expected_tools = serde_json::to_value(vec![first_tool, second_tool])
+        .expect("Doctor-tool test values must serialize");
+    let entries = w
+        .json_output
+        .as_ref()
+        .and_then(serde_json::Value::as_array)
+        .expect("JSON gate-list array");
+    let entry = entries
+        .iter()
+        .find(|entry| entry["id"] == id_value)
+        .unwrap_or_else(|| panic!("gate list output lacks {id_value:?}: {entries:?}"));
+    assert_eq!(
+        entry["doctor_tools"], expected_tools,
+        "gate list output has unexpected doctor tools: {entry}"
+    );
 }
 
 #[then("the array contains exactly the matrix-wired gates declaring surface \"ci\"")]
@@ -1690,6 +2165,139 @@ fn make_executable(path: PathBuf) {
 
 #[cfg(not(unix))]
 fn make_executable(_path: PathBuf) {}
+
+fn formatter_wrapper_path(name: &str) -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("rhino-cli manifest has a repository-root ancestor")
+        .join("scripts")
+        .join(name)
+}
+
+fn formatter_verifier_config(id: &str, command: &str, glob: &str) -> String {
+    format!(
+        "  - id: {id}\n    type: check\n    command: {command}\n    kind: external\n    surfaces:\n      ci: {{ scope: all-file-type, glob: '{glob}' }}\n"
+    )
+}
+
+#[given("a tracked \".go\" file is not formatted")]
+fn given_unformatted_go_fixture(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "unformatted.go",
+        "package fixture\nfunc main(){println(\"hello\")}\n",
+    );
+    w.write(
+        "repo-config.yml",
+        &config(&formatter_verifier_config(
+            "format-verify-gofmt",
+            &formatter_wrapper_path("verify-gofmt.sh")
+                .display()
+                .to_string(),
+            "*.go",
+        )),
+    );
+    w.stage(&["unformatted.go", "repo-config.yml"]);
+}
+
+#[when("the gate with id \"format-verify-gofmt\" runs")]
+fn when_gofmt_verifier_gate_runs(w: &mut GateWorld) {
+    w.run_gate("ci", Some("format-verify-gofmt"));
+}
+
+#[then("the wrapper treats non-empty \"gofmt -l\" output as failure")]
+fn then_gofmt_output_causes_failure(w: &mut GateWorld) {
+    assert!(w.output.contains("Go files need formatting:"));
+    assert!(w.output.contains("unformatted.go"));
+}
+
+fn write_unformatted_elixir_fixture(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "mix.exs",
+        "defmodule WrapperFixture.MixProject do\n  use Mix.Project\n\n  def project, do: [app: :wrapper_fixture, version: \"0.1.0\", elixir: \"~> 1.18\"]\nend\n",
+    );
+    w.write(
+        "unformatted.ex",
+        "defmodule Fixture do\ndef hello,do: :world\nend\n",
+    );
+    w.write(
+        "repo-config.yml",
+        &config(&formatter_verifier_config(
+            "format-verify-elixir",
+            &format!(
+                "{} --check",
+                formatter_wrapper_path("format-elixir.sh").display()
+            ),
+            "*.ex",
+        )),
+    );
+    w.stage(&["mix.exs", "unformatted.ex", "repo-config.yml"]);
+}
+
+#[given("a tracked \".ex\" file is not formatted")]
+fn given_unformatted_elixir_fixture(w: &mut GateWorld) {
+    write_unformatted_elixir_fixture(w);
+}
+
+#[when("the gate with id \"format-verify-elixir\" runs")]
+fn when_elixir_verifier_gate_runs(w: &mut GateWorld) {
+    w.run_gate("ci", Some("format-verify-elixir"));
+}
+
+#[then("no tracked file is rewritten")]
+fn then_elixir_verifier_does_not_rewrite(w: &mut GateWorld) {
+    if w.root().join("unformatted.ex").exists() {
+        assert_eq!(
+            std::fs::read_to_string(w.root().join("unformatted.ex"))
+                .expect("read unformatted Elixir fixture after check"),
+            "defmodule Fixture do\ndef hello,do: :world\nend\n"
+        );
+    } else {
+        assert_eq!(
+            std::fs::read_to_string(w.root().join("formatted.ex"))
+                .expect("read formatted Elixir source after check"),
+            "defmodule Fixture do\n  def hello, do: :world\nend\n"
+        );
+        assert_eq!(
+            std::fs::read_to_string(w.root().join("formatted.exs"))
+                .expect("read formatted Elixir script after check"),
+            "IO.puts(\"hello\")\n"
+        );
+    }
+}
+
+#[given("every tracked \".ex\" and \".exs\" file is formatted")]
+fn given_formatted_elixir_fixtures(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "mix.exs",
+        "defmodule WrapperFixture.MixProject do\n  use Mix.Project\n\n  def project, do: [app: :wrapper_fixture, version: \"0.1.0\", elixir: \"~> 1.18\"]\nend\n",
+    );
+    w.write(
+        "formatted.ex",
+        "defmodule Fixture do\n  def hello, do: :world\nend\n",
+    );
+    w.write("formatted.exs", "IO.puts(\"hello\")\n");
+    w.write(
+        "repo-config.yml",
+        &config(&formatter_verifier_config(
+            "format-verify-elixir",
+            &format!(
+                "{} --check",
+                formatter_wrapper_path("format-elixir.sh").display()
+            ),
+            "*.{ex,exs}",
+        )),
+    );
+    w.stage(&[
+        "mix.exs",
+        "formatted.ex",
+        "formatted.exs",
+        "repo-config.yml",
+    ]);
+}
 
 #[tokio::main]
 async fn main() {

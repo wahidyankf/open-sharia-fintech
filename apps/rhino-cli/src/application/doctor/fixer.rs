@@ -7,8 +7,10 @@
 
 use std::process::Command;
 
-use super::tools::{InstallStep, ToolDef, build_tool_defs};
-use super::{CheckOptions, DoctorResult, Scope, ToolStatus, is_minimal_tool};
+#[cfg(test)]
+use super::Scope;
+use super::tools::{InstallStep, ToolDef};
+use super::{CheckOptions, DoctorResult, ToolCheck, ToolStatus, selected_tool_defs};
 
 /// Executes a single install command step.
 ///
@@ -31,7 +33,7 @@ pub struct FixResult {
     pub fixed: usize,
     /// Number of tools whose install command returned a non-zero exit code.
     pub failed: usize,
-    /// Number of tools that were already `Ok` or `Warning` (not missing).
+    /// Number of tools that did not require remediation.
     pub already_ok: usize,
     /// Number of missing tools skipped because no install steps were available.
     pub skipped: usize,
@@ -66,12 +68,21 @@ fn current_platform() -> &'static str {
     }
 }
 
-/// Attempts to install missing tools from a pre-built `defs` list.
+/// Returns whether a Doctor check needs an installation/remediation attempt.
 ///
-/// For each check in `result` that has status [`ToolStatus::Missing`], the
-/// matching [`ToolDef`] is used to obtain install steps.  Progress messages
-/// are emitted via `printf`.  Tools that are `Ok` or `Warning` are counted
-/// in [`FixResult::already_ok`] and skipped.
+/// Missing tools are always actionable. A version warning is actionable only
+/// for `tofu`, whose minimum version is a security requirement.
+pub fn needs_remediation(check: &ToolCheck) -> bool {
+    check.status == ToolStatus::Missing
+        || (check.status == ToolStatus::Warning && check.name == "tofu")
+}
+
+/// Attempts to install actionable tools from a pre-built `defs` list.
+///
+/// Missing tools are actionable. A version warning is actionable only for
+/// `tofu`, whose minimum version is a security requirement; unrelated version
+/// warnings remain non-mutating. The matching [`ToolDef`] is used to obtain
+/// install steps, and progress messages are emitted via `printf`.
 ///
 /// When `opts.dry_run` is `true`, steps are printed but not executed, and
 /// [`FixResult::fixed`] remains zero.
@@ -89,11 +100,10 @@ where
     let mut fr = FixResult::default();
 
     for (i, check) in result.checks.iter().enumerate() {
-        if check.status == ToolStatus::Ok || check.status == ToolStatus::Warning {
+        if !needs_remediation(check) {
             fr.already_ok += 1;
             continue;
         }
-        // Missing
         if i >= defs.len() || defs[i].install_cmd.is_none() {
             printf(&format!(
                 "Skip: {} — no auto-install available\n",
@@ -149,8 +159,9 @@ where
 /// Builds tool definitions from `opts` and then delegates to `fix`.
 ///
 /// This is the high-level entry point used by the CLI.  It re-creates the
-/// full tool list from the repo root recorded in `opts`, applies the scope
-/// filter, and passes everything to `fix`.
+/// selected tool list from the repo root recorded in `opts`, applying the same
+/// scope, explicit-selection, and skip-tool filters as `check_all` before
+/// passing it to `fix`.
 pub fn fix_all<F>(
     result: &DoctorResult,
     opts: &CheckOptions<'_>,
@@ -160,10 +171,7 @@ pub fn fix_all<F>(
 where
     F: FnMut(&str),
 {
-    let mut defs = build_tool_defs(&opts.repo_root);
-    if opts.scope == Scope::Minimal {
-        defs.retain(|d| is_minimal_tool(&d.name));
-    }
+    let defs = selected_tool_defs(opts);
     fix(result, &defs, fix_opts, printf)
 }
 
@@ -180,7 +188,6 @@ pub fn format_fix_summary(fr: &FixResult) -> String {
 mod tests {
     use super::*;
     use crate::application::doctor::tools;
-    use crate::internal::doctor::ToolCheck;
     use std::cell::RefCell;
     use std::time::Duration;
 
@@ -207,6 +214,19 @@ mod tests {
             required_version: String::new(),
             source: String::new(),
             note: "no version requirement".into(),
+        }
+    }
+
+    /// Builds a [`ToolCheck`] with [`ToolStatus::Warning`] for testing.
+    fn warn(name: &str) -> ToolCheck {
+        ToolCheck {
+            name: name.into(),
+            binary: name.into(),
+            status: ToolStatus::Warning,
+            installed_version: "1.0.0".into(),
+            required_version: "2.0.0".into(),
+            source: String::new(),
+            note: "required: 2.0.0, version mismatch".into(),
         }
     }
 
@@ -370,6 +390,104 @@ mod tests {
         );
         assert_eq!(fr.failed, 1);
         assert_eq!(fr.fixed, 0);
+    }
+
+    #[test]
+    fn stale_tofu_warning_runs_installer() {
+        let res = DoctorResult {
+            checks: vec![warn("tofu")],
+            ok_count: 0,
+            warn_count: 1,
+            missing_count: 0,
+            duration: Duration::ZERO,
+            scope: Scope::Full,
+        };
+        let defs = vec![def("tofu", Some(install_echo))];
+        let invoked = RefCell::new(0usize);
+        let runner = |_cmd: &str, _args: &[&str]| -> Result<(), String> {
+            *invoked.borrow_mut() += 1;
+            Ok(())
+        };
+        let fr = fix(
+            &res,
+            &defs,
+            &FixOptions {
+                dry_run: false,
+                runner: Some(&runner),
+            },
+            |_| {},
+        );
+
+        assert_eq!(*invoked.borrow(), 1);
+        assert_eq!(fr.fixed, 1);
+        assert_eq!(fr.already_ok, 0);
+    }
+
+    #[test]
+    fn stale_node_warning_remains_already_ok() {
+        let res = DoctorResult {
+            checks: vec![warn("node")],
+            ok_count: 0,
+            warn_count: 1,
+            missing_count: 0,
+            duration: Duration::ZERO,
+            scope: Scope::Full,
+        };
+        let defs = vec![def("node", Some(install_echo))];
+        let invoked = RefCell::new(0usize);
+        let runner = |_cmd: &str, _args: &[&str]| -> Result<(), String> {
+            *invoked.borrow_mut() += 1;
+            Ok(())
+        };
+        let fr = fix(
+            &res,
+            &defs,
+            &FixOptions {
+                dry_run: false,
+                runner: Some(&runner),
+            },
+            |_| {},
+        );
+
+        assert_eq!(*invoked.borrow(), 0);
+        assert_eq!(fr.fixed, 0);
+        assert_eq!(fr.already_ok, 1);
+    }
+
+    #[test]
+    fn explicit_tool_selection_uses_the_same_definition_for_fixing() {
+        let dir = tempfile::tempdir().unwrap();
+        let result = DoctorResult {
+            checks: vec![miss("tofu")],
+            ok_count: 0,
+            warn_count: 0,
+            missing_count: 1,
+            duration: Duration::ZERO,
+            scope: Scope::Full,
+        };
+        let options = CheckOptions {
+            repo_root: dir.path().to_path_buf(),
+            runner: None,
+            scope: Scope::Full,
+            selected_tools: Some(vec!["tofu".into()]),
+        };
+        let mut output = String::new();
+
+        let fixed = fix_all(
+            &result,
+            &options,
+            &FixOptions {
+                dry_run: true,
+                runner: None,
+            },
+            |message| output.push_str(message),
+        );
+
+        assert_eq!(fixed.fixed, 0);
+        assert!(output.contains("Would install: tofu"));
+        assert!(output.contains("tofu_1.12.3_"));
+        assert!(output.contains("expected_checksum="));
+        assert!(!output.contains("install-opentofu.sh"));
     }
 
     #[test]

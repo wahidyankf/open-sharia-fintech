@@ -296,7 +296,7 @@ is compulsory for all apps and E2E runners.
 
 > For polyglot backend `typecheck` patterns (Go, F#, Java, Kotlin, Python, Rust, Elixir, TypeScript, C#, Clojure), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
 
-**CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every PR event and on every push to `main` via `pr-quality-gate.yml`, and again across the whole repo on `main-ci.yml`'s 4x/day schedule (WIB 06/12/18/00) plus manual dispatch — `main-ci.yml` has no push trigger. All gates run the identical check set — see All-Four-Gates Rule below.
+**CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every PR event and on every push to `main` through `pr-quality-gate.yml`; its CI matrix is derived from the gate registry. Heavy integration and E2E tiers remain scheduled-only and are never gate-surface entries.
 
 ### All Projects
 
@@ -377,16 +377,16 @@ Canonical example for a Rust CLI project (`rhino-cli`):
 > For polyglot `test:quick` composition patterns (Go, Java, Kotlin, Python, Elixir, TypeScript, C#,
 > Clojure, Dart/Flutter, F#), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
 
-#### All-Four-Gates Rule
+#### Gate-Surface and Scheduled-Tier Rule
 
-**Gate rule**: `(pre-commit ∪ pre-push) == PR gate == main gate`.
+**Gate rule**: `(pre-commit ∪ pre-push) == PR gate`; the registry defines the check set and the
+CI matrix derives matrix-wired entries from it.
 
 | Gate       | What runs                                                                               | When                               |
 | ---------- | --------------------------------------------------------------------------------------- | ---------------------------------- |
 | Pre-commit | Formatting only (lint-staged: prettier, rustfmt, fantomas, gofmt, …)                    | Every commit                       |
 | Pre-push   | `typecheck`, `lint`, `test:quick` (includes `test:unit`, `test:coverage`, `test:specs`) | Every push                         |
 | PR gate    | Identical to pre-push                                                                   | Every PR open / update             |
-| Main gate  | Identical to pre-push, but repo-wide (`run-many --all`)                                 | Schedule 4x/day + dispatch         |
 | CRON-only  | `test:integration`, `test:e2e`                                                          | Scheduled CI (2× daily, WIB 06/18) |
 
 `test:integration` and `test:e2e` are **CRON-only** — they run in scheduled CI workflows (2× daily at
@@ -825,11 +825,11 @@ have no compile step. Only the three test targets (`test:unit`, `test:integratio
 
 ## Principles Traceability
 
-| Decision                                                                                                                                                                                            | Principle                                                                                 |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Consistent target names across all projects                                                                                                                                                         | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| `typecheck`, `lint`, `test:quick` (which includes `test:unit`, `test:coverage`, `test:specs`) enforced identically at pre-push, PR gate, and main gate; `test:integration` and `test:e2e` CRON-only | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
-| Mandatory-six echo-placeholder rule ensures every project participates in workspace-wide `nx affected -t <target>` with no special-casing                                                           | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| Minimum required targets per project type; echo placeholders preferred over target omission                                                                                                         | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
-| `outputs` required for cacheable targets                                                                                                                                                            | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| Four-dimension tag scheme with controlled vocabulary declared in every `project.json`                                                                                                               | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Decision                                                                                                                                                                                    | Principle                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Consistent target names across all projects                                                                                                                                                 | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| `typecheck`, `lint`, `test:quick` (which includes `test:unit`, `test:coverage`, `test:specs`) enforced identically at pre-push and the PR gate; `test:integration` and `test:e2e` CRON-only | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
+| Mandatory-six echo-placeholder rule ensures every project participates in workspace-wide `nx affected -t <target>` with no special-casing                                                   | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Minimum required targets per project type; echo placeholders preferred over target omission                                                                                                 | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
+| `outputs` required for cacheable targets                                                                                                                                                    | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Four-dimension tag scheme with controlled vocabulary declared in every `project.json`                                                                                                       | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |

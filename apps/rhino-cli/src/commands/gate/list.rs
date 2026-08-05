@@ -35,11 +35,24 @@ struct GateListEntry {
     gate_type: String,
     /// Command declared for the gate.
     command: String,
+    /// Ordered Doctor tool identifiers declared for the gate.
+    doctor_tools: Vec<String>,
     /// Scope declared for this surface.
     scope: String,
     /// Optional composition carve-out declared for the gate.
     #[serde(rename = "carve-out", skip_serializing_if = "Option::is_none")]
     carve_out: Option<String>,
+    /// Formatter classification when the entry is a mutation formatter.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    category: Option<String>,
+    /// Mutation id checked by this verifier entry.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    verifies: Option<String>,
+    /// Explicit execution-wiring override for this gate.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    wiring: Option<String>,
+    /// Every surface where the registry declares this gate.
+    surfaces: Vec<String>,
     /// Whether the gate is implemented directly by its workflow job.
     #[serde(skip_serializing)]
     hand_wired: bool,
@@ -93,8 +106,17 @@ pub fn run_at_root(
                 id: gate.id.clone(),
                 gate_type: gate_type_name(&gate.gate_type).to_string(),
                 command: gate.command.clone(),
+                doctor_tools: gate.doctor_tools.clone(),
                 scope: scope_name(&scope.scope).to_string(),
                 carve_out: carve_out_name(gate.carve_out.as_ref()).map(str::to_owned),
+                category: gate.category.clone(),
+                verifies: gate.verifies.clone(),
+                wiring: wiring_name(gate.wiring.as_ref()).map(str::to_owned),
+                surfaces: gate
+                    .surfaces
+                    .keys()
+                    .map(|surface| surface_name(surface).to_string())
+                    .collect(),
                 hand_wired: gate.wiring.as_ref() == Some(&GateWiring::HandWired),
             }
         })
@@ -177,6 +199,25 @@ fn carve_out_name(carve_out: Option<&GateCarveOut>) -> Option<&'static str> {
     }
 }
 
+/// Returns the registry spelling for an optional execution-wiring override.
+fn wiring_name(wiring: Option<&GateWiring>) -> Option<&'static str> {
+    match wiring {
+        Some(GateWiring::Matrix) => Some("matrix"),
+        Some(GateWiring::HandWired) => Some("hand-wired"),
+        None => None,
+    }
+}
+
+/// Returns the registry spelling for a gate surface.
+fn surface_name(surface: &GateSurface) -> &'static str {
+    match surface {
+        GateSurface::CommitMsg => "commit-msg",
+        GateSurface::PreCommit => "pre-commit",
+        GateSurface::PrePush => "pre-push",
+        GateSurface::Ci => "ci",
+    }
+}
+
 /// Returns the registry spelling for a surface scope.
 fn scope_name(scope: &ScopeKind) -> &'static str {
     match scope {
@@ -206,6 +247,7 @@ mod tests {
                 "    type: check\n",
                 "    command: test:quick\n",
                 "    kind: nx\n",
+                "    doctor-tools: [git, node]\n",
                 "    surfaces:\n",
                 "      ci: { scope: affected-projects }\n",
                 "  - id: pre-commit-format\n",
@@ -232,12 +274,80 @@ mod tests {
         assert_eq!(entries.len(), 2);
         assert_eq!(entries[0]["id"], "ci-check");
         assert_eq!(entries[1]["id"], "ci-links");
+        assert_eq!(
+            entries[0]["doctor_tools"],
+            serde_json::json!(["git", "node"])
+        );
+        assert_eq!(entries[1]["doctor_tools"], serde_json::json!([]));
         for entry in entries {
             assert!(entry.get("id").is_some());
             assert!(entry.get("type").is_some());
             assert!(entry.get("command").is_some());
             assert!(entry.get("scope").is_some());
+            assert!(entry["doctor_tools"].is_array());
         }
+    }
+
+    #[test]
+    fn json_preserves_formatter_verifier_wiring_and_declared_surface_metadata() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(
+            repo.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: format-prettier\n",
+                "    type: mutation\n",
+                "    category: formatter\n",
+                "    command: prettier --write\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+                "  - id: format-verify-prettier\n",
+                "    type: check\n",
+                "    command: prettier --check\n",
+                "    kind: external\n",
+                "    verifies: format-prettier\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+                "  - id: ci-matrix\n",
+                "    type: check\n",
+                "    command: test:quick\n",
+                "    kind: nx\n",
+                "    wiring: matrix\n",
+                "    surfaces:\n",
+                "      pre-push: { scope: affected-projects }\n",
+                "      ci: { scope: affected-projects }\n",
+            ),
+        )
+        .unwrap();
+
+        let mut pre_commit = Vec::new();
+        run_at_root(
+            repo.path(),
+            "pre-commit",
+            OutputFormat::Json,
+            &mut pre_commit,
+        )
+        .unwrap();
+        let formatter: serde_json::Value = serde_json::from_slice(&pre_commit).unwrap();
+        let formatter = &formatter[0];
+        assert_eq!(formatter["category"], "formatter");
+        assert_eq!(formatter["surfaces"], serde_json::json!(["pre-commit"]));
+
+        let mut ci = Vec::new();
+        run_at_root(repo.path(), "ci", OutputFormat::Json, &mut ci).unwrap();
+        let entries: Vec<serde_json::Value> = serde_json::from_slice(&ci).unwrap();
+        let verifier = entries
+            .iter()
+            .find(|entry| entry["id"] == "format-verify-prettier")
+            .expect("verifier emitted in CI matrix JSON");
+        assert_eq!(verifier["verifies"], "format-prettier");
+        let matrix = entries
+            .iter()
+            .find(|entry| entry["id"] == "ci-matrix")
+            .expect("matrix gate emitted in CI matrix JSON");
+        assert_eq!(matrix["wiring"], "matrix");
+        assert_eq!(matrix["surfaces"], serde_json::json!(["pre-push", "ci"]));
     }
 
     #[test]

@@ -16,12 +16,11 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 
 ## PR and repo-wide gates
 
-| Workflow              | Trigger                | Role                                                                                                                              |
-| --------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `pr-quality-gate.yml` | PR + push              | Typecheck, lint, `test:quick`, `compat:min-version`, naming, md-links, harness-duplication, governance validation (all languages) |
-| `validate-env.yml`    | PR + push              | Environment-variable contract validation                                                                                          |
-| `main-ci.yml`         | 4x/day CRON + dispatch | Same as PR gate but runs across all projects (`nx run-many --all`) — no push trigger                                              |
-| `deps-audit.yml`      | Nightly CRON           | Language-native dependency audit (npm audit, cargo deny, dotnet vulnerable) — CRON-only                                           |
+| Workflow                             | Trigger      | Role                                                                                                                              |
+| ------------------------------------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `dependency-vulnerability-audit.yml` | Nightly CRON | Language-native dependency audit (npm audit, cargo deny, dotnet vulnerable) — CRON-only                                           |
+| `pr-quality-gate.yml`                | PR + push    | Typecheck, lint, `test:quick`, `compat:min-version`, naming, md-links, harness-duplication, governance validation (all languages) |
+| `validate-env.yml`                   | PR + push    | Environment-variable contract validation                                                                                          |
 
 ## www tier — direct deploy (scheduled callers of `_reusable-www-test-local-deploy.yml`)
 

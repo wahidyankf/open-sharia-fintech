@@ -11,8 +11,11 @@ mod tools;
 
 use std::time::Duration;
 
+use crate::application::repo_config;
+use tools::ToolDef;
+
 pub use checker::{check_all, real_runner};
-pub use fixer::{FixOptions, FixResult, fix_all, format_fix_summary};
+pub use fixer::{FixOptions, FixResult, fix_all, format_fix_summary, needs_remediation};
 pub use reporter::{format_json, format_markdown, format_text};
 pub use target_share::{
     FixOutcome, PruneOutcome, SweepOutcome, TargetShareStatus, cache_root_ambient,
@@ -139,4 +142,24 @@ pub struct CheckOptions<'a> {
     pub runner: Option<CommandRunner<'a>>,
     /// Which tool set to check.
     pub scope: Scope,
+    /// Explicit Doctor tool names selected by a caller. `None` retains scope-based selection;
+    /// `Some(Vec::new())` intentionally selects no tools.
+    pub selected_tools: Option<Vec<String>>,
+}
+
+/// Builds the tool definitions selected by scope, explicit selection, and the
+/// repository's `doctor.skip-tools` configuration.
+pub(crate) fn selected_tool_defs(options: &CheckOptions<'_>) -> Vec<ToolDef> {
+    let mut definitions = build_tool_defs(&options.repo_root);
+    if options.scope == Scope::Minimal {
+        definitions.retain(|definition| is_minimal_tool(&definition.name));
+    }
+    if let Some(selected_tools) = &options.selected_tools {
+        definitions.retain(|definition| selected_tools.contains(&definition.name));
+    }
+    let skipped_tools = repo_config::load_or_default(&options.repo_root)
+        .doctor
+        .skip_tools;
+    definitions.retain(|definition| !skipped_tools.iter().any(|tool| tool == &definition.name));
+    definitions
 }

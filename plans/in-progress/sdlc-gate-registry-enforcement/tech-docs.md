@@ -376,20 +376,21 @@ diff, not a judgement.
 
 Field contract:
 
-| Field            | Required       | Meaning                                                                                                                                                            |
-| ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `id`             | yes            | Stable, unique, kebab-case. The job name in CI and the label in `gate run` output.                                                                                 |
-| `type`           | yes            | `check` (can fail; subject to the composition rule) or `mutation` (rewrites files; cannot fail on style; exempt from the rule).                                    |
-| `command`        | yes            | Leaf command. Interpretation depends on `kind`.                                                                                                                    |
-| `kind`           | yes            | `rhino-cli` (invoked through the local binary), `external` (a tool on `PATH`), or `nx` (an Nx target).                                                             |
-| `wiring`         | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares the job itself; validation asserts presence only).                           |
-| `restages`       | no (mutations) | `true` when the mutation's output must be `git add`-ed back, so generated files commit in lockstep.                                                                |
-| `args`           | no             | Command-shaped data that legitimately differs per repo — chiefly `exclude` lists.                                                                                  |
-| `surfaces`       | yes            | Map of surface name to scope descriptor. At least one entry.                                                                                                       |
-| `glob` / `globs` | no             | On an `affected-file-type` surface: one glob, or a **list** of globs when one command must be dispatched across several `lint-staged` keys (prettier). See §2.2.2. |
-| `carve-out`      | no (checks)    | `staged-only` — the check reads the git index, so no CI counterpart can exist. Exempts it from the composition rule.                                               |
-| `verifies`       | no (checks)    | The id of the `type: mutation` gate this check is the read-only counterpart of. Drives the every-mutation-is-verified rule (§2.2.4).                               |
-| `category`       | no (mutations) | `formatter` marks a mutation that rewrites source to a canonical form, so `gate validate` demands a `verifies`-linked check for it.                                |
+| Field               | Required       | Meaning                                                                                                                                                                                                    |
+| ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | yes            | Stable, unique, kebab-case. The job name in CI and the label in `gate run` output.                                                                                                                         |
+| `type`              | yes            | `check` (can fail; subject to the composition rule) or `mutation` (rewrites files; cannot fail on style; exempt from the rule).                                                                            |
+| `command`           | yes            | Leaf command. Interpretation depends on `kind`.                                                                                                                                                            |
+| `kind`              | yes            | `rhino-cli` (invoked through the local binary), `external` (a tool on `PATH`), or `nx` (an Nx target).                                                                                                     |
+| `wiring`            | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares an executable, non-disabled job itself; validation requires its direct `quality-gate` aggregate dependency).         |
+| `restages`          | no (mutations) | `true` when the mutation's output must be `git add`-ed back, so generated files commit in lockstep.                                                                                                        |
+| `args`              | no             | Command-shaped data that legitimately differs per repo — chiefly `exclude` lists.                                                                                                                          |
+| `surfaces`          | yes            | Map of surface name to scope descriptor. At least one entry.                                                                                                                                               |
+| `glob` / `globs`    | no             | On an `affected-file-type` surface: one glob, or a **list** of globs when one command must be dispatched across several `lint-staged` keys (prettier). See §2.2.2.                                         |
+| `lint-staged-shell` | no             | On a pre-commit affected-file-type surface only: a shell body emitted as `bash -c '<body>' --`; `{{command}}` expands once to the kind-derived command, or a body may handle each lint-staged file itself. |
+| `carve-out`         | no (checks)    | `staged-only` — the check reads the git index, so no CI counterpart can exist. Exempts it from the composition rule.                                                                                       |
+| `verifies`          | no (checks)    | The id of the `type: mutation` gate this check is the read-only counterpart of. Drives the every-mutation-is-verified rule (§2.2.4).                                                                       |
+| `category`          | no (mutations) | `formatter` marks a mutation that rewrites source to a canonical form, so `gate validate` demands a `verifies`-linked check for it.                                                                        |
 
 Surface names are `commit-msg`, `pre-commit`, `pre-push`, and `ci` — **the four gate surfaces, and
 only those**. Scope values are the five already ratified in the SDLC Gate Standard —
@@ -439,6 +440,12 @@ and error restore, documented in its official [README](https://github.com/lint-s
 
 The emitter writes marker-first: it checks for the already-applied marker **before** locating the
 anchor, so a re-run replaces the block rather than appending a second copy.
+
+Most entries emit their kind-derived command directly. A pre-commit affected-file-type scope may
+instead declare `lint-staged-shell`: the emitter wraps its body as `bash -c '<body>' --` so lint-staged
+does not append its file list to commands that must either ignore it (`repo-config validate`) or loop
+over it with a different argument position (Docker Compose). `{{command}}` is a one-time placeholder
+for the normal kind-derived command; a shell body without that placeholder owns its file loop.
 
 **Why prettier declares `globs`, plural.** `lint-staged` runs the commands within one glob key
 **sequentially** but runs different glob keys **concurrently**. Today `*.md` is an ordered chain —
@@ -704,7 +711,7 @@ block deleted — otherwise the registry's completeness claim is false in that r
 `.husky/pre-commit` invokes the HashiCorp `terraform` binary (`terraform fmt -check -recursive
 infra/on-premise/terraform/`), not OpenTofu. Phase 4 declares the new `lint-staged`/registry mutation
 as `tofu fmt` / `tofu fmt -check` instead, matching `ose-public`'s existing choice and the `tofu`
-binary `npm run doctor -- --fix` provisions in every repo (confirmed in Phase 0). `[Web-cited]`
+Doctor tool declared for the formatter gates in every repo (confirmed in Phase 0). `[Web-cited]`
 OpenTofu's official [migration overview](https://opentofu.org/docs/intro/migration/)
 (accessed 2026-08-04) says it aims to maintain Terraform-configuration compatibility and most code
 works unchanged, while still requiring migration verification. Phase 4 therefore runs both format
@@ -726,6 +733,13 @@ This plan states the rule for `gates:` explicitly, because it is a list rather t
   declaring an `iac-lint` gate is sanctioned divergence of the same kind as it shipping Terraform at
   all. This is recorded under
   [Allowed Divergence](../../../docs/reference/sdlc-gate-standard.md#allowed-divergence).
+
+CI consumes another identical-schema registry field, `doctor-tools`: it is an ordered list of only
+the external Doctor prerequisites for that gate. The format job derives a de-duplicated union from
+**every** pre-commit gate's `doctor-tools`, because the emitted `lint-staged` batch runs both formatter
+mutations and per-file checks. Each matrix row passes only its own list to `doctor --fix --tools`; an
+empty list does not invoke Doctor. The local worktree setup remains the deliberately full
+`doctor --fix` toolchain convergence step. The workflow never carries a second gate or tool inventory.
 
 ### 2.4 Command surface
 
@@ -793,8 +807,9 @@ direct, post-batch mutation.
    `gate run --surface=…` for every surface with declared gates.
 3. **CI derivation** — for gates with `wiring: matrix` (the default), `pr-quality-gate.yml` builds
    its job matrix from `gate list` and runs no check command the registry does not declare. Gates
-   with `wiring: hand-wired` are exempt from matrix derivation; the check asserts only that a job
-   invoking them **exists** in the workflow. This is what lets the per-language `test:quick` jobs
+   with `wiring: hand-wired` are exempt from matrix derivation, but validation requires an
+   **executable, non-disabled** command invocation in the workflow and requires that job to be a
+   direct `quality-gate` aggregate dependency. This is what lets the per-language `test:quick` jobs
    keep their own `setup-dotnet` / `setup-rust` steps while remaining declared and validated.
 4. **No orphan surfaces** — no surface file invokes a gate id the registry does not carry.
 5. **Emitted-artifact freshness** — the `lint-staged` block in `package.json` matches what
@@ -842,10 +857,10 @@ parallelism as today, and the job list can no longer drift from the registry bec
 from it.
 
 The per-language `test:quick` jobs stay hand-written for their toolchain setup. They are declared as
-`wiring: hand-wired` gates, so `gate validate` check 3 asserts a job invoking them exists without
-demanding it be matrix-emitted. That is the reconciliation the first draft of this document was
-missing: it claimed CI "runs no check command the registry does not declare" while simultaneously
-leaving those jobs undeclared.
+`wiring: hand-wired` gates, so `gate validate` check 3 requires their executable, non-disabled command
+and direct `quality-gate` aggregation without demanding matrix emission. That is the reconciliation
+the first draft of this document was missing: it claimed CI "runs no check command the registry does
+not declare" while simultaneously leaving those jobs undeclared.
 
 ### 2.6 Formatting verification
 
@@ -1103,6 +1118,18 @@ carve-out.
 | `repo-governance/workflows/plan/multi-plans-execution.md`                         | The scheduling rule's "byte-identical propagation across `ose-public`/`ose-primer`/`ose-private`" is extended to name all four bound repos, so the multi-plan scheduler serializes a `beaver-nest`-touching plan against a concurrent `apps/rhino-cli` edit elsewhere too.                                                                                                              |
 | `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` | "`apps/rhino-cli` byte-identity across all three repos" is extended to "all four bound repos", matching [§2.8.6](#286-the-governance-change-this-requires).                                                                                                                                                                                                                             |
 | `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`               | The "byte-identical across all three repos" language is extended to four repos; the literal `git -C ose-public ls-files ... across all three repos` manual `md5`-diff snippet is replaced with a pointer to `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`, so it cannot silently diverge from the mechanism this plan introduces. |
+
+### 3.1 Security Waiver — OpenTofu 1.12.3
+
+**Path C approval:** Pin `tofu` to OpenTofu 1.12.3, released 2026-06-18. No CVE-clean version
+meets the 2026-06-06 Path B cutoff. The Low [GHSA-22w5-2fxg-vrwx](https://github.com/advisories/GHSA-22w5-2fxg-vrwx)
+concerns upstream Go CVEs CVE-2026-42504 and CVE-2026-27145; neither has a matching CISA KEV entry,
+and each EPSS score is below 0.5. The separate High [GHSA-q7j3-v8qv-22vq](https://github.com/advisories/GHSA-q7j3-v8qv-22vq)
+concerns arbitrary file read during certain git operations; it does not assert a CVE mapping to those
+upstream Go CVEs. The exact 1.12.3 macOS/Linux guarantee is implemented through a verified immutable
+official release archive: Doctor downloads the pinned archive, verifies its committed SHA-256 checksum,
+and installs only after verification. The [security-waiver register](../../../docs/reference/security-waivers.md)
+holds the durable entry. **AI sign-off: Codex.**
 
 ## 4. Risks and Mitigations
 

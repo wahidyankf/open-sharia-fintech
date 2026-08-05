@@ -5,7 +5,8 @@ Feature: Gate enumeration
     Given the registry declares gates on surface "ci"
     When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output is a JSON array
-    And every element carries "id", "command", and "scope" keys
+    And every element carries "id", "command", "scope", and "doctor_tools" keys
+    And entry "ci-one" reports doctor_tools "git" and "node"
     And the array contains exactly the matrix-wired gates declaring surface "ci"
 
   Scenario: A surface with no declared gates yields an empty array, not an error

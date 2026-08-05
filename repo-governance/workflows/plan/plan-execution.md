@@ -261,7 +261,7 @@ These rules govern ALL execution steps. No exception. No shortcut.
 3. **Fix ALL Issues — Including Preexisting**: When ANY test, lint, typecheck, or quality gate fails — fix it. Even if it existed before your changes. Do NOT defer. Do NOT skip. Commit preexisting fixes separately.
 4. **Delivery.md Is Sacred — Atomic Sync Ritual**: After each item's work is done, run the three-step ritual before touching the next item: (a) `Edit` checkbox `- [ ]` → `- [x]` for THIS one item (no `replace_all`), (b) `Edit` implementation-notes block under the ticked checkbox (Date, Status, Files Changed, brief notes), (c) `TaskUpdate completed`. All three MUST land before moving on. If any step fails, roll back the others and leave the task in `in_progress`. Ticking multiple checkboxes in one Edit or deferring notes to end-of-phase is forbidden.
 5. **Local Quality Gates Before Push**: Run `npx nx affected -t typecheck lint test:quick specs:coverage` before every push. Fix ALL failures. Do NOT push with any failing check.
-6. **Post-Push CI Verification**: After every push, monitor ALL GitHub Actions workflows triggered by that push — excludes `.github/workflows/main-ci.yml` (deprecated, schedule-only, never triggered by a push). Fix ALL failures (including preexisting). Do NOT proceed until CI is fully green.
+6. **Post-Push CI Verification**: After every push, monitor ALL GitHub Actions workflows triggered by that push. Fix ALL failures (including preexisting). Do NOT proceed until CI is fully green.
 7. **Thematic Commits**: Group related changes. Split different concerns. Follow Conventional Commits. Preexisting fixes get their own commits.
 8. **Manual Behavioral Assertions**: After quality gates pass, use Playwright MCP for web UI verification and curl for API verification. Fix any broken behavior before proceeding.
 9. **Progress Streaming (Observability)**: The live Task list is the user's monitoring window — keep it fresh in real time. Never run silent for more than one checkbox. After each phase completes, emit a one-line user-visible status: phase name, items ticked / total, files changed, any preexisting fixes.
@@ -489,7 +489,7 @@ After completing all items in a delivery phase, verify the phase's authored gate
 
 ### 2c. Post-Push CI Verification (Sequential, After Each Push)
 
-After every push, verify CI on the resolved delivery mode's target — `origin main` for the direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`), the PR branch for the `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`). This step never covers `.github/workflows/main-ci.yml` — it is deprecated, schedule/dispatch-only, and has no push trigger, so it is never among the workflows a push triggers.
+After every push, verify every GitHub Actions workflow triggered on the resolved delivery mode's target — `origin main` for the direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`), the PR branch for the `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`).
 
 **Phase 0 never reaches this step**: it pushes nothing (Step 2b), so it triggers no CI run and there is nothing to verify. Skip straight from the Phase 0 gate to Phase 1.
 

@@ -26,7 +26,7 @@ function AlphaBanner() {
           alignItems: "flex-start",
         }}
       >
-        <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>⚗️</div>
+        <div style={{ fontSize: 14, fontWeight: 800, flexShrink: 0, marginTop: 4 }}>NOTE</div>
         <div>
           <div
             style={{

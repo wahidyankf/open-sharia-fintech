@@ -2,15 +2,19 @@
 //!
 //! Port of `apps/rhino-cli/cmd/doctor.go`.
 
+use std::collections::HashSet;
+
 use anyhow::{Error, anyhow};
 use clap::Args;
 
+use crate::application::repo_config::DOCTOR_TOOL_INVENTORY;
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::git::common_dir;
 use crate::internal::doctor::{
     self, CheckOptions, FixOptions, Scope, cache_root_ambient, cargo_sweep_present, check_all,
     check_target_shares, fix_all, fix_target_shares, format_fix_summary, format_json,
-    format_markdown, format_text, is_ci_ambient, prune_orphans, repo_name, sweep_stale,
+    format_markdown, format_text, is_ci_ambient, needs_remediation, prune_orphans, repo_name,
+    sweep_stale,
 };
 use crate::internal::git;
 
@@ -20,6 +24,10 @@ pub struct DoctorArgs {
     /// Tool scope: full or minimal.
     #[arg(long = "scope", default_value = "full")]
     pub scope: String,
+    /// Explicit Doctor tools to check and fix; repeat or separate names with commas.
+    #[arg(long = "tools", value_delimiter = ',', value_name = "TOOL")]
+    #[arg(value_parser = parse_doctor_tool_name)]
+    pub tools: Option<Vec<String>>,
     /// Attempt to install missing tools.
     #[arg(long = "fix")]
     pub fix: bool,
@@ -108,6 +116,36 @@ fn run_target_share_step(repo_root: &std::path::Path, args: &DoctorArgs) {
     }
 }
 
+/// Parses one selected Doctor-tool name, rejecting blank or unknown values
+/// before the command starts probing or installing tools.
+fn parse_doctor_tool_name(value: &str) -> Result<String, String> {
+    let name = value.trim();
+    if name.is_empty() {
+        return Err("Doctor tool name must not be blank".into());
+    }
+    if !DOCTOR_TOOL_INVENTORY.contains(&name) {
+        return Err(format!("unknown Doctor tool {name:?}"));
+    }
+    Ok(name.to_string())
+}
+
+/// De-duplicates an explicit selection while preserving first-seen order.
+fn normalize_selected_tools(values: Option<&[String]>) -> Option<Vec<String>> {
+    values.map(|values| {
+        let mut seen = HashSet::new();
+        values
+            .iter()
+            .filter(|value| seen.insert(value.as_str()))
+            .cloned()
+            .collect()
+    })
+}
+
+/// Returns whether Doctor should invoke the fixer for the current results.
+fn has_remediation_work(result: &doctor::DoctorResult) -> bool {
+    result.checks.iter().any(needs_remediation)
+}
+
 /// Run the `doctor` command.
 ///
 /// # Errors
@@ -124,6 +162,7 @@ pub fn run(args: &DoctorArgs, output: OutputFormat) -> std::result::Result<(), E
         repo_root,
         runner: None,
         scope: parsed_scope,
+        selected_tools: normalize_selected_tools(args.tools.as_deref()),
     };
 
     let result = check_all(&opts);
@@ -143,7 +182,7 @@ pub fn run(args: &DoctorArgs, output: OutputFormat) -> std::result::Result<(), E
         run_target_share_step(&opts.repo_root, args);
     }
 
-    if args.fix && result.missing_count > 0 {
+    if args.fix && has_remediation_work(&result) {
         let mut buf = String::new();
         let fr = fix_all(
             &result,
@@ -166,7 +205,7 @@ pub fn run(args: &DoctorArgs, output: OutputFormat) -> std::result::Result<(), E
         }
     }
 
-    if args.fix && result.missing_count == 0 {
+    if args.fix && !has_remediation_work(&result) {
         println!("\nNothing to fix — all tools are installed.");
     }
 
@@ -191,6 +230,7 @@ mod tests {
     fn args_default_values() {
         let _ = DoctorArgs {
             scope: "full".into(),
+            tools: None,
             fix: false,
             dry_run: false,
             prune_cargo_cache: false,
@@ -213,6 +253,7 @@ mod tests {
 
         let args = DoctorArgs {
             scope: "full".into(),
+            tools: None,
             fix: false,
             dry_run: false,
             prune_cargo_cache: false,
@@ -225,6 +266,90 @@ mod tests {
         assert!(
             !crate_dir.join("target").exists(),
             "check mode must not create a target/ symlink"
+        );
+    }
+
+    #[test]
+    fn tools_option_is_repeatable_and_comma_delimited() {
+        use clap::Parser as _;
+
+        let cli = crate::cli::Cli::try_parse_from([
+            "rhino-cli",
+            "doctor",
+            "--tools",
+            "tofu,shfmt",
+            "--tools",
+            "clang-format",
+        ])
+        .expect("tools syntax must parse");
+        let Some(crate::cli::Commands::Doctor(args)) = cli.command else {
+            panic!("doctor arguments must parse into the doctor command");
+        };
+
+        assert_eq!(
+            args.tools,
+            Some(vec!["tofu".into(), "shfmt".into(), "clang-format".into()])
+        );
+    }
+
+    #[test]
+    fn tools_option_rejects_unknown_tool_names() {
+        use clap::Parser as _;
+
+        let parsed = crate::cli::Cli::try_parse_from([
+            "rhino-cli",
+            "doctor",
+            "--tools",
+            "not-a-doctor-tool",
+        ]);
+
+        assert!(parsed.is_err(), "unknown Doctor tool must be rejected");
+    }
+
+    #[test]
+    fn tools_option_rejects_blank_elements() {
+        use clap::Parser as _;
+
+        let parsed =
+            crate::cli::Cli::try_parse_from(["rhino-cli", "doctor", "--tools", "tofu,,shfmt"]);
+
+        assert!(parsed.is_err(), "blank Doctor tool must be rejected");
+    }
+
+    #[test]
+    fn normalized_tool_selection_preserves_first_seen_order() {
+        let values = vec!["tofu".into(), "shfmt".into(), "tofu".into()];
+
+        assert_eq!(
+            normalize_selected_tools(Some(&values)),
+            Some(vec!["tofu".into(), "shfmt".into()])
+        );
+        assert_eq!(normalize_selected_tools(None), None);
+        assert_eq!(normalize_selected_tools(Some(&[])), Some(Vec::new()));
+    }
+
+    #[test]
+    fn stale_selected_tofu_warning_requires_fix_remediation() {
+        let result = doctor::DoctorResult {
+            checks: vec![doctor::ToolCheck {
+                name: "tofu".into(),
+                binary: "tofu".into(),
+                status: doctor::ToolStatus::Warning,
+                installed_version: "1.12.2".into(),
+                required_version: "1.12.3".into(),
+                source: "Doctor selected-tools scope".into(),
+                note: "required: 1.12.3, version mismatch".into(),
+            }],
+            ok_count: 0,
+            warn_count: 1,
+            missing_count: 0,
+            duration: std::time::Duration::ZERO,
+            scope: Scope::Full,
+        };
+
+        assert!(
+            has_remediation_work(&result),
+            "a selected stale tofu warning must invoke the fixer under --fix"
         );
     }
 }
