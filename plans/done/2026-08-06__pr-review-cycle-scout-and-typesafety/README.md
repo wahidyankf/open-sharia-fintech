@@ -29,7 +29,8 @@ identically in all four repos' live pipelines:
    re-categorization boundary). Nothing separates "decide what this PR needs" from "consolidate what
    the specialists found."
 3. **No discipline owns type-system soundness.** The eight-discipline table
-   ([pr-review-disciplines.md §The Eight Reviewer Disciplines](../../../repo-governance/development/quality/pr-review-disciplines.md#the-eight-reviewer-disciplines))
+   ([pr-review-disciplines.md §The Nine Reviewer Disciplines](../../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) —
+   eight before this plan, now nine)
    covers architecture, correctness, governance, security, CI-gaming, performance, docs, and
    instruction-decay — none of which owns whether a change's **types** are sound. A compiler already
    blocks a change that does not type-check; nothing in the pipeline flags a change that type-checks
@@ -109,7 +110,7 @@ delivery units (see [Parallelization Model](./delivery.md#parallelization-model)
 %% Color palette: Blue #0173B2 (scout, new), Teal #029E73 (specialists, incl. new types),
 %% Purple #CC78BC (coordinator, trimmed), Orange #DE8F05 (fixer, unchanged)
 flowchart LR
-  SC["pr-review-scout-maker<br/>(NEW stage 0)"]:::blue --> FAN["9 tier-selected<br/>specialists"]:::teal
+  SC["pr-review-scout-maker<br/>(NEW stage 0)"]:::blue --> FAN["up to 9 tier-selected<br/>specialists (DD-10 may skip 2)"]:::teal
   FAN --> SY["pr-review-synthesis-maker<br/>(trimmed)"]:::purple
   SY --> FX["pr-review-fixer"]:::orange
 

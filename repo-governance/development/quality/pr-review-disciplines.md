@@ -1,6 +1,6 @@
 ---
 title: "PR Reviewer-Discipline Convention"
-description: Defines the eight PR-review specialist disciplines and their owned/routed-to scope, the boundary tie-breaker rule, six grey-zone rulings, and the Cloudflare-derived cost- and noise-control mechanics governing the specialist-plus-coordinator PR review pipeline
+description: Defines the nine PR-review specialist disciplines — including Type-soundness, which joins the set to own static type-escape-hatch soundness (unsafe casts, `any`, `unsafe` blocks, `!` suppression) — and their owned/routed-to scope, the boundary tie-breaker rule, seven grey-zone rulings, and the Cloudflare-derived cost- and noise-control mechanics governing the specialist-plus-coordinator PR review pipeline
 category: explanation
 subcategory: development
 tags:
@@ -14,14 +14,15 @@ created: 2026-07-23
 
 # PR Reviewer-Discipline Convention
 
-This convention defines the eight PR-review specialist disciplines that replace the single
+This convention defines the nine PR-review specialist disciplines that replace the single
 `pr-review-maker` monolith, each discipline's owned scope and the scope it explicitly routes
 elsewhere, the **boundary tie-breaker rule** that resolves a finding that does not obviously
-belong to one discipline, six documented grey-zone rulings between adjacent disciplines, and the
+belong to one discipline, seven documented grey-zone rulings between adjacent disciplines, and the
 cost- and noise-control mechanics — borrowed from Cloudflare's production AI-code-review
-system — that keep an eight-specialist fan-out affordable and quiet enough to be useful. It
-governs the nine `pr-review-*-maker.md` agent definitions (eight specialists plus the
-`pr-review-synthesis-maker` coordinator) and is the reference the
+system — that keep a nine-specialist fan-out affordable and quiet enough to be useful. It
+governs the eleven `pr-review-*-maker.md` agent definitions (nine specialists plus the
+`pr-review-synthesis-maker` coordinator and the `pr-review-scout-maker` stage-0 classifier) and is
+the reference the
 [PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md) and
 [PR Merge Protocol](../workflow/pr-merge-protocol.md) point to whenever a finding needs
 categorizing.
@@ -40,7 +41,7 @@ This convention implements/respects the following core principles:
   conflating the two into a single vague finding.
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: the
   risk-tier fan-out keeps a trivial PR's review as simple as a single coordinator pass, reserving
-  the full eight-specialist fan-out for diffs that actually need that much scrutiny.
+  the full nine-specialist fan-out for diffs that actually need that much scrutiny.
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**:
   the coordinator's dedup, re-categorize, reasonableness-filter, and tool-verify functions
   automate a second read of every raw finding that would otherwise require manual triage before a
@@ -54,7 +55,7 @@ This convention implements/respects the following conventions:
   CRITICAL/HIGH/MEDIUM/LOW severity scale unchanged. This convention decides which discipline
   assigns a finding to which class, not how severity itself is defined.
 - **[Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md)**: extends that pattern's
-  three-role idea into a fan-out variant — eight discipline-scoped makers plus one coordinator
+  three-role idea into a fan-out variant — nine discipline-scoped makers plus one coordinator
   (a checker-like consolidation role) feed the unchanged `pr-review-fixer`.
 - **[CI Blocker Resolution Convention](./ci-blocker-resolution.md)**: the CI-gaming/test-integrity
   discipline's root-cause-first stance on weakened or skipped checks is this convention applied at
@@ -72,7 +73,7 @@ This convention implements/respects the following conventions:
 The single `pr-review-maker` monolith combined six-plus review concerns into a single prompt,
 which gave no reviewer a documented reason to stay out of another discipline's lane, and no rule
 for where a finding that could plausibly belong to two disciplines should land. Splitting the
-monolith into eight discipline-scoped specialists plus a coordinator only works if:
+monolith into nine discipline-scoped specialists plus a coordinator only works if:
 
 1. Every specialist's owned scope AND its explicit non-goals ("not its job → routes to X") live in
    one place both the specialists and the coordinator reference.
@@ -80,15 +81,15 @@ monolith into eight discipline-scoped specialists plus a coordinator only works 
    discipline, so re-categorizing it is a lookup, not a fresh judgment call every cycle.
 3. The recurring grey zones between adjacent disciplines are pre-decided once, not re-litigated by
    every coordinator pass.
-4. The cost- and noise-control mechanics that make an eight-specialist fan-out affordable and quiet
+4. The cost- and noise-control mechanics that make a nine-specialist fan-out affordable and quiet
    are documented alongside the disciplines they govern, not left as an unstated assumption.
 
-Audience: the nine `pr-review-*-maker.md` agent definitions, the
+Audience: the eleven `pr-review-*-maker.md` agent definitions, the
 [PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md) that orchestrates
 them, and any future contributor deciding whether a new class of finding needs its own discipline
 or fits inside an existing one.
 
-## The Eight Reviewer Disciplines
+## The Nine Reviewer Disciplines
 
 Every specialist inherits the monolith's hard rules verbatim — numeric confidence 0-100
 with findings below 80 hard-dropped, CRITICAL/HIGH/MEDIUM/LOW severity, every finding
@@ -97,16 +98,17 @@ anti-sycophantic framing, a scope guard limited to the PR's own declared plan/is
 untrusted-input filtering of PR body/comment/linked-issue text. What differs per specialist is its
 **owned discipline** and the **scope it explicitly routes elsewhere** rather than raising itself:
 
-| Discipline                     | Specialist agent               | Owns (in-charter)                                                                                                                                                                             | NOT its job (routes to)                                                                                                                     |
-| ------------------------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Architecture                   | `pr-review-architecture-maker` | New tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, novel dependencies                                                                                  | Existing-rule layering violations → governance; domain-scenario gaps → logic                                                                |
-| Business-logic / correctness   | `pr-review-logic-maker`        | Behavior vs. domain intent + Gherkin acceptance-criteria conformance across edge/error cases                                                                                                  | Error-handling _shape_ rules → governance; should-this-boundary-exist → architecture                                                        |
-| Governance / rules-conformance | `pr-review-governance-maker`   | Mechanical conformance to already-documented `repo-governance/` conventions, naming/structure, ADRs, spec-file presence                                                                       | Whether a new rule should exist → architecture; scenario completeness → logic; instruction-decay (stale instruction docs) → instruction     |
-| Security                       | `pr-review-security-maker`     | Secrets in diffs, injection, untrusted-input handling, git-fixture isolation, unsafe git/FS operations                                                                                        | Non-security convention text → governance                                                                                                   |
-| CI-gaming / test-integrity     | `pr-review-integrity-maker`    | CI-gaming (weakened/skipped/narrowed tests, coverage-gaming), missing regression tests (regression-test-mandate)                                                                              | Whether the behavior is correct → logic                                                                                                     |
-| Performance                    | `pr-review-performance-maker`  | Concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, resource (memory/IO/alloc) concerns                                                              | A quality-attribute tradeoff decision → architecture; a perf-relevant convention (e.g. a documented budget rule) → governance               |
-| Documentation-quality          | `pr-review-docs-maker`         | Substantive documentation quality and completeness: README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility                                                         | Mechanical doc-convention conformance (heading hierarchy, linking, naming) → governance; whether the documented behavior is correct → logic |
-| Instruction-decay              | `pr-review-instruction-maker`  | Instruction-decay — a framework/build-tool/package-manager/env-var/CI change in the diff not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/`; instruction bloat (>200 lines / generic filler) | Mechanical convention conformance → governance; whether a new rule should exist → architecture                                              |
+| Discipline                     | Specialist agent               | Owns (in-charter)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOT its job (routes to)                                                                                                                                                                                       |
+| ------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Architecture                   | `pr-review-architecture-maker` | New tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, novel dependencies                                                                                                                                                                                                                                                                                                                                                                                       | Existing-rule layering violations → governance; domain-scenario gaps → logic                                                                                                                                  |
+| Business-logic / correctness   | `pr-review-logic-maker`        | Behavior vs. domain intent + Gherkin acceptance-criteria conformance across edge/error cases                                                                                                                                                                                                                                                                                                                                                                                                       | Error-handling _shape_ rules → governance; should-this-boundary-exist → architecture                                                                                                                          |
+| Governance / rules-conformance | `pr-review-governance-maker`   | Mechanical conformance to already-documented `repo-governance/` conventions, naming/structure, ADRs, spec-file presence                                                                                                                                                                                                                                                                                                                                                                            | Whether a new rule should exist → architecture; scenario completeness → logic; instruction-decay (stale instruction docs) → instruction                                                                       |
+| Security                       | `pr-review-security-maker`     | Secrets in diffs, injection, untrusted-input handling, git-fixture isolation, unsafe git/FS operations                                                                                                                                                                                                                                                                                                                                                                                             | Non-security convention text → governance                                                                                                                                                                     |
+| CI-gaming / test-integrity     | `pr-review-integrity-maker`    | CI-gaming (weakened/skipped/narrowed tests, coverage-gaming), missing regression tests (regression-test-mandate)                                                                                                                                                                                                                                                                                                                                                                                   | Whether the behavior is correct → logic                                                                                                                                                                       |
+| Performance                    | `pr-review-performance-maker`  | Concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, resource (memory/IO/alloc) concerns                                                                                                                                                                                                                                                                                                                                                                   | A quality-attribute tradeoff decision → architecture; a perf-relevant convention (e.g. a documented budget rule) → governance                                                                                 |
+| Documentation-quality          | `pr-review-docs-maker`         | Substantive documentation quality and completeness: README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility                                                                                                                                                                                                                                                                                                                                                              | Mechanical doc-convention conformance (heading hierarchy, linking, naming) → governance; whether the documented behavior is correct → logic                                                                   |
+| Instruction-decay              | `pr-review-instruction-maker`  | Instruction-decay — a framework/build-tool/package-manager/env-var/CI change in the diff not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/`; instruction bloat (>200 lines / generic filler)                                                                                                                                                                                                                                                                                                      | Mechanical convention conformance → governance; whether a new rule should exist → architecture                                                                                                                |
+| Type-soundness                 | `pr-review-types-maker`        | Static type-system soundness across languages — TypeScript `any`/unsafe casts/`@ts-ignore`/`@ts-expect-error` misuse, Rust `unsafe` blocks/unchecked casts/`unwrap()`/`expect()` panics on fallible paths with a documented error type available, F# type-erasure/`obj` misuse/non-exhaustive `match` relying on a silent default, C# nullable-reference-type suppression (`!`) misuse — anywhere a type escape hatch or an unhandled fallible path defeats the compiler's own soundness guarantee | Whether the code compiles → CI/build concern, not a review finding; general logic correctness unrelated to type escape hatches → logic; whether a new type/module boundary should exist at all → architecture |
 
 **Instruction-decay is its own eighth discipline, not folded into governance.**
 `pr-review-governance-maker` checks _conformance to_ the repo's instruction docs; nothing in its
@@ -114,15 +116,17 @@ charter checks _staleness of_ those docs against a changed framework, build tool
 env var, or CI step. Governance therefore explicitly routes instruction-decay findings to
 `pr-review-instruction-maker` rather than raising them itself.
 
-A ninth role, `pr-review-synthesis-maker` (the coordinator), does not discover findings in any of
-the eight disciplines above — it deduplicates, re-categorizes, reasonableness-filters, and
-tool-verifies what the eight specialists find, then posts exactly one consolidated review. See
-[The Boundary Tie-Breaker Rule](#the-boundary-tie-breaker-rule) below for its highest-risk
-re-categorization responsibility.
+Two further roles do not discover findings in any of the nine disciplines above. `pr-review-scout-maker`
+classifies each PR and assembles shared context ahead of the fan-out — it precedes the specialists
+rather than reviewing alongside them. `pr-review-synthesis-maker` (the coordinator) deduplicates,
+re-categorizes, reasonableness-filters, and tool-verifies what the nine specialists find, then posts
+exactly one consolidated review. See
+[The Boundary Tie-Breaker Rule](#the-boundary-tie-breaker-rule) below for the coordinator's
+highest-risk re-categorization responsibility.
 
 ## The Boundary Tie-Breaker Rule
 
-When a finding does not obviously belong to one of the eight disciplines above, resolve it with
+When a finding does not obviously belong to one of the nine disciplines above, resolve it with
 this **tie-breaker**, in order:
 
 1. **Documented + mechanically-checkable rule → governance.** If a `repo-governance/` convention
@@ -141,7 +145,7 @@ decision and a domain-behavior question can look identical in a raw finding. The
 (`pr-review-synthesis-maker`) **owns re-categorizing a misfiled finding across this specific
 boundary** as part of its re-categorize function; no specialist self-adjudicates its own
 tie-breaker verdict once the coordinator has reviewed it. This is the same tie-breaker every
-grey-zone ruling below applies — the six rulings are this rule pre-resolved for six recurring
+grey-zone ruling below applies — the seven rulings are this rule pre-resolved for seven recurring
 cases so the coordinator does not have to re-derive the tie-breaker from scratch every cycle.
 
 ```mermaid
@@ -162,12 +166,13 @@ flowchart TD
   classDef purple fill:#CC78BC,stroke:#000000,color:#000000
 ```
 
-## Six Grey-Zone Rulings
+## Seven Grey-Zone Rulings
 
-The eight-discipline split creates recurring boundary questions between adjacent disciplines. The
-following six are pre-decided so the coordinator applies a lookup instead of re-deriving the
+The nine-discipline split creates recurring boundary questions between adjacent disciplines. The
+following seven are pre-decided so the coordinator applies a lookup instead of re-deriving the
 tie-breaker every cycle. Four are core to the original discipline set; two were added when
-performance and documentation-quality became their own disciplines (D1).
+performance and documentation-quality became their own disciplines (D1); one more was added when
+type-soundness became its own discipline.
 
 - **(a) New cross-module dependency.** A violation of an existing layering rule → governance; a
   genuinely novel boundary judgment → architecture. (This is the tie-breaker's own worked example:
@@ -187,31 +192,49 @@ performance and documentation-quality became their own disciplines (D1).
 - **(f) Docs ↔ governance.** Mechanical doc-convention conformance (heading hierarchy, linking,
   naming, alt-text as a rule) → governance; substantive doc completeness/clarity/drift →
   documentation-quality (docs).
+- **(g) Compiles vs. is sound vs. should the boundary exist.** This boundary is three-way, not two-way.
+  Code that compiles cleanly can still defeat type soundness via an escape hatch (unsafe cast, `any`,
+  `unsafe` block, `!` suppression); a clean compile is NOT evidence against a type-soundness
+  finding — the type-soundness discipline owns escape-hatch _usage_ regardless of whether the build
+  succeeds. The third leg is a type/module-boundary tradeoff, not an escape-hatch-usage question:
+  whether a new type or module boundary should exist at all → architecture (the same
+  should-this-boundary-exist judgment as ruling (b), applied to types).
 
 ## Cost-Control & Noise-Control Mechanics
 
 The Cloudflare production AI-code-review system this repo's fan-out/coordinator shape is modeled
 on carries a set of cost- and noise-control mechanics beyond the discipline split itself. They are
-folded into this convention because an unbounded eight-specialist fan-out on every PR would cost
+folded into this convention because an unbounded nine-specialist fan-out on every PR would cost
 far more than a single reviewer without a matching gain in review quality.
 
 ### Risk-tier fan-out (D12)
 
-The primary cost lever is **diff-size tiering**, not model choice. Each PR is classified into one
-of three tiers by line count, file count, and whether it touches a security-sensitive path, and the
-specialist set fans out accordingly:
+The primary cost lever is **diff-size tiering**, not model choice. Risk-tier classification is
+performed by [`pr-review-scout-maker`](../../../.claude/agents/pr-review-scout-maker.md), not by
+`pr-review-synthesis-maker` directly — the scout classifies each PR into one of three tiers by line
+count, file count, and whether it touches a security-sensitive path, and the specialist set fans out
+accordingly:
 
 - **Trivial** (≤10 changed lines AND ≤20 files, no security-sensitive path) → coordinator-only: the
   coordinator runs one consolidated generalist pass itself, with no specialist fan-out.
 - **Lite** (≤100 lines AND ≤20 files) → a reduced specialist set of the four highest-yield lenses
   for this repo (governance, logic, security, integrity) plus the coordinator.
 - **Full** (>100 lines OR >20 files OR touches a security-sensitive path — secrets/`.env`, git
-  identity, CI/workflow, `pr-merge-protocol`) → all eight specialists plus the coordinator.
+  identity, CI/workflow, `pr-merge-protocol`) → all nine specialists plus the coordinator, minus the
+  Content-Type Applicability Filter (DD-10).
 
 **Security-sensitive paths force `full` regardless of size** — this repo's no-secrets iron rule and
 git-identity guardrail make that non-negotiable. The tier is computed once per PR, re-evaluated each
 cycle (since the fixer's commits change the diff), and recorded in the consolidated review header so
 the tier decision is auditable.
+
+**Content-type applicability filter (DD-10)**: within `full` tier, `pr-review-scout-maker` may skip
+`pr-review-types-maker` (no typed source in the diff) or `pr-review-integrity-maker` (no test/CI
+files in the diff) — the only two disciplines whose own charter is gated on a specific artifact class
+rather than being applicable to any changed content. The other seven specialists are never skipped by
+file type; see
+[`pr-review-scout-maker.md`'s own filter definition](../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)
+for the full rule and its fresh-per-cycle re-evaluation requirement.
 
 ### Shared-context extract-once + large-diff handling (D13)
 
@@ -224,15 +247,18 @@ hand-edited "generated" file is never silently missed because nothing is silentl
 
 Two mechanics keep this full-diff posture tractable rather than merely expensive:
 
-- **Shared context, extracted once.** The orchestrator assembles the PR metadata, linked-plan/issue
-  context, and the full diff **once** into a single shared-context brief every specialist reads,
-  rather than each specialist separately re-deriving the same context (which would multiply token
-  cost by the number of specialists).
-- **Coordinator-discretion large-diff slicing.** For a `full`-tier PR whose diff exceeds a
-  specialist's comfortable context budget, the coordinator MAY have specialists review
-  per-domain-relevant file slices rather than the whole diff at once, recording in the review header
-  that the diff was sliced. If a diff still cannot be reviewed in one fan-out, the coordinator emits
-  an explicit "diff exceeds single-review scope — reviewed in N slices" note rather than silently
+- **Shared context, extracted once.**
+  [`pr-review-scout-maker`](../../../.claude/agents/pr-review-scout-maker.md) assembles the PR
+  metadata, linked-plan/issue context, and the full diff **once** into a single shared-context
+  brief every specialist reads, rather than each specialist separately re-deriving the same context
+  (which would multiply token cost by the number of specialists) — this extraction is the scout's
+  job, not `pr-review-synthesis-maker`'s.
+- **Scout-discretion large-diff slicing.** For a `full`-tier PR whose diff exceeds a
+  specialist's comfortable context budget, `pr-review-scout-maker` MAY have specialists review
+  per-domain-relevant file slices rather than the whole diff at once, recording the slicing choice
+  in the shared-context brief for `pr-review-synthesis-maker` to carry into the review header it
+  posts. If a diff still cannot be reviewed in one fan-out, the scout records an explicit
+  "diff exceeds single-review scope — reviewed in N slices" note in the brief rather than silently
   under-covering it.
 
 ### Per-specialist SUPPRESS blocks
@@ -261,8 +287,9 @@ no enforceable rule).
 A re-review **must not re-raise a finding a human has explicitly dismissed** on its thread. A
 human's "won't fix" or "I disagree" reply resolves the thread for future cycles, mirroring
 `pr-review-fixer`'s own reasoned-reject on the agent side. Before fanning out a new cycle, the
-coordinator reads the prior cycle's thread resolution status, including any human dismissal, so the
-specialists do not waste a finding re-litigating something a human has already settled.
+scout (`pr-review-scout-maker`) reads the prior cycle's thread resolution status, including any
+human dismissal, so the specialists do not waste a finding re-litigating something a human has
+already settled.
 
 ### Boundary-tag-strip untrusted-input hardening
 
@@ -270,23 +297,25 @@ The inherited untrusted-input rule is sharpened with a concrete technique: befor
 comment, or linked-issue text reaches a model, **strip user-supplied structural boundary tags** —
 fabricated delimiters such as `<mr_input>`, `<system>`, or `<review>` that a PR author could inject
 to spoof the prompt frame and redirect a reviewer's behavior. This is in addition to, not a
-replacement for, the inherited prompt-injection filtering every specialist already carries.
+replacement for, the inherited prompt-injection filtering every specialist, `pr-review-scout-maker`
+(the pipeline's first and only raw-input ingestion point), and `pr-review-synthesis-maker` already
+carry.
 
 ## Quality-Gate Enhancements
 
-The eight-discipline split, the boundary tie-breaker, and the cost- and noise-control mechanics
+The nine-discipline split, the boundary tie-breaker, and the cost- and noise-control mechanics
 above answer who reviews what and how much of the diff gets fanned out. They do not by themselves
 guard against three known failure modes of LLM-driven review: a stated confidence score that does
 not track actual correctness, a CRITICAL finding that reviewers merely agree on rather than
 demonstrate, and a fixed-cycle policy mistaken for a data-derived optimum. The following four
 enhancements close those gaps as documented manual procedures and rules layered on top of the
-[Eight Reviewer Disciplines](#the-eight-reviewer-disciplines) above.
+[Nine Reviewer Disciplines](#the-nine-reviewer-disciplines) above.
 
 ### Confidence-Calibration Spot-Check
 
 A stated numeric confidence is only as trustworthy as its **calibration** — how closely a model's
 self-reported confidence tracks its actual accuracy. Every specialist already inherits the
-[0-100 confidence scale with a hard drop below 80](#the-eight-reviewer-disciplines); this
+[0-100 confidence scale with a hard drop below 80](#the-nine-reviewer-disciplines); this
 enhancement is the documented manual procedure that keeps that ≥80 threshold honest over time:
 
 1. Periodically sample a batch of past findings that crossed the ≥80 confidence-to-post threshold
@@ -322,7 +351,7 @@ subtle, high-consequence defects:
   defeats the purpose of a second, independent pass.
 
 This high-risk scope is deliberately narrower than the
-[risk-tier fan-out's security-sensitive path list](#risk-tier-fan-out-d12) that forces all eight
+[risk-tier fan-out's security-sensitive path list](#risk-tier-fan-out-d12) that forces all nine
 specialists into a review — a diff can be `full`-tier without touching auth, payments, migrations,
 or a public API, in which case this adversarial pass does not apply. The two mechanics are related
 but distinct: one controls how many specialists review a diff, the other controls whether a
@@ -370,12 +399,13 @@ Five metric families run continuously against live post-cutover PRs:
 
 - **Precision** — consolidated-finding precision, the fraction of findings the coordinator posts
   that `pr-review-fixer` confirms as real (confirmed-real / total-posted). This is the most direct
-  read on whether the eight-specialist fan-out produces trustworthy findings rather than noise.
+  read on whether the nine-specialist fan-out produces trustworthy findings rather than noise.
 - **Per-discipline acceptance rate** — fixes divided by total findings, tracked separately per
-  discipline. Watch specifically the two lenses the discipline split newly added — `performance`
-  and `docs` — to confirm each earns its fan-out cost, and the catch-all disciplines — `governance`
-  and `logic` — whose broad owned scope makes them the most likely to over-report if a specialist's
-  charter drifts loose.
+  discipline. Watch specifically the lenses the discipline split newly added — `performance` and
+  `docs`, and now `type-soundness` joins them as a newly-added discipline to watch — to confirm each
+  earns its fan-out cost (whether it produces enough real findings to justify running it on every
+  applicable PR), and the catch-all disciplines — `governance` and `logic` — whose broad owned scope
+  makes them the most likely to over-report if a specialist's charter drifts loose.
 - **Outdated Rate** (BitsAI-CR-style) — the share of posted findings that go stale or irrelevant by
   the time `pr-review-fixer` reaches them, typically because an earlier cycle's fix already resolved
   the diff the finding targeted. A rising outdated rate points at review cadence, not finding
@@ -444,7 +474,7 @@ that belongs in its own document rather than being folded into this convention's
 ### Bot Identity and the `REQUEST_CHANGES` Gap
 
 Only `pr-review-synthesis-maker` posts to the PR — through the GitHub Reviews API, as the sole poster
-of record; the eight specialists never post, they hand their raw findings to the coordinator. The
+of record; the nine specialists never post, they hand their raw findings to the coordinator. The
 coordinator authenticates as the PR author's own identity, and GitHub rejects a `REQUEST_CHANGES`
 review submitted against one's own pull request. Every blocking review — including one carrying a
 CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
@@ -459,7 +489,7 @@ AI-attribution and formal `REQUEST_CHANGES` question until an org-level identity
 Cloudflare's own production system — the one this convention's fan-out/coordinator shape is modeled
 on (see [Cost-Control & Noise-Control Mechanics](#cost-control--noise-control-mechanics)) — reports a
 median cost of ≈$1 per review. Applied to this repo's shape, a `full`-tier PR fanning out to all
-eight specialists across the fixed three-cycle ceiling costs roughly ≈$1 × 8 specialists × 3 cycles
+nine specialists across the fixed three-cycle ceiling costs roughly ≈$1 × 9 specialists × 3 cycles
 per PR, bounded downward by the [risk-tier fan-out (D12)](#risk-tier-fan-out-d12): a `trivial` PR
 runs the coordinator alone and a `lite` PR fans out to only four specialists, so its actual per-PR
 cost sits well under that ceiling. This convention does not yet mandate a specific budget or alert
@@ -507,18 +537,19 @@ be raised at all, regardless of which discipline would otherwise plausibly own i
 ### FAIL: Re-raising a human-dismissed finding
 
 A specialist re-raises, in cycle 2, a finding a human explicitly marked "won't fix" in cycle 1's
-thread. This violates the human-dismissal-respect rule — the coordinator should have surfaced the
-prior dismissal before fanning out, and the specialist should not have re-litigated a settled thread.
+thread. This violates the human-dismissal-respect rule — the scout (`pr-review-scout-maker`) should
+have surfaced the prior dismissal before fanning out, and the specialist should not have
+re-litigated a settled thread.
 
 ## Enforcement
 
 This convention is enforced by:
 
-- **`repo-rules-checker`**: audits the nine `pr-review-*-maker.md` agent definitions against the
+- **`repo-rules-checker`**: audits the eleven `pr-review-*-maker.md` agent definitions against the
   discipline table's owned/routed-to scope and flags a specialist charter that omits its
   `SUPPRESS` block, misstates a routing target, or contradicts a grey-zone ruling.
-- **`pr-review-synthesis-maker`**: applies the boundary tie-breaker rule and the six grey-zone
-  rulings live, during its re-categorize function, against every raw finding the eight specialists
+- **`pr-review-synthesis-maker`**: applies the boundary tie-breaker rule and the seven grey-zone
+  rulings live, during its re-categorize function, against every raw finding the nine specialists
   emit.
 
 Neither the agent definitions nor their prompts are edited here — this document records the
@@ -533,7 +564,7 @@ disciplines, the tie-breaker, the grey zones, and the cost/noise mechanics those
 - [Criticality Levels Convention](./criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity
   scale every specialist inherits unchanged
 - [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - The three-role pattern this
-  fan-out variant adapts into eight makers plus one coordinator
+  fan-out variant adapts into nine makers plus one coordinator
 - [CI Blocker Resolution Convention](./ci-blocker-resolution.md) - Root-cause-first handling of CI
   blockers that the CI-gaming/test-integrity discipline enforces at review time
 - [Regression Test Mandate](./regression-test-mandate.md) - Every bug fix needs a reproducing test;

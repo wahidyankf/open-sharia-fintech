@@ -36,7 +36,7 @@ flowchart TD
     direction LR
     A0["pr-review-scout-maker<br/>(NEW: classify + assemble<br/>+ dismissal-read)"]:::blue
     A1["pr-review-synthesis-maker<br/>(trimmed: post-fan-out only)"]:::purple
-    A2["9 specialists<br/>(+ pr-review-types-maker)"]:::blue
+    A2["up to 9 specialists<br/>(+ pr-review-types-maker;<br/>DD-10 may skip up to 2)"]:::blue
     A3["pr-review-fixer"]:::orange
     A0 -->|"tier-selected<br/>fan-out"| A2 --> A1 --> A3
   end
@@ -54,7 +54,7 @@ flowchart TD
 sequenceDiagram
   participant O as Orchestrator (pr-review-quality-gate loop)
   participant SC as pr-review-scout-maker (NEW)
-  participant SP as 9 specialist-makers
+  participant SP as up to 9 specialist-makers<br/>(DD-10 may skip up to 2)
   participant SY as pr-review-synthesis-maker (trimmed)
   participant GH as GitHub PR Reviews API
   participant F as pr-review-fixer
@@ -80,7 +80,7 @@ sequenceDiagram
 %% Color palette: Green #029E73 (trivial), Gold #DE8F05 (lite), Red #D55E00 (full)
 flowchart TD
   D["Scout reads diff +<br/>plan/issue context"] --> Q1{"Security-sensitive path?<br/>(secrets, identity,<br/>CI/workflow)"}
-  Q1 -->|Yes| FULL["full tier<br/>(all nine specialists)"]:::red
+  Q1 -->|Yes| FULL["full tier<br/>(up to nine specialists;<br/>DD-10 content-type filter<br/>may skip up to 2)"]:::red
   Q1 -->|No| Q2{"<= 10 lines AND <= 20 files?"}
   Q2 -->|Yes| TRIV["trivial tier<br/>(zero specialists;<br/>SY does the pass itself)"]:::green
   Q2 -->|No| Q3{"<= 100 lines AND <= 20 files?"}
@@ -171,6 +171,44 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   the role (see the original request) and reads unambiguously as "goes first, reports back" rather
   than "triage" (which could be misread as bug-severity triage, a different concept already covered
   by the Criticality Levels Convention).
+- **DD-10: Content-Type Applicability Filter, discovered during this PR's own Phase 5 cycle-1
+  dogfood, not pre-planned.** Cycle 1's fan-out against this plan's own delivering PR (a 38-file,
+  Markdown-only diff) surfaced that 7 of 9 specialists found real, high-confidence findings — including
+  a CRITICAL from `pr-review-security-maker` — while exactly 2 (`pr-review-types-maker`,
+  `pr-review-integrity-maker`) found nothing, both for a structural reason: their own charters are
+  gated on an artifact class (typed source; test/CI files) absent from this diff. The maintainer,
+  grilled on whether to react to this mid-dogfood, explicitly chose the broader of three offered
+  options — generalize `full`-tier fan-out to skip a specialist when its own charter's artifact-class
+  gate is unmet — over the narrower two-specialist-only option and over parking it for later
+  monitoring data, with one hard condition: the filter **must be re-derived fresh every cycle** from
+  that cycle's own current diff, never cached from a prior cycle, since the fixer's own pushed commits
+  between cycles can change the diff's file-type composition. Implemented as a `full`-tier-only
+  addendum to D12 (see [`pr-review-scout-maker.md`](../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)):
+  only `pr-review-types-maker` and `pr-review-integrity-maker` are ever skipped, and only when their
+  own declared artifact class is verifiably absent from the current cycle's diff; the other seven
+  specialists are never skipped by file type, since their charters — as this very cycle proved — reason
+  about intent, tradeoffs, and conventions in prose and prompts exactly as readily as in code. This
+  decision is intentionally conservative (2 of 9 candidates, default-to-include on any ambiguity) to
+  avoid the exact risk the maintainer flagged when choosing the broader option: an incorrectly
+  aggressive content-type skip could have suppressed `pr-review-security-maker` on this same diff and
+  never surfaced the CRITICAL untrusted-input-handling finding it actually caught.
+- **DD-11: Per-specialist attribution in the posted review, discovered in the same cycle-1 dogfood
+  turn as DD-10.** After seeing DD-10's own analysis (which specialists found what), the maintainer
+  asked that this data not stay a one-off manual read of agent transcripts — it should be durably
+  captured in every posted review, since it is exactly the raw material the
+  [Post-Cutover Monitoring Plan](../../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
+  already names as a goal ("per-discipline acceptance rate") but had no mechanism to actually record.
+  `pr-review-synthesis-maker.md`'s Consolidated Review Header gains a `**Per-specialist raw
+findings**` field (raw count per fanned-out specialist, including zero-finding specialists and
+  DD-10 skips with their reason), and every posted finding gains a `**Raised by**:` byline naming its
+  originating specialist(s) — a Deduplicate-function merge keeps every contributing name, so a
+  multiply-corroborated finding (this cycle's scout→synthesis wiring bug, independently caught by
+  four specialists) visibly shows its corroboration count rather than reading as one specialist's
+  opinion. This makes every posted review, on its own, sufficient raw data for a future acceptance-
+  rate read — no side log, no re-deriving from agent transcripts. The maintainer explicitly asked for
+  cycle 1 to be **restarted from a fresh scout pass** rather than patched mid-flight, so that cycle 1's
+  own posted review reflects DD-10 and DD-11 consistently together, instead of a hybrid where scout
+  ran under pre-DD-10 logic while synthesis posted under post-DD-11 formatting.
 
 ## File-Impact Analysis
 

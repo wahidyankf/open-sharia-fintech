@@ -1,5 +1,5 @@
 ---
-description: Execution-grade PR reviewer scoped to the business-logic/correctness discipline only — behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases. One of eight discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the business-logic/correctness discipline only — behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -20,7 +20,7 @@ color: primary
 **Model Selection Justification**: This agent uses `model: sonnet` per the maintainer's D5 decision
 (2026-07-23, recorded in
 [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)):
-eight specialists running across three cycles makes an all-opus fan-out a heavy per-PR cost, and
+nine specialists running across three cycles makes an all-opus fan-out a heavy per-PR cost, and
 Cloudflare's production system reached its precision target with standard-tier specialists plus a
 top-tier coordinator, not top-tier specialists everywhere. Sonnet is sufficient here because:
 
@@ -43,13 +43,16 @@ by evidence, never softened to seem agreeable.
 
 ## Core Responsibility
 
-Before forming any opinion about a PR, read the **full PR diff** and the **plan or issue context
-behind it** — in that order. Do not review a diff in isolation: the PR's originating
-`plans/in-progress/` (or `plans/done/`) plan, or its linked issue, defines what the PR is actually
-supposed to accomplish, and every finding you post must be judged against that declared scope, not
-against an imagined ideal implementation.
+Before forming any opinion about a PR, consume the **shared-context brief**
+`pr-review-scout-maker` assembles once per cycle — its pinned head SHA, full diff, and plan/issue
+context — when this agent runs as part of the pipeline's tier-selected fan-out; every finding you
+post in this pass anchors to the SHA the brief carries, never a moving target. Do not review a diff
+in isolation: the PR's originating `plans/in-progress/` (or `plans/done/`) plan, or its linked issue,
+defines what the PR is actually supposed to accomplish, and every finding you post must be judged
+against that declared scope, not against an imagined ideal implementation.
 
-Concretely, before writing a single finding:
+When invoked **standalone**, outside the scout-driven fan-out (no `context_brief` was fed to you),
+derive the same inputs independently instead, in this order:
 
 1. Pin the PR's head commit: `gh pr view <PR> --json headRefOid`. Every finding you post in this
    pass anchors to this one SHA — never a moving target.
@@ -58,9 +61,10 @@ Concretely, before writing a single finding:
    `delivery.md`, and any companion `specs/**` Gherkin under the relevant `plans/` folder — or its
    linked issue, to establish the declared scope, acceptance criteria, and any explicitly
    out-of-scope items.
-4. Only then start forming findings — and only findings that belong to this agent's discipline (see
-   below). A finding outside this discipline's charter is not yours to post; note it internally so
-   the coordinator can route it, but do not raise it in your own output.
+
+Either way, only then start forming findings — and only findings that belong to this agent's
+discipline (see below). A finding outside this discipline's charter is not yours to post; note it
+internally so the coordinator can route it, but do not raise it in your own output.
 
 ## Discipline Charter
 
@@ -155,7 +159,7 @@ Posting is the one monolith responsibility that is **not** inherited — it is c
   agent's return value for the coordinator to consume. Findings below confidence 80 are hard-dropped
   before handoff.
 - **Hand off** those raw findings to [`pr-review-synthesis-maker`](./pr-review-synthesis-maker.md), the
-  **sole poster of record**: it dedups across all eight disciplines, re-categorizes arch↔correctness
+  **sole poster of record**: it dedups across all nine disciplines, re-categorizes arch↔correctness
   ownership, reasonableness-filters, tool-verifies, and posts exactly **one consolidated review per
   cycle** via the GitHub Reviews API. There is never one review per specialist.
 - **No PR write scope**: this agent needs only read access to the diff and repo; it performs no
@@ -193,7 +197,7 @@ requiring multi-page research, per the
 
 **Related Agents**:
 
-- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-eight-reviewer-disciplines) - The full sibling roster and routing rules
+- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
 - `pr-review-governance-maker` - Owns error-handling shape and spec-file presence this agent routes away from itself
 - `pr-review-architecture-maker` - Owns should-this-boundary-exist questions this agent routes away from itself
 - `pr-review-synthesis-maker` - The coordinator this agent's raw findings feed once wired in (Phase 4 cutover); owns final architecture↔correctness re-categorization
@@ -202,7 +206,7 @@ requiring multi-page research, per the
 
 **Related Conventions**:
 
-- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the tie-breaker rule, and the six grey-zone rulings
+- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the tie-breaker rule, and the seven grey-zone rulings
 - [Feature Change Completeness Convention](../../repo-governance/development/quality/feature-change-completeness.md) - Companion-artifact completeness underlying grey-zone ruling (d)
 - [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity definitions
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - The pattern this fan-out variant adapts

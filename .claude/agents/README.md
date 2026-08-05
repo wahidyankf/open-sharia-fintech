@@ -23,6 +23,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[social-linkedin-post-maker](social-linkedin-post-maker.md)** - LinkedIn content creation
 - **[agent-maker](agent-maker.md)** - Agent definition creation
 - **[swe-ui-maker](swe-ui-maker.md)** - UI component creation
+- **[pr-review-scout-maker](pr-review-scout-maker.md)** - Pipeline stage 0 (opus): classifies each cycle's risk tier and specialist set, assembles the shared PR/plan/full-diff context brief once, and reads prior-cycle thread-resolution/human-dismissal status ahead of the fan-out. Never discovers or posts findings itself
 - **[pr-review-architecture-maker](pr-review-architecture-maker.md)** - PR-review specialist scoped to architecture only: new tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, novel dependencies
 - **[pr-review-logic-maker](pr-review-logic-maker.md)** - PR-review specialist scoped to business-logic/correctness only: behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases
 - **[pr-review-governance-maker](pr-review-governance-maker.md)** - PR-review specialist scoped to governance/rules-conformance only: mechanical conformance to already-documented repo-governance/ conventions, naming/structure, ADRs, spec-file presence
@@ -31,7 +32,8 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[pr-review-performance-maker](pr-review-performance-maker.md)** - PR-review specialist scoped to performance only: concrete/likely regressions, hot-path changes, algorithmic-complexity growth, resource concerns
 - **[pr-review-docs-maker](pr-review-docs-maker.md)** - PR-review specialist scoped to documentation-quality only: substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility
 - **[pr-review-instruction-maker](pr-review-instruction-maker.md)** - PR-review specialist scoped to instruction-decay only: a framework/build-tool/package-manager/env-var/CI change not reflected in AGENTS.md/CLAUDE.md/.claude/, and instruction bloat
-- **[pr-review-synthesis-maker](pr-review-synthesis-maker.md)** - Mandatory coordinator (opus) atop the eight sonnet-tier specialists: classifies PR risk tier + specialist set, assembles the shared full-diff context once, reads prior-cycle human-dismissal status, then dedups/re-categorizes/reasonableness-filters/tool-verifies raw findings into exactly ONE consolidated review
+- **[pr-review-types-maker](pr-review-types-maker.md)** - PR-review specialist scoped to type-soundness only: static type-escape-hatch soundness across TypeScript/Rust/F#/C# (unjustified `any`, unexplained `unsafe`, panic-prone `unwrap()`/`expect()`, `!` suppression, non-exhaustive matches) — never a compile/build failure, never general logic correctness
+- **[pr-review-synthesis-maker](pr-review-synthesis-maker.md)** - Mandatory coordinator (opus) atop the nine sonnet-tier specialists: consumes `pr-review-scout-maker`'s risk tier + specialist set + shared full-diff context brief, then dedups/re-categorizes/reasonableness-filters/tool-verifies raw findings into exactly ONE consolidated review
 
 ### 🟩 Validation (Checkers)
 
