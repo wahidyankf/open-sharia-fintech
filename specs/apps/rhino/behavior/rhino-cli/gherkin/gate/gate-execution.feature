@@ -26,6 +26,11 @@ Feature: Gate execution
     When its candidate set contains matching and excluded paths
     Then the leaf receives only matching non-excluded repository-relative paths
 
+  Scenario: A registered Rhino CLI gate accepts configured exclusions
+    Given the frontmatter-date gate declares website exclusions
+    When its CI gate runs by id
+    Then the frontmatter-date gate succeeds with those exclusions
+
   Scenario: An empty scoped match is a successful skip
     Given a file-scoped gate has no eligible paths
     When that gate runs

@@ -117,6 +117,7 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
         "frontmatter-dates" => md_validate_frontmatter_dates::run(
             &md_validate_frontmatter_dates::FrontmatterAuditArgs {
                 path: vec![],
+                exclude: vec![],
                 positional: vec![],
             },
             output_format,

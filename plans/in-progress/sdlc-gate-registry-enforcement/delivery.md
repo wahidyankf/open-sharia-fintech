@@ -1865,33 +1865,38 @@ that still hardcodes `ose-public`'s app names would either recreate `beaver-nest
 capabilities it depends on. See
 [tech-docs §2.8.5](./tech-docs.md#285-convergence-sequence--upstream-before-downstream).
 
-- [ ] [AI] Create the Phase 11 worktree from the merged Phase 1 state — commands:
-      `git fetch origin main` and
-      `git worktree add -b sdlc-gate-registry-enforcement-defork worktrees/sdlc-gate-registry-enforcement-defork origin/main`
-      — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
-- [ ] [AI] Install dependencies in the Phase 11 worktree — command:
-      `npm --prefix worktrees/sdlc-gate-registry-enforcement-defork install` — acceptance: exits 0.
-- [ ] [AI] Initialize its toolchain — command:
-      `(cd worktrees/sdlc-gate-registry-enforcement-defork && npm run doctor -- --fix)` — acceptance:
-      exits 0 and the follow-up doctor check reports no missing tool.
-- [ ] [AI] **P11-PRESERVE-CANONICAL-FIXES** — before composing Beaver's improvements, retain
-      public's scope-correct non-discovery Git-state handling, `CwdLock` repo-config reads, and
-      serialized Git-sensitive unit-test layout; add inherited-Git-variable clearing to each
-      serialized test command without collapsing them into a parallel command — acceptance:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` and
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` exit 0;
-      `project.json` retains sequential `test:unit` commands, each prefixed with all three `env -u`
-      variables, and focused Git-state regressions remain green.
+- [x] [AI] Create the Phase 11 worktree from the merged Phase 1 state — commands:
+  - Execution note: Created `worktrees/sdlc-gate-registry-enforcement-defork` on branch `sdlc-gate-registry-enforcement-defork` from merged Phase 1 `origin/main`; the Cycle 2 review head was `811461e54618eb6f78399d613ae4662ae5b7ac0b`, with later integration recorded by Cycle 3.
+    `git fetch origin main` and
+    `git worktree add -b sdlc-gate-registry-enforcement-defork worktrees/sdlc-gate-registry-enforcement-defork origin/main`
+    — acceptance: the worktree is clean and `HEAD...origin/main` reports `0 0`.
+- [x] [AI] Install dependencies in the Phase 11 worktree — command:
+  - Execution note: Ran the declared workspace installation before the Phase 11 validation and review cycles; the subsequent full Husky pre-push suite completed successfully.
+    `npm --prefix worktrees/sdlc-gate-registry-enforcement-defork install` — acceptance: exits 0.
+- [x] [AI] Initialize its toolchain — command:
+  - Execution note: Ran the declared doctor initialization and used the resulting toolchain for Rust, Nx, markdown, and hook validation throughout Phase 11.
+    `(cd worktrees/sdlc-gate-registry-enforcement-defork && npm run doctor -- --fix)` — acceptance:
+    exits 0 and the follow-up doctor check reports no missing tool.
+- [x] [AI] **P11-PRESERVE-CANONICAL-FIXES** — before composing Beaver's improvements, retain
+  - Execution note: Preserved serialized target commands and expanded inherited Git-environment isolation; `cargo_target_share` and `repo_config_data_driven` regressions pass in the Phase 11 commits.
+    public's scope-correct non-discovery Git-state handling, `CwdLock` repo-config reads, and
+    serialized Git-sensitive unit-test layout; add inherited-Git-variable clearing to each
+    serialized test command without collapsing them into a parallel command — acceptance:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` and
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven` exit 0;
+    `project.json` retains sequential `test:unit` commands, each prefixed with all three `env -u`
+    variables, and focused Git-state regressions remain green.
 
 ### 11.1 Delete the dead pre-commit pipeline
 
 Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-pre-commit-pipeline).
 
-- [ ] [AI] **RED** — prove the pipeline is unreachable before deleting it: assert that no CLI
-      subcommand dispatches to `commands/git_pre_commit.rs` — acceptance:
-      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- --help > /tmp/help-before.txt`
-      succeeds, and `/usr/bin/grep -rn "git_pre_commit" apps/rhino-cli/src/cli.rs` returns no match.
-      Record `help-before.txt`; it is the acceptance oracle for the deletion.
+- [x] [AI] **RED** — prove the pipeline is unreachable before deleting it: assert that no CLI
+  - Execution note: Captured the pre-removal help oracle and verified no dispatch reference existed before the deletion in `3699c04885e202849666597f0b044cd981bb74f9`.
+    subcommand dispatches to `commands/git_pre_commit.rs` — acceptance:
+    `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- --help > /tmp/help-before.txt`
+    succeeds, and `/usr/bin/grep -rn "git_pre_commit" apps/rhino-cli/src/cli.rs` returns no match.
+    Record `help-before.txt`; it is the acceptance oracle for the deletion.
 
   **Gherkin (binds) →** "The dead pre-commit pipeline is removed"
 
@@ -1904,41 +1909,51 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
     And "rhino-cli --help" lists the same commands as before the deletion
   ```
 
-- [ ] [AI] **P1B-DEAD-1** (`blocks: P1B-DEAD-2`) — delete
-      `apps/rhino-cli/src/application/git/pre_commit.rs` — command:
-      `git rm apps/rhino-cli/src/application/git/pre_commit.rs` — acceptance: path is staged deleted.
-- [ ] [AI] **P1B-DEAD-2** (`blockedBy: P1B-DEAD-1`; `blocks: P1B-DEAD-3`) — delete
-      `apps/rhino-cli/src/commands/git_pre_commit.rs` — command:
-      `git rm apps/rhino-cli/src/commands/git_pre_commit.rs` — acceptance: path is staged deleted.
-- [ ] [AI] **P1B-DEAD-3** (`blockedBy: P1B-DEAD-2`; `blocks: P1B-DEAD-4`) — remove the module declaration from
-      `apps/rhino-cli/src/commands.rs` — command:
-      `rg -n "git_pre_commit" apps/rhino-cli/src/commands.rs` — acceptance: exits 1 after the edit.
-- [ ] [AI] **P1B-DEAD-4** (`blockedBy: P1B-DEAD-3`; `blocks: P1B-DEAD-5`) — remove the re-export from
-      `apps/rhino-cli/src/internal/git.rs` — command:
-      `rg -n "pre_commit" apps/rhino-cli/src/internal/git.rs` — acceptance: exits 1 after the edit.
-- [ ] [AI] **P1B-DEAD-5** (`blockedBy: P1B-DEAD-4`; `blocks: P1B-DEAD-6`) — remove only the orphaned `Deps` implementation from
-      `apps/rhino-cli/src/infrastructure/git/mod.rs` — command:
-      `cargo check --manifest-path apps/rhino-cli/Cargo.toml` — acceptance: exits 0.
-- [ ] [AI] **P1B-DEAD-6** (`blockedBy: P1B-DEAD-5`; `blocks: P1B-DEAD-7`) — delete orphaned
-      `apps/rhino-cli/src/domain/git/staged_files.rs` — command:
-      `git rm apps/rhino-cli/src/domain/git/staged_files.rs` — acceptance: path is staged deleted.
-- [ ] [AI] **P1B-DEAD-7** (`blockedBy: P1B-DEAD-6`; `blocks: P1B-DEAD-VALIDATE`) — update the stale reference in
-      `apps/rhino-cli/src/application/fs/mock.rs` — command:
-      `rg -n "pre_commit|staged_files" apps/rhino-cli/src/application/fs/mock.rs` — acceptance: exits 1.
-- [ ] [AI] **P1B-DEAD-VALIDATE** (`blockedBy: P1B-DEAD-7`) — command:
-      `cargo build --release --manifest-path apps/rhino-cli/Cargo.toml && npm exec nx -- run rhino-cli:test:quick && diff /tmp/help-before.txt <(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- --help)`
-      — acceptance: exits 0; changed help means the code was not dead.
-- [ ] [AI] **REFACTOR** — confirm the largest hardcoded-paths site is gone — acceptance:
-      `/usr/bin/grep -rn "ayokoding" apps/rhino-cli/src/` returns no match. Verify the inverse holds
-      pre-edit: the same command returns matches before the deletion.
+- [x] [AI] **P1B-DEAD-1** (`blocks: P1B-DEAD-2`) — delete
+  - Execution note: Deleted `application/git/pre_commit.rs` in `3699c04885e202849666597f0b044cd981bb74f9`.
+    `apps/rhino-cli/src/application/git/pre_commit.rs` — command:
+    `git rm apps/rhino-cli/src/application/git/pre_commit.rs` — acceptance: path is staged deleted.
+- [x] [AI] **P1B-DEAD-2** (`blockedBy: P1B-DEAD-1`; `blocks: P1B-DEAD-3`) — delete
+  - Execution note: Deleted `commands/git_pre_commit.rs` in `3699c04885e202849666597f0b044cd981bb74f9`.
+    `apps/rhino-cli/src/commands/git_pre_commit.rs` — command:
+    `git rm apps/rhino-cli/src/commands/git_pre_commit.rs` — acceptance: path is staged deleted.
+- [x] [AI] **P1B-DEAD-3** (`blockedBy: P1B-DEAD-2`; `blocks: P1B-DEAD-4`) — remove the module declaration from
+  - Execution note: Removed the obsolete module declaration in `apps/rhino-cli/src/commands.rs`; the full crate compiles and test suite passes.
+    `apps/rhino-cli/src/commands.rs` — command:
+    `rg -n "git_pre_commit" apps/rhino-cli/src/commands.rs` — acceptance: exits 1 after the edit.
+- [x] [AI] **P1B-DEAD-4** (`blockedBy: P1B-DEAD-3`; `blocks: P1B-DEAD-5`) — remove the re-export from
+  - Execution note: Removed the obsolete `pre_commit` re-export from `apps/rhino-cli/src/internal/git.rs` in the same verified change.
+    `apps/rhino-cli/src/internal/git.rs` — command:
+    `rg -n "pre_commit" apps/rhino-cli/src/internal/git.rs` — acceptance: exits 1 after the edit.
+- [x] [AI] **P1B-DEAD-5** (`blockedBy: P1B-DEAD-4`; `blocks: P1B-DEAD-6`) — remove only the orphaned `Deps` implementation from
+  - Execution note: Removed the orphaned Git implementation from `apps/rhino-cli/src/infrastructure/git/mod.rs`; Cargo check and later full pre-push validation pass.
+    `apps/rhino-cli/src/infrastructure/git/mod.rs` — command:
+    `cargo check --manifest-path apps/rhino-cli/Cargo.toml` — acceptance: exits 0.
+- [x] [AI] **P1B-DEAD-6** (`blockedBy: P1B-DEAD-5`; `blocks: P1B-DEAD-7`) — delete orphaned
+  - Execution note: Deleted `apps/rhino-cli/src/domain/git/staged_files.rs` in the dead-pipeline removal commit.
+    `apps/rhino-cli/src/domain/git/staged_files.rs` — command:
+    `git rm apps/rhino-cli/src/domain/git/staged_files.rs` — acceptance: path is staged deleted.
+- [x] [AI] **P1B-DEAD-7** (`blockedBy: P1B-DEAD-6`; `blocks: P1B-DEAD-VALIDATE`) — update the stale reference in
+  - Execution note: Removed stale mock references; repository search and crate validation found no remaining dead-pipeline dependency.
+    `apps/rhino-cli/src/application/fs/mock.rs` — command:
+    `rg -n "pre_commit|staged_files" apps/rhino-cli/src/application/fs/mock.rs` — acceptance: exits 1.
+- [x] [AI] **P1B-DEAD-VALIDATE** (`blockedBy: P1B-DEAD-7`) — command:
+  - Execution note: Release build, quick tests, and the help-output comparison passed; current `rhino-cli --help` retains the Phase 1 command surface.
+    `cargo build --release --manifest-path apps/rhino-cli/Cargo.toml && npm exec nx -- run rhino-cli:test:quick && diff /tmp/help-before.txt <(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- --help)`
+    — acceptance: exits 0; changed help means the code was not dead.
+- [x] [AI] **REFACTOR** — confirm the largest hardcoded-paths site is gone — acceptance:
+  - Execution note: Verified the removed pipeline eliminated the targeted hardcoded discovery site; current source search is clean for that removed path.
+    `/usr/bin/grep -rn "ayokoding" apps/rhino-cli/src/` returns no match. Verify the inverse holds
+    pre-edit: the same command returns matches before the deletion.
 
 ### 11.2 Extract repo-specific data into `repo-config.yml`
 
-- [ ] [AI] **P1B-WEBSITE-RED** (`blocks: P1B-WEBSITE-GREEN`) — RED: add
-      `website_prefix_exclusions_are_runtime_config` (**new test**) to
-      `apps/rhino-cli/tests/repo_config_data_driven.rs`, bound to the R-13 extraction scenario. Run
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
-      — acceptance: fails because frontmatter audit still reads `WEBSITE_APP_PREFIXES`.
+- [x] [AI] **P1B-WEBSITE-RED** (`blocks: P1B-WEBSITE-GREEN`) — RED: add
+  - Execution note: Added the data-driven website-exclusion regression before moving runtime exclusions into `repo-config.yml`; it is covered by `repo_config_data_driven`.
+    `website_prefix_exclusions_are_runtime_config` (**new test**) to
+    `apps/rhino-cli/tests/repo_config_data_driven.rs`, bound to the R-13 extraction scenario. Run
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
+    — acceptance: fails because frontmatter audit still reads `WEBSITE_APP_PREFIXES`.
 
   **Gherkin (binds) →** "Gate exclusion lists move to the registry"
 
@@ -1950,21 +1965,24 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
     And the const no longer exists in source
   ```
 
-- [ ] [AI] **P1B-WEBSITE-GREEN** (`blockedBy: P1B-WEBSITE-RED`; `blocks: P1B-WEBSITE-REFACTOR`) — GREEN:
-      make frontmatter audit consume `args.exclude` and delete the constant. Run
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
-      — acceptance: exits 0 and a configured failing fixture under an excluded tree is skipped.
-- [ ] [AI] **P1B-WEBSITE-REFACTOR** (`blockedBy: P1B-WEBSITE-GREEN`; `blocks: P1B-AMAZON-RED`) — REFACTOR:
-      remove the last constant references. Run
-      `/usr/bin/grep -rho "WEBSITE_APP_PREFIXES" apps/rhino-cli/src/ | /usr/bin/wc -l` — acceptance:
-      prints `0`; then
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
-      exits 0.
-- [ ] [AI] **P1B-AMAZON-RED** (`blockedBy: P1B-WEBSITE-REFACTOR`; `blocks: P1B-AMAZON-GREEN`) — RED: add
-      `amazon_q_definition_name_comes_from_harness_config` (**new test**) to
-      `apps/rhino-cli/tests/repo_config_data_driven.rs`, bound to the R-13 extraction scenario. Run
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
-      — acceptance: fails because `bindings.rs` still hardcodes the name.
+- [x] [AI] **P1B-WEBSITE-GREEN** (`blockedBy: P1B-WEBSITE-RED`; `blocks: P1B-WEBSITE-REFACTOR`) — GREEN:
+  - Execution note: `md-frontmatter-dates` now consumes configured `args.exclude`; registered-gate dispatch passes in `gate_specs` at `811461e54618eb6f78399d613ae4662ae5b7ac0b`.
+    make frontmatter audit consume `args.exclude` and delete the constant. Run
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
+    — acceptance: exits 0 and a configured failing fixture under an excluded tree is skipped.
+- [x] [AI] **P1B-WEBSITE-REFACTOR** (`blockedBy: P1B-WEBSITE-GREEN`; `blocks: P1B-AMAZON-RED`) — REFACTOR:
+  - Execution note: Removed the runtime website-prefix constant and verified configured exclusions through the focused data-driven test suite.
+    remove the last constant references. Run
+    `/usr/bin/grep -rho "WEBSITE_APP_PREFIXES" apps/rhino-cli/src/ | /usr/bin/wc -l` — acceptance:
+    prints `0`; then
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven website_prefix_exclusions_are_runtime_config`
+    exits 0.
+- [x] [AI] **P1B-AMAZON-RED** (`blockedBy: P1B-WEBSITE-REFACTOR`; `blocks: P1B-AMAZON-GREEN`) — RED: add
+  - Execution note: Added the Amazon Q configuration regression before replacing the hardcoded definition name; fixture coverage now uses a synthetic configured identity.
+    `amazon_q_definition_name_comes_from_harness_config` (**new test**) to
+    `apps/rhino-cli/tests/repo_config_data_driven.rs`, bound to the R-13 extraction scenario. Run
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
+    — acceptance: fails because `bindings.rs` still hardcodes the name.
 
   **Gherkin (binds) →** "Amazon Q definition name moves to harness configuration"
 
@@ -1976,35 +1994,40 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
     And the definition name no longer exists in shared Rust source
   ```
 
-- [ ] [AI] **P1B-AMAZON-GREEN** (`blockedBy: P1B-AMAZON-RED`; `blocks: P1B-AMAZON-REFACTOR`) — GREEN:
-      read the definition name from `harness.amazonq.agent-name`. Run
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
-      — acceptance: exits 0 and generation writes `.amazonq/cli-agents/ose-default.json` because
-      `repo-config.yml`, not Rust source, declares `ose-default`.
-- [ ] [AI] **P1B-AMAZON-REFACTOR** (`blockedBy: P1B-AMAZON-GREEN`; `blocks: P1B-FIXTURE-NAMES`) — REFACTOR:
-      remove embedded definition-name literals. Run
-      `/usr/bin/grep -rho "ose-default" apps/rhino-cli/src/ | /usr/bin/wc -l` — acceptance: prints
-      `0`; then
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
-      exits 0.
-- [ ] [AI] **P1B-FIXTURE-NAMES** (`blockedBy: P1B-AMAZON-REFACTOR`; `blocks: P1B-DOC-COMMENT`) — replace real-repo app names in test fixtures with synthetic names in
-      `domain_coverage/mod.rs`, `specs_validate_counts.rs`, and `specs_coverage.rs` — acceptance:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib`
-      exits 0. Fixtures name no real repository's apps.
-- [ ] [AI] **P1B-DOC-COMMENT** (`blockedBy: P1B-FIXTURE-NAMES`) — genericize the
-      `apps/ose-be/global.json` doc comment in `doctor/tools.rs`. Run
-      `rg -n "ayokoding|organiclever|ose-be|ose-www|wahidyankf" apps/rhino-cli/src/application/domain_coverage/mod.rs apps/rhino-cli/src/commands/specs_validate_counts.rs apps/rhino-cli/src/commands/specs_coverage.rs apps/rhino-cli/src/application/doctor/tools.rs`
-      — acceptance: exits 1 with no matches. The gate is intentionally bounded to the enumerated
-      shared-data sites; unrelated environment-contract examples are outside this extraction.
+- [x] [AI] **P1B-AMAZON-GREEN** (`blockedBy: P1B-AMAZON-RED`; `blocks: P1B-AMAZON-REFACTOR`) — GREEN:
+  - Execution note: Binding generation reads `harness.amazonq.agent-name`; behavior test `agents` passed after its fixture began writing minimal valid config.
+    read the definition name from `harness.amazonq.agent-name`. Run
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
+    — acceptance: exits 0 and generation writes `.amazonq/cli-agents/ose-default.json` because
+    `repo-config.yml`, not Rust source, declares `ose-default`.
+- [x] [AI] **P1B-AMAZON-REFACTOR** (`blockedBy: P1B-AMAZON-GREEN`; `blocks: P1B-FIXTURE-NAMES`) — REFACTOR:
+  - Execution note: Removed the embedded production definition name from shared source, test, and Gherkin boundary; the configured production name remains only repository data.
+    remove embedded definition-name literals. Run
+    `/usr/bin/grep -rho "ose-default" apps/rhino-cli/src/ | /usr/bin/wc -l` — acceptance: prints
+    `0`; then
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven amazon_q_definition_name_comes_from_harness_config`
+    exits 0.
+- [x] [AI] **P1B-FIXTURE-NAMES** (`blockedBy: P1B-AMAZON-REFACTOR`; `blocks: P1B-DOC-COMMENT`) — replace real-repo app names in test fixtures with synthetic names in
+  - Execution note: Replaced the named shared-data fixtures with synthetic values in the specified coverage and specs commands; full Rhino validation passes.
+    `domain_coverage/mod.rs`, `specs_validate_counts.rs`, and `specs_coverage.rs` — acceptance:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib`
+    exits 0. Fixtures name no real repository's apps.
+- [x] [AI] **P1B-DOC-COMMENT** (`blockedBy: P1B-FIXTURE-NAMES`) — genericize the
+  - Execution note: Genericized the doctor comment and verified the bounded source search for repository-specific names is clean.
+    `apps/ose-be/global.json` doc comment in `doctor/tools.rs`. Run
+    `rg -n "ayokoding|organiclever|ose-be|ose-www|wahidyankf" apps/rhino-cli/src/application/domain_coverage/mod.rs apps/rhino-cli/src/commands/specs_validate_counts.rs apps/rhino-cli/src/commands/specs_coverage.rs apps/rhino-cli/src/application/doctor/tools.rs`
+    — acceptance: exits 1 with no matches. The gate is intentionally bounded to the enumerated
+    shared-data sites; unrelated environment-contract examples are outside this extraction.
 
 ### 11.3 Upstream `beaver-nest`'s improvements
 
 Direction matters: these flow **up** into canonical before any repo copies canonical **down**.
 
-- [ ] [AI] **RED** — add a failing test asserting `ROADMAP.md` and `SECURITY.md` are exempt from
-      `md naming validate` — command:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib docs::naming` — acceptance: fails
-      on canonical, which currently exempts neither.
+- [x] [AI] **RED** — add a failing test asserting `ROADMAP.md` and `SECURITY.md` are exempt from
+  - Execution note: Added the naming regression before accepting the Beaver Nest exemption behavior; the focused naming test proves the scenario.
+    `md naming validate` — command:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib docs::naming` — acceptance: fails
+    on canonical, which currently exempts neither.
 
   **Gherkin (binds) →** "beaver-nest's naming exemptions are upstreamed before any copy"
 
@@ -2018,19 +2041,22 @@ Direction matters: these flow **up** into canonical before any repo copies canon
     And this holds before any downstream repo copies canonical
   ```
 
-- [ ] [AI] **GREEN** — add both basenames to `is_naming_exempt`'s always-exempt list in `naming.rs`,
-      matching `beaver-nest`'s implementation — acceptance: the same test passes, and
-      `md naming validate` exits 0 on a `ROADMAP.md` fixture.
-- [ ] [AI] Port `beaver-nest`'s corrected `frontmatter_audit.rs` test and the `specs_coverage.rs`
-      comment explaining why the misleading integration test was removed — acceptance: the test
-      suite passes and the two files no longer differ from `beaver-nest`'s.
+- [x] [AI] **GREEN** — add both basenames to `is_naming_exempt`'s always-exempt list in `naming.rs`,
+  - Execution note: Added both basenames to canonical `is_naming_exempt`; `md naming validate` passes for the regression fixture.
+    matching `beaver-nest`'s implementation — acceptance: the same test passes, and
+    `md naming validate` exits 0 on a `ROADMAP.md` fixture.
+- [x] [AI] Port `beaver-nest`'s corrected `frontmatter_audit.rs` test and the `specs_coverage.rs`
+  - Execution note: Ported and genericized the corrected frontmatter and specs-coverage coverage before downstream propagation.
+    comment explaining why the misleading integration test was removed — acceptance: the test
+    suite passes and the two files no longer differ from `beaver-nest`'s.
 
-- [ ] [AI] **RED** — add regression tests at
-      `apps/rhino-cli/src/application/env/validate.rs` proving F# keys passed to a pure
-      `readEnvironment "KEY"` wrapper are detected and a direct
-      `Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")` read is excluded — command:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml scan_fsharp` — acceptance: both fail on
-      canonical for their intended missing behavior, not because of fixture setup.
+- [x] [AI] **RED** — add regression tests at
+  - Execution note: Added F# wrapper and framework-owned-key regressions before scanner changes; they run under the focused `scan_fsharp` suite.
+    `apps/rhino-cli/src/application/env/validate.rs` proving F# keys passed to a pure
+    `readEnvironment "KEY"` wrapper are detected and a direct
+    `Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")` read is excluded — command:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml scan_fsharp` — acceptance: both fail on
+    canonical for their intended missing behavior, not because of fixture setup.
 
   **Gherkin (binds) →** "F# environment wrapper reads remain detectable after convergence"
 
@@ -2043,23 +2069,26 @@ Direction matters: these flow **up** into canonical before any repo copies canon
     And the generic Gherkin scenario lands before any downstream copy
   ```
 
-- [ ] [AI] **GREEN** — port the generic scanner behavior from `beaver-nest` into
-      `apps/rhino-cli/src/application/env/validate.rs`, using synthetic fixture keys rather than a
-      real repo's app names — command:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml scan_fsharp` — acceptance: both regressions pass and existing
-      environment-scanner tests remain green.
-- [ ] [AI] **REFACTOR** — port and genericize the corresponding coverage in
-      `apps/rhino-cli/tests/env.rs` and
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-validate-app-drift.feature` — commands:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env` and
-      `npx nx run rhino-cli:specs:behavior:coverage` — acceptance: both exit 0, fixtures name no real
-      repo app, and the focused unit tests remain green.
+- [x] [AI] **GREEN** — port the generic scanner behavior from `beaver-nest` into
+  - Execution note: Ported generic F# wrapper recognition and the framework-key exclusion; focused scanner regressions pass.
+    `apps/rhino-cli/src/application/env/validate.rs`, using synthetic fixture keys rather than a
+    real repo's app names — command:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml scan_fsharp` — acceptance: both regressions pass and existing
+    environment-scanner tests remain green.
+- [x] [AI] **REFACTOR** — port and genericize the corresponding coverage in
+  - Execution note: Updated generic environment Cucumber coverage and `tests/env.rs`; `cargo test --test env` and behavior coverage pass.
+    `apps/rhino-cli/tests/env.rs` and
+    `specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-validate-app-drift.feature` — commands:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env` and
+    `npx nx run rhino-cli:specs:behavior:coverage` — acceptance: both exit 0, fixtures name no real
+    repo app, and the focused unit tests remain green.
 
-- [ ] [AI] **RED** — add a regression test at `apps/rhino-cli/tests/cargo_target_share.rs` that reads
-      `apps/rhino-cli/project.json` and proves every Rust test/coverage target clears inherited
-      `GIT_DIR`, `GIT_WORK_TREE`, and `GIT_COMMON_DIR` before invoking Cargo — command:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` — acceptance:
-      fails on canonical because its three target commands clear none of them.
+- [x] [AI] **RED** — add a regression test at `apps/rhino-cli/tests/cargo_target_share.rs` that reads
+  - Execution note: Added the inherited-Git-process-state regression before changing the target commands.
+    `apps/rhino-cli/project.json` and proves every Rust test/coverage target clears inherited
+    `GIT_DIR`, `GIT_WORK_TREE`, and `GIT_COMMON_DIR` before invoking Cargo — command:
+    `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` — acceptance:
+    fails on canonical because its three target commands clear none of them.
 
   **Gherkin (binds) →** "Rust test targets ignore inherited Git process state"
 
@@ -2071,51 +2100,59 @@ Direction matters: these flow **up** into canonical before any repo copies canon
     And a regression test protects the target configuration before any downstream copy
   ```
 
-- [ ] [AI] **GREEN** — prefix the `test:unit`, `test:integration`, and `test:coverage` commands in
-      `apps/rhino-cli/project.json` with
-      `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR`, matching the proven `beaver-nest` fix —
-      command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` —
-      acceptance: the regression passes.
-- [ ] [AI] **REFACTOR** — exercise the targets with poisoned inherited Git variables — command:
-      `GIT_DIR=/nonexistent GIT_WORK_TREE=/nonexistent GIT_COMMON_DIR=/nonexistent npx nx run-many -t test:unit,test:integration -p rhino-cli`
-      — acceptance: exits 0, temporary Git-fixture tests create and inspect only their own repos, and
-      the focused regression remains green.
+- [x] [AI] **GREEN** — prefix the `test:unit`, `test:integration`, and `test:coverage` commands in
+  - Execution note: Added the required Git-environment clearing in `project.json`; `cargo_target_share` passes.
+    `apps/rhino-cli/project.json` with
+    `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR`, matching the proven `beaver-nest` fix —
+    command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test cargo_target_share` —
+    acceptance: the regression passes.
+- [x] [AI] **REFACTOR** — exercise the targets with poisoned inherited Git variables — command:
+  - Execution note: Exercised serialized Rust targets with poisoned inherited Git variables; focused regression and full pre-push gate pass.
+    `GIT_DIR=/nonexistent GIT_WORK_TREE=/nonexistent GIT_COMMON_DIR=/nonexistent npx nx run-many -t test:unit,test:integration -p rhino-cli`
+    — acceptance: exits 0, temporary Git-fixture tests create and inspect only their own repos, and
+    the focused regression remains green.
 
 ### 11.4 Close the live three-repo violation
 
-- [ ] [AI] Adopt `zai-coding-plan/wrong` in `sync_validator.rs`'s
-      `validate_agent_equivalence_fails_on_model_mismatch` fixture, matching `ose-primer` and
-      `ose-private` — acceptance:
-      `diff <(git show HEAD:apps/rhino-cli/src/application/agents/sync_validator.rs) apps/rhino-cli/src/application/agents/sync_validator.rs`
-      shows exactly one changed line, and the model-mismatch test still **fails** on a mismatched
-      model (verify by temporarily supplying a matching model and observing the test fail to fire).
+- [x] [AI] Adopt `zai-coding-plan/wrong` in `sync_validator.rs`'s
+  - Execution note: Updated the model-mismatch fixture to the canonical value and retained the mismatched-model failure regression.
+    `validate_agent_equivalence_fails_on_model_mismatch` fixture, matching `ose-primer` and
+    `ose-private` — acceptance:
+    `diff <(git show HEAD:apps/rhino-cli/src/application/agents/sync_validator.rs) apps/rhino-cli/src/application/agents/sync_validator.rs`
+    shows exactly one changed line, and the model-mismatch test still **fails** on a mismatched
+    model (verify by temporarily supplying a matching model and observing the test fail to fire).
 
 ### 11.5 Parity manifest and its gate
 
-- [ ] [AI] **RED** — failing tests for `parity manifest generate` and `parity manifest validate` —
-      command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
-      fails because the commands do not exist.
+- [x] [AI] **RED** — failing tests for `parity manifest generate` and `parity manifest validate` —
+  - Execution note: Added parity command regressions before implementation; the module suite now covers generation and validation behavior.
+    command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
+    fails because the commands do not exist.
 
   **Gherkin (underpins) →** "An unannounced edit to byte-identical source fails the gate"; "The
   manifest never regenerates itself"; "The manifest covers tests/ as well as src/"; "Untracked
-  files never enter the manifest"; "Regeneration is idempotent"
+  files never enter the manifest"; "Regeneration is idempotent"; "An intentional manifest
+  regeneration is staged before validation"
 
-- [ ] [AI] **GREEN** — implement both. The boundary set is `apps/rhino-cli/src/**`,
-      `apps/rhino-cli/tests/**`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, enumerated via `git ls-files` so untracked
-      files cannot enter — acceptance: same command exits 0.
-- [ ] [AI] **REFACTOR** — four properties, each needing its own test because each covers a direction
-      the others do not: generation is idempotent (second run byte-identical); an edit to a `src/`
-      file fails validation; an edit to a `tests/` file **also** fails validation; and an untracked
-      file under `tests/fixtures/` is absent from the manifest and does not fail validation —
-      acceptance: all four pass. The untracked case is not hypothetical: `ose-public`'s tree carries
-      two untracked `.env` fixtures today, which must never be read, hashed, or listed.
-- [ ] [AI] **RED** — add a failing test in the `parity` module asserting the `parity-manifest`
-      failure message names the offending file, states it is byte-identical across all four repos,
-      and names `parity manifest generate` as the deliberate remedy, per
-      [tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
-      fails because the message does not yet contain all three required elements.
+- [x] [AI] **GREEN** — implement both. The boundary set is `apps/rhino-cli/src/**`,
+  - Execution note: Implemented index-backed manifest generation and validation across the declared canonical boundary in `3699c04885e202849666597f0b044cd981bb74f9`.
+    `apps/rhino-cli/tests/**`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and
+    `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, enumerated via `git ls-files` so untracked
+    files cannot enter — acceptance: same command exits 0.
+- [x] [AI] **REFACTOR** — four properties, each needing its own test because each covers a direction
+  - Execution note: Added idempotence, source drift, test drift, and untracked-file coverage; manifest validation is exercised in each full pre-push run.
+    the others do not: generation is idempotent (second run byte-identical); an edit to a `src/`
+    file fails validation; an edit to a `tests/` file **also** fails validation; and an untracked
+    file under `tests/fixtures/` is absent from the manifest and does not fail validation —
+    acceptance: all four pass. The untracked case is not hypothetical: `ose-public`'s tree carries
+    two untracked `.env` fixtures today, which must never be read, hashed, or listed.
+- [x] [AI] **RED** — add a failing test in the `parity` module asserting the `parity-manifest`
+  - Execution note: Added the actionable drift-message regression before revising the manifest failure wording.
+    failure message names the offending file, states it is byte-identical across all four repos,
+    and names `parity manifest generate` as the deliberate remedy, per
+    [tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)
+    — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
+    fails because the message does not yet contain all three required elements.
 
   **Gherkin (binds) →** "An unannounced edit to byte-identical source fails the gate"
 
@@ -2130,44 +2167,72 @@ Direction matters: these flow **up** into canonical before any repo copies canon
     And the message names "rhino-cli parity manifest generate" as the deliberate remedy
   ```
 
-- [ ] [AI] **GREEN** — implement the failure message per
-      [tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
-      the new test passes, no other tests broken.
-- [ ] [AI] Declare the `parity-manifest` gate on `pre-push` and `ci`, and **confirm the generator is
-      absent from every surface** — acceptance:
-      `... -- gate list --format=json | jq -e '[.[] | select(.command=="parity manifest generate")] | length == 0'`
-      exits 0. Verify the inverse: adding it to `pre-commit` makes that same command return false.
-- [ ] [AI] **P1B-MANIFEST** — Generate the manifest and commit it — acceptance:
-      `... -- parity manifest validate` exits 0, and re-running `generate` leaves the file unchanged.
+- [x] [AI] **GREEN** — implement the failure message per
+  - Execution note: Implemented the actionable message naming the drifted path, four-repo byte-identity boundary, and explicit regeneration remedy.
+    [tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)
+    — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
+    the new test passes, no other tests broken.
+- [x] [AI] Declare the `parity-manifest` gate on `pre-push` and `ci`, and \*\*confirm the generator is
+  - Execution note: Registered validation—not generation—on required surfaces; the registry confirms no surface invokes manifest generation.
+    absent from every surface\*\* — acceptance:
+    `... -- gate list --format=json | jq -e '[.[] | select(.command=="parity manifest generate")] | length == 0'`
+    exits 0. Verify the inverse: adding it to `pre-commit` makes that same command return false.
+- [x] [AI] **P1B-MANIFEST** — Generate the manifest, stage it, then validate the prospective index
+  - Execution note: Regenerated and staged the manifest after every boundary update, most recently for `811461e54618eb6f78399d613ae4662ae5b7ac0b`; `parity manifest validate` reports current.
+    before committing it — commands:
+    `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`,
+    `git add -- apps/rhino-cli/parity-manifest.sha256`, and
+    `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`
+    — acceptance: validation exits 0 against the staged manifest, and re-running `generate` leaves
+    the file unchanged.
 
 ### Phase 11 Execution-Ready Gate
 
-- [ ] [AI] **P1B-READY** (`blockedBy: P1B-MANIFEST`; `blocks: P1B-LAND`) — command:
-      `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: exits 0
-      before any Phase 11 Land action begins, with the parity manifest present and valid.
+- [x] [AI] **P1B-READY** (`blockedBy: P1B-MANIFEST`; `blocks: P1B-LAND`) — command:
+  - Execution note: The complete affected quality suite has passed locally via the enforced serial pre-push hook with a current staged parity manifest.
+    `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: exits 0
+    before any Phase 11 Land action begins, with the parity manifest present and valid.
 
 ### 11.6 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P1B-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit Phase 11 — command: `git add -- apps/rhino-cli specs/apps/rhino repo-config.yml && git diff --cached --name-only -- apps/rhino-cli repo-config.yml | grep -q '^repo-config.yml$' && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0; the staged diff contains both the shared-source removal and its paired `repo-config.yml` extraction.
-- [ ] [AI] Push Phase 11 — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
-- [ ] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-defork --fill` — acceptance: `gh pr view --json number,url` returns one PR.
-- [ ] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines — acceptance: eight reports exist.
-- [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review of record is posted.
-- [ ] [AI] Cycle 1 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
-- [ ] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all, commit, and push before Cycle 2.
-- [ ] [AI] Cycle 2 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
-- [ ] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: a fresh review is posted.
-- [ ] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
-- [ ] [AI] Cycle 2 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before Cycle 3.
-- [ ] [AI] Cycle 3 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
-- [ ] [AI] Cycle 3 synthesis — invoke `pr-review-synthesis-maker` — acceptance: a fresh review is posted.
-- [ ] [AI] Cycle 3 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
-- [ ] [AI] Cycle 3 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before readiness.
-- [ ] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and all five hardened preconditions pass.
+- [x] [AI] Commit Phase 11 — command: `git add -- apps/rhino-cli specs/apps/rhino repo-config.yml && git diff --cached --name-only -- apps/rhino-cli repo-config.yml | grep -q '^repo-config.yml$' && git commit -m 'refactor(rhino-cli): remove repository-specific source data'` — acceptance: commitlint and `npm run validate:sync` exit 0; the staged diff contains both the shared-source removal and its paired `repo-config.yml` extraction.
+  - Execution note: Phase implementation is recorded in `3699c04885e202849666597f0b044cd981bb74f9` and its scoped corrective commits through `811461e54618eb6f78399d613ae4662ae5b7ac0b`; commit hooks and binding sync pass.
+- [x] [AI] Push Phase 11 — command: `git push -u origin sdlc-gate-registry-enforcement-defork` — acceptance: exits 0.
+  - Execution note: Pushed the branch repeatedly after Cycle 1 and Cycle 2 repairs, including `811461e54618eb6f78399d613ae4662ae5b7ac0b`; later main integration and Cycle 3 repairs are recorded by their own execution notes.
+- [x] [AI] Open its draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-defork --fill` — acceptance: `gh pr view --json number,url` returns one PR.
+  - Execution note: Draft PR [#135](https://github.com/wahidyankf/ose-public/pull/135) is open against `main` on the declared branch.
+- [x] [AI] Cycle 1 maker fan-out — invoke all eight `pr-review-*-maker` disciplines — acceptance: eight reports exist.
+  - Execution note: Completed all eight Cycle 1 disciplines against the Phase 11 implementation head; accepted findings were carried into the two Cycle 1 correction commits.
+- [x] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review of record is posted.
+  - Execution note: Posted the consolidated Cycle 1 COMMENT review [4860159791](https://github.com/wahidyankf/ose-public/pull/135#pullrequestreview-4860159791).
+- [x] [AI] Cycle 1 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
+  - Execution note: Fixed accepted Cycle 1 findings in `fdc337a1d`, `c95554f72`, and `f6cb752c5`, then ran and passed the full pre-push gate.
+- [x] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix all, commit, and push before Cycle 2.
+  - Execution note: Final Cycle 1 `pr-quality-gate` completed successfully after the Clippy byte-lint correction; its companion env validation also passed.
+- [x] [AI] Cycle 2 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
+  - Execution note: Re-ran architecture, logic, governance, security, integrity, performance, documentation, and instruction review on the Cycle 1 head; accepted dispatch, containment, fixture, and quoting defects were repaired.
+- [x] [AI] Cycle 2 synthesis — invoke `pr-review-synthesis-maker` — acceptance: a fresh review is posted.
+  - Execution note: Posted the consolidated Cycle 2 COMMENT review at [PR review 4860177285](https://github.com/wahidyankf/ose-public/pull/135#pullrequestreview-4860177285), pinned to `811461e54618eb6f78399d613ae4662ae5b7ac0b`.
+- [x] [AI] Cycle 2 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
+  - Execution note: Accepted Cycle 2 findings are fixed and pushed in `a0f277f1c` and `811461e54`; focused tests, Clippy, manifest validation, and a fresh complete pre-push run pass.
+- [x] [AI] Cycle 2 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before Cycle 3.
+  - Execution note: [pr-quality-gate run 30969141981](https://github.com/wahidyankf/ose-public/actions/runs/30969141981) completed successfully for `811461e54618eb6f78399d613ae4662ae5b7ac0b`; companion validate-env run `30969141996` also completed successfully.
+- [x] [AI] Cycle 3 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
+  - Execution note: Completed architecture, logic, governance, security, integrity, performance, documentation, and instruction review against PR #135's merged-main head `56250e3dcff076b1c54b81a74abaa810704ba819` and the in-progress parity remediation. The review correctly leaves hook/workflow wiring to Phase 2; it found and routed parent-symlink, final-symlink, FIFO, and non-Unix TOCTOU protections into the Cycle 3 fixer.
+- [x] [AI] Cycle 3 synthesis — invoke `pr-review-synthesis-maker` — acceptance: a fresh review is posted.
+  - Execution note: Posted the consolidated Cycle 3 COMMENT review [4860674988](https://github.com/wahidyankf/ose-public/pull/135#pullrequestreview-4860674988), anchored to `ad6b9fb7d2bb4584f29b6f92ee1a61ace4317c66`; it records the resolved parity findings and the scope-correct Phase 2 disposition for hook/workflow wiring.
+- [x] [AI] Cycle 3 fixer — invoke `pr-review-fixer` — acceptance: accepted findings are fixed, committed, and pushed.
+  - Execution note: Fixed every accepted Cycle 3 parity finding in `ad6b9fb7d2bb4584f29b6f92ee1a61ace4317c66`: descriptor-relative no-follow reads and writes reject parent/final symlink escapes; FIFO reads are nonblocking and rejected; non-Unix parity access fails closed. Added regression coverage for each case, regenerated `parity-manifest.sha256`, passed the full enforced pre-push suite, and pushed the commit.
+- [x] [AI] Cycle 3 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before readiness.
+  - Execution note: [pr-quality-gate run 30971678058](https://github.com/wahidyankf/ose-public/actions/runs/30971678058) and companion [validate-env run 30971678104](https://github.com/wahidyankf/ose-public/actions/runs/30971678104) completed successfully for Cycle 3 head `3023d41e4eebf75e357a661b82b7937cec79a948`; the ensuing ledger-evidence commit is also subject to post-push CI before readiness.
+- [x] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and all five hardened preconditions pass.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: PR [#135](https://github.com/wahidyankf/ose-public/pull/135) is ready for review on `e6e4d992dec7631be6dd46fcd3d8ea1551dba84f`; `gh pr view` reports `isDraft: false` and `mergeStateStatus: CLEAN`. Preconditions hold: all three non-escalated review cycles are complete, no review thread or CRITICAL/HIGH finding remains, `origin/main` is an ancestor of the head, local gates and [pr-quality-gate 30976654664](https://github.com/wahidyankf/ose-public/actions/runs/30976654664) plus [validate-env 30976654662](https://github.com/wahidyankf/ose-public/actions/runs/30976654662) are green, and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` observed `apps/rhino-cli/parity-manifest.sha256 is current`.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:

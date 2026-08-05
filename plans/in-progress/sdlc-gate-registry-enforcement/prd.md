@@ -774,6 +774,14 @@ Feature: Byte-identity manifest
     When it runs a second time
     Then apps/rhino-cli/parity-manifest.sha256 is byte-identical to the first result
 
+  Scenario: An intentional manifest regeneration is staged before validation
+    Given a tracked byte-identity boundary file changes intentionally
+    When "rhino-cli parity manifest generate" runs
+    And apps/rhino-cli/parity-manifest.sha256 is staged
+    And "rhino-cli parity manifest validate" runs
+    Then validation evaluates the prospective index
+    And the staged manifest matches the boundary files that would be committed
+
   Scenario: The live three-repo violation is closed
     Given sync_validator.rs carried "opencode-go/wrong" in ose-public
     And it carried "zai-coding-plan/wrong" in ose-primer and ose-private

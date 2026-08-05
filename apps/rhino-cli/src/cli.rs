@@ -10,9 +10,9 @@ use crate::commands::{
     harness_validate_duplication, harness_validate_instruction_size, harness_validate_naming,
     harness_validate_sync, lang_java_validate_null_safety, md_audit, md_validate_frontmatter,
     md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
-    md_validate_mermaid, md_validate_naming, md_validate_readme_index, repo_config_validate,
-    specs_audit, specs_clean_java_imports, specs_coverage, specs_e2e_coverage,
-    specs_gherkin_cardinality, specs_scaffold_dart, specs_structure_validate,
+    md_validate_mermaid, md_validate_naming, md_validate_readme_index, parity,
+    repo_config_validate, specs_audit, specs_clean_java_imports, specs_coverage,
+    specs_e2e_coverage, specs_gherkin_cardinality, specs_scaffold_dart, specs_structure_validate,
     specs_validate_counts, test_coverage_validate, workflows_validate_naming,
 };
 use crate::domain::cliout::OutputFormat;
@@ -108,6 +108,9 @@ pub enum Commands {
     /// Git workflow helpers.
     #[command(name = "git", subcommand)]
     Git(GitCommands),
+    /// Rhino CLI byte-identity boundary helpers.
+    #[command(name = "parity", subcommand)]
+    Parity(ParityCommands),
     /// Check required tool versions are installed and correct.
     #[command(name = "doctor")]
     Doctor(doctor::DoctorArgs),
@@ -164,6 +167,23 @@ pub enum GitCommands {
 pub enum GitLockfileCommands {
     /// Regenerate and stage lockfiles for staged app manifests.
     Sync(git::lockfile::SyncArgs),
+}
+
+/// Byte-identity parity subcommands.
+#[derive(Subcommand, Debug)]
+pub enum ParityCommands {
+    /// Checksum-manifest operations.
+    #[command(name = "manifest", subcommand)]
+    Manifest(ParityManifestCommands),
+}
+
+/// `parity manifest` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum ParityManifestCommands {
+    /// Deliberately regenerate the committed parity manifest.
+    Generate(parity::GenerateArgs),
+    /// Verify the committed parity manifest without regenerating it.
+    Validate(parity::ValidateArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -677,6 +697,12 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Git(gc) => match gc {
             GitCommands::Lockfile(lc) => match lc {
                 GitLockfileCommands::Sync(args) => git::lockfile::run(args, output_format),
+            },
+        },
+        Commands::Parity(pc) => match pc {
+            ParityCommands::Manifest(mc) => match mc {
+                ParityManifestCommands::Generate(args) => parity::generate(args, output_format),
+                ParityManifestCommands::Validate(args) => parity::validate(args, output_format),
             },
         },
         Commands::Env(ec) => match ec {

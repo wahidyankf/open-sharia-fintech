@@ -105,13 +105,13 @@ mod tests {
     fn resolve_folders_default_reads_config_areas() {
         // The default app list is the config-supplied `specs.ddd-areas`, not a
         // source-hard-coded allowlist.
-        let default_apps = vec!["organiclever".to_string(), "ose".to_string()];
+        let default_apps = vec!["fixture-ledger".to_string(), "fixture-catalog".to_string()];
         let v = resolve_folders(None, &[], &default_apps);
         assert_eq!(
             v,
             vec![
-                "specs/apps/organiclever".to_string(),
-                "specs/apps/ose".to_string()
+                "specs/apps/fixture-ledger".to_string(),
+                "specs/apps/fixture-catalog".to_string()
             ]
         );
     }

@@ -323,13 +323,13 @@ npx playwright install-deps
 
 All version requirements are auto-detected by `npm run doctor` from these config files:
 
-| Tool       | Version Source                                   |
-| ---------- | ------------------------------------------------ |
-| Node.js    | `package.json` → `volta.node`                    |
-| npm        | `package.json` → `volta.npm`                     |
-| Rust       | `apps/rhino-cli/rust-toolchain.toml` → `channel` |
-| .NET       | `apps/organiclever-be/global.json` → `sdk`       |
-| Docker, jq | Any (no pinned version)                          |
+| Tool       | Version Source                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| Node.js    | `package.json` → `volta.node`                                                                         |
+| npm        | `package.json` → `volta.npm`                                                                          |
+| Rust       | `apps/rhino-cli/rust-toolchain.toml` → `channel`                                                      |
+| .NET       | `repo-config.yml` → `doctor.dotnet-global-json` → `sdk.version` (currently `apps/ose-be/global.json`) |
+| Docker, jq | Any (no pinned version)                                                                               |
 
 Never hardcode version numbers in scripts — always read from these source-of-truth files.
 

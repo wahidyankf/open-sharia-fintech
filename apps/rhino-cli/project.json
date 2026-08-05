@@ -66,7 +66,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo test --manifest-path apps/rhino-cli/Cargo.toml --tests"
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --tests"
       },
       "cache": true,
       "inputs": [
@@ -80,7 +80,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo llvm-cov --manifest-path apps/rhino-cli/Cargo.toml --lib --ignore-filename-regex '(cli\\.rs|main\\.rs|internal/git\\.rs|commands/git_pre_commit\\.rs|commands/env_|commands/doctor\\.rs|application/git/pre_commit\\.rs|infrastructure/git/|application/doctor/tools\\.rs|application/doctor/fixer\\.rs|application/doctor/checker\\.rs|application/testcoverage/diff\\.rs|application/testcoverage/merge\\.rs|application/env/)' --lcov --output-path apps/rhino-cli/lcov.info --fail-under-lines 90"
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo llvm-cov --manifest-path apps/rhino-cli/Cargo.toml --lib --ignore-filename-regex '(cli\\.rs|main\\.rs|internal/git\\.rs|commands/git_pre_commit\\.rs|commands/env_|commands/doctor\\.rs|application/git/pre_commit\\.rs|infrastructure/git/|application/doctor/tools\\.rs|application/doctor/fixer\\.rs|application/doctor/checker\\.rs|application/testcoverage/diff\\.rs|application/testcoverage/merge\\.rs|application/env/)' --lcov --output-path apps/rhino-cli/lcov.info --fail-under-lines 90"
       },
       "cache": true,
       "inputs": ["{projectRoot}/Cargo.toml", "{projectRoot}/src/**/*.rs"],
@@ -105,13 +105,13 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env_contract",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs",
-          "cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch"
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env_contract",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs",
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch"
         ],
         "cwd": "{workspaceRoot}",
         "parallel": false

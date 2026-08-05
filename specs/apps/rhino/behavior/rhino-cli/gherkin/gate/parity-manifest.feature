@@ -1,0 +1,34 @@
+@gate @unit
+Feature: Rhino CLI parity manifest
+
+  As a maintainer of the shared Rhino CLI boundary
+  I want drift to require an explicit checksum regeneration
+  So that an unannounced repository-specific edit cannot silently propagate
+
+  Scenario: Regeneration is idempotent
+    Given a tracked Rhino CLI parity boundary
+    When rhino-cli parity manifest generate runs
+    And the same manifest is generated a second time
+    Then the parity manifest is byte-identical to its first generation
+    And the parity manifest is current
+
+  Scenario: An unannounced edit to byte-identical source fails the gate
+    Given a tracked Rhino CLI parity boundary
+    And its parity manifest has been generated and staged
+    When a tracked parity source file is edited
+    And rhino-cli parity manifest validate runs
+    Then the parity gate names the edited source and deliberate remedy
+
+  Scenario: The manifest covers tests as well as source
+    Given a tracked Rhino CLI parity boundary
+    And its parity manifest has been generated and staged
+    When a tracked parity test file is edited
+    And rhino-cli parity manifest validate runs
+    Then the parity gate names the edited test
+
+  Scenario: Untracked files never enter the manifest
+    Given a tracked Rhino CLI parity boundary
+    And its parity manifest has been generated and staged
+    When an untracked test fixture is created
+    And rhino-cli parity manifest validate runs
+    Then the untracked fixture is absent from the manifest

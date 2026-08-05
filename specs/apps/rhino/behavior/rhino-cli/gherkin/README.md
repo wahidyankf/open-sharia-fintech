@@ -49,13 +49,14 @@ behavior/rhino-cli/gherkin/
 
 ### gate
 
-| File                       | Command(s)                           | Scenarios |
-| -------------------------- | ------------------------------------ | --------- |
-| `gate-declaration.feature` | `repo-config validate` / `gate list` | 9         |
-| `gate-emission.feature`    | `gate emit`                          | 2         |
-| `gate-enumeration.feature` | `gate list`                          | 6         |
-| `gate-execution.feature`   | `gate run`                           | 11        |
-| `gate-validation.feature`  | `gate validate`                      | 11        |
+| File                       | Command(s)                            | Scenarios |
+| -------------------------- | ------------------------------------- | --------- |
+| `gate-declaration.feature` | `repo-config validate` / `gate list`  | 9         |
+| `gate-emission.feature`    | `gate emit`                           | 2         |
+| `gate-enumeration.feature` | `gate list`                           | 6         |
+| `gate-execution.feature`   | `gate run`                            | 11        |
+| `gate-validation.feature`  | `gate validate`                       | 11        |
+| `parity-manifest.feature`  | `parity manifest generate`/`validate` | 4         |
 
 ### git
 

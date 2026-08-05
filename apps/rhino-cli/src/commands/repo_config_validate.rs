@@ -17,7 +17,9 @@ use std::collections::HashSet;
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, GateKind, GateType, RepoConfig, ScopeKind};
+use crate::application::repo_config::{
+    self, GateKind, GateType, RepoConfig, ScopeKind, validate_repo_relative_path,
+};
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
@@ -59,7 +61,14 @@ pub fn run_at_root(
         anyhow!("repo-config validate: repo-config.yml failed strict schema deserialization: {e:#}")
     })?;
 
-    let findings = semantic_findings(&config);
+    let mut findings = semantic_findings(&config);
+    if let Some(path) = &config.doctor.dotnet_global_json
+        && let Err(error) = repo_config::confined_repo_path(repo_root, path)
+    {
+        findings.push(format!(
+            "doctor.dotnet-global-json: invalid value {path:?} ({error:#})"
+        ));
+    }
 
     if findings.is_empty() {
         writeln!(
@@ -118,6 +127,14 @@ pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
                 ));
             }
         }
+    }
+
+    if let Some(path) = &config.doctor.dotnet_global_json
+        && let Err(error) = validate_repo_relative_path(path)
+    {
+        findings.push(format!(
+            "doctor.dotnet-global-json: invalid value {path:?} ({error})"
+        ));
     }
 
     findings.extend(gate_semantic_findings(config));
@@ -311,6 +328,47 @@ mod tests {
             out.contains("levels") && out.contains("bogus-level"),
             "finding must name the offending level value; got: {out}"
         );
+    }
+
+    #[test]
+    fn unsafe_dotnet_global_json_paths_are_rejected() {
+        for path in [
+            "/tmp/global.json",
+            "../global.json",
+            "tooling/../../global.json",
+        ] {
+            let config = format!(
+                "harness:\n  - {{ name: claude-code, tier: source, agent-dir: .claude/agents }}\ncoverage:\n  projects:\n    - name: p\n      levels: [unit]\n      specs: x\ndoctor:\n  dotnet-global-json: {path}\n"
+            );
+            let (ok, output) = write_and_run(&config);
+            assert!(!ok, "unsafe path {path:?} must fail");
+            assert!(
+                output.contains("doctor.dotnet-global-json"),
+                "finding must name the unsafe path key; got: {output}"
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn dotnet_global_json_symlink_escape_is_rejected() {
+        use std::os::unix::fs::symlink;
+
+        let tmp = TempDir::new().unwrap();
+        let outside = TempDir::new().unwrap();
+        symlink(outside.path(), tmp.path().join("tooling")).unwrap();
+        fs::write(
+            tmp.path().join("repo-config.yml"),
+            format!("{VALID}doctor:\n  dotnet-global-json: tooling/sdk/global.json\n"),
+        )
+        .unwrap();
+        let mut output = Vec::new();
+        let result = run_at_root(tmp.path(), &mut output);
+        let text = String::from_utf8_lossy(&output);
+
+        assert!(result.is_err(), "a symlink escape must fail validation");
+        assert!(text.contains("doctor.dotnet-global-json"));
+        assert!(text.contains("escapes the repository root"));
     }
 
     #[test]
