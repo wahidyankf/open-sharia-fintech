@@ -825,6 +825,24 @@ const APP_DRIFT_REPO_CONFIG: &str = concat!(
     "  ci-harness: []\n",
 );
 
+/// F# app surface with a matching injection manifest. The scenario fixture
+/// proves that `readEnvironment "KEY"` calls count as production reads while
+/// the .NET-owned container signal remains outside the application contract.
+const FSHARP_WRAPPER_REPO_CONFIG: &str = concat!(
+    "env-contract:\n",
+    "  surfaces:\n",
+    "    - root: apps/myapp\n",
+    "      kind: app\n",
+    "      lang: fsharp\n",
+    "      allowlist: []\n",
+    "env-injection:\n",
+    "  apps:\n",
+    "    - app: myapp\n",
+    "      keys-from: apps/myapp/.env.example\n",
+    "      runtime: { local: env-local }\n",
+    "  ci-harness: []\n",
+);
+
 #[given("an app surface whose .env.example declares a key the source code never reads")]
 fn given_env_validate_declared_unread(w: &mut EnvWorld) {
     w.write("repo-config.yml", APP_DRIFT_REPO_CONFIG);
@@ -842,6 +860,27 @@ fn given_env_validate_read_undeclared(w: &mut EnvWorld) {
     w.write(
         "apps/myapp/src/env.ts",
         "export const env = createEnv({\n  server: {\n    NEW_KEY: z.string(),\n  },\n  experimental__runtimeEnv: {},\n});\n",
+    );
+}
+
+#[given(
+    "an F# app surface whose .env.example declares keys read through a pure environment-reader wrapper and whose source reads the framework-owned container signal"
+)]
+fn given_env_validate_fsharp_environment_reader_wrapper(w: &mut EnvWorld) {
+    w.write("repo-config.yml", FSHARP_WRAPPER_REPO_CONFIG);
+    w.write(
+        "apps/myapp/.env.example",
+        "F_SHARP_WRAPPED_DATA_DIRECTORY=/var/lib/myapp\nF_SHARP_WRAPPED_PORT=19300\n",
+    );
+    w.write(
+        "apps/myapp/src/Configuration.fs",
+        r#"module Configuration
+let load (readEnvironment: string -> string) =
+    let runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")
+    let dataDirectory = readEnvironment "F_SHARP_WRAPPED_DATA_DIRECTORY"
+    let port = readEnvironment "F_SHARP_WRAPPED_PORT"
+    (runningInContainer, dataDirectory, port)
+"#,
     );
 }
 

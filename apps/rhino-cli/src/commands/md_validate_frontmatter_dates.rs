@@ -9,6 +9,7 @@ use anyhow::{Context, Error, anyhow};
 use clap::Args;
 use serde::Serialize;
 
+use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::fs::real::RealFs;
 use crate::internal::git;
@@ -32,6 +33,9 @@ pub struct FrontmatterAuditArgs {
     /// Paths to scan (repeatable; relative to git root).
     #[arg(short = 'p', long = "path", value_name = "PATH")]
     pub path: Vec<String>,
+    /// Repository-relative path prefixes to exclude (repeatable).
+    #[arg(long = "exclude", value_name = "PATH")]
+    pub exclude: Vec<String>,
     /// Positional path overrides — same effect as --path.
     pub positional: Vec<String>,
 }
@@ -95,7 +99,22 @@ pub fn run(
         })
         .collect();
 
-    let findings = audit_frontmatter(&RealFs, &full_paths).context("frontmatter audit failed")?;
+    let config =
+        repo_config::load(&repo_root).context("load repo-config.yml for frontmatter audit")?;
+    let mut excluded_prefixes = config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "md-frontmatter-dates")
+        .and_then(|gate| gate.args.get("exclude"))
+        .cloned()
+        .unwrap_or_default();
+    for exclude in &args.exclude {
+        if !excluded_prefixes.contains(exclude) {
+            excluded_prefixes.push(exclude.clone());
+        }
+    }
+    let findings = audit_frontmatter(&RealFs, &full_paths, &excluded_prefixes)
+        .context("frontmatter audit failed")?;
 
     match output_format {
         OutputFormat::Text => print!("{}", format_text(&findings)),

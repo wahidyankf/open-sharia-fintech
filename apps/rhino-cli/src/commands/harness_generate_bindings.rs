@@ -194,7 +194,7 @@ fn run_amazonq_emit(
     output_format: OutputFormat,
 ) -> std::result::Result<(), Error> {
     if args.dry_run {
-        return report_amazonq_dry_run(args, output_format);
+        return report_amazonq_dry_run(args, repo_root, output_format);
     }
 
     let result =
@@ -241,11 +241,13 @@ fn run_amazonq_emit(
 /// without touching the filesystem.
 fn report_amazonq_dry_run(
     args: &GenerateBindingsArgs,
+    repo_root: &Path,
     output_format: OutputFormat,
 ) -> std::result::Result<(), Error> {
-    let paths: Vec<String> = expected_bindings()
+    let paths: Vec<String> = expected_bindings(repo_root)
+        .map_err(|error| anyhow!("load Amazon Q binding configuration: {error}"))?
         .into_iter()
-        .map(|b| b.rel_path.to_string())
+        .map(|b| b.rel_path)
         .collect();
 
     if !args.quiet {
@@ -544,10 +546,8 @@ mod tests {
             verbose: false,
             quiet: false,
         };
-        // report_amazonq_dry_run never touches the filesystem (it lists the canonical
-        // binding paths from `expected_bindings()`), so it is safe to call directly
-        // without a git root, unlike the writing path (`emit_bindings`).
-        let result = report_amazonq_dry_run(&a, OutputFormat::Text);
+        let repo_root = git::root::find_root().expect("repo root");
+        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Text);
         assert!(result.is_ok());
     }
 
@@ -562,7 +562,8 @@ mod tests {
             verbose: false,
             quiet: true,
         };
-        let result = report_amazonq_dry_run(&a, OutputFormat::Json);
+        let repo_root = git::root::find_root().expect("repo root");
+        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Json);
         assert!(result.is_ok());
     }
 
@@ -577,7 +578,8 @@ mod tests {
             verbose: false,
             quiet: true,
         };
-        let result = report_amazonq_dry_run(&a, OutputFormat::Markdown);
+        let repo_root = git::root::find_root().expect("repo root");
+        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Markdown);
         assert!(result.is_ok());
     }
 

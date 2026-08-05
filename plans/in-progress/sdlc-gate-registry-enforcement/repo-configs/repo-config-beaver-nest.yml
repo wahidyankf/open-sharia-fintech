@@ -27,6 +27,7 @@
 #   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   doctor           — tool exclusions and the optional .NET SDK version source (rhino-cli doctor)
 #   gates            — executable SDLC gate registry and per-surface composition data
 
 harness:
@@ -37,6 +38,7 @@ harness:
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
   #   skills-dir  — directory of skill files (source tier only)
   #   rules-dir   — directory of injected rules (generated tier only)
+  #   agent-name  — generated Amazon Q agent-definition filename stem and embedded name (amazonq only)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)
@@ -49,6 +51,7 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
+    agent-name: beaver-nest-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -222,6 +225,9 @@ env-injection:
     - key: PLAYWRIGHT_GREP_INVERT
       class: literal
       environments: []
+
+doctor:
+  dotnet-global-json: apps/beaver-nest-be/global.json
 
 gates:
   # ---------------------------------------------------------------- commit-msg

@@ -68,17 +68,17 @@ The presence rule also applies to each extension inside a multi-extension pretti
 `sql` is absent from Beaver's prettier mutation and verifier because Beaver tracks zero `.sql`
 files; expected future use does not satisfy the current tracked-file requirement.
 
-## Two structural findings these files surfaced
+## Structural findings these files surfaced
 
-- **`ose-primer` carries a `doctor:` section the other three lack.** The live header comment in every
-  repo's `repo-config.yml` claims the structure is "byte-identical across all three repos" — that
-  claim is already false. The target headers correctly promise a shared schema across four repos,
-  not byte-identical data. The schema-parity gate validates each file against the schema rather than
-  requiring identical section presence.
-- **Every live repo header says "all three repos"**, and the section list is already inconsistent:
-  `ose-public`, `ose-private`, and `beaver-nest` list six, while `ose-primer` lists seven because it
-  documents its extra `doctor:` section. The targets add `gates` and therefore list 7, 8, 7, and 7
-  sections respectively. Measure after copying with:
+- **Every target declares `doctor:`.** `ose-public` and `beaver-nest` select their .NET SDK source
+  with `dotnet-global-json`; `ose-primer` omits it because its two backend pins differ, and skips
+  only `tofu` and `clang-format`; `ose-private` declares no exclusions. `ose-primer` no longer skips
+  `shfmt`, because its target registry declares the formatter.
+- **Every live repo header says "all three repos"**, and the section list is already inconsistent.
+  The target headers instead describe a shared schema across all four repos and list the same eight
+  concrete sections: `harness`, `coverage`, `specs`, `instruction-size`, `env-contract`,
+  `env-injection`, `doctor`, and `gates`. The schema-parity gate validates each file against the
+  schema rather than requiring identical values. Measure after copying with:
 
   ```sh
   for TARGET_REPO in ose-public ose-primer ose-private beaver-nest; do
@@ -86,7 +86,12 @@ files; expected future use does not satisfy the current tracked-file requirement
   done
   ```
 
-  Acceptance: returns 7, 8, 7, 7 for `ose-public`, `ose-primer`, `ose-private`, `beaver-nest`.
+  Acceptance: returns 8 for every repository.
+
+The `harness.amazonq.agent-name` field is also per-repository data. It is the generated Amazon Q
+agent-definition filename stem and embedded definition name: `ose-default` in the OSE repositories
+and `beaver-nest-default` in Beaver. Keeping it in `repo-config.yml` prevents shared Rust source
+from hardcoding a repository-specific identity.
 
 ## Related
 

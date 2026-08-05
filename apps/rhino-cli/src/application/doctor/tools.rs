@@ -6,6 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
+use crate::application::repo_config;
+
 use super::ToolStatus;
 use super::checker::{
     compare_exact, compare_gte, compare_major_gte, compare_playwright, parse_actionlint_version,
@@ -85,7 +87,7 @@ static PATHS: OnceLock<Paths> = OnceLock::new();
 struct Paths {
     /// Path to the root `package.json` (for `volta.node` / `volta.npm`).
     package_json: PathBuf,
-    /// Path to `apps/ose-be/global.json` (for .NET `sdk.version`).
+    /// Path to the repository's backend `global.json` (for .NET `sdk.version`).
     global_json: PathBuf,
     /// Path to `apps/rhino-cli/Cargo.toml` (for `rust-version`).
     cargo_toml: PathBuf,
@@ -98,11 +100,32 @@ struct Paths {
 fn set_paths(repo_root: &Path) {
     let p = Paths {
         package_json: repo_root.join("package.json"),
-        global_json: repo_root.join("apps").join("ose-be").join("global.json"),
+        global_json: configured_dotnet_global_json(repo_root),
         cargo_toml: repo_root.join("apps").join("rhino-cli").join("Cargo.toml"),
     };
     // OnceLock — only the first writer wins. For tests we reset via reset_paths.
     let _ = PATHS.set(p);
+}
+
+/// Resolves the repository's .NET SDK configuration path from `repo-config.yml`.
+///
+/// Repositories without an explicit setting use the conventional root-level
+/// `global.json`; repositories that keep it elsewhere declare that relative
+/// path under `doctor.dotnet-global-json`.
+fn configured_dotnet_global_json(repo_root: &Path) -> PathBuf {
+    let configured = repo_config::load_or_default(repo_root)
+        .doctor
+        .dotnet_global_json;
+    configured
+        .as_deref()
+        .map(|path| repo_config::confined_repo_path(repo_root, path))
+        .transpose()
+        // `repo-config validate` names invalid configuration precisely. Doctor
+        // must nevertheless never follow an unsafe configured path when it is
+        // invoked independently, so it falls back to the conventional root
+        // file rather than traversing an absolute, parent, or symlink escape.
+        .unwrap_or(None)
+        .unwrap_or_else(|| repo_root.join("global.json"))
 }
 
 /// Returns a reference to the global [`Paths`] instance.
@@ -557,7 +580,7 @@ fn tool_defs_dotnet() -> Vec<ToolDef> {
     vec![ToolDef {
         name: "dotnet".into(),
         binary: "dotnet".into(),
-        source: "apps/ose-be/global.json → sdk.version".into(),
+        source: "doctor.dotnet-global-json → sdk.version".into(),
         args: vec!["--version".into()],
         use_stderr: false,
         parse_ver: parse_dotnet_version,

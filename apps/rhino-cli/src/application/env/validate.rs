@@ -297,11 +297,18 @@ pub fn scan_ts_reads(root: &Path) -> Result<Vec<String>, Error> {
     Ok(keys.into_iter().collect())
 }
 
+/// Runtime-owned signals that are never application environment contract keys.
+const FRAMEWORK_OWNED_ENVIRONMENT_KEYS: &[&str] = &["DOTNET_RUNNING_IN_CONTAINER"];
+
 /// Scan F# source for environment variable keys consumed by the code.
 ///
 /// Detects:
 /// - `Environment.GetEnvironmentVariable("VAR_NAME")` calls
 /// - `System.Environment.GetEnvironmentVariable("VAR_NAME")` calls
+/// - Pure F# environment-reader wrapper calls such as `readEnvironment "VAR_NAME"`
+///
+/// The framework-owned `DOTNET_RUNNING_IN_CONTAINER` runtime signal is
+/// deliberately excluded: it is supplied by .NET, not application configuration.
 ///
 /// # Panics
 ///
@@ -317,6 +324,8 @@ pub fn scan_fsharp_reads(root: &Path) -> Result<Vec<String>, Error> {
         r#"(?:System\.)?Environment\.GetEnvironmentVariable\s*\(\s*"([A-Z][A-Z0-9_]*)"\s*\)"#,
     )
     .expect("static regex");
+    let environment_reader_re =
+        Regex::new(r#"\breadEnvironment\s+"([A-Z][A-Z0-9_]*)""#).expect("static regex");
 
     let src_dir = root.join("src");
     for entry in WalkDir::new(&src_dir).into_iter().flatten() {
@@ -333,7 +342,14 @@ pub fn scan_fsharp_reads(root: &Path) -> Result<Vec<String>, Error> {
         let content =
             fs::read_to_string(path).with_context(|| format!("cannot read {}", path.display()))?;
         for cap in env_var_re.captures_iter(&content) {
-            keys.insert(cap[1].to_string());
+            if !FRAMEWORK_OWNED_ENVIRONMENT_KEYS.contains(&&cap[1]) {
+                keys.insert(cap[1].to_string());
+            }
+        }
+        for cap in environment_reader_re.captures_iter(&content) {
+            if !FRAMEWORK_OWNED_ENVIRONMENT_KEYS.contains(&&cap[1]) {
+                keys.insert(cap[1].to_string());
+            }
         }
     }
 
@@ -849,6 +865,59 @@ let load () =
         assert!(
             keys.contains(&"CRANE_BE_NATS_URL".to_string()),
             "expected CRANE_BE_NATS_URL; got {keys:?}"
+        );
+    }
+
+    #[test]
+    fn scan_fsharp_finds_literal_keys_passed_to_environment_reader_wrappers() {
+        let dir = tempfile::tempdir().unwrap();
+        let src_dir = dir.path().join("src");
+        fs::create_dir_all(&src_dir).unwrap();
+        fs::write(
+            src_dir.join("Configuration.fs"),
+            r#"module Configuration
+let load (readEnvironment: string -> string) =
+    let dataDirectory = readEnvironment "F_SHARP_WRAPPED_DATA_DIRECTORY"
+    let port = readEnvironment "F_SHARP_WRAPPED_PORT"
+    (dataDirectory, port)
+"#,
+        )
+        .unwrap();
+
+        let mut keys = scan_fsharp_reads(dir.path()).unwrap();
+        keys.sort();
+
+        assert_eq!(
+            keys,
+            vec!["F_SHARP_WRAPPED_DATA_DIRECTORY", "F_SHARP_WRAPPED_PORT"]
+        );
+    }
+
+    #[test]
+    fn scan_fsharp_excludes_direct_dotnet_container_runtime_signal() {
+        let dir = tempfile::tempdir().unwrap();
+        let src_dir = dir.path().join("src");
+        fs::create_dir_all(&src_dir).unwrap();
+        fs::write(
+            src_dir.join("Configuration.fs"),
+            r#"module Configuration
+let load () =
+    let runningInContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")
+    let dataDirectory = Environment.GetEnvironmentVariable("F_SHARP_DIRECT_DATA_DIRECTORY")
+    (runningInContainer, dataDirectory)
+"#,
+        )
+        .unwrap();
+
+        let keys = scan_fsharp_reads(dir.path()).unwrap();
+
+        assert!(
+            !keys.contains(&"DOTNET_RUNNING_IN_CONTAINER".to_string()),
+            "framework-owned runtime signal must not be treated as app configuration: {keys:?}"
+        );
+        assert!(
+            keys.contains(&"F_SHARP_DIRECT_DATA_DIRECTORY".to_string()),
+            "application-owned direct read must still be detected: {keys:?}"
         );
     }
 

@@ -220,6 +220,8 @@ struct TargetShareWorld {
     /// for the Nx-caching-precondition proxy scenario.
     config_before: Option<Vec<u8>>,
     config_after: Option<Vec<u8>>,
+    /// Direct Cargo test/coverage commands declared by rhino-cli's Nx targets.
+    git_state_isolation_commands: Vec<(String, String)>,
 }
 
 impl std::fmt::Debug for TargetShareWorld {
@@ -246,6 +248,7 @@ impl TargetShareWorld {
             repo_name_results: Vec::new(),
             config_before: None,
             config_after: None,
+            git_state_isolation_commands: Vec::new(),
         }
     }
 
@@ -322,6 +325,94 @@ impl TargetShareWorld {
             .code()
             .unwrap_or(-1)
     }
+}
+
+/// Returns every direct Cargo command used by rhino-cli's Rust test and
+/// coverage targets. Keeping this regression configuration-driven means a new
+/// direct command cannot bypass inherited-Git-state isolation unnoticed.
+fn rust_test_and_coverage_commands() -> Vec<(String, String)> {
+    let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let project_path = manifest
+        .parent()
+        .and_then(Path::parent)
+        .expect("rhino-cli manifest must live under apps/")
+        .join("apps/rhino-cli/project.json");
+    let source = std::fs::read_to_string(&project_path).expect("read rhino-cli project.json");
+    let project: serde_json::Value =
+        serde_json::from_str(&source).expect("rhino-cli project.json must be valid JSON");
+    let targets = project["targets"]
+        .as_object()
+        .expect("rhino-cli project.json must define targets");
+
+    let unit_commands = targets["test:unit"]["options"]["commands"]
+        .as_array()
+        .expect("test:unit must retain its sequential commands array");
+    assert!(
+        !targets["test:unit"]["options"]["parallel"]
+            .as_bool()
+            .expect("test:unit must declare whether its commands are parallel"),
+        "test:unit commands must remain serialized"
+    );
+
+    let mut commands = unit_commands
+        .iter()
+        .enumerate()
+        .map(|(index, command)| {
+            (
+                format!("test:unit command {index}"),
+                command
+                    .as_str()
+                    .expect("test:unit command must be a string")
+                    .to_owned(),
+            )
+        })
+        .collect::<Vec<_>>();
+
+    for target in ["test:integration", "test:coverage"] {
+        commands.push((
+            target.to_owned(),
+            targets[target]["options"]["command"]
+                .as_str()
+                .expect("test:integration and test:coverage must declare direct commands")
+                .to_owned(),
+        ));
+    }
+    commands
+}
+
+const INHERITED_GIT_STATE_SCRUB: &str = "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR ";
+
+#[given(
+    "a rhino-cli test target is invoked with inherited GIT_DIR, GIT_WORK_TREE and GIT_COMMON_DIR"
+)]
+fn given_inherited_git_state(w: &mut TargetShareWorld) {
+    w.git_state_isolation_commands = rust_test_and_coverage_commands();
+}
+
+#[when("Nx launches the Rust test or coverage command")]
+fn when_nx_launches_rust_test_or_coverage_command(_w: &mut TargetShareWorld) {}
+
+#[then("all three inherited variables are cleared for that command")]
+fn then_all_inherited_git_variables_are_cleared(w: &mut TargetShareWorld) {
+    assert!(
+        !w.git_state_isolation_commands.is_empty(),
+        "the regression must inspect every direct Rust test and coverage command"
+    );
+    for (target, command) in &w.git_state_isolation_commands {
+        assert!(
+            command.starts_with(INHERITED_GIT_STATE_SCRUB),
+            "{target} must clear GIT_DIR, GIT_WORK_TREE, and GIT_COMMON_DIR before Cargo; got {command:?}"
+        );
+    }
+}
+
+#[then("a regression test protects the target configuration before any downstream copy")]
+fn then_regression_protects_target_configuration(w: &mut TargetShareWorld) {
+    assert_eq!(
+        w.git_state_isolation_commands.len(),
+        9,
+        "the regression must protect seven serialized unit commands plus integration and coverage"
+    );
 }
 
 // ===========================================================================

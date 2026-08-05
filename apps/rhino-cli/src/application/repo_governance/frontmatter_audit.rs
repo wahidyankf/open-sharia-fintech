@@ -23,15 +23,6 @@ pub struct FrontmatterFinding {
     pub message: String,
 }
 
-/// Path prefixes that identify website app content directories, which are
-/// exempt from this audit.
-const WEBSITE_APP_PREFIXES: &[&str] = &[
-    "apps/ayokoding-www/",
-    "apps/ose-www/",
-    "apps/organiclever-app-web/",
-    "apps/wahidyankf-www/",
-];
-
 /// Returns a compiled `Regex` matching a `**Last Updated**` bold marker in
 /// body text.
 fn last_updated_footer_re() -> &'static Regex {
@@ -52,8 +43,8 @@ fn inline_date_annotation_re() -> &'static Regex {
 /// Audits each directory in `paths` for YAML frontmatter violations and
 /// forbidden body-level date annotations.
 ///
-/// Skips files under any of the `WEBSITE_APP_PREFIXES` paths.  Findings are
-/// sorted by `file`, then by `line`.
+/// Skips files under the configured exclusion prefixes. Findings are sorted by
+/// `file`, then by `line`.
 ///
 /// # Errors
 ///
@@ -61,13 +52,14 @@ fn inline_date_annotation_re() -> &'static Regex {
 pub fn audit_frontmatter(
     fs: &dyn Fs,
     paths: &[String],
+    excluded_prefixes: &[String],
 ) -> std::result::Result<Vec<FrontmatterFinding>, Error> {
     if paths.is_empty() {
         return Err(anyhow!("at least one path is required"));
     }
     let mut findings = Vec::new();
     for root in paths {
-        let files = walk_paths(fs, root);
+        let files = walk_paths(fs, root, excluded_prefixes);
         let mut more = scan_paths(fs, &files)?;
         findings.append(&mut more);
     }
@@ -77,7 +69,7 @@ pub fn audit_frontmatter(
 
 /// Recursively walks `root` and returns sorted paths of `.md` files that are
 /// not inside a website-app directory.
-fn walk_paths(fs: &dyn Fs, root: &str) -> Vec<String> {
+fn walk_paths(fs: &dyn Fs, root: &str, excluded_prefixes: &[String]) -> Vec<String> {
     let root_p = Path::new(root);
     let mut files: Vec<String> = fs
         .walk_files(root_p, &[])
@@ -87,7 +79,7 @@ fn walk_paths(fs: &dyn Fs, root: &str) -> Vec<String> {
                 .is_some_and(|n| n.to_string_lossy().ends_with(".md"))
         })
         .map(|p| p.to_string_lossy().to_string())
-        .filter(|p| !is_website_app(p))
+        .filter(|p| !is_excluded(p, excluded_prefixes))
         .collect();
     files.sort();
     files
@@ -230,11 +222,12 @@ fn check_body_annotations(
     findings
 }
 
-/// Returns `true` when `path` is inside a website-app directory and should be
-/// excluded from the audit.
-fn is_website_app(path: &str) -> bool {
+/// Returns `true` when `path` contains a configured exclusion prefix.
+fn is_excluded(path: &str, excluded_prefixes: &[String]) -> bool {
     let slashed = path.replace('\\', "/");
-    WEBSITE_APP_PREFIXES.iter().any(|p| slashed.contains(p))
+    excluded_prefixes
+        .iter()
+        .any(|prefix| slashed.contains(prefix))
 }
 
 #[cfg(test)]
@@ -247,7 +240,7 @@ mod tests {
 
     #[test]
     fn audit_frontmatter_empty_paths_errors() {
-        let err = audit_frontmatter(&RealFs, &[]).unwrap_err();
+        let err = audit_frontmatter(&RealFs, &[], &[]).unwrap_err();
         assert!(err.to_string().contains("at least one path"));
     }
 
@@ -257,7 +250,7 @@ mod tests {
         let p = tmp.path().join("doc.md");
         fs::write(&p, "---\ntitle: Doc\nupdated: 2026-01-01\n---\n\n# Body\n").unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert_eq!(findings.len(), 1);
         assert!(findings[0].message.contains("updated:"));
         assert_eq!(findings[0].line, 3);
@@ -270,7 +263,7 @@ mod tests {
         let p = tmp.path().join("doc.md");
         fs::write(&p, "# Title\n\nBody.\n\n**Last Updated**: 2026-01-01\n").unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert_eq!(findings.len(), 1);
         assert!(findings[0].message.contains("**Last Updated**"));
         assert_eq!(findings[0].line, 5);
@@ -286,20 +279,24 @@ mod tests {
         )
         .unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert_eq!(findings.len(), 2);
         assert!(findings[0].message.contains("inline date annotation"));
         assert!(findings[1].message.contains("inline date annotation"));
     }
 
     #[test]
-    fn skips_website_apps() {
+    fn skips_configured_exclusions() {
         let tmp = TempDir::new().unwrap();
         let dir = tmp.path().join("apps/ose-www/content");
         fs::create_dir_all(&dir).unwrap();
         fs::write(dir.join("post.md"), "---\nupdated: 2026-01-01\n---\n").unwrap();
-        let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+        let findings = audit_frontmatter(
+            &RealFs,
+            &[tmp.path().to_string_lossy().to_string()],
+            &["apps/ose-www/".to_string()],
+        )
+        .unwrap();
         assert!(findings.is_empty());
     }
 
@@ -309,7 +306,7 @@ mod tests {
         let p = tmp.path().join("doc.md");
         fs::write(&p, "---\ntitle: Doc\n---\n\nClean body.\n").unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert!(findings.is_empty());
     }
 
@@ -323,7 +320,7 @@ mod tests {
         )
         .unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert_eq!(findings.len(), 2);
         assert!(findings[0].file.ends_with("a.md"));
         assert!(findings[1].file.ends_with("b.md"));
@@ -336,7 +333,7 @@ mod tests {
         // Unclosed frontmatter — entire content treated as body.
         fs::write(&p, "---\ntitle: Doc\n\n**Last Updated**: x\n").unwrap();
         let findings =
-            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()]).unwrap();
+            audit_frontmatter(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].line, 4);
     }

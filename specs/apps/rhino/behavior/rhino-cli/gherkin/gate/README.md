@@ -11,6 +11,7 @@ Gherkin feature files for the registry-driven `rhino-cli gate` command family.
 | `gate-enumeration.feature` | `gate list`                          | Surface projections and CI matrix rows |
 | `gate-execution.feature`   | `gate run`                           | Gate dispatch and derived inputs       |
 | `gate-validation.feature`  | `gate validate`                      | Registry-to-surface conformance        |
+| `parity-manifest.feature`  | `parity manifest`                    | Hermetic byte-identity checksum guard  |
 
 ## Related
 

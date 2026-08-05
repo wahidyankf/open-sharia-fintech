@@ -38,6 +38,7 @@ harness:
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
   #   skills-dir  — directory of skill files (source tier only)
   #   rules-dir   — directory of injected rules (generated tier only)
+  #   agent-name  — generated Amazon Q agent-definition filename stem and embedded name (amazonq only)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)
@@ -50,6 +51,7 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
+    agent-name: ose-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -271,6 +273,9 @@ env-injection:
   ci-harness: []
 
 doctor:
+  # No dotnet-global-json: this scaffold has two independent backend pins
+  # (crud-be-fsharp-giraffe 10.0.204 and crud-be-csharp-aspnetcore 10.0.108),
+  # while Doctor's current contract intentionally accepts exactly one source.
   # Tools from doctor's full roster (apps/rhino-cli/src/application/doctor/tools.rs)
   # that ose-primer's own toolchain does not invoke, so `doctor` stays dormant for
   # them instead of hard-failing a plain (non-`--fix`) run. Verified: ose-primer's

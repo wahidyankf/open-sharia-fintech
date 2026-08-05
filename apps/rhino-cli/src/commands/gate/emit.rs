@@ -94,8 +94,29 @@ fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
     if fixed_arguments.is_empty() {
         gate.command.clone()
     } else {
-        format!("{} {}", gate.command, fixed_arguments.join(" "))
+        let quoted_arguments = fixed_arguments
+            .iter()
+            .map(|argument| shell_quote(argument))
+            .collect::<Vec<_>>();
+        format!("{} {}", gate.command, quoted_arguments.join(" "))
     }
+}
+
+/// Quote one generated argument for lint-staged's POSIX-shell command string.
+///
+/// Single quotes preserve whitespace and backslashes verbatim. An embedded
+/// single quote is represented by closing the quoted string, emitting a
+/// literal quote, then reopening it: `'it'"'"'s'`.
+fn shell_quote(argument: &str) -> String {
+    if argument
+        .bytes()
+        .all(|byte| byte.is_ascii_alphanumeric() || b"_@%+=:,./-".contains(&byte))
+        && !argument.is_empty()
+    {
+        return argument.to_string();
+    }
+
+    format!("'{}'", argument.replace('\'', "'\"'\"'"))
 }
 
 /// Replaces or inserts the generated `lint-staged` entry in a package object.
@@ -207,4 +228,35 @@ fn re_emitting_replaces_the_existing_lint_staged_marker_once() {
 
     assert_eq!(second, first);
     assert_eq!(second.matches("\"lint-staged\"").count(), 1);
+}
+
+#[cfg(test)]
+#[test]
+fn command_with_fixed_arguments_quotes_shell_sensitive_values() {
+    use crate::application::repo_config::{GateKind, GateType};
+
+    let gate = repo_config::GateEntry {
+        id: "fixture".to_string(),
+        gate_type: GateType::Check,
+        command: "fixture-command".to_string(),
+        kind: GateKind::External,
+        wiring: None,
+        restages: false,
+        args: BTreeMap::from([
+            (
+                "exclude".to_string(),
+                vec!["contains spaces".to_string(), "it's quoted".to_string()],
+            ),
+            ("path".to_string(), vec![r"back\\slash".to_string()]),
+        ]),
+        surfaces: BTreeMap::new(),
+        carve_out: None,
+        verifies: None,
+        category: None,
+    };
+
+    assert_eq!(
+        command_with_fixed_arguments(&gate),
+        "fixture-command --exclude 'contains spaces' --exclude 'it'\"'\"'s quoted' --path 'back\\\\slash'"
+    );
 }

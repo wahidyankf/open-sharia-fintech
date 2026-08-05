@@ -611,6 +611,40 @@ mod tests {
         ("specs".to_string(), "app".to_string())
     }
 
+    /// Writes a self-contained domain-coverage fixture with one eligible app.
+    ///
+    /// The fixture deliberately uses synthetic project names, so the command's
+    /// allowlist behavior is tested without coupling to this repository's
+    /// live app tree or `repo-config.yml` values.
+    fn write_domain_coverage_fixture(root: &Path) -> (String, String) {
+        std::fs::write(
+            root.join("repo-config.yml"),
+            "specs:\n  domain-areas:\n    - fixture-ledger-api\n",
+        )
+        .unwrap();
+
+        let specs_dir = root.join("specs/fixture-ledger-api");
+        std::fs::create_dir_all(&specs_dir).unwrap();
+        std::fs::write(
+            specs_dir.join("fixture.feature"),
+            "Feature: Fixture domain coverage\n  Scenario: A fixture scenario\n    Given a fixture domain step\n",
+        )
+        .unwrap();
+
+        let app_dir = root.join("apps/fixture-ledger-api/src");
+        std::fs::create_dir_all(&app_dir).unwrap();
+        std::fs::write(
+            app_dir.join("steps.rs"),
+            "#[given(\"a fixture domain step\")]\nfn given_fixture_domain_step() {}\n",
+        )
+        .unwrap();
+
+        (
+            "specs/fixture-ledger-api".to_string(),
+            "apps/fixture-ledger-api".to_string(),
+        )
+    }
+
     #[test]
     fn run_honors_exclude_source_dir_end_to_end() {
         let _cwd = CwdLock::acquire();
@@ -741,11 +775,14 @@ mod tests {
     #[test]
     fn run_domain_skips_project_not_in_domain_areas() {
         let _cwd = CwdLock::acquire();
-        // "rhino-cli" is not listed in repo-config.yml's specs.domain-areas.
-        let args = base_args(vec![
-            "specs/apps/rhino/behavior/rhino-cli/gherkin".to_string(),
-            "apps/rhino-cli".to_string(),
-        ]);
+        let repo = TempDir::new().unwrap();
+        let root = repo.path();
+        init_git_repo(root);
+        let (specs_dir, _) = write_domain_coverage_fixture(root);
+        std::env::set_current_dir(root).expect("chdir to temp repo root");
+
+        // `fixture-utility-cli` is not listed in the fixture's domain-areas.
+        let args = base_args(vec![specs_dir, "apps/fixture-utility-cli".to_string()]);
         let result = run_domain(&args, OutputFormat::Text);
         assert!(
             result.is_ok(),
@@ -756,17 +793,20 @@ mod tests {
     #[test]
     fn run_domain_runs_full_scan_for_eligible_project() {
         let _cwd = CwdLock::acquire();
-        // "ose-be" IS listed in repo-config.yml's specs.domain-areas — falls through to run().
-        let mut args = base_args(vec![
-            "specs/apps/ose/behavior/be/gherkin".to_string(),
-            "apps/ose-be".to_string(),
-        ]);
+        let repo = TempDir::new().unwrap();
+        let root = repo.path();
+        init_git_repo(root);
+        let (specs_dir, app_dir) = write_domain_coverage_fixture(root);
+        std::env::set_current_dir(root).expect("chdir to temp repo root");
+
+        // `fixture-ledger-api` is listed in the fixture's domain-areas, so
+        // `run_domain` falls through to the normal coverage scan.
+        let mut args = base_args(vec![specs_dir, app_dir]);
         args.shared_steps = true;
-        args.exclude_dir = vec!["messaging".to_string()];
         let result = run_domain(&args, OutputFormat::Text);
         assert!(
             result.is_ok(),
-            "expected the real scan to pass for ose-be (matches its existing Nx target), got {result:?}"
+            "expected the synthetic eligible-app scan to pass, got {result:?}"
         );
     }
 

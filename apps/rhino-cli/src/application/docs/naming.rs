@@ -136,6 +136,8 @@ fn is_naming_exempt(basename: &str, exempt_globs: &[String]) -> bool {
             | "_index.md"
             | "CONTRIBUTING.md"
             | "LICENSING-NOTICE.md"
+            | "ROADMAP.md"
+            | "SECURITY.md"
     ) {
         return true;
     }
@@ -188,6 +190,16 @@ mod tests {
     fn readme_always_exempt() {
         let tmp = TempDir::new().unwrap();
         fs::write(tmp.path().join("README.md"), "x").unwrap();
+        let findings =
+            validate_docs_naming(&[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn roadmap_and_security_md_are_always_exempt() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("ROADMAP.md"), "x").unwrap();
+        fs::write(tmp.path().join("SECURITY.md"), "x").unwrap();
         let findings =
             validate_docs_naming(&[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert!(findings.is_empty());

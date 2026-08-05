@@ -29,6 +29,7 @@ struct GateWorld {
     list_output: String,
     json_output: Option<serde_json::Value>,
     first_emitted_package: Option<Vec<u8>>,
+    first_parity_manifest: Option<Vec<u8>>,
     pending_gate_type: Option<String>,
     path: Option<OsString>,
 }
@@ -48,6 +49,7 @@ impl GateWorld {
             list_output: String::new(),
             json_output: None,
             first_emitted_package: None,
+            first_parity_manifest: None,
             pending_gate_type: None,
             path: None,
         }
@@ -233,6 +235,25 @@ impl GateWorld {
 
     fn is_success(&self) -> bool {
         self.succeeded.expect("scenario command ran")
+    }
+
+    fn parity_manifest(&self) -> Vec<u8> {
+        std::fs::read(self.root().join("apps/rhino-cli/parity-manifest.sha256"))
+            .expect("read generated parity manifest")
+    }
+
+    fn run_parity(&mut self, operation: &str) {
+        let output = self
+            .fixture_rhino_command()
+            .args(["parity", "manifest", operation])
+            .output()
+            .expect("run parity manifest command");
+        self.succeeded = Some(output.status.success());
+        self.output = format!(
+            "{}{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
     }
 }
 
@@ -741,6 +762,33 @@ fn then_glob_filter_applies(w: &mut GateWorld) {
     assert!(arguments.contains("keep.md"));
     assert!(arguments.contains("also.txt"));
     assert!(!arguments.contains("docs/skip.md"));
+}
+
+#[given("the frontmatter-date gate declares website exclusions")]
+fn given_frontmatter_date_gate_with_exclusions(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "repo-config.yml",
+        &config(
+            "  - id: md-frontmatter-dates\n    type: check\n    command: md frontmatter-dates validate\n    kind: rhino-cli\n    args:\n      exclude:\n        - apps/website\n    surfaces:\n      ci: { scope: all-file-type }\n",
+        ),
+    );
+    w.write("repo-governance/clean.md", "# Clean\n");
+    w.stage(&["repo-config.yml", "repo-governance/clean.md"]);
+}
+
+#[when("its CI gate runs by id")]
+fn when_frontmatter_date_gate_runs(w: &mut GateWorld) {
+    w.run_gate("ci", Some("md-frontmatter-dates"));
+}
+
+#[then("the frontmatter-date gate succeeds with those exclusions")]
+fn then_frontmatter_date_gate_accepts_exclusions(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "frontmatter-date gate must accept configured exclusions: {}",
+        w.output
+    );
 }
 
 #[given("a file-scoped gate has no eligible paths")]
@@ -1510,6 +1558,123 @@ fn staged_paths(w: &GateWorld) -> String {
         .output()
         .expect("list staged fixture paths");
     String::from_utf8(output.stdout).expect("staged paths are UTF-8")
+}
+
+#[given("a tracked Rhino CLI parity boundary")]
+fn given_tracked_parity_boundary(w: &mut GateWorld) {
+    for (path, contents) in [
+        ("apps/rhino-cli/src/main.rs", "fn main() {}\n"),
+        ("apps/rhino-cli/tests/parity.rs", "#[test] fn parity() {}\n"),
+        (
+            "apps/rhino-cli/Cargo.toml",
+            "[package]\nname = \"fixture\"\n",
+        ),
+        ("apps/rhino-cli/Cargo.lock", "version = 4\n"),
+        ("apps/rhino-cli/project.json", "{}\n"),
+        ("apps/rhino-cli/LICENSE", "MIT\n"),
+        (
+            "specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature",
+            "Feature: fixture parity\n",
+        ),
+    ] {
+        w.write(path, contents);
+    }
+    w.init_git();
+    w.stage(&["."]);
+}
+
+#[given("its parity manifest has been generated and staged")]
+fn given_parity_manifest_generated(w: &mut GateWorld) {
+    w.run_parity("generate");
+    assert!(w.is_success(), "parity generation failed: {}", w.output);
+    w.stage(&["apps/rhino-cli/parity-manifest.sha256"]);
+}
+
+#[when("rhino-cli parity manifest generate runs")]
+fn when_parity_manifest_generate_runs(w: &mut GateWorld) {
+    w.run_parity("generate");
+    if w.is_success() {
+        w.stage(&["apps/rhino-cli/parity-manifest.sha256"]);
+    }
+}
+
+#[when("rhino-cli parity manifest validate runs")]
+fn when_parity_manifest_validate_runs(w: &mut GateWorld) {
+    w.run_parity("validate");
+}
+
+#[when("the same manifest is generated a second time")]
+fn when_parity_manifest_generated_twice(w: &mut GateWorld) {
+    w.first_parity_manifest = Some(w.parity_manifest());
+    w.run_parity("generate");
+}
+
+#[when("a tracked parity source file is edited")]
+fn when_parity_source_is_edited(w: &mut GateWorld) {
+    w.write("apps/rhino-cli/src/main.rs", "fn changed() {}\n");
+}
+
+#[when("a tracked parity test file is edited")]
+fn when_parity_test_is_edited(w: &mut GateWorld) {
+    w.write(
+        "apps/rhino-cli/tests/parity.rs",
+        "#[test] fn changed_parity() {}\n",
+    );
+}
+
+#[when("an untracked test fixture is created")]
+fn when_untracked_parity_fixture_is_created(w: &mut GateWorld) {
+    w.write(
+        "apps/rhino-cli/tests/fixtures/local.env",
+        "SECRET=not-read\n",
+    );
+}
+
+#[then("the parity manifest is current")]
+fn then_parity_manifest_is_current(w: &mut GateWorld) {
+    assert!(w.is_success(), "parity validation failed: {}", w.output);
+}
+
+#[then("the parity manifest is byte-identical to its first generation")]
+fn then_parity_manifest_is_idempotent(w: &mut GateWorld) {
+    assert!(w.is_success(), "second generation failed: {}", w.output);
+    assert_eq!(
+        w.first_parity_manifest
+            .as_ref()
+            .expect("first manifest captured"),
+        &w.parity_manifest()
+    );
+}
+
+#[then("the parity gate names the edited source and deliberate remedy")]
+fn then_parity_source_drift_is_actionable(w: &mut GateWorld) {
+    assert!(!w.is_success(), "source drift unexpectedly passed");
+    assert!(w.output.contains("apps/rhino-cli/src/main.rs"));
+    assert!(
+        w.output
+            .contains("byte-identical across ose-public, ose-primer, ose-private, and beaver-nest")
+    );
+    assert!(w.output.contains("rhino-cli parity manifest generate"));
+}
+
+#[then("the parity gate names the edited test")]
+fn then_parity_test_drift_is_actionable(w: &mut GateWorld) {
+    assert!(!w.is_success(), "test drift unexpectedly passed");
+    assert!(w.output.contains("apps/rhino-cli/tests/parity.rs"));
+}
+
+#[then("the untracked fixture is absent from the manifest")]
+fn then_untracked_fixture_is_absent_from_parity_manifest(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "untracked fixture affected validation: {}",
+        w.output
+    );
+    assert!(
+        !String::from_utf8(w.parity_manifest())
+            .expect("manifest is UTF-8")
+            .contains("apps/rhino-cli/tests/fixtures/local.env")
+    );
 }
 
 #[cfg(unix)]
