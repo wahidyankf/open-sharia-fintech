@@ -128,8 +128,9 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   files; external fact-verification is synthesis-maker's tool-verify job, not scout's).
 - **DD-6: The `AGENTS.md` edit is the single word `eight` → `nine` in the existing PR Review Cycle
   bullet, net `-1` byte, with `pr-review-scout-maker` and `pr-review-types-maker` deliberately NOT
-  named there.** `AGENTS.md` sits at 28,714 B against a 27,000 B warn / 30,000 B hard-fail budget
-  (see [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)) — any
+  named there.** `AGENTS.md` sits at 28,944 B (re-measured 2026-08-05, a point-in-time snapshot —
+  see [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)) against
+  a 27,000 B warn / 30,000 B hard-fail budget — any
   net-positive edit risks tripping the warn threshold further, and the file's own existing
   `agents-md-progressive-disclosure` idea already names this exact tightness as a live problem this
   plan should not make worse. The catalog (`.claude/agents/README.md`) and the convention
@@ -159,19 +160,40 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
 
 ## File-Impact Analysis
 
-| File                                                           | Change                                                                                                                                                                                                                             |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `repo-governance/development/quality/pr-review-disciplines.md` | Add 9th discipline row (type-soundness), 7th grey-zone ruling (DD-2), sweep applicable "eight" occurrences to "nine" (26 occurrences individually judged, not blind sed), update D12/D13 attribution from synthesis-maker to scout |
-| `repo-governance/workflows/pr/pr-review-quality-gate.md`       | Update Participants list (add scout), both mermaid diagrams (flowchart + sequenceDiagram), Loop Algorithm pseudocode, add Cycle-number header field documentation, sweep applicable "eight" occurrences (6) to "nine"              |
-| `.claude/agents/pr-review-synthesis-maker.md`                  | Remove `## Pre-Fan-Out Duties (D12 / D13)` section (moved to scout), add `**Cycle**: N of {total}` to Consolidated Review Header template, update "ninth pipeline agent" self-description to reflect new agent count               |
-| `.claude/agents/pr-review-scout-maker.md`                      | **NEW** — full charter per [Detailed Design](#detailed-design-of-pr-review-scout-makermd) below                                                                                                                                    |
-| `.claude/agents/pr-review-types-maker.md`                      | **NEW** — full charter per [Detailed Design](#detailed-design-of-pr-review-types-makermd) below                                                                                                                                    |
-| `.claude/agents/README.md`                                     | Add catalog entries for both new agents in the PR Review Cycle family list                                                                                                                                                         |
-| `AGENTS.md`                                                    | Single-word edit `eight` → `nine` in the PR Review Cycle bullet (DD-6) — no new agent names added                                                                                                                                  |
-| `.opencode/agents/pr-review-scout-maker.md`                    | **Generated** by `npm run generate:bindings` — never hand-authored                                                                                                                                                                 |
-| `.opencode/agents/pr-review-types-maker.md`                    | **Generated** by `npm run generate:bindings` — never hand-authored                                                                                                                                                                 |
-| `.opencode/agents/pr-review-synthesis-maker.md`                | **Regenerated** to match the trimmed `.claude/` source                                                                                                                                                                             |
-| `.cursor/agents/*` / `.amazonq/**`                             | **Regenerated** mirrors of the same three files, per the multi-harness sync pipeline                                                                                                                                               |
+```text
+.
+├── AGENTS.md [E] — single-word edit: eight → nine (PR Review Cycle bullet; DD-6)
+├── .claude/
+│   └── agents/
+│       ├── README.md [E] — catalog entries for both new agents
+│       ├── pr-review-synthesis-maker.md [E] — remove Pre-Fan-Out Duties section (moved to scout),
+│       │   add Cycle field to Consolidated Review Header, update "ninth"→"eleventh" self-description
+│       ├── pr-review-scout-maker.md [N] — new pipeline stage-0 agent, full charter below
+│       └── pr-review-types-maker.md [N] — new type-soundness discipline specialist, full charter below
+├── .opencode/agents/ [G] — pr-review-scout-maker.md, pr-review-types-maker.md (new),
+│   pr-review-synthesis-maker.md (regenerated) — via `npm run generate:bindings`, never hand-authored
+├── .cursor/agents/ [G]
+├── .amazonq/** [G] — regenerated mirrors of the same three agent files
+└── repo-governance/
+    ├── development/quality/pr-review-disciplines.md [E] — 9th discipline row (type-soundness), 7th
+    │   grey-zone ruling (DD-2), sweep applicable "eight"→"nine" occurrences (26 total, individually
+    │   judged, not blind sed), update D12/D13 attribution from synthesis-maker to scout
+    └── workflows/pr/pr-review-quality-gate.md [E] — Participants list (add scout), both mermaid
+        diagrams (flowchart + sequenceDiagram), Loop Algorithm pseudocode, Cycle-number header field
+        documentation, sweep applicable "eight" occurrences (6 total) to "nine"
+```
+
+### More Detail
+
+- **Mirror discovery criteria**: the `[G]` mirrors under `.opencode/`, `.cursor/`, and `.amazonq/`
+  are exactly the regenerated counterparts of the three touched/new `.claude/agents/` files above —
+  discovered mechanically via `npm run generate:bindings`'s own diff output and verified by `npm run
+validate:sync`, never enumerated or hand-authored individually.
+- **Sweep-count rationale**: the two `eight`→`nine` sweeps (26 occurrences in
+  `pr-review-disciplines.md`, 6 in `pr-review-quality-gate.md`) are not a blind find-and-replace —
+  each occurrence is read in context and judged as a current-count statement (becomes `nine`) or a
+  historical narration of the original eight-discipline cutover (stays `eight`), per Phase 1/Phase 2
+  of [delivery.md](./delivery.md).
 
 ## Dependencies
 

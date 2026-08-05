@@ -46,16 +46,19 @@ own dedicated pipeline stage, so:
 - **No type-soundness discipline exists today**: `grep -ci "type.soundness\|type.safety" repo-governance/development/quality/pr-review-disciplines.md`
   returns `0` in the discipline table itself (the term does not appear as an owned scope anywhere in
   the Eight Reviewer Disciplines table).
-- **`AGENTS.md` byte budget is already tight**: 28,714 bytes measured
-  (`wc -c AGENTS.md`) against a documented 27,000 B warn / 30,000 B hard-fail threshold (see
+- **`AGENTS.md` byte budget is already tight**: 28,944 bytes measured (`wc -c AGENTS.md`,
+  re-verified 2026-08-05) against a documented 27,000 B warn / 30,000 B hard-fail threshold (see
   [Instruction-File Size Budget Convention](../../../repo-governance/conventions/structure/instruction-file-size-budget.md)),
   and the pre-existing
   [`agents-md-progressive-disclosure` idea](../../ideas/agents-md-progressive-disclosure.md) already
-  flags this exact tightness. **Constraint this imposes on this plan**: the `AGENTS.md` PR Review
-  Cycle bullet edit must be net-neutral-to-negative in byte count (`eight` → `nine` is net `-1` byte);
-  it must NOT grow to individually name `pr-review-scout-maker` or `pr-review-types-maker` — those
-  stay documented in `.claude/agents/README.md` and `pr-review-disciplines.md`, which carry no such
-  budget.
+  flags this exact tightness. This figure is a **point-in-time snapshot, not a guaranteed
+  pre-execution value** — `AGENTS.md` is a live, frequently-edited file, so Phase 0's own re-baseline
+  step re-measures it immediately before execution and halts if it has drifted since this figure was
+  recorded. **Constraint this imposes on this plan**: the `AGENTS.md` PR Review Cycle bullet edit must
+  be net-neutral-to-negative in byte count relative to whatever the re-measured baseline turns out to
+  be (`eight` → `nine` is net `-1` byte); it must NOT grow to individually name
+  `pr-review-scout-maker` or `pr-review-types-maker` — those stay documented in
+  `.claude/agents/README.md` and `pr-review-disciplines.md`, which carry no such budget.
 
 ## Business Impact
 

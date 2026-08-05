@@ -1,10 +1,90 @@
 # Delivery Checklist: PR Review Cycle Scout + Cycle-Number + Type-Soundness
 
-**Delivery Mode**: `worktree-to-pr` — Phases 0-4 happen in a dedicated worktree with no PR yet (Phase
-0 opens no PR per the hard rule; Phases 1-4 are one contiguous delivery unit that is not yet
-independently shippable until the mirrors validate). The PR opens at the delivery boundary, at the
-start of Phase 5, per [Plans Organization Convention §PRs Open at Delivery
+## Worktree
+
+Worktree path: `worktrees/pr-review-cycle-scout-and-typesafety/`
+
+Optional manual pre-provisioning (run from repo root):
+
+```bash
+claude --worktree pr-review-cycle-scout-and-typesafety
+```
+
+The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
+`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
+the worktree after the plan is archived and pushed.
+
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree
+Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+
+## Delivery Mode: worktree-to-pr
+
+Phase 0 opens no PR per the hard rule. Phases 1-4 are one contiguous delivery unit that is not yet
+independently shippable until the mirrors validate; the PR opens at the delivery boundary, at the
+**end of Phase 4** (see that phase's Commit Guidelines subsection), per [Plans Organization
+Convention §PRs Open at Delivery
 Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+Phase 5 continues that same delivery unit's integration work against the PR Phase 4 already opened
+— running the PR-Review Maker→Fixer Cycle and performing the `[AI]` merge — and does not open a
+second PR. Phases 6-7 run after the merge, pushing `learnings.md` directly to `origin/main` from the
+local checkout (no worktree, no PR).
+
+## Parallelization Model
+
+**Serial spine (Phases 0-7)**: every phase in this plan is strictly serial — each phase's artifacts
+are the source of truth the next phase builds on (baseline → convention edits → workflow edits → new
+agent files → catalog/binding sync → dogfood + merge → knowledge capture → finalize). No fan-out
+point exists anywhere in this plan.
+
+**Chosen N**: N/A — this plan has no independent parallel nodes to fan out across, so the [Agent
+Workflow Orchestration
+Convention](../../../repo-governance/development/agents/agent-workflow-orchestration.md)'s N+1
+model does not apply beyond the single main thread.
+
+**Cleanup as the terminal node**: Phase 7 (Finalize) is the terminal node, depending on every prior
+delivery phase — it pushes the `learnings.md` triage created in Phase 6 and verifies no
+double-archival occurred; it never runs while Phase 5's merge or Phase 6's knowledge-capture triage
+is still in flight.
+
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                                              | Worktree / branch                                | PR opens                                                                                        |
+| -------- | -------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| 0        | — (setup and baseline)                                                     | —                                                | no                                                                                              |
+| 1-4      | PR Review Cycle Scout + Cycle-Number + Type-Soundness (sole delivery unit) | `worktrees/pr-review-cycle-scout-and-typesafety` | yes — at Phase 4                                                                                |
+| 5        | Same delivery unit (review-cycle + merge continuation)                     | `worktrees/pr-review-cycle-scout-and-typesafety` | yes — at Phase 5 (continues the Phase 4 PR through the review cycle and merge; not a second PR) |
+| 6-7      | Knowledge Capture + Finalize (post-merge, direct push)                     | — (local `main` checkout, no worktree)           | no                                                                                              |
+
+Every change-producing phase appears in exactly one row above. Phase 5 does not open a second PR —
+it runs the PR-Review Maker→Fixer Cycle and the `[AI]` merge against the single PR Phase 4 already
+opened; the "yes — at Phase 5" cell records that continuation for delivery-boundary tracking
+purposes, not an independent PR.
+
+### Delivery Flow
+
+```mermaid
+%% Color palette: Blue #0173B2 (worktree execution phases), Orange #DE8F05 (PR boundary),
+%% Teal #029E73 (post-merge phases)
+%% TD required: 8 sequential phases exceed LR's horizontal-depth MaxWidth=4; TD keeps depth
+%% (8) as the unchecked vertical axis since this chain's span is 1 node per rank
+flowchart TD
+  P0["Phase 0<br/>Baseline + Worktree"]:::blue --> P1["Phase 1<br/>pr-review-disciplines.md"]:::blue
+  P1 --> P2["Phase 2<br/>pr-review-quality-gate.md"]:::blue
+  P2 --> P3["Phase 3<br/>New/edited agent files"]:::blue
+  P3 --> P4["Phase 4<br/>Catalog, AGENTS.md, sync"]:::blue
+  P4 -->|"PR opens"| P5["Phase 5<br/>Dogfood + Merge"]:::orange
+  P5 --> P6["Phase 6<br/>Knowledge Capture"]:::teal
+  P6 --> P7["Phase 7<br/>Finalize"]:::teal
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF
+  classDef orange fill:#DE8F05,stroke:#000000,color:#000000
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
+> **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).
+> `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
+> privileged-credential handling). `[AI+HUMAN]`: agent prepares, human approves or finishes.
 
 ## Phase 0: Baseline and Worktree Setup
 
@@ -18,7 +98,7 @@ pr-review-cycle-scout-and-typesafety` — acceptance: `git worktree list` shows 
       (nothing changed between plan-authoring and execution start):
       `grep -c eight repo-governance/development/quality/pr-review-disciplines.md` returns `26`;
       `grep -c eight repo-governance/workflows/pr/pr-review-quality-gate.md` returns `6`;
-      `wc -c AGENTS.md` returns `28714`; `ls .claude/agents/ | grep -c pr-review` returns `10` —
+      `wc -c AGENTS.md` returns `28944`; `ls .claude/agents/ | grep -c pr-review` returns `10` —
       acceptance: all four match; if any differs, STOP and re-baseline `brd.md` before proceeding
       (another actor may have touched this surface since plan authoring)
 - [ ] [AI] Run baseline quality gates in the worktree to confirm a known-good starting point:
@@ -62,7 +142,7 @@ repo-governance/development/quality/pr-review-disciplines.md` returns `>= 1`
       scout as the item above
 - [ ] [AI] In `## Post-Cutover Monitoring Plan`'s **Per-discipline acceptance rate** bullet: note
       that `type-soundness` joins `performance` and `docs` as a newly-added discipline to watch for
-      whether it "earns its fan-out cost" — acceptance: `grep -c "type-soundness"
+      whether it "earns its fan-out cost" — acceptance: `grep -ci "type-soundness"
 repo-governance/development/quality/pr-review-disciplines.md` returns `>= 2` (table + this
       mention)
 - [ ] [AI] Sweep every remaining literal `eight` occurrence in the file (26 total per baseline, minus
@@ -79,7 +159,7 @@ repo-governance/development/quality/pr-review-disciplines.md` returns `>= 2` (ta
 
 ### Phase 1 Gate
 
-- [ ] [AI] `grep -c "type-soundness" repo-governance/development/quality/pr-review-disciplines.md`
+- [ ] [AI] `grep -ci "type-soundness" repo-governance/development/quality/pr-review-disciplines.md`
       returns `>= 2`; `grep -c "Compiles vs\."` returns `>= 1`; `grep -n eight` shows only deliberate
       historical-narration lines remaining — acceptance: all three hold
   - **Pause Safety**: only the convention doc is edited; the agent files it describes do not exist
@@ -172,8 +252,9 @@ Duties (D12 / D13)` section (all three subsections: Risk-Tier Classification, Sh
       Assembly, Prior-Cycle Thread-Resolution Read) — acceptance: `grep -c "Pre-Fan-Out Duties"
 .claude/agents/pr-review-synthesis-maker.md` returns `0`
 - [ ] [AI] Same file: add `**Cycle**: N of {total}` as the first line of the `## Consolidated Review
-Header` template block, before `**Risk tier**` — acceptance: `grep -A1 "Consolidated Review
-Header" .claude/agents/pr-review-synthesis-maker.md | grep -c Cycle` returns `>= 1`
+Header` template block, before `**Risk tier**` — acceptance: `grep -A8 "^## Consolidated Review
+Header" .claude/agents/pr-review-synthesis-maker.md | grep -c "\*\*Cycle\*\*"` returns `>= 1` (range-
+      bounded to the header's own fenced block, not just the line immediately after the heading)
 - [ ] [AI] Same file: update the frontmatter `description` and the `## Agent Metadata` Model
       Selection Justification's self-count ("the ninth `pr-review-*-maker` agent") to "the eleventh
       `pr-review-*-maker` agent"; update `## Core Responsibility` and `## Cross-Cycle Behavior` prose
@@ -211,7 +292,9 @@ maker.md` no longer contains its old Pre-Fan-Out Duties section and now carries 
 "pr-review-scout-maker\|pr-review-types-maker" .claude/agents/README.md` returns `>= 2`
 - [ ] [AI] Edit `AGENTS.md`'s PR Review Cycle bullet: change the single word `eight` → `nine` — no
       other change, per [DD-6](./tech-docs.md#design-decisions) — acceptance: `wc -c AGENTS.md`
-      returns `<= 28714` (net non-positive byte delta) AND `grep -c "nine discipline"
+      returns a value `<=` the byte count Phase 0's baseline step recorded (net non-positive delta
+      from that re-verified baseline — `28944` at this fix's authoring time, but Phase 0's own live
+      re-measurement is the actual gate, not this hardcoded figure) AND `grep -c "nine discipline"
 AGENTS.md` returns `1`
 - [ ] [AI] Run `npm run generate:bindings` — acceptance: exits 0; `.opencode/agents/pr-review-scout-
 maker.md` and `.opencode/agents/pr-review-types-maker.md` now exist; `.opencode/agents/pr-
@@ -225,6 +308,19 @@ review-synthesis-maker.md` reflects the trimmed source
 
 ### Local Quality Gates (Before Push)
 
+> **Scope note**: this plan touches only Markdown files (`repo-governance/**/*.md`,
+> `.claude/agents/*.md`, `AGENTS.md`, plus their regenerated `.opencode/`/`.cursor/`/`.amazonq/`
+> mirrors) — no `apps/`/`libs/` source. The canonical `nx affected` blast-radius pattern (targets:
+> `typecheck`, `lint`, `test:quick`, `specs:coverage`) is deliberately considered rather than
+> skipped: it returns no affected TS/Rust/F#/C# projects for a Markdown-only diff (confirm this
+> holds at execution time — if it reports an affected project, run it instead of skipping).
+> `rhino-cli` is the one Rust project whose own tests exercise the Markdown-linting subcommands this
+> plan's edits are validated against, so its `test:quick` target runs explicitly below in place of
+> the blast-radius command.
+
+- [ ] [AI] Run `nx affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: reports no
+      affected TS/Rust/F#/C# projects for this Markdown-only diff (if it reports one, run it and fix
+      any failure before proceeding, per the scope note above)
 - [ ] [AI] Run `npx nx run rhino-cli:test:quick` — acceptance: exits 0
 - [ ] [AI] Run `npm run lint:md:fix` — acceptance: exits 0, no unresolved violations in the
       touched/new files
@@ -271,31 +367,52 @@ hardening` Phase 4 cutover precedent, which retired the old monolith immediately
       push fixes, resolve threads — acceptance: per the workflow's own Step 3 success criteria
 - [ ] [AI] Confirm the CI-green gate holds after each cycle's fixer pass before the next cycle starts
       — acceptance: `gh pr checks <PR>` reports zero failing/pending checks after each cycle
+- [ ] [AI] After 3 cycles complete and CI is green: commit the archival move to the PR branch (this
+      plan's folder and its delivering PR are both in `ose-public` — no cross-repo exemption applies,
+      so archival-in-PR is a required Done-Definition item, not deferred to a post-merge step):
+      `git mv plans/in-progress/pr-review-cycle-scout-and-typesafety
+plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety` (today's completion date); update
+      `plans/in-progress/README.md` (remove the Active Plans entry) and `plans/done/README.md` (add a
+      Completed Projects entry summarizing the three shipped enhancements and the dogfood result);
+      commit as `chore(plans): archive pr-review-cycle-scout-and-typesafety` and push to the PR branch
+      — acceptance: `git status` on the PR branch shows the rename staged and committed, and the
+      commit is pushed
+- [ ] [AI] Re-confirm the CI-green gate after the archival commit — acceptance: `gh pr checks <PR>`
+      reports zero failing/pending checks
 - [ ] [AI] After 3 cycles complete: verify the [Done-Definition for `*-to-pr`
       Modes](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#done-definition-for--to-pr-modes)
       — N cycles complete without escalation, every comment answered with its fix committed and
-      pushed, all quality gates green, archival-in-PR N/A until Phase 7 (noted, not yet applicable)
+      pushed, all quality gates green, **archival-in-PR is committed** (the `git mv` + README updates
+      above landed as a commit on this PR branch, confirmed by the step above — not deferred to a
+      post-merge step, since this plan's folder and PR are both in `ose-public`)
 - [ ] [AI] Verify the five hardened merge preconditions (a)-(e) per
       [PR Merge Protocol](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#hardened-merge-preconditions)
       — 3 cycles with no escalation, 0 CRITICAL + 0 HIGH outstanding, branch up-to-date with
       `origin/main`, all gates green, no UI/API surface changed (docs+agent-prompt-only PR — record
       this exemption explicitly per the surface-conditional rule) — acceptance: all five hold
 - [ ] [AI] `[AI]` merge the PR once all preconditions hold (no `[HUMAN]` gate declared for this plan)
-      — acceptance: PR merged, `origin/main` advances
+      — acceptance: PR merged, `origin/main` advances, and the plan folder is now live at
+      `plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/` on `origin/main`
 
 ### Phase 5 Gate
 
-- [ ] [AI] PR merged; local `main` fast-forwarded (or `reset --soft`-recovered) to match `origin/main`
+- [ ] [AI] PR merged; plan folder lives at
+      `plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/` on `origin/main` (archival landed
+      inside the merged PR, per the Done-Definition step above); local `main` fast-forwarded (or
+      `reset --soft`-recovered) to match `origin/main`
       per [the FF-local-main-after-side-worktree-push practice](../../../repo-governance/development/workflow/worktree-and-artifact-cleanup.md);
       worktree removed — acceptance: `git -C /Users/wkf/ose-projects/ose-public rev-parse HEAD`
-      equals `git -C /Users/wkf/ose-projects/ose-public rev-parse origin/main`
-  - **Pause Safety**: feature work is fully merged and live; safe to pause indefinitely; resume by
-    continuing to Phase 6 (Knowledge Capture) on local `main`
+      equals `git -C /Users/wkf/ose-projects/ose-public rev-parse origin/main`; `test -d
+plans/done/*pr-review-cycle-scout-and-typesafety` returns true
+  - **Pause Safety**: feature work is fully merged and live, and the plan folder is already archived;
+    safe to pause indefinitely; resume by continuing to Phase 6 (Knowledge Capture) on local `main`
 
 ## Phase 6: Knowledge Capture
 
-- [ ] [AI] Create `learnings.md` in this plan's folder (on local `main`, per plan-docs-on-main
-      practice) with the mandatory H1 as its first content line, per the
+- [ ] [AI] Create `learnings.md` in the plan's now-archived folder
+      (`plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/`, on local `main`, per
+      plan-docs-on-main practice — the folder already moved during Phase 5's in-PR archival) with the
+      mandatory H1 as its first content line, per the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)
 - [ ] [AI] Log every learning surfaced during Phases 0-5 as it is discovered (running log, not
       reconstructed after the fact) — candidates to watch for specifically: any surprise in how the
@@ -315,24 +432,28 @@ hardening` Phase 4 cutover precedent, which retired the old monolith immediately
 - [ ] [AI] `learnings.md` exists with every discovered learning triaged to a terminal state (routed
       or discarded-with-reason); zero code-homed learnings landed inline outside the Iron Rule 3
       carve-out — acceptance: holds
+  - **Pause Safety**: `learnings.md` is fully triaged; the archived plan folder on local `main` is not
+    yet pushed; safe to pause; resume by continuing to Phase 7
 
-## Phase 7: Plan Archival
+## Phase 7: Finalize (Push Learnings, Verify)
 
-- [ ] [AI] `git mv plans/in-progress/pr-review-cycle-scout-and-typesafety
-plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety` (today's completion date) —
-      acceptance: `git status` shows the rename
-- [ ] [AI] Update `plans/in-progress/README.md`: remove the Active Plans entry added during plan
-      creation
-- [ ] [AI] Update `plans/done/README.md`: add a new Completed Projects entry summarizing the three
-      shipped enhancements and the dogfood result
-- [ ] [AI] Commit and push the archival move directly to `origin/main` from `ose-public`'s local
-      checkout (archival-in-PR already landed as part of Phase 5's merged PR if the archival commit
-      is bundled there instead — confirm which posture applies and do not double-archive)
+Plan archival already landed inside the merged PR during Phase 5 — this phase is post-merge
+verification and pushing the `learnings.md` triage created in Phase 6, not a second archival.
+
+- [ ] [AI] Commit `learnings.md` (created in Phase 6) directly to `origin/main` from `ose-public`'s
+      local checkout: `git add plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/learnings.md
+&& git commit -m "docs(plans): record knowledge-capture learnings for
+pr-review-cycle-scout-and-typesafety" && git push origin main` — acceptance: `git log -1 --stat`
+      shows the commit pushed to `origin/main`
+- [ ] [AI] Verify no double-archival occurred: `git log --oneline -- plans/in-progress/README.md
+plans/done/README.md | head -5` shows exactly one archival-related commit (the one from Phase 5's PR)
+      — acceptance: holds
 
 ### Phase 7 Gate
 
-- [ ] [AI] Plan folder lives at `plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/`; both
-      README indexes updated; local `main` matches `origin/main` — acceptance: holds; plan complete
+- [ ] [AI] Plan folder lives at `plans/done/YYYY-MM-DD__pr-review-cycle-scout-and-typesafety/`
+      (archived in Phase 5's PR); `learnings.md` committed and pushed to `origin/main`; both README
+      indexes reflect exactly one archival — acceptance: holds; plan complete
 
 ## Related Documentation
 
