@@ -266,7 +266,7 @@ impl IndexBlobReader {
         self.stdout
             .read_exact(&mut terminator)
             .context("read staged Rhino CLI parity boundary blob terminator")?;
-        if terminator != [b'\n'] {
+        if terminator != *b"\n" {
             return Err(anyhow!(
                 "Git returned a malformed parity boundary blob response"
             ));
