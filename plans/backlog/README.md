@@ -10,7 +10,7 @@ The `ayokoding-learning-path-*` plans deliver one programme. Each plan is **self
 shared programme decisions (the `R*`/`A*` ids) are folded into each plan's own `tech-docs.md` under a
 `## Programme decisions` section, and each plan's README carries its scope, course count, gates, and
 dependency edges. **Renumbered 2026-08-01** (see
-[`plan-decision-integrity-hardening`](../in-progress/plan-decision-integrity-hardening/README.md)'s
+[`plan-decision-integrity-hardening`](./plan-decision-integrity-hardening/README.md)'s
 retrofit rationale): plans `05` through `07` originally each delivered more than the 5-15-course
 governance band allows (`04` alone scoped 90 courses; `05-manifests` scoped all four path manifests
 at once; `06`/`07` scoped 24 and 30 courses respectively). Every one of them is now split along its
@@ -104,6 +104,11 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   held its $30 invoice ceiling and hit its $20 target, once a full clean billing cycle has closed. Split out of that
   plan because the grading is calendar-gated (**earliest 2026-09-26**) while the engineering finishes
   in days. Hard `blockedBy` that plan; single-file structure.
+- [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md)
+  — Four authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
+  pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied
+  retroactively to every open plan. Derived from the three-plan AI Model Benchmark chain. **Returned
+  to backlog 2026-08-05** from `in-progress`.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
