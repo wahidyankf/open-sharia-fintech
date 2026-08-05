@@ -46,7 +46,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 - Linking standards
 - Emoji usage
 - Convention compliance
-- AGENTS.md size limits (30k target, 40k hard limit)
+- Instruction-surface byte budgets (Step 6; thresholds live in `repo-config.yml`, never restated here)
 
 ### Skills Quality Validation
 
@@ -75,11 +75,13 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 3. **Inconsistencies**: Misaligned terminology, broken cross-references
 4. **Traceability Violations**: Missing required sections (Principles/Conventions Implemented)
 5. **Layer Coherence**: Ensure each layer properly governs/implements layers below
-6. **Gherkin Step-Keyword Cardinality**: Gherkin fences in `plans/in-progress/` and
-   `plans/backlog/` markdown — every `Scenario` must use exactly one primary `Given`, one
-   `When`, and one `Then`; extras chain with `And`/`But`. `Background` blocks and `Scenario
-Outline` `Examples` tables are exempt. `plans/done/` is exempt (immutable archive). Flag
-   violations as **HIGH**. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
+6. **Gherkin Step-Keyword Cardinality**: Gherkin fences in `repo-governance/`, `docs/`,
+   `.claude/skills/`, and active plans (`plans/in-progress/`, `plans/backlog/`) — every `Scenario`
+   must use exactly one primary `Given`, one `When`, and one `Then`; extras chain with `And`/`But`.
+   `Background` blocks and `Scenario Outline` `Examples` tables are exempt. `plans/done/` is exempt
+   (immutable archive). Tracked `.feature` files belong to the deterministic
+   `gherkin-keyword-cardinality` linter, not this step. Flag violations as **HIGH**. Step 7
+   sub-check 9 is the authoritative statement of this scope. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
 
 **Detection Methods**:
 
@@ -223,34 +225,12 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 - Update all [N] agents to reference Skill
 ```
 
-### AGENTS.md Size Monitoring
+### Instruction-Surface Size — Delegated
 
-**Size Limits**:
-
-- **Target**: 30,000 characters (provides 25% headroom)
-- **Warning**: 35,000 characters (should be reviewed and condensed)
-- **Hard Limit**: 40,000 characters (DO NOT EXCEED - performance threshold)
-
-**Validation**:
-
-- Check current size
-- Calculate percentage of limit
-- Warn if exceeding target or warning threshold
-- Flag as CRITICAL if exceeding hard limit
-
-**Report Format**:
-
-```markdown
-### Finding: AGENTS.md Size
-
-**Current Size**: [N] characters
-**Target Limit**: 30,000 characters ([percentage]%)
-**Hard Limit**: 40,000 characters ([percentage]%)
-**Status**: [Within Target / Warning / CRITICAL]
-
-**Recommendation**:
-[If over target] Review AGENTS.md for duplication with convention docs. Consider moving detailed examples to convention files and keeping only brief summaries with links.
-```
+Byte budgets for `AGENTS.md`, `CLAUDE.md`, and every other auto-loaded instruction surface are owned
+by **Step 6**, which defers to the `instruction-size:` section of `repo-config.yml` and the
+deterministic `rhino-cli harness instruction-size validate` gate. Never restate thresholds here — a
+second copy drifts from the config and produces contradictory verdicts on the same file.
 
 ## Reference
 
@@ -340,6 +320,18 @@ When a UUID chain exists from a previous iteration (re-validation mode, identifi
 3. **If not found**: Run full scan as normal
 
 This prevents scanning all ~265 software documentation files when only 3-4 agent files were changed by the fixer.
+
+**Path scope** (this step had none stated, which made it unbounded in practice — it is now explicit):
+
+- `repo-governance/**/*.md`
+- `.claude/agents/**/*.md`, `.claude/skills/**/*.md`
+- `docs/**/*.md`
+- root instruction surfaces: `AGENTS.md`, `CLAUDE.md`, `README.md`
+- active plans: `plans/in-progress/**/*.md`, `plans/backlog/**/*.md`
+
+**Exempt**: website content under `apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-www/`,
+`apps/wahidyankf-www/`; `plans/done/` (immutable archive); every generated mirror (`.opencode/`,
+`.cursor/`, `.amazonq/`); `generated-reports/`; `local-temp/`; `worktrees/`.
 
 Validate file naming, linking, emoji usage, convention compliance per existing logic. Includes No-Last-Updated Convention: flag `updated:` frontmatter and `**Last Updated**` footer blocks in non-website files (HIGH criticality). Date fields in non-website files are not validated for correctness — they must not exist at all per [No Manual Date Metadata Convention](../../repo-governance/conventions/structure/no-date-metadata.md).
 
@@ -697,6 +689,9 @@ See [Instruction-File Size Budget Convention](../../repo-governance/conventions/
    - `repo-governance/conventions/**/*.md`
    - `repo-governance/development/**/*.md`
    - `repo-governance/workflows/**/*.md`
+   - `.claude/agents/**/*.md` — Layer 4 governance content (the WHO layer). Content and cross-layer
+     consistency only; frontmatter shape, naming, and mirror parity belong to the deterministic
+     `rhino-cli harness` gates and `repo-harness-compatibility-checker`.
    - `repo-governance/repository-governance-architecture.md`
    - `repo-governance/README.md`
    - `docs/explanation/README.md`
@@ -1178,7 +1173,7 @@ Files in directory but not in README:
 
 #### Summary Format
 
-**After completing all 8 validation categories, add summary**:
+**After completing all 8 Step-8 sub-checks (8.1-8.8), add summary**:
 
 ```markdown
 ## Step 8 Summary: Software Documentation Validation
@@ -1209,7 +1204,7 @@ Update report status to "Complete", add summary statistics by category:
 - Agent-Skill duplication findings
 - Skill consolidation opportunity findings
 - Skills coverage gap findings
-- AGENTS.md size findings
+- Instruction-surface size findings (Step 6)
 - Rules governance findings (contradictions, inaccuracies, inconsistencies, traceability, layer coherence, licensing compliance)
 - Software documentation findings (principle alignment, cross-references, file naming, structure patterns, templates, diagrams, README indices, version docs)
 
@@ -1235,7 +1230,9 @@ When preflight is unavailable (`[WARN]` logged in Step 0.5), the report uses a s
 
 ## Important Notes
 
-**Progressive Writing**: All findings MUST be written immediately during Steps 1-7, not buffered.
+**Progressive Writing**: All findings MUST be written immediately during Steps 1-8, not buffered.
+Step 8 is the largest step (~265 files) and is the one most likely to be interrupted by compaction —
+buffering its findings is how a run loses the most work.
 
 **Duplication Detection Accuracy**: Focus on high-confidence matches. False positives are acceptable (fixer will re-validate).
 

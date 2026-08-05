@@ -7,11 +7,6 @@ Active project plans currently being worked on.
 - [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   — Authors 14 course bodies from the original course-authoring plan's mobile/desktop and concurrency
   bands.
-- [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md) — Four
-  authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
-  pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied
-  retroactively to every open plan in all three repos. Derived from the three-plan AI Model
-  Benchmark chain.
 - [sdlc-gate-registry-enforcement](./sdlc-gate-registry-enforcement/README.md) — Makes the already-ratified
   Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically enforced via a `gates:`
   registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and retires `main-ci.yml`

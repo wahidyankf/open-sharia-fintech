@@ -776,6 +776,7 @@ The rule includes "unless specified otherwise by other repo-governance/conventio
 
 ## Related Conventions
 
+- [Build-Artifact Sweeper Convention](./build-artifact-sweeper.md) - The complementary boundary: an ambient sweeper removes gitignored **build output and caches** (`target/`, `dist/`, `.next/`, `.nx/cache`) at any time, but never the agent-owned `generated-reports/` and `local-temp/` directories defined here. A report or scratch file missing is therefore never explained by a sweep
 - [File Naming Convention](../../conventions/structure/file-naming.md) - For permanent documentation files
 - [AI Agents Convention](../agents/ai-agents.md) - For agent design and tool access
 - [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - For documentation organization

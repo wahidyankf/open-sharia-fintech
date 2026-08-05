@@ -48,6 +48,8 @@ This practice implements/respects the following conventions:
 3. **Commit the fix separately.** Preexisting fixes go in their own commit with an appropriate conventional commit message (typically `fix(scope):` or `chore(scope):`), separate from your feature work.
 4. **Verify the fix.** Re-run the affected quality gates and confirm they pass before proceeding with your original work.
 
+**Carve-out — missing build artifacts.** A failure caused by absent gitignored build output or caches (`target/`, `dist/`, `.next/`, `.nx/cache`, the shared cargo `target/`) is not a preexisting issue under this rule. The ambient sweeper described in the [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md) is the identified root cause, and regenerating (`nx build`, `npm install`, `npm run doctor -- --fix`) is the proper fix, not a bypass. Only a failure that **reproduces after a clean regeneration** is a blocker governed by the four steps above.
+
 ## Forbidden Actions
 
 The following actions are **explicitly forbidden** as responses to preexisting CI blockers:
