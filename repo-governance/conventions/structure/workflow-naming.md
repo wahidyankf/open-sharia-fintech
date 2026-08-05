@@ -18,7 +18,7 @@ Workflows under `repo-governance/workflows/` follow a **single filename rule wit
 
 A uniform, exception-free naming rule gives the repository three concrete guarantees that loose naming cannot:
 
-- **Enforceable by checker**: A single regex suffix check (`-(quality-gate|execution|setup|planning)$`) decides conformance. No per-workflow judgement, no grandfathered `-validation` holdovers, no "this one is special" carve-outs. `repo-rules-checker` can audit the entire workflow tree in one pass and produce a deterministic result.
+- **Enforceable by checker**: A single regex suffix check (`-(quality-gate|execution|setup|planning|grooming)$`) decides conformance. No per-workflow judgement, no grandfathered `-validation` holdovers, no "this one is special" carve-outs. `repo-rules-checker` can audit the entire workflow tree in one pass and produce a deterministic result.
 - **Zero-exception discipline**: Exceptions erode conventions. Once one workflow is allowed a bespoke suffix, reviewers lose the ability to reject the next one on principle alone. Holding every workflow to the same structure keeps the rule teachable in one sentence and cheap to enforce forever.
 - **Semantic clarity**: The suffix immediately communicates the workflow's execution model. A reader sees `*-quality-gate` and knows to expect an iterative maker → checker → fixer loop terminating on zero findings; `*-execution` is a single forward procedure; `*-setup` provisions once and exits. No body scan required.
 
@@ -64,12 +64,13 @@ New scope tokens MUST be added to this vocabulary first before any workflow is n
 
 Exactly one of the following tokens MUST appear as the last token of every workflow filename:
 
-| Type           | Semantics                                                                                                                                                                                                                          | Example workflows                                            |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `quality-gate` | Iterative maker → checker → fixer loop that terminates on a zero-finding condition (usually two consecutive clean audits)                                                                                                          | `ci-quality-gate`, `plan-quality-gate`, `specs-quality-gate` |
-| `execution`    | Executes a defined procedure or plan against inputs; no iterative fix loop; success is defined by the procedure completing                                                                                                         | `plan-execution`                                             |
-| `setup`        | One-time environment, tooling, or resource provisioning; idempotent on re-run but not iterative in the maker/checker/fixer sense                                                                                                   | `development-environment-setup`                              |
-| `planning`     | Surveys/analyzes repository or domain state and produces a plan in `plans/` (backlog or in-progress) as its terminal deliverable; a single forward procedure that completes when the validated plan exists and never implements it | `repo-dependency-bump-planning`                              |
+| Type           | Semantics                                                                                                                                                                                                                                                                                                                                                                                                 | Example workflows                                            |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `quality-gate` | Iterative maker → checker → fixer loop that terminates on a zero-finding condition (usually two consecutive clean audits)                                                                                                                                                                                                                                                                                 | `ci-quality-gate`, `plan-quality-gate`, `specs-quality-gate` |
+| `execution`    | Executes a defined procedure or plan against inputs; no iterative fix loop; success is defined by the procedure completing                                                                                                                                                                                                                                                                                | `plan-execution`                                             |
+| `setup`        | One-time environment, tooling, or resource provisioning; idempotent on re-run but not iterative in the maker/checker/fixer sense                                                                                                                                                                                                                                                                          | `development-environment-setup`                              |
+| `planning`     | Surveys/analyzes repository or domain state and produces a plan in `plans/` (backlog or in-progress) as its terminal deliverable; a single forward procedure that completes when the validated plan exists and never implements it                                                                                                                                                                        | `repo-dependency-bump-planning`                              |
+| `grooming`     | Recurring sweep/reorganization workflow over already-existing documentation or artifact state (the Scrum "backlog grooming" analogy); does not converge to zero findings (unlike `quality-gate`), does not produce a new plan as terminal deliverable (unlike `planning`), and is not one-time provisioning (unlike `setup`) — it re-sweeps and re-organizes existing docs on a stated cadence or trigger | `plan-ideas-grooming`                                        |
 
 No other type suffixes are permitted. Introducing a new type requires amending this table first.
 
@@ -98,7 +99,7 @@ This convention applies to:
 ```bash
 find repo-governance/workflows -name '*.md' -not -name 'README.md' -not -path '*/meta/*' \
   | sed 's|.*/||; s|\.md$||' \
-  | grep -vE -- '-(quality-gate|execution|setup|planning)$'
+  | grep -vE -- '-(quality-gate|execution|setup|planning|grooming)$'
 ```
 
 Any non-empty output is a governance violation. Each line printed is a workflow filename whose suffix does not match the Type Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass.
@@ -113,6 +114,7 @@ Current workflows, grouped by type, all conforming to the rule:
 - **`execution`** — `plan-execution` (scope `plan`, type `execution`)
 - **`planning`** — `plan-planning` (scope `plan`, type `planning`), `plan-idea-promotion-planning` (scope `plan`, qualifier `idea-promotion`, type `planning`), `repo-dependency-bump-planning` (scope `repo`, qualifier `dependency-bump`, type `planning`), `web-ux-test-fixing-planning` (scope `web`, qualifier `ux`, descriptor `test-fixing`, type `planning`)
 - **`setup`** — `infra-development-environment-setup` would be the fully qualified form; the file is stored as `development-environment-setup.md` in the `infra/` directory, making the scope implicit from directory location. The enforcement command (type-suffix check) passes. New `setup` workflows SHOULD include the scope prefix explicitly (e.g., `infra-something-setup.md`).
+- **`grooming`** — `plan-ideas-grooming` (scope `plan`, type `grooming`)
 
 ## Related
 
