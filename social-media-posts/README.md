@@ -33,7 +33,7 @@ workstreams, including the current OrganicLever delivery focus.
 Posts are organized by platform, then by publication year:
 
 ```
-generated-socials/
+social-media-posts/
   linkedin/     ← all LinkedIn posts
     2025/       ← posts published in 2025
     2026/       ← posts published in 2026

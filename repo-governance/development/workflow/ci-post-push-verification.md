@@ -109,7 +109,7 @@ This convention does not apply to pushes that exclusively touch:
 - `repo-governance/` — governance only, no app behavior impact
 - `plans/` — planning documents only
 - `generated-reports/` — audit reports only
-- `generated-socials/` — social content only
+- `social-media-posts/` — social content only
 - `.claude/agents/`, `.claude/skills/` — agent/skill definitions only, no app code impact
 
 The pre-push hook (typecheck, lint, test:quick, specs:coverage) already validates these changes sufficiently.
