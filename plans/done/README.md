@@ -9,6 +9,14 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-05: plan-ideas-grooming-workflow](./2026-08-05__plan-ideas-grooming-workflow/README.md) —
+  Authored the `plan-ideas-grooming.md` workflow (merge/split/group two-pagers, Eisenhower-quadrant
+  sorting, cross-repo relocation, rename-via-link-rewrite) plus the new `grooming` workflow-naming
+  type token, and propagated both byte-identically to `ose-primer`, `ose-private`, and
+  `beaver-nest`. Each repo's own `rhino-cli` fork needed an independent `WORKFLOW_TYPES` fix — the
+  four forks have already drifted from AGENTS.md's byte-identity claim; folded into the existing
+  `tri-repo-rhino-cli-byte-identity-gate` idea. Delivery Mode: `main-to-origin-main`, direct push,
+  no PR, no GitHub Actions CI check at any phase. Completed 2026-08-05.
 - [2026-08-04: ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) —
   Authored and verified 14 mobile/desktop-platform and concurrency-language course bodies, including
   Playwright evidence across three breakpoints, prerequisite rendering, and a zero-manifest ownership

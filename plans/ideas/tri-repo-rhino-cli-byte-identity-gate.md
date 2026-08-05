@@ -21,8 +21,7 @@ and several exist only on one side — not a handful of drifted files but substa
 divergence. This raises the open question below from "where does the gate run" to "is
 reconciliation to true byte-identity still realistic, or should the claim itself be corrected to
 describe independently-maintained forks with shared design intent instead." See
-`plans/in-progress/plan-ideas-grooming-workflow/learnings.md` (moves to `plans/done/` on archival)
-for the four-occurrence detail.
+`plans/done/2026-08-05__plan-ideas-grooming-workflow/learnings.md` for the four-occurrence detail.
 
 ## Why now
 

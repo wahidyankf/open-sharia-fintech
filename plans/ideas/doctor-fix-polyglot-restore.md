@@ -28,8 +28,7 @@ each time. A documented or automated fix removes that rediscovery cost.
 
 - **This plan's `learnings.md`** — records both the `ose-primer` NuGet-restore incident and the
   `beaver-nest` npm-hoisting incident with full diagnostic detail.
-  [plans/in-progress/plan-ideas-grooming-workflow/learnings.md](../in-progress/plan-ideas-grooming-workflow/learnings.md)
-  (moves to `plans/done/` on archival)
+  [plans/done/2026-08-05\_\_plan-ideas-grooming-workflow/learnings.md](../done/2026-08-05__plan-ideas-grooming-workflow/learnings.md)
 - **`doctor --fix` command** — the existing entry point this idea would extend.
   [worktree-setup.md](../../repo-governance/development/workflow/worktree-setup.md)
 - **Reproducible Environments convention** — already documents Volta/npm/lockfile reproducibility;
