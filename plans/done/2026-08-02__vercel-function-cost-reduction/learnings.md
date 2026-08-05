@@ -92,23 +92,23 @@ Added 2026-08-02 during Phase 4 production verification:
 Both safety gates passed for the surviving entries: this log contains no credentials or private
 infrastructure details, and every retained route belongs to `ose-public`.
 
-| Candidate learning                                             | Terminal state                                                                                                                                                  |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Legacy-versus-Fluid billing vocabulary                         | Routed to the existing [steady-state successor](../../backlog/vercel-cost-steady-state-verification/README.md), which owns the completed-cycle line-item check. |
-| Dynamic locale-root APIs defeat static generation              | Routed inline to `apps/ayokoding-www/README.md` and the current static-delivery regression coverage.                                                            |
-| Production `next build` is required Suspense evidence          | Routed inline to the same app guide and current build/manifest checks.                                                                                          |
-| WAF rules can reduce metered traffic                           | Discarded: provider behaviour and current pricing cannot be made into a repository-owned automatic guard; the successor retains the platform-state review.      |
-| Spend Management pause action lags                             | Discarded: the provider-specific timing fact does not yield an automatic repository guard; its configured threshold remains an owner-side control.              |
-| A check can pass while observing nothing                       | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md), including the telemetry-order example.                                       |
-| A spoofed identity cannot test an identity-verifying control   | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md).                                                                              |
-| `generateStaticParams` logs do not prove output is static      | Routed inline to the app guide and current route-table/prerender-manifest checks.                                                                               |
-| A dashboard action can be assigned to the wrong control plane  | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md).                                                                              |
-| Aggregate telemetry was disabled before a later aggregate gate | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md); the successor carries the deliberately deferred measurement.                 |
+| Candidate learning                                             | Terminal state                                                                                                                                             |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Legacy-versus-Fluid billing vocabulary                         | Routed to the existing [steady-state successor](../../ideas/vercel-cost-steady-state-verification.md), which owns the completed-cycle line-item check.     |
+| Dynamic locale-root APIs defeat static generation              | Routed inline to `apps/ayokoding-www/README.md` and the current static-delivery regression coverage.                                                       |
+| Production `next build` is required Suspense evidence          | Routed inline to the same app guide and current build/manifest checks.                                                                                     |
+| WAF rules can reduce metered traffic                           | Discarded: provider behaviour and current pricing cannot be made into a repository-owned automatic guard; the successor retains the platform-state review. |
+| Spend Management pause action lags                             | Discarded: the provider-specific timing fact does not yield an automatic repository guard; its configured threshold remains an owner-side control.         |
+| A check can pass while observing nothing                       | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md), including the telemetry-order example.                                  |
+| A spoofed identity cannot test an identity-verifying control   | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md).                                                                         |
+| `generateStaticParams` logs do not prove output is static      | Routed inline to the app guide and current route-table/prerender-manifest checks.                                                                          |
+| A dashboard action can be assigned to the wrong control plane  | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md).                                                                         |
+| Aggregate telemetry was disabled before a later aggregate gate | Folded into [acceptance-clause-vacuity](../../ideas/acceptance-clause-vacuity.md); the successor carries the deliberately deferred measurement.            |
 
 ### Open question carried forward
 
 The projected reduction from approximately **$57/month to $2–4/month** remains **unverified at
 archival**. The measured projection rows are Observability (−$10) and middleware (−$5); the largest
 static-conversion row (−$30) is estimated. The
-[`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
+[`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
 plan owns the full-cycle reconciliation and is the only plan that may close this question.

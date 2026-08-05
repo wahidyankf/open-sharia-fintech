@@ -91,7 +91,7 @@ ayokoding-learning-path-04-course-authoring/evaluating-ai-output-essentials` —
   `.py` code, so this exact gap does not recur across the remaining courses.
 
 - **Terminal routing**: code-homed and filed as the separate backlog plan
-  [`ayokoding-database-internals-ruff-config`](../../backlog/ayokoding-database-internals-ruff-config/README.md);
+  [`ayokoding-database-internals-ruff-config`](../../ideas/ayokoding-database-internals-ruff-config.md);
   no code change lands inline in this plan.
 
 ## Learning: rule-15 triad is expressly exempt for this content-only plan

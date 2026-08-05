@@ -45,7 +45,7 @@
   a real regression next time. The system would catch this automatically once the check itself is
   hardened (bounded concurrency + single retry) — this passes the litmus test.
 - **Terminal state**: **filed as backlog (code, mandatory)** —
-  [`plans/backlog/harden-ayokoding-www-fe-e2e-bulk-link-concurrency/`](../../backlog/harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md).
+  [`plans/ideas/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md`](../../ideas/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md).
   NOT landed inline in this plan's PR — the fix touches test step files under `apps/`, a code home,
   per the code-routing rule.
 

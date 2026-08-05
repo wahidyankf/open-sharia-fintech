@@ -354,7 +354,7 @@ Fluid Compute, or domain configuration. The only mutating tools in the entire su
 `deploy_to_vercel`, `update_project_deployment_protection`, the `buy_*` purchase family, and the
 comment-toolbar tools. Therefore steps **0.2, 0.3, 0.4, 0.5**, the Phase 6 domain fix, and the
 invoice reading (now split out to
-[`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md))
+[`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md))
 are unchanged — an agent still cannot reach those settings.
 
 `get_deployment` reports `type: "LAMBDAS"` and exposes no fluid-compute flag, so an agent cannot even
