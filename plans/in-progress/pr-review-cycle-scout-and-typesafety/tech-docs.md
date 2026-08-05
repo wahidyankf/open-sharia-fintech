@@ -36,7 +36,7 @@ flowchart TD
     direction LR
     A0["pr-review-scout-maker<br/>(NEW: classify + assemble<br/>+ dismissal-read)"]:::blue
     A1["pr-review-synthesis-maker<br/>(trimmed: post-fan-out only)"]:::purple
-    A2["9 specialists<br/>(+ pr-review-types-maker)"]:::blue
+    A2["up to 9 specialists<br/>(+ pr-review-types-maker;<br/>DD-10 may skip up to 2)"]:::blue
     A3["pr-review-fixer"]:::orange
     A0 -->|"tier-selected<br/>fan-out"| A2 --> A1 --> A3
   end
@@ -54,7 +54,7 @@ flowchart TD
 sequenceDiagram
   participant O as Orchestrator (pr-review-quality-gate loop)
   participant SC as pr-review-scout-maker (NEW)
-  participant SP as 9 specialist-makers
+  participant SP as up to 9 specialist-makers<br/>(DD-10 may skip up to 2)
   participant SY as pr-review-synthesis-maker (trimmed)
   participant GH as GitHub PR Reviews API
   participant F as pr-review-fixer
@@ -80,7 +80,7 @@ sequenceDiagram
 %% Color palette: Green #029E73 (trivial), Gold #DE8F05 (lite), Red #D55E00 (full)
 flowchart TD
   D["Scout reads diff +<br/>plan/issue context"] --> Q1{"Security-sensitive path?<br/>(secrets, identity,<br/>CI/workflow)"}
-  Q1 -->|Yes| FULL["full tier<br/>(all nine specialists)"]:::red
+  Q1 -->|Yes| FULL["full tier<br/>(up to nine specialists;<br/>DD-10 content-type filter<br/>may skip up to 2)"]:::red
   Q1 -->|No| Q2{"<= 10 lines AND <= 20 files?"}
   Q2 -->|Yes| TRIV["trivial tier<br/>(zero specialists;<br/>SY does the pass itself)"]:::green
   Q2 -->|No| Q3{"<= 100 lines AND <= 20 files?"}

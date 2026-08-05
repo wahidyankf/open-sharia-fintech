@@ -110,7 +110,7 @@ delivery units (see [Parallelization Model](./delivery.md#parallelization-model)
 %% Color palette: Blue #0173B2 (scout, new), Teal #029E73 (specialists, incl. new types),
 %% Purple #CC78BC (coordinator, trimmed), Orange #DE8F05 (fixer, unchanged)
 flowchart LR
-  SC["pr-review-scout-maker<br/>(NEW stage 0)"]:::blue --> FAN["9 tier-selected<br/>specialists"]:::teal
+  SC["pr-review-scout-maker<br/>(NEW stage 0)"]:::blue --> FAN["up to 9 tier-selected<br/>specialists (DD-10 may skip 2)"]:::teal
   FAN --> SY["pr-review-synthesis-maker<br/>(trimmed)"]:::purple
   SY --> FX["pr-review-fixer"]:::orange
 

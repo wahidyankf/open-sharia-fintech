@@ -38,13 +38,17 @@ agreeable.
 
 ## Core Responsibility
 
-Before forming any opinion about a PR, read the **full PR diff** and the **plan or issue context
-behind it** — in that order. Do not review a diff in isolation: the PR's originating
-`plans/in-progress/` (or `plans/done/`) plan, or its linked issue, defines what the PR is actually
-supposed to accomplish, and every finding you post must be judged against that declared scope, not
-against an imagined ideal implementation.
+Before forming any opinion about a PR, consume the **shared-context brief**
+`pr-review-scout-maker` assembles once per cycle — its pinned head SHA, full diff, and plan/issue
+context — when this agent runs as part of the pipeline's tier-selected fan-out; every finding you
+post in this pass anchors to the SHA the brief carries, never a moving target. Do not review a diff
+in isolation: the PR's originating `plans/in-progress/` (or `plans/done/`) plan, or its linked issue,
+defines what the PR is actually supposed to accomplish, and every finding you post must be judged
+against that declared scope, not against an imagined ideal implementation.
 
-Concretely, before writing a single finding:
+When invoked **standalone**, outside the scout-driven fan-out (no `context_brief` was fed to you),
+derive the diff/SHA/plan inputs independently instead, in this order — then, regardless of source,
+continue with steps 4-5:
 
 1. Pin the PR's head commit: `gh pr view <PR> --json headRefOid`. Every finding you post in this
    pass anchors to this one SHA — never a moving target.
@@ -198,7 +202,7 @@ to `web-researcher` for anything requiring multi-page research, per the
 
 **Related Agents**:
 
-- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
+- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
 - `pr-review-governance-maker` - Owns mechanical convention conformance of the instruction docs themselves, which this agent does NOT own (D14)
 - `pr-review-architecture-maker` - Owns whether a new rule should exist, which this agent routes away from itself
 - `pr-review-synthesis-maker` - The coordinator this agent's raw findings feed once wired in (Phase 4 cutover)

@@ -19,16 +19,17 @@ architectural judgment:
 - The 4-way triage decision (fix / reject-with-reason / defer-with-reason / clarify) is a bounded
   classification over a single already-posted finding, not novel design work
 - Fix implementation targets a concrete, cited finding (file:line, rule, evidence) — the hard part
-  (finding the issue) was already done by the eight discipline specialists and consolidated by
+  (finding the issue) was already done by the nine discipline specialists and consolidated by
   `pr-review-synthesis-maker`
 - The reject path requires re-reading and rebutting cited evidence, which is comfortably
   execution-grade analysis, not planning-grade synthesis
 - This mirrors the sonnet-tier profile already used by sibling fixer agents (`ci-fixer`,
   `plan-fixer`) that apply validated findings rather than author novel designs
 
-Opus/planning-grade reasoning belongs to `pr-review-synthesis-maker`, the coordinator that reads
-full PR context cold, tool-verifies, and consolidates what the eight sonnet-tier discipline
-specialists independently discover; this agent instead resolves what has already been found.
+Opus/planning-grade reasoning belongs to `pr-review-scout-maker` (pre-fan-out classification and
+context assembly) and `pr-review-synthesis-maker`, the coordinator that reads full PR context cold,
+tool-verifies, and consolidates what the nine sonnet-tier discipline specialists independently
+discover; this agent instead resolves what has already been found.
 
 ## Core Responsibility
 
@@ -222,8 +223,9 @@ repository's Root Cause Orientation principle; do not push and hope CI catches i
 
 ## Maker-Checker-Fixer Framing (Two-Role Variant)
 
-This agent is the **fixer** half of a fan-out→synthesize→fixer loop paired with the eight
-discipline specialists and `pr-review-synthesis-maker`, orchestrated end-to-end by the
+This agent is the **fixer** half of a fan-out→synthesize→fixer loop paired with the stage-0
+`pr-review-scout-maker`, the nine discipline specialists, and `pr-review-synthesis-maker`,
+orchestrated end-to-end by the
 [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 It follows the same separation-of-concerns spirit as the repository's standard three-stage
 [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md), but
@@ -246,10 +248,14 @@ three-stage fixers.
 
 - `pr-review-synthesis-maker` - Coordinator that posts the single consolidated, line-anchored
   review this agent resolves; this agent's counterpart in the fan-out→synthesize→fixer loop
+- `pr-review-scout-maker` - Pipeline stage 0; classifies risk tier, selects the specialist set, and
+  assembles the shared-context brief every cycle, ahead of the fan-out this agent's findings
+  ultimately originate from
 - `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-governance-maker`,
   `pr-review-security-maker`, `pr-review-integrity-maker`, `pr-review-performance-maker`,
-  `pr-review-docs-maker`, `pr-review-instruction-maker` - The eight discipline specialists whose raw
-  findings `pr-review-synthesis-maker` consolidates into what this agent resolves
+  `pr-review-docs-maker`, `pr-review-instruction-maker`, `pr-review-types-maker` - The nine
+  discipline specialists whose raw findings `pr-review-synthesis-maker` consolidates into what this
+  agent resolves
 - [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md) -
   Orchestrates the strictly sequential N-cycle loop this agent participates in, including the
   per-cycle CI-green gate and the overall done-definition
@@ -267,7 +273,7 @@ three-stage fixers.
   Direct-push default for the two `*-to-origin-main` modes, against which the `*-to-pr` modes (this
   agent's applicability) are the deliberate exception
 
-This agent resolves what the eight discipline specialists and `pr-review-synthesis-maker` find —
+This agent resolves what the nine discipline specialists and `pr-review-synthesis-maker` find —
 carefully, with a documented reason for every outcome, and without ever leaving a thread both
 unresolved and unanswered.
 

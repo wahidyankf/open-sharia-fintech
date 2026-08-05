@@ -333,7 +333,7 @@ job.
 
 **Related Conventions**:
 
-- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the boundary tie-breaker rule this agent owns for architecture-versus-correctness, the six grey-zone rulings, and the Cloudflare-derived risk-tier/shared-context/SUPPRESS/instruction-decay/human-dismissal/boundary-tag-strip mechanics
+- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the boundary tie-breaker rule this agent owns for architecture-versus-correctness, the seven grey-zone rulings, and the Cloudflare-derived risk-tier/shared-context/SUPPRESS/instruction-decay/human-dismissal/boundary-tag-strip mechanics
 - [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity definitions
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - The pattern this fan-out-plus-coordinator variant adapts
 - [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md) - When to delegate to `web-researcher` versus verify in-context
