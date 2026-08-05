@@ -217,7 +217,9 @@ sequenceDiagram
 
 Two signals are recorded in this plan's `delivery.md` — one per band (Band 3, Band 4) — each with all
 five fields, `GROW_MANIFESTS` naming exactly the three software-engineer-role manifests, and
-`FINAL_PR: #133 (downstream consumption requires merge verification)`.
+`FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136` — downstream
+consumption requires verifying #136 is merged, not merely that #133 was, since `gh pr view 133`
+permanently reports `MERGED` regardless of the revert.
 
 ### Delivery flow across the two bands
 

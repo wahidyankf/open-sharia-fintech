@@ -71,4 +71,4 @@ and the missing-argument exit status as separate contracts.
 2. Why does one configuration resolver reduce release risk more than duplicating precedence rules?
 3. Why should a JSON command avoid headings even when the human mode benefits from them?
 
-← Previous: [Capstone](../../learning/capstone/overview) · Next: [Courses](/en/learn/courses)
+← Previous: [Capstone](../learning/capstone/overview.md) · Next: [Courses](/en/learn/courses)

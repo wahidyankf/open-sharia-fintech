@@ -11,7 +11,7 @@ belong in the next course.
 
 ## Prerequisites
 
-- Complete [Functional Programming](../functional-programming/overview.md) for pure functions,
-  immutable transformations, and recursive problem decomposition.
-- Complete [Just Enough Python](../just-enough-python/overview.md) for the programming fundamentals
-  reused by the exercises and command-line workflow.
+- Complete [Functional Programming](../functional-programming/learning/overview.md) for pure
+  functions, immutable transformations, and recursive problem decomposition.
+- Complete [Just Enough Python](../just-enough-python/learning/overview.md) for the programming
+  fundamentals reused by the exercises and command-line workflow.

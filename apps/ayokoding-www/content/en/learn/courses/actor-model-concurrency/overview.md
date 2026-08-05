@@ -13,8 +13,8 @@ supervision trees.
 
 - Complete [Just Enough Elixir](../just-enough-elixir/learning/overview.md) for pattern matching,
   functions, processes, and the `mix` workflow.
-- Complete the shared `concurrency-and-parallelism` course for the vocabulary of safety, liveness,
-  back-pressure, and cancellation.
+- Complete the shared [Concurrency and Parallelism](../concurrency-and-parallelism/learning/overview.md)
+  course for the vocabulary of safety, liveness, back-pressure, and cancellation.
 
 ## What you will build
 

@@ -592,10 +592,10 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-  FINAL_PR: #133 (downstream consumption requires merge verification)
+  FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
   ```
 
-  **Prepared terminal signal — consumers must verify PR #133 is merged before using it**
+  **Prepared terminal signal — consumers must verify PR #136 is merged before using it (PR #133 merged then had this content reverted by direct-push commit `919863f07`; `gh pr view 133` reports `MERGED` permanently regardless)**
 
   ```text
   BAND: Band 3 — Mobile & desktop platforms
@@ -615,7 +615,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-  FINAL_PR: #133 (downstream consumption requires merge verification)
+  FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
   ```
 
 - [x] [AI] Confirm zero manifest files were touched:
@@ -722,10 +722,10 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-  FINAL_PR: #133 (downstream consumption requires merge verification)
+  FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
   ```
 
-  **Prepared terminal signal — consumers must verify PR #133 is merged before using it**
+  **Prepared terminal signal — consumers must verify PR #136 is merged before using it (PR #133 merged then had this content reverted by direct-push commit `919863f07`; `gh pr view 133` reports `MERGED` permanently regardless)**
 
   ```text
   BAND: Band 4 — Concurrency languages
@@ -739,7 +739,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-  FINAL_PR: #133 (downstream consumption requires merge verification)
+  FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
   ```
 
 - [x] [AI] Confirm zero manifest files were touched:
@@ -1065,8 +1065,13 @@ build`, and `Scope boundary`; it is independent of the protected port-3101 proce
 - [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
-> **Terminal delivery:** [PR #133](https://github.com/wahidyankf/ose-public/pull/133). A downstream
-> plan may consume this plan's band-completion signals only after verifying that this PR is merged.
+> **Terminal delivery chain (amended):** [PR #133](https://github.com/wahidyankf/ose-public/pull/133)
+> merged 2026-08-04, then this plan's course bodies were reverted by direct-push commit
+> [`919863f07`](https://github.com/wahidyankf/ose-public/commit/919863f07d8b51f9043ead5f6735f3759f6a2d49)
+> the same day (no linked PR or issue), then restored by
+> [PR #136](https://github.com/wahidyankf/ose-public/pull/136). `gh pr view 133` permanently reports
+> `MERGED` regardless of the later revert, so a downstream plan may consume this plan's
+> band-completion signals only after verifying that PR #136 is merged, not merely that PR #133 was.
 
 ---
 

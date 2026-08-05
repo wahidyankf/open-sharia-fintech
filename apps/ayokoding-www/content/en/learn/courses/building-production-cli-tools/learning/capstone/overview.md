@@ -124,4 +124,4 @@ Success criteria:
 - On an interactive terminal, progress uses cyan text on standard error; piped or JSON output receives no progress or escape codes.
 - `bash verify-cross-build.sh` builds and size-checks `linux/amd64` and `darwin/arm64` single binaries, then removes local `dist/` artifacts.
 
-← Previous: [Advanced Examples](../advanced) · Next: [Drilling](../../drilling/overview)
+← Previous: [Advanced Examples](../advanced.md) · Next: [Drilling](../../drilling/overview.md)
