@@ -11,6 +11,11 @@ Feature: Gate execution
     When the selected gate runs
     Then its fixed arguments precede its derived files
 
+  Scenario: External kind resolves a repository-local binary
+    Given an external gate command exists only in the repository node_modules bin directory
+    When its repository-local external gate runs
+    Then the repository-local external gate succeeds
+
   Scenario: Nx kind delegates the affected project graph
     Given an nx gate declares scope "affected-projects"
     When the selected gate runs

@@ -686,6 +686,48 @@ fn then_external_arguments_are_ordered(w: &mut GateWorld) {
     );
 }
 
+#[given("an external gate command exists only in the repository node_modules bin directory")]
+fn given_repository_local_external_gate(w: &mut GateWorld) {
+    w.init_git();
+    let executable = w
+        .root()
+        .join("node_modules/.bin/repository-local-external-gate");
+    w.write(
+        "node_modules/.bin/repository-local-external-gate",
+        "#!/bin/sh\nprintf 'repository local gate\\n' > repository-local-gate.txt\n",
+    );
+    make_executable(executable);
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "repository-local-external-gate",
+            "check",
+            "repository-local-external-gate",
+            "external",
+            "      pre-commit: { scope: other }\n",
+        )),
+    );
+}
+
+#[when("its repository-local external gate runs")]
+fn when_repository_local_external_gate_runs(w: &mut GateWorld) {
+    w.run_gate("pre-commit", Some("repository-local-external-gate"));
+}
+
+#[then("the repository-local external gate succeeds")]
+fn then_repository_local_external_gate_succeeds(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "repository-local external gate failed: {}",
+        w.output
+    );
+    assert_eq!(
+        std::fs::read_to_string(w.root().join("repository-local-gate.txt"))
+            .expect("read repository-local external gate output"),
+        "repository local gate\n"
+    );
+}
+
 #[given("an nx gate declares scope \"affected-projects\"")]
 fn given_nx_gate(w: &mut GateWorld) {
     w.init_git();

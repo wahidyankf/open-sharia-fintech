@@ -69,7 +69,7 @@ export function Header() {
           <Search className="h-4 w-4" />
           <span className="text-sm">Search...</span>
           <kbd className="pointer-events-none ml-2 hidden rounded border bg-muted px-1.5 font-mono text-xs select-none lg:inline-block">
-            ⌘K
+            Cmd K
           </kbd>
         </Button>
 

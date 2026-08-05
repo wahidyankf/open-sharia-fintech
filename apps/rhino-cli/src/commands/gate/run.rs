@@ -404,6 +404,8 @@ fn run_external_leaf(
     if let Some(commit_message_file) = commit_message_file {
         arguments.push(commit_message_file.to_string_lossy().into_owned());
     }
+    let inherited_path = std::env::var_os("PATH");
+    let path = external_command_path(repo_root, inherited_path.as_deref())?;
     Command::new("sh")
         .args([
             "-c",
@@ -416,8 +418,28 @@ fn run_external_leaf(
         ])
         .args(arguments)
         .current_dir(repo_root)
+        .env("PATH", path)
         .status()
         .map_err(Error::from)
+}
+
+/// Prepend the repository's local Node executable directory to a child PATH.
+///
+/// CI setup installs JavaScript tools in `node_modules/.bin`, but direct shell
+/// dispatch does not receive npm-script PATH augmentation. Keeping this child-
+/// only preserves the caller's process environment and gives generic external
+/// gates the same local-tool resolution as npm scripts.
+fn external_command_path(
+    repo_root: &Path,
+    inherited_path: Option<&std::ffi::OsStr>,
+) -> Result<std::ffi::OsString, Error> {
+    let mut paths = inherited_path
+        .map(std::env::split_paths)
+        .map(Iterator::collect::<Vec<_>>)
+        .unwrap_or_default();
+    paths.insert(0, repo_root.join("node_modules/.bin"));
+    std::env::join_paths(paths)
+        .map_err(|error| anyhow!("failed to construct external gate PATH: {error}"))
 }
 
 /// Runs an Nx target over all or affected projects for the declared scope.
@@ -723,6 +745,46 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
         format!("{path}\n")
     );
     assert!(!repo.path().join("must-not-run.txt").exists());
+}
+
+#[cfg(unix)]
+#[test]
+#[allow(clippy::unwrap_used, clippy::panic)]
+fn external_leaf_resolves_repository_local_node_binary() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().unwrap();
+    let bin = repo.path().join("node_modules/.bin");
+    std::fs::create_dir_all(&bin).unwrap();
+    let executable = bin.join("p2-local-external-gate");
+    std::fs::write(
+        &executable,
+        "#!/usr/bin/env sh\nprintf 'local tool\\n' > local-tool-output.txt\n",
+    )
+    .unwrap();
+    let mut permissions = std::fs::metadata(&executable).unwrap().permissions();
+    permissions.set_mode(0o755);
+    std::fs::set_permissions(&executable, permissions).unwrap();
+
+    let status = run_external_leaf("p2-local-external-gate", &[], &[], None, repo.path())
+        .expect("repository-local external gate must start");
+
+    assert!(status.success());
+    assert_eq!(
+        std::fs::read_to_string(repo.path().join("local-tool-output.txt")).unwrap(),
+        "local tool\n"
+    );
+}
+
+#[test]
+#[allow(clippy::unwrap_used, clippy::panic)]
+fn external_command_path_precedes_inherited_path() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let inherited_path = std::ffi::OsStr::new("/usr/bin:/bin");
+    let path = external_command_path(repo.path(), Some(inherited_path)).unwrap();
+    let paths = std::env::split_paths(&path).collect::<Vec<_>>();
+    assert_eq!(paths.first(), Some(&repo.path().join("node_modules/.bin")));
+    assert_eq!(paths.get(1), Some(&std::path::PathBuf::from("/usr/bin")));
 }
 
 #[cfg(test)]

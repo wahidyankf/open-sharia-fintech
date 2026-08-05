@@ -18,12 +18,12 @@ export interface MealLoggerProps {
 const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"] as const;
 type MealType = (typeof MEAL_TYPES)[number];
 
-const ENERGY_LEVELS: Array<{ emoji: string; value: number }> = [
-  { emoji: "😩", value: 1 },
-  { emoji: "😐", value: 2 },
-  { emoji: "🙂", value: 3 },
-  { emoji: "😊", value: 4 },
-  { emoji: "⚡", value: 5 },
+const ENERGY_LEVELS: Array<{ label: string; value: number }> = [
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
 ];
 
 /**
@@ -131,7 +131,7 @@ export function MealLogger({ isOpen, onClose, onSaved, runtime }: MealLoggerProp
           Energy after
         </div>
         <div className="flex gap-2">
-          {ENERGY_LEVELS.map(({ emoji, value }) => (
+          {ENERGY_LEVELS.map(({ label, value }) => (
             <button
               key={value}
               type="button"
@@ -146,7 +146,7 @@ export function MealLogger({ isOpen, onClose, onSaved, runtime }: MealLoggerProp
                 fontSize: 20,
               }}
             >
-              {emoji}
+              {label}
             </button>
           ))}
         </div>

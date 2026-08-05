@@ -88,7 +88,7 @@ export function LandingNav({ onGoApp }: LandingNavProps) {
           background: "oklch(97% 0.04 80)",
         }}
       >
-        ⚗️ Pre-Alpha
+        Pre-Alpha
       </span>
     </nav>
   );
