@@ -288,21 +288,36 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
     `46a2b5ac1` (rhino-cli WORKFLOW_TYPES code fix), `3d0c1e65d` (Scope Boundary hardening — added
     mid-phase per explicit user instruction that the workflow must never write to
     `plans/backlog/`/`plans/in-progress/`, confined strictly to `plans/ideas/**`).
-- [ ] [AI] Commit and push to `origin main` from `ose-public`'s local checkout (direct push, no PR
+- [x] [AI] Commit and push to `origin main` from `ose-public`'s local checkout (direct push, no PR
       — per this plan's `main-to-origin-main` Delivery Mode)
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (git push only)
+  **Notes**: First push attempt (`b1t2kf4t8`) failed pre-push with `organiclever-app-web:test:quick`
+  timing out on 3 unrelated tests (Nx flagged the task itself as flaky). Confirmed via standalone
+  `nx run organiclever-app-web:test:quick` retry passing clean — a known flake pattern for this
+  project under parallel hook load, not a regression from this plan's changes. Retried
+  `git push origin main` (`bhhepdbg6`) — succeeded, `53816c202..a21ff4287 main -> main`. All 7
+  Phase 0/1 commits now on `origin/main`.
 
 ### Phase 1 Gate
 
 > All checks below must pass before starting Phases 2-4. GitHub Actions CI is not checked anywhere
 > in this plan (see Delivery Mode note) — local pre-commit/pre-push hooks are the sole gate.
 
-- [ ] [AI] `git -C /Users/wkf/ose-projects/ose-public log --oneline -1 origin/main -- repo-governance/workflows/plan/plan-ideas-grooming.md`
+- [x] [AI] `git -C /Users/wkf/ose-projects/ose-public log --oneline -1 origin/main -- repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns a commit (the file exists on `origin/main`) — falsifiable both ways: returns empty
       before the push, non-empty after
-- [ ] [AI] `rhino-cli repo-governance workflows naming validate` run against `ose-public`'s
+- [x] [AI] `rhino-cli repo-governance workflows naming validate` run against `ose-public`'s
       `origin/main` reports the new file compliant
-- [ ] [AI] `grep -c "/Users/" repo-governance/workflows/plan/plan-ideas-grooming.md` (against
+- [x] [AI] `grep -c "/Users/" repo-governance/workflows/plan/plan-ideas-grooming.md` (against
       `origin/main`'s copy) returns `0`
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (verification only)
+  **Notes**: All three gate checks pass post-push: file present on `origin/main` (commit `6fd559bdd`
+  in the pushed history), `rhino-cli repo-governance workflows naming validate` reports
+  "VALIDATION PASSED (0 violations)", and `grep -c "/Users/"` on the file returns `0`.
 
 > **Pause Safety**: `ose-public`'s convention amendment and new workflow document are pushed
 > directly to `main`; local pre-push hooks passed. Safe to stop indefinitely — Phases 2-4 read this
@@ -311,45 +326,75 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 
 ## Phase 2: Propagate to `ose-primer`
 
-- [ ] [AI] Sync `ose-primer`'s local `main` with its own `origin/main` before editing: from
+- [x] [AI] Sync `ose-primer`'s local `main` with its own `origin/main` before editing: from
       `/Users/wkf/ose-projects/ose-primer`, run `git checkout main && git pull --ff-only origin main`
       — acceptance: `git status --porcelain` returns empty, `git rev-list --count origin/main..main`
       returns `0`
-- [ ] [AI] Read `ose-primer/repo-governance/conventions/structure/workflow-naming.md` in full
+- [x] [AI] Read `ose-primer/repo-governance/conventions/structure/workflow-naming.md` in full
       (confirmed to differ from `ose-public`'s copy by 58 lines pre-existing) and locate its own
       Type Vocabulary table's last row — acceptance: insertion point identified without assuming
       `ose-public`'s line numbers apply
-- [ ] [AI] Edit `ose-primer/repo-governance/conventions/structure/workflow-naming.md`: apply the
+- [x] [AI] Edit `ose-primer/repo-governance/conventions/structure/workflow-naming.md`: apply the
       same conceptual amendment as Phase 1 (add the `grooming` row with matching semantics text,
       update the enforcement regex, update the Examples section) to this repo's own file, leaving
       every other pre-existing difference from `ose-public`'s copy untouched — acceptance:
       `grep -c "| \`grooming\`" workflow-naming.md`returns`1`; a diff against this file's
       pre-edit version touches only the three amendment locations
-- [ ] [AI] Copy `ose-public`'s pushed `repo-governance/workflows/plan/plan-ideas-grooming.md`
+- [x] [AI] Copy `ose-public`'s pushed `repo-governance/workflows/plan/plan-ideas-grooming.md`
       byte-identical into `ose-primer/repo-governance/workflows/plan/plan-ideas-grooming.md` —
       acceptance: `diff /Users/wkf/ose-projects/ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md /Users/wkf/ose-projects/ose-primer/repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns no output
-- [ ] [AI] Read `ose-primer/repo-governance/workflows/README.md` in full and locate its own
+- [x] [AI] Read `ose-primer/repo-governance/workflows/README.md` in full and locate its own
       Available Workflows table's insertion point and Type Vocabulary table's insertion point —
       acceptance: insertion points identified against this repo's own structure
-- [ ] [AI] Edit `ose-primer/repo-governance/workflows/README.md`: apply the same conceptual catalog
+- [x] [AI] Edit `ose-primer/repo-governance/workflows/README.md`: apply the same conceptual catalog
       additions as Phase 1 (Available Workflows row, Type Vocabulary row, Plan family bullet) —
       acceptance: `grep -c "plan-ideas-grooming" workflows/README.md` returns ≥ `2`
 
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `repo-governance/conventions/structure/workflow-naming.md`,
+  `repo-governance/workflows/plan/plan-ideas-grooming.md` (new),
+  `repo-governance/workflows/README.md`, `repo-governance/workflows/plan/README.md`
+  **Notes**: `ose-primer`'s `workflow-naming.md` and `workflows/README.md` use a per-file link
+  style (not `ose-public`'s family-README-link style), so the catalog rows were adapted to this
+  repo's own conventions rather than copied verbatim. Also proactively added a
+  `workflows/plan/README.md` bullet (this repo has the same nested per-family README as
+  `ose-public`, which needed the identical Phase-1 orphan-reference fix pre-emptively — confirmed
+  via `md readme-index validate` passing clean afterward, avoiding a repeat of the Phase 1
+  discovered-blocker cycle).
+
 ### Local Quality Gates (Before Push)
 
-- [ ] Run this repo's own markdown/naming quality gate equivalent (`npx nx run rhino-cli:test:quick`
+- [x] Run this repo's own markdown/naming quality gate equivalent (`npx nx run rhino-cli:test:quick`
       if `ose-primer` carries its own `rhino-cli` fork, else the repo's documented markdown-lint
       target) — exits 0
-- [ ] Fix ALL failures found — including preexisting issues not caused by this plan's changes
-- [ ] Verify zero failures before pushing
+- [x] Fix ALL failures found — including preexisting issues not caused by this plan's changes
+- [x] Verify zero failures before pushing
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `apps/rhino-cli/src/commands/workflows_validate_naming.rs`
+  **Notes**: `ose-primer` carries its own `rhino-cli` fork (confirmed non-byte-identical to
+  `ose-public`'s despite AGENTS.md's stated byte-identity goal — logged as a learning). Its
+  `naming validate` failed the same way `ose-public`'s did in Phase 1 (`WORKFLOW_TYPES` const
+  missing `grooming`); applied the identical minimal TDD fix (RED confirmed by the failing
+  command, added `"grooming"` to the const plus one test, GREEN confirmed) against this repo's own
+  differently-shaped copy of the file. `test:quick`, `naming validate`, `md readme-index validate`,
+  and `md links validate` all pass clean afterward.
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically (convention amendment, new file, catalog update as separate
+- [x] Commit changes thematically (convention amendment, new file, catalog update as separate
       commits) — Conventional Commits format
 
-- [ ] [AI] Commit and push to `origin main` from `ose-primer`'s local checkout (direct push, no PR)
+- [x] [AI] Commit and push to `origin main` from `ose-primer`'s local checkout (direct push, no PR)
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (git push only)
+  **Notes**: First push attempt failed pre-push on `crud-be-fsharp-giraffe:typecheck`
+  (`NETSDK1004: Assets file ... not found` — NuGet packages never restored for that F# demo app;
+  `npm run doctor -- --fix` reported all tools OK but doesn't cover per-project package restore).
+  Fixed with `dotnet restore` against both `.fsproj` files, logged as a learning. Retried
+  `git push origin main` — succeeded, `1495db2fd..b954ed75f main -> main`. 4 commits landed.
 
 ### Phase 2 Gate
 
@@ -357,9 +402,14 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 > Phases 3-4 (they are independent) but does block Phase 5. GitHub Actions CI is not checked
 > anywhere in this plan — local pre-commit/pre-push hooks are the sole gate.
 
-- [ ] [AI] `diff` between `ose-public`'s and `ose-primer`'s `origin/main` copies of
+- [x] [AI] `diff` between `ose-public`'s and `ose-primer`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
-- [ ] [AI] `ose-primer`'s own naming-validate equivalent reports the file compliant on `origin/main`
+- [x] [AI] `ose-primer`'s own naming-validate equivalent reports the file compliant on `origin/main`
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (verification only)
+  **Notes**: `diff` returns no output (byte-identical); `rhino-cli repo-governance workflows
+naming validate` reports "VALIDATION PASSED (0 violations)".
 
 > **Pause Safety**: `ose-primer`'s propagation is pushed directly to its own `main`; local pre-push
 > hooks passed. Safe to stop indefinitely — independent of Phases 3-4's progress. To resume: verify
@@ -367,53 +417,80 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 
 ## Phase 3: Propagate to `ose-private`
 
-- [ ] [AI] Sync `ose-private`'s local `main` with its own `origin/main` before editing: from
+- [x] [AI] Sync `ose-private`'s local `main` with its own `origin/main` before editing: from
       `/Users/wkf/ose-projects/ose-private`, run `git checkout main && git pull --ff-only origin main`
       — acceptance: `git status --porcelain` returns empty, `git rev-list --count origin/main..main`
       returns `0`
-- [ ] [AI] Read `ose-private/repo-governance/conventions/structure/workflow-naming.md` in full
+- [x] [AI] Read `ose-private/repo-governance/conventions/structure/workflow-naming.md` in full
       (confirmed to differ from `ose-public`'s copy by 68 lines pre-existing) and locate its own
       Type Vocabulary table's last row — acceptance: insertion point identified against this
       repo's own structure
-- [ ] [AI] Edit `ose-private/repo-governance/conventions/structure/workflow-naming.md`: apply the
+- [x] [AI] Edit `ose-private/repo-governance/conventions/structure/workflow-naming.md`: apply the
       same conceptual amendment as Phase 1 to this repo's own file — acceptance:
       `grep -c "| \`grooming\`" workflow-naming.md`returns`1`
-- [ ] [AI] Copy `ose-public`'s pushed `plan-ideas-grooming.md` byte-identical into
+- [x] [AI] Copy `ose-public`'s pushed `plan-ideas-grooming.md` byte-identical into
       `ose-private/repo-governance/workflows/plan/plan-ideas-grooming.md` — acceptance:
       `diff /Users/wkf/ose-projects/ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md /Users/wkf/ose-projects/ose-private/repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns no output
-- [ ] [AI] Read `ose-private/repo-governance/workflows/README.md` in full and locate its own
+- [x] [AI] Read `ose-private/repo-governance/workflows/README.md` in full and locate its own
       insertion points — acceptance: identified against this repo's own structure
-- [ ] [AI] Edit `ose-private/repo-governance/workflows/README.md`: apply the same conceptual
+- [x] [AI] Edit `ose-private/repo-governance/workflows/README.md`: apply the same conceptual
       catalog additions as Phase 1 — acceptance: `grep -c "plan-ideas-grooming" workflows/README.md`
       returns ≥ `2`
 
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `repo-governance/conventions/structure/workflow-naming.md`,
+  `repo-governance/workflows/plan/plan-ideas-grooming.md` (new),
+  `repo-governance/workflows/README.md`, `repo-governance/workflows/plan/README.md`
+  **Notes**: Third repo-specific link/table structure (per-file links, Type Vocabulary table near
+  the top without a `planning` row present). Proactively added the same
+  `workflows/plan/README.md` bullet as Phase 2, again avoiding a repeat orphan-reference cycle
+  (`md readme-index validate` passed clean). `grep -c "/Users/"` on the propagated file returns
+  `0`; no secret/credential pattern present.
+
 ### Local Quality Gates (Before Push)
 
-- [ ] Run this repo's own markdown/naming quality gate equivalent — exits 0
-- [ ] Fix ALL failures found — including preexisting issues not caused by this plan's changes
-- [ ] Verify zero failures before pushing
+- [x] Run this repo's own markdown/naming quality gate equivalent — exits 0
+- [x] Fix ALL failures found — including preexisting issues not caused by this plan's changes
+- [x] Verify zero failures before pushing
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `apps/rhino-cli/src/commands/workflows_validate_naming.rs`
+  **Notes**: `ose-private` also carries its own `rhino-cli` fork and hit the identical
+  `WORKFLOW_TYPES` gap as `ose-public` (Phase 1) and `ose-primer` (Phase 2) — third occurrence of
+  the same class of bug, confirming the learning already logged. Applied the same minimal TDD fix
+  (RED via failing `naming validate`, GREEN via const + one test). `test:quick`,
+  `naming validate`, `md readme-index validate`, and `md links validate` all pass clean.
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — Conventional Commits format
+- [x] Commit changes thematically — Conventional Commits format
 
-- [ ] [AI] Commit and push to `origin main` from `ose-private`'s local checkout (direct push, no
+- [x] [AI] Commit and push to `origin main` from `ose-private`'s local checkout (direct push, no
       PR)
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (git push only)
+  **Notes**: Pushed clean on first attempt — `629cc6fd0..329d2a84f main -> main`. 4 commits landed.
 
 ### Phase 3 Gate
 
 > GitHub Actions CI is not checked anywhere in this plan — local pre-commit/pre-push hooks are the
 > sole gate.
 
-- [ ] [AI] `diff` between `ose-public`'s and `ose-private`'s `origin/main` copies of
+- [x] [AI] `diff` between `ose-public`'s and `ose-private`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
-- [ ] [AI] `ose-private`'s own naming-validate equivalent reports the file compliant on
+- [x] [AI] `ose-private`'s own naming-validate equivalent reports the file compliant on
       `origin/main`
-- [ ] [AI] No secret, credential, or infra-state value was introduced by this propagation —
+- [x] [AI] No secret, credential, or infra-state value was introduced by this propagation —
       `grep -riE "(api[_-]?key|password|secret|token)\s*[:=]" ose-private/repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns no match (this is a pure governance-doc propagation; `ose-private`'s stricter secrecy
       posture applies to everything it receives)
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: none (verification only)
+  **Notes**: All three gate checks pass: byte-identical diff, naming validate PASSED, no secret
+  pattern match.
 
 > **Pause Safety**: `ose-private`'s propagation is pushed directly to its own `main`; local
 > pre-push hooks passed. Safe to stop indefinitely — independent of Phases 2 and 4's progress. To
@@ -421,51 +498,94 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 
 ## Phase 4: Propagate to `beaver-nest`
 
-- [ ] [AI] Sync `beaver-nest`'s local `main` with its own `origin/main` before editing: from
+- [x] [AI] Sync `beaver-nest`'s local `main` with its own `origin/main` before editing: from
       `/Users/wkf/ose-projects/beaver-nest`, run `git checkout main && git pull --ff-only origin main`
       — acceptance: `git status --porcelain` returns empty, `git rev-list --count origin/main..main`
       returns `0`
-- [ ] [AI] Read `beaver-nest/repo-governance/conventions/structure/workflow-naming.md` in full
+- [x] [AI] Read `beaver-nest/repo-governance/conventions/structure/workflow-naming.md` in full
       (confirmed to differ from `ose-public`'s copy by only 12 lines pre-existing — the smallest
       drift of the three siblings) and locate its own Type Vocabulary table's last row —
       acceptance: insertion point identified against this repo's own structure
-- [ ] [AI] Edit `beaver-nest/repo-governance/conventions/structure/workflow-naming.md`: apply the
+- [x] [AI] Edit `beaver-nest/repo-governance/conventions/structure/workflow-naming.md`: apply the
       same conceptual amendment as Phase 1 to this repo's own file — acceptance:
       `grep -c "| \`grooming\`" workflow-naming.md`returns`1`
-- [ ] [AI] Copy `ose-public`'s pushed `plan-ideas-grooming.md` byte-identical into
+- [x] [AI] Copy `ose-public`'s pushed `plan-ideas-grooming.md` byte-identical into
       `beaver-nest/repo-governance/workflows/plan/plan-ideas-grooming.md` — acceptance:
       `diff /Users/wkf/ose-projects/ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md /Users/wkf/ose-projects/beaver-nest/repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns no output
-- [ ] [AI] Read `beaver-nest/repo-governance/workflows/README.md` in full and locate its own
+- [x] [AI] Read `beaver-nest/repo-governance/workflows/README.md` in full and locate its own
       insertion points — acceptance: identified against this repo's own structure
-- [ ] [AI] Edit `beaver-nest/repo-governance/workflows/README.md`: apply the same conceptual
+- [x] [AI] Edit `beaver-nest/repo-governance/workflows/README.md`: apply the same conceptual
       catalog additions as Phase 1 — acceptance: `grep -c "plan-ideas-grooming" workflows/README.md`
       returns ≥ `2`
 
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `repo-governance/conventions/structure/workflow-naming.md`,
+  `repo-governance/workflows/plan/plan-ideas-grooming.md` (new),
+  `repo-governance/workflows/README.md`, `repo-governance/workflows/plan/README.md`
+  **Notes**: `beaver-nest`'s catalog uses the same family-README link style as `ose-public`
+  (`plan/README.md` rather than per-file links). Proactively added the same
+  `workflows/plan/README.md` bullet as Phases 2-3, a fourth-for-four recurrence of the same
+  orphan-reference gap — confirms it is a structural pattern across all sibling repos' nested
+  plan-family READMEs, not a one-off.
+
 ### Local Quality Gates (Before Push)
 
-- [ ] Run this repo's own markdown/naming quality gate equivalent (note: `beaver-nest` carries a
+- [x] Run this repo's own markdown/naming quality gate equivalent (note: `beaver-nest` carries a
       **fork** of `rhino-cli`, per `AGENTS.md` §Related Repositories — confirm which naming-validate
       binary this repo actually runs before invoking it) — exits 0
-- [ ] Fix ALL failures found — including preexisting issues not caused by this plan's changes
-- [ ] Verify zero failures before pushing
+- [x] Fix ALL failures found — including preexisting issues not caused by this plan's changes
+- [x] Verify zero failures before pushing
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Files Changed**: `apps/rhino-cli/src/commands/workflows_validate_naming.rs`
+  **Notes**: `beaver-nest`'s `rhino-cli` fork lives at the same `apps/rhino-cli` path and hit the
+  identical `WORKFLOW_TYPES` gap — fourth occurrence, applied the same minimal TDD fix. Its fork
+  has a diverged test harness (a separate `agent_naming_validator` integration binary that
+  rejects a libtest filter argument) — worked around with `cargo test --lib -- <name>`, logged as
+  a learning. `test:quick`, `naming validate`, `md readme-index validate`, and `md links validate`
+  all pass clean.
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — Conventional Commits format
+- [x] Commit changes thematically — Conventional Commits format
 
-- [ ] [AI] Commit and push to `origin main` from `beaver-nest`'s local checkout (direct push, no
+- [x] [AI] Commit and push to `origin main` from `beaver-nest`'s local checkout (direct push, no
       PR)
+
+  **Date**: 2026-08-05 **Status**: Complete
+  **Notes**: Pushed `88cbe7cdc..333f5bd6f` to `beaver-nest:origin/main`. Pre-push hit a second
+  blocker beyond the `WORKFLOW_TYPES` fix: `beaver-nest-fe:typecheck` failed on missing `msw`
+  (fixed via `npm install`), then `beaver-nest-fe:test:coverage` failed with
+  `Cannot find package '@vitest/coverage-v8'` even though `npm ls` showed it correctly resolved.
+  Root cause: npm workspaces had nested `@vitest/coverage-v8` under per-workspace `node_modules/`
+  (`apps/beaver-nest-fe/node_modules/`, `libs/web-ui/node_modules/`) instead of hoisting to root,
+  and root-hoisted `vitest` couldn't resolve the bare specifier via Node's ESM upward walk from its
+  own nested location. A first attempted fix (`npm install @vitest/coverage-v8@4.1.8 -w
+apps/beaver-nest-fe`) silently converted the exact pin to a caret range — caught against the
+  "Exact pins only" policy and reverted via `git checkout -- apps/beaver-nest-fe/package.json
+package-lock.json`. Correct fix: `npm dedupe`, which hoisted the package to root without touching
+  any pin, leaving only `package-lock.json` modified (left uncommitted — environment provisioning,
+  same class as `ose-primer`'s `dotnet restore` fix, not a plan deliverable). `test:coverage`
+  reran clean (9/9 tests, 97.87% stmt coverage) and the retried push succeeded with all 150
+  validation checks passing.
 
 ### Phase 4 Gate
 
 > GitHub Actions CI is not checked anywhere in this plan — local pre-commit/pre-push hooks are the
 > sole gate.
 
-- [ ] [AI] `diff` between `ose-public`'s and `beaver-nest`'s `origin/main` copies of
+- [x] [AI] `diff` between `ose-public`'s and `beaver-nest`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
-- [ ] [AI] `beaver-nest`'s own naming-validate equivalent reports the file compliant on
+
+  **Date**: 2026-08-05 **Status**: Complete — `diff` returned no output, byte-identical.
+
+- [x] [AI] `beaver-nest`'s own naming-validate equivalent reports the file compliant on
       `origin/main`
+
+  **Date**: 2026-08-05 **Status**: Complete — `repo-governance workflows naming validate` reports
+  `VALIDATION PASSED (0 violations)` against local `main` (== `origin/main` post-push, confirmed
+  via `git log origin/main -1` showing `333f5bd6f` as HEAD).
 
 > **Pause Safety**: `beaver-nest`'s propagation is pushed directly to its own `main`; local
 > pre-push hooks passed. Safe to stop indefinitely — independent of Phases 2 and 3's progress. To
@@ -476,36 +596,79 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry accrued during Phases 0-4 — keep
+- [x] [AI] Apply the litmus test to every `learnings.md` entry accrued during Phases 0-4 — keep
       only if a durable surface would catch this automatically next time; discard the rest with a
       one-line reason — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+
+  **Date**: 2026-08-05 **Status**: Complete. **Notes**: 4 entries triaged. 3 survived the litmus
+  (rhino-cli byte-identity drift, polyglot restore gap, npm hoisting mismatch); 1 discarded
+  (`beaver-nest`'s `cargo test <filter>` CLI-parsing quirk — too narrow, self-diagnosing, no
+  durable surface would be read before the ad-hoc command that triggers it).
+
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+
+  **Date**: 2026-08-05 **Status**: Complete — all 3 surviving entries are governance/tooling
+  observations (file paths, error messages, command syntax); none contains a credential, token, or
+  hostname. Verified via `grep -riE "(api[_-]?key|password|secret|token)\s*[:=]"
+learnings.md` — no match.
+
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only and is NEVER cross-routed into `ose-public`/`ose-primer`; public
       governance content may propagate via the existing parity loop — acceptance: no infra-private
       content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home. Expected candidate: a
+
+  **Date**: 2026-08-05 **Status**: Complete — all 3 surviving entries are public
+  governance/tooling content (rhino-cli naming, dotnet/npm provisioning); none names infra-private
+  detail (no Terraform, k3s, Proxmox, or real hostnames). All routed within `ose-public` only, no
+  cross-repo routing performed by this phase.
+
+- [x] [AI] Route each surviving learning to exactly one durable home. Expected candidate: a
       future-work idea recommending `plan-ideas-grooming`'s first real run be scheduled promptly
       (per `brd.md`'s staleness risk) — if this learning surfaces, file it as a new
       `plans/ideas/plan-ideas-grooming-first-run.md` two-pager in `ose-public` (small non-code
       routing, lands inline) rather than a `plans/backlog/` plan, since scheduling a future workflow
       invocation is not itself a code change — acceptance: every `learnings.md` entry records its
       terminal routing state
-- [ ] [AI] If no generalizable learning surfaced beyond the expected future-work idea above, record
+
+  **Date**: 2026-08-05 **Status**: Complete. **Notes**: the expected first-run-scheduling candidate
+  did not surface as a distinct learning (Phase 1's grooming-workflow authoring did not raise a
+  staleness concern during this execution). The 3 surviving entries instead routed as: (1) rhino-cli
+  byte-identity drift — folded INLINE into the existing
+  `plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md` two-pager rather than duplicating it
+  (per the Before-You-Add integrate-don't-duplicate rule), with an updated data point and a new open
+  question; (2) polyglot restore gap (`ose-primer` NuGet + `beaver-nest` npm hoisting) — filed as a
+  new `plans/ideas/doctor-fix-polyglot-restore.md` two-pager, landed INLINE; (3) npm workspace
+  hoisting mismatch — routed INLINE as a Troubleshooting entry in
+  `repo-governance/development/workflow/reproducible-environments.md` (also folded as a data point
+  into idea (2)). All routing landed as small non-code doc edits in this plan's own `ose-public`
+  commit — no code-homed learning, no separate backlog plan required.
+
+- [x] [AI] If no generalizable learning surfaced beyond the expected future-work idea above, record
       the explicit note in `learnings.md` alongside it — acceptance: `learnings.md` is never
       silently empty
+
+  **Date**: 2026-08-05 **Status**: Complete — not applicable; 3 generalizable learnings did surface
+  and each records a terminal routing state, so no explicit "none" escape was needed.
 
 ### Phase 5 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits (this plan produced
+
+  **Date**: 2026-08-05 **Status**: Complete — verified by reading `learnings.md` in full: all 4
+  entries carry an explicit **Routing** line (3 inline, 1 discarded with reason).
+
+- [x] [AI] No code-homed learning landed inline in this plan's own commits (this plan produced
       no `apps/`/`libs/` change, so this check is vacuously satisfied — confirmed by the File-Impact
       Analysis in `tech-docs.md` naming no such path)
+
+  **Date**: 2026-08-05 **Status**: Complete — confirmed. The polyglot-restore learning's eventual
+  code fix (extending `doctor --fix`) was explicitly NOT landed inline; only its idea-brief (a
+  `plans/ideas/` two-pager, a non-code home) was. No `apps/`/`libs/` file was touched by Phase 5.
 
 > **Pause Safety**: `learnings.md` is fully triaged; no future process depends on querying it
 > later. Safe to stop. To resume: re-read `learnings.md` and confirm every entry is terminal.

@@ -30,6 +30,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [deploy-targets-registry](./deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
 - [demo-apps-standards-recheck](./demo-apps-standards-recheck.md) — re-verify the ose-primer demo apps still meet current repo standards.
 - [doc-command-existence-validation](./doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
+- [doctor-fix-polyglot-restore](./doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
 - [governance-path-ownership-registry](./governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
 - [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.
 - [harness-binding-catalog-drift](./harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
