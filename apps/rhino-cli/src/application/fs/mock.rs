@@ -1,7 +1,7 @@
 //! In-memory [`Fs`] double for repo-governance validator unit tests.
 //!
 //! Deliberately shared (not inlined per-consumer like
-//! `application::git::pre_commit`'s `FakeStagedFileProvider`) because it is
+//! earlier command-specific doubles) because it is
 //! consumed by multiple `application::repo_governance::*` validators.
 
 use std::collections::BTreeMap;

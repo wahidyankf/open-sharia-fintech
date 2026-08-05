@@ -19,6 +19,7 @@ pub use target_share::{
     cargo_sweep_present, check_target_shares, fix_target_shares, is_ci_ambient, prune_orphans,
     repo_name, sweep_stale,
 };
+pub use tools::build_tool_defs;
 
 /// Health status of a tool check.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

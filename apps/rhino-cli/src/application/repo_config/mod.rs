@@ -68,6 +68,10 @@ pub struct HarnessEntry {
     /// Directory of injected rules files (generated tier only).
     #[serde(rename = "rules-dir", default)]
     pub rules_dir: Option<String>,
+    /// Generated default-agent name (present for generated harnesses that
+    /// materialize a named agent definition).
+    #[serde(rename = "agent-name", default)]
+    pub agent_name: Option<String>,
     /// Source agent-dir this entry must mirror (generated tier).
     #[serde(default)]
     pub mirrors: Option<String>,
@@ -243,6 +247,10 @@ pub struct SurfaceScope {
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
 pub struct DoctorConfig {
+    /// Repository-relative `global.json` supplying the required .NET SDK
+    /// version. When absent, Doctor uses the conventional root `global.json`.
+    #[serde(rename = "dotnet-global-json", default)]
+    pub dotnet_global_json: Option<String>,
     /// Tool names (from `doctor::tools::build_tool_defs`'s full roster) that
     /// this repo's dev workflow does not need — e.g. a formatter binary this
     /// repo's `lint-staged` config never invokes. Excluded from `doctor`'s

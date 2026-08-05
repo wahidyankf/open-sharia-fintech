@@ -20,6 +20,7 @@ harness:
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
   #   skills-dir  — directory of skill files (source tier only)
   #   rules-dir   — directory of injected rules (generated tier only)
+  #   agent-name  — generated default-agent name (where the harness has one)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)
@@ -32,6 +33,7 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
+    agent-name: ose-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -57,6 +59,37 @@ harness:
   - { name: antigravity, tier: native, shadow: GEMINI.md, instruction: [AGENTS.md, GEMINI.md] }
   - { name: pi, tier: native, instruction: [AGENTS.md, CLAUDE.md] }
   - { name: aider, tier: native, shadow: CONVENTIONS.md, instruction: [AGENTS.md, CONVENTIONS.md] }
+
+gates:
+  # The date-metadata audit deliberately excludes website content. The paths
+  # are repository data, not shared rhino-cli source literals.
+  - id: md-frontmatter-dates
+    type: check
+    command: md frontmatter-dates validate
+    kind: rhino-cli
+    args:
+      exclude:
+        - apps/ayokoding-www/
+        - apps/ose-www/
+        - apps/organiclever-app-web/
+        - apps/wahidyankf-www/
+    surfaces:
+      ci: { scope: all-file-type }
+
+  # The generator is deliberately absent: source drift must require an
+  # explicit acknowledgement before its new checksum can be committed.
+  - id: parity-manifest
+    type: check
+    command: parity manifest validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: other }
+      ci: { scope: other }
+
+doctor:
+  # Repository-relative .NET SDK version source. The shared Rust source reads
+  # this data rather than naming an application-specific backend path.
+  dotnet-global-json: apps/ose-be/global.json
 
 coverage:
   # Explicit per-project test-level registry. One entry per Nx project (apps,

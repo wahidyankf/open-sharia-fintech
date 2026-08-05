@@ -9,6 +9,7 @@ use anyhow::{Context, Error, anyhow};
 use clap::Args;
 use serde::Serialize;
 
+use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::infrastructure::fs::real::RealFs;
 use crate::internal::git;
@@ -95,7 +96,17 @@ pub fn run(
         })
         .collect();
 
-    let findings = audit_frontmatter(&RealFs, &full_paths).context("frontmatter audit failed")?;
+    let config =
+        repo_config::load(&repo_root).context("load repo-config.yml for frontmatter audit")?;
+    let excluded_prefixes = config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "md-frontmatter-dates")
+        .and_then(|gate| gate.args.get("exclude"))
+        .cloned()
+        .unwrap_or_default();
+    let findings = audit_frontmatter(&RealFs, &full_paths, &excluded_prefixes)
+        .context("frontmatter audit failed")?;
 
     match output_format {
         OutputFormat::Text => print!("{}", format_text(&findings)),

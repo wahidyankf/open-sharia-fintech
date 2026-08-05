@@ -673,7 +673,7 @@ mod tests {
         let dir = setup();
         write(
             &dir.path().join(".opencode/agents/foo.md"),
-            "---\ndescription: desc\nmodel: opencode-go/wrong\npermission:\n  read: allow\n  write: allow\nskills:\n  - my-skill\n---\nBody\n",
+            "---\ndescription: desc\nmodel: zai-coding-plan/wrong\npermission:\n  read: allow\n  write: allow\nskills:\n  - my-skill\n---\nBody\n",
         );
         let checks = validate_agent_equivalence(dir.path());
         assert!(

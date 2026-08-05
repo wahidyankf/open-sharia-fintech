@@ -14,10 +14,14 @@
 use std::path::{Path, PathBuf};
 
 use cucumber::{World as _, given, then, when};
+use rhino_cli::application::agents::bindings::emit_bindings;
+use rhino_cli::application::doctor::build_tool_defs;
 use rhino_cli::application::repo_config::{self, HarnessEntry};
+use rhino_cli::application::repo_governance::frontmatter_audit::audit_frontmatter;
 use rhino_cli::application::specs::required_spec_folders;
 use rhino_cli::commands::repo_config_validate;
 use rhino_cli::commands::specs_validate_counts::{ValidateCountsArgs, run_at_root};
+use rhino_cli::infrastructure::fs::real::RealFs;
 use rhino_cli::infrastructure::git::root::find_root_from;
 use tempfile::TempDir;
 
@@ -32,6 +36,12 @@ struct RepoConfigDataWorld {
     output: String,
     /// Cursor harness entry loaded from the real repository config.
     cursor_entry: Option<HarnessEntry>,
+    /// Whether a configured website exclusion was honoured by the audit.
+    website_exclusions_respected: bool,
+    /// Whether the configured Amazon Q name drove generated output.
+    amazonq_definition_name_respected: bool,
+    /// Whether the configured .NET SDK path drove Doctor's version reader.
+    dotnet_global_json_respected: bool,
 }
 
 impl std::fmt::Debug for RepoConfigDataWorld {
@@ -48,6 +58,9 @@ impl RepoConfigDataWorld {
             ran_ok: false,
             output: String::new(),
             cursor_entry: None,
+            website_exclusions_respected: false,
+            amazonq_definition_name_respected: false,
+            dotnet_global_json_respected: false,
         }
     }
 }
@@ -56,6 +69,130 @@ fn write(root: &Path, rel: &str, content: &str) {
     let p = root.join(rel);
     std::fs::create_dir_all(p.parent().unwrap()).unwrap();
     std::fs::write(p, content).unwrap();
+}
+
+/// Regression for P1B-WEBSITE: repository-specific website exclusions belong
+/// to the frontmatter gate's configuration, rather than shared Rust source.
+fn website_prefix_exclusions_are_runtime_config() {
+    let repo = TempDir::new().expect("temp repo");
+    let root = repo.path();
+    write(
+        root,
+        "repo-config.yml",
+        concat!(
+            "harness: []\n",
+            "coverage:\n  projects: []\n",
+            "gates:\n",
+            "  - id: md-frontmatter-dates\n",
+            "    type: check\n",
+            "    command: md frontmatter-dates\n",
+            "    kind: rhino-cli\n",
+            "    args:\n",
+            "      exclude:\n",
+            "        - apps/custom-site/\n",
+            "    surfaces:\n",
+            "      ci: { scope: all-file-type }\n",
+        ),
+    );
+    write(
+        root,
+        "apps/custom-site/content/post.md",
+        "---\nupdated: 2026-01-01\n---\n",
+    );
+
+    let config = repo_config::load(root).expect("custom repo config must load");
+    let exclusions = config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "md-frontmatter-dates")
+        .and_then(|gate| gate.args.get("exclude"))
+        .expect("frontmatter gate must declare exclusions");
+    let findings = audit_frontmatter(&RealFs, &[root.to_string_lossy().to_string()], exclusions)
+        .expect("audit must run");
+    assert!(
+        findings.is_empty(),
+        "a configured website path must be skipped; findings: {findings:#?}"
+    );
+}
+
+/// Regression for P1B-AMAZON: Amazon Q's generated definition derives both
+/// filename and JSON name from `harness.amazonq.agent-name`.
+fn amazon_q_definition_name_comes_from_harness_config() {
+    let repo = TempDir::new().expect("temp repo");
+    let root = repo.path();
+    write(
+        root,
+        "repo-config.yml",
+        concat!(
+            "harness:\n",
+            "  - name: amazonq\n",
+            "    tier: generated\n",
+            "    agent-name: custom-repository\n",
+            "coverage:\n  projects: []\n",
+        ),
+    );
+
+    emit_bindings(root).expect("emit bindings");
+    let definition = root.join(".amazonq/cli-agents/custom-repository.json");
+    assert!(
+        definition.is_file(),
+        "the configured agent name must select the generated filename"
+    );
+    let raw = std::fs::read_to_string(definition).expect("read generated definition");
+    let parsed: serde_json::Value = serde_json::from_str(&raw).expect("valid generated JSON");
+    assert_eq!(parsed["name"], "custom-repository");
+}
+
+/// Regression for P1B-DOC-COMMENT: Doctor's .NET SDK source path is
+/// repository data, rather than a shared-source application literal.
+fn dotnet_global_json_is_runtime_config() {
+    let repo = TempDir::new().expect("temp repo");
+    let root = repo.path();
+    write(
+        root,
+        "repo-config.yml",
+        "doctor:\n  dotnet-global-json: tooling/sdk/global.json\n",
+    );
+    write(
+        root,
+        "tooling/sdk/global.json",
+        r#"{"sdk":{"version":"9.0.100"}}"#,
+    );
+
+    let dotnet = build_tool_defs(root)
+        .into_iter()
+        .find(|tool| tool.name == "dotnet")
+        .expect("dotnet tool definition");
+    assert_eq!(dotnet.source, "doctor.dotnet-global-json → sdk.version");
+    assert_eq!(
+        (dotnet.read_req)(),
+        "9.0.100",
+        "Doctor must read the configured .NET SDK path"
+    );
+}
+
+/// Runs the named regression selected by Cargo's test-filter argument.
+///
+/// This Cucumber target uses `harness = false`, so Cargo forwards a filter to
+/// this binary rather than discovering `#[test]` functions. Recognising the
+/// two P1B extraction names preserves the plan's focused RED/GREEN commands
+/// without weakening the normal no-filter Cucumber run.
+fn run_selected_extraction_regression() -> bool {
+    match std::env::args().nth(1).as_deref() {
+        Some("website_prefix_exclusions_are_runtime_config") => {
+            website_prefix_exclusions_are_runtime_config();
+            true
+        }
+        Some("amazon_q_definition_name_comes_from_harness_config") => {
+            amazon_q_definition_name_comes_from_harness_config();
+            true
+        }
+        Some("dotnet_global_json_is_runtime_config") => {
+            dotnet_global_json_is_runtime_config();
+            true
+        }
+        _ => false,
+    }
 }
 
 #[given("rhino-cli's repo-specific behaviour (env globs, domain/ddd areas)")]
@@ -136,6 +273,48 @@ fn then_cursor_entry_agent_dir(w: &mut RepoConfigDataWorld) {
 fn then_cursor_entry_mirror_source(w: &mut RepoConfigDataWorld) {
     let entry = w.cursor_entry.as_ref().expect("cursor entry loaded");
     assert_eq!(entry.mirrors.as_deref(), Some(".claude/agents"));
+}
+
+#[given("the frontmatter-date gate declares website exclusions")]
+fn given_frontmatter_date_gate_declares_website_exclusions(_w: &mut RepoConfigDataWorld) {}
+
+#[when("the configured frontmatter-date audit runs")]
+fn when_configured_frontmatter_date_audit_runs(w: &mut RepoConfigDataWorld) {
+    website_prefix_exclusions_are_runtime_config();
+    w.website_exclusions_respected = true;
+}
+
+#[then("configured excluded website content is skipped")]
+fn then_configured_excluded_website_content_is_skipped(w: &mut RepoConfigDataWorld) {
+    assert!(w.website_exclusions_respected);
+}
+
+#[given("the Amazon Q harness declares an agent name")]
+fn given_amazonq_harness_declares_agent_name(_w: &mut RepoConfigDataWorld) {}
+
+#[when("Amazon Q bindings generate")]
+fn when_amazonq_bindings_generate(w: &mut RepoConfigDataWorld) {
+    amazon_q_definition_name_comes_from_harness_config();
+    w.amazonq_definition_name_respected = true;
+}
+
+#[then("the configured name controls the definition filename and JSON name")]
+fn then_configured_name_controls_definition_output(w: &mut RepoConfigDataWorld) {
+    assert!(w.amazonq_definition_name_respected);
+}
+
+#[given("the Doctor configuration declares a .NET SDK path")]
+fn given_doctor_config_declares_dotnet_global_json(_w: &mut RepoConfigDataWorld) {}
+
+#[when("Doctor resolves its required .NET SDK version")]
+fn when_doctor_resolves_dotnet_version(w: &mut RepoConfigDataWorld) {
+    dotnet_global_json_is_runtime_config();
+    w.dotnet_global_json_respected = true;
+}
+
+#[then("the configured global.json supplies that version")]
+fn then_configured_dotnet_global_json_supplies_version(w: &mut RepoConfigDataWorld) {
+    assert!(w.dotnet_global_json_respected);
 }
 
 fn gates_section_deserializes_gate_entries() {
@@ -561,6 +740,11 @@ fn non_empty_surfaces_are_accepted() {
 
 #[tokio::main]
 async fn main() {
+    if run_selected_extraction_regression() {
+        return;
+    }
+    website_prefix_exclusions_are_runtime_config();
+    amazon_q_definition_name_comes_from_harness_config();
     gates_section_deserializes_gate_entries();
     invalid_gate_enum_values_are_rejected();
     mutation_gate_wiring_is_rejected();

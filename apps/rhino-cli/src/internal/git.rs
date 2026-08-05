@@ -6,5 +6,3 @@
 
 /// Git repository root locator (re-exported from `infrastructure::git::root`).
 pub mod root;
-
-pub use crate::application::git::pre_commit::{Deps, run};
