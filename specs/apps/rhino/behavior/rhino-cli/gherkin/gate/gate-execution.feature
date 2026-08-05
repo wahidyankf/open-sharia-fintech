@@ -11,6 +11,11 @@ Feature: Gate execution
     When the selected gate runs
     Then its fixed arguments precede its derived files
 
+  Scenario: CI affected-file-type gates use the supplied event base
+    Given a CI event supplies its preceding commit as the changed base
+    When an affected-file-type CI gate runs after main advances
+    Then the gate receives the files changed from the supplied base
+
   Scenario: External kind resolves a repository-local binary
     Given an external gate command exists only in the repository node_modules bin directory
     When its repository-local external gate runs

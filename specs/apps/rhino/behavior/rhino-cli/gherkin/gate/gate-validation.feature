@@ -26,6 +26,11 @@ Feature: Gate conformance validation
     When gate validate runs
     Then it fails and names that command
 
+  Scenario: A registry matrix aggregate cannot omit its enumerator
+    Given a matrix-driven CI gate has an aggregate missing its enumerate dependency
+    When gate validate runs
+    Then it fails and names the enumerate dependency and quality-gate
+
   Scenario: A verifies field naming no existing gate is caught
     Given a gate verifies a missing gate id
     When gate validate runs

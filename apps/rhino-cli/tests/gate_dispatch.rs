@@ -51,6 +51,21 @@ fn fixture_rhino_command(repo_root: &Path) -> Command {
     command
 }
 
+fn fixture_commit(repo_root: &Path, message: &str) {
+    let status = fixture_git_command(repo_root)
+        .args(["commit", "--quiet", "-m", message])
+        .env("GIT_AUTHOR_NAME", "gate-dispatch-fixture")
+        .env("GIT_AUTHOR_EMAIL", "gate-dispatch-fixture@example.invalid")
+        .env("GIT_COMMITTER_NAME", "gate-dispatch-fixture")
+        .env(
+            "GIT_COMMITTER_EMAIL",
+            "gate-dispatch-fixture@example.invalid",
+        )
+        .status()
+        .expect("commit fixture state");
+    assert!(status.success(), "fixture commit must succeed");
+}
+
 #[test]
 fn fixture_git_command_uses_explicit_isolation() {
     let command = fixture_git_command(Path::new("fixture"));
@@ -337,6 +352,104 @@ fn external_kind_preserves_fixed_argv_before_files() {
         std::fs::read_to_string(arguments).expect("read captured shellcheck arguments"),
         "--severity=warning\ntool.sh\n",
         "external dispatch must preserve fixed argv before its derived files"
+    );
+}
+
+/// A CI file-scoped gate receives changes from the event baseline even after
+/// `origin/main` has advanced to `HEAD` on a push-to-main checkout.
+#[cfg(unix)]
+// @covers specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature:CI affected-file-type gates use the supplied event base
+#[test]
+fn ci_affected_file_gate_uses_supplied_changed_base() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().expect("create fixture repository");
+    let bin = repo.path().join("bin");
+    let arguments = repo.path().join("captured-ci-arguments.txt");
+    std::fs::create_dir_all(&bin).expect("create fixture bin directory");
+    std::fs::write(repo.path().join("changed.md"), "# Before\n")
+        .expect("write initial changed file");
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: ci-markdown\n",
+            "    type: check\n",
+            "    command: capture\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-file-type, glob: '*.md' }\n",
+        ),
+    )
+    .expect("write gate registry");
+    let capture = bin.join("capture");
+    std::fs::write(
+        &capture,
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$GATE_CI_ARGUMENTS\"\n",
+    )
+    .expect("write capture stub");
+    std::fs::set_permissions(&capture, std::fs::Permissions::from_mode(0o755))
+        .expect("make capture stub executable");
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .status()
+            .expect("initialize fixture git repository")
+            .success(),
+        "git init must succeed"
+    );
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["add", "repo-config.yml", "changed.md"])
+            .status()
+            .expect("stage fixture baseline")
+            .success(),
+        "git add must succeed"
+    );
+    fixture_commit(repo.path(), "test: baseline");
+    let base = String::from_utf8(
+        fixture_git_command(repo.path())
+            .args(["rev-parse", "HEAD"])
+            .output()
+            .expect("read fixture baseline")
+            .stdout,
+    )
+    .expect("fixture baseline is UTF-8");
+
+    std::fs::write(repo.path().join("changed.md"), "# After\n")
+        .expect("write changed fixture file");
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["add", "changed.md"])
+            .status()
+            .expect("stage fixture change")
+            .success(),
+        "git add must succeed"
+    );
+    fixture_commit(repo.path(), "test: changed file");
+
+    let existing_path = std::env::var_os("PATH").expect("PATH must be set for CI fixture");
+    let path =
+        std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
+            .expect("join fixture PATH");
+    let output = fixture_rhino_command(repo.path())
+        .args(["gate", "run", "--surface=ci", "--only=ci-markdown"])
+        .env("PATH", path)
+        .env("GATE_CHANGED_BASE", base.trim())
+        .env("GATE_CI_ARGUMENTS", &arguments)
+        .output()
+        .expect("run CI gate dispatcher");
+
+    assert!(
+        output.status.success(),
+        "CI leaf must exit successfully; stdout: {}; stderr: {}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(
+        std::fs::read_to_string(arguments).unwrap_or_default(),
+        "changed.md\n",
+        "the supplied CI event base must provide the committed changed path"
     );
 }
 

@@ -32,6 +32,8 @@ struct GateWorld {
     first_parity_manifest: Option<Vec<u8>>,
     pending_gate_type: Option<String>,
     path: Option<OsString>,
+    ci_changed_base: Option<String>,
+    ci_arguments: Option<PathBuf>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -52,6 +54,8 @@ impl GateWorld {
             first_parity_manifest: None,
             pending_gate_type: None,
             path: None,
+            ci_changed_base: None,
+            ci_arguments: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -159,6 +163,19 @@ impl GateWorld {
         assert!(output.status.success(), "git add failed: {output:?}");
     }
 
+    fn commit(&self, message: &str) {
+        let output = self
+            .fixture_git_command()
+            .args(["commit", "--quiet", "-m", message])
+            .env("GIT_AUTHOR_NAME", "gate-spec-fixture")
+            .env("GIT_AUTHOR_EMAIL", "gate-spec-fixture@example.invalid")
+            .env("GIT_COMMITTER_NAME", "gate-spec-fixture")
+            .env("GIT_COMMITTER_EMAIL", "gate-spec-fixture@example.invalid")
+            .output()
+            .expect("commit fixture state");
+        assert!(output.status.success(), "git commit failed: {output:?}");
+    }
+
     fn prepend_bin_to_path(&mut self, relative: &str) {
         let bin = self.root().join(relative);
         let existing = std::env::var_os("PATH").expect("PATH is available");
@@ -242,6 +259,32 @@ impl GateWorld {
         self.output.push('\n');
     }
 
+    fn run_ci_changed_base_gate(&mut self) {
+        let base = self
+            .ci_changed_base
+            .as_deref()
+            .expect("CI changed base must be configured");
+        let arguments = self
+            .ci_arguments
+            .as_ref()
+            .expect("CI arguments capture must be configured");
+        let mut command = self.fixture_rhino_command();
+        command
+            .args(["gate", "run", "--surface=ci", "--only=ci-markdown"])
+            .env("GATE_CHANGED_BASE", base)
+            .env("GATE_CI_ARGUMENTS", arguments);
+        if let Some(path) = &self.path {
+            command.env("PATH", path);
+        }
+        let output = command.output().expect("run CI changed-base gate");
+        self.succeeded = Some(output.status.success());
+        self.output = format!(
+            "{}{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
     fn is_success(&self) -> bool {
         self.succeeded.expect("scenario command ran")
     }
@@ -303,6 +346,54 @@ fn gate(id: &str, gate_type: &str, command: &str, kind: &str, surfaces: &str) ->
     format!(
         "  - id: {id}\n    type: {gate_type}\n    command: {command}\n    kind: {kind}\n    surfaces:\n{surfaces}"
     )
+}
+
+#[given("a CI event supplies its preceding commit as the changed base")]
+fn given_ci_changed_base(w: &mut GateWorld) {
+    use std::os::unix::fs::PermissionsExt;
+
+    let bin = w.root().join("bin");
+    let arguments = w.root().join("captured-ci-arguments.txt");
+    std::fs::create_dir_all(&bin).expect("create CI fixture bin directory");
+    w.write("changed.md", "# Before\n");
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "ci-markdown",
+            "check",
+            "capture",
+            "external",
+            "      ci: { scope: affected-file-type, glob: '*.md' }\n",
+        )),
+    );
+    let capture = bin.join("capture");
+    std::fs::write(
+        &capture,
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$GATE_CI_ARGUMENTS\"\n",
+    )
+    .expect("write CI capture stub");
+    std::fs::set_permissions(&capture, std::fs::Permissions::from_mode(0o755))
+        .expect("make CI capture stub executable");
+    w.init_git();
+    w.stage(&["repo-config.yml", "changed.md"]);
+    w.commit("test: baseline");
+    let base = w
+        .fixture_git_command()
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .expect("read CI fixture baseline");
+    assert!(base.status.success(), "git rev-parse HEAD must succeed");
+    w.ci_changed_base = Some(
+        String::from_utf8(base.stdout)
+            .expect("CI fixture base must be UTF-8")
+            .trim()
+            .to_owned(),
+    );
+    w.write("changed.md", "# After\n");
+    w.stage(&["changed.md"]);
+    w.commit("test: changed file");
+    w.prepend_bin_to_path("bin");
+    w.ci_arguments = Some(arguments);
 }
 
 #[given("a check declares pre-commit but no ci surface or carve-out")]
@@ -394,7 +485,30 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
             "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
-            "  quality-gate:\n    needs: gate\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
+            "  quality-gate:\n    needs: [enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
+        ),
+    );
+}
+
+#[given("a matrix-driven CI gate has an aggregate missing its enumerate dependency")]
+fn given_matrix_aggregate_missing_enumerate(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "known-check",
+            "check",
+            "known-check",
+            "external",
+            "      ci: { scope: affected-projects }\n",
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n    needs: gate\n",
         ),
     );
 }
@@ -477,7 +591,7 @@ fn given_hand_wired_job(w: &mut GateWorld) {
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
             "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
-            "  quality-gate:\n    needs: [gate, test-quick]\n",
+            "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
     );
 }
@@ -506,6 +620,11 @@ fn when_gate_validate_runs(w: &mut GateWorld) {
     w.validate();
 }
 
+#[when("an affected-file-type CI gate runs after main advances")]
+fn when_ci_changed_base_gate_runs(w: &mut GateWorld) {
+    w.run_ci_changed_base_gate();
+}
+
 #[then("it fails and names the Gate Composition Rule, gate, and ci surface")]
 fn then_composition_rule_fails(w: &mut GateWorld) {
     assert!(!w.is_success());
@@ -517,6 +636,20 @@ fn then_composition_rule_fails(w: &mut GateWorld) {
 #[then("it succeeds")]
 fn then_validate_succeeds(w: &mut GateWorld) {
     assert!(w.is_success(), "gate validation failed: {}", w.output);
+}
+
+#[then("the gate receives the files changed from the supplied base")]
+fn then_ci_changed_base_gate_receives_changed_file(w: &mut GateWorld) {
+    assert!(w.is_success(), "CI gate failed: {}", w.output);
+    let arguments = w
+        .ci_arguments
+        .as_ref()
+        .expect("CI arguments capture must be configured");
+    assert_eq!(
+        std::fs::read_to_string(arguments).unwrap_or_default(),
+        "changed.md\n",
+        "the supplied CI event base must provide the committed changed path"
+    );
 }
 
 #[then("it succeeds and gate list reports the exemption")]
@@ -536,6 +669,13 @@ fn then_hook_file_is_named(w: &mut GateWorld) {
 fn then_undeclared_command_is_named(w: &mut GateWorld) {
     assert!(!w.is_success());
     assert!(w.output.contains("unknown-check"));
+}
+
+#[then("it fails and names the enumerate dependency and quality-gate")]
+fn then_matrix_aggregate_requires_enumerate(w: &mut GateWorld) {
+    assert!(!w.is_success());
+    assert!(w.output.contains("enumerate"));
+    assert!(w.output.contains("quality-gate"));
 }
 
 #[then("it fails and names both IDs")]
@@ -614,7 +754,7 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
             "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
-            "  quality-gate:\n    needs: [gate, test-quick]\n",
+            "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
     );
 }

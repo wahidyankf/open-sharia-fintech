@@ -321,14 +321,14 @@ fn validate_ci_matrix_contract(
             .any(|run| run.contains("gate run --surface=ci --only=${{ matrix.gate.id }}"));
         derives_gate_matrix && dispatches_selected_gate
     });
-    let gate_is_required = workflow
+    let aggregate_requires_matrix_prerequisites = workflow
         .jobs
         .get("quality-gate")
-        .is_some_and(|job| job.needs.contains("gate"));
-    if has_enumeration && has_matrix_dispatcher && gate_is_required {
+        .is_some_and(|job| job.needs.contains("enumerate") && job.needs.contains("gate"));
+    if has_enumeration && has_matrix_dispatcher && aggregate_requires_matrix_prerequisites {
         return Ok(());
     }
-    let message = "CI workflow must derive its gate matrix from the enumerate job's gate list, dispatch it through the gate job, and make quality-gate depend on gate";
+    let message = "CI workflow must derive its gate matrix from the enumerate job's gate list, dispatch it through the gate job, and make quality-gate depend on enumerate and gate";
     writeln!(writer, "{message}")?;
     Err(anyhow!(message))
 }
@@ -945,7 +945,7 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -953,6 +953,57 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
         "the registry-derived CI matrix dispatcher must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn quality_gate_requires_enumerate_as_well_as_gate() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("enumerate") && rendered.contains("quality-gate"),
+        "quality-gate must directly depend on enumerate and gate; result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -992,7 +1043,7 @@ fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
             "    steps:\n",
             "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1032,7 +1083,7 @@ fn missing_named_ci_matrix_job_is_rejected() {
             "      - run: rhino-cli gate list --surface=ci --format=json\n",
             "      - run: echo '${{ fromJson(needs.enumerate.outputs.gates) }}'\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1083,7 +1134,7 @@ fn undeclared_ci_command() {
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [enumerate, gate]\n",
             "  unexpected:\n",
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=unregistered-check\n",
@@ -1137,7 +1188,7 @@ fn named_block_ci_step_is_checked_against_the_registry() {
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [enumerate, gate]\n",
             "  unexpected:\n",
             "    steps:\n",
             "      - name: undeclared block gate invocation\n",

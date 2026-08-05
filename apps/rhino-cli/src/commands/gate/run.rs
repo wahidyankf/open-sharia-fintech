@@ -28,6 +28,9 @@ enum CandidateScope {
     None,
 }
 
+/// CI event baseline supplied by the workflow for a push-to-main run.
+const GATE_CHANGED_BASE_ENV: &str = "GATE_CHANGED_BASE";
+
 /// Changed and tracked repository paths needed by a gate selection.
 type CandidatePaths = (Option<Vec<String>>, Option<Vec<String>>);
 
@@ -494,6 +497,13 @@ fn changed_paths(repo_root: &Path, surface: &GateSurface) -> Result<Vec<String>,
     if *surface == GateSurface::PreCommit {
         return staged_paths(repo_root);
     }
+    if *surface == GateSurface::Ci
+        && let Some(base) = std::env::var(GATE_CHANGED_BASE_ENV)
+            .ok()
+            .filter(|base| !base.trim().is_empty())
+    {
+        return changed_paths_from_base(repo_root, base.trim(), GATE_CHANGED_BASE_ENV);
+    }
     if matches!(surface, GateSurface::PrePush | GateSurface::Ci) {
         return merge_base_paths(repo_root);
     }
@@ -512,12 +522,21 @@ fn merge_base_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
         return staged_paths(repo_root);
     }
     let base = String::from_utf8(merge_base.stdout)?;
+    changed_paths_from_base(repo_root, base.trim(), "the branch merge base")
+}
+
+/// Returns paths changed from an explicit baseline commit to `HEAD`.
+fn changed_paths_from_base(
+    repo_root: &Path,
+    base: &str,
+    label: &str,
+) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
         .args(["diff", "--name-only", base.trim(), "HEAD"])
         .current_dir(repo_root)
         .output()?;
     if !output.status.success() {
-        return Err(anyhow!("git diff from merge base to HEAD failed"));
+        return Err(anyhow!("git diff from {label} to HEAD failed"));
     }
     Ok(String::from_utf8(output.stdout)?
         .lines()

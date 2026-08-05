@@ -16,6 +16,7 @@ concurrency:
 env:
   NX_BASE: ${{ github.event_name == 'push' && github.event.before || format('origin/{0}', github.base_ref) }}
   NX_HEAD: ${{ github.sha }}
+  GATE_CHANGED_BASE: ${{ github.event_name == 'push' && github.event.before || format('origin/{0}', github.base_ref) }}
 
 jobs:
   detect:
@@ -204,7 +205,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [format, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
+    needs: [format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

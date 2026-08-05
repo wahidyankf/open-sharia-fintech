@@ -3282,7 +3282,7 @@ checkbox remains the separately authorized integration action after its precedin
   - Date: 2026-08-05
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
-  - Execution note: With explicit user authorization, `git push --force-with-lease` updated the existing PR branch from `b1a029304` to `dd6d29f1`. Immediately after the push, `git ls-remote --heads origin sdlc-gate-registry-enforcement-rewire` and local `HEAD` both resolve to `dd6d29f1a7a51cd7a5858066e7ce8b08c6ab909d`.
+  - Execution note: With explicit user authorization, `git push --force-with-lease` updated the existing PR branch from `b1a029304` to `dd6d29f1`; the task's persisted note was then amended into the same commit and force-pushed as `64f0baf`. `git ls-remote --heads origin sdlc-gate-registry-enforcement-rewire` and local `HEAD` both resolve to `64f0baffcda8f0d0febba8d9618b930581134d73`.
 - [x] [AI] **P2-REBASE-PARITY-MANIFEST-REGENERATION** (`blockedBy: P2-REBASE-UPSTREAM-RECONCILIATION-2`; `blocks: P2-CI-REMOTE-BASELINE-REMEDIATION`) — regenerate `apps/rhino-cli/parity-manifest.sha256` after the upstream naming-module change, then validate it — commands: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: validation exits 0 and the regenerated manifest is committed with this Phase 2 remediation.
   - Date: 2026-08-05
   - Status: complete
@@ -3308,9 +3308,61 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: Opened draft PR [#137](https://github.com/wahidyankf/ose-public/pull/137) from `sdlc-gate-registry-enforcement-rewire` to `main`.
-- [ ] [AI] Cycle 1 maker fan-out — invoke all eight makers — acceptance: eight reports exist.
-- [ ] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review is posted.
-- [ ] [AI] Cycle 1 fixer — invoke `pr-review-fixer` — acceptance: fixes are committed and pushed.
+- [x] [AI] Cycle 1 maker fan-out — invoke all eight makers — acceptance: eight reports exist.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-{architecture,logic,security,performance}__b72a74__2026-08-05--21-50__audit.md`; `/Users/wkf/ose-projects/ose-public/generated-reports/pr-review-{governance,documentation,integrity-testing,instruction-workflow}__137_64f0baf__2026-08-05--09-30__audit.md`
+  - Execution note: Verified all eight fresh discipline reports. Architecture, security, governance, documentation, and instruction/workflow found no findings; logic/integrity found the CI push-base defect and performance found the enumerate-to-aggregate dependency defect.
+- [x] [AI] Cycle 1 synthesis — invoke `pr-review-synthesis-maker` — acceptance: one review is posted.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-synthesis__137_64f0baf__2026-08-05--21-50__audit.md`
+  - Execution note: Posted the review of record [4865771822](https://github.com/wahidyankf/ose-public/pull/137#pullrequestreview-4865771822), consolidating eight reports into the two accepted HIGH CI correctness findings and their regression requirements.
+- [x] [AI] **P2-C1-CI-PUSH-BASE-RED** (`blocks: P2-C1-CI-PUSH-BASE-GREEN`) — add a failing Rust integration regression proving that a CI affected-file-type gate uses an explicit event base and receives the changed file — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch ci_affected_file_gate_uses_supplied_changed_base` — acceptance: the test fails before the production fix because CI derives an empty push-to-main file set.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_dispatch.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
+  - Execution note: Added `ci_affected_file_gate_uses_supplied_changed_base`; before the production path change it exposed the empty affected-file set that arises when a push checkout makes `origin/main` equal `HEAD`.
+- [x] [AI] **P2-C1-CI-PUSH-BASE-GREEN** (`blockedBy: P2-C1-CI-PUSH-BASE-RED`; `blocks: Cycle 1 fixer`) — provide the CI event base to gate dispatch, wire it through the PR workflow, and make the regression pass — commands: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch ci_affected_file_gate_uses_supplied_changed_base` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: affected CI gates receive the event delta on both pull requests and pushes to main.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/src/commands/gate/run.rs`, `apps/rhino-cli/tests/gate_dispatch.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
+  - Execution note: The workflow now passes its event base through `GATE_CHANGED_BASE`; CI dispatch uses it before the local merge-base fallback. `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch ci_affected_file_gate_uses_supplied_changed_base` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` passed.
+- [x] [AI] **P2-C1-CI-ENUMERATE-JOIN-RED** (`blocks: P2-C1-CI-ENUMERATE-JOIN-GREEN`) — add a failing workflow-contract regression for a `quality-gate` that omits `enumerate` from `needs` — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml quality_gate_requires_enumerate_as_well_as_gate` — acceptance: the fixture currently validates despite an enumerate failure being able to skip the matrix.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Execution note: The regression fixture deliberately omitted `enumerate` from `quality-gate.needs`; before the validator correction, `gate validate` returned success for that false-green workflow contract.
+- [x] [AI] **P2-C1-CI-ENUMERATE-JOIN-GREEN** (`blockedBy: P2-C1-CI-ENUMERATE-JOIN-RED`; `blocks: Cycle 1 fixer`) — require `quality-gate` to depend on both the matrix and enumeration jobs, update the workflow, and make the regression pass — commands: `cargo test --manifest-path apps/rhino-cli/Cargo.toml quality_gate_requires_enumerate_as_well_as_gate`, `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`, and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: a failed registry enumeration is a blocking Quality gate result.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Execution note: `quality-gate` now directly needs both `enumerate` and `gate`; its validator and Cucumber contract reject an aggregate that omits the enumerator. Focused unit/spec tests, `gate validate`, `actionlint`, and `git diff --check` passed.
+- [x] [AI] **P2-C1-CI-PUSH-BASE-GHERKIN-RED** (`blocks: P2-C1-CI-PUSH-BASE-GHERKIN-GREEN`) — run the complete gate Cucumber suite after adding the CI changed-base scenario — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: the suite identifies the unbound scenario step rather than allowing the feature contract to ship unexecuted.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
+  - Execution note: The full suite correctly failed on the newly added scenario's unbound Given step, preventing an unexecuted specification from reaching the PR.
+- [x] [AI] **P2-C1-CI-PUSH-BASE-GHERKIN-GREEN** (`blockedBy: P2-C1-CI-PUSH-BASE-GHERKIN-RED`; `blocks: Cycle 1 fixer`) — bind the CI changed-base Gherkin scenario to an isolated fixture and make the complete gate Cucumber suite pass — commands: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` and `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch ci_affected_file_gate_uses_supplied_changed_base` — acceptance: executable specification and integration regression both prove the event-base contract.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
+  - Execution note: Added isolated Cucumber fixture setup, execution, and assertions using only command-scoped Git identity. The full gate spec suite and direct dispatcher regression pass.
+- [x] [AI] **P2-C1-PARITY-MANIFEST-REGENERATE** (`blocks: P2-C1-PARITY-MANIFEST-VALIDATE`) — regenerate the prospective Rhino CLI parity manifest after the Cycle 1 source correction — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate` — acceptance: `apps/rhino-cli/parity-manifest.sha256` reflects the new canonical source set.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: Regenerated the manifest after the required pre-push parity gate detected that `run.rs` had changed after the earlier Phase 2 manifest update.
+- [x] [AI] **P2-C1-PARITY-MANIFEST-VALIDATE** (`blockedBy: P2-C1-PARITY-MANIFEST-REGENERATE`; `blocks: Cycle 1 fixer`) — stage the regenerated manifest and validate the prospective commit boundary — commands: `git add -- apps/rhino-cli/parity-manifest.sha256` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: validation exits 0 without bypassing the byte-identity gate.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: Staged the generated manifest and validated the prospective boundary successfully; the manifest is current for the canonical `ose-public` source set.
+- [x] [AI] Cycle 1 fixer — invoke `pr-review-fixer` — acceptance: fixes are committed and pushed.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/parity-manifest.sha256`, `apps/rhino-cli/src/commands/gate/{run,validate}.rs`, `apps/rhino-cli/tests/{gate_dispatch,gate_specs}.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/{gate-execution,gate-validation}.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Fixed both accepted HIGH findings and the discovered executable-spec binding gap in `f513e71418a39926d04784637a304ddd73333341`. The required full affected suite passed, the parity manifest was regenerated and validated, and the normal fast-forward push passed all pre-push gates.
 - [ ] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-rewire --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix, commit, push before Cycle 2.
 - [ ] [AI] Cycle 2 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
 - [ ] [AI] Cycle 2 synthesis — invoke synthesis maker — acceptance: one fresh review is posted.
