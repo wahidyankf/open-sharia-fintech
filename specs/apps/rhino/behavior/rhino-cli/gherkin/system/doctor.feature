@@ -53,11 +53,11 @@ Feature: Development Environment Health Check
     Then the command exits with a failure code
     And the output contains a dry-run preview
 
-  Scenario: Fix dry-run previews a pinned OpenTofu remediation
+  Scenario: Fix dry-run previews a platform-safe pinned OpenTofu remediation
     Given the tofu tool is not found in the system PATH
     When the developer runs the doctor command with fix and dry-run flags
     Then the command exits with a failure code
-    And the output previews the pinned OpenTofu installer
+    And the output handles pinned OpenTofu remediation safely
 
   Scenario: Fix reports nothing to fix when all tools are present
     Given all required development tools are present with matching versions

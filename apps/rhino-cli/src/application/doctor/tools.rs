@@ -75,8 +75,13 @@ fn parse_tofu_version(s: &str) -> String {
     parse_line_word(s, "OpenTofu ", 1, "v")
 }
 
-/// Exact `OpenTofu` version installed by the Linux doctor bootstrapper.
+/// Exact `OpenTofu` version installed by the macOS and Linux doctor bootstrappers.
 const OPENTOFU_VERSION: &str = "1.12.3";
+
+/// Returns the security-cleared minimum `OpenTofu` version for Doctor.
+fn read_tofu_version() -> String {
+    OPENTOFU_VERSION.into()
+}
 
 // Per-binary readers using a path captured in a static OnceLock.
 // Go's closures capture repo_root; in Rust we precompute paths and stash them via static
@@ -414,17 +419,10 @@ fn install_shfmt(_req: &str, platform: &str) -> Vec<InstallStep> {
 
 /// Returns install steps for `tofu` (`OpenTofu`).
 ///
-/// On macOS: `brew install opentofu`.
-/// On Linux: the official `OpenTofu` standalone install script.
+/// On macOS and Linux: the official pinned `OpenTofu` standalone install script.
 fn install_tofu(_req: &str, platform: &str) -> Vec<InstallStep> {
-    if platform == "darwin" {
-        vec![InstallStep {
-            description: "Install OpenTofu via Homebrew".into(),
-            command: "brew".into(),
-            args: vec!["install".into(), "opentofu".into()],
-        }]
-    } else {
-        vec![InstallStep {
+    match platform {
+        "darwin" | "linux" => vec![InstallStep {
             description: "Install OpenTofu via the official standalone install script".into(),
             command: "bash".into(),
             args: vec![
@@ -433,7 +431,8 @@ fn install_tofu(_req: &str, platform: &str) -> Vec<InstallStep> {
                     "curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && chmod +x install-opentofu.sh && ./install-opentofu.sh --install-method standalone --opentofu-version {OPENTOFU_VERSION} && rm -f install-opentofu.sh"
                 ),
             ],
-        }]
+        }],
+        _ => Vec::new(),
     }
 }
 
@@ -690,8 +689,8 @@ fn tool_defs_formatters() -> Vec<ToolDef> {
             args: vec!["--version".into()],
             use_stderr: false,
             parse_ver: parse_tofu_version,
-            compare: compare_exact,
-            read_req: no_req,
+            compare: compare_gte,
+            read_req: read_tofu_version,
             install_cmd: Some(install_tofu),
         },
         ToolDef {
@@ -790,8 +789,13 @@ mod tests {
     #[test]
     fn install_tofu_macos() {
         let steps = install_tofu("", "darwin");
-        assert_eq!(steps[0].command, "brew");
-        assert!(steps[0].args.contains(&"opentofu".to_string()));
+        let linux_steps = install_tofu("", "linux");
+
+        assert_eq!(steps[0].command, "bash");
+        assert_eq!(OPENTOFU_VERSION, "1.12.3");
+        assert!(steps[0].args[1].contains("install-opentofu.sh"));
+        assert!(steps[0].args[1].contains(&format!("--opentofu-version {OPENTOFU_VERSION}")));
+        assert_eq!(steps[0].args, linux_steps[0].args);
     }
 
     #[test]
@@ -817,6 +821,32 @@ mod tests {
             "the Linux installer must request the named OpenTofu pin"
         );
         assert!(!script.contains("--opentofu-version latest"));
+    }
+
+    #[test]
+    fn tofu_definition_requires_pinned_minimum_version() {
+        let tofu = tool_defs_formatters()
+            .into_iter()
+            .find(|definition| definition.name == "tofu")
+            .expect("tofu definition must exist");
+        let required = (tofu.read_req)();
+
+        assert_eq!(required, OPENTOFU_VERSION);
+        assert_eq!(
+            (tofu.compare)("1.12.2", &required).0,
+            ToolStatus::Warning,
+            "an older installed OpenTofu version must be reported"
+        );
+        assert_eq!(
+            (tofu.compare)("1.12.4", &required).0,
+            ToolStatus::Ok,
+            "a newer installed OpenTofu version must satisfy the minimum"
+        );
+    }
+
+    #[test]
+    fn install_tofu_unsupported_platform_is_empty() {
+        assert!(install_tofu("", "windows").is_empty());
     }
 
     #[test]

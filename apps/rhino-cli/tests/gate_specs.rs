@@ -1649,7 +1649,7 @@ fn given_ci_registry(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(concat!(
-            "  - id: ci-one\n    type: check\n    command: one\n    kind: external\n    surfaces:\n      ci: { scope: affected-projects }\n",
+            "  - id: ci-one\n    type: check\n    command: one\n    kind: external\n    doctor-tools: [git, node]\n    surfaces:\n      ci: { scope: affected-projects }\n",
             "  - id: ci-two\n    type: check\n    command: two\n    kind: external\n    surfaces:\n      ci: { scope: all-file-type }\n",
             "  - id: local-only\n    type: check\n    command: local\n    kind: external\n    surfaces:\n      pre-commit: { scope: other }\n",
         )),
@@ -1671,7 +1671,7 @@ fn then_output_is_json_array(w: &mut GateWorld) {
     );
 }
 
-#[then("every element carries \"id\", \"command\", and \"scope\" keys")]
+#[then("every element carries \"id\", \"command\", \"scope\", and \"doctor_tools\" keys")]
 fn then_json_entries_have_matrix_keys(w: &mut GateWorld) {
     for entry in w
         .json_output
@@ -1679,10 +1679,39 @@ fn then_json_entries_have_matrix_keys(w: &mut GateWorld) {
         .and_then(serde_json::Value::as_array)
         .expect("JSON gate-list array")
     {
-        for key in ["id", "command", "scope"] {
+        for key in ["id", "command", "scope", "doctor_tools"] {
             assert!(entry.get(key).is_some(), "missing {key} in {entry}");
         }
+        assert!(
+            entry["doctor_tools"].is_array(),
+            "doctor_tools must be an array in {entry}"
+        );
     }
+}
+
+#[then(regex = r#"^entry "([^"]+)" reports doctor_tools "([^"]+)" and "([^"]+)"$"#)]
+fn then_entry_reports_doctor_tools(
+    w: &mut GateWorld,
+    id: String,
+    first_tool: String,
+    second_tool: String,
+) {
+    let id_value = serde_json::Value::String(id);
+    let expected_tools = serde_json::to_value(vec![first_tool, second_tool])
+        .expect("Doctor-tool test values must serialize");
+    let entries = w
+        .json_output
+        .as_ref()
+        .and_then(serde_json::Value::as_array)
+        .expect("JSON gate-list array");
+    let entry = entries
+        .iter()
+        .find(|entry| entry["id"] == id_value)
+        .unwrap_or_else(|| panic!("gate list output lacks {id_value:?}: {entries:?}"));
+    assert_eq!(
+        entry["doctor_tools"], expected_tools,
+        "gate list output has unexpected doctor tools: {entry}"
+    );
 }
 
 #[then("the array contains exactly the matrix-wired gates declaring surface \"ci\"")]

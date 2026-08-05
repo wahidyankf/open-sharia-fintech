@@ -557,6 +557,7 @@ gates:
     category: formatter
     command: shfmt -w
     kind: external
+    doctor-tools: [shfmt]
     restages: true
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.sh" }
@@ -565,6 +566,7 @@ gates:
     type: check
     command: shfmt -d
     kind: external
+    doctor-tools: [shfmt]
     verifies: format-shfmt
     surfaces:
       ci: { scope: affected-file-type, glob: "*.sh" }
@@ -574,6 +576,7 @@ gates:
     category: formatter
     command: tofu fmt
     kind: external
+    doctor-tools: [tofu]
     restages: true
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.tf" }
@@ -582,6 +585,7 @@ gates:
     type: check
     command: tofu fmt -check
     kind: external
+    doctor-tools: [tofu]
     verifies: format-tofu
     surfaces:
       ci: { scope: affected-file-type, glob: "*.tf" }
@@ -608,6 +612,7 @@ gates:
     category: formatter
     command: clang-format -i
     kind: external
+    doctor-tools: [clang-format]
     restages: true
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.{c,h}" }
@@ -618,6 +623,7 @@ gates:
     # "code should be clang-formatted" warning to an error so the exit is non-zero.
     command: clang-format --dry-run --Werror
     kind: external
+    doctor-tools: [clang-format]
     verifies: format-clang
     surfaces:
       ci: { scope: affected-file-type, glob: "*.{c,h}" }
@@ -696,6 +702,7 @@ gates:
     type: check
     command: actionlint
     kind: external
+    doctor-tools: [actionlint]
     surfaces:
       pre-commit:
         scope: affected-file-type
@@ -706,6 +713,7 @@ gates:
     type: check
     command: shellcheck --severity=warning
     kind: external
+    doctor-tools: [shellcheck]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.sh" }
       ci: { scope: affected-file-type, glob: "*.sh" }
@@ -714,6 +722,7 @@ gates:
     type: check
     command: hadolint --failure-threshold warning
     kind: external
+    doctor-tools: [hadolint]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "**/Dockerfile*" }
       ci: { scope: affected-file-type, glob: "**/Dockerfile*" }
@@ -740,6 +749,7 @@ gates:
     type: check
     command: 'sh -ec ''for f; do base=${f%.ci.yml}.yml; if [ "$base" != "$f" ] && [ -f "$base" ]; then docker compose -f "$base" -f "$f" config > /dev/null; else docker compose -f "$f" config > /dev/null; fi; done'' --'
     kind: external
+    doctor-tools: [docker]
     surfaces:
       pre-commit:
         scope: affected-file-type

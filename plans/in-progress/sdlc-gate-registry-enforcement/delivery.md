@@ -3474,6 +3474,76 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: none
   - Execution note: The complete required affected suite passes. Rhino coverage reports 1320 passed/0 failed (1 ignored), the doctor behavior contract is fully covered, and no affected target fails; cached unrelated project results were retained by Nx.
+- [x] [AI] **P2-C4-DOCTOR-TOFU-MINIMUM-VERSION** (`blocks: P2-C4-DOCTOR-TOFU-STALE-REMEDIATION`) — require the security-cleared OpenTofu version in Doctor so an installed vulnerable version is detected — acceptance: an old installed `tofu` version fails the requirement and focused regression coverage passes.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`
+  - Execution note: Doctor now requires OpenTofu `>=1.12.3`; focused definitions tests prove `1.12.2` is warned and `1.12.4` satisfies the requirement. `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib tofu_` passes (6 tests).
+- [x] [AI] **P2-C4-DOCTOR-TOFU-STALE-REMEDIATION** (`blockedBy: P2-C4-DOCTOR-TOFU-MINIMUM-VERSION`; `blocks: P2-C4-DOCTOR-TOFU-PLATFORMS`) — make Doctor fix an installed stale OpenTofu version instead of counting it as already healthy — acceptance: a stale `tofu` reaches the verified installer path in focused fixer coverage.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/fixer.rs`
+  - Execution note: The fixer now remediates only stale `tofu` warnings; every other warning remains non-mutating. Focused tests prove stale `tofu` invokes its installer while stale Node remains `already_ok`; `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib fixer::tests` passes (9 tests).
+- [x] [AI] **P2-C4-DOCTOR-TOFU-PLATFORMS** (`blockedBy: P2-C4-DOCTOR-TOFU-STALE-REMEDIATION`; `blocks: P2-C4-DOCTOR-TOFU-WAIVER-DOCS`) — use the exact official standalone pin on supported macOS/Linux hosts and return no installer steps for unsupported platforms — acceptance: platform-focused unit and behavior tests prove exact remediation on macOS/Linux and safe skipping elsewhere.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`, `apps/rhino-cli/tests/doctor.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`
+  - Execution note: macOS and Linux now share the exact official standalone `1.12.3` installer; unsupported platforms return no installer steps. Unit coverage tests Windows skip, and the Cucumber dry-run contract verifies the official URL, exact pin, no `latest`, and no Homebrew on supported hosts. `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test doctor` passes.
+- [x] [AI] **P2-C4-DOCTOR-TOFU-WAIVER-DOCS** (`blockedBy: P2-C4-DOCTOR-TOFU-PLATFORMS`; `blocks: P2-C4-DOC-GOVERNANCE`) — correct the Path C waiver’s advisory-to-CVE mapping and explicitly scope its exact-pin guarantee to supported platforms — acceptance: plan and durable waiver register contain only verified advisory/CVE facts and match implementation.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/tech-docs.md`, `docs/reference/security-waivers.md`
+  - Execution note: Corrected the High advisory’s unsupported CVE mapping, retained the Low advisory’s upstream Go CVEs, and scoped the exact installer guarantee to macOS/Linux—the implemented platforms. Prettier and markdownlint pass for both records.
+- [x] [AI] **P2-C4-DOC-GOVERNANCE** (`blockedBy: P2-C4-DOCTOR-TOFU-WAIVER-DOCS`; `blocks: P2-C4-CI-BOOTSTRAP-PERF`) — remove stale `main-ci.yml` guidance from the declared governance and agent instruction surfaces — acceptance: repository search finds no active-runtime `main-ci.yml` guidance outside immutable history and intentional historical records.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `AGENTS.md`, `repo-governance/development/infra/nx-targets.md`
+  - Execution note: Removed the obsolete agent instruction and the scheduled Main-gate row, then aligned the target rationale with actual pre-push/PR-gate enforcement. Active-surface search is clean; Prettier, markdownlint, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-METADATA-RED** (`blockedBy: P2-C4-DOC-GOVERNANCE`; `blocks: P2-C4-CI-BOOTSTRAP-METADATA-GREEN`) — add failing registry parser/validator coverage for optional per-gate Doctor tool metadata — acceptance: absent, known, duplicate, and unknown Doctor-tool declarations have explicit failing/passing tests before implementation.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/repo_config/mod.rs`
+  - Execution note: Added focused parser and semantic-validation contracts for omitted, known, duplicate, and unknown `doctor-tools` values. The required RED command, `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib doctor_tools_metadata`, fails with the expected missing-field errors before schema implementation.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-METADATA-GREEN** (`blockedBy: P2-C4-CI-BOOTSTRAP-METADATA-RED`; `blocks: P2-C4-CI-BOOTSTRAP-DOCTOR-RED`) — add registry-declared `doctor-tools` metadata and strict validation without any workflow-local inventory — acceptance: gate entries expose a validated ordered tool list and existing registry validation passes.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `repo-config.yml`, `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/src/commands/repo_config_validate.rs`, `apps/rhino-cli/src/commands/gate/emit.rs`
+  - Execution note: Added optional ordered `doctor-tools` metadata with a Rust-side canonical inventory and semantic rejection of unknown or duplicate entries. Declared only the relevant external prerequisites per gate; focused parser tests, Prettier, `repo-config validate`, `gate validate`, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-DOCTOR-RED** (`blockedBy: P2-C4-CI-BOOTSTRAP-METADATA-GREEN`; `blocks: P2-C4-CI-BOOTSTRAP-DOCTOR-GREEN`) — add failing focused Doctor tests for an explicit selected-tool filter, including unknown-tool rejection and no probes for an empty selection — acceptance: tests fail before selector plumbing exists.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/mod.rs`, `apps/rhino-cli/src/application/doctor/checker.rs`, `apps/rhino-cli/src/application/doctor/fixer.rs`, `apps/rhino-cli/src/commands/doctor.rs`
+  - Execution note: Added compile-ready contracts for repeatable/comma-delimited selection, unknown-name rejection, an explicit empty set, selected checking, and selected fixing. `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib doctor::` fails in exactly the four unimplemented selection assertions, establishing RED behavior.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-DOCTOR-GREEN** (`blockedBy: P2-C4-CI-BOOTSTRAP-DOCTOR-RED`; `blocks: P2-C4-CI-BOOTSTRAP-GATE-CONTRACT`) — implement the strict Doctor selector for check/fix paths, preserving exact stale-OpenTofu remediation when selected — acceptance: selected tools alone are probed/fixed, unknown tools fail, and focused Doctor tests pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/mod.rs`, `apps/rhino-cli/src/application/doctor/checker.rs`, `apps/rhino-cli/src/application/doctor/fixer.rs`, `apps/rhino-cli/src/commands/doctor.rs`
+  - Execution note: Implemented strict repeated/comma-delimited selection, unknown/blank rejection, explicit-empty semantics, and shared selection for checking and fixing. Root-cause review also corrected the all-warning stale-OpenTofu path so `--fix` invokes remediation even with no missing tool. Focused Doctor tests (86), formatting, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-GATE-CONTRACT** (`blockedBy: P2-C4-CI-BOOTSTRAP-DOCTOR-GREEN`; `blocks: P2-C4-CI-BOOTSTRAP-WORKFLOW`) — expose registry Doctor-tool metadata from `gate list --format=json` and bind the JSON contract with gate specs — acceptance: matrix entries carry declared `doctor_tools` and gate contract tests pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/list.rs`, `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature`
+  - Execution note: The JSON matrix projection now always emits snake-case `doctor_tools`, including `[]`. Focused unit, Gherkin integration, specification coverage, Rust formatting, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-WORKFLOW** (`blockedBy: P2-C4-CI-BOOTSTRAP-GATE-CONTRACT`; `blocks: P2-C4-CI-BOOTSTRAP-REFACTOR`) — derive selected Doctor bootstrap in format and matrix jobs from registry JSON, removing every unconditional full `doctor --fix` invocation — acceptance: workflow contains no full bootstrap and continues to derive all inventory from the registry.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Format derives a deduplicated formatter-tool union from registry JSON; each matrix row uses its own `doctor_tools`; empty sets skip Doctor. The validator rejects an unconditional full bootstrap. Focused validator tests, Rust formatting, actionlint, `gate validate`, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-DOCS** (`blockedBy: P2-C4-CI-BOOTSTRAP-WORKFLOW`; `blocks: P2-C4-CI-BOOTSTRAP-REFACTOR`) — document registry-derived CI Doctor provisioning and correct superseded full-bootstrap wording — acceptance: the technical plan distinguishes local full toolchain setup from selected CI provisioning and names no workflow-local inventory.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/tech-docs.md`
+  - Execution note: Corrected obsolete full-CI-bootstrap wording and documented the registry-owned selection model, empty-set behavior, and local-versus-CI distinction. Prettier, markdownlint, and whitespace validation pass.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-REFACTOR** (`blockedBy: P2-C4-CI-BOOTSTRAP-DOCS`; `blocks: P2-C4-CI-BOOTSTRAP-PERF`) — run focused format/unit/spec/workflow validation, regenerate parity manifest, and validate registry conformance — acceptance: declared validation commands pass and the canonical manifest is current.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `apps/rhino-cli/src/application/doctor/`, `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/src/commands/{doctor.rs,gate/list.rs,gate/validate.rs,repo_config_validate.rs}`, `apps/rhino-cli/tests/{doctor.rs,gate_specs.rs}`, `apps/rhino-cli/parity-manifest.sha256`, `specs/apps/rhino/behavior/rhino-cli/gherkin/{system/doctor.feature,gate/gate-enumeration.feature}`
+  - Execution note: Full Rhino unit tests (1,338 pass, 1 ignored), Doctor and Gherkin integration tests, behavior coverage, Nx lint, registry/gate validation, actionlint, Markdown checks, and whitespace validation passed. Regenerated and validated the staged canonical parity manifest.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-PERF** (`blockedBy: P2-C4-CI-BOOTSTRAP-REFACTOR`; `blocks: Merge`) — verify the final registry-derived CI bootstrap no longer duplicates the full 16-tool Doctor pass per gate — acceptance: every matrix gate receives only its declared setup while registry-derived dispatch remains validated.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `apps/rhino-cli/src/commands/gate/{list.rs,validate.rs}`, `apps/rhino-cli/src/commands/doctor.rs`
+  - Execution note: Inspected the emitted CI JSON and workflow: format obtains a unique registry-derived formatter union; every matrix invocation supplies `--tools` from its own entry; empty lists skip provisioning. The full-bootstrap detector has no remaining hit, and registry, actionlint, lint, specification, parity, and whitespace validation pass.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:

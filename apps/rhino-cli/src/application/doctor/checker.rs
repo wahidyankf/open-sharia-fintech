@@ -17,12 +17,12 @@ use std::path::Path;
 use std::process::Command;
 use std::time::Instant;
 
-use crate::application::repo_config;
-
-use super::tools::{ToolDef, build_tool_defs};
+#[cfg(test)]
+use super::Scope;
+use super::tools::ToolDef;
 use super::{
-    CheckOptions, CommandOutput, CommandRunner, DoctorResult, Scope, ToolCheck, ToolStatus,
-    is_minimal_tool,
+    CheckOptions, CommandOutput, CommandRunner, DoctorResult, ToolCheck, ToolStatus,
+    selected_tool_defs,
 };
 
 /// Strip a leading "v" from a version string.
@@ -434,30 +434,17 @@ pub(super) fn run_one_def(runner: CommandRunner<'_>, def: &ToolDef) -> ToolCheck
 /// Runs all tool checks described in [`CheckOptions`] and returns aggregated results.
 ///
 /// When `opts.scope` is [`Scope::Minimal`], only the core tool set is checked.
-/// Tools named under `repo-config.yml`'s `doctor.skip-tools` are excluded
-/// regardless of scope — this is how a repo declares a tool from the full
-/// roster genuinely inapplicable to its own toolchain (dormant, not deleted;
-/// the byte-identical Rust check logic is unchanged, only that repo's own
-/// `repo-config.yml` values differ). A missing or unparsable `repo-config.yml`
-/// is treated as an empty skip list, not an error.
+/// An explicit selection further narrows that set; an explicit empty selection
+/// checks no tools. Tools named under `repo-config.yml`'s `doctor.skip-tools`
+/// are always excluded. A missing or unparsable `repo-config.yml` is treated as
+/// an empty skip list, not an error.
 /// The `opts.runner` field overrides the default [`real_runner`] for testing.
 pub fn check_all(opts: &CheckOptions<'_>) -> DoctorResult {
     let start = Instant::now();
 
     let runner: CommandRunner<'_> = opts.runner.unwrap_or(&real_runner);
 
-    let mut defs = build_tool_defs(&opts.repo_root);
-
-    if opts.scope == Scope::Minimal {
-        defs.retain(|d| is_minimal_tool(&d.name));
-    }
-
-    let skip_tools = repo_config::load_or_default(&opts.repo_root)
-        .doctor
-        .skip_tools;
-    if !skip_tools.is_empty() {
-        defs.retain(|d| !skip_tools.iter().any(|s| s == &d.name));
-    }
+    let defs = selected_tool_defs(opts);
 
     let mut checks = Vec::with_capacity(defs.len());
     for def in &defs {
@@ -678,6 +665,7 @@ mod tests {
             repo_root: dir.path().to_path_buf(),
             runner: Some(runner),
             scope: Scope::Minimal,
+            selected_tools: None,
         };
         let r = check_all(&opts);
         assert_eq!(r.checks.len(), 6);
@@ -704,6 +692,7 @@ mod tests {
             repo_root: dir.path().to_path_buf(),
             runner: Some(runner),
             scope: Scope::Full,
+            selected_tools: None,
         };
         let r = check_all(&opts);
         assert!(
@@ -728,8 +717,51 @@ mod tests {
             repo_root: dir.path().to_path_buf(),
             runner: Some(runner),
             scope: Scope::Full,
+            selected_tools: None,
         };
         let r = check_all(&opts);
         assert_eq!(r.checks.len(), 16, "no skip-tools configured — full roster");
+    }
+
+    #[test]
+    fn explicit_empty_tool_selection_runs_zero_probes() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("package.json"), "{}").unwrap();
+        let runner: CommandRunner = &|name, _| panic!("must not probe {name}");
+        let opts = CheckOptions {
+            repo_root: dir.path().to_path_buf(),
+            runner: Some(runner),
+            scope: Scope::Full,
+            selected_tools: Some(Vec::new()),
+        };
+
+        let result = check_all(&opts);
+
+        assert!(result.checks.is_empty());
+        assert_eq!(
+            result.ok_count + result.warn_count + result.missing_count,
+            0
+        );
+    }
+
+    #[test]
+    fn explicit_tool_selection_probes_only_the_requested_tool() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("package.json"), "{}").unwrap();
+        let runner: CommandRunner = &|name, _| match name {
+            "tofu" => Ok(("OpenTofu v1.12.3\n".into(), String::new(), 0)),
+            _ => panic!("selection must not probe {name}"),
+        };
+        let opts = CheckOptions {
+            repo_root: dir.path().to_path_buf(),
+            runner: Some(runner),
+            scope: Scope::Full,
+            selected_tools: Some(vec!["tofu".into()]),
+        };
+
+        let result = check_all(&opts);
+
+        assert_eq!(result.checks.len(), 1);
+        assert_eq!(result.checks[0].name, "tofu");
     }
 }

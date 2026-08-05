@@ -711,7 +711,7 @@ block deleted — otherwise the registry's completeness claim is false in that r
 `.husky/pre-commit` invokes the HashiCorp `terraform` binary (`terraform fmt -check -recursive
 infra/on-premise/terraform/`), not OpenTofu. Phase 4 declares the new `lint-staged`/registry mutation
 as `tofu fmt` / `tofu fmt -check` instead, matching `ose-public`'s existing choice and the `tofu`
-binary `npm run doctor -- --fix` provisions in every repo (confirmed in Phase 0). `[Web-cited]`
+Doctor tool declared for the formatter gates in every repo (confirmed in Phase 0). `[Web-cited]`
 OpenTofu's official [migration overview](https://opentofu.org/docs/intro/migration/)
 (accessed 2026-08-04) says it aims to maintain Terraform-configuration compatibility and most code
 works unchanged, while still requiring migration verification. Phase 4 therefore runs both format
@@ -733,6 +733,12 @@ This plan states the rule for `gates:` explicitly, because it is a list rather t
   declaring an `iac-lint` gate is sanctioned divergence of the same kind as it shipping Terraform at
   all. This is recorded under
   [Allowed Divergence](../../../docs/reference/sdlc-gate-standard.md#allowed-divergence).
+
+CI consumes another identical-schema registry field, `doctor-tools`: it is an ordered list of only
+the external Doctor prerequisites for that gate. The format job derives a de-duplicated union of its
+formatter mutations, and each matrix row passes its own list to `doctor --fix --tools`; an empty list
+does not invoke Doctor. The local worktree setup remains the deliberately full `doctor --fix` toolchain
+convergence step. The workflow never carries a second gate or tool inventory.
 
 ### 2.4 Command surface
 
@@ -1114,10 +1120,12 @@ carve-out.
 ### 3.1 Security Waiver — OpenTofu 1.12.3
 
 **Path C approval:** Pin `tofu` to OpenTofu 1.12.3, released 2026-06-18. No CVE-clean version
-meets the 2026-06-06 Path B cutoff: [GHSA-22w5-2fxg-vrwx](https://github.com/advisories/GHSA-22w5-2fxg-vrwx)
-(Low; CVE-2026-42504) and [GHSA-q7j3-v8qv-22vq](https://github.com/advisories/GHSA-q7j3-v8qv-22vq)
-(High; CVE-2026-27145) require the post-cutoff pin. Neither CVE has a matching CISA KEV entry,
-and each EPSS score is below 0.5. The [security-waiver register](../../../docs/reference/security-waivers.md)
+meets the 2026-06-06 Path B cutoff. The Low [GHSA-22w5-2fxg-vrwx](https://github.com/advisories/GHSA-22w5-2fxg-vrwx)
+concerns upstream Go CVEs CVE-2026-42504 and CVE-2026-27145; neither has a matching CISA KEV entry,
+and each EPSS score is below 0.5. The separate High [GHSA-q7j3-v8qv-22vq](https://github.com/advisories/GHSA-q7j3-v8qv-22vq)
+concerns arbitrary file read during certain git operations; it does not assert a CVE mapping to those
+upstream Go CVEs. The exact 1.12.3 official-installer guarantee is limited to macOS and Linux,
+pending source implementation. The [security-waiver register](../../../docs/reference/security-waivers.md)
 holds the durable entry. **AI sign-off: Codex.**
 
 ## 4. Risks and Mitigations

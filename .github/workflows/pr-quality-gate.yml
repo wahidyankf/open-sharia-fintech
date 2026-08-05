@@ -72,10 +72,13 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      # The matrix is registry-derived, so its formatter/tool inventory varies
-      # by repository. Provision the declared tools rather than hard-coding a
-      # second per-language setup list in this workflow.
-      - run: npm run doctor -- --fix
+      - name: Provision registry-declared formatter tools
+        run: |
+          tools=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=json |
+            jq -r '[.[] | select(.type == "mutation" and .category == "formatter") | .doctor_tools[]] | unique | join(",")')
+          if [ -n "$tools" ]; then
+            npm run doctor -- --fix --tools "$tools"
+          fi
       - name: Format affected files with the project formatters (lint-staged)
         if: github.event_name == 'pull_request'
         run: |
@@ -134,9 +137,12 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      # The selected gate may be any repository-declared formatter or linter.
-      # `doctor --fix` keeps the generic matrix independent of that inventory.
-      - run: npm run doctor -- --fix
+      - name: Provision registry-declared tools
+        run: |
+          tools="${{ join(matrix.gate.doctor_tools, ',') }}"
+          if [ -n "$tools" ]; then
+            npm run doctor -- --fix --tools "$tools"
+          fi
       - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=${{ matrix.gate.id }}
 
   typescript:

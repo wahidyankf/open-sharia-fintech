@@ -329,6 +329,7 @@ fn command_with_fixed_arguments_quotes_shell_sensitive_values() {
         gate_type: GateType::Check,
         command: "fixture-command".to_string(),
         kind: GateKind::External,
+        doctor_tools: Vec::new(),
         wiring: None,
         restages: false,
         args: BTreeMap::from([
@@ -363,6 +364,7 @@ fn command_with_fixed_arguments_invokes_rhino_cli_through_the_local_manifest() {
         gate_type: GateType::Check,
         command: "md mermaid validate".to_string(),
         kind: GateKind::RhinoCli,
+        doctor_tools: Vec::new(),
         wiring: None,
         restages: false,
         args: BTreeMap::from([

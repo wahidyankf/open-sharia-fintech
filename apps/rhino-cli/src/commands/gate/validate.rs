@@ -220,6 +220,7 @@ fn validate_ci_workflow(
 ) -> Result<(), Error> {
     let workflow = workflow_jobs(repo_root, config, writer)?;
     validate_ci_matrix_contract(config, &workflow, writer)?;
+    validate_ci_doctor_bootstrap(config, &workflow, writer)?;
     validate_ci_gate_invocations(config, &workflow, writer)?;
     validate_hand_wired_ci_jobs(config, &workflow, writer)
 }
@@ -329,6 +330,64 @@ fn validate_ci_matrix_contract(
         return Ok(());
     }
     let message = "CI workflow must derive its gate matrix from the enumerate job's gate list, dispatch it through the gate job, and make quality-gate depend on enumerate and gate";
+    writeln!(writer, "{message}")?;
+    Err(anyhow!(message))
+}
+
+/// Validates that Doctor setup is selected from registry metadata rather than
+/// performing a full bootstrap in every CI job.
+fn validate_ci_doctor_bootstrap(
+    config: &repo_config::RepoConfig,
+    workflow: &Workflow,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    if !config
+        .gates
+        .iter()
+        .any(|gate| !gate.doctor_tools.is_empty())
+    {
+        return Ok(());
+    }
+
+    let has_full_bootstrap = workflow.jobs.values().any(|job| {
+        job.steps
+            .iter()
+            .filter_map(|step| step.run.as_deref())
+            .any(|run| run.contains("npm run doctor -- --fix") && !run.contains("--tools"))
+    });
+    if has_full_bootstrap {
+        let message = "CI workflow must not run an unconditional full Doctor bootstrap";
+        writeln!(writer, "{message}")?;
+        return Err(anyhow!(message));
+    }
+
+    let format_derives_tool_union = workflow.jobs.get("format").is_some_and(|job| {
+        job.steps
+            .iter()
+            .filter_map(|step| step.run.as_deref())
+            .any(|run| {
+                run.contains("gate list --surface=pre-commit --format=json")
+                    && run.contains("doctor_tools")
+                    && run.contains("unique")
+                    && run.contains("npm run doctor -- --fix --tools")
+                    && run.contains("if [ -n \"$tools\" ]")
+            })
+    });
+    let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
+        job.steps
+            .iter()
+            .filter_map(|step| step.run.as_deref())
+            .any(|run| {
+                run.contains("matrix.gate.doctor_tools")
+                    && run.contains("npm run doctor -- --fix --tools")
+                    && run.contains("if [ -n \"$tools\" ]")
+            })
+    });
+    if format_derives_tool_union && matrix_uses_declared_tools {
+        return Ok(());
+    }
+
+    let message = "CI workflow must derive format and matrix Doctor selections from registry doctor_tools and skip empty selections";
     writeln!(writer, "{message}")?;
     Err(anyhow!(message))
 }
@@ -1394,5 +1453,79 @@ fn hand_wired_job_deleted() {
         "a deleted hand-wired job must name its gate id and CI workflow file; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_rejects_an_unconditional_ci_bootstrap() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: npm run doctor -- --fix\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_doctor_bootstrap(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("unconditional full Doctor bootstrap"),
+        "unscoped Doctor setup must fail; result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+    ))
+    .unwrap();
+
+    assert!(
+        validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
+        "registry-derived Doctor selections must validate"
     );
 }

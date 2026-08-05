@@ -173,6 +173,30 @@ pub enum ScopeKind {
     PathGated,
 }
 
+/// Every tool identifier that Doctor can select from the registry.
+///
+/// This Rust-side inventory is the authoritative validation source for
+/// per-gate `doctor-tools` metadata. Workflow configuration consumes declared
+/// metadata and must not duplicate this list.
+pub const DOCTOR_TOOL_INVENTORY: &[&str] = &[
+    "git",
+    "volta",
+    "node",
+    "npm",
+    "rust",
+    "cargo-llvm-cov",
+    "dotnet",
+    "docker",
+    "jq",
+    "shellcheck",
+    "hadolint",
+    "actionlint",
+    "playwright",
+    "shfmt",
+    "tofu",
+    "clang-format",
+];
+
 /// One entry in the `gates:` registry of `repo-config.yml`.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -186,6 +210,9 @@ pub struct GateEntry {
     pub command: String,
     /// Command runner (`rhino-cli`, `external`, or `nx`).
     pub kind: GateKind,
+    /// Ordered Doctor tool identifiers needed before this gate can run.
+    #[serde(rename = "doctor-tools", default)]
+    pub doctor_tools: Vec<String>,
     /// Optional execution-wiring override for checks.
     #[serde(default)]
     pub wiring: Option<GateWiring>,
@@ -412,8 +439,63 @@ pub fn load_or_default(repo_root: &Path) -> RepoConfig {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::commands::repo_config_validate::gate_semantic_findings;
     use crate::internal::git;
     use crate::test_support::CwdLock;
+
+    fn parse_gate_config(doctor_tools: Option<&str>) -> RepoConfig {
+        let metadata = doctor_tools
+            .map(|tools| format!("    doctor-tools: {tools}\n"))
+            .unwrap_or_default();
+        serde_norway::from_str(&format!(
+            "gates:\n  - id: doctor-bootstrap\n    type: check\n    command: doctor\n    kind: rhino-cli\n    surfaces:\n      ci: {{ scope: other }}\n{metadata}"
+        ))
+        .expect("doctor-tools fixture must deserialize")
+    }
+
+    #[test]
+    fn doctor_tools_metadata_is_optional_and_defaults_empty() {
+        let config = parse_gate_config(None);
+
+        assert!(config.gates[0].doctor_tools.is_empty());
+        assert!(gate_semantic_findings(&config).is_empty());
+    }
+
+    #[test]
+    fn doctor_tools_metadata_accepts_known_inventory_in_order() {
+        let config = parse_gate_config(Some("[git, node]"));
+
+        assert_eq!(config.gates[0].doctor_tools, ["git", "node"]);
+        assert!(gate_semantic_findings(&config).is_empty());
+    }
+
+    #[test]
+    fn doctor_tools_metadata_rejects_duplicates() {
+        let config = parse_gate_config(Some("[git, git]"));
+        let findings = gate_semantic_findings(&config);
+
+        assert!(
+            findings.iter().any(|finding| {
+                finding.contains("doctor-tools")
+                    && finding.contains("duplicate")
+                    && finding.contains("git")
+            }),
+            "duplicate Doctor tools must be rejected; got: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn doctor_tools_metadata_rejects_unknown_inventory_entries() {
+        let config = parse_gate_config(Some("[not-a-doctor-tool]"));
+        let findings = gate_semantic_findings(&config);
+
+        assert!(
+            findings.iter().any(|finding| {
+                finding.contains("doctor-tools") && finding.contains("not-a-doctor-tool")
+            }),
+            "unknown Doctor tools must be rejected; got: {findings:?}"
+        );
+    }
 
     // Regression: this test used to hard-assert repo-specific domain literals
     // ("organiclever", "ose-be", ...), which only hold in ose-public's own

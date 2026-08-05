@@ -50,7 +50,7 @@ const STUB_TOOLS: &[(&str, &str)] = &[
     ("hadolint", "Haskell Dockerfile Linter 2.12.0"),
     ("actionlint", "1.7.7"),
     ("shfmt", "v3.13.1"),
-    ("tofu", "OpenTofu v1.10.2"),
+    ("tofu", "OpenTofu v1.12.3"),
     ("clang-format", "clang-format version 18.1.0"),
     // npx playwright --version → "Version 1.58.0".
 ];
@@ -434,16 +434,16 @@ fn then_dry_run_preview(w: &mut DoctorWorld) {
     );
 }
 
-#[then("the output previews the pinned OpenTofu installer")]
+#[then("the output handles pinned OpenTofu remediation safely")]
 fn then_pinned_tofu_dry_run_preview(w: &mut DoctorWorld) {
     let out = w.stdout();
-    assert!(out.contains("Would install: tofu"), "got: {out}");
     match std::env::consts::OS {
-        "macos" => assert!(
-            out.contains("brew install opentofu"),
-            "macOS must retain the Homebrew OpenTofu remediation: {out}"
-        ),
-        "linux" => {
+        "macos" | "linux" => {
+            assert!(out.contains("Would install: tofu"), "got: {out}");
+            assert!(
+                out.contains("https://get.opentofu.org/install-opentofu.sh"),
+                "missing official OpenTofu installer: {out}"
+            );
             assert!(
                 out.contains("--opentofu-version 1.12.3"),
                 "missing exact OpenTofu pin: {out}"
@@ -452,10 +452,14 @@ fn then_pinned_tofu_dry_run_preview(w: &mut DoctorWorld) {
                 !out.contains("latest"),
                 "OpenTofu installer must not defer version selection: {out}"
             );
+            assert!(
+                !out.contains("brew install opentofu"),
+                "OpenTofu remediation must use the standalone installer: {out}"
+            );
         }
-        platform => assert!(
-            ["macos", "linux"].contains(&platform),
-            "unsupported platform for OpenTofu remediation contract: {platform}"
+        _ => assert!(
+            !out.contains("Would install: tofu"),
+            "unsupported platforms must not receive OpenTofu install steps: {out}"
         ),
     }
 }

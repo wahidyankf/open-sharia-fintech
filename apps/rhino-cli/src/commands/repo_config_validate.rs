@@ -18,8 +18,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::repo_config::{
-    self, GateEntry, GateKind, GateSurface, GateType, RepoConfig, ScopeKind, SurfaceScope,
-    validate_repo_relative_path,
+    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, RepoConfig, ScopeKind,
+    SurfaceScope, validate_repo_relative_path,
 };
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
@@ -178,8 +178,32 @@ pub(crate) fn gate_semantic_findings(config: &RepoConfig) -> Vec<String> {
                 gate.id
             ));
         }
+        findings.extend(doctor_tools_semantic_findings(i, gate));
         for (surface, scope) in &gate.surfaces {
             findings.extend(gate_surface_semantic_findings(i, gate, surface, scope));
+        }
+    }
+
+    findings
+}
+
+/// Collect semantic findings for a gate's optional ordered Doctor-tool list.
+fn doctor_tools_semantic_findings(index: usize, gate: &GateEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+    let mut declared = HashSet::new();
+
+    for tool in &gate.doctor_tools {
+        if !DOCTOR_TOOL_INVENTORY.contains(&tool.as_str()) {
+            findings.push(format!(
+                "gates[{index}] (gate id {:?}).doctor-tools: unknown Doctor tool {:?}",
+                gate.id, tool
+            ));
+        }
+        if !declared.insert(tool.as_str()) {
+            findings.push(format!(
+                "gates[{index}] (gate id {:?}).doctor-tools: duplicate Doctor tool {:?}",
+                gate.id, tool
+            ));
         }
     }
 

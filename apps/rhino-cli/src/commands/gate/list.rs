@@ -35,6 +35,8 @@ struct GateListEntry {
     gate_type: String,
     /// Command declared for the gate.
     command: String,
+    /// Ordered Doctor tool identifiers declared for the gate.
+    doctor_tools: Vec<String>,
     /// Scope declared for this surface.
     scope: String,
     /// Optional composition carve-out declared for the gate.
@@ -104,6 +106,7 @@ pub fn run_at_root(
                 id: gate.id.clone(),
                 gate_type: gate_type_name(&gate.gate_type).to_string(),
                 command: gate.command.clone(),
+                doctor_tools: gate.doctor_tools.clone(),
                 scope: scope_name(&scope.scope).to_string(),
                 carve_out: carve_out_name(gate.carve_out.as_ref()).map(str::to_owned),
                 category: gate.category.clone(),
@@ -244,6 +247,7 @@ mod tests {
                 "    type: check\n",
                 "    command: test:quick\n",
                 "    kind: nx\n",
+                "    doctor-tools: [git, node]\n",
                 "    surfaces:\n",
                 "      ci: { scope: affected-projects }\n",
                 "  - id: pre-commit-format\n",
@@ -270,11 +274,17 @@ mod tests {
         assert_eq!(entries.len(), 2);
         assert_eq!(entries[0]["id"], "ci-check");
         assert_eq!(entries[1]["id"], "ci-links");
+        assert_eq!(
+            entries[0]["doctor_tools"],
+            serde_json::json!(["git", "node"])
+        );
+        assert_eq!(entries[1]["doctor_tools"], serde_json::json!([]));
         for entry in entries {
             assert!(entry.get("id").is_some());
             assert!(entry.get("type").is_some());
             assert!(entry.get("command").is_some());
             assert!(entry.get("scope").is_some());
+            assert!(entry["doctor_tools"].is_array());
         }
     }
 
