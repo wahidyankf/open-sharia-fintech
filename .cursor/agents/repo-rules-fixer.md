@@ -205,8 +205,11 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 
 ### Important Guidelines for Rules Fixes
 
-1. **Edit Tool Usage**: Use Edit tool for `docs/explanation/` files (NOT Bash tools)
-2. **Bash Tool Usage**: Use Bash tools ONLY for `.opencode/` files
+1. **Edit Tool Usage**: Use `Write`/`Edit` for all hand-authored sources, including `.claude/` and
+   `docs/explanation/`. Both `.claude/**` and `.opencode/**` are pre-authorized in
+   `.claude/settings.json`, so no Bash workaround is needed anywhere.
+2. **Never hand-edit a generated mirror**: `.opencode/`, `.cursor/`, and `.amazonq/` are emitted by
+   `npm run generate:bindings`. Fix the `.claude/` source, then regenerate.
 3. **Preserve Meaning**: Don't change intended meaning when fixing inconsistencies
 4. **Document Changes**: Explain fixes clearly in fix report
 5. **Traceability**: When adding traceability sections, analyze content carefully
@@ -736,7 +739,7 @@ See repo-generating-validation-reports Skill for report structure.
 ## Important Guidelines
 
 1. **Always re-validate**: Don't trust stale audit reports
-2. **Use bash tools for .opencode**: Mandatory for agent/Skill/workflow files
+2. **Never hand-edit a generated mirror**: fix the `.claude/` source, then `npm run generate:bindings`
 3. **Assess confidence**: Skip uncertain fixes (preserve correctness)
 4. **Write progressively**: Don't buffer fix results
 5. **Test after fixes**: Recommend validation after applying fixes
@@ -755,7 +758,7 @@ See repo-generating-validation-reports Skill for report structure.
    - Re-validate issue exists
    - Assess confidence
    - Apply fix (HIGH confidence only) or skip
-   - Use bash tools for .opencode files
+   - Fix `.claude/` sources, never generated mirrors
    - Write results progressively
 3. Generate fix report
 4. Recommend re-running repo-rules-checker to verify
