@@ -88,9 +88,17 @@ When a build, test, lint, or tooling command fails because an artifact is absent
 2. **Regenerate, then retry the failed step.** `nx build <project>` for build output, `npm install`
    for dependencies, `npm run doctor -- --fix` for a swept toolchain. A first `cargo`-backed command
    after a sweep rebuilds from cold — slow is not broken.
-3. **Escalate only if** regeneration itself fails, or something outside the three classes is missing.
-   Either is a real problem and this convention does not cover it.
-4. A failure that **reproduces after a clean regeneration** is a genuine defect. Treat it normally.
+3. **If regeneration itself fails with a filesystem error inside the artifact directory** — for
+   example `No such file or directory` writing a compiled object mid-build, `couldn't create a temp
+dir`, or `failed to write bytecode` — the sweep is still in progress, not finished. Retrying
+   immediately re-races the same window and reliably fails again. Back off with increasing cooldowns
+   before the next regeneration attempt: **3 → 5 → 8 → 12 → 17 minutes.** This is a distinct case from
+   step 2's plain "artifact absent, rebuild instantly" outcome — only a build that fails _while
+   running_, not one that simply starts cold, warrants the cooldown.
+4. **Escalate only if** the failure still reproduces after the fifth (17-minute) attempt, or something
+   outside the three removable classes is missing. Either is a real problem and this convention does
+   not cover it.
+5. A failure that **reproduces after a clean regeneration** is a genuine defect. Treat it normally.
 
 ## Anti-Patterns
 
@@ -102,6 +110,9 @@ When a build, test, lint, or tooling command fails because an artifact is absent
 - **Blaming a concurrent agent** for a deletion the environment performed.
 - **Disabling, rescheduling, or working around the sweeper.** It exists because the disk is shared;
   circumventing it moves the cost onto everyone else.
+- **Tight-looping regeneration attempts against an active sweep.** A build that fails mid-run with a
+  filesystem error, not merely a cold-start rebuild, means the sweep has not finished; retrying without
+  the step-3 cooldown just re-races the same window repeatedly.
 - **Reaching for a destructive git recovery** — `reset --hard`, `clean -fdx`, force-removing a
   worktree — after a sweep. Nothing tracked was lost, so there is nothing to recover, and those
   operations are forbidden regardless.
