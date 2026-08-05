@@ -75,6 +75,9 @@ fn parse_tofu_version(s: &str) -> String {
     parse_line_word(s, "OpenTofu ", 1, "v")
 }
 
+/// Exact `OpenTofu` version installed by the Linux doctor bootstrapper.
+const OPENTOFU_VERSION: &str = "1.12.3";
+
 // Per-binary readers using a path captured in a static OnceLock.
 // Go's closures capture repo_root; in Rust we precompute paths and stash them via static
 // once-locks keyed off PID-stable build_tool_defs(repo_root) call.
@@ -426,7 +429,9 @@ fn install_tofu(_req: &str, platform: &str) -> Vec<InstallStep> {
             command: "bash".into(),
             args: vec![
                 "-c".into(),
-                "curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && chmod +x install-opentofu.sh && ./install-opentofu.sh --install-method standalone && rm -f install-opentofu.sh".into(),
+                format!(
+                    "curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && chmod +x install-opentofu.sh && ./install-opentofu.sh --install-method standalone --opentofu-version {OPENTOFU_VERSION} && rm -f install-opentofu.sh"
+                ),
             ],
         }]
     }
@@ -793,12 +798,25 @@ mod tests {
     fn install_tofu_linux() {
         let steps = install_tofu("", "linux");
         assert_eq!(steps[0].command, "bash");
+        assert_eq!(OPENTOFU_VERSION, "1.12.3");
+        let script = &steps[0].args[1];
+        assert!(script.contains("install-opentofu.sh"));
+        assert!(script.contains("--tlsv1.2"));
+        assert!(script.contains(&format!("--opentofu-version {OPENTOFU_VERSION}")));
+        assert!(!script.contains("latest"));
+        assert!(!script.contains("--skip-verify"));
+    }
+
+    #[test]
+    fn install_tofu_linux_uses_named_pin_not_caller_requirement() {
+        let steps = install_tofu("latest", "linux");
+        let script = &steps[0].args[1];
+
         assert!(
-            steps[0]
-                .args
-                .iter()
-                .any(|a| a.contains("install-opentofu.sh"))
+            script.contains(&format!("--opentofu-version {OPENTOFU_VERSION}")),
+            "the Linux installer must request the named OpenTofu pin"
         );
+        assert!(!script.contains("--opentofu-version latest"));
     }
 
     #[test]

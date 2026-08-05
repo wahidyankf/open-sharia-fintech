@@ -271,6 +271,13 @@ fn given_tool_missing(w: &mut DoctorWorld) {
     let _ = std::fs::remove_file(w.bin.path().join("shellcheck"));
 }
 
+#[given("the tofu tool is not found in the system PATH")]
+fn given_tofu_missing(w: &mut DoctorWorld) {
+    w.write_config("24.11.1");
+    w.write_stubs();
+    let _ = std::fs::remove_file(w.bin.path().join("tofu"));
+}
+
 #[given("a required development tool is installed with a non-matching version")]
 fn given_tool_mismatch(w: &mut DoctorWorld) {
     // node requirement "1.0.0" but the stub reports v24.11.1 → warning.
@@ -425,6 +432,32 @@ fn then_dry_run_preview(w: &mut DoctorWorld) {
         out.contains("Would install") || out.contains("Skip:"),
         "got: {out}"
     );
+}
+
+#[then("the output previews the pinned OpenTofu installer")]
+fn then_pinned_tofu_dry_run_preview(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    assert!(out.contains("Would install: tofu"), "got: {out}");
+    match std::env::consts::OS {
+        "macos" => assert!(
+            out.contains("brew install opentofu"),
+            "macOS must retain the Homebrew OpenTofu remediation: {out}"
+        ),
+        "linux" => {
+            assert!(
+                out.contains("--opentofu-version 1.12.3"),
+                "missing exact OpenTofu pin: {out}"
+            );
+            assert!(
+                !out.contains("latest"),
+                "OpenTofu installer must not defer version selection: {out}"
+            );
+        }
+        platform => assert!(
+            ["macos", "linux"].contains(&platform),
+            "unsupported platform for OpenTofu remediation contract: {platform}"
+        ),
+    }
 }
 
 #[then("the output reports nothing to fix")]

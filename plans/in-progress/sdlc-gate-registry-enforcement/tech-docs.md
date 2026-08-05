@@ -1111,6 +1111,15 @@ carve-out.
 | `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` | "`apps/rhino-cli` byte-identity across all three repos" is extended to "all four bound repos", matching [§2.8.6](#286-the-governance-change-this-requires).                                                                                                                                                                                                                             |
 | `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`               | The "byte-identical across all three repos" language is extended to four repos; the literal `git -C ose-public ls-files ... across all three repos` manual `md5`-diff snippet is replaced with a pointer to `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`, so it cannot silently diverge from the mechanism this plan introduces. |
 
+### 3.1 Security Waiver — OpenTofu 1.12.3
+
+**Path C approval:** Pin `tofu` to OpenTofu 1.12.3, released 2026-06-18. No CVE-clean version
+meets the 2026-06-06 Path B cutoff: [GHSA-22w5-2fxg-vrwx](https://github.com/advisories/GHSA-22w5-2fxg-vrwx)
+(Low; CVE-2026-42504) and [GHSA-q7j3-v8qv-22vq](https://github.com/advisories/GHSA-q7j3-v8qv-22vq)
+(High; CVE-2026-27145) require the post-cutoff pin. Neither CVE has a matching CISA KEV entry,
+and each EPSS score is below 0.5. The [security-waiver register](../../../docs/reference/security-waivers.md)
+holds the durable entry. **AI sign-off: Codex.**
+
 ## 4. Risks and Mitigations
 
 | Risk                                                                                             | Severity | Mitigation                                                                                                                                                                                                                                                               |

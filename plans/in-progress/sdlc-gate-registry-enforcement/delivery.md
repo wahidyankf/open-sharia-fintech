@@ -3418,6 +3418,62 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: Rebasing `5a7a1caa7` onto `origin/main` `041f0a547` completed without conflict. Upstream contributed two plan/governance documentation commits only; `git diff origin/main...HEAD` confirms the Phase 2 CI, hook, gate, spec, and parity surfaces remain present. `npx nx affected -t typecheck lint test:quick specs:coverage` passed before the lease-protected push of `90dc88310`.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-RED** (`blocks: P2-CI-DOCTOR-TOFU-PIN-GREEN`) — add a focused failing doctor installer-contract test proving the Linux standalone command supplies an exact OpenTofu version instead of resolving `latest` through the GitHub API — acceptance: the new assertion fails against the existing unpinned installer.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`
+  - Execution note: Added `install_tofu_linux_pins_required_version`; the required focused RED command failed as expected against the prior unpinned command with `the Linux installer must request the required OpenTofu version`.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-CLEARANCE** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-RED`; `blocks: P2-CI-DOCTOR-TOFU-PIN-WAIVER`) — determine the latest exact OpenTofu version eligible under the dependency safety policy, including release-age, NVD, GitHub advisory, Snyk, vendor, CISA KEV, EPSS, and functional-defect evidence — acceptance: the plan records the security classification and evidence for the selected version or states why no Path B candidate is clean.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Path B cutoff is 2026-06-06. The latest age-eligible release is `1.12.1` (2026-05-27), but it is vulnerable to GitHub advisories `GHSA-22w5-2fxg-vrwx` and `GHSA-q7j3-v8qv-22vq`; `1.12.3` (2026-06-18) is the first version patching both. NVD's OpenTofu search found no core-product CVE (the one result is an unrelated provider); GitHub's advisory API and OSV were checked, Snyk's public package page was checked, the vendor security advisory page was checked, CISA KEV returned no matching entry, and EPSS for the two identified CVEs is below 0.5. The release notes expose no fatal functional defect, and the upstream release-blocker query is empty. No CVE-clean Path B candidate exists, so Path C is required.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-WAIVER** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-CLEARANCE`; `blocks: P2-CI-DOCTOR-TOFU-PIN-GREEN`) — record the Path C waiver for the CVE-patched exact OpenTofu version when no 60-day-eligible candidate is clean — acceptance: `tech-docs.md` contains the required package, version, advisory, severity, release-date, justification, and AI sign-off; create and record it in `docs/reference/security-waivers.md` when no long-lived register exists.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/tech-docs.md`, `docs/reference/security-waivers.md`
+  - Execution note: Recorded the required Path C waiver for `tofu` 1.12.3 (2026-06-18), including `GHSA-22w5-2fxg-vrwx` (Low), `GHSA-q7j3-v8qv-22vq` (High), no matching KEV record, EPSS below 0.5, justification, and Codex AI sign-off. The long-lived waiver register already existed and now contains the durable entry; Prettier, markdownlint, and `git diff --check` pass.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-GREEN** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-WAIVER`; `blocks: P2-CI-DOCTOR-TOFU-PIN-SPECS`) — pin the Linux standalone OpenTofu installer to the security-cleared exact version and make the focused installer-contract test pass — acceptance: the generated command includes the recorded exact `--opentofu-version` argument and does not ask the installer to determine a latest release.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`
+  - Execution note: Added the named `OPENTOFU_VERSION` pin at `1.12.3`; Linux remediation now always supplies it to the official standalone installer. Focused unit assertions cover the pin, TLS 1.2, and the absence of both `latest` and `--skip-verify`. `cargo fmt --manifest-path apps/rhino-cli/Cargo.toml --check` and `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib install_tofu_linux` pass.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-TEST-SCOPE** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-GREEN`; `blocks: P2-CI-DOCTOR-TOFU-PIN-REFACTOR`) — scope the focused Rust verification to the library test target so Cargo does not pass the unit-test filter to unrelated custom integration-test harnesses — acceptance: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib install_tofu_linux` exits 0.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: none
+  - Execution note: The initial unscoped filter reached a custom integration-test executable that rejects positional filters; targeting `--lib` isolates the intended unit tests. The corrected focused command exits 0 with both installer tests passing.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-SPECS** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-GREEN`; `blocks: P2-CI-DOCTOR-TOFU-PIN-REFACTOR`) — add a bound doctor behavior scenario covering platform-appropriate OpenTofu remediation, with the exact pinned standalone command asserted on Linux and Homebrew asserted on macOS — acceptance: the Gherkin feature and Cucumber binding exercise the user-visible dry-run contract and the doctor behavior suite passes on both supported platforms.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`, `apps/rhino-cli/tests/doctor.rs`
+  - Execution note: Bound a missing-`tofu` dry-run scenario. The contract checks the security-cleared exact pin and no `latest` on Linux, while preserving the correct Homebrew remediation on macOS. `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test doctor` passes with 11 scenarios and 44 steps.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-PARITY-INDEX** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-GREEN, P2-CI-DOCTOR-TOFU-PIN-SPECS`; `blocks: P2-CI-DOCTOR-TOFU-PIN-REFACTOR`) — stage only the owned Rhino boundary files required by the index-based parity validator, regenerate the canonical manifest, and stage the generated manifest — acceptance: parity validation sees the intended source and manifest together in the index without staging any foreign path.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: Reconciled the parity validator's index precondition by staging only owned boundary inputs: `doctor/tools.rs`, `tests/doctor.rs`, and the bound doctor feature. Regenerated and staged the manifest; `parity manifest validate` now reports it current. No foreign path was staged.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-REFACTOR** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-GREEN, P2-CI-DOCTOR-TOFU-PIN-TEST-SCOPE, P2-CI-DOCTOR-TOFU-PIN-SPECS, P2-CI-DOCTOR-TOFU-PIN-PARITY-INDEX`; `blocks: Merge`) — run focused Rust formatting/tests, regenerate the canonical parity manifest, and validate it — acceptance: formatter, doctor tests, parity manifest validation, and `gate validate` all pass.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: `cargo fmt --check`, library installer tests, doctor Cucumber tests, parity validation, `gate validate`, and both staged/unstaged whitespace checks pass. The regenerated manifest is staged with its boundary inputs.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-CLIPPY** (`blocks: P2-CI-DOCTOR-TOFU-PIN-TEST-CLIPPY`) — correct the lint finding in the new OpenTofu installer-pin documentation comment — acceptance: the `doc_markdown` finding is absent from the next `rhino-cli:lint` run.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`
+  - Execution note: Backticked `OpenTofu` in the new doc comment. The next lint run no longer reports `doc_markdown`; it correctly exposed the separate newly added Cucumber-test `panic!` violation, which is tracked as the next task.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-TEST-CLIPPY** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-CLIPPY`; `blocks: P2-CI-DOCTOR-TOFU-PIN-AFFECTED-QUALITY`) — replace the test-only unsupported-platform `panic!` with a Clippy-compliant assertion while preserving the platform contract — acceptance: `npx nx run rhino-cli:lint` exits 0 with no warning-as-error finding.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/doctor.rs`
+  - Execution note: Replaced the unsupported-platform `panic!` with an explicit supported-platform assertion; the macOS and Linux contracts remain unchanged. `npx nx run rhino-cli:lint` passes through `cargo fmt` and warning-as-error Clippy.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-PARITY-REGEN** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-TEST-CLIPPY`; `blocks: P2-CI-DOCTOR-TOFU-PIN-AFFECTED-QUALITY`) — stage the final owned boundary test revision, regenerate the parity manifest, and validate the staged pair — acceptance: `parity manifest validate` reports the manifest current.
+- [x] [AI] **P2-CI-DOCTOR-TOFU-PIN-AFFECTED-QUALITY** (`blockedBy: P2-CI-DOCTOR-TOFU-PIN-PARITY-REGEN`; `blocks: Merge`) — rerun the complete required affected suite after the lint corrections — acceptance: `npx nx affected -t typecheck lint test:quick specs:coverage` exits 0.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: none
+  - Execution note: The complete required affected suite passes. Rhino coverage reports 1320 passed/0 failed (1 ignored), the doctor behavior contract is fully covered, and no affected target fails; cached unrelated project results were retained by Nx.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
