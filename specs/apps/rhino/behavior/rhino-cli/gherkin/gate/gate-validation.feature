@@ -66,6 +66,11 @@ Feature: Gate conformance validation
     When gate validate runs
     Then it fails and names the gate and workflow file
 
+  Scenario: A quoted hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command is only quoted text
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
   Scenario: A literal-disabled hand-wired CI command does not satisfy the workflow contract
     Given a hand-wired CI command has a literal-disabled step
     When gate validate runs
@@ -73,6 +78,11 @@ Feature: Gate conformance validation
 
   Scenario: A normalized literal-disabled hand-wired CI command does not satisfy the workflow contract
     Given a hand-wired CI command has a normalized literal-disabled step
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A falsey literal-disabled hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command has falsey literal-disabled steps
     When gate validate runs
     Then it fails and names the gate and workflow file
 

@@ -3664,6 +3664,7 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
   - Execution note: Added Gherkin-backed inline-comment and normalized `${{false}}` fixtures to prove non-executing hand-wired commands cannot satisfy validation. Gate-spec tests (57 scenarios, 209 steps), behavior coverage (441 scenarios), Rustfmt, and `git diff --check` pass.
+  - Evidence correction (2026-08-06): The quoted-text case was unit-covered in Cycle 6 but was not Gherkin-bound then. Cycle 7 task `P2-C7-QUOTED-GHERKIN` added its bound `echo 'npx nx affected -t test:quick'` scenario; the current suite has 59 passing scenarios and 215 steps.
 - [x] [AI] **P2-C6-CONTRACT-DOCS** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-FIXER`) — align the technical plan with all-pre-commit Doctor selection and executable/direct-aggregate hand-wired validation — command: `npm run lint:md` — acceptance: active contract language cannot direct a reintroduction of Cycle 5/6 defects.
   - Date: 2026-08-06
   - Status: complete
@@ -3679,10 +3680,77 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/{src/commands/gate/validate.rs,tests/gate_specs.rs,parity-manifest.sha256}`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/{delivery.md,tech-docs.md}`
   - Execution note: Commit `36e8ced2b` resolves both accepted findings: tokenized executable `npx nx` target recognition with normalized literal-false guards and aligned active technical-contract wording. Both Cycle 6 review threads are resolved; focused validator/spec tests, behavior coverage, strict lint, registry and parity validation, Markdown lint, and the full pre-push gate pass.
-- [ ] [AI] **P2-C6-CI** (`blockedBy: P2-C6-FIXER`; `blocks: P2-C7-MAKER`) — run and verify CI for the Cycle 6 head — acceptance: required checks succeed before Cycle 7 starts.
-- [ ] [AI] **P2-C7-MAKER** (`blockedBy: P2-C6-CI`; `blocks: P2-C7-SYNTHESIS`) — run the final scout-first, content-applicable PR review maker fan-out — acceptance: all selected raw reports are recorded and triaged.
-- [ ] [AI] **P2-C7-SYNTHESIS** (`blockedBy: P2-C7-MAKER`; `blocks: P2-C7-FIXER`) — synthesize final findings into the sole review of record — acceptance: every finding has a disposition and evidence.
-- [ ] [AI] **P2-C7-FIXER** (`blockedBy: P2-C7-SYNTHESIS`; `blocks: P2-C7-CI`) — implement every accepted final-cycle finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [x] [AI] **P2-C6-CI** (`blockedBy: P2-C6-FIXER`; `blocks: P2-C7-MAKER`) — run and verify CI for the Cycle 6 head — acceptance: required checks succeed before Cycle 7 starts.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (CI evidence)
+  - Execution note: The Cycle 6 delivery-record head `01e70bf251e92dd0ce6b2d89d1d1b788c066f477` passed required `pr-quality-gate` run [31050168663](https://github.com/wahidyankf/ose-public/actions/runs/31050168663) and `validate-env` run [31050168664](https://github.com/wahidyankf/ose-public/actions/runs/31050168664). Both completed successfully before Cycle 7 began.
+- [x] [AI] **P2-C7-MAKER** (`blockedBy: P2-C6-CI`; `blocks: P2-C7-SYNTHESIS`) — run the final scout-first, content-applicable PR review maker fan-out — acceptance: all selected raw reports are recorded and triaged.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-{scout,architecture,logic,governance,security,integrity,performance,docs,instruction,types}__137_01e70bf25__2026-08-06--*__audit.md`
+  - Execution note: The scout pinned `01e70bf251e92dd0ce6b2d89d1d1b788c066f477`, classified the 91-file delivery diff as full tier, and selected all nine disciplines. The fan-out found three HIGH executable-enforcement bypasses and one MEDIUM quoted-text Gherkin gap; every other discipline result is recorded clean.
+- [x] [AI] **P2-C7-SYNTHESIS** (`blockedBy: P2-C7-MAKER`; `blocks: P2-C7-FIXER`) — synthesize final findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-*__137_01e70bf25__2026-08-06--*__audit.md`
+  - Execution note: Sole review of record [4869256899](https://github.com/wahidyankf/ose-public/pull/137#pullrequestreview-4869256899) pins `01e70bf` and accepts L4, INTEGRITY-02, T2, and G2. Architecture, security, performance, documentation, and instruction findings are clean; governance has no additional finding. Each accepted issue is decomposed into a blocking repair task below.
+- [x] [AI] **P2-C7-EXEC-SUBCOMMAND-RED** (`blockedBy: P2-C7-SYNTHESIS`; `blocks: P2-C7-EXEC-SUBCOMMAND-GREEN`) — add a failing regression for non-executing `nx report`/`nx show` commands that carry a required target flag — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: the test fails because the current recognizer accepts the bypass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Added `non_executing_nx_subcommands_do_not_satisfy_hand_wired_gates`. The focused validator test fails as intended with `[false, false]`, proving `npx nx report -t test:quick` and `npx nx show projects -t test:quick` currently satisfy validation. `rustfmt --check` and `git diff --check` pass.
+- [x] [AI] **P2-C7-EXEC-SUBCOMMAND-GREEN** (`blockedBy: P2-C7-EXEC-SUBCOMMAND-RED`; `blocks: P2-C7-EXEC-SUBCOMMAND-REFACTOR`) — restrict qualifying hand-wired commands to supported target-execution subcommands — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: non-executing Nx subcommands cannot satisfy a required gate while supported executions still validate.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: `nx_targets` now requires the shipped target-execution form `npx nx affected -t …`, rejecting `report` and `show` bypasses while retaining valid hand-wired jobs. Focused validator tests pass (30), as do `rustfmt --check` and `git diff --check`.
+- [x] [AI] **P2-C7-EXEC-SUBCOMMAND-REFACTOR** (`blockedBy: P2-C7-EXEC-SUBCOMMAND-GREEN`; `blocks: P2-C7-ERROR-MASK-RED`) — simplify the command classifier without weakening its execution-subcommand invariant — command: `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` — acceptance: readable classifier and strict lint pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (verification-only)
+  - Execution note: Reviewed the minimal subcommand guard; no further simplification is warranted. `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` reports no issues.
+- [x] [AI] **P2-C7-ERROR-MASK-RED** (`blockedBy: P2-C7-EXEC-SUBCOMMAND-REFACTOR`; `blocks: P2-C7-ERROR-MASK-GREEN`) — add failing regressions for `|| true` error masking on a required hand-wired command — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: the current validator incorrectly accepts the masked command.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Added `error_masked_hand_wired_command_is_rejected`. The focused test fails as intended because `npx nx affected -t test:quick || true` currently satisfies validation; 0 passed, 1 failed, 1346 filtered. No production correction occurred in RED.
+- [x] [AI] **P2-C7-ERROR-MASK-GREEN** (`blockedBy: P2-C7-ERROR-MASK-RED`; `blocks: P2-C7-ERROR-MASK-REFACTOR`) — reject shell-compound or error-masking command forms from hand-wired gate satisfaction — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: a required command cannot be made successful after its target fails.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: The executable command recognizer now rejects `||`, `&&`, `;`, and `|` compound forms before target matching. The expanded regression covers all four operators; focused validator tests pass (31), along with `cargo fmt --check` and `git diff --check`.
+- [x] [AI] **P2-C7-ERROR-MASK-REFACTOR** (`blockedBy: P2-C7-ERROR-MASK-GREEN`; `blocks: P2-C7-FALSY-GUARD-RED`) — refactor compound-command detection while retaining failure propagation — command: `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` — acceptance: classifier remains clear and strict lint passes.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (verification-only)
+  - Execution note: Reviewed the compact compound-operator rejection rule; it centralizes failure-propagation protection without duplicate paths. `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` reports no issues.
+- [x] [AI] **P2-C7-FALSY-GUARD-RED** (`blockedBy: P2-C7-ERROR-MASK-REFACTOR`; `blocks: P2-C7-FALSY-GUARD-GREEN`) — add failing unit and Gherkin regressions for literal-falsy GitHub Actions guards — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: `0`, `-0`, empty strings, and `null` guards demonstrate the bypass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/{src/commands/gate/validate.rs,tests/gate_specs.rs}`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Execution note: Unit coverage fails for all ten job/step forms of `${{ 0 }}`, `${{ -0 }}`, `${{ '' }}`, `${{ "" }}`, and `${{ null }}`. Bound Gherkin coverage fails as expected: 58 scenarios, 57 pass, 1 fail because `gate validate` still succeeds. No production correction occurred in RED.
+- [x] [AI] **P2-C7-FALSY-GUARD-GREEN** (`blockedBy: P2-C7-FALSY-GUARD-RED`; `blocks: P2-C7-FALSY-GUARD-REFACTOR`) — normalize all literal-falsy expressions before validating execution — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: literal-falsy guarded jobs and steps cannot satisfy required gates.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: `WorkflowCondition` now recognizes exactly `false`, `0`, `-0`, `''`, `""`, and `null`, directly and inside normalized `${{ … }}` expressions, without inferring dynamic expressions. Focused unit test passes; gate specs pass (58 scenarios, 212 steps); `cargo fmt --check` passes.
+- [x] [AI] **P2-C7-FALSY-GUARD-REFACTOR** (`blockedBy: P2-C7-FALSY-GUARD-GREEN`; `blocks: P2-C7-QUOTED-GHERKIN`) — make falsy-expression normalization explicit and maintainable — command: `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` — acceptance: strict lint passes with no duplicated normalization paths.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (verification-only)
+  - Execution note: The falsy normalizer keeps optional expression unwrapping and literal recognition in one branch; no duplicated path is needed. `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings` reports no issues.
+- [x] [AI] **P2-C7-QUOTED-GHERKIN** (`blockedBy: P2-C7-FALSY-GUARD-REFACTOR`; `blocks: P2-C7-PARITY-MANIFEST`) — add and bind a quoted-text executable-command Gherkin regression, then correct Cycle 6 evidence — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: `echo 'npx nx affected -t test:quick'` cannot satisfy validation and delivery evidence accurately names the coverage.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Added and bound the quoted-text command fixture `echo 'npx nx affected -t test:quick'`; it cannot satisfy validation. Gate specs pass (59 scenarios, 215 steps), along with `cargo fmt --check` and `git diff --check`. The Cycle 6 evidence correction below records the precise coverage timing.
+- [x] [AI] **P2-C7-PARITY-MANIFEST** (`blockedBy: P2-C7-QUOTED-GHERKIN`; `blocks: P2-C7-FIXER`) — regenerate and validate the canonical Rhino byte-identity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: manifest covers every prospective Cycle 7 correction.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (manifest already current)
+  - Execution note: Regenerated the canonical Rhino byte-identity manifest after every Cycle 7 correction; the generated bytes were unchanged, and validation succeeded against the working delivery set.
+- [ ] [AI] **P2-C7-FIXER** (`blockedBy: P2-C7-PARITY-MANIFEST`; `blocks: P2-C7-CI`) — implement every accepted final-cycle finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
 - [ ] [AI] **P2-C7-CI** (`blockedBy: P2-C7-FIXER`; `blocks: Merge`) — run and verify CI for the final review head — acceptance: all required checks are green before merge.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:

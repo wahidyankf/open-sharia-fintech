@@ -517,7 +517,7 @@ enum WorkflowCondition {
 }
 
 impl WorkflowCondition {
-    /// Whether this condition unconditionally disables execution.
+    /// Whether this condition is one of GitHub Actions' literal-falsy forms.
     fn is_literal_false(&self) -> bool {
         match self {
             Self::Boolean(value) => !value,
@@ -528,7 +528,7 @@ impl WorkflowCondition {
                     .and_then(|value| value.strip_suffix("}}"))
                     .unwrap_or(trimmed)
                     .trim();
-                expression.eq_ignore_ascii_case("false")
+                matches!(expression, "false" | "0" | "-0" | "''" | "\"\"" | "null")
             }
         }
     }
@@ -617,9 +617,12 @@ fn validate_hand_wired_ci_jobs(
 fn run_declares_command(run: &str, command: &str) -> bool {
     run.lines().any(|line| {
         let tokens = shell_tokens(line);
-        nx_targets(&tokens)
-            .into_iter()
-            .any(|target| target == command)
+        !tokens
+            .iter()
+            .any(|token| matches!(token.as_str(), "&&" | "||" | ";" | "|"))
+            && nx_targets(&tokens)
+                .into_iter()
+                .any(|target| target == command)
     })
 }
 
@@ -656,7 +659,7 @@ fn shell_tokens(line: &str) -> Vec<String> {
     tokens
 }
 
-/// Returns the declared targets of an executable `npx nx … -t` command.
+/// Returns the declared targets of an executable `npx nx affected -t` command.
 fn nx_targets(tokens: &[String]) -> Vec<&str> {
     let Some((executable, rest)) = tokens.split_first() else {
         return Vec::new();
@@ -668,6 +671,12 @@ fn nx_targets(tokens: &[String]) -> Vec<&str> {
         return Vec::new();
     };
     if runner != "nx" {
+        return Vec::new();
+    }
+    if arguments
+        .first()
+        .is_none_or(|subcommand| subcommand != "affected")
+    {
         return Vec::new();
     }
     let Some(target_index) = arguments
@@ -1757,6 +1766,114 @@ fn unspaced_false_expression_hand_wired_guards_are_rejected() {
     assert!(
         results.iter().all(|result| *result),
         "literal false job and step expressions must not satisfy the hand-wired CI contract: {results:?}"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn falsey_expression_hand_wired_guards_are_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+
+    let mut results = Vec::new();
+    for condition in [
+        "${{ 0 }}",
+        "${{ -0 }}",
+        "${{ '' }}",
+        "${{ \"\" }}",
+        "${{ null }}",
+    ] {
+        for workflow_source in [
+            format!(
+                "jobs:\n  test-quick:\n    if: |-\n      {condition}\n    steps:\n      - run: npx nx affected -t test:quick\n  quality-gate:\n    needs: [test-quick]\n"
+            ),
+            format!(
+                "jobs:\n  test-quick:\n    steps:\n      - if: |-\n          {condition}\n        run: npx nx affected -t test:quick\n  quality-gate:\n    needs: [test-quick]\n"
+            ),
+        ] {
+            let workflow: Workflow = serde_norway::from_str(&workflow_source).unwrap();
+            results.push(validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err());
+        }
+    }
+    assert!(
+        results.iter().all(|result| *result),
+        "literal falsey job and step expressions must not satisfy the hand-wired CI contract: {results:?}"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn non_executing_nx_subcommands_do_not_satisfy_hand_wired_gates() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+
+    let results = [
+        "npx nx report -t test:quick",
+        "npx nx show projects -t test:quick",
+    ]
+    .into_iter()
+    .map(|run| {
+        let workflow_source = format!(
+            "jobs:\n  test-quick:\n    steps:\n      - run: \"{run}\"\n  quality-gate:\n    needs: [test-quick]\n"
+        );
+        let workflow: Workflow = serde_norway::from_str(&workflow_source).unwrap();
+        validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err()
+    })
+    .collect::<Vec<_>>();
+    assert!(
+        results.iter().all(|result| *result),
+        "non-executing Nx subcommands must not satisfy the hand-wired CI contract: {results:?}"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn error_masked_hand_wired_command_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let results = ["||", "&&", ";", "|"]
+        .into_iter()
+        .map(|operator| {
+            let workflow_source = format!(
+                "jobs:\n  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick {operator} true\n  quality-gate:\n    needs: [test-quick]\n"
+            );
+            let workflow: Workflow = serde_norway::from_str(&workflow_source).unwrap();
+            validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err()
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        results.iter().all(|result| *result),
+        "compound Nx commands must not satisfy the hand-wired CI contract: {results:?}"
     );
 }
 
