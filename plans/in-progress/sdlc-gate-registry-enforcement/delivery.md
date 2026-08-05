@@ -3408,7 +3408,11 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: none
   - Execution note: `pr-quality-gate` run `31025113598` completed successfully for `2905332d5a10e6c4f0f4585634f008fe35055c93`.
-- [ ] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and five preconditions pass.
+- [x] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and five preconditions pass.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: none
+  - Execution note: PR [#137](https://github.com/wahidyankf/ose-public/pull/137) is no longer a draft. The current head has three completed review cycles, zero accepted findings, and green `pr-quality-gate` CI.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
