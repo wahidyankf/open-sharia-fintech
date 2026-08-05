@@ -3363,7 +3363,11 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/parity-manifest.sha256`, `apps/rhino-cli/src/commands/gate/{run,validate}.rs`, `apps/rhino-cli/tests/{gate_dispatch,gate_specs}.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/{gate-execution,gate-validation}.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: Fixed both accepted HIGH findings and the discovered executable-spec binding gap in `f513e71418a39926d04784637a304ddd73333341`. The required full affected suite passed, the parity manifest was regenerated and validated, and the normal fast-forward push passed all pre-push gates.
-- [ ] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-rewire --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix, commit, push before Cycle 2.
+- [x] [AI] Cycle 1 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-rewire --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; otherwise fix, commit, push before Cycle 2.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: none
+  - Execution note: `pr-quality-gate` run `31019436002` completed successfully for head `35610e55b0c5406c91f00669092ee2e0b0e944a0`.
 - [ ] [AI] Cycle 2 maker fan-out — invoke all eight makers — acceptance: eight fresh reports exist.
 - [ ] [AI] Cycle 2 synthesis — invoke synthesis maker — acceptance: one fresh review is posted.
 - [ ] [AI] Cycle 2 fixer — invoke fixer — acceptance: fixes are committed and pushed.
