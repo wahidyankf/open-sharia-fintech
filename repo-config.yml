@@ -60,32 +60,6 @@ harness:
   - { name: pi, tier: native, instruction: [AGENTS.md, CLAUDE.md] }
   - { name: aider, tier: native, shadow: CONVENTIONS.md, instruction: [AGENTS.md, CONVENTIONS.md] }
 
-gates:
-  # The date-metadata audit deliberately excludes website content. The paths
-  # are repository data, not shared rhino-cli source literals.
-  - id: md-frontmatter-dates
-    type: check
-    command: md frontmatter-dates validate
-    kind: rhino-cli
-    args:
-      exclude:
-        - apps/ayokoding-www/
-        - apps/ose-www/
-        - apps/organiclever-app-web/
-        - apps/wahidyankf-www/
-    surfaces:
-      ci: { scope: all-file-type }
-
-  # The generator is deliberately absent: source drift must require an
-  # explicit acknowledgement before its new checksum can be committed.
-  - id: parity-manifest
-    type: check
-    command: parity manifest validate
-    kind: rhino-cli
-    surfaces:
-      pre-push: { scope: other }
-      ci: { scope: other }
-
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
   # this data rather than naming an application-specific backend path.
@@ -391,3 +365,561 @@ env-injection:
     - key: PLAYWRIGHT_GREP_INVERT
       class: literal
       environments: []
+
+gates:
+  # ---------------------------------------------------------------- commit-msg
+  - id: commitlint
+    type: check
+    command: 'npx --no -- commitlint --edit "$1"'
+    kind: external
+    surfaces:
+      commit-msg: { scope: other }
+
+  # -------------------------------------------- pre-commit: guards before work
+  - id: env-staged-guard
+    type: check
+    command: env staged-guard validate
+    kind: rhino-cli
+    carve-out: staged-only
+    surfaces:
+      pre-commit: { scope: other }
+
+  - id: repo-config-schema
+    type: check
+    command: repo-config validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: repo-config.yml
+        lint-staged-shell: "{{command}}"
+      ci: { scope: other }
+
+  # ----------------------------------------------- formatters (13 mutations) +
+  # ----------------------------------------------- their ci verifiers (13 checks)
+  - id: format-prettier
+    type: mutation
+    category: formatter
+    command: prettier --write
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        globs:
+          - "*.md"
+          - "*.{js,jsx,ts,tsx,mjs,cjs}"
+          - "*.json"
+          - "*.{yml,yaml}"
+          - "*.{css,scss}"
+          - "*.html"
+          - "*.sql"
+
+  - id: format-verify-prettier
+    type: check
+    command: prettier --check
+    kind: external
+    verifies: format-prettier
+    surfaces:
+      ci:
+        scope: affected-file-type
+        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+
+  - id: format-rustfmt
+    type: mutation
+    category: formatter
+    command: rustfmt --edition 2024
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.rs" }
+
+  - id: format-verify-rustfmt
+    type: check
+    command: rustfmt --edition 2024 --check
+    kind: external
+    verifies: format-rustfmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.rs" }
+
+  - id: format-fantomas
+    type: mutation
+    category: formatter
+    command: fantomas
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.fs" }
+
+  - id: format-verify-fantomas
+    type: check
+    # Fantomas exits 99 (not 1) when files need formatting; 1 means an unexpected
+    # error. Any non-zero must fail the gate — never test for exit code 1 alone.
+    # Bare `fantomas` requires a GLOBAL dotnet tool install; a local manifest
+    # install needs `dotnet fantomas`. Phase 0 confirms which this repo uses.
+    command: fantomas --check
+    kind: external
+    verifies: format-fantomas
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.fs" }
+
+  - id: format-ruff
+    type: mutation
+    category: formatter
+    command: ruff format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.py" }
+
+  - id: format-verify-ruff
+    type: check
+    command: ruff format --check
+    kind: external
+    verifies: format-ruff
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.py" }
+
+  - id: format-gofmt
+    type: mutation
+    category: formatter
+    command: gofmt -w
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.go" }
+
+  - id: format-verify-gofmt
+    type: check
+    # `gofmt -l` always exits 0; the wrapper converts non-empty output to failure.
+    command: scripts/verify-gofmt.sh
+    kind: external
+    verifies: format-gofmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.go" }
+
+  - id: format-elixir
+    type: mutation
+    category: formatter
+    command: scripts/format-elixir.sh
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.{ex,exs}" }
+
+  - id: format-verify-elixir
+    type: check
+    # The wrapper discovers each mix project; do not add --no-exit.
+    command: scripts/format-elixir.sh --check
+    kind: external
+    verifies: format-elixir
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.{ex,exs}" }
+
+  - id: format-csharpier
+    type: mutation
+    category: formatter
+    command: dotnet csharpier format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.cs" }
+
+  - id: format-verify-csharpier
+    type: check
+    # `check` fails on unformatted files; do not use `--unformatted-as-warnings`.
+    command: dotnet csharpier check
+    kind: external
+    verifies: format-csharpier
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.cs" }
+
+  - id: format-dart
+    type: mutation
+    category: formatter
+    command: dart format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.dart" }
+
+  - id: format-verify-dart
+    type: check
+    # `-o none` prevents the verifier from rewriting files before it fails.
+    command: dart format -o none --set-exit-if-changed
+    kind: external
+    verifies: format-dart
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.dart" }
+
+  - id: format-shfmt
+    type: mutation
+    category: formatter
+    command: shfmt -w
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: format-verify-shfmt
+    type: check
+    command: shfmt -d
+    kind: external
+    verifies: format-shfmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: format-tofu
+    type: mutation
+    category: formatter
+    command: tofu fmt
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.tf" }
+
+  - id: format-verify-tofu
+    type: check
+    command: tofu fmt -check
+    kind: external
+    verifies: format-tofu
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.tf" }
+
+  - id: format-stylua
+    type: mutation
+    category: formatter
+    command: stylua
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.lua" }
+
+  - id: format-verify-stylua
+    type: check
+    command: stylua --check
+    kind: external
+    verifies: format-stylua
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.lua" }
+
+  - id: format-clang
+    type: mutation
+    category: formatter
+    command: clang-format -i
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.{c,h}" }
+
+  - id: format-verify-clang
+    type: check
+    # --Werror is double-dash per LLVM docs; it promotes the
+    # "code should be clang-formatted" warning to an error so the exit is non-zero.
+    command: clang-format --dry-run --Werror
+    kind: external
+    verifies: format-clang
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.{c,h}" }
+
+  - id: format-buildifier
+    type: mutation
+    category: formatter
+    command: buildifier
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "{BUILD,BUILD.bazel,*.bzl}"
+
+  - id: format-verify-buildifier
+    type: check
+    command: buildifier --mode=check
+    kind: external
+    verifies: format-buildifier
+    surfaces:
+      ci:
+        scope: affected-file-type
+        glob: "{BUILD,BUILD.bazel,*.bzl}"
+
+  # -------------------------------------------------- per-file checks (12)
+  - id: markdownlint
+    type: check
+    command: markdownlint-cli2
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-mermaid
+    type: check
+    command: md mermaid validate
+    kind: rhino-cli
+    args:
+      exclude:
+        - apps/ayokoding-www/content
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-heading-hierarchy
+    type: check
+    command: md heading-hierarchy validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-naming
+    type: check
+    command: md naming validate
+    kind: rhino-cli
+    args:
+      exempt:
+        - "*__linkedin__*.md"
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-frontmatter
+    type: check
+    command: md frontmatter validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: actionlint
+    type: check
+    command: actionlint
+    kind: external
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: ".github/workflows/*.{yml,yaml}"
+      ci: { scope: all-file-type }
+
+  - id: shellcheck
+    type: check
+    command: shellcheck --severity=warning
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.sh" }
+      ci: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: hadolint
+    type: check
+    command: hadolint --failure-threshold warning
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "**/Dockerfile*" }
+      ci: { scope: affected-file-type, glob: "**/Dockerfile*" }
+
+  - id: convention-emoji
+    type: check
+    command: convention emoji validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}"
+      ci: { scope: all-file-type }
+
+  - id: specs-gherkin-cardinality
+    type: check
+    command: specs gherkin-cardinality validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.feature" }
+      ci: { scope: all-file-type }
+
+  - id: docker-compose-config
+    type: check
+    command: docker compose config
+    kind: external
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "docker-compose*.{yml,yaml}"
+        lint-staged-shell: 'for f; do docker compose -f "$f" config > /dev/null; done'
+      ci: { scope: all-file-type }
+
+  # ------------------------------------- pre-commit mutations, run last (order)
+  - id: harness-bindings-generate
+    type: mutation
+    command: harness bindings generate
+    kind: rhino-cli
+    restages: true
+    surfaces:
+      pre-commit: { scope: other }
+
+  - id: lockfile-sync
+    type: mutation
+    command: git lockfile sync
+    kind: rhino-cli
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "apps/*/package.json" }
+
+  # ------------------------------------------------------ pre-push + ci checks
+  - id: test-quick
+    type: check
+    command: "test:quick"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: compat-min-version
+    type: check
+    command: "compat:min-version"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: specs-structure
+    type: check
+    command: "specs:structure-validation"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: env-validate
+    type: check
+    command: env validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: other }
+      ci: { scope: other }
+
+  - id: md-links
+    type: check
+    command: md links validate
+    kind: rhino-cli
+    args:
+      exclude:
+        - plans/done
+        - apps/ayokoding-www/content
+        - apps/ose-www/content
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: md-readme-index
+    type: check
+    command: md readme-index validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: harness-duplication
+    type: check
+    command: harness duplication validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: parity-manifest
+    type: check
+    command: parity manifest validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: other }
+      ci: { scope: other }
+
+  # --------------------------------------------- path-gated governance checks
+  - id: harness-naming
+    type: check
+    command: harness naming validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/agents/
+          - .opencode/agents/
+      ci: { scope: other }
+
+  - id: workflows-naming
+    type: check
+    command: repo-governance workflows naming validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/workflows/
+      ci: { scope: other }
+
+  - id: vendor-independence
+    type: check
+    command: repo-governance vendor validate repo-governance/
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: convention-license
+    type: check
+    command: convention license validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: harness-bindings
+    type: check
+    command: harness bindings validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .amazonq/
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .cursor/
+          - .windsurf/
+          - .junie/
+          - .github/
+          - AGENTS.md
+          - CLAUDE.md
+          - GEMINI.md
+          - CONVENTIONS.md
+          - docs/reference/platform-bindings.md
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: instruction-size
+    type: check
+    command: harness instruction-size validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+          - .amazonq/rules/
+          - .windsurf/rules/
+          - .cursor/rules/
+          - .junie/guidelines.md
+          - .github/copilot-instructions.md
+          - CONVENTIONS.md
+      ci: { scope: other }

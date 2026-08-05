@@ -51,6 +51,12 @@ Feature: Gate conformance validation
     When gate validate runs
     Then it fails and names the gate and workflow file
 
+  Scenario: Gate validation covers every hook surface
+    Given pre-commit and pre-push invoke their declared gate surfaces
+    And commit-msg is missing its declared gate surface invocation
+    When "rhino-cli gate validate" runs
+    Then validation fails and identifies the commit-msg hook
+
   Scenario: The shipped configuration passes
     Given the registry and surfaces as shipped by this plan
     When "rhino-cli gate validate" runs

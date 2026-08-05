@@ -254,7 +254,10 @@ gates:
     command: repo-config validate
     kind: rhino-cli
     surfaces:
-      pre-commit: { scope: affected-file-type, glob: repo-config.yml }
+      pre-commit:
+        scope: affected-file-type
+        glob: repo-config.yml
+        lint-staged-shell: "{{command}}"
       ci: { scope: other }
 
   # ------------------------------------------- formatters (4) + verifiers (4)
@@ -267,7 +270,14 @@ gates:
     surfaces:
       pre-commit:
         scope: affected-file-type
-        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+        globs:
+          - "*.md"
+          - "*.{js,jsx,ts,tsx,mjs,cjs}"
+          - "*.json"
+          - "*.{yml,yaml}"
+          - "*.{css,scss}"
+          - "*.html"
+          - "*.sql"
 
   - id: format-verify-prettier
     type: check
@@ -425,6 +435,7 @@ gates:
       pre-commit:
         scope: affected-file-type
         glob: "docker-compose*.{yml,yaml}"
+        lint-staged-shell: 'for f; do docker compose -f "$f" config > /dev/null; done'
       ci: { scope: all-file-type }
 
   # ------------------------------------------- IaC gates — ose-private ONLY

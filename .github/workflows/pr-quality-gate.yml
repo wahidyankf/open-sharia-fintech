@@ -61,17 +61,22 @@ jobs:
 
   format:
     name: Auto-format affected (lint-staged)
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-rust
+      # The matrix is registry-derived, so its formatter/tool inventory varies
+      # by repository. Provision the declared tools rather than hard-coding a
+      # second per-language setup list in this workflow.
+      - run: npm run doctor -- --fix
       - name: Format affected files with the project formatters (lint-staged)
+        if: github.event_name == 'pull_request'
         run: |
           git fetch --no-tags origin "$GITHUB_BASE_REF"
           CHANGED=$(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF...HEAD")
@@ -80,6 +85,7 @@ jobs:
             npx lint-staged --no-stash
           fi
       - name: Commit formatting to the PR branch
+        if: github.event_name == 'pull_request'
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "github-actions[bot]"
@@ -88,54 +94,49 @@ jobs:
             git push origin "HEAD:$GITHUB_HEAD_REF"
           fi
 
-  shellcheck:
-    name: Shell lint (ShellCheck)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: ShellCheck (warning threshold)
+      - name: Verify affected formatting on main
+        if: github.event_name == 'push'
         run: |
-          shellcheck --version
-          files=$(git diff --diff-filter=ACM --name-only "$NX_BASE"...HEAD | grep '\.sh$' | grep -v 'husky/_/' | grep -v '^archived/' || true)
-          if [ -z "$files" ]; then echo "No changed shell scripts — skipping"; exit 0; fi
-          # shellcheck disable=SC2086 # word-splitting the file list is intentional
-          shellcheck --severity=warning $files
+          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json |
+            jq -r '.[] | select(.id | startswith("format-verify-")) | .id' |
+            while IFS= read -r gate_id; do
+              cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$gate_id"
+            done
 
-  hadolint:
-    name: Dockerfile lint (hadolint)
+  enumerate:
+    name: Enumerate registry CI gates
     runs-on: ubuntu-latest
+    outputs:
+      gates: ${{ steps.list.outputs.gates }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: hadolint (warning threshold)
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-rust
+      - id: list
         run: |
-          sudo curl -sSL -o /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.14.0/hadolint-Linux-x86_64
-          sudo chmod +x /usr/local/bin/hadolint
-          hadolint --version
-          files=$(git diff --diff-filter=ACM --name-only "$NX_BASE"...HEAD | grep -iE 'Dockerfile' | grep -vE '^archived/' | grep -v '\.dockerignore$' || true)
-          if [ -z "$files" ]; then echo "No changed Dockerfiles — skipping"; exit 0; fi
-          # shellcheck disable=SC2086 # word-splitting the file list is intentional
-          hadolint --failure-threshold warning $files
+          gates=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json | jq -c .)
+          echo "gates=$gates" >> "$GITHUB_OUTPUT"
 
-  actionlint:
-    name: GitHub Actions lint (actionlint)
+  gate:
+    needs: enumerate
+    name: ${{ matrix.gate.id }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: actionlint
-        run: |
-          curl -sSL -o download-actionlint.bash \
-            https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash
-          bash download-actionlint.bash 1.7.12
-          files=$(git diff --diff-filter=ACM --name-only "$NX_BASE"...HEAD | grep '^\.github/workflows/.*\.yml$' || true)
-          if [ -z "$files" ]; then echo "No changed workflow files — skipping"; exit 0; fi
-          # shellcheck disable=SC2086 # word-splitting the file list is intentional
-          ./actionlint -color $files
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-rust
+      # The selected gate may be any repository-declared formatter or linter.
+      # `doctor --fix` keeps the generic matrix independent of that inventory.
+      - run: npm run doctor -- --fix
+      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=${{ matrix.gate.id }}
 
   typescript:
     name: TypeScript quality gate
@@ -188,113 +189,18 @@ jobs:
       - uses: ./.github/actions/setup-rust
       - run: npx nx affected -t compat:min-version
 
-  markdown:
-    name: Markdown quality gate
-    needs: detect
-    if: needs.detect.outputs.has-markdown == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - run: npm run lint:md
-
-  naming:
-    name: Naming validators (agents + workflows)
+  specs-structure:
+    name: Specs structure validation (all affected)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      - run: npx nx run rhino-cli:naming:harness-validation
-      - run: npx nx run rhino-cli:naming:workflows-validation
-
-  instruction-size:
-    name: Instruction-size budget gate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: npx nx run rhino-cli:instruction-size:validation
-
-  specs-gate:
-    name: Specs gate (BDD+DDD validators)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: npx nx run-many -t specs:structure-validation --projects=rhino-cli
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate
-
-  repo-config-validate:
-    name: repo-config.yml schema parity
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate
-
-  md-links:
-    name: Markdown link validation (repo-wide)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content
-
-  readme-index:
-    name: README index validation (repo-wide)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate
-
-  harness-duplication:
-    name: Harness duplication validation (repo-wide)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness duplication validate
-
-  governance:
-    name: Governance validators (vendor audit + license)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
-      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention license validate
+      - run: npx nx affected -t specs:structure-validation
 
   quality-gate:
     name: Quality gate
-    needs:
-      [
-        detect,
-        shellcheck,
-        hadolint,
-        actionlint,
-        typescript,
-        dotnet,
-        rust,
-        compat-min-version,
-        markdown,
-        naming,
-        instruction-size,
-        specs-gate,
-        repo-config-validate,
-        md-links,
-        readme-index,
-        harness-duplication,
-        governance,
-      ]
+    needs: [format, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

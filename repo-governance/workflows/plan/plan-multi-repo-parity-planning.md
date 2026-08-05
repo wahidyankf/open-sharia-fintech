@@ -10,9 +10,9 @@ inputs:
     required: true
   - name: repos
     type: string
-    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-primer, ose-private')"
+    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-primer, ose-private, beaver-nest')"
     required: false
-    default: "ose-public, ose-primer, ose-private"
+    default: "ose-public, ose-primer, ose-private, beaver-nest"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main, worktree-to-pr]
@@ -113,7 +113,7 @@ parallel under the N+1 model (`1 main thread + N background agents`, default **N
 serialized behind one another. `ose-private` does not participate in the parity loop for content it
 does not carry.
 
-The one hard serialization: **`apps/rhino-cli` must stay byte-identical across all three repos**, so
+The one hard serialization: **`apps/rhino-cli` must stay byte-identical across all four bound repos**, so
 plans touching it propagate one repo at a time rather than concurrently.
 
 ### Delivery Shape Per Repo
@@ -252,26 +252,14 @@ configs, grep the files, run the tools — do not trust docs alone.
 - Repo-specific constraints: CI runner type (self-hosted vs GitHub-hosted), private vs public
   visibility, language stack, existing toolchain, dual-CLI parity guards
 - **rhino-cli byte-identity check** (whenever the objective touches `apps/rhino-cli` or its Gherkin
-  behavior tree): diff the `md5` manifest of `apps/rhino-cli`'s tracked files plus every
-  `.feature`/`README.md` under `specs/apps/rhino/behavior/rhino-cli/gherkin/**` across all three
-  repos —
+  behavior tree): run the canonical manifest validator in each bound repository:
 
   ```bash
-  git -C ose-public ls-files apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin \
-    | grep -E '(apps/rhino-cli/.*|gherkin/.*\.feature$|gherkin/.*README\.md$)' | sort \
-    | xargs md5 -q > /tmp/public.md5
-  git -C ose-primer ls-files apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin \
-    | grep -E '(apps/rhino-cli/.*|gherkin/.*\.feature$|gherkin/.*README\.md$)' | sort \
-    | xargs md5 -q > /tmp/primer.md5
-  git -C ose-private ls-files apps/rhino-cli specs/apps/rhino/behavior/rhino-cli/gherkin \
-    | grep -E '(apps/rhino-cli/.*|gherkin/.*\.feature$|gherkin/.*README\.md$)' | sort \
-    | xargs md5 -q > /tmp/infra.md5
-  diff /tmp/public.md5 /tmp/primer.md5
-  diff /tmp/public.md5 /tmp/infra.md5
+  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate
   ```
 
-  (or compare directly against the frozen `plans/done/*/audit/06-canonical-manifest.md` if one
-  exists). Any diff is drift that MUST become its own deviation-matrix row in Step 2 — surface it
+  It covers the four-repository boundary and the tracked `apps/rhino-cli` source, tests, and Gherkin
+  behavior tree. Any failure is drift that MUST become its own deviation-matrix row in Step 2 — surface it
   before grilling, never silently re-sync it.
 
 **Output**: A per-repo state inventory. Every dimension the objective touches is inventoried for

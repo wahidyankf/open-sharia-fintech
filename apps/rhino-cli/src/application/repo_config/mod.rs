@@ -238,6 +238,13 @@ pub struct SurfaceScope {
     /// Multiple file globs for an affected-file-type scope.
     #[serde(default)]
     pub globs: Vec<String>,
+    /// Optional shell command emitted instead of the default lint-staged command.
+    ///
+    /// The value is meaningful only for the pre-commit affected-file-type
+    /// surface. When present, emitters use it verbatim, or substitute its one
+    /// optional `{{command}}` marker with the rendered registry command.
+    #[serde(rename = "lint-staged-shell", default)]
+    pub lint_staged_shell: Option<String>,
     /// Paths that activate a path-gated scope.
     #[serde(default)]
     pub trigger: Vec<String>,
