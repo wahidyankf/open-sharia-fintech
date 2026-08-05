@@ -169,8 +169,46 @@ pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
         result.written.push(binding.rel_path);
     }
 
+    remove_stale_amazonq_definitions(repo_root)?;
+
     result.duration = start.elapsed();
     Ok(result)
+}
+
+/// Remove obsolete generated Amazon Q agent definitions after a configured
+/// `harness.amazonq.agent-name` rename. The generated directory is owned by
+/// this emitter; leaving an old JSON definition would create two conflicting
+/// default agents even though validation only checks the newly configured one.
+fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
+    let expected_name = amazonq_agent_name(repo_root)?;
+    let expected_file = format!("{expected_name}.json");
+    let definitions_dir = repo_root.join(AMAZONQ_AGENT_DEFINITION_DIR);
+    let entries = fs::read_dir(&definitions_dir).map_err(|error| {
+        format!(
+            "failed to list generated Amazon Q definitions at {}: {error}",
+            definitions_dir.display()
+        )
+    })?;
+    for entry in entries {
+        let entry = entry.map_err(|error| {
+            format!(
+                "failed to inspect generated Amazon Q definition at {}: {error}",
+                definitions_dir.display()
+            )
+        })?;
+        let path = entry.path();
+        let is_json = path.extension().and_then(|extension| extension.to_str()) == Some("json");
+        let is_expected = path.file_name().and_then(|name| name.to_str()) == Some(&expected_file);
+        if is_json && !is_expected {
+            fs::remove_file(&path).map_err(|error| {
+                format!(
+                    "failed to remove stale generated Amazon Q definition {}: {error}",
+                    path.display()
+                )
+            })?;
+        }
+    }
+    Ok(())
 }
 
 /// Validates all 11 harnesses:
@@ -550,6 +588,38 @@ mod tests {
         emit_bindings(root).unwrap();
         let second = std::fs::read(agent_definition_path(root)).unwrap();
         assert_eq!(first, second);
+    }
+
+    #[test]
+    fn emit_removes_stale_definition_after_configured_agent_rename() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write_amazonq_config(root);
+        emit_bindings(root).expect("emit original definition");
+        assert!(agent_definition_path(root).is_file());
+
+        write(
+            &root.join("repo-config.yml"),
+            concat!(
+                "harness:\n",
+                "  - name: amazonq\n",
+                "    tier: generated\n",
+                "    agent-name: renamed-agent\n",
+                "coverage:\n  projects: []\n",
+            ),
+        );
+        emit_bindings(root).expect("emit renamed definition");
+
+        assert!(
+            !agent_definition_path(root).exists(),
+            "the old generated definition must not survive a configured rename"
+        );
+        assert!(
+            root.join(AMAZONQ_AGENT_DEFINITION_DIR)
+                .join("renamed-agent.json")
+                .is_file(),
+            "the configured replacement definition must be emitted"
+        );
     }
 
     #[test]

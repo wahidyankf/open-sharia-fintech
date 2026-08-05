@@ -49,6 +49,7 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
+    agent-name: ose-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -225,6 +226,8 @@ env-injection:
     - key: BASE_URL
       class: var
       environments: [coralpolyp-staging]
+
+doctor: {}
 
 gates:
   # ---------------------------------------------------------------- commit-msg

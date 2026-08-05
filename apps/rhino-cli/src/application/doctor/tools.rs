@@ -113,13 +113,19 @@ fn set_paths(repo_root: &Path) {
 /// `global.json`; repositories that keep it elsewhere declare that relative
 /// path under `doctor.dotnet-global-json`.
 fn configured_dotnet_global_json(repo_root: &Path) -> PathBuf {
-    repo_config::load_or_default(repo_root)
+    let configured = repo_config::load_or_default(repo_root)
         .doctor
-        .dotnet_global_json
-        .map_or_else(
-            || repo_root.join("global.json"),
-            |path| repo_root.join(path),
-        )
+        .dotnet_global_json;
+    configured
+        .as_deref()
+        .map(|path| repo_config::confined_repo_path(repo_root, path))
+        .transpose()
+        // `repo-config validate` names invalid configuration precisely. Doctor
+        // must nevertheless never follow an unsafe configured path when it is
+        // invoked independently, so it falls back to the conventional root
+        // file rather than traversing an absolute, parent, or symlink escape.
+        .unwrap_or(None)
+        .unwrap_or_else(|| repo_root.join("global.json"))
 }
 
 /// Returns a reference to the global [`Paths`] instance.

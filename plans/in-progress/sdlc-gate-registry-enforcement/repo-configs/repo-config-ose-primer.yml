@@ -50,6 +50,7 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
+    agent-name: ose-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -271,6 +272,9 @@ env-injection:
   ci-harness: []
 
 doctor:
+  # No dotnet-global-json: this scaffold has two independent backend pins
+  # (crud-be-fsharp-giraffe 10.0.204 and crud-be-csharp-aspnetcore 10.0.108),
+  # while Doctor's current contract intentionally accepts exactly one source.
   # Tools from doctor's full roster (apps/rhino-cli/src/application/doctor/tools.rs)
   # that ose-primer's own toolchain does not invoke, so `doctor` stays dormant for
   # them instead of hard-failing a plain (non-`--fix`) run. Verified: ose-primer's

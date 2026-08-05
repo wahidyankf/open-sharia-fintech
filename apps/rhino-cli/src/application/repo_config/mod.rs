@@ -7,7 +7,7 @@
 
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::Path;
+use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Error};
 use serde::Deserialize;
@@ -262,6 +262,67 @@ pub struct DoctorConfig {
     pub skip_tools: Vec<String>,
 }
 
+/// Validate a configured repository-relative file path before it is joined to
+/// a repository root. This is intentionally lexical so schema validation can
+/// report unsafe configuration even when the configured file does not exist.
+///
+/// # Errors
+///
+/// Returns an error when the path is empty, absolute, or contains a parent
+/// directory component.
+pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
+    let path = Path::new(value);
+    if value.is_empty() || path.is_absolute() {
+        return Err("must be a non-empty repository-relative path".to_string());
+    }
+    if path.components().any(|component| {
+        matches!(
+            component,
+            Component::ParentDir | Component::RootDir | Component::Prefix(_)
+        )
+    }) {
+        return Err("must not contain an absolute or parent-directory component".to_string());
+    }
+    Ok(())
+}
+
+/// Resolve a configured repository-relative path while proving that existing
+/// path components do not escape `repo_root` through symlinks.
+///
+/// Missing final components are allowed: the caller may use the returned path
+/// to report an absent optional configuration file. The nearest existing
+/// ancestor is still canonicalized, which catches a symlinked intermediate
+/// directory that points outside the repository.
+///
+/// # Errors
+///
+/// Returns an error when the configured path is lexically unsafe, the root or
+/// nearest existing ancestor cannot be canonicalized, or that ancestor lies
+/// outside the repository root.
+pub fn confined_repo_path(repo_root: &Path, value: &str) -> Result<PathBuf, Error> {
+    validate_repo_relative_path(value).map_err(Error::msg)?;
+    let canonical_root = repo_root
+        .canonicalize()
+        .with_context(|| format!("canonicalize repository root {}", repo_root.display()))?;
+    let candidate = repo_root.join(value);
+    let existing_ancestor = candidate
+        .ancestors()
+        .find(|path| path.exists())
+        .ok_or_else(|| Error::msg("configured path has no existing repository ancestor"))?;
+    let canonical_ancestor = existing_ancestor.canonicalize().with_context(|| {
+        format!(
+            "canonicalize configured path ancestor {}",
+            existing_ancestor.display()
+        )
+    })?;
+    if !canonical_ancestor.starts_with(&canonical_root) {
+        return Err(Error::msg(format!(
+            "configured path {value:?} escapes the repository root through a symlink"
+        )));
+    }
+    Ok(candidate)
+}
+
 /// Parsed `repo-config.yml` — the canonical schema, byte-identical across all
 /// three repos. Every top-level section is modeled here, and both this struct
 /// and its nested structs use `#[serde(deny_unknown_fields)]`: an unknown or
@@ -389,5 +450,34 @@ mod tests {
             rhino.specs.starts_with("specs/apps/rhino"),
             "rhino-cli specs glob must point to specs/apps/rhino"
         );
+    }
+
+    #[test]
+    fn configured_repository_path_rejects_absolute_and_parent_components() {
+        for path in [
+            "/tmp/global.json",
+            "../global.json",
+            "tooling/../../global.json",
+        ] {
+            assert!(
+                validate_repo_relative_path(path).is_err(),
+                "unsafe configured path {path:?} must be rejected"
+            );
+        }
+        assert!(validate_repo_relative_path("tooling/sdk/global.json").is_ok());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn confined_repository_path_rejects_a_symlink_escape() {
+        use std::os::unix::fs::symlink;
+
+        let root = tempfile::tempdir().expect("create repository root");
+        let outside = tempfile::tempdir().expect("create outside directory");
+        symlink(outside.path(), root.path().join("tooling")).expect("create symlink escape");
+
+        let error = confined_repo_path(root.path(), "tooling/sdk/global.json")
+            .expect_err("symlinked configured path must fail");
+        assert!(format!("{error:#}").contains("escapes the repository root"));
     }
 }

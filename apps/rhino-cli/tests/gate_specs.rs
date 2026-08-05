@@ -1560,11 +1560,15 @@ fn given_tracked_parity_boundary(w: &mut GateWorld) {
 fn given_parity_manifest_generated(w: &mut GateWorld) {
     w.run_parity("generate");
     assert!(w.is_success(), "parity generation failed: {}", w.output);
+    w.stage(&["apps/rhino-cli/parity-manifest.sha256"]);
 }
 
 #[when("rhino-cli parity manifest generate runs")]
 fn when_parity_manifest_generate_runs(w: &mut GateWorld) {
     w.run_parity("generate");
+    if w.is_success() {
+        w.stage(&["apps/rhino-cli/parity-manifest.sha256"]);
+    }
 }
 
 #[when("rhino-cli parity manifest validate runs")]
