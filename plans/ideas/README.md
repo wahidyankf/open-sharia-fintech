@@ -24,6 +24,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [contributing-md-trunk-guidance-and-naming-exemption](./contributing-md-trunk-guidance-and-naming-exemption.md) — fix stale "work on main" guidance blocked by the filename-naming gate.
 - [demo-apps-standards-recheck](./demo-apps-standards-recheck.md) — re-verify the ose-primer demo apps still meet current repo standards.
 - [doc-command-existence-validation](./doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
+- [governance-path-ownership-registry](./governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
 - [harness-binding-catalog-drift](./harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
 - [iam-service-module](./iam-service-module.md) — a shared IAM (authn/authz) capability; early placeholder, mostly open questions.
 - [mermaid-validator-does-not-check-syntax](./mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
