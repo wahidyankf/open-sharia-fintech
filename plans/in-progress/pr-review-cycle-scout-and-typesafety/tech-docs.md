@@ -3,7 +3,7 @@
 ## Architecture Overview
 
 The PR Review Quality Gate pipeline moves from a 10-agent shape (8 discipline specialists +
-`pr-review-synthesis-maker` + `pr-review-fixer`) to an 11-agent shape (9 discipline specialists +
+`pr-review-synthesis-maker` + `pr-review-fixer`) to a 12-agent shape (9 discipline specialists +
 `pr-review-scout-maker` + `pr-review-synthesis-maker` + `pr-review-fixer`). The orchestrator (the
 workflow's own Step 1/2/3 loop, called from `plan-execution.md` Step 8 or invoked directly against a
 PR) gains one call per cycle — to scout — inserted before the specialist fan-out; every other

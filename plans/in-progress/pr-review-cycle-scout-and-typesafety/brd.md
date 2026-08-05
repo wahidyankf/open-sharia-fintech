@@ -83,7 +83,7 @@ own dedicated pipeline stage, so:
 - **`pr-review-fixer`** — unaffected in charter; simply sees findings that may now originate from a
   ninth discipline and carry a cycle-number-stamped header.
 - **Every future contributor reading `pr-review-disciplines.md` or `pr-review-quality-gate.md`** —
-  reads an updated nine-discipline table and an updated ten-agent (soon eleven-agent) pipeline
+  reads an updated nine-discipline table and an updated ten-agent (soon twelve-agent) pipeline
   diagram/algorithm.
 
 ## Business-Level Success Metrics
