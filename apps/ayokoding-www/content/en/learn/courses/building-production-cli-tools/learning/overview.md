@@ -19,4 +19,4 @@ Run Go examples with `go run main.go`. Run Rust examples with `rustc main.rs && 
 intentionally return a non-zero status say so in their surrounding text; inspect their output rather
 than treating that status as a failed lesson.
 
-← Previous: [Courses](/en/learn/courses) · Next: [Beginner Examples](./beginner)
+← Previous: [Courses](/en/learn/courses) · Next: [Beginner Examples](./beginner.md)
