@@ -16,7 +16,7 @@ use crate::internal::naming::{self, Violation};
 use crate::internal::naming::reporter::{format_json, format_markdown, format_text};
 
 /// Accepted type suffixes for workflow file names.
-const WORKFLOW_TYPES: &[&str] = &["quality-gate", "execution", "setup", "planning"];
+const WORKFLOW_TYPES: &[&str] = &["quality-gate", "execution", "setup", "planning", "grooming"];
 
 /// CLI arguments for `repo-governance workflows naming validate` (cross-domain moved from `workflows` domain in §2a-names) (none required).
 #[derive(Args, Debug)]
@@ -156,5 +156,19 @@ mod tests {
         std::fs::write(root.join("foo-bar.md"), "---\nname: foo-bar\n---\n").unwrap();
         let result = workflows_validate_naming(&tmp.path().to_string_lossy()).unwrap();
         assert!(result.iter().any(|v| v.kind == "type-suffix"));
+    }
+
+    #[test]
+    fn workflows_validate_naming_accepts_grooming_suffix() {
+        let tmp = TempDir::new().unwrap();
+        let root = tmp.path().join("repo-governance/workflows/plan");
+        std::fs::create_dir_all(&root).unwrap();
+        std::fs::write(
+            root.join("plan-ideas-grooming.md"),
+            "---\nname: plan-ideas-grooming\n---\n",
+        )
+        .unwrap();
+        let result = workflows_validate_naming(&tmp.path().to_string_lossy()).unwrap();
+        assert!(result.is_empty());
     }
 }

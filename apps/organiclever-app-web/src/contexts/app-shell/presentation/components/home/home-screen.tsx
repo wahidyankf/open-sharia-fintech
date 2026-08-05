@@ -295,7 +295,6 @@ export function HomeScreen({ runtime, onStartWorkout, onEditRoutine }: HomeScree
                 color: "var(--color-muted-foreground)",
               }}
             >
-              <div style={{ fontSize: 36, marginBottom: 8 }}>📋</div>
               <div style={{ fontSize: 14, fontWeight: 700 }}>No entries yet</div>
               <div style={{ fontSize: 13, marginTop: 4 }}>Tap + to log your first entry</div>
             </div>

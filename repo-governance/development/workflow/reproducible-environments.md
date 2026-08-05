@@ -680,6 +680,18 @@ verify();
 - Check for hardcoded paths (use relative paths)
 - Review .env.example is up-to-date
 
+**"`npm ls <package>` shows it resolved, but a consumer still reports it missing"**:
+
+- A workspace version conflict can leave npm nesting the package under one workspace's own
+  `node_modules/` instead of hoisting it to root. If the consumer that needs it (e.g. a
+  root-hoisted `vitest`) resolves bare specifiers by walking up from its own location, it never
+  reaches a sibling workspace's nested copy — `npm ls` still reports the dependency graph as
+  resolved because the package exists somewhere, just not where the consumer can see it.
+- Run `npm dedupe` to re-hoist without touching any declared version — do not reach for
+  `npm install <package>@<version> -w <workspace>` as the fix; it silently converts an exact pin to
+  a caret range, violating this repo's [Dependency Bump Stability & Safety Policy](./dependency-bump-policy.md)
+  "exact pins only" rule.
+
 ## Migration Guide
 
 ### Adding Volta to Existing Project

@@ -210,6 +210,11 @@ mod tests {
     }
 
     #[test]
+    fn validate_suffix_accepts_grooming_type() {
+        assert!(validate_suffix("plan-ideas-grooming.md", &["grooming"], "type-suffix").is_none());
+    }
+
+    #[test]
     fn extract_frontmatter_returns_name() {
         let content = b"---\nname: foo-bar\ndescription: D\n---\n# Body";
         assert_eq!(extract_frontmatter_name(content), "foo-bar");

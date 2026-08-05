@@ -35,14 +35,14 @@ function buildStatFields(entry: JournalEntry): StatField[] {
   }
   if (name === "learning") {
     if (typeof p["source"] === "string") fields.push(["Source", p["source"]]);
-    if (typeof p["rating"] === "number") fields.push(["Quality", "⭐".repeat(p["rating"] as number)]);
+    if (typeof p["rating"] === "number") fields.push(["Quality", `${p["rating"]}/5`]);
   }
   if (name === "meal") {
     if (typeof p["mealType"] === "string") fields.push(["Meal type", p["mealType"]]);
-    if (typeof p["energyLevel"] === "number") fields.push(["Energy after", "⚡".repeat(p["energyLevel"] as number)]);
+    if (typeof p["energyLevel"] === "number") fields.push(["Energy after", `${p["energyLevel"]}/5`]);
   }
   if (name === "focus") {
-    if (typeof p["quality"] === "number") fields.push(["Focus quality", "🧠".repeat(p["quality"] as number)]);
+    if (typeof p["quality"] === "number") fields.push(["Focus quality", `${p["quality"]}/5`]);
   }
   if (name === "workout") {
     const exercises = Array.isArray(p["exercises"]) ? (p["exercises"] as Array<Record<string, unknown>>) : [];

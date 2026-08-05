@@ -17,12 +17,12 @@ export interface FocusLoggerProps {
 
 const DURATION_PRESETS = [25, 45, 60, 90] as const;
 
-const QUALITY_OPTIONS: Array<{ emoji: string; value: number }> = [
-  { emoji: "😵", value: 1 },
-  { emoji: "😐", value: 2 },
-  { emoji: "🙂", value: 3 },
-  { emoji: "😊", value: 4 },
-  { emoji: "🧠", value: 5 },
+const QUALITY_OPTIONS: Array<{ label: string; value: number }> = [
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
 ];
 
 /**
@@ -139,7 +139,7 @@ export function FocusLogger({ isOpen, onClose, onSaved, runtime }: FocusLoggerPr
           Focus quality
         </div>
         <div className="flex gap-2">
-          {QUALITY_OPTIONS.map(({ emoji, value }) => (
+          {QUALITY_OPTIONS.map(({ label, value }) => (
             <button
               key={value}
               type="button"
@@ -154,7 +154,7 @@ export function FocusLogger({ isOpen, onClose, onSaved, runtime }: FocusLoggerPr
                 fontSize: 20,
               }}
             >
-              {emoji}
+              {label}
             </button>
           ))}
         </div>

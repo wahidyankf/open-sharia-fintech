@@ -193,7 +193,7 @@ export function ExerciseProgressCard({ name, progress }: ExerciseProgressCardPro
                         fill="var(--hue-teal-ink)"
                         fontWeight="bold"
                       >
-                        ★
+                        PR
                       </text>
                     )}
                   </g>

@@ -12,6 +12,17 @@ enforces it continuously — identity is only checked when someone runs a manual
 found **4 drifted files** entirely by accident while researching something unrelated; the drift had
 been sitting there silently since it was introduced.
 
+**Update 2026-08-05 (plan-ideas-grooming-workflow)**: the drift is worse than file-count-4 suggested.
+Propagating a single naming-type token (`grooming`) required an independent, differently-shaped
+`WORKFLOW_TYPES` fix in **every** repo's own `rhino-cli` fork, including `beaver-nest` — four
+separate RED/GREEN cycles for what byte-identity implies should be one shared change. A `diff -rq`
+between `ose-public`'s and `ose-primer`'s `apps/rhino-cli/src` trees showed dozens of files differ
+and several exist only on one side — not a handful of drifted files but substantial, structural
+divergence. This raises the open question below from "where does the gate run" to "is
+reconciliation to true byte-identity still realistic, or should the claim itself be corrected to
+describe independently-maintained forks with shared design intent instead." See
+`plans/done/2026-08-05__plan-ideas-grooming-workflow/learnings.md` for the four-occurrence detail.
+
 ## Why now
 
 Drift has already happened once and went undetected until a coincidental manual audit. Every rhino-cli
@@ -48,6 +59,11 @@ should join the boundary (a separate open idea); any change to the boundary's ow
 - Cadence: per-PR (catches drift at introduction, but needs cross-repo checkout on every PR) vs.
   nightly (cheaper, but drift lives up to a day)? (open)
 - Auth model for a public-repo CI job reading the private `ose-private`. (open)
+- Given the 2026-08-05 finding of dozens of pre-existing drifted files (not a handful), is
+  reconciling to true byte-identity still the right target, or should the AGENTS.md claim itself be
+  corrected to describe independently-maintained forks instead of demanding a drift-detection gate
+  over a boundary that has already substantially diverged? (open — may reshape this idea's proposed
+  direction from "detect drift" to "measure drift size, then decide reconcile vs. correct-the-claim")
 
 ## What success looks like + promotion signal
 

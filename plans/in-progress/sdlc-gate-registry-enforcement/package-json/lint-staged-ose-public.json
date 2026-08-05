@@ -5,7 +5,7 @@
   "*.md": [
     "prettier --write",
     "markdownlint-cli2",
-    "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude \"apps/ayokoding-www/content\"",
+    "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude \"apps/rhino-cli/tests/fixtures\" --exclude \"plans/done\" --exclude \"apps/ayokoding-www/content\"",
     "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
     "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate --exempt \"*__linkedin__*.md\"",
     "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
@@ -36,5 +36,7 @@
   "*.feature": [
     "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
   ],
-  "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"]
+  "docker-compose*.{yml,yaml}": [
+    "bash -c 'set -e; for f; do base=${f%.ci.yml}.yml; if [ \"$base\" != \"$f\" ] && [ -f \"$base\" ]; then docker compose -f \"$base\" -f \"$f\" config > /dev/null; else docker compose -f \"$f\" config > /dev/null; fi; done' --"
+  ]
 }
