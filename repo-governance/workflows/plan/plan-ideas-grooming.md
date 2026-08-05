@@ -77,6 +77,20 @@ with every rename's inbound/outbound links rewritten by the same mechanism reloc
   not use it to promote a single ripe idea into a full plan (that is
   [`plan-idea-promotion-planning`](./plan-idea-promotion-planning.md)).
 
+## Scope Boundary (Hard)
+
+This workflow's write scope is strictly `plans/ideas/**` in each processed repo — the idea files
+themselves, their quadrant subfolders, and the `## Grooming Log` / `> Last groomed:` lines it
+appends to that folder's own `README.md`. It **never** creates, moves, renames into, or otherwise
+writes any file under `plans/backlog/` or `plans/in-progress/` in any repo, in any of its ten
+steps, under any `delivery-mode`. Promoting a groomed, ripe idea into a full backlog plan is a
+categorically separate action, performed only by
+[`plan-idea-promotion-planning`](./plan-idea-promotion-planning.md), invoked explicitly and
+separately by a maintainer or another workflow — `plan-ideas-grooming` never invokes it and never
+performs a promotion itself, even when a surviving idea looks obviously ready. If a step's output
+would require writing outside `plans/ideas/**`, that output is out of scope for this workflow:
+stop and log it as a follow-up recommendation in the grooming log instead of writing it.
+
 ## Execution Mode
 
 **Direct Orchestration** — the calling context (the top-level assistant session that received the
