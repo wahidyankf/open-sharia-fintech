@@ -3148,6 +3148,16 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: The first Phase 2 commit attempt correctly stopped on `MD038` at `delivery.md:2800`; the direct Markdown rerun also identified five missing blank lines around fenced examples. Replaced the malformed inline-code phrase and added the required fence spacing. The full staged Markdown set now passes with 0 errors before the commit retry.
+- [x] [AI] **P2-REBASE-UPSTREAM-RECONCILIATION** (`blockedBy: Phase 2 commit`; `blocks: P2-PUSH`) — inspect the `origin/main` delta absorbed by the Phase 2 rebase, reconcile any overlap with the registry implementation, and amend this delivery record if its dependencies, acceptance criteria, or scope changed — acceptance: relevant upstream paths are inspected, the rebased implementation is validated, and the conclusion is recorded here.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Rebasing `789fbd8` onto `origin/main` `53816c2` applied cleanly as `f4243c7`. The absorbed graph contains 17 commits; its relevant paths were inspected, including the restored `BTreeMap` import in Rhino configuration and build-sweeper documentation. No change overlapped the gate registry, hook dispatchers, PR workflow contract, or Phase 2 acceptance criteria. `gate validate` and the exact affected Nx readiness suite had already passed on the reconciled tree, so no scope or dependency amendment was required beyond this audit record.
+- [x] [AI] **P2-PARITY-MANIFEST-REGENERATION** (`blockedBy: P2-REBASE-UPSTREAM-RECONCILIATION`; `blocks: P2-PUSH`) — regenerate the byte-identity manifest after the Phase 2 `Cargo.toml` feature change is rejected by the mandatory pre-push gate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate` — acceptance: `parity manifest validate` exits 0 and the regenerated manifest is committed with the Phase 2 branch.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: The first normal push correctly stopped at `parity-manifest`: `Cargo.toml` no longer matched the committed checksum. Regenerated the manifest using the prescribed command; it is a generated declaration of the cross-repository byte-identity boundary, not a gate surface change.
 - [x] [AI] Commit Phase 2 — command: `git add -- .husky .github .claude .opencode .cursor .amazonq package.json repo-config.yml AGENTS.md scripts/format-elixir.sh docs repo-governance && git diff --cached --name-only -- scripts/format-elixir.sh | grep -qx 'scripts/format-elixir.sh' && git commit -m 'feat(ci): derive quality surfaces from gate registry'` — acceptance: commitlint and `npm run validate:sync` exit 0; the formatter wrapper and any generated binding source/mirror paths are staged in this same commit.
   - Date: 2026-08-05
   - Status: complete
