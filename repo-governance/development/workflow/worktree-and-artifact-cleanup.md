@@ -85,7 +85,10 @@ These bound every action the gate takes.
   [`rust-cargo-target-dir-sharing`](../../../plans/done/2026-07-19__rust-cargo-target-dir-sharing/)
   plan — is depended on by concurrent builds in every other worktree. Removing it breaks them. The
   same reasoning applies to any shared cache: if another session can be relying on it, it is out of
-  scope for a plan-scoped cleanup.
+  scope for a plan-scoped cleanup. This binds **agents**, and it is not contradicted by the ambient
+  sweeper described in the [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md),
+  which may remove the same shared cache on its own schedule. A cache you must not delete can still
+  disappear; that is the environment, not a rule violation by another actor.
 - **Cleanup is itself non-destructive to others.** The gate may not use any operation that a
   concurrent actor could be harmed by. It removes; it never force-removes, rewrites, or prunes shared
   state.
@@ -184,7 +187,9 @@ Purge only the build output produced **inside this plan's own worktrees** — `t
 `.next/`, and build caches — after verifying non-use.
 
 Explicitly **skip** the shared cargo `target/` and every other shared cache, and run **no** `git gc`
-or `git prune` on the object store. History maintenance is a serialization point on a shared machine
+or `git prune` on the object store. If build output is already gone when this gate runs, that is the
+ambient sweeper, not a missed step — record it as swept and move on rather than rebuilding output
+solely to delete it. History maintenance is a serialization point on a shared machine
 and stays out of the cleanup gate entirely.
 
 ## Related Documentation
@@ -206,6 +211,10 @@ and stays out of the cleanup gate entirely.
 - [Git Push Safety Convention](./git-push-safety.md) — the remote-side companion. Note the boundary
   set out in the Jurisdiction note above: remote **branch deletion** is gated here by the merged-check,
   not there by the force-push approval gate.
+- [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md) — the environment-side
+  counterpart. This gate governs what a **plan** deletes; that convention governs what the **host
+  machine** deletes on its own schedule, including the shared cargo `target/` this gate must leave
+  alone. Read together they answer "who removed this?" without either rule loosening.
 - [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) — the DAG model
   in which cleanup is the **terminal node**, depending on every delivery node so it cannot remove an
   artifact that in-flight work still needs.

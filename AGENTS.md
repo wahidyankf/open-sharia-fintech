@@ -13,9 +13,7 @@
 
 ### Tech Stack
 
-- **Node.js**: 24.13.1 (LTS, managed by Volta)
-- **npm**: 11.10.1
-- **Monorepo**: Nx workspace
+- **Node.js**: 24.13.1 (LTS, managed by Volta) · **npm**: 11.10.1 · **Monorepo**: Nx workspace
 - **App naming tiers**: `[domain]-www` = public website at the domain root; `[domain]-app-web` = product
   web client at `app.*`; `[domain]-be` = generic HTTP backend for a product domain.
 - **Current Apps**: Next.js sites, F# backends, Rust and F# CLIs, a contract spec, and paired E2E
@@ -32,7 +30,7 @@ tutorials/how-to/reference/explanation), `repo-governance/`
 (conventions/development/principles/workflows/vision), `plans/` (backlog/in-progress/done), `.claude/`
 (primary binding: agents + skills), `.opencode/` (auto-synced from `.claude/`).
 
-**See**: [docs/reference/monorepo-structure.md](./docs/reference/monorepo-structure.md)
+**See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md)
 
 ## Build, Test, Lint Commands
 
@@ -52,7 +50,7 @@ npm run lint:md:fix                   # Fix markdown violations
 **Worktree setup**: After `git worktree add`, run `npm install` AND `npm run doctor -- --fix`. See
 [Worktree Toolchain Initialization](./repo-governance/development/workflow/worktree-setup.md).
 
-**See**: [repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md)
+**See**: [nx-targets.md](./repo-governance/development/infra/nx-targets.md)
 for canonical target names, coverage thresholds, caching rules, and the three-level testing standard.
 
 ## Markdown Quality
@@ -62,8 +60,8 @@ All markdown auto-linted via Prettier (pre-commit), markdownlint-cli2 (pre-push)
 into pre-commit/pre-push hooks and CI as raw `cargo run` invocations — not Nx targets). Quick fix:
 `npm run lint:md:fix`.
 
-**See**: [repo-governance/development/quality/markdown.md](./repo-governance/development/quality/markdown.md),
-[repo-governance/development/quality/repository-validation.md](./repo-governance/development/quality/repository-validation.md)
+**See**: [markdown.md](./repo-governance/development/quality/markdown.md),
+[repository-validation.md](./repo-governance/development/quality/repository-validation.md)
 
 ## Cross-Language Lint Gates
 
@@ -76,7 +74,7 @@ All installed by `npm run doctor -- --fix`.
 thresholds on auto-loaded instruction files; sole remediation is progressive disclosure.
 See [Instruction-File Size Budget Convention](./repo-governance/conventions/structure/instruction-file-size-budget.md).
 
-**See**: [repo-governance/development/quality/cross-language-lint-strictness.md](./repo-governance/development/quality/cross-language-lint-strictness.md)
+**See**: [cross-language-lint-strictness.md](./repo-governance/development/quality/cross-language-lint-strictness.md)
 
 ## Monorepo Architecture
 
@@ -84,9 +82,9 @@ See [Instruction-File Size Budget Convention](./repo-governance/conventions/stru
 `libs/` — flat, naming `ts-[name]`/`rust-[name]`/`fsharp-[name]`, import via
 `@open-sharia-enterprise/ts-[lib-name]`, no circular deps.
 
-**See**: [docs/reference/monorepo-structure.md](./docs/reference/monorepo-structure.md),
-[docs/how-to/add-new-app.md](./docs/how-to/add-new-app.md),
-[repo-governance/development/infra/nx-targets.md](./repo-governance/development/infra/nx-targets.md)
+**See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md),
+[add-new-app.md](./docs/how-to/add-new-app.md),
+[nx-targets.md](./repo-governance/development/infra/nx-targets.md)
 
 ## Git Workflow
 
@@ -96,14 +94,14 @@ lib/backend targets (`prod-web-ui`, `stag-ose-be`) absent from the Web Sites tab
 **Commit format**: Conventional Commits `<type>(<scope>): <description>` — imperative mood, no
 period. Split by domain/concern.
 
-**See**: [repo-governance/development/workflow/commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
+**See**: [commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
 
 ### Worktree Path
 
 Worktrees land at **`worktrees/<name>/`** in the repo root (gitignored). Routing handled by a
 repo-local `WorktreeCreate` hook.
 
-**See**: [repo-governance/conventions/structure/worktree-path.md](./repo-governance/conventions/structure/worktree-path.md)
+**See**: [worktree-path.md](./repo-governance/conventions/structure/worktree-path.md)
 
 ### Delivery Mode
 
@@ -114,13 +112,13 @@ or primary checkout) and integration target (draft PR or direct push). `*-to-pr`
 `[HUMAN]` merge gate applies only where a plan's own step says so explicitly, with identical
 preconditions — only the actor differs.
 
-**The PR is the independent merge point** — N parallel units become N PRs reviewed, gated, and
-merged independently, which is why `worktree-to-pr` is the default; each change-producing DAG leaf
-gets its own worktree and PR (strict 1-PR ↔ 1-worktree), dependent nodes staying one PR.
-A PR merges only when **all five hardened preconditions** (a)-(e) hold — see the PR Merge Protocol.
-**PRs open at delivery boundaries, not every phase** — a PR covers a **delivery unit**, the
+**The PR is the independent merge point** — N parallel units become N PRs reviewed, gated, and merged
+independently, which is why `worktree-to-pr` is the default; each change-producing DAG leaf gets its
+own worktree and PR (strict 1-PR ↔ 1-worktree), dependent nodes staying one PR. A PR merges only when
+**all five hardened preconditions** (a)-(e) hold — see the PR Merge Protocol.
+**PRs open at delivery boundaries, not every phase** — a PR covers a **delivery unit**: the
 contiguous phases ending where work becomes independently shippable, so a plan opens one once at the
-end or several times through; folding independent nodes together to cut PR count stays forbidden.
+end or several times through. Folding independent nodes together to cut PR count stays forbidden.
 **Phase 0 opens none under any mode** — the earliest PR is Phase 1, and Phase 0's evidence rides it.
 
 **See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
@@ -136,7 +134,7 @@ shell/Dockerfiles/workflows, auto-sync platform bindings, auto-stage. Commit-msg
 Pre-push: `typecheck`, `lint`, `test:quick`, `specs:coverage` for affected projects (parallelism:
 cores-1); markdown linting. All four Nx targets cacheable — warm cache before push if timeout occurs.
 
-**See**: [repo-governance/development/quality/code.md](./repo-governance/development/quality/code.md)
+**See**: [code.md](./repo-governance/development/quality/code.md)
 
 ## Documentation Organization
 
@@ -144,8 +142,8 @@ cores-1); markdown linting. All four Nx targets cacheable — warm cache before 
 `docs/reference/` (specs), `docs/explanation/` (concepts). File naming: lowercase kebab-case;
 exception: `README.md`.
 
-**See**: [repo-governance/conventions/structure/file-naming.md](./repo-governance/conventions/structure/file-naming.md),
-[repo-governance/conventions/structure/diataxis-framework.md](./repo-governance/conventions/structure/diataxis-framework.md)
+**See**: [file-naming.md](./repo-governance/conventions/structure/file-naming.md),
+[diataxis-framework.md](./repo-governance/conventions/structure/diataxis-framework.md)
 
 ## Conventions
 
@@ -162,45 +160,45 @@ Core principles (see [Principles Index](./repo-governance/principles/README.md) 
 
 Lowercase kebab-case (`[a-z0-9-]+`). Exception: `README.md`, `docs/metadata/` files.
 
-**See**: [repo-governance/conventions/structure/file-naming.md](./repo-governance/conventions/structure/file-naming.md)
+**See**: [file-naming.md](./repo-governance/conventions/structure/file-naming.md)
 
 ### Linking
 
 GitHub-compatible markdown with `.md` extension.
 
-**See**: [repo-governance/conventions/formatting/linking.md](./repo-governance/conventions/formatting/linking.md)
+**See**: [linking.md](./repo-governance/conventions/formatting/linking.md)
 
 ### Indentation
 
 Markdown nested bullets: 2 spaces. YAML frontmatter: 2 spaces. Code: language-specific.
 
-**See**: [repo-governance/conventions/formatting/indentation.md](./repo-governance/conventions/formatting/indentation.md)
+**See**: [indentation.md](./repo-governance/conventions/formatting/indentation.md)
 
 ### Emoji Usage
 
 Allowed: `docs/`, README, `plans/`, `repo-governance/`, `AGENTS.md`, `CLAUDE.md`, agent definition
 files, Agent Skill files. Forbidden: config files (`*.json`, `*.yaml`, `*.toml`), source code.
 
-**See**: [repo-governance/conventions/formatting/emoji.md](./repo-governance/conventions/formatting/emoji.md)
+**See**: [emoji.md](./repo-governance/conventions/formatting/emoji.md)
 
 ### Diagrams
 
 Mermaid diagrams with color-blind friendly palette, proper accessibility.
 
-**See**: [repo-governance/conventions/formatting/diagrams.md](./repo-governance/conventions/formatting/diagrams.md)
+**See**: [diagrams.md](./repo-governance/conventions/formatting/diagrams.md)
 
 ### Content Quality
 
 Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast.
 
-**See**: [repo-governance/conventions/writing/quality.md](./repo-governance/conventions/writing/quality.md)
+**See**: [quality.md](./repo-governance/conventions/writing/quality.md)
 
 ### Dynamic Collection References
 
 Never hardcode counts of dynamic collections (agents, skills, conventions, practices, principles,
 workflows) in docs. Reference collection by name and link.
 
-**See**: [repo-governance/conventions/writing/dynamic-collection-references.md](./repo-governance/conventions/writing/dynamic-collection-references.md)
+**See**: [dynamic-collection-references.md](./repo-governance/conventions/writing/dynamic-collection-references.md)
 
 ## Development Practices
 
@@ -208,13 +206,13 @@ workflows) in docs. Reference collection by name and link.
 
 Prefer immutability, pure functions, functional core/imperative shell.
 
-**See**: [repo-governance/development/pattern/functional-programming.md](./repo-governance/development/pattern/functional-programming.md)
+**See**: [functional-programming.md](./repo-governance/development/pattern/functional-programming.md)
 
 ### Implementation Workflow
 
 Make it work → Make it right → Make it fast.
 
-**See**: [repo-governance/development/workflow/implementation.md](./repo-governance/development/workflow/implementation.md)
+**See**: [implementation.md](./repo-governance/development/workflow/implementation.md)
 
 ### Test-Driven Development
 
@@ -222,7 +220,7 @@ Red → Green → Refactor. Required for all code changes. Every code delivery s
 three-substep template (RED/GREEN/REFACTOR), each naming a file path, verbatim command, and acceptance
 criterion.
 
-**See**: [repo-governance/development/workflow/test-driven-development.md](./repo-governance/development/workflow/test-driven-development.md)
+**See**: [test-driven-development.md](./repo-governance/development/workflow/test-driven-development.md)
 
 ### Specs & Gherkin Completeness (Both Paths)
 
@@ -231,14 +229,14 @@ Code under `apps/`/`libs/` never lands without companion `specs/` Gherkin — **
 Gherkin steps; `plan-maker` emits them, `plan-checker` flags absence). Pure refactors and docs-only
 changes are exempt.
 
-**See**: [repo-governance/development/quality/feature-change-completeness.md](./repo-governance/development/quality/feature-change-completeness.md)
+**See**: [feature-change-completeness.md](./repo-governance/development/quality/feature-change-completeness.md)
 
 ### Regression Test Mandate (Every Bug Fix)
 
 Every bug fix lands with a reproducing test (failing before fix, passing after) in the same commit/PR —
 blocking, no exemptions. Enforced by `swe-code-checker` (Step 6.7) and `plan-checker` (Step 16b).
 
-**See**: [repo-governance/development/quality/regression-test-mandate.md](./repo-governance/development/quality/regression-test-mandate.md)
+**See**: [regression-test-mandate.md](./repo-governance/development/quality/regression-test-mandate.md)
 
 ### Knowledge Capture
 
@@ -258,7 +256,7 @@ identity at **any** scope — `git config user.*` bare/`--local`/`--global`/`--s
 `.git/config [user]` edits. Identity comes from the developer's `~/.gitconfig` (`includeIf` for
 per-tree overrides). CI service-account identity in workflow YAML is exempt.
 
-**See**: [repo-governance/development/workflow/reproducible-environments.md](./repo-governance/development/workflow/reproducible-environments.md),
+**See**: [reproducible-environments.md](./repo-governance/development/workflow/reproducible-environments.md),
 [Secrets and Env Standards](./repo-governance/conventions/security/secrets-and-env-standards.md)
 
 ### Dependency Bump Stability & Safety Policy
@@ -267,35 +265,33 @@ Three-path tree: A (LTS latest patch), B (60-day soak + CVE-clean), C (security-
 Exact pins only, CVE-clean across NVD, GitHub Advisories, Snyk, vendor pages, CISA KEV. CISA-KEV
 fast-track and EPSS ≥ 0.5 escalate to Path C.
 
-**See**: [repo-governance/development/workflow/dependency-bump-policy.md](./repo-governance/development/workflow/dependency-bump-policy.md)
+**See**: [dependency-bump-policy.md](./repo-governance/development/workflow/dependency-bump-policy.md)
 
 ### Agent Workflow Orchestration
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions). **Parallel-by-default**: the
 **N+1 model** — `1 main thread + N background agents`, **default N=3** — bounds fan-out; raise/lower N
-per-plan by capacity and budget headroom, never self-promote beyond it. Poll subagent mtime every 3
-min; stale 30 min triggers `TaskStop` and relaunch.
-**Same-machine assumption**: other agents/engineers/processes run concurrently on the same shared
-disk, git object store, worktrees, and CI runners, so every orchestration and git action must be
+per-plan by capacity and budget, never self-promote beyond it. Poll subagent mtime every 3 min; stale
+30 min triggers `TaskStop` and relaunch.
+**Same-machine assumption**: other agents, engineers, and processes run concurrently on the same
+disk, git object store, worktrees, and CI runners — every orchestration and git action must be
 concurrency-safe.
-**File-touch ledger**: these repos are edited constantly by agents and humans — in worktrees, on
-branches, and on local `main` — so keep a deliberate, append-only record of every file you touch,
-**reproduce it in full through every compaction, summary, and handoff**, and reconcile it against
-`git status` before staging. `git status` is the union of everyone's work, never a report of yours.
-Anything not on your ledger is another actor's in-flight work: leave it untouched, and without a
-ledger assume **nothing** is yours.
+**File-touch ledger**: keep an append-only record of every file you touch, **reproduce it in full
+through every compaction, summary, and handoff**, and reconcile it against `git status` before
+staging. `git status` is the union of everyone's work, never a report of yours; anything not on your
+ledger is another actor's in-flight work — leave it untouched, and without a ledger assume
+**nothing** is yours.
 **Harness sync is generated, not hand-written**: `.claude/` is the only hand-authored surface;
-`.opencode/`, `.cursor/`, and `.amazonq/` are emitted by `rhino-cli harness bindings generate`
-(`npm run generate:bindings`, also run and auto-staged by pre-commit). Those mirrors are files you
-touched — they go on your ledger and into the **same commit** as their source, never a follow-up
-sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror.
+`.opencode/`, `.cursor/`, and `.amazonq/` are emitted by `npm run generate:bindings` (also run and
+auto-staged by pre-commit). Mirrors go on your ledger and into the **same commit** as their source,
+never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror.
 **DAG-first**: every task list/delivery checklist declares a dependency DAG (`blocks`/`blockedBy`);
 independent nodes fan out up to N, dependent nodes serialize, cleanup is the terminal node.
 **Background-slot preference**: fill background slots up to N, keeping the main thread the vacant
 orchestrator, never splitting dependent work to fill a slot. Report every 5 min generic, 3 min CI;
 maintain a live task list, marking in-progress/completed and adding discovered tasks immediately.
 
-**See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md),
+**See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md),
 [Subagent Orchestration Convention](./repo-governance/development/agents/subagent-orchestration.md),
 [Parallel-by-Default Practice](./repo-governance/development/practice/parallel-by-default.md),
 [Task List Discipline](./repo-governance/development/practice/task-list-discipline.md),
@@ -305,11 +301,12 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 
 ### Manual Verification & CI Blockers
 
-- **Verify behavior**: Prefer available Chrome DevTools/Playwright MCP or equivalent for UI; curl for API.
+- **Verify behavior**: browser MCP (Chrome DevTools/Playwright) or equivalent for UI; curl for API.
   See [manual-behavioral-verification.md](./repo-governance/development/quality/manual-behavioral-verification.md)
 - **User-facing delivery hardening**: Sixteen rules; near-end EWT/UWT/DWT retest for UI plans, AET
   for API plans. See [user-facing-delivery-hardening.md](./repo-governance/development/quality/user-facing-delivery-hardening.md)
-- **CI blockers**: Investigate root cause, fix properly, never bypass.
+- **CI blockers**: Investigate root cause, fix properly, never bypass. A missing swept build artifact
+  is the exception — regenerate and continue.
   See [ci-blocker-resolution.md](./repo-governance/development/quality/ci-blocker-resolution.md)
 - **CI post-push verification**: After pushing app or lib code, trigger CI and verify it passes.
   See [ci-post-push-verification.md](./repo-governance/development/workflow/ci-post-push-verification.md)
@@ -343,16 +340,16 @@ role. Do not maintain a second roster here. Names follow `<domain>-<role>`:
   and api-exploratory-tester. All non-destructive; output modes `plan` (default), `delivery`
   (rule-15 retest), `local-temp`.
 
-**Web Research Default**: `web-researcher` is the default primitive for public-web information gathering.
+**Web Research Default**: `web-researcher` is the default primitive for public-web research.
 See [Web Research Delegation Convention](./repo-governance/conventions/writing/web-research-delegation.md).
 
-**agent skills infrastructure**: Two modes — **Inline** (default: inject into current conversation) and
-**Fork** (`context: fork`: delegated isolated context, return summarized results). Agent definition files
-at `.claude/agents/<name>.md`; skill files at `.claude/skills/<name>/SKILL.md`. Agent skills serve agents
-(service relationship, not governance).
+**agent skills infrastructure**: two modes — **Inline** (default: inject into the current
+conversation) and **Fork** (`context: fork`: isolated context, returns summarized results). Agents at
+`.claude/agents/<name>.md`, skills at `.claude/skills/<name>/SKILL.md`. Skills serve agents (service
+relationship, not governance).
 
-**See**: [repo-governance/development/agents/ai-agents.md](./repo-governance/development/agents/ai-agents.md),
-[repo-governance/development/pattern/maker-checker-fixer.md](./repo-governance/development/pattern/maker-checker-fixer.md),
+**See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md),
+[maker-checker-fixer.md](./repo-governance/development/pattern/maker-checker-fixer.md),
 [Agent Naming Convention](./repo-governance/conventions/structure/agent-naming.md),
 [Workflow Naming Convention](./repo-governance/conventions/structure/workflow-naming.md)
 
@@ -364,7 +361,7 @@ rules), Layer 3 (Development — HOW we develop), Layer 4 (AI Agents — WHO enf
 (Workflows — WHEN we compose agents/procedures). **agent skills**: delivery infrastructure (inline + fork
 modes) serving agents — not a governance layer.
 
-**See**: [repo-governance/repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md)
+**See**: [repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md)
 
 ## Web Sites
 
@@ -388,14 +385,23 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
   `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. Checkers MUST write progressive reports.
 - **`local-temp/`**: Misc temporary files.
 
-**See**: [repo-governance/development/infra/temporary-files.md](./repo-governance/development/infra/temporary-files.md)
+**Ambient build-artifact sweeper**: a scheduled sweeper on the host machine deletes gitignored
+build output (`target/`, `dist/`, `.next/`), tool caches (`.nx/cache`), and the shared cargo
+`target/` at any time — mid-session and mid-plan. A missing artifact is **expected**: regenerate
+(`nx build`, `npm install`, `npm run doctor -- --fix`) and continue. Never file a finding, commit
+build output, edit `.gitignore` to protect it, or blame a concurrent agent. It never touches tracked
+files, `.env*`, `generated-reports/`, `local-temp/`, worktrees, or git refs — anything else missing
+is not the sweeper.
+
+**See**: [temporary-files.md](./repo-governance/development/infra/temporary-files.md),
+[build-artifact-sweeper.md](./repo-governance/development/infra/build-artifact-sweeper.md)
 
 ## Plans
 
 `plans/` folder: `ideas/` (two-pager briefs), `backlog/` (future; `[id]/`),
 `in-progress/` (active; `[id]/`), `done/` (completed; `YYYY-MM-DD__[id]/`).
 
-**See**: [repo-governance/conventions/structure/plans.md](./repo-governance/conventions/structure/plans.md)
+**See**: [plans.md](./repo-governance/conventions/structure/plans.md)
 
 ## Important Notes
 
@@ -409,12 +415,12 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 
 ## Related Documentation
 
-- **Conventions Index**: [repo-governance/conventions/README.md](./repo-governance/conventions/README.md) — Documentation writing and org standards
-- **Development Index**: [repo-governance/development/README.md](./repo-governance/development/README.md) — Software dev practices and workflows
-- **Principles Index**: [repo-governance/principles/README.md](./repo-governance/principles/README.md) — Foundational values governing all layers
-- **Primary Binding Agents Index**: [agent catalog](./.claude/agents/README.md) — Specialized agents organized by role
-- **Workflows Index**: [repo-governance/workflows/README.md](./repo-governance/workflows/README.md) — Orchestrated processes
-- **Repository Architecture**: [repo-governance/repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md) — Six-layer governance hierarchy
+- [Conventions Index](./repo-governance/conventions/README.md) — writing and org standards
+- [Development Index](./repo-governance/development/README.md) — dev practices and workflows
+- [Principles Index](./repo-governance/principles/README.md) — foundational values
+- [Agent catalog](./.claude/agents/README.md) — agents by role (primary binding)
+- [Workflows Index](./repo-governance/workflows/README.md) — orchestrated processes
+- [Repository Architecture](./repo-governance/repository-governance-architecture.md) — six-layer hierarchy
 
 ## Related Repositories
 
@@ -438,18 +444,16 @@ Model selection by capability tier: **Planning-grade** (complex multi-step plann
 **Execution-grade** (standard coding and review), **Fast** (simple/low-latency). Concrete vendor model
 IDs in each platform binding's agent definition files.
 
-See [repo-governance/development/agents/model-selection.md](./repo-governance/development/agents/model-selection.md).
+See [model-selection.md](./repo-governance/development/agents/model-selection.md).
 
 ## General Guidelines for Working with Nx
 
-- For navigating/exploring the workspace, invoke the `nx-workspace` skill first — it has patterns for
+- Invoke the `nx-workspace` skill first when navigating the workspace — it carries the patterns for
   querying projects, targets, and dependencies
-- When running tasks (build, lint, test, e2e, etc.), prefer running through `nx` (`nx run`,
-  `nx run-many`, `nx affected`) instead of underlying tooling directly
-- Prefix nx commands with the workspace package manager (e.g., `pnpm nx build`, `npm exec nx test`)
-- You have access to the Nx MCP server and its tools; use them
-- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this
-  file — proceed without it if unavailable.
+- Run tasks through `nx` (`nx run`, `nx run-many`, `nx affected`), not the underlying tooling, and
+  prefix with the workspace package manager (e.g. `npm exec nx test`)
+- Use the Nx MCP server and its tools. For plugin best practices check
+  `node_modules/@nx/<plugin>/PLUGIN.md` — not all plugins ship one; proceed without it
 - NEVER guess CLI flags — check nx_docs or `--help` first when unsure
 
 ## Scaffolding & Generators
@@ -460,17 +464,15 @@ skill FIRST before exploring or calling MCP tools.
 ## When to use nx_docs
 
 - USE for: advanced config options, unfamiliar flags, migration guides, plugin config, edge cases
-- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already
-  know
-- The `nx-generate` skill handles generator discovery internally — don't call nx_docs just to look up
-  generator syntax
+- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, or things you know.
+  The `nx-generate` skill handles generator discovery internally
 
 ## Platform Binding Examples
 
-The content under this heading is intentionally vendor-specific. Per the
+Content under this heading is intentionally vendor-specific. Per the
 [Governance Vendor-Independence Convention](./repo-governance/conventions/structure/governance-vendor-independence.md),
-the vendor-audit scanner skips every line under a "Platform Binding Examples"
-heading until the next same-level heading or end of file.
+the vendor-audit scanner skips every line under a "Platform Binding Examples" heading until the next
+same-level heading or end of file.
 
 ### Platform Bindings Catalog
 
@@ -489,10 +491,10 @@ The exceptions:
 
 Every generated directory above is emitted by `rhino-cli harness bindings generate` — never hand-edited.
 
-See [docs/reference/platform-bindings.md](./docs/reference/platform-bindings.md) for the full catalog
+See [platform-bindings.md](./docs/reference/platform-bindings.md) for the full catalog
 of binding directories, root instruction files, and mechanical translation artifacts. The two-tier
 binding model and no-shadowing rule are defined in
-[repo-governance/conventions/structure/multi-harness-binding.md](./repo-governance/conventions/structure/multi-harness-binding.md).
+[multi-harness-binding.md](./repo-governance/conventions/structure/multi-harness-binding.md).
 
 ### Concrete Vendor Model IDs
 
