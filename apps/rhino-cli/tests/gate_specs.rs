@@ -764,6 +764,33 @@ fn then_glob_filter_applies(w: &mut GateWorld) {
     assert!(!arguments.contains("docs/skip.md"));
 }
 
+#[given("the frontmatter-date gate declares website exclusions")]
+fn given_frontmatter_date_gate_with_exclusions(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "repo-config.yml",
+        &config(
+            "  - id: md-frontmatter-dates\n    type: check\n    command: md frontmatter-dates validate\n    kind: rhino-cli\n    args:\n      exclude:\n        - apps/website\n    surfaces:\n      ci: { scope: all-file-type }\n",
+        ),
+    );
+    w.write("repo-governance/clean.md", "# Clean\n");
+    w.stage(&["repo-config.yml", "repo-governance/clean.md"]);
+}
+
+#[when("its CI gate runs by id")]
+fn when_frontmatter_date_gate_runs(w: &mut GateWorld) {
+    w.run_gate("ci", Some("md-frontmatter-dates"));
+}
+
+#[then("the frontmatter-date gate succeeds with those exclusions")]
+fn then_frontmatter_date_gate_accepts_exclusions(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "frontmatter-date gate must accept configured exclusions: {}",
+        w.output
+    );
+}
+
 #[given("a file-scoped gate has no eligible paths")]
 fn given_empty_file_scope(w: &mut GateWorld) {
     w.init_git();

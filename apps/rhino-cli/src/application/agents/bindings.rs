@@ -159,11 +159,13 @@ pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
     let mut result = EmitResult::default();
 
     for binding in expected_bindings(repo_root)? {
+        reject_symlinked_binding_path(repo_root, &binding.rel_path)?;
         let abs = join_rel(repo_root, &binding.rel_path);
         if let Some(parent) = abs.parent() {
             fs::create_dir_all(parent)
                 .map_err(|e| format!("failed to create directory {}: {e}", parent.display()))?;
         }
+        reject_symlinked_binding_path(repo_root, &binding.rel_path)?;
         fs::write(&abs, binding.content)
             .map_err(|e| format!("failed to write {}: {e}", abs.display()))?;
         result.written.push(binding.rel_path);
@@ -182,6 +184,7 @@ pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
 fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
     let expected_name = amazonq_agent_name(repo_root)?;
     let expected_file = format!("{expected_name}.json");
+    reject_symlinked_binding_path(repo_root, AMAZONQ_AGENT_DEFINITION_DIR)?;
     let definitions_dir = repo_root.join(AMAZONQ_AGENT_DEFINITION_DIR);
     let entries = fs::read_dir(&definitions_dir).map_err(|error| {
         format!(
@@ -205,6 +208,40 @@ fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
                     path.display()
                 )
             })?;
+        }
+    }
+    Ok(())
+}
+
+/// Refuse an Amazon Q binding path when an existing component is a symlink.
+///
+/// Emission and stale-definition cleanup must never traverse a repository path
+/// that has been redirected outside the repository. The binding paths are
+/// fixed relative paths, so checking each component protects both directory
+/// creation and file writes without accepting user-supplied path traversal.
+fn reject_symlinked_binding_path(repo_root: &Path, rel_path: &str) -> Result<(), String> {
+    let mut path = repo_root.to_path_buf();
+    for segment in rel_path.split('/') {
+        if segment.is_empty() {
+            continue;
+        }
+        path.push(segment);
+        match fs::symlink_metadata(&path) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(format!(
+                    "refusing Amazon Q binding path {} because {} is a symlink",
+                    rel_path,
+                    path.display()
+                ));
+            }
+            Ok(_) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => {
+                return Err(format!(
+                    "failed to inspect Amazon Q binding path {}: {error}",
+                    path.display()
+                ));
+            }
         }
     }
     Ok(())
@@ -613,6 +650,68 @@ mod tests {
         emit_bindings(root).unwrap();
         let second = std::fs::read(agent_definition_path(root)).unwrap();
         assert_eq!(first, second);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn emit_refuses_a_symlinked_amazonq_directory_without_writing_outside_repo() {
+        use std::os::unix::fs::symlink;
+
+        let dir = tempdir().unwrap();
+        let external = tempdir().unwrap();
+        let root = dir.path();
+        write_amazonq_config(root);
+        symlink(external.path(), root.join(".amazonq")).unwrap();
+
+        let error = emit_bindings(root).expect_err("symlinked Amazon Q directory must be rejected");
+
+        assert!(error.contains("symlink"), "unexpected error: {error}");
+        assert!(
+            !external.path().join("rules/00-agents-md.md").exists(),
+            "emission must not write the rules pointer outside the repository"
+        );
+        assert!(
+            !external
+                .path()
+                .join("cli-agents/fixture-agent.json")
+                .exists(),
+            "emission must not write the agent definition outside the repository"
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn emit_refuses_a_symlinked_definitions_directory_without_deleting_outside_repo() {
+        use std::os::unix::fs::symlink;
+
+        let dir = tempdir().unwrap();
+        let external = tempdir().unwrap();
+        let root = dir.path();
+        write_amazonq_config(root);
+        let external_definitions = external.path().join("cli-agents");
+        std::fs::create_dir_all(&external_definitions).unwrap();
+        let stale_definition = external_definitions.join("stale-agent.json");
+        write(&stale_definition, &agent_definition_content("stale-agent"));
+        std::fs::create_dir_all(root.join(".amazonq")).unwrap();
+        symlink(
+            &external_definitions,
+            root.join(AMAZONQ_AGENT_DEFINITION_DIR),
+        )
+        .unwrap();
+
+        let error = emit_bindings(root)
+            .expect_err("symlinked Amazon Q definitions directory must be rejected");
+
+        assert!(error.contains("symlink"), "unexpected error: {error}");
+        assert_eq!(
+            std::fs::read_to_string(&stale_definition).unwrap(),
+            agent_definition_content("stale-agent"),
+            "cleanup must not delete a managed-looking definition outside the repository"
+        );
+        assert!(
+            !external_definitions.join("fixture-agent.json").exists(),
+            "emission must not create a definition outside the repository"
+        );
     }
 
     #[test]
