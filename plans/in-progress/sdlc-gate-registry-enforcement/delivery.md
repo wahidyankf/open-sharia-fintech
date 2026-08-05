@@ -3674,7 +3674,11 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
   - Execution note: Staged executable-guard and companion-spec inputs, regenerated the canonical manifest, and validated the prospective staged commit. The manifest is current.
-- [ ] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-PARITY-MANIFEST, P2-C6-CONTRACT-DOCS`; `blocks: P2-C6-CI`) — reconcile both accepted Cycle 6 findings and record final dispositions — acceptance: both review threads are resolved by the correction commit and combined focused gates pass.
+- [x] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-PARITY-MANIFEST, P2-C6-CONTRACT-DOCS`; `blocks: P2-C6-CI`) — reconcile both accepted Cycle 6 findings and record final dispositions — acceptance: both review threads are resolved by the correction commit and combined focused gates pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/{src/commands/gate/validate.rs,tests/gate_specs.rs,parity-manifest.sha256}`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/{delivery.md,tech-docs.md}`
+  - Execution note: Commit `36e8ced2b` resolves both accepted findings: tokenized executable `npx nx` target recognition with normalized literal-false guards and aligned active technical-contract wording. Both Cycle 6 review threads are resolved; focused validator/spec tests, behavior coverage, strict lint, registry and parity validation, Markdown lint, and the full pre-push gate pass.
 - [ ] [AI] **P2-C6-CI** (`blockedBy: P2-C6-FIXER`; `blocks: P2-C7-MAKER`) — run and verify CI for the Cycle 6 head — acceptance: required checks succeed before Cycle 7 starts.
 - [ ] [AI] **P2-C7-MAKER** (`blockedBy: P2-C6-CI`; `blocks: P2-C7-SYNTHESIS`) — run the final scout-first, content-applicable PR review maker fan-out — acceptance: all selected raw reports are recorded and triaged.
 - [ ] [AI] **P2-C7-SYNTHESIS** (`blockedBy: P2-C7-MAKER`; `blocks: P2-C7-FIXER`) — synthesize final findings into the sole review of record — acceptance: every finding has a disposition and evidence.
