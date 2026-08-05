@@ -10,6 +10,14 @@ PR) gains one call per cycle — to scout — inserted before the specialist fan
 orchestration boundary (fan-out is concurrent, cross-cycle is sequential, CI-green is a hard gate)
 stays exactly as documented today.
 
+**This architecture is applied identically in all four repos** (`ose-public`, `ose-primer`,
+`ose-private`, `beaver-nest`) — each repo runs its own independent instance of the 10-agent-to-
+12-agent transition described below. Nothing in this section's diagrams or design decisions differs
+by repo; the per-repo divergence is confined to the mechanical edit shape of two specific files
+(`AGENTS.md`'s wording, per repo, and `pr-review-quality-gate.md`'s "eight" occurrence count in
+`ose-private`), documented in [File-Impact Analysis](#file-impact-analysis) below, not to the
+architecture itself.
+
 ### Diagram 1 — Component Interactions (Before → After)
 
 ```mermaid
@@ -126,16 +134,22 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   files, mirroring synthesis-maker's own no-Write/Edit posture), and no `WebFetch`/`WebSearch` (D12
   classification and D13 context assembly are purely internal to the PR's own diff/metadata/plan
   files; external fact-verification is synthesis-maker's tool-verify job, not scout's).
-- **DD-6: The `AGENTS.md` edit is the single word `eight` → `nine` in the existing PR Review Cycle
-  bullet, net `-1` byte, with `pr-review-scout-maker` and `pr-review-types-maker` deliberately NOT
-  named there.** `AGENTS.md` sits at 28,944 B (re-measured 2026-08-05, a point-in-time snapshot —
-  see [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)) against
-  a 27,000 B warn / 30,000 B hard-fail budget — any
-  net-positive edit risks tripping the warn threshold further, and the file's own existing
-  `agents-md-progressive-disclosure` idea already names this exact tightness as a live problem this
-  plan should not make worse. The catalog (`.claude/agents/README.md`) and the convention
+- **DD-6: The `AGENTS.md` edit is per-repo, not a single verbatim diff broadcast to all four —
+  `pr-review-scout-maker` and `pr-review-types-maker` are deliberately NOT named in any repo's
+  `AGENTS.md`.** Per [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05),
+  three repos (`ose-public`, `ose-primer`, `beaver-nest`) share the pattern "eight discipline
+  `pr-review-*-maker` specialists fan out to..." — a single-word `eight` → `nine` swap, net `-1`
+  byte. `ose-private` has no literal "eight" in its bullet at all; it names the eight disciplines
+  explicitly by list with no scout mention, so its edit is a multi-word insertion (add
+  `pr-review-types-maker` to the list, add a scout clause ahead of the fan-out) — net **byte-positive**,
+  the opposite direction of the other three. Each repo sits at a different point against its own
+  27,000 B warn / 30,000 B hard-fail budget (`ose-public` 28,944 B, `ose-primer` **29,852 B** — only
+  148 B of headroom, the tightest by far — `ose-private` 26,754 B, `beaver-nest` 29,547 B); any
+  net-positive edit in the three tight repos risks tripping the warn threshold further, while
+  `ose-private`'s comparatively large headroom is exactly why its edit is safe to be net-positive
+  there and nowhere else. The catalog (`.claude/agents/README.md`) and the convention
   (`pr-review-disciplines.md`) remain the authoritative, budget-unconstrained sources for the two new
-  agents' names and charters.
+  agents' names and charters, in every repo.
 - **DD-7: Trivial-tier handoff — scout classifies and assembles context; `pr-review-synthesis-maker`
   still performs the actual single generalist review pass itself when the tier is `trivial`.** Scout
   never reviews code — its charter is purely classification, selection, and context assembly.
@@ -160,9 +174,14 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
 
 ## File-Impact Analysis
 
+The tree below is the pattern applied **once per repo**, root-relative inside each of
+`ose-public/`, `ose-primer/`, `ose-private/`, and `beaver-nest/` independently — it is not a single
+shared tree, since each repo has its own copy of every file listed:
+
 ```text
 .
-├── AGENTS.md [E] — single-word edit: eight → nine (PR Review Cycle bullet; DD-6)
+├── AGENTS.md [E] — PR Review Cycle bullet edit; shape is per-repo, see DD-6 (three repos: single-word
+│   eight → nine; ose-private: multi-word list insertion, net byte-positive)
 ├── .claude/
 │   └── agents/
 │       ├── README.md [E] — catalog entries for both new agents
@@ -176,60 +195,76 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
 ├── .amazonq/** [G] — regenerated mirrors of the same three agent files
 └── repo-governance/
     ├── development/quality/pr-review-disciplines.md [E] — 9th discipline row (type-soundness), 7th
-    │   grey-zone ruling (DD-2), sweep applicable "eight"→"nine" occurrences (26 total, individually
-    │   judged, not blind sed), update D12/D13 attribution from synthesis-maker to scout
+    │   grey-zone ruling (DD-2), sweep applicable "eight"→"nine" occurrences (26 total in every repo,
+    │   individually judged, not blind sed), update D12/D13 attribution from synthesis-maker to scout
     └── workflows/pr/pr-review-quality-gate.md [E] — Participants list (add scout), both mermaid
         diagrams (flowchart + sequenceDiagram), Loop Algorithm pseudocode, Cycle-number header field
-        documentation, sweep applicable "eight" occurrences (6 total) to "nine"
+        documentation, sweep applicable "eight" occurrences to "nine" (6 total in ose-public/
+        ose-primer/beaver-nest; **5** in ose-private — see brd.md's baseline)
 ```
 
 ### More Detail
 
-- **Mirror discovery criteria**: the `[G]` mirrors under `.opencode/`, `.cursor/`, and `.amazonq/`
-  are exactly the regenerated counterparts of the three touched/new `.claude/agents/` files above —
-  discovered mechanically via `npm run generate:bindings`'s own diff output and verified by `npm run
-validate:sync`, never enumerated or hand-authored individually.
-- **Sweep-count rationale**: the two `eight`→`nine` sweeps (26 occurrences in
-  `pr-review-disciplines.md`, 6 in `pr-review-quality-gate.md`) are not a blind find-and-replace —
-  each occurrence is read in context and judged as a current-count statement (becomes `nine`) or a
-  historical narration of the original eight-discipline cutover (stays `eight`), per Phase 1/Phase 2
-  of [delivery.md](./delivery.md).
+- **Mirror discovery criteria, per repo**: the `[G]` mirrors under `.opencode/`, `.cursor/`, and
+  `.amazonq/` are exactly the regenerated counterparts of the three touched/new `.claude/agents/`
+  files above — discovered mechanically via that repo's own `npm run generate:bindings` diff output
+  and verified by that repo's own `npm run validate:sync`, never enumerated or hand-authored
+  individually, and never carried over from another repo's generated output.
+- **Sweep-count rationale, per repo**: the two `eight`→`nine` sweeps (26 occurrences in
+  `pr-review-disciplines.md` in every repo; 6 in `pr-review-quality-gate.md` in three repos, **5** in
+  `ose-private`) are not a blind find-and-replace, in any repo — each occurrence is read in context
+  and judged as a current-count statement (becomes `nine`) or a historical narration of the original
+  eight-discipline cutover (stays `eight`), per that repo's own Phase 1/Phase 2 track in
+  [delivery.md](./delivery.md). A count matching in one repo does not excuse skipping the read-in-
+  context judgment in another — the occurrence text itself can differ even where the count matches.
+- **`AGENTS.md` edit shape divergence (DD-6)**: `ose-public`, `ose-primer`, `beaver-nest` all apply
+  the same single-word `eight` → `nine` swap; `ose-private` applies a structurally different edit
+  (list insertion) because its bullet never said "eight" to begin with. Each repo's Phase 4 delivery
+  item in [delivery.md](./delivery.md) is written to match that repo's actual wording, not copied
+  from `ose-public`'s diff.
 
 ## Dependencies
 
-- No new runtime dependencies (`package.json`, `Cargo.toml`, etc.) — this plan edits Markdown
-  governance docs and agent-definition Markdown files only.
-- Depends on `npm run generate:bindings` / `npm run validate:sync` (existing tooling, unchanged) to
-  keep `.opencode/`/`.cursor/`/`.amazonq/` mirrors in sync with the two new `.claude/agents/` files
-  and the trimmed `pr-review-synthesis-maker.md`.
-- Depends on the (pre-existing, unmodified-by-this-plan) `pr-review-quality-gate` workflow actually
-  running against this plan's own delivering PR — the dogfood verification in Phase 5 of
-  [delivery.md](./delivery.md) is the functional test for the new agent shape, since there is no
-  automated unit-test harness for agent-prompt behavior in this repo.
+- No new runtime dependencies (`package.json`, `Cargo.toml`, etc.), in any of the four repos — this
+  plan edits Markdown governance docs and agent-definition Markdown files only.
+- Depends on each repo's own `npm run generate:bindings` / `npm run validate:sync` (existing tooling,
+  unchanged, present identically in all four repos) to keep that repo's own
+  `.opencode/`/`.cursor/`/`.amazonq/` mirrors in sync with its two new `.claude/agents/` files and its
+  trimmed `pr-review-synthesis-maker.md`. These four toolchains run independently — one repo's sync
+  passing is not evidence another's will.
+- Depends on each repo's own (pre-existing, unmodified-by-this-plan) `pr-review-quality-gate`
+  workflow actually running against that repo's own delivering PR — the dogfood verification in each
+  track's own Phase 5 of [delivery.md](./delivery.md) is the functional test for the new agent shape
+  in that repo, since there is no automated unit-test harness for agent-prompt behavior in any of the
+  four.
 
 ## Testing / Verification Strategy
 
 Agent-definition and governance-doc changes are **not** `apps/`/`libs/` application code, so the
-[Specs & Gherkin Completeness Convention](../../../repo-governance/development/quality/feature-change-completeness.md)'s
-`specs/` companion-artifact requirement does not apply (docs-only / prompt-only changes are exempt,
-consistent with how the original eight-discipline split and every subsequent `pr-review-*-maker.md`
-addition were delivered). Verification instead relies on:
+Specs & Gherkin Completeness Convention's `specs/` companion-artifact requirement does not apply in
+any of the four repos (docs-only / prompt-only changes are exempt, consistent with how the original
+eight-discipline split and every subsequent `pr-review-*-maker.md` addition were delivered, in every
+repo that already ran that split). Verification instead relies on, applied independently per repo:
 
 1. **Mechanical grep-based acceptance criteria** — every `prd.md` Gherkin scenario above pairs a
    positive check (the new text/field/file exists) with a negative control (the old absence is
-   confirmed first, so the positive check is falsifiable in both directions, per this repo's
-   acceptance-clause discipline).
-2. **`repo-rules-checker`** — already audits every `pr-review-*-maker.md` agent definition against
-   the discipline table's owned/routed-to scope and flags a specialist charter missing its
-   `SUPPRESS` block (per `pr-review-disciplines.md`'s own Enforcement section); Phase 3's delivery
-   item runs it explicitly against both new agent files before they are considered complete.
-3. **Live dogfooding** — this plan's own `worktree-to-pr` delivery mode means the very first PR to
-   exercise the new scout-first, nine-specialist, cycle-numbered pipeline is this plan's own
-   delivering PR (Phase 5). A design defect in the new shape (e.g. scout mis-selecting specialists,
-   or the header field rendering wrong) surfaces immediately against a real PR rather than waiting
-   for the next unrelated PR to discover it.
-4. **`npm run validate:sync`** — confirms the generated mirrors match their `.claude/` source
-   byte-for-byte, the same gate every other `.claude/agents/` change already passes through.
+   confirmed first, so the positive check is falsifiable in both directions, per this repo family's
+   acceptance-clause discipline), run once inside each repo's own checkout.
+2. **`repo-rules-checker`** — already runs in each repo and audits every `pr-review-*-maker.md` agent
+   definition against that repo's own discipline table's owned/routed-to scope, flagging a specialist
+   charter missing its `SUPPRESS` block (per `pr-review-disciplines.md`'s own Enforcement section);
+   each track's Phase 3 delivery item runs it explicitly against that repo's two new agent files
+   before they are considered complete.
+3. **Live dogfooding, four times** — each repo's own `worktree-to-pr` delivery mode means the very
+   first PR to exercise the new scout-first, nine-specialist, cycle-numbered pipeline **in that repo**
+   is that repo's own delivering PR (its own Phase 5). A design defect in the new shape (e.g. scout
+   mis-selecting specialists, or the header field rendering wrong) surfaces immediately against a real
+   PR in each repo rather than waiting for the next unrelated PR to discover it — and a defect
+   surfacing in one repo's dogfood run does not automatically mean another repo's run hits the same
+   defect, since the underlying diff/PR content differs per repo.
+4. **`npm run validate:sync`, in each repo** — confirms that repo's generated mirrors match its
+   `.claude/` source byte-for-byte, the same gate every other `.claude/agents/` change in that repo
+   already passes through.
 
 ## Detailed Design of `pr-review-scout-maker.md`
 
@@ -330,18 +365,25 @@ Section shape (mirrors the eight existing discipline specialists' common shape, 
 
 ## Rollback
 
-No destructive step is required to roll back: this plan only adds two new agent files, edits three
-existing files, and regenerates mirrors. A rollback is a forward `git revert` of the delivering PR's
-merge commit (never a history rewrite), which:
+No destructive step is required to roll back, in any repo: this plan only adds two new agent files,
+edits three existing files, and regenerates mirrors, in each repo independently. Rollback is a
+forward `git revert` of that repo's own delivering PR's merge commit (never a history rewrite),
+applied **per repo** — reverting one repo's PR has no effect on the other three, since each is an
+independent merge on an independent `main`. Each repo's revert:
 
-1. Deletes `pr-review-scout-maker.md` and `pr-review-types-maker.md` (and their mirrors).
-2. Restores `pr-review-synthesis-maker.md`'s D12/D13 sections and the un-cycle-numbered header.
-3. Restores `pr-review-disciplines.md` and `pr-review-quality-gate.md` to their eight-discipline
-   text.
-4. Restores `AGENTS.md`'s `eight` wording.
+1. Deletes that repo's `pr-review-scout-maker.md` and `pr-review-types-maker.md` (and their mirrors).
+2. Restores that repo's `pr-review-synthesis-maker.md`'s D12/D13 sections and the un-cycle-numbered
+   header.
+3. Restores that repo's `pr-review-disciplines.md` and `pr-review-quality-gate.md` to their
+   eight-discipline text.
+4. Restores that repo's own `AGENTS.md` wording to its pre-plan form — the single `eight` wording in
+   `ose-public`/`ose-primer`/`beaver-nest`, or the explicit eight-item list in `ose-private`.
 
-Run `npm run generate:bindings && npm run validate:sync` after the revert, identical to the forward
-delivery's own Phase 4 step, to resynchronize the mirrors.
+Run `npm run generate:bindings && npm run validate:sync` in that repo after its revert, identical to
+that repo's own forward-delivery Phase 4 step, to resynchronize its mirrors. A partial rollback (some
+repos reverted, others not) is a valid intermediate state — the four repos were never coupled at the
+git level, only at the design level — but leaves the family in the same mixed-shape state the
+Product-Level Risks section already flags as worth avoiding during forward delivery.
 
 ## Related Documentation
 

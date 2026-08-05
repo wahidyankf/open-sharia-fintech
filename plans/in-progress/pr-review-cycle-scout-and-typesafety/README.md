@@ -2,11 +2,20 @@
 
 ## Context
 
-The [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
-and the [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)
-already run a nine-agent pipeline (eight sonnet-tier discipline specialists plus the opus-tier
-`pr-review-synthesis-maker` coordinator) across a fixed 3-cycle loop, feeding the unchanged
-`pr-review-fixer`. The maintainer identified three concrete gaps in that live pipeline:
+The PR Review Quality Gate pipeline is not `ose-public`-only governance: it is duplicated,
+byte-for-byte-independent, in all **four** OSE repos —
+[`ose-public`](https://github.com/wahidyankf/ose-public),
+[`ose-primer`](https://github.com/wahidyankf/ose-primer),
+[`ose-private`](https://github.com/wahidyankf/ose-private), and
+[`beaver-nest`](https://github.com/wahidyankf/beaver-nest) — each carrying its own
+`repo-governance/workflows/pr/pr-review-quality-gate.md`,
+`repo-governance/development/quality/pr-review-disciplines.md`, and 10
+`.claude/agents/pr-review-*.md` files. Live-verified 2026-08-05 (see
+[brd.md's Current-State Baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)
+for the exact per-repo counts): each repo runs a nine-agent pipeline (eight sonnet-tier discipline
+specialists plus the opus-tier `pr-review-synthesis-maker` coordinator) across a fixed 3-cycle loop,
+feeding the unchanged `pr-review-fixer`. The maintainer identified three concrete gaps, present
+identically in all four repos' live pipelines:
 
 1. **No cycle number in the posted review.** The Consolidated Review Header already records risk
    tier, specialist set, diff coverage, and human-dismissal count — but not which of the 3 cycles
@@ -25,31 +34,46 @@ already run a nine-agent pipeline (eight sonnet-tier discipline specialists plus
    instruction-decay — none of which owns whether a change's **types** are sound. A compiler already
    blocks a change that does not type-check; nothing in the pipeline flags a change that type-checks
    but is unsound (an unjustified `any`, a non-exhaustive match, a panic-prone `unwrap()` on a
-   fallible path) across this repo's four production languages (TypeScript, Rust, F#, C#).
+   fallible path) across the four production languages these repos ship (TypeScript, Rust, F#, C#).
+
+All three gaps are structural to the pipeline's design, not an `ose-public`-specific accident — so
+this plan closes them identically in all four repos rather than leaving three repos on the
+now-superseded eight-agent shape.
 
 > Requested 2026-08-05. Grilled via `AskUserQuestion` before authoring — see
 > [Resolved Design Decisions](#resolved-design-decisions-from-grilling) below.
 
 ## Scope
 
-**In scope**:
+**Repo scope**: all four OSE repos — `ose-public`, `ose-primer`, `ose-private`, `beaver-nest` — each
+carrying its own independent copy of the PR Review Quality Gate pipeline. This is a fifth kind of
+cross-repo boundary, distinct from the two already named in
+[Related Repositories](../../../docs/reference/related-repositories.md) (content-parity is
+`ose-public` ↔ `ose-primer` only; `apps/rhino-cli` byte-identity spans three of the four with zero
+carve-outs) — the PR Review Cycle boundary spans **all four**, since every repo runs its own
+independent instance of this governance tooling rather than sharing or mirroring a canonical copy.
+
+**In scope, applied identically in each of the four repos** (repo-specific wording divergences
+called out explicitly in [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)
+and [tech-docs.md's File-Impact Analysis](./tech-docs.md#file-impact-analysis) — this is NOT a blind
+four-way broadcast of one diff):
 
 - Add a `**Cycle**: N of {total}` field to the Consolidated Review Header
-  ([pr-review-synthesis-maker.md](../../../.claude/agents/pr-review-synthesis-maker.md)'s header
-  block and [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)'s
-  documentation of it).
+  (`pr-review-synthesis-maker.md`'s header block and `pr-review-quality-gate.md`'s documentation of
+  it).
 - A new `pr-review-scout-maker` agent that becomes pipeline stage 0 each cycle: it owns risk-tier
   classification (D12), specialist-set selection, shared-context-brief assembly (D13), and the
   prior-cycle human-dismissal read — duties `pr-review-synthesis-maker` currently performs itself.
   `pr-review-synthesis-maker` is trimmed to its post-fan-out job only: dedup, re-categorize,
   reasonableness-filter, tool-verify, post.
 - A new ninth discipline, **type-soundness**, owned by a new `pr-review-types-maker` specialist,
-  scoped across TypeScript, Rust, F#, and C# — the repo's four production languages.
-- Every doc/agent file this ripples into: `pr-review-disciplines.md`, `pr-review-quality-gate.md`,
-  `pr-review-synthesis-maker.md`, the two new agent files, `.claude/agents/README.md`, `AGENTS.md`'s
-  one-line PR Review Cycle summary, and the `.opencode/`/`.cursor/`/`.amazonq/` mirrors regenerated
-  from them.
-- Dogfooding: this plan's own delivering PR runs the **new** pipeline shape against itself (see
+  scoped across TypeScript, Rust, F#, and C# — the four production languages this repo family ships.
+- Every doc/agent file this ripples into, per repo: `pr-review-disciplines.md`,
+  `pr-review-quality-gate.md`, `pr-review-synthesis-maker.md`, the two new agent files,
+  `.claude/agents/README.md`, `AGENTS.md`'s PR Review Cycle summary (wording differs per repo — see
+  the baseline), and the `.opencode/`/`.cursor/`/`.amazonq/` mirrors regenerated from them.
+- Dogfooding: each repo's own delivering PR runs **that repo's own newly-updated** pipeline shape
+  against itself — four independent first-runs, not one (see
   [Worktree and Delivery Mode](#worktree-and-delivery-mode) below).
 
 **Out of scope (for now)**:
@@ -67,18 +91,19 @@ already run a nine-agent pipeline (eight sonnet-tier discipline specialists plus
 - Promoting the type-soundness discipline into the four-specialist `lite` tier. It launches
   `full`-tier-only, per the same "new disciplines start conservative, earn their tier via
   post-cutover acceptance-rate data" posture the convention already applies to `performance` and
-  `docs` (its own two most-recently-added disciplines). Revisit once
+  `docs` (its own two most-recently-added disciplines), in every repo. Revisit once
   [Post-Cutover Monitoring](../../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
   has data on it.
-- Propagating any of this to `ose-primer` / `ose-private` / `beaver-nest`. The PR Review Cycle is not
-  part of the tri-repo `apps/rhino-cli` byte-identity boundary or the `ose-public` ↔ `ose-primer`
-  content-parity boundary — it is `ose-public`-only governance infrastructure. The user explicitly
-  scoped this request to `ose-public` ("focus back to ose-public").
+- Reconciling the four repos' pipelines into one shared/mirrored source. Each repo keeps its own
+  independent copy after this plan, exactly as before it — this plan lands the same enhancement four
+  times, it does not introduce a new sharing mechanism (that would be a much larger, separately-scoped
+  change, and is not what was asked for).
 
 ## Approach Summary
 
 Three independent-but-related enhancements, landed together because they touch the same small set of
-files and the same nine-(soon-eleven)-agent pipeline:
+files and the same nine-(soon-eleven)-agent pipeline — applied once per repo, as four independent
+delivery units (see [Parallelization Model](./delivery.md#parallelization-model)):
 
 ```mermaid
 %% Color palette: Blue #0173B2 (scout, new), Teal #029E73 (specialists, incl. new types),
@@ -102,9 +127,13 @@ Full design rationale, the updated Loop Algorithm, and both new agents' complete
 Four decisions were grilled with the maintainer via `AskUserQuestion` before any file was touched;
 all four selected the recommended option:
 
-1. **Execution Delivery Mode**: `worktree-to-pr` (the repo default) — this plan's own PR runs the PR
-   Review Quality Gate workflow against itself, dogfooding the new scout+types pipeline shape before
-   it becomes the standing shape for every future `*-to-pr` PR in this repo.
+1. **Execution Delivery Mode**: `worktree-to-pr` (the repo default), run independently **once per
+   repo** — each of the four repos' own delivering PR runs that repo's own PR Review Quality Gate
+   workflow against itself, dogfooding the new scout+types pipeline shape in that repo before it
+   becomes the standing shape for every future `*-to-pr` PR there. Four repos, four worktrees, four
+   PRs — strict 1-PR-↔-1-worktree per [AGENTS.md §Delivery
+   Mode](../../../AGENTS.md#delivery-mode), since the four repo tracks are fully independent of each
+   other (none blocks or depends on another).
 2. **Scout placement**: `pr-review-scout-maker` **replaces** `pr-review-synthesis-maker`'s D12/D13
    pre-fan-out duties outright (not an advisory-only first opinion `pr-review-synthesis-maker` can
    override) — a clean stage split, not a second opinion layered on the same duties.
@@ -116,7 +145,7 @@ all four selected the recommended option:
    [Post-Cutover Monitoring Plan](../../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
    stays the periodic, manually-run measurement process it already is.
 
-One additional decision was **not** grilled (judged low-stakes enough to decide directly, recorded
+Two additional decisions were **not** grilled (judged low-stakes enough to decide directly, recorded
 here for auditability rather than re-litigated):
 
 - **`pr-review-scout-maker`'s model tier is `opus`, matching `pr-review-synthesis-maker`, not
@@ -127,18 +156,41 @@ here for auditability rather than re-litigated):
   their risk profile — the same justification now applies to `pr-review-scout-maker` directly. See
   [tech-docs.md Design Decision DD-1](./tech-docs.md#design-decisions) for the full cost/rationale
   tradeoff this introduces (a second opus-tier call per cycle instead of one).
+- **Repo scope is all four repos, decided directly by the maintainer's explicit instruction** ("make
+  sure its scope is all 4 ose repos"), not re-grilled with `AskUserQuestion` — the three underlying
+  design questions (scout placement, type-soundness language scope, metrics tracking) were already
+  grilled once and apply identically regardless of repo count, so re-grilling would have re-litigated
+  settled decisions rather than surfaced a new one. What changed is delivery footprint, not design.
+
+Live verification (2026-08-05) confirmed all four repos run byte-for-byte-independent but
+structurally identical pipelines (10 `pr-review-*.md` agents each, same discipline/workflow doc
+shape) — see [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)
+for the exact per-repo counts and the specific wording divergences (`ose-private`'s `AGENTS.md`
+names disciplines explicitly rather than saying "eight"; `ose-primer`'s `AGENTS.md` sits far closer
+to its byte ceiling than the other three) that make this **not** a safe blind four-way broadcast of
+one diff.
 
 ## Worktree and Delivery Mode
 
 **Delivery Mode**: `worktree-to-pr` (see
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)).
-Execution happens in a dedicated worktree (`worktrees/pr-review-cycle-scout-and-typesafety/`), opens
-a PR against `ose-public`'s `main`, and runs the (pre-this-plan, unmodified) PR Review Quality Gate
-workflow for 3 cycles before an `[AI]` merge under the five hardened preconditions.
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)),
+run as **four independent tracks, one per repo**. Each track executes in its own dedicated worktree
+inside that repo (`worktrees/pr-review-cycle-scout-and-typesafety/` in each of `ose-public`,
+`ose-primer`, `ose-private`, `beaver-nest`), opens its own PR against that repo's own `main`, and runs
+that repo's own (pre-this-plan, unmodified) PR Review Quality Gate workflow for 3 cycles before an
+`[AI]` merge under the five hardened preconditions — four PRs total, none blocking any other. See
+[delivery.md's Parallelization Model](./delivery.md#parallelization-model) for the full DAG and the
+chosen fan-out width.
 
 **This plan-authoring itself** (the five documents in this folder) is written directly on local `main`
-in the primary checkout, per the established plan-docs-on-main practice — only the plan's own
-_execution_ phases (Phase 1 onward, see [delivery.md](./delivery.md)) happen in the worktree.
+in `ose-public`'s primary checkout, per the established plan-docs-on-main practice — the plan folder
+lives only in `ose-public` (the other three repos have no `plans/` entry for this work); only the
+plan's own _execution_ phases (Phase 1 onward per track, see [delivery.md](./delivery.md)) happen in
+each repo's worktree. Because the plan folder lives in `ose-public` only, the
+[Archival-in-PR HARD RULE](../../../AGENTS.md#delivery-mode) applies to `ose-public`'s own delivering
+PR (archival lands inside that PR before merge); the other three repos' PRs carry no `plans/` content
+at all and so have no archival step of their own — this is the ordinary cross-repo carve-out from that
+same rule, not a special case invented for this plan.
 
 ## Related Documentation
 

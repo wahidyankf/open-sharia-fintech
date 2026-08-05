@@ -2,8 +2,9 @@
 
 ## Product Overview
 
-Three additions to the live PR Review Quality Gate pipeline, landed as one plan because they touch
-the same small file set:
+Three additions to the live PR Review Quality Gate pipeline, landed **identically in all four OSE
+repos** (`ose-public`, `ose-primer`, `ose-private`, `beaver-nest`) as one plan because they touch the
+same small file set in each:
 
 1. A `**Cycle**: N of {total}` field on every Consolidated Review Header.
 2. A new pipeline stage-0 agent, `pr-review-scout-maker`, that owns risk-tier classification,
@@ -14,14 +15,16 @@ the same small file set:
 
 ## Personas
 
-- **The maintainer** — sole reviewer/merger of this repo's own PRs. Reads consolidated reviews on
+- **The maintainer** — sole reviewer/merger of all four repos' own PRs. Reads consolidated reviews on
   GitHub, wants to see cycle progress and trust that type-level defects are covered the same way
-  security or logic defects already are.
-- **`pr-review-fixer`** — consumes whatever `pr-review-synthesis-maker` posts; unaffected in its own
-  charter, but now triages findings that may originate from a ninth discipline.
-- **A future contributor** reading `pr-review-disciplines.md` or `pr-review-quality-gate.md` to
-  understand what the pipeline does before extending it further (e.g. adding a tenth discipline
-  later).
+  security or logic defects already are — in whichever of the four repos the PR happens to be in.
+- **`pr-review-fixer`, in each repo** — consumes whatever that repo's `pr-review-synthesis-maker`
+  posts; unaffected in its own charter, but now triages findings that may originate from a ninth
+  discipline.
+- **A future contributor**, in any of the four repos, reading that repo's own
+  `pr-review-disciplines.md` or `pr-review-quality-gate.md` to understand what the pipeline does
+  before extending it further (e.g. adding a tenth discipline later) — expects the same shape in
+  whichever repo they happen to be working in.
 
 ## User Stories
 
@@ -37,7 +40,13 @@ the same small file set:
    a security or logic defect already would.
 4. As a future contributor, I want the discipline table, the pipeline diagrams, and the loop
    algorithm to stay internally consistent after this plan lands — no doc says "eight specialists"
-   in one place and "nine" in another.
+   in one place and "nine" in another, in any of the four repos.
+5. As the maintainer working across all four repos, I want the same three enhancements landed
+   identically in `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`, so a PR's review
+   experience does not depend on which repo it happens to be in — while still respecting each repo's
+   own pre-existing wording divergences (e.g. `ose-private`'s `AGENTS.md` names disciplines
+   explicitly rather than saying "eight") rather than forcing artificial uniformity where none existed
+   before.
 
 ## Acceptance Criteria (Gherkin)
 
@@ -140,57 +149,88 @@ Feature: Type-soundness discipline
     Then it returns 0
     # After Phase 1, the same grep against the same table must return >= 1.
 
-Feature: Internal consistency after the sweep
+Feature: Internal consistency after the sweep, independently in each of the four repos
 
-  Scenario: No doc states a stale specialist count
-    Given all edits in Phase 1, Phase 2, and Phase 3 have landed
+  Scenario: No doc states a stale specialist count, in this repo
+    Given all edits in Phase 1, Phase 2, and Phase 3 have landed in ONE repo's own checkout
     When grep -rn "eight discipline\|eight specialist" repo-governance/ .claude/agents/ AGENTS.md is
-      run
+      run inside that repo
     Then it returns 0 matches
-    And the same search for "nine discipline\|nine specialist" returns >= 1 match in
+    And the same search for "nine discipline\|nine specialist" returns >= 1 match in that repo's own
       pr-review-disciplines.md and pr-review-quality-gate.md
+    # This scenario is executed FOUR times, once per repo's own delivery track — a pass in one repo's
+    # checkout is not evidence of a pass in another's, since each repo's copy is edited independently.
 
-  Scenario: The catalog and its mirror stay in sync
+  Scenario: The catalog and its mirror stay in sync, in this repo
     Given pr-review-scout-maker.md and pr-review-types-maker.md have been created under
-      .claude/agents/
-    When npm run generate:bindings && npm run validate:sync is run
+      .claude/agents/ in ONE repo's own checkout
+    When npm run generate:bindings && npm run validate:sync is run inside that repo
     Then it exits 0
-    And .opencode/agents/pr-review-scout-maker.md and .opencode/agents/pr-review-types-maker.md exist
-      with content generated from, not hand-written independently of, their .claude/ source
+    And that repo's own .opencode/agents/pr-review-scout-maker.md and
+      .opencode/agents/pr-review-types-maker.md exist with content generated from, not hand-written
+      independently of, their .claude/ source
+    # Executed four times, once per repo — each repo's own generate:bindings/validate:sync run is
+    # independent tooling, not a shared cross-repo mechanism.
+
+  Scenario: The four repos land the same discipline count and pipeline shape (negative control:
+    partial rollout)
+    Given this plan's delivery tracks for all four repos have completed
+    When "nine discipline" or "nine specialist" is grepped against each repo's own
+      pr-review-disciplines.md
+    Then all four repos return >= 1 match
+    And none of the four repos is left on the pre-plan eight-discipline shape while the others move to
+      nine — a partial rollout across repos is treated as an incomplete delivery, not a partial success
 ```
 
 ## Product Scope
 
-**In scope**: everything named in [README.md's Scope section](./README.md#scope).
+**In scope**: everything named in [README.md's Scope section](./README.md#scope), applied
+independently in all four repos (`ose-public`, `ose-primer`, `ose-private`, `beaver-nest`).
 
 **Explicitly out of scope** (a reader might reasonably expect these in scope; they are not):
 
 - Changing the fixed 3-cycle ceiling, the CI-green hard gate, or any of the five hardened merge
-  preconditions — this plan adds a header field and two agents; it does not touch loop-exit,
-  escalation, or merge-precondition logic.
-- Changing which four disciplines make up the `lite` tier's 4-specialist set — type-soundness joins
-  only `full`-tier, per the resolved design decision.
-- Retroactively adding cycle numbers to reviews already posted on already-merged PRs — the field
-  applies going forward only.
+  preconditions, in any repo — this plan adds a header field and two agents; it does not touch
+  loop-exit, escalation, or merge-precondition logic anywhere.
+- Changing which four disciplines make up the `lite` tier's 4-specialist set, in any repo —
+  type-soundness joins only `full`-tier, per the resolved design decision, in all four.
+- Retroactively adding cycle numbers to reviews already posted on already-merged PRs, in any repo —
+  the field applies going forward only, everywhere.
 - A `plans/ideas/` two-pager or `plans/backlog/` plan for the deferred persistent-metrics-log idea —
   if that becomes worth pursuing later, it gets its own idea brief at that time, not a stub created
   here.
+- Introducing a shared/mirrored source for the pipeline across the four repos (so a future change
+  lands once instead of four times) — each repo keeps its own independent copy, exactly as it did
+  before this plan; that would be a materially larger, separately-scoped change.
 
 ## Product-Level Risks
 
-- **Doc-drift risk during the sweep**: `pr-review-disciplines.md` (26 "eight" occurrences) and
-  `pr-review-quality-gate.md` (6 occurrences) are dense, heavily cross-linked documents; a
-  mechanical find-and-replace would misfire on occurrences describing an unrelated historical fact
-  (e.g. "the eight discipline specialists" describing the original monolith-to-split cutover, which
-  stays historically accurate even after a ninth discipline joins later — that sentence describes
-  what happened at cutover, not the current count). **Mitigation**: Phase 1/2 delivery items require
-  reading each occurrence in context before deciding whether it becomes "nine" or stays as
-  historical narration — never a blind `sed`.
-- **Agent-file bloat risk**: `pr-review-synthesis-maker.md` is currently 23.7 KB, the largest agent
-  file in the pipeline. Removing its D12/D13 sections shrinks it; the new `pr-review-scout-maker.md`
-  needs its own complete charter (tools, model justification, hard rules, SUPPRESS-equivalent scope
-  guard) rather than a thin stub — sized comparably to a discipline specialist (13-16 KB), not
-  copy-pasted wholesale from the removed sections without adaptation.
+- **Doc-drift risk during the sweep, quadrupled**: `pr-review-disciplines.md` (26 "eight"
+  occurrences in each repo) and `pr-review-quality-gate.md` (6 occurrences in `ose-public`,
+  `ose-primer`, `beaver-nest`; **5** in `ose-private` — see
+  [brd.md's baseline](./brd.md#current-state-baseline-mechanically-verified-2026-08-05)) are dense,
+  heavily cross-linked documents in every repo; a mechanical find-and-replace would misfire on
+  occurrences describing an unrelated historical fact (e.g. "the eight discipline specialists"
+  describing the original monolith-to-split cutover, which stays historically accurate even after a
+  ninth discipline joins later — that sentence describes what happened at cutover, not the current
+  count), and running the same sweep four times quadruples the chance of one repo's sweep missing an
+  edge case the others' catch. **Mitigation**: each repo's own Phase 1/2 delivery items require
+  reading each occurrence in that repo's own files in context before deciding whether it becomes
+  "nine" or stays as historical narration — never a blind `sed`, and never a diff copy-pasted from
+  one repo's result into another's.
+- **Agent-file bloat risk, in each repo**: `pr-review-synthesis-maker.md` is currently the largest
+  agent file in the pipeline in every repo (~23.7 KB in `ose-public`, sizes vary slightly per repo).
+  Removing its D12/D13 sections shrinks it; the new `pr-review-scout-maker.md` needs its own complete
+  charter (tools, model justification, hard rules, SUPPRESS-equivalent scope guard) rather than a
+  thin stub — sized comparably to a discipline specialist (13-16 KB), not copy-pasted wholesale from
+  the removed sections without adaptation, in each of the four repos independently.
+- **Risk (new to the 4-repo scope): silent partial rollout.** Four independent delivery tracks with
+  no dependency between them means one track could complete while another stalls (e.g. blocked on a
+  merge-precondition or a CI flake), leaving the repo family in a mixed eight-and-nine-discipline
+  state indefinitely. **Mitigation**: [delivery.md's terminal Finalize
+  phase](./delivery.md#phase-7-finalize-across-all-four-repos) explicitly checks all four repos'
+  completion state before the plan is considered done — it does not close out on the strength of only
+  `ose-public`'s track finishing.
 
 ## Related Documentation
 
