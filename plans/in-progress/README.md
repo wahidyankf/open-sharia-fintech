@@ -9,6 +9,12 @@ Active project plans currently being worked on.
   registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and retires `main-ci.yml`
   after folding its unique checks into the PR gate. Closes seven drift findings from the 2026-08-02
   four-repo audit; spans `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`.
+- [pr-review-cycle-scout-and-typesafety](./pr-review-cycle-scout-and-typesafety/README.md) — Adds a
+  `pr-review-scout-maker` pipeline stage 0 (risk-tier classification + specialist selection + context
+  assembly, moved off `pr-review-synthesis-maker`), a ninth `pr-review-types-maker` discipline for
+  cross-language type-soundness (TypeScript/Rust/F#/C#), and a `Cycle: N of {total}` field on every
+  Consolidated Review Header. `ose-public`-only, `worktree-to-pr` delivery, dogfoods the new pipeline
+  against its own PR.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
