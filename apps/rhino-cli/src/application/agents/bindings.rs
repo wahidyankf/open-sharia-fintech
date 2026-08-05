@@ -176,9 +176,9 @@ pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
 }
 
 /// Remove obsolete generated Amazon Q agent definitions after a configured
-/// `harness.amazonq.agent-name` rename. The generated directory is owned by
-/// this emitter; leaving an old JSON definition would create two conflicting
-/// default agents even though validation only checks the newly configured one.
+/// `harness.amazonq.agent-name` rename. The definitions directory can also
+/// contain custom Amazon Q agents, so a candidate is removed only when its
+/// file name and exact contents prove that a previous emitter run generated it.
 fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
     let expected_name = amazonq_agent_name(repo_root)?;
     let expected_file = format!("{expected_name}.json");
@@ -197,9 +197,8 @@ fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
             )
         })?;
         let path = entry.path();
-        let is_json = path.extension().and_then(|extension| extension.to_str()) == Some("json");
         let is_expected = path.file_name().and_then(|name| name.to_str()) == Some(&expected_file);
-        if is_json && !is_expected {
+        if !is_expected && is_emitter_managed_definition(&entry) {
             fs::remove_file(&path).map_err(|error| {
                 format!(
                     "failed to remove stale generated Amazon Q definition {}: {error}",
@@ -209,6 +208,32 @@ fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// Returns whether `entry` is a regular file whose name and exact bytes match
+/// a definition that this emitter could have generated. Failed reads and
+/// non-regular entries are deliberately treated as unmanaged: cleanup must
+/// preserve anything it cannot positively identify as an emitted definition.
+fn is_emitter_managed_definition(entry: &fs::DirEntry) -> bool {
+    let Ok(file_type) = entry.file_type() else {
+        return false;
+    };
+    if !file_type.is_file() {
+        return false;
+    }
+
+    let Some(file_name) = entry.file_name().to_str().map(str::to_owned) else {
+        return false;
+    };
+    let Some(agent_name) = file_name.strip_suffix(".json") else {
+        return false;
+    };
+    if !is_kebab_case_identifier(agent_name) {
+        return false;
+    }
+
+    fs::read_to_string(entry.path())
+        .is_ok_and(|content| content == agent_definition_content(agent_name))
 }
 
 /// Validates all 11 harnesses:
@@ -619,6 +644,43 @@ mod tests {
                 .join("renamed-agent.json")
                 .is_file(),
             "the configured replacement definition must be emitted"
+        );
+    }
+
+    #[test]
+    fn emit_preserves_custom_definition_after_configured_agent_rename() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write_amazonq_config(root);
+        emit_bindings(root).expect("emit original definition");
+
+        let custom_definition = root
+            .join(AMAZONQ_AGENT_DEFINITION_DIR)
+            .join("custom-agent.json");
+        let custom_content =
+            "{\n  \"name\": \"custom-agent\",\n  \"prompt\": \"Custom agent\"\n}\n";
+        write(&custom_definition, custom_content);
+
+        write(
+            &root.join("repo-config.yml"),
+            concat!(
+                "harness:\n",
+                "  - name: amazonq\n",
+                "    tier: generated\n",
+                "    agent-name: renamed-agent\n",
+                "coverage:\n  projects: []\n",
+            ),
+        );
+        emit_bindings(root).expect("emit renamed definition");
+
+        assert_eq!(
+            std::fs::read_to_string(&custom_definition).unwrap(),
+            custom_content,
+            "custom Amazon Q definitions must not be treated as stale emitter output"
+        );
+        assert!(
+            !agent_definition_path(root).exists(),
+            "the old generated definition must still be cleaned up"
         );
     }
 

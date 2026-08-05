@@ -1001,9 +1001,12 @@ failure mode actually observed: a local edit to shared source that nobody meant 
 
 **The generator is deliberately NOT a pre-commit mutation.** Unlike `harness bindings generate`, it
 does not auto-run and auto-restage. If it did, every drift would silently self-heal locally and only
-the scheduled audit would ever see it. Making regeneration an explicit, deliberate act means the gate
-fails loudly the moment someone edits byte-identical source, and the failure message says what that
-means:
+the scheduled audit would ever see it. When a boundary change is intentional, the maintainer must run
+`rhino-cli parity manifest generate`, stage `apps/rhino-cli/parity-manifest.sha256`, then run
+`rhino-cli parity manifest validate`. Validation evaluates the prospective index, so staging the
+generated manifest is a prerequisite: it proves the exact manifest that would be committed matches
+the boundary files. Making regeneration an explicit, deliberate act means the gate fails loudly the
+moment someone edits byte-identical source, and the failure message says what that means:
 
 ```text
 apps/rhino-cli/src/application/docs/naming.rs no longer matches parity-manifest.sha256.

@@ -2098,7 +2098,8 @@ Direction matters: these flow **up** into canonical before any repo copies canon
 
   **Gherkin (underpins) →** "An unannounced edit to byte-identical source fails the gate"; "The
   manifest never regenerates itself"; "The manifest covers tests/ as well as src/"; "Untracked
-  files never enter the manifest"; "Regeneration is idempotent"
+  files never enter the manifest"; "Regeneration is idempotent"; "An intentional manifest
+  regeneration is staged before validation"
 
 - [ ] [AI] **GREEN** — implement both. The boundary set is `apps/rhino-cli/src/**`,
       `apps/rhino-cli/tests/**`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and
@@ -2138,8 +2139,13 @@ Direction matters: these flow **up** into canonical before any repo copies canon
       absent from every surface** — acceptance:
       `... -- gate list --format=json | jq -e '[.[] | select(.command=="parity manifest generate")] | length == 0'`
       exits 0. Verify the inverse: adding it to `pre-commit` makes that same command return false.
-- [ ] [AI] **P1B-MANIFEST** — Generate the manifest and commit it — acceptance:
-      `... -- parity manifest validate` exits 0, and re-running `generate` leaves the file unchanged.
+- [ ] [AI] **P1B-MANIFEST** — Generate the manifest, stage it, then validate the prospective index
+      before committing it — commands:
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`,
+      `git add -- apps/rhino-cli/parity-manifest.sha256`, and
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`
+      — acceptance: validation exits 0 against the staged manifest, and re-running `generate` leaves
+      the file unchanged.
 
 ### Phase 11 Execution-Ready Gate
 

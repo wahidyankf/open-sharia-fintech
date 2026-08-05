@@ -14,21 +14,21 @@ Feature: Rhino CLI parity manifest
 
   Scenario: An unannounced edit to byte-identical source fails the gate
     Given a tracked Rhino CLI parity boundary
-    And its parity manifest has been generated
+    And its parity manifest has been generated and staged
     When a tracked parity source file is edited
     And rhino-cli parity manifest validate runs
     Then the parity gate names the edited source and deliberate remedy
 
   Scenario: The manifest covers tests as well as source
     Given a tracked Rhino CLI parity boundary
-    And its parity manifest has been generated
+    And its parity manifest has been generated and staged
     When a tracked parity test file is edited
     And rhino-cli parity manifest validate runs
     Then the parity gate names the edited test
 
   Scenario: Untracked files never enter the manifest
     Given a tracked Rhino CLI parity boundary
-    And its parity manifest has been generated
+    And its parity manifest has been generated and staged
     When an untracked test fixture is created
     And rhino-cli parity manifest validate runs
     Then the untracked fixture is absent from the manifest

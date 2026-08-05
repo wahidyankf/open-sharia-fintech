@@ -38,6 +38,7 @@ harness:
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
   #   skills-dir  — directory of skill files (source tier only)
   #   rules-dir   — directory of injected rules (generated tier only)
+  #   agent-name  — generated Amazon Q agent-definition filename stem and embedded name (amazonq only)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)

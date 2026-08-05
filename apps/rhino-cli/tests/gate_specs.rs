@@ -1556,7 +1556,7 @@ fn given_tracked_parity_boundary(w: &mut GateWorld) {
     w.stage(&["."]);
 }
 
-#[given("its parity manifest has been generated")]
+#[given("its parity manifest has been generated and staged")]
 fn given_parity_manifest_generated(w: &mut GateWorld) {
     w.run_parity("generate");
     assert!(w.is_success(), "parity generation failed: {}", w.output);

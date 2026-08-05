@@ -3,8 +3,9 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::fs;
+use std::io::{BufRead, BufReader, Read, Write as IoWrite};
 use std::path::Path;
-use std::process::Command;
+use std::process::{Child, ChildStderr, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use anyhow::{Context, Error, anyhow};
@@ -99,6 +100,7 @@ fn boundary_hashes(repo_root: &Path) -> Result<BTreeMap<String, String>, Error> 
         ));
     }
 
+    let mut index_blobs = IndexBlobReader::spawn(repo_root)?;
     let mut hashes = BTreeMap::new();
     for raw_entry in output
         .stdout
@@ -134,7 +136,7 @@ fn boundary_hashes(repo_root: &Path) -> Result<BTreeMap<String, String>, Error> 
         reject_symlink(repo_root, path)?;
         let worktree_contents = fs::read(&full_path)
             .with_context(|| format!("read staged parity boundary file {path}"))?;
-        let contents = index_blob(repo_root, object_id)?;
+        let contents = index_blobs.read_blob(object_id)?;
         if worktree_contents != contents {
             return Err(anyhow!(
                 "{path} differs from the Git index; stage or revert the worktree change before generating or validating {MANIFEST_PATH}.\n\n{}",
@@ -149,6 +151,7 @@ fn boundary_hashes(repo_root: &Path) -> Result<BTreeMap<String, String>, Error> 
         }
         hashes.insert(path.to_owned(), digest);
     }
+    index_blobs.finish()?;
     Ok(hashes)
 }
 
@@ -169,19 +172,137 @@ fn isolated_git(repo_root: &Path) -> Command {
     command
 }
 
-/// Read one immutable index blob by object ID.
-fn index_blob(repo_root: &Path, object_id: &str) -> Result<Vec<u8>, Error> {
-    let output = isolated_git(repo_root)
-        .args(["cat-file", "blob", object_id])
-        .output()
-        .context("read staged Rhino CLI parity boundary blob")?;
-    if !output.status.success() {
-        return Err(anyhow!(
-            "git cat-file failed for staged Rhino CLI parity boundary blob: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
+/// A persistent, hermetic `git cat-file --batch` reader for staged blobs.
+///
+/// Boundary validation commonly reads hundreds of objects. Keeping this
+/// process open avoids paying a Git process startup cost for every file while
+/// still reading the exact object IDs recorded in the index.
+struct IndexBlobReader {
+    /// Running Git process that owns the batch object stream.
+    child: Child,
+    /// Request stream; dropping it signals EOF to Git.
+    stdin: Option<ChildStdin>,
+    /// Buffered response stream carrying headers and blob bytes.
+    stdout: BufReader<ChildStdout>,
+    /// Git diagnostic stream, read if the process exits unsuccessfully.
+    stderr: ChildStderr,
+    /// Whether [`Self::finish`] has already reaped the child process.
+    finished: bool,
+}
+
+impl IndexBlobReader {
+    /// Start the one Git object reader used for a parity-boundary traversal.
+    fn spawn(repo_root: &Path) -> Result<Self, Error> {
+        let mut child = isolated_git(repo_root)
+            .args(["cat-file", "--batch"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .context("start staged Rhino CLI parity boundary blob reader")?;
+        let stdin = child
+            .stdin
+            .take()
+            .ok_or_else(|| anyhow!("Git did not expose parity blob-reader stdin"))?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or_else(|| anyhow!("Git did not expose parity blob-reader stdout"))?;
+        let stderr = child
+            .stderr
+            .take()
+            .ok_or_else(|| anyhow!("Git did not expose parity blob-reader stderr"))?;
+        Ok(Self {
+            child,
+            stdin: Some(stdin),
+            stdout: BufReader::new(stdout),
+            stderr,
+            finished: false,
+        })
     }
-    Ok(output.stdout)
+
+    /// Read exactly one blob, in the same order that Git receives requests.
+    fn read_blob(&mut self, object_id: &str) -> Result<Vec<u8>, Error> {
+        let stdin = self
+            .stdin
+            .as_mut()
+            .ok_or_else(|| anyhow!("Git parity blob reader has already been closed"))?;
+        writeln!(stdin, "{object_id}").context("request staged Rhino CLI parity boundary blob")?;
+        stdin
+            .flush()
+            .context("flush staged Rhino CLI parity boundary blob request")?;
+
+        let mut header = String::new();
+        self.stdout
+            .read_line(&mut header)
+            .context("read staged Rhino CLI parity boundary blob header")?;
+        let header = header
+            .strip_suffix('\n')
+            .and_then(|line| line.strip_suffix('\r').or(Some(line)))
+            .ok_or_else(|| anyhow!("Git ended before returning a parity boundary blob header"))?;
+        let mut fields = header.split_whitespace();
+        let returned_object_id = fields
+            .next()
+            .ok_or_else(|| anyhow!("Git returned an empty parity boundary blob header"))?;
+        let object_type = fields.next().ok_or_else(|| {
+            anyhow!("Git returned a malformed parity boundary blob header: {header}")
+        })?;
+        let size = fields.next().ok_or_else(|| {
+            anyhow!("Git returned a malformed parity boundary blob header: {header}")
+        })?;
+        if fields.next().is_some() || returned_object_id != object_id || object_type != "blob" {
+            return Err(anyhow!(
+                "Git returned an unexpected parity boundary blob header: {header}"
+            ));
+        }
+        let size = size.parse::<usize>().with_context(|| {
+            format!("Git returned an invalid parity boundary blob size: {header}")
+        })?;
+        let mut contents = vec![0; size];
+        self.stdout
+            .read_exact(&mut contents)
+            .context("read staged Rhino CLI parity boundary blob contents")?;
+        let mut terminator = [0];
+        self.stdout
+            .read_exact(&mut terminator)
+            .context("read staged Rhino CLI parity boundary blob terminator")?;
+        if terminator != [b'\n'] {
+            return Err(anyhow!(
+                "Git returned a malformed parity boundary blob response"
+            ));
+        }
+        Ok(contents)
+    }
+
+    /// Close the reader and surface any Git-level failure.
+    fn finish(mut self) -> Result<(), Error> {
+        drop(self.stdin.take());
+        let status = self
+            .child
+            .wait()
+            .context("finish staged Rhino CLI parity boundary blob reader")?;
+        self.finished = true;
+        if !status.success() {
+            let mut stderr = String::new();
+            self.stderr
+                .read_to_string(&mut stderr)
+                .context("read staged Rhino CLI parity boundary blob-reader error")?;
+            return Err(anyhow!(
+                "git cat-file --batch failed for staged Rhino CLI parity boundary blobs: {}",
+                stderr.trim()
+            ));
+        }
+        Ok(())
+    }
+}
+
+impl Drop for IndexBlobReader {
+    fn drop(&mut self) {
+        if !self.finished {
+            drop(self.stdin.take());
+            let _ = self.child.wait();
+        }
+    }
 }
 
 /// Read a stage-zero index blob for an exact repository-relative path.
@@ -227,7 +348,10 @@ fn index_blob_for_path(repo_root: &Path, path: &str) -> Result<Vec<u8>, Error> {
     if stage != "0" || fields.next().is_some() {
         return Err(anyhow!("{MANIFEST_PATH} has an unresolved Git index entry"));
     }
-    index_blob(repo_root, object_id)
+    let mut index_blobs = IndexBlobReader::spawn(repo_root)?;
+    let contents = index_blobs.read_blob(object_id)?;
+    index_blobs.finish()?;
+    Ok(contents)
 }
 
 /// Reject a symlink before any read or write that could leave the repository.
