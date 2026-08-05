@@ -1,0 +1,6 @@
+name: dart_availability_cli
+description: Light Dart primer capstone
+environment:
+  sdk: ^3.0.0
+dev_dependencies:
+  test: any

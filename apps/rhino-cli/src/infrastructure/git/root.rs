@@ -20,18 +20,13 @@ pub fn find_root_from(cwd: Option<&std::path::Path>) -> std::result::Result<Path
     let mut cmd = Command::new("git");
     cmd.args(["rev-parse", "--show-toplevel"]);
     if let Some(dir) = cwd {
-        // An explicit `cwd` means "the repository containing *this* directory".
-        // Git otherwise honours the ambient `GIT_DIR`/`GIT_WORK_TREE` ahead of
-        // the working directory, and git hooks export `GIT_DIR` — so without
-        // this scrub, every rhino-cli invocation from a pre-commit/pre-push hook
-        // resolves to the hook's repository rather than the requested path.
-        cmd.current_dir(dir)
-            .env_remove("GIT_DIR")
-            .env_remove("GIT_WORK_TREE")
-            .env_remove("GIT_INDEX_FILE")
-            .env_remove("GIT_OBJECT_DIRECTORY")
-            .env_remove("GIT_COMMON_DIR");
+        cmd.current_dir(dir);
     }
+    // Repository discovery must start from the supplied cwd (or the process
+    // cwd when none is supplied). Git hooks export these variables for the
+    // hook's repository, which would otherwise override that starting point.
+    // Scrub them even for `find_root()`: its ambient cwd is still authoritative.
+    cmd.env_remove("GIT_DIR").env_remove("GIT_WORK_TREE");
     let output = cmd.output().context("failed to invoke git rev-parse")?;
     if !output.status.success() {
         return Err(anyhow!(

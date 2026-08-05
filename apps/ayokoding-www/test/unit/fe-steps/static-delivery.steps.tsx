@@ -112,16 +112,16 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
   });
 
-  ScenarioOutline("The document language reflects the content-page locale", ({ Given, When, Then }, variables) => {
-    Given('a visitor opens a content page in the "<locale>" locale', () => {
+  ScenarioOutline("The document language reflects the localized page locale", ({ Given, When, Then }, variables) => {
+    Given('a visitor opens a localized page in the "<locale>" locale', () => {
       expect(isValidLocale(String(variables.locale))).toBe(true);
     });
 
-    When("the content page renders", () => {
+    When("the localized page renders", () => {
       expect(localeLayoutSource).toContain("<html lang={(await params).locale}");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the content-page locale
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the localized page locale
     Then('the html element declares the "<language_code>" language code', () => {
       expect(String(variables.locale)).toBe(String(variables.language_code));
     });

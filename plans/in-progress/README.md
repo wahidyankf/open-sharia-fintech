@@ -4,9 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
-  — Authors 14 course bodies from the original course-authoring plan's mobile/desktop and concurrency
-  bands.
 - [sdlc-gate-registry-enforcement](./sdlc-gate-registry-enforcement/README.md) — Makes the already-ratified
   Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically enforced via a `gates:`
   registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and retires `main-ci.yml`

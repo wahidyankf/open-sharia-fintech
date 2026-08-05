@@ -1,0 +1,17 @@
+---
+title: "Just Enough Go"
+date: 2026-08-03T00:00:00+07:00
+draft: false
+weight: 360
+prerequisites: []
+---
+
+- [Overview](/en/learn/courses/just-enough-go/overview)
+- [Learning](/en/learn/courses/just-enough-go/learning)
+  - [Overview](/en/learn/courses/just-enough-go/learning/overview)
+  - [Beginner Examples](/en/learn/courses/just-enough-go/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/just-enough-go/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/just-enough-go/learning/advanced)
+  - [Capstone](/en/learn/courses/just-enough-go/learning/capstone)
+- [Drilling](/en/learn/courses/just-enough-go/drilling)
+  - [Overview](/en/learn/courses/just-enough-go/drilling/overview)

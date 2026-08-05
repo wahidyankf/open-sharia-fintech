@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "notes-linux"
+version = "0.1.0"
+description = "A well-behaved Linux CLI and Unix-socket daemon capstone."
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+notes-linux = "notes_linux.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
