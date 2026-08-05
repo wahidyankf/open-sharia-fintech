@@ -159,6 +159,7 @@ fn validate_local_hook_shims(
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
     for (surface, shim_name) in [
+        (GateSurface::CommitMsg, "commit-msg"),
         (GateSurface::PreCommit, "pre-commit"),
         (GateSurface::PrePush, "pre-push"),
     ] {
@@ -173,15 +174,29 @@ fn validate_local_hook_shims(
         let expected_invocation = format!("gate run --surface={shim_name}");
         let has_registry_invocation = std::fs::read_to_string(&shim)
             .is_ok_and(|contents| has_executable_shell_invocation(&contents, &expected_invocation));
-        if !has_registry_invocation {
+        if !has_executable_mode(&shim) || !has_registry_invocation {
             let message = format!(
-                "Gate surface shim .husky/{shim_name} must invoke gate run --surface={shim_name}"
+                "Gate surface shim .husky/{shim_name} must be executable and invoke gate run --surface={shim_name}"
             );
             writeln!(writer, "{message}")?;
             return Err(anyhow!(message));
         }
     }
     Ok(())
+}
+
+/// Returns whether a hook file has an executable permission bit.
+fn has_executable_mode(path: &Path) -> bool {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+
+        std::fs::metadata(path).is_ok_and(|metadata| metadata.permissions().mode() & 0o111 != 0)
+    }
+    #[cfg(not(unix))]
+    {
+        std::fs::metadata(path).is_ok()
+    }
 }
 
 /// Returns whether a shell script contains a non-comment line with an invocation.
@@ -203,11 +218,13 @@ fn validate_ci_workflow(
     config: &repo_config::RepoConfig,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
-    let workflow_jobs = workflow_jobs(repo_root, config, writer)?;
-    validate_hand_wired_ci_jobs(config, &workflow_jobs, writer)
+    let workflow = workflow_jobs(repo_root, config, writer)?;
+    validate_ci_matrix_contract(config, &workflow, writer)?;
+    validate_ci_gate_invocations(config, &workflow, writer)?;
+    validate_hand_wired_ci_jobs(config, &workflow, writer)
 }
 
-/// Collects CI workflow job names after checking registry-backed commands.
+/// Loads the CI workflow only when the registry declares a CI surface.
 ///
 /// # Errors
 ///
@@ -217,14 +234,14 @@ fn workflow_jobs(
     repo_root: &Path,
     config: &repo_config::RepoConfig,
     writer: &mut dyn Write,
-) -> Result<Vec<String>, Error> {
+) -> Result<Workflow, Error> {
     let pr_workflow = repo_root.join(".github/workflows/pr-quality-gate.yml");
     let has_ci_gates = config
         .gates
         .iter()
         .any(|gate| gate.surfaces.contains_key(&GateSurface::Ci));
     if !has_ci_gates {
-        return Ok(Vec::new());
+        return Ok(Workflow::default());
     }
     let workflow_source = match std::fs::read_to_string(&pr_workflow) {
         Ok(workflow) => workflow,
@@ -268,40 +285,100 @@ fn workflow_jobs(
         writeln!(writer, "{message}")?;
         return Err(anyhow!(message));
     }
-    let has_ci_matrix_enumeration = workflow_source.contains("rhino-cli gate list --surface=ci")
-        && workflow_source.contains("fromJson(needs.enumerate.outputs.gates)");
-    let mut workflow_jobs = Vec::new();
-    for (job, definition) in workflow.jobs {
-        workflow_jobs.push(job.clone());
-        for command in definition
+    Ok(workflow)
+}
+
+/// Validates the generated CI matrix and its quality-gate dependency.
+fn validate_ci_matrix_contract(
+    config: &repo_config::RepoConfig,
+    workflow: &Workflow,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let has_matrix_gates = config.gates.iter().any(|gate| {
+        gate.surfaces.contains_key(&GateSurface::Ci)
+            && gate.wiring.as_ref() != Some(&GateWiring::HandWired)
+    });
+    if !has_matrix_gates {
+        return Ok(());
+    }
+    let has_enumeration = workflow.jobs.get("enumerate").is_some_and(|job| {
+        job.steps
+            .iter()
+            .filter_map(|step| step.run.as_deref())
+            .any(|run| run.contains("gate list --surface=ci"))
+    });
+    let has_matrix_dispatcher = workflow.jobs.get("gate").is_some_and(|job| {
+        let derives_gate_matrix = job.needs.contains("enumerate")
+            && job
+                .strategy
+                .matrix
+                .get("gate")
+                .is_some_and(|entry| entry.contains("fromJson(needs.enumerate.outputs.gates)"));
+        let dispatches_selected_gate = job
             .steps
             .iter()
             .filter_map(|step| step.run.as_deref())
-        {
-            let command = command.trim();
-            let is_declared_command = config.gates.iter().any(|gate| gate.command == command);
-            let is_ci_matrix_command = has_ci_matrix_enumeration
-                && (command.starts_with("rhino-cli gate list --surface=ci")
-                    || command == "rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}");
-            let is_hand_wired_job = config.gates.iter().any(|gate| {
-                gate.id == job
-                    && gate.wiring.as_ref() == Some(&GateWiring::HandWired)
-                    && gate.surfaces.contains_key(&GateSurface::Ci)
-            });
-            if !is_declared_command && !is_ci_matrix_command && !is_hand_wired_job {
-                let message = format!(
-                    "CI workflow pr-quality-gate.yml declares command {command:?} absent from the gate registry"
-                );
-                writeln!(writer, "{message}")?;
-                return Err(anyhow!(message));
-            }
-        }
+            .any(|run| run.contains("gate run --surface=ci --only=${{ matrix.gate.id }}"));
+        derives_gate_matrix && dispatches_selected_gate
+    });
+    let gate_is_required = workflow
+        .jobs
+        .get("quality-gate")
+        .is_some_and(|job| job.needs.contains("gate"));
+    if has_enumeration && has_matrix_dispatcher && gate_is_required {
+        return Ok(());
     }
-    Ok(workflow_jobs)
+    let message = "CI workflow must derive its gate matrix from the enumerate job's gate list, dispatch it through the gate job, and make quality-gate depend on gate";
+    writeln!(writer, "{message}")?;
+    Err(anyhow!(message))
+}
+
+/// Checks only explicit CI gate-driver invocations, leaving setup/control shell alone.
+fn validate_ci_gate_invocations(
+    config: &repo_config::RepoConfig,
+    workflow: &Workflow,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for command in workflow
+        .jobs
+        .values()
+        .flat_map(|job| job.steps.iter())
+        .filter_map(|step| step.run.as_deref())
+        .flat_map(str::lines)
+        .map(str::trim)
+        .filter(|line| !line.starts_with('#'))
+    {
+        if !command.contains("gate run --surface=ci") {
+            continue;
+        }
+        let Some(selector) = command.split("--only=").nth(1) else {
+            let message = format!(
+                "CI workflow gate run invocation {command:?} must select exactly one matrix gate"
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        };
+        let selector = selector.trim().trim_matches('"').trim_matches('\'');
+        if selector.contains("${{") || selector.starts_with('$') {
+            continue;
+        }
+        if config
+            .gates
+            .iter()
+            .any(|gate| gate.id == selector && gate.surfaces.contains_key(&GateSurface::Ci))
+        {
+            continue;
+        }
+        let message =
+            format!("CI workflow invokes undeclared CI gate selector {selector:?} via {command:?}");
+        writeln!(writer, "{message}")?;
+        return Err(anyhow!(message));
+    }
+    Ok(())
 }
 
 /// The small subset of GitHub Actions workflow YAML needed for CI derivation checks.
-#[derive(Deserialize)]
+#[derive(Default, Deserialize)]
 struct Workflow {
     /// All named workflow jobs.
     #[serde(default)]
@@ -314,6 +391,46 @@ struct WorkflowJob {
     /// Shell or action steps configured for this job.
     #[serde(default)]
     steps: Vec<WorkflowStep>,
+    /// Jobs this job waits for before running.
+    #[serde(default)]
+    needs: WorkflowNeeds,
+    /// Matrix strategy declarations for registry-derived jobs.
+    #[serde(default)]
+    strategy: WorkflowStrategy,
+}
+
+/// The matrix portion of a GitHub Actions job strategy.
+#[derive(Default, Deserialize)]
+struct WorkflowStrategy {
+    /// Named matrix dimensions and their expressions.
+    #[serde(default)]
+    matrix: BTreeMap<String, String>,
+}
+
+/// GitHub Actions accepts a single `needs` job or an array of job ids.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum WorkflowNeeds {
+    /// A single prerequisite job.
+    One(String),
+    /// Multiple prerequisite jobs.
+    Many(Vec<String>),
+}
+
+impl Default for WorkflowNeeds {
+    fn default() -> Self {
+        Self::Many(Vec::new())
+    }
+}
+
+impl WorkflowNeeds {
+    /// Whether the dependency list includes one job id.
+    fn contains(&self, expected: &str) -> bool {
+        match self {
+            Self::One(actual) => actual == expected,
+            Self::Many(actual) => actual.iter().any(|job| job == expected),
+        }
+    }
 }
 
 /// A workflow step's optional shell command.
@@ -332,17 +449,23 @@ struct WorkflowStep {
 /// cannot be written.
 fn validate_hand_wired_ci_jobs(
     config: &repo_config::RepoConfig,
-    workflow_jobs: &[String],
+    workflow: &Workflow,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
     for hand_wired_gate in config.gates.iter().filter(|gate| {
         gate.wiring.as_ref() == Some(&GateWiring::HandWired)
             && gate.surfaces.contains_key(&GateSurface::Ci)
     }) {
-        if !workflow_jobs.iter().any(|job| job == &hand_wired_gate.id) {
+        let appears_in_a_job = workflow.jobs.values().any(|job| {
+            job.steps
+                .iter()
+                .filter_map(|step| step.run.as_deref())
+                .any(|run| run.contains(&hand_wired_gate.command))
+        });
+        if !appears_in_a_job {
             let message = format!(
-                "Hand-wired CI gate {:?} is missing from pr-quality-gate.yml",
-                hand_wired_gate.id
+                "Hand-wired CI gate {:?} command {:?} is missing from pr-quality-gate.yml",
+                hand_wired_gate.id, hand_wired_gate.command
             );
             writeln!(writer, "{message}")?;
             return Err(anyhow!(message));
@@ -446,6 +569,8 @@ fn pre_push_composition_rule_violation() {
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn mutation_pre_commit_only_passes() {
+    use std::os::unix::fs::PermissionsExt;
+
     let repo = tempfile::TempDir::new().unwrap();
     std::fs::write(
         repo.path().join("repo-config.yml"),
@@ -466,6 +591,11 @@ fn mutation_pre_commit_only_passes() {
         "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
     )
     .unwrap();
+    std::fs::set_permissions(
+        repo.path().join(".husky/pre-commit"),
+        std::fs::Permissions::from_mode(0o755),
+    )
+    .unwrap();
 
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
@@ -477,6 +607,8 @@ fn mutation_pre_commit_only_passes() {
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn staged_only_carve_out_exempts_pre_commit_check() {
+    use std::os::unix::fs::PermissionsExt;
+
     let repo = tempfile::TempDir::new().unwrap();
     std::fs::write(
         repo.path().join("repo-config.yml"),
@@ -496,6 +628,11 @@ fn staged_only_carve_out_exempts_pre_commit_check() {
     std::fs::write(
         repo.path().join(".husky/pre-commit"),
         "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+    std::fs::set_permissions(
+        repo.path().join(".husky/pre-commit"),
+        std::fs::Permissions::from_mode(0o755),
     )
     .unwrap();
 
@@ -609,6 +746,131 @@ fn commented_surface_shim_is_not_a_registry_delegation() {
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
+fn legacy_non_executable_commit_msg_shim_is_rejected() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().unwrap();
+    let husky = repo.path().join(".husky");
+    std::fs::create_dir(&husky).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: commitlint\n",
+            "    type: check\n",
+            "    command: commitlint --edit\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      commit-msg: { scope: other }\n",
+            "  - id: pre-commit-mutation\n",
+            "    type: mutation\n",
+            "    command: prettier --write\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "  - id: pre-push-mutation\n",
+            "    type: mutation\n",
+            "    command: verify\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+    for (hook, invocation) in [("pre-commit", "pre-commit"), ("pre-push", "pre-push")] {
+        let hook_path = husky.join(hook);
+        std::fs::write(
+            &hook_path,
+            format!("#!/bin/sh\nrhino-cli gate run --surface={invocation}\n"),
+        )
+        .unwrap();
+        std::fs::set_permissions(&hook_path, std::fs::Permissions::from_mode(0o755)).unwrap();
+    }
+    let commit_msg = husky.join("commit-msg");
+    std::fs::write(
+        &commit_msg,
+        "#!/bin/sh\nnpx --no -- commitlint --edit \"$1\"\n",
+    )
+    .unwrap();
+    std::fs::set_permissions(&commit_msg, std::fs::Permissions::from_mode(0o644)).unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains(".husky/commit-msg")
+            && rendered.contains("gate run --surface=commit-msg"),
+        "a legacy, non-executable commit-msg hook must not validate when pre-commit and pre-push delegate correctly; result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn every_declared_hook_shim_must_be_executable() {
+    use std::os::unix::fs::PermissionsExt;
+
+    for hook_without_executable_mode in ["commit-msg", "pre-commit", "pre-push"] {
+        let repo = tempfile::TempDir::new().unwrap();
+        let husky = repo.path().join(".husky");
+        std::fs::create_dir(&husky).unwrap();
+        std::fs::write(
+            repo.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: commitlint\n",
+                "    type: check\n",
+                "    command: commitlint --edit\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      commit-msg: { scope: other }\n",
+                "  - id: pre-commit-mutation\n",
+                "    type: mutation\n",
+                "    command: prettier --write\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-commit: { scope: other }\n",
+                "  - id: pre-push-mutation\n",
+                "    type: mutation\n",
+                "    command: verify\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      pre-push: { scope: other }\n",
+            ),
+        )
+        .unwrap();
+        for hook in ["commit-msg", "pre-commit", "pre-push"] {
+            let hook_path = husky.join(hook);
+            std::fs::write(
+                &hook_path,
+                format!("#!/bin/sh\nrhino-cli gate run --surface={hook}\n"),
+            )
+            .unwrap();
+            let mode = if hook == hook_without_executable_mode {
+                0o644
+            } else {
+                0o755
+            };
+            std::fs::set_permissions(&hook_path, std::fs::Permissions::from_mode(mode)).unwrap();
+        }
+
+        let mut output = Vec::new();
+        let result = run_at_root(repo.path(), &mut output);
+        let rendered = String::from_utf8_lossy(&output);
+        assert!(
+            result.is_err() && rendered.contains(&format!(".husky/{hook_without_executable_mode}")),
+            "a non-executable {hook_without_executable_mode} hook must fail validation; \
+             result_ok={}, output={rendered:?}",
+            result.is_ok()
+        );
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
 fn formatter_requires_exactly_one_verifying_check() {
     let repo = tempfile::TempDir::new().unwrap();
     std::fs::write(
@@ -676,11 +938,14 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
             "    steps:\n",
             "      - run: rhino-cli gate list --surface=ci --format=json\n",
             "  gate:\n",
+            "    needs: enumerate\n",
             "    strategy:\n",
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
         ),
     )
     .unwrap();
@@ -688,6 +953,97 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
         "the registry-derived CI matrix dispatcher must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: echo setup complete\n",
+            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
+        ),
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "ordinary setup shell plus a Cargo-prefixed registry matrix must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn missing_named_ci_matrix_job_is_rejected() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: echo '${{ fromJson(needs.enumerate.outputs.gates) }}'\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err() && rendered.contains("matrix"),
+        "a CI registry gate requires the named matrix dispatcher; result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -716,9 +1072,21 @@ fn undeclared_ci_command() {
         concat!(
             "name: PR quality gate\n",
             "jobs:\n",
-            "  quality:\n",
+            "  enumerate:\n",
             "    steps:\n",
-            "      - run: npm run unregistered-check\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
+            "  unexpected:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=unregistered-check\n",
         ),
     )
     .unwrap();
@@ -727,8 +1095,8 @@ fn undeclared_ci_command() {
     let result = run_at_root(repo.path(), &mut output);
     let rendered = String::from_utf8_lossy(&output);
     assert!(
-        result.is_err() && rendered.contains("npm run unregistered-check"),
-        "a hard-coded CI check absent from the registry must name the undeclared command; \
+        result.is_err() && rendered.contains("unregistered-check"),
+        "an explicit CI gate invocation absent from the registry must name the undeclared selector; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
     );
@@ -758,11 +1126,23 @@ fn named_block_ci_step_is_checked_against_the_registry() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  quality:\n",
+            "  enumerate:\n",
             "    steps:\n",
-            "      - name: undeclared block command\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: gate\n",
+            "  unexpected:\n",
+            "    steps:\n",
+            "      - name: undeclared block gate invocation\n",
             "        run: |\n",
-            "          npm run unregistered-check\n",
+            "          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=unregistered-check\n",
         ),
     )
     .unwrap();
@@ -771,8 +1151,8 @@ fn named_block_ci_step_is_checked_against_the_registry() {
     let result = run_at_root(repo.path(), &mut output);
     let rendered = String::from_utf8_lossy(&output);
     assert!(
-        result.is_err() && rendered.contains("npm run unregistered-check"),
-        "a named block CI step must not bypass registry command validation; \
+        result.is_err() && rendered.contains("unregistered-check"),
+        "a named block CI step must not bypass explicit registry gate validation; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
     );
@@ -815,6 +1195,8 @@ fn orphan_verifies_reference() {
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn stale_lint_staged_block() {
+    use std::os::unix::fs::PermissionsExt;
+
     let repo = tempfile::TempDir::new().unwrap();
     std::fs::write(
         repo.path().join("repo-config.yml"),
@@ -838,6 +1220,11 @@ fn stale_lint_staged_block() {
     std::fs::write(
         repo.path().join(".husky/pre-commit"),
         "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    )
+    .unwrap();
+    std::fs::set_permissions(
+        repo.path().join(".husky/pre-commit"),
+        std::fs::Permissions::from_mode(0o755),
     )
     .unwrap();
 

@@ -194,7 +194,7 @@ set — **safety-first: uncertain nodes are treated as conflicting, never as dis
    concurrently — the scheduler serializes them (the later-scheduled one waits). Nodes with disjoint
    resource-sets are **parallelizable**. Two plans that both touch `apps/rhino-cli/**` are always
    serialized at least at their overlapping nodes, because byte-identical propagation across
-   `ose-public`/`ose-primer`/`ose-private` cannot tolerate two concurrent divergent edits.
+   `ose-public`/`ose-primer`/`ose-private`/`beaver-nest` cannot tolerate two concurrent divergent edits.
 3. **Cycle check.** If explicit `Depends-on` declarations form a cycle, stop and report — a cyclic
    plan graph is a planning error, not something to schedule around.
 
@@ -298,7 +298,7 @@ execute all `[AI]` items → validation via `plan-execution-checker` → iterate
 scheduling changes _when_ these steps run relative to other plans, never _whether_ they run.
 
 **D2. Byte-identity plans propagate as a unit.** A plan whose changes fall under the `apps/rhino-cli`
-byte-identity boundary lands byte-identically across `ose-public`/`ose-primer`/`ose-private`. Two such
+byte-identity boundary lands byte-identically across `ose-public`/`ose-primer`/`ose-private`/`beaver-nest`. Two such
 plans are always serialized (A6.2) so their propagations never race.
 
 **D3. Failure isolation (quarantine).** If a node fails and cannot be fixed (per Iron Rule 3, fix ALL
@@ -404,9 +404,9 @@ In the real 2026-07-18 run of exactly these three plans, the DAG came out **more
 file-level reading suggests** — a worked illustration of why A5/A6 are re-derived per run rather than
 assumed:
 
-- All three edit **different** files, so they are disjoint on disk. But all three touch
-  `apps/rhino-cli/**`, so all three carry the **byte-identity flag** and serialize at their merge +
-  3-repo propagation nodes (A6.2 / Iron Rule 3) — disjoint-on-disk does **not** imply
+- All four edit **different** files, so they are disjoint on disk. But all four touch
+  `apps/rhino-cli/**`, so all four carry the **byte-identity flag** and serialize at their merge +
+  4-repo propagation nodes (A6.2 / Iron Rule 3) — disjoint-on-disk does **not** imply
   parallelizable-to-merge.
 - `rust-cargo-target-dir-sharing` had pivoted from a `scripts/*.sh` helper into `rhino-cli doctor`,
   moving it **inside** the byte-identity boundary. A stale pre-pivot reading would have scheduled it
@@ -480,7 +480,7 @@ Depends-on: [rhino-cli-source-drift-reconciliation]
 - [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — the per-plan pre-merge gate run for
   each `*-to-pr` plan (D1).
 - [`plan-multi-repo-parity-planning-and-execution.md`](./plan-multi-repo-parity-planning-and-execution.md)
-  — the distinct concern of propagating one change byte-identically across the three sibling repos
+  — the distinct concern of propagating one change byte-identically across the four bound repos
   (a plan whose scope this scheduler treats as a single serialized unit).
 
 ## Principles Implemented/Respected

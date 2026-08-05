@@ -34,6 +34,9 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 - Linking standards
 - Emoji usage
 - Convention compliance
+- Registry-gate consistency: live hook and CI documentation delegates command discovery to `gate
+list` and is verified by `gate validate`; flag embedded gate inventories and retired live CI
+  references
 - Instruction-surface byte budgets (Step 6; thresholds live in `repo-config.yml`, never restated here)
 
 ### Skills Quality Validation
