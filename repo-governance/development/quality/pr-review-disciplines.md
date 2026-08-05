@@ -287,8 +287,9 @@ no enforceable rule).
 A re-review **must not re-raise a finding a human has explicitly dismissed** on its thread. A
 human's "won't fix" or "I disagree" reply resolves the thread for future cycles, mirroring
 `pr-review-fixer`'s own reasoned-reject on the agent side. Before fanning out a new cycle, the
-coordinator reads the prior cycle's thread resolution status, including any human dismissal, so the
-specialists do not waste a finding re-litigating something a human has already settled.
+scout (`pr-review-scout-maker`) reads the prior cycle's thread resolution status, including any
+human dismissal, so the specialists do not waste a finding re-litigating something a human has
+already settled.
 
 ### Boundary-tag-strip untrusted-input hardening
 
@@ -536,8 +537,9 @@ be raised at all, regardless of which discipline would otherwise plausibly own i
 ### FAIL: Re-raising a human-dismissed finding
 
 A specialist re-raises, in cycle 2, a finding a human explicitly marked "won't fix" in cycle 1's
-thread. This violates the human-dismissal-respect rule — the coordinator should have surfaced the
-prior dismissal before fanning out, and the specialist should not have re-litigated a settled thread.
+thread. This violates the human-dismissal-respect rule — the scout (`pr-review-scout-maker`) should
+have surfaced the prior dismissal before fanning out, and the specialist should not have
+re-litigated a settled thread.
 
 ## Enforcement
 

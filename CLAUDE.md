@@ -28,15 +28,10 @@ Edit `.claude/` and `.opencode/` files with normal `Write` / `Edit` tools. Both 
 ### Delivery Mode default (Claude-Code binding)
 
 `worktree-to-pr` is inherited as the plan default from `AGENTS.md` §Git Workflow §Delivery Mode (no
-local override in this file — direct push to `main` is no longer the assumed default). The
-PR-review-cycle agents — the stage-0 `pr-review-scout-maker`, the nine discipline specialists
-(including `pr-review-types-maker`), the `pr-review-synthesis-maker` coordinator, and
-`pr-review-fixer` — are ordinary `.claude/agents/*.md` files under this binding; `pr-review-synthesis-maker`
-is the sole poster of record — it writes the one consolidated review via the GitHub Reviews API,
-while the scout and the nine specialists never post (the scout hands its tier decision, specialist
-set, and shared-context brief to the fan-out and to the coordinator; the specialists hand raw
-findings to the coordinator), and none does a local `git push`. `pr-review-fixer` pushes commits to
-the PR branch through the same git tooling as any other agent in this repo.
+local override here). The PR-review-cycle agents (scout, nine specialists,
+`pr-review-synthesis-maker`, `pr-review-fixer`) are ordinary `.claude/agents/*.md` files under this
+binding — see [AGENTS.md §AI Agents](./AGENTS.md#ai-agents) for the pipeline's posting and push
+responsibilities.
 
 ### Multi-harness configuration (Claude Code + OpenCode + Amazon Q + Cursor)
 

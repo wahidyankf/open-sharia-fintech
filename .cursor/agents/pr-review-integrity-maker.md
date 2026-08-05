@@ -1,6 +1,6 @@
 ---
 name: pr-review-integrity-maker
-description: Execution-grade PR reviewer scoped to the CI-gaming/test-integrity discipline only — weakened/skipped/narrowed tests, coverage-gaming, and missing regression tests. One of nine discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the CI-gaming/test-integrity discipline only — weakened/skipped/narrowed tests, coverage-gaming, and missing regression tests. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 model: composer-2.5
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: pr-review-performance-maker
-description: Execution-grade PR reviewer scoped to the performance discipline only — concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, and resource (memory/IO/alloc) concerns. One of nine discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the performance discipline only — concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, and resource (memory/IO/alloc) concerns. One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model: sonnet
 color: blue
