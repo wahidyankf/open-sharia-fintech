@@ -1073,6 +1073,16 @@ build`, and `Scope boundary`; it is independent of the protected port-3101 proce
 > `MERGED` regardless of the later revert, so a downstream plan may consume this plan's
 > band-completion signals only after verifying that PR #136 is merged, not merely that PR #133 was.
 
+> **PR #136 disclosed side-restorations (Cycle 3 review):** because `919863f07` was a wholesale
+> direct-push revert, reverting it wholesale in PR #136 restored 10 files across 5 groups beyond this
+> plan's own 14 course bodies — 5 rhino-cli git env-var scrubbing files, the ayokoding-www
+> cost-of-living-calculator content + test, `apps/ose-www/test/unit/be-steps/features-module-root.unit.test.ts`,
+> `specs/apps/organiclever/containers/contracts/project.json`, and
+> `infra/dev/ayokoding-www/docker-compose.yml`. Each is a faithful restoration of an already-reviewed,
+> already-merged fix that `919863f07` had also discarded, verified individually rather than assumed
+> correct; the `docker-compose.yml` restoration additionally repairs a live `CONTENT_DIR`/
+> `AYOKODING_WEB_CONTENT_DIR` mismatch on `main`. See PR #136's description for the full enumeration.
+
 ---
 
 ### Commit Guidelines (all phases)

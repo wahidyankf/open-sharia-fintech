@@ -148,7 +148,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       handoff**:
 
   ```bash
-  test "$(gh pr view 133 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
+  test "$(gh pr view 136 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
   for s in csp-style-concurrency actor-model-concurrency; do
     test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"
   done | grep -c .

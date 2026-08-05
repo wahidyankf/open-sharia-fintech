@@ -454,7 +454,7 @@ owns its own `<MANIFESTS>careers/careers-ai-manifest.unit.test.ts`.
 - [ ] [AI] On [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md)'s Band 3+4 signal, verify its terminal PR and then repeat the same append-and-reverify:
 
   ```bash
-  test "$(gh pr view 133 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
+  test "$(gh pr view 136 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
   npx nx run ayokoding-www:test:unit
   ```
 
