@@ -2,7 +2,7 @@
 title: "Beginner Actor Model"
 date: 2026-08-03T00:00:00+07:00
 draft: false
-weight: 1
+weight: 10
 ---
 
 # Beginner Actor Model

@@ -7,13 +7,13 @@ weight: 95
 ---
 
 - [66 · Just Enough Elixir](/en/learn/courses/just-enough-elixir)
-  - [Learning](/en/learn/courses/just-enough-elixir/learning)
   - [Overview](/en/learn/courses/just-enough-elixir/overview)
   - [Drilling](/en/learn/courses/just-enough-elixir/drilling)
+  - [Learning](/en/learn/courses/just-enough-elixir/learning)
 - [67 · Actor-Model Concurrency](/en/learn/courses/actor-model-concurrency)
-  - [Learning](/en/learn/courses/actor-model-concurrency/learning)
   - [Overview](/en/learn/courses/actor-model-concurrency/overview)
   - [Drilling](/en/learn/courses/actor-model-concurrency/drilling)
+  - [Learning](/en/learn/courses/actor-model-concurrency/learning)
 - [1 · Just Enough Nvim](/en/learn/courses/just-enough-nvim)
   - [Learning](/en/learn/courses/just-enough-nvim/learning)
   - [Drilling](/en/learn/courses/just-enough-nvim/drilling)
