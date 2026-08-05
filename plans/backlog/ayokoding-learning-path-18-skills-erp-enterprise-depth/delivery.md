@@ -52,6 +52,10 @@ per-course/cohort/stage worktrees nor per-phase branches. Remove it only after t
 
 ## Delivery Mode: worktree-to-pr
 
+**CI scope note**: "CI green"/"CI gates" below mean the PR's own check run
+(`pr-quality-gate.yml`) — never `.github/workflows/main-ci.yml`, which is deprecated,
+schedule-only, and must not be monitored or gated on.
+
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 9 must not push, open
 a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 9 first

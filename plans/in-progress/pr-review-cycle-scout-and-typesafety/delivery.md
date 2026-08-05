@@ -252,6 +252,10 @@ review-synthesis-maker.md` reflects the trimmed source
 
 ## Phase 5: Dogfood the New Pipeline and Merge
 
+**CI scope note**: the CI-green gate below is the PR's own check run (`pr-quality-gate.yml`,
+via `gh pr checks`) — never `.github/workflows/main-ci.yml`, which is deprecated, schedule-only,
+and must not be monitored or gated on.
+
 - [ ] [AI] Invoke the (pre-existing, unmodified-by-this-plan) `pr-review-quality-gate` workflow
       against this plan's own PR with the default `cycles: 3` — this is the **first PR to ever run
       the new scout-first, nine-specialist, cycle-numbered pipeline**, exercising it against the very
