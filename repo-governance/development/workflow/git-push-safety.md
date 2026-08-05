@@ -182,11 +182,36 @@ This rule applies to:
 
 It does not apply to:
 
-- Normal `git push` without destructive flags — agents may run these autonomously.
+- Normal `git push` without destructive flags to a ref the agent has no reason to believe is
+  protected — agents may run these autonomously, subject to the Post-Push Bypass Detection
+  obligation below.
 - `git commit --no-verify` — that is covered separately in the [Code Quality Convention](../quality/code.md) under "Bypassing Hooks".
+
+## Post-Push Bypass Detection
+
+A ruleset bypass cannot be pre-approved the way `--force` can: whether a given push will trigger one
+depends on server-side branch-protection rules and the pusher's bypass privileges, neither of which
+the agent can see in advance. The obligation is therefore post-hoc, not preventive.
+
+After every push, the agent MUST read the push output. If it contains bypass language — for example
+`Bypassed rule violations`, `bypassed branch protection`, or an equivalent GitHub ruleset-bypass
+notice — the push is not routine, even though no destructive flag was used:
+
+1. Stop treating the push as autonomous-and-done. Do not proceed to the next step as if the pushed
+   state passed its required checks.
+2. Report to the user, verbatim from the output, which required check or rule was bypassed.
+3. Record a written reason in the plan (or the session, if no plan exists) for why the underlying
+   check did not run or was not satisfied — the same standard [No Destructive Git
+   Operations](./no-destructive-git-operations.md#no-corner-cutting--root-cause-orientation-is-binding)
+   already requires for skipping a declared quality gate (see its "skipping a declared quality gate"
+   item). A bypassed required status check is exactly that case, discovered after the fact instead of
+   before it.
+4. Never treat "the push succeeded" as evidence the bypassed check would have passed.
 
 ## Related Documentation
 
+- [No Destructive Git Operations Convention](./no-destructive-git-operations.md) — the written-reason
+  standard that Post-Push Bypass Detection's step 3 applies to a discovered ruleset bypass.
 - [Code Quality Convention](../quality/code.md) — Git hooks (Husky, lint-staged, pre-push) that `--no-verify` bypasses.
 - [Trunk Based Development Convention](./trunk-based-development.md) — Git workflow and the specific environment branches (`prod-ayokoding-www`, etc.) where CI-managed force-push is explicitly documented.
 - [Commit Message Convention](./commit-messages.md) — Conventional Commits format enforced by the commit-msg hook.
