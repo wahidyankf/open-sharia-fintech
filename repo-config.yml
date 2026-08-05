@@ -923,3 +923,12 @@ gates:
           - .github/copilot-instructions.md
           - CONVENTIONS.md
       ci: { scope: other }
+
+  # Scratch-only Phase 2 proof that the CI matrix propagates a failed gate to
+  # the Quality gate join job. This entry is never merged.
+  - id: p2-scratch-matrix-failure
+    type: check
+    command: false
+    kind: external
+    surfaces:
+      ci: { scope: other }
