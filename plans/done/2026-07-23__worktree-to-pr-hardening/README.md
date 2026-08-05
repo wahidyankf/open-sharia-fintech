@@ -95,7 +95,7 @@ an afterthought.
 - A future-work workstream: the AI-attribution/bot-identity gap, cost/latency budgeting, and the
   **deferred merge queue** (D7/D10 — researched but NOT adopted here; the repo exposes no merge-queue
   branch setting, so it is split into its own backlog plan:
-  [`merge-queue-adoption`](../../backlog/merge-queue-adoption/README.md)).
+  [`merge-queue-adoption`](../../ideas/merge-queue-adoption.md)).
 - Register/index/binding updates for every new agent (`AGENTS.md`, `.claude/agents/README.md`,
   `npm run generate:bindings`).
 

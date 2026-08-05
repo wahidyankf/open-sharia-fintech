@@ -531,7 +531,7 @@ affected` no-op noted in Phase 8)
 - [x] [AI] Record the **deferred merge queue** (D7/D10): a merge queue was researched (GitHub-native vs
       Graphite) but **NOT adopted** — the repo's branch settings do not expose a merge-queue toggle, so
       precondition (c) stays the manual branch-up-to-date check. The deferred work is owned by the
-      standalone [`merge-queue-adoption`](../../backlog/merge-queue-adoption/README.md) backlog plan; record this
+      standalone [`merge-queue-adoption`](../../ideas/merge-queue-adoption.md) backlog plan; record this
       inside the same `## Future Work` section of `repo-governance/development/quality/pr-review-disciplines.md`
       — acceptance: `grep -ci "merge queue" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; the note states it is deferred,
       not delivered, links `merge-queue-adoption`, and confirms precondition (c) is unchanged

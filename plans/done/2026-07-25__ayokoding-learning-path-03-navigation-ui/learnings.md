@@ -48,7 +48,7 @@ plan-execution.md` §2b) runs this same broad affected suite after a delivery-un
   non-code, workflow doc) — added a caution paragraph after the `test:e2e`/`test:integration` step.
   The specific `course-rehome-redirects.feature` concurrency pattern is already tracked by the
   existing backlog plan
-  [`harden-ayokoding-www-fe-e2e-bulk-link-concurrency`](../../backlog/harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md) —
+  [`harden-ayokoding-www-fe-e2e-bulk-link-concurrency`](../../ideas/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) —
   no duplicate filing needed.
 
 ## Discarded: `ose-app-web-e2e:test:e2e` "connection refused" when run standalone
