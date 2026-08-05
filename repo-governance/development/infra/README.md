@@ -35,6 +35,7 @@ These standards define **HOW to manage development infrastructure**, including w
 
 - [Acceptance Criteria Convention](./acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation
 - [BDD Spec-to-Test Mapping Convention](./bdd-spec-test-mapping.md) - Mandatory 1:1 mapping between CLI commands and Gherkin specifications
+- [Build-Artifact Sweeper Convention](./build-artifact-sweeper.md) - An ambient scheduled sweeper deletes gitignored build output, tool caches, and the shared cargo `target/` on the host machine at any time. A missing artifact is expected environmental behaviour to regenerate and continue from, never a defect to investigate or a finding to file
 - [CI/CD Conventions](./ci-conventions.md) - Central reference for CI/CD conventions: git hooks, test level definitions, coverage thresholds, Docker patterns, GitHub Actions structure, and naming rules
 - [Docker Monorepo Build Patterns](./docker-monorepo-builds.md) - Patterns and pitfalls for building Docker images in an npm workspace monorepo (symlink resolution, direct node_modules injection, transitive dependency hoisting)
 - [GitHub Actions Workflow Naming Convention](./github-actions-workflow-naming.md) - Workflow filenames must mirror their `name:` field using a consistent kebab-case derivation rule
