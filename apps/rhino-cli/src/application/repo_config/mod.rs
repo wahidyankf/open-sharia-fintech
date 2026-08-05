@@ -5,6 +5,7 @@
 //! is byte-identical across all three repos (ose-public, ose-primer, ose-private);
 //! only the per-repo values differ.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 

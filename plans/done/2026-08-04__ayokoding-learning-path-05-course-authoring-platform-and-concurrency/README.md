@@ -2,8 +2,17 @@
 
 **Status**: Completed 2026-08-04
 
-**Terminal delivery:** [PR #133](https://github.com/wahidyankf/ose-public/pull/133). A downstream
-plan may consume this plan's band-completion signals only after verifying that this PR is merged.
+**Terminal delivery chain (amended — read before consuming this plan's signals):** [PR
+#133](https://github.com/wahidyankf/ose-public/pull/133) merged 2026-08-04, then all 14 of this
+plan's course bodies were reverted by direct-push commit
+[`919863f07`](https://github.com/wahidyankf/ose-public/commit/919863f07d8b51f9043ead5f6735f3759f6a2d49)
+on `main` the same day (no linked PR or issue), then restored by
+[PR #136](https://github.com/wahidyankf/ose-public/pull/136). `gh pr view 133` permanently reports
+`MERGED` regardless of the later revert, so **"PR #133 is merged" alone does not prove this plan's
+content is present on `main`** — a downstream plan MUST additionally verify PR #136 is merged (or, if
+consuming after this note is stale, that the 14 course directories under
+`apps/ayokoding-www/content/en/learn/courses/` still exist on `main`) before consuming this plan's
+band-completion signals.
 
 ## Delivery amendment — one final PR
 
@@ -227,7 +236,7 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-FINAL_PR: #133 (downstream consumption requires merge verification)
+FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
 ```
 
 ```text
@@ -242,7 +251,7 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-FINAL_PR: #133 (downstream consumption requires merge verification)
+FINAL_PR: #133, reverted by direct-push commit 919863f07 same day, restored by #136 (downstream consumption requires verifying #136 is merged, not merely that #133 was)
 ```
 
 A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving

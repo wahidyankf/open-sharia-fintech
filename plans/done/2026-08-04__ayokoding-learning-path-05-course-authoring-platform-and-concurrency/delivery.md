@@ -985,7 +985,12 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — the dated move and
       index updates are included in the same archival commit.
-- [x] [AI] Open exactly one draft PR from that branch — [PR #133](https://github.com/wahidyankf/ose-public/pull/133) is the only PR for this plan.
+- [x] [AI] Open exactly one draft PR from that branch — [PR #133](https://github.com/wahidyankf/ose-public/pull/133)
+      was the original PR for this plan. **Amendment**: PR #133's content was reverted by direct-push
+      commit [`919863f07`](https://github.com/wahidyankf/ose-public/commit/919863f07d8b51f9043ead5f6735f3759f6a2d49)
+      the same day (no linked PR/issue) and restored by
+      [PR #136](https://github.com/wahidyankf/ose-public/pull/136) — see README.md's amended
+      "Terminal delivery chain" note for the full chain and the downstream-verification implication.
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle plus every local and CI gate for PR #133.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
