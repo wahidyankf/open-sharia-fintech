@@ -192,6 +192,23 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   avoid the exact risk the maintainer flagged when choosing the broader option: an incorrectly
   aggressive content-type skip could have suppressed `pr-review-security-maker` on this same diff and
   never surfaced the CRITICAL untrusted-input-handling finding it actually caught.
+- **DD-11: Per-specialist attribution in the posted review, discovered in the same cycle-1 dogfood
+  turn as DD-10.** After seeing DD-10's own analysis (which specialists found what), the maintainer
+  asked that this data not stay a one-off manual read of agent transcripts — it should be durably
+  captured in every posted review, since it is exactly the raw material the
+  [Post-Cutover Monitoring Plan](../../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
+  already names as a goal ("per-discipline acceptance rate") but had no mechanism to actually record.
+  `pr-review-synthesis-maker.md`'s Consolidated Review Header gains a `**Per-specialist raw
+findings**` field (raw count per fanned-out specialist, including zero-finding specialists and
+  DD-10 skips with their reason), and every posted finding gains a `**Raised by**:` byline naming its
+  originating specialist(s) — a Deduplicate-function merge keeps every contributing name, so a
+  multiply-corroborated finding (this cycle's scout→synthesis wiring bug, independently caught by
+  four specialists) visibly shows its corroboration count rather than reading as one specialist's
+  opinion. This makes every posted review, on its own, sufficient raw data for a future acceptance-
+  rate read — no side log, no re-deriving from agent transcripts. The maintainer explicitly asked for
+  cycle 1 to be **restarted from a fresh scout pass** rather than patched mid-flight, so that cycle 1's
+  own posted review reflects DD-10 and DD-11 consistently together, instead of a hybrid where scout
+  ran under pre-DD-10 logic while synthesis posted under post-DD-11 formatting.
 
 ## File-Impact Analysis
 

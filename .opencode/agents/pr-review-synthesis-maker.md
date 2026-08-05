@@ -129,16 +129,29 @@ A finding survives all four functions before it is eligible for the consolidated
 that fails any one of them is dropped, recategorized-and-re-evaluated, or held for verification — it
 is never posted "as-is, just in case."
 
+**Attribution tracking (DD-11), required for every finding**: while running the four functions,
+track which specialist(s) originated each finding — a raw finding a single specialist raised keeps a
+single-name byline; a finding two or more specialists independently raised (a Deduplicate-function
+merge) keeps every contributing specialist's name, since multi-specialist convergence on the same
+root cause is itself a confidence signal worth surfacing, not collapsing away. Also tally each
+fanned-out specialist's total raw-finding count (before dedup/filter), including specialists that
+fired and found nothing, and specialists the Content-Type Applicability Filter (DD-10) skipped this
+cycle and why. This is the sole durable, per-cycle record of which disciplines earn their fan-out cost
+— the [Post-Cutover Monitoring Plan](../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
+depends on this data existing somewhere auditable; a posted review missing it is not analyzable later.
+
 ## Consolidated Review Header (Every Tier Decision Is Auditable)
 
 Every consolidated review this agent posts opens with a fixed-shape header, so the cycle number, the
-risk-tier decision `pr-review-scout-maker` made this cycle, and any diff-slicing choice are auditable
-directly from the GitHub review itself — not just from an internal log:
+risk-tier decision `pr-review-scout-maker` made this cycle, which specialists actually fired (and
+their raw yield), and any diff-slicing choice are auditable directly from the GitHub review itself —
+not just from an internal log:
 
 ```markdown
 **Cycle**: N of {total}
 **Risk tier**: trivial | lite | full
-**Specialists fanned out**: none (coordinator-only pass) | governance, logic, security, integrity | all nine specialists
+**Specialists fanned out**: none (coordinator-only pass) | governance, logic, security, integrity | all nine specialists (minus any DD-10 content-type skips, named with reason)
+**Per-specialist raw findings**: architecture 1, logic 1, governance 2, security 1, integrity 0 (skipped: no test/CI files in diff), performance 1, docs 6, instruction 3, types 0 (skipped: no typed source in diff)
 **Security-sensitive-path override applied**: yes | no
 **Diff coverage**: full diff reviewed in one pass | reviewed in N slices (see note)
 **Prior-cycle human dismissals respected**: N threads / none this cycle
@@ -148,7 +161,16 @@ Populate every field for every cycle, even a `trivial`-tier coordinator-only pas
 omitted field is itself a finding-worthy gap in this agent's own output. Every field after `**Cycle**`
 carries forward the exact tier, specialist-set, and slicing decision `pr-review-scout-maker` recorded
 in its shared-context brief for this cycle — this agent transcribes that decision into the header, it
-does not re-derive it.
+does not re-derive it. **`**Per-specialist raw findings**` is the one field this agent itself
+populates** (not scout) — it is a direct byproduct of running the Four Coordination Functions over
+the specialists' actual raw output this cycle, so it belongs to this agent's own accounting, not
+scout's pre-fan-out brief.
+
+Every posted finding in the review body also carries a **`**Raised by**:`** line naming the
+originating specialist(s) — single name for a single-specialist finding, every contributing name
+(comma-separated) for a Deduplicate-function merge — immediately after that finding's confidence/
+severity line, so a reader (or a future automated pass over this repo's PR history) can reconstruct
+per-specialist acceptance rate directly from the posted review body without needing a side log.
 
 ## Finding Requirements (Hard Rules)
 
