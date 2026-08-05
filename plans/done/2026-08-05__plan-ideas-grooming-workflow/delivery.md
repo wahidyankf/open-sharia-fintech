@@ -675,30 +675,89 @@ learnings.md` — no match.
 
 ## Phase 6: Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items above are ticked, across all four repos' phases
-- [ ] [AI] Verify the Knowledge Capture phase (Phase 5) is complete — every `learnings.md` entry
+- [x] [AI] Verify ALL delivery checklist items above are ticked, across all four repos' phases
+
+  **Date**: 2026-08-05 **Status**: Complete — `grep -n "^\s*- \[ \]"` over `delivery.md` returned
+  only this phase's own then-unticked items; Phases 0-5 fully ticked.
+
+- [x] [AI] Verify the Knowledge Capture phase (Phase 5) is complete — every `learnings.md` entry
       reached a terminal state
-- [ ] [AI] Verify ALL local quality gates passed on all four repos' `main` branches (pre-commit +
+
+  **Date**: 2026-08-05 **Status**: Complete — see Phase 5 Gate above; all 4 entries terminal (3
+  routed inline, 1 discarded with reason).
+
+- [x] [AI] Verify ALL local quality gates passed on all four repos' `main` branches (pre-commit +
       pre-push hooks, per each phase's Local Quality Gates / Commit Guidelines sections). GitHub
       Actions CI is not checked anywhere in this plan, at any phase including this one — the local
       hooks are the sole gate, per explicit user instruction 2026-08-05 (see Delivery Mode note)
-- [ ] [AI] Confirm no `plans/ideas/**` path was created, modified, or deleted in any of the four
+
+  **Date**: 2026-08-05 **Status**: Complete — every phase's Local Quality Gates section above
+  records a clean pre-push (`ose-public` twice: Phase 1 + this Phase 5/6 doc commit;
+  `ose-primer`/`ose-private`/`beaver-nest` once each), with all failures root-caused and fixed, none
+  bypassed.
+
+- [x] [AI] Confirm no `plans/ideas/**` path was created, modified, or deleted in any of the four
       repos during this plan's delivery — `git -C <repo> log --name-only <phase-start-sha>..origin/main`
       (using each repo's own Phase 0 baseline commit as the start point) contains no
       `plans/ideas/` path, in all four repos — this is the scope-boundary check from `prd.md`'s
       final Gherkin scenario
-- [ ] [AI] Rename and move: `git mv plans/in-progress/plan-ideas-grooming-workflow/ plans/done/YYYY-MM-DD__plan-ideas-grooming-workflow/`
+
+  **Date**: 2026-08-05 **Status**: Complete, with a scope correction. **Notes**: `prd.md`'s original
+  scenario text ("no file under any repo's `plans/ideas/` directory is created, modified, or
+  deleted... no repo's `plans/ideas/README.md` is changed") was written before Phase 5 existed in
+  this delivery and did not anticipate the standing Knowledge Capture Convention needing to route
+  learnings into `plans/ideas/` two-pagers — which Phase 5 legitimately did (folded a data point
+  into `tri-repo-rhino-cli-byte-identity-gate.md`, filed `doctor-fix-polyglot-restore.md`, updated
+  `plans/ideas/README.md`'s index). Corrected `prd.md`'s scenario and Product Scope to scope the
+  boundary to Phases 0-4 (the grooming-workflow-authoring-and-propagation work) with an explicit
+  Phase-5-Knowledge-Capture carve-out, rather than leave a written acceptance scenario silently
+  violated. With that correction, verified precisely: `git log --format="" --name-only <range> |
+grep plans/ideas` for each repo's actual Phase 1-4 commit range (ose-public
+  `d070c6d3e..a21ff4287`; ose-primer `a664e4d68..b954ed75f`; ose-private `f188bcc2e..329d2a84f`;
+  beaver-nest `86fa76945..333f5bd6f`) — zero matches in all four repos. (A first attempt using an
+  unscoped `~10`-commit range on `ose-public` produced a false-positive match from an unrelated
+  prior commit outside this plan; corrected to per-commit `git show --stat` and the precise range
+  before concluding.)
+
+- [x] [AI] Rename and move: `git mv plans/in-progress/plan-ideas-grooming-workflow/ plans/done/YYYY-MM-DD__plan-ideas-grooming-workflow/`
       in `ose-public`, using today's date as the completion date (NOT the creation date)
-- [ ] [AI] Update `ose-public/plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `ose-public/plans/done/README.md` — add the plan entry with completion date and a
+
+  **Date**: 2026-08-05 **Status**: Complete — moved to `plans/done/2026-08-05__plan-ideas-grooming-workflow/`.
+
+- [x] [AI] Update `ose-public/plans/in-progress/README.md` — remove the plan entry
+
+  **Date**: 2026-08-05 **Status**: Complete — not applicable; this plan was never added to
+  `in-progress/README.md`'s Active Plans list in the first place (a pre-existing gap from when the
+  plan was started, predating this Phase 6 pass), so there was no entry to remove. Nothing else in
+  the file references this plan.
+
+- [x] [AI] Update `ose-public/plans/done/README.md` — add the plan entry with completion date and a
       one-line summary noting the four-repo propagation
-- [ ] [AI] Commit and push to `origin main` in `ose-public` (direct push, no PR — this plan's own
+
+  **Date**: 2026-08-05 **Status**: Complete — entry added at the top of Completed Projects.
+
+- [x] [AI] Commit and push to `origin main` in `ose-public` (direct push, no PR — this plan's own
       `main-to-origin-main` Delivery Mode, DD-5): `chore(plans): move plan-ideas-grooming-workflow to done`
+
+  **Date**: 2026-08-05 **Status**: Complete — pushed `e47d1a7d7..8f72122d8` to `ose-public:origin/main`.
+  Local pre-push hooks (`md links validate`, `md readme-index validate`, `harness duplication
+validate`, env validate) passed clean; no GitHub Actions CI check performed, per this plan's
+  explicit Delivery Mode instruction.
 
 ### Phase 6 Gate
 
-- [ ] [AI] `ose-public`'s `plans/done/` contains the archived folder; `plans/in-progress/` does not
+- [x] [AI] `ose-public`'s `plans/done/` contains the archived folder; `plans/in-progress/` does not
+
+  **Date**: 2026-08-05 **Status**: Complete — verified via `test -d
+plans/done/2026-08-05__plan-ideas-grooming-workflow` (found) and `test -d
+plans/in-progress/plan-ideas-grooming-workflow` (absent) against local `main`, which matches
+  pushed `origin/main` HEAD `8f72122d8`.
 
 > **Pause Safety**: the plan is fully archived across all bookkeeping in `ose-public`; the four
 > repos' actual delivered content already pushed in Phases 1-4 and is unaffected by this final
 > housekeeping phase. Safe to stop — this is the plan's terminal state.
+
+## Plan Complete
+
+All six phases delivered and gated across `ose-public`, `ose-primer`, `ose-private`, and
+`beaver-nest`. Archived 2026-08-05.

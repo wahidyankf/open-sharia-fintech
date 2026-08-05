@@ -169,13 +169,19 @@ Feature: the workflow renames idea-doc filenames when warranted, with links rewr
 ```
 
 ```gherkin
-Feature: this plan's own delivery never touches live plans/ideas/ content
+Feature: this plan's own delivery never operates the grooming workflow against live plans/ideas/ content
 
-  Scenario: no idea file is created, edited, or deleted by this plan's delivery
+  Scenario: no idea file is created, edited, or deleted by running the grooming workflow, merging, splitting, or relocating
     Given this plan's declared scope excludes running the grooming workflow
-    When this plan's delivery checklist is executed to completion
-    Then no file under any repo's plans/ideas/ directory is created, modified, or deleted
-    And no repo's plans/ideas/README.md is changed
+    When this plan's delivery checklist (Phases 0-4, the workflow-authoring-and-propagation scope) is executed to completion
+    Then no file under any repo's plans/ideas/ directory is created, modified, or deleted by invoking plan-ideas-grooming.md, merging/splitting/renaming/relocating an existing idea file, or creating a q1-q4 quadrant subfolder
+    And no repo's plans/ideas/README.md is changed by any such operation
+
+  Scenario: the Knowledge Capture phase MAY add or update a plans/ideas/ two-pager as a routing destination
+    Given the repo-wide Knowledge Capture Convention names plans/ideas/ two-pagers as a legitimate durable home for a future-work learning
+    When this plan's mandatory Phase 5 (Knowledge Capture) routes a surviving learning to that home
+    Then creating a new two-pager, folding a learning into an existing one, or updating plans/ideas/README.md's index is in scope for Phase 5 specifically
+    And this carve-out never extends to Phases 0-4 — the grooming-workflow-authoring-and-propagation work itself still never touches plans/ideas/
 ```
 
 ## Product Scope
@@ -197,9 +203,18 @@ Feature: this plan's own delivery never touches live plans/ideas/ content
 - Running `plan-ideas-grooming` against any repo's live `plans/ideas/` content.
 - Creating any `q1-…`–`q4-…` quadrant subfolder in any repo.
 - Modifying, merging, splitting, renaming, or relocating any existing idea file.
-- Modifying any repo's `plans/ideas/README.md`.
 - Running `npm run generate:bindings` or any `.claude`/`.opencode`/harness-sync command — this plan
   touches only `repo-governance/` content, which is not part of the harness-binding sync surface.
+
+**Carve-out (added 2026-08-05, Phase 6)**: the four bullets above bind Phases 0-4 (the
+grooming-workflow-authoring-and-propagation work) only. Phase 5's mandatory Knowledge Capture
+routing MAY create or edit a `plans/ideas/` two-pager, including `plans/ideas/README.md`'s index,
+when a surviving learning routes there per the Knowledge Capture Convention — that convention is a
+separate, standing, plan-wide obligation this plan cannot opt out of, and "modifying
+`plans/ideas/README.md`" was originally listed as flatly out of scope without anticipating this
+overlap. Discovered when Phase 5 needed to route two learnings there and the original wording
+would have been silently violated; corrected here rather than left contradictory. See
+`learnings.md` for the routing detail.
 
 ## Product-Level Risks
 
