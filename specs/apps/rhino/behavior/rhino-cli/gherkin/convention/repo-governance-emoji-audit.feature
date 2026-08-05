@@ -34,3 +34,9 @@ Feature: Governance Emoji Audit
     When the developer runs convention emoji validate on the tree
     Then the command exits successfully
     And the output reports zero emoji findings
+
+  Scenario: emoji-audit skips policy-permitted agent skill files
+    Given a source tree with an emoji-containing agent skill source file
+    When the developer runs convention emoji validate on the tree
+    Then the command exits successfully
+    And the output reports zero emoji findings

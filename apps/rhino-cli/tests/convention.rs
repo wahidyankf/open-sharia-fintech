@@ -167,6 +167,15 @@ fn given_emoji_archived_skip(w: &mut ConventionWorld) {
     w.write("archived/old.json", "{\n  \"label\": \"\u{2713}\"\n}\n");
 }
 
+#[given("a source tree with an emoji-containing agent skill source file")]
+fn given_emoji_agent_skill_skip(w: &mut ConventionWorld) {
+    w.target = ".".to_string();
+    w.write(
+        ".agents/skills/example/scripts/tool.py",
+        "message = '\u{2713}'\n",
+    );
+}
+
 // ===========================================================================
 // Given steps — convention license validate
 // ===========================================================================

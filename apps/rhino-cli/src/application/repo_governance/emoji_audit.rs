@@ -32,6 +32,7 @@ const EMOJI_FORBIDDEN_EXTENSIONS: &[&str] = &[
 /// Directory names to skip during the walk.
 const EMOJI_SKIP_DIRS: &[&str] = &[
     "node_modules",
+    ".agents",
     ".git",
     ".next",
     "dist",

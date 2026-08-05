@@ -214,7 +214,7 @@ function MealDetail({ entry }: DetailProps) {
       {mealType && <div style={{ fontSize: 13, fontWeight: 600, color: "var(--hue-terracotta-ink)" }}>{mealType}</div>}
       {energyLevel != null && (
         <div style={{ fontSize: 13, color: "var(--color-muted-foreground)" }}>
-          Energy after: {"⚡".repeat(Math.min(Math.max(energyLevel, 0), 5))}
+          Energy after: {Math.min(Math.max(energyLevel, 0), 5)}/5
         </div>
       )}
       {notes && <NotesRow notes={notes} />}
@@ -235,9 +235,7 @@ function FocusDetail({ entry }: DetailProps) {
       {durationMins > 0 && (
         <div style={{ fontSize: 13, color: "var(--color-muted-foreground)" }}>{durationMins} min</div>
       )}
-      {quality != null && (
-        <div style={{ fontSize: 13 }}>Focus quality: {"🧠".repeat(Math.min(Math.max(quality, 0), 5))}</div>
-      )}
+      {quality != null && <div style={{ fontSize: 13 }}>Focus quality: {Math.min(Math.max(quality, 0), 5)}/5</div>}
       {notes && <NotesRow notes={notes} />}
     </div>
   );

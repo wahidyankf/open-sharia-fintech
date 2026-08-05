@@ -62,7 +62,7 @@ export const HoneyOutline: Story = {
   args: {
     variant: "outline",
     hue: "honey",
-    children: "⚗️ Pre-Alpha",
+    children: "Pre-Alpha",
   },
 };
 

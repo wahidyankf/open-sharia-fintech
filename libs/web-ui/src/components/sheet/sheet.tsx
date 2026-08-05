@@ -33,7 +33,7 @@ export function Sheet({ title, onClose, children }: SheetProps) {
               onClick={onClose}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary"
             >
-              ✕
+              ×
             </button>
           </div>
           <div className="px-5 py-4">{children}</div>
