@@ -210,7 +210,7 @@ research, per the
 
 **Related Agents**:
 
-- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-eight-reviewer-disciplines) - The full sibling roster and routing rules
+- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
 - `pr-review-logic-maker` - Owns whether the underlying behavior is correct, which this agent routes away from itself
 - `pr-review-synthesis-maker` - The coordinator this agent's raw findings feed once wired in (Phase 4 cutover)
 - `pr-review-fixer` - Resolves the findings this agent's discipline contributes to the consolidated review

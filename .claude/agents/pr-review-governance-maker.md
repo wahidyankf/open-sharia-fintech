@@ -190,7 +190,7 @@ to `web-researcher` for anything requiring multi-page research, per the
 
 **Related Agents**:
 
-- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-eight-reviewer-disciplines) - The full sibling roster and routing rules
+- [`pr-review-disciplines.md`'s eight-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
 - `pr-review-architecture-maker` - Owns whether a new rule should exist, which this agent routes away from itself
 - `pr-review-logic-maker` - Owns scenario completeness this agent routes away from itself
 - `pr-review-instruction-maker` - Owns instruction-decay staleness this agent explicitly does NOT own (D14)
