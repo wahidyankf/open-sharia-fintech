@@ -2943,6 +2943,11 @@ Ordered — the convention must permit the name before the file can legally carr
 - [ ] [AI] Verify the inverse once — remove the matrix job from `needs:` only on the scratch branch
       and rerun the same failing fixture — acceptance: the join incorrectly stays green, proving the
       test detects the hazard; restore `needs:`, rerun `actionlint`, and leave no scratch diff.
+- [ ] [AI] **P2-CI-REMOTE-BASELINE-REMEDIATION** (`blocks: P2-CI-JOIN-PROOF, P2-MAIN-CI-RETIREMENT`) — repair the registry CI baseline exposed by the disposable remote proof: every CI job that uses `NX_BASE=origin/main` must have that ref available, and every declared matrix gate must be runnable in GitHub Actions without failing on unrelated repository-wide pre-existing findings or absent command dependencies — acceptance: a scratch PR with only `p2-scratch-matrix-failure` failing has no other failed matrix job; its normal join fails, while the inverse join succeeds when only `gate` is omitted from `needs:`.
+  - Date: 2026-08-05
+  - Status: in progress
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Scratch runs [30993522565](https://github.com/wahidyankf/ose-public/actions/runs/30993522565) and [30996147592](https://github.com/wahidyankf/ose-public/actions/runs/30996147592) proved the named matrix fixture fails, but also exposed independent CI failures: no `origin/main` ref for affected specs, missing `markdownlint-cli2`, all-repository emoji/Mermaid scans, Docker Compose discovery, and a stale byte-identity manifest. Those independent failures made the inverse `Quality gate` red and therefore invalidate the intended proof until the baseline is fixed.
 
 ### 2.4 Retire `main-ci.yml`
 
