@@ -3629,10 +3629,52 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/{src/commands/gate/validate.rs,tests/gate_specs.rs,parity-manifest.sha256}`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`, `docs/reference/code-coverage.md`, `plans/in-progress/sdlc-gate-registry-enforcement/{delivery.md,tech-docs.md}`, `repo-governance/workflows/plan/{plan-execution.md,plan-planning.md}`
   - Execution note: Commit `77bad8726` resolves all four accepted findings: executable-only hand-wired validation with RED/GREEN/refactor and Gherkin coverage, canonical coverage wording, active planning/execution workflow guidance, and the implemented verified OpenTofu release-archive guarantee. All four review threads are resolved; focused tests, behavior coverage, lint, Markdown checks, parity validation, and the full pre-push gate pass.
-- [ ] [AI] **P2-C5-CI** (`blockedBy: P2-C5R-FIXER`; `blocks: P2-C6-MAKER`) — run and verify CI for the rebased Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
-- [ ] [AI] **P2-C6-MAKER** (`blockedBy: P2-C5-CI`; `blocks: P2-C6-SYNTHESIS`) — run a fresh scout-first, content-applicable PR review maker fan-out after Cycle 5 — acceptance: all selected raw reports are recorded and triaged.
-- [ ] [AI] **P2-C6-SYNTHESIS** (`blockedBy: P2-C6-MAKER`; `blocks: P2-C6-FIXER`) — synthesize Cycle 6 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
-- [ ] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-CI`) — implement every accepted Cycle 6 finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [x] [AI] **P2-C5-CI** (`blockedBy: P2-C5R-FIXER`; `blocks: P2-C6-MAKER`) — run and verify CI for the rebased Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (CI evidence only)
+  - Execution note: Rebased Cycle 5 final head `cc29571f4651024f2c87850d8bbd2829723376fe` passed [pr-quality-gate run 31047179676](https://github.com/wahidyankf/ose-public/actions/runs/31047179676) and companion [validate-env run 31047179697](https://github.com/wahidyankf/ose-public/actions/runs/31047179697). The prior correction-only head’s cancelled runs were superseded by this final evidence.
+- [x] [AI] **P2-C6-MAKER** (`blockedBy: P2-C5-CI`; `blocks: P2-C6-SYNTHESIS`) — run a fresh scout-first, content-applicable PR review maker fan-out after Cycle 5 — acceptance: all selected raw reports are recorded and triaged.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-{scout,architecture,logic,governance,security,integrity,performance,docs,instruction,types}__137_cc29571f__2026-08-06--*__audit.md`
+  - Execution note: Scout classified the verified Cycle 5 head `cc29571f4651024f2c87850d8bbd2829723376fe` as full tier and selected all nine disciplines. Four resolved Cycle 5 threads were supplied as prior-cycle context. The fresh fan-out reported an executable-command bypass and stale active technical-contract wording; all other discipline results were clean.
+- [x] [AI] **P2-C6-SYNTHESIS** (`blockedBy: P2-C6-MAKER`; `blocks: P2-C6-FIXER`) — synthesize Cycle 6 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-*__137_cc29571f__2026-08-06--*__audit.md`
+  - Execution note: Deduplicated the logic and integrity reports into one HIGH executable-command finding, tool-verified the governance technical-contract drift, and accepted both with no rejection or deferral. The sole Cycle 6 COMMENT review is [4868949323](https://github.com/wahidyankf/ose-public/pull/137#pullrequestreview-4868949323).
+- [x] [AI] **P2-C6-EXECUTABLE-GUARD-RED** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-EXECUTABLE-GUARD-GREEN`) — add failing unit regressions for inline-comment/quoted-text false positives and whitespace-normalized literal-false guards — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: each non-executing form fails before the recognizer is hardened.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Added focused regressions showing both inline-comment/quoted text and unspaced `${{false}}` guards bypassed the first repair. The exact unit tests fail before implementation; Rustfmt and `git diff --check` pass.
+- [x] [AI] **P2-C6-EXECUTABLE-GUARD-GREEN** (`blockedBy: P2-C6-EXECUTABLE-GUARD-RED`; `blocks: P2-C6-EXECUTABLE-GUARD-REFACTOR`) — recognize only executable hand-wired Nx target invocation and normalize literal-false GitHub expressions — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: non-executing text and both literal-false forms fail while the shipped workflow validates.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Replaced free-text matching with tokenized executable `npx nx … -t` target recognition that stops at unquoted shell comments; normalizes both spaced and unspaced `${{ false }}` expressions. All 29 focused validator tests, production `gate validate`, and strict Rhino lint pass after correcting two Clippy-reported parser-arm duplications.
+- [x] [AI] **P2-C6-EXECUTABLE-GUARD-REFACTOR** (`blockedBy: P2-C6-EXECUTABLE-GUARD-GREEN`; `blocks: P2-C6-EXECUTABLE-GUARD-SPECS`) — simplify guard/command recognition and validate the production registry contract — command: `cargo fmt --manifest-path apps/rhino-cli/Cargo.toml -- --check && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: no free-text command matcher remains in the hand-wired validation path.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Isolated minimal shell tokenization and declared-target extraction; the hand-wired path no longer accepts command-like substrings. Rustfmt, production registry validation, and `git diff --check` pass.
+- [x] [AI] **P2-C6-EXECUTABLE-GUARD-SPECS** (`blockedBy: P2-C6-EXECUTABLE-GUARD-REFACTOR`; `blocks: P2-C6-PARITY-MANIFEST`) — add companion Gherkin coverage for inline-comment/quoted-text and normalized-false bypasses — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: behavior specification proves all bypasses fail validation.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Execution note: Added Gherkin-backed inline-comment and normalized `${{false}}` fixtures to prove non-executing hand-wired commands cannot satisfy validation. Gate-spec tests (57 scenarios, 209 steps), behavior coverage (441 scenarios), Rustfmt, and `git diff --check` pass.
+- [x] [AI] **P2-C6-CONTRACT-DOCS** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-FIXER`) — align the technical plan with all-pre-commit Doctor selection and executable/direct-aggregate hand-wired validation — command: `npm run lint:md` — acceptance: active contract language cannot direct a reintroduction of Cycle 5/6 defects.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/tech-docs.md`
+  - Execution note: Corrected the active field contract, CI bootstrap, validation rules, and hand-wired explanation to describe all-pre-commit Doctor tool selection and executable/non-disabled direct aggregate validation. Scoped Markdown/Prettier checks, `npm run lint:md`, and `git diff --check` pass.
+- [x] [AI] **P2-C6-PARITY-MANIFEST** (`blockedBy: P2-C6-EXECUTABLE-GUARD-SPECS`; `blocks: P2-C6-FIXER`) — regenerate and validate the canonical Rhino byte-identity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: manifest is current for the prospective correction commit.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: Staged executable-guard and companion-spec inputs, regenerated the canonical manifest, and validated the prospective staged commit. The manifest is current.
+- [ ] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-PARITY-MANIFEST, P2-C6-CONTRACT-DOCS`; `blocks: P2-C6-CI`) — reconcile both accepted Cycle 6 findings and record final dispositions — acceptance: both review threads are resolved by the correction commit and combined focused gates pass.
 - [ ] [AI] **P2-C6-CI** (`blockedBy: P2-C6-FIXER`; `blocks: P2-C7-MAKER`) — run and verify CI for the Cycle 6 head — acceptance: required checks succeed before Cycle 7 starts.
 - [ ] [AI] **P2-C7-MAKER** (`blockedBy: P2-C6-CI`; `blocks: P2-C7-SYNTHESIS`) — run the final scout-first, content-applicable PR review maker fan-out — acceptance: all selected raw reports are recorded and triaged.
 - [ ] [AI] **P2-C7-SYNTHESIS** (`blockedBy: P2-C7-MAKER`; `blocks: P2-C7-FIXER`) — synthesize final findings into the sole review of record — acceptance: every finding has a disposition and evidence.

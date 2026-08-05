@@ -382,7 +382,7 @@ Field contract:
 | `type`              | yes            | `check` (can fail; subject to the composition rule) or `mutation` (rewrites files; cannot fail on style; exempt from the rule).                                                                            |
 | `command`           | yes            | Leaf command. Interpretation depends on `kind`.                                                                                                                                                            |
 | `kind`              | yes            | `rhino-cli` (invoked through the local binary), `external` (a tool on `PATH`), or `nx` (an Nx target).                                                                                                     |
-| `wiring`            | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares the job itself; validation asserts presence only).                                                                   |
+| `wiring`            | no (checks)    | `matrix` (default — CI emits one job per gate) or `hand-wired` (the workflow declares an executable, non-disabled job itself; validation requires its direct `quality-gate` aggregate dependency).         |
 | `restages`          | no (mutations) | `true` when the mutation's output must be `git add`-ed back, so generated files commit in lockstep.                                                                                                        |
 | `args`              | no             | Command-shaped data that legitimately differs per repo — chiefly `exclude` lists.                                                                                                                          |
 | `surfaces`          | yes            | Map of surface name to scope descriptor. At least one entry.                                                                                                                                               |
@@ -735,10 +735,11 @@ This plan states the rule for `gates:` explicitly, because it is a list rather t
   [Allowed Divergence](../../../docs/reference/sdlc-gate-standard.md#allowed-divergence).
 
 CI consumes another identical-schema registry field, `doctor-tools`: it is an ordered list of only
-the external Doctor prerequisites for that gate. The format job derives a de-duplicated union of its
-formatter mutations, and each matrix row passes its own list to `doctor --fix --tools`; an empty list
-does not invoke Doctor. The local worktree setup remains the deliberately full `doctor --fix` toolchain
-convergence step. The workflow never carries a second gate or tool inventory.
+the external Doctor prerequisites for that gate. The format job derives a de-duplicated union from
+**every** pre-commit gate's `doctor-tools`, because the emitted `lint-staged` batch runs both formatter
+mutations and per-file checks. Each matrix row passes only its own list to `doctor --fix --tools`; an
+empty list does not invoke Doctor. The local worktree setup remains the deliberately full
+`doctor --fix` toolchain convergence step. The workflow never carries a second gate or tool inventory.
 
 ### 2.4 Command surface
 
@@ -806,8 +807,9 @@ direct, post-batch mutation.
    `gate run --surface=…` for every surface with declared gates.
 3. **CI derivation** — for gates with `wiring: matrix` (the default), `pr-quality-gate.yml` builds
    its job matrix from `gate list` and runs no check command the registry does not declare. Gates
-   with `wiring: hand-wired` are exempt from matrix derivation; the check asserts only that a job
-   invoking them **exists** in the workflow. This is what lets the per-language `test:quick` jobs
+   with `wiring: hand-wired` are exempt from matrix derivation, but validation requires an
+   **executable, non-disabled** command invocation in the workflow and requires that job to be a
+   direct `quality-gate` aggregate dependency. This is what lets the per-language `test:quick` jobs
    keep their own `setup-dotnet` / `setup-rust` steps while remaining declared and validated.
 4. **No orphan surfaces** — no surface file invokes a gate id the registry does not carry.
 5. **Emitted-artifact freshness** — the `lint-staged` block in `package.json` matches what
@@ -855,10 +857,10 @@ parallelism as today, and the job list can no longer drift from the registry bec
 from it.
 
 The per-language `test:quick` jobs stay hand-written for their toolchain setup. They are declared as
-`wiring: hand-wired` gates, so `gate validate` check 3 asserts a job invoking them exists without
-demanding it be matrix-emitted. That is the reconciliation the first draft of this document was
-missing: it claimed CI "runs no check command the registry does not declare" while simultaneously
-leaving those jobs undeclared.
+`wiring: hand-wired` gates, so `gate validate` check 3 requires their executable, non-disabled command
+and direct `quality-gate` aggregation without demanding matrix emission. That is the reconciliation
+the first draft of this document was missing: it claimed CI "runs no check command the registry does
+not declare" while simultaneously leaving those jobs undeclared.
 
 ### 2.6 Formatting verification
 

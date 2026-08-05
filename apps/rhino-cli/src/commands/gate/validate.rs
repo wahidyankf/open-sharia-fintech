@@ -521,7 +521,15 @@ impl WorkflowCondition {
     fn is_literal_false(&self) -> bool {
         match self {
             Self::Boolean(value) => !value,
-            Self::String(value) => matches!(value.trim(), "false" | "${{ false }}"),
+            Self::String(value) => {
+                let trimmed = value.trim();
+                let expression = trimmed
+                    .strip_prefix("${{")
+                    .and_then(|value| value.strip_suffix("}}"))
+                    .unwrap_or(trimmed)
+                    .trim();
+                expression.eq_ignore_ascii_case("false")
+            }
         }
     }
 }
@@ -605,23 +613,77 @@ fn validate_hand_wired_ci_jobs(
     Ok(())
 }
 
-/// Returns whether a shell command includes the declared gate command as a token.
+/// Returns whether a shell command invokes the declared gate as an Nx target.
 fn run_declares_command(run: &str, command: &str) -> bool {
     run.lines().any(|line| {
-        let executable = line.trim_start();
-        !executable.starts_with('#')
-            && executable.match_indices(command).any(|(start, _)| {
-                let before = executable[..start].chars().next_back();
-                let after = executable[start + command.len()..].chars().next();
-                before.is_none_or(|character| !is_command_token_character(character))
-                    && after.is_none_or(|character| !is_command_token_character(character))
-            })
+        let tokens = shell_tokens(line);
+        nx_targets(&tokens)
+            .into_iter()
+            .any(|target| target == command)
     })
 }
 
-/// Returns whether a character can continue a command or target token.
-fn is_command_token_character(character: char) -> bool {
-    character.is_ascii_alphanumeric() || matches!(character, ':' | '-' | '_' | '.')
+/// Splits one shell command line, stopping at unquoted comments.
+fn shell_tokens(line: &str) -> Vec<String> {
+    let mut tokens = Vec::new();
+    let mut token = String::new();
+    let mut quote = None;
+    let mut escaped = false;
+
+    for character in line.chars() {
+        if escaped {
+            token.push(character);
+            escaped = false;
+            continue;
+        }
+        match quote {
+            Some('\'') if character == '\'' => quote = None,
+            Some('"') if character == '"' => quote = None,
+            None if character == '#' => break,
+            None if matches!(character, '\'' | '"') => quote = Some(character),
+            Some('"') | None if character == '\\' => escaped = true,
+            None if character.is_whitespace() => {
+                if !token.is_empty() {
+                    tokens.push(std::mem::take(&mut token));
+                }
+            }
+            Some(_) | None => token.push(character),
+        }
+    }
+    if !token.is_empty() {
+        tokens.push(token);
+    }
+    tokens
+}
+
+/// Returns the declared targets of an executable `npx nx … -t` command.
+fn nx_targets(tokens: &[String]) -> Vec<&str> {
+    let Some((executable, rest)) = tokens.split_first() else {
+        return Vec::new();
+    };
+    if executable != "npx" {
+        return Vec::new();
+    }
+    let Some((runner, arguments)) = rest.split_first() else {
+        return Vec::new();
+    };
+    if runner != "nx" {
+        return Vec::new();
+    }
+    let Some(target_index) = arguments
+        .iter()
+        .position(|argument| argument == "-t" || argument == "--targets")
+    else {
+        return Vec::new();
+    };
+
+    arguments[target_index + 1..]
+        .iter()
+        .take_while(|argument| {
+            !argument.starts_with('-') && !matches!(argument.as_str(), "&&" | ";" | "|")
+        })
+        .flat_map(|argument| argument.split(','))
+        .collect()
 }
 
 /// Validates that `package.json` contains the generated lint-staged block.
@@ -1625,6 +1687,77 @@ fn disabled_hand_wired_command_is_rejected() {
             "a literal false job or step guard must not satisfy the hand-wired CI contract"
         );
     }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn inline_comment_or_quoted_hand_wired_command_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+
+    let results = [
+        ": # npx nx affected -t test:quick",
+        "echo 'npx nx affected -t test:quick'",
+    ]
+    .into_iter()
+    .map(|run| {
+        let workflow_source = format!(
+            "jobs:\n  test-quick:\n    steps:\n      - run: \"{run}\"\n  quality-gate:\n    needs: [test-quick]\n"
+        );
+        let workflow: Workflow = serde_norway::from_str(&workflow_source).unwrap();
+        validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err()
+    })
+    .collect::<Vec<_>>();
+    assert!(
+        results.iter().all(|result| *result),
+        "inline comments and quoted commands must not satisfy the hand-wired CI contract: {results:?}"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn unspaced_false_expression_hand_wired_guards_are_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+
+    let mut results = Vec::new();
+    for condition in ["${{ false }}", "${{false}}"] {
+        for workflow_source in [
+            format!(
+                "jobs:\n  test-quick:\n    if: '{condition}'\n    steps:\n      - run: npx nx affected -t test:quick\n  quality-gate:\n    needs: [test-quick]\n"
+            ),
+            format!(
+                "jobs:\n  test-quick:\n    steps:\n      - if: '{condition}'\n        run: npx nx affected -t test:quick\n  quality-gate:\n    needs: [test-quick]\n"
+            ),
+        ] {
+            let workflow: Workflow = serde_norway::from_str(&workflow_source).unwrap();
+            results.push(validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err());
+        }
+    }
+    assert!(
+        results.iter().all(|result| *result),
+        "literal false job and step expressions must not satisfy the hand-wired CI contract: {results:?}"
+    );
 }
 
 #[cfg(test)]

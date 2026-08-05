@@ -639,6 +639,31 @@ fn given_commented_hand_wired_command(w: &mut GateWorld) {
     );
 }
 
+#[given("a hand-wired CI command is only inline-commented")]
+fn given_inline_commented_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - run: echo disabled # npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
 #[given("a hand-wired CI command has a literal-disabled step")]
 fn given_disabled_hand_wired_command(w: &mut GateWorld) {
     w.write(
@@ -659,6 +684,31 @@ fn given_disabled_hand_wired_command(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  test-quick:\n    steps:\n      - if: false\n        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command has a normalized literal-disabled step")]
+fn given_normalized_disabled_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - if: ${{false}}\n        run: npx nx affected -t test:quick\n",
             "  quality-gate:\n    needs: [test-quick]\n",
         ),
     );
