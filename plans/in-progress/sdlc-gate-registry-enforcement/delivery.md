@@ -3579,8 +3579,53 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `.claude/agents/plan-*.md`, generated `.cursor/agents/plan-*.md`, generated `.opencode/agents/plan-*.md`, `apps/rhino-cli/src/application/doctor/{fixer.rs,tools.rs}`, `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/tests/doctor.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`
   - Execution note: Reconciled all five accepted findings with no rejection or deferral. Focused Doctor/gate/spec tests, warning-as-error lint, registry/actionlint/sync validation, and whitespace validation pass.
-- [ ] [AI] **P2-C5-REBASE-REVIEW** (`blockedBy: P2-C5-FIXER`; `blocks: P2-C5-CI`) — recertify the rebased Cycle 5 head with the current scout-first PR-review pipeline — acceptance: the scout records content applicability and every selected member of the nine-discipline fan-out produces a fresh report against the rebased head.
-- [ ] [AI] **P2-C5-CI** (`blockedBy: P2-C5-REBASE-REVIEW`; `blocks: P2-C6-MAKER`) — run and verify CI for the rebased Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
+- [x] [AI] **P2-C5-REBASE-REVIEW** (`blockedBy: P2-C5-FIXER`; `blocks: P2-C5-CI`) — recertify the rebased Cycle 5 head with the current scout-first PR-review pipeline — acceptance: the scout records content applicability and every selected member of the nine-discipline fan-out produces a fresh report against the rebased head.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-{scout,architecture,logic,governance,security,integrity,performance,docs,instruction,types}__137_fe3e16e0a__2026-08-06--*__audit.md`
+  - Execution note: Scout classified the rebased 88-file, security-sensitive diff as full tier, with all nine disciplines applicable and no prior human dismissals. All raw reports were recorded against `fe3e16e0a0a17ffcb462fb2b08992e875cd59860`; synthesis tool-verified four accepted findings and posted the sole Cycle 5 COMMENT review [4868651935](https://github.com/wahidyankf/ose-public/pull/137#pullrequestreview-4868651935).
+- [x] [AI] **P2-C5R-HAND-WIRED-GUARDS-RED** (`blockedBy: P2-C5-REBASE-REVIEW`; `blocks: P2-C5R-HAND-WIRED-GUARDS-GREEN`) — add focused failing validator regressions for commented required commands and literal-disabled job or step guards — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: both bypass cases fail before the guard-aware implementation exists.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Added focused regressions for a commented required command and literal-disabled job/step guards. Both exact validator cases fail before production changes; Rustfmt and `git diff --check` pass.
+- [x] [AI] **P2-C5R-HAND-WIRED-GUARDS-GREEN** (`blockedBy: P2-C5R-HAND-WIRED-GUARDS-RED`; `blocks: P2-C5R-HAND-WIRED-GUARDS-REFACTOR`) — make hand-wired gate validation consider only executable, non-disabled workflow commands — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml commands::gate::validate:: --lib` — acceptance: literal false guards and commented commands are rejected while the production workflow validates.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Modeled optional job/step conditions, rejects YAML and expression literal-false guards, and ignores fully commented shell lines during command matching. All 27 focused validator tests and the production `gate validate` command pass.
+- [x] [AI] **P2-C5R-HAND-WIRED-GUARDS-REFACTOR** (`blockedBy: P2-C5R-HAND-WIRED-GUARDS-GREEN`; `blocks: P2-C5R-HAND-WIRED-GUARDS-SPECS`) — format, simplify, and run registry/workflow validation for the guard-aware hand-wired enforcement — command: `cargo fmt --manifest-path apps/rhino-cli/Cargo.toml -- --check && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: no duplicated command-detection logic or regression in the declared workflow contract.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: Kept guard evaluation centralized in `WorkflowCondition` and executable command matching centralized in `run_declares_command`. Rustfmt, production registry validation, and `git diff --check` pass.
+- [x] [AI] **P2-C5R-HAND-WIRED-GUARDS-SPECS** (`blockedBy: P2-C5R-HAND-WIRED-GUARDS-REFACTOR`; `blocks: P2-C5R-PARITY-MANIFEST`) — add companion Gherkin coverage for disabled or commented hand-wired CI commands — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs` — acceptance: behavioral specification proves such commands cannot satisfy registry validation.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/gate_specs.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`
+  - Execution note: Added Gherkin-backed comment-only and literal-false step fixtures while preserving the aggregate dependency, proving neither bypass satisfies `gate validate`. Gate-spec tests (55 scenarios, 203 steps), behavior coverage (439 scenarios), Rustfmt, and `git diff --check` pass.
+- [x] [AI] **P2-C5R-COVERAGE-DOCS** (`blockedBy: P2-C5-REBASE-REVIEW`; `blocks: P2-C5R-FIXER`) — correct the canonical coverage reference for the retired `main-ci.yml` workflow — command: `npm run lint:md` — acceptance: coverage documentation names the PR quality gate and its push-to-main trigger.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `docs/reference/code-coverage.md`
+  - Execution note: Replaced the retired `main CI` reference with the PR quality gate and explicitly retained its push-to-`main` behavior. Scoped Prettier/Markdown checks, `git diff --check`, and `npm run lint:md` pass.
+- [x] [AI] **P2-C5R-PLAN-WORKFLOW-DOCS** (`blockedBy: P2-C5-REBASE-REVIEW`; `blocks: P2-C5R-FIXER`) — remove retired-workflow monitoring exceptions from active planning and execution workflow guidance — command: `npm run lint:md` — acceptance: current workflow guidance requires monitoring every push-triggered workflow without naming deleted `main-ci.yml`.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `repo-governance/workflows/plan/plan-execution.md`, `repo-governance/workflows/plan/plan-planning.md`
+  - Execution note: Removed only the deleted-workflow exemption, retaining the generic obligation to monitor all workflows triggered by a push. Scoped Markdown lint, `git diff --check`, and `npm run lint:md` pass.
+- [x] [AI] **P2-C5R-WAIVER-DOCS** (`blockedBy: P2-C5-REBASE-REVIEW`; `blocks: P2-C5R-FIXER`) — align the OpenTofu waiver’s delivery-state language with verified immutable release-archive installation — command: `npm run lint:md` — acceptance: the active technical plan describes implemented checksum verification and no longer calls it pending or an installer script.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/tech-docs.md`
+  - Execution note: Replaced the obsolete pending official-installer statement with the implemented pinned official release-archive and checksum-before-install behavior. `npm run lint:md` passes.
+- [x] [AI] **P2-C5R-PARITY-MANIFEST** (`blockedBy: P2-C5R-HAND-WIRED-GUARDS-SPECS`; `blocks: P2-C5R-FIXER`) — regenerate and validate the canonical Rhino byte-identity manifest for the guard enforcement and companion specification — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: staged manifest matches the prospective Phase 2 commit.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
+  - Execution note: Staged the changed byte-identity inputs, generated the manifest, then validated the prospective staged commit. The manifest is current and records the guard implementation, regression tests, and Gherkin specification.
+- [ ] [AI] **P2-C5R-FIXER** (`blockedBy: P2-C5R-PARITY-MANIFEST, P2-C5R-COVERAGE-DOCS, P2-C5R-PLAN-WORKFLOW-DOCS, P2-C5R-WAIVER-DOCS`; `blocks: P2-C5-CI`) — reconcile every accepted rebased Cycle 5 finding, validate the combined delivery, and record dispositions — acceptance: all four review threads are resolved by the correction commit and all focused gates pass.
+- [ ] [AI] **P2-C5-CI** (`blockedBy: P2-C5R-FIXER`; `blocks: P2-C6-MAKER`) — run and verify CI for the rebased Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
 - [ ] [AI] **P2-C6-MAKER** (`blockedBy: P2-C5-CI`; `blocks: P2-C6-SYNTHESIS`) — run a fresh scout-first, content-applicable PR review maker fan-out after Cycle 5 — acceptance: all selected raw reports are recorded and triaged.
 - [ ] [AI] **P2-C6-SYNTHESIS** (`blockedBy: P2-C6-MAKER`; `blocks: P2-C6-FIXER`) — synthesize Cycle 6 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
 - [ ] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-CI`) — implement every accepted Cycle 6 finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.

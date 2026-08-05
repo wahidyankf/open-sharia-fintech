@@ -56,6 +56,16 @@ Feature: Gate conformance validation
     When gate validate runs
     Then it fails and names the gate and workflow file
 
+  Scenario: A commented hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command is only commented out
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
+  Scenario: A literal-disabled hand-wired CI command does not satisfy the workflow contract
+    Given a hand-wired CI command has a literal-disabled step
+    When gate validate runs
+    Then it fails and names the gate and workflow file
+
   Scenario: Gate validation covers every hook surface
     Given pre-commit and pre-push invoke their declared gate surfaces
     And commit-msg is missing its declared gate surface invocation

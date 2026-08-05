@@ -1124,8 +1124,9 @@ meets the 2026-06-06 Path B cutoff. The Low [GHSA-22w5-2fxg-vrwx](https://github
 concerns upstream Go CVEs CVE-2026-42504 and CVE-2026-27145; neither has a matching CISA KEV entry,
 and each EPSS score is below 0.5. The separate High [GHSA-q7j3-v8qv-22vq](https://github.com/advisories/GHSA-q7j3-v8qv-22vq)
 concerns arbitrary file read during certain git operations; it does not assert a CVE mapping to those
-upstream Go CVEs. The exact 1.12.3 official-installer guarantee is limited to macOS and Linux,
-pending source implementation. The [security-waiver register](../../../docs/reference/security-waivers.md)
+upstream Go CVEs. The exact 1.12.3 macOS/Linux guarantee is implemented through a verified immutable
+official release archive: Doctor downloads the pinned archive, verifies its committed SHA-256 checksum,
+and installs only after verification. The [security-waiver register](../../../docs/reference/security-waivers.md)
 holds the durable entry. **AI sign-off: Codex.**
 
 ## 4. Risks and Mitigations

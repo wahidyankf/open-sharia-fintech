@@ -614,6 +614,56 @@ fn given_deleted_hand_wired_job(w: &mut GateWorld) {
     w.write(".github/workflows/pr-quality-gate.yml", "jobs: {}\n");
 }
 
+#[given("a hand-wired CI command is only commented out")]
+fn given_commented_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - run: '# npx nx affected -t test:quick'\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
+#[given("a hand-wired CI command has a literal-disabled step")]
+fn given_disabled_hand_wired_command(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    wiring: hand-wired\n",
+            gate(
+                "test-quick",
+                "check",
+                "test:quick",
+                "nx",
+                "      ci: { scope: affected-projects }\n",
+            )
+        )),
+    );
+    w.write(
+        ".github/workflows/pr-quality-gate.yml",
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n    steps:\n      - if: false\n        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n    needs: [test-quick]\n",
+        ),
+    );
+}
+
 #[when("\"rhino-cli gate validate\" runs")]
 #[when("gate validate runs")]
 fn when_gate_validate_runs(w: &mut GateWorld) {

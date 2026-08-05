@@ -86,8 +86,9 @@ dotnet test --collect:"XPlat Code Coverage" \
 
 ## CI Integration
 
-Coverage is measured during `test:quick` (part of the pre-push hook and main CI)
-via the native `test:coverage` Nx target per project.
+Coverage is measured during `test:quick` (part of the pre-push hook and the
+[PR quality gate](../../.github/workflows/pr-quality-gate.yml), which also triggers on pushes to
+`main`) via the native `test:coverage` Nx target per project.
 
 ### Pipeline Flow
 

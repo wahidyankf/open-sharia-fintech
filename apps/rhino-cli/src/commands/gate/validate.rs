@@ -456,6 +456,9 @@ struct WorkflowJob {
     /// Matrix strategy declarations for registry-derived jobs.
     #[serde(default)]
     strategy: WorkflowStrategy,
+    /// Optional job execution condition.
+    #[serde(rename = "if")]
+    condition: Option<WorkflowCondition>,
 }
 
 /// The matrix portion of a GitHub Actions job strategy.
@@ -498,6 +501,29 @@ struct WorkflowStep {
     /// Optional shell command, including YAML block scalars.
     #[serde(default)]
     run: Option<String>,
+    /// Optional step execution condition.
+    #[serde(rename = "if")]
+    condition: Option<WorkflowCondition>,
+}
+
+/// A GitHub Actions execution condition expressed as a YAML boolean or string.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum WorkflowCondition {
+    /// A native YAML boolean condition.
+    Boolean(bool),
+    /// A GitHub Actions expression or string condition.
+    String(String),
+}
+
+impl WorkflowCondition {
+    /// Whether this condition unconditionally disables execution.
+    fn is_literal_false(&self) -> bool {
+        match self {
+            Self::Boolean(value) => !value,
+            Self::String(value) => matches!(value.trim(), "false" | "${{ false }}"),
+        }
+    }
 }
 
 /// Validates that every hand-wired CI command has an aggregated workflow job.
@@ -535,11 +561,20 @@ fn validate_hand_wired_ci_jobs(
             .jobs
             .iter()
             .filter_map(|(job_id, job)| {
-                job.steps
-                    .iter()
-                    .filter_map(|step| step.run.as_deref())
-                    .any(|run| run_declares_command(run, &hand_wired_gate.command))
-                    .then_some(job_id.as_str())
+                (!job
+                    .condition
+                    .as_ref()
+                    .is_some_and(WorkflowCondition::is_literal_false)
+                    && job.steps.iter().any(|step| {
+                        !step
+                            .condition
+                            .as_ref()
+                            .is_some_and(WorkflowCondition::is_literal_false)
+                            && step.run.as_deref().is_some_and(|run| {
+                                run_declares_command(run, &hand_wired_gate.command)
+                            })
+                    }))
+                .then_some(job_id.as_str())
             })
             .collect::<Vec<_>>();
         if matching_jobs.is_empty() {
@@ -572,11 +607,15 @@ fn validate_hand_wired_ci_jobs(
 
 /// Returns whether a shell command includes the declared gate command as a token.
 fn run_declares_command(run: &str, command: &str) -> bool {
-    run.match_indices(command).any(|(start, _)| {
-        let before = run[..start].chars().next_back();
-        let after = run[start + command.len()..].chars().next();
-        before.is_none_or(|character| !is_command_token_character(character))
-            && after.is_none_or(|character| !is_command_token_character(character))
+    run.lines().any(|line| {
+        let executable = line.trim_start();
+        !executable.starts_with('#')
+            && executable.match_indices(command).any(|(start, _)| {
+                let before = executable[..start].chars().next_back();
+                let after = executable[start + command.len()..].chars().next();
+                before.is_none_or(|character| !is_command_token_character(character))
+                    && after.is_none_or(|character| !is_command_token_character(character))
+            })
     })
 }
 
@@ -1511,6 +1550,81 @@ fn hand_wired_gate_requires_a_quality_gate_dependency() {
         "a hand-wired command in an unaggregated job must fail; result_ok={}, output={rendered:?}",
         result.is_ok()
     );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn commented_hand_wired_command_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  test-quick:\n",
+        "    steps:\n",
+        "      - run: '# npx nx affected -t test:quick'\n",
+        "  quality-gate:\n",
+        "    needs: [test-quick]\n",
+    ))
+    .unwrap();
+
+    assert!(
+        validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err(),
+        "a commented hand-wired command must not satisfy the CI workflow contract"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn disabled_hand_wired_command_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+
+    for workflow_source in [
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n",
+            "    if: false\n",
+            "    steps:\n",
+            "      - run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n",
+            "    needs: [test-quick]\n",
+        ),
+        concat!(
+            "jobs:\n",
+            "  test-quick:\n",
+            "    steps:\n",
+            "      - if: false\n",
+            "        run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n",
+            "    needs: [test-quick]\n",
+        ),
+    ] {
+        let workflow: Workflow = serde_norway::from_str(workflow_source).unwrap();
+        assert!(
+            validate_hand_wired_ci_jobs(&config, &workflow, &mut Vec::new()).is_err(),
+            "a literal false job or step guard must not satisfy the hand-wired CI contract"
+        );
+    }
 }
 
 #[cfg(test)]
