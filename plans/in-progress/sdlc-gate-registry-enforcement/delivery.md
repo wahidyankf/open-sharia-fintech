@@ -2228,7 +2228,11 @@ checkbox remains the separately authorized integration action after its precedin
   - Execution note: Fixed every accepted Cycle 3 parity finding in `ad6b9fb7d2bb4584f29b6f92ee1a61ace4317c66`: descriptor-relative no-follow reads and writes reject parent/final symlink escapes; FIFO reads are nonblocking and rejected; non-Unix parity access fails closed. Added regression coverage for each case, regenerated `parity-manifest.sha256`, passed the full enforced pre-push suite, and pushed the commit.
 - [x] [AI] Cycle 3 CI gate — command: `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-defork --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion` — acceptance: completed/success; failures are fixed and pushed before readiness.
   - Execution note: [pr-quality-gate run 30971678058](https://github.com/wahidyankf/ose-public/actions/runs/30971678058) and companion [validate-env run 30971678104](https://github.com/wahidyankf/ose-public/actions/runs/30971678104) completed successfully for Cycle 3 head `3023d41e4eebf75e357a661b82b7937cec79a948`; the ensuing ledger-evidence commit is also subject to post-push CI before readiness.
-- [ ] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and all five hardened preconditions pass.
+- [x] [AI] Mark ready — command: `gh pr ready` — acceptance: draft is false and all five hardened preconditions pass.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: PR [#135](https://github.com/wahidyankf/ose-public/pull/135) is ready for review on `e6e4d992dec7631be6dd46fcd3d8ea1551dba84f`; `gh pr view` reports `isDraft: false` and `mergeStateStatus: CLEAN`. Preconditions hold: all three non-escalated review cycles are complete, no review thread or CRITICAL/HIGH finding remains, `origin/main` is an ancestor of the head, local gates and [pr-quality-gate 30976654664](https://github.com/wahidyankf/ose-public/actions/runs/30976654664) plus [validate-env 30976654662](https://github.com/wahidyankf/ose-public/actions/runs/30976654662) are green, and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` observed `apps/rhino-cli/parity-manifest.sha256 is current`.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
