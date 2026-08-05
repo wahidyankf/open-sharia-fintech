@@ -9,6 +9,18 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-06: pr-review-cycle-scout-and-typesafety](./2026-08-06__pr-review-cycle-scout-and-typesafety/README.md) —
+  Added a `pr-review-scout-maker` pipeline stage 0 (risk-tier classification + specialist selection +
+  shared-context assembly, moved off `pr-review-synthesis-maker`), a ninth `pr-review-types-maker`
+  discipline for cross-language type-soundness (TypeScript/Rust/F#/C#), and a `Cycle: N of {total}`
+  field plus per-specialist attribution bylines on every Consolidated Review Header. Dogfooded the new
+  pipeline against its own delivering PR across all 3 scheduled review cycles (11 → 6 → 5 findings,
+  severity ceiling CRITICAL → HIGH → HIGH, converging cleanly with zero regressions across the
+  regression-watch disciplines). Delivery Mode: `worktree-to-pr`, four independent repo tracks
+  (`ose-public`, `ose-primer`, `ose-private`, `beaver-nest`); this entry records `ose-public`'s
+  (Track A) completion per the archival-in-PR hard rule — the other three tracks and the shared
+  Knowledge Capture/Finalize phases are tracked separately and land on their own repos' `origin/main`.
+  Terminal delivery chain: [PR #139](https://github.com/wahidyankf/ose-public/pull/139).
 - [2026-08-05: plan-ideas-grooming-workflow](./2026-08-05__plan-ideas-grooming-workflow/README.md) —
   Authored the `plan-ideas-grooming.md` workflow (merge/split/group two-pagers, Eisenhower-quadrant
   sorting, cross-repo relocation, rename-via-link-rewrite) plus the new `grooming` workflow-naming
