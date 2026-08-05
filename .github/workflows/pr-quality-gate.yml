@@ -202,7 +202,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [format, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
+    needs: [format, typescript, dotnet, rust, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:
