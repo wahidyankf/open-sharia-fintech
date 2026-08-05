@@ -910,7 +910,7 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
      ```
 
   7. **Run or complete the PR-Review Maker→Fixer Cycle** against the PR (see the gate above) — because
-     each cycle's reviewer pipeline (eight specialists → `pr-review-synthesis-maker`) reviews the full
+     each cycle's reviewer pipeline (`pr-review-scout-maker` → nine specialists → `pr-review-synthesis-maker`) reviews the full
      current state of the PR, its final pass also covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
      complete, every comment answered, all gates GREEN (including CI on this last push), and the
      archival commit present on the PR branch.

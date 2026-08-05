@@ -1,5 +1,5 @@
 ---
-description: Execution-grade PR reviewer scoped to the documentation-quality discipline only — substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, and doc alt-text/accessibility. One of eight discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the documentation-quality discipline only — substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, and doc alt-text/accessibility. One of nine discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -20,7 +20,7 @@ color: primary
 **Model Selection Justification**: This agent uses `model: sonnet` per the maintainer's D5 decision
 (2026-07-23, recorded in
 [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)):
-eight specialists running across three cycles makes an all-opus fan-out a heavy per-PR cost, and
+nine specialists running across three cycles makes an all-opus fan-out a heavy per-PR cost, and
 Cloudflare's production system reached its precision target with standard-tier specialists plus a
 top-tier coordinator, not top-tier specialists everywhere. Sonnet is sufficient here because:
 
@@ -160,7 +160,7 @@ Posting is the one monolith responsibility that is **not** inherited — it is c
   agent's return value for the coordinator to consume. Findings below confidence 80 are hard-dropped
   before handoff.
 - **Hand off** those raw findings to [`pr-review-synthesis-maker`](./pr-review-synthesis-maker.md), the
-  **sole poster of record**: it dedups across all eight disciplines, re-categorizes arch↔correctness
+  **sole poster of record**: it dedups across all nine disciplines, re-categorizes arch↔correctness
   ownership, reasonableness-filters, tool-verifies, and posts exactly **one consolidated review per
   cycle** via the GitHub Reviews API. There is never one review per specialist.
 - **No PR write scope**: this agent needs only read access to the diff and repo; it performs no
@@ -210,7 +210,7 @@ multi-page research, per the
 
 **Related Conventions**:
 
-- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the tie-breaker rule, and the six grey-zone rulings
+- [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter, the tie-breaker rule, and the seven grey-zone rulings
 - [Content Quality Principles](../../repo-governance/conventions/writing/quality.md) - Active voice, heading hierarchy, alt text, WCAG AA color contrast
 - [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity definitions
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - The pattern this fan-out variant adapts

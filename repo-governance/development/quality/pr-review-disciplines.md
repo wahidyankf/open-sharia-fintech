@@ -253,11 +253,12 @@ Two mechanics keep this full-diff posture tractable rather than merely expensive
   brief every specialist reads, rather than each specialist separately re-deriving the same context
   (which would multiply token cost by the number of specialists) — this extraction is the scout's
   job, not `pr-review-synthesis-maker`'s.
-- **Coordinator-discretion large-diff slicing.** For a `full`-tier PR whose diff exceeds a
-  specialist's comfortable context budget, the coordinator MAY have specialists review
-  per-domain-relevant file slices rather than the whole diff at once, recording in the review header
-  that the diff was sliced. If a diff still cannot be reviewed in one fan-out, the coordinator emits
-  an explicit "diff exceeds single-review scope — reviewed in N slices" note rather than silently
+- **Scout-discretion large-diff slicing.** For a `full`-tier PR whose diff exceeds a
+  specialist's comfortable context budget, `pr-review-scout-maker` MAY have specialists review
+  per-domain-relevant file slices rather than the whole diff at once, recording the slicing choice
+  in the shared-context brief for `pr-review-synthesis-maker` to carry into the review header it
+  posts. If a diff still cannot be reviewed in one fan-out, the scout records an explicit
+  "diff exceeds single-review scope — reviewed in N slices" note in the brief rather than silently
   under-covering it.
 
 ### Per-specialist SUPPRESS blocks

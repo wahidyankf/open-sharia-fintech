@@ -87,7 +87,10 @@ submission carrying every surviving finding.
 `pr-review-governance-maker`, `pr-review-security-maker`, `pr-review-integrity-maker`,
 `pr-review-performance-maker`, `pr-review-docs-maker`, `pr-review-instruction-maker`,
 `pr-review-types-maker`). This agent
-never originates a brand-new finding no specialist raised; its output is always a transformation
+never originates a brand-new finding no specialist raised, **except in the single trivial-tier
+generalist pass it performs itself per DD-7**, where no specialist fans out (see
+[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](./pr-review-scout-maker.md#trivial-tier-handoff-dd-7)).
+Outside that carve-out, its output is always a transformation
 (collapse, recategorize, drop, verify) of what the specialists fed it. Risk-tier classification,
 shared-context assembly, and the prior-cycle thread-resolution read are also explicitly NOT this
 agent's job — those are `pr-review-scout-maker`'s dedicated upstream duties (see

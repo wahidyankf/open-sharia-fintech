@@ -58,6 +58,13 @@ coordinator that consolidates their raw findings — feeding the unchanged `pr-r
 [PR Reviewer-Discipline Convention](../../development/quality/pr-review-disciplines.md) for each
 specialist's full charter, owned scope, and routing rules.
 
+**Trivial-tier branch**: when the scout classifies a cycle `trivial` (DD-7), `scout.specialists` is
+the empty set — no specialist fans out. `pr-review-synthesis-maker` does not sit idle in this
+branch; it performs one consolidated generalist pass itself in place of the fan-out and originates
+findings directly, the single explicit carve-out to its otherwise-transform-only charter (see
+[`pr-review-synthesis-maker.md`'s Charter](../../../.claude/agents/pr-review-synthesis-maker.md) and
+[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../.claude/agents/pr-review-scout-maker.md#trivial-tier-handoff-dd-7)).
+
 - **`pr-review-scout-maker`** — pipeline stage 0, runs once at the start of each cycle before the
   specialist fan-out. Owns risk-tier classification and specialist-set selection (D12) and
   shared-context assembly (D13), and reads the prior cycle's thread-resolution/dismissal state so the
@@ -239,6 +246,13 @@ sequenceDiagram
   [PR Reviewer-Discipline Convention](../../development/quality/pr-review-disciplines.md))
 - **On failure**: If a specialist or the coordinator cannot access the PR or an API call fails, retry
   once; if it fails again, escalate to the user
+- **Trivial-tier branch**: when Step 1 records `tier: trivial`, `specialists` is empty and there is
+  no fan-out to dispatch. `pr-review-synthesis-maker` instead performs one consolidated generalist
+  pass over the full PR context itself, originating the findings that in every other tier the
+  specialists would have raised, then runs the same four coordination functions and posts the same
+  single consolidated review. This is the sole condition under which the coordinator originates a
+  finding no specialist raised (see the carve-out in
+  [`pr-review-synthesis-maker.md`](../../../.claude/agents/pr-review-synthesis-maker.md)).
 
 ### 3. Per-Cycle Fixer Pass (Sequential, After Each Fan-Out + Synthesis Pass)
 
