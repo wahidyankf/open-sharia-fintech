@@ -479,7 +479,7 @@ settings expose no merge-queue toggle to enable, because GitHub merge queue requ
 ownership and the repos in scope are personal-account-owned. Precondition (c) therefore remains the
 manual branch-up-to-date check, unchanged. The deferred investigation, availability matrix, and
 adoption path are owned by the standalone
-[merge-queue-adoption backlog plan](../../../plans/backlog/merge-queue-adoption/README.md), not by
+[merge-queue-adoption backlog plan](../../../plans/ideas/merge-queue-adoption.md), not by
 this convention.
 
 ## Examples

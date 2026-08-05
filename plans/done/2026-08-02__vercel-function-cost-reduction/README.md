@@ -90,7 +90,7 @@ Bank the risk-free platform wins first, then remove the code causes in leverage 
 5. **Phases 7–8** — Knowledge Capture and archival.
 
 Steady-state measurement against the budget is **not** in this plan. It was split out to
-[`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
+[`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
 because grading needs a full clean billing cycle to close (earliest **2026-09-26**), which would
 otherwise hold this plan open for two months after the engineering finished.
 

@@ -10,7 +10,7 @@ The `ayokoding-learning-path-*` plans deliver one programme. Each plan is **self
 shared programme decisions (the `R*`/`A*` ids) are folded into each plan's own `tech-docs.md` under a
 `## Programme decisions` section, and each plan's README carries its scope, course count, gates, and
 dependency edges. **Renumbered 2026-08-01** (see
-[`plan-decision-integrity-hardening`](./plan-decision-integrity-hardening/README.md)'s
+[`plan-decision-integrity-hardening`](../ideas/plan-decision-integrity-hardening.md)'s
 retrofit rationale): plans `05` through `07` originally each delivered more than the 5-15-course
 governance band allows (`04` alone scoped 90 courses; `05-manifests` scoped all four path manifests
 at once; `06`/`07` scoped 24 and 30 courses respectively). Every one of them is now split along its
@@ -72,43 +72,12 @@ contracts; Plan 04's retained baseline is complete and Plan 05 is active):
   — 15 courses (Stage B + C merged, `blockedBy 17`; soft-overall/hard-at-two-gates on `15`/`16` at
   stage granularity): conventional enterprise depth, then the Sharia-compliant design stage.
 
-Standalone plans (outside the `ayokoding-learning-path-*` programme):
-
-- [ayokoding-database-internals-ruff-config](./ayokoding-database-internals-ruff-config/README.md)
-  — Adds course-scoped Ruff configuration so annotation-heavy database-internals examples remain
-  formatter-stable without changing course behavior or shared lint policy.
-- [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md)
-  — Bounds concurrency (and retries transient failures) in `ayokoding-www-fe-e2e`'s bulk-link-check
-  helper, which currently fires every collected `href` at once.
-- [merge-queue-adoption](./merge-queue-adoption/README.md)
-  — Hardens merge-precondition (c) under concurrent integration; owns the merge-queue work deferred
-  from `worktree-to-pr-hardening`.
-- [ayokoding-www-cost-reduction](./ayokoding-www-cost-reduction/README.md)
-  — Runtime-and-hosting cost reduction for `apps/ayokoding-www`: Pagefind migration, build-time
-  Mermaid, `html-react-parser` removal, calculator lazy-load, Docker/trace narrowing, and a
-  dependency modernization sweep bound to the repo's bump policy.
-- [audit-e2e-reuse-existing-server-config](./audit-e2e-reuse-existing-server-config/README.md)
-  — Audits whether `reuseExistingServer: true` (hardcoded unconditionally in six `*-e2e`
-  `playwright.config.ts` files) risks silently reusing a stale, unrelated server, and applies a
-  CI-conditional gate, doc caveat, or automated check depending on runner persistence.
-- [vitest-glob-coverage-guard](./vitest-glob-coverage-guard/README.md)
-  — Designs a durable, automated guard against test files landing outside every configured Vitest
-  project's `include` glob, after an `ayokoding-www` regression test silently executed zero times
-  due to exactly this gap.
-- [ayokoding-www-app-shell-tap-targets](./ayokoding-www-app-shell-tap-targets/README.md)
-  — Fixes two shared `ayokoding-www` app-shell tap targets (the header's "Learn"/"Tools" nav links
-  and the footer's "MIT" license link) measuring below the WCAG 2.5.8 24x24 CSS px minimum,
-  deferred out of `ayokoding-www-ai-benchmark-responsive-overhaul`'s scope (Rule-15 `EWT-005`).
-- [vercel-cost-steady-state-verification](./vercel-cost-steady-state-verification/README.md)
-  — Grades whether [`vercel-function-cost-reduction`](../done/2026-08-02__vercel-function-cost-reduction/README.md)
-  held its $30 invoice ceiling and hit its $20 target, once a full clean billing cycle has closed. Split out of that
-  plan because the grading is calendar-gated (**earliest 2026-09-26**) while the engineering finishes
-  in days. Hard `blockedBy` that plan; single-file structure.
-- [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md)
-  — Four authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
-  pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied
-  retroactively to every open plan. Derived from the three-plan AI Model Benchmark chain. **Returned
-  to backlog 2026-08-05** from `in-progress`.
+**Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
+bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
+`reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state
+grading, and plan-decision-integrity hardening — was reduced to a single-file idea brief in
+[`../ideas/`](../ideas/README.md). This backlog now holds only the `ayokoding-learning-path-*`
+programme.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
