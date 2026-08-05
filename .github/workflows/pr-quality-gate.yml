@@ -148,8 +148,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      # --parallel=2: see main-ci.yml's identical flag on the run-many equivalent — bounds peak
-      # memory when many TS projects are affected at once (e.g. a shared-lib change).
+      # --parallel=2 bounds peak memory when many TS projects are affected at once (e.g. a
+      # shared-lib change).
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=2
 
   dotnet:
@@ -163,7 +163,9 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust'
+      # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
+      # downloaded JAR, so serial execution prevents a first-run download race.
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust' --parallel=1
 
   rust:
     name: Rust quality gate

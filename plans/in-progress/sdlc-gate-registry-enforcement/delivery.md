@@ -2936,18 +2936,41 @@ Ordered — the convention must permit the name before the file can legally carr
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: `quality-gate` retains the byte-identical `name: Quality gate` and its `needs` explicitly includes `gate` alongside format and the retained language/hand-wired jobs. `actionlint` passes; the CI validator also rejects a missing named matrix dispatcher.
-- [ ] [AI] Verify the join dependency — introduce one deliberately failing matrix fixture on a
+- [x] [AI] Verify the join dependency — introduce one deliberately failing matrix fixture on a
       scratch branch and run the workflow — acceptance:
-      `RUN_ID=$(gh run list --branch sdlc-gate-registry-enforcement-rewire --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion`
+      `RUN_ID=$(gh run list --branch p2-ci-join-proof --workflow pr-quality-gate.yml --limit 1 --json databaseId --jq '.[0].databaseId') && gh run view "$RUN_ID" --json status,conclusion`
       reports the `quality-gate` failure; revert the fixture before continuing.
-- [ ] [AI] Verify the inverse once — remove the matrix job from `needs:` only on the scratch branch
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Scratch run [31005080894](https://github.com/wahidyankf/ose-public/actions/runs/31005080894) completed with only `p2-scratch-matrix-failure` and `Quality gate` failed; the fixture matrix job and join both reported failure, while no other job failed. The fixture was subsequently removed in scratch commit `d04133d8`.
+- [x] [AI] Verify the inverse once — remove the matrix job from `needs:` only on the scratch branch
       and rerun the same failing fixture — acceptance: the join incorrectly stays green, proving the
       test detects the hazard; restore `needs:`, rerun `actionlint`, and leave no scratch diff.
-- [ ] [AI] **P2-CI-REMOTE-BASELINE-REMEDIATION** (`blockedBy: P2-REBASE-PARITY-MANIFEST-REGENERATION, P2-REBASE-UPSTREAM-RECONCILIATION-3, P2-REBASE-UPSTREAM-RECONCILIATION-4`; `blocks: P2-CI-JOIN-PROOF, P2-MAIN-CI-RETIREMENT`) — repair the registry CI baseline exposed by the disposable remote proof: every CI job that uses `NX_BASE=origin/main` must have that ref available, and every declared matrix gate must be runnable in GitHub Actions without failing on unrelated repository-wide pre-existing findings or absent command dependencies — acceptance: a scratch PR with only `p2-scratch-matrix-failure` failing has no other failed matrix job; its normal join fails, while the inverse join succeeds when only `gate` is omitted from `needs:`.
   - Date: 2026-08-05
-  - Status: in progress
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Scratch inverse run [31007162658](https://github.com/wahidyankf/ose-public/actions/runs/31007162658) completed with `p2-scratch-matrix-failure` failed but `Quality gate` successful, proving omission of `gate` from `needs:` masks the matrix failure. Commit `8fa08be` restored `gate` to the join and `d04133d8` removed the fixture; `actionlint` and `gate validate` passed. After `145d34b`, clean scratch run [31013137637](https://github.com/wahidyankf/ose-public/actions/runs/31013137637) has every job successful and the scratch worktree is clean.
+- [x] [AI] **P2-CI-REMOTE-BASELINE-REMEDIATION** (`blockedBy: P2-REBASE-PARITY-MANIFEST-REGENERATION, P2-REBASE-UPSTREAM-RECONCILIATION-3, P2-REBASE-UPSTREAM-RECONCILIATION-4, P2-CI-OPENAPI-CODEGEN-RACE-GREEN`; `blocks: P2-CI-JOIN-PROOF, P2-MAIN-CI-RETIREMENT`) — repair the registry CI baseline exposed by the disposable remote proof: every CI job that uses `NX_BASE=origin/main` must have that ref available, and every declared matrix gate must be runnable in GitHub Actions without failing on unrelated repository-wide pre-existing findings or absent command dependencies — acceptance: a scratch PR with only `p2-scratch-matrix-failure` failing has no other failed matrix job; its normal join fails, while the inverse join succeeds when only `gate` is omitted from `needs:`.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/`, `apps/organiclever-app-web/`, `apps/organiclever-www/`, `apps/ose-www/`, `libs/web-ui/`, `package.json`, `repo-config.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/`, `specs/apps/rhino/behavior/rhino-cli/gherkin/`
+  - Execution note: The remediation now supplies complete Git history for affected specs, repository-local executable PATH for external gates, complete Compose discovery, documented Mermaid exclusions, a narrow permitted-agent-skill emoji exclusion plus all remaining source remediation, and an up-to-date parity manifest. The discovered shared OpenAPI Generator download race is also fixed by serializing the .NET affected suite. Normal fixture run [31005080894](https://github.com/wahidyankf/ose-public/actions/runs/31005080894) had no failed matrix job beyond the fixture, its join failed, and inverse run [31007162658](https://github.com/wahidyankf/ose-public/actions/runs/31007162658) made only the join pass; cleanup run [31013137637](https://github.com/wahidyankf/ose-public/actions/runs/31013137637) is fully green.
+- [x] [AI] **P2-CI-JOIN-PROOF** (`blockedBy: P2-CI-REMOTE-BASELINE-REMEDIATION`; `blocks: P2-MAIN-CI-RETIREMENT`) — consolidate the normal, inverse, restoration, and clean-run evidence for the matrix-to-join dependency before the obsolete schedule-only workflow is retired — acceptance: fixture failure reaches `Quality gate` normally, omission of only `gate` makes the join green, and restored workflow/configuration has a fully green remote run.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: The exact remote evidence is normal failure [31005080894](https://github.com/wahidyankf/ose-public/actions/runs/31005080894), inverse green join [31007162658](https://github.com/wahidyankf/ose-public/actions/runs/31007162658), and restored green configuration [31013137637](https://github.com/wahidyankf/ose-public/actions/runs/31013137637). The clean run reports all matrix, retained, and `Quality gate` jobs successful.
+- [x] [AI] **P2-CI-OPENAPI-CODEGEN-RACE-RED** (`blockedBy: P2-CI-REMEDIATION-COMMIT`; `blocks: P2-CI-OPENAPI-CODEGEN-RACE-GREEN`) — record the scratch-cleanup CI regression in which concurrently scheduled affected F# code generators contend for `@openapitools/openapi-generator-cli`'s shared downloaded JAR — acceptance: the failed .NET job identifies `ose-be:codegen` and records `Unable to access jarfile .../versions/7.20.0.jar` while the independent `organiclever-be:codegen` succeeds.
+  - Date: 2026-08-05
+  - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
-  - Execution note: Scratch runs [30993522565](https://github.com/wahidyankf/ose-public/actions/runs/30993522565) and [30996147592](https://github.com/wahidyankf/ose-public/actions/runs/30996147592) proved the named matrix fixture fails, but also exposed independent CI failures: no `origin/main` ref for affected specs, missing `markdownlint-cli2`, all-repository emoji/Mermaid scans, Docker Compose discovery, and a stale byte-identity manifest. Those independent failures made the inverse `Quality gate` red and therefore invalidate the intended proof until the baseline is fixed.
+  - Execution note: Scratch cleanup run [31011000349](https://github.com/wahidyankf/ose-public/actions/runs/31011000349) failed only because its .NET quality job scheduled both backend code generators concurrently. `ose-be:codegen` failed with `Unable to access jarfile .../node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar`; the same job log shows `organiclever-be:codegen` succeeding, which isolates a shared first-download race rather than a fixture or contract failure.
+- [x] [AI] **P2-CI-OPENAPI-CODEGEN-RACE-GREEN** (`blockedBy: P2-CI-OPENAPI-CODEGEN-RACE-RED`; `blocks: P2-CI-REMOTE-BASELINE-REMEDIATION`) — serialize affected .NET quality targets so code generation cannot concurrently initialize the shared OpenAPI Generator JAR — acceptance: `.github/workflows/pr-quality-gate.yml` passes `actionlint`, and `npx nx affected -t typecheck,lint,test:quick,specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust' --parallel=1` exits 0.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: The .NET workflow invocation now uses `--parallel=1`, preventing concurrent initialization of the shared downloaded generator JAR. `actionlint .github/workflows/pr-quality-gate.yml` and the exact serialized affected Nx suite both exit 0 locally.
 - [x] [AI] **P2-CI-EXTERNAL-PATH-RED** (`blockedBy: P2-REBASE-PARITY-MANIFEST-REGENERATION`; `blocks: P2-CI-EXTERNAL-PATH-GREEN`) — establish the regression for generic external gates that must resolve executables installed only in the repository's `node_modules/.bin` — acceptance: the recorded remote CI failure proves the missing-path behavior and the focused test protects the intended resolution contract.
   - Date: 2026-08-05
   - Status: complete
@@ -3045,33 +3068,45 @@ Ordered — do not delete before the fold-in is verified.
     gates; the matrix and retained jobs use the repository setup actions plus `npm run doctor -- --fix`
     for the declared tool inventory. No validating command is dropped.
 
-- [ ] [AI] `git rm .github/workflows/main-ci.yml` — acceptance:
+- [x] [AI] `git rm .github/workflows/main-ci.yml` — acceptance:
       `test ! -f .github/workflows/main-ci.yml`.
-- [ ] [AI] Scrub references from the **live** surfaces — the four tracked files that describe CI as it
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/main-ci.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Removed the tracked schedule/dispatch-only workflow with the prescribed `git rm`; `test ! -f .github/workflows/main-ci.yml` exits 0. The prior normal, inverse, and restored PR-quality gate evidence is complete.
+- [x] [AI] Scrub references from the **live** surfaces that describe CI as it
       currently works — acceptance:
-      `git ls-files -z | xargs -0 grep -l "main-ci" | grep -E '^(\.github/workflows/|docs/reference/|repo-governance/)'`
-      returns nothing. Today it returns six paths:
-      `.github/workflows/README.md`, `.github/workflows/main-ci.yml` (deleted by the step above),
-      `.github/workflows/pr-quality-gate.yml`, `docs/reference/sdlc-gate-standard.md`,
-      `docs/reference/system-architecture/ci-cd.md`, and
-      `repo-governance/development/infra/nx-targets.md`.
-- [ ] [AI] Leave the **narrative** references alone — acceptance: after the scrub,
+      `git ls-files -z | xargs -0 grep -l "main-ci" | grep -E '^(\.github/workflows/|docs/reference/|repo-governance/development/)'`
+      returns nothing. After the 2026-08-05 `origin/main` rebase, upstream had already removed the
+      live documentation references; once the preceding deletion completes, the only remaining live
+      reference is the explanatory comment in `.github/workflows/pr-quality-gate.yml`. The plan
+      workflow documents under `repo-governance/workflows/plan/` are narrative protocol references
+      and remain covered by the next item's exclusions.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Removed the obsolete workflow cross-reference from the TypeScript quality comment. `actionlint` passes, and the scoped live-surface grep returns nothing; surviving references are plan protocol, harness instructions, historical plans, or release narrative.
+- [x] [AI] Leave the **narrative** references alone — acceptance: after the scrub,
       `git ls-files -z | xargs -0 grep -l "main-ci"` still returns matches, and every one of them
-      falls in exactly these six categories:
+      falls in exactly these narrative categories:
 
   ```sh
   # Every surviving path must match one of these prefixes. Anything else is a missed live surface.
   git ls-files -z | xargs -0 grep -l "main-ci" \
-    | grep -vE '^(plans/done/|plans/backlog/|plans/ideas/|plans/in-progress/README\.md$|plans/in-progress/sdlc-gate-registry-enforcement/|apps/ose-www/content/updates/)'
+    | grep -vE '^(\.claude/agents/plan-|\.cursor/agents/plan-|\.opencode/agents/plan-|AGENTS\.md$|repo-governance/workflows/plan/|plans/done/|plans/backlog/|plans/ideas/|plans/in-progress/|apps/ose-www/content/updates/)'
   ```
 
-  Returns nothing once the six live surfaces are scrubbed. Note the fifth and sixth categories:
-  `plans/in-progress/README.md` and, separately, **this plan's own folder**, which discusses
-  `main-ci.yml` throughout — it is the plan's subject — so the plan's documents are themselves
-  narrative references and must not be scrubbed. Omitting the plan's-own-folder category from the
-  enumeration was an earlier defect in this step. These are history, future-work notes, and this
-  plan's own record; rewriting them would falsify it. A repo-wide "no match anywhere" clause is
-  **unsatisfiable** and was the original form of this step.
+  Returns nothing once the live surfaces are scrubbed. Harness and root instructions record the
+  schedule-only workflow's monitoring exclusion; plan workflow documents define the same protocol.
+  Active plans, including this plan and the concurrently rebased PR-review plan, may discuss
+  `main-ci.yml` as a subject, so they too are narrative references and must not be scrubbed.
+  Historical and future-work plan records plus release content preserve their own context. Rewriting
+  any of these would falsify the record; a repo-wide "no match anywhere" clause is therefore
+  **unsatisfiable**.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: The surviving references are limited to plan protocol and harness instructions, root guidance, active/historical/future plan records, and the published release update. The expanded active-plan category is required by the rebase-introduced `pr-review-cycle-scout-and-typesafety` plan; the exclusion command returns nothing, so no live CI surface was left behind.
 
 ### 2.5 Documents
 
@@ -3237,7 +3272,17 @@ checkbox remains the separately authorized integration action after its precedin
   - Date: 2026-08-05
   - Status: complete
   - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
-  - Execution note: Fetched `origin/main` and cleanly rebased seven local commits over five upstream commits (`c287f9b4e`, `b560543d2`, `b10758617`, `d67e3c0b2`, `3f43bae6e`). The social-media directory rename and the new/fixed PR-review plan have no Phase 2 overlap. `d67e3c0b2` updates the plan workflow to exclude schedule/dispatch-only `main-ci.yml` from CI gating, and `3f43bae6e` adds that same clarification only to other active/backlog plans; both agree with this plan's existing narrative-reference exclusion and its ordered PR-quality-gate proof before retirement. No workflow, registry, Rhino source, parity boundary, or active acceptance criterion changed. `git merge-base --is-ancestor origin/main HEAD` passes (`HEAD` `9afc481c0`, `origin/main` `3f43bae6e`); the baseline task now records this reconciliation as its completed dependency.
+  - Execution note: Fetched `origin/main` and cleanly rebased seven local commits over five upstream commits (`c287f9b4e`, `b560543d2`, `b10758617`, `d67e3c0b2`, `3f43bae6e`). The social-media directory rename and the new/fixed PR-review plan have no Phase 2 overlap. `d67e3c0b2` updates the plan workflow to exclude schedule/dispatch-only `main-ci.yml` from CI gating, and `3f43bae6e` adds that same clarification only to other active/backlog plans; both agree with this plan's existing narrative-reference exclusion and its ordered PR-quality-gate proof before retirement. No workflow, registry, Rhino source, parity boundary, or active acceptance criterion changed. `git merge-base --is-ancestor origin/main HEAD` passes (`HEAD` `9afc481c0`, `origin/main` `3f43bae6e`); after inspecting the rebased live surfaces, the execution record was clarified to use the dedicated `p2-ci-join-proof` branch and to name the sole remaining post-delete live `main-ci` reference, while keeping the proof and retirement acceptance criteria unchanged.
+- [x] [AI] **P2-REBASE-INTEGRATION-COMMIT** (`blockedBy: P2-CI-JOIN-PROOF, P2-MAIN-CI-RETIREMENT`; `blocks: P2-REBASE-PUSH-INTEGRATION`) — commit the remote-proof record, OpenAPI codegen serialization, `main-ci.yml` retirement, and active-plan reconciliation after the latest rebase — acceptance: the staged path list contains only the owned workflow, plan, and deleted obsolete workflow paths, and the conventional commit passes its hooks.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `.github/workflows/main-ci.yml`, `.github/workflows/pr-quality-gate.yml`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Staged only the deleted schedule-only workflow, the PR-quality workflow, and the active delivery record. The conventional commit completed all hooks successfully as `7700979`; this execution note is being folded into that same local commit before it is pushed.
+- [x] [AI] **P2-REBASE-PUSH-INTEGRATION** (`blockedBy: P2-REBASE-INTEGRATION-COMMIT`; `blocks: Phase 2 review cycle 1`) — update the already-open rebased PR branch with `git push --force-with-lease origin sdlc-gate-registry-enforcement-rewire` — acceptance: the lease-protected push succeeds and the remote branch SHA equals local `HEAD`.
+  - Date: 2026-08-05
+  - Status: complete
+  - Files Changed: `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: With explicit user authorization, `git push --force-with-lease` updated the existing PR branch from `b1a029304` to `dd6d29f1`. Immediately after the push, `git ls-remote --heads origin sdlc-gate-registry-enforcement-rewire` and local `HEAD` both resolve to `dd6d29f1a7a51cd7a5858066e7ce8b08c6ab909d`.
 - [x] [AI] **P2-REBASE-PARITY-MANIFEST-REGENERATION** (`blockedBy: P2-REBASE-UPSTREAM-RECONCILIATION-2`; `blocks: P2-CI-REMOTE-BASELINE-REMEDIATION`) — regenerate `apps/rhino-cli/parity-manifest.sha256` after the upstream naming-module change, then validate it — commands: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` — acceptance: validation exits 0 and the regenerated manifest is committed with this Phase 2 remediation.
   - Date: 2026-08-05
   - Status: complete
