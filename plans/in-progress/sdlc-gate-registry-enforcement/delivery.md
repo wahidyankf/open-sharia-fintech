@@ -3750,7 +3750,11 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `apps/rhino-cli/parity-manifest.sha256`
   - Execution note: After staging the prospective manifest, regenerated hashes for `validate.rs`, gate-spec bindings, and the Gherkin feature. `parity manifest validate` confirms the staged manifest is current; this corrects the earlier prematurely recorded no-change result.
-- [ ] [AI] **P2-C7-FIXER** (`blockedBy: P2-C7-PARITY-MANIFEST`; `blocks: P2-C7-CI`) — implement every accepted final-cycle finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [x] [AI] **P2-C7-FIXER** (`blockedBy: P2-C7-PARITY-MANIFEST`; `blocks: P2-C7-CI`) — implement every accepted final-cycle finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/{src/commands/gate/validate.rs,tests/gate_specs.rs,parity-manifest.sha256}`, `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: Commits `b47c92d7f` and `54412d247` resolve every accepted Cycle 7 finding: only executable `nx affected -t` commands qualify; compound/error-masking forms are rejected; exact GitHub Actions literal-falsy guards disable execution; and quoted command text is bound in Gherkin. All four Cycle 7 review threads are resolved (zero unresolved threads). Focused tests, bound gate specs, behavior coverage, registry validation, strict lint, Markdown lint, and the full pre-push gate pass.
 - [ ] [AI] **P2-C7-CI** (`blockedBy: P2-C7-FIXER`; `blocks: Merge`) — run and verify CI for the final review head — acceptance: all required checks are green before merge.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
