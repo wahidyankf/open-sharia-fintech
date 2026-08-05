@@ -1,5 +1,5 @@
 ---
-description: Creates LinkedIn posts in generated-socials/linkedin/ from project updates across the ose-public/ose-primer/ose-private sibling repos. Enforces the 3,000-character LinkedIn body limit (measured from the "OPEN SHARIA ENTERPRISE" line down). Optimizes for engagement and professional tone. Use every time a LinkedIn post is created in generated-socials/linkedin/.
+description: Creates LinkedIn posts in generated-socials/linkedin/ from completed origin/main updates across the ose-public, ose-primer, ose-private, and beaver-nest repos. Enforces the 3,000-character LinkedIn body limit (measured from the "OPEN SHARIA ENTERPRISE" line down). Optimizes for engagement and professional tone. Use every time a LinkedIn post is created in generated-socials/linkedin/.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -29,6 +29,13 @@ Use this agent **every time** a LinkedIn post is created in `generated-socials/l
 
 **Canonical exemplar**: model every new post on [`generated-socials/linkedin/2026/2026-05-25__linkedin__ose-update-week-0027.md`](../../generated-socials/linkedin/2026/2026-05-25__linkedin__ose-update-week-0027.md) — match its header, section structure, tone, and length. Always read the latest existing post before drafting so format and voice stay consistent.
 
+**Week title**: use only `Week <NN>`. Do not append phase or phase-week counters.
+
+**Compare endpoints**: establish what was true at the previous post boundary, then describe the final
+completed `origin/main` state at the new window end. Present baseline → result comparisons and omit
+transient names, temporary states, and superseded intermediate steps unless readers need them to
+understand the final result.
+
 ## Hard Constraints
 
 ### LinkedIn character limit — 3,000
@@ -56,12 +63,12 @@ Path: `generated-socials/linkedin/YYYY/YYYY-MM-DD__linkedin__ose-update-week-NNN
 ```
 Posted: <Weekday, Month D, YYYY>
 Platform: LinkedIn
-Window: <prev-window-end +0700> → <now +0700>. ~<N> commits across the three repos (ose-public <a>, ose-primer <b>, ose-private <c>).
+Window: <prev-window-end +0700> → <now +0700>. ~<N> commits across the four repos (ose-public <a>, ose-primer <b>, ose-private <c>, beaver-nest <d>).
 
 ---
 
 OPEN SHARIA ENTERPRISE
-Week <NN> / Phase <P>, Week <W>
+Week <NN>
 
 Highlights: <one-paragraph lead summarizing the biggest changes>
 
@@ -75,6 +82,9 @@ Highlights: <one-paragraph lead summarizing the biggest changes>
 <paragraph(s)>
 
 📦 ose-primer
+<paragraph(s)>
+
+🦫 beaver-nest
 <paragraph(s)>
 
 🔜 Next 2–4 weeks
@@ -96,8 +106,8 @@ The header lines above the `---` are bookkeeping only. Keep them accurate but re
 ## Workflow
 
 1. **Establish the window.** Read the most recent file across every year folder under `generated-socials/linkedin/` (`ls generated-socials/linkedin/*/ | sort | tail -1`, or read the highest year folder's last file — do not stop at the current year, which is empty every January); take its `Window:` end timestamp as the new window start, and its week number + 1 as the new week. New window end = now (+0700).
-2. **Gather commits** across the three sibling repos at `~/ose-projects/{ose-public,ose-primer,ose-private}`. Use `git -C <repo> rev-list --count --since=<start> HEAD` for accurate totals and `git -C <repo> log --since=<start>` for subjects. Note: RTK caps `git log` output at ~50 lines — use `rtk proxy git -C <repo> log ...` or `rev-list --count` when you need the full count.
-3. **Draft the body** using the structure above. Lead with the most significant structural changes; compress routine churn into single clauses. Active voice, professional tone, benefits-focused.
+2. **Gather commits** across the four repos at `~/ose-projects/{ose-public,ose-primer,ose-private,beaver-nest}`. Fetch safely, then use `git -C <repo> rev-list --count --since=<start> origin/main` for accurate totals and `git -C <repo> log origin/main --since=<start>` for subjects. Note: RTK caps `git log` output at ~50 lines — use `rtk proxy git -C <repo> log ...` or `rev-list --count` when you need the full count. Include only completed work present on `origin/main`; never present local-only, staged, open-PR, or paused-plan work as completed.
+3. **Compare endpoints and draft the body** using the structure above. Read the previous post as the baseline, compare it with the final completed `origin/main` state, and write baseline → result rather than an intermediate changelog. Lead with the most significant structural changes; compress routine synchronized changes into single clauses. Active voice, professional tone, benefits-focused.
 4. **Measure** the body (command above) and **trim until ≤ 3,000** characters.
 5. **Write** the file at the correct path/filename. Report the final character count to the caller.
 
