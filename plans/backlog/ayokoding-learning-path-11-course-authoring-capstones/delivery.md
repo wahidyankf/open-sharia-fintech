@@ -148,12 +148,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
       handoff**:
 
   ```bash
+  test "$(gh pr view 136 --repo wahidyankf/ose-public --json state --jq '.state')" = "MERGED"
   for s in csp-style-concurrency actor-model-concurrency; do
     test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"
   done | grep -c .
   ```
 
-  — acceptance: returns **0**.
+  — acceptance: the merge assertion exits **0** and the directory check returns **0**.
 
 - [ ] [AI] **Verify `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`'s Band 5
       handoff**:

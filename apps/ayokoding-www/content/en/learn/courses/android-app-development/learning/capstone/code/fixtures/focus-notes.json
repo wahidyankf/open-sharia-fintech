@@ -1,0 +1,8 @@
+[
+  {
+    "id": "fixture-1",
+    "title": "Review offline-first design",
+    "body": "Use this deterministic fixture with MockWebServer in Retrofit integration tests.",
+    "updatedAt": 1735689600000
+  }
+]

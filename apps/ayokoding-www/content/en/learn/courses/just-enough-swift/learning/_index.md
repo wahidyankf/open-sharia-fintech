@@ -1,0 +1,13 @@
+---
+title: "Learning"
+date: 2026-08-03T00:00:00+07:00
+draft: false
+weight: 170
+---
+
+- [Overview](/en/learn/courses/just-enough-swift/learning/overview)
+- [Beginner Examples](/en/learn/courses/just-enough-swift/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/just-enough-swift/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/just-enough-swift/learning/advanced)
+- [Capstone](/en/learn/courses/just-enough-swift/learning/capstone)
+  - [Swift Availability CLI](/en/learn/courses/just-enough-swift/learning/capstone/overview)

@@ -161,7 +161,7 @@ Found during this plan's dependency verification and originally recorded here fo
    that supplied its dependency claim did not name the authoring plan with certainty. **Reconciled**:
    plan 05's own `README.md` now carries a "reconciliation pass" row (added 2026-08-01) that redirects
    its `blocks` edge from plan 10 to this plan (`ayokoding-learning-path-11-course-authoring-capstones`)
-   — see `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md`.
+   — see `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md`.
 
 Neither discrepancy ever changed this plan's own dependency table above, which is grounded directly in
 the primary syllabus specs rather than in either sibling plan's assertion.
@@ -359,7 +359,7 @@ verified absent at this plan's authoring time):
 | Dependency                                                                                | Kind       | Note                                                                                                                                                                                              |
 | ----------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ayokoding-learning-path-04-course-authoring` merged (baseline + Band 1/2)                | hard, plan | see confirmed dependency map above                                                                                                                                                                |
-| `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` merged (Band 4)    | hard, plan | `csp-style-concurrency`, `actor-model-concurrency`                                                                                                                                                |
+| `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` terminal PR #133   | hard, plan | Verify its merge state before capstone authoring; then use `csp-style-concurrency`, `actor-model-concurrency`                                                                                     |
 | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` merged (Band 5) | hard, plan | harness cluster + `agentic-ai`, `browser-automation-with-cdp`, `system-design`, `event-driven-architecture`, `creating-ai-powered-apps`                                                           |
 | `ayokoding-learning-path-08-course-authoring-security-and-ops` merged (Band 7)            | hard, plan | `offensive-security`, `defensive-security`, `detection-engineering-and-siem-operations`, `vulnerability-management-and-assessment`, `it-and-application-security`, `site-reliability-engineering` |
 | `vercel-function-cost-reduction` merged (Phases 1-4)                                      | hard, plan | see README §Why the cost-reduction dependency is hard                                                                                                                                             |

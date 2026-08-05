@@ -24,7 +24,12 @@ are done; 04 delivered its 21-course retained scope (a documented exception to t
 execution history, not new backlog scoping).
 
 **Course-authoring backlog** (the remaining 55 of `04`'s original Bands 3-9 + course-surgery
-contracts; Plan 04's retained baseline is complete and Plan 05 is active):
+contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
+are complete; Plan 05's terminal delivery chain is [PR #133](https://github.com/wahidyankf/ose-public/pull/133),
+reverted by direct-push commit [`919863f07`](https://github.com/wahidyankf/ose-public/commit/919863f07d8b51f9043ead5f6735f3759f6a2d49)
+the same day, restored by [PR #136](https://github.com/wahidyankf/ose-public/pull/136); its downstream
+signals require verifying PR #136 is merged, not merely that PR #133 was, since `gh pr view 133`
+permanently reports `MERGED` regardless of the revert):
 
 - [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   — 15 courses (old Band 5 + the three course-surgery scope contracts): software architecture,
