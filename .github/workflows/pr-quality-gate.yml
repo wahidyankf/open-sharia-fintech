@@ -72,10 +72,10 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      - name: Provision registry-declared formatter tools
+      - name: Provision registry-declared pre-commit tools
         run: |
           tools=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=json |
-            jq -r '[.[] | select(.type == "mutation" and .category == "formatter") | .doctor_tools[]] | unique | join(",")')
+            jq -r '[.[] | .doctor_tools[]] | unique | join(",")')
           if [ -n "$tools" ]; then
             npm run doctor -- --fix --tools "$tools"
           fi

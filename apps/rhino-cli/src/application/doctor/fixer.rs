@@ -485,7 +485,9 @@ mod tests {
 
         assert_eq!(fixed.fixed, 0);
         assert!(output.contains("Would install: tofu"));
-        assert!(output.contains("install-opentofu.sh"));
+        assert!(output.contains("tofu_1.12.3_"));
+        assert!(output.contains("expected_checksum="));
+        assert!(!output.contains("install-opentofu.sh"));
     }
 
     #[test]

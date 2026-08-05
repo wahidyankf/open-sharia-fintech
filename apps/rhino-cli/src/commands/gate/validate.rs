@@ -367,7 +367,7 @@ fn validate_ci_doctor_bootstrap(
             .filter_map(|step| step.run.as_deref())
             .any(|run| {
                 run.contains("gate list --surface=pre-commit --format=json")
-                    && run.contains("doctor_tools")
+                    && run.contains("[.[] | .doctor_tools[]]")
                     && run.contains("unique")
                     && run.contains("npm run doctor -- --fix --tools")
                     && run.contains("if [ -n \"$tools\" ]")
@@ -500,28 +500,49 @@ struct WorkflowStep {
     run: Option<String>,
 }
 
-/// Validates that every hand-wired CI gate has a workflow job of the same id.
+/// Validates that every hand-wired CI command has an aggregated workflow job.
 ///
 /// # Errors
 ///
-/// Returns an error when a hand-wired CI gate is missing or its diagnostic
-/// cannot be written.
+/// Returns an error when a hand-wired CI command is missing, its workflow job
+/// is not a direct `quality-gate` dependency, or its diagnostic cannot be
+/// written.
 fn validate_hand_wired_ci_jobs(
     config: &repo_config::RepoConfig,
     workflow: &Workflow,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
-    for hand_wired_gate in config.gates.iter().filter(|gate| {
-        gate.wiring.as_ref() == Some(&GateWiring::HandWired)
-            && gate.surfaces.contains_key(&GateSurface::Ci)
-    }) {
-        let appears_in_a_job = workflow.jobs.values().any(|job| {
-            job.steps
-                .iter()
-                .filter_map(|step| step.run.as_deref())
-                .any(|run| run.contains(&hand_wired_gate.command))
-        });
-        if !appears_in_a_job {
+    let hand_wired_ci_gates = config
+        .gates
+        .iter()
+        .filter(|gate| {
+            gate.wiring.as_ref() == Some(&GateWiring::HandWired)
+                && gate.surfaces.contains_key(&GateSurface::Ci)
+        })
+        .collect::<Vec<_>>();
+    if hand_wired_ci_gates.is_empty() {
+        return Ok(());
+    }
+
+    let Some(quality_gate) = workflow.jobs.get("quality-gate") else {
+        let message = "CI workflow pr-quality-gate.yml must declare a quality-gate job for hand-wired CI gates";
+        writeln!(writer, "{message}")?;
+        return Err(anyhow!(message));
+    };
+
+    for hand_wired_gate in hand_wired_ci_gates {
+        let matching_jobs = workflow
+            .jobs
+            .iter()
+            .filter_map(|(job_id, job)| {
+                job.steps
+                    .iter()
+                    .filter_map(|step| step.run.as_deref())
+                    .any(|run| run_declares_command(run, &hand_wired_gate.command))
+                    .then_some(job_id.as_str())
+            })
+            .collect::<Vec<_>>();
+        if matching_jobs.is_empty() {
             let message = format!(
                 "Hand-wired CI gate {:?} command {:?} is missing from pr-quality-gate.yml",
                 hand_wired_gate.id, hand_wired_gate.command
@@ -529,8 +550,39 @@ fn validate_hand_wired_ci_jobs(
             writeln!(writer, "{message}")?;
             return Err(anyhow!(message));
         }
+
+        let unaggregated_jobs = matching_jobs
+            .iter()
+            .copied()
+            .filter(|job_id| !quality_gate.needs.contains(job_id))
+            .collect::<Vec<_>>();
+        if !unaggregated_jobs.is_empty() {
+            let message = format!(
+                "Hand-wired CI gate {:?} command {:?} maps to job(s) {} that must be direct quality-gate dependencies in pr-quality-gate.yml",
+                hand_wired_gate.id,
+                hand_wired_gate.command,
+                unaggregated_jobs.join(", "),
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
     }
     Ok(())
+}
+
+/// Returns whether a shell command includes the declared gate command as a token.
+fn run_declares_command(run: &str, command: &str) -> bool {
+    run.match_indices(command).any(|(start, _)| {
+        let before = run[..start].chars().next_back();
+        let after = run[start + command.len()..].chars().next();
+        before.is_none_or(|character| !is_command_token_character(character))
+            && after.is_none_or(|character| !is_command_token_character(character))
+    })
+}
+
+/// Returns whether a character can continue a command or target token.
+fn is_command_token_character(character: char) -> bool {
+    character.is_ascii_alphanumeric() || matches!(character, ':' | '-' | '_' | '.')
 }
 
 /// Validates that `package.json` contains the generated lint-staged block.
@@ -1410,6 +1462,8 @@ fn hand_wired_present() {
             "  test-quick:\n",
             "    steps:\n",
             "      - run: npx nx affected -t test:quick\n",
+            "  quality-gate:\n",
+            "    needs: [test-quick]\n",
         ),
     )
     .unwrap();
@@ -1417,6 +1471,45 @@ fn hand_wired_present() {
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
         "a hand-wired CI gate with its matching workflow job must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn hand_wired_gate_requires_a_quality_gate_dependency() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: test-quick\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    wiring: hand-wired\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  detached:\n",
+        "    steps:\n",
+        "      - run: npx nx affected -t test:quick\n",
+        "  quality-gate:\n",
+        "    needs: []\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_hand_wired_ci_jobs(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err()
+            && rendered.contains("test-quick")
+            && rendered.contains("detached")
+            && rendered.contains("quality-gate"),
+        "a hand-wired command in an unaggregated job must fail; result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -1527,5 +1620,59 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
     assert!(
         validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
         "registry-derived Doctor selections must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: format-shfmt\n",
+        "    type: mutation\n",
+        "    command: shfmt\n",
+        "    kind: external\n",
+        "    category: formatter\n",
+        "    doctor-tools: [shfmt]\n",
+        "    surfaces:\n",
+        "      pre-commit: { scope: all-file-type }\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      pre-commit: { scope: all-file-type }\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | select(.type == \"mutation\" and .category == \"formatter\") | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_doctor_bootstrap(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("format and matrix Doctor selections"),
+        "formatter-only format setup must fail; result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }

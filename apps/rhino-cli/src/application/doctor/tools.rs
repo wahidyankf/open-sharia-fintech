@@ -70,13 +70,30 @@ fn parse_git_version(s: &str) -> String {
 }
 
 /// Extracts the `OpenTofu` version from `tofu --version` output
-/// (e.g. `"OpenTofu v1.10.2\non darwin_arm64"` → `"1.10.2"`).
+/// (e.g. `` `OpenTofu v1.10.2\non darwin_arm64` `` → `"1.10.2"`).
 fn parse_tofu_version(s: &str) -> String {
     parse_line_word(s, "OpenTofu ", 1, "v")
 }
 
 /// Exact `OpenTofu` version installed by the macOS and Linux doctor bootstrappers.
 const OPENTOFU_VERSION: &str = "1.12.3";
+
+/// Immutable official `OpenTofu` release path for the security-cleared version.
+const OPENTOFU_RELEASE_BASE_URL: &str =
+    "https://github.com/opentofu/opentofu/releases/download/v1.12.3";
+
+/// SHA-256 sum for the official macOS AMD64 archive.
+const OPENTOFU_DARWIN_AMD64_SHA256: &str =
+    "0898350dcc5b2ae31ad104cf4882228d08f858ba28f4e8bea693b51d1b267c57";
+/// SHA-256 sum for the official macOS ARM64 archive.
+const OPENTOFU_DARWIN_ARM64_SHA256: &str =
+    "2b81c065cdcf5e573cfb5d9e0c663ac4cfc32512927078b645b58ef81cec2474";
+/// SHA-256 sum for the official Linux AMD64 archive.
+const OPENTOFU_LINUX_AMD64_SHA256: &str =
+    "46b48c3438c65cf479fc076c9281422ffa2f493548d1e813d154c835c5986a08";
+/// SHA-256 sum for the official Linux ARM64 archive.
+const OPENTOFU_LINUX_ARM64_SHA256: &str =
+    "b2110d1ce46e366ce861b7f53d293dad99080075629aed7fb50d7328916d91c2";
 
 /// Returns the security-cleared minimum `OpenTofu` version for Doctor.
 fn read_tofu_version() -> String {
@@ -419,21 +436,53 @@ fn install_shfmt(_req: &str, platform: &str) -> Vec<InstallStep> {
 
 /// Returns install steps for `tofu` (`OpenTofu`).
 ///
-/// On macOS and Linux: the official pinned `OpenTofu` standalone install script.
+/// On macOS and Linux: a pinned official release archive whose checksum is
+/// authenticated against the hash committed alongside this installer. A release
+/// archive is used directly rather than fetching and executing a mutable shell
+/// script from the network.
 fn install_tofu(_req: &str, platform: &str) -> Vec<InstallStep> {
-    match platform {
-        "darwin" | "linux" => vec![InstallStep {
-            description: "Install OpenTofu via the official standalone install script".into(),
-            command: "bash".into(),
-            args: vec![
-                "-c".into(),
-                format!(
-                    "curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && chmod +x install-opentofu.sh && ./install-opentofu.sh --install-method standalone --opentofu-version {OPENTOFU_VERSION} && rm -f install-opentofu.sh"
-                ),
-            ],
-        }],
-        _ => Vec::new(),
-    }
+    let (os, checksum_command, amd64_checksum, arm64_checksum) = match platform {
+        "darwin" => (
+            "darwin",
+            "shasum -a 256",
+            OPENTOFU_DARWIN_AMD64_SHA256,
+            OPENTOFU_DARWIN_ARM64_SHA256,
+        ),
+        "linux" => (
+            "linux",
+            "sha256sum",
+            OPENTOFU_LINUX_AMD64_SHA256,
+            OPENTOFU_LINUX_ARM64_SHA256,
+        ),
+        _ => return Vec::new(),
+    };
+
+    vec![InstallStep {
+        description: "Install verified OpenTofu release archive".into(),
+        command: "bash".into(),
+        args: vec![
+            "-c".into(),
+            format!(
+                r#"set -eu
+case "$(uname -m)" in
+  x86_64) arch=amd64; expected_checksum={amd64_checksum} ;;
+  arm64|aarch64) arch=arm64; expected_checksum={arm64_checksum} ;;
+  *) echo "Unsupported OpenTofu architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+artifact=tofu_{OPENTOFU_VERSION}_{os}_${{arch}}.zip
+temp_dir=$(mktemp -d)
+trap 'rm -rf "$temp_dir"' EXIT
+curl --proto '=https' --tlsv1.2 -fsSL {OPENTOFU_RELEASE_BASE_URL}/"$artifact" -o "$temp_dir/$artifact"
+actual_checksum=$({checksum_command} "$temp_dir/$artifact" | awk '{{print $1}}')
+if [ "$actual_checksum" != "$expected_checksum" ]; then
+  echo "OpenTofu archive checksum mismatch" >&2
+  exit 1
+fi
+unzip -q "$temp_dir/$artifact" -d "$temp_dir/extract"
+sudo install -m 0755 "$temp_dir/extract/tofu" /usr/local/bin/tofu"#
+            ),
+        ],
+    }]
 }
 
 /// Returns install steps for `clang-format` (Homebrew on macOS, apt on Linux).
@@ -790,12 +839,26 @@ mod tests {
     fn install_tofu_macos() {
         let steps = install_tofu("", "darwin");
         let linux_steps = install_tofu("", "linux");
+        let script = &steps[0].args[1];
 
         assert_eq!(steps[0].command, "bash");
         assert_eq!(OPENTOFU_VERSION, "1.12.3");
-        assert!(steps[0].args[1].contains("install-opentofu.sh"));
-        assert!(steps[0].args[1].contains(&format!("--opentofu-version {OPENTOFU_VERSION}")));
-        assert_eq!(steps[0].args, linux_steps[0].args);
+        assert!(script.contains("github.com/opentofu/opentofu/releases/download/v1.12.3"));
+        assert!(script.contains("tofu_1.12.3_darwin_"));
+        assert!(
+            script.contains("0898350dcc5b2ae31ad104cf4882228d08f858ba28f4e8bea693b51d1b267c57")
+        );
+        assert!(
+            script.contains("2b81c065cdcf5e573cfb5d9e0c663ac4cfc32512927078b645b58ef81cec2474")
+        );
+        assert!(script.contains("shasum -a 256"));
+        assert!(script.contains("unzip -q"));
+        assert!(
+            script.find("actual_checksum=").unwrap() < script.find("unzip -q").unwrap(),
+            "the archive must be authenticated before it is unpacked"
+        );
+        assert!(!script.contains("install-opentofu.sh"));
+        assert_ne!(steps[0].args, linux_steps[0].args);
     }
 
     #[test]
@@ -804,11 +867,24 @@ mod tests {
         assert_eq!(steps[0].command, "bash");
         assert_eq!(OPENTOFU_VERSION, "1.12.3");
         let script = &steps[0].args[1];
-        assert!(script.contains("install-opentofu.sh"));
+        assert!(script.contains("github.com/opentofu/opentofu/releases/download/v1.12.3"));
+        assert!(script.contains("tofu_1.12.3_linux_"));
+        assert!(
+            script.contains("46b48c3438c65cf479fc076c9281422ffa2f493548d1e813d154c835c5986a08")
+        );
+        assert!(
+            script.contains("b2110d1ce46e366ce861b7f53d293dad99080075629aed7fb50d7328916d91c2")
+        );
+        assert!(script.contains("sha256sum"));
+        assert!(script.contains("unzip -q"));
+        assert!(
+            script.find("actual_checksum=").unwrap() < script.find("unzip -q").unwrap(),
+            "the archive must be authenticated before it is unpacked"
+        );
         assert!(script.contains("--tlsv1.2"));
-        assert!(script.contains(&format!("--opentofu-version {OPENTOFU_VERSION}")));
         assert!(!script.contains("latest"));
         assert!(!script.contains("--skip-verify"));
+        assert!(!script.contains("install-opentofu.sh"));
     }
 
     #[test]
@@ -817,10 +893,10 @@ mod tests {
         let script = &steps[0].args[1];
 
         assert!(
-            script.contains(&format!("--opentofu-version {OPENTOFU_VERSION}")),
-            "the Linux installer must request the named OpenTofu pin"
+            script.contains(&format!("tofu_{OPENTOFU_VERSION}_linux_")),
+            "the Linux installer must download the named OpenTofu pin"
         );
-        assert!(!script.contains("--opentofu-version latest"));
+        assert!(!script.contains("tofu_latest_"));
     }
 
     #[test]

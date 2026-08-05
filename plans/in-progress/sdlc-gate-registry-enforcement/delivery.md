@@ -3544,9 +3544,41 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `apps/rhino-cli/src/commands/gate/{list.rs,validate.rs}`, `apps/rhino-cli/src/commands/doctor.rs`
   - Execution note: Inspected the emitted CI JSON and workflow: format obtains a unique registry-derived formatter union; every matrix invocation supplies `--tools` from its own entry; empty lists skip provisioning. The full-bootstrap detector has no remaining hit, and registry, actionlint, lint, specification, parity, and whitespace validation pass.
-- [ ] [AI] **P2-C5-MAKER** (`blockedBy: P2-C4-CI-BOOTSTRAP-PERF`; `blocks: P2-C5-SYNTHESIS`) — run a fresh eight-discipline PR review maker fan-out on the Cycle 4 delivery — acceptance: all raw reports are recorded and triaged.
-- [ ] [AI] **P2-C5-SYNTHESIS** (`blockedBy: P2-C5-MAKER`; `blocks: P2-C5-FIXER`) — synthesize Cycle 5 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
-- [ ] [AI] **P2-C5-FIXER** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-CI`) — implement every accepted Cycle 5 finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [x] [AI] **P2-C5-MAKER** (`blockedBy: P2-C4-CI-BOOTSTRAP-PERF`; `blocks: P2-C5-SYNTHESIS`) — run a fresh eight-discipline PR review maker fan-out on the Cycle 4 delivery — acceptance: all raw reports are recorded and triaged.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-{architecture,logic,docs,test,security,performance,ci,maintainability}__137_0ef3f2ef5__2026-08-06--*__audit.md`
+  - Execution note: Eight independent raw reviews were recorded against `0ef3f2ef5`. Architecture, CI, and maintainability found no independent issue; the remaining disciplines reported five accepted findings: hand-wired validation, generated governance drift, end-to-end Doctor selection specs, installer integrity, and pre-commit bootstrap completeness.
+- [x] [AI] **P2-C5-SYNTHESIS** (`blockedBy: P2-C5-MAKER`; `blocks: P2-C5-FIXER`) — synthesize Cycle 5 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `generated-reports/pr-review-*__137_0ef3f2ef5__2026-08-06--*__audit.md`
+  - Execution note: Consolidated eight raw reports. Accepted L1 (hand-wired job proof), D1 (generated governance drift), T1 (Doctor selection behavior coverage), S-001 (installer integrity), and PR-001 (pre-commit bootstrap completeness); no finding was rejected or deferred.
+- [x] [AI] **P2-C5-WORKFLOW** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-FIXER`) — derive format bootstrap from every pre-commit gate's declared Doctor tools and strengthen the malformed hand-wired CI validation contract — acceptance: lint-staged prerequisites and hand-wired workflow roles are both validated from registry data.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `apps/rhino-cli/src/commands/gate/validate.rs`
+  - Execution note: The format job now derives its unique prerequisite union from every pre-commit entry. Exact command-to-hand-wired-job matching and direct aggregate dependencies are enforced with RED/GREEN regression tests. Validator tests, `gate validate`, actionlint, and whitespace validation pass.
+- [x] [AI] **P2-C5-INSTALLER** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-FIXER`) — authenticate the exact OpenTofu installation artifact before execution on supported platforms — acceptance: a compromised or mismatched artifact cannot be executed and focused security regression tests pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/src/application/doctor/tools.rs`, `apps/rhino-cli/src/application/doctor/fixer.rs`, `apps/rhino-cli/tests/doctor.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`
+  - Execution note: Replaced mutable remote script execution with the exact versioned GitHub release archive, pinned OS/CPU SHA-256 values, and hash verification before extraction/installation; unsupported platforms and CPUs remain safe no-ops. RED then GREEN focused installer, Doctor library, Cucumber, formatting, and whitespace checks pass.
+- [x] [AI] **P2-C5-GOVERNANCE** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-FIXER`) — remove stale retired-workflow guidance from canonical Claude sources and regenerate all bindings — acceptance: canonical and generated instruction surfaces agree and binding validation passes.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.claude/agents/{plan-checker,plan-execution-checker,plan-fixer,plan-maker}.md`, `.cursor/agents/{plan-checker,plan-execution-checker,plan-fixer,plan-maker}.md`, `.opencode/agents/{plan-checker,plan-execution-checker,plan-fixer,plan-maker}.md`
+  - Execution note: Corrected canonical stale retired-workflow guidance, then generated bindings mechanically. `npm run generate:bindings`, `npm run validate:sync` (93/93), `npm run lint:md`, and whitespace validation pass.
+- [x] [AI] **P2-C5-SPECS** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-FIXER`) — add end-to-end Gherkin coverage for selected and invalid Doctor tool selections — acceptance: behavior tests prove selected check/fix behavior and invalid input rejection.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/doctor.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`
+  - Execution note: Added behavior contracts for selected checks, selected missing-tool dry-run remediation, and invalid selection rejection before probing. Doctor Cucumber tests and behavior coverage pass; follow-up Clippy documentation errors in the verified installer were corrected and `rhino-cli:lint` passes.
+- [x] [AI] **P2-C5-FIXER** (`blockedBy: P2-C5-WORKFLOW, P2-C5-INSTALLER, P2-C5-GOVERNANCE, P2-C5-SPECS`; `blocks: P2-C5-CI`) — reconcile every accepted Cycle 5 correction and record the final disposition — acceptance: each granular correction is complete before CI.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `.github/workflows/pr-quality-gate.yml`, `.claude/agents/plan-*.md`, generated `.cursor/agents/plan-*.md`, generated `.opencode/agents/plan-*.md`, `apps/rhino-cli/src/application/doctor/{fixer.rs,tools.rs}`, `apps/rhino-cli/src/commands/gate/validate.rs`, `apps/rhino-cli/tests/doctor.rs`, `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`
+  - Execution note: Reconciled all five accepted findings with no rejection or deferral. Focused Doctor/gate/spec tests, warning-as-error lint, registry/actionlint/sync validation, and whitespace validation pass.
 - [ ] [AI] **P2-C5-CI** (`blockedBy: P2-C5-FIXER`; `blocks: P2-C6-MAKER`) — run and verify CI for the Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
 - [ ] [AI] **P2-C6-MAKER** (`blockedBy: P2-C5-CI`; `blocks: P2-C6-SYNTHESIS`) — run a fresh eight-discipline PR review maker fan-out after Cycle 5 — acceptance: all raw reports are recorded and triaged.
 - [ ] [AI] **P2-C6-SYNTHESIS** (`blockedBy: P2-C6-MAKER`; `blocks: P2-C6-FIXER`) — synthesize Cycle 6 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
