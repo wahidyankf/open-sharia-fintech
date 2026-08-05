@@ -35,7 +35,15 @@ All four repos use `main-to-origin-main` — an explicit user override of the re
 outside the plan-docs-only carve-out. Each repo's changes are edited directly on that repo's local
 `main`, committed, and pushed straight to that repo's `origin/main`. **No PR opens, in any repo, at
 any phase of this plan's own delivery** — no draft PR, no PR-Review Maker→Fixer Cycle, no PR merge.
-CI is verified directly against each push (see each phase's "Post-Push CI Verification").
+
+**GitHub Actions CI monitoring is omitted entirely from this plan's delivery (deliberate deviation
+from `plan-execution.md`'s generic per-push default, by explicit user instruction 2026-08-05)**:
+local pre-commit and pre-push hooks (format, lint, markdown/link/naming/frontmatter validators,
+`test:quick`, spec coverage) already gate every commit and push in full — see each phase's "Local
+Quality Gates" and "Commit Guidelines" sections. The user judged this local coverage sufficient and
+GitHub Actions polling — after every phase, or even once at the end — an unnecessary use of time
+for a `plans/**`/`repo-governance/**`-only governance change. No phase, and no gate in this plan,
+checks `gh run` / GitHub Actions status at any point.
 
 ## Parallelization Model
 
@@ -77,19 +85,37 @@ new reviewable governance change; Phase 6's archival commit (moving this plan's 
 > baseline only in `ose-public`: it pushes no branch other than confirming `main` is already in
 > sync, and opens nothing.
 
-- [ ] [AI] Install dependencies in `ose-public`'s checkout: `npm install` — acceptance: exits 0,
+- [x] [AI] Install dependencies in `ose-public`'s checkout: `npm install` — acceptance: exits 0,
       `node_modules/` synchronized
-- [ ] [AI] Converge the full polyglot toolchain: `npm run doctor -- --fix` — acceptance: exits 0
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: none. **Notes**: `npm install`
+    exited 0, `node_modules/` synchronized (1596 packages, up to date). Executed via
+    `repo-setup-manager`.
+- [x] [AI] Converge the full polyglot toolchain: `npm run doctor -- --fix` — acceptance: exits 0
       with no unresolved drift
-- [ ] [AI] Create `plans/in-progress/plan-ideas-grooming-workflow/learnings.md` with the mandatory
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: none. **Notes**: `npm run doctor -- --fix`
+    exits 0, 16/16 tools OK, 0 warning, 0 missing. One session-scoped `npm` version-mismatch
+    warning was environment-only (Volta shim recursion guard in the agent harness's own
+    launch env), not a repo defect — resolved within the executor's Bash session
+    (`env -u _VOLTA_TOOL_RECURSION`), no repo file touched.
+- [x] [AI] Create `plans/in-progress/plan-ideas-grooming-workflow/learnings.md` with the mandatory
       scaffold (`# Learnings: plan-ideas-grooming-workflow` H1 followed by the running-log comment
       lines) — acceptance: file exists, first content line is the H1
-- [ ] [AI] Run existing markdown quality gates to establish baseline:
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**:
+    `plans/in-progress/plan-ideas-grooming-workflow/learnings.md` (new). **Notes**: File created
+    with the H1 as its first content line, followed by the running-log HTML comment scaffold.
+- [x] [AI] Run existing markdown quality gates to establish baseline:
       `npx nx run rhino-cli:test:quick` — acceptance: baseline pass/fail count recorded; any
       preexisting failure documented
-- [ ] [AI] Resolve all preexisting failures before proceeding — acceptance: no preexisting failure
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: none. **Notes**: Baseline clean —
+    1302 unit tests passed / 0 failed / 1 ignored (run twice, including once cold with
+    `--skip-nx-cache`), 13 passed in the secondary test group, typecheck/lint green,
+    specs:structure-validation 0 findings across 6 spec domains, specs:behavior:coverage
+    67 specs / 424 scenarios / 1740 steps all covered. No preexisting failures found.
+- [x] [AI] Resolve all preexisting failures before proceeding — acceptance: no preexisting failure
       remains unresolved
-- [ ] [AI] Confirm all four repos have a normal (non-bare) working tree and are on a clean, synced
+  - **Date**: 2026-08-05. **Status**: Done (vacuous). **Files Changed**: none. **Notes**: Baseline
+    run found zero preexisting failures — nothing to resolve.
+- [x] [AI] Confirm all four repos have a normal (non-bare) working tree and are on a clean, synced
       `main`: for each of `/Users/wkf/ose-projects/ose-public`, `/Users/wkf/ose-projects/ose-primer`,
       `/Users/wkf/ose-projects/ose-private`, `/Users/wkf/ose-projects/beaver-nest`, run
       `git -C <path> rev-parse --is-bare-repository` (expect `false`),
@@ -97,19 +123,36 @@ new reviewable governance change; Phase 6's archival commit (moving this plan's 
       `git -C <path> status --porcelain` (expect empty) — acceptance: all three checks pass for
       all four repos, or any dirty/non-`main`/bare state is explicitly surfaced to the user before
       Phase 1 begins
+  - **Date**: 2026-08-05. **Status**: Done (with surfaced exception). **Files Changed**: none.
+    **Notes**: All four repos confirmed non-bare, on `main`. `ose-primer`, `ose-private`,
+    `beaver-nest` are clean (`git status --porcelain` empty) and `0` commits ahead of their own
+    `origin/main`. `ose-public` is dirty by this plan's own Phase 0 work-in-progress: this plan's
+    own `delivery.md`/`learnings.md` edits (in-flight, expected), plus a `package-lock.json` diff
+    (174 stale `"extraneous": true` workspace entries pruned) produced by Phase 0's own
+    `npm install` step under the correctly-pinned npm 11.11.0 — a legitimate lockfile-hygiene
+    byproduct of routine dependency installation, not foreign work. Surfaced here explicitly per
+    the acceptance clause; will land as a separate "preexisting fix" commit alongside Phase 1's
+    push (Iron Rule 3 / Iron Rule 7), not committed during Phase 0 itself (Phase 0 pushes nothing).
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `learnings.md` exists with the mandatory H1 as its first content line
-- [ ] [AI] All four repos are confirmed non-bare, on `main`, and clean (or their state was
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: verified above.
+- [x] [AI] `learnings.md` exists with the mandatory H1 as its first content line
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: verified above.
+- [x] [AI] All four repos are confirmed non-bare, on `main`, and clean (or their state was
       explicitly surfaced and accepted by the user) — falsifiable both ways:
       `git -C <path> status --porcelain` returns empty for a clean tree, non-empty for a dirty one;
       re-run after any surfaced dirty state is resolved
-- [ ] [AI] Each repo's local `main` is not ahead of its own `origin/main` yet (no plan work has
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: `ose-primer`/`ose-private`/`beaver-nest`
+    clean; `ose-public` dirty by this plan's own in-flight/Phase-0-byproduct changes only —
+    surfaced above, falsifiable both ways (empty before this plan touched anything, non-empty now).
+- [x] [AI] Each repo's local `main` is not ahead of its own `origin/main` yet (no plan work has
       landed) — `git -C <path> rev-list --count origin/main..main` returns `0` for all four repos
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: all four repos return `0` (verified above);
+    `ose-public`'s dirty working-tree changes are not yet committed, so this holds.
 
 > **Pause Safety**: only the local toolchain was verified, the baseline recorded, and all four
 > repos' topology/cleanliness confirmed — no feature work exists yet, nothing is pushed anywhere.
@@ -117,7 +160,7 @@ new reviewable governance change; Phase 6's archival commit (moving this plan's 
 
 ## Phase 1: Author the `grooming` Token and Workflow Doc in `ose-public`
 
-- [ ] [AI] Edit `ose-public/repo-governance/conventions/structure/workflow-naming.md`: in the Type
+- [x] [AI] Edit `ose-public/repo-governance/conventions/structure/workflow-naming.md`: in the Type
       Vocabulary table (currently 4 rows: `quality-gate`, `execution`, `setup`, `planning`), add a
       fifth row `grooming` with the semantics text: "Recurring sweep/reorganization workflow over
       already-existing documentation or artifact state (the Scrum 'backlog grooming' analogy);
@@ -127,16 +170,23 @@ new reviewable governance change; Phase 6's archival commit (moving this plan's 
       workflow `plan-ideas-grooming` — acceptance: table has 5 rows,
       `grep -c "| \`grooming\`" workflow-naming.md`returns`1`
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit the same file: update the enforcement audit command's regex from
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**:
+    `repo-governance/conventions/structure/workflow-naming.md`. **Notes**: `grep -c` confirms `1`.
+    Executed by `repo-rules-maker`.
+- [x] [AI] Edit the same file: update the enforcement audit command's regex from
       `-(quality-gate|execution|setup|planning)$` to `-(quality-gate|execution|setup|planning|grooming)$`
       in both the `## Enforcement` section's fenced code block and any other occurrence — acceptance:
       `grep -c 'quality-gate|execution|setup|planning|grooming' workflow-naming.md` returns ≥ `1`
       and no stale 4-token regex remains (`grep -c 'setup|planning)\$' workflow-naming.md` returns `0`)
-- [ ] [AI] Edit the same file's `## Examples` section: add a `**grooming**` bullet listing
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: same file. **Notes**: both the
+    fenced-code-block occurrence and an additional prose occurrence under "Why This Rule Exists"
+    updated; `0` stale 4-token regexes remain.
+- [x] [AI] Edit the same file's `## Examples` section: add a `**grooming**` bullet listing
       `plan-ideas-grooming` (scope `plan`, type `grooming`) alongside the existing
       `quality-gate`/`execution`/`planning`/`setup` bullets — acceptance:
       `grep -c "plan-ideas-grooming" workflow-naming.md` returns ≥ `1`
-- [ ] [AI] Create new file `ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md`
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: same file.
+- [x] [AI] Create new file `ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md`
       following the frontmatter and section shape specified in `tech-docs.md`'s "Detailed Design of
       `plan-ideas-grooming.md`" section verbatim: YAML frontmatter (`name`, `title`, `goal`,
       `termination`, `inputs: repos, dry-run, delivery-mode`,
@@ -149,33 +199,74 @@ new reviewable governance change; Phase 6's archival commit (moving this plan's 
       acceptance: file exists, `rhino-cli repo-governance workflows naming validate` (or the
       documented `find | grep` audit) reports the file compliant
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Verify the new file contains no absolute local filesystem path (DD-4): run
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**:
+    `repo-governance/workflows/plan/plan-ideas-grooming.md` (new). **Notes**: file created per
+    tech-docs.md's Detailed Design section. `naming validate` initially rejected it because
+    `apps/rhino-cli/src/commands/workflows_validate_naming.rs`'s `WORKFLOW_TYPES` const hardcoded
+    the old 4-token list (a code-level enforcement point the doc-only edits above didn't reach) —
+    fixed as a discovered same-plan blocker (task #185, TDD RED/GREEN via `swe-rust-dev`); validator
+    now reports 0 violations. See item below.
+- [x] [AI] Verify the new file contains no absolute local filesystem path (DD-4): run
       `grep -c "/Users/" ose-public/repo-governance/workflows/plan/plan-ideas-grooming.md` —
       acceptance: returns `0`
-- [ ] [AI] Edit `ose-public/repo-governance/workflows/README.md`: add a new row to the "Available
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: `grep -c` returns `0`, confirmed.
+- [x] [AI] Edit `ose-public/repo-governance/workflows/README.md`: add a new row to the "Available
       Workflows" table for `plan-ideas-grooming` (Purpose: sweep and reorganize `plans/ideas/`
       across repos; Agents: none — direct orchestration, mechanical file operations; Complexity:
       Medium) — acceptance: `grep -c "plan-ideas-grooming" workflows/README.md` returns ≥ `1`
       after this edit
-- [ ] [AI] Edit the same file's `## Type Vocabulary` table (the README's own copy, separate from
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: `repo-governance/workflows/README.md`.
+- [x] [AI] Edit the same file's `## Type Vocabulary` table (the README's own copy, separate from
       `workflow-naming.md`'s): add the `grooming` row with matching semantics text — acceptance:
       both tables (in `workflow-naming.md` and `workflows/README.md`) list `grooming` with
       consistent wording
-- [ ] [AI] Edit the same file's `### Documentation Workflows` bullet under `## Workflow Families`
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: same file.
+- [x] [AI] Edit the same file's `### Documentation Workflows` bullet under `## Workflow Families`
       (the `- **plan**: Project planning documents — ...` line): append a clause noting
       `plan-ideas-grooming` as the idea-corpus grooming workflow — acceptance:
       `grep -c "plan-ideas-grooming" workflows/README.md` returns ≥ `2` (catalog row + family
       bullet)
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: `grep -c` returns `2` (catalog row + family
+    bullet), confirmed.
+- [x] [AI] **[Discovered blocker, not an original checklist item]** Fix
+      `apps/rhino-cli/src/commands/workflows_validate_naming.rs`'s hardcoded `WORKFLOW_TYPES` const
+      to include `grooming` — required for the item above's acceptance criterion to hold.
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**:
+    `apps/rhino-cli/src/commands/workflows_validate_naming.rs`,
+    `apps/rhino-cli/src/application/naming/mod.rs` (added tests). **Notes**: TDD RED/GREEN via
+    `swe-rust-dev` — RED: `workflows_validate_naming_accepts_grooming_suffix` failed pre-fix;
+    GREEN: passes post-fix (6/6 in that test file, 58/58 in `naming::`). Final
+    `cargo run --release -- repo-governance workflows naming validate` reports 0 violations.
+    `npx nx run rhino-cli:test:quick --skip-nx-cache` re-run clean afterward (specs:behavior:coverage
+    still 67 specs / 424 scenarios / 1740 steps, all covered — no new Gherkin scenario required for
+    this data-only enum extension).
 
 ### Local Quality Gates (Before Push)
 
-- [ ] Run `npx nx run rhino-cli:test:quick` (covers markdown lint, link validation, mermaid
+- [x] Run `npx nx run rhino-cli:test:quick` (covers markdown lint, link validation, mermaid
       validation, heading-hierarchy validation, and `rhino-cli repo-governance workflows naming
 validate` per `AGENTS.md` §Markdown Quality) — exits 0
-- [ ] Run `npm run lint:md:fix` — exits 0, no unresolved violations in the three touched/new files
-- [ ] Fix ALL failures found — including preexisting issues not caused by this plan's changes
-- [ ] Re-run failing checks to confirm resolution
-- [ ] Verify zero failures before pushing
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: 1302 unit tests passed, 0 failed (run twice,
+    once cold with `--skip-nx-cache`); specs:structure-validation 0 findings; specs:behavior:coverage
+    67 specs/424 scenarios/1740 steps all covered.
+- [x] Run `npm run lint:md:fix` — exits 0, no unresolved violations in the three touched/new files
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: `markdownlint-cli2 --fix "**/*.md"` — 3923
+    files linted, 0 errors.
+- [x] Fix ALL failures found — including preexisting issues not caused by this plan's changes
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: two real (non-sweeper) discovered blockers
+    found and fixed inline, both required to satisfy this phase's own delivery acceptance criteria
+    (Iron Rule 3 current-plan-blocker carve-out, not deferred learnings): (1) `rhino-cli`'s
+    `WORKFLOW_TYPES` const (task #185, see item 4 above); (2) `repo-governance/workflows/plan/README.md`
+    orphan-file finding from `md readme-index validate` (task #186) — added a Workflows-list bullet
+    for `plan-ideas-grooming.md`.
+- [x] Re-run failing checks to confirm resolution
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: `md readme-index validate` →
+    `README INDEX AUDIT PASSED: no orphan or ghost references found`.
+- [x] Verify zero failures before pushing
+  - **Date**: 2026-08-05. **Status**: Done. **Notes**: also ran (scoped correctly per the actual
+    pre-push hook, excluding `plans/done`/content dirs): `md links validate` → all links valid;
+    `harness duplication validate` → 0 clusters; `repo-governance vendor validate` → passed;
+    `convention license validate` → passed.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your
 > changes. This follows the root cause orientation principle — proactively fix preexisting errors
@@ -184,30 +275,26 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 
 ### Commit Guidelines
 
-- [ ] Commit changes thematically — group related changes into logically cohesive commits
-- [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
-- [ ] Split different domains/concerns into separate commits (e.g., the convention amendment as
+- [x] Commit changes thematically — group related changes into logically cohesive commits
+- [x] Follow Conventional Commits format: `<type>(<scope>): <description>`
+- [x] Split different domains/concerns into separate commits (e.g., the convention amendment as
       one commit, the new workflow file as another, the catalog update as a third)
-- [ ] Preexisting fixes get their own commits, separate from plan work
-- [ ] Do NOT bundle unrelated changes into a single commit
-
+- [x] Preexisting fixes get their own commits, separate from plan work
+- [x] Do NOT bundle unrelated changes into a single commit
+  - **Date**: 2026-08-05. **Status**: Done. **Files Changed**: none (verification of prior commits).
+    **Notes**: 6 commits landed on local `main`, each single-concern: `466510bd5` (package-lock.json
+    preexisting drift), `d070c6d3e` (workflow-naming.md grooming token), `6fd559bdd` (new
+    plan-ideas-grooming.md), `5bfaebdd7` (catalog entries in both README.md files),
+    `46a2b5ac1` (rhino-cli WORKFLOW_TYPES code fix), `3d0c1e65d` (Scope Boundary hardening — added
+    mid-phase per explicit user instruction that the workflow must never write to
+    `plans/backlog/`/`plans/in-progress/`, confined strictly to `plans/ideas/**`).
 - [ ] [AI] Commit and push to `origin main` from `ose-public`'s local checkout (direct push, no PR
       — per this plan's `main-to-origin-main` Delivery Mode)
 
-### Post-Push CI Verification
-
-- [ ] Trigger and monitor ALL GitHub Actions workflows on `ose-public`'s `main` after the push:
-      `gh run list --repo wahidyankf/ose-public --branch main --limit 5`, then
-      `gh run view <run-id> --repo wahidyankf/ose-public --json status,conclusion` (poll every 2
-      minutes, one call per wakeup — see [CI monitoring](../../../repo-governance/development/workflow/ci-monitoring.md))
-- [ ] Verify ALL CI checks pass — no exceptions
-- [ ] If any CI check fails, fix immediately and push a follow-up commit directly to `main`
-- [ ] Repeat until ALL checks pass with zero failures
-- [ ] Do NOT proceed to Phase 2 until CI is fully green
-
 ### Phase 1 Gate
 
-> All checks below must pass before starting Phases 2-4.
+> All checks below must pass before starting Phases 2-4. GitHub Actions CI is not checked anywhere
+> in this plan (see Delivery Mode note) — local pre-commit/pre-push hooks are the sole gate.
 
 - [ ] [AI] `git -C /Users/wkf/ose-projects/ose-public log --oneline -1 origin/main -- repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns a commit (the file exists on `origin/main`) — falsifiable both ways: returns empty
@@ -216,12 +303,11 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
       `origin/main` reports the new file compliant
 - [ ] [AI] `grep -c "/Users/" repo-governance/workflows/plan/plan-ideas-grooming.md` (against
       `origin/main`'s copy) returns `0`
-- [ ] [AI] CI on `ose-public`'s `main` is green for the commit(s) this phase pushed
 
 > **Pause Safety**: `ose-public`'s convention amendment and new workflow document are pushed
-> directly to `main` and CI is green. Safe to stop indefinitely — Phases 2-4 read this finalized
-> content whenever they resume. To resume: verify the Phase 1 Gate checks still pass, then move to
-> the next sibling repo.
+> directly to `main`; local pre-push hooks passed. Safe to stop indefinitely — Phases 2-4 read this
+> finalized content whenever they resume. To resume: verify the Phase 1 Gate checks still pass,
+> then move to the next sibling repo.
 
 ## Phase 2: Propagate to `ose-primer`
 
@@ -265,25 +351,19 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 
 - [ ] [AI] Commit and push to `origin main` from `ose-primer`'s local checkout (direct push, no PR)
 
-### Post-Push CI Verification
-
-- [ ] Trigger and monitor ALL GitHub Actions workflows on `ose-primer`'s `main` after the push
-      (`gh run list --repo wahidyankf/ose-primer --branch main --limit 5`); verify ALL checks pass;
-      fix and push a follow-up commit directly to `main` on any failure; repeat until fully green
-
 ### Phase 2 Gate
 
 > All checks below must pass before this delivery unit is considered done. Phase 2 does not block
-> Phases 3-4 (they are independent) but does block Phase 5.
+> Phases 3-4 (they are independent) but does block Phase 5. GitHub Actions CI is not checked
+> anywhere in this plan — local pre-commit/pre-push hooks are the sole gate.
 
 - [ ] [AI] `diff` between `ose-public`'s and `ose-primer`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
 - [ ] [AI] `ose-primer`'s own naming-validate equivalent reports the file compliant on `origin/main`
-- [ ] [AI] CI on `ose-primer`'s `main` is green for the commit(s) this phase pushed
 
-> **Pause Safety**: `ose-primer`'s propagation is pushed directly to its own `main` and CI is
-> green. Safe to stop indefinitely — independent of Phases 3-4's progress. To resume: verify this
-> gate, then continue to whichever of Phases 3-4 has not yet run.
+> **Pause Safety**: `ose-primer`'s propagation is pushed directly to its own `main`; local pre-push
+> hooks passed. Safe to stop indefinitely — independent of Phases 3-4's progress. To resume: verify
+> this gate, then continue to whichever of Phases 3-4 has not yet run.
 
 ## Phase 3: Propagate to `ose-private`
 
@@ -321,13 +401,10 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 - [ ] [AI] Commit and push to `origin main` from `ose-private`'s local checkout (direct push, no
       PR)
 
-### Post-Push CI Verification
-
-- [ ] Trigger and monitor ALL GitHub Actions workflows on `ose-private`'s `main` after the push;
-      verify ALL checks pass; fix and push a follow-up commit directly to `main` on any failure;
-      repeat until fully green
-
 ### Phase 3 Gate
+
+> GitHub Actions CI is not checked anywhere in this plan — local pre-commit/pre-push hooks are the
+> sole gate.
 
 - [ ] [AI] `diff` between `ose-public`'s and `ose-private`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
@@ -337,11 +414,10 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
       `grep -riE "(api[_-]?key|password|secret|token)\s*[:=]" ose-private/repo-governance/workflows/plan/plan-ideas-grooming.md`
       returns no match (this is a pure governance-doc propagation; `ose-private`'s stricter secrecy
       posture applies to everything it receives)
-- [ ] [AI] CI on `ose-private`'s `main` is green for the commit(s) this phase pushed
 
-> **Pause Safety**: `ose-private`'s propagation is pushed directly to its own `main` and CI is
-> green. Safe to stop indefinitely — independent of Phases 2 and 4's progress. To resume: verify
-> this gate, then continue to whichever of Phases 2/4 has not yet run.
+> **Pause Safety**: `ose-private`'s propagation is pushed directly to its own `main`; local
+> pre-push hooks passed. Safe to stop indefinitely — independent of Phases 2 and 4's progress. To
+> resume: verify this gate, then continue to whichever of Phases 2/4 has not yet run.
 
 ## Phase 4: Propagate to `beaver-nest`
 
@@ -381,23 +457,19 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 - [ ] [AI] Commit and push to `origin main` from `beaver-nest`'s local checkout (direct push, no
       PR)
 
-### Post-Push CI Verification
-
-- [ ] Trigger and monitor ALL GitHub Actions workflows on `beaver-nest`'s `main` after the push;
-      verify ALL checks pass; fix and push a follow-up commit directly to `main` on any failure;
-      repeat until fully green
-
 ### Phase 4 Gate
+
+> GitHub Actions CI is not checked anywhere in this plan — local pre-commit/pre-push hooks are the
+> sole gate.
 
 - [ ] [AI] `diff` between `ose-public`'s and `beaver-nest`'s `origin/main` copies of
       `plan-ideas-grooming.md` returns no output
 - [ ] [AI] `beaver-nest`'s own naming-validate equivalent reports the file compliant on
       `origin/main`
-- [ ] [AI] CI on `beaver-nest`'s `main` is green for the commit(s) this phase pushed
 
-> **Pause Safety**: `beaver-nest`'s propagation is pushed directly to its own `main` and CI is
-> green. Safe to stop indefinitely — independent of Phases 2 and 3's progress. To resume: verify
-> this gate, then continue to whichever of Phases 2/3 has not yet run.
+> **Pause Safety**: `beaver-nest`'s propagation is pushed directly to its own `main`; local
+> pre-push hooks passed. Safe to stop indefinitely — independent of Phases 2 and 3's progress. To
+> resume: verify this gate, then continue to whichever of Phases 2/3 has not yet run.
 
 ## Phase 5: Knowledge Capture
 
@@ -443,7 +515,10 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 - [ ] [AI] Verify ALL delivery checklist items above are ticked, across all four repos' phases
 - [ ] [AI] Verify the Knowledge Capture phase (Phase 5) is complete — every `learnings.md` entry
       reached a terminal state
-- [ ] [AI] Verify ALL quality gates pass (local + CI) on all four repos' `main` branches
+- [ ] [AI] Verify ALL local quality gates passed on all four repos' `main` branches (pre-commit +
+      pre-push hooks, per each phase's Local Quality Gates / Commit Guidelines sections). GitHub
+      Actions CI is not checked anywhere in this plan, at any phase including this one — the local
+      hooks are the sole gate, per explicit user instruction 2026-08-05 (see Delivery Mode note)
 - [ ] [AI] Confirm no `plans/ideas/**` path was created, modified, or deleted in any of the four
       repos during this plan's delivery — `git -C <repo> log --name-only <phase-start-sha>..origin/main`
       (using each repo's own Phase 0 baseline commit as the start point) contains no
@@ -460,7 +535,6 @@ validate` per `AGENTS.md` §Markdown Quality) — exits 0
 ### Phase 6 Gate
 
 - [ ] [AI] `ose-public`'s `plans/done/` contains the archived folder; `plans/in-progress/` does not
-- [ ] [AI] CI on `ose-public`'s `main` is green for the archival commit
 
 > **Pause Safety**: the plan is fully archived across all bookkeeping in `ose-public`; the four
 > repos' actual delivered content already pushed in Phases 1-4 and is unaffected by this final
