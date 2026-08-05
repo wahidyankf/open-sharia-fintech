@@ -27,6 +27,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [class-sweep-completeness](./class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
 - [contributing-md-trunk-guidance-and-naming-exemption](./contributing-md-trunk-guidance-and-naming-exemption.md) — fix stale "work on main" guidance blocked by the filename-naming gate.
 - [cross-repo-governance-link-parity](./cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
+- [deploy-targets-registry](./deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
 - [demo-apps-standards-recheck](./demo-apps-standards-recheck.md) — re-verify the ose-primer demo apps still meet current repo standards.
 - [doc-command-existence-validation](./doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
 - [governance-path-ownership-registry](./governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
