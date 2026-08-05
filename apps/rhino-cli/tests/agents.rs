@@ -35,6 +35,11 @@ use cucumber::{World as _, given, then, when};
 use serde_json::Value;
 use tempfile::TempDir;
 
+/// Synthetic Amazon Q definition identity declared by the behavior fixture.
+/// This keeps the byte-identical Rhino CLI test boundary independent of any
+/// particular repository's configured agent name.
+const AMAZONQ_FIXTURE_AGENT_NAME: &str = "fixture-amazonq-agent";
+
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace
 /// so the binary's `findGitRoot` resolves inside the fixture.
 #[derive(cucumber::World)]
@@ -111,6 +116,25 @@ impl AgentsWorld {
             &format!(".claude/skills/{name}/SKILL.md"),
             &format!("---\nname: {name}\ndescription: Skill {name}.\n---\n# Skill body\n"),
         );
+    }
+
+    /// Writes the smallest repository configuration needed by the Amazon Q
+    /// bindings command. The generated definition name is fixture data, just
+    /// as it is repository data in production.
+    fn write_amazonq_config(&self) {
+        self.write(
+            "repo-config.yml",
+            &format!(
+                "harness:\n  - name: amazonq\n    tier: generated\n    agent-name: {AMAZONQ_FIXTURE_AGENT_NAME}\ncoverage:\n  projects: []\n"
+            ),
+        );
+    }
+
+    fn amazonq_definition_path(&self) -> PathBuf {
+        self.work
+            .path()
+            .join(".amazonq/cli-agents")
+            .join(format!("{AMAZONQ_FIXTURE_AGENT_NAME}.json"))
     }
 
     fn bin() -> PathBuf {
@@ -684,6 +708,7 @@ impl AgentsWorld {
 
 #[given("a repository without an existing .amazonq/ directory")]
 fn given_no_amazonq_dir(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     assert!(
         !w.work.path().join(".amazonq").exists(),
         "fresh fixture workspace must not already have .amazonq/"
@@ -692,18 +717,20 @@ fn given_no_amazonq_dir(w: &mut AgentsWorld) {
 
 #[given("a repository where the bridge files already exist")]
 fn given_bridge_files_exist(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.write_matching_bindings();
     for rel in [
-        ".amazonq/rules/00-agents-md.md",
-        ".amazonq/cli-agents/ose-default.json",
+        ".amazonq/rules/00-agents-md.md".to_string(),
+        format!(".amazonq/cli-agents/{AMAZONQ_FIXTURE_AGENT_NAME}.json"),
     ] {
-        let bytes = std::fs::read(w.work.path().join(rel)).expect("read prior emission");
-        w.bindings_snapshot.push((rel.to_string(), bytes));
+        let bytes = std::fs::read(w.work.path().join(&rel)).expect("read prior emission");
+        w.bindings_snapshot.push((rel, bytes));
     }
 }
 
 #[given("a repository whose bridge files match the generated content")]
 fn given_bridge_files_match(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.write_matching_bindings();
     w.make_sync_dirs();
 }
@@ -715,6 +742,7 @@ fn given_catalog_references_everything_present(w: &mut AgentsWorld) {
 
 #[given("a repository where a bridge file has been hand-edited away from the generated content")]
 fn given_bridge_file_mutated(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.given_full_valid_bindings_setup();
     w.write(
         ".amazonq/rules/00-agents-md.md",
@@ -724,15 +752,16 @@ fn given_bridge_file_mutated(w: &mut AgentsWorld) {
 
 #[given("a repository where a bridge file has been deleted")]
 fn given_bridge_file_deleted(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.given_full_valid_bindings_setup();
-    std::fs::remove_file(w.work.path().join(".amazonq/cli-agents/ose-default.json"))
-        .expect("remove bridge file");
+    std::fs::remove_file(w.amazonq_definition_path()).expect("remove bridge file");
 }
 
 #[given(
     "a repository with a known binding directory that the platform-bindings catalog does not reference"
 )]
 fn given_catalog_missing_dir_row(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.write_matching_bindings();
     w.make_sync_dirs();
     // `.codex` is present on disk but the catalog below omits it.
@@ -745,6 +774,7 @@ fn given_catalog_missing_dir_row(w: &mut AgentsWorld) {
 
 #[given("a repository where some known binding directories do not exist on disk")]
 fn given_some_binding_dirs_absent(w: &mut AgentsWorld) {
+    w.write_amazonq_config();
     w.write_matching_bindings();
     w.make_sync_dirs();
     // .codex, .github, .cursor, .windsurf, .junie, GEMINI.md, CONVENTIONS.md
@@ -776,24 +806,20 @@ fn then_rules_pointer_written(w: &mut AgentsWorld) {
     assert!(content.contains("AGENTS.md"), "got: {content}");
 }
 
-#[then(
-    "the file .amazonq/cli-agents/ose-default.json is written as a valid Amazon Q agent definition"
-)]
+#[then("the configured Amazon Q agent definition is written as valid JSON")]
 fn then_agent_definition_written(w: &mut AgentsWorld) {
-    let content =
-        std::fs::read_to_string(w.work.path().join(".amazonq/cli-agents/ose-default.json"))
-            .expect("read agent definition");
+    let content = std::fs::read_to_string(w.amazonq_definition_path())
+        .expect("read configured agent definition");
     let json: Value = serde_json::from_str(&content).expect("valid json");
-    assert_eq!(json["name"], "ose-default");
+    assert_eq!(json["name"], AMAZONQ_FIXTURE_AGENT_NAME);
 }
 
 #[then(
     "the agent definition resources reference file://AGENTS.md and file://.amazonq/rules/**/*.md"
 )]
 fn then_agent_definition_resources(w: &mut AgentsWorld) {
-    let content =
-        std::fs::read_to_string(w.work.path().join(".amazonq/cli-agents/ose-default.json"))
-            .expect("read agent definition");
+    let content = std::fs::read_to_string(w.amazonq_definition_path())
+        .expect("read configured agent definition");
     let json: Value = serde_json::from_str(&content).expect("valid json");
     let resources = json["resources"].as_array().expect("resources array");
     let strs: Vec<&str> = resources.iter().filter_map(Value::as_str).collect();
@@ -834,7 +860,9 @@ fn then_identifies_drifted_bridge_file(w: &mut AgentsWorld) {
 fn then_reports_missing_bridge_file(w: &mut AgentsWorld) {
     let out = w.stdout();
     assert!(
-        out.contains("Binding: .amazonq/cli-agents/ose-default.json"),
+        out.contains(&format!(
+            "Binding: .amazonq/cli-agents/{AMAZONQ_FIXTURE_AGENT_NAME}.json"
+        )),
         "got: {out}"
     );
     assert!(

@@ -1,9 +1,9 @@
-2c1959ba68d60191ce240d0f971af2468feb70c824174acf18502ab0be37f7c1  apps/rhino-cli/Cargo.lock
-17e2df2743fac5644cae0fa04831688f5503b30a6923dd785f9d582b10fa52db  apps/rhino-cli/Cargo.toml
+23e9109bd73c084143dc439efbd6e227955c99ee3928819f2f584f2ec1f00cc9  apps/rhino-cli/Cargo.lock
+3a33f7eb147c12f3508c168f487119860663785d593adba45e7fd4335eee39ff  apps/rhino-cli/Cargo.toml
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 cd57c9202e69fdde2f562ae7f0c8778b5f132947681e35aae5225ab9e4061912  apps/rhino-cli/project.json
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
-69d4fcd3d3f6e9a1786fe8e2fa5d94e8906050e5198c96e103851f4c5c4bb11f  apps/rhino-cli/src/application/agents/bindings.rs
+37ef69e273a6d672a3dab9d91cc923a8555b17b66e056a6d55ce79e839db3e3b  apps/rhino-cli/src/application/agents/bindings.rs
 07dd2ceb069411b1d60ca01701aa4d2e49d421dd0826b399f34c1f9e9316524e  apps/rhino-cli/src/application/agents/claude_validator.rs
 abc7b14eed48a343d09a34ff5245e707591e406af23900305a3f6a169f25fcce  apps/rhino-cli/src/application/agents/converter.rs
 f8dd9b8866ca6d218dcccce4146db948ddd01d5309291f09e271bbcedffa918a  apps/rhino-cli/src/application/agents/cursor.rs
@@ -105,7 +105,7 @@ f64b81c06712b2c44a264e16488928fd24c38f7ca13f3a5b9aaa278209b5ae3b  apps/rhino-cli
 94712c3653f9e91111f0136cd90ab434f58d2ec6d20ce80b4dec2fc2364fd899  apps/rhino-cli/src/commands/env_restore.rs
 2eb52e7dbd4601beb261cc17c34e72e604eab1ac0444586f05cbda7f3691e58b  apps/rhino-cli/src/commands/env_staged_guard.rs
 abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli/src/commands/env_validate.rs
-4483857d4188364288c960ce6458eb281fcc87832ca8c18cc191aa5f9c9cd226  apps/rhino-cli/src/commands/gate/emit.rs
+ce785df5918b9fd89c3fedf00008d8c2383cf17aec759bb004e806993c7f1603  apps/rhino-cli/src/commands/gate/emit.rs
 ec3203664efb22bb61089f8959257e98bf630bfc2568ba3637fc5715c9d09d28  apps/rhino-cli/src/commands/gate/list.rs
 d500838c85c402bd260502f1a28d489db2ea4e74bc5769f4adf42bb4fc2035b9  apps/rhino-cli/src/commands/gate/mod.rs
 438798dee46573c526d8f955307cbefaaddedef657ac01c578eddf8d89181833  apps/rhino-cli/src/commands/gate/run.rs
@@ -198,7 +198,7 @@ f1026443fbcd7f1c673c9fa7ce2cc1aadb881aad012e5d034f6757f3d85b4c82  apps/rhino-cli
 303a205712f399049fff94468e24d01f308b425f8e5e90db593f47d78d50da10  apps/rhino-cli/src/main.rs
 af6651b2adb5ee6d5becf743af675eab72210e35cb5e3c510c08d78dbb07f838  apps/rhino-cli/src/test_support.rs
 1acfdaa6fb586bae30ed0ae223222f9d551d5adc3ebaa6574424db5c8d1ac36e  apps/rhino-cli/tests/agent_naming_validator.rs
-41b31ef860f51af2a481439993fb39582e8cab0cc4e09cb6941bcbef79ffd8ed  apps/rhino-cli/tests/agents.rs
+887055ad5c2959a0c60046f050740ab7fb58dc275dca4f17cb73f646cb52dfdc  apps/rhino-cli/tests/agents.rs
 2e577c82d3e9fec50ec7b2dc2489e1cba548a40d55c2b16377d712ddffbe7b06  apps/rhino-cli/tests/cargo_target_share.rs
 d6b8c614e58d37f36e0b6a6813e2b8e89138cc5a2053a90e14c2a71f1d6e3462  apps/rhino-cli/tests/cli_smoke.rs
 ecee8e2b0c870d14a905a561a0f4cf7e6887a7492e85b61f1f4adb9ef3be3bee  apps/rhino-cli/tests/contracts.rs
@@ -601,7 +601,7 @@ ea407253b8458bb2b6494ea30b39bd1d3082ad3c49c5efa309cb403b2838752e  specs/apps/rhi
 ea0050aee27166f3a3f74a3a225c0c391e48b681abcd063a26f5931f0d840925  specs/apps/rhino/behavior/rhino-cli/gherkin/git/README.md
 6a8b12b64ebed5103ff323480894a0ae79e0af57584b9eb65a92e20d9a05fcba  specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature
 ab3befdc6d310c74d031930db0dcb43ed0a17366f2ec347fb6fb6747751af140  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
-84d1bc8fcb3064699fe5cd8070a1e0ffb53e219064959dee022e467f38a45203  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
+d0013ed83f00c2a5b032ebbfbd1ab4cc5b82d13904e22a076f5dcd68678dd486  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
 de8c721980d1577c2a2eb4e8c0dcd41e857137b41cef5b60392d7955bd41c5da  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature
 254c5559129fbfa48e81e676d21ba2720356ee74fbf5298a7a79c7e699f4d71c  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature
 994addeae1c9fcc4aa71ef1f1ec6c40cc00f952145ebdee11d8570f41906467d  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature

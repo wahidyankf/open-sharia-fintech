@@ -23,6 +23,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
+#[cfg(unix)]
+use std::io::{Read as _, Write as _};
+#[cfg(unix)]
+use std::os::fd::OwnedFd;
+
 use super::sync_validator::{validate_cursor_sync, validate_sync};
 use super::types::{ValidationCheck, ValidationResult};
 use crate::application::repo_config;
@@ -155,6 +160,184 @@ pub struct EmitResult {
 /// Returns an error string if a directory cannot be created or a file cannot
 /// be written.
 pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
+    #[cfg(unix)]
+    {
+        emit_bindings_no_follow(repo_root)
+    }
+
+    #[cfg(not(unix))]
+    {
+        emit_bindings_with_metadata_checks(repo_root)
+    }
+}
+
+/// Emit Amazon Q bindings through directory descriptors, so each path lookup
+/// is anchored to the repository and rejects symlinks at the kernel boundary.
+/// This prevents an attacker from replacing a checked path with a symlink
+/// between inspection and write or stale-definition cleanup.
+#[cfg(unix)]
+fn emit_bindings_no_follow(repo_root: &Path) -> Result<EmitResult, String> {
+    let start = Instant::now();
+    let mut result = EmitResult::default();
+    let bindings = expected_bindings(repo_root)?;
+    let agent_name = amazonq_agent_name(repo_root)?;
+    let root = open_repository_directory(repo_root)?;
+    let amazonq = open_or_create_directory(&root, ".amazonq")?;
+    let rules = open_or_create_directory(&amazonq, "rules")?;
+    let definitions = open_or_create_directory(&amazonq, "cli-agents")?;
+
+    write_no_follow_file(&rules, "00-agents-md.md", &bindings[0].content)?;
+    write_no_follow_file(
+        &definitions,
+        &format!("{agent_name}.json"),
+        &bindings[1].content,
+    )?;
+    result.written = bindings
+        .into_iter()
+        .map(|binding| binding.rel_path)
+        .collect();
+
+    remove_stale_amazonq_definitions_no_follow(&definitions, &agent_name)?;
+
+    result.duration = start.elapsed();
+    Ok(result)
+}
+
+/// Open the configured repository root as a directory without following a
+/// final symlink. Every subsequent lookup is descriptor-relative.
+#[cfg(unix)]
+fn open_repository_directory(repo_root: &Path) -> Result<OwnedFd, String> {
+    use rustix::fs::{CWD, Mode, OFlags, openat};
+
+    openat(
+        CWD,
+        repo_root,
+        OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::empty(),
+    )
+    .map_err(|error| {
+        format!(
+            "failed to open repository root {} with symlink protection: {error}",
+            repo_root.display()
+        )
+    })
+}
+
+/// Obtain a child directory from a trusted parent descriptor, creating it if
+/// absent. A concurrent symlink replacement is rejected by the final
+/// descriptor-relative `openat` with `O_NOFOLLOW`.
+#[cfg(unix)]
+fn open_or_create_directory(parent: &OwnedFd, name: &str) -> Result<OwnedFd, String> {
+    use rustix::fs::{Mode, OFlags, mkdirat, openat};
+    use rustix::io::Errno;
+
+    let flags = OFlags::RDONLY | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC;
+    match openat(parent, name, flags, Mode::empty()) {
+        Ok(directory) => Ok(directory),
+        Err(Errno::NOENT) => {
+            if let Err(error) = mkdirat(parent, name, Mode::RWXU)
+                && error != Errno::EXIST
+            {
+                return Err(format!(
+                    "failed to create Amazon Q binding directory {name} with symlink protection: {error}"
+                ));
+            }
+            openat(parent, name, flags, Mode::empty()).map_err(|error| {
+                format!(
+                    "failed to open Amazon Q binding directory {name} with symlink protection: {error}"
+                )
+            })
+        }
+        Err(error) => Err(format!(
+            "failed to open Amazon Q binding directory {name} with symlink protection: {error}"
+        )),
+    }
+}
+
+/// Write a generated file through its parent directory descriptor without
+/// resolving a symlink at the final path component.
+#[cfg(unix)]
+fn write_no_follow_file(parent: &OwnedFd, name: &str, content: &str) -> Result<(), String> {
+    use rustix::fs::{Mode, OFlags, openat};
+
+    let file = openat(
+        parent,
+        name,
+        OFlags::WRONLY | OFlags::CREATE | OFlags::TRUNC | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::RUSR | Mode::WUSR,
+    )
+    .map_err(|error| {
+        format!("failed to open Amazon Q binding file {name} with symlink protection: {error}")
+    })?;
+    std::fs::File::from(file)
+        .write_all(content.as_bytes())
+        .map_err(|error| format!("failed to write Amazon Q binding file {name}: {error}"))
+}
+
+/// Remove obsolete generated definitions through the trusted definitions
+/// directory descriptor. Both inspection and deletion are descriptor-relative
+/// and no-follow, so a concurrent path swap cannot delete outside the repo.
+#[cfg(unix)]
+fn remove_stale_amazonq_definitions_no_follow(
+    definitions_dir: &OwnedFd,
+    expected_name: &str,
+) -> Result<(), String> {
+    use rustix::fs::{AtFlags, Dir, unlinkat};
+
+    let expected_file = format!("{expected_name}.json");
+    let entries = Dir::read_from(definitions_dir).map_err(|error| {
+        format!("failed to list generated Amazon Q definitions safely: {error}")
+    })?;
+    for entry in entries {
+        let entry = entry.map_err(|error| {
+            format!("failed to inspect generated Amazon Q definition safely: {error}")
+        })?;
+        let Ok(file_name) = entry.file_name().to_str() else {
+            continue;
+        };
+        if file_name == expected_file
+            || !is_emitter_managed_definition_at(definitions_dir, file_name)
+        {
+            continue;
+        }
+        unlinkat(definitions_dir, file_name, AtFlags::empty()).map_err(|error| {
+            format!("failed to remove stale generated Amazon Q definition {file_name}: {error}")
+        })?;
+    }
+    Ok(())
+}
+
+/// Return whether a descriptor-relative candidate is a regular file whose
+/// bytes exactly match a definition that this emitter could have generated.
+#[cfg(unix)]
+fn is_emitter_managed_definition_at(definitions_dir: &OwnedFd, file_name: &str) -> bool {
+    use rustix::fs::{Mode, OFlags, openat};
+
+    let Some(agent_name) = file_name.strip_suffix(".json") else {
+        return false;
+    };
+    if !is_kebab_case_identifier(agent_name) {
+        return false;
+    }
+    let Ok(file) = openat(
+        definitions_dir,
+        file_name,
+        OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+        Mode::empty(),
+    ) else {
+        return false;
+    };
+    let mut content = String::new();
+    let mut file = std::fs::File::from(file);
+    file.metadata().is_ok_and(|metadata| metadata.is_file())
+        && file.read_to_string(&mut content).is_ok()
+        && content == agent_definition_content(agent_name)
+}
+
+/// Fallback emitter for platforms without POSIX descriptor-relative APIs.
+/// Unix targets use [`emit_bindings_no_follow`] instead.
+#[cfg(not(unix))]
+fn emit_bindings_with_metadata_checks(repo_root: &Path) -> Result<EmitResult, String> {
     let start = Instant::now();
     let mut result = EmitResult::default();
 
@@ -181,6 +364,7 @@ pub fn emit_bindings(repo_root: &Path) -> Result<EmitResult, String> {
 /// `harness.amazonq.agent-name` rename. The definitions directory can also
 /// contain custom Amazon Q agents, so a candidate is removed only when its
 /// file name and exact contents prove that a previous emitter run generated it.
+#[cfg(not(unix))]
 fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
     let expected_name = amazonq_agent_name(repo_root)?;
     let expected_file = format!("{expected_name}.json");
@@ -219,6 +403,7 @@ fn remove_stale_amazonq_definitions(repo_root: &Path) -> Result<(), String> {
 /// that has been redirected outside the repository. The binding paths are
 /// fixed relative paths, so checking each component protects both directory
 /// creation and file writes without accepting user-supplied path traversal.
+#[cfg(not(unix))]
 fn reject_symlinked_binding_path(repo_root: &Path, rel_path: &str) -> Result<(), String> {
     let mut path = repo_root.to_path_buf();
     for segment in rel_path.split('/') {
@@ -251,6 +436,7 @@ fn reject_symlinked_binding_path(repo_root: &Path, rel_path: &str) -> Result<(),
 /// a definition that this emitter could have generated. Failed reads and
 /// non-regular entries are deliberately treated as unmanaged: cleanup must
 /// preserve anything it cannot positively identify as an emitted definition.
+#[cfg(not(unix))]
 fn is_emitter_managed_definition(entry: &fs::DirEntry) -> bool {
     let Ok(file_type) = entry.file_type() else {
         return false;

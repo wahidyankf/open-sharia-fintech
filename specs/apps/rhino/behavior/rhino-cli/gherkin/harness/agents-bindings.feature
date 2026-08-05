@@ -12,7 +12,7 @@ Feature: Amazon Q Developer Binding Bridge
       When the developer runs agents emit-bindings
       Then the command exits successfully
       And the file .amazonq/rules/00-agents-md.md is written as a pointer to AGENTS.md
-      And the file .amazonq/cli-agents/ose-default.json is written as a valid Amazon Q agent definition
+      And the configured Amazon Q agent definition is written as valid JSON
 
     Scenario: The agent definition loads AGENTS.md and the rules directory as resources
       Given a repository without an existing .amazonq/ directory
