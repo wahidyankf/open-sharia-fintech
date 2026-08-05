@@ -533,6 +533,8 @@ fn read_git_sha(repo_root: &Path) -> String {
         .arg("rev-parse")
         .arg("--short")
         .arg("HEAD")
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
         .output();
     match out {
         Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),

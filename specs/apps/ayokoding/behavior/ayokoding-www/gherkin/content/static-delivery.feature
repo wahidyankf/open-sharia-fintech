@@ -33,9 +33,9 @@ Feature: Statically delivered content pages
     Then every runtime data endpoint responds successfully
 
   @e2e
-  Scenario Outline: The document language reflects the content-page locale
-    Given a visitor opens a content page in the "<locale>" locale
-    When the content page renders
+  Scenario Outline: The document language reflects the localized page locale
+    Given a visitor opens a localized page in the "<locale>" locale
+    When the localized page renders
     Then the html element declares the "<language_code>" language code
 
     Examples:

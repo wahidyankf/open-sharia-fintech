@@ -17,6 +17,8 @@ impl StagedFileProvider for GitStagedFileProvider {
             .arg("--cached")
             .arg("--name-only")
             .current_dir(git_root)
+            .env_remove("GIT_DIR")
+            .env_remove("GIT_WORK_TREE")
             .output()?;
         if !out.status.success() {
             return Err(anyhow!("git diff --cached failed"));

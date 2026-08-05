@@ -9,6 +9,12 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-04: ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) —
+  Authored and verified 14 mobile/desktop-platform and concurrency-language course bodies, including
+  Playwright evidence across three breakpoints, prerequisite rendering, and a zero-manifest ownership
+  invariant. Delivery Mode: `worktree-to-pr`. Completed 2026-08-04. Terminal delivery:
+  [PR #133](https://github.com/wahidyankf/ose-public/pull/133); downstream use requires merge
+  verification.
 - [2026-08-02: ayokoding-learning-path-04-course-authoring](./2026-08-02__ayokoding-learning-path-04-course-authoring/README.md) —
   Authored and verified the plan's 21-course retained scope across AI engineering, data depth, and
   web/backend/platform productivity. Delivered with static-build repairs, Playwright evidence at
