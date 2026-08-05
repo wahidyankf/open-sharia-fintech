@@ -3539,11 +3539,23 @@ checkbox remains the separately authorized integration action after its precedin
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `apps/rhino-cli/src/application/doctor/`, `apps/rhino-cli/src/application/repo_config/mod.rs`, `apps/rhino-cli/src/commands/{doctor.rs,gate/list.rs,gate/validate.rs,repo_config_validate.rs}`, `apps/rhino-cli/tests/{doctor.rs,gate_specs.rs}`, `apps/rhino-cli/parity-manifest.sha256`, `specs/apps/rhino/behavior/rhino-cli/gherkin/{system/doctor.feature,gate/gate-enumeration.feature}`
   - Execution note: Full Rhino unit tests (1,338 pass, 1 ignored), Doctor and Gherkin integration tests, behavior coverage, Nx lint, registry/gate validation, actionlint, Markdown checks, and whitespace validation passed. Regenerated and validated the staged canonical parity manifest.
-- [x] [AI] **P2-C4-CI-BOOTSTRAP-PERF** (`blockedBy: P2-C4-CI-BOOTSTRAP-REFACTOR`; `blocks: Merge`) — verify the final registry-derived CI bootstrap no longer duplicates the full 16-tool Doctor pass per gate — acceptance: every matrix gate receives only its declared setup while registry-derived dispatch remains validated.
+- [x] [AI] **P2-C4-CI-BOOTSTRAP-PERF** (`blockedBy: P2-C4-CI-BOOTSTRAP-REFACTOR`; `blocks: P2-C5-MAKER`) — verify the final registry-derived CI bootstrap no longer duplicates the full Doctor pass per gate — acceptance: every matrix gate receives only its declared setup while registry-derived dispatch remains validated.
   - Date: 2026-08-06
   - Status: complete
   - Files Changed: `.github/workflows/pr-quality-gate.yml`, `repo-config.yml`, `apps/rhino-cli/src/commands/gate/{list.rs,validate.rs}`, `apps/rhino-cli/src/commands/doctor.rs`
   - Execution note: Inspected the emitted CI JSON and workflow: format obtains a unique registry-derived formatter union; every matrix invocation supplies `--tools` from its own entry; empty lists skip provisioning. The full-bootstrap detector has no remaining hit, and registry, actionlint, lint, specification, parity, and whitespace validation pass.
+- [ ] [AI] **P2-C5-MAKER** (`blockedBy: P2-C4-CI-BOOTSTRAP-PERF`; `blocks: P2-C5-SYNTHESIS`) — run a fresh eight-discipline PR review maker fan-out on the Cycle 4 delivery — acceptance: all raw reports are recorded and triaged.
+- [ ] [AI] **P2-C5-SYNTHESIS** (`blockedBy: P2-C5-MAKER`; `blocks: P2-C5-FIXER`) — synthesize Cycle 5 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+- [ ] [AI] **P2-C5-FIXER** (`blockedBy: P2-C5-SYNTHESIS`; `blocks: P2-C5-CI`) — implement every accepted Cycle 5 finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [ ] [AI] **P2-C5-CI** (`blockedBy: P2-C5-FIXER`; `blocks: P2-C6-MAKER`) — run and verify CI for the Cycle 5 head — acceptance: required checks succeed before Cycle 6 starts.
+- [ ] [AI] **P2-C6-MAKER** (`blockedBy: P2-C5-CI`; `blocks: P2-C6-SYNTHESIS`) — run a fresh eight-discipline PR review maker fan-out after Cycle 5 — acceptance: all raw reports are recorded and triaged.
+- [ ] [AI] **P2-C6-SYNTHESIS** (`blockedBy: P2-C6-MAKER`; `blocks: P2-C6-FIXER`) — synthesize Cycle 6 findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+- [ ] [AI] **P2-C6-FIXER** (`blockedBy: P2-C6-SYNTHESIS`; `blocks: P2-C6-CI`) — implement every accepted Cycle 6 finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [ ] [AI] **P2-C6-CI** (`blockedBy: P2-C6-FIXER`; `blocks: P2-C7-MAKER`) — run and verify CI for the Cycle 6 head — acceptance: required checks succeed before Cycle 7 starts.
+- [ ] [AI] **P2-C7-MAKER** (`blockedBy: P2-C6-CI`; `blocks: P2-C7-SYNTHESIS`) — run the final eight-discipline PR review maker fan-out — acceptance: all raw reports are recorded and triaged.
+- [ ] [AI] **P2-C7-SYNTHESIS** (`blockedBy: P2-C7-MAKER`; `blocks: P2-C7-FIXER`) — synthesize final findings into the sole review of record — acceptance: every finding has a disposition and evidence.
+- [ ] [AI] **P2-C7-FIXER** (`blockedBy: P2-C7-SYNTHESIS`; `blocks: P2-C7-CI`) — implement every accepted final-cycle finding and record any rejected finding rationale — acceptance: delivery diff and task list reflect all accepted corrections.
+- [ ] [AI] **P2-C7-CI** (`blockedBy: P2-C7-FIXER`; `blocks: Merge`) — run and verify CI for the final review head — acceptance: all required checks are green before merge.
 - [ ] [AI] Merge.
 - [ ] [AI] Fast-forward local `main` after the merge — command:
       `git fetch origin main && git switch main && git merge --ff-only origin/main` — acceptance:
