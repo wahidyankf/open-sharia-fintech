@@ -438,6 +438,11 @@ flowchart TD
       make the command serve the documented loopback page, then refactor only after the focused
       app, spec, and runtime checks pass — acceptance: the tutorial remains truthful and the
       correction changes no Rhino identity-bound path.
+- [ ] [AI] [P4-006C] If that shared frontend Gherkin contract reveals the same startup defect in
+      another first-party Next.js implementation, extend the same RED/GREEN/REFACTOR correction to
+      that implementation and reconcile every affected scenario count — acceptance: both
+      implementations bind the shared scenario, focused unit/typecheck/lint commands pass, and no
+      Rhino identity-bound path changes.
 - [ ] [AI] [P4-007] Execute every exact primer document task row one at a time, including app/lib/spec
       READMEs, setup, architecture, relationships, navigation, governance, CI, and catch-all living
       surfaces — acceptance: every row has its own terminal result.
@@ -802,10 +807,10 @@ after processes stop and evidence is safely recorded.
       loopback and blocks outbound network access — acceptance: the private record proves egress is
       blocked before either target starts.
 - [ ] [AI] [P8E-004] Resolve the declared CoralPolyp backend target with `npm exec nx show project
-    coralpolyp-be --json` in the private clone — acceptance: its exact declared local start command
+  coralpolyp-be --json` in the private clone — acceptance: its exact declared local start command
       and health route are retained only in the private record.
 - [ ] [AI] [P8E-005] Resolve the declared CoralPolyp frontend target with `npm exec nx show project
-    coralpolyp-fe --json` in the private clone — acceptance: its exact declared local start command
+  coralpolyp-fe --json` in the private clone — acceptance: its exact declared local start command
       and loopback address are retained only in the private record.
 - [ ] [AI] [P8E-006] Start the backend inside the sanitized, egress-blocked sandbox and request its
       recorded loopback health route with `curl --fail --silent --show-error` — acceptance: local
