@@ -112,7 +112,7 @@ export const cvData: CVEntry[] = [
     ],
     skills: [
       "Engineering Management",
-      "System Design",
+      "Systems Design",
       "Software Engineering",
       "Frontend Engineering",
       "Backend Engineering",
@@ -145,7 +145,7 @@ export const cvData: CVEntry[] = [
       "Frontend Engineering",
       "Backend Engineering",
       "Software Testing",
-      "System Design",
+      "Systems Design",
       "Software Engineering",
     ],
     programmingLanguages: ["JavaScript", "Python", "TypeScript", "SQL"],
@@ -171,7 +171,7 @@ export const cvData: CVEntry[] = [
     ],
     skills: [
       "Engineering Management",
-      "System Design",
+      "Systems Design",
       "Frontend Engineering",
       "Software Engineering",
       "Software Testing",
@@ -194,7 +194,7 @@ export const cvData: CVEntry[] = [
     ],
     skills: [
       "Engineering Management",
-      "System Design",
+      "Systems Design",
       "Backend Engineering",
       "Frontend Engineering",
       "Software Engineering",
@@ -217,7 +217,7 @@ export const cvData: CVEntry[] = [
       "I was involved in Ruangguru's FE engineering committee and influenced its road map. One of the results was that Ruangguru's FE team quickly (i.e., about four weeks from the initial discussion) converged the convention and technological stacks for the then-new TypeScript adoption in Ruangguru's FE future projects.",
       "Heavily involved in Ruangguru's new FE engineer hiring. This involvement results in a faster FE engineering hiring process while ensuring only technical and culturally fit candidates pass. I also streamlined the FE team's onboarding process by creating documents and guides, resulting in a faster, more precise, and smoother onboarding for the new engineers while making it more scalable and reproducible.",
     ],
-    skills: ["Frontend Engineering", "System Design", "Software Engineering"],
+    skills: ["Frontend Engineering", "Systems Design", "Software Engineering"],
     programmingLanguages: ["JavaScript", "TypeScript", "ReasonML", "SQL", "HTML", "CSS"],
     frameworks: ["React.js", "React Native", "ReasonReact"],
   },
@@ -400,30 +400,41 @@ export const calculateDuration = (period: string): number => {
   return months + 1;
 };
 
+// The calendar month a date falls in, as a single comparable integer.
+const toMonthIndex = (date: Date): number => date.getFullYear() * 12 + date.getMonth();
+
 export const calculateTotalDuration = (periods: { start: Date; end: Date }[]): number => {
   if (periods.length === 0) return 0;
 
-  // Sort periods by start date
-  periods.sort((a, b) => a.start.getTime() - b.start.getTime());
+  // Each period is an inclusive [startMonth, endMonth] range. Merge the ranges
+  // before counting: adding each period's own inclusive length would count a
+  // shared month twice whenever one role starts in the month another ended.
+  const ranges = periods
+    .map((period) => ({
+      start: toMonthIndex(period.start),
+      end: toMonthIndex(period.end),
+    }))
+    .filter((range) => range.end >= range.start)
+    .sort((a, b) => a.start - b.start);
+
+  if (ranges.length === 0) return 0;
 
   let totalMonths = 0;
-  let currentEnd = new Date(0); // Initialize with the earliest possible date
+  let spanStart = ranges[0].start;
+  let spanEnd = ranges[0].end;
 
-  for (const period of periods) {
-    const startDate = period.start > currentEnd ? period.start : currentEnd;
-    const endDate = period.end;
-
-    if (startDate < endDate) {
-      // Calculate months, always including start and end months
-      const monthsDiff =
-        (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth()) + 1; // Add 1 to include both start and end months
-
-      totalMonths += monthsDiff;
-      currentEnd = endDate > currentEnd ? endDate : currentEnd;
+  for (const range of ranges.slice(1)) {
+    if (range.start <= spanEnd + 1) {
+      // Overlapping or back-to-back: extend the span rather than recounting it.
+      spanEnd = Math.max(spanEnd, range.end);
+    } else {
+      totalMonths += spanEnd - spanStart + 1;
+      spanStart = range.start;
+      spanEnd = range.end;
     }
   }
 
-  return totalMonths;
+  return totalMonths + (spanEnd - spanStart + 1);
 };
 
 export const formatDuration = (months: number): string => {
@@ -439,185 +450,60 @@ export const formatDuration = (months: number): string => {
   }
 };
 
-export const getTopSkillsLastFiveYears = (data: CVEntry[]): { name: string; duration: number }[] => {
+type SkillTotal = { name: string; duration: number };
+
+/**
+ * Aggregates one facet of the work history (skills, languages, or frameworks).
+ *
+ * The five-year window decides *which* items are listed: an item appears only
+ * if it was used in a role active within the window. The duration reported
+ * alongside each item is a lifetime total across the whole career, so it is not
+ * truncated by that window.
+ */
+const topItemsLastFiveYears = (
+  data: CVEntry[],
+  selectItems: (entry: CVEntry) => string[] | undefined,
+): SkillTotal[] => {
   const fiveYearsAgo = new Date();
   fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
 
-  const allWorkEntries = data.filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work");
-
-  const skillInfo: {
-    [key: string]: { count: number; periods: { start: Date; end: Date }[] };
+  const itemInfo: {
+    [key: string]: { usedInWindow: boolean; periods: { start: Date; end: Date }[] };
   } = {};
 
-  allWorkEntries.forEach((entry) => {
-    if (!entry.period) return;
-    const [startStr, endStr] = entry.period.split(" - ");
-    if (!startStr || !endStr) return;
-    const start = parseDate(startStr);
-    const end = endStr === "Present" ? new Date() : parseDate(endStr);
+  data
+    .filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work")
+    .forEach((entry) => {
+      if (!entry.period) return;
+      const [startStr, endStr] = entry.period.split(" - ");
+      if (!startStr || !endStr) return;
+      const start = parseDate(startStr);
+      const end = endStr === "Present" ? new Date() : parseDate(endStr);
 
-    entry.skills?.forEach((skill) => {
-      if (!skillInfo[skill]) {
-        skillInfo[skill] = { count: 0, periods: [] };
-      }
-      if (end >= fiveYearsAgo) {
-        skillInfo[skill].count += 1;
-      }
-      skillInfo[skill].periods.push({ start, end });
-    });
-  });
-
-  const skillDurations = Object.entries(skillInfo).map(([name, info]) => ({
-    name,
-    duration: calculateTotalDuration(info.periods),
-    count: info.count,
-  }));
-
-  return skillDurations
-    .sort((a, b) => b.duration - a.duration) // Sort by duration in descending order
-    .slice(0, 10)
-    .map(({ name, duration }) => ({ name, duration }));
-};
-
-export const getTopLanguagesLastFiveYears = (data: CVEntry[]): { name: string; duration: number }[] => {
-  const fiveYearsAgo = new Date();
-  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-
-  const allWorkEntries = data.filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work");
-
-  const languageInfo: {
-    [key: string]: { count: number; periods: { start: Date; end: Date }[] };
-  } = {};
-
-  allWorkEntries.forEach((entry) => {
-    if (!entry.period) return;
-    const [startStr, endStr] = entry.period.split(" - ");
-    if (!startStr || !endStr) return;
-    const start = parseDate(startStr);
-    const end = endStr === "Present" ? new Date() : parseDate(endStr);
-
-    entry.programmingLanguages?.forEach((lang) => {
-      if (!languageInfo[lang]) {
-        languageInfo[lang] = { count: 0, periods: [] };
-      }
-      if (end >= fiveYearsAgo) {
-        languageInfo[lang].count += 1;
-      }
-      languageInfo[lang].periods.push({ start, end });
-    });
-  });
-
-  const languageDurations = Object.entries(languageInfo).map(([name, info]) => ({
-    name,
-    duration: calculateTotalDuration(info.periods),
-    count: info.count,
-  }));
-
-  return languageDurations
-    .sort((a, b) => b.duration - a.duration) // Sort by duration in descending order
-    .slice(0, 10)
-    .map(({ name, duration }) => ({ name, duration }));
-};
-
-export const getTopFrameworksLastFiveYears = (data: CVEntry[]): { name: string; duration: number }[] => {
-  const fiveYearsAgo = new Date();
-  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-
-  const allWorkEntries = data.filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work");
-
-  const frameworkInfo: {
-    [key: string]: { count: number; periods: { start: Date; end: Date }[] };
-  } = {};
-
-  allWorkEntries.forEach((entry) => {
-    if (!entry.period) return;
-    const [startStr, endStr] = entry.period.split(" - ");
-    if (!startStr || !endStr) return;
-    const start = parseDate(startStr);
-    const end = endStr === "Present" ? new Date() : parseDate(endStr);
-
-    entry.frameworks?.forEach((framework) => {
-      if (!frameworkInfo[framework]) {
-        frameworkInfo[framework] = { count: 0, periods: [] };
-      }
-      if (end >= fiveYearsAgo) {
-        frameworkInfo[framework].count += 1;
-      }
-      frameworkInfo[framework].periods.push({ start, end });
-    });
-  });
-
-  const frameworkDurations = Object.entries(frameworkInfo).map(([name, info]) => ({
-    name,
-    duration: calculateTotalDuration(info.periods),
-    count: info.count,
-  }));
-
-  return frameworkDurations
-    .sort((a, b) => b.duration - a.duration) // Sort by duration in descending order
-    .slice(0, 10)
-    .map(({ name, duration }) => ({ name, duration }));
-};
-
-export function getLanguagesAndFrameworks(data: CVEntry[]): {
-  languages: { name: string; duration: number }[];
-  frameworks: { name: string; duration: number }[];
-} {
-  const fiveYearsAgo = new Date();
-  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-
-  const workEntries = data.filter((entry): entry is CVEntry & { type: "work" } => entry.type === "work");
-  const languageInfo: {
-    [key: string]: { periods: { start: Date; end: Date }[] };
-  } = {};
-  const frameworkInfo: {
-    [key: string]: { periods: { start: Date; end: Date }[] };
-  } = {};
-
-  workEntries.forEach((entry) => {
-    if (!entry.period) return;
-    const [startStr, endStr] = entry.period.split(" - ");
-    if (!startStr || !endStr) return;
-    const start = parseDate(startStr);
-    const end = endStr === "Present" ? new Date() : parseDate(endStr);
-
-    // Only consider entries that end after or during the last 5 years
-    if (end >= fiveYearsAgo) {
-      entry.programmingLanguages?.forEach((lang) => {
-        if (!languageInfo[lang]) {
-          languageInfo[lang] = { periods: [] };
+      selectItems(entry)?.forEach((name) => {
+        const info = (itemInfo[name] ??= { usedInWindow: false, periods: [] });
+        if (end >= fiveYearsAgo) {
+          info.usedInWindow = true;
         }
-        languageInfo[lang].periods.push({
-          start: start < fiveYearsAgo ? fiveYearsAgo : start,
-          end,
-        });
+        info.periods.push({ start, end });
       });
+    });
 
-      entry.frameworks?.forEach((framework) => {
-        if (!frameworkInfo[framework]) {
-          frameworkInfo[framework] = { periods: [] };
-        }
-        frameworkInfo[framework].periods.push({
-          start: start < fiveYearsAgo ? fiveYearsAgo : start,
-          end,
-        });
-      });
-    }
-  });
-
-  const languages = Object.entries(languageInfo)
+  return Object.entries(itemInfo)
+    .filter(([, info]) => info.usedInWindow)
     .map(([name, info]) => ({
       name,
       duration: calculateTotalDuration(info.periods),
     }))
-    .sort((a, b) => b.duration - a.duration);
+    .sort((a, b) => b.duration - a.duration) // Longest-held first
+    .slice(0, 10);
+};
 
-  const frameworks = Object.entries(frameworkInfo)
-    .map(([name, info]) => ({
-      name,
-      duration: calculateTotalDuration(info.periods),
-    }))
-    .sort((a, b) => b.duration - a.duration);
+export const getTopSkillsLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+  topItemsLastFiveYears(data, (entry) => entry.skills);
 
-  return { languages, frameworks };
-}
+export const getTopLanguagesLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+  topItemsLastFiveYears(data, (entry) => entry.programmingLanguages);
+
+export const getTopFrameworksLastFiveYears = (data: CVEntry[]): SkillTotal[] =>
+  topItemsLastFiveYears(data, (entry) => entry.frameworks);

@@ -132,7 +132,7 @@ export function HomeContent() {
                       <HighlightText text={name} searchTerm={searchTerm} />
                     </span>
                     <span className="text-xs text-green-300 transition-colors duration-200 group-hover:text-white">
-                      ({formatDuration(Number(duration))})
+                      (total: {formatDuration(Number(duration))})
                     </span>
                   </button>
                 ))}

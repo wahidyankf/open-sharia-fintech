@@ -66,7 +66,7 @@ const ClickableItem = ({
     </div>
     {showDuration && (
       <span className="text-xs text-green-300 transition-colors duration-200 group-hover:text-white">
-        (
+        (total:{" "}
         <HighlightText text={formatDuration(duration)} searchTerm={searchTerm} />)
       </span>
     )}
