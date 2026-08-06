@@ -259,11 +259,35 @@ fn install_cargo_llvm_cov(_req: &str, _platform: &str) -> Vec<InstallStep> {
     }]
 }
 
+/// Well-known .NET release channel used when [`dotnet_channel`] cannot
+/// derive one from the configured requirement (e.g. an empty `req`).
+const DOTNET_DEFAULT_CHANNEL: &str = "10.0";
+
+/// Extracts the `major.minor` release channel (e.g. `"10.0"`) from a full
+/// SDK version string (e.g. `"10.0.204"`), for use with the .NET official
+/// install script's `--channel` flag.
+///
+/// Falls back to [`DOTNET_DEFAULT_CHANNEL`] when `req` is empty or does not
+/// contain at least two dot-separated, non-empty segments.
+fn dotnet_channel(req: &str) -> String {
+    let mut parts = req.split('.');
+    match (parts.next(), parts.next()) {
+        (Some(major), Some(minor)) if !major.is_empty() && !minor.is_empty() => {
+            format!("{major}.{minor}")
+        }
+        _ => DOTNET_DEFAULT_CHANNEL.into(),
+    }
+}
+
 /// Returns install steps for .NET SDK.
 ///
 /// On macOS: `brew install dotnet`.
-/// On Linux: `sudo snap install dotnet-sdk --classic --channel=10.0`.
-fn install_dotnet(_req: &str, platform: &str) -> Vec<InstallStep> {
+/// On Linux: Microsoft's official `dotnet-install.sh` script, channelled to
+/// the required SDK's `major.minor` version. The community-maintained
+/// `dotnet-sdk` snap is deliberately avoided — its track catalog lags
+/// behind current .NET releases (capped at `8.0/stable` as of 2026-08),
+/// so a hardcoded newer channel there fails to install on every CI run.
+fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
     if platform == "darwin" {
         vec![InstallStep {
             description: "Install .NET via Homebrew".into(),
@@ -271,15 +295,17 @@ fn install_dotnet(_req: &str, platform: &str) -> Vec<InstallStep> {
             args: vec!["install".into(), "dotnet".into()],
         }]
     } else {
+        let channel = dotnet_channel(req);
         vec![InstallStep {
-            description: "Install .NET via snap".into(),
-            command: "sudo".into(),
+            description: format!("Install .NET {channel} via the official install script"),
+            command: "bash".into(),
             args: vec![
-                "snap".into(),
-                "install".into(),
-                "dotnet-sdk".into(),
-                "--classic".into(),
-                "--channel=10.0".into(),
+                "-c".into(),
+                format!(
+                    "curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- \
+                     --channel {channel} --install-dir /usr/share/dotnet && \
+                     sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"
+                ),
             ],
         }]
     }
@@ -931,6 +957,54 @@ mod tests {
             parse_tofu_version("OpenTofu v1.10.2\non darwin_arm64"),
             "1.10.2"
         );
+    }
+
+    #[test]
+    fn install_dotnet_macos() {
+        let steps = install_dotnet("10.0.204", "darwin");
+        assert_eq!(steps[0].command, "brew");
+        assert!(steps[0].args.contains(&"dotnet".to_string()));
+    }
+
+    #[test]
+    fn install_dotnet_linux_uses_official_script_not_snap() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert_eq!(steps[0].command, "bash");
+        assert!(
+            script.contains("dot.net/v1/dotnet-install.sh"),
+            "must use Microsoft's official install script, which supports every channel"
+        );
+        assert!(
+            !script.contains("snap"),
+            "must not depend on the community-maintained dotnet-sdk snap, whose track \
+             catalog lags behind current .NET releases (capped at 8.0 as of 2026-08)"
+        );
+        assert!(
+            !script.contains("dotnet-sdk"),
+            "must not reference the community snap package name"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_channel_derived_from_required_version() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            script.contains("--channel 10.0"),
+            "the install channel must track the required SDK's major.minor version, \
+             not a value hardcoded independently of the configured requirement"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_falls_back_to_default_channel_when_req_empty() {
+        let steps = install_dotnet("", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(script.contains("--channel 10.0"));
     }
 
     #[test]
