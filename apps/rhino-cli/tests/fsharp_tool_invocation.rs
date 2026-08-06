@@ -120,8 +120,8 @@ fn manifest_backed_fantomas_targets(workspace_root: &Path) -> Vec<PathBuf> {
                 Some(".git" | "node_modules" | "target" | "dist")
             )
         })
-        .filter_map(|entry| entry.ok())
-        .map(|entry| entry.into_path())
+        .filter_map(Result::ok)
+        .map(walkdir::DirEntry::into_path)
         .filter(|path| path.file_name().is_some_and(|name| name == "project.json"))
         .filter(|path| {
             let project = fs::read_to_string(path)
