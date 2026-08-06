@@ -926,7 +926,14 @@ safety gates (secret/sensitivity, repo-relevance) — before the plan may be arc
 5. **Both safety gates present** — the phase MUST reference applying the secret/sensitivity gate
    and the repo-relevance gate to every surviving entry before routing. A phase present but missing
    either gate reference: **MEDIUM**.
-6. **Exemption** — pure-docs and trivial plans (a one-line rename, a single broken-link fix) MAY
+6. **`plans/ideas/` overlap-scan rule stated** — if the phase's routing matrix names `plans/ideas/`
+   as a candidate destination (it does by default per the standard scaffold), the phase's prose MUST
+   state that any entry routed there is checked against `plans/ideas/README.md` and the existing
+   two-pagers FIRST, folding into a brief that already covers the same area instead of creating a
+   new one, per
+   [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers).
+   A phase present but silent on this rule: **MEDIUM**.
+7. **Exemption** — pure-docs and trivial plans (a one-line rename, a single broken-link fix) MAY
    skip an elaborate Knowledge Capture phase; the explicit "none" escape (or an equally explicit
    note in `delivery.md`) satisfies the requirement. Verify any claimed exemption is legitimate; an
    illegitimate exemption on a genuinely substantive plan is **MEDIUM**.
@@ -935,7 +942,8 @@ safety gates (secret/sensitivity, repo-relevance) — before the plan may be arc
 
 - `delivery.md` has no Knowledge Capture phase and no explicit "none" record anywhere: **MEDIUM**
 - Explicit "none" record present (in `learnings.md` or `delivery.md`): **PASS** — not a finding
-- Phase present but missing the code-routing rule or either safety-gate reference: **MEDIUM**
+- Phase present but missing the code-routing rule, either safety-gate reference, or the
+  `plans/ideas/` overlap-scan rule: **MEDIUM**
 - Illegitimate trivial-plan exemption used to skip on a genuinely substantive plan: **MEDIUM**
 
 ### 19. Delivery Mode Validation (Step 5m — MANDATORY)

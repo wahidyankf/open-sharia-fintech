@@ -941,6 +941,13 @@ gates:
       (large); code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan and NEVER landed inline
       — acceptance: every `learnings.md` entry records its terminal routing state
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning
+      into that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md`
+      when the scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing
 - [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>` — acceptance: `learnings.md` is never
       silently empty

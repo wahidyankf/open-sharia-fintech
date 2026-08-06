@@ -1081,6 +1081,9 @@ Checklist), immediately before the Plan Archival section:
       matrix; code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan, NEVER landed inline (the only carve-out is a genuine blocker
       required to finish this plan's own scope)
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same area — fold in rather than creating a
+      new file (see [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>`
       in `learnings.md`
 
