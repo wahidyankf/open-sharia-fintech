@@ -356,7 +356,48 @@ this plan's own three landings and its hub-card slice.
 
 **Locale scope.** `en`-only; `id/belajar/` has zero courses and zero paths.
 
-## File Impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/src/features/course-paths/manifests/
+│   ├── README.md [E] — fix stale ownership refs to retired plan names
+│   └── careers/
+│       ├── careers-se-manifests.unit.test.ts [N] — created Phase 1, extended 2-4
+│       ├── interview-ready/software-engineer.yaml [N] — Phase 1, grown Phase 4
+│       ├── immediately-effective/software-engineer.yaml [N] — Phase 2, grown Phase 4
+│       └── fundamentally-strong/software-engineer.yaml [N] — Phase 3, grown Phase 4
+├── apps/ayokoding-www/content/en/learn/paths/
+│   ├── _index.md [E] — populate this plan's 3-card slice (file created by plan 01)
+│   ├── careers/interview-ready/software-engineer/_index.md [N]
+│   ├── careers/immediately-effective/software-engineer/_index.md [N]
+│   └── careers/fundamentally-strong/software-engineer/_index.md [N]
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── path-composition.feature [N] — created Phase 1, extended 2-4 and 8
+└── apps/ayokoding-www-fe-e2e/src/steps/path-composition.steps.ts [N] — same cadence
+└── plans/in-progress/ayokoding-learning-path-12-careers-se-manifests/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+Every path above is `[N]` except three `[E]` edits, and each of those three is a **populate-only**
+edit of a file another plan created: `manifests/README.md` and `paths/_index.md` (plan 01), which this
+plan appends its own slice to rather than rewriting. The sibling AI-manifest plan populates the fourth
+hub card independently, so the two plans append disjoint slices to the same `_index.md` — a mergeable
+diff, not a write conflict.
+
+The three `.yaml` manifests are created in Phases 1-3 and then **grown** in Phase 4 as the upstream
+band-completion signals arrive; the same file therefore appears once in the tree even though it is
+written across two phases, because the tree records intent per path, not per commit.
+
+No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                                                      | Change                                                  | Phase   |
 | ------------------------------------------------------------------------- | ------------------------------------------------------- | ------- |

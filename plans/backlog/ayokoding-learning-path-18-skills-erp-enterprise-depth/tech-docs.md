@@ -351,7 +351,52 @@ intra-topic" rename are all inherited unchanged. See
 - **DD-10 · UI gate: exempt, with the exemption and its reason stated; API gate: not exempt.**
   Unchanged rationale from plan 17 and the retired source plan. **Decided.**
 
-## File impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append 15 catalog rows (30 total), populate only
+│   └── <erp-course-id>/ [N] — 15 course bundles, Stage B (12) + Stage C (3)
+├── apps/ayokoding-www/content/en/learn/paths/skills/
+│   ├── conventional-erp/_index.md [E] — grown through Dangerous 2/3/4; created by plan 17
+│   └── sharia-erp/_index.md [E] — grown; created by plan 17
+├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
+│   ├── conventional-erp.yaml [E] — grown 15 -> 27; created by plan 17
+│   ├── sharia-erp.yaml [E] — grown 15 -> 27 -> 30; created by plan 17
+│   ├── conventional-erp-manifest.unit.test.ts [E] — terminal 27-id assertion
+│   └── sharia-erp-manifest.unit.test.ts [E] — terminal 30-id assertion
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── skills-erp-paths.feature [E] — Dangerous 2/3/4 scenarios; created by plan 17
+└── apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts [E] — extended
+└── plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+**This plan owns its own `syllabus/` corpus slice** (Stage B + C, 15 spec files) and is a
+**read-only consumer** of plan 17's corpus — it references plan 17's `syllabus/courses/<id>.md` files
+by id and never copies or edits one. That asymmetry is why plan 17's corpus appears nowhere in this
+tree, and why this plan carries both a `## Corpus Disposition` (for what it owns) and a
+`## Corpus Custody` echo (for what it reads).
+
+**Every manifest, landing, spec, and step-definition row is an `[E]` growth of a file plan 17
+authored.** This plan's only cross-plan file edits are those eight files, an explicitly authorized
+sequential growth across the Stage A/B boundary — plan 17 archives before this plan starts, so it is
+never a same-time collision. The 15 new course bundles are this plan's only `[N]` content rows.
+
+**`conventional-erp.yaml` stops at 27 while `sharia-erp.yaml` reaches 30.** The three Stage C courses
+grow the Sharia manifest only; a step that pushed the conventional manifest past 27 would be a
+boundary violation. The divergence is stated in the tree rather than left to be inferred.
+
+No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                                              | Change | Note                                                                                |
 | ----------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------- |

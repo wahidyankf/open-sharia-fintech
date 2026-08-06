@@ -71,7 +71,7 @@ origin/main` — is the command for you, not the bare-repo refspec form.** Runni
 the index or working tree, leaving them pinned to the old commit while `HEAD` points at the new one;
 git then reports the entire skipped delta as a pending mass revert. This happened for real — see the
 [Terminal Reconcile](#terminal-reconcile) table's "Why this form" column and
-[`stale-checkout-ref-advance-drift`](../../../plans/ideas/stale-checkout-ref-advance-drift.md) for the
+[`stale-checkout-ref-advance-drift`](../../../plans/ideas/q2-not-urgent-important/stale-checkout-ref-advance-drift.md) for the
 incident this caused.
 
 ## Verify Topology First

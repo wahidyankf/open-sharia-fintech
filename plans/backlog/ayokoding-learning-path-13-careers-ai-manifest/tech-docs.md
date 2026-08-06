@@ -256,7 +256,41 @@ retest remain mandatory, scoped to this plan's one landing and its hub-card slic
 
 **Locale scope.** `en`-only; `id/belajar/` has zero courses and zero paths.
 
-## File Impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/src/features/course-paths/manifests/careers/
+│   ├── careers-ai-manifest.unit.test.ts [N] — created Phase 1, extended Phase 2
+│   └── immediately-effective/ai-engineer.yaml [N] — created Phase 1, grown Phase 2
+├── apps/ayokoding-www/content/en/learn/paths/
+│   ├── _index.md [E] — populate this plan's 1-card slice (file created by plan 01)
+│   └── careers/immediately-effective/ai-engineer/_index.md [N]
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── path-composition.feature [N] — created Phase 1, extended Phase 2
+└── apps/ayokoding-www-fe-e2e/src/steps/path-composition.steps.ts [N] — same cadence
+└── plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+This plan owns exactly one manifest file. The single `[E]` row, `paths/_index.md`, is a
+**populate-only** edit of a file plan 01 created — this plan appends its one hub card and the sibling
+SE-manifests plan appends its three, so the two append disjoint slices to the same file and merge
+cleanly.
+
+`ai-engineer.yaml` is created in Phase 1 at its six-course smoke-test spine and **grown** in Phase 2
+once the upstream AI-cluster band-completion signals land. It appears once in the tree because the
+tree records intent per path, not per commit.
+
+No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                                                     | Change                                | Phase |
 | ------------------------------------------------------------------------ | ------------------------------------- | ----- |

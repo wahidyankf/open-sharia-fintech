@@ -10,58 +10,87 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 
 ## Two-Pagers
 
-- [acceptance-clause-vacuity](./acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
-- [agents-md-progressive-disclosure](./agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
-- [audit-e2e-reuse-existing-server-config](./audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`.
-- [ayokoding-content-checker-coverage](./ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
-- [ayokoding-database-internals-ruff-config](./ayokoding-database-internals-ruff-config.md) — 22 sibling courses carry a scoped `ruff.toml` and this one does not, though `ruff format --check` currently passes clean.
-- [ayokoding-i18n-nav-hardening](./ayokoding-i18n-nav-hardening.md) — pre-existing id-locale, language-switcher-404, and sidebar-clip defects surfaced by the url-restructure Phase-5 retest.
-- [ayokoding-mermaid-diagram-remediation](./ayokoding-mermaid-diagram-remediation.md) — 636 mermaid violations exposed by the `detect_kind` fix; remediate and drop the temporary CI exclude.
-- [ayokoding-www-app-shell-tap-targets](./ayokoding-www-app-shell-tap-targets.md) — shared header/footer tap targets render 17-20 CSS px tall against WCAG 2.5.8's 24x24 floor, site-wide and unguarded by CI.
-- [ayokoding-www-cost-reduction](./ayokoding-www-cost-reduction.md) — retire the 3 MB search index, ~700 KB client mermaid, 97 MB image copy, and the not-XSS-safe HTML parser in one coordinated pass.
-- [ayokoding-www-e2e-coverage-gaps](./ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
-- [ayokoding-www-e2e-parallel-load-flake](./ayokoding-www-e2e-parallel-load-flake.md) — the e2e suite flakes under full-suite parallel-worker load (isolated re-runs pass); stabilize or quarantine.
-- [bare-repo-landing-method-step-count-drift](./bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.
-- [behavior-coverage-json-report-wiring](./behavior-coverage-json-report-wiring.md) — wire rhino-cli's JSON-run-report cross-check into project targets + CI.
-- [ci-setup-rust-toolchain-retry](./ci-setup-rust-toolchain-retry.md) — `setup-rust` flaked 7× in one phase on the toolchain download; add a retry in all three repos.
-- [class-sweep-completeness](./class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
-- [contributing-md-trunk-guidance-and-naming-exemption](./contributing-md-trunk-guidance-and-naming-exemption.md) — fix stale "work on main" guidance blocked by the filename-naming gate.
-- [cross-repo-governance-link-parity](./cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
-- [deploy-targets-registry](./deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
-- [demo-apps-standards-recheck](./demo-apps-standards-recheck.md) — re-verify the ose-primer demo apps still meet current repo standards.
-- [doc-command-existence-validation](./doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
-- [doctor-fix-polyglot-restore](./doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
-- [governance-path-ownership-registry](./governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
-- [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.
-- [harness-binding-catalog-drift](./harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
-- [iam-service-module](./iam-service-module.md) — a shared IAM (authn/authz) capability; early placeholder, mostly open questions.
-- [merge-queue-adoption](./merge-queue-adoption.md) — merge-precondition (c) cannot hold under concurrent merges, but GitHub's native queue is gated on organization ownership all three repos lack.
-- [mermaid-validator-does-not-check-syntax](./mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
-- [mermaid-state-label-render-clipping-warn](./mermaid-state-label-render-clipping-warn.md) — a WARN rule for `stateDiagram-v2` edge labels that clip in GitHub's renderer.
-- [nx-affected-cross-worktree-contamination](./nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
-- [ose-private-opencode-ci-monitor-orphan](./ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip all three repos inherit.
-- [plan-archival-in-pr-multi-repo-gap](./plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
-- [plan-decision-integrity-hardening](./plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
-- [plan-quality-gate-convergence](./plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
-- [post-cutoff-dependency-migrations](./post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
-- [pr-review-bot-identity](./pr-review-bot-identity.md) — a dedicated bot identity so blocking reviews post as `REQUEST_CHANGES`.
-- [propagation-checklist-under-coverage](./propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
-- [repo-rules-quality-gate-convergence](./repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
-- [rhino-cli-env-backup-scripts](./rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
-- [rhino-cli-language-rewrite-tradeoffs](./rhino-cli-language-rewrite-tradeoffs.md) — compile-time, disk-usage, and Gherkin-support trade-offs for rewriting rhino-cli in .NET (F#) or OCaml; no rewrite decided, spike proposed.
-- [rust-crate-structural-checklist-promotion](./rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
-- [web-ui-alert-destructive-dark-contrast](./web-ui-alert-destructive-dark-contrast.md) — shared `Alert variant="destructive"` renders at 1.99:1 in dark mode; the obvious token fix is unsafe.
-- [sdlc-gate-standard-property-bound-lag](./sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
-- [sibling-main-ci-never-runs-on-merge](./sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in both siblings, so a merge to their `main` gets no post-merge CI signal.
-- [simplify-ayokoding-ose-cli](./simplify-ayokoding-ose-cli.md) — simplify `ayokoding-cli` / `ose-cli`; fold overlaps into rhino-cli.
-- [source-code-credential-scanning](./source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
-- [stale-checkout-ref-advance-drift](./stale-checkout-ref-advance-drift.md) — a ref-advancing `fetch` moved a checked-out branch 9 commits without its index, and git reported the drift as 265 staged files two agent sessions deferred to.
-- [standardize-cis](./standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
-- [syllabus-conformance-validator](./syllabus-conformance-validator.md) — a deterministic `rhino-cli md syllabus validate` for course-file section conformance, deferred until the format settles.
-- [tri-repo-rhino-cli-byte-identity-gate](./tri-repo-rhino-cli-byte-identity-gate.md) — a standing diff gate over the `apps/rhino-cli` byte-identity boundary across all three repos.
-- [vendor-audit-kiro-term](./vendor-audit-kiro-term.md) — add `Kiro` to the vendor-audit denylist before it leaks into governance prose.
-- [vercel-cost-steady-state-verification](./vercel-cost-steady-state-verification.md) — grade the shipped cost fix against the $30 invoice ceiling once the first clean billing cycle closes on 2026-09-26.
-- [vitest-glob-coverage-guard](./vitest-glob-coverage-guard.md) — a regression test that matched no Vitest project's include glob ran zero times and passed green; guard the class.
+Grouped into Eisenhower quadrants by [`plan-ideas-grooming`](../../repo-governance/workflows/plan/plan-ideas-grooming.md).
+
+### Q1 — Urgent & Important
+
+Blocks an active plan or documents a live defect, and carries a cross-repo, security, data-integrity, CI-gate, or checker-enforced stake. Do these first.
+
+- [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
+- [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
+- [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
+- [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
+- [rhino-cli-language-rewrite-tradeoffs](./q1-urgent-important/rhino-cli-language-rewrite-tradeoffs.md) — compile-time, disk-usage, and Gherkin-support trade-offs for rewriting rhino-cli in .NET (F#) or OCaml; no rewrite decided, spike proposed.
+- [tri-repo-rhino-cli-byte-identity-gate](./q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md) — a standing diff gate over the `apps/rhino-cli` byte-identity boundary across all three repos.
+
+### Q2 — Important, Not Urgent
+
+No active plan waits on these and no live defect is running, but each carries a real stake. This is the plan-from-here quadrant.
+
+- [audit-e2e-reuse-existing-server-config](./q2-not-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`.
+- [ayokoding-content-checker-coverage](./q2-not-urgent-important/ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
+- [ayokoding-database-internals-ruff-config](./q2-not-urgent-important/ayokoding-database-internals-ruff-config.md) — 22 sibling courses carry a scoped `ruff.toml` and this one does not, though `ruff format --check` currently passes clean.
+- [ayokoding-mermaid-diagram-remediation](./q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md) — 636 mermaid violations exposed by the `detect_kind` fix; remediate and drop the temporary CI exclude.
+- [ayokoding-www-app-shell-tap-targets](./q2-not-urgent-important/ayokoding-www-app-shell-tap-targets.md) — shared header/footer tap targets render 17-20 CSS px tall against WCAG 2.5.8's 24x24 floor, site-wide and unguarded by CI.
+- [bare-repo-landing-method-step-count-drift](./q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.
+- [behavior-coverage-json-report-wiring](./q2-not-urgent-important/behavior-coverage-json-report-wiring.md) — wire rhino-cli's JSON-run-report cross-check into project targets + CI.
+- [ci-setup-rust-toolchain-retry](./q2-not-urgent-important/ci-setup-rust-toolchain-retry.md) — `setup-rust` flaked 7× in one phase on the toolchain download; add a retry in all three repos.
+- [class-sweep-completeness](./q2-not-urgent-important/class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
+- [contributing-md-trunk-guidance-and-naming-exemption](./q2-not-urgent-important/contributing-md-trunk-guidance-and-naming-exemption.md) — fix stale "work on main" guidance blocked by the filename-naming gate.
+- [coverage-artifact-relative-paths](./q2-not-urgent-important/coverage-artifact-relative-paths.md) — generated coverage files bake in the last runner's absolute path; both live instances are already gitignored, leaving only a root-level guard and an index check.
+- [cross-repo-governance-link-parity](./q2-not-urgent-important/cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
+- [cross-repo-port-registry](./q2-not-urgent-important/cross-repo-port-registry.md) — port allocation across the four sibling repos lives in four separate prose tables, so a collision is caught only when two apps fail to bind at once.
+- [deploy-targets-registry](./q2-not-urgent-important/deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
+- [doc-command-existence-validation](./q2-not-urgent-important/doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
+- [doctor-fix-polyglot-restore](./q2-not-urgent-important/doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
+- [governance-path-ownership-registry](./q2-not-urgent-important/governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
+- [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
+- [iam-service-module](./q2-not-urgent-important/iam-service-module.md) — a shared IAM (authn/authz) capability; early placeholder, mostly open questions.
+- [merge-queue-adoption](./q2-not-urgent-important/merge-queue-adoption.md) — merge-precondition (c) cannot hold under concurrent merges, but GitHub's native queue is gated on organization ownership all three repos lack.
+- [mermaid-state-label-render-clipping-warn](./q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md) — a WARN rule for `stateDiagram-v2` edge labels that clip in GitHub's renderer.
+- [nx-affected-cross-worktree-contamination](./q2-not-urgent-important/nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
+- [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip all three repos inherit.
+- [ose-public-nx-affected-rhino-cli-gap](./q2-not-urgent-important/ose-public-nx-affected-rhino-cli-gap.md) — root-cause why ose-public's `nx affected` silently misses rhino-cli Rust changes, letting untested commits clear pre-push.
+- [plan-archival-in-pr-multi-repo-gap](./q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
+- [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
+- [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
+- [pr-review-bot-identity](./q2-not-urgent-important/pr-review-bot-identity.md) — a dedicated bot identity so blocking reviews post as `REQUEST_CHANGES`.
+- [propagation-checklist-under-coverage](./q2-not-urgent-important/propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
+- [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
+- [repo-rules-quality-gate-convergence](./q2-not-urgent-important/repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
+- [rhino-cli-env-backup-scripts](./q2-not-urgent-important/rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
+- [rhino-cli-exclude-dir-shared-steps-gap](./q2-not-urgent-important/rhino-cli-exclude-dir-shared-steps-gap.md) — thread `--exclude-dir` through rhino-cli's whole-app step scan so both sides of a `--shared-steps` comparison exclude the same dirs.
+- [rhino-cli-sync-validator-wrong-model-drift](./q2-not-urgent-important/rhino-cli-sync-validator-wrong-model-drift.md) — a one-line test-fixture placeholder in `sync_validator.rs` diverges from ose-public, violating the zero-carve-out `apps/rhino-cli` byte-identity rule.
+- [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
+- [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
+- [sibling-main-ci-never-runs-on-merge](./q2-not-urgent-important/sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in both siblings, so a merge to their `main` gets no post-merge CI signal.
+- [source-code-credential-scanning](./q2-not-urgent-important/source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
+- [specs-checker-phantom-nx-targets](./q2-not-urgent-important/specs-checker-phantom-nx-targets.md) — `specs-checker.md`'s Drift Detection section names Nx targets that don't exist.
+- [stale-checkout-ref-advance-drift](./q2-not-urgent-important/stale-checkout-ref-advance-drift.md) — a ref-advancing `fetch` moved a checked-out branch 9 commits without its index, and git reported the drift as 265 staged files two agent sessions deferred to.
+- [standardize-cis](./q2-not-urgent-important/standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
+- [syllabus-conformance-validator](./q2-not-urgent-important/syllabus-conformance-validator.md) — a deterministic `rhino-cli md syllabus validate` for course-file section conformance, deferred until the format settles.
+- [vendor-audit-kiro-term](./q2-not-urgent-important/vendor-audit-kiro-term.md) — add `Kiro` to the vendor-audit denylist before it leaks into governance prose.
+- [vitest-glob-coverage-guard](./q2-not-urgent-important/vitest-glob-coverage-guard.md) — a regression test that matched no Vitest project's include glob ran zero times and passed green; guard the class.
+- [web-ui-alert-destructive-dark-contrast](./q2-not-urgent-important/web-ui-alert-destructive-dark-contrast.md) — shared `Alert variant="destructive"` renders at 1.99:1 in dark mode; the obvious token fix is unsafe.
+
+### Q3 — Urgent, Not Important
+
+Something active references these, but they carry none of the importance signals. Delegate or timebox.
+
+- [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
+
+### Q4 — Neither Urgent nor Important
+
+Parked deliberately. Kept because the need may become real, not because it is real now.
+
+- [ayokoding-i18n-nav-hardening](./q4-not-urgent-not-important/ayokoding-i18n-nav-hardening.md) — pre-existing id-locale, language-switcher-404, and sidebar-clip defects surfaced by the url-restructure Phase-5 retest.
+- [ayokoding-www-cost-reduction](./q4-not-urgent-not-important/ayokoding-www-cost-reduction.md) — retire the 3 MB search index, ~700 KB client mermaid, 97 MB image copy, and the not-XSS-safe HTML parser in one coordinated pass.
+- [ayokoding-www-e2e-parallel-load-flake](./q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md) — the e2e suite flakes under full-suite parallel-worker load (isolated re-runs pass); stabilize or quarantine.
+- [dependency-library-updates](./q4-not-urgent-not-important/dependency-library-updates.md) — a standing, policy-compliant sweep to advance pinned library dependencies as their soak windows clear.
+- [fsl-standards](./q4-not-urgent-not-important/fsl-standards.md) — clarify the intent behind "FSL standards" and, if warranted, codify a licensing standard around the Functional Source License.
+- [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./q4-not-urgent-not-important/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.
+- [simplify-ayokoding-ose-cli](./q4-not-urgent-not-important/simplify-ayokoding-ose-cli.md) — simplify `ayokoding-cli` / `ose-cli`; fold overlaps into rhino-cli.
+- [vercel-cost-steady-state-verification](./q4-not-urgent-not-important/vercel-cost-steady-state-verification.md) — grade the shipped cost fix against the $30 invoice ceiling once the first clean billing cycle closes on 2026-09-26.
 
 ## What a Two-Pager Is
 
@@ -102,3 +131,30 @@ promoted yet" is a legitimate state, distinct from "rejected".
   — the authoritative convention, template, and discipline.
 - [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md) —
   routes future-work learnings from plan execution here as two-pagers.
+
+## Grooming Log
+
+### 2026-08-06 — plan-ideas-grooming (all four OSE repos in one run)
+
+Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`; 79 survive. Every surviving idea carries a residency verdict (R1 secrets-bearing, R2 single-repo-only, R3 generalizable) and an Eisenhower quadrant.
+
+- **Classified**: 60 idea(s) resident here, filed into quadrant folders.
+- **Relocated in** (9):
+  - `coverage-artifact-relative-paths.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `cross-repo-port-registry.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `ose-public-nx-affected-rhino-cli-gap.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `refresh-agent-illustrative-example-paths.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `rhino-cli-exclude-dir-shared-steps-gap.md` from `ose-primer` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `rhino-cli-sync-validator-wrong-model-drift.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `specs-checker-phantom-nx-targets.md` from `beaver-nest` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `dependency-library-updates.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+  - `fsl-standards.md` from `ose-private` — rule R3: generalizable cross-cutting concern; no secret required, present in 2+ repos
+- **Deduplicated out** (1) — the surviving copy is named for each:
+  - `demo-apps-standards-recheck.md` → `ose-primer/plans/ideas/q2-not-urgent-important/demo-apps-standards-recheck.md`
+- **Unresolved follow-ups**: none. No relocation was interrupted and no filename collision was
+  deferred. One inbound link sat in `plans/backlog/beaver-nest-repo-consolidation/`, an untracked
+  plan folder that was another actor's in-flight work at grooming time; its single reference to
+  `post-cutoff-dependency-migrations.md` was repointed at the new quadrant path in the working tree
+  and left for that folder's own author to commit, since this run does not stage their files.
+
+> Last groomed: 2026-08-06

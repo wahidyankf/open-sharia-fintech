@@ -95,7 +95,7 @@ an afterthought.
 - A future-work workstream: the AI-attribution/bot-identity gap, cost/latency budgeting, and the
   **deferred merge queue** (D7/D10 — researched but NOT adopted here; the repo exposes no merge-queue
   branch setting, so it is split into its own backlog plan:
-  [`merge-queue-adoption`](../../ideas/merge-queue-adoption.md)).
+  [`merge-queue-adoption`](../../ideas/q2-not-urgent-important/merge-queue-adoption.md)).
 - Register/index/binding updates for every new agent (`AGENTS.md`, `.claude/agents/README.md`,
   `npm run generate:bindings`).
 
@@ -103,7 +103,7 @@ an afterthought.
 
 - Implementing any application code under `apps/` or `libs/`.
 - Provisioning a dedicated GitHub App / bot identity (tracked separately in
-  [`plans/ideas/pr-review-bot-identity.md`](../../ideas/pr-review-bot-identity.md) [Repo-grounded]).
+  [`plans/ideas/pr-review-bot-identity.md`](../../ideas/q2-not-urgent-important/pr-review-bot-identity.md) [Repo-grounded]).
 - Changing `pr-review-fixer`'s core triage contract (it keeps consuming a consolidated finding set;
   whether to split it too is a deferred decision).
 

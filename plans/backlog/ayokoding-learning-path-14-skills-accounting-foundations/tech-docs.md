@@ -624,7 +624,54 @@ path). All three TypeScript files are test code, covered by this plan's own Gher
 Recorded in [prd.md §UI-design-funnel disposition](./prd.md#ui-design-funnel-disposition). No
 net-new screen, no net-new component, no `assets/` folder, for either path.
 
-## File Impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append 11 catalog rows (file created by plan 01)
+│   └── <course-id>/ [N] — 11 full page bundles, courses #1-#11; bounded family, members
+│                          enumerated in this plan's own syllabus/courses/ spec layer
+├── apps/ayokoding-www/content/en/learn/paths/skills/
+│   ├── conventional-accounting/_index.md [N] — landing content, no `courseOrder`
+│   └── sharia-accounting/_index.md [N] — landing content, no `courseOrder`
+├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
+│   ├── conventional-accounting.yaml [N] — created here at 11 ids; plan 15 extends
+│   ├── sharia-accounting.yaml [N] — created here at 11 ids; plans 15+16 extend
+│   ├── conventional-accounting-manifest.unit.test.ts [N]
+│   └── sharia-accounting-manifest.unit.test.ts [N]
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── <this plan's feature file> [N] — Scenario Outline, two Examples rows
+└── apps/ayokoding-www-fe-e2e/src/steps/<matching steps file> [N]
+└── plans/in-progress/ayokoding-learning-path-14-skills-accounting-foundations/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+**This plan owns a `syllabus/` corpus and must ship its required folder layout.** Its
+`## Corpus Disposition` above declares `archive-with-plan`, which makes it the corpus **custodian**,
+so under the
+[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#required-folder-layout)
+the corpus needs `syllabus/README.md` (carrying the `**Custodian**` line), `syllabus/courses/README.md`,
+and `syllabus/paths/README.md`. This is a **new** corpus created after that convention landed, so the
+two per-subfolder READMEs are REQUIRED, not grandfathered — the plan folder rows above show them as
+`[N]` because Phase 1 authors them.
+
+The 11 `<course-id>/` bundles are bounded by this plan's own `syllabus/courses/` spec layer: the
+member list is the set of spec files, not a glob over the content tree.
+
+Both manifests are created here at 11 ids and later **grown** by plans 15 and 16. That later growth is
+an explicitly authorized sequential hand-off, not a same-time collision — plan 14 finishes before plan
+15 starts.
+
+No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                                    | Kind                                | Note                                                                                                                          |
 | ------------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |

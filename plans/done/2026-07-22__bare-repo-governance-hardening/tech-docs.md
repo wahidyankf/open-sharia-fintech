@@ -405,7 +405,7 @@ implementation phases (DD-4).
 plan folder that lives in one repo while its delivery's last-merging PR lives in another — and does
 not establish that every future `*-to-pr` plan may archive via direct push. The proper fix is a rule
 change, not a repeatable citation: see
-[`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/plan-archival-in-pr-multi-repo-gap.md),
+[`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md),
 the idea brief this decision is tracked against, proposing `plan-execution.md` §8 gain an explicit
 multi-repo provision so a future plan of this shape does not need to re-argue the case from first
 principles.

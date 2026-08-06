@@ -237,7 +237,7 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     Compute changes the meter, and a meter is only readable once it has metered. The check that
     `Fluid Active CPU` / `Fluid Provisioned Memory` go non-zero **while `Function Duration` stops
     climbing** belongs to
-    [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md),
+    [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md),
     which reads a full closed cycle.
   - **Open item — does the setting bind yet?** Fluid Compute applies to **new deployments**; it does
     not retrofit the deployment already serving traffic. If no redeploy followed the toggle, the
@@ -358,7 +358,7 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     Inspection → Live Test** (authoritative, and `[HUMAN]`), or Vercel Firewall logs showing zero
     challenges issued to verified Google source IPs. Until one of those exists, this stays "Off".
   - **Follow-up filed against the successor plan**: the smoke-test design itself needs replacing in
-    [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
+    [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md)
     — a UA-header probe is the wrong instrument for an IP-verified control, and it would have
     produced the same uninterpretable result on any future re-attempt.
 
@@ -482,7 +482,7 @@ display mode`) and a handful of `took more than 60 seconds … Retrying` message
     warnings. That worktree belongs to **another session** and is not on this plan's file-touch
     ledger, so it stays untouched. The warnings are noise — every gate passed — and they are exactly
     the symptom already filed as
-    [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md).
+    [`nx-affected-cross-worktree-contamination`](../../ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md).
     Relevant because this plan runs three concurrent worktrees in Phases 1–6; expect the same noise
     there and do not chase it.
 
@@ -668,7 +668,7 @@ Phase 6, because the file lives in `apps/ayokoding-www`; Phase 6 is Unit 3's
 > though they are _performed_ here. Fluid Compute's acceptance ("the Fluid lines go non-zero while
 > Function Duration stops accruing") and Observability Plus's ("the Events line stops accruing") both
 > need the next cycle's billing data. Those confirmations belong to
-> [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md),
+> [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md),
 > which carries them explicitly. Do not block Phase 1 on them.
 >
 > **Pause Safety**: this phase is a safe stop and is independently valuable — the platform changes
@@ -1169,7 +1169,7 @@ vercel.function_invocation.count --project ayokoding-www --prod --since 1h --gra
   - **Resolution**: the production `x-vercel-cache: HIT`, route-table, and deployment-bound
     Gherkin results remain the direct Phase 4 evidence. The unverified fleet-level projection is
     carried explicitly to
-    [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md),
+    [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md),
     as Phase 7 requires. Re-enabling the paid telemetry product would reverse the completed
     cost-reduction decision, so it is not an acceptable substitute.
   - Acceptance, falsifiable in both directions against measured numbers, not impressions:
@@ -1411,7 +1411,7 @@ Independent of Units 1 and 2.
 ## Steady-state measurement — split out to its own plan
 
 Grading this plan's cost objective is **not** part of this plan. It moved, whole, to
-[`plans/ideas/vercel-cost-steady-state-verification.md`](../../ideas/vercel-cost-steady-state-verification.md):
+[`plans/ideas/vercel-cost-steady-state-verification.md`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md):
 the full-cycle invoice reading, the MCP volume verification, the Fluid-Compute and
 Observability-Plus billing-vocabulary confirmations, and the actual-versus-projected reconciliation.
 
@@ -1449,7 +1449,7 @@ open question rather than closing it out.
   - That Vercel's WAF blocks **before** the billing meter, making the free rulesets a cost control.
   - That Spend Management's pause action is off by default and lags by minutes.
 - [x] `[AI]` Fold anything cross-cutting into the existing
-      [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md)
+      [`nx-affected-cross-worktree-contamination`](../../ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md)
       two-pager if it belongs there rather than creating a duplicate.
   - **Date**: 2026-08-02. **Status**: done.
   - **Result**: none of the findings concern Nx affected-set contamination. The cross-cutting
@@ -1458,7 +1458,7 @@ open question rather than closing it out.
 - [x] `[AI]` **Record the unverified projection as an open question** — mandatory, because the
       steady-state grading was split out. State in `learnings.md` that the ~$57/mo → ~$2–4/mo
       projection is **unverified at archival**, name
-      [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
+      [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md)
       as the plan that closes it, and note which projection rows were measured (Observability −$10,
       middleware −$5) versus estimated (the −$30 static conversion, the largest row).
   - **Date**: 2026-08-02. **Status**: done.
@@ -1507,7 +1507,7 @@ open question rather than closing it out.
       diverge.
 - [ ] `[AI]` Remove all three worktrees after confirming each is clean and fully merged.
 - [x] `[AI]` Confirm the successor plan
-      [`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
+      [`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md)
       exists in `plans/backlog/` and its precondition now passes.
   - Acceptance: `test -f plans/ideas/vercel-cost-steady-state-verification.md` exits 0, and
     both `test ! -f apps/ayokoding-www/src/app/layout.tsx` and

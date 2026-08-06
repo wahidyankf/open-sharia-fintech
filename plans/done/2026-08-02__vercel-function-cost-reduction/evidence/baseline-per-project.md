@@ -21,7 +21,7 @@ inference is now a measurement.
   MCP exposes no billing, usage, or invoice tool (see
   [tech-docs.md §Vercel MCP capability boundary](../tech-docs.md#vercel-mcp-capability-boundary)),
   so the dollar side of Phase 0.1 remains `[HUMAN]`, as does the whole of the successor plan
-  [`vercel-cost-steady-state-verification`](../../../ideas/vercel-cost-steady-state-verification.md).
+  [`vercel-cost-steady-state-verification`](../../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md).
 - Window limits observed empirically: `since: "24h"` and `since: "72h"` both return; `since: "7d"`
   fails with `Aggregate query failed: timed out`. **72h is the widest usable window.**
 - Retention depends on Observability, which delivery step 0.5 disables. This snapshot was therefore

@@ -90,7 +90,7 @@ Bank the risk-free platform wins first, then remove the code causes in leverage 
 5. **Phases 7–8** — Knowledge Capture and archival.
 
 Steady-state measurement against the budget is **not** in this plan. It was split out to
-[`vercel-cost-steady-state-verification`](../../ideas/vercel-cost-steady-state-verification.md)
+[`vercel-cost-steady-state-verification`](../../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md)
 because grading needs a full clean billing cycle to close (earliest **2026-09-26**), which would
 otherwise hold this plan open for two months after the engineering finished.
 
@@ -165,5 +165,5 @@ they self-verify against `origin/main` at their own Phase 0.
   query state client-side inside a `<Suspense>` boundary, which is exactly the pattern this plan
   enforces everywhere else. (Those keys went through two renames after this plan was first written —
   `light` → `haiku`, then camelCase → kebab-case — and no unrated sort key exists at all.)
-- [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md)
+- [`nx-affected-cross-worktree-contamination`](../../ideas/q2-not-urgent-important/nx-affected-cross-worktree-contamination.md)
   — filed two-pager; relevant because this plan spans three worktrees concurrently.

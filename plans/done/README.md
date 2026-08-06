@@ -48,7 +48,7 @@ Archived plans and completed project planning documents.
   removed secondary always-on work. Delivery is tracked by PRs #129, #130, and #131; production
   checks confirmed canonical redirects and CDN cache hits. The $57/mo → $2–4/mo projection remains
   explicitly unverified and is owned by the
-  [steady-state successor](../ideas/vercel-cost-steady-state-verification.md). Delivery
+  [steady-state successor](../ideas/q4-not-urgent-not-important/vercel-cost-steady-state-verification.md). Delivery
   Mode: `worktree-to-pr`. Completed 2026-08-02.
 - [2026-08-01: ayokoding-www-ai-benchmark-responsive-overhaul](./2026-08-01__ayokoding-www-ai-benchmark-responsive-overhaul/README.md) —
   Full responsive re-look of the AI Model Benchmark page: DOM bars replace the scale-coupled SVG
@@ -175,7 +175,7 @@ Archived plans and completed project planning documents.
   the `plan-quality-gate` workflow. Added `## Corpus Disposition` + `**Custodian**` declarations to the
   three ayokoding learning-path corpora (plans 02/06/07) and `custodied-by:` consumer echoes to plans
   04/05, and filed the deferred deterministic `rhino-cli md syllabus validate` check as
-  [`plans/ideas/syllabus-conformance-validator.md`](../ideas/syllabus-conformance-validator.md) — a
+  [`plans/ideas/syllabus-conformance-validator.md`](../ideas/q2-not-urgent-important/syllabus-conformance-validator.md) — a
   check follows a settled format, it does not precede it. Propagated the convention + enforcement
   across ose-public/ose-primer/ose-infra, adapted to each repo's own step numbering; the convention
   doc is **byte-identical** in all three (one `shasum`, `fa4882c36…`). Delivered via PR #82
@@ -198,7 +198,7 @@ Archived plans and completed project planning documents.
   normative while six derivatives kept it, and `AGENTS.md` having zero bareness carve-out despite
   being the file every harness auto-loads. Knowledge Capture routed 19 learnings; the recurring
   theme — acceptance clauses that cannot fail — became
-  [`plans/ideas/acceptance-clause-vacuity.md`](../ideas/acceptance-clause-vacuity.md), seeded by the
+  [`plans/ideas/acceptance-clause-vacuity.md`](../ideas/q1-urgent-important/acceptance-clause-vacuity.md), seeded by the
   terminal reconcile's own command reporting a false clean when run before `git fetch`. Delivery
   Mode: `worktree-to-pr`. Completed 2026-07-22.
 - [2026-07-21: shared-course-library-and-learning-paths](./2026-07-21__shared-course-library-and-learning-paths/README.md) —

@@ -493,7 +493,45 @@ TypeScript test file is created.
 Recorded in [prd.md §UI-design-funnel disposition](./prd.md#ui-design-funnel-disposition). No
 net-new screen, no net-new component.
 
-## File Impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append 5 catalog rows (file created by plan 01)
+│   └── <course-id>/ [N] — 5 full page bundles, courses #20-#24
+├── apps/ayokoding-www/content/en/learn/paths/skills/
+│   └── sharia-accounting/_index.md [E] — grown; file created by plan 14
+├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
+│   ├── sharia-accounting.yaml [E] — grown 19 -> 24; created by plan 14
+│   └── sharia-accounting-manifest.unit.test.ts [E] — extended to the terminal 24-id state
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── <the accounting feature file> [E] — extended; created by plan 14
+└── apps/ayokoding-www-fe-e2e/src/steps/<matching steps file> [E] — extended
+└── plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+**This plan owns its own `syllabus/` corpus slice and must ship the required folder layout** —
+`syllabus/README.md` with the `**Custodian**` line, plus `syllabus/courses/README.md` and
+`syllabus/paths/README.md`, per the
+[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#required-folder-layout).
+
+**`conventional-accounting.yaml` is deliberately absent from this tree.** This is the first plan in the
+14 → 15 → 16 chain where the two manifests diverge: the five Sharia-extension courses grow
+`sharia-accounting` only. A step here that touched the conventional manifest would be a boundary
+violation, not a convenience — its absence from the tree is the assertion.
+
+Every cross-plan row is an `[E]` growth of a file plan 14 authored, along the same sequential hand-off.
+No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                              | Kind        | Note                                                                                  |
 | ------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------- |

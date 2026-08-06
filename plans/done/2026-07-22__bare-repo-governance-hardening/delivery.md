@@ -100,7 +100,7 @@ stated plainly rather than reframed away:
 See **DD-11** in
 [tech-docs.md](./tech-docs.md#dd-11--phase-7-archival-departs-from-plan-executionmd-8-by-necessity-not-oversight)
 for the full design-decision record, and
-[`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/plan-archival-in-pr-multi-repo-gap.md)
+[`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md)
 for the tracked follow-up proposing §8 gain an explicit multi-repo provision so a future plan of
 this shape does not need to re-argue the case from first principles.
 
@@ -2383,7 +2383,7 @@ default` paragraph stated the pre-reversal "a floor, not a ceiling" rule and lin
       set is correct across three repos — a CI-parity decision outside this docs-only plan's scope,
       and one where `ose-primer`'s stricter form may well be right and the other two repos' excludes
       the drift. Folded into
-      [`plans/ideas/ayokoding-mermaid-diagram-remediation.md`](../../ideas/ayokoding-mermaid-diagram-remediation.md)
+      [`plans/ideas/ayokoding-mermaid-diagram-remediation.md`](../../ideas/q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md)
       with the measurement attached. On the siblings' post-merge state, precisely: `pr-quality-gate`
       and `validate-env` **did** run on both merge commits and both passed — `ose-primer` at
       `cedabb2f1`, `ose-infra` at `1d64990bb`. Only `main-ci` has not run on either, because that one
@@ -2513,7 +2513,7 @@ apps/rhino-cli/Cargo.toml -- md links validate --staged-only` (no `--exclude` fl
     worktree/PR for implementation. See **DD-11** in
     [tech-docs.md](./tech-docs.md#dd-11--phase-7-archival-departs-from-plan-executionmd-8-by-necessity-not-oversight)
     for the full record, and
-    [`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/plan-archival-in-pr-multi-repo-gap.md)
+    [`plan-archival-in-pr-multi-repo-gap`](../../../plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md)
     for the tracked follow-up proposing §8 gain an explicit multi-repo provision._
 - [x] [AI] Verify CI is green on `main` after the archival push before removing anything —
       `gh run list --limit 5` shows the triggered runs at `completed/success`. Poll every **2
@@ -2588,7 +2588,7 @@ apps/ose-www/content` exits 0 — the pre-push exclude form, not the bare repo-w
       content defect: it alone lacks `--exclude plans/done` on `md mermaid validate`, and the file it
       fails on is byte-identical to `ose-public`'s copy. Full measurement and the follow-up route are
       in the "quality gates" step above and in
-      [`ayokoding-mermaid-diagram-remediation`](../../ideas/ayokoding-mermaid-diagram-remediation.md)
+      [`ayokoding-mermaid-diagram-remediation`](../../ideas/q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md)
 - [x] [AI] `git worktree list` shows no leftover worktree for this plan in any of the three repos
       — **Result**: clean in all three. `ose-public` lists only its primary checkout at `main`;
       `ose-primer` and `ose-infra` each list only their single `(bare)` line. Every removal used

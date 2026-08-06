@@ -84,10 +84,10 @@ four-way broadcast of one diff):
   [Resolved Design Decisions](#resolved-design-decisions-from-grilling). Deferred to a future idea if
   the header proves insufficient for tracking efficiency trends over time.
 - Provisioning a dedicated bot/GitHub App identity to unblock `REQUEST_CHANGES` — tracked separately
-  by [`plans/ideas/pr-review-bot-identity.md`](../../ideas/pr-review-bot-identity.md), unaffected by
+  by [`plans/ideas/pr-review-bot-identity.md`](../../ideas/q2-not-urgent-important/pr-review-bot-identity.md), unaffected by
   this plan.
 - A merge queue for precondition (c) — tracked separately by
-  [`plans/ideas/merge-queue-adoption.md`](../../ideas/merge-queue-adoption.md), unaffected by this
+  [`plans/ideas/merge-queue-adoption.md`](../../ideas/q2-not-urgent-important/merge-queue-adoption.md), unaffected by this
   plan.
 - Promoting the type-soundness discipline into the four-specialist `lite` tier. It launches
   `full`-tier-only, per the same "new disciplines start conservative, earn their tier via

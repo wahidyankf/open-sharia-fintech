@@ -518,13 +518,51 @@ committed screenshot evidence. Only the three-tester triad is waived.
 
 This plan changes no REST or GraphQL endpoint and ships no API contract.
 
-## File Impact
+## File-Impact Analysis
 
-**New directories created** (15 total, one per authored body, zero overlap with any pre-existing
-bundle):
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
 
-- `apps/ayokoding-www/content/en/learn/courses/<course-id>/` — the fixed course-page bundle anatomy,
-  one per slug in [README §Exact scope](./README.md#exact-scope-15-courses-in-order).
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append one list entry per landed course ID
+│   └── <course-id>/ [N] — 15 bundles, one per slug in README §Exact scope; bounded family,
+│       │                  members enumerated verbatim in evidence/authored-body-slugs.txt
+│       │                  (written in Phase 0) and never discovered by glob
+│       ├── _index.md [N] — declares `prerequisites: [course-id, ...]`
+│       ├── overview.md [N] — purpose, prerequisites, register, scope boundary
+│       ├── learning/
+│       │   ├── _index.md [N]
+│       │   ├── <co-NN / ex-NN concept and example pages> [N] — count fixed by the course's spec
+│       │   ├── code/ [N] — colocated runnable examples (code-bearing courses only)
+│       │   └── capstone/ [N] — the course's own intra-course capstone
+│       └── drilling/
+│           ├── _index.md [N]
+│           └── overview.md [N] — the fixed five-section drilling order
+├── plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/
+│   ├── tech-docs.md [E] — this file; §Course Library Catalog already carries all 15 rows
+│   ├── delivery.md [E] — checkbox ticks + the five-field Band-5 completion signal
+│   ├── learnings.md [E] — running log, drained by Phase 8
+│   └── evidence/ [N] — phase-0-snapshot.txt, authored-body-slugs.txt, Playwright screenshots
+└── apps/ayokoding-www/src/features/course-paths/ — NOT TOUCHED (see §Never touched below)
+```
+
+### More Detail
+
+The 15 `<course-id>/` bundles are the only `*`-shaped family in the tree, and they are bounded by
+construction: the exact member list is written to `evidence/authored-body-slugs.txt` during Phase 0
+and every later assertion reads that register rather than globbing the directory, so a slug that
+drifted into the tree from another plan can never be silently adopted as this plan's work.
+
+`apps/ayokoding-www/content/en/learn/courses/_index.md` is the single shared file this plan edits
+outside its own plan folder. It is appended per cohort rather than rewritten, so a concurrent
+sibling band plan appending its own entries produces a mergeable diff rather than a conflict.
+
+Nothing under `apps/ayokoding-www/src/` appears with an action annotation because this plan writes
+no application code at all — the zero-diff gate in every phase asserts that absence rather than
+trusting it. The manifest subtree is called out separately below because reading it is permitted and
+writing it is a boundary violation, a distinction the tree alone cannot carry.
 
 **Existing files modified per cohort** (this plan edits these; it never creates them):
 

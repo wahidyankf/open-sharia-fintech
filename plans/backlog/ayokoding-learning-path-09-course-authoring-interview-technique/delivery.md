@@ -132,6 +132,16 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > landed. A body authored before any of these lands into the wrong place, from a spec that does not
 > yet exist, or onto a site that is still knowingly over-cost.
 
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique/ plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0,
       `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
@@ -581,6 +591,13 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       Root Cause Orientation work.
 - [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
       discarded with reason) directly in `learnings.md`.
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead.
 
@@ -622,9 +639,9 @@ test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failu
 - [ ] [AI] **Archive the plan folder — on the persistent `final-delivery` branch, before opening the PR**, so
       the archival commit lands inside the same reviewed PR rather than as an unreviewed post-merge
       commit. Move this plan folder from `plans/backlog/` to `plans/done/` via
-      `git mv plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique plans/done/YYYY-MM-DD__ayokoding-learning-path-09-course-authoring-interview-technique`
+      `git mv plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique plans/done/YYYY-MM-DD__ayokoding-learning-path-09-course-authoring-interview-technique`
       (substitute the actual completion date; the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/backlog/README.md` — remove this plan's entry.
+- [ ] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update any other README that references this plan by its `backlog/` path.
 - [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-09-course-authoring-interview-technique to done`.
