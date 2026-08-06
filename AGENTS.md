@@ -321,6 +321,13 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
   Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
+- **Runner contention (frequent — do not mistake for a code defect)**: All 4 OSE repos share a
+  limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`/
+  `beaver-nest`, a small self-hosted pool for `ose-private`. A queued or stalled job is often just
+  contention. Response: wait patiently (same 2-min cadence), check `gh run list
+--status=queued --status=in_progress` across repos or [github.com/wahidyankf](https://github.com/wahidyankf)
+  before debugging code. If no contention is found and the run is still stuck, rebase onto latest
+  `origin/main` and push to retrigger. See [Runner Contention section](./repo-governance/development/workflow/ci-monitoring.md#runner-contention-across-the-ose-repos-read-first)
 
 ## AI Agents
 

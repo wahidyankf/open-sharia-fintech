@@ -17,7 +17,28 @@ Monitoring CI runs is a required step after every push, whether the target is a 
 
 **Default poll interval: 2 minutes.** Schedule a wakeup every 2 minutes (or slower) and issue one `gh run view --json status,conclusion` per wakeup. Do not use `gh run watch` (stream-watching is prohibited for CI monitoring).
 
-**Absolute floor: never poll CI or GitHub Actions faster than once every 2 minutes.** Two minutes is the hard, never-exceed minimum spacing for any CI or Actions status check; the 2-minute default above sits exactly at this floor â going slower (longer intervals) is always fine, going faster is forbidden. Any cadence faster than once per 2 minutes is forbidden regardless of mechanism (manual loop, scheduled wakeup, or stream-watch).
+**Absolute floor: never poll CI or GitHub Actions faster than once every 2 minutes.** Two minutes is the hard, never-exceed minimum spacing for any CI or Actions status check; the 2-minute default above sits exactly at this floor — going slower (longer intervals) is always fine, going faster is forbidden. Any cadence faster than once per 2 minutes is forbidden regardless of mechanism (manual loop, scheduled wakeup, or stream-watch).
+
+## Runner Contention Across the OSE Repos (Read First)
+
+**Runner capacity across the OSE repos is limited and shared — contention is expected, not a bug.** `ose-public`, `ose-primer`, and `beaver-nest` run CI on GitHub's free-tier hosted runners (`runs-on: ubuntu-latest`), which share GitHub's per-account concurrent-job cap across every public repo under [github.com/wahidyankf](https://github.com/wahidyankf). `ose-private` runs on a small, fixed pool of self-hosted runners (`runs-on: [self-hosted, linux, ose-self-hosted]`). Both pools are finite. When multiple repos or workflows queue jobs at the same time, a run can sit `queued`, or a step can stall with no progress — this is runner/action contention, not a defect in the pushed code, and it is not something a code fix or a retry resolves.
+
+**Response: wait patiently, then check what else is running before assuming anything is broken.**
+
+```bash
+# Queued/in-progress runs in one repo
+gh run list --status=queued --status=in_progress --limit=20
+
+# Same check across every OSE repo
+for repo in ose-public ose-primer ose-private beaver-nest; do
+  echo "== $repo =="
+  gh run list --repo wahidyankf/$repo --status=queued --status=in_progress --limit=10
+done
+
+# Org/account-wide view (browser) — https://github.com/wahidyankf, then each repo's Actions tab
+```
+
+Keep the same [2-minute `ScheduleWakeup` cadence](#preferred-monitoring-approaches-priority-order) already required by this convention while waiting — do not shorten it because the cause is suspected to be contention rather than a normal-length job. Do not cancel/rerun a queued or stalled job as a first response to suspected contention: that only consumes another slot in the same congested pool. Only escalate to the [stuck-runner diagnosis](#diagnosing-a-stuck-self-hosted-runner-job) below once contention has been ruled out — i.e., nothing else is queued or running and the job is still making zero progress.
 
 ## Principles Implemented/Respected
 
@@ -54,6 +75,8 @@ The target audience is any agent or developer performing the post-push CI verifi
 - Trigger discipline to avoid redundant concurrent runs
 - Rate limit budget facts and window behavior
 - Recovery procedure when rate-limited (HTTP 403 from `gh`)
+- Runner/action contention across the shared, limited OSE runner pools (free hosted + self-hosted) and the wait-and-check response
+- Retriggering a genuinely stuck run (no contention) via rebase-and-push
 - Application of these rules in plan execution (Step 2c of `plan-execution.md`)
 
 ### What This Convention Does NOT Cover
@@ -188,6 +211,29 @@ that step takes in a sibling job of the same run, it is stuck, not merely slow.
 gh run cancel <run-id>          # cascades to any job depending on the stuck job's output
 gh run rerun <run-id> --failed  # reruns only cancelled/failed jobs, not the whole run
 ```
+
+### Retriggering a Stuck Run With No Contention (PR Branches)
+
+If [runner contention across the OSE repos](#runner-contention-across-the-ose-repos-read-first) has
+been ruled out (nothing else queued or running) and a `worktree-to-pr` run is still stuck — queued
+indefinitely, or wedged in a way `gh run cancel`/`gh run rerun` does not clear — rebase the PR branch
+onto latest `origin/main` and push. The new commit SHA registers as a fresh trigger, which often
+clears whatever the platform wedged on:
+
+```bash
+git fetch origin main
+git rebase origin/main
+git push --force-with-lease
+```
+
+Use `--force-with-lease`, never `--force`, per the
+[No Destructive Git Operations Convention](./no-destructive-git-operations.md). This applies to
+`worktree-to-pr` branches only — a direct push to `main` has no PR branch to rebase; if that is stuck
+with contention ruled out, use `gh run rerun` (above) or wait longer.
+
+The rebase lands foreign `origin/main` commits on the branch — apply the
+[Integration Diff Review Convention](./integration-diff-review.md) before continuing. Retriggering
+CI is not a reason to skip diff review of what just landed.
 
 ### Recovery When Rate-Limited
 
