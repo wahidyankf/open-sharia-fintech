@@ -85,6 +85,13 @@ npm exec nx -- affected -t build,test:quick,lint
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate
 ```
 
+For an unscoped repository-wide validator that reports pre-existing violations outside this
+program's ledgered paths, record its baseline result and verify zero violations in every changed or
+ledgered path instead. The merged PR's required affected-file checks are the final authoritative
+gate for that validator. This is scope control, not a waiver: every violation in a changed,
+generated, or ledgered path is fixed before the unit proceeds, and no failing required PR check may
+merge.
+
 The exact staged environment-file gate is:
 
 ```bash
@@ -105,10 +112,10 @@ receive the same AI semantic review because they are outside the staged file sca
 
 Every “full unit gates” task executes both deterministic gates above.
 
-> **Important**: Fix every failure found by a quality gate, including a preexisting failure. Regenerate
-> swept build artifacts and continue. Never bypass a gate. If a failure requires code, API, UI, or
-> infrastructure behavior work, create and complete its separate blocking plan before resuming this
-> documentation program.
+> **Important**: Fix every in-scope failure found by a quality gate, including a preexisting failure
+> in a changed, generated, or ledgered path. Regenerate swept build artifacts and continue. Never
+> bypass a required PR check. If a failure requires code, API, UI, or infrastructure behavior work,
+> create and complete its separate blocking plan before resuming this documentation program.
 
 For every PR unit, Phase 0 records every workflow name and required check-run name triggered by that
 repository. After each push, enumerate all matching workflow runs with
@@ -221,8 +228,9 @@ flowchart TD
       `origin/main` — acceptance: `git worktree list` shows the declared path/branch pair.
 - [ ] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the contract worktree —
       acceptance: both exit 0 and no real `.env*` is accessed.
-- [ ] [AI] [P0-009] Run the public baseline gates in the contract worktree — acceptance: the unit has
-      a known clean starting state before plan artifacts change.
+- [ ] [AI] [P0-009] Run the public baseline gates in the contract worktree and classify each
+      repository-wide result as ledgered-path or unrelated-baseline evidence — acceptance: every
+      ledgered path is clean and any unrelated baseline result is recorded without expanding scope.
 
 ### Phase 0 Gate
 
