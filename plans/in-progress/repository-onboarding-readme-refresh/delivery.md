@@ -432,6 +432,12 @@ flowchart TD
 - [ ] [AI] [P4-006] Create `docs/tutorials/getting-started-with-ose-primer.md` and repair reader
       navigation — acceptance: the macOS/Ubuntu journey reaches `crud-fe-ts-nextjs:dev`, explains
       example versus reusable content, and ends with adoption choices.
+- [ ] [AI] [P4-006B] If executing the documented first-success command exposes a reproducible
+      application startup defect, expand this delivery unit with the smallest safe
+      RED/GREEN/REFACTOR correction: add a failing app-level test and companion Gherkin scenario,
+      make the command serve the documented loopback page, then refactor only after the focused
+      app, spec, and runtime checks pass — acceptance: the tutorial remains truthful and the
+      correction changes no Rhino identity-bound path.
 - [ ] [AI] [P4-007] Execute every exact primer document task row one at a time, including app/lib/spec
       READMEs, setup, architecture, relationships, navigation, governance, CI, and catch-all living
       surfaces — acceptance: every row has its own terminal result.
@@ -796,10 +802,10 @@ after processes stop and evidence is safely recorded.
       loopback and blocks outbound network access — acceptance: the private record proves egress is
       blocked before either target starts.
 - [ ] [AI] [P8E-004] Resolve the declared CoralPolyp backend target with `npm exec nx show project
-      coralpolyp-be --json` in the private clone — acceptance: its exact declared local start command
+    coralpolyp-be --json` in the private clone — acceptance: its exact declared local start command
       and health route are retained only in the private record.
 - [ ] [AI] [P8E-005] Resolve the declared CoralPolyp frontend target with `npm exec nx show project
-      coralpolyp-fe --json` in the private clone — acceptance: its exact declared local start command
+    coralpolyp-fe --json` in the private clone — acceptance: its exact declared local start command
       and loopback address are retained only in the private record.
 - [ ] [AI] [P8E-006] Start the backend inside the sanitized, egress-blocked sandbox and request its
       recorded loopback health route with `curl --fail --silent --show-error` — acceptance: local
