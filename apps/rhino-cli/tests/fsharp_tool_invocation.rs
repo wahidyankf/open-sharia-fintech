@@ -17,20 +17,22 @@ use walkdir::WalkDir;
 #[world(init = Self::new)]
 struct FsharpToolInvocationWorld {
     configured: usize,
+    evaluated: usize,
     missing_local_restores: Vec<PathBuf>,
     missing_manifest_commands: Vec<PathBuf>,
     bare_global_invocations: Vec<PathBuf>,
-    malformed_source_rejected: bool,
+    malformed_source_rejected: Option<bool>,
 }
 
 impl FsharpToolInvocationWorld {
     fn new() -> Self {
         Self {
             configured: 0,
+            evaluated: 0,
             missing_local_restores: Vec::new(),
             missing_manifest_commands: Vec::new(),
             bare_global_invocations: Vec::new(),
-            malformed_source_rejected: false,
+            malformed_source_rejected: None,
         }
     }
 }
@@ -38,11 +40,13 @@ impl FsharpToolInvocationWorld {
 #[given("the local F# lint targets are discovered")]
 fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
     assert_audit_detects_noncompliant_candidates();
+    assert_empty_workspace_does_not_require_manifest_tool();
 
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let audit = audit_fantomas_lint_targets(&workspace_root);
 
     w.configured = audit.candidates.len();
+    w.evaluated = audit.evaluated_candidates;
     w.missing_local_restores = audit.missing_local_restores;
     w.missing_manifest_commands = audit.missing_manifest_commands;
     w.bare_global_invocations = audit.bare_global_invocations;
@@ -51,36 +55,15 @@ fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
 #[when("every locally discovered F# lint target is evaluated")]
 fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let mut malformed_source = Builder::new()
-        .prefix("fantomas-regression-")
-        .suffix(".fs")
-        .tempfile()
-        .expect("create malformed F# fixture");
-    writeln!(malformed_source, "module Malformed\nlet value= 1")
-        .expect("write malformed F# fixture");
-
-    let status = Command::new("dotnet")
-        .current_dir(workspace_root)
-        .args([
-            "tool",
-            "run",
-            "fantomas",
-            "--check",
-            malformed_source
-                .path()
-                .to_str()
-                .expect("UTF-8 fixture path"),
-        ])
-        .status()
-        .expect("run manifest Fantomas check");
-    w.malformed_source_rejected = !status.success();
+    w.malformed_source_rejected =
+        check_malformed_source_if_targets_exist(&workspace_root, w.configured);
 }
 
-#[then("at least one local Fantomas lint target is found when F# linting applies")]
-fn then_fsharp_lint_targets_are_found(w: &mut FsharpToolInvocationWorld) {
-    assert!(
-        w.configured > 0,
-        "expected at least one local Fantomas lint target in this F# workspace"
+#[then("every discovered F# lint target is evaluated")]
+fn then_every_fsharp_lint_target_is_evaluated(w: &mut FsharpToolInvocationWorld) {
+    assert_eq!(
+        w.evaluated, w.configured,
+        "every discovered F# lint target must be evaluated"
     );
 }
 
@@ -107,17 +90,60 @@ fn then_targets_do_not_use_global_fantomas(w: &mut FsharpToolInvocationWorld) {
     );
 }
 
-#[then("an unformatted source file still makes the lint target fail")]
+#[then("an unformatted source file is checked only when F# lint targets exist")]
 fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
-    assert!(
+    if w.configured == 0 {
+        assert!(
+            w.malformed_source_rejected.is_none(),
+            "a workspace without F# lint targets must not invoke the manifest Fantomas tool"
+        );
+        return;
+    }
+
+    assert_eq!(
         w.malformed_source_rejected,
+        Some(true),
         "the manifest-backed Fantomas check must reject malformed source"
     );
+}
+
+fn check_malformed_source_if_targets_exist(
+    workspace_root: &Path,
+    configured_targets: usize,
+) -> Option<bool> {
+    if configured_targets == 0 {
+        return None;
+    }
+
+    let mut malformed_source = Builder::new()
+        .prefix("fantomas-regression-")
+        .suffix(".fs")
+        .tempfile()
+        .expect("create malformed F# fixture");
+    writeln!(malformed_source, "module Malformed\nlet value= 1")
+        .expect("write malformed F# fixture");
+
+    let status = Command::new("dotnet")
+        .current_dir(workspace_root)
+        .args([
+            "tool",
+            "run",
+            "fantomas",
+            "--check",
+            malformed_source
+                .path()
+                .to_str()
+                .expect("UTF-8 fixture path"),
+        ])
+        .status()
+        .expect("run manifest Fantomas check");
+    Some(!status.success())
 }
 
 #[derive(Debug, Eq, PartialEq)]
 struct FantomasLintTargetAudit {
     candidates: Vec<PathBuf>,
+    evaluated_candidates: usize,
     missing_local_restores: Vec<PathBuf>,
     missing_manifest_commands: Vec<PathBuf>,
     bare_global_invocations: Vec<PathBuf>,
@@ -146,7 +172,9 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
     let mut missing_local_restores = Vec::new();
     let mut missing_manifest_commands = Vec::new();
     let mut bare_global_invocations = Vec::new();
+    let mut evaluated_candidates = 0;
     for project_path in &candidates {
+        evaluated_candidates += 1;
         let project = fs::read_to_string(project_path)
             .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
         if !project.contains("dotnet tool restore") {
@@ -165,6 +193,7 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
 
     FantomasLintTargetAudit {
         candidates,
+        evaluated_candidates,
         missing_local_restores,
         missing_manifest_commands,
         bare_global_invocations,
@@ -207,6 +236,7 @@ fn assert_audit_detects_noncompliant_candidates() {
     let audit = audit_fantomas_lint_targets(fixture_root.path());
 
     assert_eq!(audit.candidates.len(), 3);
+    assert_eq!(audit.evaluated_candidates, 3);
     assert_eq!(
         audit.missing_local_restores,
         vec![
@@ -223,6 +253,19 @@ fn assert_audit_detects_noncompliant_candidates() {
     assert_eq!(
         audit.bare_global_invocations,
         vec![fixture_root.path().join("libs/bare-global/project.json")]
+    );
+}
+
+fn assert_empty_workspace_does_not_require_manifest_tool() {
+    let fixture_root = tempfile::tempdir().expect("create empty fixture workspace");
+    let audit = audit_fantomas_lint_targets(fixture_root.path());
+
+    assert!(audit.candidates.is_empty());
+    assert_eq!(audit.evaluated_candidates, 0);
+    assert_eq!(
+        check_malformed_source_if_targets_exist(fixture_root.path(), audit.candidates.len()),
+        None,
+        "an empty topology must not require a local tool manifest"
     );
 }
 
