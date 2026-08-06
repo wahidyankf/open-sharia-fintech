@@ -4,6 +4,10 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
+- [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
+  living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
+  `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
+  strict secret-safety.
 - [sdlc-gate-registry-enforcement](./sdlc-gate-registry-enforcement/README.md) — Makes the already-ratified
   Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically enforced via a `gates:`
   registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and retires `main-ci.yml`
