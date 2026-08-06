@@ -1857,7 +1857,7 @@ visible` and not horizontally scrollable). At 768 px and 1280 px it is a single 
 Every EWT/UWT/DWT finding, dispositioned. **In-scope defects (against this plan's deliverable or its own
 PRD) are fixed in this Phase 5.** Pre-existing, out-of-scope findings (the plan's diff never touched the
 implicated surface) are captured in the filed idea brief
-[`plans/ideas/ayokoding-i18n-nav-hardening.md`](../../ideas/ayokoding-i18n-nav-hardening.md) so the
+[`plans/ideas/ayokoding-i18n-nav-hardening.md`](../../ideas/q4-not-urgent-not-important/ayokoding-i18n-nav-hardening.md) so the
 evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 
 **In-scope — fixed (2 code fixes, TDD, in the Phase 5 PR):**
@@ -1887,7 +1887,7 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
       **UWT-005 (HIGH)** id 404 copy not localized, plus MED/LOW **UWT-004/006/007/008/009/011/012**,
       **DWT-003** (active-nav contrast 4.37:1), **EWT-002** (singular `/path` alias), **EWT-003/004** (apex
       Squarespace forwarding). All routed to
-      [`ayokoding-i18n-nav-hardening`](../../ideas/ayokoding-i18n-nav-hardening.md); none is a regression
+      [`ayokoding-i18n-nav-hardening`](../../ideas/q4-not-urgent-not-important/ayokoding-i18n-nav-hardening.md); none is a regression
       introduced by this plan.
 - [x] [AI] **Spec-gap (DWT/USS-001..005)** — a Playwright/computed-style regression guard for "breadcrumb
       never wraps at the narrowest viewport" is now realized as the DWT-001 RTL test; the remaining USS-###

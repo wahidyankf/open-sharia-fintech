@@ -311,7 +311,7 @@ sole poster of record every cycle.
   (`CRITICAL` / `HIGH`), never by the review's STATE field. Consumers MUST parse severity from
   comment text. This limitation disappears only when a dedicated bot/GitHub App identity is
   provisioned — see the two-pager idea brief
-  [`plans/ideas/pr-review-bot-identity.md`](../../../plans/ideas/pr-review-bot-identity.md).
+  [`plans/ideas/pr-review-bot-identity.md`](../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md).
 - **List unresolved threads**: a `gh api graphql` query using `reviewThreads(isResolved: false)` — the
   fixer never relies on top-level PR comments for state, only on review-thread resolution status.
   Each thread's comment `databaseId` maps to the REST `comment_id` used when replying.

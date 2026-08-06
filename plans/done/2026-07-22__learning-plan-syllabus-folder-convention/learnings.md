@@ -32,7 +32,7 @@ Tiering` and `### Grandfathered Format Cohort` sections in
   record this exact 17-file ordered-list / omitted-`Short summary` cohort and freeze the census that
   exposed it; (2) the automated-catch home — a deterministic `rhino-cli md syllabus validate` is the
   surface that would catch a future silent fork, deliberately deferred until the format settles and
-  filed as the two-pager [`plans/ideas/syllabus-conformance-validator.md`](../../ideas/syllabus-conformance-validator.md).
+  filed as the two-pager [`plans/ideas/syllabus-conformance-validator.md`](../../ideas/q2-not-urgent-important/syllabus-conformance-validator.md).
   No code home is landed inline (the validator is future work behind a promotion signal, not part of
   this docs/governance plan). Secret gate: no secret present. Repo-relevance gate: ose-public corpus
   content, not infra-private — no cross-routing.

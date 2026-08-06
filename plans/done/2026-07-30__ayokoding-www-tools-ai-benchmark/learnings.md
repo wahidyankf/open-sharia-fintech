@@ -45,7 +45,7 @@ escape line: `No generalizable learnings — <one-line reason>`.
   always sets `reuseExistingServer: false` (or that CI runners never have a stray process on the
   port) — a local dev habit of leaving `next dev` running can silently invalidate local e2e runs.
 - **Terminal state**: filed as
-  [`plans/ideas/audit-e2e-reuse-existing-server-config.md`](../../ideas/audit-e2e-reuse-existing-server-config.md) —
+  [`plans/ideas/audit-e2e-reuse-existing-server-config.md`](../../ideas/q2-not-urgent-important/audit-e2e-reuse-existing-server-config.md) —
   a repo-wide grep confirmed six `*-e2e` Playwright configs hardcode `reuseExistingServer: true`
   unconditionally (not gated on `!process.env.CI`), while `organiclever-app-web-e2e` already gates
   it correctly. Code/tooling-homed (spans multiple `apps/*-e2e` configs), so filed as a separate
@@ -134,7 +134,7 @@ escape line: `No generalizable learnings — <one-line reason>`.
   in the repo a new test file is added under a new directory shape without checking it matches an
   existing vitest/jest/other test-runner's globs.
 - **Terminal state**: filed as
-  [`plans/ideas/vitest-glob-coverage-guard.md`](../../ideas/vitest-glob-coverage-guard.md) —
+  [`plans/ideas/vitest-glob-coverage-guard.md`](../../ideas/q2-not-urgent-important/vitest-glob-coverage-guard.md) —
   the immediate `ayokoding-www` glob fix already landed in PR #122, but the durable guard (an
   automated check that a new test file matches at least one configured project's glob) is
   code/tooling-homed and repo-wide in potential scope, so it is filed as a separate backlog plan per

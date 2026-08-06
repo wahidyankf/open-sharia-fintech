@@ -145,13 +145,13 @@ open, resume, close, and rollback commands are in
 | Phase | Unit                                                     | Repo          | Opens PR                  |
 | ----- | -------------------------------------------------------- | ------------- | ------------------------- |
 | 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes |
-| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | yes |
-| 4     | Engine propagation + rewire                              | `ose-private` | yes |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes |
-| 6     | Knowledge capture                                        | `ose-public`  | yes |
+| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes                       |
+| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes                       |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes                       |
+| 3     | Engine propagation + rewire                              | `ose-primer`  | yes                       |
+| 4     | Engine propagation + rewire                              | `ose-private` | yes                       |
+| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes                       |
+| 6     | Knowledge capture                                        | `ose-public`  | yes                       |
 
 Phases 3, 4, and 5 have disjoint repository ownership and may fan out after Phase 2, but the
 transaction remains open until all three integrate.
@@ -186,4 +186,4 @@ copies rather than reconstructs:
 - [Nx Targets](../../../repo-governance/development/infra/nx-targets.md) — references `main-ci.yml`
 - [CI/CD System Architecture](../../../docs/reference/system-architecture/ci-cd.md) — references `main-ci.yml`
 - [`2026-07-01__standardize-rhino-cli-sdlc-parity`](../../done/2026-07-01__standardize-rhino-cli-sdlc-parity/README.md) — the predecessor that ratified the rule
-- [`tri-repo-rhino-cli-byte-identity-gate`](../../ideas/tri-repo-rhino-cli-byte-identity-gate.md) — the idea brief this plan fulfills: R-11/R-12's hermetic parity gate plus the scheduled unauthenticated-fetch audit ([tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) answer its open questions on run location, cadence, and the `ose-private` auth model. Retired in Phase 6.
+- [`tri-repo-rhino-cli-byte-identity-gate`](../../ideas/q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md) — the idea brief this plan fulfills: R-11/R-12's hermetic parity gate plus the scheduled unauthenticated-fetch audit ([tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) answer its open questions on run location, cadence, and the `ose-private` auth model. Retired in Phase 6.

@@ -354,7 +354,7 @@ through a worktree per the
 [bare-repo landing method](../../../repo-governance/development/workflow/bare-repo-landing-method.md);
 and this plan's own folder is archived inside the `ose-public` PR while sibling PRs may still be open,
 a known structural limitation filed as
-[plan-archival-in-pr-multi-repo-gap](../../ideas/plan-archival-in-pr-multi-repo-gap.md).
+[plan-archival-in-pr-multi-repo-gap](../../ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md).
 
 ## File Impact
 
