@@ -130,6 +130,16 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `node_modules/` synchronized.
 - [x] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-11-course-authoring-capstones/ plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-11-course-authoring-capstones/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] **Verify `ayokoding-learning-path-01-url-restructure` and `ayokoding-learning-path-02-schema-and-prerequisite-dag`
       are both archived to `done/`** — command:
       `git ls-files -- 'plans/done/*ayokoding-learning-path-01-url-restructure/README.md' 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md' | grep -c .`
@@ -551,6 +561,13 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 
 ## Phase 6: Knowledge Capture
 
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] Triage every entry in `learnings.md` through the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)'s
       routing matrix — each surviving learning routed to exactly one durable home, or discarded with a
@@ -574,9 +591,11 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 - [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Move this plan folder from `plans/backlog/ayokoding-learning-path-11-course-authoring-capstones/`
+- [ ] [AI] Move this plan folder from `plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/`
       to `plans/done/YYYY-MM-DD__ayokoding-learning-path-11-course-authoring-capstones/` (today's
-      completion date), update `plans/backlog/README.md` and `plans/done/README.md`.
+      completion date), update `plans/in-progress/README.md` and `plans/done/README.md`. The source is
+      always `plans/in-progress/` — Phase 0's promotion step is a mandatory precondition, so the plan
+      never sits in `plans/backlog/` at archival time.
 - [ ] [AI] Push `final-delivery` and open the one terminal archival PR, then run the PR-Review
       Maker→Fixer Cycle, CI verification, `[AI]` merge, and deployment.
 - [ ] [AI] Remove the declared worktree only after the terminal archival PR merges and it has no

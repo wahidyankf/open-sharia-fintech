@@ -381,7 +381,44 @@ verification remains mandatory.
 
 No endpoint changes.
 
-## File Impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append one catalog row per landed course ID
+│   └── <course-id>/ [N] — 7 bundles; bounded family, members enumerated verbatim in
+│       │                  evidence/authored-body-slugs.txt (written in Phase 0), never by glob
+│       ├── _index.md [N] — declares `prerequisites: [course-id, ...]`
+│       ├── overview.md [N] — purpose, prerequisites, register, scope boundary
+│       ├── learning/ [N] — `_index.md`, co-NN/ex-NN pages, `code/`, `capstone/`
+│       └── drilling/ [N] — `_index.md` + `overview.md` (fixed five-section order)
+├── plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/
+│   ├── tech-docs.md [E] — this file; the Course Library Catalog rows
+│   ├── delivery.md [E] — checkbox ticks + the five-field band-completion signal
+│   ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+│   └── evidence/ [N] — phase-0 snapshot, authored-body-slugs.txt, Playwright screenshots
+└── apps/ayokoding-www/src/features/course-paths/ — NOT TOUCHED (zero-diff gate every phase)
+```
+
+### More Detail
+
+The `<course-id>/` bundles are the only `*`-shaped family in the tree, and they are bounded by
+construction: the exact member list is written to `evidence/authored-body-slugs.txt` during Phase 0,
+and every later assertion reads that register rather than globbing the directory — so a slug that
+drifted into the tree from a sibling band plan can never be silently adopted as this plan's work.
+
+`apps/ayokoding-www/content/en/learn/courses/_index.md` is the one shared file this plan edits outside
+its own plan folder. It is **appended to**, never rewritten, so a concurrent sibling band plan adding
+its own rows produces a mergeable diff rather than a conflict.
+
+Nothing under `apps/ayokoding-www/src/` carries an action annotation because this plan writes no
+application code at all. That absence is **asserted** by the zero-diff manifest gate in every phase,
+not merely assumed — the manifest subtree is named separately below because reading it is permitted
+and writing it is a boundary violation, a distinction the tree alone cannot carry.
 
 **New directories created** (7 total, one per authored body, zero overlap with any existing
 `<COURSES>` bundle):

@@ -141,6 +141,16 @@ and a string form silently short-circuits to a single false-passing iteration.
 
 ### Environment Setup
 
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-14-skills-accounting-foundations/ plans/in-progress/ayokoding-learning-path-14-skills-accounting-foundations/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-14-skills-accounting-foundations/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-14-skills-accounting-foundations/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] Confirm the worktree is provisioned and current: `git worktree list | grep -F "ayokoding-learning-path-14-skills-accounting-foundations"` exits 0.
 - [ ] [AI] Install dependencies: `npm install`.
 - [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
@@ -850,6 +860,13 @@ Apply the seven-step per-course convention to each course; each course is its ow
 - [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-private` only.
 - [ ] [AI] Route each surviving learning to exactly one durable home; code-homed learnings are
       filed as a separate `plans/backlog/<slug>/` plan, never landed inline.
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
 
@@ -874,8 +891,8 @@ Apply the seven-step per-course convention to each course; each course is its ow
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-14-skills-accounting-foundations plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-14-skills-accounting-foundations`
-      (or from `plans/backlog/…` if it was never promoted to `in-progress/`).
-- [ ] [AI] Update `plans/in-progress/README.md` (or `plans/backlog/README.md`) — remove this
+      (always from `plans/in-progress/` — Phase 0's promotion step is a mandatory precondition).
+- [ ] [AI] Update `plans/in-progress/README.md` — remove this
       plan's entry.
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update `ayokoding-learning-path-15-skills-accounting-enterprise-reporting`'s own docs (if

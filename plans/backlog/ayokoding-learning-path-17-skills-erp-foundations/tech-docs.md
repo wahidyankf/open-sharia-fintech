@@ -499,7 +499,53 @@ redundant — each verifies a distinct, independently-shipped state of the same 
   apply in full; Sharia-specific standards bodies are out of this plan's scope.** AAOIFI/PSAK/MFRS
   material belongs entirely to the successor plan's Stage C sub-phase. **Decided.**
 
-## File impact
+## File-Impact Analysis
+
+Root-relative annotated tree — the scan-first source of truth for this plan's scope. **[E]** edit,
+**[N]** new file/pattern, **[D]** delete, **[G]** generated/regenerated.
+
+```text
+.
+├── apps/ayokoding-www/content/en/learn/courses/
+│   ├── _index.md [E] — append 15 catalog rows, populate only (created by plan 01)
+│   └── <erp-course-id>/ [N] — 15 course bundles, this plan's Stage A slice
+├── apps/ayokoding-www/content/en/learn/paths/
+│   ├── _index.md [E] — add two ERP cards, populate only
+│   ├── skills/_index.md [E] — add two ERP cards, populate only
+│   ├── skills/conventional-erp/_index.md [N] — landing through Dangerous 1
+│   └── skills/sharia-erp/_index.md [N] — landing through Dangerous 1
+├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
+│   ├── conventional-erp.yaml [N] — published at 15 ids; plan 18 grows it
+│   ├── sharia-erp.yaml [N] — published at 15 ids; plan 18 grows it
+│   ├── conventional-erp-manifest.unit.test.ts [N] — asserts 15 ids
+│   └── sharia-erp-manifest.unit.test.ts [N] — asserts 15 ids
+├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
+│   └── skills-erp-paths.feature [N] — Dangerous-1-scoped
+└── apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts [N]
+└── plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations/
+    ├── tech-docs.md [E] — this file
+    ├── delivery.md [E] — checkbox ticks and per-phase implementation notes
+    ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
+    └── evidence/ [N] — phase-0 snapshot, growth records, Playwright screenshots
+```
+
+### More Detail
+
+**This plan is the corpus custodian and its `syllabus/` tree already exists on disk** — the plan
+folder rows above therefore show `syllabus/README.md` (carrying
+`**Custodian**: ayokoding-learning-path-17-skills-erp-foundations`), `syllabus/courses/` (15 spec
+files) and `syllabus/paths/` (two manifest mirrors at 15 ids each) as `[E]`/`[N]` work Phase 1
+completes. Plan 18 is a read-only consumer that echoes `custodied-by:` under its own
+`## Corpus Custody` heading and never edits a file here.
+
+**This plan creates both ERP manifests fresh at 15 ids and hands edit rights to plan 18** to grow them
+to 27/30. That is a sequential hand-off across the Stage A/B boundary, not a shared write — plan 17
+archives before plan 18 starts.
+
+The three `[E]` rows under `content/en/learn/` are all **populate-only** edits of files plan 01
+created; this plan appends its ERP slice rather than rewriting them.
+
+No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its output.
 
 | Path                                                              | Change | Note                                                                     |
 | ----------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
