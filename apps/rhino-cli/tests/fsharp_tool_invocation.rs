@@ -107,7 +107,7 @@ fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
         .malformed_source_check
         .as_ref()
         .expect("a configured F# topology must run the manifest Fantomas checks");
-    assert_eq!(checks.len(), w.configured);
+    assert_eq!(checks.len(), w.candidate_working_directories.len());
     assert!(
         checks.iter().all(|check| check.restore_succeeded),
         "the local .NET tool manifest must restore before checking fixtures"
@@ -270,6 +270,9 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
         }
     }
 
+    candidate_working_directories.sort();
+    candidate_working_directories.dedup();
+
     FantomasLintTargetAudit {
         candidates,
         evaluated_candidates,
@@ -385,7 +388,7 @@ fn assert_audit_detects_noncompliant_candidates() {
     write_project_fixture(
         fixture_root.path(),
         "apps/manifest-backed/project.json",
-        r#"{"targets":{"lint":{"options":{"commands":["dotnet tool restore","dotnet tool run fantomas --check src"]}}}}"#,
+        r#"{"targets":{"lint":{"options":{"cwd":"apps/manifest-backed","commands":["dotnet tool restore","dotnet tool run fantomas --check src"]}}}}"#,
     );
     write_project_fixture(
         fixture_root.path(),
@@ -417,6 +420,14 @@ fn assert_audit_detects_noncompliant_candidates() {
 
     assert_eq!(audit.candidates.len(), 5);
     assert_eq!(audit.evaluated_candidates, 5);
+    assert_eq!(
+        audit.candidate_working_directories,
+        vec![
+            fixture_root.path().to_path_buf(),
+            fixture_root.path().join("apps/manifest-backed"),
+        ],
+        "each distinct effective working directory must be checked once even when multiple lint targets share it"
+    );
     assert_eq!(
         audit.missing_local_restores,
         vec![

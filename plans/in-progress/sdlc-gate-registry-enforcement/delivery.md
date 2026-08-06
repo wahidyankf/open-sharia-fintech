@@ -3921,9 +3921,21 @@ repropagation; no repository may carry a local workaround.
   - Status: complete
   - Files Changed: none (GitHub PR metadata)
   - Execution note: Opened draft PR [#143](https://github.com/wahidyankf/ose-public/pull/143) from `sdlc-gate-registry-enforcement-fsharp-cwd` to `main` at protected head `603075b3e`. It contains the ordered canonical F# local-tool-CWD source correction and validated user-requested plan checkpoint.
-- [ ] [AI] **P2B-FSHARP-CWD-C1-MAKERS** (`blockedBy: P2B-FSHARP-CWD-PR`; `blocks: P2B-FSHARP-CWD-C1-SYNTHESIS`) — run all PR-review discipline makers for the canonical correction — acceptance: every discipline report is persisted.
-- [ ] [AI] **P2B-FSHARP-CWD-C1-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C1-MAKERS`; `blocks: P2B-FSHARP-CWD-C1-FIXER`) — synthesize and post the first correction review — acceptance: one authoritative posted review contains every accepted finding.
-- [ ] [AI] **P2B-FSHARP-CWD-C1-FIXER** (`blockedBy: P2B-FSHARP-CWD-C1-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C1-CI`) — resolve accepted correction findings, commit, and push through hooks — acceptance: each thread is resolved or explicitly rejected with evidence.
+- [x] [AI] **P2B-FSHARP-CWD-C1-MAKERS** (`blockedBy: P2B-FSHARP-CWD-PR`; `blocks: P2B-FSHARP-CWD-C1-SYNTHESIS`) — run all PR-review discipline makers for the canonical correction — acceptance: every discipline report is persisted.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (review evidence only)
+  - Execution note: Full-tier Cycle 1 fanned out to architecture, logic, governance, security, integrity, performance, docs, instruction, and types at pinned head `01ff49531`. Eight reports found no actionable issue; the performance report found one verified MEDIUM duplication in candidate-CWD control execution, routed to the single synthesis review. All nine raw reports persist under `generated-reports/`.
+- [x] [AI] **P2B-FSHARP-CWD-C1-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C1-MAKERS`; `blocks: P2B-FSHARP-CWD-C1-FIXER`) — synthesize and post the first correction review — acceptance: one authoritative posted review contains every accepted finding.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (GitHub review metadata)
+  - Execution note: Posted exactly one line-anchored Cycle 1 review, [review 4872084505](https://github.com/wahidyankf/ose-public/pull/143#pullrequestreview-4872084505), against pinned head `01ff49531`. It preserves the scout’s full-tier selection and accepts only the performance maker’s MEDIUM-confidence-99 effective-CWD deduplication finding.
+- [x] [AI] **P2B-FSHARP-CWD-C1-FIXER** (`blockedBy: P2B-FSHARP-CWD-C1-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C1-CI`) — resolve accepted correction findings, commit, and push through hooks — acceptance: each thread is resolved or explicitly rejected with evidence.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `apps/rhino-cli/parity-manifest.sha256`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
+  - Execution note: RED showed five repeated workspace CWD controls where one was expected. GREEN sorts and de-duplicates effective CWDs before local manifest controls while retaining all configured-target audit coverage and testing shared/distinct CWD fixtures. Focused Cucumber, `cargo fmt --check`, full parity-manifest verification, and `git diff --check` pass; the review thread is replied to and resolved after the protected push.
 - [ ] [AI] **P2B-FSHARP-CWD-C1-CI** (`blockedBy: P2B-FSHARP-CWD-C1-FIXER`; `blocks: P2B-FSHARP-CWD-C2-MAKERS`) — monitor correction PR CI to a green terminal conclusion — acceptance: all required checks pass.
 - [ ] [AI] **P2B-FSHARP-CWD-C2-MAKERS** (`blockedBy: P2B-FSHARP-CWD-C1-CI`; `blocks: P2B-FSHARP-CWD-C2-SYNTHESIS`) — run fresh second-cycle discipline makers — acceptance: every discipline report is persisted.
 - [ ] [AI] **P2B-FSHARP-CWD-C2-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C2-MAKERS`; `blocks: P2B-FSHARP-CWD-C2-FIXER`) — synthesize and post the second correction review — acceptance: one authoritative review is posted.
