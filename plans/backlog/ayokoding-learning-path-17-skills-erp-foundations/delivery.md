@@ -162,6 +162,16 @@ ERP_STAGE_BC_FORWARD=(
 
 ## Phase 0: Environment Setup
 
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-17-skills-erp-foundations/ plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-17-skills-erp-foundations/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] All five hard-blocking plans merged to `origin/main` — run the loop in
       [§Depends-on](#depends-on-and-start-preconditions); acceptance: empty output.
 - [ ] [AI] Install dependencies: `npm install`.
@@ -586,6 +596,13 @@ for why this content tree is English-only by established repo convention.
       separate `plans/backlog/<slug>/` plan — NEVER land it inline in this plan's own commits/PR. The
       sole carve-out is a bug/lint/test failure that blocks THIS plan's own scope, which is fixed
       inline as ordinary Root Cause Orientation work, not routed as a deferred learning.
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
 
@@ -615,8 +632,8 @@ for why this content tree is English-only by established repo convention.
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-17-skills-erp-foundations/syllabus/…` path
       (branch (a), link rewrite, per the Learning-Plan Syllabus Convention's Custody Rule) — commit
       that rewrite as part of this same archival step.
-- [ ] [AI] `git mv plans/backlog/ayokoding-learning-path-17-skills-erp-foundations plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-17-skills-erp-foundations`.
-- [ ] [AI] Update `plans/backlog/README.md` to remove this plan's backlog entry and reflect its
+- [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-17-skills-erp-foundations`.
+- [ ] [AI] Update `plans/in-progress/README.md` to remove this plan's in-progress entry and reflect its
       completed status.
 - [ ] [AI] Commit the archival move (and any link rewrite from the custody check above) to the
       persistent final-delivery branch before opening the only PR. Use a Conventional
@@ -646,5 +663,5 @@ for why this content tree is English-only by established repo convention.
 
 ## File impact and rollback
 
-See [tech-docs.md §File impact](./tech-docs.md#file-impact) and [§Rollback](./tech-docs.md#rollback)
+See [tech-docs.md §File impact](./tech-docs.md#file-impact-analysis) and [§Rollback](./tech-docs.md#rollback)
 — this delivery checklist implements exactly that file set, phase by phase, with no step outside it.

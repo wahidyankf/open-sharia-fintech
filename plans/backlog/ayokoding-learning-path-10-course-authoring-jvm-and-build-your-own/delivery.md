@@ -148,6 +148,16 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > `distributed-systems`) sub-phases specifically, plus one infrastructure plan
 > (`vercel-function-cost-reduction`) gating every deploy.
 
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/ plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
@@ -624,6 +634,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] Route each surviving entry to exactly one durable home (a small non-code edit lands inline;
       larger non-code work or any code-homed learning files a `plans/backlog/` follow-up plan).
 - [ ] [AI] Record the terminal state of every entry directly in `learnings.md`.
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] If execution surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead.
 
@@ -653,9 +670,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] Verify the `en`-only locale scope was exercised and the `id` deferral stated, not silently
       skipped.
 - [ ] [AI] Move plan folder from `plans/backlog/` to `plans/done/` via
-      `git mv plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own plans/done/<completion-date>__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`
+      `git mv plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own plans/done/<completion-date>__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`
       (the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/backlog/README.md` — remove this plan's entry.
+- [ ] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
       those plans exist on disk).

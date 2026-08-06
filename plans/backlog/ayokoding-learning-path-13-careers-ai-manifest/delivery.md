@@ -125,6 +125,16 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 
 > _Executor: `repo-setup-manager`_
 
+- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+      Run `git mv plans/backlog/ayokoding-learning-path-13-careers-ai-manifest/ plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest/`
+      (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
+      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest/README.md | grep -c .`
+      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md` returns **0**.
+      Falsifiable both ways: before the push lands, the first query returns 0 and the second
+      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
+      precondition, not a courtesy. See
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
 - [ ] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0.
 - [ ] [AI] **Precondition 1** — confirm navigation-ui is merged:
@@ -494,6 +504,13 @@ together every time this phase's gate is checked.
 - [ ] [AI] Apply the repo-relevance gate.
 - [ ] [AI] Route each surviving learning to exactly one durable home — code homes are ALWAYS filed as a
       separate `plans/backlog/<slug>/` plan, never landed inline.
+- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+      two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
+      that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
+      scan confirms no existing brief overlaps (see
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      — acceptance: the entry's routing line names either the folded-into brief or confirms the
+      overlap scan found nothing.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>`.
 
 ### Phase 6 Gate
@@ -528,8 +545,8 @@ together every time this phase's gate is checked.
       **1**, AND `npx nx run ayokoding-www:test:unit` exits 0 — acceptance: all three hold.
 - [ ] [AI] **Scoped cross-plan link check** — re-run Phase 3's filtered link validation and confirm it
       still finds no line naming this plan's folder.
-- [ ] [AI] Move: `git mv plans/backlog/ayokoding-learning-path-13-careers-ai-manifest plans/done/YYYY-MM-DD__ayokoding-learning-path-13-careers-ai-manifest`.
-- [ ] [AI] Update `plans/backlog/README.md` and `plans/done/README.md`.
+- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest plans/done/YYYY-MM-DD__ayokoding-learning-path-13-careers-ai-manifest`.
+- [ ] [AI] Update `plans/in-progress/README.md` and `plans/done/README.md`.
 - [ ] [AI] Update the sibling plan's cross-references to this plan's archived path, in the same commit —
       the sibling plan's Phase 8 start-condition check will need this plan's new archived location once
       it re-verifies its own merged-PR search.
