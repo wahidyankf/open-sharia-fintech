@@ -80,8 +80,8 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md head
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate
 npm run validate:sync
-npm exec nx affected -t typecheck,lint,test:quick,specs:coverage
-npm exec nx affected -t build,test:quick,lint
+npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage
+npm exec nx -- affected -t build,test:quick,lint
 cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate
 ```
 
@@ -110,13 +110,15 @@ Every “full unit gates” task executes both deterministic gates above.
 > infrastructure behavior work, create and complete its separate blocking plan before resuming this
 > documentation program.
 
-For every PR unit, Phase 0 records the workflow name and check-run names triggered by that repository.
-After each push, obtain the newest run ID with
-`gh run list --branch <exact-branch> --limit 1 --json databaseId,name,status,conclusion`, then poll
-that exact run every two minutes with `gh run view <databaseId> --json status,conclusion`. Record the
-workflow name, run ID, and sanitized result in the unit record. A failed or cancelled run is investigated,
-fixed in the owning unit, pushed, and polled again; merge is forbidden until the named run and required
-PR checks are green.
+For every PR unit, Phase 0 records every workflow name and required check-run name triggered by that
+repository. After each push, enumerate all matching workflow runs with
+`gh run list --branch <exact-branch> --limit 20 --json databaseId,name,status,conclusion`; select the
+newest run for each recorded workflow, then poll every selected run every two minutes with
+`gh run view <databaseId> --json status,conclusion`. Also query the PR's complete check set with
+`gh pr checks <pr-number> --required`. Record each workflow name, run ID, check name, and sanitized
+result in the unit record. A failed, cancelled, missing, or still-pending run/check is investigated,
+fixed in the owning unit, pushed, and polled again; merge is forbidden until every named run and required
+PR check succeeds.
 
 ## Parallelization Model
 
