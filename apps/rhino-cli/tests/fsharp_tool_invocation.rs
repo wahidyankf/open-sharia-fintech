@@ -17,8 +17,9 @@ use walkdir::WalkDir;
 #[world(init = Self::new)]
 struct FsharpToolInvocationWorld {
     configured: usize,
-    manifest: usize,
-    bare_global: usize,
+    missing_local_restores: Vec<PathBuf>,
+    missing_manifest_commands: Vec<PathBuf>,
+    bare_global_invocations: Vec<PathBuf>,
     malformed_source_rejected: bool,
 }
 
@@ -26,43 +27,29 @@ impl FsharpToolInvocationWorld {
     fn new() -> Self {
         Self {
             configured: 0,
-            manifest: 0,
-            bare_global: 0,
+            missing_local_restores: Vec::new(),
+            missing_manifest_commands: Vec::new(),
+            bare_global_invocations: Vec::new(),
             malformed_source_rejected: false,
         }
     }
 }
 
-#[given("the F# lint targets are configured")]
+#[given("the local F# lint targets are discovered")]
 fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
+    assert_audit_detects_noncompliant_candidates();
+
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let targets = manifest_backed_fantomas_targets(&workspace_root);
+    let audit = audit_fantomas_lint_targets(&workspace_root);
 
-    w.configured = targets.len();
-    for project_path in targets {
-        let project = fs::read_to_string(&project_path)
-            .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
-
-        if project.contains("dotnet tool restore")
-            && project.contains("dotnet tool run fantomas --check")
-        {
-            w.manifest += 1;
-        }
-        if project
-            .lines()
-            .any(|line| line.contains("fantomas --check") && !line.contains("dotnet tool run"))
-        {
-            w.bare_global += 1;
-        }
-    }
+    w.configured = audit.candidates.len();
+    w.missing_local_restores = audit.missing_local_restores;
+    w.missing_manifest_commands = audit.missing_manifest_commands;
+    w.bare_global_invocations = audit.bare_global_invocations;
 }
 
-#[when("the configured F# lint targets are inspected")]
+#[when("every locally discovered F# lint target is evaluated")]
 fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
-    if w.configured == 0 {
-        return;
-    }
-
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let mut malformed_source = Builder::new()
         .prefix("fantomas-regression-")
@@ -89,30 +76,55 @@ fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
     w.malformed_source_rejected = !status.success();
 }
 
+#[then("at least one local Fantomas lint target is found when F# linting applies")]
+fn then_fsharp_lint_targets_are_found(w: &mut FsharpToolInvocationWorld) {
+    assert!(
+        w.configured > 0,
+        "expected at least one local Fantomas lint target in this F# workspace"
+    );
+}
+
 #[then("each target restores the local .NET tool manifest before running Fantomas")]
 fn then_targets_restore_manifest(w: &mut FsharpToolInvocationWorld) {
-    assert_eq!(w.manifest, w.configured);
+    assert!(
+        w.missing_local_restores.is_empty(),
+        "Fantomas targets missing `dotnet tool restore`: {:?}",
+        w.missing_local_restores
+    );
+    assert!(
+        w.missing_manifest_commands.is_empty(),
+        "Fantomas targets missing `dotnet tool run fantomas --check`: {:?}",
+        w.missing_manifest_commands
+    );
 }
 
 #[then("no target invokes the global Fantomas app host directly")]
 fn then_targets_do_not_use_global_fantomas(w: &mut FsharpToolInvocationWorld) {
-    assert_eq!(w.bare_global, 0);
+    assert!(
+        w.bare_global_invocations.is_empty(),
+        "Fantomas targets invoking the global app host: {:?}",
+        w.bare_global_invocations
+    );
 }
 
 #[then("an unformatted source file still makes the lint target fail")]
 fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
-    if w.configured == 0 {
-        return;
-    }
-
     assert!(
         w.malformed_source_rejected,
         "the manifest-backed Fantomas check must reject malformed source"
     );
 }
 
-fn manifest_backed_fantomas_targets(workspace_root: &Path) -> Vec<PathBuf> {
-    let mut targets = WalkDir::new(workspace_root)
+#[derive(Debug, Eq, PartialEq)]
+struct FantomasLintTargetAudit {
+    candidates: Vec<PathBuf>,
+    missing_local_restores: Vec<PathBuf>,
+    missing_manifest_commands: Vec<PathBuf>,
+    bare_global_invocations: Vec<PathBuf>,
+}
+
+fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit {
+    let mut candidates = WalkDir::new(workspace_root)
         .into_iter()
         .filter_entry(|entry| {
             !matches!(
@@ -126,12 +138,37 @@ fn manifest_backed_fantomas_targets(workspace_root: &Path) -> Vec<PathBuf> {
         .filter(|path| {
             let project = fs::read_to_string(path)
                 .unwrap_or_else(|error| panic!("read {}: {error}", path.display()));
-            project.contains("dotnet tool restore")
-                && project.contains("dotnet tool run fantomas --check")
+            project.contains("fantomas --check")
         })
         .collect::<Vec<_>>();
-    targets.sort();
-    targets
+    candidates.sort();
+
+    let mut missing_local_restores = Vec::new();
+    let mut missing_manifest_commands = Vec::new();
+    let mut bare_global_invocations = Vec::new();
+    for project_path in &candidates {
+        let project = fs::read_to_string(project_path)
+            .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
+        if !project.contains("dotnet tool restore") {
+            missing_local_restores.push(project_path.clone());
+        }
+        if !project.contains("dotnet tool run fantomas --check") {
+            missing_manifest_commands.push(project_path.clone());
+        }
+        if project
+            .lines()
+            .any(|line| line.contains("fantomas --check") && !line.contains("dotnet tool run"))
+        {
+            bare_global_invocations.push(project_path.clone());
+        }
+    }
+
+    FantomasLintTargetAudit {
+        candidates,
+        missing_local_restores,
+        missing_manifest_commands,
+        bare_global_invocations,
+    }
 }
 
 #[tokio::main]
@@ -147,4 +184,51 @@ fn feature_path() -> PathBuf {
         .join("../../specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature")
         .canonicalize()
         .expect("feature file resolvable")
+}
+
+fn assert_audit_detects_noncompliant_candidates() {
+    let fixture_root = tempfile::tempdir().expect("create target fixture workspace");
+    write_project_fixture(
+        fixture_root.path(),
+        "apps/manifest-backed/project.json",
+        r#"{"commands":["dotnet tool restore","dotnet tool run fantomas --check src"]}"#,
+    );
+    write_project_fixture(
+        fixture_root.path(),
+        "apps/missing-restore/project.json",
+        r#"{"commands":["dotnet tool run fantomas --check src"]}"#,
+    );
+    write_project_fixture(
+        fixture_root.path(),
+        "libs/bare-global/project.json",
+        r#"{"commands":["fantomas --check src"]}"#,
+    );
+
+    let audit = audit_fantomas_lint_targets(fixture_root.path());
+
+    assert_eq!(audit.candidates.len(), 3);
+    assert_eq!(
+        audit.missing_local_restores,
+        vec![
+            fixture_root
+                .path()
+                .join("apps/missing-restore/project.json"),
+            fixture_root.path().join("libs/bare-global/project.json"),
+        ]
+    );
+    assert_eq!(
+        audit.missing_manifest_commands,
+        vec![fixture_root.path().join("libs/bare-global/project.json")]
+    );
+    assert_eq!(
+        audit.bare_global_invocations,
+        vec![fixture_root.path().join("libs/bare-global/project.json")]
+    );
+}
+
+fn write_project_fixture(root: &Path, relative_path: &str, contents: &str) {
+    let path = root.join(relative_path);
+    fs::create_dir_all(path.parent().expect("fixture project directory"))
+        .expect("create fixture project directory");
+    fs::write(path, contents).expect("write fixture project configuration");
 }
