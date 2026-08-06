@@ -1175,7 +1175,7 @@ config, logging) assembled into one runnable whole -- the capstone is the full v
 the type/lint gate.
 
 **Why it matters**: the value of this entire topic is that these primitives compose into something
-deployable. This example is the proof; the [capstone](../capstone/overview.md) is the full, tested, gated
+deployable. This example is the proof; the [capstone](./capstone/overview.md) is the full, tested, gated
 version that is the topic's done bar.
 
 ---
@@ -2637,4 +2637,4 @@ the service operable, not just runnable.
 
 ---
 
-← Previous: [Intermediate Examples](./intermediate.md) · Next: [Capstone](../capstone/overview.md) →
+← Previous: [Intermediate Examples](./intermediate.md) · Next: [Capstone](./capstone/overview.md) →

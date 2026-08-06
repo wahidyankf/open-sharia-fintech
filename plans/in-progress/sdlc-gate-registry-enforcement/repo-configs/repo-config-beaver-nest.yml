@@ -1,18 +1,18 @@
 # TARGET STATE — do not copy this banner into the repo.
 #
 # This is the COMPLETE repo-config.yml as it should look in beaver-nest AFTER the
-# sdlc-gate-registry-enforcement plan lands. Everything above the `gates:`
-# section is this repo's CURRENT YAML content, reproduced verbatim as of
-# 2026-08-04. This plan also corrects the stale header below and adds the
-# `gates:` section at the end.
+# sdlc-gate-registry-enforcement plan lands. Apart from the intended
+# `harness.amazonq.agent-name` and `doctor.dotnet-global-json` additions, content
+# above the `gates:` section is this repo's current YAML as of 2026-08-04. This
+# plan also corrects the stale header below and adds the `gates:` section at end.
 #
 # Before copying, re-verify the unchanged part still matches:
 #   diff <(sed -n '/^harness:/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
 #        <(sed -n '/^harness:/,$p' beaver-nest/repo-config.yml)
 # The range compares existing YAML while excluding this banner, the deliberately
-# corrected header, and the new `gates:` section.
-# A non-empty diff means another change landed since 2026-08-04 — reconcile
-# rather than overwrite.
+# corrected header, and the new `gates:` section. The intentional `agent-name`
+# and `dotnet-global-json` additions are the only expected differences; reconcile
+# any others rather than overwrite.
 #
 # repo-config.yml — schema: rhino-cli/repo-config/v1
 #

@@ -16,9 +16,9 @@
 #
 # repo-config.yml — schema: rhino-cli/repo-config/v1
 #
-# Unified repository configuration. All four OSE repositories share the same
-# rhino-cli schema; section presence and values reflect each repo's actual project
-# set and surfaces. rhino-cli commands read their relevant section.
+# Unified repository configuration. Structure is byte-identical across all three
+# repos (ose-public, ose-primer, ose-private); values reflect each repo's actual
+# project set and surfaces. rhino-cli commands read their relevant section.
 #
 # Sections defined here:
 #   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
@@ -28,7 +28,6 @@
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
 #   doctor           — tools from doctor's full roster this repo's toolchain does not need (rhino-cli doctor)
-#   gates            — executable SDLC gate registry and per-surface composition data
 
 harness:
   # Authoritative harness registry — all 11 supported coding-agent harnesses.
@@ -38,7 +37,6 @@ harness:
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
   #   skills-dir  — directory of skill files (source tier only)
   #   rules-dir   — directory of injected rules (generated tier only)
-  #   agent-name  — generated Amazon Q agent-definition filename stem and embedded name (amazonq only)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)
@@ -51,7 +49,6 @@ harness:
   - name: amazonq
     tier: generated
     rules-dir: .amazonq/rules
-    agent-name: ose-default
     instruction:
       - .amazonq/rules/*.md
   - name: codex
@@ -273,9 +270,6 @@ env-injection:
   ci-harness: []
 
 doctor:
-  # No dotnet-global-json: this scaffold has two independent backend pins
-  # (crud-be-fsharp-giraffe 10.0.204 and crud-be-csharp-aspnetcore 10.0.108),
-  # while Doctor's current contract intentionally accepts exactly one source.
   # Tools from doctor's full roster (apps/rhino-cli/src/application/doctor/tools.rs)
   # that ose-primer's own toolchain does not invoke, so `doctor` stays dormant for
   # them instead of hard-failing a plain (non-`--fix`) run. Verified: ose-primer's
@@ -283,7 +277,6 @@ doctor:
   # shellchecks *.sh without formatting them, has no *.tf files, and its only
   # *.c/*.h files are vendored Elixir NIF deps under deps/, never lint-staged'd).
   skip-tools: [shfmt, tofu, clang-format]
-
 gates:
   # ---------------------------------------------------------------- commit-msg
   - id: commitlint
