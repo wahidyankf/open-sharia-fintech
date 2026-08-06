@@ -114,6 +114,13 @@ Implement the fix directly in the working tree, commit, and push to the PR branc
 same thread with `Fixed: <what changed>` — a concrete, specific description of the change (file,
 mechanism), not a vague "addressed" or "done".
 
+**A finding naming a stale count or terminology change (e.g., "eight" → "nine" of something) is
+fixed by a repo-wide grep for the OLD term, not just the file(s) the finding cited.** A fix scoped to
+only the named occurrences reliably leaves a second, self-contradicting instance in a file the
+citing specialist did not happen to read in full — this has recurred across dogfood cycles and
+survived being named-and-deferred once already. Run the repo-wide grep before replying `Fixed`, not
+after a later cycle re-discovers the same class of miss.
+
 ### Reject Path — A Higher Bar Than "Disagree"
 
 Rejecting a finding requires more justification than accepting one. A rejection is valid ONLY when

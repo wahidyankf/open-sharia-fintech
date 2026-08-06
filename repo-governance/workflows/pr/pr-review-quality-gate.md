@@ -372,7 +372,12 @@ following hold:
   blocks the merge on its own, for any merge actor. The configured count is a **hard ceiling, not a
   floor** — a PR merges once preconditions (b)-(e) also hold, never on additional cycles beyond this
   count.
-- **(b)** **0 CRITICAL + 0 HIGH findings outstanding.**
+- **(b)** **0 CRITICAL + 0 HIGH findings outstanding.** A thread `pr-review-fixer` disposed as
+  **defer-with-reason** (its own sanctioned 4-way triage outcome, re-affirmed rather than silently
+  carried across every subsequent cycle) does not count as "outstanding" against this precondition —
+  it is a deliberate, recorded non-resolution, not an unaddressed finding. Record the deferral and its
+  reasoning explicitly at merge time rather than treating the raw GraphQL unresolved-thread count as
+  the sole signal.
 - **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
   bring it forward by a **non-destructive forward update** — `git fetch origin` then
   `git merge --ff-only origin/main`, or an ordinary forward merge. **Never** a shared-history rewrite,
@@ -406,6 +411,13 @@ following hold:
 
 Precondition (c) is the reason a long-lived PR cannot simply be merged on the strength of a green
 run from last week: the gates proved the branch was good against a `main` that has since moved.
+
+**Merge-command mechanics are per-repo, never assumed.** Repos in this platform's family do not all
+share one merge-commit convention — one may use `gh pr merge --merge` (a real 2-parent merge commit)
+while another uses `--squash`, even under the same governance corpus. Verify the target repo's actual
+convention (e.g., `git log --format='%P' -1 <sha>` on its last few merged PRs — 2 parents means a real
+merge commit) before choosing the flag; never default to `--merge` on the assumption that it matches
+another repo in the family.
 
 ```mermaid
 %% Color palette: Teal #029E73 (done-definition items), Blue #0173B2 (AI done-boundary), Orange #DE8F05 (merge step -- [AI] by default)
