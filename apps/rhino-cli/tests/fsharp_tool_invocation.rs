@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use cucumber::{World as _, given, then, when};
+use serde_json::Value;
 use tempfile::Builder;
 use walkdir::WalkDir;
 
@@ -21,7 +22,7 @@ struct FsharpToolInvocationWorld {
     missing_local_restores: Vec<PathBuf>,
     missing_manifest_commands: Vec<PathBuf>,
     bare_global_invocations: Vec<PathBuf>,
-    malformed_source_rejected: Option<bool>,
+    malformed_source_check: Option<MalformedSourceCheck>,
 }
 
 impl FsharpToolInvocationWorld {
@@ -32,7 +33,7 @@ impl FsharpToolInvocationWorld {
             missing_local_restores: Vec::new(),
             missing_manifest_commands: Vec::new(),
             bare_global_invocations: Vec::new(),
-            malformed_source_rejected: None,
+            malformed_source_check: None,
         }
     }
 }
@@ -55,7 +56,7 @@ fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
 #[when("every locally discovered F# lint target is evaluated")]
 fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    w.malformed_source_rejected =
+    w.malformed_source_check =
         check_malformed_source_if_targets_exist(&workspace_root, w.configured);
 }
 
@@ -94,27 +95,63 @@ fn then_targets_do_not_use_global_fantomas(w: &mut FsharpToolInvocationWorld) {
 fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
     if w.configured == 0 {
         assert!(
-            w.malformed_source_rejected.is_none(),
+            w.malformed_source_check.is_none(),
             "a workspace without F# lint targets must not invoke the manifest Fantomas tool"
         );
         return;
     }
 
-    assert_eq!(
-        w.malformed_source_rejected,
-        Some(true),
+    let check = w
+        .malformed_source_check
+        .as_ref()
+        .expect("a configured F# topology must run the manifest Fantomas checks");
+    assert!(
+        check.restore_succeeded,
+        "the local .NET tool manifest must restore before checking fixtures"
+    );
+    assert!(
+        check.formatted_source_accepted,
+        "the manifest-backed Fantomas check must accept the formatted control source"
+    );
+    assert!(
+        check.malformed_source_rejected,
         "the manifest-backed Fantomas check must reject malformed source"
     );
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct MalformedSourceCheck {
+    restore_succeeded: bool,
+    formatted_source_accepted: bool,
+    malformed_source_rejected: bool,
 }
 
 fn check_malformed_source_if_targets_exist(
     workspace_root: &Path,
     configured_targets: usize,
-) -> Option<bool> {
+) -> Option<MalformedSourceCheck> {
     if configured_targets == 0 {
         return None;
     }
 
+    let restore_succeeded = Command::new("dotnet")
+        .current_dir(workspace_root)
+        .args(["tool", "restore"])
+        .status()
+        .expect("restore local .NET tool manifest")
+        .success();
+    assert!(
+        restore_succeeded,
+        "the local .NET tool manifest must restore before Fantomas regression checks"
+    );
+
+    let mut formatted_source = Builder::new()
+        .prefix("fantomas-formatted-control-")
+        .suffix(".fs")
+        .tempfile()
+        .expect("create formatted F# control fixture");
+    writeln!(formatted_source, "module Formatted\n\nlet value = 1")
+        .expect("write formatted F# control fixture");
     let mut malformed_source = Builder::new()
         .prefix("fantomas-regression-")
         .suffix(".fs")
@@ -123,21 +160,35 @@ fn check_malformed_source_if_targets_exist(
     writeln!(malformed_source, "module Malformed\nlet value= 1")
         .expect("write malformed F# fixture");
 
-    let status = Command::new("dotnet")
+    let formatted_source_accepted =
+        run_manifest_fantomas_check(workspace_root, formatted_source.path());
+    assert!(
+        formatted_source_accepted,
+        "the local Fantomas tool must accept the formatted control fixture before malformed-source rejection is evaluated"
+    );
+    let malformed_source_rejected =
+        !run_manifest_fantomas_check(workspace_root, malformed_source.path());
+
+    Some(MalformedSourceCheck {
+        restore_succeeded,
+        formatted_source_accepted,
+        malformed_source_rejected,
+    })
+}
+
+fn run_manifest_fantomas_check(workspace_root: &Path, source_path: &Path) -> bool {
+    Command::new("dotnet")
         .current_dir(workspace_root)
         .args([
             "tool",
             "run",
             "fantomas",
             "--check",
-            malformed_source
-                .path()
-                .to_str()
-                .expect("UTF-8 fixture path"),
+            source_path.to_str().expect("UTF-8 fixture path"),
         ])
         .status()
-        .expect("run manifest Fantomas check");
-    Some(!status.success())
+        .expect("run manifest Fantomas check")
+        .success()
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -161,10 +212,11 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
         .filter_map(Result::ok)
         .map(walkdir::DirEntry::into_path)
         .filter(|path| path.file_name().is_some_and(|name| name == "project.json"))
+        .filter(|path| !lint_commands(path).is_empty())
         .filter(|path| {
-            let project = fs::read_to_string(path)
-                .unwrap_or_else(|error| panic!("read {}: {error}", path.display()));
-            project.contains("fantomas --check")
+            lint_commands(path)
+                .iter()
+                .any(|command| !fantomas_invocations(command).is_empty())
         })
         .collect::<Vec<_>>();
     candidates.sort();
@@ -175,18 +227,31 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
     let mut evaluated_candidates = 0;
     for project_path in &candidates {
         evaluated_candidates += 1;
-        let project = fs::read_to_string(project_path)
-            .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
-        if !project.contains("dotnet tool restore") {
-            missing_local_restores.push(project_path.clone());
+        let commands = lint_commands(project_path);
+        let mut restore_seen = false;
+        let mut local_run_seen = false;
+        let mut local_run_without_prior_restore = false;
+        let mut bare_global_seen = false;
+
+        for command in commands {
+            for segment in shell_segments(&command) {
+                let invocations = fantomas_invocations(segment);
+                local_run_seen |= invocations.iter().any(|invocation| invocation.is_local);
+                bare_global_seen |= invocations.iter().any(|invocation| !invocation.is_local);
+                if invocations.iter().any(|invocation| invocation.is_local) && !restore_seen {
+                    local_run_without_prior_restore = true;
+                }
+                restore_seen |= contains_tool_restore(segment);
+            }
         }
-        if !project.contains("dotnet tool run fantomas --check") {
+
+        if !local_run_seen {
             missing_manifest_commands.push(project_path.clone());
         }
-        if project
-            .lines()
-            .any(|line| line.contains("fantomas --check") && !line.contains("dotnet tool run"))
-        {
+        if !local_run_seen || local_run_without_prior_restore {
+            missing_local_restores.push(project_path.clone());
+        }
+        if bare_global_seen {
             bare_global_invocations.push(project_path.clone());
         }
     }
@@ -198,6 +263,65 @@ fn audit_fantomas_lint_targets(workspace_root: &Path) -> FantomasLintTargetAudit
         missing_manifest_commands,
         bare_global_invocations,
     }
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct FantomasInvocation {
+    is_local: bool,
+}
+
+fn lint_commands(project_path: &Path) -> Vec<String> {
+    let project = fs::read_to_string(project_path)
+        .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
+    let parsed: Value = serde_json::from_str(&project)
+        .unwrap_or_else(|error| panic!("parse {}: {error}", project_path.display()));
+    parsed
+        .pointer("/targets/lint/options/commands")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .map(str::to_owned)
+        .collect()
+}
+
+fn shell_segments(command: &str) -> Vec<&str> {
+    command
+        .split([';', '\n'])
+        .flat_map(|segment| segment.split("&&"))
+        .flat_map(|segment| segment.split("||"))
+        .map(str::trim)
+        .filter(|segment| !segment.is_empty())
+        .collect()
+}
+
+fn contains_tool_restore(segment: &str) -> bool {
+    let tokens = shell_tokens(segment);
+    tokens
+        .windows(3)
+        .any(|window| window == ["dotnet", "tool", "restore"])
+}
+
+fn fantomas_invocations(segment: &str) -> Vec<FantomasInvocation> {
+    let tokens = shell_tokens(segment);
+    tokens
+        .windows(2)
+        .enumerate()
+        .filter(|(_, window)| *window == ["fantomas", "--check"])
+        .map(|(index, _)| FantomasInvocation {
+            is_local: index >= 3 && tokens[index - 3..index] == ["dotnet", "tool", "run"],
+        })
+        .collect()
+}
+
+fn shell_tokens(segment: &str) -> Vec<&str> {
+    segment
+        .split_whitespace()
+        .map(|token| {
+            token.trim_matches(|character: char| matches!(character, '(' | ')' | '"' | '\''))
+        })
+        .filter(|token| !token.is_empty())
+        .collect()
 }
 
 #[tokio::main]
@@ -220,29 +344,47 @@ fn assert_audit_detects_noncompliant_candidates() {
     write_project_fixture(
         fixture_root.path(),
         "apps/manifest-backed/project.json",
-        r#"{"commands":["dotnet tool restore","dotnet tool run fantomas --check src"]}"#,
+        r#"{"targets":{"lint":{"options":{"commands":["dotnet tool restore","dotnet tool run fantomas --check src"]}}}}"#,
     );
     write_project_fixture(
         fixture_root.path(),
         "apps/missing-restore/project.json",
-        r#"{"commands":["dotnet tool run fantomas --check src"]}"#,
+        r#"{"targets":{"lint":{"options":{"commands":["dotnet tool run fantomas --check src"]}}}}"#,
     );
     write_project_fixture(
         fixture_root.path(),
         "libs/bare-global/project.json",
-        r#"{"commands":["fantomas --check src"]}"#,
+        r#"{"targets":{"lint":{"options":{"commands":["fantomas --check src"]}}}}"#,
+    );
+    write_project_fixture(
+        fixture_root.path(),
+        "apps/mixed-local-and-global/project.json",
+        r#"{"targets":{"lint":{"options":{"commands":["dotnet tool restore && dotnet tool run fantomas --check src && fantomas --check src"]}}}}"#,
+    );
+    write_project_fixture(
+        fixture_root.path(),
+        "apps/restore-after-run/project.json",
+        r#"{"targets":{"lint":{"options":{"commands":["dotnet tool run fantomas --check src && dotnet tool restore"]}}}}"#,
+    );
+    write_project_fixture(
+        fixture_root.path(),
+        "apps/unrelated-target/project.json",
+        r#"{"description":"fantomas --check must not be audited here","targets":{"build":{"options":{"commands":["dotnet tool restore && fantomas --check src"]}},"lint":{"options":{"commands":["echo lint-only"]}}}}"#,
     );
 
     let audit = audit_fantomas_lint_targets(fixture_root.path());
 
-    assert_eq!(audit.candidates.len(), 3);
-    assert_eq!(audit.evaluated_candidates, 3);
+    assert_eq!(audit.candidates.len(), 5);
+    assert_eq!(audit.evaluated_candidates, 5);
     assert_eq!(
         audit.missing_local_restores,
         vec![
             fixture_root
                 .path()
                 .join("apps/missing-restore/project.json"),
+            fixture_root
+                .path()
+                .join("apps/restore-after-run/project.json"),
             fixture_root.path().join("libs/bare-global/project.json"),
         ]
     );
@@ -252,7 +394,12 @@ fn assert_audit_detects_noncompliant_candidates() {
     );
     assert_eq!(
         audit.bare_global_invocations,
-        vec![fixture_root.path().join("libs/bare-global/project.json")]
+        vec![
+            fixture_root
+                .path()
+                .join("apps/mixed-local-and-global/project.json"),
+            fixture_root.path().join("libs/bare-global/project.json"),
+        ]
     );
 }
 
