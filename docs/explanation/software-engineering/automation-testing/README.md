@@ -1,6 +1,6 @@
 ---
 title: Automation Testing
-description: OSE Platform Automation Testing Documentation Index
+description: Why and where automated checks build confidence in open-sharia-enterprise
 category: explanation
 subcategory: software-engineering
 tags:
@@ -17,26 +17,33 @@ created: 2026-02-08
 
 # Automation Testing
 
-**OSE Platform authoritative documentation** for automation testing frameworks and tools.
+Automated tests turn an expected product behavior into a repeatable check. They help a product person see whether a promise is protected, and help an engineer change code without relying on memory or a lucky manual click-through.
 
-## Overview
+This section explains the testing tools and patterns used in this repository. It is context, not a substitute for the test targets listed in an application's README or the repository quality rules.
 
-This directory contains OSE Platform-specific standards for automation testing tools including end-to-end testing, API testing, and visual regression testing.
+## Start with the question
 
-## Testing Tools
+| If you need to understand…                                      | Start here                                                              |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| How browser journeys are automated                              | [Playwright](./tools/playwright/README.md)                              |
+| Which automation tool pages exist                               | [Testing tools](./tools/README.md)                                      |
+| How automated checks fit alongside unit and integration testing | [Software Development Practices](../development/README.md)              |
+| The repository's required quality gates                         | [Code quality](../../../../repo-governance/development/quality/code.md) |
 
-- **[Tools Index](tools/README.md)** - All automation testing tools organized by category
+## What automated browser checks are for
 
-### End-to-End Testing
+Browser and end-to-end tests are most valuable when they protect a user-visible path: a page opens, a form can be completed, a saved decision appears where expected, or an integration handles a failure clearly. They complement lower-level tests; they do not need to repeat every unit-level decision.
 
-- **[Playwright](tools/playwright/README.md)** - Cross-browser end-to-end testing framework
+The repository uses Playwright for browser automation. Individual apps own their test projects and commands, so use the app README to find the correct command for the product area you are working on.
 
-## Related Documentation
+## Keep the learning path practical
 
-- **[Software Engineering Index](../README.md)** - Parent documentation
-- **[Testing Principles](../../../../repo-governance/development/quality/code.md)** - Quality standards
-- **[TypeScript Standards](../programming-languages/typescript/README.md)** - Language standards
+If you are new to automated testing, start with a small behavior that a reader or user can observe. Describe the intended outcome in plain language, find the existing test boundary, and then use the detailed Playwright guidance when you need selectors, fixtures, traces, or debugging techniques.
 
----
+For the test-first practices that connect product examples to implementation, see [Behavior-Driven Development](../development/behavior-driven-development-bdd/README.md) and [Test-Driven Development](../development/test-driven-development-tdd/README.md).
 
-**Maintainers**: Platform Documentation Team
+## Related reading
+
+- [Software Engineering](../README.md) — the wider engineering map.
+- [Testing tools](./tools/README.md) — the available tool documentation.
+- [Code quality](../../../../repo-governance/development/quality/code.md) — repository-level quality rules.

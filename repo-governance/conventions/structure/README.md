@@ -12,7 +12,7 @@ created: 2026-01-30
 
 # Structure Conventions
 
-Documentation organization frameworks, file naming, and project planning structure. These conventions answer the question: **"How do I ORGANIZE documentation?"**
+Use these conventions to decide where a document belongs, how to name it, and how planning records move through their lifecycle. They answer the practical question: **"How should this repository stay navigable as it grows?"**
 
 ## Purpose
 

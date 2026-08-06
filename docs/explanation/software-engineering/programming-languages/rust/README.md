@@ -20,7 +20,7 @@ created: 2026-03-09
 
 # Rust
 
-**This is THE authoritative reference** for Rust coding standards in OSE Platform.
+Use this reference when you are working in a Rust CLI, library, or service within OSE Platform. It is the authoritative Rust standard, with the repository-specific decisions that matter after you know the language fundamentals.
 
 All Rust code written for the OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks code review and merge approval.
 
@@ -82,9 +82,9 @@ OSE Platform Rust applications MUST use the following stack:
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Rust-specific release documentation location
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Rust learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+These are **OSE Platform-specific style guides**, not a first introduction to Rust. If ownership, borrowing, and error handling are new to you, use the learning path first; otherwise, continue with the standards that apply to your change.
 
 **You MUST understand Rust fundamentals before using these standards:**
 

@@ -1,6 +1,6 @@
 ---
 title: How to Set Up Your Development Environment
-description: Install and configure all tools needed to develop, test, and contribute to the open-sharia-enterprise monorepo
+description: Install and configure the tools needed to develop and test OSE Public locally
 category: how-to
 tags:
   - onboarding
@@ -14,9 +14,9 @@ created: 2026-04-04
 
 # How to Set Up Your Development Environment
 
-This guide walks you through installing every tool required to work on any project in this
-monorepo. After completing it, your pre-commit hooks, pre-push hooks, unit tests, integration
-tests, and E2E tests will all work locally.
+This guide walks you through installing the tools needed to work on an authorized OSE Public
+project locally. After completing it, the repository can verify your toolchain, Git hooks, and the
+tests relevant to the project you are changing.
 
 > **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) were extracted to
 > [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. If you need to set
@@ -39,7 +39,8 @@ but they all share the same Nx build system and git hooks.
 
 ## Prerequisites
 
-- **macOS** (primary) or **Linux** (Debian/Ubuntu). Windows is not supported.
+- **macOS** (primary) or **Linux** (Debian/Ubuntu). Windows is not supported. WSL2 may work, but it
+  is not supported or verified by this repository.
 - **Admin access** to install system packages.
 - **~5 GB disk space** for all runtimes, Docker images, and Playwright browsers.
 
@@ -61,7 +62,7 @@ source ~/.zshrc
 
 # 4. Clone and bootstrap
 git clone https://github.com/wahidyankf/ose-public.git
-cd open-sharia-enterprise
+cd ose-public
 npm install          # Installs deps + git hooks
 npx playwright install  # Installs test browsers
 
@@ -69,7 +70,8 @@ npx playwright install  # Installs test browsers
 npm run doctor
 ```
 
-If doctor shows all green, you are ready. Run `npx nx affected -t typecheck lint test:quick specs:coverage`
+If doctor shows all green, you are ready. Run
+`npm exec nx -- affected -t typecheck,lint,test:quick,test:specs`
 to verify the full pre-push pipeline.
 
 ## Full Setup
@@ -133,16 +135,16 @@ source ~/.zshrc   # or source ~/.bashrc
 After installation, entering the repo directory auto-installs the correct versions:
 
 ```bash
-cd open-sharia-enterprise
-node --version   # Expected: v24.13.1
-npm --version    # Expected: 11.10.1
+cd ose-public
+node --version   # Expected: v24.16.0
+npm --version    # Expected: 11.11.0
 ```
 
 If the versions don't match, force install:
 
 ```bash
-volta install node@24.13.1
-volta install npm@11.10.1
+volta install node@24.16.0
+volta install npm@11.11.0
 ```
 
 ### Step 4: Rust Toolchain
@@ -164,7 +166,7 @@ rustc --version
 
 ```bash
 git clone https://github.com/wahidyankf/ose-public.git
-cd open-sharia-enterprise
+cd ose-public
 npm install
 ```
 
@@ -174,27 +176,12 @@ npm install
 2. Runs `npm run doctor` automatically (postinstall script) to verify your toolchain
 3. Sets up Husky git hooks (pre-commit, commit-msg, pre-push)
 
-### Step 6: Restore Environment Files
+### Step 6: Keep local environment data out of onboarding
 
-`.env` files are gitignored but required by many apps. If you have a previous backup,
-restore them:
-
-```bash
-# Restore .env files from default backup location (~/ose-public-env-backup)
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env restore --force
-
-# Also restore uncommitted config files (AI tool settings, Docker overrides, etc.)
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env restore --force --include-config
-```
-
-If this is a fresh setup with no backup, copy `.env.example` to `.env` in each app you
-plan to work on and fill in the required values.
-
-To create a backup for future use:
-
-```bash
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env backup --include-config
-```
+Do not restore, copy, or commit a real `.env` file as part of a first checkout. The public
+onboarding path does not require private environment values. When an application eventually needs
+configuration, read its README and its tracked `.env.example` only; keep real values local and
+uncommitted.
 
 ### Step 7: Install Playwright Browsers
 
@@ -227,17 +214,15 @@ step above.
 **Pre-commit** (runs on every commit — Prettier, markdownlint, lint-staged):
 
 ```bash
-# Make a trivial change and commit
-git commit --allow-empty -m "test: verify pre-commit hook"
-# If it succeeds, the hook works. Undo:
-git reset HEAD~1
+# Run the staged-file gate without creating a throwaway commit
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=pre-commit
 ```
 
-**Pre-push** (runs on every push — typecheck, lint, test:quick, specs:coverage):
+**Pre-push** (runs affected quality and specification checks):
 
 ```bash
 # Dry-run: execute the same targets pre-push would
-npx nx affected -t typecheck lint test:quick specs:coverage
+npm exec nx -- affected -t typecheck,lint,test:quick,test:specs
 ```
 
 This also warms the Nx cache, making subsequent pushes fast.
@@ -246,7 +231,7 @@ This also warms the Nx cache, making subsequent pushes fast.
 
 ```bash
 # Run the OrganicLever backend's integration suite (uses Docker + PostgreSQL)
-nx run organiclever-be:test:integration
+npm exec nx -- run organiclever-be:test:integration
 ```
 
 If this passes, Docker and database integration work correctly.
@@ -261,11 +246,12 @@ the matching step above.
 
 ### Pre-push hook times out
 
-The pre-push hook runs `typecheck`, `lint`, `test:quick`, and `specs:coverage` for affected
-projects. On first run with a cold cache, this takes several minutes. Warm the cache first:
+The pre-push hook runs affected quality and specification checks, including `typecheck`, `lint`,
+`test:quick`, and `test:specs`. On first run with a cold cache, this can take a while. Warm the
+cache first:
 
 ```bash
-npx nx affected -t typecheck lint test:quick specs:coverage
+npm exec nx -- affected -t typecheck,lint,test:quick,test:specs
 ```
 
 Subsequent pushes reuse cached results and complete in seconds.

@@ -12,12 +12,11 @@ created: 2026-04-26
 
 # Rust Documentation Templates
 
-This directory contains reusable code templates and patterns for Rust development.
+This directory is reserved for reusable Rust documentation templates. It is intentionally empty today, so it does not yet offer a copy-and-adapt starting point.
 
 ## Purpose
 
-Templates provide standardized starting points for common Rust patterns,
-reducing repetition and ensuring consistency across documentation and code examples.
+When templates are added, they will provide a documented starting point for common Rust patterns without pretending that an unreviewed snippet is a complete implementation.
 
 ## Template Naming Convention
 
@@ -25,9 +24,9 @@ Templates use plain kebab-case filenames (e.g., `axum-handler.md`). The containi
 
 ## Templates
 
-This directory is currently a placeholder. Templates will be added as common patterns are identified.
+No templates are published in this directory yet. Use the [Rust programming-language overview](../README.md) and the relevant architecture standards instead of assuming that `axum-handler.md` already exists.
 
-Suggested starting template: `axum-handler.md`
+Candidate template, once a recurring and reviewed need exists: `axum-handler.md`.
 
 ## Usage
 

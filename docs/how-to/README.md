@@ -1,6 +1,6 @@
 ---
 title: "How-To Guides"
-description: Problem-solving guides for open-sharia-enterprise
+description: Problem-solving guides for working safely and confidently in OSE Public
 category: how-to
 tags:
   - index
@@ -11,15 +11,21 @@ created: 2025-11-22
 
 # How-To Guides
 
-Problem-solving guides for common tasks in the open-sharia-enterprise project. These documents provide practical, step-by-step instructions for accomplishing specific goals.
+Use these guides once you know what you want to do. If you are new to OSE, begin with
+[Getting started with OSE Public](../tutorials/getting-started-with-ose-public.md) first; tutorials
+teach a journey, while how-to guides help you solve one specific problem.
 
-## 📋 Contents
+## Choose a task
 
-- [How to Add a New App](./add-new-app.md) - Step-by-step guide for creating a new application in the `apps/` folder following the Nx monorepo conventions
-- [How to Add a New Library](./add-new-lib.md) - Step-by-step guide for creating a new reusable library in the `libs/` folder
-- [How to Add a Programming Language](./add-programming-language.md) - Step-by-step guide for adding a new programming language to ayokoding-www (e.g., Kotlin, TypeScript, Rust, Clojure) following the Programming Language Content Standard. Covers planning, setup, content creation (5 tutorials, cookbook, how-to guides, best practices), validation, and deployment
-- [How to Create a New Skill](./create-new-skill.md) - Guide for creating a new Skill in `.claude/skills/` for Claude Code's Skills auto-loading feature
-- [How to Set Up Your Development Environment](./setup-development-environment.md) - Install and configure all tools needed to develop, test, and contribute to the monorepo (19 tools across 11 languages)
-- [How to Organize Your Work](./organize-work.md) - Choose the right folder (plans, docs) for different types of work
-- [How to Run Nx Commands](./run-nx-commands.md) - Common Nx workflows and commands for working with the monorepo
-- [How to Fix Bugs with Regression Tests and Demand Systematic Live-Site Coverage](./fix-bugs-with-regression-tests.md) - Pin every bug fix with a reproducing test in the same commit/PR, and apply the six enumerate-not-sample forcing-functions when testing live sites
+- [Set up your development environment](./setup-development-environment.md) — install the tools
+  verified by the repository doctor.
+- [Run Nx commands](./run-nx-commands.md) — discover projects and run their available targets.
+- [Add a new app](./add-new-app.md) or [add a new library](./add-new-lib.md) — extend an existing
+  authorized product area.
+- [Organize your work](./organize-work.md) — decide whether a lasting explanation belongs in `docs/`
+  or a delivery record belongs in `plans/`.
+- [Fix bugs with regression tests](./fix-bugs-with-regression-tests.md) — turn a report into a
+  repeatable check before changing implementation.
+
+External contribution intake is closed. These guides describe work in an authorized repository
+session; they do not promise review of externally submitted changes.

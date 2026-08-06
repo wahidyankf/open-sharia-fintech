@@ -1,6 +1,6 @@
 ---
 title: "Workflow Meta Documentation"
-description: ""
+description: Reference material for designing workflows that are understandable and reusable
 category: explanation
 subcategory: workflows
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Workflow Meta Documentation
 
-Foundational workflow patterns and conventions defining how workflows are structured.
+Use this reference when you are creating or reshaping a workflow. It explains the shared structure that makes workflows understandable, composable, and reviewable.
 
 ## Purpose
 

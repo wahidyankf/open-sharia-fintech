@@ -17,7 +17,7 @@ created: 2026-02-09
 
 # Behavior-Driven Development (BDD)
 
-**This is THE authoritative reference** for Behavior-Driven Development standards in OSE Platform.
+BDD gives product people, domain experts, and engineers one concrete way to discuss what a change should do. This is the authoritative BDD standard for OSE Platform.
 
 All acceptance criteria and stakeholder-facing specifications MUST follow the BDD methodology and standards documented here.
 
@@ -41,9 +41,9 @@ All acceptance criteria and stakeholder-facing specifications MUST follow the BD
 - Jest-Cucumber (use Cucumber.js)
 - Writing step definitions before scenarios
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Behavior-Driven Development learning path. These are **OSE Platform-specific BDD standards**, not educational tutorials.
+These are **OSE Platform-specific BDD standards**, not a first lesson in Gherkin. If feature files and examples are new to you, use the learning material first; otherwise, start with the standard you need.
 
 **You MUST understand BDD fundamentals before using these standards:**
 

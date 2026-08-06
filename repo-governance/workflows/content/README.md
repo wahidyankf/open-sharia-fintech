@@ -14,8 +14,9 @@ created: 2026-05-14
 
 # Content Workflows
 
-Workflows for content creation, format conversion, and fidelity validation. These workflows ensure
-content quality across documents, reference materials, and Markdown representations.
+Use these workflows when a source document must become a trustworthy repository artifact. They cover
+conversion and fidelity checks, so a reader can rely on the resulting Markdown rather than guessing
+what changed.
 
 ## Workflows in This Family
 

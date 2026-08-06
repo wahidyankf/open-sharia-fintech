@@ -1,6 +1,6 @@
 ---
-title: "Security Frameworks"
-description: Industry security frameworks and standards reference documentation
+title: Security Frameworks
+description: Security-framework reference material used by open-sharia-enterprise
 category: reference
 subcategory: security
 tags:
@@ -14,12 +14,13 @@ created: 2026-05-14
 
 # Security Frameworks
 
-Industry security frameworks and standards referenced by the open-sharia-enterprise project.
+These references give the team a shared starting point for security conversations. They are context, not a claim of certification or a substitute for applying the repository's security practices to a specific change.
 
-## Contents
+## Available framework reference
 
-- [NIST SP 800-53 Rev 5](./nist-sp-800-53-rev5.md) - NIST Special Publication 800-53 Revision 5: Security and Privacy Controls for Information Systems and Organizations. Verbatim Markdown conversion of the official PDF. Covers security and privacy control families, baselines, and implementation guidance for federal information systems.
+- [NIST SP 800-53 Rev. 5](./nist-sp-800-53-rev5.md) — Markdown conversion of the official control catalog, covering security and privacy control families, baselines, and implementation guidance for federal information systems.
 
-## Related Documentation
+## Related reading
 
-- [Security Reference](../README.md) - Parent security reference index
+- [Security Reference](../README.md) — when and how to use this material.
+- [Security conventions](../../../../repo-governance/conventions/security/README.md) — the repository's working rules.

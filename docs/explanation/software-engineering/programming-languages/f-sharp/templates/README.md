@@ -12,12 +12,11 @@ created: 2026-03-09
 
 # F# Documentation Templates
 
-This directory contains reusable code templates and patterns for F# development.
+This directory is reserved for reusable F# documentation templates. It is intentionally empty today, so it does not yet offer a copy-and-adapt starting point.
 
 ## Purpose
 
-Templates provide standardized starting points for common F# patterns,
-reducing repetition and ensuring consistency across documentation and code examples.
+When templates are added, they will provide a documented starting point for common F# patterns without pretending that an unreviewed snippet is a complete implementation.
 
 ## Template Naming Convention
 
@@ -25,15 +24,15 @@ Templates use plain kebab-case filenames (e.g., `giraffe-handler.md`). The conta
 
 ## Templates
 
-This directory is currently a placeholder. Templates will be added as common patterns are identified.
+No templates are published in this directory yet. Use the [F# programming-language overview](../README.md) and the relevant architecture standards instead of assuming that the example filenames below already exist.
 
-Suggested starting templates:
+Candidate templates, once a recurring and reviewed need exists:
 
-- `giraffe-handler.md` - Giraffe HttpHandler composition pattern
-- `result-railway.md` - Railway-oriented programming with Result type
-- `expecto-suite.md` - Expecto test module structure
-- `discriminated-union-domain.md` - Domain modeling with discriminated unions
-- `mailboxprocessor-actor.md` - MailboxProcessor actor pattern
+- `giraffe-handler.md` — Giraffe `HttpHandler` composition pattern
+- `result-railway.md` — railway-oriented programming with `Result`
+- `expecto-suite.md` — Expecto test module structure
+- `discriminated-union-domain.md` — domain modeling with discriminated unions
+- `mailboxprocessor-actor.md` — `MailboxProcessor` actor pattern
 
 ## Usage
 

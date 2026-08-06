@@ -1,49 +1,71 @@
-# ose-app-web
+# OSE Application web
 
-Next.js 16 frontend for OSE Application (Governance, Risk, and Compliance) platform.
+The web client for OSE Application, a pre-alpha Governance, Risk, and Compliance (GRC) product.
+It is being shaped for compliance officers and risk teams who need to compare regulator-published
+requirements with their organisation's internal policies.
 
-## Quick Start
+## What the product is intended to do
 
-1. Install dependencies: `npm install`
-2. Copy env: `cp .env.example .env.local`
-3. Start dev server: `nx dev ose-app-web`
-4. Open: <http://localhost:3300>
+OSE Application is designed to help teams:
 
-## Commands
+- bring regulatory documents and internal policies into one place;
+- use AI-assisted analysis to identify gaps between them; and
+- track each finding as a traceable GapItem that connects a regulatory clause to a missing policy
+  area.
 
-| Command                         | Description                    |
-| ------------------------------- | ------------------------------ |
-| `nx dev ose-app-web`            | Dev server (port 3300)         |
-| `nx build ose-app-web`          | Production build               |
-| `nx run ose-app-web:test:quick` | Unit tests + coverage          |
-| `nx run ose-app-web:typecheck`  | TypeScript typecheck           |
-| `nx run ose-app-web:lint`       | ESLint + oxlint                |
-| `nx run ose-app-web:codegen`    | Generate TS types from OpenAPI |
+The current interface is a bootstrap scaffold, not a complete product workflow. Expect the
+experience and architecture to evolve as the application moves beyond pre-alpha.
 
-## Tech Stack
+## Run it locally
 
-- **Next.js 16** — App Router, React 19
-- **TypeScript** — Strict mode
-- **tRPC** — Type-safe API calls to ose-be
-- **Tailwind v4** — Styling
-- **@open-sharia-enterprise/web-ui** — Shared component library
-- **Vitest** — Unit testing
-- **Storybook** — Component development
+From the repository root, install the workspace dependencies and start the web client:
 
-## Deployment
+```bash
+npm install
+npm exec nx -- dev ose-app-web
+```
 
-- **Staging**: served by Vercel from the `stag-ose-app-web` branch, which the scheduled
-  `ose-app-test-local-deploy-stag.yml` workflow force-pushes from `main` after the
-  local-stack test gate passes. The staging URL is kept **private** (Vercel Deployment
-  Protection) — it lives only in the `ose-app-staging` GitHub Environment var
-  `WEB_BASE_URL`, never in a tracked file.
-- **Production**: `prod-ose-app-web` → `app.oseplatform.com`. Production CD is **deferred** —
-  no production-promotion workflow exists yet.
-- **Deployer agent**: [`apps-ose-app-web-deployer`](../../.claude/agents/apps-ose-app-web-deployer.md).
+Then open <http://localhost:3300>. The app currently has no application-defined environment
+variables, so no local configuration is required to run this screen.
 
-## Related
+To run the web client alongside the OSE API and its development database, use the local stack:
 
-- [ose-be](../ose-be/) — F#/Giraffe backend API
-- [ose-be-e2e](../ose-be-e2e/) — BE E2E tests
-- [ose-app-web-e2e](../ose-app-web-e2e/) — FE E2E tests
-- [specs/apps/ose](../../specs/apps/ose/) — DDD specs and behavior
+```bash
+docker compose -f infra/dev/ose-app/docker-compose.yml up --build -d
+```
+
+## Useful commands
+
+Run these from the repository root.
+
+| Command                                           | When to use it                                                             |
+| ------------------------------------------------- | -------------------------------------------------------------------------- |
+| `npm exec nx -- dev ose-app-web`                  | Start the local development server on port 3300.                           |
+| `npm exec nx -- build ose-app-web`                | Produce a production build.                                                |
+| `npm exec nx -- run ose-app-web:test:quick`       | Run the app's type, lint, unit, coverage, and specification checks.        |
+| `npm exec nx -- run ose-app-web:test:unit`        | Run unit tests.                                                            |
+| `npm exec nx -- run ose-app-web:test:integration` | Run integration tests.                                                     |
+| `npm exec nx -- run ose-app-web:lint`             | Run accessibility-aware Oxlint and ESLint checks.                          |
+| `npm exec nx -- run ose-app-web:codegen`          | Regenerate TypeScript API types from the OSE Application OpenAPI contract. |
+| `npm exec nx -- run ose-app-web:storybook`        | Explore components locally with Storybook on port 6006.                    |
+
+## How the pieces fit together
+
+- This app is a Next.js 16 and TypeScript frontend. Its routes and shared UI live in
+  [`src/`](./src/).
+- [`@open-sharia-enterprise/web-ui`](../../libs/web-ui/) provides the shared UI components and
+  design tokens used by the app.
+- [`ose-be`](../ose-be/) is the OSE Application backend.
+- The [OpenAPI contract](../../specs/apps/ose/containers/contracts/) is the source of truth for
+  the API shared by the frontend and backend. The `codegen` target keeps generated TypeScript
+  types in sync with that contract.
+- [Product, architecture, and behaviour specifications](../../specs/apps/ose/) explain the
+  intended user outcomes and acceptance scenarios.
+
+## Next places to look
+
+- [Frontend acceptance scenarios](../../specs/apps/ose/behavior/app-web/gherkin/) describe the
+  observable browser behaviour.
+- [Browser end-to-end tests](../ose-app-web-e2e/) exercise those scenarios with Playwright.
+- [Development environment setup](../../docs/how-to/setup-development-environment.md) covers the
+  tools used across the repository.

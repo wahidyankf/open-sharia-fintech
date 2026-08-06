@@ -16,7 +16,7 @@ created: 2026-02-09
 
 # Test-Driven Development (TDD)
 
-**This is THE authoritative reference** for Test-Driven Development standards in OSE Platform.
+TDD is a practical way to turn a small, observable expectation into safer code. This is the authoritative TDD standard for OSE Platform, with the repository-specific rules that sit around the familiar red–green–refactor loop.
 
 All code developed for the OSE Platform MUST follow the TDD methodology and standards documented here.
 
@@ -30,16 +30,16 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **REQUIRED Test Runner:**
 
-- **Nx Monorepo**: `nx run [project-name]:test:quick` (pre-push gate), `nx run [project-name]:test:unit` (isolated unit tests), `nx affected -t test:quick` (affected projects). See [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.
+- **Nx Monorepo**: `npm exec nx -- run [project-name]:test:quick` (pre-push gate), `npm exec nx -- run [project-name]:test:unit` (isolated unit tests), `npm exec nx -- affected -t test:quick` (affected projects). See [Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md) for canonical target names.
 
 **PROHIBITED:**
 
 - Jest (use Vitest for TypeScript)
 - Mocha/Chai (use Vitest)
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Test-Driven Development learning path. These are **OSE Platform-specific TDD standards**, not educational tutorials.
+These are **OSE Platform-specific TDD standards**, not a first lesson in unit testing. If red–green–refactor is new to you, use the learning material first; otherwise, continue to the standards below.
 
 **You MUST understand TDD fundamentals before using these standards:**
 

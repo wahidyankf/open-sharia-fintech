@@ -12,9 +12,9 @@ created: 2026-05-24
 
 # Security Conventions
 
-Security conventions governing how agents and contributors interact with sensitive repository
-artifacts. These conventions define rules that reduce the risk of secret exposure, accidental
-commits of sensitive files, and related security events.
+Read these conventions before a change might touch configuration, credentials, or environment files.
+They protect people and the project by keeping sensitive values out of tracked content and by making
+the safe path explicit.
 
 **Governance**: All conventions in this directory implement the [Core Principles](../../principles/README.md)
 (Layer 1) and are part of the [six-layer governance architecture](../../repository-governance-architecture.md).

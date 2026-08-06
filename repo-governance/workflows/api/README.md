@@ -14,7 +14,7 @@ created: 2026-07-20
 
 # API Workflows
 
-Orchestrated multi-step processes for API quality automation against a **running** service.
+Use these workflows when an API needs to be checked as a real client experiences it. They test a **running** service against its contract, then turn evidence into a focused fix path.
 
 ## Available Workflows
 

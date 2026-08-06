@@ -1,62 +1,36 @@
 # organiclever-be-e2e
 
-End-to-end tests for the OrganicLever backend API using playwright-bdd
-and Playwright's `APIRequestContext` (no browser required).
+This project checks the OrganicLever backend through its HTTP API. It uses Playwright’s request
+client rather than a browser, so the scenarios stay focused on product behavior at the API boundary.
+🔬
 
-**Behavior specs** (source of truth):
-[`specs/apps/organiclever/behavior/organiclever-be/gherkin/`](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/)
-
-## Prerequisites
-
-Backend must be running on `http://localhost:8202` (or `API_BASE_URL`):
+## Run the API suite
 
 ```bash
-nx dev organiclever-be
-# OR via Docker Compose:
-# cd apps/organiclever-be && docker compose -f docker-compose.integration.yml up -d
+# Install test dependencies once on this machine
+npm exec nx -- run organiclever-be-e2e:install
+
+# Start the backend at http://localhost:8202
+npm exec nx -- run organiclever-be:dev
+
+# In another terminal, run the scenarios
+npm exec nx -- run organiclever-be-e2e:test:e2e
 ```
 
-## Setup
+`npm exec nx -- run organiclever-be-e2e:test:e2e:ui` opens Playwright’s UI, and
+`npm exec nx -- run organiclever-be-e2e:test:e2e:report` opens the latest HTML report.
+
+## Target a different environment
+
+The default API address is `http://localhost:8202`. Set `API_BASE_URL` to test another running
+environment. Do not put credentials or access tokens in this README or any tracked configuration.
+
+## Keep it healthy
 
 ```bash
-nx install organiclever-be-e2e   # Install Playwright (one-time)
+npm exec nx -- run organiclever-be-e2e:test:quick
+npm exec nx -- run organiclever-be-e2e:test:specs
 ```
 
-## Running Tests
-
-```bash
-# Run all BDD E2E tests headlessly
-nx run organiclever-be-e2e:test:e2e
-
-# Interactive Playwright UI
-nx run organiclever-be-e2e:test:e2e:ui
-
-# View HTML report from last run
-nx run organiclever-be-e2e:test:e2e:report
-
-# Pre-push quality gate (lint + typecheck)
-nx run organiclever-be-e2e:test:quick
-```
-
-`test:e2e` runs on a scheduled cron (twice daily), not on pre-push.
-
-## Environment Variables
-
-| Variable       | Default                 | Description                  |
-| -------------- | ----------------------- | ---------------------------- |
-| `API_BASE_URL` | `http://localhost:8202` | Backend base URL             |
-| `CI`           | unset                   | Enables CI mode (no retries) |
-
-## Project Structure
-
-```
-apps/organiclever-be-e2e/
-├── playwright.config.ts    # Playwright + playwright-bdd config
-├── steps/                   # BDD step implementations
-└── utils/response-store.ts  # Shared APIResponse state between steps
-```
-
-## Related
-
-- [Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/) — feature files (source of truth)
-- [organiclever-be](../organiclever-be/README.md) — backend under test
+The expected behavior is described in
+[the OrganicLever backend Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md).

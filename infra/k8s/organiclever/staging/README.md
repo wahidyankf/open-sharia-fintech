@@ -1,17 +1,19 @@
-# Staging Environment
+# OrganicLever staging Kubernetes placeholder
 
-**Status**: Placeholder — Kubernetes manifests to be added.
+There are no staging Kubernetes manifests in this directory yet. This is a
+reservation for a future, reviewed staging deployment—not an instruction to
+create, apply, or infer configuration. 🛑
 
-For environment details, Docker images, and deployment configuration see
-[specs/apps/organiclever/containers/deployment.md](../../../../specs/apps/organiclever/containers/deployment.md).
+## Before this becomes deployable
 
-**Note**: The `SPRING_PROFILES_ACTIVE` reference in this directory is stale — `organiclever-be`
-uses F#/Giraffe (ASP.NET Core), not Spring Boot. The correct env var is
-`ASPNETCORE_ENVIRONMENT=Staging`. Fix planned alongside the Kubernetes manifest authoring.
+A staging-ready change must provide, at minimum:
 
-Planned resources:
+- reviewed manifests that match the active OrganicLever applications;
+- a secret-safe configuration contract with no real values in Git;
+- health and rollout behavior that can be verified; and
+- an operational plan that defines what staging proves before any wider use.
 
-- Deployment manifests
-- Service definitions
-- Ingress rules
-- ConfigMaps and Secrets
+Until then, use the [OrganicLever web README](../../../../apps/organiclever-app-web/README.md)
+for product exploration and the [OrganicLever backend README](../../../../apps/organiclever-be/README.md)
+for server-side development. Product intent belongs in the
+[OrganicLever specifications](../../../../specs/apps/organiclever/README.md).

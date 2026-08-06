@@ -1,280 +1,59 @@
-# Apps Folder
+# Applications
 
-## Purpose
+`apps/` contains the products, services, command-line tools, and end-to-end test projects that can be built and run from this workspace. Start with the product or capability you need; each app README has its local requirements and commands.
 
-The `apps/` directory contains **deployable application projects** (executables). These are the final artifacts that can be run, deployed, and served to end users.
+## Product map
 
-## Naming Convention
+| If you are working on                        | Start here                                                                                                  | Purpose                                                                  |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| OSE's public presence                        | [ose-www](./ose-www/README.md)                                                                              | Public website for Open Sharia Enterprise and its updates.               |
+| OSE governance, risk, and compliance product | [ose-app-web](./ose-app-web/README.md) and [ose-be](./ose-be/README.md)                                     | The product web client and its REST API backend.                         |
+| AyoKoding                                    | [ayokoding-www](./ayokoding-www/README.md)                                                                  | Educational content platform.                                            |
+| OrganicLever's public presence               | [organiclever-www](./organiclever-www/README.md)                                                            | Marketing website for the OrganicLever productivity platform.            |
+| OrganicLever's life journal                  | [organiclever-app-web](./organiclever-app-web/README.md) and [organiclever-be](./organiclever-be/README.md) | Local-first journal and productivity tracker, with its REST API backend. |
+| Wahidyan Kresna Fridayoka's site             | [wahidyankf-www](./wahidyankf-www/README.md)                                                                | Personal portfolio, CV, and projects site.                               |
 
-Apps follow the naming pattern: **`{domain}-{part}`**
+## Tools
 
-Where `{part}` describes the role and technology stack:
+| Tool                                       | Purpose                                           |
+| ------------------------------------------ | ------------------------------------------------- |
+| [rhino-cli](./rhino-cli/README.md)         | Repository hygiene, validation, and automation.   |
+| [crane-cli](./crane-cli/README.md)         | Deterministic PDF-to-Markdown processing.         |
+| [ayokoding-cli](./ayokoding-cli/README.md) | Internal-link validation for AyoKoding content.   |
+| [ose-cli](./ose-cli/README.md)             | Internal-link validation for OSE website content. |
 
-| Part pattern            | Examples                                              | Description                              |
-| ----------------------- | ----------------------------------------------------- | ---------------------------------------- |
-| `be-{lang}-{framework}` | `be-golang-gin`, `be-java-springboot`, `be-ts-effect` | Backend service                          |
-| `fe-{lang}-{framework}` | `fe-ts-nextjs`, `fe-dart-flutterweb`                  | Frontend application                     |
-| `fs-{lang}-{framework}` | `fs-ts-nextjs`                                        | Fullstack application (FE + BE combined) |
-| `cli`                   | `ayokoding-cli`, `rhino-cli`, `ose-cli`               | CLI tool                                 |
-| `web`                   | `ayokoding-www`, `ose-www`                            | Web platform (content site)              |
-| `{role}-e2e`            | `be-e2e`, `fe-e2e`, `organiclever-app-web-e2e`        | E2E test project for the named role      |
-| `be` / `fe`             | `organiclever-be`, `organiclever-app-web`             | Simple single-technology projects        |
+## End-to-end tests
 
-**Language abbreviations** (`{lang}`): `ts` (TypeScript), `golang` (Go), `java` (Java), `kt` (Kotlin),
-`py` (Python), `rs` (Rust), `cs` (C#), `fs` (F#), `clj` (Clojure), `dart` (Dart), `ex` (Elixir).
+End-to-end projects keep browser and API behavior separate from the application they exercise. Use the app README for prerequisites, then run the matching project's `test:e2e` target.
 
-**Framework abbreviations** (`{framework}`): `nextjs`, `gin`, `springboot`, `ktor`, `fastapi`, `axum`,
-`aspnetcore`, `giraffe`, `pedestal`, `phoenix`, `vertx`, `effect`, `tanstack-start`, `flutterweb`.
+| Product or service               | Browser tests                                                    | API tests                                                      |
+| -------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------- |
+| OSE public website               | [ose-www-fe-e2e](./ose-www-fe-e2e/)                              | [ose-www-be-e2e](./ose-www-be-e2e/)                            |
+| OSE product                      | [ose-app-web-e2e](./ose-app-web-e2e/README.md)                   | [ose-be-e2e](./ose-be-e2e/README.md)                           |
+| AyoKoding                        | [ayokoding-www-fe-e2e](./ayokoding-www-fe-e2e/)                  | [ayokoding-www-be-e2e](./ayokoding-www-be-e2e/)                |
+| OrganicLever public website      | [organiclever-www-fe-e2e](./organiclever-www-fe-e2e/README.md)   | [organiclever-www-be-e2e](./organiclever-www-be-e2e/README.md) |
+| OrganicLever product             | [organiclever-app-web-e2e](./organiclever-app-web-e2e/README.md) | [organiclever-be-e2e](./organiclever-be-e2e/README.md)         |
+| Wahidyan Kresna Fridayoka's site | [wahidyankf-www-fe-e2e](./wahidyankf-www-fe-e2e/README.md)       | —                                                              |
 
-### Current Apps
+## Work with an app
 
-- `ose-www` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Next.js 16 content platform (TypeScript, tRPC)
-- `ose-www-be-e2e` - Playwright BE E2E tests for ose-www tRPC API
-- `ose-www-fe-e2e` - Playwright FE E2E tests for ose-www UI
-- `ayokoding-www` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Next.js 16 fullstack content platform (TypeScript, tRPC)
-- `ayokoding-www-be-e2e` - Playwright BE E2E tests for ayokoding-www tRPC API
-- `ayokoding-www-fe-e2e` - Playwright FE E2E tests for ayokoding-www UI
-- `ayokoding-cli` - AyoKoding CLI tool for link validation - Go application
-- `crane-cli` - Content Retrieval And Normalization Engine CLI for PDF-to-Markdown pipeline - F# application
-- `rhino-cli` - Repository management CLI tools - Rust application (ported from Go 2026-05-23)
-- `ose-cli` - OSE Platform CLI tool for link validation - Go application
-- `organiclever-app-web` - OrganicLever app frontend (www.organiclever.com) - Next.js app (port 3202)
-- `organiclever-be` - OrganicLever backend API (F#/Giraffe) - F# application (port 8202)
-- `organiclever-app-web-e2e` - FE E2E tests for organiclever-app-web - Playwright (browser testing)
-- `organiclever-be-e2e` - BE E2E tests for organiclever-be - Playwright (API testing)
-- `wahidyankf-www` - Wahidyankf personal portfolio ([www.wahidyankf.com](https://www.wahidyankf.com)) - Next.js 16 app (port 3201)
-- `wahidyankf-www-fe-e2e` - FE E2E tests for wahidyankf-www - Playwright-BDD with axe-core
-
-## Application Characteristics
-
-- **Consumers** - Apps import and use libs, but don't export anything for reuse
-- **Isolated** - Apps should NOT import from other apps
-- **Deployable** - Each app is independently deployable
-- **Specific** - Contains app-specific logic and configuration
-- **Entry Points** - Has clear entry points (index.ts, main.ts, etc.)
-
-## App Structure Examples
-
-### Next.js App (ose-www)
-
-```
-apps/ose-www/
-├── content/                 # Markdown content files
-├── src/                     # Application source code
-│   ├── app/                 # Next.js App Router pages
-│   ├── components/          # Reusable React components
-│   └── lib/                 # Utility functions and helpers
-├── public/                  # Static assets
-├── next.config.ts           # Next.js configuration
-├── tsconfig.json            # TypeScript configuration
-├── vercel.json              # Deployment configuration
-├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-### Go CLI Application (Current)
-
-```
-apps/ayokoding-cli/
-├── cmd/                     # CLI commands
-├── internal/                # Internal packages
-├── dist/                    # Build output (gitignored)
-├── main.go                  # Entry point
-├── go.mod                   # Go module definition
-├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-```
-apps/rhino-cli/
-├── cmd/                     # CLI commands
-├── internal/                # Internal packages
-├── dist/                    # Build output (gitignored)
-├── main.go                  # Entry point
-├── go.mod                   # Go module definition
-├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-```
-apps/ose-cli/
-├── internal/                # Internal packages (links/)
-├── cmd/                     # CLI commands
-├── dist/                    # Build output (gitignored)
-├── main.go                  # Entry point
-├── go.mod                   # Go module definition
-├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-### Playwright E2E Test App (Current)
-
-```
-apps/organiclever-be-e2e/
-├── playwright.config.ts         # Playwright configuration (baseURL, reporters)
-├── package.json                 # Pinned @playwright/test dependency
-├── tsconfig.json                # TypeScript config (extends workspace base)
-├── project.json                 # Nx configuration
-├── tests/
-│   ├── e2e/                     # Feature-grouped specs
-│   └── utils/                   # Shared request utilities
-└── README.md                    # App documentation
-```
-
-### Next.js Application (Current)
-
-```
-apps/organiclever-app-web/
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── dashboard/          # Dashboard route
-│   │   ├── login/              # Login route
-│   │   ├── api/                # API route handlers
-│   │   ├── layout.tsx          # Root layout
-│   │   └── page.tsx            # Root page
-│   ├── components/             # Reusable React components
-│   │   └── ui/                 # shadcn-ui component library
-│   ├── contexts/               # Shared React contexts
-│   ├── data/                   # JSON data files
-│   └── lib/                    # Utility functions and helpers
-├── public/                     # Static assets
-├── components.json             # shadcn-ui configuration
-├── next.config.mjs             # Next.js configuration
-├── tailwind.config.ts          # TailwindCSS configuration
-├── tsconfig.json               # TypeScript configuration
-├── vercel.json                 # Vercel deployment configuration
-├── project.json                # Nx project configuration
-└── README.md                   # App documentation
-```
-
-### Future App Types
-
-Kotlin, Python apps will have language-specific structures and tooling.
-
-## Nx Configuration (project.json)
-
-Each app must have a `project.json` file with Nx configuration.
-
-**Next.js App Example** (`ose-www`):
-
-```json
-{
-  "name": "ose-www",
-  "sourceRoot": "apps/ose-www/src",
-  "projectType": "application",
-  "targets": {
-    "dev": {
-      "command": "next dev --port 3100",
-      "options": {
-        "cwd": "apps/ose-www"
-      }
-    },
-    "build": {
-      "command": "next build",
-      "options": {
-        "cwd": "apps/ose-www"
-      },
-      "outputs": ["{projectRoot}/.next"],
-      "cache": true
-    },
-    "start": {
-      "command": "next start --port 3100",
-      "options": {
-        "cwd": "apps/ose-www"
-      }
-    }
-  },
-  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ose-platform"]
-}
-```
-
-**Note**: This repository uses vanilla Nx (no plugins), so all targets use `command` (shorthand for `nx:run-commands`) to run standard build tools directly (Next.js, Go, etc.).
-
-## How to Add a New App
-
-See the how-to guide: `docs/how-to/add-new-app.md` (to be created)
-
-## Importing from Libraries
-
-Apps can import from any library in `libs/` using path mappings:
-
-```typescript
-// Future TypeScript apps will use path mappings like:
-import { utils } from "@open-sharia-enterprise/ts-utils";
-import { Button } from "@open-sharia-enterprise/ts-components";
-```
-
-Path mappings are configured in the workspace `tsconfig.base.json` file.
-
-**Note**: Currently there are no libraries in `libs/`. Libraries will be created as shared functionality is identified.
-
-## Running Apps
-
-Use Nx commands to run apps:
+Run Nx targets from the workspace root. Replace `ose-www` with the project you chose above:
 
 ```bash
-# Development mode (Next.js)
-nx dev ose-www
-nx dev organiclever-app-web
-nx dev ayokoding-www
-
-# Build for production
-nx build ose-www
-nx build ayokoding-www
-nx build ayokoding-cli
-nx build rhino-cli
-nx build organiclever-app-web
-
-# Run CLI applications
-nx run rhino-cli
-
-# Clean build artifacts
-nx clean ose-www
-
-# Run E2E tests for organiclever-app-web (organiclever-app-web must be running first)
-nx run organiclever-app-web-e2e:test:e2e
-
-# Run API E2E tests (backend must be running first)
-nx run organiclever-be-e2e:test:e2e
+npm exec nx -- dev ose-www
+npm exec nx -- run ose-www:test:quick
+npm exec nx -- build ose-www
 ```
 
-## Deployment Branches
+Each project declares its available targets in `project.json`. Use `npm exec nx -- show project <project-name>` to inspect them, and follow the app README for app-specific setup.
 
-Vercel-deployed apps use dedicated production branches (deployment-only — never commit directly):
+## Structure and boundaries
 
-| Branch                  | Production URL                                        | App                  |
-| ----------------------- | ----------------------------------------------------- | -------------------- |
-| `prod-ayokoding-www`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-www        |
-| `prod-ose-www`          | [oseplatform.com](https://oseplatform.com)            | ose-www              |
-| `prod-organiclever-www` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-app-web |
+Apps are independently runnable projects. They can use shared code from [`libs/`](../libs/README.md), but they do not import one another. App names make their role clear:
 
-**ayokoding-www**: Deploy by force-pushing `main` to the production branch:
+- `[domain]-www` is a public website.
+- `[domain]-app-web` is a product web client.
+- `[domain]-be` is a product backend.
+- `*-e2e` is an end-to-end test project for a named surface.
 
-```bash
-git push origin main:prod-ayokoding-www --force
-```
-
-**ose-www**: Deployed automatically by scheduled GitHub Actions
-workflow (`ose-www-test-local-deploy-prod.yml`) running at 6 AM and 6 PM
-WIB. The workflow detects changes scoped to the app directory before building and deploying.
-Trigger on-demand from the GitHub Actions UI (set `force_deploy=true` to skip change detection).
-
-**organiclever-app-web**: Deploy by force-pushing `main` to the production branch:
-
-```bash
-git push origin main:prod-organiclever-www --force
-```
-
-Use the corresponding deployer agent (e.g. `apps-organiclever-app-web-deployer`) for guided deployment.
-
-## Language Support
-
-Currently:
-
-- **Go** (CLI tools) - ayokoding-cli, ose-cli
-- **Rust** (CLI tools) - rhino-cli
-- **TypeScript/Next.js** (web applications) - ose-www, organiclever-app-web, ayokoding-www
-- **F#** (CLI tools, backend API) - crane-cli, organiclever-be
-- **TypeScript/Playwright** (E2E testing) - organiclever-app-web-e2e, organiclever-be-e2e
-
-Future: Kotlin, Python apps (each language will have language-specific structure and tooling)
+For the workspace-wide structure and standard targets, see the [monorepo structure reference](../docs/reference/monorepo-structure.md) and [Nx targets reference](../repo-governance/development/infra/nx-targets.md). To create a new app, follow [Add a new app](../docs/how-to/add-new-app.md).

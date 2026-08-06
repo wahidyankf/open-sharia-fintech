@@ -1,6 +1,6 @@
 ---
 title: "CI Workflows"
-description: ""
+description: Workflows for checking that repository CI setup follows its documented standards
 category: explanation
 subcategory: workflows
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # CI Workflows
 
-Orchestrated workflows for validating CI/CD compliance across all projects in the repository.
+Use these workflows when CI configuration needs a repository-wide quality pass. They distinguish the rules from the process for checking that projects follow them.
 
 ## Purpose
 

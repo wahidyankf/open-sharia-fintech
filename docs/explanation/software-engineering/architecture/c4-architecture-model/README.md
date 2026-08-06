@@ -18,7 +18,7 @@ created: 2026-01-18
 
 # C4 Architecture Model
 
-**This is THE authoritative reference** for C4 architecture diagrams in OSE Platform.
+Use this reference after you understand the product question a diagram needs to answer. It is the authoritative C4 standard for OSE Platform diagrams, from a stakeholder-friendly system view down to an implementation-focused component view.
 
 All C4 diagrams created for the OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks documentation review and merge approval.
 
@@ -51,9 +51,9 @@ OSE Platform C4 diagrams MUST use the following tools and conventions:
 - MUST show FSM states in component diagrams when applicable
 - MUST visualize Nx workspace structure at container level
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding C4 Architecture Model learning path. These are **OSE Platform-specific C4 standards**, not educational tutorials.
+These are **OSE Platform-specific C4 standards**, not an introduction to C4. If the four C4 levels are new to you, use the learning materials below first; otherwise, jump to the standards that match the diagram you are creating.
 
 **You MUST understand C4 fundamentals before using these standards:**
 

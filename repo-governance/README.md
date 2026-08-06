@@ -1,11 +1,10 @@
 ---
-title: "Rules - Repository Governance"
-description: All governance layers (Vision, Principles, Conventions, Development, Workflows) for open-sharia-enterprise
+title: "Repository Governance"
+description: How open-sharia-enterprise turns its mission and values into consistent ways of working
 category: explanation
 subcategory: governance
 tags:
   - index
-  - rules
   - governance
   - principles
   - conventions
@@ -14,208 +13,66 @@ tags:
 created: 2026-01-04
 ---
 
-# Rules - Repository Governance
+# Repository Governance
 
-This directory contains all governance layers that define WHY the project exists, WHAT we value, WHAT documentation standards we follow, HOW we develop software, and WHEN we orchestrate multi-step processes.
+Governance helps open-sharia-enterprise make consistent, purposeful decisions as the repository grows. It connects the project's mission to the principles, standards, development practices, automated agents, and workflows that put that mission into practice.
 
-All governance content is organized under this `repo-governance/` directory for clear semantic grouping while maintaining the six-layer architecture terminology.
+This directory is a map, not a replacement for the documents it links to. Start with the layer closest to the question you have, then follow its links for the full rule or procedure.
 
-## 🎯 Purpose
+## Start Here
 
-The `repo-governance/` directory groups all governance documentation together:
+- To understand the whole model and how the layers relate, read the [Repository Governance Architecture](./repository-governance-architecture.md).
+- To learn why the project exists, begin with the [Vision](./vision/README.md).
+- To find a rule for writing or organizing documentation, use [Conventions](./conventions/README.md).
+- To find a software practice, quality gate, or engineering workflow, use [Development](./development/README.md).
+- To run a defined multi-step process, use [Workflows](./workflows/README.md).
 
-- **Layer 0: Vision** - WHY we exist, WHAT change we seek
-- **Layer 1: Principles** - WHY we value specific approaches
-- **Layer 2: Conventions** - WHAT documentation rules we follow
-- **Layer 3: Development** - HOW we develop software
-- **Layer 4: AI Agents** - WHO enforces rules (see platform-binding agent catalogs in [`.claude/agents/`](../.claude/agents/README.md) — primary binding)
-- **Layer 5: Workflows** - WHEN we run multi-step orchestrated processes
+## Navigate the Layers
 
-See [Repository Governance Architecture](./repository-governance-architecture.md) for complete explanation of the six-layer architecture, layer characteristics, traceability examples, and usage guidance.
+The governance model has six layers. Each answers a different question and gives the layers below it a clear foundation.
 
-## 📊 Six-Layer Architecture
+| Layer          | Question it answers                               | Where to go                                  |
+| -------------- | ------------------------------------------------- | -------------------------------------------- |
+| 0. Vision      | Why does the project exist?                       | [Vision](./vision/README.md)                 |
+| 1. Principles  | Why do we value this approach?                    | [Principles](./principles/README.md)         |
+| 2. Conventions | What rules shape our documentation?               | [Conventions](./conventions/README.md)       |
+| 3. Development | How do we build and maintain software?            | [Development](./development/README.md)       |
+| 4. AI Agents   | Who carries out defined checks and tasks?         | [Agent catalog](../.claude/agents/README.md) |
+| 5. Workflows   | When do we use a coordinated, multi-step process? | [Workflows](./workflows/README.md)           |
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Sky Blue #56B4E9
-graph TD
- L0[Layer 0: Vision<br/>WHY WE EXIST] -- inspires --> L1[Layer 1: Principles<br/>WHY - Values]
- L1 -- governs --> L2[Layer 2: Conventions<br/>WHAT - Rules]
- L1 -- governs --> L3[Layer 3: Development<br/>HOW - Practices]
- L2 -- governs --> L3
- L2 -- governs --> L4[Layer 4: AI Agents<br/>WHO - Executors]
- L3 -- governs --> L4
- L4 -- orchestrated by --> L5[Layer 5: Workflows<br/>WHEN - Processes]
+The layers flow from enduring intent to day-to-day execution:
 
- style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
- style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L5 fill:#56B4E9,stroke:#000000,color:#000000,stroke-width:2px
+```text
+Vision → Principles → Conventions and Development → AI Agents → Workflows
 ```
 
-## 📋 Contents
+The [Repository Governance Architecture](./repository-governance-architecture.md) explains the relationships, traceability, and change impact in detail.
 
-### Core Governance Layers
+## Choose the Right Home
 
-#### Layer 0: Vision (WHY WE EXIST)
+Use the question below to decide where a new governance document belongs.
 
-- **[Vision](./vision/README.md)** - Foundational purpose establishing WHY the project exists
-  - Democratize Shariah-compliant enterprise
-  - Make ethical Islamic business solutions accessible to everyone
-  - Nearly immutable - changes only if mission fundamentally shifts
+| If the document answers…                          | Put it in…                                |
+| ------------------------------------------------- | ----------------------------------------- |
+| Why does the project exist?                       | [`vision/`](./vision/README.md)           |
+| Why do we value an approach?                      | [`principles/`](./principles/README.md)   |
+| What documentation rule should we follow?         | [`conventions/`](./conventions/README.md) |
+| How should we develop, test, or operate software? | [`development/`](./development/README.md) |
+| When should a multi-step process run?             | [`workflows/`](./workflows/README.md)     |
 
-#### Layer 1: Principles (WHY - Values)
+Keep governance prose vendor-neutral. Details that apply only to a particular tool or platform belong in its platform-binding documentation, as described by the [Governance Vendor-Independence Convention](./conventions/structure/governance-vendor-independence.md).
 
-- **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
-  - Principles organized across categories (General, Content, Software Engineering)
-  - Each principle traces back to vision with "Vision Supported" section
-  - Examples: Deliberate Problem-Solving, Simplicity Over Complexity, Root Cause Orientation, Accessibility First, Documentation First, Automation Over Manual
+## Follow the Trace
 
-#### Layer 2: Conventions (WHAT - Documentation Rules)
+When a rule feels arbitrary, trace it upward. A development practice should be grounded in relevant principles; a convention should support the project's purpose. When a higher layer changes, review the lower layers that depend on it.
 
-- **[Conventions](./conventions/README.md)** - Documentation writing and organization standards
-  - Conventions organized across categories (formatting, linking, writing, structure, tutorials)
-  - Implements principles in concrete documentation rules
-  - Each convention includes "Principles Implemented/Respected" section
-  - Enforced by AI agents (docs-checker, docs-maker, etc.)
-  - **[Governance Vendor-Independence Convention](./conventions/structure/governance-vendor-independence.md)** — all `repo-governance/` prose must be vendor-neutral; vendor-specific bindings belong in platform-binding directories
+For example, the [Accessibility First principle](./principles/content/accessibility-first.md) informs documentation conventions, development practices, agent checks, and workflows that verify accessible outcomes. This traceability keeps local decisions aligned with the project's broader purpose.
 
-#### Layer 3: Development (HOW - Software Practices)
+## Read by Situation
 
-- **[Development](./development/README.md)** - Software development practices and workflows
-  - Practices organized across categories (workflow, quality, pattern, practice, agents, infra, frontend)
-  - Implements principles in concrete software standards
-  - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
-  - Enforced by AI agents and automation (git hooks, build tools)
+- **New to the repository:** read the [Vision](./vision/README.md), then the [Principles](./principles/README.md), followed by the [Repository Governance Architecture](./repository-governance-architecture.md).
+- **Writing documentation:** start with [Conventions](./conventions/README.md), especially its formatting, linking, and writing guidance.
+- **Changing code or delivery practices:** start with [Development](./development/README.md), then use the relevant [Workflows](./workflows/README.md).
+- **Working with automated agents:** use the [Agent catalog](../.claude/agents/README.md) to understand available roles and the governance documents they enforce.
 
-#### Layer 4: AI Agents (WHO - Atomic Executors)
-
-- **AI Agents** - Specialized automated agents enforcing conventions and development practices
-  - Organized by role (Makers, Checkers, Fixers, Operations, Development)
-  - Single-purpose agents with explicit tool permissions
-  - Each agent enforces specific conventions and development practices
-  - Orchestrated by Layer 5 workflows
-  - Vendor-neutral: agent definitions live in **platform-binding directories**, with the canonical catalog in [`.claude/agents/`](../.claude/agents/README.md) (primary binding) and auto-synced mirror in `.opencode/agents/` (secondary binding); both are read by their respective coding agents
-
-#### Layer 5: Workflows (WHEN - Multi-Step Processes)
-
-- **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing agents, procedures, and/or other workflows
-  - Workflows across categories (ayokoding-web, ci, content, docs, infra, meta, plan, repo, specs, ui)
-  - Define sequences (sequential/parallel/conditional), state management, termination criteria
-  - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
-  - Orchestrate agents from Layer 4
-
-### Architecture Documentation
-
-- **[Repository Governance Architecture](./repository-governance-architecture.md)** - Comprehensive guide to the six-layer architecture
-  - Complete layer characteristics and relationships
-  - Traceability examples showing Vision → Principles → Conventions/Development → Agents → Workflows
-  - Usage guidance for creating, changing, and troubleshooting governance content
-  - Verification methods and validation approaches
-
-## 🔗 Traceability Example
-
-Every rule in this repository traces back to foundational vision and principles:
-
-```
-Vision: Democratize Shariah-compliant enterprise (accessible to everyone)
-    ↓ inspires
-Principle: Accessibility First (Layer 1)
-    ↓ governs
-Convention: Color Accessibility (Layer 2) - verified accessible palette
-Development: AI Agents Convention (Layer 3) - accessible color palette for agent categorization
-    ↓ implemented by
-Agents: docs-checker, docs-fixer (Layer 4) - validate/fix colors
-    ↓ orchestrated by
-Workflow: Maker-Checker-Fixer (Layer 5) - automated quality gate
-```
-
-## 🧪 Layer Test: Where Does My Document Belong?
-
-Use these questions to determine the correct subdirectory:
-
-### Vision Test
-
-**Question**: Does this document define WHY the project exists?
-
-- ✅ **YES** → Place in `repo-governance/vision/`
-- ❌ **NO** → Continue to next test
-
-### Principles Test
-
-**Question**: Can you ask "**WHY do we value this?**" about the content?
-
-- ✅ **YES** → Place in `repo-governance/principles/` - It's a foundational value
-- ❌ **NO** → Continue to next test
-
-### Conventions Test
-
-**Question**: Can you ask "**WHAT are the documentation rules?**" about the content?
-
-- ✅ **YES** → Place in `repo-governance/conventions/` - It's a documentation standard
-- ❌ **NO** → Continue to next test
-
-### Development Test
-
-**Question**: Can you ask "**HOW do we develop software?**" about the content?
-
-- ✅ **YES** → Place in `repo-governance/development/` - It's a software practice
-- ❌ **NO** → Continue to next test
-
-### Workflows Test
-
-**Question**: Can you ask "**WHEN do we compose agents, procedures, and/or other workflows in a multi-step process?**" about the content?
-
-- ✅ **YES** → Place in `repo-governance/workflows/` - It's a multi-step process
-- ❌ **NO** → Continue to next test
-
-### Vendor-Specific Content Test
-
-**Question**: Does this content reference specific vendors, products, or platform implementations (e.g., concrete model IDs, named CSS color tokens, vendor schema requirements, named coding-agent products)?
-
-- ✅ **YES** → It does **not** belong in `repo-governance/` (governance prose is vendor-neutral by [Governance Vendor-Independence Convention](./conventions/structure/governance-vendor-independence.md)). Choose by intent:
-  - **Platform binding details** (agent definitions, sync configs, vendor schema notes) → place in the platform-binding directory (e.g., `.claude/`, `.opencode/`)
-  - **Cited reference data** (benchmark scores, primary-source citations, version histories) → place in `docs/reference/` (e.g., `docs/reference/ai-model-benchmarks.md`)
-  - **Vendor-specific examples inside an otherwise neutral governance doc** → wrap in a `binding-example` fenced code block or move under a "Platform Binding Examples" heading per the convention's Migration Guidance
-- ❌ **NO** → Place per the prior tests; if no test matched, consider `docs/how-to/` or `docs/reference/`
-
-## 📐 Quick Decision Tree
-
-```
-Is it about WHY the project exists?
-├─ YES → vision/
-└─ NO → Is it about WHY we value something?
-    ├─ YES → principles/
-    └─ NO → Is it about WHAT documentation rules?
-        ├─ YES → conventions/
-        └─ NO → Is it about HOW to develop software?
-            ├─ YES → development/
-            └─ NO → Is it about WHEN to compose agents, procedures, and/or workflows?
-                ├─ YES → workflows/
-                └─ NO → Is the content vendor-specific?
-                    ├─ YES → platform-binding dir (.claude/, .opencode/) OR docs/reference/
-                    └─ NO  → Wrong category (try docs/how-to/ or docs/reference/)
-```
-
-## 🔑 Key Principles
-
-### Immutability Decreases Down the Layers
-
-- **Layer 0 (Vision)**: Nearly immutable - only changes if mission fundamentally shifts
-- **Layer 1 (Principles)**: Very stable - rarely change, require strong justification
-- **Layer 2 (Conventions)**: Moderately stable - change when documentation needs evolve
-- **Layer 3 (Development)**: Moderately stable - change when software practices evolve
-- **Layer 4 (AI Agents)**: Changes often - new agents added as needs emerge, existing agents updated as conventions evolve
-- **Layer 5 (Workflows)**: Changes frequently - new workflows as needs emerge
-
-### Traceability is Mandatory
-
-- **Principles** → MUST include "Vision Supported" section
-- **Conventions** → MUST include "Principles Implemented/Respected" section
-- **Development** → MUST include both "Principles" AND "Conventions" sections
-- **Workflows** → SHOULD reference which agents, procedures, and/or nested workflows they compose
-
-### Changes Propagate Down
-
-When changing a layer, all lower layers may need updates. Use `repo-rules-maker` to propagate changes systematically.
+This structure keeps the repository's decisions discoverable: begin with the question at hand, use the matching layer, and follow links only as far as the work requires.

@@ -1,6 +1,6 @@
 ---
 title: "Writing Conventions"
-description: Content quality standards, validation methodology, and writing guidelines
+description: Reader-focused writing and validation rules for repository documentation
 category: explanation
 tags:
   - index
@@ -12,7 +12,7 @@ created: 2026-01-30
 
 # Writing Conventions
 
-Content quality standards, validation methodology, and writing guidelines for documentation. These conventions answer the question: **"How do I WRITE documentation content?"**
+Use these conventions to write documentation that sounds like a capable teammate: clear about purpose, honest about limits, and useful on a first read.
 
 ## Purpose
 

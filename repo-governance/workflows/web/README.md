@@ -9,7 +9,7 @@ created: 2026-06-20
 
 # Web Workflows
 
-Orchestrated workflows that operate against a live running website — exercising it as a real browser would, then turning what they observe into an actionable deliverable.
+Use these workflows when a live site needs to be experienced as a real visitor would experience it. They turn observed behavior, usability, and design findings into an actionable delivery plan.
 
 ## Purpose
 

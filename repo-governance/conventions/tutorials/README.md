@@ -12,7 +12,7 @@ created: 2026-01-30
 
 # Tutorial Conventions
 
-Standards for creating learning-oriented tutorial content. These conventions answer the question: **"How do I CREATE tutorials?"**
+Use these conventions when you are helping someone learn, rather than merely listing facts. They answer: **"How can a reader make steady progress without needing hidden context?"**
 
 ## Purpose
 

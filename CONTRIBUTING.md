@@ -1,6 +1,9 @@
 # Contributing to Open Sharia Enterprise
 
-Thank you for your interest in contributing to Open Sharia Enterprise! We welcome contributions from the community and appreciate your time and effort.
+Thank you for your interest in Open Sharia Enterprise. This repository is in pre-alpha while we
+stabilize its architecture and working patterns, so external code contributions and pull requests
+are currently closed. Forking is welcome under the [MIT License](./LICENSE): you are free to adapt
+the project for your own region or use case.
 
 ## Table of Contents
 
@@ -8,12 +11,12 @@ Thank you for your interest in contributing to Open Sharia Enterprise! We welcom
 - [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
 - [Project Structure](#project-structure)
-- [Making Changes](#making-changes)
+- [Repository Development](#repository-development)
 - [Code Conventions](#code-conventions)
 - [Testing](#testing)
-- [Submitting Changes](#submitting-changes)
+- [External Contributions](#external-contributions)
 - [Reporting Bugs](#reporting-bugs)
-- [Suggesting Enhancements](#suggesting-enhancements)
+- [Product Feedback](#product-feedback)
 - [Documentation](#documentation)
 - [Getting Help](#getting-help)
 
@@ -23,7 +26,8 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ## Getting Started
 
-Open Sharia Enterprise is an enterprise platform built with Node.js and organized as an Nx monorepo. Before contributing, please:
+Open Sharia Enterprise is an enterprise platform built with Node.js and organized as an Nx monorepo.
+If you are exploring the project or preparing a fork, please:
 
 1. Read this contributing guide completely
 2. Review our [documentation](./docs/README.md)
@@ -36,8 +40,8 @@ Open Sharia Enterprise is an enterprise platform built with Node.js and organize
 
 This project uses **Volta** to manage Node.js and npm versions automatically:
 
-- **Node.js**: 24.13.1 (LTS)
-- **npm**: 11.10.1
+- **Node.js**: 24.16.0 (LTS)
+- **npm**: 11.11.0
 
 **Important**: You don't need to install these versions manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
 
@@ -71,7 +75,7 @@ After installation, restart your terminal and Volta will automatically manage No
    npm install
    ```
 
-   Volta will automatically use Node.js 24.13.1 and npm 11.10.1 as specified in `package.json`.
+   Volta will automatically use Node.js 24.16.0 and npm 11.11.0 as specified in `package.json`.
 
 3. **Verify installation**:
 
@@ -87,7 +91,7 @@ After installation, restart your terminal and Volta will automatically manage No
 **Solution**: Make sure Volta is installed and your terminal is restarted.
 
 **Issue**: Wrong Node.js version
-**Solution**: Run `volta install node@24.13.1` to ensure Volta has the correct version.
+**Solution**: Run `volta install node@24.16.0` to ensure Volta has the correct version.
 
 **Issue**: `npm install` fails
 **Solution**: Clear npm cache with `npm cache clean --force` and try again.
@@ -123,26 +127,31 @@ For detailed information, see:
 - [Add New App Guide](./docs/how-to/add-new-app.md)
 - [Add New Lib Guide](./docs/how-to/add-new-lib.md)
 
-## Making Changes
+## Repository Development
 
-### Git Workflow: Trunk Based Development
+### Internal AI-Assisted Delivery
 
-This project uses **Trunk Based Development** (TBD):
+The repository uses [Trunk Based Development](./repo-governance/development/workflow/trunk-based-development.md).
+For internal AI-assisted plan work, the repo-wide default delivery mode is `worktree-to-pr`:
 
-- **Default**: Work directly on the `main` branch
-- **Small, frequent commits**: Break work into tiny, mergeable increments
-- **Feature flags**: Use toggles to hide incomplete features, not branches
-- **Short-lived branches**: If branches are needed (e.g., for code review), merge within 1-2 days
+1. Work happens on a short-lived plan branch in a disposable Git worktree.
+2. The branch is pushed to a draft pull request targeting `main`.
+3. The AI runs the configured PR review-maker/fixer cycle and required quality gates.
+4. Once its done-definition is met, the AI marks the PR ready for review.
+5. A merge occurs only after the repository's hardened merge preconditions hold; AI merges by
+   default unless the plan explicitly requires a human merge gate.
 
-**When to use branches**:
+This is an internal delivery process, not an invitation to submit external pull requests. The
+[PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md) defines the
+required review, quality, branch-freshness, and testing conditions for a merge.
 
-- Code review required by team policy (keep < 2 days)
-- Experimental work that may be discarded
-- External contributions via fork + PR
+### Working in Your Fork
 
-For complete details, see [Trunk Based Development Convention](./repo-governance/development/workflow/trunk-based-development.md).
+You may use this guide and the repository's documentation when working in your own fork. Your fork
+is independent: choose the workflow, branch protections, review process, and deployment approach
+that fit your project.
 
-### Development Workflow
+### Local Development Workflow
 
 1. **Pull latest changes**:
 
@@ -158,13 +167,13 @@ For complete details, see [Trunk Based Development Convention](./repo-governance
 3. **Run the fast quality gate for affected projects**:
 
    ```bash
-   nx affected -t test:quick
+   npm exec nx -- affected -t test:quick
    ```
 
 4. **Run affected build**:
 
    ```bash
-   nx affected -t build
+   npm exec nx -- affected -t build
    ```
 
 5. **Format code** (automatic on commit):
@@ -249,19 +258,19 @@ git commit -m "feat: add agent, update docs, fix dates"  # Too many changes in o
 **Fast quality gate for affected projects** (recommended for pre-push):
 
 ```bash
-nx affected -t test:quick
+npm exec nx -- affected -t test:quick
 ```
 
 **Specific project quality gate**:
 
 ```bash
-nx run [project-name]:test:quick
+npm exec nx -- run [project-name]:test:quick
 ```
 
 **Isolated unit tests for a specific project**:
 
 ```bash
-nx run [project-name]:test:unit
+npm exec nx -- run [project-name]:test:unit
 ```
 
 **See**: [Nx Target Standards](./repo-governance/development/infra/nx-targets.md) for canonical target names, test composition rules, and the full execution model.
@@ -286,39 +295,14 @@ libs/ts-utils/
 │       └── format-date.test.ts
 ```
 
-## Submitting Changes
+## External Contributions
 
-### Pull Request Process
+External code contributions and pull requests are not being accepted at this time. Please do not
+open a pull request against this repository, including from a fork.
 
-1. **Push your changes** to your fork or branch
-
-2. **Open a pull request** against `main` branch
-
-3. **Fill out the PR template** with:
-   - Description of changes
-   - Related issues (if any)
-   - Testing performed
-   - Screenshots (if UI changes)
-
-4. **Wait for code review**: Typically within 2-3 business days
-
-5. **Address feedback**: Make requested changes
-
-6. **Merge**: Once approved and tests pass, your PR will be merged
-
-### PR Requirements
-
-- **One PR per feature/bug fix**: Keep PRs focused and reviewable
-- **Tests pass**: All CI checks must be green
-- **No merge conflicts**: Rebase on latest `main` if needed
-- **Code formatted**: Prettier must have run (automatic on commit)
-- **Commits follow convention**: All commits must pass commitlint
-
-### PR Size Guidelines
-
-- **Ideal**: < 300 lines changed
-- **Maximum**: < 1000 lines (break larger changes into multiple PRs)
-- **Exception**: Generated code, migrations, or dependency updates
+You are welcome to fork the repository and build on it under the [MIT License](./LICENSE). If you
+find a problem or have an idea, the feedback channels below remain the best way to share it without
+opening a contribution PR.
 
 ## Reporting Bugs
 
@@ -339,19 +323,15 @@ When opening an issue, include:
 - **Environment**: OS, Node.js version, browser (if applicable)
 - **Logs/screenshots**: Any relevant error messages or screenshots
 
-## Suggesting Enhancements
+## Product Feedback
 
-We welcome feature suggestions! When proposing an enhancement:
-
-1. **Check existing issues**: Feature may already be proposed
-2. **Describe the problem**: What problem does this solve?
-3. **Describe the solution**: How would this feature work?
-4. **Consider alternatives**: Are there other ways to solve this?
-5. **Additional context**: Screenshots, mockups, or examples
+This repository does not currently run a public feature-request or discussion channel. You are
+welcome to explore an idea in your own MIT-licensed fork, but please do not open a feature request
+or contribution pull request expecting project intake.
 
 ## Documentation
 
-Documentation is as important as code. When contributing:
+Documentation is as important as code. When maintaining a fork or doing internal work:
 
 - **Update docs** if your changes affect user-facing behavior
 - **Follow Diátaxis**: Use appropriate category (tutorial, how-to, reference, explanation)
@@ -366,11 +346,11 @@ Documentation is as important as code. When contributing:
 
 ## Getting Help
 
-### Questions and Discussions
+### Questions
 
-- **Questions**: Open a GitHub Discussion in the "Q&A" category
-- **General discussion**: GitHub Discussions "General" category
-- **Real-time chat**: (Coming soon)
+The project does not currently host public Discussions or real-time support. Start with the
+[documentation hub](./docs/README.md); an independent fork is the appropriate place to experiment
+with a workflow or feature idea.
 
 ### Security Issues
 
@@ -394,13 +374,13 @@ npm install
 npm run build
 
 # Build affected projects
-nx affected -t build
+npm exec nx -- affected -t build
 
 # Run fast quality gate for affected projects (pre-push standard)
-nx affected -t test:quick
+npm exec nx -- affected -t test:quick
 
 # Run unit tests for a specific project
-nx run [project-name]:test:unit
+npm exec nx -- run [project-name]:test:unit
 
 # Lint all projects
 npm run lint
@@ -409,14 +389,14 @@ npm run lint
 npm run graph
 
 # Build specific project
-nx build [project-name]
+npm exec nx -- build [project-name]
 
 # Start development server for an app
-nx dev [app-name]
+npm exec nx -- dev [app-name]
 ```
 
 **See**: [Nx Target Standards](./repo-governance/development/infra/nx-targets.md) for all canonical target names.
 
 ---
 
-Thank you for contributing to Open Sharia Enterprise! Your contributions help build better, more secure enterprise solutions. 🚀
+Thank you for respecting Open Sharia Enterprise's current intake boundary. 🚀

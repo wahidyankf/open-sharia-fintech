@@ -12,11 +12,11 @@ created: 2025-12-24
 
 # Vision
 
-The foundational purpose and change we seek through Open Sharia Enterprise - democratizing Shariah-compliant enterprise and making ethical Islamic business solutions accessible to everyone.
+Open Sharia Enterprise exists to make trustworthy, Shariah-compliant enterprise systems easier to understand, build, and use. This vision keeps product purpose ahead of process.
 
 ## Purpose
 
-This directory contains the vision documents that establish **WHY** the Open Sharia Enterprise project exists and **WHAT CHANGE** we seek to create in the world. Vision is the top layer (Layer 0) of our six-layer architecture - it governs and gives purpose to all principles, conventions, development practices, agents, and workflows.
+This directory holds the statement of **why** Open Sharia Enterprise exists and **what change** it seeks. Vision is Layer 0 of the governance architecture: everything else should be able to trace its purpose back here.
 
 See [Repository Architecture](../repository-governance-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
 

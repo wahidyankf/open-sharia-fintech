@@ -15,11 +15,11 @@ created: 2026-05-17
 
 # DDD + Hexagonal in Practice
 
-OSE Platform conventions for integrating Domain-Driven Design bounded contexts with Hexagonal Architecture (Ports and Adapters). These standards govern how strategic domain design maps onto the structural layer in `organiclever-be` and future OSE Platform services.
+This is the bridge between a product's domain model and the code structure that protects it. Use it when a business boundary needs to become a bounded context, port, adapter, or integration contract in `organiclever-be` and future OSE Platform services.
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: Before using this directory, complete:
+This directory applies DDD and Hexagonal Architecture; it does not teach either from scratch. Use these learning resources if those terms are new to you:
 
 - **DDD fundamentals** — [Domain-Driven Design Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/)
 - **Hexagonal fundamentals** — [Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/overview.md)

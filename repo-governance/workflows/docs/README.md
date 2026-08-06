@@ -1,6 +1,6 @@
 ---
 title: "Documentation Workflows"
-description: ""
+description: Workflows for checking that reader-facing documentation remains accurate and navigable
 category: explanation
 subcategory: workflows
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Documentation Workflows
 
-Orchestrated workflows for validating project documentation quality (docs/ directory).
+Use these workflows when reader-facing documentation needs a systematic quality pass. They help keep tutorials, explanations, and reference pages accurate, learnable, and connected.
 
 ## Purpose
 

@@ -13,7 +13,7 @@ created: 2026-01-04
 
 # Workflows Index
 
-**Purpose**: Orchestrated multi-step processes that compose agents, procedures, and/or other workflows to achieve specific goals with clear termination criteria.
+**Purpose**: Repeatable paths for work that needs more than one careful step. A workflow makes the goal, evidence, and stopping point clear so a delivery can stay understandable as it grows.
 
 **Layer**: 5th layer in repository hierarchy (composes agents, procedures, and/or other workflows)
 

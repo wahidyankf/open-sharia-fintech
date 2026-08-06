@@ -1,228 +1,81 @@
 ---
-title: Software Design
-description: Comprehensive documentation on software design patterns, architectural models, and practices for building scalable, maintainable systems
+title: Software Engineering
+description: How open-sharia-enterprise approaches architecture, development, languages, frameworks, testing, and licensing
 category: explanation
-subcategory: design
+subcategory: software-engineering
 tags:
-  - software
+  - software-engineering
   - architecture
-  - c4-model
-  - domain-driven-design
-  - patterns
+  - development
+  - testing
   - index
 created: 2026-01-20
 ---
 
-# Software Design
+# Software Engineering
 
-**Understanding-oriented documentation** on software design patterns, architectural models, and design practices for building complex enterprise systems.
+This section explains the engineering ideas used across open-sharia-enterprise. It is a good starting point for product people who want to understand how a product decision becomes software, and for early engineers who need a map before opening implementation-focused guidance.
 
-## What is Software Design?
+You do not need to read everything in order. Start with the question you have, then follow the links when you need more detail.
 
-Software design encompasses the fundamental structures of a software system—the building blocks, their relationships, and the principles governing their design and evolution. Good design documentation helps teams:
+## Start with your question
 
-- **Communicate design decisions** across technical and non-technical stakeholders
-- **Manage complexity** through clear boundaries and abstractions
-- **Guide implementation** while maintaining design consistency
-- **Evolve systems** systematically as requirements change
+| If you want to understand…                                                               | Start here                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| How the parts of a system fit together                                                   | [Architecture](./architecture/README.md)                                                                           |
+| How business language and rules shape a system                                           | [Domain-Driven Design (DDD)](./architecture/domain-driven-design-ddd/README.md)                                    |
+| How an application can keep its core logic independent from delivery and storage details | [Hexagonal Architecture](./architecture/hexagonal-architecture/README.md)                                          |
+| How a record or workflow moves through defined stages                                    | [Finite State Machine (FSM)](./architecture/finite-state-machine-fsm/README.md)                                    |
+| How teams turn examples and acceptance criteria into reliable code                       | [Software Development Practices](./development/README.md)                                                          |
+| Which language or web framework a part of the platform uses                              | [Programming Languages](./programming-languages/README.md) or [Libraries and Frameworks](./platform-web/README.md) |
+| How browser behavior is checked automatically                                            | [Automation Testing](./automation-testing/README.md)                                                               |
+| Why a dependency's license was accepted or needs care                                    | [Licensing](./licensing/README.md)                                                                                 |
 
-## Documentation Structure
+## The engineering map
 
-### 🏛️ [Architecture](./architecture/README.md)
+### Architecture: shape the system around the problem
 
-Comprehensive documentation on software architecture patterns and models:
+[Architecture](./architecture/README.md) covers the boundaries, responsibilities, and vocabulary that make a system easier to discuss and change. These approaches solve different parts of the same problem:
 
-- **[C4 Architecture Model](./architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical diagrams
-- **[Domain-Driven Design (DDD)](./architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
-- **[Finite State Machine (FSM)](./architecture/finite-state-machine-fsm/README.md)** - Standards for entity lifecycle management using finite state machines
+- [C4 Architecture Model](./architecture/c4-architecture-model/README.md) helps people see a system from its broad context down to implementation-level components.
+- [Domain-Driven Design (DDD)](./architecture/domain-driven-design-ddd/README.md) helps product and engineering participants model a complex business domain using shared language, bounded contexts, aggregates, and events.
+- [Hexagonal Architecture](./architecture/hexagonal-architecture/README.md) explains how ports and adapters protect business logic from infrastructure choices.
+- [DDD + Hexagonal in Practice](./architecture/ddd-hexagonal-in-practice/README.md) connects the domain-modeling and structural approaches used in platform services.
+- [Finite State Machine (FSM)](./architecture/finite-state-machine-fsm/README.md) explains explicit lifecycle states and valid transitions for entities and workflows.
 
-### 🧪 [Development](./development/README.md)
+For a product conversation, DDD and C4 are usually the most useful entry points: DDD helps establish what the business means, while C4 helps show where that work lives in the wider system.
 
-Comprehensive documentation on software development practices:
+### Development: make behavior clear and verifiable
 
-- **[Test-Driven Development (TDD)](./development/test-driven-development-tdd/README.md)** - Red-Green-Refactor cycle and testing patterns
-- **[Behavior-Driven Development (BDD)](./development/behavior-driven-development-bdd/README.md)** - Gherkin scenarios and specification by example
+[Software Development Practices](./development/README.md) covers two complementary ways to build confidence before implementation becomes large or hard to change:
 
-### ☕ [Programming Languages](./programming-languages/README.md)
+- [Behavior-Driven Development (BDD)](./development/behavior-driven-development-bdd/README.md) uses concrete examples and Gherkin scenarios to keep product intent, acceptance criteria, and automated checks aligned.
+- [Test-Driven Development (TDD)](./development/test-driven-development-tdd/README.md) uses the Red-Green-Refactor cycle to guide small, well-tested design steps.
 
-Language-specific idioms, best practices, and antipatterns:
+BDD is especially useful when a feature needs a shared business conversation; TDD is especially useful when implementing and refining the underlying code. They can be used together.
 
-- **[C#](./programming-languages/c-sharp/README.md)** - C# development for .NET applications and enterprise services
-- **[F#](./programming-languages/f-sharp/README.md)** - F# development for .NET applications with functional-first programming
-- **[Rust](./programming-languages/rust/README.md)** - Rust development for systems programming and high-performance services
-- **[TypeScript](./programming-languages/typescript/README.md)** - TypeScript development for frontend applications and Node.js services
+### Languages and frameworks: work idiomatically in the chosen stack
 
-### 🌐 [Platform and Web Frameworks](./platform-web/README.md)
+The platform uses more than one language and framework because its web applications, services, and repository tooling have different needs. The guidance in these sections explains the conventions and trade-offs for each supported stack:
 
-Platform-specific documentation for web frameworks used in the enterprise platform:
+- [Programming Languages](./programming-languages/README.md) covers [TypeScript](./programming-languages/typescript/README.md), [Rust](./programming-languages/rust/README.md), [F#](./programming-languages/f-sharp/README.md), and [C#](./programming-languages/c-sharp/README.md).
+- [Libraries and Frameworks](./platform-web/README.md) covers the web stack, including [React](./platform-web/tools/fe-react/README.md) and [Next.js](./platform-web/tools/fe-nextjs/README.md).
 
-- **[Next.js (Frontend)](./platform-web/tools/fe-nextjs/README.md)** - Next.js React framework for frontend applications
-- **[React (Frontend)](./platform-web/tools/fe-react/README.md)** - React library patterns and best practices
+Use these pages after you know the relevant application or library. They explain how to apply a language or framework well here; they are not a substitute for choosing a product boundary or defining the feature's behavior.
 
-### 🤖 [Automation Testing](./automation-testing/README.md)
+### Quality and operational confidence
 
-End-to-end testing frameworks and browser automation tools:
+- [Automation Testing](./automation-testing/README.md) introduces automated browser and end-to-end testing, including [Playwright](./automation-testing/tools/playwright/README.md).
+- [Licensing](./licensing/README.md) records compatibility analysis and decisions for selected dependencies, helping teams understand the obligations that may accompany a technical choice.
 
-- **[Automation Testing](./automation-testing/README.md)** - E2E testing frameworks and browser automation
-  - **[Playwright](./automation-testing/tools/playwright/README.md)** - Cross-browser E2E testing for web applications
+## How this material relates to the rest of the documentation
 
-### ⚖️ [Licensing](./licensing/README.md)
+These pages are **explanation**: they provide context, vocabulary, and the reasoning behind approaches. When you need to perform a concrete task, look for a how-to guide; when you need a precise rule or interface, use reference documentation. The [Explanation index](../README.md) describes how this fits within the project's [Diátaxis documentation structure](../../../repo-governance/conventions/structure/diataxis-framework.md).
 
-License analysis and compliance decisions for open-source dependencies:
+Many linked pages also record repository-specific standards. Their mandatory language applies when working in this repository; this index is the place to orient yourself before using those detailed standards.
 
-- **[Licensing Decisions](licensing/licensing-decisions.md)** - Analysis for Liquibase FSL-1.1-ALv2, Hibernate LGPL-2.1, sharp-libvips LGPL-3.0, and Logback EPL-1.0/LGPL-2.1. Includes quarterly audit schedule.
+## Related reading
 
-### 📚 Cross-References
-
-- **[Software Design Reference](./software-design-reference.md)** - Cross-reference index to all software design documentation. Links architecture patterns, development practices, and language-specific standards
-
-## Why This Structure?
-
-**Three complementary dimensions of software design:**
-
-- **Architecture** answers _"What are we building?"_ - System structure, boundaries, and strategic design decisions
-- **Development** answers _"How do we build reliably?"_ - Testing practices that ensure correctness and alignment with requirements
-- **Programming Languages** answers _"How do we write idiomatic code?"_ - Language-specific patterns that leverage each language's strengths
-
-**Think of it as:**
-
-- **Architecture** = Building blueprint (rooms, walls, plumbing)
-- **Development** = Construction methodology (inspection checkpoints, quality control)
-- **Languages** = Craftsmanship (how to properly use tools and materials)
-
-All three work together: you need good architecture to know what to build, solid development practices to build it correctly, and language expertise to build it idiomatically.
-
----
-
-## Architecture Documentation
-
-This section covers two complementary approaches to software architecture:
-
-1. **C4 Architecture Model** - How to visualize and communicate design through hierarchical diagrams
-2. **Domain-Driven Design (DDD)** - How to design systems that reflect complex business domains
-
-## C4 and DDD Overview
-
-### 🎨 C4 Architecture Model
-
-**Visualizing software architecture through hierarchical abstraction levels**
-
-The C4 model provides a systematic way to create architecture diagrams at four levels of detail (Context, Container, Component, Code). Created by Simon Brown, it offers a developer-friendly alternative to heavyweight modeling approaches.
-
-**Use C4 when you need to:**
-
-- Create clear, consistent architecture diagrams for diverse audiences
-- Document systems at multiple levels of abstraction
-- Communicate technical decisions to both developers and stakeholders
-- Maintain lightweight but rigorous architecture documentation
-
-**Learn more:** [C4 Architecture Model Documentation](./architecture/c4-architecture-model/README.md)
-
-**Key topics:**
-
-- System Context diagrams (system boundaries and external dependencies)
-- Container diagrams (high-level technical building blocks)
-- Component diagrams (internal structure of containers)
-- Code diagrams (implementation details)
-- Dynamic diagrams (runtime behavior)
-- Deployment diagrams (infrastructure mapping)
-
-### 🏛️ Domain-Driven Design (DDD)
-
-**Strategic and tactical patterns for modeling complex business domains**
-
-Domain-Driven Design is a software development approach that places the business domain at the center of design. Introduced by Eric Evans in 2003, DDD provides patterns for managing complexity in large-scale systems through strategic design (understanding the business) and tactical patterns (implementing the model).
-
-**Use DDD when you have:**
-
-- Complex business logic with numerous rules and invariants
-- Access to domain experts for collaboration
-- Long-lived systems expected to evolve over years
-- High cost of defects or regulatory compliance requirements
-
-**Learn more:** [Domain-Driven Design Documentation](./architecture/domain-driven-design-ddd/README.md)
-
-**Key topics:**
-
-- Strategic patterns: Bounded Contexts, Context Mapping, Subdomains, Ubiquitous Language
-- Tactical patterns: Aggregates, Entities, Value Objects, Repositories, Domain Events
-- Event Storming and collaborative design workshops
-- Functional programming adaptations for DDD
-- Integration with layered and hexagonal architectures
-
-## How C4 and DDD Work Together
-
-C4 and DDD complement each other throughout the design process:
-
-| DDD Concept             | Maps to C4 Level | Purpose                                                       |
-| ----------------------- | ---------------- | ------------------------------------------------------------- |
-| **Context Maps**        | System Context   | Shows how bounded contexts relate to external systems         |
-| **Bounded Contexts**    | Containers       | Each bounded context typically becomes one or more containers |
-| **Aggregates**          | Components       | Major aggregates often become components within a container   |
-| **Domain Events**       | Dynamic Diagrams | Event flows visualized across components and containers       |
-| **Ubiquitous Language** | Diagram Labels   | Consistent terminology across all diagrams                    |
-
-**Example workflow:**
-
-1. Use **Event Storming** (DDD) to discover domain events and bounded contexts
-2. Create **Context Map** (DDD) showing relationships between bounded contexts
-3. Draw **System Context diagram** (C4) showing bounded contexts as containers
-4. Design **Aggregates** (DDD) within each bounded context
-5. Create **Component diagrams** (C4) showing aggregates and their relationships
-6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
-
-See [DDD and C4 Integration](./architecture/domain-driven-design-ddd/README.md) for comprehensive examples.
-
-## Design in This Repository
-
-The open-sharia-enterprise project applies both C4 and DDD principles:
-
-**C4 Model Usage:**
-
-- All design diagrams use C4 conventions
-- WCAG AA-compliant color palette for accessibility
-- Mermaid diagrams for version-controlled documentation
-- Multiple abstraction levels for different audiences
-
-**DDD Application:**
-
-- Bounded contexts align with Nx project boundaries
-- Business domains modeled with Ubiquitous Language (Tax, Loan, Donation)
-- Functional programming adaptations (immutable aggregates, pure domain logic)
-- Event-driven architecture with Domain Events
-
-**Complementary Practices:**
-
-- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md) - Immutability and pure functions
-- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [Diátaxis Framework](../../../repo-governance/conventions/structure/diataxis-framework.md) - Documentation organization
-
-## Learning Paths
-
-### For Architects and Technical Leads
-
-1. **Understand visualization approaches** - Read [C4 System Context](./architecture/c4-architecture-model/README.md)
-2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/bounded-context-standards.md) and [Context Mapping](./architecture/domain-driven-design-ddd/README.md)
-3. **Learn integration** - Read [DDD and C4 Integration](./architecture/domain-driven-design-ddd/README.md)
-4. **Apply to projects** - Apply C4 and DDD patterns to your architecture
-
-### For Developers
-
-1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./architecture/c4-architecture-model/README.md#ose-platform-c4-standards-authoritative)
-2. **Understand tactical patterns** - Read [DDD Aggregates](./architecture/domain-driven-design-ddd/aggregate-standards.md) and [Value Objects](./architecture/domain-driven-design-ddd/value-object-standards.md)
-3. **Functional programming focus** - Read [DDD and Functional Programming](./architecture/domain-driven-design-ddd/README.md)
-4. **Decision frameworks** - Use [DDD Decision Trees](./architecture/domain-driven-design-ddd/README.md)
-
-### For Domain Experts and Product Owners
-
-1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./architecture/domain-driven-design-ddd/README.md)
-2. **Learn workshop techniques** - Read [Strategic Design Process](./architecture/domain-driven-design-ddd/README.md)
-3. **Visualize system context** - Read [C4 System Context](./architecture/c4-architecture-model/README.md)
-
-## Related Documentation
-
-- **[Explanation Documentation Index](../README.md)** - All conceptual documentation
-- **[Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)** - Six-layer governance hierarchy
-- **[Functional Programming Principles](../../../repo-governance/development/pattern/functional-programming.md)** - FP practices in this repository
-- **[Diagram Standards](../../../repo-governance/conventions/formatting/diagrams.md)** - Mermaid and accessibility requirements
-- **[Content Quality Standards](../../../repo-governance/conventions/writing/quality.md)** - Documentation writing guidelines
+- [Software Design Reference](./software-design-reference.md) — Cross-reference index for software design documentation.
+- [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md) — The project's preference for immutability and pure functions.
+- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md) — How technical practices connect to the wider governance model.

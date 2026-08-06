@@ -1,6 +1,6 @@
 ---
 title: "AyoKoding Web Workflows"
-description: ""
+description: Workflows for keeping AyoKoding learning content accurate, useful, and well structured
 category: explanation
 subcategory: workflows
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # AyoKoding Web Workflows
 
-Orchestrated workflows for ayokoding-web content quality validation and management.
+Use these workflows when AyoKoding learning content needs an independent quality pass. They connect a learning goal to checks for factual accuracy, clarity, and working links.
 
 ## Purpose
 

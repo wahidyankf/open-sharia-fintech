@@ -1,6 +1,6 @@
 ---
 title: "Software Engineering Principles"
-description: ""
+description: Values behind dependable, understandable software development in the platform
 category: explanation
 subcategory: principles
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Software Engineering Principles
 
-Software engineering-specific foundational principles governing development practices, configuration, automation, and code organization.
+These principles explain why the platform favors dependable, understandable software: explicit choices, reproducible work, and automation that removes avoidable friction.
 
 ## Purpose
 
@@ -40,15 +40,15 @@ These principles define **WHY we value specific approaches to software developme
 
 ## Examples from Platform
 
-Each principle is demonstrated across the platform's technology stack:
+Each principle has practical forms across the platform's technology stack:
 
 ### Principle-Specific Examples
 
-- **Automation Over Manual**: Java records auto-generate boilerplate, static analysis catches bugs, TestContainers automate infrastructure
-- **Explicit Over Implicit**: Sealed classes define explicit type hierarchies, pattern matching ensures exhaustive handling
-- **Immutability Over Mutability**: Records, final fields, immutable collections enable thread-safe concurrent code
-- **Pure Functions Over Side Effects**: Functional core/imperative shell separates domain logic from I/O
-- **Reproducibility First**: SDKMAN! pins Java versions, Maven wrapper pins build tools, dependency management pins versions
+- **Automation Over Manual**: Repository checks and generated artifacts make repeatable work less error-prone.
+- **Explicit Over Implicit**: Named contracts, targets, and boundaries make important decisions visible.
+- **Immutability Over Mutability**: Immutable values reduce surprising state changes and make concurrent work easier to reason about.
+- **Pure Functions Over Side Effects**: A functional core and an effectful shell keep domain logic easier to test.
+- **Reproducibility First**: Pinned toolchains and lockfiles help a fresh checkout behave like another developer's checkout.
 
 ## Related Documentation
 

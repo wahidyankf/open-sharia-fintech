@@ -1,6 +1,6 @@
 ---
 title: "Specs Workflows"
-description: ""
+description: Workflows for checking that specifications remain coherent, complete, and actionable
 category: explanation
 subcategory: workflows
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Specs Workflows
 
-Orchestrated workflows for validating specification quality across the specs/ directory.
+Use these workflows when specifications need an independent quality pass. They check whether a spec remains coherent for people who need to understand the product as well as systems that need to validate it.
 
 ## Purpose
 

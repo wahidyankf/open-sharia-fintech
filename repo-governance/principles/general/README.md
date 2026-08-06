@@ -1,6 +1,6 @@
 ---
 title: "General Principles"
-description: ""
+description: Foundational problem-solving values that apply across the repository
 category: explanation
 subcategory: principles
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # General Principles
 
-Universal foundational principles that apply to all problem-solving contexts - beyond software, content, or any specific domain.
+These principles guide decisions before a task becomes code, a document, or a workflow. Use them when there is more than one plausible path and you need a durable basis for choosing.
 
 ## Purpose
 

@@ -11,6 +11,15 @@ what inputs the command accepts, what it writes to stdout, and what exit code
 it returns. They are the single source of truth for correctness and serve as
 the contract between the CLI implementation and its consumers.
 
+## 🧭 Start here
+
+- Looking for a command's promised behavior? Open
+  [behavior/rhino-cli/gherkin/](./behavior/rhino-cli/gherkin/README.md) and choose its domain.
+- Understanding how the CLI fits together? Follow [system-context/](./system-context/README.md),
+  [containers/](./containers/README.md), and [components/](./components/README.md).
+- Adding or changing a command? Read [Adding New Specs](#adding-new-specs) before creating a
+  feature file.
+
 ## Structure
 
 Feature files live under `behavior/rhino-cli/gherkin/`, organized into domain subdirs:
@@ -24,18 +33,14 @@ specs/apps/rhino/
 ├── components/
 │   └── cli/          # C4 L3 CLI internals
 └── behavior/
-    └── cli/
+    └── rhino-cli/
         └── gherkin/
-            ├── agents/           # agents subcommand family (4 features)
-            ├── ddd/              # ddd subcommand family (2 features)
-            ├── docs/             # docs subcommand family (5 features)
-            ├── env/              # env subcommand family (3 features)
-            ├── git/              # git subcommand family (1 feature)
-            ├── repo-governance/  # repo-governance subcommand family (9 features)
-            ├── spec-coverage/    # spec-coverage subcommand family (1 feature)
-            ├── specs/            # specs subcommand family (4 features)
-            ├── system/           # system commands — doctor (1 feature)
-            └── workflows/        # workflows subcommand family (1 feature)
+            ├── contracts/        # contract and generated-artifact checks
+            ├── env/              # environment helpers and contracts
+            ├── gate/             # quality-gate registry and execution
+            ├── md/               # Markdown validation commands
+            ├── repo-governance/  # governance validation
+            └── ...               # one folder for each command domain
 ```
 
 See [behavior/rhino-cli/gherkin/README.md](./behavior/rhino-cli/gherkin/README.md) for the full file inventory.
@@ -43,19 +48,18 @@ See [behavior/rhino-cli/gherkin/README.md](./behavior/rhino-cli/gherkin/README.m
 ## Running the Tests
 
 Unit tests live as `#[cfg(test)]` modules inside `src/`; binary integration tests live in
-`tests/cli/`. A cucumber-rs harness (`tests/cucumber/`) is scaffolded but deferred — the
-existing 754-test suite plus shadow-diff already establishes full behavioral parity. See
-the `project-rhino-cli-rust-cucumber-gap` memory entry for context.
+`tests/cli/`. A cucumber-rs harness (`tests/cucumber/`) is scaffolded but deferred; the existing
+unit and integration suites remain the executable coverage for these feature files.
 
 ```bash
 # Run all unit tests with coverage gate (≥90% line coverage)
-nx run rhino-cli:test:quick
+npm exec nx -- run rhino-cli:test:quick
 
 # Run unit tests directly (no coverage threshold)
 cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib
 
 # Run all binary integration tests
-nx run rhino-cli:test:integration
+npm exec nx -- run rhino-cli:test:integration
 
 # Run a specific integration test during development
 cargo test --manifest-path apps/rhino-cli/Cargo.toml --tests -- <test_name>
@@ -80,8 +84,8 @@ cache-invalidated when spec files change.
 4. Verify:
 
    ```bash
-   nx run rhino-cli:test:quick
-   nx run rhino-cli:test:integration
+   npm exec nx -- run rhino-cli:test:quick
+   npm exec nx -- run rhino-cli:test:integration
    ```
 
 ## Dual Consumption

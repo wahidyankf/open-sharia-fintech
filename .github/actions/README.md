@@ -1,23 +1,39 @@
-# Composite Actions
+# Composite GitHub Actions
 
-Reusable composite actions that set up the toolchains the workflows depend on. Each is
-referenced as `uses: ./.github/actions/<name>`.
+These actions give OSE workflows a consistent, repeatable toolchain setup.
+They are building blocks for automation, not commands a new contributor needs
+to run locally. For a local first success, start from the
+[root README](../../README.md). ⚙️
 
-| Action               | Purpose                                                                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `setup-node`         | Install Node.js via Volta, run `npm ci`, and configure the Nx cache                                                            |
-| `setup-dotnet`       | Install the .NET SDK, Fantomas, and fsharplint with NuGet cache (F# backends)                                                  |
-| `setup-rust`         | Install the Rust toolchain pinned by `rust-toolchain.toml`, with build cache, `cargo-llvm-cov`, `cargo-deny`, and `cargo-hack` |
-| `setup-playwright`   | Install Playwright browsers and OS dependencies with browser cache (E2E)                                                       |
-| `setup-docker-cache` | Configure Docker Buildx with GitHub Actions layer cache (integration/E2E Docker stacks)                                        |
+## What each action prepares
 
-The repository's active languages are TypeScript, Rust, and F#. The former
-`setup-golang`, `setup-jvm`, `setup-python`, `setup-language`, and `install-language-deps`
-actions were removed when Go and the polyglot demo apps left this repo — see the
-[CI Conventions](../../repo-governance/development/infra/ci-conventions.md) and
-[model/language tiers](../../repo-governance/development/agents/model-selection.md).
+| Action               | What it prepares                                         | Used when                                    |
+| -------------------- | -------------------------------------------------------- | -------------------------------------------- |
+| `setup-node`         | The pinned Node.js toolchain, dependencies, and Nx cache | A workflow runs workspace tasks              |
+| `setup-dotnet`       | .NET tooling and its cache                               | A workflow validates F# work                 |
+| `setup-rust`         | The pinned Rust toolchain and Rust quality tools         | A workflow validates Rust work               |
+| `setup-playwright`   | Browsers and operating-system dependencies               | A workflow runs browser E2E checks           |
+| `setup-docker-cache` | Docker Buildx and its layer cache                        | A workflow needs an integration or E2E stack |
 
-## See also
+Workflows reference an action with `uses: ./.github/actions/<name>`. Keep
+setup behavior in the relevant `action.yml`; this README explains intent so a
+reader can choose the right place to investigate.
 
-- [workflows/README.md](../workflows/README.md) — workflows that consume these actions
-- [CI/CD Pipeline reference](../../docs/reference/system-architecture/ci-cd.md)
+## Safe maintenance boundary
+
+- Keep versions and installation logic in the action definition, not in a
+  calling workflow.
+- Use the workspace’s pinned toolchains; do not add a one-off installer just
+  to make a workflow pass.
+- Treat caches as an acceleration, never as the only source of a build input.
+- Do not put credentials, tokens, or environment values in action files or
+  documentation.
+
+## Related guides
+
+- [Workflow map](../workflows/README.md) — which automation consumes these
+  actions
+- [CI/CD reference](../../docs/reference/system-architecture/ci-cd.md) — the
+  broader quality and delivery model
+- [CI conventions](../../repo-governance/development/infra/ci-conventions.md)
+  — repository standards for workflow design

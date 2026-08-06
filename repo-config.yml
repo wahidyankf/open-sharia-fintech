@@ -686,6 +686,7 @@ gates:
     args:
       exempt:
         - "*__linkedin__*.md"
+        - "CONTRIBUTING.md"
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }

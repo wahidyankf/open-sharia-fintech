@@ -13,11 +13,11 @@ created: 2025-12-15
 
 # Core Principles
 
-Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise.
+These principles explain why the repository makes the choices it does. They connect day-to-day documentation and engineering decisions to the [Vision](../vision/open-sharia-enterprise.md): making trustworthy, Shariah-compliant enterprise systems more accessible.
 
 ## 🎯 Purpose
 
-Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
+Core principles are the stable values behind how we build software and write documentation. In the six-layer architecture, they are **Layer 1**: they serve the [Vision](../vision/open-sharia-enterprise.md) and guide conventions and development practices.
 
 See [Repository Architecture](../repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
 

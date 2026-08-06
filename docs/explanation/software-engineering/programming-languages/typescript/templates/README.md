@@ -12,12 +12,11 @@ created: 2026-04-26
 
 # TypeScript Documentation Templates
 
-This directory contains reusable code templates and patterns for TypeScript development.
+This directory is reserved for reusable TypeScript documentation templates. It is intentionally empty today, so it does not yet offer a copy-and-adapt starting point.
 
 ## Purpose
 
-Templates provide standardized starting points for common TypeScript patterns,
-reducing repetition and ensuring consistency across documentation and code examples.
+When templates are added, they will provide a documented starting point for common TypeScript patterns without pretending that an unreviewed snippet is a complete implementation.
 
 ## Template Naming Convention
 
@@ -25,9 +24,9 @@ Templates use plain kebab-case filenames (e.g., `service-class.md`). The contain
 
 ## Templates
 
-This directory is currently a placeholder. Templates will be added as common patterns are identified.
+No templates are published in this directory yet. Use the [TypeScript programming-language overview](../README.md) and the relevant framework standards instead of assuming that `service-class.md` already exists.
 
-Suggested starting template: `service-class.md`
+Candidate template, once a recurring and reviewed need exists: `service-class.md`.
 
 ## Usage
 

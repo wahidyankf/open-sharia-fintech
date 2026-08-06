@@ -17,7 +17,7 @@ created: 2026-01-21
 
 # Finite State Machine (FSM)
 
-**This is THE authoritative reference** for Finite State Machine standards in OSE Platform.
+Use this reference when a product entity has a meaningful lifecycle — for example, a request being drafted, approved, fulfilled, or cancelled. It is the authoritative finite-state-machine standard for OSE Platform.
 
 All FSM implementations in OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks code review and merge approval.
 
@@ -48,9 +48,9 @@ OSE Platform FSM implementations MUST use the following frameworks:
 - MUST emit domain events on state transitions
 - MUST log all state changes for audit trails
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Finite State Machine learning path. These are **OSE Platform-specific FSM standards**, not educational tutorials.
+These are **OSE Platform-specific FSM standards**, not an introduction to state machines. Read the learning material first if states, transitions, and guards are unfamiliar; otherwise, continue to the applicable standard.
 
 **You MUST understand FSM fundamentals before using these standards:**
 

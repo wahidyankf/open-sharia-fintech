@@ -23,7 +23,7 @@ principles:
 created: 2026-03-09
 ---
 
-# F
+# F Sharp
 
 **This is THE authoritative reference** for F# coding standards in OSE Platform.
 

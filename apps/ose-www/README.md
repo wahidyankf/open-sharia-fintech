@@ -1,112 +1,104 @@
-# ose-www
+# OSE Platform website
 
-Official website for the **Open Sharia Enterprise** platform — an open-source Sharia-compliant
-enterprise solutions platform built in the open.
+`ose-www` is the public website for Open Sharia Enterprise (OSE), available at
+[oseplatform.com](https://oseplatform.com). It gives product people and early engineers a clear
+starting point for understanding OSE: why trustworthy, Sharia-compliant enterprise products need
+to be designed as inspectable systems, what the platform is exploring, and how that work is
+developing.
 
-**Why This Matters**: Islamic finance is a multi-trillion dollar industry, but most
-Sharia-compliant enterprise solutions are proprietary and expensive. We're building an
-open-source alternative with Sharia-compliance at its core — not bolted on as an afterthought.
+OSE is pre-alpha. The product direction, technical architecture, and public APIs can change as the
+team learns. For the wider product context, see the repository
+[roadmap](../../roadmap.md) and [application map](../../docs/reference/system-architecture/applications.md).
 
-**What This Site Does**: Showcases the platform and shares our journey. Regular updates keep the
-community informed as we build with radical transparency.
+## What the site provides
 
-## Architecture
+- A public introduction to the OSE Platform and its product intent.
+- An About page that explains the problem space and current approach.
+- A chronological updates section, plus an RSS feed, for published progress and decisions.
+- Search across the site's Markdown content.
 
-- **Framework**: Next.js 16 (App Router, React Server Components)
-- **Language**: TypeScript (strict mode)
-- **API**: tRPC for type-safe server-client communication (runs inside the Next.js process)
-- **Content**: Markdown with YAML frontmatter from `content/` (~6 pages: Landing, About, updates)
-- **Styling**: Tailwind CSS v4 + shadcn/ui
-- **Search**: FlexSearch for full-text search
-- **Diagrams**: Mermaid diagram support
-- **Testing**: Vitest (unit + integration), 86% line coverage enforced via rhino-cli
-- **Structure**: Feature modules under `src/features/<feature>/`, each split into `core/` and `shell/`
+The site is a Next.js 16 application using the App Router, TypeScript, Tailwind CSS, tRPC, and
+Markdown content stored in this app. Its feature modules keep decision-making code in `core/` and
+framework or IO work in `shell/`.
 
-The codebase follows the functional-core / imperative-shell convention. Each feature module splits
-into two layers:
+## Run locally
 
-- **core** — the functional core: pure functions, immutable data, derivations, validation, Zod
-  schemas, plain TypeScript types, and constant data tables. `core/` performs no IO and never
-  imports React, Next.js, node builtins, tRPC wiring, or any network/file client. `core/` never
-  imports from `shell/`.
-- **shell** — the imperative shell: everything effectful — React components and DOM hooks, file
-  system readers, repository adapters, tRPC routers and init wiring, route handlers, and the RSS /
-  sitemap generators. `shell/` may import from `core/`.
-
-A shared pure type that both layers depend on (such as a repository interface) lives in `core/`, so
-`shell/` adapters implement it without `core/` ever depending on `shell/`.
-
-## Quick Start
+From the repository root, install the workspace dependencies and start the site:
 
 ```bash
-# Development server (port 3100)
-nx dev ose-www
-
-# Production build
-nx build ose-www
-
-# Typecheck
-nx run ose-www:typecheck
-
-# Lint (oxlint)
-nx run ose-www:lint
-
-# Unit tests + coverage + links
-nx run ose-www:test:quick
-
-# Integration tests
-nx run ose-www:test:integration
-
-# Spec coverage (both web + api perspectives)
-nx run ose-www:specs:coverage
+npm install
+npm exec nx -- run ose-www:dev
 ```
 
-## Project Structure
+Open <http://localhost:3100>. The development server uses port 3100. No local configuration is
+required for the standard site; optional content and development-server settings are documented in
+[.env.example](./.env.example).
 
-```
-ose-www/
-├── src/
-│   ├── app/            # Next.js App Router routes (thin glue, imports from features/)
-│   ├── features/       # Feature modules (one folder per feature, each with core/ + shell/)
-│   │   ├── app-shell/  # Site chrome + root tRPC router
-│   │   ├── landing/    # Marketing landing page
-│   │   ├── content/    # Content retrieval + rendering
-│   │   ├── search/     # Search backend + UI
-│   │   ├── rss-feed/   # RSS feed generation
-│   │   ├── seo/        # Sitemap + metadata
-│   │   └── health/     # Health probe + status page
-│   └── lib/            # Cross-cutting utilities (tRPC infra, cn)
-├── test/               # Test files (Vitest unit + integration)
-├── content/            # Markdown pages with YAML frontmatter
-└── project.json        # Nx project configuration
-```
+For supported platforms, prerequisites, and recovery steps, follow
+[Getting started with OSE Public](../../docs/tutorials/getting-started-with-ose-public.md).
 
-## Specs
+## Publish or revise site content
 
-Spec tree: `specs/apps/ose/`.
+The public pages and updates live in [`content/`](./content/). Update Markdown there to change
+what the website publishes:
 
-| Section                                                                               | What it contains                                 |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [system-context/](../../specs/apps/ose/system-context/)                               | C4 L1 — actors, external systems                 |
-| [containers/](../../specs/apps/ose/containers/)                                       | C4 L2 — single `web` container                   |
-| [components/web/](../../specs/apps/ose/components/platform-web/)                      | C4 L3 — UI perspective                           |
-| [components/api/](../../specs/apps/ose/components/platform-be/)                       | C4 L3 — tRPC HTTP perspective                    |
-| [behavior/platform-web/gherkin/](../../specs/apps/ose/behavior/platform-web/gherkin/) | UI-semantic Gherkin (web perspective)            |
-| [behavior/platform-be/gherkin/](../../specs/apps/ose/behavior/platform-be/gherkin/)   | tRPC HTTP-semantic Gherkin (backend perspective) |
+- `about.md` supplies the About page.
+- `updates/_index.md` supplies the updates landing page.
+- `updates/<date>-<slug>.md` supplies an individual update.
 
-## Deployment
+Each content file uses YAML frontmatter. `title` is required; `description`, `summary`, `date`,
+`tags`, `categories`, `draft`, `weight`, `showtoc`, and `url` are supported when applicable. Build
+the site after a content change to regenerate its search data and check the rendered result.
 
-Deployed to Vercel via production branch `prod-ose-www`.
+## Develop and verify
 
-- **Production**: <https://oseplatform.com>
-- **Deploy**: Push `main` to `prod-ose-www`; Vercel builds automatically
+Run these commands from the repository root:
 
 ```bash
-git push origin main:prod-ose-www
+# Create the production build (also regenerates search data)
+npm exec nx -- run ose-www:build
+
+# Run the focused quality gate: typecheck, lint, unit tests, coverage, and spec checks
+npm exec nx -- run ose-www:test:quick
+
+# Run the unit suite only
+npm exec nx -- run ose-www:test:unit
+
+# Run the website's companion frontend E2E suite
+npm exec nx -- run ose-www-fe-e2e:test:e2e
 ```
 
-## Related
+The focused quality gate enforces 86% line coverage. `ose-www:test:integration` currently reports
+that integration testing is not applicable; it is not a substitute for the companion E2E suite.
 
-- [Specs root](../../specs/apps/ose/README.md)
-- [Main Repository](https://github.com/wahidyankf/ose-public)
-- [apps-ose-www-deployer](../../.claude/agents/) — AI agent for deployments
+## Project layout
+
+```text
+apps/ose-www/
+├── content/       # Public Markdown pages and updates
+├── public/        # Static site assets
+├── src/app/       # Thin Next.js routes
+├── src/features/  # Product features, organized into core/ and shell/
+├── test/          # Unit and integration test definitions
+└── project.json   # Nx targets for development, build, and verification
+```
+
+The behavior specifications that describe the web and tRPC perspectives are in
+[specs/apps/ose](../../specs/apps/ose/).
+
+## Production delivery
+
+The production site runs on Vercel at <https://oseplatform.com>. A GitHub Actions workflow runs the
+website quality gates and E2E checks; when `apps/ose-www/` has changed and the gates pass, it
+updates the `prod-ose-www` deployment branch. Vercel builds only from that branch.
+
+Deployment is automated. Do not manually push to `prod-ose-www`; see the
+[production workflow](../../.github/workflows/ose-www-test-local-deploy-prod.yml) and
+[deployment reference](../../docs/reference/system-architecture/deployment.md) for the current
+delivery path.
+
+## Related references
+
+- [Repository onboarding tutorial](../../docs/tutorials/getting-started-with-ose-public.md)
+- [OSE specifications](../../specs/apps/ose/README.md)
+- [Application architecture](../../docs/reference/system-architecture/applications.md)

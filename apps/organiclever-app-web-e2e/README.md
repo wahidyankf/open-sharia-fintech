@@ -1,60 +1,36 @@
 # organiclever-app-web-e2e
 
-End-to-end tests for the [OrganicLever frontend](../organiclever-app-web/README.md),
-using playwright-bdd to drive a real browser from Gherkin feature files.
+This project checks OrganicLever’s product interface in a real browser. Its Gherkin scenarios cover
+the journeys that matter to someone using the app, while Playwright-BDD turns those examples into
+repeatable checks. 🌿
 
-**Behavior specs** (source of truth):
-[`specs/apps/organiclever/behavior/organiclever-app-web/gherkin/`](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/)
-
-## Prerequisites
-
-Frontend must be running on `http://localhost:3202` (or `BASE_URL`):
+## Run the browser suite
 
 ```bash
-nx dev organiclever-app-web
+# Install the browser support once on this machine
+npm exec nx -- run organiclever-app-web-e2e:install
+
+# Start the app for a local run
+npm exec nx -- run organiclever-app-web:dev
+
+# In another terminal, run the scenarios
+npm exec nx -- run organiclever-app-web-e2e:test:e2e
 ```
 
-## Setup
+Use `npm exec nx -- run organiclever-app-web-e2e:test:e2e:ui` to investigate a scenario visually,
+or `npm exec nx -- run organiclever-app-web-e2e:test:e2e:report` to open the last HTML report.
+
+## Target a different environment
+
+The suite uses `http://localhost:3202` by default. Set `WEB_BASE_URL` to test an already-running
+environment. Keep credentials and access tokens outside committed files.
+
+## Keep it healthy
 
 ```bash
-nx run organiclever-app-web-e2e:install   # Install Playwright + browser deps (one-time)
+npm exec nx -- run organiclever-app-web-e2e:test:quick
+npm exec nx -- run organiclever-app-web-e2e:test:specs
 ```
 
-## Running Tests
-
-```bash
-# Run all BDD E2E tests headlessly
-nx run organiclever-app-web-e2e:test:e2e
-
-# Interactive Playwright UI
-nx run organiclever-app-web-e2e:test:e2e:ui
-
-# View HTML report from last run
-nx run organiclever-app-web-e2e:test:e2e:report
-
-# Pre-push quality gate (typecheck + lint)
-nx run organiclever-app-web-e2e:test:quick
-```
-
-`test:e2e` runs on a scheduled cron, not on pre-push.
-
-## Environment Variables
-
-| Variable   | Default                 | Description                     |
-| ---------- | ----------------------- | ------------------------------- |
-| `BASE_URL` | `http://localhost:3202` | Frontend base URL               |
-| `CI`       | unset                   | Enables CI mode (single worker) |
-
-## Project Structure
-
-```
-apps/organiclever-app-web-e2e/
-├── playwright.config.ts   # Playwright + playwright-bdd config
-├── steps/                  # BDD step definitions (per feature domain)
-└── .features-gen/          # Auto-generated spec files (gitignored)
-```
-
-## Related
-
-- [Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/) — feature files (source of truth)
-- [organiclever-app-web](../organiclever-app-web/README.md) — frontend under test
+The behavior source of truth is in
+[the OrganicLever app-web Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md).

@@ -1,25 +1,26 @@
-# OrganicLever Kubernetes Deployments
+# OrganicLever Kubernetes boundary
 
-Kubernetes configurations for staging and production environments.
-See [deployment.md](../../../specs/apps/organiclever/containers/deployment.md)
-for full environment details, Docker images, and environment variables.
+This directory reserves the staging and production locations for a future
+OrganicLever Kubernetes deployment. It does not currently contain deployable
+manifests, so it is not a place to run kubectl apply or to begin local
+development. 🛑
 
-## Environments
+## What to use instead
 
-| Environment | Purpose              | Path          |
-| ----------- | -------------------- | ------------- |
-| Staging     | Pre-production QA    | `staging/`    |
-| Production  | Live user-facing app | `production/` |
+| Your goal                                  | Start here                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| Explore or develop the local-first web app | [OrganicLever web app](../../../apps/organiclever-app-web/README.md)      |
+| Work on the current backend service        | [OrganicLever backend](../../../apps/organiclever-be/README.md)           |
+| Understand expected product behavior       | [OrganicLever specifications](../../../specs/apps/organiclever/README.md) |
 
-## Apply manifests
+The [staging](./staging/README.md) and
+[production](./production/README.md) directories document their status and
+the conditions needed before a manifest may be added.
 
-```bash
-kubectl apply -f infra/k8s/organiclever/staging/
-kubectl apply -f infra/k8s/organiclever/production/
-```
+## Safe boundary
 
-## Local development
-
-Use Docker Compose instead of Kubernetes for local dev.
-
-See [infra/dev/organiclever-app/README.md](../../dev/organiclever-app/README.md).
+Kubernetes configuration can affect shared environments. Keep secrets out of
+Git, do not infer missing manifests from this directory structure, and do not
+treat placeholders as an operational runbook. A future deployment change needs
+a reviewed, secret-safe implementation plan and validated manifests before this
+directory becomes executable.

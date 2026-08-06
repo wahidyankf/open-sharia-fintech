@@ -1,19 +1,35 @@
 # ose-be-e2e
 
-Playwright-BDD backend E2E tests for ose-be.
+This project tests OSE’s backend through its HTTP API. Playwright-BDD executes the same behavior
+examples that describe the service, without needing a browser. 🧪
 
-## Quick Start
+## Run locally
 
-1. Start BE: `nx dev ose-be`
-2. Run E2E: `nx run ose-be-e2e:test:e2e`
+```bash
+# Install test dependencies once on this machine
+npm exec nx -- run ose-be-e2e:install
 
-## Commands
+# Start the API at http://localhost:8302
+npm exec nx -- run ose-be:dev
 
-| Command                            | Description                 |
-| ---------------------------------- | --------------------------- |
-| `nx run ose-be-e2e:test:e2e`       | Run BE E2E tests headlessly |
-| `nx run ose-be-e2e:specs:coverage` | Check Gherkin step coverage |
+# In another terminal, run the API scenarios
+npm exec nx -- run ose-be-e2e:test:e2e
+```
 
-## Feature Files
+Use `npm exec nx -- run ose-be-e2e:test:e2e:ui` for Playwright’s UI or
+`npm exec nx -- run ose-be-e2e:test:e2e:report` for the most recent report.
 
-- [health.feature](../../specs/apps/ose/behavior/be/gherkin/health/health.feature)
+## Target a running environment
+
+The default API address is `http://localhost:8302`. Set `API_BASE_URL` to point the suite at a
+different running environment; never commit credentials or real access values.
+
+## Checks and specs
+
+```bash
+npm exec nx -- run ose-be-e2e:test:quick
+npm exec nx -- run ose-be-e2e:test:specs
+```
+
+The behavior source of truth is
+[the OSE backend Gherkin suite](../../specs/apps/ose/behavior/be/gherkin/README.md).

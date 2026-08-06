@@ -8,6 +8,15 @@ The system is implemented as a single Next.js 16 application that serves both se
 HTML pages (App Router) and a tRPC HTTP API at `/api/trpc/*`. There is no separate backend
 container.
 
+## 🧭 Start here
+
+- Want to understand the learning product and its audience? Start with
+  [product/](./product/README.md).
+- Need to see a user journey or API promise? Browse [behavior/](./behavior/README.md), then the
+  relevant Gherkin feature.
+- Mapping an implementation change? Use [system-context/](./system-context/README.md),
+  [containers/](./containers/README.md), and [components/](./components/README.md) in that order.
+
 ## Structure
 
 ```
@@ -38,11 +47,11 @@ specs/apps/ayokoding/
 │       └── *.md           # One glossary file per bounded context
 └── behavior/              # Gherkin scenarios (all surfaces)
     ├── README.md
-    ├── api/gherkin/        # tRPC API Gherkin scenarios (per bounded context)
-    ├── build-tools/gherkin/ # Build-time index-generation scripts
+    ├── ayokoding-be/gherkin/          # tRPC API scenarios (per bounded context)
+    ├── ayokoding-build-tools/gherkin/ # Build-time index-generation scripts
     │   └── index-generation/
-    ├── cli/gherkin/        # ayokoding-cli link-validation scenarios
-    └── web/gherkin/        # Browser UI Gherkin scenarios (per bounded context)
+    ├── ayokoding-cli/gherkin/         # Link-validation CLI scenarios
+    └── ayokoding-www/gherkin/         # Browser UI scenarios (per bounded context)
 ```
 
 ## Containers and perspectives
@@ -88,7 +97,7 @@ Counts are Gherkin features per perspective. `--` means no features in that pers
 
 `bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
 `ayokoding-www`. Two `rhino-cli ddd` subcommands read it to enforce structural and
-vocabulary invariants automatically in `nx run ayokoding-www:test:quick`.
+vocabulary invariants automatically in `npm exec nx -- run ayokoding-www:test:quick`.
 
 ### Schema
 
@@ -150,7 +159,7 @@ Reads the registry to locate every `glossary:` file, then validates each:
 3. Create the glossary file at `ddd/ubiquitous-language/<bc>.md`.
 4. Create the gherkin directory and add at least one `.feature` file under
    `behavior/ayokoding-www/gherkin/<bc>/` (and optionally `behavior/ayokoding-be/gherkin/<bc>/`).
-5. Run `nx run ayokoding-www:test:quick` — `ddd bc` and `ddd ul` confirm
+5. Run `npm exec nx -- run ayokoding-www:test:quick` — `ddd bc` and `ddd ul` confirm
    the registry matches the filesystem before any unit tests run.
 
 ## tRPC Procedures

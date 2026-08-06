@@ -1,149 +1,66 @@
-# Claude Code Skills
+# Claude Code skills
 
-This directory contains skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+Skills are short, reusable guides that give an AI agent the right context at
+the right moment. Think of them as a practical field guide: an agent can load
+the relevant skill instead of carrying every repository convention into every
+task. 🧭
 
-## Skill Organization
+If you are new here, begin with [AGENTS.md](../../AGENTS.md). Then use this
+directory when you want to understand the guidance behind a task or add a new
+skill.
 
-### 📚 Documentation Skills
+## Find the right skill
 
-- **docs-applying-content-quality** - Universal content quality standards (active voice, heading hierarchy, accessibility)
-- **docs-applying-diataxis-framework** - Four-category documentation organization (Tutorials, How-To, Reference, Explanation)
-- **docs-creating-accessible-diagrams** - Accessible Mermaid diagrams with color-blind friendly palette
-- **docs-creating-by-example-tutorials** - By-example tutorial creation methodology
-- **docs-creating-in-the-field-tutorials** - In-the-field tutorial creation methodology
-- **docs-validating-factual-accuracy** - Factual verification methodology with web research
-- **docs-validating-links** - Link validity checking and fixing procedures
-- **docs-validating-software-engineering-separation** - Programming language docs separation validation
+| Your goal                                   | Look in                     |
+| ------------------------------------------- | --------------------------- |
+| Create, organize, or validate documentation | `docs-*` and `readme-*`     |
+| Shape or check a delivery plan              | `plan-*` and `grill-me`     |
+| Build or test an application                | `swe-*`                     |
+| Work with a site’s content                  | `apps-*-developing-content` |
+| Work on repository, CI, or agent practices  | `repo-*` and `ci-standards` |
 
-### 📋 README Skills
+Directory names are the live catalog. This guide intentionally avoids a copied
+list of every skill, so a newly added skill is discoverable without leaving a
+stale index behind.
 
-- **readme-writing-readme-files** - README-specific quality standards and structure
+## Read a skill before using it
 
-### 📝 Planning Skills
+Each skill has a `SKILL.md` file. Read it in full before acting on its
+instructions; it may point to a small reference or a supplied script that is
+part of the workflow. A typical package looks like this:
 
-- **grill-me** - Structured one-question-at-a-time interrogation of plans and designs before implementation; presents 2-4 options with recommended choice; explores codebase before asking answerable questions; walks the decision tree to completion
-- **plan-creating-project-plans** - Project planning methodology and structure
-- **plan-grooming-idea-briefs** - Invocable entry point for the plan-ideas-grooming workflow: cross-repo dedup, the three residency rules, Eisenhower-quadrant classification, fail-safe relocation, and the six-clause termination audit
-- **plan-writing-gherkin-criteria** - Gherkin-style acceptance criteria writing
-
-### 🤖 Agent Development Skills
-
-- **agent-developing-agents** - Agent creation, reference documentation structure, and model selection standards
-
-### 🔧 CI/CD Skills
-
-- **ci-standards** - CI/CD standards including mandatory Nx targets, coverage thresholds, Docker setup, Gherkin consumption, and workflow files
-
-### 🏗️ Repository Pattern Skills
-
-- **repo-applying-maker-checker-fixer** - Three-stage quality workflow pattern
-- **repo-assessing-criticality-confidence** - Criticality and confidence assessment system
-- **repo-defining-workflows** - Workflow orchestration and multi-step process patterns
-- **repo-generating-validation-reports** - Progressive report writing with UUID chains
-- **repo-practicing-trunk-based-development** - Trunk-based development workflow
-- **repo-understanding-repository-architecture** - Six-layer governance hierarchy
-
-### 💻 Development Workflow Skills
-
-- **swe-developing-applications-common** - Common development workflow patterns shared across all language developers
-- **swe-developing-frontend-ui** - UI component development standards — CVA variants, Radix composition, design tokens, accessibility, responsive design, and anti-patterns
-- **swe-developing-e2e-test-with-playwright** - End-to-end testing with Playwright methodology and standards
-
-### 🔤 Programming Language Skills
-
-- **swe-programming-clojure** - Clojure coding standards quick reference
-- **swe-programming-csharp** - C# coding standards quick reference
-- **swe-programming-dart** - Dart coding standards quick reference
-- **swe-programming-elixir** - Elixir, Phoenix Framework, and Phoenix LiveView coding standards
-- **swe-programming-fsharp** - F# coding standards quick reference
-- **swe-programming-golang** - Go coding standards quick reference
-- **swe-programming-java** - Java, Spring Framework, and Spring Boot coding standards
-- **swe-programming-kotlin** - Kotlin coding standards quick reference
-- **swe-programming-python** - Python coding standards quick reference
-- **swe-programming-rust** - Rust coding standards quick reference
-- **swe-programming-typescript** - TypeScript coding standards quick reference
-
-### 🌐 Site Development Skills
-
-- **apps-ayokoding-www-developing-content** - AyoKoding content development standards (Next.js)
-- **apps-organiclever-www-developing-content** - OrganicLever frontend content development standards
-- **apps-ose-www-developing-content** - OSE Platform content development standards
-
-## Skill Structure
-
-Each skill package follows this directory structure:
-
-```
+```text
 skill-name/
-├── SKILL.md           # Primary content (injected when invoked)
-├── reference.md       # Extended reference (optional)
-├── examples.md        # Usage examples (optional)
-└── checklists.md      # Quick checklists (optional)
+├── SKILL.md       # required entry point
+├── reference/     # optional focused detail
+├── scripts/       # optional task helpers
+└── assets/        # optional reusable material
 ```
 
-## Inline vs Fork Skills
+Skills use progressive disclosure: their names help you locate the right
+subject, while the full `SKILL.md` supplies the working rules only when that
+subject is in scope.
 
-Skills operate in two modes:
+## Source and platform behavior
 
-**Inline Skills** (default):
+`.claude/skills/` is the hand-authored source for these skill packages.
+OpenCode reads compatible skills from this location; it does not need a copied
+skill directory. Do not create or hand-edit `.opencode/skills/` mirrors.
 
-- Inject knowledge into current conversation
-- Progressive disclosure (name/description → full content on-demand)
-- Enable knowledge composition (multiple skills work together)
+When a skill changes, follow the source skill’s instructions and verify the
+repository state with `npm run validate:sync`. See
+[Platform bindings](../../docs/reference/platform-bindings.md) for the
+cross-tool model.
 
-**Fork Skills** (`context: fork`):
+## Keep a new skill useful
 
-- Delegate tasks to agents in isolated subagent contexts
-- Act as lightweight orchestrators
-- Return summarized results to main conversation
+- Give it one clear job and a reader-friendly description.
+- Put the essential procedure in `SKILL.md`; link to deeper material instead
+  of repeating it.
+- Prefer supplied scripts and templates over retyping large, fragile commands.
+- State boundaries, especially around generated files, credentials, and
+  destructive actions.
 
-See `repo-applying-maker-checker-fixer` skill for complete workflow patterns.
-
-## Dual-Mode Operation
-
-**Source of Truth**: This directory (`.claude/skills/`) is the PRIMARY source for both Claude Code AND OpenCode.
-
-**No mirror copy**: Per [opencode.ai/docs/skills](https://opencode.ai/docs/skills/),
-OpenCode reads `.claude/skills/<name>/SKILL.md` natively. `rhino-cli harness bindings generate`
-
-Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
-does NOT copy skills to `.opencode/skill/` or `.opencode/skills/`. Editing a
-skill here is immediately visible to both systems on the next session start.
-
-**Making Changes**:
-
-1. Edit skills in `.claude/skills/` directory.
-2. Restart any active Claude Code or OpenCode session to pick up changes.
-3. The `validate:sync` command's `No Synced Skill Mirror` check fails if a
-   stale `.opencode/skill/` or `.opencode/skills/<claude-name>` mirror reappears.
-
-**See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
-
-## Skills vs Agents
-
-**Skills** are reusable knowledge packages that **serve agents** but don't govern them:
-
-- Deliver domain-specific knowledge on-demand
-- Bundle conventions, patterns, and standards
-- Support both inline (knowledge injection) and fork (task delegation) modes
-- Service relationship, NOT governance layer
-
-**Agents** are autonomous executors that **use skills** as knowledge resources:
-
-- Execute specific tasks (make, check, fix, deploy)
-- Consume skills for domain expertise
-- Follow conventions and practices (L2/L3 governance)
-- Action-oriented, task-focused
-
-**See**: [repo-governance/repository-governance-architecture.md](../../repo-governance/repository-governance-architecture.md) for complete architecture
-
-## Governance Standards
-
-All skills follow governance principles:
-
-- **Documentation First** - Comprehensive guidance in SKILL.md
-- **Progressive Disclosure** - Name/description → full content on-demand
-- **Simplicity Over Complexity** - Single-purpose skills, clear scope
-- **Explicit Over Implicit** - Clear when/how to use each skill
-
-**See**: [repo-governance/principles/README.md](../../repo-governance/principles/README.md)
+For the repository’s full expectations, see
+[AI agents](../../repo-governance/development/agents/ai-agents.md) and the
+[agent-development skill](agent-developing-agents/SKILL.md).

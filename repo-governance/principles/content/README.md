@@ -1,6 +1,6 @@
 ---
 title: "Content Principles"
-description: ""
+description: Values that make platform documentation and learning materials accessible and useful
 category: explanation
 subcategory: principles
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Content Principles
 
-Content-specific foundational principles governing documentation, education, and communication.
+These principles explain why the platform treats clear documentation, accessible communication, and respectful learning as product work—not polish added at the end.
 
 ## Purpose
 

@@ -12,9 +12,16 @@ created: 2025-11-22
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted.
+Use this section when you need the repository's shared rules for writing, organizing, or checking documentation. These conventions make the platform easier to understand and safer to change without turning every decision into a new debate.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./writing/conventions.md) for structure requirements.
+
+## 🧭 Find the right rule
+
+- Starting a reader-facing page? Begin with [writing](./writing/README.md), then use [formatting](./formatting/README.md) and [linking](./linking/README.md) as needed.
+- Deciding where a document belongs? Use [structure](./structure/README.md) and the Diátaxis convention it links to.
+- Creating learning material? Use [tutorials](./tutorials/README.md).
+- Handling environment or sensitive data guidance? Use [security](./security/README.md) before making a change.
 
 ## Scope
 

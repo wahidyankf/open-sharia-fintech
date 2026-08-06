@@ -1,48 +1,36 @@
-# OSE Application Local Development Infrastructure
+# OSE Application local-stack scaffold
 
-Docker Compose setup for running the full OSE Application stack locally.
+This folder contains an early Docker Compose scaffold for a future paired OSE
+Application stack. It is **not** the supported onboarding route today: the
+active API is the F# service in [apps/ose-be/](../../../apps/ose-be/), and the
+active web client is in [apps/ose-app-web/](../../../apps/ose-app-web/). 🧪
 
-## Services
+## Start in the supported place
 
-| Service     | Port | Description                |
-| ----------- | ---- | -------------------------- |
-| postgres    | 5432 | PostgreSQL 17 database     |
-| ose-app-be  | 8302 | Rust/Axum REST API backend |
-| ose-app-web | 3300 | Next.js 16 frontend        |
+- To see the web client, follow
+  [the OSE Application web README](../../../apps/ose-app-web/README.md).
+- To develop the API or its local dependencies, follow
+  [the OSE Application backend README](../../../apps/ose-be/README.md).
+- For workspace setup and the first local success, use the
+  [OSE getting-started tutorial](../../../docs/tutorials/getting-started-with-ose-public.md).
 
-## Quick Start
+macOS and Ubuntu Linux are the supported local-development paths. Windows may
+work through WSL2, but it is not yet a verified route for this scaffold.
 
-```bash
-# Copy env (edit OPENROUTER_API_KEY if needed)
-cp apps/ose-app-be/.env.example infra/dev/ose-app/.env
+## Why this folder is not an onboarding command
 
-# Start all services
-docker compose -f infra/dev/ose-app/docker-compose.yml up --build -d
+The Compose files retain a Rust-container shape and application paths that no
+longer match the active F# backend. They also describe an exploratory,
+AI-assisted path whose local credentials must never be committed. Running this
+scaffold would not be a reliable way for a new reader to learn or verify the
+current product.
 
-# Verify health
-curl -sf http://localhost:8302/api/v1/health
-curl -sf http://localhost:3300
+Keep this directory as a clear boundary for future work. Before it is promoted
+to a supported local stack, it needs an explicit owner, aligned application
+paths, a secret-safe configuration guide, and a fresh-checkout verification.
 
-# Tear down (removes volumes)
-docker compose -f infra/dev/ose-app/docker-compose.yml down -v
-```
+## Related references
 
-## Environment Variables
-
-| Variable            | Default                          | Required |
-| ------------------- | -------------------------------- | -------- |
-| DATABASE_URL        | postgresql://ose_app:ose_app@... | No       |
-| OPENROUTER_API_KEY  | (empty)                          | No\*     |
-| OPENROUTER_MODEL    | openrouter/auto                  | No       |
-| OPENROUTER_BASE_URL | https://openrouter.ai/api/v1     | No       |
-
-\*Required for AI-assisted gap analysis (not needed for bootstrap health-only scaffold).
-
-## CI Variant
-
-`docker-compose.ci.yml` overrides environment variables for GitHub Actions E2E runs.
-
-## Behavior & Architecture
-
-See [specs/apps/ose/containers/deployment.md](../../../specs/apps/ose/containers/deployment.md)
-for environments, Docker images, and deployment details.
+- [OSE Application web](../../../apps/ose-app-web/README.md)
+- [OSE Application backend](../../../apps/ose-be/README.md)
+- [OSE Application specifications](../../../specs/apps/ose/README.md)

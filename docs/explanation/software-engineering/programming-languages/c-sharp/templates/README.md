@@ -12,12 +12,11 @@ created: 2026-04-26
 
 # C# Documentation Templates
 
-This directory contains reusable code templates and patterns for C# development.
+This directory is reserved for reusable C# documentation templates. It is intentionally empty today, so it does not yet offer a copy-and-adapt starting point.
 
 ## Purpose
 
-Templates provide standardized starting points for common C# patterns,
-reducing repetition and ensuring consistency across documentation and code examples.
+When templates are added, they will provide a documented starting point for common C# patterns without pretending that an unreviewed snippet is a complete implementation.
 
 ## Template Naming Convention
 
@@ -25,14 +24,14 @@ Templates use plain kebab-case filenames (e.g., `value-object.md`). The containi
 
 ## Templates
 
-This directory is currently a placeholder. Templates will be added as common patterns are identified.
+No templates are published in this directory yet. Use the [C# programming-language overview](../README.md) and the relevant architecture standards instead of assuming that the example filenames below already exist.
 
-Suggested starting templates:
+Candidate templates, once a recurring and reviewed need exists:
 
-- `value-object.md` - Record-based Value Object with validation
-- `aggregate-root.md` - Aggregate Root with domain events
-- `minimal-api-endpoint.md` - Minimal API endpoint group with filters
-- `ef-core-repository.md` - Generic EF Core repository with specification
+- `value-object.md` — record-based value object with validation
+- `aggregate-root.md` — aggregate root with domain events
+- `minimal-api-endpoint.md` — minimal API endpoint group with filters
+- `ef-core-repository.md` — generic EF Core repository with a specification
 
 ## Usage
 

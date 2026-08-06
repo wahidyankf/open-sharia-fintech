@@ -1,47 +1,35 @@
 # wahidyankf-www-fe-e2e
 
-End-to-end tests for [`apps/wahidyankf-www`](../wahidyankf-www/) using
-Playwright and `playwright-bdd`. Consumes the Gherkin feature files at
-`specs/apps/wahidyankf/fe/gherkin/` shared with the FE unit tests.
+This project checks the portfolio site in a real browser: navigation, search, CV content, theme,
+responsive behavior, and accessibility. It gives the public site a practical release-confidence
+signal without relying on a shared development server. ✨
 
-## Commands
-
-```bash
-# Install Chromium for Playwright
-nx run wahidyankf-www-fe-e2e:install
-
-# Build a fresh production Docker image, wait for its health check, and run all E2E scenarios
-nx run wahidyankf-www-fe-e2e:test:e2e
-
-# Run with Playwright UI
-nx run wahidyankf-www-fe-e2e:test:e2e:ui
-
-# View last run report
-nx run wahidyankf-www-fe-e2e:test:e2e:report
-
-# Pre-push quick gate (typecheck + lint; e2e runs nightly / on demand)
-nx run wahidyankf-www-fe-e2e:test:quick
-```
-
-## Features consumed
-
-- `home.feature`
-- `search.feature`
-- `cv.feature`
-- `theme.feature`
-- `personal-projects.feature`
-- `responsive.feature`
-- `accessibility.feature` — E2E-only, axe-core-driven
-- `static-filterable-routes.feature` — production-container route and crawler checks
-
-## Default base URL
-
-The regular E2E command builds a fresh production Docker image, starts an isolated container on an
-ephemeral loopback port, waits for its health check, then supplies that URL to Playwright. It never
-reuses a checkout server.
-
-Set `BASE_URL` only to run the same suite against an already-running staging or production deployment:
+## Run the suite
 
 ```bash
-BASE_URL=https://example.com nx run wahidyankf-www-fe-e2e:test:e2e
+# Install Chromium once on this machine
+npm exec nx -- run wahidyankf-www-fe-e2e:install
+
+# Build an isolated local production container and run the scenarios
+npm exec nx -- run wahidyankf-www-fe-e2e:test:e2e
 ```
+
+The regular test command creates its own short-lived local container and health-checks it before
+Playwright starts. For interactive debugging, run
+`npm exec nx -- run wahidyankf-www-fe-e2e:test:e2e:ui`; for the last report, run
+`npm exec nx -- run wahidyankf-www-fe-e2e:test:e2e:report`.
+
+## Check a deployed environment
+
+Set `BASE_URL` only when deliberately running the suite against an already-running staging or
+production site. Keep any access values out of tracked files.
+
+## Checks and specs
+
+```bash
+npm exec nx -- run wahidyankf-www-fe-e2e:test:quick
+npm exec nx -- run wahidyankf-www-fe-e2e:test:specs
+```
+
+The behavior source of truth is in
+[the Wahidyankf public-site Gherkin specs](../../specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/README.md).

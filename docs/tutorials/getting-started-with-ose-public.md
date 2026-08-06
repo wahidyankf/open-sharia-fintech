@@ -1,0 +1,162 @@
+---
+title: Getting Started with OSE Public
+description: Run the Open Sharia Enterprise public website locally from a supported development environment
+category: tutorial
+tags:
+  - onboarding
+  - ose-www
+  - development
+  - volta
+created: 2026-08-07
+---
+
+# Getting Started with OSE Public
+
+Open Sharia Enterprise (OSE) is an open-source platform for researching and building trustworthy,
+Sharia-compliant enterprise products. This repository is the public upstream for that work. It is
+pre-alpha, so interfaces and architecture can change as the platform takes shape.
+
+In this tutorial, you will run the OSE public website on your computer. When you finish, the home
+page will be available at <http://localhost:3100> and will show the **Open Sharia Enterprise
+Platform** heading.
+
+## Choose a supported environment
+
+The onboarding path is verified on macOS and Ubuntu Linux. WSL2 may be workable, but it is
+unsupported and unverified; use one of the supported environments when you need a dependable path.
+
+You need a terminal, an internet connection, and permission to install development tools. The
+commands below use the shell provided by macOS or Ubuntu.
+
+### macOS
+
+Git is supplied by Xcode Command Line Tools. If this command cannot find Git, start the Apple
+installer, complete it, then return to this tutorial:
+
+```bash
+git --version || xcode-select --install
+```
+
+### Ubuntu
+
+Install the command-line build tools, Git, and curl:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential curl git
+```
+
+## Install the version managers
+
+The repository pins its Node.js and npm versions in `package.json`; Volta reads those pins when
+you enter the cloned repository. Cargo is also needed because the repository's tool checker is a
+Rust command-line application.
+
+Run these commands on either supported operating system:
+
+```bash
+curl https://get.volta.sh | bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+```
+
+Close and reopen the terminal so both installers can update its command path. Confirm the tools
+are available before continuing:
+
+```bash
+git --version
+volta --version
+cargo --version
+```
+
+Each command should print a version. If `volta` or `cargo` is still not found, reopen the terminal
+once more and follow the recovery guidance below.
+
+## Clone and prepare OSE
+
+Clone the public repository and enter it:
+
+```bash
+git clone https://github.com/wahidyankf/ose-public.git
+cd ose-public
+```
+
+Now install the workspace dependencies. Volta selects the Node.js and npm versions declared by
+this checkout; `npm install` also installs the repository's Git hooks.
+
+```bash
+node --version
+npm --version
+npm install
+```
+
+The first two commands print versions matching the `volta` values in this checkout's
+`package.json`. The installation can take a while and ends after npm has installed the workspace
+dependencies.
+
+Run the focused tool check used by this website path:
+
+```bash
+npm run doctor -- --fix --tools git,volta,node,npm
+```
+
+The check reports the selected tools and completes without missing-tool errors. It reads required
+Node.js and npm versions from `package.json`, rather than asking you to maintain a separate list.
+
+## Run the public website
+
+Start the Nx development target for `ose-www`:
+
+```bash
+npm exec nx -- run ose-www:dev
+```
+
+Nx starts Next.js on port 3100 and keeps the terminal occupied while the server runs. Open
+<http://localhost:3100> in a browser. You have succeeded when the page shows **Open Sharia
+Enterprise Platform** and the product description beginning “Open-source (MIT) platform for
+Sharia-compliant enterprise solutions.”
+
+When you are finished, return to the terminal running the server and press <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+
+## Recover from common setup problems
+
+### `volta` or `cargo` is not found
+
+The installer has not yet updated the current shell. Close and reopen the terminal, then rerun the
+matching version command. If it is still missing, rerun the relevant installer from
+[Install the version managers](#install-the-version-managers), reopen the terminal, and try again.
+
+### The tool check reports Docker as missing
+
+Docker is not needed to run `ose-www`, so you can continue with this tutorial. Other repository
+targets may require it. When you need one, install Docker Desktop on macOS or Docker Engine on
+Ubuntu, then run:
+
+```bash
+npm run doctor -- --fix --tools docker
+```
+
+For the complete, multi-language environment and Docker guidance, see
+[Set Up Your Development Environment](../how-to/setup-development-environment.md).
+
+### Port 3100 is already in use
+
+Another local server is using the website's configured port. If it is an earlier OSE development
+server, stop it with <kbd>Ctrl</kbd>+<kbd>C</kbd> in its terminal, then rerun the development command.
+Do not stop an unfamiliar process just to free the port.
+
+### A generated artifact is missing or stale
+
+Regenerate the website build through its declared Nx target, then start development again:
+
+```bash
+npm exec nx -- run ose-www:build
+npm exec nx -- run ose-www:dev
+```
+
+The build target regenerates its search data before creating the local Next.js output.
+
+## Choose your next step
+
+You now have a working public-site development loop. To understand the product direction, read the
+[roadmap](../../roadmap.md). To explore this website's architecture and available development
+targets, continue with the [ose-www README](../../apps/ose-www/README.md).

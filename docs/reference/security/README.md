@@ -1,6 +1,6 @@
 ---
-title: "Security Reference"
-description: Security framework documentation and compliance references for open-sharia-enterprise
+title: Security Reference
+description: Security reference material used by open-sharia-enterprise
 category: reference
 subcategory: security
 tags:
@@ -13,16 +13,15 @@ created: 2026-05-14
 
 # Security Reference
 
-Security framework documentation and compliance references for the open-sharia-enterprise project.
+This section points to the security reference material used when shaping or reviewing the platform. It helps readers understand the source material behind a security decision; it does not replace the repository's no-secrets rules or an application's threat-aware implementation work.
 
-## Contents
+## Available reference material
 
-### Frameworks
+- [Security Frameworks](./frameworks/README.md) — the framework documents collected for reference.
+- [NIST SP 800-53 Rev. 5](./frameworks/nist-sp-800-53-rev5.md) — a Markdown conversion of the published NIST control catalog.
 
-- [Security Frameworks](./frameworks/README.md) - Industry security frameworks and standards
-  - [NIST SP 800-53 Rev 5](./frameworks/nist-sp-800-53-rev5.md) - NIST Special Publication 800-53 Revision 5: Security and Privacy Controls for Information Systems and Organizations
+## When to use this section
 
-## Related Documentation
+Start here when you need vocabulary or a source reference for a security discussion. For the rules that govern repository work, read [the security conventions](../../../repo-governance/conventions/security/README.md). For the product-level structure those rules help protect, use the [system architecture reference](../system-architecture/README.md).
 
-- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md) - Six-layer governance hierarchy
-- [System Architecture](../system-architecture/README.md) - Platform architecture reference
+Never place credentials, tokens, production identifiers, or real environment values in these documents or any other tracked file.

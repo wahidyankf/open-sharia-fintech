@@ -1,34 +1,29 @@
 # organiclever-www-fe-e2e
 
-End-to-end frontend tests for [`apps/organiclever-www`](../organiclever-www/) using
-Playwright and `playwright-bdd`. Consumes the Gherkin feature files at
-`specs/apps/organiclever/behavior/organiclever-www/gherkin/`.
+This project makes sure OrganicLever’s public site remains understandable, usable, and accessible
+in a real browser. It checks the marketing home page and its WCAG-focused behavior from a visitor’s
+point of view. 🌱
 
-## Commands
+## Run the suite
 
 ```bash
-# Install Chromium for Playwright
-nx run organiclever-www-fe-e2e:install
+# Install Chromium once on this machine
+npm exec nx -- run organiclever-www-fe-e2e:install
 
-# Run all E2E scenarios headlessly (Playwright starts the production server)
-nx run organiclever-www-fe-e2e:test:e2e
-
-# Run with Playwright UI
-nx run organiclever-www-fe-e2e:test:e2e:ui
-
-# View last run report
-nx run organiclever-www-fe-e2e:test:e2e:report
-
-# Pre-push quick gate (typecheck + lint; e2e runs nightly / on demand)
-nx run organiclever-www-fe-e2e:test:quick
+# Run all browser scenarios; the test target starts the site it needs
+npm exec nx -- run organiclever-www-fe-e2e:test:e2e
 ```
 
-## Features consumed
+For an interactive investigation, use `npm exec nx -- run organiclever-www-fe-e2e:test:e2e:ui`. To
+open the last report, use `npm exec nx -- run organiclever-www-fe-e2e:test:e2e:report`.
 
-- `home/home.feature` — marketing landing page rendering
-- `accessibility/accessibility.feature` — WCAG AA compliance
+## Checks and specs
 
-## Default base URL
+```bash
+npm exec nx -- run organiclever-www-fe-e2e:test:quick
+npm exec nx -- run organiclever-www-fe-e2e:test:specs
+```
 
-`http://localhost:3200` — override with `BASE_URL` env var for staging /
-production smoke runs.
+The default target is `http://localhost:3200`. Set `BASE_URL` only to check another running
+environment. The scenarios live in
+[the OrganicLever public-site Gherkin specs](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md).

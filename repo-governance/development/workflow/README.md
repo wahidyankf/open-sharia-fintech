@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Workflow Development
 
-Development workflow standards covering implementation methodology, git workflows, commit messages, and reproducible environments.
+Use these standards to move a change from a fresh checkout to a safe delivery. They cover implementation, Git, verification, and reproducible environments without assuming that the reader already knows the repository's habits.
 
 ## Purpose
 

@@ -1,37 +1,37 @@
-# OrganicLever Local Development Infrastructure
+# OrganicLever local-stack scaffold
 
-Docker Compose setup for running the full OrganicLever stack locally.
+This folder holds an early Docker Compose scaffold for a future full
+OrganicLever stack. It is **not** the supported way to get started today: the
+current OrganicLever app is local-first, and its active backend is the F#
+service in [apps/organiclever-be/](../../../apps/organiclever-be/). 🧪
 
-## Services
+## Start in the supported place
 
-| Service              | Port | Description                |
-| -------------------- | ---- | -------------------------- |
-| organiclever-be      | 8202 | Rust/Axum REST API backend |
-| organiclever-app-web | 3202 | Next.js 16 frontend        |
+- To explore the product quickly, follow
+  [the OrganicLever web README](../../../apps/organiclever-app-web/README.md).
+  It runs without a backend for its primary local-first experience.
+- To work on the backend, use
+  [the OrganicLever backend README](../../../apps/organiclever-be/README.md).
+  That guide owns the current dependency and test setup.
+- For the wider workspace setup, begin with the
+  [OSE getting-started tutorial](../../../docs/tutorials/getting-started-with-ose-public.md).
 
-## Quick Start
+macOS and Ubuntu Linux are the supported local-development paths. Windows may
+work through WSL2, but it is not yet a verified route for this scaffold.
 
-```bash
-# Start all services (no .env file required today)
-npm run organiclever:dev
+## Why this folder is not an onboarding command
 
-# Restart with a fresh build
-npm run organiclever:dev:restart
-```
+The Compose files retain an earlier Rust-container shape and mount paths that
+do not match the current F# backend application. Running them would give a new
+reader a misleading picture of the active product architecture.
 
-## Environment Variables
+Keep this directory as an implementation boundary for a future, intentionally
+validated stack. Do not add credentials or production settings here. When the
+stack becomes supported, replace this status with an end-to-end quick-start
+that verifies the running services and links to the relevant specifications.
 
-No required environment variables today. The backend runs the health endpoint without
-configuration and the frontend is local-first. The `.env.example` placeholder is kept for future
-product features.
+## Related references
 
-## CI Variant
-
-`docker-compose.ci.yml` is used in GitHub Actions for E2E tests. It overrides only what differs
-from the default compose file (currently nothing meaningful — kept as the extension point for
-future CI-specific configuration).
-
-## Behavior & Architecture
-
-See [specs/apps/organiclever/containers/deployment.md](../../../specs/apps/organiclever/containers/deployment.md)
-for environments, Docker images, and deployment details.
+- [OrganicLever web app](../../../apps/organiclever-app-web/README.md)
+- [OrganicLever backend](../../../apps/organiclever-be/README.md)
+- [OrganicLever specifications](../../../specs/apps/organiclever/README.md)

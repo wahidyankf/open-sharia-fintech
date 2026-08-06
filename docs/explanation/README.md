@@ -11,72 +11,51 @@ created: 2025-11-22
 
 # Explanation
 
-**Understanding-oriented documentation** that provides background, context, and conceptual knowledge about the open-sharia-enterprise project.
+This is the place to understand the thinking behind open-sharia-enterprise: the problems it is trying to solve, the principles that shape it, and the reasons for important technical choices.
 
-## What is Explanation Documentation?
+Start here when you are deciding whether an approach fits the product, orienting yourself to the repository, or looking for the context behind an existing practice. You do not need to know every implementation detail before reading these pages.
 
-Per the [Diátaxis framework](../../repo-governance/conventions/structure/diataxis-framework.md), Explanation documentation:
+## Is explanation the right kind of documentation?
 
-- **Deepens understanding** of concepts, design decisions, and systems
-- **Answers "why?"** questions and provides context
-- **Clarifies background** and alternative approaches
-- **Discusses trade-offs** and decision rationale
+Explanation is for the **why** behind the work. It complements the other documentation types in the [Diátaxis framework](../../repo-governance/conventions/structure/diataxis-framework.md):
 
-This is distinct from:
+- **Tutorials** help you learn by doing.
+- **How-to guides** help you complete a specific task.
+- **Reference** documents state exact facts, interfaces, and rules.
+- **Explanation** connects the context, alternatives, trade-offs, and decisions.
 
-- **Tutorials** (learning by doing)
-- **How-to Guides** (solving specific problems)
-- **Reference** (technical specifications)
+For a first view of how the repository is organized and governed, begin with [Rules](../../repo-governance/README.md). For the reasoning behind its layers and how they fit together, continue to [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md).
 
-## Documentation Scope
+## Explore by question
 
-This directory contains conceptual documentation across multiple areas:
+### How does the repository make decisions and keep work consistent?
 
-- **Repository Governance** - How we organize, validate, and enforce standards
-- **Software Design** - System design and technical decisions
-- **Domain Concepts** - Shariah-compliant enterprise principles and Islamic business foundations
-- **Technical Background** - Technologies, patterns, and frameworks used in the project
+The governance material explains the shared foundation for product, engineering, and automation work. It covers the six-layer architecture—Vision, Principles, Conventions, Development, Agents, and Workflows—and the relationship between those layers.
 
----
+- [Rules](../../repo-governance/README.md) — Orientation to the governance system, its layers, and its decision aids.
+- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md) — A deeper account of the architecture, including traceability, use, and verification.
 
-## 🏛️ Repository Governance
+### How is the software designed and built?
 
-The repository follows a **six-layer governance architecture** (Vision → Principles → Conventions → Development → Agents → Workflows) where each layer builds on the foundation above.
+These guides introduce the engineering ideas used across the project. They are useful when you want a shared vocabulary before following implementation-focused documentation.
 
-**See [Rules](../../repo-governance/README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
+- [Software Engineering](./software-engineering/README.md) — Entry point for programming languages, frameworks, architecture patterns, and development practices.
+- [C4 Architecture Model](./software-engineering/architecture/c4-architecture-model/README.md) — A way to describe software architecture at progressively more detailed levels.
+- [Domain-Driven Design (DDD)](./software-engineering/architecture/domain-driven-design-ddd/README.md) — Strategic and tactical patterns for representing complex business domains in software.
 
-**See [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
+### Why did a cross-repository standard or convention take its current form?
 
----
+Decision logs record the context, options, and conclusions behind changes that affect multiple OSE repositories. Read them when a rule feels surprising or when you need the rationale before extending related work.
 
-## 📋 Documentation Index
+- [Plan Domain Parity — Design Decisions (2026-06-06)](./plan-domain-parity-decisions.md) — Decisions from the cross-repository parity effort, including resolved and rejected approaches.
+- [Gherkin Step-Keyword Cardinality — Parity Decisions (2026-06-07)](./gherkin-step-keyword-cardinality-parity-decisions.md) — The canonical rule, deliberate repository differences, and aligned decisions for Gherkin step keywords.
+- [Standardize App Spec Trees — Parity Decisions (2026-06-11)](./standardize-app-spec-trees-parity-decisions.md) — Decisions on app-spec naming, merges, renames, and backend suffixes.
+- [Lint & Safety Parity — Decisions (2026-06-12)](./lint-safety-parity-decisions.md) — Decisions on cross-language quality gates, configuration cleanup, and intentional exemptions.
 
-### Repository Governance
+### What can we learn from a problem after it has been resolved?
 
-- **[Rules](../../repo-governance/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
-- **[Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
+- [Post-Mortems](./post-mortems/README.md) — Blameless retrospectives for incidents and regressions, plus the writing template and [Post-Mortem Convention](../../repo-governance/conventions/structure/post-mortems.md).
 
-### Software Engineering
+## Growing areas
 
-- **[Software Engineering](./software-engineering/README.md)** - Complete index of programming languages, frameworks, architecture patterns, and development practices
-- **[C4 Architecture Model](./software-engineering/architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
-- **[Domain-Driven Design (DDD)](./software-engineering/architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
-
-### Decision Logs
-
-- **[Plan Domain Parity — Design Decisions (2026-06-06)](./plan-domain-parity-decisions.md)** - All 26 decisions from the 2026-06-06 cross-repo parity effort: what was resolved, why, and what was rejected across ose-public, ose-primer, and ose-private
-- **[Gherkin Step-Keyword Cardinality — Parity Decisions (2026-06-07)](./gherkin-step-keyword-cardinality-parity-decisions.md)** - All 13 decisions from the 2026-06-07 cross-repo parity effort: canonical rule, four deliberate deviations (primer dual-CLI, sibling Step 0.5 preflight port, per-repo CI wiring, primer main-push), and aligned decisions across ose-public, ose-primer, and ose-private
-- **[Standardize App Spec Trees — Parity Decisions (2026-06-11)](./standardize-app-spec-trees-parity-decisions.md)** - Four decisions from the 2026-06-11 spec-tree standardization: flat `<product>-<surface>` naming, `ose-app` + `ose-platform` merge into `ose/`, `ayokoding-build-tools` rename, and `be` vs `api` suffix resolution
-- **[Lint & Safety Parity — Decisions (2026-06-12)](./lint-safety-parity-decisions.md)** - Every ose-public dimension in the 2026-06-12 cross-repo lint-safety-parity effort: the cross-language strictness gates added (hadolint, shellcheck, actionlint, F# TreatWarningsAsErrors + G-Research analyzers), dead-config removal (D10), the D1/D1b Rust reference status, the D5 deferral, and the exemption philosophy
-
-### Post-Mortems
-
-- **[Post-Mortems](./post-mortems/README.md)** - Blameless incident retrospectives (CI/CD failures, Vercel outages, dependency-bump and parity-guard regressions). Writer-facing template and index; governed by the [Post-Mortem Convention](../../repo-governance/conventions/structure/post-mortems.md)
-
-### Domain Concepts
-
-_Documentation for Shariah-compliant enterprise principles and Islamic business foundations to be added as the project evolves._
-
-### Technical Background
-
-_Documentation for key technologies, patterns, and frameworks to be added as the project evolves._
+As the platform evolves, this section will also collect explanations of Shariah-compliant enterprise principles, Islamic business foundations, and the technical background needed to understand the systems built here. Until then, the pages above are the best starting points for the project’s current reasoning and design history.

@@ -1,10 +1,18 @@
-# wahidyankf-web Application Specs
+# wahidyankf-www Application Specs
 
-Platform-agnostic specifications for the wahidyankf-web personal portfolio site. The
+Platform-agnostic specifications for the wahidyankf-www personal portfolio site. The
 application is a static Next.js 16 site deployed on Vercel at
 [www.wahidyankf.com](https://www.wahidyankf.com). It presents a professional profile —
 CV timeline, personal projects, and contact links — with a client-side search feature.
 There is no backend API, no database, and no authentication.
+
+## 🧭 Start here
+
+- Want the product story and intended audience? Begin with [product/](./product/README.md).
+- Need the boundaries of this deliberately simple site? Read
+  [system-context/](./system-context/README.md) and [containers/](./containers/README.md).
+- Looking for user-facing promises? Browse [behavior/](./behavior/README.md) and its Gherkin
+  scenarios.
 
 ## Structure
 
@@ -30,7 +38,7 @@ specs/apps/wahidyankf/
 │       └── *.md           # One glossary file per bounded context
 └── behavior/              # Gherkin scenarios (UI-semantic only)
     ├── README.md
-    └── web/gherkin/       # Frontend Gherkin scenarios (per bounded context)
+    └── wahidyankf-www/gherkin/ # Frontend Gherkin scenarios (per bounded context)
 ```
 
 ## Containers
@@ -39,7 +47,7 @@ One container: the `web` Next.js app. No backend container exists today.
 
 | Container | Perspective                       | Background                 | Scenarios                                                                       | Consumed by                        |
 | --------- | --------------------------------- | -------------------------- | ------------------------------------------------------------------------------- | ---------------------------------- |
-| `web`     | UI-semantic (clicks, types, sees) | `Given the app is running` | [behavior/wahidyankf-www/gherkin/](./behavior/wahidyankf-www/gherkin/README.md) | `apps/wahidyankf-web` (Next.js 16) |
+| `web`     | UI-semantic (clicks, types, sees) | `Given the app is running` | [behavior/wahidyankf-www/gherkin/](./behavior/wahidyankf-www/gherkin/README.md) | `apps/wahidyankf-www` (Next.js 16) |
 
 ## Bounded Contexts
 
@@ -63,8 +71,8 @@ Counts are Gherkin features per container.
 ## DDD Registry (`bounded-contexts.yaml`)
 
 `bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
-`wahidyankf-web`. Two `rhino-cli ddd` subcommands read it to enforce structural and
-vocabulary invariants automatically in `nx run wahidyankf-web:test:quick`.
+`wahidyankf-www`. Two `rhino-cli ddd` subcommands read it to enforce structural and
+vocabulary invariants automatically in `npm exec nx -- run wahidyankf-www:test:quick`.
 
 ### Schema
 

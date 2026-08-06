@@ -12,7 +12,7 @@ created: 2026-05-12
 
 # Infrastructure Workflows
 
-Workflows for development environment and infrastructure setup.
+Use this workflow when setting up a development environment or diagnosing whether a checkout has the toolchains it needs.
 
 ## Available Workflows
 
