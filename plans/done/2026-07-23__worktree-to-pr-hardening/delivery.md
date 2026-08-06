@@ -520,7 +520,7 @@ affected` no-op noted in Phase 8)
 
 - [x] [AI] Add a `## Future Work` section to `repo-governance/development/quality/pr-review-disciplines.md`
       (the convention created in Phase 1) and cross-reference the existing bot-identity two-pager
-      [`plans/ideas/pr-review-bot-identity.md`](../../ideas/pr-review-bot-identity.md) as the owner of
+      [`plans/ideas/pr-review-bot-identity.md`](../../ideas/q2-not-urgent-important/pr-review-bot-identity.md) as the owner of
       the AI-attribution / `REQUEST_CHANGES` gap
       — acceptance: `grep -c "## Future Work" repo-governance/development/quality/pr-review-disciplines.md` = 1;
       `test -f plans/ideas/pr-review-bot-identity.md` passes and the `## Future Work` section links it
@@ -531,7 +531,7 @@ affected` no-op noted in Phase 8)
 - [x] [AI] Record the **deferred merge queue** (D7/D10): a merge queue was researched (GitHub-native vs
       Graphite) but **NOT adopted** — the repo's branch settings do not expose a merge-queue toggle, so
       precondition (c) stays the manual branch-up-to-date check. The deferred work is owned by the
-      standalone [`merge-queue-adoption`](../../ideas/merge-queue-adoption.md) backlog plan; record this
+      standalone [`merge-queue-adoption`](../../ideas/q2-not-urgent-important/merge-queue-adoption.md) backlog plan; record this
       inside the same `## Future Work` section of `repo-governance/development/quality/pr-review-disciplines.md`
       — acceptance: `grep -ci "merge queue" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; the note states it is deferred,
       not delivered, links `merge-queue-adoption`, and confirms precondition (c) is unchanged

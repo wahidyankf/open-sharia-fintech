@@ -73,7 +73,7 @@ Entry shape:
   must use frontmatter (or a generator-preserved region), never the body, in a repo whose index
   generator regenerates section bodies. A plan step that mandates both "author body prose" and "run +
   validate the index generator" is internally contradictory for childless sections.
-- **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md)
+- **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md)
   as instance (a) of its new "self-contradictory acceptance steps" sub-class — a phase that mandates a
   hand-written index body AND `validate-indexes` passing is internally inconsistent because the generator
   regenerates section bodies. Terminal.
@@ -88,7 +88,7 @@ Entry shape:
     Phase-2 deliverable can still show a red suite. Distinguish "my scenarios green + unrelated flake" from
     a real regression before gating on the aggregate exit code.
   - **Routing**: **Filed** as a new idea brief
-    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/ayokoding-www-e2e-parallel-load-flake.md)
+    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md)
     (code-homed test-infra ⇒ separate plan, never inline per the code-routing rule). Terminal.
 - **Phase 2 — two delivery.md wording gaps for future plan-maker runs.** (1) The pure-rename proof step
   wrote `git diff --cached --summary -M -- <destination path>`, but git cannot pair a rename when the
@@ -101,7 +101,7 @@ Entry shape:
     Gherkin that assumes a structure a later same-plan override removes, are internally inconsistent — the
     same class as the DD-49 body/validate contradiction above. plan-maker/plan-checker should flag pathspec-
     scoped rename proofs and cross-check later-resolved overrides against earlier acceptance prose.
-  - **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md)
+  - **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md)
     as instances (b) rename-proof pathspec scoping and (c) later-override-vs-earlier-acceptance divergence
     of the "self-contradictory acceptance steps" sub-class. Terminal.
 
@@ -121,7 +121,7 @@ Entry shape:
     "isolated re-run passes" (flake) from a real regression before gating on it. Reinforces the Phase-2
     entry: the whole `ayokoding-www-fe-e2e` suite, not just the calculator, is load-sensitive here.
   - **Routing**: **Filed** into the same idea brief as the Phase-2 flake entry —
-    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/ayokoding-www-e2e-parallel-load-flake.md),
+    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/q4-not-urgent-not-important/ayokoding-www-e2e-parallel-load-flake.md),
     whose scope covers the whole suite (all three identified load-flaky scenarios), not just the
     calculator spec. Terminal.
 

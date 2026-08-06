@@ -134,7 +134,7 @@ last scheduled `main-ci` is red on a pre-existing condition that predates this p
 [delivery.md §Phase 7 Gate](./delivery.md#phase-7-gate).
 
 A defect **this plan introduced** is tracked in
-[`plans/ideas/bare-repo-landing-method-step-count-drift.md`](../../ideas/bare-repo-landing-method-step-count-drift.md):
+[`plans/ideas/bare-repo-landing-method-step-count-drift.md`](../../ideas/q2-not-urgent-important/bare-repo-landing-method-step-count-drift.md):
 the landing sequence numbers eight steps, but the file's own frontmatter and both governance indexes
 call it "the seven-step landing sequence" — nine sites across the three repos. The undercount drops
 exactly the reconcile step the document was written to add.

@@ -62,7 +62,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   equivalent), not to drop either. The same shape applies to any loop-until-dry harness whose exit
   condition counts consecutive empty rounds.
 - **Terminal state**: **folded into**
-  [`plans/ideas/plan-quality-gate-convergence.md`](../../ideas/plan-quality-gate-convergence.md) —
+  [`plans/ideas/plan-quality-gate-convergence.md`](../../ideas/q2-not-urgent-important/plan-quality-gate-convergence.md) —
   an existing brief on exactly this loop's convergence, per the ideas folder's integrate-don't-
   duplicate rule. Not landed inline: the fix is a change to how iterations are briefed in a
   governance workflow, which is a design question the brief exists to resolve, not a typo.
@@ -83,7 +83,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   executor's tool grant checked against those commands up front, and any phase that edits markdown
   needs its lint scope to cover **every** path it edited, not just the phase's headline directory.
 - **Terminal state**: filed as
-  [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md) — the
+  [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md) — the
   tool-grant mismatch is one of four instances that brief carries, all of the same shape: a clause
   that returns a plausible number while certifying nothing. Both candidate surfaces
   (`subagent-orchestration.md`, `maker-checker-fixer.md`) are named in the brief as targets; the
@@ -113,7 +113,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   both phases swept `<GATE>` and the sibling copies were diffed against the corrected `ose-public`
   version. Nothing durable is owed for that. Its generalizable half — a propagation checklist
   enumerated by change ID under-covers the real changeset — is not lost: it is carried by
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md)
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md)
   as one of that brief's four consolidated instances.
 
 ## Learning: CONFIRMED LIVE in Phase 4 — the `<GATE>` propagation gap is not hypothetical
@@ -134,7 +134,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   the **merged changeset's file list**, not the plan's authoring-time C-list. `ose-public`'s merged
   PR touched 22 files; Phase 4's checklist names 8.
 - **Terminal state**: filed as
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md).
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md).
   This entry supplies that brief's sharpest data point — the source PR touched 22 files while the
   propagation checklist named 8 — and its proposed route (derive the file list from
   `git show --stat <merge-sha>`) is the brief's lead proposal. Target surface:
@@ -163,7 +163,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
 - **Terminal state**: candidate route (1) — re-check the identical premise live at Phase 5 — was
   **executed**, and the premise was false in `ose-infra` too (see the four-premise entry below).
   Route (2) is filed as
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md):
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md):
   a "verified absent in sibling" claim needs an explicit if-present branch, never a bare do-nothing.
 
 ## Learning: a sibling can be AHEAD of the source of truth on a shared governance document
@@ -188,7 +188,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   acceptance clause asserting a sibling's pre-state is an assumption about a repo the plan did not
   read.
 - **Terminal state**: filed as
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md)
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md)
   — propagation acceptance criteria should assert the **post** state only, never a sibling's
   pre-state. This entry contributes the brief's most counter-intuitive data point: an acceptance grep
   that passed **before** any edit was made, which is indistinguishable from a successful edit.
@@ -249,7 +249,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   immediately-actionable half was done: Phase 5 swept both files in `ose-infra` and applied
   property-bound carve-outs to every mode-selection statement, not only the sites `ose-primer`'s
   cycle 2 cited. Its generalizable half is the same class as the entry above and is carried by
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md).
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md).
   Worth noting what this entry got right and wrong: it correctly predicted the class would recur in
   `ose-infra`, and it under-predicted the reach — cycle 2 there found the same defect in `AGENTS.md`,
   which neither this entry nor `ose-primer`'s sweep had considered.
@@ -284,7 +284,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   `detect_kind` fix"). **Both candidate routes are now closed.** Route (1): this `plans/done/`
   instance, and the generalizable half (a repo-wide CI validator paired with a directory-scoped local
   gate guarantees a class of failure invisible until CI runs), are **folded into**
-  [`plans/ideas/ayokoding-mermaid-diagram-remediation.md`](../../ideas/ayokoding-mermaid-diagram-remediation.md).
+  [`plans/ideas/ayokoding-mermaid-diagram-remediation.md`](../../ideas/q2-not-urgent-important/ayokoding-mermaid-diagram-remediation.md).
   Route (2): **executed at Phase 5** — the local gate was widened to
   `repo-governance docs .claude plans/ideas` _and_ CI's own `--exclude`-qualified command was run
   directly against `ose-infra`, and the two agreed at `0 violation(s)`. That measurement also
@@ -391,10 +391,10 @@ the secret/sensitivity gate before it is ever written. Entry shape:
 - **Terminal state**: split across two briefs, because this entry carries two distinct classes. The
   propagation half — assert **post** state only, derive the file list from the source PR's actual
   diff, carry an explicit if-present branch for every "verified absent" claim — is filed as
-  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/propagation-checklist-under-coverage.md).
+  [`plans/ideas/propagation-checklist-under-coverage.md`](../../ideas/q2-not-urgent-important/propagation-checklist-under-coverage.md).
   The clause half — a well-formed, falsifiable clause pointing at the wrong string is
   indistinguishable from passing — is filed as
-  [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md).
+  [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md).
 
 ## Learning: the reading surfaces got the new rule; the writing surfaces did not
 
@@ -416,7 +416,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   validator is deliberately structural (string membership only), the producers are the _only_ place
   the constraint can live.
 - **Terminal state**: filed as
-  [`plans/ideas/class-sweep-completeness.md`](../../ideas/class-sweep-completeness.md) — this entry
+  [`plans/ideas/class-sweep-completeness.md`](../../ideas/q2-not-urgent-important/class-sweep-completeness.md) — this entry
   is that brief's first of three instances. The candidate route survives into it: when a change
   restricts a declared enum, enumerate the maker/producer surfaces explicitly, since the checker may
   be structurally unable to carry the restriction. Target surface named there:
@@ -448,9 +448,9 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   closing that gap in `ose-public` requires progressive disclosure first, not an edit.
 - **Terminal state**: both routes filed. (1) Root instruction files belong in the enumerated surface
   list wherever a class sweep is prescribed — filed as
-  [`plans/ideas/class-sweep-completeness.md`](../../ideas/class-sweep-completeness.md), where this is
+  [`plans/ideas/class-sweep-completeness.md`](../../ideas/q2-not-urgent-important/class-sweep-completeness.md), where this is
   the second of three instances. (2) The byte-budget blocker is **folded into**
-  [`plans/ideas/agents-md-progressive-disclosure.md`](../../ideas/agents-md-progressive-disclosure.md),
+  [`plans/ideas/agents-md-progressive-disclosure.md`](../../ideas/q1-urgent-important/agents-md-progressive-disclosure.md),
   an existing brief on exactly that ceiling, per the integrate-don't-duplicate rule. The fold matters
   for more than bookkeeping: it converts that brief's premise from a forecast into a recorded event,
   since the ceiling has now blocked a real correction rather than merely threatening to.
@@ -511,7 +511,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   the PR, and — given the shape divergence recorded above — a same-text patch would not even have
   applied cleanly across the three repos.
 - **Terminal state**: filed as
-  [`plans/ideas/ci-setup-rust-toolchain-retry.md`](../../ideas/ci-setup-rust-toolchain-retry.md) — a
+  [`plans/ideas/ci-setup-rust-toolchain-retry.md`](../../ideas/q2-not-urgent-important/ci-setup-rust-toolchain-retry.md) — a
   retry around the toolchain install in all three repos' `setup-rust`, which the brief records as a
   **reconciliation** rather than a copy, since the three do not share an implementation. It also
   carries the open question of where the retry belongs (in our action, or one layer down in the
@@ -547,7 +547,7 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   label and the body of the same five-line block then contradicted each other. Same shape: the edit
   addressed the string that was cited and not the unit of meaning that contained it.
 - **Terminal state**: filed as
-  [`plans/ideas/class-sweep-completeness.md`](../../ideas/class-sweep-completeness.md) — the third of
+  [`plans/ideas/class-sweep-completeness.md`](../../ideas/q2-not-urgent-important/class-sweep-completeness.md) — the third of
   that brief's three instances, and the one that states the unit-of-edit rule most directly: the
   fixer must re-read the **whole enclosing block** it edits (example, list item, precondition, table
   row) and confirm every part still agrees, rather than verifying only that the cited substring

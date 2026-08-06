@@ -512,7 +512,7 @@ flowchart TD
 > merge in Phase 8 **after** `ose-public` merges — the convention's home repo lands first. Note the
 > known structural limitation: this plan's folder is archived inside the `ose-public` PR while the
 > sibling PRs may still be open, filed as
-> [plan-archival-in-pr-multi-repo-gap](../../ideas/plan-archival-in-pr-multi-repo-gap.md).
+> [plan-archival-in-pr-multi-repo-gap](../../ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md).
 >
 > **Both siblings are bare repositories.** `git -C <repo> rev-parse --is-bare-repository` reports
 > `true` for each. Every git and tooling invocation below must therefore follow

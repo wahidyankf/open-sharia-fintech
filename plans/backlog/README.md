@@ -10,7 +10,7 @@ The `ayokoding-learning-path-*` plans deliver one programme. Each plan is **self
 shared programme decisions (the `R*`/`A*` ids) are folded into each plan's own `tech-docs.md` under a
 `## Programme decisions` section, and each plan's README carries its scope, course count, gates, and
 dependency edges. **Renumbered 2026-08-01** (see
-[`plan-decision-integrity-hardening`](../ideas/plan-decision-integrity-hardening.md)'s
+[`plan-decision-integrity-hardening`](../ideas/q1-urgent-important/plan-decision-integrity-hardening.md)'s
 retrofit rationale): plans `05` through `07` originally each delivered more than the 5-15-course
 governance band allows (`04` alone scoped 90 courses; `05-manifests` scoped all four path manifests
 at once; `06`/`07` scoped 24 and 30 courses respectively). Every one of them is now split along its

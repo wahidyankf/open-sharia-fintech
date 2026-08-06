@@ -235,7 +235,7 @@ rename procedures:
   link pointing at the file's old path or filename and update each to the new path/filename.
 - **Cross-repo** (Step 5's relocation): convert every `./`-relative link inside the moved file to an
   absolute `https://github.com/<org>/<repo>/blob/main/...` URL (the same pattern already used in
-  [`deploy-targets-registry.md`](../../../plans/ideas/deploy-targets-registry.md)), and check the
+  [`deploy-targets-registry.md`](../../../plans/ideas/q2-not-urgent-important/deploy-targets-registry.md)), and check the
   source repo for (though do not expect to find) any inbound link into the file being relocated.
 
 **Rename criteria**: apply a rename whenever Step 2 (merge/split), Step 4 (residency-driven
