@@ -1,6 +1,6 @@
 ---
 title: "Git Push Default Convention"
-description: Default git push behavior — the repo-wide default integration target is a PR branch opened against main (worktree-to-pr), with direct push to origin main available via the worktree-to-origin-main and main-to-origin-main modes when explicitly selected. Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
+description: Default git push behavior — the repo-wide default integration target is a PR branch opened against main (worktree-to-pr), with direct push to origin main available via the worktree-to-origin-main and main-to-origin-main modes when explicitly selected. main-to-origin-main additionally requires an .md-only change set or explicit user go-ahead. Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
 category: explanation
 subcategory: development
 tags:
@@ -17,9 +17,10 @@ created: 2026-04-25
 The repo-wide default integration target for every push is a **PR branch opened against `main`**
 (the `worktree-to-pr` delivery mode). Direct push to `origin main` remains fully available — through
 the `worktree-to-origin-main` and `main-to-origin-main` modes — but it is an explicit selection, never
-an inferred one. This applies to all contexts: general work, plan creation, plan checking, plan fixing,
-and plan execution. The canonical four-mode vocabulary and the three-tier precedence that resolves
-which mode is active live in the
+an inferred one, and `main-to-origin-main` specifically is valid only for an `.md`-only change set or
+with explicit user go-ahead (Standard 2). This applies to all contexts: general work, plan creation,
+plan checking, plan fixing, and plan execution. The canonical four-mode vocabulary and the three-tier
+precedence that resolves which mode is active live in the
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode);
 this convention governs the push mechanics for each mode.
 
@@ -147,6 +148,19 @@ direct-push intent from:
 - The size or risk of the change.
 - A desire to "save time" or "skip review".
 - Past sessions in which direct push was used.
+
+**`main-to-origin-main` carries a further content restriction that `worktree-to-origin-main` does
+not.** An explicit selection signal above is necessary but not sufficient for `main-to-origin-main` —
+working directly in the primary checkout skips both PR review and worktree isolation, so it is valid
+only when **one** of two conditions also holds:
+
+1. the change set is **`.md` files only** (no source, config, spec, or generated-mirror files), or
+2. the user has given **explicit, standing go-ahead** for that specific change.
+
+Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+for the canonical statement of this restriction and its relationship to the
+[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out).
 
 ### Standard 3: Plans Must Declare a Delivery Mode Only to Override the Default
 

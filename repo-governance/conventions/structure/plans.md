@@ -850,7 +850,26 @@ the human or agent declaring the mode must make, not one the algorithm enforces 
 
 `worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
 disposable worktree and routes it through review before it touches `main`, so it is the safest
-choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
+choice absent a reason to pick another mode.
+
+**`main-to-origin-main` carries a further content restriction, on top of Standard 2's
+selection-signal test in the
+[Git Push Default Convention](../../development/workflow/git-push-default.md#standard-2-direct-push-modes-are-explicit-selections-not-inferred).**
+An explicit selection signal (invocation argument or plan field) is necessary but not sufficient:
+choosing `main-to-origin-main` is additionally valid only when **one** of two conditions holds —
+
+1. the change set is **`.md` files only** (no source, config, spec, or generated-mirror files), or
+2. the user has given **explicit, standing go-ahead** for that specific change.
+
+Absent one of these two, use `worktree-to-pr` even if a direct-push mode would otherwise be
+convenient. This restriction targets `main-to-origin-main` specifically — working directly in the
+primary checkout skips both PR review and worktree isolation, so it is held to a narrower bar than
+`worktree-to-origin-main`, which still isolates work from the primary checkout even though it also
+skips review. The [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out)
+is the plan-authoring-time instance of condition 1 above — see that section for how the two
+reconcile when a plan folder's push includes non-markdown evidence files.
+
+The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
 the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps at the plan's
 **delivery boundaries** only — never at every phase, per

@@ -270,6 +270,14 @@ ships no runtime behaviour, so the PR review cycle has no code surface to review
 It is stated here in its own right and is **not** derived from DD-11 of any individual plan, which
 disclaims being a general precedent.
 
+**Reconciling with the `main-to-origin-main` content restriction**: [Plans Organization Convention —
+Delivery Mode](../../conventions/structure/plans.md#delivery-mode) restricts `main-to-origin-main` to
+an `.md`-only change set or explicit user go-ahead. Plan-folder pushes are `.md`-only in the ordinary
+case, so this carve-out is that condition's plan-authoring-time instance — no separate justification
+is needed. When a plan-docs-only push carries a **non-markdown** evidence artifact (a CSV baseline, a
+screenshot, a raw log capture), the carve-out alone no longer covers it: fall back to the restriction's
+second condition (explicit user go-ahead) or to `worktree-to-pr`.
+
 ### File-Touch Ledger (All Plans, Unconditional)
 
 Every plan executes in a repository that other agents, engineers, and background processes are
