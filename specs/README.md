@@ -1,105 +1,69 @@
-# Specs
+# Specifications
 
-Gherkin acceptance specifications for OSE Platform applications.
+This directory is the shared description of what OSE software is expected to do. Start here when
+you need to understand a user outcome, a command's contract, or the boundary between parts of a
+product. The matching README in `apps/` or `libs/` complements it with the practical details for
+running, building, and testing that implementation.
 
-## What This Is
+Specifications describe intent and observable behavior. They are deliberately separate from the
+code so that product, engineering, and quality conversations can begin with the same source of
+truth.
 
-This directory holds executable specifications written in Gherkin — the shared language between
-business stakeholders, developers, and QA engineers. These specs describe _what_ each app does,
-not _how_ it is implemented.
+## Find a specification
 
-## Why Specs Live Here
+Each row links to the specification index first, then to the implementation it describes.
 
-Acceptance specs belong at the monorepo root rather than inside app directories because:
+| Product or library    | Specification                                       | Implementation                                                                                                                                                   |
+| --------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AyoKoding             | [Application specs](./apps/ayokoding/README.md)     | [website](../apps/ayokoding-www/README.md) and [CLI](../apps/ayokoding-cli/README.md)                                                                            |
+| Crane                 | [CLI specs](./apps/crane/README.md)                 | [crane-cli](../apps/crane-cli/README.md)                                                                                                                         |
+| OrganicLever          | [Application specs](./apps/organiclever/README.md)  | [public website](../apps/organiclever-www/README.md), [web app](../apps/organiclever-app-web/README.md), and [backend](../apps/organiclever-be/README.md)        |
+| OSE                   | [Product-family specs](./apps/ose/README.md)        | [public website](../apps/ose-www/README.md), [web app](../apps/ose-app-web/README.md), [backend](../apps/ose-be/README.md), and [CLI](../apps/ose-cli/README.md) |
+| Rhino                 | [CLI specs](./apps/rhino/README.md)                 | [rhino-cli](../apps/rhino-cli/README.md)                                                                                                                         |
+| WahidYankf            | [Website specs](./apps/wahidyankf/README.md)        | [wahidyankf-www](../apps/wahidyankf-www/README.md)                                                                                                               |
+| Shared web UI         | [Library specs](./libs/web-ui/README.md)            | [web-ui](../libs/web-ui/README.md)                                                                                                                               |
+| Shared design tokens  | [Library specs](./libs/web-ui-token/README.md)      | [web-ui-token](../libs/web-ui-token/README.md)                                                                                                                   |
+| Shared Rust utilities | [Library specs](./libs/rust-commons/README.md)      | [rust-commons source](../libs/rust-commons/)                                                                                                                     |
+| Shared F# Crane core  | [Library specs](./libs/fsharp-crane-core/README.md) | [fsharp-crane-core source](../libs/fsharp-crane-core/)                                                                                                           |
 
-- **Stakeholder access** — business owners and QA engineers read specs without navigating app internals
-- **Shared ownership** — Three Amigos (business + development + QA) collectively own these files
-- **Clear separation** — specs define behavior; implementation tests live inside the apps
+## Read a specification from the outside in
 
-## Testing Layers
+An application or library index leads to the most useful level of detail:
 
-| Layer                      | Location           | Purpose                               | When it runs            |
-| -------------------------- | ------------------ | ------------------------------------- | ----------------------- |
-| Acceptance specs (Gherkin) | `specs/`           | Define behavior from user perspective | CI full suite           |
-| Unit / integration tests   | `apps/*/src/test/` | Verify internal implementation        | Pre-push (`test:quick`) |
-| E2E tests                  | `apps/*-e2e/`      | Verify flows against running system   | CI E2E suite            |
+- `product/` explains the problem, users, and scope.
+- `system-context/`, `containers/`, and `components/` progressively describe the system boundary,
+  running parts, and their internals.
+- `behavior/` contains the acceptance scenarios. These use Gherkin, a concise
+  `Given`/`When`/`Then` format for an observable outcome.
 
-## App Specs
+Some product areas also include `ddd/`, which records the shared vocabulary and boundaries of a
+domain, or `containers/contracts/`, which holds the API contract. Those folders appear only when
+the product needs them.
 
-- **[ayokoding](./apps/ayokoding/README.md)** — AyoKoding educational website specifications (Next.js 16, multilingual programming, AI, and security tutorials)
-- **[crane](./apps/crane/README.md)** — crane-cli specifications (Content Retrieval And Normalization Engine CLI, Python/pytest-bdd)
-- **[organiclever](./apps/organiclever/README.md)** — OrganicLever fullstack specifications (F#/Giraffe backend REST API + Next.js 16 frontend)
-- **[ose](./apps/ose/README.md)** — OSE family specifications (ose-be/web GRC platform + ose-web platform site, unified under one spec tree)
-- **[rhino](./apps/rhino/README.md)** — rhino-cli specifications (Repository Hygiene and INtegration Orchestrator CLI, Rust)
-- **[wahidyankf](./apps/wahidyankf/README.md)** — wahidyankf-web specifications (personal portfolio site, Next.js 16, static)
+## How specifications relate to code and tests
 
-## Library Specs
+Specs answer “what should happen?”; applications and libraries answer “how is it delivered?” A
+feature change keeps both aligned. Gherkin scenarios express the accepted behavior, while unit,
+integration, and end-to-end tests check the implementation at the appropriate level. For a CLI,
+the same scenarios can also define command input, output, and exit-code behavior.
 
-- **[web-ui](./libs/web-ui/)** — Shared web UI component specifications
-- **[web-ui-token](./libs/web-ui-token/)** — Shared design-token package specifications
-- **[rust-commons](./libs/rust-commons/)** — Shared Rust utility crate specifications
-- **[fsharp-crane-core](./libs/fsharp-crane-core/)** — Shared F# PDF-to-Markdown domain/logic core specifications
+Specifications do not replace implementation tests, and implementation tests do not replace a
+clear statement of the intended behavior. Together they make a change easier to discuss, build,
+and verify.
 
-## Standard Folder Pattern
+## A safe next step
 
-Each application domain follows this canonical five-folder layout under `specs/apps/{domain}/`:
+When exploring or preparing a change:
 
-```
-specs/apps/{domain}/
-├── README.md               # Describes app, BDD framework, and feature organization
-├── product/                # Product framing above C4 (vision, personas, scope)
-├── system-context/         # C4 L1 — actors and external systems
-├── containers/             # C4 L2 — deployable units
-│   └── contracts/          # OpenAPI 3.1 contract spec (bundled + source files)
-├── components/             # C4 L3 — per-container or per-perspective internals
-└── behavior/               # Gherkin acceptance scenarios
-    └── <product>-<surface>/
-        └── gherkin/
-            └── <domain>/   # Domain subdirectory (required — no flat feature files)
-                └── <feature>.feature
-```
+1. Read the relevant specification index and the closest existing behavior scenario before
+   interpreting the requirement. Use the linked app or library README for local commands and
+   implementation-specific setup.
+2. Put a new or changed observable outcome in the existing `behavior/` surface for that product.
+   Keep the scenario focused on the outcome, not framework details.
+3. Update the matching code and its tests. If an HTTP API changes, review its contract; if a system
+   boundary changes, review the associated architecture material as well.
+4. Run the focused checks documented by that project. Update this root index only when the
+   specification structure itself changes, such as adding, renaming, or removing a product or
+   library tree.
 
-The `<product>-<surface>` segment uniquely identifies the deployable and execution
-perspective. The format is `<product>-<surface>` where:
-
-- `<product>` — short identifier for the deployable (e.g. `organiclever`, `ayokoding`,
-  `platform`, `app`, `crane`, `rhino`, `wahidyankf`)
-- `<surface>` — execution context: `be` (HTTP backend), `web` (browser UI), `cli`
-  (command-line), `build-tools` (build-time tooling)
-
-Examples: `organiclever-be`, `platform-web`, `be`, `crane-cli`, `rhino-cli`.
-
-**Deprecated slugs** (do not use in new spec trees): bare `be`, bare `web`, bare `cli`,
-`api`. All existing spec trees were migrated to the flat `<product>-<surface>` scheme.
-
-Domain subdirectories are required under `behavior/<product>-<surface>/gherkin/`. Feature
-files must not sit directly under the `gherkin/` directory.
-
-**Contracts** live at `specs/apps/{domain}/containers/contracts/` and are the source of truth
-for API contracts shared between frontend and backend. The `{domain}-contracts` Nx project
-lints and bundles the spec; downstream apps consume it via their `codegen` target.
-
-**C4 diagrams** live in `system-context/`, `containers/`, and `components/` and describe the
-system architecture at the context (L1), container (L2), and component (L3) levels.
-
-## Standards
-
-All feature files follow the OSE Platform BDD standards:
-
-- [BDD Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md) —
-  framework requirements, Three Amigos process, coverage rules
-- [Gherkin Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/gherkin-standards.md) —
-  feature file structure, naming, ubiquitous language
-- [Scenario Standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md) —
-  scenario independence, naming, assertions
-- [Spec-to-Test Mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md) —
-  mandatory 1:1 mapping between CLI commands and feature file `@tags`
-
-## Adding Specs
-
-1. Choose the appropriate subdirectory: `specs/apps/` for production-bound applications,
-   `specs/libs/` for libraries
-2. Create a folder matching the project name: `specs/apps/[app-name]/` or `specs/libs/[lib-name]/`
-3. Add a `README.md` describing the project, BDD framework, and feature file organization
-4. Organize `.feature` files by bounded context or user journey (kebab-case names)
-5. Update this README with a link to the new folder
+For the detailed rules, see the [BDD standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md), [Gherkin standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/gherkin-standards.md), [scenario standards](../docs/explanation/software-engineering/development/behavior-driven-development-bdd/scenario-standards.md), and [spec-to-test mapping](../repo-governance/development/infra/bdd-spec-test-mapping.md).

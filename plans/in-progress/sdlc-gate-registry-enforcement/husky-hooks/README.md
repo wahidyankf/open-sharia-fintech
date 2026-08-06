@@ -57,7 +57,8 @@ Both uses depend on the captures actually being verbatim, so verify that first â
 `identical` twelve times:
 
 ```sh
-SDLC_REPOS_ROOT=/Users/wkf/ose-projects
+# Set this to the directory that contains the authorized OSE checkouts.
+SDLC_REPOS_ROOT=/path/to/ose-checkouts
 for r in ose-public ose-primer ose-private beaver-nest; do
   for h in commit-msg pre-commit pre-push; do
     diff -q "$SDLC_REPOS_ROOT/$r/.husky/$h" "current/$h-$r" >/dev/null \

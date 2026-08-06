@@ -1,6 +1,6 @@
 ---
 title: "Quality Development"
-description: ""
+description: Quality standards and evidence practices for trustworthy repository changes
 category: explanation
 subcategory: development
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Quality Development
 
-Quality standards and methodologies for code quality, validation, and content preservation.
+Use this section to decide what evidence a change needs before it can be trusted. It connects local checks, tests, and captured results to the quality of the product readers and users experience.
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 ---
 title: System Architecture
-description: Comprehensive reference for the Open Sharia Enterprise platform architecture
+description: Reader's guide to the Open Sharia Enterprise platform architecture
 category: reference
 tags:
   - architecture
@@ -11,92 +11,102 @@ created: 2025-11-29
 
 # System Architecture
 
-> **Note:** This document is a work in progress (WIP/Draft). Content and diagrams are subject to change as the platform evolves.
+This is the starting point for understanding how Open Sharia Enterprise (OSE) is organised. It is
+written for product people who need a map of the platform and early engineers who need to find the
+right technical boundary before reading implementation code.
 
-Comprehensive reference for the Open Sharia Enterprise platform architecture, including application inventory, interactions, deployment infrastructure, and CI/CD pipelines.
+OSE is an Nx monorepo containing independently deployable applications, shared libraries, and the
+tooling that builds and checks them. The platform is pre-alpha, so this reference describes the
+current shape of the system rather than a fixed long-term design.
 
-## System Overview
+## Platform at a glance
 
-Open Sharia Enterprise is a monorepo-based platform built with Nx, containing multiple applications that serve different aspects of the Sharia-compliant enterprise ecosystem. The system follows a microservices-style architecture where applications are independent but share common libraries and build infrastructure.
-
-**Key Characteristics:**
-
-- **Monorepo Architecture**: Nx workspace with multiple independent applications
-- **Trunk-Based Development**: All development on `main` branch
-- **Automated Quality Gates**: Git hooks + GitHub Actions + Nx caching
-- **Deployment**: Vercel for static sites and web applications
-- **Build Optimization**: Nx affected builds ensure only changed code is rebuilt
-
-## C4 Model Architecture
-
-The system architecture is documented using the C4 model (Context, Container, Component, Code) to provide multiple levels of abstraction suitable for different audiences.
-
-### C4 Level 1: System Context
-
-Shows how the Open Sharia Enterprise platform fits into the world, including users and external systems.
-
-**Contribution flow:**
+The diagram is a repository-level map, not a runtime request-flow diagram. It shows the main kinds
+of software that live together and the role Nx plays in coordinating their work.
 
 ```mermaid
-graph LR
-    subgraph "External Users"
-        DEVS[Developers<br/>Building enterprise apps]
-        AUTHORS[Content Authors<br/>Writing educational content]
+%% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TB
+    PEOPLE[People using OSE]
+
+    subgraph "Open Sharia Enterprise"
+        PUBLIC[Public websites<br/>Platform, product, learning]
+        PRODUCT[Product applications<br/>Web experiences]
+        API[Backend services<br/>HTTP APIs]
+        TOOLS[Tooling and test suites<br/>Quality and delivery]
+        LIBS[Shared libraries<br/>Reusable capabilities]
+        NX[Nx workspace<br/>Task coordination]
     end
 
-    subgraph "External Systems"
-        GITHUB[GitHub<br/>Source control & CI/CD]
-    end
+    PEOPLE -->|Explore public information| PUBLIC
+    PEOPLE -->|Use product experiences| PRODUCT
+    PRODUCT -.->|Uses service contracts| API
+    LIBS -.->|Supports| PUBLIC
+    LIBS -.->|Supports| PRODUCT
+    LIBS -.->|Supports| API
+    NX -.->|Coordinates tasks for| PUBLIC
+    NX -.->|Coordinates tasks for| PRODUCT
+    NX -.->|Coordinates tasks for| API
+    NX -.->|Coordinates tasks for| TOOLS
 
-    OSE_PLATFORM[OSE Platform<br/>Monorepo - 9 apps<br/>Nx workspace]
-
-    DEVS -->|Clone, commit, push| GITHUB
-    AUTHORS -->|Write markdown content| GITHUB
-    GITHUB -->|Webhook triggers| OSE_PLATFORM
-
-    style OSE_PLATFORM fill:#0077b6,stroke:#03045e,color:#ffffff,stroke-width:3px
-    style DEVS fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style AUTHORS fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style GITHUB fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style PEOPLE fill:#029E73,stroke:#000000,color:#ffffff
+    style PUBLIC fill:#0173B2,stroke:#000000,color:#ffffff
+    style PRODUCT fill:#0173B2,stroke:#000000,color:#ffffff
+    style API fill:#DE8F05,stroke:#000000,color:#000000
+    style TOOLS fill:#CC78BC,stroke:#000000,color:#000000
+    style LIBS fill:#CC78BC,stroke:#000000,color:#000000
+    style NX fill:#CA9161,stroke:#000000,color:#000000
 ```
 
-**Content delivery flow:**
+The key architectural boundaries are:
 
-```mermaid
-graph LR
-    subgraph "External Users"
-        LEARNERS[Learners<br/>Studying prog/AI/security]
-    end
+- **Applications** are deployable units in `apps/`. They can depend on shared libraries but do not
+  import one another.
+- **Libraries** are reusable capabilities in `libs/`, shared across applications where that makes
+  sense.
+- **Tooling and tests** are projects in the same workspace, so quality checks and affected-project
+  builds can be coordinated with the applications they support.
+- **Delivery** is handled per application; the deployment reference explains the environments and
+  deployment paths that exist today.
 
-    OSE_PLATFORM[OSE Platform<br/>Monorepo - 9 apps<br/>Nx workspace]
+For the complete directory and project conventions, see the
+[Monorepo Structure Reference](../monorepo-structure.md).
 
-    subgraph "External Systems"
-        VERCEL[Vercel<br/>Static site hosting]
-        DNS[DNS/CDN<br/>Domain management]
-    end
+## Read the architecture at the right level
 
-    LEARNERS -->|Read tutorials & guides| OSE_PLATFORM
-    OSE_PLATFORM -->|Deploy static sites| VERCEL
-    VERCEL -->|Serve websites| LEARNERS
-    DNS -->|Route traffic| VERCEL
+OSE uses the C4 model to describe the system from broad context to implementation detail. Start at
+the level that answers your question; you do not need to read every document in order.
 
-    style OSE_PLATFORM fill:#0077b6,stroke:#03045e,color:#ffffff,stroke-width:3px
-    style LEARNERS fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style VERCEL fill:#6a4c93,stroke:#22223b,color:#ffffff
-    style DNS fill:#6a4c93,stroke:#22223b,color:#ffffff
-```
+| If you need to understand...                          | Start here                                     | What it covers                                                          |
+| ----------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
+| Which software surfaces exist and what each is for    | [Applications & Containers](./applications.md) | Application inventory, C4 Level 2 containers, and their interactions    |
+| How a particular application is structured internally | [Components & Code](./components.md)           | C4 Level 3 components and selected Level 4 code structure               |
+| How applications reach their environments             | [Deployment](./deployment.md)                  | Deployment architecture, environment branches, and Vercel configuration |
+| How changes are checked before delivery               | [CI/CD Pipeline](./ci-cd.md)                   | Local hooks, GitHub Actions, Nx orchestration, and quality gates        |
+| Which technologies are in use                         | [Technology Stack](./technology-stack.md)      | Languages, frameworks, quality tools, and architecture considerations   |
 
-**Key Relationships:**
+## Suggested reading paths
 
-- **Developers & Authors**: Interact with GitHub (source of truth) to build applications and create content
-- **Learners**: Access educational content via Vercel-hosted sites (ayokoding-www, ose-www)
-- **GitHub**: Central hub for CI/CD automation and quality gates
-- **Vercel**: Automated deployment platform for Next.js web applications
+### Product discovery
 
-## Contents
+1. Read [Applications & Containers](./applications.md) to identify the current product, public,
+   and supporting software surfaces.
+2. Read [Deployment](./deployment.md) to see how those surfaces are delivered.
+3. Use [Components & Code](./components.md) when you need more detail about a particular
+   implementation boundary.
 
-- [Applications & Containers](./applications.md) - Application inventory, C4 Level 2 container diagram, interactions
-- [Components & Code](./components.md) - C4 Level 3 component diagrams, Level 4 code architecture
-- [Deployment](./deployment.md) - Deployment architecture, environment branches, Vercel configuration
-- [CI/CD Pipeline](./ci-cd.md) - Git hooks, GitHub Actions workflows, Nx build system, development workflow
-- [Technology Stack](./technology-stack.md) - Stack summary, quality tools, future considerations
+### Early engineering orientation
+
+1. Read the [Monorepo Structure Reference](../monorepo-structure.md) for project and dependency
+   rules.
+2. Read [Applications & Containers](./applications.md) to choose the application or library you
+   need to inspect.
+3. Read [Components & Code](./components.md) and the relevant application README before changing
+   code.
+4. Read [CI/CD Pipeline](./ci-cd.md) to understand the checks that protect the system.
+
+## Scope of this reference
+
+This section explains the public OSE repository and its current technical architecture. Product
+plans, research material, and detailed acceptance specifications live elsewhere in the repository;
+the linked documents above provide the architectural route into those details.

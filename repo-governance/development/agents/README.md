@@ -1,6 +1,6 @@
 ---
 title: "AI Agents Development"
-description: ""
+description: Standards for AI agents that work safely and predictably in this repository
 category: explanation
 subcategory: development
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # AI Agents Development
 
-Standards and conventions for creating and managing AI agents in the `.claude/agents/` directory (source of truth), synced to `.opencode/agents/`.
+Use this section when defining or changing an AI agent. It explains how to give an agent a clear, safe job and how its canonical definition is kept compatible with supported harnesses.
 
 ## Purpose
 

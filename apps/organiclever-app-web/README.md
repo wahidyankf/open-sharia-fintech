@@ -1,76 +1,108 @@
-# organiclever-app-web
+# OrganicLever app web
 
-Next.js 16 frontend for the OrganicLever life journal — local-first productivity tracker
-with PGlite (Postgres-WASM, IndexedDB-backed) for in-browser data storage.
+The OrganicLever web client is an in-progress, local-first life journal and
+productivity tracker. It provides journaling, routines, workout sessions,
+history and progress views, and user preferences in a responsive Next.js app.
 
-> **Status: Pre-Alpha.** Data model may change between versions without migration.
+> **Pre-alpha:** The product and its browser data model are still evolving. Do
+> not treat local browser data as a durable backup.
 
-## Quick Start
+## Get running
+
+From the repository root, install the workspace dependencies, then start the
+app:
 
 ```bash
-nx dev organiclever-app-web   # http://localhost:3202
+npm install
+npm exec nx -- run organiclever-app-web:dev
 ```
 
-## Commands
+Open <http://localhost:3202>. The root route redirects to `/app/home`; `/app`
+permanently redirects there as well.
 
-| Nx target                                      | What it does                             |
-| ---------------------------------------------- | ---------------------------------------- |
-| `nx dev organiclever-app-web`                  | Dev server (localhost:3202)              |
-| `nx build organiclever-app-web`                | Production build                         |
-| `nx run organiclever-app-web:test:quick`       | Unit tests + coverage (70%) + DDD checks |
-| `nx run organiclever-app-web:test:unit`        | Unit tests only                          |
-| `nx run organiclever-app-web:test:integration` | Integration tests                        |
-| `nx run organiclever-app-web:specs:coverage`   | Gherkin spec coverage                    |
-| `nx run organiclever-app-web:lint`             | Lint with oxlint + ESLint                |
-| `nx run organiclever-app-web:typecheck`        | TypeScript type check                    |
+The development target generates the journal migration index before launching
+Next.js. It needs no backend or environment variables for normal local-first
+use.
 
-## Environment Variables
+## Local data and optional backend probe
 
-| Variable              | Scope       | Required | Description                                         |
-| --------------------- | ----------- | -------- | --------------------------------------------------- |
-| `ORGANICLEVER_BE_URL` | Server-only | No       | Backend base URL probed by `/system/status/be` only |
+Journal, routine, settings, and progress data are stored in the current
+browser with PGlite on IndexedDB. The app initializes and migrates that storage
+when the application shell starts. Clearing this site's browser storage removes
+the local data.
 
-## Deployment
+The backend is optional. To let the diagnostic page at `/system/status/be`
+probe its health endpoint, copy the app's example environment file to a local,
+untracked `.env.local` file and set the backend URL:
 
-- **Staging**: served by Vercel from the `stag-organiclever-app-web` branch, which the
-  scheduled `organiclever-app-test-local-deploy-stag.yml` workflow force-pushes from `main`
-  after the local-stack test gate passes. The staging URL is kept **private** (Vercel
-  Deployment Protection) — it lives only in the `organiclever-app-staging` GitHub
-  Environment var `WEB_BASE_URL`, never in a tracked file.
-- **Production**: `prod-organiclever-app-web` → `app.organiclever.com`. Production CD is
-  **deferred** — no production-promotion workflow exists yet.
-- **Deployer agent**: [`apps-organiclever-app-web-deployer`](../../.claude/agents/apps-organiclever-app-web-deployer.md).
-
-## Project Layout
-
-```
-apps/organiclever-app-web/src/
-├── app/          # Next.js App Router — thin page wrappers only
-├── contexts/     # Bounded-context implementations (journal, routine, stats, …)
-├── shared/       # Cross-context utilities (PgliteService, format-relative-time)
-└── test/         # Vitest-cucumber step implementations
+```bash
+ORGANICLEVER_BE_URL=http://localhost:8202
 ```
 
-## Tech Stack
+When this value is unset, the diagnostic page reports that no backend is
+configured. The app does not require it for its primary experience.
 
-- **Next.js 16** — App Router, Server Components
-- **PGlite** — Postgres-WASM, IndexedDB-backed; local-first, no backend required
-- **XState v5** — UI shell and workout-session FSMs
-- **Effect TS** — typed functional effects in infrastructure layer
-- **Tailwind CSS v4** — utility-first CSS
-- **`@open-sharia-enterprise/web-ui`** — shared component library
+See [`.env.example`](./.env.example) for the supported local development
+variables, including optional Next.js host and port overrides.
 
-## Behavior & Architecture
+## Everyday commands
 
-| Artifact                     | Location                                                                                                                        |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Bounded-context architecture | [specs/…/components/app-web/architecture.md](../../specs/apps/organiclever/components/app-web/architecture.md)                  |
-| Routes and screens           | [specs/…/components/app-web/routes-and-screens.md](../../specs/apps/organiclever/components/app-web/routes-and-screens.md)      |
-| Design system                | [specs/…/components/app-web/design-system.md](../../specs/apps/organiclever/components/app-web/design-system.md)                |
-| Ubiquitous language          | [specs/…/ddd/ubiquitous-language/](../../specs/apps/organiclever/ddd/ubiquitous-language/README.md)                             |
-| Gherkin specs                | [specs/…/behavior/organiclever-app-web/gherkin/](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md) |
+Run these from the repository root.
 
-## Related
+| Command                                                    | Purpose                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `npm exec nx -- run organiclever-app-web:dev`              | Generate migrations and start Next.js on port 3202.                                       |
+| `npm exec nx -- run organiclever-app-web:build`            | Generate migrations, regenerate contract types, and create a production build.            |
+| `npm exec nx -- run organiclever-app-web:start`            | Serve an existing production build on port 3202.                                          |
+| `npm exec nx -- run organiclever-app-web:codegen`          | Regenerate TypeScript types from the bundled OrganicLever OpenAPI contract.               |
+| `npm exec nx -- run organiclever-app-web:typecheck`        | Check TypeScript types.                                                                   |
+| `npm exec nx -- run organiclever-app-web:lint`             | Run Oxlint accessibility checks and ESLint.                                               |
+| `npm exec nx -- run organiclever-app-web:test:unit`        | Run unit tests.                                                                           |
+| `npm exec nx -- run organiclever-app-web:test:integration` | Run integration tests.                                                                    |
+| `npm exec nx -- run organiclever-app-web:test:quick`       | Run the local quality gate: type checks, lint, unit tests, coverage, and spec validation. |
+| `npm exec nx -- run organiclever-app-web:test:specs`       | Validate the OrganicLever spec structure and behavior coverage.                           |
+| `npm exec nx -- run organiclever-app-web:storybook`        | Start Storybook on port 6006.                                                             |
 
-- [organiclever-app-web-e2e](../organiclever-app-web-e2e/README.md) — Playwright E2E tests
-- [specs/apps/organiclever/](../../specs/apps/organiclever/README.md) — full spec tree
+`build`, `typecheck`, and `codegen` consume the `organiclever-contracts`
+project's bundled OpenAPI document. Nx builds that dependency when needed.
+
+## What to explore
+
+| Area                | Routes                                                      | Notes                                                    |
+| ------------------- | ----------------------------------------------------------- | -------------------------------------------------------- |
+| Daily journal       | `/app/home`                                                 | View journal activity, routines, and entry logging.      |
+| Workout routines    | `/app/routines/edit`, `/app/workout`, `/app/workout/finish` | Create a routine and record a workout session.           |
+| Progress            | `/app/history`, `/app/progress`                             | Review recorded sessions and derived progress.           |
+| Preferences         | `/app/settings`                                             | Change theme and language preferences.                   |
+| Backend diagnostics | `/system/status/be`                                         | Optionally probe the configured backend health endpoint. |
+
+## Code map
+
+```text
+apps/organiclever-app-web/
+├── src/app/        # Next.js App Router pages and route layouts
+├── src/contexts/   # Bounded contexts: journal, routine, settings, stats, and more
+├── src/shared/     # Cross-context runtime primitives and utilities
+├── scripts/        # Build-time helpers, including migration-index generation
+└── test/           # Gherkin-backed Vitest step implementations
+```
+
+The `/app` layout creates one browser-side PGlite runtime, initializes journal
+migrations, and shares it with the bounded contexts. XState coordinates app
+shell and workout-session state; Effect provides the typed runtime and
+infrastructure composition.
+
+## Engineering references
+
+- [Frontend architecture](../../specs/apps/organiclever/components/app-web/architecture.md)
+  — bounded contexts and their boundaries.
+- [Routes and screens](../../specs/apps/organiclever/components/app-web/routes-and-screens.md)
+  — intended UI surface and navigation.
+- [Design system](../../specs/apps/organiclever/components/app-web/design-system.md)
+  — visual and interaction guidance.
+- [OrganicLever specifications](../../specs/apps/organiclever/README.md) — product,
+  architecture, and behavior specifications.
+- [Frontend Gherkin specifications](../../specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md)
+  — executable behavior source of truth.
+- [Browser E2E suite](../organiclever-app-web-e2e/README.md) — Playwright coverage
+  for this client.

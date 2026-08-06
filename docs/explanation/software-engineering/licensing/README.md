@@ -13,11 +13,11 @@ created: 2026-03-26
 
 # Licensing
 
-License analysis and compliance documentation for open-source dependencies used in the open-sharia-enterprise platform.
+This is the decision record for how OSE Platform uses open-source software. Start here when you need the reason behind a licensing choice or the evidence supporting a dependency decision; it is not a substitute for legal advice.
 
 ## Why Licensing Documentation?
 
-Open-source licenses impose conditions on how software may be used, modified, and distributed. Some licenses are permissive (MIT, Apache 2.0), while others require specific obligations (LGPL, EPL) or contain non-compete restrictions (FSL). Documenting license decisions ensures the project remains compliant and reduces legal risk.
+Open-source licenses set conditions on use, modification, and distribution. Some are permissive (MIT, Apache 2.0); others carry additional obligations (LGPL, EPL) or restrictions (FSL). Recording the decision, its assumptions, and the supporting evidence makes the work reviewable and reduces avoidable risk.
 
 ## Documents
 

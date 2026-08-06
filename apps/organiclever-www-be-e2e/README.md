@@ -1,31 +1,26 @@
 # organiclever-www-be-e2e
 
-Backend E2E slot for [`apps/organiclever-www`](../organiclever-www/) using
-Playwright and `playwright-bdd`.
+OrganicLever’s public site is a static marketing experience, so it has no separate backend API to
+exercise. This project keeps the repository’s standard frontend/backend E2E shape intact while
+making that absence explicit. 🧩
 
-`organiclever-www` is a pure Next.js static marketing site with no tRPC route
-handlers or dedicated backend API. This project exists to satisfy the
-standardized `{app}-be-e2e` + `{app}-fe-e2e` reusable workflow pair. The
-`be-e2e` slot is tolerated-absent in CI (called with `|| true`).
+## What to run instead
 
-## Commands
+Use the frontend suite when you want meaningful browser coverage:
 
 ```bash
-# Install Chromium for Playwright
-nx run organiclever-www-be-e2e:install
-
-# Run E2E (placeholder suite — no real scenarios)
-nx run organiclever-www-be-e2e:test:e2e
-
-# Pre-push quick gate (typecheck + lint)
-nx run organiclever-www-be-e2e:test:quick
+npm exec nx -- run organiclever-www-fe-e2e:test:e2e
 ```
 
-## Features consumed
+This project has a deliberately minimal placeholder scenario. Its commands are still useful for
+checking the project wiring:
 
-- `specs/apps/organiclever/behavior/organiclever-www-be/gherkin/placeholder/placeholder.feature`
-  — structural placeholder, no real backend scenarios
+```bash
+npm exec nx -- run organiclever-www-be-e2e:install
+npm exec nx -- run organiclever-www-be-e2e:test:e2e
+npm exec nx -- run organiclever-www-be-e2e:test:quick
+```
 
-## Default base URL
-
-`http://localhost:3200` — override with `BASE_URL` env var.
+The default target is `http://localhost:3200`; set `BASE_URL` only when checking another running
+site. The placeholder behavior is documented in
+[the OrganicLever public-site API slot](../../specs/apps/organiclever/behavior/organiclever-www-be/gherkin/README.md).

@@ -1,217 +1,138 @@
 # 🌙 Open Sharia Enterprise
 
-✨ An enterprise solutions platform for Sharia-compliant business systems.
+Open Sharia Enterprise (OSE) is an open-source platform for researching and building trustworthy,
+Sharia-compliant enterprise products. It exists for organizations that need business software whose
+rules, decisions, and foundations can be examined rather than treated as a black box.
 
-🌐 **Live Sites**:
+OSE is for product people exploring that problem and early-career engineers who want to see how a
+product platform is being built. This is a pre-alpha repository: the architecture and APIs will
+change as product, research, assurance, and platform work develops.
 
-- **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
-- **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Engineering research and learnings from this project, shared publicly as educational content
-- **OrganicLever** ([organiclever.com](https://www.organiclever.com/)) - Marketing site for the
-  active OrganicLever product workstream
+This is the active OSE product monorepo, not a generic project starter. Its sibling
+[ose-primer](https://github.com/wahidyankf/ose-primer) packages reusable governance, automation,
+and reference applications for teams starting their own repositories. `ose-public` holds OSE
+product work, its supporting research, and the shared source material from which that starter grew.
 
-## 🚧 Project Status
+External contributions are currently closed while the project stabilizes its product and engineering
+patterns.
 
-> ⚠️ **Pre-Alpha - In Development** - APIs and implementations may change significantly.
-> **Contributions and pull requests are not being accepted** at this time.
+Choose the path that fits what you need:
 
-Product development, research, assurance, platform engineering, and public learning proceed as
-parallel workstreams wherever evidence, dependencies, and capacity allow:
+- [🧭 Understand the product](#-understand-the-product) if you are evaluating OSE, mapping its
+  workstreams, or looking for the product context.
+- [🧰 Run OSE locally](#-run-ose-locally) if you want to start the OSE Platform website on your
+  machine.
 
-- 🚀 **Product delivery** — OrganicLever marketing site, local-first client, backend, and paired
-  end-to-end suites
-- 🕌 **Shariah and regulatory research** — principles, rules, review methods, and prototypes
-- 🏢 **Business and enterprise research** — domain discovery, process models, and experiments
-- 🛡️ **Trust and assurance** — security, privacy, governance, and compliance capabilities
-- ⚙️ **Platform and operations** — architecture, developer tooling, infrastructure, and reliability
-- 📚 **Public learning** — AyoKoding educational content and OSE project updates
+## 🧭 Understand the product
 
-Workstreams coordinate through explicit dependencies and per-deliverable readiness checks instead
-of portfolio-wide stage transitions.
+OSE works toward enterprise systems that make Sharia compliance a design constraint from the start.
+The repository brings together product delivery, Shariah and regulatory research, enterprise-domain
+research, security and governance work, platform engineering, and public learning. These streams
+move when their own evidence and dependencies are ready; they do not wait for one portfolio-wide
+stage.
 
-**What to Expect:**
+The current product and public surfaces are:
 
-- 🔄 Breaking changes without notice
-- 📐 Architecture still evolving
-- 🧪 Experimental implementations
+- **OSE Platform** — the platform’s public website at [oseplatform.com](https://oseplatform.com).
+- **OrganicLever** — an active local-first productivity product workstream, with a marketing site,
+  web client, backend, and end-to-end tests.
+- **AyoKoding** — public engineering research and learning drawn from work around the platform.
 
-See the **[development roadmap](./roadmap.md)** for the concurrent workstreams, readiness model,
-and strategy.
+Start with the [development roadmap](./roadmap.md) for the workstreams and readiness model. Then
+use the [application map](./docs/reference/system-architecture/applications.md) to see the current
+software surfaces and their responsibilities.
 
-## 🚀 Getting Started
+### Where the work lives
 
-### 📋 Prerequisites
+OSE uses an [Nx](https://nx.dev/) monorepo: one repository that contains several independently
+deployable applications and shared libraries while Nx coordinates their development tasks.
 
-- **Node.js** 24.13.1 LTS & **npm** 11.10.1 (managed via [Volta](https://docs.volta.sh/guide/getting-started))
+| Location                      | What you will find                                                         |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| [`apps/`](./apps/README.md)   | Product apps, public sites, command-line tools, and end-to-end test suites |
+| [`libs/`](./libs/README.md)   | Shared code used by applications                                           |
+| [`docs/`](./docs/README.md)   | Tutorials, how-to guides, technical reference, and explanations            |
+| [`specs/`](./specs/README.md) | Product and behavior specifications                                        |
+| [`plans/`](./plans/README.md) | Current and completed planning records                                     |
 
-### 📥 Installation
+## 🧰 Run OSE locally
+
+This first run starts `ose-www`, the OSE Platform website, at <http://localhost:3100>. It is a
+small, visible way to explore the product without needing to understand every service in the
+repository.
+
+Want a paced walkthrough with expected results and recovery steps? Follow
+[Getting started with OSE Public](./docs/tutorials/getting-started-with-ose-public.md).
+
+### Supported platforms and prerequisites
+
+macOS and Ubuntu Linux are supported. The Linux steps may work in WSL2, but WSL2 is neither
+supported nor verified by this project. Native Windows is not supported.
+
+Before installing dependencies, have these tools available:
+
+- Git to clone the repository.
+- [Volta](https://volta.sh/) to install the Node.js and npm versions pinned in
+  [`package.json`](./package.json).
+- Rust and Cargo. The repository’s tool checker is a Rust command-line application, so Cargo must
+  exist before it can check or install other missing tools.
+- Docker and `jq` only when you move into container-based or broader local-tooling work. They are
+  not needed for the first `ose-www` website run.
+
+Follow [Set up your development environment](./docs/how-to/setup-development-environment.md) for
+macOS or Ubuntu installation commands and recovery steps for a missing tool.
+
+### Clone and bootstrap
 
 ```bash
+git clone https://github.com/wahidyankf/ose-public.git
+cd ose-public
 npm install
 ```
 
-## 🛠️ Tech Stack
-
-**Guiding Principle**: Technologies that keep you free - open formats, portable data, no vendor lock-in.
-
-**Established platform:**
-
-- Node.js & npm (via Volta) - Tooling and development infrastructure
-- Next.js 16 - Public websites and content platforms
-- Rust - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/),
-  [rhino-cli](./apps/rhino-cli/), and [ose-cli](./apps/ose-cli/))
-- F# - PDF-to-Markdown tooling and shared processing libraries
-
-**Active OrganicLever product work:**
-
-- Product client: Next.js 16 + TypeScript + PGlite
-- Backend: F# + Giraffe + ASP.NET 10
-- Data: Local-first PostgreSQL-WASM in the product client; PostgreSQL for backend integration
-- Operations: Vercel deployment plus Kubernetes, observability, and reliability research
-
-Technology choices belong to the initiatives that need them; no language or architecture is
-reserved for a future project stage. See the **[development roadmap](./roadmap.md)** for details.
-
-## 📂 Project Structure
-
-This project uses **Nx** to manage applications and libraries:
-
-```
-open-sharia-enterprise/
-├── apps/                  # Deployable applications (Nx monorepo)
-├── libs/                  # Reusable libraries (Nx monorepo, flat structure)
-├── docs/                  # Project documentation (Diataxis framework)
-│   ├── tutorials/         # Learning-oriented guides
-│   ├── how-to/            # Problem-oriented guides
-│   ├── reference/         # Technical reference
-│   └── explanation/       # Conceptual documentation
-├── plans/                 # Project planning documents
-│   ├── in-progress/       # Active project plans
-│   ├── backlog/           # Planned projects for future
-│   └── done/              # Completed and archived plans
-├── nx.json                # Nx workspace configuration
-├── tsconfig.base.json     # Base TypeScript configuration
-├── package.json           # Project manifest with npm workspaces
-└── README.md              # This file
-```
-
-**Applications** (`apps/`):
-
-- **Public websites**: [`ose-www`](./apps/ose-www/),
-  [`ayokoding-www`](./apps/ayokoding-www/),
-  [`organiclever-www`](./apps/organiclever-www/), and
-  [`wahidyankf-www`](./apps/wahidyankf-www/)
-- **Product apps**: [`organiclever-app-web`](./apps/organiclever-app-web/),
-  [`organiclever-be`](./apps/organiclever-be/), [`ose-app-web`](./apps/ose-app-web/), and
-  [`ose-be`](./apps/ose-be/)
-- **CLI and processing tools**: [`ayokoding-cli`](./apps/ayokoding-cli/),
-  [`rhino-cli`](./apps/rhino-cli/), [`ose-cli`](./apps/ose-cli/), and
-  [`crane-cli`](./apps/crane-cli/)
-- **End-to-end suites**: see the [applications index](./apps/README.md) and
-  [monorepo structure reference](./docs/reference/monorepo-structure.md)
-- **Polyglot demo apps**: extracted 2026-04-18 to the downstream
-  [`ose-primer`](https://github.com/wahidyankf/ose-primer) template repository, which is now
-  authoritative for the polyglot showcase.
-
-**Libraries** (`libs/`): Reusable shared code
-
-**Learn More**: [Monorepo Structure Reference](./docs/reference/monorepo-structure.md) | [How to Add New App](./docs/how-to/add-new-app.md) | [How to Add New Library](./docs/how-to/add-new-lib.md) | [How to Run Nx Commands](./docs/how-to/run-nx-commands.md)
-
-## 💻 Development
-
-**Code Quality**: Automated checks run on every commit (Prettier formatting, Commitlint validation, markdown linting).
-
-**Common Commands**:
+`npm install` installs the workspace dependencies, sets up Git hooks, and runs a broad repository
+tool check. Follow the onboarding tutorial's focused check for the website path; install Docker or
+other optional tools only when you choose work that needs them. To repair a required tool after you
+have installed it, run:
 
 ```bash
-npm run build                    # Build all projects
-npm run test                     # Run tests
-npm run lint                     # Lint code
-nx dev [app-name]                # Start development server
-nx build [app-name]              # Build specific project
-nx affected -t build             # Build only affected projects
-nx affected -t test:quick        # Run fast quality gate for affected projects
-nx graph                         # Visualize dependencies
+npm run doctor -- --fix
 ```
 
-See [Code Quality](./repo-governance/development/quality/code.md) and [Commit Messages](./repo-governance/development/workflow/commit-messages.md) for details.
+When the focused check is green, you can run the public website. If Cargo, Volta, or another tool
+needed for the work you chose is still missing, return to the
+[setup guide](./docs/how-to/setup-development-environment.md) rather than bypassing the check.
 
-## 📊 CI & Test Coverage
+### Find and run the first project
 
-All projects enforce ≥90% test coverage as part of `test:quick`.
+List the projects that Nx can run:
 
-**Quality gates**: pre-commit hooks (formatting, linting), pre-push hooks (`typecheck`, `lint`, `test:quick` for affected projects), and [PR quality gate](./.github/workflows/pr-quality-gate.yml).
+```bash
+npm exec nx -- show projects
+```
 
-- OSE Platform
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/ose-www-test-local-deploy-prod.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/ose-www-test-local-deploy-prod.yml)
-- AyoKoding
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/ayokoding-www-test-local-deploy-prod.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/ayokoding-www-test-local-deploy-prod.yml)
-- OrganicLever (app — staging)
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/organiclever-app-test-local-deploy-stag.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/organiclever-app-test-local-deploy-stag.yml)
-- Wahidyankf
-  - [![Deploy](https://github.com/wahidyankf/ose-public/actions/workflows/wahidyankf-www-test-local-deploy-prod.yml/badge.svg)](https://github.com/wahidyankf/ose-public/actions/workflows/wahidyankf-www-test-local-deploy-prod.yml)
-- [`rhino-cli`](./apps/rhino-cli/)
+Start the OSE Platform website:
 
-For polyglot demo app CI badges, see the [`ose-primer`](https://github.com/wahidyankf/ose-primer) repository.
+```bash
+npm exec nx -- dev ose-www
+```
 
-## 📚 Documentation
+Open <http://localhost:3100> when the development server reports that it is ready. If the port is
+already in use or the server cannot start, stop the process using that port and try again; the
+[Nx command guide](./docs/how-to/run-nx-commands.md) explains project discovery and other targets.
 
-Organized using the [Diátaxis framework](https://diataxis.fr/): [Tutorials](./docs/tutorials/) (learning), [How-To](./docs/how-to/) (problem-solving), [Reference](./docs/reference/) (lookup), [Explanation](./docs/explanation/) (understanding).
+From there, read [how OSE applications fit together](./docs/reference/system-architecture/applications.md)
+or explore the [OSE Platform app](./apps/ose-www/) itself.
 
-See [`docs/README.md`](./docs/README.md) for details.
+## Project status
 
-## 🔗 Related Repositories
+OSE is pre-alpha. Expect breaking changes, evolving architecture, and experimental implementations.
+The project uses TypeScript and Next.js for web applications, Rust for repository and link-checking
+tools, and F# for backend and document-processing work. See the
+[technology-stack reference](./docs/reference/system-architecture/technology-stack.md) for the
+current technical picture.
 
-`ose-public` is one of four sibling repositories in the Open Sharia Enterprise (OSE) family. The four repositories cross-reference each other directly — no parent coordination repository exists.
+## License
 
-- **[`ose-public`](https://github.com/wahidyankf/ose-public)** — MIT, public. This repository. The main OSE platform monorepo and upstream source of truth for governance, conventions, AI agents, and scaffolding.
-- **[`ose-primer`](https://github.com/wahidyankf/ose-primer)** — MIT, public. Template repository derived from `ose-public`. Packages scaffolding (governance, AI agents, skills, conventions, CI harness, polyglot demo apps) into a reusable starting point. `ose-public` is upstream; content parity is maintained manually via the multi-repo parity planning workflows.
-- **[`ose-private`](https://github.com/wahidyankf/ose-private)** — Proprietary, private. The unexposed surface of OSE: self-hosted GitHub Actions runner stack and the `coralpolyp` app. Not publicly accessible.
-- **[`beaver-nest`](https://github.com/wahidyankf/beaver-nest)** — MIT, public. BeaverNest, a personal operating layer built as a product within the OSE ecosystem. Scaffolded from this lineage but standing **outside** the parity loop — it does not participate in cross-repo parity syncs.
-
-For the full catalogue, upstream/downstream relationships, and license differences, see the [Related Repositories reference](./docs/reference/related-repositories.md).
-
-## 🎯 Motivation
-
-Our mission is to democratize access to trustworthy, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
-
-**The Opportunity:**
-
-- Islamic enterprise (finance, commerce, cooperatives) is a multi-trillion dollar global market
-- Existing platforms are proprietary, expensive, and domain-limited
-- Most organizations rely on legacy systems retrofitted for Sharia compliance
-- The gap: open-source, compliance-first solutions with radical transparency
-
-**Our Approach:**
-
-- Concurrent product, research, assurance, platform, and public-learning workstreams
-- Progressive complexity within each initiative, based on evidence rather than a fixed sequence
-- Explicit dependencies and readiness gates for every production-facing deliverable
-- Sustainable prioritization based on user value, risk, capacity, and funding
-- Sharia-compliance built in from the ground up, not bolted on after
-
-**What We Believe:**
-
-- 🕌 **Sharia-compliance as a foundation** - Built in from the ground up, not bolted on later
-- 🔓 **Transparency builds trust** - Open source code enables community verification of Sharia compliance
-- 🤖 **AI-assisted development** - Systematic use of AI tools to enhance productivity and code quality
-- 🛡️ **Security and governance from day one** - Architectural foundations, not afterthoughts
-- 📚 **Learning in public** - Share our research and knowledge through [ayokoding.com](https://ayokoding.com)
-- 🏗️ **Long-term foundation over quick wins** - Building solid foundations for a life-long project
-
-For complete principles, see [repo-governance/principles/](./repo-governance/principles/README.md).
-
-## 🤝 Contributing
-
-🔒 **Contributions are currently closed** while we stabilize the architecture and patterns.
-
-🎉 **Forking is welcome!** Build your own version for your region or use case — once the foundation is solid, we'll open contributions to the community.
-
-## 📜 License
-
-This repository is licensed under the **[MIT License](./LICENSE)**. All code, documentation,
-governance materials, specifications, and AI agent configuration are MIT-licensed — free to use,
-fork, modify, and distribute for any purpose.
-
-See [LICENSING-NOTICE.md](./LICENSING-NOTICE.md) for full details |
-[LICENSE](./LICENSE) for the root license text |
-[Licensing Convention](./repo-governance/conventions/structure/licensing.md) for internal rules.
+OSE is available under the [MIT License](./LICENSE). See the
+[licensing notice](./LICENSING-NOTICE.md) for the repository-wide statement.

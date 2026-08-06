@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Plan Workflows
 
-Orchestrated workflows for project planning quality validation and systematic execution.
+Use these workflows to turn an idea into a well-grounded, checkable delivery plan, then carry it through execution without losing the evidence behind each decision.
 
 ## Purpose
 

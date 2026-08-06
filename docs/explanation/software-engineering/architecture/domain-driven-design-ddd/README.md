@@ -18,7 +18,7 @@ created: 2026-01-25
 
 # Domain-Driven Design (DDD)
 
-**This is THE authoritative reference** for Domain-Driven Design standards in OSE Platform.
+Use this reference when product language, business rules, and code boundaries need to stay aligned. It is the authoritative Domain-Driven Design standard for OSE Platform.
 
 All DDD implementations in OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks code review and merge approval.
 
@@ -45,9 +45,9 @@ OSE Platform Islamic finance systems MUST use the following DDD patterns:
 - MUST use FSM for entity lifecycles when applicable
 - MUST use immutable value objects (Java records, TypeScript readonly)
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Domain-Driven Design learning path. These are **OSE Platform-specific DDD standards**, not educational tutorials.
+These are **OSE Platform-specific DDD standards**, not an introduction to DDD. If bounded contexts, aggregates, and value objects are new to you, take the learning path first; otherwise, start with the standard that matches the decision in front of you.
 
 **You MUST understand DDD fundamentals before using these standards:**
 

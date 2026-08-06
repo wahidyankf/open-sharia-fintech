@@ -14,13 +14,11 @@ created: 2026-01-20
 
 # Programming Languages
 
-**Understanding-oriented documentation** on language-specific idioms, best practices, and antipatterns for programming languages used in the open-sharia-enterprise platform.
+Use this area to understand why a language is used here and which standards apply before you change code. It is written to help an early-career engineer find a safe starting point without asking a product partner to decode implementation jargon.
 
 ## Overview
 
-**The Polyglot Confusion**: Every language has its own idioms, conventions, and gotchas. Developers switch between TypeScript promises, Rust ownership semantics, and F# discriminated unions. What's idiomatic in one language is an antipattern in another. Copy-pasting patterns across languages leads to awkward, non-idiomatic code.
-
-**Curated Language Guidance**: We provide language-specific documentation that captures idioms, best practices, and antipatterns for each active language in the platform. Learn how to write code that feels native to the language, not awkwardly translated from another one.
+Each language has its own ideas about structure, errors, state, and testing. A useful pattern in TypeScript can be awkward or unsafe in Rust or F#. These guides explain the local conventions so a reader can make choices that fit both the language and this repository.
 
 This directory contains comprehensive documentation on programming languages used throughout the platform. Active languages use one of two documentation patterns:
 
@@ -36,19 +34,19 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 
 ## Quick Decision: Which Language for My Task?
 
-| Task                                     | Recommended Language | Start With                                     |
-| ---------------------------------------- | -------------------- | ---------------------------------------------- |
-| REST API backend (current ose-public)    | F#/Giraffe           | See organiclever-be, ose-be                    |
-| Frontend web application                 | TypeScript           | [TypeScript Standards](./typescript/README.md) |
-| CLI tool for repository automation       | Rust                 | See rhino-cli, ayokoding-cli, ose-cli (Rust)   |
-| Infrastructure tooling                   | Rust                 | See existing CLI tools                         |
-| Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md) |
-| Complex domain logic with DDD            | F#/Rust              | See language-specific README files             |
-| Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files         |
+| Task                                     | Recommended Language | Start With                                      |
+| ---------------------------------------- | -------------------- | ----------------------------------------------- |
+| REST API backend                         | F#/Giraffe           | See the F# guidance and the relevant app README |
+| Frontend web application                 | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
+| CLI tool for repository automation       | Rust                 | See rhino-cli, ayokoding-cli, ose-cli (Rust)    |
+| Infrastructure tooling                   | Rust                 | See existing CLI tools                          |
+| Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
+| Complex domain logic with DDD            | F#/Rust              | See language-specific README files              |
+| Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files          |
 
 **Platform Guidance**:
 
-- **TypeScript**: Active for all frontend applications (Next.js) and tRPC backends
+- **TypeScript**: Active for frontend applications, including Next.js sites
 - **Rust**: Active for CLI tools (rhino-cli, ayokoding-cli, ose-cli, crane-cli)
 - **F#**: Active for REST API backends (organiclever-be, ose-be) and content pipeline tooling (crane-cli — Content Retrieval And Normalization Engine)
 - **C#**: Retained for potential .NET interop with F#

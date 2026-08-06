@@ -4,9 +4,19 @@ Platform-agnostic specifications for all OSE-family deployables. Two distinct pr
 tree:
 
 - **OSE Application** (`ose-app-*`) — AI-assisted GRC platform (app.oseplatform.com).
-  Rust/Axum backend + Next.js 16 frontend.
-- **OSE Platform Web** (`ose-web`, `ose-cli`) — Marketing and updates site
+  F#/Giraffe backend + Next.js 16 frontend.
+- **OSE Platform Web** (`ose-www`, `ose-cli`) — Marketing and updates site
   (oseplatform.com). Next.js 16 + tRPC, single container.
+
+## 🧭 Start here
+
+- Exploring the product purpose? Read [product/](./product/README.md) first, then choose the OSE
+  Application or OSE Platform Web section below.
+- Planning a change? Follow [system-context/](./system-context/README.md),
+  [containers/](./containers/README.md), and [components/](./components/README.md) from broad to
+  specific.
+- Checking an expected outcome? Go to [behavior/](./behavior/README.md) and then its matching
+  Gherkin feature.
 
 ## Structure
 
@@ -19,17 +29,17 @@ specs/apps/ose/
 │   └── contracts/              # OpenAPI 3.1 contract spec (ose-app only)
 ├── components/                 # C4 L3 — per-container internals
 │   ├── be/                     # ose-be (F#/Giraffe) component specs
-│   ├── platform-be/            # ose-web tRPC HTTP perspective
-│   └── platform-web/           # ose-web UI perspective
+│   ├── platform-be/            # ose-www tRPC HTTP perspective
+│   └── platform-web/           # ose-www UI perspective
 ├── ddd/                        # DDD artifacts (ose-app)
 │   ├── bounded-contexts.yaml   # Machine-readable context registry
 │   ├── bounded-context-map.md  # Visual context map
 │   └── ubiquitous-language/    # Per-context glossaries
 └── behavior/                   # Gherkin scenarios
-    ├── be/gherkin/         # ose-be HTTP-semantic scenarios
+    ├── be/gherkin/             # ose-be HTTP-semantic scenarios
     ├── app-web/gherkin/        # ose-app-web UI-semantic scenarios
-    ├── platform-be/gherkin/    # ose-web tRPC HTTP-semantic scenarios
-    ├── platform-web/gherkin/   # ose-web UI-semantic scenarios
+    ├── platform-be/gherkin/    # ose-www tRPC HTTP-semantic scenarios
+    ├── platform-web/gherkin/   # ose-www UI-semantic scenarios
     └── ose-cli/gherkin/        # ose-cli link-check scenarios
 ```
 
@@ -54,19 +64,19 @@ GRC fullstack: AI-assisted gap analysis between regulatory documents and interna
 | `gap-analysis`      |       —       | Compares regulatory corpus against policy corpus; emits GapItem records |
 | `ai-orchestration`  |       —       | Wraps LLM calls (OpenRouter), prompt management, retry/backoff          |
 
-## OSE Platform Web (`ose-web`, `ose-cli`)
+## OSE Platform Web (`ose-www`, `ose-cli`)
 
 Content and marketing site for the OSE Platform.
 
 ### Behavior Surfaces
 
-| Surface        | Perspective                             | Background                 | Consumers                  |
-| -------------- | --------------------------------------- | -------------------------- | -------------------------- |
-| `platform-be`  | tRPC HTTP-semantic (procedures, routes) | `Given the API is running` | `apps/ose-www-be-e2e`      |
-| `platform-web` | UI-semantic (clicks, types, sees)       | `Given the app is running` | `apps/ose-www-fe-e2e`      |
-| `cli`          | CLI invocation (link validation)        | N/A                        | `apps/ose-cli` (Go, godog) |
+| Surface        | Perspective                             | Background                 | Consumers             |
+| -------------- | --------------------------------------- | -------------------------- | --------------------- |
+| `platform-be`  | tRPC HTTP-semantic (procedures, routes) | `Given the API is running` | `apps/ose-www-be-e2e` |
+| `platform-web` | UI-semantic (clicks, types, sees)       | `Given the app is running` | `apps/ose-www-fe-e2e` |
+| `cli`          | CLI invocation (link validation)        | N/A                        | `apps/ose-cli` (Rust) |
 
-### Bounded Contexts (ose-web/ose-cli)
+### Bounded Contexts (ose-www/ose-cli)
 
 | Bounded Context | `platform-web` features | `platform-be` features | Description                                                           |
 | --------------- | :---------------------: | :--------------------: | --------------------------------------------------------------------- |
@@ -77,7 +87,7 @@ Content and marketing site for the OSE Platform.
 | `rss-feed`      |            —            |           1            | RSS 2.0 feed generation route handler                                 |
 | `seo`           |            —            |           1            | Sitemap, robots, per-route metadata                                   |
 | `health`        |            —            |           1            | Health probe (tRPC) + system-status diagnostic page                   |
-| `links`         |           N/A           |          N/A           | ose-cli internal link validation (godog BDD)                          |
+| `links`         |           N/A           |          N/A           | ose-cli internal link validation                                      |
 
 ## Spec Artifacts
 

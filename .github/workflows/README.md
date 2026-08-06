@@ -1,55 +1,56 @@
-# GitHub Actions Workflows
+# GitHub Actions workflow map
 
-CI/CD workflows for the monorepo. Filenames follow the
-[GitHub Actions Workflow Naming Convention](../../repo-governance/development/infra/github-actions-workflow-naming.md);
-the [CI Conventions](../../repo-governance/development/infra/ci-conventions.md) define the
-reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour staging→prod gap).
+These workflows continuously check that OSE stays buildable and that its
+delivery paths remain healthy. They are here for orientation: product readers
+can see how quality is protected, while early engineers can find the workflow
+that explains a run they encounter. 🚦
 
-## Reusable
+Use the [root README](../../README.md) to run the product locally. Do not
+trigger, edit, or copy a workflow as a substitute for the documented local
+development path.
 
-| Workflow                                   | Role                                                                                                     |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `_reusable-www-test-local-deploy.yml`      | Full local-stack test pipeline (lint, unit, integration, E2E) then force-push to a `prod-*-www` branch.  |
-| `_reusable-app-test-local-deploy-stag.yml` | App-group local-stack pipeline; on pass force-pushes BOTH the `stag-*-app-web` and `stag-*-be` branches. |
-| `_reusable-app-test-stag.yml`              | FE E2E gate against the deployed staging URL (Vercel bypass secret). Stops on pass — no promote.         |
-| `_reusable-be-build-deploy.yml`            | Build a backend image and push it to GHCR (rolled out by ose-private `coralpolyp`).                      |
+## Start with the workflow family
 
-## PR and repo-wide gates
+| Family                          | What it does                                                                      | Where to look                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Pull-request and main checks    | Validates affected workspace quality and environment contracts                    | `pr-quality-gate.yml`, `validate-env.yml`                                                                           |
+| Dependency and parity audits    | Looks for dependency risk and cross-repository Rhino CLI drift                    | `dependency-vulnerability-audit.yml`, `rhino-cli-parity-audit.yml`                                                  |
+| Website delivery                | Tests each public website before its managed delivery step                        | `*-www-test-local-deploy-prod.yml` and `_reusable-www-test-local-deploy.yml`                                        |
+| Application delivery            | Tests a paired web/backend application before its managed staging path            | `*-app-test-local-deploy-stag.yml`, `*-app-test-stag.yml`, and reusable counterparts                                |
+| Backend images and UI artifacts | Builds publishable backend images or the web UI artifact when their inputs change | `_reusable-be-build-deploy.yml`, `*-be-build-deploy-stag.yml`, `publish-images.yml`, `web-ui-build-deploy-prod.yml` |
 
-| Workflow                             | Trigger      | Role                                                                                                                              |
-| ------------------------------------ | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `dependency-vulnerability-audit.yml` | Nightly CRON | Language-native dependency audit (npm audit, cargo deny, dotnet vulnerable) — CRON-only                                           |
-| `pr-quality-gate.yml`                | PR + push    | Typecheck, lint, `test:quick`, `compat:min-version`, naming, md-links, harness-duplication, governance validation (all languages) |
-| `validate-env.yml`                   | PR + push    | Environment-variable contract validation                                                                                          |
+The workflow filenames are the authoritative inventory. This map names stable
+families rather than maintaining a fragile duplicate list.
 
-## www tier — direct deploy (scheduled callers of `_reusable-www-test-local-deploy.yml`)
+## Reading a workflow run
 
-| Workflow                                      | Site                                |
-| --------------------------------------------- | ----------------------------------- |
-| `ayokoding-www-test-local-deploy-prod.yml`    | ayokoding-www → ayokoding.com       |
-| `ose-www-test-local-deploy-prod.yml`          | ose-www → oseplatform.com           |
-| `organiclever-www-test-local-deploy-prod.yml` | organiclever-www → organiclever.com |
-| `wahidyankf-www-test-local-deploy-prod.yml`   | wahidyankf-www → www.wahidyankf.com |
+1. Open the run in GitHub and identify the workflow filename and triggering
+   event.
+2. Read the workflow’s `name`, `on`, permissions, and reusable-workflow call
+   before assuming what it changed.
+3. For a failed quality check, reproduce the named local command from the
+   [development guides](../../repo-governance/development/README.md).
+4. Treat a queued run as a capacity signal first. OSE repositories share a
+   limited runner pool; follow the
+   [CI monitoring guidance](../../repo-governance/development/workflow/ci-monitoring.md)
+   before changing code or configuration.
 
-## app tier — gated promotion (local-deploy-stag → test-stag; prod CD deferred)
+## Maintenance boundaries
 
-| Workflow                                      | Stage                                                            |
-| --------------------------------------------- | ---------------------------------------------------------------- |
-| `organiclever-app-test-local-deploy-stag.yml` | Test the organiclever app group, force-push web + be stag branch |
-| `organiclever-app-test-stag.yml`              | FE E2E gate vs staging (+2.5h); stops on pass                    |
-| `ose-app-test-local-deploy-stag.yml`          | Test the ose-app group, force-push web + be stag branch          |
-| `ose-app-test-stag.yml`                       | FE E2E gate vs staging (+2.5h); stops on pass                    |
+- Reusable workflows hold shared behavior; callers provide the product-specific
+  inputs.
+- Keep secrets in GitHub’s protected configuration. Never copy them into YAML,
+  logs, issues, or documentation.
+- A workflow can run scheduled or managed delivery work; that does not make it
+  the local onboarding route.
+- Follow the [CI conventions](../../repo-governance/development/infra/ci-conventions.md)
+  and [workflow naming convention](../../repo-governance/development/infra/github-actions-workflow-naming.md)
+  when changing automation.
 
-## Backend images and CLIs
+## Related guides
 
-| Workflow                                | Role                                                                                                                          |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `publish-images.yml`                    | Build and push `organiclever-be` / `ose-be` images to GHCR (deployed by the ose-private k3s plans, not Vercel) — transitional |
-| `organiclever-be-build-deploy-stag.yml` | Build the `organiclever-be` image and push it to GHCR; triggered on `stag-organiclever-be` push                               |
-| `ose-be-build-deploy-stag.yml`          | Build the `ose-be` image and push it to GHCR; triggered on `stag-ose-be` push                                                 |
-
-## web-ui — Storybook (scheduled deploy)
-
-| Workflow                       | Trigger                           | Role                                                                                     |
-| ------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `web-ui-build-deploy-prod.yml` | Daily CRON (00:00 UTC) + dispatch | Compare Storybook inputs with `prod-web-ui`; build and force-push only when they changed |
+- [Composite Actions](../actions/README.md) — shared toolchain setup
+- [CI/CD reference](../../docs/reference/system-architecture/ci-cd.md) — how
+  quality and delivery fit together
+- [Repository validation](../../repo-governance/development/quality/repository-validation.md)
+  — local checks and their purpose

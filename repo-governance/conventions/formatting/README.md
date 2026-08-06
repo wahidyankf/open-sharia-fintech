@@ -1,6 +1,6 @@
 ---
 title: "Formatting Conventions"
-description: ""
+description: Practical Markdown formatting rules that keep repository documentation clear and accessible
 category: explanation
 subcategory: conventions
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Formatting Conventions
 
-Standards for markdown formatting, syntax, and visual elements in all documentation.
+Use these rules to make Markdown easy to scan, accessible to more readers, and consistent across the repository. Start with the convention that matches the thing you are adding; you do not need to memorize the whole set.
 
 ## Purpose
 

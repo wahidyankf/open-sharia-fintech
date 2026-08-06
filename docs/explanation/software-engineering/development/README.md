@@ -15,13 +15,11 @@ created: 2026-01-20
 
 # Software Development Practices
 
-**Understanding-oriented documentation** on software development practices that ensure quality, maintainability, and alignment with business requirements.
+Good delivery starts by making the desired outcome testable. This guide helps product partners and early-career engineers see where shared examples (BDD) and technical tests (TDD) fit together.
 
 ## Overview
 
-**The Problem**: Writing tests after code leads to untestable designs, incomplete coverage, and tests that simply verify existing implementation. Business requirements get lost in translation between stakeholders and developers. Teams debate whether tests are worth the effort.
-
-**Our Solution**: Test-first development practices that drive design, ensure coverage, and align implementation with requirements:
+Writing tests after code can make intent hard to recover, while product context can get lost between a conversation and a change. Test-first practices keep both visible:
 
 1. **Test-Driven Development (TDD)** - Write tests first, then implement code to pass those tests
 2. **Behavior-Driven Development (BDD)** - Specify behavior through examples in collaboration with domain experts

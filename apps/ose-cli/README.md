@@ -1,133 +1,36 @@
 # ose-cli
 
-Go CLI tool for ose-www site maintenance. Validates internal links
-across all markdown content files.
+`ose-cli` keeps OSE website content navigable by checking its internal Markdown links. It is a
+local Rust maintenance tool for the public site, not a separately installed product. 🔎
 
-## Usage
+## Run a check
 
-```sh
-ose-cli <command> [flags]
+```bash
+# Check the default ose-www content directory
+npm exec nx -- run ose-cli:run -- links check
+
+# Check a specific content directory
+npm exec nx -- run ose-cli:run -- links check --content path/to/content
 ```
 
-### Commands
+The command can write `text`, `json`, or `markdown` output via `--output`; add `--quiet` when a
+script only needs failures. It returns `0` when every internal link resolves, `1` for broken links
+or a readable-content problem, and `2` for invalid command arguments.
 
-| Command       | Description                                |
-| ------------- | ------------------------------------------ |
-| `links check` | Validate internal links in ose-www content |
+## Build and verify
 
-### Global Flags
-
-| Flag         | Short | Default | Description                               |
-| ------------ | ----- | ------- | ----------------------------------------- |
-| `--verbose`  | `-v`  | `false` | Verbose output with timestamps            |
-| `--quiet`    | `-q`  | `false` | Quiet mode (errors only)                  |
-| `--output`   | `-o`  | `text`  | Output format: `text`, `json`, `markdown` |
-| `--no-color` |       | `false` | Disable colored output                    |
-
-### `links check` Flags
-
-| Flag        | Default                | Description            |
-| ----------- | ---------------------- | ---------------------- |
-| `--content` | `apps/ose-www/content` | Content directory path |
-
-### Exit codes
-
-| Code | Meaning                        |
-| ---- | ------------------------------ |
-| 0    | All links valid                |
-| 1    | One or more broken links found |
-| 2    | Usage error or I/O failure     |
-
-## Examples
-
-```sh
-# Check links (default content path, run from workspace root)
-./apps/ose-cli/dist/ose-cli links check
-
-# Check links with explicit content path
-ose-cli links check --content apps/ose-www/content
-
-# Output as JSON
-ose-cli links check -o json
-
-# Output as markdown report
-ose-cli links check -o markdown
-
-# Verbose output with timestamp
-ose-cli links check -v
+```bash
+npm exec nx -- run ose-cli:build
+npm exec nx -- run ose-cli:test:quick
+npm exec nx -- run ose-cli:test:integration
 ```
 
-## Testing
+The build target creates `apps/ose-cli/dist/ose-cli`. For the website-level quality check that
+uses this tool, run `npm exec nx -- run ose-www:test:quick`.
 
-Two test tiers consume the same Gherkin specs from `specs/apps/ose/behavior/ose-cli/gherkin/` via
-[godog](https://github.com/cucumber/godog) — only the step implementations differ:
+## Where to look next
 
-| Level       | Test File Pattern                   | Step Implementation                             | Nx Target          |
-| ----------- | ----------------------------------- | ----------------------------------------------- | ------------------ |
-| Unit        | `cmd/{command}_test.go`             | Mocked I/O via package-level function variables | `test:unit`        |
-| Integration | `cmd/{command}.integration_test.go` | Real filesystem via `/tmp` fixtures             | `test:integration` |
-
-This pattern will be implemented as part of the CLI testing alignment plan.
-
-### Unit Tests
-
-```sh
-# Run unit tests (includes godog BDD scenarios with mocked I/O)
-nx run ose-cli:test:quick
-
-# Run unit tests directly
-cd apps/ose-cli
-go test -v -run TestUnit ./cmd/...
-```
-
-Unit tests run godog BDD scenarios with all I/O mocked via package-level function variables.
-Coverage threshold: ≥95% line coverage.
-
-### Integration Tests
-
-```sh
-# Run all BDD integration tests
-nx run ose-cli:test:integration
-
-# Run the suite directly during development
-cd apps/ose-cli
-go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
-```
-
-Integration tests use godog to drive commands in-process via `cmd.RunE()` against controlled
-`/tmp` filesystem fixtures.
-
-| Test function               | Feature file                                                        | Scenarios |
-| --------------------------- | ------------------------------------------------------------------- | --------- |
-| `TestIntegrationLinksCheck` | `specs/apps/ose/behavior/ose-cli/gherkin/links/links-check.feature` | 4         |
-
-The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
-`specs/apps/ose/**/*.feature` files change.
-
-## Development
-
-```sh
-# Build
-nx build ose-cli
-
-# Test
-nx run ose-cli:test:quick
-
-# Integration tests
-nx run ose-cli:test:integration
-
-# Lint
-nx lint ose-cli
-
-# Run directly
-nx run ose-cli:run -- links check
-```
-
-## Why this exists
-
-`ose-www` needs internal link validation as a quality gate before build.
-This CLI runs as a `dependsOn` step in `ose-www`'s `test:quick` target,
-ensuring broken links are caught before the build runs.
-
-Keeping it as a standalone binary prevents unrelated changes from triggering
-unnecessary rebuild cascades across other projects.
+- `src/cli.rs` — supported commands and exit behavior
+- `src/commands/links.rs` — link-check implementation
+- `tests/` — command-level coverage
+- `project.json` — workspace targets

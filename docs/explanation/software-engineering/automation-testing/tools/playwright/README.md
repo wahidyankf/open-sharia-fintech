@@ -26,7 +26,7 @@ created: 2026-02-08
 
 Playwright is Microsoft's modern end-to-end testing framework that provides reliable cross-browser automation with auto-waiting, trace viewer debugging, and powerful network control. It enables fast, reliable testing across Chromium, Firefox, and WebKit with a single API.
 
-This documentation covers Playwright 1.40+ with TypeScript targeting end-to-end testing, component testing, and cross-browser compatibility validation.
+This documentation covers Playwright with TypeScript for end-to-end testing, component testing, and cross-browser compatibility validation. Check the owning test project's `package.json` for the version it actually runs; the repository does not use this page as a version pin.
 
 ## Prerequisite Knowledge
 
@@ -119,7 +119,7 @@ Playwright usage in this platform follows the software engineering principles fr
 
 ## Playwright Version Strategy
 
-**Platform Standard**: Playwright 1.40+ is the target version for all E2E testing projects.
+**Platform standard**: Use the Playwright version pinned by the owning end-to-end test project. Keep it current through the repository's dependency policy instead of treating this explanation page as the source of a version number.
 
 **Rationale**:
 

@@ -43,8 +43,8 @@ Worth stating because it bounds the blast radius: no script, dependency, version
 or Volta pin is touched by this plan. Verified — this prints `IDENTICAL` four times:
 
 ```sh
-# Run from this folder. REPOS is the directory holding all four checkouts.
-REPOS=/Users/wkf/ose-projects node -e '
+# Run from this folder. REPOS is the directory holding the authorized checkouts.
+REPOS=/path/to/ose-checkouts node -e '
 const fs = require("fs");
 const repos = process.env.REPOS;
 for (const r of ["ose-public", "ose-primer", "ose-private", "beaver-nest"]) {
@@ -74,12 +74,13 @@ for(const r of ["ose-public","ose-primer","ose-private","beaver-nest"]){
 
 ## The emitter's acceptance oracle
 
-Phase 1's `gate emit` is correct when this diff is empty:
+Phase 1's `gate emit` is correct when this diff is empty. Run it from the `ose-public` repository
+root:
 
 ```sh
 rhino-cli gate emit --surface=pre-commit
 diff <(jq '."lint-staged"' package.json) \
-  /Users/wkf/ose-projects/ose-public/plans/in-progress/sdlc-gate-registry-enforcement/package-json/lint-staged-ose-public.json
+  plans/in-progress/sdlc-gate-registry-enforcement/package-json/lint-staged-ose-public.json
 ```
 
 That is a diff, not a judgement — which is the point of authoring the target rather than describing
@@ -123,10 +124,11 @@ shape without changing what runs. "Byte-identical" would be the wrong word — t
 17 keys execute the same command list. Reproduce both numbers:
 
 ```sh
+# Run from the `ose-public` repository root.
 node -e '
 const fs = require("fs");
 const norm = (v) => JSON.stringify(Array.isArray(v) ? v : [v]);
-const live = JSON.parse(fs.readFileSync("/Users/wkf/ose-projects/ose-public/package.json", "utf8"))["lint-staged"];
+const live = JSON.parse(fs.readFileSync("package.json", "utf8"))["lint-staged"];
 const tgt = JSON.parse(fs.readFileSync("lint-staged-ose-public.json", "utf8"));
 let same = 0, strict = 0;
 for (const k of Object.keys(tgt)) {

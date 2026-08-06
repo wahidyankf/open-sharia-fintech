@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Repository Workflows
 
-Orchestrated workflows for repository-level governance — validation, binding-file health, content synchronization with the `ose-primer` template, and policy-compliant dependency bump planning.
+Use these workflows when a change affects the repository as a system: its rules, generated bindings, public-template relationship, or dependency posture.
 
 ## Purpose
 

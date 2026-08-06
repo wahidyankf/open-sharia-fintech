@@ -1,6 +1,6 @@
 ---
 title: Development
-description: Development conventions and standards for open-sharia-enterprise
+description: Internal development guidance for authorized open-sharia-enterprise delivery work
 category: explanation
 subcategory: development
 tags:
@@ -13,15 +13,23 @@ created: 2025-11-23
 
 # Development
 
-Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
+This is the internal guide to delivering changes safely and consistently in open-sharia-enterprise. Use it when you are already authorized to plan, build, verify, or land repository work.
+
+It explains the shared practices behind delivery: how work is planned, implemented, tested, reviewed, automated, and cleaned up. It is not an external contribution intake or a process for requesting repository access; follow the work authorization and delivery path provided for your assignment.
+
+## Start Here
+
+- For a change you are about to make, begin with the [Implementation Workflow Convention](./workflow/implementation.md) and [Test-Driven Development Convention](./workflow/test-driven-development.md).
+- For checks that must pass before delivery, see [Code Quality Convention](./quality/code.md), [Three-Level Testing Standard](./quality/three-level-testing-standard.md), and [Manual Behavioral Verification Convention](./quality/manual-behavioral-verification.md).
+- For planned or collaborative delivery, use the [Agent Workflow Orchestration Convention](./agents/agent-workflow-orchestration.md), [PR Merge Protocol Convention](./workflow/pr-merge-protocol.md), and [Worktree and Artifact Cleanup Convention](./workflow/worktree-and-artifact-cleanup.md).
 
 **Governance**: All development practices in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](../principles/README.md) (Layer 1), and implement/enforce [Documentation Conventions](../conventions/README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Implemented/Respected" and "Conventions Implemented/Respected". See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [AI Agents Convention](./agents/ai-agents.md) for structure requirements.
 
-## 🎯 Scope
+## Scope
 
-**This directory contains conventions for SOFTWARE DEVELOPMENT:**
+This directory answers one practical question: **how do authorized teams develop software in this repository?** It covers software delivery practices, tools, controls, and workflows.
 
-**✅ Belongs Here:**
+It includes:
 
 - Software development methodologies (BDD, testing, agile practices)
 - Build processes, tooling, and automation workflows
@@ -31,7 +39,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Code quality, testing, and deployment practices
 - Acceptance criteria and testable requirements
 
-**❌ Does NOT Belong Here (use [Conventions](../conventions/README.md) instead):**
+It does not duplicate documentation-writing rules. For those, use [Conventions](../conventions/README.md):
 
 - How to write and format documentation
 - Markdown writing standards and style guides
@@ -40,59 +48,11 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Visual documentation elements (diagrams, colors in docs)
 - Documentation quality and accessibility
 
-## 🧪 The Layer Test for Development
+## Choosing the Right Guidance
 
-**Question**: Does this document answer "**HOW do we develop software?**"
+Use a development document when it answers **how we develop software**: how to build systems, run workflows, automate checks, or use delivery tooling. Use a principle for why a value matters, a convention for how documentation is written, and a how-to guide for a specific user problem.
 
-✅ **Belongs in development/** if it defines:
-
-- HOW to develop software systems (code, themes, layouts, build processes)
-- WHAT development workflows to follow (git, commits, testing)
-- HOW to automate development tasks (git hooks, CI/CD, AI agents)
-- WHAT development tools and standards to use
-
-❌ **Does NOT belong** if it defines:
-
-- WHY we value something (that's a principle)
-- HOW to write documentation (that's a convention)
-- HOW to solve a specific user problem (that's a how-to guide)
-
-**Examples**:
-
-- "Use Trunk Based Development for git workflow" → ✅ Development (software practice)
-- "Commit messages must follow Conventional Commits" → ✅ Development (development workflow)
-- "Markdown files use 2-space indentation" → ❌ Convention (documentation rule)
-- "Why we automate repetitive tasks" → ❌ Principle (foundational value)
-
-## 📂 Document Types
-
-Development practices in this directory fall into several categories:
-
-### Workflow Documentation
-
-**Purpose:** Define step-by-step processes for development activities
-**Examples:** Trunk Based Development, Commit Messages
-**Structure:** Context → Process → Examples → Exceptions
-
-### Standards Documentation
-
-**Purpose:** Establish quality gates and requirements
-**Examples:** Code Quality, Acceptance Criteria
-**Structure:** Purpose → Requirements → Checklist → Examples
-
-### Tool-Specific Documentation
-
-**Purpose:** Define technology-specific best practices
-**Examples:** AI Agents
-**Structure:** Overview → Conventions → Patterns → Anti-patterns
-
-### Infrastructure Documentation
-
-**Purpose:** Document system design decisions
-**Examples:** Temporary Files
-**Structure:** Problem → Solution → Organization → Usage
-
-## 📋 Contents
+## Development Guidance by Topic
 
 ### Workflow Documentation
 

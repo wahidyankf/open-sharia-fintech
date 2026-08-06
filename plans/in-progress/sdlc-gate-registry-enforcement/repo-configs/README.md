@@ -36,10 +36,11 @@ These repos are edited concurrently by other actors, so confirm nothing else has
 ```bash
 # Compare existing YAML while excluding the target-state banner, the deliberately
 # amended header comments, and the new gates section.
+OSE_REPOS_ROOT=/path/to/ose-checkouts
 TARGET_REPO=ose-public
 TARGET_ARTIFACT=repo-config-ose-public.yml
 diff <(sed -n '/^harness:/,/^gates:/p' "$TARGET_ARTIFACT" | sed '$d' | sed '$d') \
-     <(sed -n '/^harness:/,$p' "/Users/wkf/ose-projects/$TARGET_REPO/repo-config.yml")
+     <(sed -n '/^harness:/,$p' "$OSE_REPOS_ROOT/$TARGET_REPO/repo-config.yml")
 ```
 
 Repeat with the explicit pairs `ose-primer`/`repo-config-ose-primer.yml`,
@@ -81,8 +82,9 @@ files; expected future use does not satisfy the current tracked-file requirement
   schema rather than requiring identical values. Measure after copying with:
 
   ```sh
+  OSE_REPOS_ROOT=/path/to/ose-checkouts
   for TARGET_REPO in ose-public ose-primer ose-private beaver-nest; do
-    sed -n '/Sections defined here/,/^$/p' "/Users/wkf/ose-projects/$TARGET_REPO/repo-config.yml" | grep -c '^#   [a-z]'
+    sed -n '/Sections defined here/,/^$/p' "$OSE_REPOS_ROOT/$TARGET_REPO/repo-config.yml" | grep -c '^#   [a-z]'
   done
   ```
 

@@ -1,39 +1,23 @@
 # Plans
 
-<!--
-  MAINTENANCE NOTE: Brief landing page
-  For comprehensive documentation, see:
-  repo-governance/conventions/structure/plans.md
--->
+Plans are the repository's working record of change. They help an AI delivery session or an
+authorized maintainer understand why work exists, what it depends on, and what evidence will show
+it is complete. They are not product documentation.
 
-This folder contains temporary, ephemeral project planning documents, distinct from permanent documentation in `docs/`.
+## Find the right plan stage
 
-## Quick Reference
+- [`ideas/`](./ideas/README.md) — short, promotable problem briefs.
+- [`backlog/`](./backlog/README.md) — prepared work that has not started.
+- [`in-progress/`](./in-progress/README.md) — active delivery records, including their task lists.
+- [`done/`](./done/README.md) — completed historical plans; do not casually rewrite them.
 
-- **ideas/** - Two-pager idea briefs not yet formalized into full plans (one file per idea)
-- **backlog/** - Planned projects for future implementation
-- **in-progress/** - Active plans currently being worked on
-- **done/** - Completed and archived plans
+## How delivery works
 
-## Complete Documentation
+The default delivery mode is `worktree-to-pr`: a focused worktree and branch produce one pull
+request, which is reviewed, gated, and merged by the authorized AI delivery flow. The exact plan
+states its delivery mode and any exceptions. External contribution intake is closed.
 
-For detailed information on plans organization, structure, naming conventions, and workflow, see:
-
-**[Plans Organization Convention](../repo-governance/conventions/structure/plans.md)**
-
-## Plan Folder Naming
-
-Stage-aware — see the [Plans Organization Convention](../repo-governance/conventions/structure/plans.md#plan-folder-naming):
-
-```
-ideas/[idea-slug].md                     # two-pager brief, no date prefix
-backlog/[project-identifier]/            # no date prefix
-in-progress/[project-identifier]/        # no date prefix
-done/YYYY-MM-DD__[project-identifier]/   # completion-date prefix
-```
-
-Examples: `backlog/init-monorepo/`, `in-progress/auth-system/`, `done/2025-12-01__auth-system/`
-
-## Related Documentation
-
-- [How to Organize Your Work](../docs/how-to/organize-work.md) - Decision guide for plans/ and docs/
+For plan structure, naming, lifecycle, and evidence requirements, read the
+[Plans Organization Convention](../repo-governance/conventions/structure/plans.md). For help
+choosing between permanent documentation and a temporary plan, see
+[How to Organize Your Work](../docs/how-to/organize-work.md).

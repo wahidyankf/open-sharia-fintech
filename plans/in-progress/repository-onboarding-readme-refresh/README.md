@@ -74,7 +74,7 @@ result, and recover from common failures without guessing.
 
 ## Status
 
-**In Progress — planning complete; delivery not started.**
+**In Progress — the shared contract has merged and the `ose-public` delivery unit is underway.**
 
 ## Approach Summary
 

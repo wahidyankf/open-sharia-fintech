@@ -1,6 +1,6 @@
 ---
 title: "Linking Conventions"
-description: ""
+description: Rules for durable, repository-internal Markdown links
 category: explanation
 subcategory: conventions
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Linking Conventions
 
-This category contains standards for cross-referencing and internal linking in markdown documentation.
+Use these conventions when one repository document points to another. They keep links useful in a fresh checkout, not just on a published site.
 
 ## Purpose
 

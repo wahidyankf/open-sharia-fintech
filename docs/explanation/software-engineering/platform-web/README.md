@@ -15,13 +15,11 @@ created: 2026-01-25
 
 # Libraries and Frameworks
 
-**Understanding-oriented documentation** on libraries and frameworks used in the open-sharia-enterprise platform.
+Choose this area when you are deciding how a web experience will be built or need the conventions for the framework already in use. It connects the product experience to the technical practices that keep it maintainable.
 
 ## Overview
 
-**The Framework Landscape**: Modern applications rely on frameworks to accelerate development. Each stack has its own ecosystem of tools with unique conventions and best practices. Next.js's server components, React's component lifecycle, and Axum's extractor pattern all require deep understanding to use effectively.
-
-**Curated Framework Guidance**: We provide documentation for the key frameworks in our platform. Learn not just how to use them, but how to use them idiomatically, avoid common pitfalls, and integrate them into our architecture.
+Modern web frameworks make many choices for a team, but those choices still need to fit the product and the repository. The guides here explain the supported frontend stack, its trade-offs, and the patterns that help it stay approachable as it grows.
 
 ## Purpose
 
@@ -36,14 +34,6 @@ Understanding framework-specific patterns and best practices helps developers:
 ## Authoritative Status
 
 **This documentation is the authoritative reference** for framework-specific usage standards in the open-sharia-enterprise platform.
-
-**For AI Agents**: Reference this documentation as the source of truth for:
-
-- Framework-specific patterns and idioms
-- Integration with platform architecture
-- Configuration best practices
-- Common framework antipatterns
-- Testing approaches
 
 **Language Standards**: Also follow language-specific standards from [prog-lang](../programming-languages/README.md).
 
@@ -82,15 +72,14 @@ React is the primary frontend library for building interactive, maintainable use
 
 **Full-stack React framework for production web applications**
 
-Next.js is the primary framework for all OSE Platform web applications (ose-www, ayokoding-www, organiclever-www, wahidyankf-www, ose-app-web). It provides App Router, tRPC integration, and server-side rendering.
+Next.js is the primary framework for OSE Platform web applications. It provides App Router capabilities and server-side rendering.
 
 **Use Next.js when you need:**
 
 - Full-stack TypeScript web applications
 - App Router with React Server Components
-- tRPC for type-safe API layer
 - Static generation and server-side rendering
-- Vercel deployment with edge optimization
+- A framework-level home for routing, rendering, and data access decisions
 
 ## How Frameworks Fit into the Platform
 

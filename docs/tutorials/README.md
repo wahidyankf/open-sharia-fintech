@@ -1,51 +1,33 @@
 ---
 title: "Tutorials"
-description: Tutorials have been migrated to ayokoding-www
+description: "Guided, learn-by-doing journeys for using Open Sharia Enterprise."
 category: tutorial
 tags:
   - index
   - tutorials
-  - migration
+  - onboarding
 created: 2025-11-22
 ---
 
 # Tutorials
 
-**All tutorial content has been migrated to the AyoKoding website.**
+These tutorials help you get a real result before you need to understand every part of the
+monorepo. Start with the product journey, then use the how-to and reference material when you have
+a specific question.
 
-## 📍 New Location
+## Start here ✨
 
-Tutorials are now available at:
+- [Getting started with OSE Public](./getting-started-with-ose-public.md) — understand the product
+  and run the OSE Platform website locally on macOS or Ubuntu.
 
-- **Website**: [ayokoding.com](https://ayokoding.com) (when deployed)
-- **Source**: `apps/ayokoding-www/content/en/learn/`
+## Looking for learning content?
 
-## 📚 Migrated Content
+General software-engineering learning content lives with the
+[AyoKoding website](../../apps/ayokoding-www/content/en/learn/). These OSE tutorials stay here
+because they explain how to work with this repository and its products.
 
-The following content has been migrated:
+## Next steps
 
-- **AI Engineering** → `/apps/ayokoding-www/content/en/learn/ai/`
-- **Business & Finance** → `/apps/ayokoding-www/content/en/learn/business/`
-- **Programming Languages** → `/apps/ayokoding-www/content/en/learn/swe/lang/`
-  - Golang tutorials (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
-  - Java tutorials (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
-- **System Design** → `/apps/ayokoding-www/content/en/learn/swe/system-design/`
-
-## 🔄 Migration Date
-
-Content migrated: **December 8, 2025**
-
-All tutorials are now part of the AyoKoding educational platform and benefit from:
-
-- Better navigation and discoverability
-- Consistent Next.js theme
-- Integration with other learning content
-- Public web access
-
----
-
-For internal project documentation, see the `docs/` directory structure:
-
-- `docs/explanation/` - Conceptual documentation
-- `docs/how-to/` - Problem-solving guides
-- `docs/reference/` - Technical reference
+- [How-to guides](../how-to/README.md) for a goal you already have.
+- [Reference](../reference/README.md) for exact repository facts.
+- [Explanations](../explanation/README.md) for the reasoning behind the platform.

@@ -1,35 +1,52 @@
-# organiclever-www
+# OrganicLever public website
 
-Next.js 16 marketing website for the OrganicLever productivity platform.
+The pre-alpha marketing site for [OrganicLever](../../specs/apps/organiclever/product/overview.md), a local-first life journal for recording and reviewing everyday activity. It serves the public landing experience at the domain root; the product client is a separate application, [`organiclever-app-web`](../organiclever-app-web/README.md).
 
-## Quick Start
+This project is intentionally simple: it renders static Next.js marketing content, has no dedicated backend API, and does not persist application data. That makes it a good place for an early engineer to work on the public story, visual system, and accessible landing-page behavior without coupling to product runtime concerns.
+
+## Run locally
+
+From the workspace root, after installing the workspace dependencies:
 
 ```bash
-nx dev organiclever-www   # http://localhost:3200
+npm exec nx -- dev organiclever-www
 ```
 
-## Commands
+Open <http://localhost:3200>. Stop the server with `Ctrl+C`.
 
-| Nx target                                | What it does                       |
-| ---------------------------------------- | ---------------------------------- |
-| `nx dev organiclever-www`                | Dev server (localhost:3200)        |
-| `nx build organiclever-www`              | Production build                   |
-| `nx run organiclever-www:test:quick`     | Unit tests + coverage + DDD checks |
-| `nx run organiclever-www:test:unit`      | Unit tests only                    |
-| `nx run organiclever-www:specs:coverage` | Gherkin spec coverage              |
-| `nx run organiclever-www:lint`           | Lint with oxlint + ESLint          |
-| `nx run organiclever-www:typecheck`      | TypeScript type check              |
+No project-specific environment variables are required. The checked-in [`.env.example`](./.env.example) documents only optional Next.js framework settings; the app itself defines none.
 
-## Tech Stack
+## Where to look first
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 + `@open-sharia-enterprise/web-ui`
-- **Deployment**: Vercel via `prod-organiclever-www` branch
-- **Dev port**: 3200
+- [`src/app/`](./src/app/) — Next.js App Router entry point, metadata, and global styles.
+- [`src/features/home/`](./src/features/home/) — landing-page composition: hero, feature cards, weekly-rhythm preview, and principles.
+- [`src/features/app-shell/`](./src/features/app-shell/) — shared landing navigation and footer.
+- [`test/unit/steps/`](./test/unit/steps/) — Vitest Cucumber step definitions for the marketing and accessibility scenarios.
+- [`specs/apps/organiclever/behavior/organiclever-www/gherkin/`](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md) — executable acceptance criteria shared by unit and E2E tests.
 
-## Related
+## Engineering shape
 
-- [organiclever-www-fe-e2e](../organiclever-www-fe-e2e/README.md) — Playwright FE E2E tests
-- [organiclever-www-be-e2e](../organiclever-www-be-e2e/README.md) — Playwright BE E2E slot (placeholder)
-- [specs/apps/organiclever/](../../specs/apps/organiclever/README.md) — full spec tree
+- Next.js 16 App Router with React 19 and TypeScript.
+- Tailwind CSS v4 plus the shared `@open-sharia-enterprise/web-ui` design system.
+- The landing content is built from feature components rather than a product-state or database layer.
+- Vercel builds this app with `next build`; the deployment configuration considers the `prod-organiclever-www` branch.
+
+## Validate a change
+
+Run these from the workspace root.
+
+| Command                                          | Purpose                                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `npm exec nx -- build organiclever-www`          | Create a production build.                                                                 |
+| `npm exec nx -- run organiclever-www:typecheck`  | Check TypeScript without emitting files.                                                   |
+| `npm exec nx -- run organiclever-www:lint`       | Run the accessibility-aware source lint.                                                   |
+| `npm exec nx -- run organiclever-www:test:unit`  | Run the unit-level Gherkin step tests.                                                     |
+| `npm exec nx -- run organiclever-www:test:quick` | Run the focused quality gate: type check, lint, unit tests, coverage, and spec validation. |
+
+Browser E2E tests belong to the paired [`organiclever-www-fe-e2e`](../organiclever-www-fe-e2e/README.md) project. Use `npm exec nx -- run organiclever-www-fe-e2e:test:e2e` when a change needs browser-level verification.
+
+## Related context
+
+- [OrganicLever product overview](../../specs/apps/organiclever/product/overview.md) — the product direction and current capabilities.
+- [Marketing behavior specs](../../specs/apps/organiclever/behavior/organiclever-www/gherkin/README.md) — the landing page’s acceptance criteria.
+- [System architecture application reference](../../docs/reference/system-architecture/applications.md) — monorepo-level application context.

@@ -13,13 +13,13 @@ created: 2026-05-17
 
 # Hexagonal Architecture
 
-**This is THE authoritative reference** for Hexagonal Architecture (Ports and Adapters) standards in OSE Platform.
+Use this reference when you need domain rules to remain independent from databases, HTTP, messaging, and other infrastructure. It is the authoritative Ports and Adapters standard for OSE Platform.
 
 All hexagonal architecture implementations in OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks code review and merge approval.
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding Hexagonal Architecture learning path. These are **OSE Platform-specific standards**, not educational tutorials.
+These are **OSE Platform-specific standards**, not an introduction to Hexagonal Architecture. Use the learning material first if ports, adapters, and composition roots are new concepts; otherwise, continue with the standards below.
 
 **You MUST understand hexagonal architecture fundamentals before using these standards:**
 

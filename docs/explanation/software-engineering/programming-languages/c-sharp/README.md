@@ -24,7 +24,7 @@ principles:
 created: 2026-03-09
 ---
 
-# C
+# C Sharp
 
 **This is THE authoritative reference** for C# coding standards in OSE Platform.
 

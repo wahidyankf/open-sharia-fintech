@@ -4,6 +4,14 @@ Full, ready-to-execute plans waiting to start. A plan lands here only when it ha
 from a two-pager** in [`../ideas/`](../ideas/README.md) — i.e. its open questions have shrunk to ones
 that genuinely need a full plan's depth to answer.
 
+## Start here 🧭
+
+This is the delivery queue, not the best first stop for learning what OSE is. If you are exploring
+the product or setting up a checkout, begin with the [repository README](../../README.md) and
+[documentation hub](../../docs/README.md). Come back here when you need to understand a proposed
+piece of work: open its README for the why, scope, and dependencies, then use `delivery.md` for the
+step-by-step execution record.
+
 ## Planned Projects
 
 The `ayokoding-learning-path-*` plans deliver one programme. Each plan is **self-contained**: the

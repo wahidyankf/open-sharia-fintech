@@ -1,6 +1,6 @@
 ---
 title: "Development Practices"
-description: ""
+description: Day-to-day practices for solving repository work carefully and collaboratively
 category: explanation
 subcategory: development
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Development Practices
 
-Operational practices that govern day-to-day development behavior and decision-making.
+Use these practices when the work is ambiguous, shared, or already in motion. They help contributors and AI agents make careful progress without losing sight of the product or each other.
 
 ## Purpose
 

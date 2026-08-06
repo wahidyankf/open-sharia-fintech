@@ -2,6 +2,13 @@
 
 Active project plans currently being worked on.
 
+## Choose the right route 🧭
+
+Use this index to understand delivery work that is underway. For the product story or a first local
+run, start with the [repository README](../../README.md) and [documentation hub](../../docs/README.md)
+instead. Each plan README explains its outcome and boundaries; its `delivery.md` is the detailed
+execution checklist.
+
 ## Active Plans
 
 - [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes

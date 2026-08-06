@@ -1,191 +1,40 @@
-# Libs Folder
+# Shared Libraries
 
-## Purpose
+`libs/` holds code that more than one OSE application can use. Start with an app when you are
+learning the product; come here when you need to understand a capability shared across apps.
 
-The `libs/` directory contains **reusable library packages** that can be shared across multiple applications. Libraries provide shared functionality, utilities, components, and services.
+## What is here
 
-## Folder Organization
+- `rust-commons/` — shared Rust utilities used by repository command-line tools.
+- `fsharp-crane-core/` — the F# core used by the Crane PDF-to-Markdown tooling.
+- [`web-ui/`](./web-ui/README.md) — shared web interface building blocks.
 
-**Flat Structure**: All libraries exist at the same level in `libs/` directory. No nested scopes or subdirectories.
+Each library owns its own README, build targets, and tests. The current workspace structure is the
+source of truth; do not assume a planned library exists just because a naming pattern supports it.
 
-```
-libs/
-├── fsharp-crane-core/         # Shared F# PDF-to-Markdown core (PdfPig + Tesseract)
-├── rust-commons/              # Shared Rust utilities (link-checking, HTTP)
-├── ts-ui/                     # TypeScript UI component library
-├── web-ui/                    # Web UI component library
-└── web-ui-token/              # Web UI design token library
-```
+## How libraries fit into OSE
 
-## Naming Convention
+OSE applications may import libraries, but applications do not import one another. Libraries should
+remain focused, avoid circular dependencies, and expose a small public surface appropriate to their
+language. This keeps product work easier to change without turning the monorepo into one tightly
+coupled application.
 
-Libraries follow the pattern: **`[language-prefix]-[name]`**
+## Work with a library
 
-This flat structure with language prefixes supports a **polyglot monorepo** where libraries can be written in multiple programming languages.
-
-### Language Prefixes
-
-- **`ts-*`** - TypeScript libraries
-- **`rust-*`** - Rust libraries
-- **`fsharp-*`** - F# libraries
-
-### Examples
-
-**TypeScript libraries** (planned):
-
-- `ts-utils` - TypeScript utility functions
-- `ts-components` - Reusable React components
-- `ts-hooks` - Custom React hooks
-- `ts-api` - API client libraries
-
-**Rust libraries** (current):
-
-- `rust-commons` - Shared Rust utilities (link-checking, HTTP)
-
-**F# libraries** (current):
-
-- `fsharp-crane-core` - Shared F# PDF-to-Markdown core (PdfPig + Tesseract)
-
-## Current Implementation
-
-**`rust-commons`** - Shared Rust utilities (link-checking, HTTP) used by the Rust CLIs
-(`ayokoding-cli`, `ose-cli`, `rhino-cli`).
-
-**`fsharp-crane-core`** - Shared F# PDF-to-Markdown core (PdfPig + Tesseract) consumed by `crane-cli`.
-
-## Library Characteristics
-
-- **Polyglot-Ready** - Designed to support multiple languages (TypeScript, Rust, F# active)
-- **Flat Structure** - All libs at same level (no nested scopes)
-- **Language-Specific** - Each language uses its own conventions and tools
-- **Reusable** - Libs are designed to be imported by apps and other libs
-- **Focused** - Each lib has a single, clear purpose
-- **Public API** - Exports controlled through index.ts (TypeScript) or language-specific mechanisms
-- **Testable** - Can be tested independently using language-specific test frameworks
-
-## Required Files (TypeScript Libraries)
-
-Each TypeScript library requires:
-
-```
-libs/ts-[name]/
-├── src/
-│   ├── index.ts             # Public API (barrel export)
-│   ├── lib/                 # Implementation
-│   │   ├── [feature].ts
-│   │   └── [feature].test.ts
-│   └── __tests__/           # Integration tests
-├── dist/                    # Build output (gitignored)
-├── package.json             # Lib dependencies (if any)
-├── project.json             # Nx project configuration
-├── tsconfig.json            # TypeScript configuration
-├── tsconfig.build.json      # Build-specific TS config
-└── README.md                # Library documentation
-```
-
-## Nx Configuration (project.json)
-
-Each library must have a `project.json` file:
-
-```json
-{
-  "name": "ts-library-name",
-  "sourceRoot": "libs/ts-library-name/src",
-  "projectType": "library",
-  "targets": {
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsc -p libs/ts-library-name/tsconfig.build.json",
-        "cwd": "."
-      },
-      "outputs": ["{projectRoot}/dist"]
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "node --test libs/ts-library-name/src/**/*.test.ts",
-        "cwd": "."
-      },
-      "dependsOn": ["build"]
-    }
-  }
-}
-```
-
-**Note**: This repository uses vanilla Nx (no plugins), so all executors use `nx:run-commands` to run standard build tools directly.
-
-## Dependency Guidelines
-
-### General Rules
-
-1. **Apps can import from any lib** - Applications are consumers
-2. **Libs can import from other libs** - Cross-library dependencies allowed
-3. **No circular dependencies** - Strictly prohibited (A → B → A not allowed)
-4. **Language boundaries** - TypeScript libs can't directly import Rust/F# libs (use APIs or IPC)
-5. **Keep dependencies minimal** - Each lib should have clear, focused dependencies
-
-### Monitoring Dependencies
-
-Use Nx dependency graph to visualize and monitor:
+Use Nx to discover the target names available today:
 
 ```bash
-nx graph                    # View full dependency graph
-nx affected:graph           # View affected projects
+npm exec nx -- show projects
+npm exec nx -- show project <project-name>
 ```
 
-## How to Add a New Library
-
-See the how-to guide: `docs/how-to/add-new-lib.md` (to be created)
-
-## Path Mappings
-
-TypeScript libraries use workspace path mappings configured in `tsconfig.base.json`:
-
-```json
-{
-  "paths": {
-    "@open-sharia-enterprise/ts-*": ["libs/ts-*/src/index.ts"]
-  }
-}
-```
-
-This allows clean imports:
-
-```typescript
-import { utils } from "@open-sharia-enterprise/ts-utils";
-import { Button } from "@open-sharia-enterprise/ts-components";
-```
-
-## Running Library Commands
-
-Use Nx commands to work with libraries:
+Then run the target shown by that project, for example:
 
 ```bash
-# Build a library
-nx build ts-library-name
-
-# Run fast quality gate (pre-push standard)
-nx run ts-library-name:test:quick
-
-# Run isolated unit tests
-nx run ts-library-name:test:unit
-
-# Lint a library
-nx lint ts-library-name
-
-# Build all libraries
-nx run-many -t build
+npm exec nx -- build <project-name>
+npm exec nx -- run <project-name>:test:quick
 ```
 
-**See**: [Nx Target Standards](../repo-governance/development/infra/nx-targets.md) for canonical target names and mandatory targets per project type.
-
-## Active Language Support
-
-Current active languages with lib support:
-
-- **TypeScript**: Standard TS project structure with `tsconfig.json`
-- **Rust**: Cargo workspace member, shared via `[workspace]` in root `Cargo.toml`
-- **F#**: .NET project (`.fsproj`) built via `dotnet`, consumed as a project reference
-
-Each language uses its own build tools via `nx:run-commands` executor, maintaining the vanilla Nx approach.
+For the repository-wide boundaries and naming rules, read the
+[monorepo structure reference](../docs/reference/monorepo-structure.md). For a new reusable
+capability, begin with the relevant application and library README before choosing where it belongs.

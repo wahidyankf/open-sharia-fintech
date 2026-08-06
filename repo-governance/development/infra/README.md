@@ -1,6 +1,6 @@
 ---
 title: "Infrastructure Development"
-description: ""
+description: Standards for reliable local development infrastructure, toolchains, and artifacts
 category: explanation
 subcategory: development
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Infrastructure Development
 
-Development infrastructure standards covering temporary files, build artifacts, and acceptance criteria.
+Use these standards to make a local checkout dependable: set up tools, name targets consistently, keep temporary output contained, and write acceptance criteria that can be checked.
 
 ## Purpose
 

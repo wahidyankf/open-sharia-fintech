@@ -16,7 +16,7 @@ created: 2026-01-24
 
 # TypeScript Documentation
 
-Complete TypeScript guide for the Open Sharia Enterprise (OSE) Platform. Covers type safety, domain-driven design, testing, and modern TypeScript practices for financial applications.
+Use this reference when you are working in a TypeScript application or library in OSE Platform. It explains the repository-specific standards that make a change easier to review and safer to evolve; it is not a replacement for learning TypeScript fundamentals.
 
 ## Quick Reference
 
@@ -34,7 +34,7 @@ Complete TypeScript guide for the Open Sharia Enterprise (OSE) Platform. Covers 
 
 ## Overview
 
-TypeScript is the primary language for OSE Platform development. It provides static typing, modern ECMAScript features, and excellent tooling for building robust financial applications.
+TypeScript is used across OSE Platform web applications and supporting libraries. Its type system and tooling help teams express product rules clearly and refactor with confidence.
 
 ### Why TypeScript?
 
@@ -45,9 +45,9 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 - **Ecosystem**: Vast npm ecosystem with TypeScript support for frameworks and libraries
 - **Developer Experience**: IntelliSense, type inference, and compile-time validation accelerate development
 
-## Prerequisite Knowledge
+## Before You Start
 
-**REQUIRED**: This documentation assumes you have completed the AyoKoding TypeScript learning path. These are **OSE Platform-specific style guides**, not educational tutorials.
+These are **OSE Platform-specific style guides**, not a first lesson in TypeScript. If types, modules, and async code are new to you, start with the learning materials below; otherwise, jump to the standard that matches your change.
 
 **You MUST understand TypeScript fundamentals before using these standards:**
 
@@ -714,22 +714,22 @@ class ZakatCalculator {
 
 ```bash
 # Build specific library
-nx build ts-zakat-calculator
+npm exec nx -- build ts-zakat-calculator
 
 # Run fast quality gate (pre-push standard)
-nx run ts-zakat-calculator:test:quick
+npm exec nx -- run ts-zakat-calculator:test:quick
 
 # Run isolated unit tests
-nx run ts-zakat-calculator:test:unit
+npm exec nx -- run ts-zakat-calculator:test:unit
 
 # Lint specific library
 nx lint ts-zakat-calculator
 
 # Build only affected projects (after git changes)
-nx affected -t build
+npm exec nx -- affected -t build
 
 # Run quality gate for affected projects
-nx affected -t test:quick
+npm exec nx -- affected -t test:quick
 
 # Visualize dependency graph
 nx graph
@@ -750,10 +750,10 @@ nx graph
 curl https://get.volta.sh | bash
 
 # Pin Node.js version for project
-volta pin node@24.13.1
+volta pin node@24.16.0
 
 # Pin npm version
-volta pin npm@11.10.1
+volta pin npm@11.11.0
 ```
 
 **package.json configuration** (automatically added by Volta):
@@ -761,8 +761,8 @@ volta pin npm@11.10.1
 ```json
 {
   "volta": {
-    "node": "24.13.1",
-    "npm": "11.10.1"
+    "node": "24.16.0",
+    "npm": "11.11.0"
   }
 }
 ```
@@ -823,7 +823,7 @@ git commit -m "feat: add new-package dependency"
 **Dockerfile for reproducible development**:
 
 ```dockerfile
-FROM node:24.13.1-alpine
+FROM node:24.16.0-alpine
 
 # Install system dependencies
 RUN apk add --no-cache git
@@ -909,7 +909,7 @@ set -e
 echo "🔧 Setting up OSE Platform development environment..."
 
 # Check Node.js version
-REQUIRED_NODE_VERSION="24.13.1"
+REQUIRED_NODE_VERSION="24.16.0"
 CURRENT_NODE_VERSION=$(node -v | cut -d'v' -f2)
 
 if [ "$CURRENT_NODE_VERSION" != "$REQUIRED_NODE_VERSION" ]; then
@@ -1004,7 +1004,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.13.1"
+          node-version: "24.16.0"
           cache: "npm"
 
       - name: Install dependencies
@@ -1481,12 +1481,12 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 ### Core Tools (Latest Versions)
 
 - **TypeScript**: 5.9.3 (latest stable)
-- **Node.js**: 24.13.1 LTS (Volta managed)
-- **npm**: 11.10.1
+- **Node.js**: 24.16.0 LTS (Volta managed)
+- **npm**: 11.11.0
 
 ### Package Managers
 
-- **npm**: 11.10.1 (default)
+- **npm**: 11.11.0 (default)
 - **pnpm**: 10.28.1 (fast, disk-efficient)
 - **bun**: 1.3.6 (ultra-fast)
 

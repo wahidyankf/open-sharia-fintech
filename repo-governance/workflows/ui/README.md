@@ -13,7 +13,7 @@ created: 2026-03-28
 
 # UI Workflows
 
-Orchestrated multi-step processes for UI component quality automation.
+Use these workflows when a UI component needs a repeatable quality pass. They connect source-level checks to the accessibility and consistency people notice in the product.
 
 ## Available Workflows
 

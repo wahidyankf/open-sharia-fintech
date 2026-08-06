@@ -1,6 +1,6 @@
 ---
 title: "Development Patterns"
-description: ""
+description: Reusable architecture and quality patterns for maintainable platform changes
 category: explanation
 subcategory: development
 tags: []
@@ -9,7 +9,7 @@ created: 2026-05-12
 
 # Development Patterns
 
-Reusable software development patterns and practices for consistent, high-quality code.
+Use these patterns when a change needs a proven shape, such as a clear application boundary, an audit trail, or an independent review cycle. They offer reusable choices, not permission to add complexity by default.
 
 ## Purpose
 

@@ -14,13 +14,11 @@ created: 2026-01-20
 
 # Architecture
 
-**Understanding-oriented documentation** on software architecture patterns, models, and design approaches for building scalable, maintainable enterprise systems.
+Architecture is how a product's moving parts stay understandable as it grows. Start here when you need a shared picture of the system, a home for a business rule, or a clear boundary before implementation gets underway.
 
 ## Overview
 
-**The Challenge**: You're building a complex system. Stakeholders ask "how does it work?" Junior developers ask "where should this code go?" Teams in different contexts use different terms for the same concept. Architecture documentation gets outdated the moment you write it.
-
-**Our Approach**: We combine two complementary practices that solve different but related problems:
+People looking at the same product need different levels of detail: a product partner needs the big picture; an engineer needs the boundary they can safely change. This area combines complementary practices that address both needs:
 
 1. **C4 Architecture Model** - Visual communication of software architecture through hierarchical diagrams
 2. **Domain-Driven Design (DDD)** - Strategic and tactical patterns for modeling complex business domains
@@ -31,23 +29,21 @@ These approaches work together to help teams design, communicate, and implement 
 
 Clear architecture documentation delivers tangible benefits:
 
-- **Faster Onboarding** - New developers understand system structure in hours instead of weeks
+- **Clearer onboarding** - New developers can form a useful mental model before they make a change
 - **Better Communication** - Stakeholders, developers, and domain experts share a common visual language
 - **Reduced Technical Debt** - Explicit boundaries and responsibilities prevent "big ball of mud" architectures
 - **Confident Evolution** - Teams make changes knowing the ripple effects and integration points
 
 ## Quick Decision: Which Documentation Do I Need?
 
-| Your Situation                                       | Start With                                                 |
-| ---------------------------------------------------- | ---------------------------------------------------------- |
-| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)     |
-| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)   |
-| Aligning multiple teams on integration               | DDD Context Mapping                                        |
-| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md) |
-| Modeling domain logic with functional programming    | DDD and Functional Programming                             |
-| Combining strategic design with visual communication | DDD and C4 Integration                                     |
-
----
+| Your Situation                                       | Start With                                                                                                                          |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)                                                                              |
+| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)                                                                            |
+| Aligning multiple teams on integration               | [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md)                                                                |
+| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md)                                                                          |
+| Modeling domain logic with functional programming    | [Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md)                                                                  |
+| Combining strategic design with visual communication | [C4 Architecture Model](./c4-architecture-model/README.md) and [DDD + Hexagonal in Practice](./ddd-hexagonal-in-practice/README.md) |
 
 ### 🎨 [C4 Architecture Model](./c4-architecture-model/README.md)
 

@@ -1,61 +1,106 @@
 # organiclever-be
 
-F# / Giraffe / ASP.NET 10 REST API backend for OrganicLever. Ships one endpoint: health check.
+`organiclever-be` is OrganicLever's F# backend service, built with Giraffe on
+ASP.NET Core. It is pre-alpha software for engineers working on the product's
+server-side foundations: a PostgreSQL-backed journal, database migrations, and
+a small NATS/JetStream messaging probe.
 
-## Quick Start
+The OrganicLever web app is currently local-first. This service is where the
+server-of-record path is being developed and verified.
+
+## Start locally
+
+The service requires PostgreSQL. Docker is the quickest way to provide the
+local PostgreSQL and NATS dependencies used by the end-to-end test setup.
 
 ```bash
-nx dev organiclever-be   # http://localhost:8202
+docker compose -f apps/organiclever-be/docker-compose.e2e.yml up -d
+
+export DATABASE_URL='Host=localhost;Port=5432;Database=organiclever;Username=postgres;Password=postgres'
+export ASPNETCORE_URLS='http://localhost:8202'
+
+npm exec nx -- run organiclever-be:dev
 ```
 
-## Commands
+On startup, the service applies its embedded SQL migrations to `DATABASE_URL`.
+It also tries to connect to NATS and run its JetStream demo. A NATS failure is
+reported through the messaging status endpoint but does not prevent the HTTP
+service from starting.
 
-| Nx target                                 | What it does                                   |
-| ----------------------------------------- | ---------------------------------------------- |
-| `nx dev organiclever-be`                  | Dev server (localhost:8202)                    |
-| `nx build organiclever-be`                | Production build (`dotnet publish`)            |
-| `nx run organiclever-be:test:quick`       | DDD checks + unit tests + coverage (≥90% line) |
-| `nx run organiclever-be:test:unit`        | Unit tests only                                |
-| `nx run organiclever-be:test:integration` | Integration tests (Docker + real DB)           |
-| `nx run organiclever-be:lint`             | F# strict lint (`TreatWarningsAsErrors`)       |
-| `nx run organiclever-be:typecheck`        | `dotnet build` (type checks the project)       |
-| `nx run organiclever-be:fmt`              | `fantomas .`                                   |
-| `nx run organiclever-be:fmt:check`        | `fantomas --check .`                           |
-| `nx run organiclever-be:specs:coverage`   | Gherkin step coverage (rhino-cli)              |
+Verify the service in another terminal:
 
-## Prerequisites
+```bash
+curl http://localhost:8202/api/v1/health
+```
 
-- **.NET 10 SDK**
-- **Docker** (for `test:integration`)
+When finished, stop the local dependencies:
 
-## Environment Variables
+```bash
+docker compose -f apps/organiclever-be/docker-compose.e2e.yml down -v
+```
 
-| Variable       | Default                                                    | Description               |
-| -------------- | ---------------------------------------------------------- | ------------------------- |
-| `DATABASE_URL` | `postgres://postgres:postgres@localhost:5432/organiclever` | PostgreSQL connection URL |
-| `PORT`         | `8202`                                                     | TCP port to listen on     |
-| `CORS_ORIGINS` | `*`                                                        | Allowed CORS origins      |
+## Configuration
 
-See `.env.example` for a local template.
+| Variable                   | Required | Purpose                                                                  |
+| -------------------------- | -------- | ------------------------------------------------------------------------ |
+| `DATABASE_URL`             | Yes      | PostgreSQL connection string; the service fails fast when it is missing. |
+| `ASPNETCORE_URLS`          | No       | ASP.NET Core listen address, for example `http://localhost:8202`.        |
+| `ORGANICLEVER_BE_NATS_URL` | No       | NATS address for startup messaging; defaults to `nats://localhost:4222`. |
 
-## Tech Stack
+Use `.env.example` as a local variable reference. It contains only local
+development placeholders; do not put real credentials in tracked files.
 
-- **Language**: F# (.NET 10)
-- **Web framework**: Giraffe (ASP.NET Core)
-- **Database**: PostgreSQL
-- **Port**: 8202 | **API base**: `/api/v1`
-- **Architecture**: Hexagonal ports-and-adapters
-- **Linting**: F# strict (`TreatWarningsAsErrors`) + G-Research.FSharp.Analyzers + Fantomas
+## HTTP surface
 
-## Behavior & Architecture
+| Method                 | Path                              | Purpose                                    |
+| ---------------------- | --------------------------------- | ------------------------------------------ |
+| `GET`                  | `/health`                         | Legacy liveness probe for the web tier.    |
+| `GET`                  | `/api/v1/health`                  | Versioned service health response.         |
+| `GET`, `POST`          | `/api/v1/journal/entries`         | List or create journal entries.            |
+| `GET`, `PUT`, `DELETE` | `/api/v1/journal/entries/{id}`    | Read, update, or delete one journal entry. |
+| `GET`                  | `/api/v1/system/status/messaging` | Result of the startup JetStream demo.      |
 
-| Artifact      | Location                                                                                                              |
-| ------------- | --------------------------------------------------------------------------------------------------------------------- |
-| API reference | [specs/…/components/be/api.md](../../specs/apps/organiclever/components/be/api.md)                                    |
-| Gherkin specs | [specs/…/behavior/organiclever-be/gherkin/](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md) |
-| Deployment    | [specs/…/containers/deployment.md](../../specs/apps/organiclever/containers/deployment.md)                            |
+The [OpenAPI contract](../../specs/apps/organiclever/containers/contracts/openapi.yaml) and
+[behavior specifications](../../specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md)
+are the durable references for intended API behavior.
 
-## Related
+## Everyday commands
 
-- [organiclever-be-e2e](../organiclever-be-e2e/README.md) — Playwright BE E2E tests
-- [specs/apps/organiclever/](../../specs/apps/organiclever/README.md) — full spec tree
+| Command                                               | Use                                                               |
+| ----------------------------------------------------- | ----------------------------------------------------------------- |
+| `npm exec nx -- run organiclever-be:dev`              | Run with `dotnet watch`.                                          |
+| `npm exec nx -- build organiclever-be`                | Generate contract types and publish a release build.              |
+| `npm exec nx -- run organiclever-be:test:quick`       | Typecheck, lint, unit-test, coverage, and specification checks.   |
+| `npm exec nx -- run organiclever-be:test:unit`        | Run the TickSpec/xUnit unit suite.                                |
+| `npm exec nx -- run organiclever-be:test:integration` | Run integration tests against Docker-managed PostgreSQL and NATS. |
+| `npm exec nx -- run organiclever-be:lint`             | Check Fantomas formatting and strict F# analysis.                 |
+| `npm exec nx -- run organiclever-be:fmt`              | Apply Fantomas formatting to service source files.                |
+| `npm exec nx -- run organiclever-be:codegen`          | Regenerate F# contract types from the bundled OpenAPI spec.       |
+
+The app-level `test:e2e` target is deliberately a no-op. Backend API E2E tests
+belong to [organiclever-be-e2e](../organiclever-be-e2e/README.md).
+
+## Project layout
+
+```text
+apps/organiclever-be/
+├── src/OrganicleverBe/
+│   ├── Contexts/       # Health, Journal, Messaging, and database slices
+│   ├── Infrastructure/ # EF Core database and NATS adapters
+│   ├── WebApp.fs       # HTTP route composition
+│   └── Program.fs      # Startup, migrations, and host configuration
+├── db/migrations/      # SQL applied on startup
+├── tests/unit/         # TickSpec/xUnit unit tests
+└── tests/integration/  # PostgreSQL-backed integration tests
+```
+
+`generated-contracts/` is generated from the OpenAPI bundle and is intentionally
+not hand-edited. Nx runs code generation before build, typecheck, lint, and
+unit-test targets.
+
+## Related references
+
+- [Backend component overview](../../specs/apps/organiclever/components/be/README.md)
+- [API reference](../../specs/apps/organiclever/components/be/api.md)
+- [Backend behavior specifications](../../specs/apps/organiclever/behavior/organiclever-be/README.md)
+- [Backend E2E suite](../organiclever-be-e2e/README.md)
