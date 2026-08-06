@@ -1,7 +1,7 @@
 # Example 46: Capstone Preview of a Fully Self-Hosted Service
 
 _Traces to: `co-01`–`co-21`; the full four-step build lives in
-[`./capstone/overview.md`](../../../capstone/overview.md)._
+[`./capstone/overview.md`](../../capstone/overview.md)._
 
 This is the one-paragraph "what the capstone proves" the Advanced tier closes on: every primitive
 from `co-01`–`co-21`, assembled into one runnable service on one box.
