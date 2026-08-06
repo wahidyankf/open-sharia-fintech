@@ -127,6 +127,14 @@ and [§Phase 0 Opens No PR](./repo-governance/conventions/structure/plans.md#pha
 and [§PRs Open at Delivery Boundaries](./repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
+### Integration Diff Review
+
+After any `rebase`/`pull`/`merge`/`cherry-pick`/fast-forward that lands foreign commits on the current
+branch, read the full incoming diff and reassess impact on in-flight work before continuing — a clean,
+conflict-free integration is not proof the incoming changes are safe to ignore.
+
+**See**: [Integration Diff Review Convention](./repo-governance/development/workflow/integration-diff-review.md)
+
 ## Git Hooks (Automated Quality)
 
 The three executable Husky files are registry shims: use
