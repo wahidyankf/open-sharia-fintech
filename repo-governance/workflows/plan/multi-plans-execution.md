@@ -157,6 +157,14 @@ the whole run** (never re-expanded later — a plan added to `plans/backlog/` mi
   a selector, the bucket + exclusions that produced it) so the caller can confirm scope. An empty
   resolved set (e.g., `all-in-progress` with nothing in-progress) terminates `fail` with a clear
   message — there is nothing to execute.
+- **Promote every resolved `plans/backlog/` entry before scheduling.** For each plan in the frozen
+  set that still resolves inside `plans/backlog/` (an explicit-list entry or any `all-backlog`/`all`
+  member), run the promotion from
+  [`plan-execution.md` Step 0](./plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate) —
+  `git mv plans/backlog/<slug>/ plans/in-progress/<slug>/`, commit, push to `origin main` — on the
+  local `main` checkout, never inside a worktree, before that plan's first node is scheduled. Only
+  after that push lands does the plan's path resolve to `plans/in-progress/` for the rest of this
+  run. No plan in the frozen set is ever scheduled directly out of `plans/backlog/`.
 
 **A2. Refuse unvetted plans.** For each plan, confirm it passed `plan-quality-gate` (a clean strict
 double-zero — check for the plan's audit trail or re-run the gate). A plan that has not been vetted
@@ -270,7 +278,9 @@ remaining chain) first, so the overall run finishes sooner; break ties by plan i
 worktree** (`worktrees/<plan-id>/`), so two plans editing different files never collide on disk. The
 resource-conflict guard exists for **logical/merge-time** conflicts (two plans mutating the same
 tracked file, or both touching the byte-identity boundary), not for physical disk safety. Provision
-each plan's worktree once, on that plan's first scheduled node, following [`plan-execution.md`
+each plan's worktree once, on that plan's first scheduled node — A1 has already promoted any
+`plans/backlog/`-sourced plan, so every node reaching this step resolves inside `plans/in-progress/`
+— following [`plan-execution.md`
 Step 0](./plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate) (including
 `npm install` + `npm run doctor -- --fix`).
 
