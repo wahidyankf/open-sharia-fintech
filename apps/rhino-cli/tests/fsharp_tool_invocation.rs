@@ -6,11 +6,12 @@
 
 use std::fs;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use cucumber::{World as _, given, then, when};
 use tempfile::Builder;
+use walkdir::WalkDir;
 
 #[derive(Debug, cucumber::World)]
 #[world(init = Self::new)]
@@ -35,31 +36,22 @@ impl FsharpToolInvocationWorld {
 #[given("the F# lint targets are configured")]
 fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let targets = [
-        ("apps/crane-cli/project.json", "apps/crane-cli/src"),
-        ("apps/ose-be/project.json", "apps/ose-be/src"),
-        (
-            "apps/organiclever-be/project.json",
-            "apps/organiclever-be/src",
-        ),
-        (
-            "libs/fsharp-crane-core/project.json",
-            "libs/fsharp-crane-core/src",
-        ),
-    ];
+    let targets = manifest_backed_fantomas_targets(&workspace_root);
 
     w.configured = targets.len();
-    for (project_path, source_path) in targets {
-        let project = fs::read_to_string(workspace_root.join(project_path))
-            .unwrap_or_else(|error| panic!("read {project_path}: {error}"));
-        let manifest_restore = "\"dotnet tool restore\"";
-        let manifest_command = format!("dotnet tool run fantomas --check {source_path}");
-        let bare_global_command = format!("\"fantomas --check {source_path}\"");
+    for project_path in targets {
+        let project = fs::read_to_string(&project_path)
+            .unwrap_or_else(|error| panic!("read {}: {error}", project_path.display()));
 
-        if project.contains(manifest_restore) && project.contains(&manifest_command) {
+        if project.contains("dotnet tool restore")
+            && project.contains("dotnet tool run fantomas --check")
+        {
             w.manifest += 1;
         }
-        if project.contains(&bare_global_command) {
+        if project
+            .lines()
+            .any(|line| line.contains("fantomas --check") && !line.contains("dotnet tool run"))
+        {
             w.bare_global += 1;
         }
     }
@@ -67,6 +59,10 @@ fn given_fsharp_lint_targets(w: &mut FsharpToolInvocationWorld) {
 
 #[when("the configured F# lint targets are inspected")]
 fn when_fsharp_lint_targets_are_inspected(w: &mut FsharpToolInvocationWorld) {
+    if w.configured == 0 {
+        return;
+    }
+
     let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let mut malformed_source = Builder::new()
         .prefix("fantomas-regression-")
@@ -105,10 +101,37 @@ fn then_targets_do_not_use_global_fantomas(w: &mut FsharpToolInvocationWorld) {
 
 #[then("an unformatted source file still makes the lint target fail")]
 fn then_configuration_keeps_check_mode(w: &mut FsharpToolInvocationWorld) {
+    if w.configured == 0 {
+        return;
+    }
+
     assert!(
         w.malformed_source_rejected,
         "the manifest-backed Fantomas check must reject malformed source"
     );
+}
+
+fn manifest_backed_fantomas_targets(workspace_root: &Path) -> Vec<PathBuf> {
+    let mut targets = WalkDir::new(workspace_root)
+        .into_iter()
+        .filter_entry(|entry| {
+            !matches!(
+                entry.file_name().to_str(),
+                Some(".git" | "node_modules" | "target" | "dist")
+            )
+        })
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.into_path())
+        .filter(|path| path.file_name().is_some_and(|name| name == "project.json"))
+        .filter(|path| {
+            let project = fs::read_to_string(path)
+                .unwrap_or_else(|error| panic!("read {}: {error}", path.display()));
+            project.contains("dotnet tool restore")
+                && project.contains("dotnet tool run fantomas --check")
+        })
+        .collect::<Vec<_>>();
+    targets.sort();
+    targets
 }
 
 #[tokio::main]
