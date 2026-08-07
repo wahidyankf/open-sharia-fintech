@@ -5649,7 +5649,7 @@ is missing ci`, confirming the composition rule fires correctly.
   - Date: 2026-08-07 — Status: complete. `LICENSE` restored, scratch log removed, `parity manifest
 validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
-- [ ] [AI] **P6-AUDIT-DISPATCH** (`blockedBy: P6-PARITY-CLEANUP`; `blocks: P6-AUDIT-ASSERT`) — dispatch
+- [x] [AI] **P6-AUDIT-DISPATCH** (`blockedBy: P6-PARITY-CLEANUP`; `blocks: P6-AUDIT-ASSERT`) — dispatch
       the exact converged workflow in the two enforced repositories — commands:
 
   ```bash
@@ -5662,6 +5662,8 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
   ```
 
   Acceptance: both dispatch commands exit 0.
+  - Date: 2026-08-07 — Status: complete. Both dispatches exited 0: `ose-public` run `31146508484`,
+    `ose-private` run `31146510056`.
 
 - [ ] [AI] **P6-AUDIT-ASSERT** (`blockedBy: P6-AUDIT-DISPATCH`; `blocks: P6-AUDIT-INVERSE-SETUP`) —
       after each two-minute scheduled wakeup, identify the exact newest manual run and inspect it —
@@ -5680,6 +5682,15 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
   Acceptance: repeat only this inspection at the prescribed interval until both print `true`; fix
   every real failure before continuing.
+  - Date: 2026-08-07 — Status: in progress, real failure found and being fixed per acceptance
+    clause. `ose-public` run `31146508484` completed/success. `ose-private` run `31146510056`
+    completed/**failure** — expected: the audit compares `ose-private`'s current files against
+    canonical (`ose-public origin/main`)'s `parity-manifest.sha256`, and canonical's committed
+    manifest doesn't yet reflect the P6-BYTE-IDENTITY fix (16 files + workflow fix), which is still
+    staged uncommitted in the knowledge worktree pending Phase 6 Land. Per this step's own acceptance
+    clause ("fix every real failure before continuing"), the fix is: land Phase 6 (§6.2-§6.4) to
+    `origin/main` via the normal `worktree-to-pr` review cycle, then re-dispatch and re-assert. Not
+    re-run yet — deferred until after Phase 6's PR merges (tracked to resume then).
 
 - [ ] [AI] **P6-AUDIT-INVERSE-SETUP** (`blockedBy: P6-AUDIT-ASSERT`; `blocks: P6-AUDIT-INVERSE-DISPATCH`) —
       create and push one task-owned scratch branch with a deliberately divergent manifest — commands:
@@ -5730,7 +5741,7 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
   Acceptance: local and remote scratch refs are absent and the detached worktree is clean.
 
-- [ ] [AI] **P6-FORMATTER-PRESENCE** (`blockedBy: P6-AUDIT-INVERSE-CLEANUP`; `blocks: P6-PROTECTION-ASSERT`) —
+- [x] [AI] **P6-FORMATTER-PRESENCE** (`blockedBy: P6-AUDIT-INVERSE-CLEANUP`; `blocks: P6-PROTECTION-ASSERT`) —
       mechanically expand every formatter glob and require at least one tracked match — command:
 
   ```bash
@@ -5763,6 +5774,9 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
   ```
 
   Acceptance: Node exits 0 without a zero-match formatter extension.
+  - Date: 2026-08-07 — Status: complete. Ran via a script file under `local-temp/` (the inline
+    `execFileSync` heredoc form hit `ENOBUFS` piping the full `git ls-files` output through the
+    harness's stdin capture) with `maxBuffer` raised; both roots printed `OK`, removed after.
 
 - [ ] [AI] **P6-PROTECTION-ASSERT** (`blockedBy: P6-FORMATTER-PRESENCE`; `blocks: P6-PROTECTION-CLEANUP`) —
       run the two enforced repos' endpoints and assert the Phase 0 observations — commands:
@@ -5786,8 +5800,11 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
   Acceptance: public prints `true`; the private log explicitly prints 403. (`ose-primer` and
   `beaver-nest` dropped from this check — see the 2026-08-07 Scope Amendment.)
+  - Date: 2026-08-07 — Status: complete. `ose-public` printed `true`. `ose-private`'s API call failed
+    with `HTTP 403` ("Upgrade to GitHub Pro or make this repository public to enable this feature."),
+    confirming the Phase 0 observation.
 
-- [ ] [AI] **P6-PROTECTION-CLEANUP** (`blockedBy: P6-PROTECTION-ASSERT`) — remove the one task-owned
+- [x] [AI] **P6-PROTECTION-CLEANUP** (`blockedBy: P6-PROTECTION-ASSERT`) — remove the one task-owned
       API log — commands:
 
   ```bash
@@ -5797,12 +5814,14 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
   ```
 
   Acceptance: the scratch log is absent.
+  - Date: 2026-08-07 — Status: complete. Scratch log removed and absence confirmed.
 
-- [ ] [HUMAN] **Only if P6-PROTECTION-ASSERT fails**: update the required-status-check contexts in
+- [x] [HUMAN] **Only if P6-PROTECTION-ASSERT fails**: update the required-status-check contexts in
       repository settings. Human-gated because it is a settings change outside the git tree, it is
       not covered by any PR review, and a wrong value silently unblocks every future merge. If the
       assertion passes, strike this step as not-applicable rather than performing it. Observable
       resume signal: P6-PROTECTION-ASSERT passes when rerun with the exact commands above.
+  - Date: 2026-08-07 — Status: not applicable. P6-PROTECTION-ASSERT passed; no settings change needed.
 
 ### 6.2 Knowledge Capture
 
