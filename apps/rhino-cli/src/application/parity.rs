@@ -167,7 +167,10 @@ fn isolated_git(repo_root: &Path) -> Command {
         .env_remove("GIT_OBJECT_DIRECTORY")
         .env_remove("GIT_ALTERNATE_OBJECT_DIRECTORIES")
         .env_remove("GIT_COMMON_DIR")
-        .env_remove("GIT_PREFIX");
+        .env_remove("GIT_PREFIX")
+        .env("GIT_CONFIG_NOSYSTEM", "1")
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_COUNT", "0");
     command
 }
 
@@ -642,6 +645,30 @@ mod tests {
             .status()
             .expect("run git");
         assert!(status.success(), "git {args:?} failed");
+    }
+
+    #[test]
+    fn isolated_git_disables_ambient_configuration() {
+        let command = isolated_git(Path::new("/fixture"));
+        let config_count = command
+            .get_envs()
+            .find(|(name, _)| *name == "GIT_CONFIG_COUNT")
+            .and_then(|(_, value)| value)
+            .expect("Git config count must be set");
+        let no_system = command
+            .get_envs()
+            .find(|(name, _)| *name == "GIT_CONFIG_NOSYSTEM")
+            .and_then(|(_, value)| value)
+            .expect("Git system configuration must be disabled");
+        let global = command
+            .get_envs()
+            .find(|(name, _)| *name == "GIT_CONFIG_GLOBAL")
+            .and_then(|(_, value)| value)
+            .expect("Git global configuration must be disabled");
+
+        assert_eq!(config_count, "0");
+        assert_eq!(no_system, "1");
+        assert_eq!(global, "/dev/null");
     }
 
     #[test]

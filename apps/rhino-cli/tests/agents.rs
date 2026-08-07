@@ -1334,7 +1334,7 @@ fn when_pre_push_hook_runs(w: &mut AgentsWorld) {
     }
 }
 
-#[then("the instruction-size validation Nx target runs")]
+#[then("the instruction-size gate runs")]
 fn then_instruction_size_target_runs(w: &mut AgentsWorld) {
     assert!(
         w.hook_invoked,

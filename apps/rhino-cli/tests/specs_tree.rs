@@ -878,13 +878,27 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
     // `emit_bindings` requires `harness.amazonq.agent-name` from repo-config.yml
-    // (no sensible default exists for a generated agent identifier) — this
-    // synthetic fixture root needs its own minimal registry declaration rather
-    // than relying on a real repo-config.yml being present at this temp path.
+    // (no sensible default exists for a generated agent identifier), and
+    // `validate_bindings` walks the source (claude-code) and generated
+    // (opencode/cursor/amazonq) tiers together for mirror-parity checks — this
+    // synthetic fixture root needs its own complete registry declaration
+    // rather than relying on a real repo-config.yml being present at this
+    // temp path.
     std::fs::write(
         root.join("repo-config.yml"),
         concat!(
             "harness:\n",
+            "  - name: claude-code\n",
+            "    tier: source\n",
+            "    agent-dir: .claude/agents\n",
+            "  - name: cursor\n",
+            "    tier: generated\n",
+            "    agent-dir: .cursor/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
             "  - name: amazonq\n",
             "    tier: generated\n",
             "    rules-dir: .amazonq/rules\n",
@@ -893,7 +907,7 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
         ),
     )
-    .expect("write minimal repo-config.yml");
+    .expect("write repo-config.yml");
     emit_bindings(root).expect("emit bindings");
     let catalog = root.join(PLATFORM_BINDINGS_CATALOG);
     std::fs::create_dir_all(catalog.parent().expect("catalog has parent"))

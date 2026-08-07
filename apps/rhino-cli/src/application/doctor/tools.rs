@@ -1000,6 +1000,14 @@ mod tests {
             !script.contains("dotnet-sdk"),
             "must not reference the community snap package name"
         );
+        assert!(
+            !script.contains("| bash"),
+            "the installer must be downloaded before it is executed"
+        );
+        assert!(
+            script.contains("--proto '=https'") && script.contains("--tlsv1.2"),
+            "the installer download must be HTTPS-only and require modern TLS"
+        );
     }
 
     #[test]
@@ -1057,6 +1065,13 @@ mod tests {
             "must not pipe the downloaded script directly into a shell; download to a \
              temp file and execute it as a separate step instead"
         );
+    }
+
+    #[test]
+    fn dotnet_channel_rejects_non_numeric_segments() {
+        for requirement in ["10.0;touch /tmp/pwned", "10.$(id)", "10..204"] {
+            assert_eq!(dotnet_channel(requirement), DOTNET_DEFAULT_CHANNEL);
+        }
     }
 
     #[test]

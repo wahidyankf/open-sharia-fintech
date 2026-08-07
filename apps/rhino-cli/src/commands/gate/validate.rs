@@ -331,20 +331,22 @@ fn validate_ci_matrix_contract(
                 .matrix
                 .get("gate")
                 .is_some_and(|entry| entry.contains("fromJson(needs.enumerate.outputs.gates)"));
-        // The matrix gate id must reach the shell through a step-level `env:`
+        // A matrix gate id must reach the shell through a step-level `env:`
         // variable, never spliced as a raw `${{ matrix.gate.id }}` expression
-        // into `run:` (GitHub Actions expression injection). The dispatcher
-        // step must therefore both declare `GATE_ID` from the matrix
-        // expression *and* invoke the gate driver via that shell variable.
+        // into `run:` (GitHub Actions expression injection). Accept any
+        // step-env variable name that carries the matrix expression, so long
+        // as the run body expands it via a quoted shell variable of the same
+        // name — this is deliberately name-agnostic rather than hardcoding
+        // `GATE_ID`.
         let dispatches_selected_gate = job.steps.iter().any(|step| {
-            let selects_gate_id_via_env = step
-                .env
-                .get("GATE_ID")
-                .is_some_and(|value| value.contains("matrix.gate.id"));
-            let uses_gate_id_shell_variable = step.run.as_deref().is_some_and(|run| {
-                run.contains("gate run --surface=ci") && run.contains("--only=\"$GATE_ID\"")
-            });
-            selects_gate_id_via_env && uses_gate_id_shell_variable
+            let Some(run) = step.run.as_deref() else {
+                return false;
+            };
+            let normalized_run = run.split_whitespace().collect::<Vec<_>>().join(" ");
+            step.env.iter().any(|(name, value)| {
+                value.contains("matrix.gate.id")
+                    && normalized_run.contains(&format!("gate run --surface=ci --only=\"${name}\""))
+            })
         });
         // Existence of the safe env-indirected step is not enough: a later
         // step (in this job or any other) could still splice the raw matrix
@@ -553,6 +555,8 @@ struct WorkflowStep {
     /// Optional step-level environment variables, e.g. deriving a shell-safe
     /// variable from a matrix expression (`GATE_ID: ${{ matrix.gate.id }}`)
     /// so `run:` never splices the raw expression into the shell string.
+    /// Matrix-derived values must always enter shell commands through these
+    /// variables, never as inline `${{ }}` expressions.
     #[serde(default)]
     env: BTreeMap<String, String>,
     /// Optional step execution condition.
@@ -1290,6 +1294,44 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
         "a raw matrix.gate.id splice alongside the safe dispatcher step must still fail; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_rejects_an_inline_gate_id_expression() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: declared-ci-check\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  enumerate:\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate list --surface=ci --format=json\n",
+        "  gate:\n",
+        "    needs: enumerate\n",
+        "    strategy:\n",
+        "      matrix:\n",
+        "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+        "  quality-gate:\n",
+        "    needs: [enumerate, gate]\n",
+    ))
+    .unwrap();
+    let mut output = Vec::new();
+
+    assert!(
+        validate_ci_matrix_contract(&config, &workflow, &mut output).is_err(),
+        "a matrix gate id must not be template-spliced into a shell command"
     );
 }
 
