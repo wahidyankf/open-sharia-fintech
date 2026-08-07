@@ -14,10 +14,15 @@ created: 2026-08-02
 
 # SDLC Gate Registry Enforcement
 
-**Status**: In Progress — planning refresh; execution blocked
+**Status**: In Progress — Phases 1, 11, 2, 3, and 4 landed; Phase 5 cancelled; Phase 6 next
 **Delivery Mode**: `worktree-to-pr`
-**Repos in scope**: `ose-public`, `ose-primer`, `ose-private`, `beaver-nest` (all four)
-**Readiness baseline**: Refreshed 2026-08-04 against current `main` in all four repos
+**Repos in scope**: `ose-public` and `ose-private` (enforced, ongoing) — **amended 2026-08-07**, see
+[delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07). `ose-primer` received a
+one-time Phase 3 propagation (merged, PR #3) and is now synced periodically/manually, outside the
+enforced boundary, for cost reasons. `beaver-nest` (Phase 5) is cancelled — it is slated for future
+deprecation and merge into `ose-public`, so it never joins the boundary.
+**Readiness baseline**: Refreshed 2026-08-04 against current `main` in all four repos (historical;
+scope narrowed 2026-08-07 — see above)
 
 ## Readiness Review — 2026-08-04
 
@@ -102,14 +107,13 @@ read, plus a validator that fails when a surface silently drops a check.
    is rewritten, and `deps-audit.yml` is replaced by `dependency-vulnerability-audit.yml` — kept out
    of the registry, but finally named for what it does (which needs a small
    workflow-naming-convention amendment to be legal).
-5. **`rhino-cli` byte-identity becomes enforceable, across all four repos.** The same defect one
-   layer down: a ratified zero-carve-out rule that nothing checks, and that is already broken. A
-   committed checksum manifest turns local drift into a blocking gate; a scheduled audit compares
-   manifests across repos. `apps/rhino-cli/tests/` joins the boundary. `beaver-nest` stops being a
-   fork — which is possible only because its divergence was never a capability choice, but
-   `ose-public`'s app names hardcoded into shared source. Extracting that data into `repo-config.yml`
-   is the same move the registry already makes, which is why this rides here rather than in its own
-   plan.
+5. **`rhino-cli` byte-identity becomes enforceable, between `ose-public` and `ose-private`** (amended
+   2026-08-07 from the original four-repo design — see delivery.md's Scope Amendment). The same
+   defect one layer down: a ratified zero-carve-out rule that nothing checks, and that is already
+   broken. A committed checksum manifest turns local drift into a blocking gate; a scheduled audit
+   compares manifests across the two enforced repos. `apps/rhino-cli/tests/` joins the boundary.
+   `beaver-nest`'s planned de-forking (originally Phase 5) is cancelled, not merely deferred —
+   `beaver-nest` is slated for future deprecation and merge into `ose-public`.
 
 **Concrete target state is authored, not described.** [`repo-configs/`](./repo-configs/README.md),
 [`husky-hooks/`](./husky-hooks/README.md), and [`package-json/`](./package-json/README.md) hold the
@@ -132,34 +136,37 @@ with the mitigation options that were considered and declined.
 Each unit is a delivery boundary — one worktree, one PR. See [delivery.md](./delivery.md) for the
 full DAG and the per-phase gates.
 
-Phases 1–5 form one bounded byte-identity propagation transaction. Phase 1 merges the governing
-protocol amendment together with the first canonical byte change; intermediate PRs are reversible
-integration checkpoints and controlled pause-safe states when their four refs and next node are
-recorded, not claims that four-repo identity is restored or permission for unrelated boundary work.
-The transaction blocks unrelated `apps/rhino-cli` edits and Phase 6, advances through canonical
-de-fork/rewire and downstream copy PRs, and closes only when all four merged manifests and bounded
-diffs agree. If downstream convergence fails, the canonical transaction commits are reverted. Exact
-open, resume, close, and rollback commands are in
+**Amended 2026-08-07** — see [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07):
+Phases 1–4 form the bounded byte-identity propagation transaction; Phase 3 (`ose-primer`) already
+landed as a one-time propagation and left the transaction's enforced membership; Phase 5
+(`beaver-nest`) is cancelled and never joined it. Phase 1 merges the governing protocol amendment
+together with the first canonical byte change; intermediate PRs are reversible integration
+checkpoints and controlled pause-safe states when their exact refs and next node are recorded, not
+claims that identity is restored or permission for unrelated boundary work. The transaction blocks
+unrelated `apps/rhino-cli` edits and Phase 6, advances through canonical de-fork/rewire and the
+`ose-private` copy PR, and closes only when **both** merged manifests and bounded diffs agree. If
+`ose-private` convergence fails, the canonical transaction commits are reverted. Exact open, resume,
+close, and rollback commands are in
 [delivery.md §Bounded Byte-Identity Propagation Transaction](./delivery.md#bounded-byte-identity-propagation-transaction).
 
-| Phase | Unit                                                     | Repo          | Opens PR                  |
-| ----- | -------------------------------------------------------- | ------------- | ------------------------- |
-| 0     | Baseline convergence                                     | all four      | No (per the Phase-0 rule) |
-| 1     | Gate engine — registry schema, `gate` commands, specs    | `ose-public`  | yes                       |
-| 11    | De-fork canonical source + parity manifest               | `ose-public`  | yes                       |
-| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments | `ose-public`  | yes                       |
-| 3     | Engine propagation + rewire                              | `ose-primer`  | yes                       |
-| 4     | Engine propagation + rewire                              | `ose-private` | yes                       |
-| 5     | Join the byte-identity boundary + rewire                 | `beaver-nest` | yes                       |
-| 6     | Knowledge capture                                        | `ose-public`  | yes                       |
+| Phase | Unit                                                                       | Repo          | Opens PR                    |
+| ----- | -------------------------------------------------------------------------- | ------------- | --------------------------- |
+| 0     | Baseline convergence                                                       | all four      | No (per the Phase-0 rule)   |
+| 1     | Gate engine — registry schema, `gate` commands, specs                      | `ose-public`  | yes                         |
+| 11    | De-fork canonical source + parity manifest                                 | `ose-public`  | yes                         |
+| 2     | Surface rewire + `main-ci.yml` deletion + doc amendments                   | `ose-public`  | yes                         |
+| 3     | Engine propagation + rewire — landed one-time; periodic sync going forward | `ose-primer`  | yes (already merged, PR #3) |
+| 4     | Engine propagation + rewire                                                | `ose-private` | yes                         |
+| 5     | ~~Join the byte-identity boundary + rewire~~ — **CANCELLED 2026-08-07**    | `beaver-nest` | No (cancelled before Land)  |
+| 6     | Knowledge capture (rescoped to `ose-public` + `ose-private`)               | `ose-public`  | yes                         |
 
-Phases 3, 4, and 5 have disjoint repository ownership and may fan out after Phase 2, but the
-transaction remains open until all three integrate.
+Phase 4 is the sole remaining node in the enforced transaction after Phase 2. Phase 3 already landed
+independently and is out of scope going forward. Phase 5 is cancelled.
 
-**Phase 11 blocks Phase 2; Phase 2 blocks the three downstream repository deliveries.** Canonical
-must first be de-forked — dead pipeline deleted, hardcoded app names extracted, and `beaver-nest`'s
-naming, F# environment-scanning, and Git-isolation improvements upstreamed. Phase 2 then finalizes
-the governance documents consumed by Phases 3, 4, and 5, which fan out independently.
+**Phase 11 blocks Phase 2; Phase 2 blocks Phase 4.** Canonical must first be de-forked — dead
+pipeline deleted and hardcoded app names extracted. Phase 2 then finalizes the governance documents
+Phase 4 consumes. (Phase 3 already consumed the pre-amendment version of those documents once, before
+this scope narrowing, and is not re-run.)
 
 ## Documents
 

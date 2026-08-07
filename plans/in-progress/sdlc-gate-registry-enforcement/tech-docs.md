@@ -13,6 +13,14 @@ created: 2026-08-02
 
 # Tech Docs — SDLC Gate Registry Enforcement
 
+> **Scope Amendment (2026-08-07)**: the byte-identity design below describes the original four-repo
+> boundary; it is narrowed to **`ose-public` + `ose-private`** — see
+> [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07). `beaver-nest` (§2.8) is
+> **cancelled**, not executed — `beaver-nest` is slated for future deprecation/merge into
+> `ose-public`. `ose-primer` already fulfilled its one-time propagation and is now periodic/manual,
+> outside continuous enforcement. The design below is left as originally authored — historical
+> record of what was built and why — except where explicitly marked cancelled/superseded inline.
+>
 > **Planned-path annotation**: `apps/rhino-cli/parity-manifest.sha256`,
 > `.github/workflows/dependency-vulnerability-audit.yml`,
 > `.github/workflows/rhino-cli-parity-audit.yml`, `apps/rhino-cli/tests/gate_dispatch.rs`,

@@ -12,6 +12,13 @@ created: 2026-08-02
 
 # BRD — SDLC Gate Registry Enforcement
 
+> **Scope Amendment (2026-08-07)**: the byte-identity boundary is narrowed to **`ose-public` +
+> `ose-private`** — see [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07).
+> `beaver-nest` is **cancelled** (slated for future deprecation/merge into `ose-public`); `ose-primer`
+> already fulfilled its one-time propagation and is now periodic/manual, outside continuous
+> enforcement. The rationale and audit findings below are left as originally authored — historical
+> record — except where explicitly marked cancelled/superseded inline.
+
 ## Context
 
 The repo operates four quality-gate surfaces: `.husky/pre-commit`, `.husky/pre-push`,

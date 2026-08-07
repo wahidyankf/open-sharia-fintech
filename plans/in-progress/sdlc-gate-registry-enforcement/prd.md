@@ -12,6 +12,18 @@ created: 2026-08-02
 
 # PRD — SDLC Gate Registry Enforcement
 
+> **Scope Amendment (2026-08-07)**: the byte-identity boundary this PRD specifies as spanning "all
+> four repos" is narrowed to **`ose-public` + `ose-private`** — see
+> [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07) for the full rationale.
+> `beaver-nest` (R-11's Phase 5 join, R-13) is **cancelled** — `beaver-nest` is slated for future
+> deprecation and merge into `ose-public`. `ose-primer` already fulfilled its one-time propagation
+> (R-11's Phase 3 leg, merged) and is now synced periodically/manually, outside continuous
+> enforcement. The requirements and Gherkin scenarios below are left as originally authored —
+> historical record of the four-repo design — except where explicitly marked cancelled/superseded
+> inline. Do not treat an unmarked "all four repos" or `beaver-nest` scenario below as a live,
+> executable requirement; delivery.md's checklist is the current source of truth for what actually
+> runs.
+>
 > **Planned-path annotation**: `apps/rhino-cli/parity-manifest.sha256`,
 > `.github/workflows/dependency-vulnerability-audit.yml`, and
 > `.github/workflows/rhino-cli-parity-audit.yml` are **new files** everywhere they appear below.
