@@ -60,7 +60,18 @@
       "options": {
         "cwd": "apps/ose-www"
       },
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/test/unit/**/*", "{projectRoot}/vitest.config.ts"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/test/unit/**/*",
+        "{projectRoot}/test/integration/**/*",
+        "{projectRoot}/vitest.config.ts",
+        "{projectRoot}/tsconfig.json",
+        "{projectRoot}/next.config.ts",
+        "{projectRoot}/next-env.d.ts",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/specs/apps/ose/behavior/platform-be/gherkin/**/*.feature"
+      ],
       "cache": true
     },
     "test:coverage": {
@@ -71,7 +82,18 @@
       },
       "cache": true,
       "outputs": ["{projectRoot}/coverage"],
-      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tests/**/*"]
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/test/unit/**/*",
+        "{projectRoot}/vitest.config.ts",
+        "{projectRoot}/tsconfig.json",
+        "{projectRoot}/next.config.ts",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/package-lock.json",
+        "{workspaceRoot}/libs/web-ui/src/**/*",
+        "{workspaceRoot}/specs/apps/ose/behavior/platform-be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/ose/behavior/platform-web/gherkin/**/*.feature"
+      ]
     },
     "test:quick": {
       "executor": "nx:run-commands",
