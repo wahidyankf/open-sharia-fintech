@@ -877,6 +877,13 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
+    // `emit_bindings` requires `harness.amazonq.agent-name` from repo-config.yml
+    // (no sensible default exists for a generated agent identifier), and
+    // `validate_bindings` walks the source (claude-code) and generated
+    // (opencode/cursor/amazonq) tiers together for mirror-parity checks — this
+    // synthetic fixture root needs its own complete registry declaration
+    // rather than relying on a real repo-config.yml being present at this
+    // temp path.
     std::fs::write(
         root.join("repo-config.yml"),
         concat!(
@@ -895,7 +902,7 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
             "  - name: amazonq\n",
             "    tier: generated\n",
             "    rules-dir: .amazonq/rules\n",
-            "    agent-name: fixture-agent\n",
+            "    agent-name: ose-default\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
         ),

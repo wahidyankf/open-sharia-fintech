@@ -105,7 +105,7 @@ impl CursorWorld {
                 "  - name: amazonq\n",
                 "    tier: generated\n",
                 "    rules-dir: .amazonq/rules\n",
-                "    agent-name: fixture-agent\n",
+                "    agent-name: ose-default\n",
                 "coverage:\n  projects: []\n",
                 "specs:\n  ddd-areas: []\n  domain-areas: []\n",
             ),

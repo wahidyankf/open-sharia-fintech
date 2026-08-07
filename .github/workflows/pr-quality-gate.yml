@@ -139,13 +139,17 @@ jobs:
       - uses: ./.github/actions/setup-rust
       - name: Provision registry-declared tools
         run: |
-          tools="${{ join(matrix.gate.doctor_tools, ',') }}"
+          tools="$DOCTOR_TOOLS"
           if [ -n "$tools" ]; then
             npm run doctor -- --fix --tools "$tools"
           fi
-      - env:
+        env:
+          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}
+      - run: >-
+          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run
+          --surface=ci --only="$GATE_ID"
+        env:
           GATE_ID: ${{ matrix.gate.id }}
-        run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$GATE_ID"
 
   typescript:
     name: TypeScript quality gate

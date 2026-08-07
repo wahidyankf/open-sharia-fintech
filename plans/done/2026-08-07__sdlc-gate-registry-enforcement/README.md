@@ -14,7 +14,7 @@ created: 2026-08-02
 
 # SDLC Gate Registry Enforcement
 
-**Status**: In Progress — Phases 1, 11, 2, 3, and 4 landed; Phase 5 cancelled; Phase 6 next
+**Status**: Complete (2026-08-07) — Phases 1, 1.1, 2, 3, 4, and 6 landed; Phase 5 cancelled.
 **Delivery Mode**: `worktree-to-pr`
 **Repos in scope**: `ose-public` and `ose-private` (enforced, ongoing) — **amended 2026-08-07**, see
 [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07). `ose-primer` received a
@@ -193,4 +193,4 @@ copies rather than reconstructs:
 - [Nx Targets](../../../repo-governance/development/infra/nx-targets.md) — references `main-ci.yml`
 - [CI/CD System Architecture](../../../docs/reference/system-architecture/ci-cd.md) — references `main-ci.yml`
 - [`2026-07-01__standardize-rhino-cli-sdlc-parity`](../../done/2026-07-01__standardize-rhino-cli-sdlc-parity/README.md) — the predecessor that ratified the rule
-- [`tri-repo-rhino-cli-byte-identity-gate`](../../ideas/q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md) — the idea brief this plan fulfills: R-11/R-12's hermetic parity gate plus the scheduled unauthenticated-fetch audit ([tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) answer its open questions on run location, cadence, and the `ose-private` auth model. Retired in Phase 6.
+- `tri-repo-rhino-cli-byte-identity-gate` — the idea brief this plan fulfills (since deleted; see git history): R-11/R-12's hermetic parity gate plus the scheduled unauthenticated-fetch audit ([tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) answer its open questions on run location, cadence, and the `ose-private` auth model. Retired in Phase 6.

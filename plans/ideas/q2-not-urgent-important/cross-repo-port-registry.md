@@ -56,8 +56,10 @@ collision forces the issue means building this while also debugging a bind failu
 - [plan-multi-repo-parity-planning workflow](https://github.com/wahidyankf/beaver-nest/blob/main/repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
   — the established mechanism for keeping a file in step across repos, and the obvious candidate for
   syncing a shared registry.
-- [tri-repo rhino-cli byte-identity drift gate](../q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md) — a
-  sibling idea facing the same unresolved question of where a cross-repo check can actually run.
+- [sdlc-gate-registry-enforcement](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md) —
+  the plan that fulfilled and retired the sibling `tri-repo-rhino-cli-byte-identity-gate` idea; its
+  `tech-docs.md` §2.8.4 answers the run-location question this brief also faces, for the
+  byte-identity check specifically.
 
 ## Proposed direction (sketch)
 

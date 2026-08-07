@@ -9,6 +9,18 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-07: sdlc-gate-registry-enforcement](./2026-08-07__sdlc-gate-registry-enforcement/README.md) —
+  Made the already-ratified Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically
+  enforced via a `gates:` registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and
+  retired `main-ci.yml` after folding its unique checks into the PR gate. Landed across `ose-public`
+  (Phase 1-2), `ose-primer` (Phase 3, PR #3), and `ose-private` (Phase 4, PR #4). **Scope Amendment
+  (2026-08-07)**: the enforced byte-identity boundary narrowed mid-execution from four repos to two
+  (`ose-public` + `ose-private`) — `beaver-nest` (Phase 5) is cancelled, not deferred, and
+  `ose-primer` (Phase 3) keeps its already-merged landing but exits continuous enforcement in favor
+  of periodic/manual sync. See the plan's own `learnings.md` Scope Amendment entry for the full
+  rationale. Delivery Mode: `worktree-to-pr` (`ose-public`, `ose-primer`, `ose-private` each as
+  independent tracks). Completed 2026-08-07. Terminal delivery chain (`ose-public` Phase 6, Knowledge
+  Capture/Archive): [PR #152](https://github.com/wahidyankf/ose-public/pull/152).
 - [2026-08-06: pr-review-cycle-scout-and-typesafety](./2026-08-06__pr-review-cycle-scout-and-typesafety/README.md) —
   Added a `pr-review-scout-maker` pipeline stage 0 (risk-tier classification + specialist selection +
   shared-context assembly, moved off `pr-review-synthesis-maker`), a ninth `pr-review-types-maker`

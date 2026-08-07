@@ -154,6 +154,20 @@ pub(crate) fn gate_semantic_findings(config: &RepoConfig) -> Vec<String> {
         if !gate_ids.insert(gate.id.as_str()) {
             findings.push(format!("gates[{i}].id: duplicate gate id {:?}", gate.id));
         }
+        if gate.id.is_empty()
+            || !gate
+                .id
+                .bytes()
+                .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+        {
+            findings.push(format!(
+                "gates[{i}].id: {:?} must be non-empty lowercase kebab-case (`[a-z0-9-]+`) — \
+                 this value reaches shell contexts (CI matrix dispatch, hook generation) \
+                 unescaped, so any other character is a defense-in-depth risk, not merely a \
+                 style violation",
+                gate.id
+            ));
+        }
         if gate.surfaces.is_empty() {
             findings.push(format!(
                 "gates[{i}] (gate id {:?}).surfaces: at least one surface is required",
@@ -469,6 +483,44 @@ mod tests {
                 .any(|finding| finding.contains("malformed-glob") && finding.contains("glob")),
             "a malformed gate glob must be reported before dispatch"
         );
+    }
+
+    #[test]
+    fn gate_id_charset_accepts_valid_kebab_case() {
+        let config = format!(
+            "{VALID}{}",
+            concat!(
+                "gates:\n",
+                "  - id: gate-1\n",
+                "    type: check\n",
+                "    command: true\n",
+                "    kind: external\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+            )
+        );
+        let (ok, output) = write_and_run(&config);
+
+        assert!(ok, "a valid kebab-case gate id must pass; got: {output}");
+    }
+
+    #[test]
+    fn gate_id_charset_rejects_invalid_characters() {
+        for bad_id in ["Gate_ID", "gate id", "gate/../x", ""] {
+            let config = format!(
+                "{VALID}gates:\n  - id: {bad_id:?}\n    type: check\n    command: true\n    kind: external\n    surfaces:\n      ci: {{ scope: all-file-type }}\n"
+            );
+            let (ok, output) = write_and_run(&config);
+
+            assert!(
+                !ok,
+                "gate id {bad_id:?} must be rejected; got ok output: {output}"
+            );
+            assert!(
+                output.contains("kebab-case"),
+                "finding for {bad_id:?} must cite the kebab-case rule; got: {output}"
+            );
+        }
     }
 
     #[test]

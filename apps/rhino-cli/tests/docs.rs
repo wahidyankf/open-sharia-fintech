@@ -1389,6 +1389,25 @@ fn given_fd_website_exempt(w: &mut DocsWorld) {
         "apps/ayokoding-www/content/post.md",
         "---\nupdated: 2026-01-01\n---\n",
     );
+    // The website-app exemption is registry-driven (the `md-frontmatter-dates`
+    // gate's `exclude` arg), not hardcoded — declare it locally so this
+    // fixture exercises the real exclusion mechanism rather than depending on
+    // this repo's own `repo-config.yml` content.
+    w.write(
+        "repo-config.yml",
+        concat!(
+            "gates:\n",
+            "  - id: md-frontmatter-dates\n",
+            "    type: check\n",
+            "    command: md frontmatter-dates validate\n",
+            "    kind: rhino-cli\n",
+            "    args:\n",
+            "      exclude:\n",
+            "        - apps/\n",
+            "    surfaces:\n",
+            "      pre-push: { scope: other }\n",
+        ),
+    );
     w.frontmatter_target = Some("apps/ayokoding-www".to_string());
 }
 

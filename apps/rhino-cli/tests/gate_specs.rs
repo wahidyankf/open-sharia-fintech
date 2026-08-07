@@ -484,7 +484,7 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
             "  quality-gate:\n    needs: [enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
         ),
     );
@@ -507,7 +507,7 @@ fn given_matrix_aggregate_missing_enumerate(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
             "  quality-gate:\n    needs: gate\n",
         ),
     );
@@ -589,7 +589,7 @@ fn given_hand_wired_job(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
             "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
@@ -908,7 +908,7 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
             "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
@@ -1359,6 +1359,126 @@ fn then_failed_restage_does_not_stage(w: &mut GateWorld) {
     assert!(output.stdout.is_empty());
 }
 
+#[given("two successful restaging mutations each change a distinct output file")]
+fn given_two_successful_restage_mutations(w: &mut GateWorld) {
+    w.init_git();
+    w.write("mutate-first.sh", "#!/bin/sh\nprintf first > first.txt\n");
+    w.write(
+        "mutate-second.sh",
+        "#!/bin/sh\nprintf second > second.txt\n",
+    );
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    restages: true\n{}    restages: true\n",
+            gate(
+                "generate-first",
+                "mutation",
+                "sh mutate-first.sh",
+                "external",
+                "      pre-push: { scope: other }\n",
+            ),
+            gate(
+                "generate-second",
+                "mutation",
+                "sh mutate-second.sh",
+                "external",
+                "      pre-push: { scope: other }\n",
+            ),
+        )),
+    );
+}
+
+#[when("they run back to back")]
+fn when_two_restages_run_back_to_back(w: &mut GateWorld) {
+    w.write("unrelated.txt", "unrelated\n");
+    w.run_gate("pre-push", None);
+}
+
+#[then("each mutation's own output is staged and neither is attributed to the other")]
+fn then_each_restage_output_is_independently_staged(w: &mut GateWorld) {
+    assert!(w.is_success(), "restaging failed: {}", w.output);
+    let output = w
+        .fixture_git_command()
+        .args(["diff", "--cached", "--name-only"])
+        .output()
+        .expect("list staged outputs");
+    let mut staged = String::from_utf8(output.stdout)
+        .expect("staged paths are UTF-8")
+        .lines()
+        .map(str::to_owned)
+        .collect::<Vec<_>>();
+    staged.sort();
+    assert_eq!(
+        staged,
+        vec!["first.txt".to_owned(), "second.txt".to_owned()]
+    );
+    assert!(
+        w.root().join("unrelated.txt").exists(),
+        "unrelated untracked work must be left alone by both restaging gates"
+    );
+}
+
+#[given(
+    "two successful restaging mutations, the second of which also re-touches the first mutation's output file"
+)]
+fn given_second_restage_retouches_first_output(w: &mut GateWorld) {
+    w.init_git();
+    w.write("mutate-first.sh", "#!/bin/sh\nprintf first > first.txt\n");
+    w.write(
+        "mutate-second.sh",
+        "#!/bin/sh\nprintf overwritten > first.txt\nprintf second > second.txt\n",
+    );
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    restages: true\n{}    restages: true\n",
+            gate(
+                "generate-first",
+                "mutation",
+                "sh mutate-first.sh",
+                "external",
+                "      pre-push: { scope: other }\n",
+            ),
+            gate(
+                "generate-second",
+                "mutation",
+                "sh mutate-second.sh",
+                "external",
+                "      pre-push: { scope: other }\n",
+            ),
+        )),
+    );
+}
+
+#[then(
+    "the second mutation's re-touch of that shared file is staged, not silently dropped by the threaded snapshot"
+)]
+fn then_second_restage_retouch_is_staged(w: &mut GateWorld) {
+    assert!(w.is_success(), "restaging failed: {}", w.output);
+    let staged_first = w
+        .fixture_git_command()
+        .args(["show", ":first.txt"])
+        .output()
+        .expect("read staged first.txt");
+    let staged_second = w
+        .fixture_git_command()
+        .args(["show", ":second.txt"])
+        .output()
+        .expect("read staged second.txt");
+    let worktree_diff = w
+        .fixture_git_command()
+        .args(["diff", "--name-only"])
+        .output()
+        .expect("list unstaged paths");
+    assert_eq!(staged_first.stdout, b"overwritten");
+    assert_eq!(staged_second.stdout, b"second");
+    assert!(
+        worktree_diff.stdout.is_empty(),
+        "gate 2's re-touch of first.txt must be fully staged, leaving nothing unstaged"
+    );
+}
+
 #[given("pre-commit contains eligible file gates and direct mutations")]
 fn given_pre_commit_batch(w: &mut GateWorld) {
     given_batch_and_direct_mutation(w);
@@ -1369,6 +1489,99 @@ fn then_one_batch_precedes_direct_mutation(w: &mut GateWorld) {
     assert!(w.is_success(), "pre-commit batch failed: {}", w.output);
     let calls = std::fs::read_to_string(w.root().join("calls.txt")).expect("read batch calls");
     assert_eq!(calls, "batch\ndirect\n");
+}
+
+#[given(
+    "a restaging mutation, then a batch-eligible entry that leaves its file modified, then another restaging mutation"
+)]
+fn given_restaging_batch_restaging_sequence(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "bin/generate-first",
+        "#!/bin/sh\nprintf 'first\\n' > first.txt\n",
+    );
+    make_executable(w.root().join("bin/generate-first"));
+    w.write(
+        "bin/generate-second",
+        "#!/bin/sh\nprintf 'second\\n' > second.txt\n",
+    );
+    make_executable(w.root().join("bin/generate-second"));
+    // Stands in for the real `npx -- lint-staged` batch: rewrites the staged
+    // markdown file's working-tree content without staging it.
+    w.write(
+        "bin/npx",
+        "#!/bin/sh\nprintf '# Changed\\nformatted\\n' > changed.md\n",
+    );
+    make_executable(w.root().join("bin/npx"));
+    w.prepend_bin_to_path("bin");
+    w.write("changed.md", "# Changed\n");
+    w.write(
+        "repo-config.yml",
+        &config(&format!(
+            "{}    restages: true\n{}{}    restages: true\n",
+            gate(
+                "generate-first",
+                "mutation",
+                "generate-first",
+                "external",
+                "      pre-commit: { scope: other }\n",
+            ),
+            "  - id: format-markdown\n    type: mutation\n    command: dirty-markdown\n    kind: external\n    category: formatter\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+            gate(
+                "generate-second",
+                "mutation",
+                "generate-second",
+                "external",
+                "      pre-commit: { scope: other }\n",
+            ),
+        )),
+    );
+    w.stage(&["changed.md"]);
+}
+
+#[when("they run in that order")]
+fn when_restaging_batch_restaging_runs(w: &mut GateWorld) {
+    w.run_gate("pre-commit", None);
+}
+
+#[then(
+    "the second restaging gate stages only its own output and leaves the batch's leftover mutation unstaged"
+)]
+fn then_second_restage_leaves_batch_mutation_unstaged(w: &mut GateWorld) {
+    assert!(w.is_success(), "gate run failed: {}", w.output);
+    let staged_first = w
+        .fixture_git_command()
+        .args(["show", ":first.txt"])
+        .output()
+        .expect("read staged first.txt");
+    let staged_second = w
+        .fixture_git_command()
+        .args(["show", ":second.txt"])
+        .output()
+        .expect("read staged second.txt");
+    let staged_changed_md = w
+        .fixture_git_command()
+        .args(["show", ":changed.md"])
+        .output()
+        .expect("read staged changed.md");
+    let worktree_diff = String::from_utf8_lossy(
+        &w.fixture_git_command()
+            .args(["diff", "--name-only"])
+            .output()
+            .expect("list unstaged paths")
+            .stdout,
+    )
+    .lines()
+    .map(str::to_owned)
+    .collect::<Vec<_>>();
+    assert_eq!(staged_first.stdout, b"first\n");
+    assert_eq!(staged_second.stdout, b"second\n");
+    assert_eq!(
+        staged_changed_md.stdout, b"# Changed\n",
+        "the batch's leftover mutation must not be pulled into the index by the following \
+         restaging gate"
+    );
+    assert_eq!(worktree_diff, vec!["changed.md".to_string()]);
 }
 
 #[given("the surfaces as shipped by this plan")]
@@ -1739,6 +1952,23 @@ fn then_unknown_scope_is_explained(w: &mut GateWorld) {
     assert!(w.output.contains("invalid-scope"));
     assert!(w.output.contains("affected-file-type"));
     assert!(w.output.contains("all-file-type"));
+}
+
+#[given(regex = r#"^repo-config\.yml declares a gate with id "([^"]+)"$"#)]
+fn given_invalid_id_charset(w: &mut GateWorld, id: String) {
+    let id = id.into_boxed_str();
+    w.write(
+        "repo-config.yml",
+        &strict_config(&format!(
+            "  - id: {id}\n    type: check\n    command: true\n    kind: external\n    surfaces:\n      ci: {{ scope: all-file-type }}\n"
+        )),
+    );
+}
+
+#[then("the message names the offending gate id and states it must be lowercase kebab-case")]
+fn then_invalid_id_charset_is_explained(w: &mut GateWorld) {
+    assert!(w.output.contains("Invalid_ID"));
+    assert!(w.output.contains("kebab-case"));
 }
 
 #[given("repo-config.yml declares two gates both with id \"md-links\"")]

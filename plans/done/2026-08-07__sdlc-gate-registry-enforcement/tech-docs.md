@@ -1010,7 +1010,7 @@ must never appear in a manifest or a diff report.
 Byte-identity is a cross-repo invariant and every gate runs inside one repo, so no single mechanism
 covers it. The plan uses two, split on exactly the hermeticity line
 [§2.2.3](#223-what-is-deliberately-outside-the-registry) already draws. This design fulfills
-[`plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md`](../../ideas/q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md)
+`plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md` (since deleted; see git history)
 (surfaced 2026-07-17), answering its open questions on run location (hermetic gate: locally, in
 `pre-push` and `ci`; audit: scheduled workflow), cadence (audit runs on a schedule, not per-commit),
 and the `ose-private` auth model (the audit is unauthenticated-fetch, per B below). The idea brief is

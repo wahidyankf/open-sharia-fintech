@@ -1344,11 +1344,29 @@ fn then_instruction_size_target_runs(w: &mut AgentsWorld) {
         w.output.is_some(),
         "expected `harness instruction-size validate` to have executed"
     );
-    // Golden guard against the generated hook drifting away from the gate
-    // registry command this scenario mirrors.
-    let hook =
-        std::fs::read_to_string(real_repo_root().join(".husky/pre-push")).expect("read hook");
-    assert!(hook.contains("gate run --surface=pre-push"), "hook: {hook}");
+    // Golden guard against the registry drifting from the trigger this
+    // scenario mirrors. `.husky/pre-push` is a generated one-line registry
+    // shim (`gate run --surface=pre-push`) — the real command and trigger
+    // list live in `repo-config.yml`'s `instruction-size` gate entry, not in
+    // hook-file prose.
+    let registry =
+        std::fs::read_to_string(real_repo_root().join("repo-config.yml")).expect("read registry");
+    let instruction_size_entry = registry
+        .split("\n  - id: ")
+        .find(|entry| entry.starts_with("instruction-size\n"))
+        .expect("repo-config.yml must declare the instruction-size gate");
+    assert!(
+        instruction_size_entry.contains("command: harness instruction-size validate"),
+        "instruction-size gate entry: {instruction_size_entry}"
+    );
+    assert!(
+        instruction_size_entry.contains("pre-push:"),
+        "instruction-size gate entry: {instruction_size_entry}"
+    );
+    assert!(
+        instruction_size_entry.contains("- AGENTS.md"),
+        "instruction-size gate entry: {instruction_size_entry}"
+    );
 }
 
 #[then("the push is aborted with a non-zero exit")]

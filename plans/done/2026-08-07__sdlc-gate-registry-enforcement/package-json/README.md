@@ -80,7 +80,7 @@ root:
 ```sh
 rhino-cli gate emit --surface=pre-commit
 diff <(jq '."lint-staged"' package.json) \
-  plans/in-progress/sdlc-gate-registry-enforcement/package-json/lint-staged-ose-public.json
+  plans/done/2026-08-07__sdlc-gate-registry-enforcement/package-json/lint-staged-ose-public.json
 ```
 
 That is a diff, not a judgement — which is the point of authoring the target rather than describing

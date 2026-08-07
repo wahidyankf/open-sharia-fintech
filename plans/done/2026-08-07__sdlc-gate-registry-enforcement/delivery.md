@@ -5825,57 +5825,119 @@ validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
 ### 6.2 Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every [learnings.md](./learnings.md) entry — keep only entries
+- [x] [AI] Apply the litmus test to every [learnings.md](./learnings.md) entry — keep only entries
       where a durable surface would catch this automatically next time; discard the rest with a
       one-line reason.
-- [ ] [AI] Apply the secret/sensitivity gate to every surviving entry — sanitize to `{placeholder}`
+  - Date: 2026-08-07 — Status: complete. All 12 entries survive the litmus test (11 generalizable
+    process/technical lessons + the Scope Amendment entry, which is explicitly plan-specific and
+    routed to no durable surface per its own stated reasoning). Nothing discarded.
+- [x] [AI] Apply the secret/sensitivity gate to every surviving entry — sanitize to `{placeholder}`
       tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the repo-relevance gate to every surviving entry — content sourced from
+  - Date: 2026-08-07 — Status: complete. No entry contained a secret, token, or credential; no
+    sanitization needed.
+- [x] [AI] Apply the repo-relevance gate to every surviving entry — content sourced from
       `ose-private` stays in `ose-private` only; never cross-route it into `ose-public`, `ose-primer`,
       or `beaver-nest`. This gate is load-bearing here, since `ose-private` is one of the two repos
       still enforced after the 2026-08-07 Scope Amendment.
-- [ ] [AI] Route each surviving entry to exactly one durable home (`docs/`, `repo-governance/`,
+  - Date: 2026-08-07 — Status: complete. 4 entries are `ose-private` (PR #22)-sourced (the two
+    webhook-throttling/still-down outage instances, the generated-file merge-conflict entry, the
+    self-hosted-runner-permission entry). Each was generalized before landing in `ose-public` —
+    repo name, PR number, and infra specifics (runner label, `/usr/share/dotnet` path,
+    branch-protection-tier detail) stripped, keeping only the repo-agnostic process lesson. The
+    PR #20 outage entry is `ose-primer`-sourced, not `ose-private`, so the gate does not restrict it.
+- [x] [AI] Route each surviving entry to exactly one durable home (`docs/`, `repo-governance/`,
       `.claude/agents/`, `.claude/skills/`, or another durable home), landing small non-code edits
       inline or filing a `plans/backlog/{slug}/` follow-up plan for larger non-code work.
-- [ ] [AI] Code-routing rule: if a learning's home is `apps/`, `libs/`, or tests, file it as a
+  - Date: 2026-08-07 — Status: complete. Routed inline: `plan-multi-repo-parity-planning.md` (survey
+    freshness), `ci-conventions.md` (Expression Safety — GHA falsy-`&&`/`||` gotcha +
+    env-indirection injection pattern), `ci-blocker-resolution.md` (Operational CI-Availability
+    Exceptions — 5 entries merged into one exception class), `pr-merge-protocol.md` (generated-file
+    merge-conflict resolution), `sdlc-gate-standard.md` (`doctor/tools.rs` known-exception note),
+    and a new practice `mechanize-cross-file-invariants.md` (registered in
+    `repo-governance/development/practice/README.md`). The Scope Amendment entry stays
+    unrouted per its own stated reasoning (plan-specific execution history, fully captured in this
+    file already).
+- [x] [AI] Code-routing rule: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — never land it inline in this PR's commits. The sole carve-out
       is a bug/lint/test failure blocking this plan's own scope, fixed inline as ordinary Root Cause
       Orientation work.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `{path}` /
+  - Date: 2026-08-07 — Status: complete. One entry's fix is `apps/rhino-cli` code (the
+    `doctor/tools.rs` byte-identity/`BOUNDARY_PATHS` tension) — filed as
+    `plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md` rather than landed
+    inline. Filed as an idea brief (not a full `plans/backlog/` plan) since `plans/ideas/README.md`
+    states backlog entries are promoted from a two-pager, and this finding needs a design decision
+    between two candidate directions before a five-document plan is warranted.
+- [x] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `{path}` /
       discarded with reason) directly in `learnings.md`, or record the explicit
       `No generalizable learnings — {reason}` escape — acceptance: no untriaged entry remains.
+  - Date: 2026-08-07 — Status: complete. Every entry's `**Home**:` line in `learnings.md` now states
+    its terminal routing (verified: zero remaining `to be triaged in Phase 6` placeholders via
+    `grep -c` — exit 1, zero matches).
 
 ### 6.3 Archive the Plan (`ose-public`)
 
-- [ ] [AI] Archive the plan in `ose-public` — command:
+- [x] [AI] Archive the plan in `ose-public` — command:
       `ARCHIVE_DATE=$(date +%F) && git mv plans/in-progress/sdlc-gate-registry-enforcement/ "plans/done/${ARCHIVE_DATE}__sdlc-gate-registry-enforcement/"`
       — acceptance: the folder exists under `done/` with today's validated date prefix,
       and `plans/in-progress/README.md` no longer lists it.
-- [ ] [AI] Update `plans/done/README.md` and `plans/in-progress/README.md` in `ose-public` —
+  - Date: 2026-08-07 — Status: complete. `git mv` ran with `ARCHIVE_DATE=2026-08-07`; folder now
+    at `plans/done/2026-08-07__sdlc-gate-registry-enforcement/`; verified `grep -c
+"sdlc-gate-registry-enforcement" plans/in-progress/README.md` returns `0`.
+- [x] [AI] Update `plans/done/README.md` and `plans/in-progress/README.md` in `ose-public` —
       acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done`
       exits 0.
-- [ ] [AI] **P6-ARCHIVE** — Retire `plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md`: this plan's R-11/R-12
+  - Date: 2026-08-07 — Status: complete. Added the completed-projects entry to `plans/done/README.md`
+    (with the Scope Amendment noted inline) and removed the stale in-progress entry from
+    `plans/in-progress/README.md`. `md links validate --exclude plans/done` initially reported 9
+    broken links — all external references pointing at the old
+    `plans/in-progress/sdlc-gate-registry-enforcement/` path from `docs/reference/security-waivers.md`
+    and 7 other plan docs (`plans/backlog/*`, 2 `plans/ideas/*` entries) — repointed all 8 to
+    `plans/done/2026-08-07__sdlc-gate-registry-enforcement/`; re-ran, exits 0 ("All links valid! No
+    broken links found").
+- [x] [AI] **P6-ARCHIVE** — Retire `plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md`: this plan's R-11/R-12
       fulfill it — delete the file — acceptance: `test -f plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md`
       exits non-zero, and
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done`
       still exits 0 (no remaining reference to the deleted file).
+  - Date: 2026-08-07 — Status: complete. `git rm`'d the file (was at
+    `plans/ideas/q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md`); removed its entry
+    from `plans/ideas/README.md`'s Q1 list; repointed its two remaining inbound links
+    (`cross-repo-port-registry.md`, `ose-private-opencode-ci-monitor-orphan.md`) to the archived
+    plan that fulfilled it. `test -f ...` exits non-zero (confirmed); `md links validate --exclude
+plans/done` exits 0.
 
 ### Phase 6 Execution-Ready Gate
 
-- [ ] [AI] **P6-READY** (`blockedBy: P6-ARCHIVE`; `blocks: P6-LAND`) — verify §6.1–§6.3,
+- [x] [AI] **P6-READY** (`blockedBy: P6-ARCHIVE`; `blocks: P6-LAND`) — verify §6.1–§6.3,
       including the already-staged archival, then run
       `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` — acceptance: every
       specified verification exits as expected, the dated plan folder is under `plans/done/`, and
       the Nx command exits 0 before any Phase 6 Land action begins.
+  - Date: 2026-08-07 — Status: complete. §6.1 verified (P6-AUDIT-ASSERT is the sole open item,
+    explicitly deferred per its own note until after this PR lands — not a §6.1 blocker for
+    P6-READY, since the acceptance clause for that step names landing this PR as its own resolution
+    path). §6.2/§6.3 both fully complete per the notes above. `cargo run ... gate validate` exits 0.
+    `npm exec nx -- affected -t typecheck,lint,test:quick,specs:coverage` exited 0 (25 projects + 7
+    dependency tasks, `rhino-cli` included in the affected set; 81/82 tasks served from cache, 1 ran
+    fresh). Dated plan folder confirmed at `plans/done/2026-08-07__sdlc-gate-registry-enforcement/`.
 
 ### 6.4 Land
 
 Every non-merge checkbox in this subsection is `blockedBy: P6-READY`; the untagged protected merge
 checkbox remains the separately authorized integration action after its preceding Land tasks.
 
-- [ ] [AI] Commit Phase 6 — command: `git add -- plans repo-governance && git commit -m 'docs(plans): archive gate registry delivery knowledge'` — acceptance: commitlint and sync validation exit 0.
-- [ ] [AI] Push Phase 6 — command: `git push -u origin sdlc-gate-registry-enforcement-knowledge` — acceptance: exits 0 and matches the declared branch.
-- [ ] [AI] Open draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-knowledge --fill` — acceptance: one PR exists.
+- [x] [AI] Commit Phase 6 — command: `git add -- plans repo-governance && git commit -m 'docs(plans): archive gate registry delivery knowledge'` — acceptance: commitlint and sync validation exit 0.
+  - Date: 2026-08-07 — Status: complete. Actual scope was wider than the literal command (also
+    `docs/`, `apps/rhino-cli/` propagated fixes + regenerated manifest, `.github/workflows/`,
+    `specs/`) — staged explicitly by path (85 files total), not via the literal two-directory `git
+add`. Commit `48a8e97d6`. Pre-commit hooks (lint-staged, harness-bindings-generate/sync,
+    commitlint, license/vendor audits) all passed; `harness-bindings validate`: 208/208 checks
+    passed.
+- [x] [AI] Push Phase 6 — command: `git push -u origin sdlc-gate-registry-enforcement-knowledge` — acceptance: exits 0 and matches the declared branch.
+  - Date: 2026-08-07 — Status: complete. Pushed; pre-push gate suite passed; branch tracking set.
+- [x] [AI] Open draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement-knowledge --fill` — acceptance: one PR exists.
+  - Date: 2026-08-07 — Status: complete. [PR #152](https://github.com/wahidyankf/ose-public/pull/152)
+    opened as draft.
 - [ ] [AI] Cycle 1 makers — invoke eight makers — acceptance: eight reports.
 - [ ] [AI] Cycle 1 synthesis — invoke synthesis maker — acceptance: one posted review.
 - [ ] [AI] Cycle 1 fixer — invoke fixer — acceptance: fixes committed/pushed.

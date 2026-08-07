@@ -66,10 +66,25 @@ Feature: Gate execution
     When it runs
     Then it returns non-zero without staging that output
 
+  Scenario: Two consecutive re-staging mutations each attribute only their own output
+    Given two successful restaging mutations each change a distinct output file
+    When they run back to back
+    Then each mutation's own output is staged and neither is attributed to the other
+
+  Scenario: A second re-staging mutation that re-touches the first mutation's output is still staged
+    Given two successful restaging mutations, the second of which also re-touches the first mutation's output file
+    When they run back to back
+    Then the second mutation's re-touch of that shared file is staged, not silently dropped by the threaded snapshot
+
   Scenario: Pre-commit has one declaration-positioned batch
     Given pre-commit contains eligible file gates and direct mutations
     When gate run executes
     Then one lint-staged batch runs at its declaration position
+
+  Scenario: A restaging gate after the lint-staged batch never re-stages the batch's own leftover mutation
+    Given a restaging mutation, then a batch-eligible entry that leaves its file modified, then another restaging mutation
+    When they run in that order
+    Then the second restaging gate stages only its own output and leaves the batch's leftover mutation unstaged
 
   Scenario: gofmt is wrapped because it cannot fail on its own
     Given a tracked ".go" file is not formatted

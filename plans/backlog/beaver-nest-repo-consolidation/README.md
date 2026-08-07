@@ -138,7 +138,7 @@ complete.
 
 ### `blockedBy` — `sdlc-gate-registry-enforcement`
 
-[`plans/in-progress/sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md)
+[`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
 originally declared all four repos in scope, so it needed `beaver-nest` to still exist as a live,
 writable repository — archiving first would have stranded its fourth track. That plan **amended its
 scope on 2026-08-07** to `ose-public` and `ose-private` only, with `beaver-nest`'s Phase 5

@@ -99,8 +99,13 @@ pub fn run(
         })
         .collect();
 
-    let config =
-        repo_config::load(&repo_root).context("load repo-config.yml for frontmatter audit")?;
+    // The registry only supplies an *optional* extra exclude list for this
+    // audit (via the `md-frontmatter-dates` gate's `exclude` arg) — a repo
+    // with no `repo-config.yml` at all (or one that hasn't declared that
+    // gate) still has a perfectly runnable frontmatter audit with zero
+    // registry-driven exclusions, so a missing/unparseable registry must not
+    // hard-fail the whole command.
+    let config = repo_config::load_or_default(&repo_root);
     let mut excluded_prefixes = config
         .gates
         .iter()

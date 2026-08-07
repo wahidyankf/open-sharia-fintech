@@ -599,28 +599,51 @@ mod tests {
         fs::write(path, contents).expect("write fixture file");
     }
 
-    /// Builds an isolated Git command for a fixture repository so ambient Git
-    /// discovery, configuration, and hooks cannot affect a parity test.
-    fn iso_git(repo: &Path) -> Command {
+    /// Builds a `git` [`Command`] isolated per the
+    /// [Git Fixture Isolation Convention](../../../../repo-governance/development/quality/git-fixture-isolation.md):
+    /// an explicit `GIT_DIR`, a `GIT_CEILING_DIRECTORIES` boundary, a
+    /// disabled global/system config, and — once the fixture repository
+    /// exists — a pre-write escape guard confirming `git` resolves inside
+    /// the fixture rather than a real ancestor repository. Mirrors
+    /// `fixture_git_command` in `commands/gate/run.rs`.
+    fn fixture_git_command(repo_root: &Path) -> Command {
+        if repo_root.join(".git").exists() {
+            let output = Command::new("git")
+                .args(["rev-parse", "--show-toplevel"])
+                .current_dir(repo_root)
+                .env("GIT_DIR", repo_root.join(".git"))
+                .env("GIT_CEILING_DIRECTORIES", repo_root)
+                .env("GIT_CONFIG_GLOBAL", "/dev/null")
+                .env("GIT_CONFIG_SYSTEM", "/dev/null")
+                .output()
+                .expect("fixture escape guard must start git");
+            assert!(
+                output.status.success(),
+                "fixture escape guard must find its repository"
+            );
+            assert_eq!(
+                std::fs::canonicalize(String::from_utf8_lossy(&output.stdout).trim())
+                    .expect("fixture escape guard must return a canonical repository root"),
+                std::fs::canonicalize(repo_root)
+                    .expect("fixture repository root must be canonicalizable"),
+                "fixture escape guard must refuse a Git command outside its temporary repository"
+            );
+        }
         let mut command = Command::new("git");
         command
-            .current_dir(repo)
-            .env("GIT_DIR", repo.join(".git"))
-            .env("GIT_CEILING_DIRECTORIES", repo)
+            .current_dir(repo_root)
+            .env("GIT_DIR", repo_root.join(".git"))
+            .env("GIT_CEILING_DIRECTORIES", repo_root)
             .env("GIT_CONFIG_GLOBAL", "/dev/null")
-            .env("GIT_CONFIG_SYSTEM", "/dev/null")
-            .env("GIT_CONFIG_NOSYSTEM", "1")
-            .env("GIT_CONFIG_COUNT", "0")
-            .env_remove("GIT_WORK_TREE")
-            .env_remove("GIT_INDEX_FILE")
-            .env_remove("GIT_OBJECT_DIRECTORY")
-            .env_remove("GIT_ALTERNATE_OBJECT_DIRECTORIES")
-            .env("GIT_OPTIONAL_LOCKS", "0");
+            .env("GIT_CONFIG_SYSTEM", "/dev/null");
         command
     }
 
     fn run_git(repo: &Path, args: &[&str]) {
-        let status = iso_git(repo).args(args).status().expect("run git");
+        let status = fixture_git_command(repo)
+            .args(args)
+            .status()
+            .expect("run git");
         assert!(status.success(), "git {args:?} failed");
     }
 

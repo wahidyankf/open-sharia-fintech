@@ -40,8 +40,10 @@ artifacts or cross-repository assumptions need an explicit live-state reconcilia
 otherwise a mechanically correct copy step can revert newer work or fail before establishing its
 baseline.
 
-**Home**: to be triaged in Phase 6 — candidate is the plans convention's readiness or Phase 0
-guidance.
+**Home**: routed inline — added a "Survey freshness" paragraph to
+[`plan-multi-repo-parity-planning.md` § Step 1](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning.md#step-1--parity-set-survey-per-repo-parallelizable),
+directing execution to re-run the survey live immediately before executing a phase with copy-ready
+artifacts, rather than trusting a stale prior inventory.
 
 ### Pre-seeded from the 2026-08-02 audit
 
@@ -54,8 +56,11 @@ this — it is why harness bindings are generated and validated rather than hand
 that the generate-and-validate pattern should be the default for any invariant spanning more than one
 file, not a special case reserved for bindings.
 
-**Home**: to be triaged in Phase 6 — candidate is
-`repo-governance/development/practice/` as a general "mechanize the invariant" practice.
+**Home**: routed inline — new practice
+[`mechanize-cross-file-invariants.md`](../../../repo-governance/development/practice/mechanize-cross-file-invariants.md),
+registered in `repo-governance/development/practice/README.md`, generalizing the existing
+generate-and-validate prior art (harness bindings, `repo-config.yml` schema parity, git hooks,
+`lint-staged` emission) into one named practice.
 
 ### GitHub Actions `&&`/`||` conditional expressions never resolve to a falsy right-hand value
 
@@ -76,8 +81,10 @@ review-driven change mid-cycle, not the original registry work — a reminder th
 scoped, well-reasoned CI fix needs its resulting expression manually truth-tabled when a falsy
 operand is involved, not just spot-checked against the one case that motivated it.
 
-**Home**: to be triaged in Phase 6 — candidate is `repo-governance/development/workflow/ci-monitoring.md`
-or a new short GHA-expression-gotchas note referenced from the CI quality gate workflow doc.
+**Home**: routed inline — added an "Expression Safety" subsection to
+[`ci-conventions.md` § GitHub Actions Conventions](../../../repo-governance/development/infra/ci-conventions.md#expression-safety),
+which also documents the `env:`-indirection expression-injection pattern `gate validate`'s
+`validate_ci_matrix_contract` enforces (previously enforced in code with no governance-doc backing).
 
 ### PR #20 (ose-primer) merged during a live GitHub Actions platform outage — deliberate exception
 
@@ -106,13 +113,12 @@ skipped, and (4) the branch had no protection rule actually enforcing the check 
 verification." This should NOT be read as precedent for skipping CI when a repo's branch protection
 does enforce required checks, or when the blocker's root cause is unconfirmed/internal.
 
-**Home**: to be triaged in Phase 6 — candidate is `ci-blocker-resolution.md` as a narrowly-scoped
-"external-outage + branch-protection-absent + local-hook-equivalence" exception carve-out, stated
-narrowly enough not to weaken the general never-bypass rule.
+**Home**: routed inline — generalized (repo/PR-number stripped) into
+[`ci-blocker-resolution.md` § Operational CI-Availability Exceptions](../../../repo-governance/development/quality/ci-blocker-resolution.md#operational-ci-availability-exceptions),
+merged with the four related PR #22 instances below into one exception class with a shared
+verification checklist.
 
-### `BOUNDARY_PATHS` declares the whole `apps/rhino-cli/src` byte-identical, but per-repo tool
-
-### extensions already violate it
+### `BOUNDARY_PATHS` declares the whole `apps/rhino-cli/src` byte-identical, but per-repo tool extensions already violate it
 
 **Observed**: While propagating the canonical dotnet-channel fix (task #224) into `ose-private`'s
 `doctor/tools.rs`, a full `diff` against canonical showed far more divergence than the propagated
@@ -134,13 +140,19 @@ requiring a literal `diff -r` match. Left unresolved, every Phase Gate's "byte-i
 check (tasks #59, #102, #146) will report drift on this file indefinitely, masking genuinely
 unpropagated fixes among expected structural differences.
 
-**Home**: to be triaged in Phase 6 — candidate is `docs/reference/sdlc-gate-standard.md` or the
-parity/byte-identity section of `repo-governance/`, to either narrow `BOUNDARY_PATHS` or define an
-accepted-superset comparison mode for the byte-identity gate.
+**Home**: routed — doc-only portion landed inline as a "Known exception (tracked, not yet
+reconciled)" note in
+[`sdlc-gate-standard.md` § rhino-cli Byte-Identity Boundary](../../../docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary)
+(no new disclosure — reuses the "infra-only IaC" framing that document already states publicly for
+`ose-private`). The code-level fix (narrow `BOUNDARY_PATHS` or an accepted-superset comparison mode)
+is `apps/rhino-cli` work, so per the code-routing rule it is filed as a follow-up idea brief instead
+of landed inline:
+[`rhino-cli-tools-superset-carveout`](../../../plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md)
+(filed as an idea brief rather than a full backlog plan, since it needs a design decision between
+two directions before a five-document plan is warranted — the correct promotion path per
+`plans/ideas/README.md`).
 
-### PR #22 (ose-private) Cycle 1 CI gate skipped a second time — same outage, worse symptom (webhook
-
-### throttling, not job cancellation)
+### PR #22 (ose-private) Cycle 1 CI gate skipped a second time — same outage, worse symptom (webhook throttling, not job cancellation)
 
 **Observed**: After pushing the dotnet-channel propagation fix (`6ff8b1775`, then a retry empty commit
 `099b2a100`) to `ose-private` PR #22, no `pull_request` workflow run was created at all — not queued,
@@ -163,9 +175,12 @@ admin-override merge is needed later either. The review-cycle discipline itself 
 synthesis → fixer, 3 full cycles) still runs in full per the standing goal — only the CI-gate
 confirmation step is treated as non-blocking during the outage.
 
-**Home**: same as the PR #20 entry above — the `ci-blocker-resolution.md` exception carve-out should
-name both failure shapes (job cancellation _and_ webhook-trigger absence) and both repos as
-instances of one class, not two.
+**Home**: routed inline — repo-relevance gate applies (this instance is `ose-private`-sourced), so
+only the generalized, repo-agnostic failure signature (webhook-trigger absence, distinct from job
+cancellation) was folded into
+[`ci-blocker-resolution.md` § Operational CI-Availability Exceptions](../../../repo-governance/development/quality/ci-blocker-resolution.md#operational-ci-availability-exceptions)
+— no `ose-private`-specific detail (repo name, PR number, runner-pool identity, branch-protection
+tier) was carried into this `ose-public` document.
 
 ### PR #22 (ose-private) Cycle 2 CI gate skipped a third time — same outage, still active hours later
 
@@ -184,8 +199,9 @@ plan (Cycle 3 here, and all of Phase 5/6's cycles) should expect the same bypass
 needed again; each instance still gets its own live githubstatus.com check before bypassing, per the
 established protocol, rather than assuming the outage is still active from a stale prior check.
 
-**Home**: same as the two entries above — one exception class, now with three corroborating
-instances across two repos and three consecutive PR-review cycles.
+**Home**: routed inline — same repo-relevance handling as the entry above; folded into the same
+generalized `ci-blocker-resolution.md` section without carrying any `ose-private`-specific detail
+into `ose-public`.
 
 ### GitHub Actions outage resolved between cycles — always re-verify live, never assume still-down
 
@@ -199,7 +215,9 @@ never assume from a stale prior check) is load-bearing, not belt-and-suspenders 
 lasted hours can still resolve mid-plan, and skipping the fresh check would have caused an
 unnecessary bypass on a cycle that didn't need one.
 
-**Home**: same as the three entries above.
+**Home**: routed inline — the "always re-verify live" rule is the load-bearing point of
+`ci-blocker-resolution.md`'s new § Operational CI-Availability Exceptions (rule 2), carried in
+generalized form alongside the entries above.
 
 ### A same-cycle PR rebase surfaced a real, narrow merge conflict, plus a generator/hand-edit trap
 
@@ -226,9 +244,11 @@ regenerated — never hand-resolved directly in the generated artifact, even whe
 looks correct, because `gate validate` (or the equivalent drift check) is specifically designed to
 catch exactly that kind of silent divergence.
 
-**Home**: to be triaged in Phase 6 — candidate is `repo-governance/development/workflow/` for a short
-"resolve generated-file conflicts at the source" note, referenced from wherever marker-owned/generated
-file conventions are already documented.
+**Home**: routed inline — repo-relevance gate applies (this instance is `ose-private`-sourced, PR
+#22), so only the generalized mechanism (not the repo name, PR number, or specific `package.json`
+diff) was folded into
+[`pr-merge-protocol.md` § Resolving Merge Conflicts in Generated Files](../../../repo-governance/development/workflow/pr-merge-protocol.md#resolving-merge-conflicts-in-generated-files),
+cross-linked from the new `mechanize-cross-file-invariants.md` practice.
 
 ### PR #22's final CI gate hit a distinct infra failure class: self-hosted-runner filesystem permission, not a GitHub outage
 
@@ -258,10 +278,13 @@ just a different mechanism. A human with access to the runner host still needs t
 user-writable path in the composite action) to prevent recurrence — flagged as a new `[HUMAN]`
 follow-up, not fixed here since it requires host-level access this session doesn't have.
 
-**Home**: same as the CI-outage entries above — the eventual `ci-blocker-resolution.md` exception
-carve-out should enumerate all observed failure _signatures_ (webhook-drop, job-cancellation,
-runner-host-filesystem-permission) as one exception class with a shared verification checklist, not
-just the GitHub-outage case.
+**Home**: routed inline — repo-relevance gate applies (`ose-private`-sourced); the generalized
+failure signature ("a generic, identical failure across many otherwise-unrelated matrix legs, traced
+to a shared setup step") was folded into
+[`ci-blocker-resolution.md` § Operational CI-Availability Exceptions](../../../repo-governance/development/quality/ci-blocker-resolution.md#operational-ci-availability-exceptions)
+signature list, alongside the webhook-drop and job-cancellation signatures. No `ose-private`-specific
+detail (repo name, PR number, the `/usr/share/dotnet` path, the runner label) was carried into
+`ose-public`.
 
 ## Scope Amendment: byte-identity boundary narrowed from four repos to two (2026-08-07)
 
