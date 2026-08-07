@@ -589,8 +589,9 @@ flowchart TD
   **Date:** 2026-08-07  
   **Status:** passed with user-authorized hosted-gate exception  
   **Files Changed:** Public main branch  
-  **Evidence:** Public PR #148 was AI-merged, placing the reader refresh on public `main`; hosted
-  checks were queued under verified runner contention.
+  **Evidence:** Public PR #148 was AI-merged, placing the reader refresh on public `main`; no hosted
+  checks were created for PR #148, so the merge proceeded under the user-authorized
+  runner-contention exception.
 
 ### Phase 3 Gate
 
@@ -1174,6 +1175,13 @@ affected -t typecheck,lint,test:quick,specs:coverage` passed for all affected pr
 
 - [x] [AI] [P6-002] If the boundary needs no change, record Phase 6 as not applicable with comparison
       evidence — acceptance: no Rhino PR or worktree is created.
+
+  **Date:** 2026-08-07  
+  **Status:** not applicable  
+  **Notes:** P6-001's comparison found drift, so this conditional branch's premise did not hold — the
+  boundary needed change, which is why P6-003's Rhino PRs and worktrees exist. See P6-003's completion
+  evidence for the resulting delivery unit and merged PRs.
+
 - [x] [AI] [P6-003] If source code or observable behavior must change, complete the blocking
       three-repository TDD/spec delivery unit in this mega-plan before resuming reader-documentation
       work — acceptance: the existing Phase 6A–6C RED/GREEN/REFACTOR-equivalent gates prove the
@@ -1616,7 +1624,7 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
 - [x] [AI] [P9A-G01] Verify public corrections are merged or explicitly not applicable — acceptance:
       no public journey defect remains.
 
-> **Pause Safety**: the public correction state is terminal.
+> **Pause Safety**: the public correction state is terminal. To resume, begin at P9B-001.
 
 ### Phase 9B: Primer Corrections, If Needed
 
@@ -1712,7 +1720,7 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Files changed: none
   - Notes: PR #23 merged the sole primer journey defect. Browser availability and ambient host-sweeper interruptions remain environment-capacity observations, not repository defects.
 
-> **Pause Safety**: the primer correction state is terminal.
+> **Pause Safety**: the primer correction state is terminal. To resume, begin at P9B-011.
 
 ### Phase 9B.1: Primer Reader-Boundary Follow-up
 
@@ -1793,7 +1801,8 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Status: passed with browser-runtime limitation
   - Notes: Primer main contains merge commit 1fabf765; route, behavior, rendered-app coverage, and local gates passed. The unavailable browser runtime is tracked separately and is not represented as console evidence.
 
-> **Pause Safety**: the Primer reader-boundary correction state is terminal.
+> **Pause Safety**: the Primer reader-boundary correction state is terminal. To resume, begin at
+> P9B-021.
 
 ### Phase 9B.2: Primer Noninteractive First-Start Correction
 
@@ -2001,7 +2010,7 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Files changed: none
   - Notes: Private PR #24 is merged. Its final independent recheck found no material findings; runner-queued CI uses the authorized local-gate exception.
 
-> **Pause Safety**: the private correction state is terminal.
+> **Pause Safety**: the private correction state is terminal. To resume, begin at P9C-011.
 
 ### Phase 9C.1: Private Sandbox Follow-up
 
@@ -2057,12 +2066,12 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
 
 - [x] [AI] [P9C-016A] Run the Linux-specific egress/DBus boundary proof in its supported environment — acceptance: the escape probe is denied and the evidence remains private-scope and sanitized in public records.
   - Date: 2026-08-07
-  - Status: terminal with user-authorized runner exception
+  - Status: skipped by user-authorized runner exception
   - Notes: The supported Linux runner could not reach the repository gate because shared setup-dotnet failed first; no Linux execution is claimed.
 
 - [x] [AI] [P9C-016B] Execute the user-D-Bus escape probe in the registered Linux CI/pre-push path, not only as a static source assertion — acceptance: the supported user-manager environment proves the child cannot create an unrestricted sibling unit.
   - Date: 2026-08-07
-  - Status: terminal with user-authorized runner exception
+  - Status: skipped by user-authorized runner exception
   - Notes: The executable CI-only integration gate is registered, but runner setup failed before it could execute; no execution result is claimed.
 
 - [x] [AI] [P9C-016C] Isolate the executable Linux user-manager proof from the shared runner account — acceptance: its disposable account, namespace, or container is owned by the gate, needs no broad host privilege, and cleanup cannot interrupt another job.
@@ -2097,7 +2106,8 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Status: passed with user-authorized runner exception
   - Notes: macOS rerun and local gates passed. Linux CI execution is transparently recorded as an authorized runner exception above; no unresolved reviewed defect remains.
 
-> **Pause Safety**: the private least-privilege sandbox correction state is terminal.
+> **Pause Safety**: the private least-privilege sandbox correction state is terminal. To resume,
+> begin at P9-G01.
 
 ### Phase 9 Gate
 
