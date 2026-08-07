@@ -9,7 +9,7 @@ Feature: Pre-push enforcement of the instruction-file size budget
     Given my push range modifies "AGENTS.md"
     And "AGENTS.md" exceeds its fail ceiling
     When the pre-push hook runs
-    Then the instruction-size validation Nx target runs
+    Then the instruction-size gate runs
     And the push is aborted with a non-zero exit
 
   Scenario: Pushing changes that do not touch instruction files skips the gate

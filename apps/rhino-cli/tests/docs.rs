@@ -72,6 +72,24 @@ impl DocsWorld {
         let work = TempDir::new().expect("temp workspace");
         init_git_repo(work.path());
         std::fs::create_dir_all(work.path().join("docs")).expect("mk docs");
+        std::fs::write(
+            work.path().join("repo-config.yml"),
+            concat!(
+                "coverage:\n  projects: []\n",
+                "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+                "gates:\n",
+                "  - id: md-frontmatter-dates\n",
+                "    type: check\n",
+                "    command: md frontmatter-dates validate\n",
+                "    kind: rhino-cli\n",
+                "    args:\n",
+                "      exclude:\n",
+                "        - apps/ayokoding-www/content\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+            ),
+        )
+        .expect("write minimal repo config");
         Self {
             work,
             extra_args: Vec::new(),

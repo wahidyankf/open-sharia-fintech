@@ -44,6 +44,10 @@ fn run_elixir_check(sources: &[&Path]) -> Output {
         .expect("Elixir formatter check wrapper starts")
 }
 
+fn elixir_formatter_is_configured() -> bool {
+    script("format-elixir.sh").is_file()
+}
+
 #[test]
 fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
     let fixture = TempDir::new().expect("create Go fixture directory");
@@ -83,6 +87,10 @@ fn gofmt_verifier_rejects_unformatted_files_and_accepts_formatted_files() {
 
 #[test]
 fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
+    if !elixir_formatter_is_configured() {
+        return;
+    }
+
     let fixture = TempDir::new().expect("create Elixir fixture directory");
     write_elixir_project(fixture.path());
     let source = fixture.path().join("unformatted.ex");
@@ -112,6 +120,10 @@ fn elixir_check_rejects_unformatted_files_without_rewriting_them() {
 
 #[test]
 fn elixir_check_accepts_formatted_ex_and_exs_files_without_rewriting_them() {
+    if !elixir_formatter_is_configured() {
+        return;
+    }
+
     let fixture = TempDir::new().expect("create Elixir fixture directory");
     write_elixir_project(fixture.path());
     let source = fixture.path().join("formatted.ex");
