@@ -383,15 +383,26 @@ fn validate_ci_doctor_bootstrap(
                     && run.contains("if [ -n \"$tools\" ]")
             })
     });
+    // The matrix doctor-tools selection must reach the shell through a
+    // step-level `env:` variable, never spliced as a raw
+    // `${{ join(matrix.gate.doctor_tools, ',') }}` expression into `run:`
+    // (GitHub Actions expression injection) — the same class of fix as
+    // `GATE_ID` above. The provisioning step must therefore both declare
+    // `DOCTOR_TOOLS` from the matrix expression *and* consume it via that
+    // shell variable.
     let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
-        job.steps
-            .iter()
-            .filter_map(|step| step.run.as_deref())
-            .any(|run| {
-                run.contains("matrix.gate.doctor_tools")
+        job.steps.iter().any(|step| {
+            let selects_doctor_tools_via_env = step
+                .env
+                .get("DOCTOR_TOOLS")
+                .is_some_and(|value| value.contains("matrix.gate.doctor_tools"));
+            let uses_doctor_tools_shell_variable = step.run.as_deref().is_some_and(|run| {
+                run.contains("tools=\"$DOCTOR_TOOLS\"")
                     && run.contains("npm run doctor -- --fix --tools")
                     && run.contains("if [ -n \"$tools\" ]")
-            })
+            });
+            selects_doctor_tools_via_env && uses_doctor_tools_shell_variable
+        })
     });
     if format_derives_tool_union && matrix_uses_declared_tools {
         return Ok(());
@@ -1999,10 +2010,12 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "  gate:\n",
         "    steps:\n",
         "      - run: |\n",
-        "          tools=\"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+        "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
         "            npm run doctor -- --fix --tools \"$tools\"\n",
         "          fi\n",
+        "        env:\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
     ))
     .unwrap();
 
@@ -2048,10 +2061,12 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "  gate:\n",
         "    steps:\n",
         "      - run: |\n",
-        "          tools=\"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+        "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
         "            npm run doctor -- --fix --tools \"$tools\"\n",
         "          fi\n",
+        "        env:\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
     ))
     .unwrap();
 
