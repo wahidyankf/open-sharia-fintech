@@ -596,12 +596,26 @@ mod tests {
         fs::write(path, contents).expect("write fixture file");
     }
 
-    fn run_git(repo: &Path, args: &[&str]) {
-        let status = Command::new("git")
+    /// Builds an isolated Git command for a fixture repository so ambient Git
+    /// discovery, configuration, and hooks cannot affect a parity test.
+    fn iso_git(repo: &Path) -> Command {
+        let mut command = Command::new("git");
+        command
             .current_dir(repo)
-            .args(args)
-            .status()
-            .expect("run git");
+            .env("GIT_DIR", repo.join(".git"))
+            .env("GIT_CEILING_DIRECTORIES", repo)
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null")
+            .env_remove("GIT_WORK_TREE")
+            .env_remove("GIT_INDEX_FILE")
+            .env_remove("GIT_OBJECT_DIRECTORY")
+            .env_remove("GIT_ALTERNATE_OBJECT_DIRECTORIES")
+            .env("GIT_OPTIONAL_LOCKS", "0");
+        command
+    }
+
+    fn run_git(repo: &Path, args: &[&str]) {
+        let status = iso_git(repo).args(args).status().expect("run git");
         assert!(status.success(), "git {args:?} failed");
     }
 
