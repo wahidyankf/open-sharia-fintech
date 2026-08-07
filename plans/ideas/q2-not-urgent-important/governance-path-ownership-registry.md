@@ -67,8 +67,8 @@ infrastructure rather than invent a competing one.
   belong in `rhino-cli` and judgement-based ones in the AI checker. An ownership registry is the
   missing third axis: _which agent_, alongside _which tier_.
   [split convention](../../../repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md)
-- **`sdlc-gate-registry-enforcement`** — the in-flight central-registry-in-`repo-config.yml` pattern
-  this should extend. [plan](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
+- **`sdlc-gate-registry-enforcement`** — the plan that landed the central-registry-in-`repo-config.yml`
+  pattern this should extend. [plan](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
 - **Instruction-File Size Budget Convention** — precedent for thresholds living in `repo-config.yml`
   as the single authority, with agent prose deferring to it rather than restating it. The 40k-vs-30k
   contradiction is what happens when that deference lapses.

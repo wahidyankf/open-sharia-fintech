@@ -249,9 +249,7 @@ looks correct, because `gate validate` (or the equivalent drift check) is specif
 catch exactly that kind of silent divergence.
 
 **Home**: routed inline — repo-relevance gate applies (this instance is `ose-private`-sourced, PR
-
-# 22), so only the generalized mechanism (not the repo name, PR number, or specific `package.json`
-
+#22), so only the generalized mechanism (not the repo name, PR number, or specific `package.json`
 diff) was folded into
 [`pr-merge-protocol.md` § Resolving Merge Conflicts in Generated Files](../../../repo-governance/development/workflow/pr-merge-protocol.md#resolving-merge-conflicts-in-generated-files),
 cross-linked from the new `mechanize-cross-file-invariants.md` practice.

@@ -115,3 +115,4 @@ more files or surfaces within a single repository. It does not apply to:
 - [Root Cause Orientation Principle](../../principles/general/root-cause-orientation.md) — the
   foundational principle this practice operationalizes for cross-file consistency
 - [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md)
+  — the general principle this practice specializes for cross-file consistency

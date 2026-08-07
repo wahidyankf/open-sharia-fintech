@@ -145,9 +145,9 @@ Promotion signal: **MQ-1 resolves to an option that unlocks a queue** — concre
 or when a third-party queue is verified to work on user-owned repos. Either makes the enablement work
 real rather than hypothetical.
 
-One dependency to check before promoting, because it is genuine and currently live: the in-progress
-[`sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md) plan
-**deletes `main-ci.yml` in all four repos** and folds its unique checks into the PR gate, amending the
+One dependency to check before promoting, because it is genuine even though the plan has since landed:
+the [`sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
+plan **deletes `main-ci.yml` in all four repos** and folds its unique checks into the PR gate, amending the
 Gate Composition Rule to `(pre-commit ∪ pre-push) == PR gate`. That plan explicitly accepts the
 resulting loss: with `main-ci.yml` gone, no surface re-verifies the whole repo, and the PR gate's
 `push: [main]` trigger computes affected from `github.event.before`, which covers the merged change but
