@@ -555,8 +555,24 @@ flowchart TD
 
 - [x] [AI] [P3-015] Open the public draft PR against `main` — acceptance: its declared file set and
       megaplan link are correct.
+
+  **Date:** 2026-08-07  
+  **Status:** passed  
+  **Files Changed:** Public pull request  
+  **Evidence:** Draft PR [#148](https://github.com/wahidyankf/ose-public/pull/148) was opened
+  against `main` with the declared file set and megaplan link.
+
 - [x] [AI] [P3-016] Run three sequential PR Review Maker→Fixer cycles — acceptance: all accepted
       findings are fixed and each cycle's CI is green.
+
+  **Date:** 2026-08-07  
+  **Status:** skipped by user-authorized runner-contention exception  
+  **Files Changed:** None  
+  **Evidence:** Three independent local reviews cleared the delivery before PR creation; no hosted
+  checks were ever created for PR #148 across its 114-second draft-to-merge lifetime (verified
+  against GitHub's check-runs, status, and Actions-runs records), so the hosted review cycle was
+  waived under the active runner-contention exception rather than completed.
+
 - [x] [AI] [P3-017] Forward-update from public `origin/main` without destructive history edits —
       acceptance: the branch contains current `origin/main`.
 - [x] [AI] [P3-018] Rerun full unit gates and verify final PR CI — acceptance: every gate is green.
@@ -564,8 +580,9 @@ flowchart TD
   **Date:** 2026-08-07  
   **Status:** passed with user-authorized hosted-gate exception  
   **Files Changed:** Public delivery branch and pull request  
-  **Evidence:** The public unit's final local pre-commit and pre-push gates passed; hosted checks
-  remained queued under the active runner-contention exception.
+  **Evidence:** The public unit's final local pre-commit and pre-push gates passed; no hosted checks
+  were created for PR #148, so the "final PR CI" portion of the acceptance criterion relied on the
+  user-authorized runner-contention exception rather than a green hosted run.
 
 - [x] [AI] [P3-019] Merge the public PR as AI — acceptance: public `main` contains the refresh.
 
@@ -1422,7 +1439,7 @@ after processes stop and evidence is safely recorded.
 - [x] [AI] [P8E-001] Create an authorized macOS `mktemp -d` clone of private `main`; record its exact
       path only in the private local record — acceptance: checkout succeeds without reading real `.env*`.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: ignored private local verification record only
   - Notes: Created an authorized disposable private `main` checkout, confirmed a clean status, and recorded its exact path only in the private local record. No real environment file was accessed.
 
@@ -1430,7 +1447,7 @@ after processes stop and evidence is safely recorded.
       and construct the sanitized child environment — acceptance: the private record proves no ambient
       secret was inherited without recording values.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: ignored private local verification record only
   - Notes: Derived only tracked variable names and ran the tracked preflight’s explicit `env -i` child check. The private record retains a count and sanitized outcome, never values.
 
@@ -1488,7 +1505,7 @@ coralpolyp-fe --json` in the private clone — acceptance: its exact declared lo
       commands, paths, and detailed evidence only in the private record — acceptance: no mutable
       macOS private-journey state remains.
   - Date: 2026-08-07
-  - Status: complete with failed journey recorded
+  - Status: passed with failed journey recorded
   - Files changed: ignored private local verification record only
   - Notes: The tracked preflight strips ambient configuration but does not prove an OS-level egress block. No service started; the untouched disposable checkout was moved to Trash. Private correction row P9C-01 now owns the missing boundary.
 
@@ -1606,83 +1623,83 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
 - [x] [AI] [P9B-001] Provision/initialize the exact primer-fixes worktree when primer defects exist —
       acceptance: install, doctor, and baseline gates pass; otherwise record not applicable.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: no tracked primer files yet; local-only `p9b-01-execution-record.md`
   - Notes: Created `fix/repository-onboarding-primer-next-env` from current primer `origin/main`; the documented bootstrap, doctor, and baseline quick checks completed.
 
 - [x] [AI] [P9B-001A] Create the exact owning-unit execution record when applicable — acceptance:
       every Phase 9B task ID has a row.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: ignored primer local record only
   - Notes: Created the P9B-01 local-only record before correction execution; it uses sanitized statuses and contains no credential or environment values.
 
 - [x] [AI] [P9B-002] Execute each exact primer correction row and rerun its failed journey —
       acceptance: every defect is fixed.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: primer `.gitignore`; removed both tracked Next.js `next-env.d.ts` files
   - Notes: Official Next.js documentation classifies `next-env.d.ts` as generated and recommends ignoring it. The repeated `crud-fe-ts-nextjs:dev` run served successfully and left no new tracked file change.
 
 - [x] [AI] [P9B-003] Reconcile and stage only primer correction-ledger paths — acceptance: every
       correction is owned and the staged set equals the ledger.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: only primer `.gitignore`, `apps/crud-fe-ts-nextjs/next-env.d.ts`, and `apps/crud-fs-ts-nextjs/next-env.d.ts`
   - Notes: The staged diff contains exactly one ignore rule and two generated-file deletions; no unrelated primary-checkout edits entered the correction worktree.
 
 - [x] [AI] [P9B-003A] Run full unit gates — acceptance: every command exits 0.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none beyond the staged correction
   - Notes: Both Next app quick suites passed. Both builds passed; the full-stack build used only the tracked `.env.example` development placeholder, never a real environment file.
 
 - [x] [AI] [P9B-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL,
       HIGH, or MEDIUM findings.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: A separate read-only AI review found zero CRITICAL, HIGH, or MEDIUM findings. It confirmed that both files are generated, the global ignore covers both app roots, and the staged diff contains no secret or protected content.
 
 - [x] [AI] [P9B-004] Commit the primer correction unit — acceptance: one cohesive Conventional Commit.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: primer `.gitignore`; two generated Next.js declaration files removed
   - Notes: Committed the isolated correction as `6b2668f` with the Conventional Commit message `fix(primer): ignore generated Next type declarations`.
 
 - [x] [AI] [P9B-005] Push the primer correction branch — acceptance: `origin` contains the head.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: Pushed `fix/repository-onboarding-primer-next-env`; the repository pre-push gate completed successfully, including environment, Markdown-link, README-index, and harness checks.
 
 - [x] [AI] [P9B-006] Open the primer correction draft PR — acceptance: its scope matches defect rows.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: Opened draft [ose-primer PR #23](https://github.com/wahidyankf/ose-primer/pull/23); it contains only the generated-file correction and sanitized verification summary.
 
 - [x] [AI] [P9B-007] Run three PR Review Maker→Fixer cycles — acceptance: findings are resolved.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Files changed: none
   - Notes: Three sequential trivial-tier AI reviews of PR #23 posted zero findings. GitHub checks remained runner-queued after the requested three-minute cadence; local pre-push and targeted gates passed, so the user-authorized contention exception applies.
 
 - [x] [AI] [P9B-008] Forward-update from primer `origin/main` — acceptance: the head is current.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: Fetched primer `origin/main` and confirmed it is an ancestor of the correction head; no forward merge was needed.
 
 - [x] [AI] [P9B-009] Rerun gates, the failed journey, and PR CI — acceptance: all are green.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Files changed: none
   - Notes: Repeated development served successfully without tracked generated-file drift; targeted gates and pre-push gates passed. The disposable fresh clone encountered only ambient host-sweeper dependency loss and was removed safely. Hosted CI remained runner-queued, covered by the authorized exception.
 
 - [x] [AI] [P9B-010] Merge the primer correction PR as AI — acceptance: fixes are on `main`.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Files changed: none
   - Notes: AI merged [ose-primer PR #23](https://github.com/wahidyankf/ose-primer/pull/23) as merge commit `e70fa56f4f4603d7392c53bfe73fe37db1a4078c`; the correction is on current primer `main`.
 
@@ -1691,7 +1708,7 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
 - [x] [AI] [P9B-G01] Verify primer corrections are merged or explicitly not applicable — acceptance:
       no primer journey defect remains.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: PR #23 merged the sole primer journey defect. Browser availability and ambient host-sweeper interruptions remain environment-capacity observations, not repository defects.
 
@@ -1775,6 +1792,8 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Date: 2026-08-07
   - Status: passed with browser-runtime limitation
   - Notes: Primer main contains merge commit 1fabf765; route, behavior, rendered-app coverage, and local gates passed. The unavailable browser runtime is tracked separately and is not represented as console evidence.
+
+> **Pause Safety**: the Primer reader-boundary correction state is terminal.
 
 ### Phase 9B.2: Primer Noninteractive First-Start Correction
 
@@ -1891,83 +1910,86 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
       defect, browser console error, or unclean temporary state — acceptance: no known macOS Primer
       onboarding interruption remains.
 
+> **Pause Safety**: no Primer noninteractive first-start correction work has started, so there is
+> nothing mutable to clean up. To resume, begin at P9B-021.
+
 ### Phase 9C: Private Corrections, If Needed
 
 - [x] [AI] [P9C-001] Provision/initialize the exact private-fixes worktree when private defects exist —
       acceptance: install, doctor, and baseline gates pass; otherwise record not applicable.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: ignored private P9C-01 record; private sandbox preflight and onboarding docs
   - Notes: Created the isolated private correction worktree, completed bootstrap and doctor, then ran the targeted preflight, shell, Markdown, and CoralPolyp quick checks.
 
 - [x] [AI] [P9C-001A] Create the exact owning-unit execution record when applicable — acceptance:
       every Phase 9C task ID has a row.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: ignored private P9C-01 record only
   - Notes: Created the private-only execution record before correction work; it contains sanitized status only.
 
 - [x] [AI] [P9C-002] Execute each exact private correction row and rerun its failed sandbox journey —
       acceptance: every defect is fixed without public evidence or real secrets.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: private sandbox preflight, private README, private getting-started tutorial
   - Notes: The preflight now uses supported macOS and Ubuntu loopback-only runners, keeps backend code generation inside the sanitized boundary, and validates both denied external traffic and allowed loopback behavior without exposing private details.
 
 - [x] [AI] [P9C-003] Reconcile and stage only private correction-ledger paths — acceptance: every
       correction is owned and the staged set equals the private ledger.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: private sandbox preflight and two private onboarding documents only
   - Notes: The staged set matched the private correction ledger exactly; no protected or unrelated path entered the unit.
 
 - [x] [AI] [P9C-003A] Run full private unit gates — acceptance: every command exits 0.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none beyond the private correction
   - Notes: Preflight, shell syntax, shellcheck, Markdown lint, both CoralPolyp quick suites, diff checks, and pre-push gates passed.
 
 - [x] [AI] [P9C-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL,
       HIGH, or MEDIUM findings and no protected content crosses repositories.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Files changed: none
   - Notes: Independent reviewers resolved all reported safety and portability issues; the final recheck found zero CRITICAL, HIGH, or MEDIUM findings and no protected-content exposure.
 
 - [x] [AI] [P9C-004] Commit the private correction unit — acceptance: one cohesive Conventional Commit.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Notes: Committed the isolated sandbox correction and reviewer-confirmed Linux portability refinements as Conventional Commits.
 
 - [x] [AI] [P9C-005] Push the private correction branch — acceptance: `origin` contains the head.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Notes: Each correction commit was pushed successfully after the repository pre-push gate.
 
 - [x] [AI] [P9C-006] Open the private correction draft PR — acceptance: its scope matches defect rows
       and its text contains no protected detail.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Notes: Opened private PR #24 with a sanitized scope and verification summary.
 
 - [x] [AI] [P9C-007] Run three PR Review Maker→Fixer cycles — acceptance: findings are resolved.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Notes: Three sequential AI review cycles resolved the sandbox safety and Linux portability findings.
 
 - [x] [AI] [P9C-008] Forward-update from private `origin/main` — acceptance: the head is current.
   - Date: 2026-08-07
-  - Status: complete
+  - Status: passed
   - Notes: The correction head already contained current private main; no forward merge was required.
 
 - [x] [AI] [P9C-009] Rerun gates, the failed sandbox journey, and PR CI — acceptance: all are green.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Notes: Corrected preflight and local gates passed; hosted CI remained runner-queued under the authorized exception.
 
 - [x] [AI] [P9C-010] Merge the private correction PR as AI — acceptance: fixes are on `main`.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Notes: AI merged private PR #24; the egress-boundary correction is on private main.
 
 #### Phase 9C Gate
@@ -1975,7 +1997,7 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
 - [x] [AI] [P9C-G01] Verify private corrections are merged or explicitly not applicable — acceptance:
       no private journey defect remains and no protected detail crossed repositories.
   - Date: 2026-08-07
-  - Status: complete with user-authorized hosted-gate exception
+  - Status: passed with user-authorized hosted-gate exception
   - Files changed: none
   - Notes: Private PR #24 is merged. Its final independent recheck found no material findings; runner-queued CI uses the authorized local-gate exception.
 
@@ -2074,6 +2096,8 @@ unit. Append `@<nn>` to its Phase 9 task IDs in the owning record.
   - Date: 2026-08-07
   - Status: passed with user-authorized runner exception
   - Notes: macOS rerun and local gates passed. Linux CI execution is transparently recorded as an authorized runner exception above; no unresolved reviewed defect remains.
+
+> **Pause Safety**: the private least-privilege sandbox correction state is terminal.
 
 ### Phase 9 Gate
 
