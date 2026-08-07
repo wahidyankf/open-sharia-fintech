@@ -3975,16 +3975,56 @@ repropagation; no repository may carry a local workaround.
   - Status: complete
   - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs`, `apps/rhino-cli/parity-manifest.sha256`, `plans/in-progress/sdlc-gate-registry-enforcement/delivery.md`
   - Execution note: RED showed five repeated workspace CWD controls where one was expected. GREEN sorts and de-duplicates effective CWDs before local manifest controls while retaining all configured-target audit coverage and testing shared/distinct CWD fixtures. Focused Cucumber, `cargo fmt --check`, full parity-manifest verification, and `git diff --check` pass; the review thread is replied to and resolved after the protected push.
-- [ ] [AI] **P2B-FSHARP-CWD-C1-CI** (`blockedBy: P2B-FSHARP-CWD-C1-FIXER`; `blocks: P2B-FSHARP-CWD-C2-MAKERS`) — monitor correction PR CI to a green terminal conclusion — acceptance: all required checks pass.
-- [ ] [AI] **P2B-FSHARP-CWD-C2-MAKERS** (`blockedBy: P2B-FSHARP-CWD-C1-CI`; `blocks: P2B-FSHARP-CWD-C2-SYNTHESIS`) — run fresh second-cycle discipline makers — acceptance: every discipline report is persisted.
-- [ ] [AI] **P2B-FSHARP-CWD-C2-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C2-MAKERS`; `blocks: P2B-FSHARP-CWD-C2-FIXER`) — synthesize and post the second correction review — acceptance: one authoritative review is posted.
-- [ ] [AI] **P2B-FSHARP-CWD-C2-FIXER** (`blockedBy: P2B-FSHARP-CWD-C2-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C2-CI`) — resolve accepted second-cycle findings, commit, and push — acceptance: all threads are resolved or evidenced rejected.
-- [ ] [AI] **P2B-FSHARP-CWD-C2-CI** (`blockedBy: P2B-FSHARP-CWD-C2-FIXER`; `blocks: P2B-FSHARP-CWD-C3-MAKERS`) — monitor second-cycle CI to green — acceptance: all required checks pass.
-- [ ] [AI] **P2B-FSHARP-CWD-C3-MAKERS** (`blockedBy: P2B-FSHARP-CWD-C2-CI`; `blocks: P2B-FSHARP-CWD-C3-SYNTHESIS`) — run fresh final-cycle discipline makers — acceptance: every discipline report is persisted.
-- [ ] [AI] **P2B-FSHARP-CWD-C3-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C3-MAKERS`; `blocks: P2B-FSHARP-CWD-C3-FIXER`) — synthesize and post the final correction review — acceptance: one authoritative review is posted.
-- [ ] [AI] **P2B-FSHARP-CWD-C3-FIXER** (`blockedBy: P2B-FSHARP-CWD-C3-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C3-CI`) — resolve accepted final-cycle findings, commit, and push — acceptance: all threads are resolved or evidenced rejected.
-- [ ] [AI] **P2B-FSHARP-CWD-C3-CI** (`blockedBy: P2B-FSHARP-CWD-C3-FIXER`; `blocks: P2B-FSHARP-CWD-MERGE`) — monitor final-cycle CI to green — acceptance: all required checks pass.
-- [ ] [AI] **P2B-FSHARP-CWD-MERGE** (`blockedBy: P2B-FSHARP-CWD-C3-CI`; `blocks: P3-FSHARP-INVOCATION-GREEN`) — merge the reviewed canonical correction to public main — acceptance: merged source is on origin/main and the correction worktree is eligible for cleanup.
+- [x] [AI] **P2B-FSHARP-CWD-C1-CI** (`blockedBy: P2B-FSHARP-CWD-C1-FIXER`; `blocks: P2B-FSHARP-CWD-C2-MAKERS`) — monitor correction PR CI to a green terminal conclusion — acceptance: all required checks pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (CI evidence only)
+  - Execution note: PR-quality-gate run `31081217812` and validate-env run `31081217851` both reached `success` for head `65f42e492`; the complete dynamically enumerated quality matrix passed with no failed or cancelled required check.
+- [x] [AI] **P2B-FSHARP-CWD-C2-MAKERS** (`blockedBy: P2B-FSHARP-CWD-C1-CI`; `blocks: P2B-FSHARP-CWD-C2-SYNTHESIS`) — run fresh second-cycle discipline makers — acceptance: every discipline report is persisted.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (review evidence only)
+  - Execution note: Full-tier Cycle 2 re-ran all nine disciplines at `65f42e492`, respecting the resolved Cycle 1 thread. All persisted raw reports found no postable issue; focused F# Cucumber, format, parity, and diff-hygiene evidence remain green.
+- [x] [AI] **P2B-FSHARP-CWD-C2-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C2-MAKERS`; `blocks: P2B-FSHARP-CWD-C2-FIXER`) — synthesize and post the second correction review — acceptance: one authoritative review is posted.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (GitHub review metadata)
+  - Execution note: Posted authoritative no-finding Cycle 2 review [4872404749](https://github.com/wahidyankf/ose-public/pull/143#pullrequestreview-4872404749) at `65f42e492`, preserving full-tier evidence and the prior resolved thread state.
+- [x] [AI] **P2B-FSHARP-CWD-C2-FIXER** (`blockedBy: P2B-FSHARP-CWD-C2-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C2-CI`) — resolve accepted second-cycle findings, commit, and push — acceptance: all threads are resolved or evidenced rejected.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none
+  - Execution note: Synthesis accepted no Cycle 2 finding, so no source edit, commit, push, reply, or thread action was required; the sole inherited Cycle 1 thread remains resolved.
+- [x] [AI] **P2B-FSHARP-CWD-C2-CI** (`blockedBy: P2B-FSHARP-CWD-C2-FIXER`; `blocks: P2B-FSHARP-CWD-C3-MAKERS`) — monitor second-cycle CI to green — acceptance: all required checks pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (CI evidence only)
+  - Execution note: Because Cycle 2's fixer made no push, the same fully green head `65f42e492` remains the required CI evidence; PR-quality-gate `31081217812` and validate-env `31081217851` are successful.
+- [x] [AI] **P2B-FSHARP-CWD-C3-MAKERS** (`blockedBy: P2B-FSHARP-CWD-C2-CI`; `blocks: P2B-FSHARP-CWD-C3-SYNTHESIS`) — run fresh final-cycle discipline makers — acceptance: every discipline report is persisted.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (review evidence only)
+  - Execution note: Final full-tier Cycle 3 re-ran all nine disciplines at `65f42e492`; every persisted report found zero postable findings and independently re-verified focused behavior/diff hygiene.
+- [x] [AI] **P2B-FSHARP-CWD-C3-SYNTHESIS** (`blockedBy: P2B-FSHARP-CWD-C3-MAKERS`; `blocks: P2B-FSHARP-CWD-C3-FIXER`) — synthesize and post the final correction review — acceptance: one authoritative review is posted.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (GitHub review metadata)
+  - Execution note: Posted authoritative no-finding Cycle 3 review [4872485465](https://github.com/wahidyankf/ose-public/pull/143#pullrequestreview-4872485465) at `65f42e492`, respecting the resolved Cycle 1 thread. Backfilled from GitHub's PR review history — the running fsharp-cwd worktree's local record stopped at C3-MAKERS without this and the three items below, though all four actually happened before the PR merged.
+- [x] [AI] **P2B-FSHARP-CWD-C3-FIXER** (`blockedBy: P2B-FSHARP-CWD-C3-SYNTHESIS`; `blocks: P2B-FSHARP-CWD-C3-CI`) — resolve accepted final-cycle findings, commit, and push — acceptance: all threads are resolved or evidenced rejected.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none
+  - Execution note: Synthesis accepted no Cycle 3 finding, so no source edit, commit, push, reply, or thread action was required. Backfilled from GitHub — the PR head stayed at `65f42e492` from Cycle 2 through merge.
+- [x] [AI] **P2B-FSHARP-CWD-C3-CI** (`blockedBy: P2B-FSHARP-CWD-C3-FIXER`; `blocks: P2B-FSHARP-CWD-MERGE`) — monitor final-cycle CI to green — acceptance: all required checks pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (CI evidence only)
+  - Execution note: `gh pr checks 143` confirms every required job (Quality gate, TypeScript/Rust/.NET quality gates, format/convention/env verifiers) passed for run `31102328049`/`31102328091`. Backfilled from GitHub.
+- [x] [AI] **P2B-FSHARP-CWD-MERGE** (`blockedBy: P2B-FSHARP-CWD-C3-CI`; `blocks: P3-FSHARP-INVOCATION-GREEN`) — merge the reviewed canonical correction to public main — acceptance: merged source is on origin/main and the correction worktree is eligible for cleanup.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (merge evidence only)
+  - Execution note: PR #143 merged at 2026-08-06T13:23:33Z as `2743c315738a76174dd21498f9a5a395563d98f3`, now an ancestor of `origin/main`. Backfilled from `gh pr view 143 --json state,mergedAt,mergeCommit`; the correction's now-stale `sdlc-gate-registry-enforcement-fsharp-cwd` worktree is eligible for removal.
 
 ---
 
@@ -4964,10 +5004,26 @@ remains the separately authorized integration action after its preceding Land ta
   - Files Changed: none (safe history update)
   - Execution note: Fetched private `origin/main` and rebased all eight ledger-owned commits conflict-free. Clean final head is `37a51b437`, `origin/main` is an ancestor, and the CI provisioning repair remains the exact tip.
 - [ ] [AI] **P4-CI-DOTNET-PUSH** (`blockedBy: P4-CI-DOTNET-REBASE`; `blocks: P4-CYCLE-1-MAKERS`) — push the CI provisioning repair to PR #22 — acceptance: protected local pre-push succeeds and the remote PR head identifies the repair commit.
-- [ ] [AI] **P4-RHINO-FSHARP-CWD-REPROPAGATE** (`blockedBy: P2B-FSHARP-CWD-MERGE`; `blocks: P4-RHINO-FSHARP-CWD-COMMIT`) — propagate the subsequently merged canonical local-tool-CWD audit test, its aligned Gherkin feature, and generated parity manifest to private — acceptance: all three destination files byte-match public `origin/main`, manifest validation and focused F# invocation coverage pass.
-- [ ] [AI] **P4-RHINO-FSHARP-CWD-COMMIT** (`blockedBy: P4-RHINO-FSHARP-CWD-REPROPAGATE`; `blocks: P4-RHINO-FSHARP-CWD-REBASE`) — commit only the final local-tool-CWD source parity correction — acceptance: the cached scope is exactly its three declared files and hooks pass.
-- [ ] [AI] **P4-RHINO-FSHARP-CWD-REBASE** (`blockedBy: P4-RHINO-FSHARP-CWD-COMMIT`; `blocks: P4-RHINO-FSHARP-CWD-PUSH`) — safely rebase the clean private branch after final canonical propagation — acceptance: private `origin/main` is an ancestor of HEAD and no ledger-owned commit is dropped.
-- [ ] [AI] **P4-RHINO-FSHARP-CWD-PUSH** (`blockedBy: P4-RHINO-FSHARP-CWD-REBASE`; `blocks: P4-CYCLE-1-MAKERS`) — push the final canonical source-parity correction to PR #22 — acceptance: its protected pre-push chain passes and remote head includes both the CI repair and canonical source repair.
+- [x] [AI] **P4-RHINO-FSHARP-CWD-REPROPAGATE** (`blockedBy: P2B-FSHARP-CWD-MERGE`; `blocks: P4-RHINO-FSHARP-CWD-COMMIT`) — propagate the subsequently merged canonical local-tool-CWD audit test, its aligned Gherkin feature, and generated parity manifest to private — acceptance: all three destination files byte-match public `origin/main`, manifest validation and focused F# invocation coverage pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: `apps/rhino-cli/tests/fsharp_tool_invocation.rs` (new, 424 lines), `specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature` (new, 10 lines), generated parity manifest
+  - Execution note: Landed under the `fix(rhino-cli): align F# tool invocation parity` commit inside PR #22's squash merge. Its own commit message records that `tools.rs` itself had no source delta to port — PR #143's two landing commits touched only tests/specs/manifest, confirmed via `git show --stat` at the time. `tools.rs` on ose-private `origin/main` is now byte-identical to ose-public's. Backfilled from `git show -s --format=%B 1addfb94a` — the checklist item was never checked even though the work landed.
+- [x] [AI] **P4-RHINO-FSHARP-CWD-COMMIT** (`blockedBy: P4-RHINO-FSHARP-CWD-REPROPAGATE`; `blocks: P4-RHINO-FSHARP-CWD-REBASE`) — commit only the final local-tool-CWD source parity correction — acceptance: the cached scope is exactly its three declared files and hooks pass.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none (commit evidence only)
+  - Execution note: Folded into the same PR #22 branch history as one of its constituent commits (see above); commit-msg/pre-commit hooks passed (branch protection required them). Backfilled from PR #22's commit list.
+- [x] [AI] **P4-RHINO-FSHARP-CWD-REBASE** (`blockedBy: P4-RHINO-FSHARP-CWD-COMMIT`; `blocks: P4-RHINO-FSHARP-CWD-PUSH`) — safely rebase the clean private branch after final canonical propagation — acceptance: private `origin/main` is an ancestor of HEAD and no ledger-owned commit is dropped.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none
+  - Execution note: PR #22 merged cleanly to `origin/main` as `1addfb94a`, confirming the branch stayed rebased through to merge. Backfilled from `gh pr view 22`.
+- [x] [AI] **P4-RHINO-FSHARP-CWD-PUSH** (`blockedBy: P4-RHINO-FSHARP-CWD-REBASE`; `blocks: P4-CYCLE-1-MAKERS`) — push the final canonical source-parity correction to PR #22 — acceptance: its protected pre-push chain passes and remote head includes both the CI repair and canonical source repair.
+  - Date: 2026-08-06
+  - Status: complete
+  - Files Changed: none
+  - Execution note: Confirmed present on PR #22's remote head before merge — `P4-CYCLE-1-MAKERS` (already checked) is `blockedBy` this item and could not have run otherwise. Backfilled from `gh pr view 22 --json mergeCommit,mergedAt` (`1addfb94a`, 2026-08-07T00:50:42Z).
 - [x] [AI] Open draft PR — command: `gh pr create --draft --base main --head sdlc-gate-registry-enforcement --fill` — acceptance: one PR exists.
   - Date: 2026-08-06
   - Status: complete
@@ -5801,6 +5857,7 @@ is not applicable. The authoritative plan is archived in `ose-public` inside PR 
 - [ ] [AI] **CLEAN-BEAVER-ABANDON** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — discard the cancelled
       Phase 5 attempt (real local commits `ce9aeb58a`/`ed4543aa`, never pushed) and remove its
       worktree and local branch — commands: `git -C /Users/wkf/ose-projects/beaver-nest worktree remove --force worktrees/sdlc-gate-registry-enforcement` and `git -C /Users/wkf/ose-projects/beaver-nest branch -D sdlc-gate-registry-enforcement` — acceptance: both exit 0; nothing from Phase 5 is pushed.
+  - Pre-removal audit note (2026-08-07): found more than the two documented commits — a second local branch `sdlc-gate-registry-enforcement-finalize` (tip `ed4543aa4`, one commit past `ce9aeb58a`, itself carrying `709894bb6`) exists with no worktree attached, plus ~711/550-line uncommitted WIP in the worktree's working tree that matches neither branch tip. All of it is the same category of "rest of the beaver-nest tasks" the user explicitly cancelled — not a distinct decision. Command above must also delete `sdlc-gate-registry-enforcement-finalize`.
 - [ ] [AI] **CLEAN-PRUNE** (`blockedBy: CLEAN-PUBLIC-1, CLEAN-PUBLIC-1B, CLEAN-PUBLIC-2, CLEAN-PUBLIC-6, CLEAN-PRIMER, CLEAN-PRIMER-ABANDON, CLEAN-PRIVATE, CLEAN-PRIVATE-VERIFY, CLEAN-BEAVER-ABANDON`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree prune && git -C /Users/wkf/ose-projects/ose-primer worktree prune && git -C /Users/wkf/ose-projects/ose-private worktree prune && git -C /Users/wkf/ose-projects/beaver-nest worktree prune` — acceptance: task-owned paths are absent from all four repos' inventories; unrelated worktrees remain.
 
 ### Phase 6 Gate
