@@ -5472,7 +5472,7 @@ cancelled — see the 2026-08-07 Scope Amendment).
 > narrowed byte-identity boundary — `ose-public` and `ose-private`. `ose-primer` and `beaver-nest`
 > are dropped from every loop, dispatch, and endpoint check; see the Scope Amendment.
 
-- [ ] [AI] **P6-END-STATE** (`blocks: P6-COMPOSITION-SETUP`) — validate the two exact working roots and
+- [x] [AI] **P6-END-STATE** (`blocks: P6-COMPOSITION-SETUP`) — validate the two exact working roots and
       prove each is level with its converged `origin/main` — commands:
 
   ```bash
@@ -5489,8 +5489,17 @@ cancelled — see the 2026-08-07 Scope Amendment).
   ```
 
   Acceptance: every command exits 0 in both roots.
+  - Date: 2026-08-07
+  - Status: complete, with a confirmed substitution
+  - Execution note: `ose-private`'s primary checkout has ~139 files of the user's own confirmed
+    in-progress `apps/rhino-cli` refactor uncommitted (`gate validate` doesn't even build a `gate`
+    subcommand mid-refactor). The user confirmed it's their own WIP and authorized substituting the
+    already-clean, already-created `/Users/wkf/ose-projects/ose-private/worktrees/gate-final-verification`
+    (detached at `origin/main`) for the `ose-private` leg of every remaining §6.1 step. Both
+    substituted roots pass: `rev-list --left-right --count` is `0 0`, `gate validate` exits 0, and
+    neither has `main-ci.yml`.
 
-- [ ] [AI] **P6-COMPOSITION-SETUP** (`blockedBy: P6-END-STATE`; `blocks: P6-COMPOSITION-ASSERT`) —
+- [x] [AI] **P6-COMPOSITION-SETUP** (`blockedBy: P6-END-STATE`; `blocks: P6-COMPOSITION-ASSERT`) —
       create one exact scratch composition violation only after proving the target is clean — commands:
 
   ```bash
@@ -5507,8 +5516,9 @@ cancelled — see the 2026-08-07 Scope Amendment).
   ```
 
   Acceptance: the final command prints exactly one scratch gate.
+  - Date: 2026-08-07 — Status: complete. Scratch gate appended and confirmed present via `rg`.
 
-- [ ] [AI] **P6-COMPOSITION-ASSERT** (`blockedBy: P6-COMPOSITION-SETUP`; `blocks: P6-COMPOSITION-CLEANUP`) —
+- [x] [AI] **P6-COMPOSITION-ASSERT** (`blockedBy: P6-COMPOSITION-SETUP`; `blocks: P6-COMPOSITION-CLEANUP`) —
       prove the validator rejects the scratch gate — commands:
 
   ```bash
@@ -5522,8 +5532,11 @@ cancelled — see the 2026-08-07 Scope Amendment).
   ```
 
   Acceptance: validation is non-zero and the log names the scratch gate or missing CI composition.
+  - Date: 2026-08-07 — Status: complete. `gate validate` exited non-zero with
+    `Gate Composition Rule violation: gate "p6-composition-inverse" declares a local hook surface but
+is missing ci`, confirming the composition rule fires correctly.
 
-- [ ] [AI] **P6-COMPOSITION-CLEANUP** (`blockedBy: P6-COMPOSITION-ASSERT`; `blocks: P6-BYTE-IDENTITY`) —
+- [x] [AI] **P6-COMPOSITION-CLEANUP** (`blockedBy: P6-COMPOSITION-ASSERT`; `blocks: P6-BYTE-IDENTITY`) —
       restore only the scratch target and revalidate the clean state — commands:
 
   ```bash
@@ -5535,8 +5548,10 @@ cancelled — see the 2026-08-07 Scope Amendment).
   ```
 
   Acceptance: the restored file is clean and validation exits 0.
+  - Date: 2026-08-07 — Status: complete. `repo-config.yml` restored via `git restore`, scratch log
+    removed, working tree clean, `gate validate` back to exit 0.
 
-- [ ] [AI] **P6-BYTE-IDENTITY** (`blockedBy: P6-COMPOSITION-CLEANUP`; `blocks: P6-PARITY-SETUP`) —
+- [x] [AI] **P6-BYTE-IDENTITY** (`blockedBy: P6-COMPOSITION-CLEANUP`; `blocks: P6-PARITY-SETUP`) —
       compare every boundary path directly from canonical to the sole enforced downstream root —
       commands:
 
@@ -5561,6 +5576,32 @@ cancelled — see the 2026-08-07 Scope Amendment).
   ```
 
   Acceptance: every pairwise `diff -r` exits 0.
+  - Date: 2026-08-07 — Status: complete, with a real drift found and fixed first. Initial `diff -r`
+    found 16 files differing — `ose-private`'s already-merged, already-reviewed PR #22 Cycle-2-review
+    hardening fixes (Task #231's known-pending propagation) had never landed in canonical:
+    `apps/rhino-cli/src/application/doctor/tools.rs`, `apps/rhino-cli/src/application/parity.rs`,
+    `apps/rhino-cli/src/commands/gate/{run,validate}.rs`,
+    `apps/rhino-cli/src/commands/md_validate_frontmatter_dates.rs`,
+    `apps/rhino-cli/src/commands/repo_config_validate.rs`, 7 files under `apps/rhino-cli/tests/`, and
+    3 Gherkin features under `specs/apps/rhino/behavior/rhino-cli/gherkin/`. Fixed by copying all 16
+    files wholesale from the verification worktree into canonical (propagate-by-wholesale-copy, since
+    the content was already reviewed/merged downstream) and regenerating
+    `apps/rhino-cli/parity-manifest.sha256` via `parity manifest generate`. Re-running the diff loop
+    then confirmed exit 0 across every boundary path. Discovered as a side effect: the copied-in
+    `gate/validate.rs` now enforces a stricter `validate_ci_matrix_contract` check requiring the CI
+    dispatch step to route the matrix gate id through a shell `env:` variable rather than splicing
+    `${{ matrix.gate.id }}` raw into `run:` (a GHA expression-injection hardening from PR #22).
+    Canonical's `.github/workflows/pr-quality-gate.yml` still used the raw-splice shape; fixed to
+    match `ose-private`'s already-hardened pattern (`env: GATE_ID: ${{ matrix.gate.id }}` +
+    `--only="$GATE_ID"`). `gate validate` now passes clean in canonical. Full `cargo test` for
+    `apps/rhino-cli` also run as an extra check: 1355+ tests pass; the pre-existing `golden_master`
+    corpus (`apps/rhino-cli/tests/golden-master/*.stdout`) is stale (missing `gate`/`git`/`parity`
+    commands added in earlier phases) and its wrap-sensitive entries are non-deterministic in this
+    interactive sandbox (clap's terminal-width detection depends on inherited stdin tty-state, which
+    fluctuates here but is consistently non-tty in real CI). This staleness is pre-existing and
+    identical in `ose-private` already (confirmed zero-drift before any edits), so fixture changes
+    were reverted rather than risking new cross-repo drift; left as a separate, non-blocking follow-up
+    (not folded into Task #231's scope).
 
 - [ ] [AI] **P6-PARITY-SETUP** (`blockedBy: P6-BYTE-IDENTITY`; `blocks: P6-PARITY-ASSERT`) — create
       one real drift in the clean detached `ose-private` verification worktree — commands:
