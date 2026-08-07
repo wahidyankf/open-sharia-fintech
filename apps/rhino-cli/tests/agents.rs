@@ -1334,7 +1334,7 @@ fn when_pre_push_hook_runs(w: &mut AgentsWorld) {
     }
 }
 
-#[then("the instruction-size validation Nx target runs")]
+#[then("the instruction-size gate runs")]
 fn then_instruction_size_target_runs(w: &mut AgentsWorld) {
     assert!(
         w.hook_invoked,
@@ -1344,15 +1344,11 @@ fn then_instruction_size_target_runs(w: &mut AgentsWorld) {
         w.output.is_some(),
         "expected `harness instruction-size validate` to have executed"
     );
-    // Golden guard against the real hook drifting from the regex this
-    // scenario mirrors.
+    // Golden guard against the generated hook drifting away from the gate
+    // registry command this scenario mirrors.
     let hook =
         std::fs::read_to_string(real_repo_root().join(".husky/pre-push")).expect("read hook");
-    assert!(
-        hook.contains("harness instruction-size validate"),
-        "hook: {hook}"
-    );
-    assert!(hook.contains("AGENTS\\.md"), "hook: {hook}");
+    assert!(hook.contains("gate run --surface=pre-push"), "hook: {hook}");
 }
 
 #[then("the push is aborted with a non-zero exit")]

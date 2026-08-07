@@ -268,11 +268,16 @@ const DOTNET_DEFAULT_CHANNEL: &str = "10.0";
 /// install script's `--channel` flag.
 ///
 /// Falls back to [`DOTNET_DEFAULT_CHANNEL`] when `req` is empty or does not
-/// contain at least two dot-separated, non-empty segments.
+/// start with two numeric dot-separated segments.
 fn dotnet_channel(req: &str) -> String {
     let mut parts = req.split('.');
     match (parts.next(), parts.next()) {
-        (Some(major), Some(minor)) if !major.is_empty() && !minor.is_empty() => {
+        (Some(major), Some(minor))
+            if !major.is_empty()
+                && !minor.is_empty()
+                && major.bytes().all(|byte| byte.is_ascii_digit())
+                && minor.bytes().all(|byte| byte.is_ascii_digit()) =>
+        {
             format!("{major}.{minor}")
         }
         _ => DOTNET_DEFAULT_CHANNEL.into(),
@@ -302,8 +307,10 @@ fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
             args: vec![
                 "-c".into(),
                 format!(
-                    "curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- \
-                     --channel {channel} --install-dir /usr/share/dotnet && \
+                    "set -eu; script_path=$(mktemp); trap 'rm -f \"$script_path\"' EXIT; \
+                     curl --fail --location --proto '=https' --tlsv1.2 \
+                     --output \"$script_path\" https://dot.net/v1/dotnet-install.sh; \
+                     bash \"$script_path\" --channel {channel} --install-dir /usr/share/dotnet && \
                      sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"
                 ),
             ],
@@ -985,6 +992,14 @@ mod tests {
             !script.contains("dotnet-sdk"),
             "must not reference the community snap package name"
         );
+        assert!(
+            !script.contains("| bash"),
+            "the installer must be downloaded before it is executed"
+        );
+        assert!(
+            script.contains("--proto '=https'") && script.contains("--tlsv1.2"),
+            "the installer download must be HTTPS-only and require modern TLS"
+        );
     }
 
     #[test]
@@ -1005,6 +1020,13 @@ mod tests {
         let script = &steps[0].args[1];
 
         assert!(script.contains("--channel 10.0"));
+    }
+
+    #[test]
+    fn dotnet_channel_rejects_non_numeric_segments() {
+        for requirement in ["10.0;touch /tmp/pwned", "10.$(id)", "10..204"] {
+            assert_eq!(dotnet_channel(requirement), DOTNET_DEFAULT_CHANNEL);
+        }
     }
 
     #[test]

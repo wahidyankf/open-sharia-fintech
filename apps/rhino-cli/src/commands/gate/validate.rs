@@ -315,11 +315,19 @@ fn validate_ci_matrix_contract(
                 .matrix
                 .get("gate")
                 .is_some_and(|entry| entry.contains("fromJson(needs.enumerate.outputs.gates)"));
-        let dispatches_selected_gate = job
-            .steps
-            .iter()
-            .filter_map(|step| step.run.as_deref())
-            .any(|run| run.contains("gate run --surface=ci --only=${{ matrix.gate.id }}"));
+        // A matrix gate id is configuration-controlled input. It must travel
+        // through a step environment variable and a quoted shell expansion,
+        // never be template-spliced into `run:`.
+        let dispatches_selected_gate = job.steps.iter().any(|step| {
+            let Some(run) = step.run.as_deref() else {
+                return false;
+            };
+            let normalized_run = run.split_whitespace().collect::<Vec<_>>().join(" ");
+            step.env.iter().any(|(name, value)| {
+                value.contains("matrix.gate.id")
+                    && normalized_run.contains(&format!("gate run --surface=ci --only=\"${name}\""))
+            })
+        });
         derives_gate_matrix && dispatches_selected_gate
     });
     let aggregate_requires_matrix_prerequisites = workflow
@@ -501,6 +509,10 @@ struct WorkflowStep {
     /// Optional shell command, including YAML block scalars.
     #[serde(default)]
     run: Option<String>,
+    /// Optional step-level environment variables. Matrix-derived values must
+    /// enter shell commands through these variables, not inline expressions.
+    #[serde(default)]
+    env: BTreeMap<String, String>,
     /// Optional step execution condition.
     #[serde(rename = "if")]
     condition: Option<WorkflowCondition>,
@@ -1164,7 +1176,9 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "      - env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n",
             "    needs: [enumerate, gate]\n",
         ),
@@ -1174,6 +1188,44 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
         "the registry-derived CI matrix dispatcher must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_rejects_an_inline_gate_id_expression() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: declared-ci-check\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  enumerate:\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate list --surface=ci --format=json\n",
+        "  gate:\n",
+        "    needs: enumerate\n",
+        "    strategy:\n",
+        "      matrix:\n",
+        "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+        "  quality-gate:\n",
+        "    needs: [enumerate, gate]\n",
+    ))
+    .unwrap();
+    let mut output = Vec::new();
+
+    assert!(
+        validate_ci_matrix_contract(&config, &workflow, &mut output).is_err(),
+        "a matrix gate id must not be template-spliced into a shell command"
     );
 }
 
@@ -1210,7 +1262,9 @@ fn quality_gate_requires_enumerate_as_well_as_gate() {
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "      - env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n",
             "    needs: gate\n",
         ),
@@ -1262,7 +1316,9 @@ fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
-            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "      - env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "        run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n",
             "    needs: [enumerate, gate]\n",
         ),
@@ -1353,7 +1409,9 @@ fn undeclared_ci_command() {
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "      - env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n",
             "    needs: [enumerate, gate]\n",
             "  unexpected:\n",
@@ -1407,7 +1465,9 @@ fn named_block_ci_step_is_checked_against_the_registry() {
             "      matrix:\n",
             "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "      - env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n",
             "    needs: [enumerate, gate]\n",
             "  unexpected:\n",

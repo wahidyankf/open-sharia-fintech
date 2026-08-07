@@ -877,6 +877,30 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
+    std::fs::write(
+        root.join("repo-config.yml"),
+        concat!(
+            "harness:\n",
+            "  - name: claude-code\n",
+            "    tier: source\n",
+            "    agent-dir: .claude/agents\n",
+            "  - name: cursor\n",
+            "    tier: generated\n",
+            "    agent-dir: .cursor/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: amazonq\n",
+            "    tier: generated\n",
+            "    rules-dir: .amazonq/rules\n",
+            "    agent-name: fixture-agent\n",
+            "coverage:\n  projects: []\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        ),
+    )
+    .expect("write repo-config.yml");
     emit_bindings(root).expect("emit bindings");
     let catalog = root.join(PLATFORM_BINDINGS_CATALOG);
     std::fs::create_dir_all(catalog.parent().expect("catalog has parent"))

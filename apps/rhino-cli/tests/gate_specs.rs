@@ -484,7 +484,7 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n    needs: [enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
         ),
     );
@@ -507,7 +507,7 @@ fn given_matrix_aggregate_missing_enumerate(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  quality-gate:\n    needs: gate\n",
         ),
     );
@@ -589,7 +589,7 @@ fn given_hand_wired_job(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
             "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
@@ -908,7 +908,7 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
         concat!(
             "jobs:\n",
             "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - env:\n          GATE_ID: ${{ matrix.gate.id }}\n        run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
             "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
         ),
