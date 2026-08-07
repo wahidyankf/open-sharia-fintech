@@ -224,15 +224,21 @@ for the full synthesis approach and acceptance criteria.
 **Known exception (tracked, not yet reconciled): `doctor/tools.rs` tool-provisioning extensions.**
 `ose-private` legitimately needs IaC tool provisioning (the same infra-only IaC surface named under
 [Allowed Divergence](#allowed-divergence) below) that the other bound repos do not, and its
-`doctor/tools.rs` carries extra tool-definition and test entries beyond the canonical set as a result.
-The "zero carve-outs" target above is stated as the goal for the whole `src/` tree; this one file has
-a structural tension with that goal that predates and is independent of this document's propagation
-work — the byte-identity boundary either needs a narrower `BOUNDARY_PATHS` carve-out for this file, or
-the parity check needs an accepted-superset comparison mode (canonical subset + declared per-repo
-extensions) instead of a literal full-file match. Until one of those lands as a code change, treat
-drift reports naming only `doctor/tools.rs`'s known IaC-tooling additions as this tracked exception,
-not as a new propagation gap — but still diff the file in full on every byte-identity check, since a
-new, unrelated drift can hide alongside the known one. Tracked as a follow-up idea brief:
+`doctor/tools.rs` was originally observed to carry extra tool-definition and test entries beyond the
+canonical set as a result. **Re-measured 2026-08-07** (see the linked brief's "Live re-measurement"
+section): as of that measurement the two files' `fn`-signature sets and `DOCTOR_TOOL_INVENTORY` are
+identical, and the file's entire diff is a separately-tracked, unpropagated fix (task #238) — not an
+extra-tool-definition surplus. The structural tension this note describes may still be real in
+principle, but the specific divergence that motivated writing it down is not currently observable; do
+not treat this note alone as evidence of present drift. The "zero carve-outs" target above is stated
+as the goal for the whole `src/` tree; this one file has a structural tension with that goal that
+predates and is independent of this document's propagation work — the byte-identity boundary either
+needs a narrower `BOUNDARY_PATHS` carve-out for this file, or the parity check needs an
+accepted-superset comparison mode (canonical subset + declared per-repo extensions) instead of a
+literal full-file match. Until one of those lands as a code change, treat drift reports naming only
+`doctor/tools.rs`'s known IaC-tooling additions as this tracked exception, not as a new propagation
+gap — but still diff the file in full on every byte-identity check, since a new, unrelated drift can
+hide alongside the known one. Tracked as a follow-up idea brief:
 [`rhino-cli-tools-superset-carveout`](../../plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md).
 
 ### Allowed Divergence

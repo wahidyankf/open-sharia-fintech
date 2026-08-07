@@ -411,21 +411,24 @@ fn validate_ci_doctor_bootstrap(
     // step-level `env:` variable, never spliced as a raw
     // `${{ join(matrix.gate.doctor_tools, ',') }}` expression into `run:`
     // (GitHub Actions expression injection) — the same class of fix as
-    // `GATE_ID` above. The provisioning step must therefore both declare
-    // `DOCTOR_TOOLS` from the matrix expression *and* consume it via that
-    // shell variable.
+    // `GATE_ID` above, and now implemented the same way: accept any
+    // step-env variable name that carries the matrix expression, so long as
+    // the run body assigns it to the local `tools` shell variable of that
+    // same name. This is deliberately name-agnostic rather than hardcoding
+    // `DOCTOR_TOOLS`, matching `dispatches_selected_gate` above so a repo
+    // naming its variable differently is not spuriously rejected.
     let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
         job.steps.iter().any(|step| {
-            let selects_doctor_tools_via_env = step
-                .env
-                .get("DOCTOR_TOOLS")
-                .is_some_and(|value| value.contains("matrix.gate.doctor_tools"));
-            let uses_doctor_tools_shell_variable = step.run.as_deref().is_some_and(|run| {
-                run.contains("tools=\"$DOCTOR_TOOLS\"")
-                    && run.contains("npm run doctor -- --fix --tools")
-                    && run.contains("if [ -n \"$tools\" ]")
-            });
-            selects_doctor_tools_via_env && uses_doctor_tools_shell_variable
+            let Some(run) = step.run.as_deref() else {
+                return false;
+            };
+            let normalized_run = run.split_whitespace().collect::<Vec<_>>().join(" ");
+            step.env.iter().any(|(name, value)| {
+                value.contains("matrix.gate.doctor_tools")
+                    && normalized_run.contains(&format!("tools=\"${name}\""))
+                    && normalized_run.contains("npm run doctor -- --fix --tools")
+                    && normalized_run.contains("if [ -n \"$tools\" ]")
+            })
         })
     });
     // As with `GATE_ID` above, existence of the safe env-indirected step does
@@ -1332,6 +1335,58 @@ fn matrix_ci_dispatcher_rejects_an_inline_gate_id_expression() {
     assert!(
         validate_ci_matrix_contract(&config, &workflow, &mut output).is_err(),
         "a matrix gate id must not be template-spliced into a shell command"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_accepts_a_non_default_gate_id_env_var_name() {
+    // `dispatches_selected_gate` is deliberately name-agnostic. Exercise that
+    // dimension directly: no fixture anywhere else in this suite uses an
+    // env-var name other than the literal `GATE_ID`, so without this test
+    // the name-agnostic capability itself is unexercised.
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=\"$CI_SELECTED_GATE\"\n",
+            "        env:\n",
+            "          CI_SELECTED_GATE: ${{ matrix.gate.id }}\n",
+            "  quality-gate:\n",
+            "    needs: [enumerate, gate]\n",
+        ),
+    )
+    .unwrap();
+
+    assert!(
+        run_at_root(repo.path(), &mut Vec::new()).is_ok(),
+        "a differently-named env var carrying matrix.gate.id must still validate"
     );
 }
 
@@ -2262,5 +2317,52 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "a raw matrix.gate.doctor_tools splice alongside the safe step must still fail; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
+    // `matrix_uses_declared_tools` is deliberately name-agnostic, matching
+    // `dispatches_selected_gate` above. Exercise that dimension directly: no
+    // fixture anywhere else in this suite uses an env-var name other than
+    // the literal `DOCTOR_TOOLS`, so without this test the name-agnostic
+    // capability itself is unexercised.
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"$CI_SELECTED_DOCTOR_TOOLS\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "        env:\n",
+        "          CI_SELECTED_DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
+    ))
+    .unwrap();
+
+    assert!(
+        validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
+        "a differently-named env var carrying matrix.gate.doctor_tools must still validate"
     );
 }

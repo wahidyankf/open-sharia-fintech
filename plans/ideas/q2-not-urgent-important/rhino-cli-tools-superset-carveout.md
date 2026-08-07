@@ -29,6 +29,13 @@ already carved out.
 So the boundary model (whole-file byte-identity) and the per-repo extension model (repos legitimately
 provision tools the others don't need) are in tension for exactly this one file. Left unresolved:
 
+- Every Phase Gate's "byte-identical to canonical" check that touches this file reports drift
+  indefinitely, masking genuinely unpropagated fixes among expected, known-good structural
+  differences — a checker or human has to manually distinguish "known IaC extension" from "someone
+  forgot to propagate a real fix" every time, with no mechanical way to tell them apart.
+- The stated "zero carve-outs" claim in `sdlc-gate-standard.md` is inaccurate for this one file as
+  written, which is itself a documentation-integrity problem independent of the code question.
+
 **Live re-measurement (2026-08-07, this review cycle) — flagged for re-confirmation before
 promotion.** Comparing this PR's canonical `apps/rhino-cli/src/application/doctor/tools.rs` (1075
 lines) against `ose-private`'s `origin/main` copy (1045 lines, commit `1cb9cd236`) directly:
@@ -46,16 +53,10 @@ This does not reproduce the "`ose-private` carries extra `OpenTofu`/`clang-forma
 canonical does not have" example above as of this measurement — canonical (`ose-public`) already
 carries that tooling identically (added by `ea286ee88`, predating this brief). The structural tension
 this brief describes (whole-file byte-identity vs. legitimate per-repo tool extension) may still be
-real in principle, but the specific divergence that motivated writing it down is not currently
-observable; re-verify against a live `diff` before promoting this brief past the idea stage, rather
-than treating the original provenance note as still-current evidence.
-
-- Every Phase Gate's "byte-identical to canonical" check that touches this file reports drift
-  indefinitely, masking genuinely unpropagated fixes among expected, known-good structural
-  differences — a checker or human has to manually distinguish "known IaC extension" from "someone
-  forgot to propagate a real fix" every time, with no mechanical way to tell them apart.
-- The stated "zero carve-outs" claim in `sdlc-gate-standard.md` is inaccurate for this one file as
-  written, which is itself a documentation-integrity problem independent of the code question.
+real in principle, but the specific divergence that motivated writing it down — and both consequences
+the bullets above assert — is **not currently observable**; re-verify against a live `diff` before
+promoting this brief past the idea stage, rather than treating the original provenance note or the
+bullets above as still-current evidence.
 
 ## Why now
 
