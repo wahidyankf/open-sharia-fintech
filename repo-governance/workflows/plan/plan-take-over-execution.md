@@ -126,13 +126,28 @@ workflow adds before that checklist even loads:
 
 - **One Task per (repo × artifact-class) discovery probe** in Phase A — never one coarse "discover
   state" task. Six artifact classes × N repos is 6N tasks, not one.
+- **One Task per Bucket-4 anomaly** raised in Phase B, closed only once the user's resolution is
+  recorded (see Phase C step 5) — an anomaly is never silently dropped from the live list.
 - **One Task per cleanup candidate** in Phase D — never a single "cleanup" task covering several
   worktrees or branches.
+- **Every checkbox Phase C step 5 ticks from discovered evidence gets its own Task too.** If no Task
+  yet exists for that checkbox (the common case — discovery runs before any delivery-checklist Task
+  list has been materialized), create one, then immediately complete it in the same breath as the
+  `delivery.md` edit — the identical pairing `plan-execution.md`'s Atomic Sync Ritual requires mid-execution, applied here at takeover time instead.
 - **Phase E rebuilds and resumes `plan-execution.md`'s own per-checkbox Task list per its Step 1**,
-  unchanged — this workflow's tasks close out as Phase E's handoff begins, not before.
+  unchanged — this workflow's own discovery/cleanup/reconciliation tasks close out as Phase E's
+  handoff begins, not before, and never get silently merged into the delivery-checklist tasks Phase E
+  creates next.
 
-Sync every task to `TaskUpdate` immediately on completion, matching the cadence
-`plan-execution.md` itself enforces — no batching several probes' worth of task closes into one
+**This is harness-agnostic.** Per the [multi-harness binding
+model](../../conventions/structure/multi-harness-binding.md), this document is vendor-neutral: "Task
+list" here means whatever live task/todo-tracking primitive the executing session's harness exposes
+(`TaskCreate`/`TaskUpdate`, or an equivalent primitive under another platform binding). Only the
+concrete tool name varies by harness — the 1:1-mapping and immediate-sync requirements above bind
+identically regardless of which one is in use.
+
+Sync every task to completion immediately, matching the cadence `plan-execution.md` itself enforces
+— no batching several probes', anomalies', or reconciled checkboxes' worth of task closes into one
 update.
 
 ## Steps
@@ -230,6 +245,20 @@ Changed` block, and (if recoverable) a prior session's transcript. Until the led
 4. **If a PR already exists for this branch**, record its number, state, and CI status
    (`gh pr checks <number>`) — `plan-execution.md`'s Step 2b/2c push-and-CI logic resumes against
    this PR at the plan's next delivery boundary rather than opening a duplicate one.
+5. **Reconcile `delivery.md` to the discovered ground truth before Phase E hands off.** The adopted
+   copy's `delivery.md` is the resume basis, but Phase A's cross-repo search can surface completed
+   work that copy doesn't yet reflect — a further-along PR found in a different repo for the same
+   multi-repo-parity plan, a sibling worktree whose `delivery.md` has more `- [x]` items ticked for a
+   shared checkbox, or a change that plainly landed (verified in Phase A2's diff/PR read) without its
+   Atomic Sync Ritual ever completing. For every such discovered fact, apply the identical [Atomic
+   Sync Ritual](./plan-execution.md#atomic-sync-ritual) `plan-execution.md` uses mid-execution — tick
+   the checkbox, add an implementation-notes block citing the discovery evidence (which repo, branch,
+   commit, or PR it came from), matching `TaskUpdate` — rather than leaving `delivery.md` stale and
+   letting `plan-execution.md`'s own Resume Reconciliation under-count progress at Step 1. **Tick only
+   from positive evidence gathered in Phase A** (a `MERGED` PR, a `- [x]` line actually present in a
+   discovered copy, a diff that proves the described change already landed) — never from inference.
+   A Bucket-4 anomaly the user resolved during Phase B also gets a note here, so a future resume sees
+   why the state looks the way it does rather than re-discovering the same anomaly cold.
 
 ### Phase D — Clean Up Confirmed-Stale Leftovers (Sequential, After Every Repo Is Classified)
 
