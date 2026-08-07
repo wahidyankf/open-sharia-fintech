@@ -5603,7 +5603,7 @@ is missing ci`, confirming the composition rule fires correctly.
     were reverted rather than risking new cross-repo drift; left as a separate, non-blocking follow-up
     (not folded into Task #231's scope).
 
-- [ ] [AI] **P6-PARITY-SETUP** (`blockedBy: P6-BYTE-IDENTITY`; `blocks: P6-PARITY-ASSERT`) — create
+- [x] [AI] **P6-PARITY-SETUP** (`blockedBy: P6-BYTE-IDENTITY`; `blocks: P6-PARITY-ASSERT`) — create
       one real drift in the clean detached `ose-private` verification worktree — commands:
 
   ```bash
@@ -5614,8 +5614,9 @@ is missing ci`, confirming the composition rule fires correctly.
   ```
 
   Acceptance: only `apps/rhino-cli/LICENSE` is dirty.
+  - Date: 2026-08-07 — Status: complete. Only `apps/rhino-cli/LICENSE` shown dirty by `git status`.
 
-- [ ] [AI] **P6-PARITY-ASSERT** (`blockedBy: P6-PARITY-SETUP`; `blocks: P6-PARITY-CLEANUP`) — prove
+- [x] [AI] **P6-PARITY-ASSERT** (`blockedBy: P6-PARITY-SETUP`; `blocks: P6-PARITY-CLEANUP`) — prove
       manifest validation fails and names the drifted file — commands:
 
   ```bash
@@ -5629,8 +5630,11 @@ is missing ci`, confirming the composition rule fires correctly.
   ```
 
   Acceptance: validation is non-zero and the log names `LICENSE`.
+  - Date: 2026-08-07 — Status: complete. Validation failed with
+    `apps/rhino-cli/LICENSE differs from the Git index; stage or revert the worktree change...` and
+    `apps/rhino-cli/LICENSE no longer matches apps/rhino-cli/parity-manifest.sha256.`
 
-- [ ] [AI] **P6-PARITY-CLEANUP** (`blockedBy: P6-PARITY-ASSERT`; `blocks: P6-AUDIT-DISPATCH`) — restore
+- [x] [AI] **P6-PARITY-CLEANUP** (`blockedBy: P6-PARITY-ASSERT`; `blocks: P6-AUDIT-DISPATCH`) — restore
       only the scratch file and prove parity is green again — commands:
 
   ```bash
@@ -5642,6 +5646,8 @@ is missing ci`, confirming the composition rule fires correctly.
   ```
 
   Acceptance: the file is clean and validation exits 0.
+  - Date: 2026-08-07 — Status: complete. `LICENSE` restored, scratch log removed, `parity manifest
+validate` reports `apps/rhino-cli/parity-manifest.sha256 is current` (exit 0).
 
 - [ ] [AI] **P6-AUDIT-DISPATCH** (`blockedBy: P6-PARITY-CLEANUP`; `blocks: P6-AUDIT-ASSERT`) — dispatch
       the exact converged workflow in the two enforced repositories — commands:
