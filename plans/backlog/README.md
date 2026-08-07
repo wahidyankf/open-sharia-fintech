@@ -96,6 +96,18 @@ added no decision value):
   [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
   scopes all four repos and needs `beaver-nest` live and writable.
 
+**Toolchain** (direct-authored on maintainer request 2026-08-07, not promoted from a two-pager):
+
+- [rhino-cli-ocaml-rewrite](./rhino-cli-ocaml-rewrite/README.md) — rewrite
+  [`apps/rhino-cli`](../../apps/rhino-cli/README.md) from Rust to OCaml, behind an evidence gate.
+  Carries the measured cost baseline that motivated it (68.4 s incremental rebuild, ~16 GB resident
+  Rust footprint), a four-way Rust/Go/OCaml/F# comparison, and a home-grown Gherkin harness, since no
+  maintained OCaml Cucumber implementation exists. Phase 1 runs a control experiment — toolchain
+  reclamation plus a fast dev profile — before the Phase 2 `[HUMAN]` go/no-go gate, so the rewrite is
+  decided against measured numbers rather than expectations. Hard `blockedBy`
+  [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
+  is actively rewriting `repo-config.yml` and the Husky shims this plan retargets.
+
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
 `reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state
