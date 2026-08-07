@@ -5833,7 +5833,7 @@ checkbox remains the separately authorized integration action after its precedin
 No sibling repo receives an in-progress copy of this plan in Phases 3, 4, or 5, so sibling archival
 is not applicable. The authoritative plan is archived in `ose-public` inside PR #6.
 
-- [ ] [AI] Inventory only the task-owned worktree paths declared in this plan, including
+- [x] [AI] Inventory only the task-owned worktree paths declared in this plan, including
       `ose-private/worktrees/gate-final-verification` (moved here from `beaver-nest` — see the
       2026-08-07 Scope Amendment) and the abandoned `beaver-nest/worktrees/sdlc-gate-registry-enforcement`
       and `ose-primer/worktrees/sdlc-gate-registry-enforcement-tools-propagate` worktrees, whose
@@ -5842,23 +5842,71 @@ is not applicable. The authoritative plan is archived in `ose-public` inside PR 
       **still-enforced** worktree — acceptance: every task-owned worktree in the enforced scope is
       clean and fully pushed, or its evidence is recovered before cleanup. Unrelated worktrees are
       recorded and excluded.
-- [ ] [HUMAN] Confirm removal of the inventoried task-owned worktrees and their local delivery
+  - Date: 2026-08-07
+  - Status: complete (out of the plan's normal order — see note below)
+  - Execution note: run early, ahead of Phase 6, on the user's direct instruction ("make sure all
+    changes are in origin main... all related worktrees in all repos are deleted afterward"). Full
+    inventory: `sdlc-gate-registry-enforcement-fsharp-cwd` had real unrecovered PR #143 evidence,
+    backfilled into this file and pushed (`08dbc980b`) before removal; `sdlc-gate-registry-enforcement`
+    (ose-primer) had a real tested locale-invariance fix later found already superseded upstream (no
+    action needed); `sdlc-gate-registry-enforcement` (beaver-nest) had two undocumented local commits
+    plus uncommitted WIP, all correctly cancelled per the Scope Amendment; the rest were clean or
+    stale/damaged with no unrecovered content. Unrelated `repository-onboarding-*` worktrees in all
+    four repos were inspected only enough to confirm they aren't task-owned, then left untouched.
+- [x] [HUMAN] Confirm removal of the inventoried task-owned worktrees and their local delivery
       branches — acceptance: explicit confirmation is recorded; without it, leave every worktree in
       place and mark cleanup pending rather than deleting anything.
-- [ ] [AI] **CLEAN-PUBLIC-1** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain.
-- [ ] [AI] **CLEAN-PUBLIC-1B** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement-defork` — acceptance: exits 0; unrelated worktrees remain.
-- [ ] [AI] **CLEAN-PUBLIC-2** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement-rewire-public` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — confirmed directly by the user's own instruction (quoted above), not a
+    separate ask.
+- [x] [AI] **CLEAN-PUBLIC-1** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: already-satisfied (no-op) — this worktree path did not exist at cleanup time (removed
+    earlier this session, before the current context window); confirmed via `git worktree list`.
+- [x] [AI] **CLEAN-PUBLIC-1B** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement-defork` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: already-satisfied (no-op) — same as CLEAN-PUBLIC-1; path absent, confirmed via
+    `git worktree list`.
+- [x] [AI] **CLEAN-PUBLIC-2** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement-rewire-public` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — clean worktree, removed without `--force`.
 - [ ] [AI] **CLEAN-PUBLIC-6** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree remove worktrees/sdlc-gate-registry-enforcement-knowledge` — acceptance: exits 0; unrelated worktrees remain.
-- [ ] [AI] **CLEAN-PRIMER** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-primer worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain (Phase 3 already merged; this removes the now-idle delivery worktree).
-- [ ] [AI] **CLEAN-PRIMER-ABANDON** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — discard the cancelled Task
+  - Not yet applicable: this worktree is created later, in §6.1 (`P6: create Phase 6 ose-public
+knowledge worktree`), which has not run yet — nothing exists to remove.
+- [x] [AI] **CLEAN-PRIMER** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-primer worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain (Phase 3 already merged; this removes the now-idle delivery worktree).
+  - Date: 2026-08-07
+  - Status: complete — before removal, found a real tested F# invariant-culture decimal-locale fix
+    (5 files) deliberately left uncommitted per Task #225 ("note for separate PR"). Attempted to land
+    it standalone (fresh worktree/branch off `origin/main`) but found upstream had already solved the
+    identical problem independently (`AmountFormatting.fs`, commit `68e153c1e`) — the stashed fix was
+    obsolete, not lost. Two additional files (`nx.json` telemetry flag, autogenerated
+    `routeTree.gen.ts` quote-style drift) were confirmed as noise and discarded. Worktree removed
+    clean.
+- [x] [AI] **CLEAN-PRIMER-ABANDON** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — discard the cancelled Task
       #228 propagation attempt and remove its worktree — command: `git -C /Users/wkf/ose-projects/ose-primer worktree remove --force worktrees/sdlc-gate-registry-enforcement-tools-propagate` — acceptance: exits 0; nothing from it is pushed or committed.
-- [ ] [AI] **CLEAN-PRIVATE** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-private worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — confirmed nothing from Task #228's tools.rs/package.json changes was ever
+    pushed or committed before force-removing.
+- [x] [AI] **CLEAN-PRIVATE** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-private worktree remove worktrees/sdlc-gate-registry-enforcement` — acceptance: exits 0; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — clean worktree, removed without `--force`.
 - [ ] [AI] **CLEAN-PRIVATE-VERIFY** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — command: `git -C /Users/wkf/ose-projects/ose-private worktree remove worktrees/gate-final-verification` — acceptance: exits 0; unrelated worktrees remain.
-- [ ] [AI] **CLEAN-BEAVER-ABANDON** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — discard the cancelled
+  - Not yet applicable: this worktree is created later, in §6.1 (`P6: attach detached
+final-verification worktree to ose-private`), which has not run yet — nothing exists to remove.
+- [x] [AI] **CLEAN-BEAVER-ABANDON** (`blockedBy: HUMAN-CLEANUP-CONFIRM`) — discard the cancelled
       Phase 5 attempt (real local commits `ce9aeb58a`/`ed4543aa`, never pushed) and remove its
       worktree and local branch — commands: `git -C /Users/wkf/ose-projects/beaver-nest worktree remove --force worktrees/sdlc-gate-registry-enforcement` and `git -C /Users/wkf/ose-projects/beaver-nest branch -D sdlc-gate-registry-enforcement` — acceptance: both exit 0; nothing from Phase 5 is pushed.
   - Pre-removal audit note (2026-08-07): found more than the two documented commits — a second local branch `sdlc-gate-registry-enforcement-finalize` (tip `ed4543aa4`, one commit past `ce9aeb58a`, itself carrying `709894bb6`) exists with no worktree attached, plus ~711/550-line uncommitted WIP in the worktree's working tree that matches neither branch tip. All of it is the same category of "rest of the beaver-nest tasks" the user explicitly cancelled — not a distinct decision. Command above must also delete `sdlc-gate-registry-enforcement-finalize`.
-- [ ] [AI] **CLEAN-PRUNE** (`blockedBy: CLEAN-PUBLIC-1, CLEAN-PUBLIC-1B, CLEAN-PUBLIC-2, CLEAN-PUBLIC-6, CLEAN-PRIMER, CLEAN-PRIMER-ABANDON, CLEAN-PRIVATE, CLEAN-PRIVATE-VERIFY, CLEAN-BEAVER-ABANDON`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree prune && git -C /Users/wkf/ose-projects/ose-primer worktree prune && git -C /Users/wkf/ose-projects/ose-private worktree prune && git -C /Users/wkf/ose-projects/beaver-nest worktree prune` — acceptance: task-owned paths are absent from all four repos' inventories; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — worktree force-removed, both local branches (`sdlc-gate-registry-enforcement`
+    and `sdlc-gate-registry-enforcement-finalize`) deleted; `git worktree list`/`git branch -a`
+    confirmed nothing beaver-nest-side was ever pushed.
+- [x] [AI] **CLEAN-PRUNE** (`blockedBy: CLEAN-PUBLIC-1, CLEAN-PUBLIC-1B, CLEAN-PUBLIC-2, CLEAN-PUBLIC-6, CLEAN-PRIMER, CLEAN-PRIMER-ABANDON, CLEAN-PRIVATE, CLEAN-PRIVATE-VERIFY, CLEAN-BEAVER-ABANDON`) — command: `git -C /Users/wkf/ose-projects/ose-public worktree prune && git -C /Users/wkf/ose-projects/ose-primer worktree prune && git -C /Users/wkf/ose-projects/ose-private worktree prune && git -C /Users/wkf/ose-projects/beaver-nest worktree prune` — acceptance: task-owned paths are absent from all four repos' inventories; unrelated worktrees remain.
+  - Date: 2026-08-07
+  - Status: complete — ran ahead of CLEAN-PUBLIC-6/CLEAN-PRIVATE-VERIFY since both are not-yet-applicable
+    (see above); safe to run early since `worktree prune` only clears stale administrative files for
+    already-removed worktrees and is a no-op for the two not-yet-created ones. All four repos pruned;
+    `git worktree list` in each shows only `main` plus the unrelated `repository-onboarding-*` set.
 
 ### Phase 6 Gate
 
