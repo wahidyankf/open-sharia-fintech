@@ -4,6 +4,7 @@ import path from "node:path";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  allowedDevOrigins: ["127.0.0.1"],
   transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
   outputFileTracingRoot: path.join(__dirname, "../../"),
   outputFileTracingIncludes: {
