@@ -118,9 +118,7 @@ does enforce required checks, or when the blocker's root cause is unconfirmed/in
 merged with the four related PR #22 instances below into one exception class with a shared
 verification checklist.
 
-### `BOUNDARY_PATHS` declares the whole `apps/rhino-cli/src` byte-identical, but per-repo tool
-
-### extensions already violate it
+### `BOUNDARY_PATHS` declares the whole `apps/rhino-cli/src` byte-identical, but per-repo tool extensions already violate it
 
 **Observed**: While propagating the canonical dotnet-channel fix (task #224) into `ose-private`'s
 `doctor/tools.rs`, a full `diff` against canonical showed far more divergence than the propagated
@@ -154,9 +152,7 @@ of landed inline:
 two directions before a five-document plan is warranted — the correct promotion path per
 `plans/ideas/README.md`).
 
-### PR #22 (ose-private) Cycle 1 CI gate skipped a second time — same outage, worse symptom (webhook
-
-### throttling, not job cancellation)
+### PR #22 (ose-private) Cycle 1 CI gate skipped a second time — same outage, worse symptom (webhook throttling, not job cancellation)
 
 **Observed**: After pushing the dotnet-channel propagation fix (`6ff8b1775`, then a retry empty commit
 `099b2a100`) to `ose-private` PR #22, no `pull_request` workflow run was created at all — not queued,

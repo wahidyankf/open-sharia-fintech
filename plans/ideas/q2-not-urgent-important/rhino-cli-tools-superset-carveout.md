@@ -29,6 +29,27 @@ already carved out.
 So the boundary model (whole-file byte-identity) and the per-repo extension model (repos legitimately
 provision tools the others don't need) are in tension for exactly this one file. Left unresolved:
 
+**Live re-measurement (2026-08-07, this review cycle) — flagged for re-confirmation before
+promotion.** Comparing this PR's canonical `apps/rhino-cli/src/application/doctor/tools.rs` (1075
+lines) against `ose-private`'s `origin/main` copy (1045 lines, commit `1cb9cd236`) directly:
+
+- `fn`-signature sets are **identical** — 36 of 36 functions match by name in both files, including
+  `install_clang_format` and the `OpenTofu`-specific helpers cited above as the motivating example.
+- `DOCTOR_TOOL_INVENTORY` (`apps/rhino-cli/src/application/repo_config/mod.rs`) is **identical** —
+  the same 16 entries (including `tofu` and `clang-format`) in both repos.
+- The entire 111-line diff between the two files is the already-separately-tracked, unpropagated
+  `dotnet_channel`/`install_dotnet` security-hardening fix (same propagation-gap class as F4 in the
+  `sdlc-gate-registry-enforcement` PR #152 Cycle 2 review, tracked as task #238) — **not** a residual
+  extra-tool-definition surplus.
+
+This does not reproduce the "`ose-private` carries extra `OpenTofu`/`clang-format` tool definitions
+canonical does not have" example above as of this measurement — canonical (`ose-public`) already
+carries that tooling identically (added by `ea286ee88`, predating this brief). The structural tension
+this brief describes (whole-file byte-identity vs. legitimate per-repo tool extension) may still be
+real in principle, but the specific divergence that motivated writing it down is not currently
+observable; re-verify against a live `diff` before promoting this brief past the idea stage, rather
+than treating the original provenance note as still-current evidence.
+
 - Every Phase Gate's "byte-identical to canonical" check that touches this file reports drift
   indefinitely, masking genuinely unpropagated fixes among expected, known-good structural
   differences — a checker or human has to manually distinguish "known IaC extension" from "someone

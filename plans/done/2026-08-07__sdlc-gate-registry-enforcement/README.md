@@ -14,7 +14,7 @@ created: 2026-08-02
 
 # SDLC Gate Registry Enforcement
 
-**Status**: In Progress — Phases 1, 11, 2, 3, and 4 landed; Phase 5 cancelled; Phase 6 next
+**Status**: Complete (2026-08-07) — Phases 1, 1.1, 2, 3, 4, and 6 landed; Phase 5 cancelled.
 **Delivery Mode**: `worktree-to-pr`
 **Repos in scope**: `ose-public` and `ose-private` (enforced, ongoing) — **amended 2026-08-07**, see
 [delivery.md §Scope Amendment](./delivery.md#scope-amendment-2026-08-07). `ose-primer` received a

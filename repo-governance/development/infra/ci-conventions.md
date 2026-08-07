@@ -357,10 +357,14 @@ expression directly:
        GATE_ID: ${{ matrix.gate.id }}
    ```
 
-   `rhino-cli`'s `gate validate` command enforces this pattern for the CI dispatch step
-   (`validate_ci_matrix_contract` in `apps/rhino-cli/src/commands/gate/validate.rs`) — a matrix
-   `run:` step that references `matrix.gate.id` directly, without an `env:` indirection, fails
-   validation.
+   `rhino-cli`'s `gate validate` command enforces this pattern for **both** matrix values that
+   currently reach the shell — `matrix.gate.id` (via `validate_ci_matrix_contract`) and
+   `matrix.gate.doctor_tools` (via `validate_ci_doctor_bootstrap`), both in
+   `apps/rhino-cli/src/commands/gate/validate.rs`. Each function requires the safe `env:`-indirected
+   step **and** rejects a raw, unindirected splice of its matrix expression anywhere in the
+   workflow's `run:` bodies — so any step referencing `matrix.gate.id` or
+   `matrix.gate.doctor_tools` directly, without an `env:` indirection, fails validation, regardless
+   of whether a compliant step is also present.
 
 2. **`condition && 0 || fallback` never evaluates to `0`.** GitHub Actions expressions use
    JavaScript-like short-circuit `&&`/`||`, and `0` (like `''` and `false`) is falsy — so

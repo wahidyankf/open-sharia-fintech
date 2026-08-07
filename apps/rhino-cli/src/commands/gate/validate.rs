@@ -289,6 +289,22 @@ fn workflow_jobs(
     Ok(workflow)
 }
 
+/// Whether any step's `run:` body, in any job, references `needle` at all —
+/// used to reject a raw, unindirected splice of a matrix expression (e.g.
+/// `matrix.gate.id`, `matrix.gate.doctor_tools`) into a shell string. The
+/// safe env-indirected pattern never puts the matrix expression text in
+/// `run:` (it lives in the step's `env:` map instead), so this is a sound
+/// absence check, not merely a presence check for the unsafe pattern's most
+/// common shape.
+fn workflow_run_bodies_reference(workflow: &Workflow, needle: &str) -> bool {
+    workflow
+        .jobs
+        .values()
+        .flat_map(|job| job.steps.iter())
+        .filter_map(|step| step.run.as_deref())
+        .any(|run| run.contains(needle))
+}
+
 /// Validates the generated CI matrix and its quality-gate dependency.
 fn validate_ci_matrix_contract(
     config: &repo_config::RepoConfig,
@@ -330,7 +346,13 @@ fn validate_ci_matrix_contract(
             });
             selects_gate_id_via_env && uses_gate_id_shell_variable
         });
-        derives_gate_matrix && dispatches_selected_gate
+        // Existence of the safe env-indirected step is not enough: a later
+        // step (in this job or any other) could still splice the raw matrix
+        // expression directly into a `run:` shell string. Reject that
+        // regardless of whether the safe pattern is also present, so a
+        // regression cannot hide behind an unrelated compliant step.
+        let no_raw_gate_id_splice = !workflow_run_bodies_reference(workflow, "matrix.gate.id");
+        derives_gate_matrix && dispatches_selected_gate && no_raw_gate_id_splice
     });
     let aggregate_requires_matrix_prerequisites = workflow
         .jobs
@@ -404,7 +426,13 @@ fn validate_ci_doctor_bootstrap(
             selects_doctor_tools_via_env && uses_doctor_tools_shell_variable
         })
     });
-    if format_derives_tool_union && matrix_uses_declared_tools {
+    // As with `GATE_ID` above, existence of the safe env-indirected step does
+    // not preclude a second, unsafe step from splicing the raw matrix
+    // expression directly into a `run:` shell string. Reject that
+    // regardless of whether the safe pattern is also present.
+    let no_raw_doctor_tools_splice =
+        !workflow_run_bodies_reference(workflow, "matrix.gate.doctor_tools");
+    if format_derives_tool_union && matrix_uses_declared_tools && no_raw_doctor_tools_splice {
         return Ok(());
     }
 
@@ -1202,6 +1230,66 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
         "the registry-derived CI matrix dispatcher must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() {
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    // The safe env-indirected dispatcher step is present (matching the
+    // existence check exactly), but a *second* step in the same job still
+    // splices the raw matrix expression directly into its `run:` body, with
+    // no `env:` indirection. This must fail even though the safe pattern
+    // exists somewhere in the job.
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  enumerate:\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "  gate:\n",
+            "    needs: enumerate\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "        env:\n",
+            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "      - run: echo \"debug gate id is ${{ matrix.gate.id }}\"\n",
+            "  quality-gate:\n",
+            "    needs: [enumerate, gate]\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("must derive its gate matrix"),
+        "a raw matrix.gate.id splice alongside the safe dispatcher step must still fail; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -2077,6 +2165,60 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
     assert!(
         result.is_err() && rendered.contains("format and matrix Doctor selections"),
         "formatter-only format setup must fail; result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    // The safe env-indirected step is present (matching the `gate` job's
+    // existence check exactly), but a *second* step in the same job still
+    // splices the raw matrix expression directly into its `run:` body,
+    // with no `env:` indirection. This must fail even though the safe
+    // pattern exists somewhere in the workflow.
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"$DOCTOR_TOOLS\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "        env:\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
+        "      - run: npm run doctor -- --fix --tools \"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_doctor_bootstrap(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("format and matrix Doctor selections"),
+        "a raw matrix.gate.doctor_tools splice alongside the safe step must still fail; \
+         result_ok={}, output={rendered:?}",
         result.is_ok()
     );
 }
