@@ -19,7 +19,8 @@ Archived plans and completed project planning documents.
   `ose-primer` (Phase 3) keeps its already-merged landing but exits continuous enforcement in favor
   of periodic/manual sync. See the plan's own `learnings.md` Scope Amendment entry for the full
   rationale. Delivery Mode: `worktree-to-pr` (`ose-public`, `ose-primer`, `ose-private` each as
-  independent tracks). Completed 2026-08-07.
+  independent tracks). Completed 2026-08-07. Terminal delivery chain (`ose-public` Phase 6, Knowledge
+  Capture/Archive): [PR #152](https://github.com/wahidyankf/ose-public/pull/152).
 - [2026-08-06: pr-review-cycle-scout-and-typesafety](./2026-08-06__pr-review-cycle-scout-and-typesafety/README.md) —
   Added a `pr-review-scout-maker` pipeline stage 0 (risk-tier classification + specialist selection +
   shared-context assembly, moved off `pr-review-synthesis-maker`), a ninth `pr-review-types-maker`
