@@ -47,6 +47,11 @@ validation at the end.
   prior-art `web-researcher` study → promotion checkpoint → `plan-planning` (target-stage=backlog) →
   retire the two-pager (delete + de-index) so the idea now lives as a plan. Not-yet-ripe briefs get a
   readiness report and no plan. Deliverable is the plan, never the implementation.
+- [Plan Take-Over Execution](./plan-take-over-execution.md) - Before executing a plan, discover
+  whether it has already been worked anywhere — local worktrees, local/remote branches, and PRs
+  across the current repo and its siblings (`ose-primer`, `ose-private` at minimum) — reconcile
+  findings into one authoritative picture, adopt any live in-flight work instead of reprovisioning
+  over it, remove confirmed-stale leftovers, then hand off to `plan-execution`
 - [Plan Execution](./plan-execution.md) - Execute plan tasks systematically with validation and completion tracking; orchestrated directly by the calling context, validated by `plan-execution-checker`
 - [Multi-Plans Execution](./multi-plans-execution.md) - Execute several plans together — named as an explicit list or a set-selector (`all-in-progress` / `all-backlog` / `all`, optionally minus an `except` list) resolved to a frozen set: build a dependency DAG (explicit `Depends-on` wins, resource-overlap inference fills gaps), materialize one very-granular union Task list, and run a bounded ready-queue scheduler (default 3 parallel nodes, overridable) that drives each plan through its full `plan-execution` lifecycle; failure quarantines a plan without cascading to independent ones
 - [Plan Multi-Repo Parity Planning](./plan-multi-repo-parity-planning.md) - Author aligned-but-deliberately-divergent plans across multiple sibling repositories for a shared objective: survey → deviation matrix → first grill (hard gate) → web research → second grill → author → gate → deliver. Every cross-repo deviation reaches a recorded decision before authoring begins
