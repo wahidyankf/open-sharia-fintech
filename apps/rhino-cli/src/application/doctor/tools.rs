@@ -291,6 +291,18 @@ fn dotnet_channel(req: &str) -> String {
     }
 }
 
+/// GPG key fingerprint (40 hex chars) that must sign `dotnet-install.sh`,
+/// pinned from Microsoft's published key at `https://dot.net/v1/dotnet-install.asc`
+/// (live-verified 2026-08-07: key `B9CF1A51FC7D3ACF`, uid "Microsoft
+/// `DevUXTeamPrague` <devuxteamprague@microsoft.com>", detached signature at
+/// `https://dot.net/v1/dotnet-install.sig` verifies against the fetched
+/// script). Pinning the fingerprint — rather than trusting whatever key the
+/// `.asc` endpoint happens to serve at install time — closes the same class
+/// of gap `OPENTOFU_*_SHA256` closes for `install_tofu`: without a pin, a
+/// compromised `dot.net` endpoint could serve a malicious script alongside a
+/// matching malicious key/signature pair and still pass verification.
+const DOTNET_INSTALL_SH_GPG_FINGERPRINT: &str = "2B930AB1228D11D5D7F6B6ACB9CF1A51FC7D3ACF";
+
 /// Returns install steps for .NET SDK.
 ///
 /// On macOS: `brew install dotnet`.
@@ -299,6 +311,29 @@ fn dotnet_channel(req: &str) -> String {
 /// `dotnet-sdk` snap is deliberately avoided — its track catalog lags
 /// behind current .NET releases (capped at `8.0/stable` as of 2026-08),
 /// so a hardcoded newer channel there fails to install on every CI run.
+///
+/// The Linux command is:
+///
+/// ```text
+/// curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$temp_dir/dotnet-install.sh"
+/// # + .sig/.asc download and GPG signature verification (see
+/// #   DOTNET_INSTALL_SH_GPG_FINGERPRINT)
+/// sudo mkdir -p /usr/share/dotnet
+/// sudo chown "$(id -u):$(id -g)" /usr/share/dotnet
+/// bash "$temp_dir/dotnet-install.sh" --channel <channel> --install-dir /usr/share/dotnet
+/// sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet
+/// ```
+///
+/// Only the directory creation is privileged, not the whole script: `sudo`
+/// scope is narrowed to `mkdir`/`chown`/`ln` because `/usr/share` is
+/// root-owned on stock Debian/Ubuntu, so creating `/usr/share/dotnet` needs
+/// root — but Microsoft's install script itself is designed to perform a
+/// non-admin installation once its target directory exists and is writable,
+/// and its own writes (extraction, SDK files) stay confined to
+/// `--install-dir` and its own `mktemp` working directory. Running the
+/// entire curl-downloaded third-party script under `sudo`, as an earlier
+/// version of this function did, would escalate every one of those writes to
+/// root for no reason beyond the single `mkdir` that actually requires it.
 fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
     if platform == "darwin" {
         vec![InstallStep {
@@ -318,6 +353,19 @@ fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
 temp_dir=$(mktemp -d)
 trap 'rm -rf "$temp_dir"' EXIT
 curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sh -o "$temp_dir/dotnet-install.sh"
+curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sig -o "$temp_dir/dotnet-install.sig"
+curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.asc -o "$temp_dir/dotnet-install.asc"
+export GNUPGHOME="$temp_dir/gnupg"
+mkdir -m 700 "$GNUPGHOME"
+gpg --batch --import "$temp_dir/dotnet-install.asc" >/dev/null 2>&1
+actual_fingerprint=$(gpg --batch --with-colons --fingerprint | awk -F: '/^fpr:/ {{print $10; exit}}')
+if [ "$actual_fingerprint" != "{DOTNET_INSTALL_SH_GPG_FINGERPRINT}" ]; then
+  echo "dotnet-install.sh signing key fingerprint mismatch: expected {DOTNET_INSTALL_SH_GPG_FINGERPRINT}, got $actual_fingerprint" >&2
+  exit 1
+fi
+gpg --batch --verify "$temp_dir/dotnet-install.sig" "$temp_dir/dotnet-install.sh"
+sudo mkdir -p /usr/share/dotnet
+sudo chown "$(id -u):$(id -g)" /usr/share/dotnet
 bash "$temp_dir/dotnet-install.sh" --channel {channel} --install-dir /usr/share/dotnet
 sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"#
                 ),
@@ -1048,6 +1096,70 @@ mod tests {
             !script.contains("curl attacker") && !script.contains("| bash\n"),
             "a metacharacter-bearing channel must never be spliced verbatim into the \
              `bash -c` script"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_narrows_root_privilege_to_directory_setup_and_symlink_only() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            !script.contains("sudo bash \"$temp_dir/dotnet-install.sh\""),
+            "the curl-downloaded dotnet-install.sh must NOT run entirely under sudo — only \
+             its own `mkdir -p /usr/share/dotnet` needs root (because /usr/share is \
+             root-owned on stock Debian/Ubuntu); escalating the whole third-party script \
+             gives root to every write it makes, not just that one directory creation"
+        );
+        assert!(
+            script.contains("bash \"$temp_dir/dotnet-install.sh\" --channel 10.0"),
+            "dotnet-install.sh itself must run unprivileged once its install directory \
+             exists and is writable — Microsoft's script performs a non-admin installation \
+             by design"
+        );
+        assert!(
+            script.contains("sudo mkdir -p /usr/share/dotnet")
+                && script.contains("sudo chown \"$(id -u):$(id -g)\" /usr/share/dotnet"),
+            "root privilege must be scoped to pre-creating and chowning the install \
+             directory, run before the unprivileged install-script invocation, so the \
+             install itself can write into it without sudo"
+        );
+        assert!(
+            script.find("sudo mkdir -p /usr/share/dotnet").unwrap()
+                < script.find("bash \"$temp_dir/dotnet-install.sh\"").unwrap(),
+            "the privileged mkdir+chown step must run BEFORE the unprivileged install-script \
+             invocation, or the script's own directory creation would still hit a \
+             root-owned /usr/share"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_verifies_gpg_signature_before_running_install_script() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            script.contains("https://dot.net/v1/dotnet-install.sig")
+                && script.contains("https://dot.net/v1/dotnet-install.asc"),
+            "must download both the detached signature and Microsoft's signing public key \
+             alongside dotnet-install.sh itself"
+        );
+        assert!(
+            script.contains(DOTNET_INSTALL_SH_GPG_FINGERPRINT),
+            "must pin the expected signing key fingerprint rather than trusting whatever \
+             key the .asc endpoint happens to serve at install time"
+        );
+        assert!(
+            script.contains("gpg --batch --verify")
+                && script
+                    .contains(r#""$temp_dir/dotnet-install.sig" "$temp_dir/dotnet-install.sh""#),
+            "must run `gpg --verify` against the downloaded script before executing it"
+        );
+        assert!(
+            script.find("gpg --batch --verify").unwrap()
+                < script.find("bash \"$temp_dir/dotnet-install.sh\"").unwrap(),
+            "GPG verification must complete BEFORE the install script is executed, or a \
+             tampered script could run before its signature is even checked"
         );
     }
 
