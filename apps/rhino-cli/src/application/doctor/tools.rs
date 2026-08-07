@@ -318,7 +318,7 @@ fn install_dotnet(req: &str, platform: &str) -> Vec<InstallStep> {
 temp_dir=$(mktemp -d)
 trap 'rm -rf "$temp_dir"' EXIT
 curl --proto '=https' --tlsv1.2 -fsSL https://dot.net/v1/dotnet-install.sh -o "$temp_dir/dotnet-install.sh"
-bash "$temp_dir/dotnet-install.sh" --channel {channel} --install-dir /usr/share/dotnet
+sudo bash "$temp_dir/dotnet-install.sh" --channel {channel} --install-dir /usr/share/dotnet
 sudo ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet"#
                 ),
             ],
@@ -1048,6 +1048,21 @@ mod tests {
             !script.contains("curl attacker") && !script.contains("| bash\n"),
             "a metacharacter-bearing channel must never be spliced verbatim into the \
              `bash -c` script"
+        );
+    }
+
+    #[test]
+    fn install_dotnet_linux_runs_install_script_with_root_privileges() {
+        let steps = install_dotnet("10.0.204", "linux");
+        let script = &steps[0].args[1];
+
+        assert!(
+            script.contains("sudo bash \"$temp_dir/dotnet-install.sh\""),
+            "the install script itself must run under sudo, not only the trailing symlink \
+             step — dotnet-install.sh's own `mkdir -p /usr/share/dotnet` requires root on a \
+             stock Debian/Ubuntu runner where /usr/share is root-owned; running only the \
+             symlink under sudo leaves the install's directory-creation step unprivileged \
+             and it fails with 'Permission denied'"
         );
     }
 
