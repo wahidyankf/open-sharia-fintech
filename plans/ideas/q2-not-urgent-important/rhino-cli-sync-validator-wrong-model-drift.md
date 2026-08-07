@@ -47,9 +47,10 @@ every additional divergence makes a full reconciliation pass harder to reason ab
 - **Multi-repo parity planning workflow** — the existing, sanctioned procedure for coordinating a
   change that must land in more than one repo at once.
   [plan-multi-repo-parity-planning.md](https://github.com/wahidyankf/ose-private/blob/main/repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
-- **`ose-public-nx-affected-rhino-cli-gap` idea** — the adjacent rhino-cli-in-`ose-public` finding from
-  the same plan; distinct problem, same family, worth triaging together.
-  [ose-public-nx-affected-rhino-cli-gap](./ose-public-nx-affected-rhino-cli-gap.md)
+- **The `nx affected` rhino-cli-detection gap** — the adjacent rhino-cli-in-`ose-public` finding from
+  the same plan; distinct problem, same family. Promoted 2026-08-07 into
+  [rhino-cli-optimization](../../backlog/rhino-cli-optimization/README.md), which root-causes it in
+  Axis A Phase 4.
 
 ## Proposed direction (sketch)
 
@@ -76,8 +77,8 @@ Out of scope, carried forward verbatim from the source plan:
 
 - Building an automated cross-repo byte-identity CI gate — a larger, separate investment; track it as
   its own idea if pursued.
-- The `ose-public`-specific `nx affected` rhino-cli-detection gap, tracked separately at
-  [ose-public-nx-affected-rhino-cli-gap](./ose-public-nx-affected-rhino-cli-gap.md).
+- The `ose-public`-specific `nx affected` rhino-cli-detection gap, now carried by
+  [rhino-cli-optimization](../../backlog/rhino-cli-optimization/README.md) Axis A Phase 4.
 - Reconciling `ose-primer`'s copy, unless it turns out to carry this specific string — verify first, do
   not assume drift where none exists.
 - Any change to the wrong-model _behavior_. Only the fixture string identity moves.

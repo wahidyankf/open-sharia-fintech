@@ -96,17 +96,24 @@ added no decision value):
   [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
   scopes all four repos and needs `beaver-nest` live and writable.
 
-**Toolchain** (direct-authored on maintainer request 2026-08-07, not promoted from a two-pager):
+**Toolchain** (direct-authored on maintainer request 2026-08-07):
 
-- [rhino-cli-ocaml-rewrite](./rhino-cli-ocaml-rewrite/README.md) — rewrite
-  [`apps/rhino-cli`](../../apps/rhino-cli/README.md) from Rust to OCaml, behind an evidence gate.
-  Carries the measured cost baseline that motivated it (68.4 s incremental rebuild, ~16 GB resident
-  Rust footprint), a four-way Rust/Go/OCaml/F# comparison, and a home-grown Gherkin harness, since no
-  maintained OCaml Cucumber implementation exists. Phase 1 runs a control experiment — toolchain
-  reclamation plus a fast dev profile — before the Phase 2 `[HUMAN]` go/no-go gate, so the rewrite is
-  decided against measured numbers rather than expectations. Hard `blockedBy`
+- [rhino-cli-optimization](./rhino-cli-optimization/README.md) — make
+  [`apps/rhino-cli`](../../apps/rhino-cli/README.md) fast to build, cheap on disk, and more provably
+  type-safe, working from a measured first-principles cost model rather than a language swap.
+  Three independent axes: build time (68.4 s incremental rebuild → a **&lt; 10 s** gate, already
+  demonstrated at 1.83 s by a profile change, since 53 invocation sites across 27 `project.json`
+  files shell out to `cargo run --release`); disk (~16 GB → **&lt; 6 GB**, ~7 GB of it five
+  superseded rustup toolchains and a sibling repo's stale cache that nothing owns); and type safety
+  (`indexing_slicing` and `arithmetic_side_effects` denied crate-wide across 1,983 sites). Every
+  substantive phase opens with a bounded POC carrying an abandon-if threshold, because local
+  measurement disqualified four separately well-cited interventions during authoring. A language
+  rewrite survives only as a **gated last-resort phase** reached if the measured targets go unmet,
+  carrying the four-way Rust/Go/OCaml/F# comparison as its decision record. Absorbs the
+  `rhino-cli-language-rewrite-tradeoffs` and `ose-public-nx-affected-rhino-cli-gap` two-pagers.
+  Sequenced after
   [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
-  is actively rewriting `repo-config.yml` and the Husky shims this plan retargets.
+  owns the `repo-config.yml` gate registry this plan builds its build-speed work on.
 
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the

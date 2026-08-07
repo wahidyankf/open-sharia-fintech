@@ -20,7 +20,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
-- [rhino-cli-language-rewrite-tradeoffs](./q1-urgent-important/rhino-cli-language-rewrite-tradeoffs.md) — compile-time, disk-usage, and Gherkin-support trade-offs for rewriting rhino-cli in .NET (F#) or OCaml; no rewrite decided, spike proposed.
 - [tri-repo-rhino-cli-byte-identity-gate](./q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md) — a standing diff gate over the `apps/rhino-cli` byte-identity boundary across all three repos.
 
 ### Q2 — Important, Not Urgent
@@ -49,7 +48,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [mermaid-state-label-render-clipping-warn](./q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md) — a WARN rule for `stateDiagram-v2` edge labels that clip in GitHub's renderer.
 - [nx-affected-cross-worktree-contamination](./q2-not-urgent-important/nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
 - [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip all three repos inherit.
-- [ose-public-nx-affected-rhino-cli-gap](./q2-not-urgent-important/ose-public-nx-affected-rhino-cli-gap.md) — root-cause why ose-public's `nx affected` silently misses rhino-cli Rust changes, letting untested commits clear pre-push.
 - [plan-archival-in-pr-multi-repo-gap](./q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
 - [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.

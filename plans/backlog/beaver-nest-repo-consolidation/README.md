@@ -127,12 +127,48 @@ Four delivery units, executed in order:
 
 ## Ordering Constraint
 
-This plan is **`blockedBy`**
+This plan is the **last of three**, executed in this order:
+
+```text
+sdlc-gate-registry-enforcement  →  rhino-cli-optimization  →  beaver-nest-repo-consolidation
+```
+
+All three touch `apps/rhino-cli`, and this plan must not start until **both** predecessors are
+complete.
+
+### `blockedBy` — `sdlc-gate-registry-enforcement`
+
 [`plans/in-progress/sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md)
-and must not start until that plan is complete. That plan declares
-`**Repos in scope**: ose-public, ose-primer, ose-private, beaver-nest (all four)`
-[Repo-grounded — its `README.md:19`, read 2026-08-06], so it needs `beaver-nest` to still exist as a
-live, writable repository. Archiving first would strand its fourth track.
+originally declared all four repos in scope, so it needed `beaver-nest` to still exist as a live,
+writable repository — archiving first would have stranded its fourth track. That plan **amended its
+scope on 2026-08-07** to `ose-public` and `ose-private` only, with `beaver-nest`'s Phase 5
+cancelled precisely because this consolidation retires it. The ordering still holds, now for the
+simpler reason that it owns `repo-config.yml`, the generated Husky shims, and the CI gate surface.
+
+### `blockedBy` — `rhino-cli-optimization`
+
+[`plans/backlog/rhino-cli-optimization`](../rhino-cli-optimization/README.md) rewrites how
+`apps/rhino-cli` is built, invoked, and lint-gated. It changes three things this plan's delivery
+checklist currently depends on, and **that plan owns repairing every citation** — its Phase 2 and
+Phase 3 carry explicit hand-off steps, and its Phase 12 gate verifies every command named here
+still resolves:
+
+| What changes                                                              | This plan's affected steps                                                                  |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `apps/rhino-cli/tests/gate_specs.rs` is consolidated into one test binary | The parity-message TDD cycle's RED target and its `cargo test --test gate_specs` invocation |
+| `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml`   | Four steps, including `repo-config validate` and `parity manifest generate`/`validate`      |
+| `docs/reference/sdlc-gate-standard.md` invocation-form references         | Both plans edit this file for different reasons; `rhino-cli-optimization` lands first       |
+
+**Do not pre-emptively rewrite these steps.** Re-derive them against `apps/rhino-cli`'s actual
+post-optimization state at Phase 0, since the predecessor's own POC phases may change the shape of
+the resolver it introduces.
+
+One terminology nuance to preserve rather than "correct": this plan's four→three sweep makes
+`parity.rs` name **three** repos (`ose-public`, `ose-primer`, `ose-private`) in its parity message.
+That is not in conflict with `rhino-cli-optimization` scoping itself to **two** — `ose-primer` is
+named in the message and synced manually on a delay, but sits outside _continuously enforced_
+byte-identity per commit `a0383faed`. The message names membership; enforcement is narrower. Do not
+collapse the two concepts in either direction.
 
 ## Worktree and Delivery Mode
 

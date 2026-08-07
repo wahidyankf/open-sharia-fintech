@@ -21,12 +21,34 @@ Phases 6-7 execute in `ose-primer` and `ose-private` respectively; Phase 8 execu
 > `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
 > privileged-credential handling). `[AI+HUMAN]`: agent prepares, human approves or finishes.
 
-## Blocking Precondition
+## Blocking Preconditions
+
+This plan is the **last of three**:
+`sdlc-gate-registry-enforcement` → `rhino-cli-optimization` → this plan. Both predecessors must be
+archived before Phase 0 begins. See
+[README.md §Ordering Constraint](./README.md#ordering-constraint) for why each blocks.
 
 - [ ] [AI] Verify [`plans/in-progress/sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md)
       has completed — command: `test -d plans/done/*__sdlc-gate-registry-enforcement && echo COMPLETE`
       — acceptance: prints `COMPLETE`; if the folder is still under `plans/in-progress/`, **stop and
       do not begin Phase 0** (see [tech-docs.md D5](./tech-docs.md#design-decisions))
+- [ ] [AI] Verify [`plans/backlog/rhino-cli-optimization`](../rhino-cli-optimization/README.md) has
+      completed — command: `test -d plans/done/*__rhino-cli-optimization && echo COMPLETE` —
+      acceptance: prints `COMPLETE`; if the folder is still under `plans/backlog/` or
+      `plans/in-progress/`, **stop and do not begin Phase 0**
+- [ ] [AI] Re-derive this checklist's `apps/rhino-cli` citations against the post-optimization tree,
+      because that plan consolidates the integration-test binaries and replaces the
+      `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml` invocation form. Its Phase 2
+      and Phase 3 own repairing every citation here, and its Phase 12 gate verifies them — so this
+      step is a **confirmation**, not a rewrite. Command:
+      `grep -rn 'gate_specs\|cargo run --release' plans/backlog/beaver-nest-repo-consolidation/` —
+      acceptance: every match names a path that exists and a command that runs
+
+- [ ] [AI] Confirm the parity message's **three-repo** membership claim is still correct and has not
+      been conflated with the **two-repo** continuously-enforced boundary. `ose-primer` is named in
+      the message and synced manually on a delay; enforcement covers `ose-public` and `ose-private`
+      only, per commit `a0383faed`. Both statements are true simultaneously — acceptance: the
+      four→three sweep below changes membership wording only, and touches no enforcement scope
 
 ## Worktree
 
