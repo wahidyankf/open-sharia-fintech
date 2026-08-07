@@ -1086,6 +1086,232 @@ fn restaging_mutation_stages_only_outputs() {
     );
 }
 
+/// Two consecutive restaging mutations each attribute only their own output —
+/// regression coverage for threading gate N's post-mutation snapshot forward
+/// as gate N+1's pre-mutation baseline (halves the Git rescans per restaging
+/// gate) without losing per-gate attribution.
+#[cfg(unix)]
+// @covers specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature:Two consecutive re-staging mutations each attribute only their own output
+#[test]
+fn consecutive_restaging_mutations_attribute_outputs_independently() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().expect("create fixture repository");
+    let bin = repo.path().join("bin");
+    std::fs::create_dir_all(&bin).expect("create fixture bin directory");
+    std::fs::write(repo.path().join("unrelated.txt"), "leave unstaged\n")
+        .expect("write unrelated worktree edit");
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: generate-first\n",
+            "    type: mutation\n",
+            "    command: generate-first\n",
+            "    kind: external\n",
+            "    restages: true\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "  - id: generate-second\n",
+            "    type: mutation\n",
+            "    command: generate-second\n",
+            "    kind: external\n",
+            "    restages: true\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+        ),
+    )
+    .expect("write gate registry");
+    for (name, contents) in [
+        (
+            "generate-first",
+            "#!/bin/sh\nprintf 'first\\n' > first.txt\n",
+        ),
+        (
+            "generate-second",
+            "#!/bin/sh\nprintf 'second\\n' > second.txt\n",
+        ),
+    ] {
+        let generator = bin.join(name);
+        std::fs::write(&generator, contents).expect("write mutation stub");
+        std::fs::set_permissions(&generator, std::fs::Permissions::from_mode(0o755))
+            .expect("make mutation stub executable");
+    }
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .current_dir(repo.path())
+            .status()
+            .expect("initialize fixture git repository")
+            .success(),
+        "git init must succeed"
+    );
+
+    let existing_path = std::env::var_os("PATH").expect("PATH must be set for restage fixture");
+    let path =
+        std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
+            .expect("join fixture PATH");
+    let output = fixture_rhino_command(repo.path())
+        .args(["gate", "run", "--surface=pre-commit"])
+        .current_dir(repo.path())
+        .env("PATH", path)
+        .output()
+        .expect("run gate dispatcher");
+    let git_output = |args: &[&str]| {
+        fixture_git_command(repo.path())
+            .args(args)
+            .current_dir(repo.path())
+            .output()
+            .expect("inspect fixture git state")
+    };
+    let index_first = git_output(&["show", ":first.txt"]);
+    let index_second = git_output(&["show", ":second.txt"]);
+    let mut staged =
+        String::from_utf8_lossy(&git_output(&["diff", "--cached", "--name-only"]).stdout)
+            .lines()
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+    staged.sort();
+
+    assert!(
+        output.status.success()
+            && index_first.status.success()
+            && index_first.stdout == b"first\n"
+            && index_second.status.success()
+            && index_second.stdout == b"second\n"
+            && staged == vec!["first.txt".to_string(), "second.txt".to_string()],
+        "each restaging mutation must stage exactly its own output, with neither over- nor \
+         under-attributed to the other; status_success={}, first={:?}, second={:?}, staged={staged:?}",
+        output.status.success(),
+        String::from_utf8_lossy(&index_first.stdout),
+        String::from_utf8_lossy(&index_second.stdout)
+    );
+    assert!(
+        repo.path().join("unrelated.txt").exists(),
+        "unrelated untracked work must be left alone by both restaging gates"
+    );
+}
+
+/// A second restaging mutation that re-touches the *same* path the first one
+/// already restaged must still have that re-touch staged — regression
+/// coverage for a cached-snapshot under-attribution bug: threading gate N's
+/// post-mutation snapshot forward as gate N+1's baseline used to carry gate
+/// N's own just-staged output paths along with it, so a later gate that
+/// mutated one of those same paths again would find it already present in
+/// its "before" baseline and would never stage its own re-mutation. Unlike
+/// `consecutive_restaging_mutations_attribute_outputs_independently` (whose
+/// two gates touch disjoint paths and therefore cannot detect this — the
+/// broken and fixed implementations produce byte-identical output for that
+/// fixture), this fixture is only satisfied by an implementation that keeps
+/// the threaded baseline equivalent to a fresh rescan.
+#[cfg(unix)]
+// @covers specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature:A second re-staging mutation that re-touches the first mutation's output is still staged
+#[test]
+fn second_restaging_mutation_restages_a_path_the_first_already_restaged() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let repo = tempfile::TempDir::new().expect("create fixture repository");
+    let bin = repo.path().join("bin");
+    std::fs::create_dir_all(&bin).expect("create fixture bin directory");
+    std::fs::write(repo.path().join("unrelated.txt"), "leave unstaged\n")
+        .expect("write unrelated worktree edit");
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: generate-first\n",
+            "    type: mutation\n",
+            "    command: generate-first\n",
+            "    kind: external\n",
+            "    restages: true\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+            "  - id: generate-second\n",
+            "    type: mutation\n",
+            "    command: generate-second\n",
+            "    kind: external\n",
+            "    restages: true\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: other }\n",
+        ),
+    )
+    .expect("write gate registry");
+    for (name, contents) in [
+        (
+            "generate-first",
+            "#!/bin/sh\nprintf 'first\\n' > first.txt\n",
+        ),
+        (
+            // Re-touches first.txt (the path gate 1 already restaged) *and*
+            // produces its own distinct output, second.txt.
+            "generate-second",
+            "#!/bin/sh\nprintf 'overwritten\\n' > first.txt\nprintf 'second\\n' > second.txt\n",
+        ),
+    ] {
+        let generator = bin.join(name);
+        std::fs::write(&generator, contents).expect("write mutation stub");
+        std::fs::set_permissions(&generator, std::fs::Permissions::from_mode(0o755))
+            .expect("make mutation stub executable");
+    }
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .current_dir(repo.path())
+            .status()
+            .expect("initialize fixture git repository")
+            .success(),
+        "git init must succeed"
+    );
+
+    let existing_path = std::env::var_os("PATH").expect("PATH must be set for restage fixture");
+    let path =
+        std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
+            .expect("join fixture PATH");
+    let output = fixture_rhino_command(repo.path())
+        .args(["gate", "run", "--surface=pre-commit"])
+        .current_dir(repo.path())
+        .env("PATH", path)
+        .output()
+        .expect("run gate dispatcher");
+    let git_output = |args: &[&str]| {
+        fixture_git_command(repo.path())
+            .args(args)
+            .current_dir(repo.path())
+            .output()
+            .expect("inspect fixture git state")
+    };
+    let index_first = git_output(&["show", ":first.txt"]);
+    let index_second = git_output(&["show", ":second.txt"]);
+    let mut staged =
+        String::from_utf8_lossy(&git_output(&["diff", "--cached", "--name-only"]).stdout)
+            .lines()
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+    staged.sort();
+    let worktree = git_output(&["diff", "--name-only"]);
+
+    assert!(
+        output.status.success()
+            && index_first.status.success()
+            && index_first.stdout == b"overwritten\n"
+            && index_second.status.success()
+            && index_second.stdout == b"second\n"
+            && staged == vec!["first.txt".to_string(), "second.txt".to_string()]
+            && worktree.stdout.is_empty(),
+        "gate 2's re-touch of first.txt must be staged, not silently dropped by the threaded \
+         cache; status_success={}, indexed_first={:?}, indexed_second={:?}, staged={staged:?}, \
+         unstaged={:?}",
+        output.status.success(),
+        String::from_utf8_lossy(&index_first.stdout),
+        String::from_utf8_lossy(&index_second.stdout),
+        String::from_utf8_lossy(&worktree.stdout)
+    );
+    assert!(
+        repo.path().join("unrelated.txt").exists(),
+        "unrelated untracked work must be left alone by both restaging gates"
+    );
+}
+
 /// A failed mutation cannot restage its modified output.
 #[cfg(unix)]
 // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature:A failed mutation never re-stages output
@@ -1259,5 +1485,133 @@ fn precommit_has_one_ordered_file_batch() {
          npx={recorded_npx:?}, individual_ran={}",
         output.status.success(),
         individual.exists()
+    );
+}
+
+/// A restaging gate's threaded worktree snapshot is invalidated across the
+/// lint-staged batch boundary — regression coverage for `gate/run.rs`'s
+/// `worktree_snapshot = None` reset after `run_lint_staged_batch`. The batch
+/// mutates an arbitrary, gate-independent file (here, a staged markdown
+/// file it leaves modified-but-unstaged, simulating a batch entry whose
+/// output isn't restaged by our tracking) between two restaging gates; a
+/// restaging gate → batch → restaging gate fixture is the only shape that
+/// can distinguish "invalidated" from "still threaded", since a threaded
+/// (bug-reintroduced) snapshot predates the batch and would omit whatever
+/// it touched, causing the second restaging gate to over-attribute the
+/// batch's own leftover mutation to itself.
+#[cfg(unix)]
+// @covers specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature:A restaging gate after the lint-staged batch never re-stages the batch's own leftover mutation
+#[test]
+fn restaging_gate_after_batch_does_not_inherit_batch_mutation() {
+    use std::os::unix::fs::PermissionsExt;
+
+    fn write_executable(path: &std::path::Path, contents: &str) {
+        std::fs::write(path, contents).expect("write fixture stub");
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o755))
+            .expect("make fixture stub executable");
+    }
+
+    let repo = tempfile::TempDir::new().expect("create fixture repository");
+    let bin = repo.path().join("bin");
+    std::fs::create_dir_all(&bin).expect("create fixture bin directory");
+    std::fs::write(repo.path().join("unrelated.txt"), "leave unstaged\n")
+        .expect("write unrelated worktree edit");
+    std::fs::write(repo.path().join("changed.md"), "# Changed\n")
+        .expect("write staged markdown file");
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        "gates:\n  \
+         - id: generate-first\n    type: mutation\n    command: generate-first\n    kind: external\n    restages: true\n    surfaces:\n      pre-commit: { scope: other }\n  \
+         - id: format-markdown\n    type: mutation\n    command: dirty-markdown\n    kind: external\n    category: formatter\n    surfaces:\n      pre-commit: { scope: affected-file-type, glob: '*.md' }\n  \
+         - id: generate-second\n    type: mutation\n    command: generate-second\n    kind: external\n    restages: true\n    surfaces:\n      pre-commit: { scope: other }\n",
+    )
+    .expect("write gate registry");
+    write_executable(
+        &bin.join("generate-first"),
+        "#!/bin/sh\nprintf 'first\\n' > first.txt\n",
+    );
+    write_executable(
+        &bin.join("generate-second"),
+        "#!/bin/sh\nprintf 'second\\n' > second.txt\n",
+    );
+    // Stands in for the real `npx -- lint-staged` batch: rewrites the staged
+    // markdown file's working-tree content without staging it, representing
+    // an arbitrary batch-driven mutation our restaging tracking never learns
+    // about directly.
+    write_executable(
+        &bin.join("npx"),
+        "#!/bin/sh\nprintf '# Changed\\nformatted\\n' > changed.md\n",
+    );
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["init", "--quiet"])
+            .current_dir(repo.path())
+            .status()
+            .expect("initialize fixture git repository")
+            .success(),
+        "git init must succeed"
+    );
+    assert!(
+        fixture_git_command(repo.path())
+            .args(["add", "changed.md"])
+            .current_dir(repo.path())
+            .status()
+            .expect("stage markdown file")
+            .success(),
+        "git add must succeed"
+    );
+
+    let existing_path = std::env::var_os("PATH").expect("PATH must be set for restage fixture");
+    let path =
+        std::env::join_paths(std::iter::once(bin).chain(std::env::split_paths(&existing_path)))
+            .expect("join fixture PATH");
+    let output = fixture_rhino_command(repo.path())
+        .args(["gate", "run", "--surface=pre-commit"])
+        .current_dir(repo.path())
+        .env("PATH", path)
+        .output()
+        .expect("run gate dispatcher");
+    let git_output = |args: &[&str]| {
+        fixture_git_command(repo.path())
+            .args(args)
+            .current_dir(repo.path())
+            .output()
+            .expect("inspect fixture git state")
+    };
+    let index_first = git_output(&["show", ":first.txt"]);
+    let index_second = git_output(&["show", ":second.txt"]);
+    // `changed.md` was already staged by the fixture's own setup (mirroring a
+    // real pre-commit run against staged files), so its mere presence in
+    // `--cached --name-only` proves nothing either way. What discriminates is
+    // its *staged content*: if the second restaging gate wrongly attributed
+    // the batch's leftover mutation to itself, `git add` would have pulled
+    // the batch's rewritten content into the index.
+    let index_changed_md = git_output(&["show", ":changed.md"]);
+    let worktree = String::from_utf8_lossy(&git_output(&["diff", "--name-only"]).stdout)
+        .lines()
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+
+    assert!(
+        output.status.success()
+            && index_first.status.success()
+            && index_first.stdout == b"first\n"
+            && index_second.status.success()
+            && index_second.stdout == b"second\n"
+            && index_changed_md.status.success()
+            && index_changed_md.stdout == b"# Changed\n"
+            && worktree == vec!["changed.md".to_string()],
+        "the restaging gate after the batch must attribute only second.txt to itself and leave \
+         the batch's own changed.md mutation unstaged (its index content must stay the \
+         pre-batch original); status_success={}, first={:?}, second={:?}, \
+         changed_md_index={:?}, worktree={worktree:?}",
+        output.status.success(),
+        String::from_utf8_lossy(&index_first.stdout),
+        String::from_utf8_lossy(&index_second.stdout),
+        String::from_utf8_lossy(&index_changed_md.stdout)
+    );
+    assert!(
+        repo.path().join("unrelated.txt").exists(),
+        "unrelated untracked work must be left alone across the batch boundary"
     );
 }

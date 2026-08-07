@@ -28,7 +28,7 @@ This plan is the **last of three**:
 archived before Phase 0 begins. See
 [README.md §Ordering Constraint](./README.md#ordering-constraint) for why each blocks.
 
-- [ ] [AI] Verify [`plans/in-progress/sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md)
+- [ ] [AI] Verify [`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
       has completed — command: `test -d plans/done/*__sdlc-gate-registry-enforcement && echo COMPLETE`
       — acceptance: prints `COMPLETE`; if the folder is still under `plans/in-progress/`, **stop and
       do not begin Phase 0** (see [tech-docs.md D5](./tech-docs.md#design-decisions))

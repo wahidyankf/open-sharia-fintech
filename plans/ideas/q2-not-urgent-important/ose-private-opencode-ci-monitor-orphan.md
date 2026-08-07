@@ -64,9 +64,10 @@ carries the carve-out forward into three repositories, so the cost of leaving it
 - **[File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md)** —
   the rule that generated mirrors are never hand-edited and land in the same commit as their source;
   this orphan is that rule's unenforced case.
-- **[tri-repo-rhino-cli-byte-identity-gate](../q1-urgent-important/tri-repo-rhino-cli-byte-identity-gate.md)** — the
-  standing byte-identity boundary that turns a one-line validator change into a coordinated tri-repo
-  landing. Any fix here is constrained by it.
+- **[sdlc-gate-registry-enforcement](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)** —
+  the plan that fulfilled and retired the `tri-repo-rhino-cli-byte-identity-gate` idea, landing the
+  standing byte-identity boundary that turns a one-line validator change into a coordinated
+  multi-repo landing. Any fix here is constrained by it.
 - **[multi-harness-compatibility](../../done/2026-05-24__multi-harness-compatibility/README.md)** — the
   original binding-parity effort; whatever it did or did not normalize about mirror completeness is
   where the skip most likely originated.

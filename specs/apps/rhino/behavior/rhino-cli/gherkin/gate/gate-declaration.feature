@@ -15,6 +15,12 @@ Feature: Gate registry declaration
     Then it exits non-zero
     And the message names the offending gate id and the allowed scope values
 
+  Scenario: A gate id with disallowed characters is rejected
+    Given repo-config.yml declares a gate with id "Invalid_ID"
+    When "rhino-cli repo-config validate" runs
+    Then it exits non-zero
+    And the message names the offending gate id and states it must be lowercase kebab-case
+
   Scenario: A duplicate gate id is rejected
     Given repo-config.yml declares two gates both with id "md-links"
     When "rhino-cli repo-config validate" runs

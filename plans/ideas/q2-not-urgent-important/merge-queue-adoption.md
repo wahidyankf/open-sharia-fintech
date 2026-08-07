@@ -146,7 +146,7 @@ or when a third-party queue is verified to work on user-owned repos. Either make
 real rather than hypothetical.
 
 One dependency to check before promoting, because it is genuine and currently live: the in-progress
-[`sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md) plan
+[`sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md) plan
 **deletes `main-ci.yml` in all four repos** and folds its unique checks into the PR gate, amending the
 Gate Composition Rule to `(pre-commit ∪ pre-push) == PR gate`. That plan explicitly accepts the
 resulting loss: with `main-ci.yml` gone, no surface re-verifies the whole repo, and the PR gate's

@@ -877,6 +877,23 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
+    // `emit_bindings` requires `harness.amazonq.agent-name` from repo-config.yml
+    // (no sensible default exists for a generated agent identifier) — this
+    // synthetic fixture root needs its own minimal registry declaration rather
+    // than relying on a real repo-config.yml being present at this temp path.
+    std::fs::write(
+        root.join("repo-config.yml"),
+        concat!(
+            "harness:\n",
+            "  - name: amazonq\n",
+            "    tier: generated\n",
+            "    rules-dir: .amazonq/rules\n",
+            "    agent-name: ose-default\n",
+            "coverage:\n  projects: []\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        ),
+    )
+    .expect("write minimal repo-config.yml");
     emit_bindings(root).expect("emit bindings");
     let catalog = root.join(PLATFORM_BINDINGS_CATALOG);
     std::fs::create_dir_all(catalog.parent().expect("catalog has parent"))

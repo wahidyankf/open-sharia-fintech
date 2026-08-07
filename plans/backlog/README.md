@@ -93,7 +93,7 @@ added no decision value):
   product into `ose-public` as `apps/beavernest-be` / `apps/beavernest-app-web`, sweep four-repo
   terminology to three across `ose-public`, `ose-primer`, and `ose-private`, and archive
   `github.com/wahidyankf/beaver-nest`. Hard `blockedBy`
-  [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
+  [`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md), which
   scopes all four repos and needs `beaver-nest` live and writable.
 
 **Toolchain** (direct-authored on maintainer request 2026-08-07):
@@ -112,7 +112,7 @@ added no decision value):
   carrying the four-way Rust/Go/OCaml/F# comparison as its decision record. Absorbs the
   `rhino-cli-language-rewrite-tradeoffs` and `ose-public-nx-affected-rhino-cli-gap` two-pagers.
   Sequenced after
-  [`sdlc-gate-registry-enforcement`](../in-progress/sdlc-gate-registry-enforcement/README.md), which
+  [`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md), which
   owns the `repo-config.yml` gate registry this plan builds its build-speed work on.
 
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the

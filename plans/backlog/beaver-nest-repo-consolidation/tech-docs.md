@@ -294,7 +294,7 @@ rather than a failed edit.
 ## Dependencies
 
 - **Hard plan dependency**: `blockedBy`
-  [`plans/in-progress/sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md).
+  [`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md).
   See D5.
 - **Toolchain**: .NET 10 SDK and F# tooling for `beavernest-be`; Node 24.13.1 / npm 11.10.1 via
   Volta; Docker/Compose for the `infra/dev/beavernest-app/` stack; `gh` CLI for the archive step.

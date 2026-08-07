@@ -262,6 +262,15 @@ configs, grep the files, run the tools — do not trust docs alone.
   behavior tree. Any failure is drift that MUST become its own deviation-matrix row in Step 2 — surface it
   before grilling, never silently re-sync it.
 
+**Survey freshness**: a clean survey is a point-in-time result, not a standing fact. If execution of a
+phase that carries copy-ready artifacts (a file to be propagated verbatim, a cross-repository
+assumption baked into a checklist step) begins any meaningful time after that phase's survey ran —
+another contributor's concurrent work, a prior phase's own duration, a paused-and-resumed plan — re-run
+this step's checks live immediately before executing, rather than trusting the recorded inventory.
+A target repo's package baseline, environment scanner, test-target isolation, or even its bare-vs-normal
+git topology can all change between survey and execution; a mechanically correct copy step built on a
+stale inventory can revert newer work on the target or fail before establishing its own baseline.
+
 **Output**: A per-repo state inventory. Every dimension the objective touches is inventoried for
 every repo. Document what exists, what is absent, and any repo-specific constraint that will
 affect what the plan must contain.

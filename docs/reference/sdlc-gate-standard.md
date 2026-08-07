@@ -221,6 +221,20 @@ Within `apps/rhino-cli` itself, the only sanctioned divergence anywhere is:
 See [tech-docs.md §4 "rhino-cli Source-Identity Standard"](../../plans/done/2026-07-03__unify-rhino-cli-sdlc-parity/tech-docs.md#4-rhino-cli-source-identity-standard)
 for the full synthesis approach and acceptance criteria.
 
+**Known exception (tracked, not yet reconciled): `doctor/tools.rs` tool-provisioning extensions.**
+`ose-private` legitimately needs IaC tool provisioning (the same infra-only IaC surface named under
+[Allowed Divergence](#allowed-divergence) below) that the other bound repos do not, and its
+`doctor/tools.rs` carries extra tool-definition and test entries beyond the canonical set as a result.
+The "zero carve-outs" target above is stated as the goal for the whole `src/` tree; this one file has
+a structural tension with that goal that predates and is independent of this document's propagation
+work — the byte-identity boundary either needs a narrower `BOUNDARY_PATHS` carve-out for this file, or
+the parity check needs an accepted-superset comparison mode (canonical subset + declared per-repo
+extensions) instead of a literal full-file match. Until one of those lands as a code change, treat
+drift reports naming only `doctor/tools.rs`'s known IaC-tooling additions as this tracked exception,
+not as a new propagation gap — but still diff the file in full on every byte-identity check, since a
+new, unrelated drift can hide alongside the known one. Tracked as a follow-up idea brief:
+[`rhino-cli-tools-superset-carveout`](../../plans/ideas/q2-not-urgent-important/rhino-cli-tools-superset-carveout.md).
+
 ### Allowed Divergence
 
 The following variations are not flagged as drift:

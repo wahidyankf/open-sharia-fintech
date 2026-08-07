@@ -339,6 +339,40 @@ the language into any workflow.
 .github/actions/setup-rust/action.yml
 ```
 
+### Expression Safety
+
+Two failure modes recur whenever a workflow step's `run:` block references a `${{ ... }}`
+expression directly:
+
+1. **Matrix/context values feeding a shell command must route through `env:`, never splice
+   into `run:` directly.** `run: cargo run ... --only=${{ matrix.gate.id }}` lets a
+   matrix value that contains shell metacharacters execute as shell code (GitHub's documented
+   script-injection class for `pull_request`-triggered workflows, where matrix/context values can
+   originate from untrusted input). Fix: set a step-level `env:` mapping the expression to a
+   variable, then reference the **shell** variable in `run:`:
+
+   ```yaml
+   - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$GATE_ID"
+     env:
+       GATE_ID: ${{ matrix.gate.id }}
+   ```
+
+   `rhino-cli`'s `gate validate` command enforces this pattern for the CI dispatch step
+   (`validate_ci_matrix_contract` in `apps/rhino-cli/src/commands/gate/validate.rs`) — a matrix
+   `run:` step that references `matrix.gate.id` directly, without an `env:` indirection, fails
+   validation.
+
+2. **`condition && 0 || fallback` never evaluates to `0`.** GitHub Actions expressions use
+   JavaScript-like short-circuit `&&`/`||`, and `0` (like `''` and `false`) is falsy — so
+   `true && 0` produces `0`, but a trailing `|| fallback` then treats that `0` as falsy and
+   substitutes `fallback` regardless of the left-hand condition. This is a well-known
+   community-documented GHA antipattern, general to any expression choosing between a falsy value
+   and a truthy fallback via `&&`/`||` chaining. Fix: reorder so the falsy value is never the
+   right-hand operand of `&&` — negate the condition and swap the operands instead:
+   `${{ condition-negated && fallback || 0 }}`. Manually truth-table any expression that produces
+   `0`, `''`, or `false` on one branch before trusting it — a spot check against only the case
+   that motivated the expression is not sufficient.
+
 ### Reusable Workflows
 
 Reusable workflows live in `.github/workflows/_reusable-{purpose}.yml` and are called via

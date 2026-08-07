@@ -68,7 +68,7 @@ infrastructure rather than invent a competing one.
   missing third axis: _which agent_, alongside _which tier_.
   [split convention](../../../repo-governance/conventions/structure/deterministic-vs-ai-validation-split.md)
 - **`sdlc-gate-registry-enforcement`** — the in-flight central-registry-in-`repo-config.yml` pattern
-  this should extend. [plan](../../in-progress/sdlc-gate-registry-enforcement/README.md)
+  this should extend. [plan](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
 - **Instruction-File Size Budget Convention** — precedent for thresholds living in `repo-config.yml`
   as the single authority, with agent prose deferring to it rather than restating it. The 40k-vs-30k
   contradiction is what happens when that deference lapses.

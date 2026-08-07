@@ -121,6 +121,16 @@ fn run_at_root_with_only_and_message_file(
         .collect::<Vec<_>>();
     let (changed_paths, tracked_paths) = candidate_paths(repo_root, &selected_gates, &surface)?;
     let mut batch_ran = false;
+    // Threaded worktree snapshot for restaging gates: gate N's "after" snapshot
+    // is, by construction, gate N+1's "before" snapshot whenever nothing else
+    // mutates the worktree between them (true today — every `restages: true`
+    // gate skips or continues immediately when it is not selected, and the
+    // lint-staged batch below invalidates this cache on the rare path where it
+    // runs between two restaging gates). Threading it here halves the Git
+    // process spawns for back-to-back restaging gates (4 -> 2 per gate) with no
+    // loss of per-gate mutation-output attribution — see
+    // `worktree_changed_paths` and `restage_mutation_outputs`.
+    let mut worktree_snapshot: Option<BTreeSet<String>> = None;
     for gate in selected_gates {
         let scope = &gate.surfaces[&surface];
         if scope.scope == ScopeKind::PathGated
@@ -158,22 +168,16 @@ fn run_at_root_with_only_and_message_file(
             if batch_ran {
                 continue;
             }
-            writeln!(writer, "Running lint-staged batch")?;
-            let status = Command::new("npx")
-                .args(["--no", "--", "lint-staged"])
-                .current_dir(repo_root)
-                .status()?;
-            if !status.success() {
-                return Err(anyhow!("lint-staged batch failed"));
-            }
+            run_lint_staged_batch(repo_root, writer)?;
             batch_ran = true;
+            // The batch mutates an arbitrary, gate-independent file set, so any
+            // cached snapshot from an earlier restaging gate no longer reflects
+            // the worktree; force the next restaging gate to recompute fresh.
+            worktree_snapshot = None;
             continue;
         }
         writeln!(writer, "Running gate {}", gate.id)?;
-        let changed_before = gate
-            .restages
-            .then(|| worktree_changed_paths(repo_root))
-            .transpose()?;
+        let changed_before = restaging_before_snapshot(gate, &mut worktree_snapshot, repo_root)?;
         let status = run_leaf(
             &gate.kind,
             &gate.command,
@@ -187,10 +191,56 @@ fn run_at_root_with_only_and_message_file(
             return Err(anyhow!("gate {} failed", gate.id));
         }
         if let Some(changed_before) = changed_before {
-            restage_mutation_outputs(repo_root, &changed_before)?;
+            let changed_after = restage_mutation_outputs(repo_root, &changed_before)?;
+            worktree_snapshot = Some(changed_after);
+        } else if gate.gate_type == GateType::Mutation {
+            // A non-restaging mutation (none exist in the registry today, but
+            // the schema permits one) can also change the worktree; drop the
+            // cache defensively rather than let a future gate misattribute
+            // outputs to the wrong gate.
+            worktree_snapshot = None;
         }
     }
     Ok(())
+}
+
+/// Runs the batched `lint-staged` invocation for eligible pre-commit gates.
+///
+/// # Errors
+///
+/// Returns an error when the batch process fails to start or exits non-zero.
+fn run_lint_staged_batch(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
+    writeln!(writer, "Running lint-staged batch")?;
+    let status = Command::new("npx")
+        .args(["--no", "--", "lint-staged"])
+        .current_dir(repo_root)
+        .status()?;
+    if !status.success() {
+        return Err(anyhow!("lint-staged batch failed"));
+    }
+    Ok(())
+}
+
+/// Resolves a restaging gate's pre-mutation worktree snapshot, reusing the
+/// previous restaging gate's post-mutation snapshot when it is still valid
+/// (see the threading rationale at this function's call site) rather than
+/// rescanning the worktree. Returns `None` for a non-restaging gate.
+///
+/// # Errors
+///
+/// Returns an error when a fresh scan is required and Git cannot list paths.
+fn restaging_before_snapshot(
+    gate: &repo_config::GateEntry,
+    worktree_snapshot: &mut Option<BTreeSet<String>>,
+    repo_root: &Path,
+) -> Result<Option<BTreeSet<String>>, Error> {
+    if !gate.restages {
+        return Ok(None);
+    }
+    Ok(Some(match worktree_snapshot.take() {
+        Some(snapshot) => snapshot,
+        None => worktree_changed_paths(repo_root)?,
+    }))
 }
 
 /// Load the candidate paths required by a collection of selected gates.
@@ -457,7 +507,15 @@ fn run_nx_leaf(
 ) -> Result<std::process::ExitStatus, Error> {
     let arguments = match scope {
         ScopeKind::AllProjects => vec!["exec", "nx", "--", "run-many", "--all", "-t", target],
-        _ => vec!["exec", "nx", "--", "affected", "-t", target],
+        // Every other scope kind runs against only the affected project set today.
+        // Matched explicitly (rather than via `_`) so that adding a new `ScopeKind`
+        // variant is a compile error here until this arm is deliberately updated,
+        // mirroring `candidate_scope`'s exhaustive match in this same file.
+        ScopeKind::AffectedProjects
+        | ScopeKind::AffectedFileType
+        | ScopeKind::AllFileType
+        | ScopeKind::Other
+        | ScopeKind::PathGated => vec!["exec", "nx", "--", "affected", "-t", target],
     };
     Command::new("npm")
         .args(arguments)
@@ -595,22 +653,37 @@ fn worktree_changed_paths(repo_root: &Path) -> Result<BTreeSet<String>, Error> {
 
 /// Stages files newly changed by a successful mutation gate.
 ///
+/// Returns the post-mutation worktree snapshot (`changed_after`, with this
+/// gate's own just-staged outputs removed) so the caller can thread it
+/// forward as the next restaging gate's `changed_before` baseline without a
+/// redundant rescan.
+///
+/// The returned snapshot deliberately excludes `outputs`: `changed_after` is
+/// captured *before* the `git add` below runs, so a raw pass-through would
+/// leave this gate's now-staged-and-clean paths sitting in the cache. A later
+/// gate that re-touches one of those same paths would then have its own
+/// re-mutation silently absorbed into the inherited baseline and never
+/// staged — the cached baseline would disagree with what a fresh rescan
+/// would report at that point, even though the whole point of the cache is
+/// to stand in for one. Removing `outputs` here keeps the threaded snapshot
+/// equivalent to a fresh rescan while still saving the rescan itself.
+///
 /// # Errors
 ///
 /// Returns an error when Git cannot inspect or stage mutation outputs.
 fn restage_mutation_outputs(
     repo_root: &Path,
     changed_before: &BTreeSet<String>,
-) -> Result<(), Error> {
+) -> Result<BTreeSet<String>, Error> {
     let changed_after = worktree_changed_paths(repo_root)?;
     let outputs = mutation_output_delta(changed_before, &changed_after);
     if outputs.is_empty() {
-        return Ok(());
+        return Ok(changed_after);
     }
     let status = Command::new("git")
         .arg("add")
         .arg("--")
-        .args(outputs)
+        .args(&outputs)
         .current_dir(repo_root)
         .env_remove("GIT_DIR")
         .env_remove("GIT_WORK_TREE")
@@ -618,7 +691,11 @@ fn restage_mutation_outputs(
     if !status.success() {
         return Err(anyhow!("git add mutation outputs failed"));
     }
-    Ok(())
+    let mut threaded_snapshot = changed_after;
+    for output in &outputs {
+        threaded_snapshot.remove(output);
+    }
+    Ok(threaded_snapshot)
 }
 
 /// Returns paths introduced into the worktree after a mutation gate runs.

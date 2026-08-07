@@ -45,7 +45,7 @@ All three touch `apps/rhino-cli`, so the ordering carries obligations in both di
 
 ### Upstream — what this plan inherits
 
-[`sdlc-gate-registry-enforcement`](../../in-progress/sdlc-gate-registry-enforcement/README.md) makes
+[`sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md) makes
 `repo-config.yml` the authoritative gate registry and `rhino-cli gate run` the dispatch behind the
 three generated Husky shims, with per-entry `rhino-cli` / `external` / `nx` invocation types. Its
 scope was narrowed on 2026-08-07 to `ose-public` and `ose-private` — the same two repos as this
