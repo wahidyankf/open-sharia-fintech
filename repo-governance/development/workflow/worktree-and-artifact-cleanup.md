@@ -18,10 +18,17 @@ A plan that creates worktrees, branches, and build output must remove them when 
 the **teardown** half of the worktree lifecycle; provisioning and toolchain initialization are covered
 separately.
 
-Cleanup is a **mandatory plan-end gate**, not a courtesy. It is also the one gate most likely to cause
-harm if executed carelessly, because every action it takes is a deletion. The whole convention exists
-to make that combination safe: delete thoroughly, delete only what is yours, and verify before each
-removal.
+Cleanup is a **mandatory gate**, not a courtesy. It is also the one gate most likely to cause harm if
+executed carelessly, because every action it takes is a deletion. The whole convention exists to make
+that combination safe: delete thoroughly, delete only what is yours, and verify before each removal.
+
+**Cleanup is immediate, not deferred.** Remove a repo's worktree the moment this plan is done using
+it — when every delivery unit this plan places in that repo is confirmed merged (see the checks
+below) — right then, not batched with unrelated later steps and not left in place "in case it's
+needed again." Under the [Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
+repo's worktree is torn down as soon as that repo's own units land, independently of whether the
+plan's other repos are still in flight.
 
 ## Principles Implemented/Respected
 
