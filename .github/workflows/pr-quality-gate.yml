@@ -107,36 +107,53 @@ jobs:
               cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$gate_id"
             done
 
-  enumerate:
-    name: Enumerate registry CI gates
+  build-rhino:
+    name: Build rhino-cli (gate profile)
     runs-on: ubuntu-latest
-    outputs:
-      gates: ${{ steps.list.outputs.gates }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate/rhino-cli
+
+  enumerate:
+    name: Enumerate registry CI gate groups
+    needs: build-rhino
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.list.outputs.groups }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - id: list
         run: |
-          gates=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json | jq -c .)
-          echo "gates=$gates" >> "$GITHUB_OUTPUT"
+          groups=$(RHINO_CLI_BIN="$PWD/apps/rhino-cli/target/gate/rhino-cli" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
+          echo "groups=$groups" >> "$GITHUB_OUTPUT"
 
   gate:
-    needs: enumerate
-    name: ${{ matrix.gate.id }}
+    needs: [build-rhino, enumerate]
+    name: ${{ matrix.group.group }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}
+        group: ${{ fromJson(needs.enumerate.outputs.groups) }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - name: Provision registry-declared tools
         run: |
           tools="$DOCTOR_TOOLS"
@@ -144,12 +161,11 @@ jobs:
             npm run doctor -- --fix --tools "$tools"
           fi
         env:
-          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}
-      - run: >-
-          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run
-          --surface=ci --only="$GATE_ID"
+          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}
+      - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
         env:
-          GATE_ID: ${{ matrix.gate.id }}
+          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
+          GROUP_ID: ${{ matrix.group.group }}
 
   typescript:
     name: TypeScript quality gate
@@ -217,7 +233,18 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
+    needs:
+      [
+        build-rhino,
+        format,
+        enumerate,
+        gate,
+        typescript,
+        dotnet,
+        rust,
+        compat-min-version,
+        specs-structure,
+      ]
     if: always()
     runs-on: ubuntu-latest
     steps:
