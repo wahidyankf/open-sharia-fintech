@@ -86,3 +86,22 @@
   actual mechanism) and was never an authored step here. More generally: a per-invocation isolated
   benchmark does not necessarily predict its saving inside a batched/child-process execution model —
   measure the actual integrated path before hard-gating a phase on the isolated number.
+
+## Learning: a new gate-emission.feature scenario needs step bindings in TWO places, every time
+
+- **Context**: both Phase 2 (resolver-shim scenario) and Phase 3 (node_modules/.bin scenario) added
+  a scenario to `gate-emission.feature` and bound it at the `emit.rs` unit-test level, per the
+  phase's own authored RED step. Both times, `apps/rhino-cli/tests/gate_specs.rs`'s cucumber harness
+  — which scans the whole `gate/` feature directory regardless of which scenario a given phase is
+  "working on" — hit an undefined-step failure on the very next `test:quick`/pre-push run, requiring
+  a same-day follow-up fix commit each time.
+- **Observation**: this is now a confirmed repeat, not a one-off. The pre-push `test-quick` gate did
+  catch it correctly both times (nothing shipped broken), but only after a full commit+push cycle,
+  costing a wasted push attempt and a follow-up commit each time.
+- **Why it might generalize**: any future phase in this plan (or any future rhino-cli change) that
+  adds a `gate-emission.feature`/`gate-execution.feature`/etc. scenario must budget for TWO binding
+  sites, not one — the unit-test module AND `gate_specs.rs` — and should verify
+  `cargo test --test gate_specs` locally (not just the narrower `--lib gate::emit`) before ever
+  committing, not rely on the pre-push gate to catch it after the fact. Worth flagging for Phase 12
+  triage as a documentation gap: the RED-step convention in this plan's own delivery.md items only
+  ever names the unit-test command, never the integration-test command, for scenarios of this kind.
