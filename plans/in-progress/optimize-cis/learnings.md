@@ -63,3 +63,26 @@
   edit) touching a byte-identity-governed `apps/rhino-cli` file should expect this same local gate to
   fire on the very next push, immediately, before any cross-repo work has happened — it is a
   same-repo self-consistency check, not a signal that propagation is already done or overdue.
+
+## Learning: isolated single-shot benchmarks overstated a batched-execution saving by ~4x
+
+- **Context**: `tech-docs.md` §A.2 benchmarked prettier/markdownlint-cli2's pre-DD-2 "current form"
+  as standalone `npx --no -- <tool>` invocations (622 ms / 441 ms) to derive DD-2's claimed ~250 ms
+  per-tool saving and the plan's "3,047 ms → 683 ms" M1 projection, which Phase 3's own gate then
+  encoded as a hard `≤900 ms` acceptance clause.
+- **Observation**: the real pre-commit path never paid `npx` per tool. `repo-config.yml`'s actual
+  commands were always bare (`prettier --write`, no `npx` prefix); only the outer
+  `apps/rhino-cli/src/commands/gate/run.rs` batch runner spawns `npx --no -- lint-staged` **once**
+  for the whole batch, and prettier/markdownlint-cli2 ran as its children via lint-staged's own
+  `node_modules/.bin`-inclusive `PATH` — the isolated per-tool `npx` tax the benchmark measured was
+  never actually being paid twice in the integrated path. Real measured Phase 3 M1 saving: −138 ms
+  (−5.4 % vs Phase 2), not the ~500+ ms the isolated benchmark implied. Phase 3 Gate's `≤900 ms`
+  acceptance clause was corrected in place (see `delivery.md` Phase 3 Gate) rather than forced to a
+  false PASS.
+- **Why it might generalize**: a **candidate follow-up** worth triaging (a `DD-10`-class idea, not
+  authored or scoped by this plan): the one remaining process-spawn cost neither DD-1 nor DD-2
+  touches is that single outer `npx --no -- lint-staged` spawn in `run.rs` — replacing it with a
+  direct `node_modules/.bin/lint-staged` call is outside `GateKind` command-rendering (DD-1/DD-2's
+  actual mechanism) and was never an authored step here. More generally: a per-invocation isolated
+  benchmark does not necessarily predict its saving inside a batched/child-process execution model —
+  measure the actual integrated path before hard-gating a phase on the isolated number.

@@ -71,30 +71,30 @@
       "bash -c 'apps/rhino-cli/scripts/rhino-bin.sh repo-config validate' --"
     ],
     "*.md": [
-      "prettier --write",
-      "markdownlint-cli2",
+      "node_modules/.bin/prettier --write",
+      "node_modules/.bin/markdownlint-cli2",
       "apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate --exclude \"apps/rhino-cli/tests/fixtures\" --exclude \"plans/done\" --exclude \"apps/ayokoding-www/content\"",
       "apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate",
       "apps/rhino-cli/scripts/rhino-bin.sh md naming validate --exempt \"*__linkedin__*.md\" --exempt \"CONTRIBUTING.md\"",
       "apps/rhino-cli/scripts/rhino-bin.sh md frontmatter validate"
     ],
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.json": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.{yml,yaml}": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.{css,scss}": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.html": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.sql": [
-      "prettier --write"
+      "node_modules/.bin/prettier --write"
     ],
     "*.rs": [
       "rustfmt --edition 2024"

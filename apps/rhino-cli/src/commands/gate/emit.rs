@@ -135,6 +135,9 @@ fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
         repo_config::GateKind::RhinoCli => {
             format!("{RHINO_CLI_RESOLVER_SHIM} {}", gate.command)
         }
+        repo_config::GateKind::External if is_node_resolved(gate) => {
+            node_modules_bin_command(&gate.command)
+        }
         repo_config::GateKind::External | repo_config::GateKind::Nx => gate.command.clone(),
     };
     let fixed_arguments = repo_config::fixed_arguments(gate);
@@ -153,6 +156,56 @@ fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
             })
             .collect::<Vec<_>>();
         format!("{command} {}", quoted_arguments.join(" "))
+    }
+}
+
+/// Whether a gate's `kind: external` command resolves its tool from this
+/// repository's `node_modules` (an npm package) rather than a system `PATH`
+/// binary. `doctor-tools: [npm]` is the registry's existing signal for a
+/// tool provisioned by `npm install`; reusing it here needs no new schema
+/// field, matching how `doctor-tools: [shellcheck]` already flags a system
+/// tool's own prerequisite.
+fn is_node_resolved(gate: &repo_config::GateEntry) -> bool {
+    gate.doctor_tools.iter().any(|tool| tool == "npm")
+}
+
+/// Rewrite a node-resolved gate's command to invoke its tool through the
+/// repository-local `node_modules/.bin` directory instead of `npx`. `npx`
+/// pays its own resolution/download-check overhead on every invocation even
+/// when the package is already installed; resolving straight to the binary
+/// mirrors the `RHINO_CLI_RESOLVER_SHIM` shortcut for `kind: rhino-cli`
+/// gates.
+///
+/// Handles both a bare tool invocation (`prettier --write`) and an
+/// `npx`-wrapped one (`npx --no -- commitlint --edit "$1"`), skipping `npx`'s
+/// own flags and `--` separator to find the wrapped tool's name.
+fn node_modules_bin_command(command: &str) -> String {
+    let (mut tool, mut arguments) = split_leading_token(command);
+    if tool == "npx" {
+        loop {
+            let (next_tool, next_arguments) = split_leading_token(arguments);
+            if next_tool.starts_with('-') {
+                arguments = next_arguments;
+                continue;
+            }
+            tool = next_tool;
+            arguments = next_arguments;
+            break;
+        }
+    }
+    if arguments.is_empty() {
+        format!("node_modules/.bin/{tool}")
+    } else {
+        format!("node_modules/.bin/{tool} {arguments}")
+    }
+}
+
+/// Split a command string into its leading whitespace-delimited token and
+/// the (whitespace-trimmed) remainder.
+fn split_leading_token(command: &str) -> (&str, &str) {
+    match command.split_once(char::is_whitespace) {
+        Some((first, rest)) => (first, rest.trim_start()),
+        None => (command, ""),
     }
 }
 
@@ -436,6 +489,49 @@ fn rhino_cli_kind_renders_a_resolver_shim_invocation() {
     assert!(
         !rendered.contains("cargo run"),
         "expected the generated command to contain no cargo run substring, got {rendered:?}"
+    );
+}
+
+/// Binds the Gherkin scenario "Node-resolved external tools render a
+/// repository-local bin path"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature).
+/// `npx` pays its own resolution/download-check tax on every invocation even
+/// when the tool is already installed in `node_modules`; generated commands
+/// for node-resolved external tools must instead invoke the repository-local
+/// `node_modules/.bin` path directly.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn external_node_resolved_kind_renders_a_node_modules_bin_invocation() {
+    use std::collections::BTreeMap;
+
+    use crate::application::repo_config::{GateKind, GateType};
+
+    let gate = repo_config::GateEntry {
+        id: "fixture".to_string(),
+        gate_type: GateType::Check,
+        command: r#"npx --no -- commitlint --edit "$1""#.to_string(),
+        kind: GateKind::External,
+        doctor_tools: vec!["npm".to_string()],
+        wiring: None,
+        restages: false,
+        args: BTreeMap::new(),
+        surfaces: BTreeMap::new(),
+        carve_out: None,
+        verifies: None,
+        category: None,
+    };
+
+    let rendered = command_with_fixed_arguments(&gate);
+
+    assert!(
+        rendered.contains("node_modules/.bin/commitlint"),
+        "expected the generated command to invoke the tool through \
+         node_modules/.bin/commitlint, got {rendered:?}"
+    );
+    assert!(
+        !rendered.contains("npx"),
+        "expected the generated command to contain no npx substring, got {rendered:?}"
     );
 }
 

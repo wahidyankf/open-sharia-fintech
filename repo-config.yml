@@ -372,6 +372,7 @@ gates:
     type: check
     command: 'npx --no -- commitlint --edit "$1"'
     kind: external
+    doctor-tools: [npm]
     surfaces:
       commit-msg: { scope: other }
 
@@ -402,6 +403,7 @@ gates:
     category: formatter
     command: prettier --write
     kind: external
+    doctor-tools: [npm]
     restages: true
     surfaces:
       pre-commit:
@@ -419,6 +421,7 @@ gates:
     type: check
     command: prettier --check
     kind: external
+    doctor-tools: [npm]
     verifies: format-prettier
     surfaces:
       ci:
@@ -654,6 +657,7 @@ gates:
     type: check
     command: markdownlint-cli2
     kind: external
+    doctor-tools: [npm]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
