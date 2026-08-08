@@ -96,3 +96,10 @@ Feature: Gate conformance validation
     Given the registry and surfaces as shipped by this plan
     When "rhino-cli gate validate" runs
     Then it exits zero
+
+  Scenario: A gate declared without a CI group fails validation
+    Given a gate entry in repo-config.yml carrying a ci surface and no ci_group field
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And its output names the offending gate id
+    And its output states that ci_group is required

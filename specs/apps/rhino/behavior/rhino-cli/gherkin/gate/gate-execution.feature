@@ -103,3 +103,10 @@ Feature: Gate execution
     When the gate with id "format-verify-elixir" runs
     Then it exits zero
     And no tracked file is rewritten
+
+  Scenario: A failing gate inside a group is named in the output
+    Given a CI group containing several gates where exactly one fails
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then it exits non-zero
+    And its output contains a per-gate summary line for every gate in the group
+    And the failing gate id appears on a line marked FAIL
