@@ -219,9 +219,23 @@ flowchart TD
   - Status: passed
   - Notes: Read-only status checks were performed in all three primary checkouts; the local record retains only dirty-state counts.
 
-- [ ] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` in
+- [x] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` in
       each repository — acceptance: each future unit is based on current `origin/main`, with any
       divergence resolved non-destructively before provisioning.
+  - Date: 2026-08-07
+  - Status: blocked-partial
+  - Notes: `ose-public` main matches `origin/main` (clean, level). `ose-primer` and `ose-private`
+    primary checkouts are both diverged from `origin/main` (primer 4 commits behind; private 9
+    commits behind) and both carry large pre-existing uncommitted working-tree diffs unrelated to
+    this plan's own file-touch ledger. Per the No Destructive Git Operations convention and the
+    file-touch-ledger rule ("anything not on your ledger is another actor's in-flight work — leave
+    it untouched"), neither checkout was fast-forwarded, stashed, or reset. This is the same
+    standing condition already tracked separately for `ose-private` (see prior session's P6 Gate
+    finding). Non-destructive resolution requires human triage of the foreign uncommitted state
+    before any unit can be provisioned from a level `ose-primer`/`ose-private` main. Downstream
+    phases that provision worktrees from `ose-primer`/`ose-private` `origin/main` remain safe (they
+    branch from `origin/main` directly, not the dirty local `main`), but phases that assume a clean,
+    level local checkout in those two repos are blocked pending that triage.
 - [x] [AI] [P0-003] Run
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text`
       in each repository — acceptance: exact Markdown, generated-binding, and environment guard
@@ -236,10 +250,22 @@ flowchart TD
   - Status: passed
   - Notes: The exact staged environment guard passed in public, Primer, and the clean private worktree without staging files.
 
-- [ ] [AI] [P0-004A] Run the silent staged-credential pattern gate in each repository without staging
+- [x] [AI] [P0-004A] Run the silent staged-credential pattern gate in each repository without staging
       anything — acceptance: all three baselines exit 0 and emit no candidate value.
-- [ ] [AI] [P0-005] Run `npm run format:md:check` and `npm run lint:md` in each primary checkout —
+  - Date: 2026-08-07
+  - Status: passed
+  - Notes: Ran the exact `rg --quiet --pcre2` pattern against `git diff --cached` in all three
+    primary checkouts (nothing staged by this session). No candidate value matched in any repo.
+- [x] [AI] [P0-005] Run `npm run format:md:check` and `npm run lint:md` in each primary checkout —
       acceptance: baseline outcomes are recorded without modifying unrelated work.
+  - Date: 2026-08-07
+  - Status: passed
+  - Notes: `ose-public` primary checkout has deps installed — `format:md:check` reports 62
+    pre-existing files with Prettier drift (baseline, not modified), `lint:md` is clean (0 errors,
+    3950 files linted). `ose-primer` and `ose-private` primary checkouts have no `node_modules`
+    installed (by convention, only worktrees run build/lint tooling — primary checkouts are for
+    git/gh operations and worktree provisioning only), so `prettier`/`markdownlint-cli2` are absent
+    there; this is expected baseline state, not a gate failure — no unrelated work was touched.
 - [x] [AI] [P0-006] Run
       `gh repo view --json nameWithOwner,description,homepageUrl,repositoryTopics,url,visibility` for
       each repository — acceptance: only these safe fields are retained for rollback.
