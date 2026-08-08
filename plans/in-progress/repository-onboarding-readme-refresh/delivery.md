@@ -187,7 +187,7 @@ flowchart TD
 | Phase / unit                 | Repository    | Exact branch                                    | Exact worktree                                              | PR                        |
 | ---------------------------- | ------------- | ----------------------------------------------- | ----------------------------------------------------------- | ------------------------- |
 | 0                            | all three     | —                                               | primary checkouts; tracked state read-only                  | none                      |
-| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-contract`           | `worktrees/repository-onboarding-readme-refresh-contract/`  | opens at Phase 2          |
+| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-p1-p2-progress`²    | `worktrees/repository-onboarding-readme-refresh-contract/`  | opens at Phase 2          |
 | 3 `public`                   | `ose-public`  | `docs/repository-onboarding-public`             | `worktrees/repository-onboarding-readme-refresh-public/`    | opens at Phase 3          |
 | 4 `primer`                   | `ose-primer`  | `docs/repository-onboarding-primer`             | `worktrees/repository-onboarding-readme-refresh-primer/`    | opens at Phase 4          |
 | 5 `private`                  | `ose-private` | `docs/repository-onboarding-private`            | `worktrees/repository-onboarding-readme-refresh-private/`   | opens at Phase 5          |
@@ -203,6 +203,14 @@ flowchart TD
 | 11–12 `closeout`             | `ose-public`  | `docs/repository-onboarding-closeout`           | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | opens at Phase 12         |
 
 ¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
+
+² **Renamed mid-unit for an out-of-band private-data history scrub (P1-005 remediation).** The unit
+was originally provisioned on the declared `docs/repository-onboarding-contract` branch (see P0-007's
+Notes). That branch's history was found to carry a private-data leak (P1-005), remediated out-of-band
+before this PR-review cycle by creating a fresh branch, `docs/repository-onboarding-p1-p2-progress`,
+from `origin/main` and cherry-picking only the sanitized Phase 0/1 commits onto it. This PR (#160) and
+its worktree are backed by that fresh branch, not the originally declared one; `git worktree list` and
+`gh pr view 160 --json headRefName` are the source of truth for the branch actually in effect.
 
 ## Phase 0: Environment, Safety, and Baseline
 
@@ -326,7 +334,14 @@ flowchart TD
     `worktrees/repository-onboarding-readme-refresh-contract` from the pre-existing empty local
     branch `docs/repository-onboarding-contract` (0 commits ahead of `origin/main`, not pushed —
     adopted per the "adopt, never reprovision" rule rather than deleted and recreated). `git worktree
-list` confirms both declared path/branch pairs.
+list` confirmed both declared path/branch pairs at the time this row was ticked. **Superseded by an
+    out-of-band remediation after this row was ticked**: `docs/repository-onboarding-contract`'s
+    history was later found to carry a private-data leak (P1-005) and was remediated by rebuilding the
+    unit on a fresh branch, `docs/repository-onboarding-p1-p2-progress`, created from `origin/main`
+    with only the sanitized Phase 0/1 commits cherry-picked onto it; the contract worktree's branch
+    was switched accordingly. `git worktree list` and `gh pr view 160 --json headRefName` now report
+    `docs/repository-onboarding-p1-p2-progress`, not the branch originally named in this row — see the
+    Delivery Boundaries table's footnote ² at `:190`.
 - [x] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the contract worktree —
       acceptance: both exit 0 and no real `.env*` is accessed.
   - Date: 2026-08-08
@@ -363,7 +378,12 @@ list` confirms both declared path/branch pairs.
     never invoked for `docs/repository-onboarding-contract` or the plan-control branch's Phase-0
     content), and mutated no repository metadata (P0-006/P0-006A were read-only `gh repo view` calls).
     All evidence lives in the gitignored local execution record and this tracked delivery checklist;
-    no secret or private-repo fact was copied.
+    no secret or private-repo fact was copied. This claim is scoped to the branch topology as it stood
+    when this row was ticked; per P0-007's Notes and the Delivery Boundaries table's footnote ² at
+    `:190`, `docs/repository-onboarding-contract` was later superseded by
+    `docs/repository-onboarding-p1-p2-progress` via an out-of-band history scrub, and the
+    "pushed no branch" fact does not carry forward to the replacement branch — that branch's own push
+    history is this PR's (#160) own commit log, not a Phase-0 fact.
 
 > **Pause Safety**: reader documentation and metadata remain unchanged. To resume, inspect the P0
 > execution record and rerun only failed baselines.
@@ -542,12 +562,25 @@ list` confirms both declared path/branch pairs.
       and shared Rhino paths identity-bound — acceptance: none is scheduled for ordinary hand-editing.
   - Date: 2026-08-08
   - Status: passed
-  - Notes: Verified in the public ledger: every `plans/done/**` row is `historical`. Generated-mirror
-    directories (`.opencode/`, `.amazonq/`, `.cursor/`) and `apps/rhino-cli/**` source paths are
-    `not-reader-doc` (not scheduled for ordinary hand-editing) — with the deliberate, correct
+  - Notes: Verified in the public ledger: 1,141 of the 1,150 `plans/done/**` rows are `historical`.
+    The 9-row exception is the 4 `audit-required` and 5 `not-reader-doc` rows under
+    `plans/done/2026-08-07__sdlc-gate-registry-enforcement/` (`README.md`, `husky-hooks/README.md`,
+    `package-json/README.md`, `repo-configs/README.md` — `audit-required`; `brd.md`, `delivery.md`,
+    `learnings.md`, `prd.md`, `tech-docs.md` — `not-reader-doc`); per `delivery.md:458-460`, these 9
+    rows were repointed from the now-archived
+    `plans/in-progress/sdlc-gate-registry-enforcement/**` to their `plans/done/**` successor path
+    without also reclassifying their disposition to `historical`, so the underlying `audit-required`
+    rows remain genuinely scheduled for ordinary hand-editing, not historical. Generated-mirror
+    directories (`.opencode/`, `.amazonq/`, `.cursor/`) hold 200 `not-reader-doc` rows and one
+    exception, `.opencode/agents/README.md` (`audit-required` — its `.opencode/agents/` mirror is
+    auto-synced from `.claude/agents/`, but the README itself indexes the mirror's own file list and
+    is genuinely reader-facing, so it is scheduled for ordinary hand-editing like any other hub
+    README). `apps/rhino-cli/**` source paths are `not-reader-doc`, with the deliberate, correct
     exception of `apps/rhino-cli/README.md` itself, which is genuinely reader-facing tool
     documentation (not byte-identity-bound source) and is handled through Phase 6's Rhino Identity
-    Delivery, not ordinary hand-editing.
+    Delivery, not ordinary hand-editing. These row dispositions are left as recorded in the ledger,
+    not reclassified — reclassifying the 9 `plans/done/**` rows or `.opencode/agents/README.md` would
+    silently change what work the ledger schedules and is out of this row's scope.
 
 - [x] [AI] [P1-008] Compute the primer ledger digest inside `ose-primer` and create
       `artifacts/reader-doc-disposition-ose-primer-summary.md` in the contract worktree — acceptance:
