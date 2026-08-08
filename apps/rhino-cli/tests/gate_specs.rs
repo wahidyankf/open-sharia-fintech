@@ -2650,7 +2650,7 @@ fn given_formatted_elixir_fixtures(w: &mut GateWorld) {
 // precedence over discovery" — against the real `rhino-bin.sh` resolver shim
 // script (not a fixture stand-in). The first scenario sandboxes tier 3
 // (build-then-execute) via a scratch `CARGO_TARGET_DIR`, so the real
-// `apps/rhino-cli/target/release/rhino-cli` build artifact this test suite
+// `apps/rhino-cli/target/gate/rhino-cli` build artifact this test suite
 // itself may depend on is never touched. The second scenario proves no
 // `cargo build` occurred by stripping cargo's directory from PATH for that
 // invocation, rather than relying on timing.
@@ -2668,7 +2668,7 @@ fn rhino_bin_shim_path() -> PathBuf {
 }
 
 fn real_prebuilt_rhino_cli() -> PathBuf {
-    repo_root().join("apps/rhino-cli/target/release/rhino-cli")
+    repo_root().join("apps/rhino-cli/target/gate/rhino-cli")
 }
 
 /// Deterministic, side-effect-free probe args for exercising the resolver
@@ -2748,7 +2748,7 @@ fn then_shim_builds_and_executes(w: &mut GateWorld) {
         .as_ref()
         .expect("sandbox target dir configured")
         .path()
-        .join("release/rhino-cli");
+        .join("gate/rhino-cli");
     assert!(
         built_binary.is_file(),
         "resolver shim must build the binary into the sandbox target directory"
@@ -2775,7 +2775,7 @@ fn then_subsequent_invocation_reuses_binary(w: &mut GateWorld) {
         .shim_target_dir
         .as_ref()
         .expect("sandbox target dir configured");
-    let built_binary = target_dir.path().join("release/rhino-cli");
+    let built_binary = target_dir.path().join("gate/rhino-cli");
     let mtime_before = std::fs::metadata(&built_binary)
         .expect("read sandbox binary metadata")
         .modified()

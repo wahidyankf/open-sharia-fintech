@@ -2,7 +2,7 @@
 name = "rhino-cli"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.95.0"
 description = "Repository Hygiene & INtegration Orchestrator — Rust port"
 license = "MIT"
 publish = false
@@ -186,3 +186,14 @@ lto = "thin"
 codegen-units = 1
 panic = "abort"
 strip = "symbols"
+
+# Fast local/gate build profile — inherits `release` (e.g. `panic = "abort"`) but trades
+# optimization depth for compile speed: no LTO, higher codegen-unit parallelism, and a lower
+# opt-level. Used by `apps/rhino-cli/scripts/rhino-bin.sh` and the gate-path Nx targets so local
+# gate runs rebuild in seconds instead of tens of seconds; `build`/CI release artifacts still use
+# `[profile.release]` above, unchanged.
+[profile.gate]
+inherits = "release"
+lto = false
+codegen-units = 16
+opt-level = 1
