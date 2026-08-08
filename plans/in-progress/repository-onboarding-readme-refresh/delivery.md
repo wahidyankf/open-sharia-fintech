@@ -219,23 +219,59 @@ flowchart TD
   - Status: passed
   - Notes: Read-only status checks were performed in all three primary checkouts; the local record retains only dirty-state counts.
 
-- [x] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` in
+- [ ] [AI] [P0-002] Run `git fetch origin`, `git rev-parse main`, and `git rev-parse origin/main` in
       each repository — acceptance: each future unit is based on current `origin/main`, with any
       divergence resolved non-destructively before provisioning.
   - Date: 2026-08-07
   - Status: blocked-partial
-  - Notes: `ose-public` main matches `origin/main` (clean, level). `ose-primer` and `ose-private`
-    primary checkouts are both diverged from `origin/main` (primer 4 commits behind; private 9
-    commits behind) and both carry large pre-existing uncommitted working-tree diffs unrelated to
-    this plan's own file-touch ledger. Per the No Destructive Git Operations convention and the
-    file-touch-ledger rule ("anything not on your ledger is another actor's in-flight work — leave
-    it untouched"), neither checkout was fast-forwarded, stashed, or reset. This is the same
-    standing condition already tracked separately for `ose-private` (see prior session's P6 Gate
-    finding). Non-destructive resolution requires human triage of the foreign uncommitted state
-    before any unit can be provisioned from a level `ose-primer`/`ose-private` main. Downstream
-    phases that provision worktrees from `ose-primer`/`ose-private` `origin/main` remain safe (they
-    branch from `origin/main` directly, not the dirty local `main`), but phases that assume a clean,
-    level local checkout in those two repos are blocked pending that triage.
+  - Notes: The fetch/rev-parse commands ran cleanly in all three primary checkouts. The compound
+    acceptance criterion — divergence resolved non-destructively — is met only for `ose-public`; it
+    is not met for `ose-primer` or `ose-private`. Per-repository disposition and tracked follow-up
+    are recorded in P0-002A (`ose-public`, resolved), P0-002B (`ose-primer`, blocked), and P0-002C
+    (`ose-private`, blocked). This parent row stays unticked because the acceptance criterion is not
+    fully met across all three repositories.
+
+- [x] [AI] [P0-002A] Confirm `ose-public`'s primary-checkout `main` is level with `origin/main` —
+      acceptance: `git rev-parse main` and `git rev-parse origin/main` return the identical revision.
+  - Date: 2026-08-07
+  - Status: passed
+  - Notes: `ose-public` primary checkout `main` matches `origin/main` exactly — clean, level, zero
+    divergence. This repository's future units may provision from the local `main` directly.
+
+- [ ] [AI] [P0-002B] Resolve the `ose-primer` primary-checkout divergence from `origin/main` (4
+      commits behind) and its unrelated pre-existing uncommitted working-tree diff — acceptance:
+      `main` is level with `origin/main` and the foreign working-tree state is triaged
+      non-destructively.
+  - Date: 2026-08-07
+  - Status: blocked
+  - Notes: `ose-primer`'s primary checkout is 4 commits behind `origin/main` and carries a large
+    pre-existing uncommitted working-tree diff unrelated to this plan's own file-touch ledger. Per
+    the No Destructive Git Operations convention and the file-touch-ledger rule ("anything not on
+    your ledger is another actor's in-flight work — leave it untouched"), this session did not
+    fast-forward, stash, or reset the checkout. Per this plan's Legend ("If execution discovers a
+    task that genuinely requires a person or real-secret handling, stop that task as out of scope
+    instead of adding a human participant"), this task stops here as out of scope for AI execution:
+    triaging and clearing the foreign uncommitted state is a human decision outside this plan.
+    Downstream phases that provision `ose-primer` worktrees directly from `origin/main` (not the
+    dirty local `main`) remain unaffected and safe to proceed; phases that assume a clean, level
+    local `ose-primer` checkout stay blocked pending that human triage.
+
+- [ ] [AI] [P0-002C] Resolve the `ose-private` primary-checkout divergence from `origin/main` (9
+      commits behind) and its unrelated pre-existing uncommitted working-tree diff — acceptance:
+      `main` is level with `origin/main` and the foreign working-tree state is triaged
+      non-destructively.
+  - Date: 2026-08-07
+  - Status: blocked
+  - Notes: `ose-private`'s primary checkout is 9 commits behind `origin/main` and carries a large
+    pre-existing uncommitted working-tree diff unrelated to this plan's own file-touch ledger. Per
+    the same No Destructive Git Operations and file-touch-ledger rules, this session did not
+    fast-forward, stash, or reset the checkout. Per this plan's Legend, this task stops here as out
+    of scope for AI execution: triaging and clearing the foreign uncommitted state is a human
+    decision outside this plan. This row is the sole tracker for this standing condition — no other
+    reference to it exists elsewhere in this plan. Downstream phases that provision `ose-private`
+    worktrees directly from `origin/main` (not the dirty local `main`) remain unaffected and safe to
+    proceed; phases that assume a clean, level local `ose-private` checkout stay blocked pending
+    that human triage.
 - [x] [AI] [P0-003] Run
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text`
       in each repository — acceptance: exact Markdown, generated-binding, and environment guard
