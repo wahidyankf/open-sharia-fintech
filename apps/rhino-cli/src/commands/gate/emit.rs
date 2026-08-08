@@ -408,6 +408,7 @@ fn command_with_fixed_arguments_quotes_shell_sensitive_values() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     assert_eq!(
@@ -443,6 +444,7 @@ fn command_with_fixed_arguments_invokes_rhino_cli_through_the_resolver_shim() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     assert_eq!(
@@ -477,6 +479,7 @@ fn rhino_cli_kind_renders_a_resolver_shim_invocation() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     let rendered = command_with_fixed_arguments(&gate);
@@ -520,6 +523,7 @@ fn external_node_resolved_kind_renders_a_node_modules_bin_invocation() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     let rendered = command_with_fixed_arguments(&gate);

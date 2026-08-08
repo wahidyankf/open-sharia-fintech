@@ -23,6 +23,10 @@ pub struct ListArgs {
     /// Output format for the listed gates.
     #[arg(long, default_value = "text")]
     pub format: String,
+    /// When set, groups CI-surface gates by their declared `ci_group`
+    /// instead of listing them individually.
+    #[arg(long)]
+    pub by_group: bool,
 }
 
 /// JSON-friendly projection of one gate on one surface.
@@ -58,6 +62,15 @@ struct GateListEntry {
     hand_wired: bool,
 }
 
+/// JSON-friendly projection of one declared `ci_group` and its members.
+#[derive(Serialize)]
+struct GateGroupEntry {
+    /// Distinct `ci_group` value.
+    group: String,
+    /// Member gate ids in registry declaration order.
+    gates: Vec<String>,
+}
+
 /// List gates declared on one surface from `repo-config.yml`.
 ///
 /// # Errors
@@ -71,6 +84,7 @@ pub fn run(args: &ListArgs, _output_format: OutputFormat) -> Result<(), Error> {
         &repo_root,
         &args.surface,
         output_format,
+        args.by_group,
         &mut std::io::stdout(),
     )
 }
@@ -79,11 +93,13 @@ pub fn run(args: &ListArgs, _output_format: OutputFormat) -> Result<(), Error> {
 ///
 /// # Errors
 ///
-/// Returns an error when `repo-config.yml` cannot be read or rendered.
+/// Returns an error when `repo-config.yml` cannot be read or rendered, or —
+/// when `by_group` is set — a selected gate has no declared `ci_group`.
 pub fn run_at_root(
     repo_root: &Path,
     surface: &str,
     output_format: OutputFormat,
+    by_group: bool,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
     let surface = parse_surface(surface)?;
@@ -94,12 +110,21 @@ pub fn run_at_root(
         .filter(|gate| gate.surfaces.contains_key(&surface))
         .collect::<Vec<_>>();
     validate_gate_ids(&surface_gates, None)?;
-    let entries: Vec<GateListEntry> = surface_gates
+    let visible_gates = surface_gates
         .iter()
+        .copied()
         .filter(|gate| {
             output_format != OutputFormat::Json
                 || gate.wiring.as_ref() != Some(&GateWiring::HandWired)
         })
+        .collect::<Vec<_>>();
+
+    if by_group {
+        return write_grouped(&visible_gates, output_format, writer);
+    }
+
+    let entries: Vec<GateListEntry> = visible_gates
+        .iter()
         .map(|gate| {
             let scope = &gate.surfaces[&surface];
             GateListEntry {
@@ -143,6 +168,83 @@ pub fn run_at_root(
         }
     }
     Ok(())
+}
+
+/// Writes gates grouped by their declared `ci_group`.
+///
+/// # Errors
+///
+/// Returns an error when a gate has no declared `ci_group` or writing fails.
+fn write_grouped(
+    gates: &[&GateEntry],
+    output_format: OutputFormat,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let groups = group_by_ci_group(gates)?;
+    match output_format {
+        OutputFormat::Json => {
+            let entries: Vec<GateGroupEntry> = groups
+                .into_iter()
+                .map(|(group, members)| GateGroupEntry {
+                    group,
+                    gates: members.into_iter().map(|gate| gate.id.clone()).collect(),
+                })
+                .collect();
+            serde_json::to_writer_pretty(&mut *writer, &entries)?;
+            writeln!(writer)?;
+        }
+        OutputFormat::Text | OutputFormat::Markdown => {
+            for (group, members) in groups {
+                let ids = members
+                    .iter()
+                    .map(|gate| gate.id.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                writeln!(writer, "{group}\t{ids}")?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Groups gates by their declared `ci_group`, preserving each group's
+/// first-appearance order and each gate's registry declaration order within
+/// the group.
+///
+/// # Errors
+///
+/// Returns an error when a gate lacks a declared `ci_group`.
+fn group_by_ci_group<'a>(
+    gates: &[&'a GateEntry],
+) -> Result<Vec<(String, Vec<&'a GateEntry>)>, Error> {
+    let mut group_ids: Vec<&str> = Vec::new();
+    for gate in gates {
+        let Some(ci_group) = gate.ci_group.as_deref() else {
+            return Err(anyhow!(
+                "gate {:?} is missing ci_group required for grouped output",
+                gate.id
+            ));
+        };
+        if !group_ids.contains(&ci_group) {
+            group_ids.push(ci_group);
+        }
+    }
+    Ok(group_ids
+        .into_iter()
+        .map(|group_id| (group_id.to_string(), gates_in_ci_group(gates, group_id)))
+        .collect())
+}
+
+/// Returns the gates whose declared `ci_group` equals `group_id`, preserving
+/// registry declaration order. Shared by `gate list --by-group` (bucketing
+/// every distinct group here in [`group_by_ci_group`]) and `gate run
+/// --group` (selecting one group's members).
+pub(crate) fn gates_in_ci_group<'a>(gates: &[&'a GateEntry], group_id: &str) -> Vec<&'a GateEntry> {
+    gates
+        .iter()
+        .copied()
+        .filter(|gate| gate.ci_group.as_deref() == Some(group_id))
+        .collect()
 }
 
 /// Validates duplicate gate ids or an exact `--only` selector against one surface.
@@ -236,6 +338,61 @@ mod tests {
     use super::*;
     use tempfile::TempDir;
 
+    /// Binds the Gherkin scenario "Enumeration can group CI gates by
+    /// declared group"
+    /// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature).
+    #[test]
+    fn enumeration_groups_ci_gates_by_declared_group() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(
+            repo.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: markdown-links\n",
+                "    type: check\n",
+                "    command: md links validate\n",
+                "    kind: rhino-cli\n",
+                "    ci-group: markdown\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+                "  - id: markdown-mermaid\n",
+                "    type: check\n",
+                "    command: md mermaid validate\n",
+                "    kind: rhino-cli\n",
+                "    ci-group: markdown\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+                "  - id: shell-lint\n",
+                "    type: check\n",
+                "    command: shell lint\n",
+                "    kind: external\n",
+                "    ci-group: shell\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+            ),
+        )
+        .unwrap();
+
+        let mut output = Vec::new();
+        run_at_root(repo.path(), "ci", OutputFormat::Json, true, &mut output)
+            .expect("gate list --by-group must group CI gates as JSON");
+
+        let groups: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
+        assert_eq!(
+            groups.len(),
+            2,
+            "must emit one entry per distinct ci_group value; got {groups:?}"
+        );
+        assert_eq!(groups[0]["group"], "markdown");
+        assert_eq!(
+            groups[0]["gates"],
+            serde_json::json!(["markdown-links", "markdown-mermaid"]),
+            "members must appear in registry declaration order"
+        );
+        assert_eq!(groups[1]["group"], "shell");
+        assert_eq!(groups[1]["gates"], serde_json::json!(["shell-lint"]));
+    }
+
     #[test]
     fn ci_json_lists_only_ci_gates_with_required_fields() {
         let repo = TempDir::new().unwrap();
@@ -267,7 +424,7 @@ mod tests {
         .unwrap();
 
         let mut output = Vec::new();
-        run_at_root(repo.path(), "ci", OutputFormat::Json, &mut output)
+        run_at_root(repo.path(), "ci", OutputFormat::Json, false, &mut output)
             .expect("gate list command path must enumerate CI gates as JSON");
 
         let entries: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
@@ -326,6 +483,7 @@ mod tests {
             repo.path(),
             "pre-commit",
             OutputFormat::Json,
+            false,
             &mut pre_commit,
         )
         .unwrap();
@@ -335,7 +493,7 @@ mod tests {
         assert_eq!(formatter["surfaces"], serde_json::json!(["pre-commit"]));
 
         let mut ci = Vec::new();
-        run_at_root(repo.path(), "ci", OutputFormat::Json, &mut ci).unwrap();
+        run_at_root(repo.path(), "ci", OutputFormat::Json, false, &mut ci).unwrap();
         let entries: Vec<serde_json::Value> = serde_json::from_slice(&ci).unwrap();
         let verifier = entries
             .iter()
@@ -357,7 +515,7 @@ mod tests {
 
         for surface in ["commit-msg", "pre-commit", "pre-push", "ci"] {
             let mut output = Vec::new();
-            run_at_root(repo.path(), surface, OutputFormat::Json, &mut output).unwrap();
+            run_at_root(repo.path(), surface, OutputFormat::Json, false, &mut output).unwrap();
             assert_eq!(output, b"[]\n", "{surface} must return an empty array");
         }
     }
@@ -367,9 +525,15 @@ mod tests {
         let repo = TempDir::new().unwrap();
         std::fs::write(repo.path().join("repo-config.yml"), "gates: []\n").unwrap();
 
-        let error = run_at_root(repo.path(), "cron", OutputFormat::Json, &mut Vec::new())
-            .unwrap_err()
-            .to_string();
+        let error = run_at_root(
+            repo.path(),
+            "cron",
+            OutputFormat::Json,
+            false,
+            &mut Vec::new(),
+        )
+        .unwrap_err()
+        .to_string();
         assert!(error.contains("cron"));
         assert!(error.contains("commit-msg"));
         assert!(error.contains("pre-commit"));
@@ -405,7 +569,7 @@ fn format_json_omits_hand_wired() {
     .unwrap();
 
     let mut output = Vec::new();
-    run_at_root(repo.path(), "ci", OutputFormat::Json, &mut output).unwrap();
+    run_at_root(repo.path(), "ci", OutputFormat::Json, false, &mut output).unwrap();
     let entries: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
     assert!(entries.iter().all(|entry| entry["id"] != "test-quick"));
 }
@@ -431,7 +595,7 @@ fn format_text_includes_hand_wired() {
     .unwrap();
 
     let mut output = Vec::new();
-    run_at_root(repo.path(), "ci", OutputFormat::Text, &mut output).unwrap();
+    run_at_root(repo.path(), "ci", OutputFormat::Text, false, &mut output).unwrap();
     let output = String::from_utf8(output).unwrap();
     assert!(output.contains("test-quick"));
     assert!(output.contains("hand-wired"));
@@ -458,7 +622,14 @@ fn format_text_reports_staged_only_carve_out() {
     .unwrap();
 
     let mut output = Vec::new();
-    run_at_root(repo.path(), "pre-commit", OutputFormat::Text, &mut output).unwrap();
+    run_at_root(
+        repo.path(),
+        "pre-commit",
+        OutputFormat::Text,
+        false,
+        &mut output,
+    )
+    .unwrap();
     let output = String::from_utf8(output).unwrap();
     assert!(output.contains("index-guard"));
     assert!(output.contains("carve-out=staged-only"));

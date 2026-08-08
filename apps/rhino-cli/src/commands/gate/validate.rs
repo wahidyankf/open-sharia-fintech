@@ -38,12 +38,36 @@ pub fn run(_args: &ValidateArgs, _output_format: OutputFormat) -> Result<(), Err
 pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
     let config = repo_config::load(repo_root)?;
 
+    validate_ci_group_declared(&config, writer)?;
     validate_local_hook_composition(&config, writer)?;
     validate_verifies_references(&config, writer)?;
     validate_formatter_verification(&config, writer)?;
     validate_local_hook_shims(repo_root, &config, writer)?;
     validate_ci_workflow(repo_root, &config, writer)?;
     validate_lint_staged(repo_root, &config, writer)
+}
+
+/// Validates that every gate declaring a `ci` surface also declares `ci_group`.
+///
+/// # Errors
+///
+/// Returns an error when a `ci`-surface gate has no declared `ci_group` or the
+/// diagnostic cannot be written.
+fn validate_ci_group_declared(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for gate in &config.gates {
+        if gate.surfaces.contains_key(&GateSurface::Ci) && gate.ci_group.is_none() {
+            let message = format!(
+                "Gate {:?} carries a ci surface but declares no ci_group; ci_group is required for gates carrying a ci surface",
+                gate.id
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
 }
 
 /// Validates the local-hook check-to-CI composition rule.
@@ -781,6 +805,41 @@ fn validate_lint_staged(
     Ok(())
 }
 
+/// Binds the Gherkin scenario "A gate declared without a CI group fails
+/// validation"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature).
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn ci_group_required_for_ci_surface_gate() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: missing-ci-group\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("missing-ci-group")
+            && rendered.contains("ci_group is required"),
+        "a ci-surface gate without ci_group must fail validation; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
@@ -939,6 +998,7 @@ fn missing_surface_shim() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-push: { scope: affected-projects }\n",
             "      ci: { scope: affected-projects }\n",
@@ -971,6 +1031,7 @@ fn missing_pre_commit_surface_shim() {
             "    type: check\n",
             "    command: md naming validate\n",
             "    kind: rhino-cli\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-commit: { scope: other }\n",
             "      ci: { scope: all-file-type }\n",
@@ -1005,6 +1066,7 @@ fn commented_surface_shim_is_not_a_registry_delegation() {
             "    type: check\n",
             "    command: md naming validate\n",
             "    kind: rhino-cli\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-commit: { scope: other }\n",
             "      ci: { scope: all-file-type }\n",
@@ -1163,6 +1225,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: mutation\n",
             "    command: prettier --write\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    category: formatter\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1170,6 +1233,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: format-markdown\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1177,6 +1241,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: format-markdown\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1207,6 +1272,7 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1255,6 +1321,7 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1310,6 +1377,7 @@ fn matrix_ci_dispatcher_rejects_an_inline_gate_id_expression() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
     ))
@@ -1357,6 +1425,7 @@ fn matrix_ci_dispatcher_accepts_a_non_default_gate_id_env_var_name() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1405,6 +1474,7 @@ fn quality_gate_requires_enumerate_as_well_as_gate() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1458,6 +1528,7 @@ fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1507,6 +1578,7 @@ fn missing_named_ci_matrix_job_is_rejected() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1551,6 +1623,7 @@ fn undeclared_ci_command() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1608,6 +1681,7 @@ fn named_block_ci_step_is_checked_against_the_registry() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1664,6 +1738,7 @@ fn orphan_verifies_reference() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: missing-format\n",
             "    surfaces:\n",
             "      ci: { scope: affected-file-type, glob: '*.md' }\n",
@@ -1780,6 +1855,7 @@ fn hand_wired_present() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    wiring: hand-wired\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
@@ -1815,6 +1891,7 @@ fn hand_wired_gate_requires_a_quality_gate_dependency() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1854,6 +1931,7 @@ fn commented_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1885,6 +1963,7 @@ fn disabled_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1929,6 +2008,7 @@ fn inline_comment_or_quoted_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1964,6 +2044,7 @@ fn unspaced_false_expression_hand_wired_guards_are_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2000,6 +2081,7 @@ fn falsey_expression_hand_wired_guards_are_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2042,6 +2124,7 @@ fn non_executing_nx_subcommands_do_not_satisfy_hand_wired_gates() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2077,6 +2160,7 @@ fn error_masked_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2113,6 +2197,7 @@ fn hand_wired_job_deleted() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    wiring: hand-wired\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
@@ -2144,6 +2229,7 @@ fn doctor_tool_metadata_rejects_an_unconditional_ci_bootstrap() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2178,6 +2264,7 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2228,6 +2315,7 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      pre-commit: { scope: all-file-type }\n",
@@ -2276,6 +2364,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2335,6 +2424,7 @@ fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",

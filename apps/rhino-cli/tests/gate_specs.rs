@@ -32,6 +32,7 @@ struct GateWorld {
     first_emitted_package: Option<Vec<u8>>,
     first_parity_manifest: Option<Vec<u8>>,
     pending_gate_type: Option<String>,
+    pending_ci_group: Option<String>,
     path: Option<OsString>,
     ci_changed_base: Option<String>,
     ci_arguments: Option<PathBuf>,
@@ -59,6 +60,7 @@ impl GateWorld {
             first_emitted_package: None,
             first_parity_manifest: None,
             pending_gate_type: None,
+            pending_ci_group: None,
             path: None,
             ci_changed_base: None,
             ci_arguments: None,
@@ -208,18 +210,36 @@ impl GateWorld {
 
     fn list_pre_commit(&mut self) {
         let mut buffer = Vec::new();
-        let result = list::run_at_root(self.root(), "pre-commit", OutputFormat::Text, &mut buffer);
+        let result = list::run_at_root(
+            self.root(),
+            "pre-commit",
+            OutputFormat::Text,
+            false,
+            &mut buffer,
+        );
         assert!(result.is_ok(), "gate list must run: {result:?}");
         self.list_output = String::from_utf8(buffer).expect("list output is UTF-8");
     }
 
     fn list(&mut self, surface: &str, format: OutputFormat) {
         let mut buffer = Vec::new();
-        let result = list::run_at_root(self.root(), surface, format, &mut buffer);
+        let result = list::run_at_root(self.root(), surface, format, false, &mut buffer);
         self.succeeded = Some(result.is_ok());
         self.output = String::from_utf8_lossy(&buffer).into_owned();
         self.json_output = (result.is_ok() && format == OutputFormat::Json)
             .then(|| serde_json::from_str(&self.output).expect("gate list emits JSON"));
+        if let Err(error) = result {
+            self.output.push_str(&error.to_string());
+        }
+    }
+
+    fn list_grouped(&mut self, surface: &str, format: OutputFormat) {
+        let mut buffer = Vec::new();
+        let result = list::run_at_root(self.root(), surface, format, true, &mut buffer);
+        self.succeeded = Some(result.is_ok());
+        self.output = String::from_utf8_lossy(&buffer).into_owned();
+        self.json_output = (result.is_ok() && format == OutputFormat::Json)
+            .then(|| serde_json::from_str(&self.output).expect("gate list --by-group emits JSON"));
         if let Err(error) = result {
             self.output.push_str(&error.to_string());
         }
@@ -257,6 +277,24 @@ impl GateWorld {
             command.env("PATH", path);
         }
         let output = command.output().expect("run gate command");
+        self.succeeded = Some(output.status.success());
+        self.output = format!(
+            "{}{}",
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    fn run_gate_group(&mut self, surface: &str, group: &str) {
+        let mut command = self.fixture_rhino_command();
+        command
+            .args(["gate", "run"])
+            .arg(format!("--surface={surface}"))
+            .arg(format!("--group={group}"));
+        if let Some(path) = &self.path {
+            command.env("PATH", path);
+        }
+        let output = command.output().expect("run gate group command");
         self.succeeded = Some(output.status.success());
         self.output = format!(
             "{}{}",
@@ -464,15 +502,18 @@ fn given_staged_only_check(w: &mut GateWorld) {
 fn given_non_delegating_pre_push_hook(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
-        &config(&gate(
-            "pre-push-check",
-            "check",
-            "test:quick",
-            "nx",
-            concat!(
-                "      pre-push: { scope: affected-projects }\n",
-                "      ci: { scope: affected-projects }\n",
-            ),
+        &config(&format!(
+            "{}    ci-group: fixture-group\n",
+            gate(
+                "pre-push-check",
+                "check",
+                "test:quick",
+                "nx",
+                concat!(
+                    "      pre-push: { scope: affected-projects }\n",
+                    "      ci: { scope: affected-projects }\n",
+                ),
+            )
         )),
     );
     w.write(".husky/pre-push", "#!/bin/sh\necho stale\n");
@@ -482,12 +523,15 @@ fn given_non_delegating_pre_push_hook(w: &mut GateWorld) {
 fn given_undeclared_ci_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
-        &config(&gate(
-            "known-check",
-            "check",
-            "known-check",
-            "external",
-            "      ci: { scope: affected-projects }\n",
+        &config(&format!(
+            "{}    ci-group: fixture-group\n",
+            gate(
+                "known-check",
+                "check",
+                "known-check",
+                "external",
+                "      ci: { scope: affected-projects }\n",
+            )
         )),
     );
     w.write(
@@ -505,12 +549,15 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
 fn given_matrix_aggregate_missing_enumerate(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
-        &config(&gate(
-            "known-check",
-            "check",
-            "known-check",
-            "external",
-            "      ci: { scope: affected-projects }\n",
+        &config(&format!(
+            "{}    ci-group: fixture-group\n",
+            gate(
+                "known-check",
+                "check",
+                "known-check",
+                "external",
+                "      ci: { scope: affected-projects }\n",
+            )
         )),
     );
     w.write(
@@ -529,7 +576,7 @@ fn given_orphan_verifies(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    verifies: missing-gate\n",
+            "{}    verifies: missing-gate\n    ci-group: fixture-group\n",
             gate(
                 "verify-format",
                 "check",
@@ -585,7 +632,7 @@ fn given_hand_wired_job(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -612,7 +659,7 @@ fn given_deleted_hand_wired_job(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -630,7 +677,7 @@ fn given_commented_hand_wired_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -655,7 +702,7 @@ fn given_inline_commented_hand_wired_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -680,7 +727,7 @@ fn given_quoted_hand_wired_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -705,7 +752,7 @@ fn given_disabled_hand_wired_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -730,7 +777,7 @@ fn given_normalized_disabled_hand_wired_command(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -755,7 +802,7 @@ fn given_falsey_disabled_hand_wired_commands(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(&format!(
-            "{}    wiring: hand-wired\n",
+            "{}    wiring: hand-wired\n    ci-group: fixture-group\n",
             gate(
                 "test-quick",
                 "check",
@@ -872,6 +919,41 @@ fn then_deleted_hand_wired_job_is_named(w: &mut GateWorld) {
     assert!(w.output.contains("pr-quality-gate.yml"));
 }
 
+#[given("a gate entry in repo-config.yml carrying a ci surface and no ci_group field")]
+fn given_ci_gate_without_ci_group(w: &mut GateWorld) {
+    // Deliberately omits `ci-group`: this scenario asserts on that absence, so
+    // unlike every other `ci`-surface fixture in this file it must NOT gain
+    // the `ci-group: fixture-group` line added elsewhere for DD-3.
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "missing-ci-group",
+            "check",
+            "md links validate",
+            "rhino-cli",
+            "      ci: { scope: all-file-type }\n",
+        )),
+    );
+}
+
+#[then("its output names the offending gate id")]
+fn then_ci_group_error_names_gate(w: &mut GateWorld) {
+    assert!(
+        w.output.contains("missing-ci-group"),
+        "missing offending gate id in {}",
+        w.output
+    );
+}
+
+#[then("its output states that ci_group is required")]
+fn then_ci_group_error_states_required(w: &mut GateWorld) {
+    assert!(
+        w.output.contains("ci_group is required"),
+        "missing ci_group explanation in {}",
+        w.output
+    );
+}
+
 #[given("pre-commit and pre-push invoke their declared gate surfaces")]
 fn given_delegating_hook_surfaces(w: &mut GateWorld) {
     w.write(
@@ -900,10 +982,10 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
     w.write(
         "repo-config.yml",
         &config(concat!(
-            "  - id: pre-commit-check\n    type: check\n    command: md links validate\n    kind: rhino-cli\n    surfaces:\n      pre-commit: { scope: other }\n      ci: { scope: all-file-type }\n",
-            "  - id: pre-push-check\n    type: check\n    command: test:quick\n    kind: nx\n    surfaces:\n      pre-push: { scope: affected-projects }\n      ci: { scope: affected-projects }\n",
+            "  - id: pre-commit-check\n    type: check\n    command: md links validate\n    kind: rhino-cli\n    ci-group: fixture-group\n    surfaces:\n      pre-commit: { scope: other }\n      ci: { scope: all-file-type }\n",
+            "  - id: pre-push-check\n    type: check\n    command: test:quick\n    kind: nx\n    ci-group: fixture-group\n    surfaces:\n      pre-push: { scope: affected-projects }\n      ci: { scope: affected-projects }\n",
             "  - id: generate-bindings\n    type: mutation\n    command: harness bindings generate\n    kind: rhino-cli\n    surfaces:\n      pre-commit: { scope: other }\n",
-            "  - id: test-quick\n    type: check\n    command: test:quick\n    kind: nx\n    wiring: hand-wired\n    surfaces:\n      ci: { scope: affected-projects }\n",
+            "  - id: test-quick\n    type: check\n    command: test:quick\n    kind: nx\n    wiring: hand-wired\n    ci-group: fixture-group\n    surfaces:\n      ci: { scope: affected-projects }\n",
         )),
     );
     w.write(
@@ -1626,6 +1708,60 @@ fn then_output_reports_type(w: &mut GateWorld, gate_type: String) {
         "gate list output lacks type {gate_type:?}: {:?}",
         w.json_output
     );
+}
+
+#[given("every ci-surface gate in the registry declares a ci_group")]
+fn given_every_ci_gate_declares_group(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(concat!(
+            "  - id: markdown-links\n    type: check\n    command: md links validate\n    kind: rhino-cli\n    ci-group: markdown\n    surfaces:\n      ci: { scope: all-file-type }\n",
+            "  - id: markdown-mermaid\n    type: check\n    command: md mermaid validate\n    kind: rhino-cli\n    ci-group: markdown\n    surfaces:\n      ci: { scope: all-file-type }\n",
+            "  - id: shell-lint\n    type: check\n    command: shell lint\n    kind: external\n    ci-group: shell\n    surfaces:\n      ci: { scope: all-file-type }\n",
+        )),
+    );
+}
+
+#[when("\"rhino-cli gate list --surface=ci --format=json --by-group\" runs")]
+fn when_list_ci_json_by_group(w: &mut GateWorld) {
+    w.list_grouped("ci", OutputFormat::Json);
+}
+
+#[then("it emits one entry per distinct ci_group value")]
+fn then_group_output_has_one_entry_per_group(w: &mut GateWorld) {
+    assert!(w.is_success(), "gate list --by-group failed: {}", w.output);
+    let entries = w
+        .json_output
+        .as_ref()
+        .and_then(serde_json::Value::as_array)
+        .expect("JSON grouped gate-list output");
+    assert_eq!(
+        entries.len(),
+        2,
+        "expected one entry per distinct ci_group value: {entries:?}"
+    );
+}
+
+#[then("each entry lists its member gate ids in registry declaration order")]
+fn then_group_entries_list_members_in_order(w: &mut GateWorld) {
+    let entries = w
+        .json_output
+        .as_ref()
+        .and_then(serde_json::Value::as_array)
+        .expect("JSON grouped gate-list output");
+    let markdown = entries
+        .iter()
+        .find(|entry| entry["group"] == "markdown")
+        .expect("markdown group entry present");
+    assert_eq!(
+        markdown["gates"],
+        serde_json::json!(["markdown-links", "markdown-mermaid"])
+    );
+    let shell = entries
+        .iter()
+        .find(|entry| entry["group"] == "shell")
+        .expect("shell group entry present");
+    assert_eq!(shell["gates"], serde_json::json!(["shell-lint"]));
 }
 
 #[given(regex = r#"^a gate declares type "([^"]+)"$"#)]
@@ -2643,6 +2779,53 @@ fn given_formatted_elixir_fixtures(w: &mut GateWorld) {
         "formatted.exs",
         "repo-config.yml",
     ]);
+}
+
+#[given("a CI group containing several gates where exactly one fails")]
+fn given_ci_group_with_one_failure(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "repo-config.yml",
+        &config(concat!(
+            "  - id: group-first\n    type: check\n    command: true\n    kind: external\n    ci-group: sample-group\n    surfaces:\n      ci: { scope: other }\n",
+            "  - id: group-failing\n    type: check\n    command: false\n    kind: external\n    ci-group: sample-group\n    surfaces:\n      ci: { scope: other }\n",
+            "  - id: group-third\n    type: check\n    command: true\n    kind: external\n    ci-group: sample-group\n    surfaces:\n      ci: { scope: other }\n",
+            "  - id: other-group-gate\n    type: check\n    command: touch must-not-run.txt\n    kind: external\n    ci-group: other-group\n    surfaces:\n      ci: { scope: other }\n",
+        )),
+    );
+    w.pending_ci_group = Some("sample-group".to_owned());
+}
+
+#[when("\"rhino-cli gate run --surface=ci --group=<id>\" runs")]
+fn when_gate_group_runs(w: &mut GateWorld) {
+    let group = w
+        .pending_ci_group
+        .clone()
+        .expect("CI group must be configured");
+    w.run_gate_group("ci", &group);
+}
+
+#[then("its output contains a per-gate summary line for every gate in the group")]
+fn then_output_contains_group_summary(w: &mut GateWorld) {
+    for id in ["group-first", "group-failing", "group-third"] {
+        assert!(w.output.contains(id), "missing {id} in {}", w.output);
+    }
+    assert!(
+        !w.output.contains("other-group-gate"),
+        "a gate outside the selected group must not appear in the summary: {}",
+        w.output
+    );
+}
+
+#[then("the failing gate id appears on a line marked FAIL")]
+fn then_failing_gate_marked_fail(w: &mut GateWorld) {
+    assert!(
+        w.output
+            .lines()
+            .any(|line| line.contains("group-failing") && line.contains("FAIL")),
+        "no FAIL line naming group-failing in {}",
+        w.output
+    );
 }
 
 // Binds `gate-binary-resolution.feature`'s two scenarios — "A swept target

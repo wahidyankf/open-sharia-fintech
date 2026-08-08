@@ -233,6 +233,12 @@ pub struct GateEntry {
     /// Mutation category, such as `formatter`.
     #[serde(default)]
     pub category: Option<String>,
+    /// CI job group this gate belongs to. Required for every gate whose
+    /// `surfaces` includes `ci` (enforced by `gate validate`, not by this
+    /// schema, since the requirement is conditional on the declared surface
+    /// set); groups gates onto shared CI matrix jobs (DD-3).
+    #[serde(rename = "ci-group", default)]
+    pub ci_group: Option<String>,
 }
 
 /// Return registry arguments that are forwarded to the declared gate command.
