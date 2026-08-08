@@ -481,9 +481,10 @@ Independent of Phase 3; may run in parallel.
 
 ## Phase 5 — `ci_group` becomes a required registry field (DD-3)
 
-- [ ] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature` exits 0.
+- [x] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature`. **Notes**: scenario appended verbatim; `gherkin-cardinality validate` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/validate.rs` tests module binding the scenario below
+- [x] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/validate.rs` tests module binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate`
       — acceptance: test fails because `ci_group` is not yet required.
   - **Gherkin (binds) →** "A gate declared without a CI group fails validation"
@@ -498,13 +499,16 @@ Independent of Phase 3; may run in parallel.
     ```
 
   - _Suggested executor: `swe-rust-dev`_
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `gate::validate::ci_group_required_for_ci_surface_gate` added; failed as expected — actual error was the pre-existing CI-workflow-conformance message, not a `ci_group`-specific one, confirming the check didn't yet exist.
 
-- [ ] [AI] **GREEN**: Add the `ci_group` field to the gate schema in the `repo_config` module and enforce its presence in `validate.rs`
+- [x] [AI] **GREEN**: Add the `ci_group` field to the gate schema in the `repo_config` module and enforce its presence in `validate.rs`
       — command: same as above
       — acceptance: test passes (AC-5).
-- [ ] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/application/repo_config/mod.rs` (`ci_group: Option<String>`, serde rename `ci-group`), `apps/rhino-cli/src/commands/gate/validate.rs` (`validate_ci_group_declared`), `apps/rhino-cli/src/commands/gate/emit.rs` (4 test-fixture updates). **Notes**: `gate::validate` module 38/38 pass.
+- [x] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature`. **Notes**: scenario appended verbatim; `gherkin-cardinality validate` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/list.rs` tests module binding the scenario below
+- [x] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/list.rs` tests module binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list`
       — acceptance: test fails because `--by-group` is unrecognized.
   - **Gherkin (binds) →** "Enumeration can group CI gates by declared group"
@@ -518,13 +522,16 @@ Independent of Phase 3; may run in parallel.
     ```
 
   - _Suggested executor: `swe-rust-dev`_
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `gate::list::tests::enumeration_groups_ci_gates_by_declared_group` added; failed to compile as expected (`E0061`, `by_group` param didn't exist).
 
-- [ ] [AI] **GREEN**: Implement `--by-group` in `apps/rhino-cli/src/commands/gate/list.rs`
+- [x] [AI] **GREEN**: Implement `--by-group` in `apps/rhino-cli/src/commands/gate/list.rs`
       — command: same as above
       — acceptance: test passes.
-- [ ] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands/gate/list.rs` (`--by-group` flag, `GateGroupEntry`, `write_grouped`, `group_by_ci_group`, shared `gates_in_ci_group` helper; `by_group` threaded through 8 pre-existing `run_at_root` call sites). **Notes**: `gate::list` module 8/8 pass.
+- [x] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`. **Notes**: scenario appended verbatim; `gherkin-cardinality validate` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/run.rs` tests module binding the scenario below
+- [x] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/run.rs` tests module binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::run`
       — acceptance: test fails because `--group` is unrecognized.
   - **Gherkin (binds) →** "A failing gate inside a group is named in the output"
@@ -539,28 +546,33 @@ Independent of Phase 3; may run in parallel.
     ```
 
   - _Suggested executor: `swe-rust-dev`_
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `gate::run::failing_gate_inside_a_group_is_named_in_the_output` added; failed to compile as expected (`E0425`, `run_at_root_with_group` didn't exist).
 
-- [ ] [AI] **GREEN**: Implement `--group` in `apps/rhino-cli/src/commands/gate/run.rs`, including the per-gate summary output
+- [x] [AI] **GREEN**: Implement `--group` in `apps/rhino-cli/src/commands/gate/run.rs`, including the per-gate summary output
       — command: same as above
       — acceptance: test passes (AC-6).
-- [ ] [AI] **REFACTOR**: Deduplicate group filtering between `list.rs` and `run.rs`
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands/gate/run.rs` (`--group` flag, `run_at_root_with_group`, group-aware execution running every gate in the group rather than stopping at first failure, `resolve_group_gates`, `report_group_summary`). **Notes**: `gate::run` module 12/12 pass.
+- [x] [AI] **REFACTOR**: Deduplicate group filtering between `list.rs` and `run.rs`
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib`
       — acceptance: all lib tests pass.
-- [ ] [AI] Add `ci_group` to every gate entry in `repo-config.yml` carrying a `ci` surface. Group by required toolchain, mirroring `beaver-nest`'s proven job names: markdown, shell/docker/actions, governance, specs, naming, formatting-verify
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: extracted the duplicated `ci_group` filter predicate into `pub(crate) fn gates_in_ci_group` in `list.rs`, used by both `group_by_ci_group` (bucketing) and `run.rs`'s `resolve_group_gates` (selection). Full `cargo test --lib`: 1371 passed, 1 ignored, 0 failed. `cargo fmt --check` and `cargo clippy --lib -- -D warnings` both clean.
+- [x] [AI] Add `ci_group` to every gate entry in `repo-config.yml` carrying a `ci` surface. Group by required toolchain, mirroring `beaver-nest`'s proven job names: markdown, shell/docker/actions, governance, specs, naming, formatting-verify
       — command: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — acceptance: exits 0; every `ci`-surface gate declares a group.
-- [ ] [AI] Add the CI-topology scenarios AC-9 and AC-10 from `prd.md` to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` (AC-5, AC-6, and AC-18 already landed with their RED cycles above)
-      — command: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
-      — acceptance: exits 0.
-  - _Suggested executor: `specs-maker`_
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `repo-config.yml`. **Notes**: all 36 gates enumerated by `gate list --surface=ci --format=json` grouped into the 6 suggested names (formatting-verify ×13, markdown ×7, shell-docker-actions ×4, specs ×1, naming ×3, governance ×8). `gate validate` additionally caught 3 `wiring: hand-wired` gates carrying a `ci` surface that `gate list --surface=ci` doesn't enumerate (`test-quick`, `compat-min-version`, `specs-structure`, all Nx-driven) — added a 7th group `rust` for the two Rust/cargo-toolchain checks and put `specs-structure` under `specs`. `gate validate` exits 0 for all 39 total ci-surface gates.
+- [x] [AI] ~~Add the CI-topology scenarios AC-9 and AC-10 from `prd.md` to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`~~ **Deferred — see note.**
+  - **Date**: 2026-08-09. **Status**: Corrected, not executed as originally written. **Notes**: a `specs-maker` agent did add both scenarios verbatim per this item's original text, and `gherkin-cardinality validate` did exit 0 for the file — but `apps/rhino-cli/tests/gate_specs.rs`'s cucumber suite (which requires a literal, passing step binding for every scenario in the whole `gherkin/gate/` tree, not just the ones a given phase "owns") then failed both: neither scenario is implementable yet, since AC-9 (prebuilt-binary consumption) describes the `build-rhino` job Phase 6 creates and AC-10 (npm ci skip) describes the conditional input Phase 7 creates — neither exists in `.github/workflows/pr-quality-gate.yml` yet. This is the same cross-phase forward-reference defect class already logged in `learnings.md` ("cross-phase forward-references in a checklist item's own text can hard-error"), this time hitting the Gherkin-coverage invariant instead of a Cargo profile. Root-caused and fixed by removing both scenarios from `gate-execution.feature` here and moving their authoring+binding into Phase 6 and Phase 7 respectively (see the new items added to each phase below), where the behavior they assert actually exists. Logged as a second instance of the class in `learnings.md`.
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] Verify the union of gate ids across all declared groups equals the Phase 0 `ci` capture — command: compare `gate list --surface=ci --by-group --format=json` flattened member ids against `baseline/gates-ci.txt` — acceptance: sets are byte-identical (AC-4). **No gate may be orphaned by grouping.**
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — acceptance: exits 0.
-- [ ] [AI] Commit this phase's changes thematically and push to the open PR branch — acceptance: push succeeds; the PR's check run starts.
+- [x] [AI] Verify the union of gate ids across all declared groups equals the Phase 0 `ci` capture — command: compare `gate list --surface=ci --by-group --format=json` flattened member ids against `baseline/gates-ci.txt` — acceptance: sets are byte-identical (AC-4). **No gate may be orphaned by grouping.**
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: both sets are 36 ids; `grouped - baseline = {}`, `baseline - grouped = {}` — byte-identical.
+- [x] [AI] `npx nx run rhino-cli:test:quick` — acceptance: exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: exits 0 (specs:structure-validation, specs:behavior:coverage, test:specs all pass — 68 specs, 455 scenarios, 1860 steps, all covered).
+- [x] [AI] Commit this phase's changes thematically and push to the open PR branch — acceptance: push succeeds; the PR's check run starts.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: split into 4 thematic commits — Rust `ci_group`/`--by-group`/`--group` implementation (`42415f5f2`), `repo-config.yml` grouping (`8152150af`), Gherkin scenarios (`853a2b296`), plan docs (this commit). **Notes**: mid-implementation, `apps/rhino-cli/tests/gate_specs.rs`'s cucumber suite surfaced two real defects before any commit: (1) 2 pre-existing call sites broke on `list::run_at_root`'s new `by_group` parameter — fixed directly; (2) the new `ci_group`-required check broke 13 pre-existing scenarios whose synthetic fixtures didn't declare `ci_group`, plus the 5 new scenarios needed step bindings — both delegated to and fixed by `swe-rust-dev`. A 3rd issue (AC-9/AC-10 unbindable, see the corrected item above) was root-caused and fixed by deferring those 2 scenarios to Phase 6/7. Final state before commit: `cargo test --lib` 1371/1371, `cargo test --test gate_specs` 70/70, `specs behavior-coverage validate` 0 gaps (68 specs, 455 scenarios, 1860 steps), fmt/clippy clean.
 
 > **Pause Safety**: the registry declares groups and the CLI can enumerate and run them; the workflow still uses the old matrix, so CI is unaffected. Safe to stop. To resume: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`.
 
@@ -581,6 +593,20 @@ Independent of Phase 3; may run in parallel.
 - [ ] [AI] Preserve the protected status-check contract: the terminal job in `.github/workflows/pr-quality-gate.yml` MUST keep the job key `quality-gate` and the literal `name: Quality gate`, and must still fail when any dependency job fails — update only its `needs:` list to name the new group matrix — acceptance: `grep -c "name: Quality gate" .github/workflows/pr-quality-gate.yml` returns 1, and the string matches `baseline/required-checks.md` for this repo byte-for-byte.
   - _Renaming this job silently bricks merging for the whole repo. Treat the name as an external API._
 - [ ] [AI] Reduce `fetch-depth` from `0` to a targeted fetch on every job that does not need full history — acceptance: only jobs running `nx affected` or `git diff` against a base ref retain `fetch-depth: 0`; `actionlint` exits 0.
+- [ ] [AI] Add the AC-9 scenario (deferred from Phase 5 — see that phase's corrected item) to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` and bind it in `apps/rhino-cli/tests/gate_specs.rs` against the real `build-rhino` job and group-job artifact-download step just added above
+      — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --profile gate --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
+      — acceptance: exits 0 (72/72 scenarios, the AC-9 scenario included and passing).
+
+  ```gherkin
+  Scenario: Gate group jobs consume a prebuilt binary
+    Given the build-rhino job has published the rhino-cli artifact for the run
+    When a gate group job executes
+    Then it downloads the artifact rather than building from source
+    And it runs no cargo install command
+    And its step list contains no Rust toolchain setup
+  ```
+
+  - _Suggested executor: `specs-maker` for the scenario, `swe-rust-dev` for the binding._
 
 ### Phase 6 Gate
 
@@ -604,6 +630,19 @@ Independent of Phase 3; may run in parallel.
       — acceptance: those jobs' logs contain no `npm ci` (AC-10).
 - [ ] [AI] Remove `-${{ github.sha }}` from the `.nx/cache` key at `.github/actions/setup-node/action.yml:30`, retaining the existing `restore-keys` fallbacks
       — acceptance: the key no longer interpolates `github.sha`; `actionlint` exits 0.
+- [ ] [AI] Add the AC-10 scenario (deferred from Phase 5 — see that phase's corrected item) to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` and bind it in `apps/rhino-cli/tests/gate_specs.rs` against the real conditional `npm ci` input just added above
+      — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --profile gate --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
+      — acceptance: exits 0 (73/73 scenarios, the AC-10 scenario included and passing).
+
+  ```gherkin
+  Scenario: A gate group with no node tooling skips npm ci
+    Given a CI gate group whose gates require no node-resolved tool
+    When that group's job executes
+    Then its step list contains no npm ci invocation
+    And every gate in the group still reports its baseline result
+  ```
+
+  - _Suggested executor: `specs-maker` for the scenario, `swe-rust-dev` for the binding._
 
 ### Phase 7 Gate
 

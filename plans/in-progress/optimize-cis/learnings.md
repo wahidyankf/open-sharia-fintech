@@ -122,3 +122,25 @@
   a legitimate, reproducible side effect of running `compat:min-version` at all, not drift or a
   concurrent-agent artifact. Any future MSRV bump anywhere in this repo should expect the same
   `X.Y`-vs-`X.Y.Z` toolchain duplication from this exact Nx target.
+
+## Learning: a plan step can add a Gherkin scenario that no phase can yet bind — 2nd instance of the cross-phase forward-reference class
+
+- **Context**: Phase 5's own delivery.md text instructed adding the AC-9 and AC-10 CI-topology
+  scenarios (prebuilt-binary consumption, conditional `npm ci` skip) to `gate-execution.feature`
+  during Phase 5 — but AC-9 describes the `build-rhino` job Phase 6 creates and AC-10 describes the
+  conditional node-setup input Phase 7 creates. Neither exists in `.github/workflows/pr-quality-gate.yml`
+  yet at Phase 5.
+- **Observation**: `specs gherkin-cardinality validate` passed immediately (it only checks keyword
+  structure), so nothing caught this at authoring time. The real failure surfaced one layer deeper:
+  `apps/rhino-cli/tests/gate_specs.rs`'s cucumber suite requires a literal, **passing** step binding
+  for every scenario in the entire `gherkin/gate/` tree regardless of which phase "owns" it, and there
+  was no truthful way to bind either scenario — the behavior they assert doesn't exist yet. Forcing a
+  binding would have meant fabricating a fixture that asserts against nothing real.
+- **Why it might generalize**: this is the same forward-reference class already logged above
+  ("cross-phase forward-references in a checklist item's own text can hard-error"), but at the
+  Gherkin-coverage layer instead of a Cargo-profile layer — proof it's a general planning-time gap,
+  not a one-off. Fixed here by moving the scenario authoring out of Phase 5 and into Phase 6/Phase 7
+  themselves, right where each behavior actually lands. The general rule this suggests for
+  `plan-checker`: a step that adds a Gherkin scenario should be checked not just for keyword structure
+  but for whether the behavior it describes is created by an **earlier or same** phase — never a
+  later one — since this repo's coverage tools require whole-tree, always-live bindings.
