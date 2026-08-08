@@ -45,6 +45,7 @@ struct GateWorld {
     build_rhino_publishes_artifact: Option<bool>,
     gate_job_needs_build_rhino: Option<bool>,
     gate_job_block: Option<String>,
+    no_npm_group_id: Option<String>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -77,6 +78,7 @@ impl GateWorld {
             build_rhino_publishes_artifact: None,
             gate_job_needs_build_rhino: None,
             gate_job_block: None,
+            no_npm_group_id: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -3150,6 +3152,107 @@ fn then_gate_has_no_rust_toolchain_setup(w: &mut GateWorld) {
         !gate_job.contains("setup-rust"),
         "the gate job must not run a Rust toolchain setup step (it consumes a prebuilt binary): \
          {gate_job}"
+    );
+}
+
+// Binds `gate-execution.feature`'s "A gate group with no node tooling skips
+// npm ci" scenario. Like its sibling above, this is about the STATIC SHAPE of
+// the real, checked-in `.github/workflows/pr-quality-gate.yml` and
+// `.github/actions/setup-node/action.yml` — it parses both real files and
+// asserts on their actual structure, grounded in a real `ci-group` read from
+// the real `repo-config.yml` rather than a hypothetical one.
+
+#[given("a CI gate group whose gates require no node-resolved tool")]
+fn given_group_without_node_tool(w: &mut GateWorld) {
+    let repo_config = std::fs::read_to_string(repo_root().join("repo-config.yml"))
+        .expect("read the real repo-config.yml");
+    let mut group_has_npm: std::collections::HashMap<String, bool> =
+        std::collections::HashMap::new();
+    let mut current_group: Option<String> = None;
+    for line in repo_config.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with("- id:") {
+            current_group = None;
+        } else if let Some(rest) = trimmed.strip_prefix("ci-group:") {
+            let group = rest.trim().to_string();
+            group_has_npm.entry(group.clone()).or_insert(false);
+            current_group = Some(group);
+        } else if trimmed.starts_with("doctor-tools:")
+            && trimmed.contains("npm")
+            && let Some(group) = &current_group
+        {
+            group_has_npm.insert(group.clone(), true);
+        }
+    }
+    let no_npm_group = group_has_npm
+        .into_iter()
+        .find(|(_, has_npm)| !has_npm)
+        .map(|(group, _)| group)
+        .expect("at least one real ci-group must have no npm-doctor-tool gate");
+    w.no_npm_group_id = Some(no_npm_group);
+    w.workflow_yaml = Some(pr_quality_gate_workflow());
+}
+
+#[when("that group's job executes")]
+fn when_no_npm_group_job_executes(w: &mut GateWorld) {
+    let workflow = w
+        .workflow_yaml
+        .clone()
+        .expect("the real workflow must be loaded by the Given step");
+    w.gate_job_block = Some(job_block(&workflow, "gate"));
+}
+
+#[then("its step list contains no npm ci invocation")]
+fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
+    let gate_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("gate job block must be captured by the When step");
+    assert!(
+        gate_job.contains("run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}"),
+        "the gate job's setup-node step must gate run-npm-ci on the group's own doctor_tools: \
+         {gate_job}"
+    );
+
+    let setup_node_action =
+        std::fs::read_to_string(repo_root().join(".github/actions/setup-node/action.yml"))
+            .expect("read the real .github/actions/setup-node/action.yml");
+    assert!(
+        setup_node_action.contains("if: inputs.run-npm-ci == 'true'")
+            && setup_node_action.contains("run: npm ci"),
+        "setup-node's npm ci step must be gated on the run-npm-ci input, so a group whose \
+         doctor_tools excludes npm never runs it: {setup_node_action}"
+    );
+}
+
+#[then("every gate in the group still reports its baseline result")]
+fn then_group_gates_still_run(w: &mut GateWorld) {
+    let group_id = w
+        .no_npm_group_id
+        .as_deref()
+        .expect("group id must be captured by the Given step");
+    let gate_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("gate job block must be captured by the When step");
+    let lines: Vec<&str> = gate_job.lines().collect();
+    let idx = lines
+        .iter()
+        .position(|line| line.contains("gate run --surface=ci"))
+        .unwrap_or_else(|| {
+            panic!("gate job must contain the gate run --surface=ci step for group {group_id}")
+        });
+    let mut start = idx;
+    while start > 0 && !lines[start].trim_start().starts_with("- ") {
+        start -= 1;
+    }
+    let step_lines = &lines[start..=idx];
+    assert!(
+        !step_lines
+            .iter()
+            .any(|line| line.trim_start().starts_with("if:")),
+        "the gate run step must be unconditional for group {group_id} — skipping npm ci must \
+         never skip running its gates: {step_lines:?}"
     );
 }
 

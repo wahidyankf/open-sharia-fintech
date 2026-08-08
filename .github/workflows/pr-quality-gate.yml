@@ -151,6 +151,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
+        with:
+          run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary

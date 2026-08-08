@@ -117,3 +117,9 @@ Feature: Gate execution
     Then it downloads the artifact rather than building from source
     And it runs no cargo install command
     And its step list contains no Rust toolchain setup
+
+  Scenario: A gate group with no node tooling skips npm ci
+    Given a CI gate group whose gates require no node-resolved tool
+    When that group's job executes
+    Then its step list contains no npm ci invocation
+    And every gate in the group still reports its baseline result
