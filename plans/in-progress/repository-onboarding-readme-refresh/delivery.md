@@ -15,8 +15,13 @@
 The plan-control worktree is `worktrees/repository-onboarding-readme-refresh/`. Before the first
 change-producing phase, create it with `claude --worktree repository-onboarding-readme-refresh` from
 the public repository root, verify the resulting path with `git worktree list`, and record the exact
-branch in the Phase 0 execution record. This control worktree owns the plan artifacts; the per-unit
-worktrees below own their delivery changes. Follow the
+branch in the Phase 0 execution record. This control worktree owns the plan artifacts; the already-
+merged units in the Delivery Boundaries table below each used their own separate per-unit worktree,
+now removed. **Amended mid-plan for the
+[Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule):**
+every not-yet-executed unit reuses this same control worktree (or the equivalent single worktree in
+`ose-primer`/`ose-private`) for its delivery changes too, branch-switching per unit, instead of
+opening a new per-unit worktree. Follow the
 [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md#worktree-specification) for
 provisioning and reconciliation.
 
@@ -179,23 +184,25 @@ flowchart TD
 
 ### Delivery Boundaries
 
-| Phase / unit                 | Repository    | Exact branch                                    | Exact worktree                                                       | PR                        |
-| ---------------------------- | ------------- | ----------------------------------------------- | -------------------------------------------------------------------- | ------------------------- |
-| 0                            | all three     | —                                               | primary checkouts; tracked state read-only                           | none                      |
-| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-contract`           | `worktrees/repository-onboarding-readme-refresh-contract/`           | opens at Phase 2          |
-| 3 `public`                   | `ose-public`  | `docs/repository-onboarding-public`             | `worktrees/repository-onboarding-readme-refresh-public/`             | opens at Phase 3          |
-| 4 `primer`                   | `ose-primer`  | `docs/repository-onboarding-primer`             | `worktrees/repository-onboarding-readme-refresh-primer/`             | opens at Phase 4          |
-| 5 `private`                  | `ose-private` | `docs/repository-onboarding-private`            | `worktrees/repository-onboarding-readme-refresh-private/`            | opens at Phase 5          |
-| 6A `rhino-public` if needed  | `ose-public`  | `docs/rhino-readme-identity-public`             | `worktrees/rhino-readme-identity-public/`                            | conditional               |
-| 6B `rhino-primer` if needed  | `ose-primer`  | `docs/rhino-readme-identity-primer`             | `worktrees/rhino-readme-identity-primer/`                            | conditional               |
-| 6C `rhino-private` if needed | `ose-private` | `docs/rhino-readme-identity-private`            | `worktrees/rhino-readme-identity-private/`                           | conditional               |
-| 7                            | all three     | —                                               | authenticated repository sessions                                    | none; metadata only       |
-| 8                            | all three     | —                                               | explicit temporary clean clones                                      | none; verification only   |
-| 9A `public-fixes-<nn>`       | `ose-public`  | `docs/repository-onboarding-public-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh-public-fixes-<nn>/`  | conditional per iteration |
-| 9B `primer-fixes-<nn>`       | `ose-primer`  | `docs/repository-onboarding-primer-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh-primer-fixes-<nn>/`  | conditional per iteration |
-| 9C `private-fixes-<nn>`      | `ose-private` | `docs/repository-onboarding-private-fixes-<nn>` | `worktrees/repository-onboarding-readme-refresh-private-fixes-<nn>/` | conditional per iteration |
-| 10 verification              | all three     | —                                               | merged `main`, read-only                                             | none                      |
-| 11–12 `closeout`             | `ose-public`  | `docs/repository-onboarding-closeout`           | `worktrees/repository-onboarding-readme-refresh-closeout/`           | opens at Phase 12         |
+| Phase / unit                 | Repository    | Exact branch                                    | Exact worktree                                              | PR                        |
+| ---------------------------- | ------------- | ----------------------------------------------- | ----------------------------------------------------------- | ------------------------- |
+| 0                            | all three     | —                                               | primary checkouts; tracked state read-only                  | none                      |
+| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-contract`           | `worktrees/repository-onboarding-readme-refresh-contract/`  | opens at Phase 2          |
+| 3 `public`                   | `ose-public`  | `docs/repository-onboarding-public`             | `worktrees/repository-onboarding-readme-refresh-public/`    | opens at Phase 3          |
+| 4 `primer`                   | `ose-primer`  | `docs/repository-onboarding-primer`             | `worktrees/repository-onboarding-readme-refresh-primer/`    | opens at Phase 4          |
+| 5 `private`                  | `ose-private` | `docs/repository-onboarding-private`            | `worktrees/repository-onboarding-readme-refresh-private/`   | opens at Phase 5          |
+| 6A `rhino-public` if needed  | `ose-public`  | `docs/rhino-readme-identity-public`             | `worktrees/rhino-readme-identity-public/`                   | conditional               |
+| 6B `rhino-primer` if needed  | `ose-primer`  | `docs/rhino-readme-identity-primer`             | `worktrees/rhino-readme-identity-primer/`                   | conditional               |
+| 6C `rhino-private` if needed | `ose-private` | `docs/rhino-readme-identity-private`            | `worktrees/rhino-readme-identity-private/`                  | conditional               |
+| 7                            | all three     | —                                               | authenticated repository sessions                           | none; metadata only       |
+| 8                            | all three     | —                                               | explicit temporary clean clones                             | none; verification only   |
+| 9A `public-fixes-<nn>`       | `ose-public`  | `docs/repository-onboarding-public-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
+| 9B `primer-fixes-<nn>`       | `ose-primer`  | `docs/repository-onboarding-primer-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
+| 9C `private-fixes-<nn>`      | `ose-private` | `docs/repository-onboarding-private-fixes-<nn>` | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
+| 10 verification              | all three     | —                                               | merged `main`, read-only                                    | none                      |
+| 11–12 `closeout`             | `ose-public`  | `docs/repository-onboarding-closeout`           | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | opens at Phase 12         |
+
+¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
 
 ## Phase 0: Environment, Safety, and Baseline
 

@@ -37,7 +37,7 @@ Three standing constraints govern every step below.
 
 Per [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
 and the **One-Worktree-One-PR HARD RULE** in
-[plan-planning.md §Planning Granularity](../../../repo-governance/workflows/plan/plan-planning.md#one-worktree-one-branch-one-pr-one-delivery-unit-hard-rule),
+[plan-planning.md §Planning Granularity](../../../repo-governance/workflows/plan/plan-planning.md#one-branch-one-pr-one-delivery-unit-hard-rule),
 each **delivery unit** — the phase groupings named in the [Delivery Boundaries](#delivery-boundaries)
 table below — gets its **own** worktree: one worktree → one branch → one PR → one delivery unit,
 never a worktree shared across units.
@@ -130,7 +130,7 @@ Each row below gets its **own** worktree and branch — one worktree → one bra
 delivery unit, never a worktree shared across units — per
 [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
 and the One-Worktree-One-PR HARD RULE in
-[plan-planning.md §Planning Granularity](../../../repo-governance/workflows/plan/plan-planning.md#one-worktree-one-branch-one-pr-one-delivery-unit-hard-rule).
+[plan-planning.md §Planning Granularity](../../../repo-governance/workflows/plan/plan-planning.md#one-branch-one-pr-one-delivery-unit-hard-rule).
 Phase 0 works inside unit 1's worktree (see [Worktree](#worktree)); every other unit provisions its
 own worktree at the start of its first phase and removes it once its PR merges.
 

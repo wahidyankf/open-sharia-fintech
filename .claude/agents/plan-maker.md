@@ -265,6 +265,16 @@ user or calling context specified a mode explicitly) → plan field (if a prior 
 declared one) → default `worktree-to-pr`. Never silently coerce an invalid non-empty value —
 treat it as a grill question instead (Step 8).
 
+**Per-Repository Delivery Mode Restrictions (HARD RULE) apply before a direct-push mode is ever
+authored**: `worktree-to-origin-main` and `main-to-origin-main` have no executable path in
+`ose-public` or `ose-primer` (`main` is branch-protected, including for admins), and `beaver-nest`
+is held to the same restriction by convention. Only a genuinely infrastructure-as-code plan
+targeting `ose-private` may declare a direct-push mode. Do not author `worktree-to-origin-main` or
+`main-to-origin-main` for any plan targeting a restricted repo — resolve to `worktree-to-pr` (or
+`main-to-pr`) instead, since `plan-checker` item 9 will HIGH-flag the restricted mode on the very
+next check pass. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions
+(HARD RULE)](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
+
 **For `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`)**: the delivery checklist MUST emit the
 **PR-Review Maker→Fixer Cycle** steps (see
 [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)) —
@@ -588,7 +598,7 @@ When a plan uses a **Per-Phase Integration Protocol** block (branch → commit �
 
 #### Delivery Boundaries Authoring Rule (HARD RULE)
 
-**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one worktree, one branch, and one PR.
+**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one branch and one PR. The **worktree** stays a coarser, per-repository unit: capped at one per repo per plan and reused — branch-switched — across every delivery unit landed there, per [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 Decide boundaries at authoring time using the four-part boundary test (coherent / green standalone / defensible on `main` / reviewable whole) in [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), then:
 

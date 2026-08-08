@@ -283,10 +283,12 @@ Two constraints override that fan-out and force strict serialization:
   dependency, but a shared write target is.
 
 **Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
-**one worktree → one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged
-at its **delivery boundary** rather than at every phase or batched at composite end, with partial
-work merged-but-dark behind a **feature flag**. See
-[plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
+**one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged at its
+**delivery boundary** rather than at every phase or batched at composite end, with partial work
+merged-but-dark behind a **feature flag**. The **worktree** is a coarser, per-repository unit: each
+repo's plan is capped at one worktree, reused across every delivery unit it lands in that repo — see
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+See [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
 
 **Shared-machine safety**: all four repos share one machine's disk and git object store, and two of
 them are bare repos driven through worktrees. The **no-destructive-git** rule binds every git action

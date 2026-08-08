@@ -147,6 +147,28 @@ by reconciling the mode and the step rather than reflexively deleting the step:
   direct-push Delivery Mode does not loosen that boundary: a stray merge step under a direct-push
   mode is a separate finding to surface, not license to delete it here.
 
+#### Per-Repository Delivery Mode Restriction (per [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule))
+
+When plan-checker flags its item 9 HIGH finding — a resolved `## Delivery Mode` of
+`worktree-to-origin-main` or `main-to-origin-main` in a repo where that mode has no executable path
+(`ose-public`, `ose-primer`) or is a convention violation (`beaver-nest`) — this is a **different
+finding class from PR Step / Delivery Mode Reconciliation above** and takes a different fix:
+
+- **Always rewrite the resolved `## Delivery Mode` field to `worktree-to-pr`** (or `main-to-pr` if
+  the plan's own work location genuinely requires the primary checkout with no worktree). **Never**
+  merely delete the offending PR/push step — the mode itself is illegal for the repo, not the step.
+- After rewriting the mode, scaffold the missing PR-Review Maker→Fixer Cycle steps (see [Delivery
+  Mode Fixes](#delivery-mode-fixes) below) so the plan is executable under the corrected mode.
+- **The one narrow exception**: a genuinely infrastructure-as-code plan targeting `ose-private` may
+  keep a direct-push mode — verify the plan's own stated scope actually is infrastructure-as-code
+  (Terraform, Ansible, or equivalent state-changing infra work needing the primary checkout's real
+  secrets/local state) before treating this as the exception rather than the finding.
+- **Never silently coerce** an author's explicit mode choice without recording why in the fix
+  report — state the repo, the restriction that applies, and the corrected mode.
+
+Verify after fixing by re-running `plan-checker`'s item 9 detection and confirming the resolved mode
+no longer resolves to a direct-push mode in a restricted repo.
+
 #### Phase 0 PR/Push Step Removal (per [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
 
 When plan-checker flags a PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or
@@ -191,7 +213,8 @@ not deleted — it is **relocated**. A PR opens once per delivery unit, at the u
   invent boundaries the delivery checklist does not support.
 - **If a change-producing phase appears in no row**, add it to the unit it belongs to rather than
   giving it a unit of its own — unless it is genuinely independent in the DAG, in which case it
-  gets its own unit, worktree, and PR.
+  gets its own unit, branch, and PR — the worktree stays the plan's single per-repo instance,
+  reused across every delivery unit landed there.
 - **If the last change-producing phase is not a boundary**, make it one. Work that never reaches a
   boundary never merges.
 - **Never fold two independent DAG nodes into one delivery unit** to silence a finding — that

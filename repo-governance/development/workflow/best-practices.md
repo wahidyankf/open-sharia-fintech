@@ -44,11 +44,15 @@ gh pr create --draft --base main
 # Review cycle + CI, then merge once the preconditions hold; branch deleted
 ```
 
-**Also correct — a declared direct-push mode for a trivial change:**
+**Also correct — a declared direct-push mode for a trivial `ose-private` infrastructure-as-code
+change** (the one repo where this mode has an executable path; `main` is branch-protected,
+including for admins, in `ose-public` and `ose-primer`, and `beaver-nest` is held to the same
+restriction by convention — see [Plans Organization Convention §Per-Repository Delivery Mode
+Restrictions (HARD RULE)](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)):
 
 ```bash
-# Plan declares `## Delivery Mode: main-to-origin-main`
-git commit -m "fix(docs): correct a typo"
+# ose-private plan declares `## Delivery Mode: main-to-origin-main` for a single Terraform tag fix
+git commit -m "fix(infra): correct a resource tag"
 git push origin main
 ```
 
@@ -746,7 +750,7 @@ git pull origin main  # Use merge instead
 
 ### Practice 12: Default to `worktree-to-pr`; Select a Direct-Push Mode Deliberately
 
-**Principle**: the repo-wide default delivery mode is `worktree-to-pr` — a short-lived plan branch in a disposable worktree, pushed to a draft PR against `main`, driven green, then merged. The direct-push modes remain fully supported, but they are an explicit selection declared in the plan, not the assumed path.
+**Principle**: the repo-wide default delivery mode is `worktree-to-pr` — a short-lived plan branch in a disposable worktree, pushed to a draft PR against `main`, driven green, then merged. The direct-push modes have no executable path in `ose-public` or `ose-primer` (`main` is branch-protected, including for admins) and are a convention violation in `beaver-nest`; they survive only as an explicit, deliberate selection for a genuinely infrastructure-as-code plan in `ose-private` — never the assumed path. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **Good Example:**
 
@@ -759,11 +763,12 @@ gh pr create --draft --base main --title "feat(auth): add email validation"
 # Review cycle + CI run; merge once the hardened preconditions hold
 ```
 
-**Also correct — a deliberately declared direct-push mode:**
+**Also correct — a deliberately declared direct-push mode for an `ose-private`
+infrastructure-as-code plan** (the one repo where this mode has an executable path):
 
 ```bash
-# Plan declares `## Delivery Mode: main-to-origin-main` for a one-line doc fix
-git commit -m "docs(readme): fix broken anchor"
+# ose-private plan declares `## Delivery Mode: main-to-origin-main` for a one-line Terraform var fix
+git commit -m "fix(infra): correct a Terraform variable default"
 git push origin main
 ```
 
