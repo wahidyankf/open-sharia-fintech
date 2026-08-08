@@ -148,6 +148,8 @@ jobs:
         group: ${{ fromJson(needs.enumerate.outputs.groups) }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: actions/download-artifact@v4
         with:
@@ -233,18 +235,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs:
-      [
-        build-rhino,
-        format,
-        enumerate,
-        gate,
-        typescript,
-        dotnet,
-        rust,
-        compat-min-version,
-        specs-structure,
-      ]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

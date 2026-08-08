@@ -144,3 +144,21 @@
   `plan-checker`: a step that adds a Gherkin scenario should be checked not just for keyword structure
   but for whether the behavior it describes is created by an **earlier or same** phase — never a
   later one — since this repo's coverage tools require whole-tree, always-live bindings.
+
+## Learning: "does this job run git diff/nx affected" must be checked one layer deeper than the workflow YAML
+
+- **Context**: Phase 6's fetch-depth reduction item reasoned that `build-rhino`, `enumerate`, and
+  `gate` could all safely drop `fetch-depth: 0` because none of their `run:` steps invoke `nx
+affected` or `git diff` directly in the workflow YAML.
+- **Observation**: that reasoning was correct for `build-rhino` and `enumerate`, but wrong for `gate`
+  — its single `run:` step dispatches `rhino-cli gate run --surface=ci --group=<id>`, which internally
+  fans out to several affected-file-type and Nx-scoped gates (`format-verify-*`,
+  `shell-docker-actions`, `specs-structure`) that themselves run `git diff`/`nx affected` against
+  `origin/main` one process down. A shallow clone has no `origin/main` ref, so 3 of 6 matrix groups
+  failed live in CI (`31281760676`) with "unknown revision" / "git diff ... failed" — not a flake,
+  a real gap in the analysis, caught only once the real workflow ran end-to-end.
+- **Why it might generalize**: "does this job need full history" can't be answered by grepping the
+  job's own YAML for `git diff`/`nx affected` — it has to be answered by asking what the job's
+  dispatched CLI/script does _underneath_, including any commands that further dispatch to other
+  tools. Any future fetch-depth or similar shallow-clone optimization in this repo's CI should trace
+  the full call chain of what a job actually invokes, not just its literal `run:` lines.
