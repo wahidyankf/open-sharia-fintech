@@ -817,7 +817,7 @@ for the same repo within one plan is a defect. A plan touching **N** repositorie
 This caps a genuinely scarce shared resource: each worktree is a full checkout plus a converged
 polyglot toolchain (`npm install && npm run doctor -- --fix`), and on the same-machine assumption
 (other agents, engineers, and CI runners sharing this disk concurrently — see the
-[Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md#same-machine-assumption))
+[Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md#parallelism-budget))
 that setup cost is worth paying once per repo, not once per delivery unit.
 
 **What stays one-per-delivery-unit**: the **branch** and the **PR** — unchanged from
@@ -891,7 +891,7 @@ choice absent a reason to pick another mode.
 
 **`main-to-origin-main` carries a further content restriction, on top of Standard 2's
 selection-signal test in the
-[Git Push Default Convention](../../development/workflow/git-push-default.md#standard-2-direct-push-modes-are-explicit-selections-not-inferred).**
+[Git Push Default Convention](../../development/workflow/git-push-default.md#standard-2-direct-push-modes-are-explicit-selections-not-inferred--and-are-repo-restricted).**
 An explicit selection signal (invocation argument or plan field) is necessary but not sufficient:
 choosing `main-to-origin-main` is additionally valid only when **one** of two conditions holds —
 
@@ -902,7 +902,7 @@ Absent one of these two, use `worktree-to-pr` even if a direct-push mode would o
 convenient. This restriction targets `main-to-origin-main` specifically — working directly in the
 primary checkout skips both PR review and worktree isolation, so it is held to a narrower bar than
 `worktree-to-origin-main`, which still isolates work from the primary checkout even though it also
-skips review. The [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out)
+skips review. The [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)
 is the plan-authoring-time instance of condition 1 above — see that section for how the two
 reconcile when a plan folder's push includes non-markdown evidence files.
 
@@ -923,7 +923,7 @@ available wherever a plan finds it easier.
   therefore **unavailable** — no credential or role can push to `main` outside a merged PR.
   `main-to-pr` is not blocked by the protection (it still opens a PR) but is not used either: every
   plan in these three repositories uses **`worktree-to-pr`**, with no exception. The
-  [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out) and
+  [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) and
   the `.md`-only condition of the content restriction above are **retired** in these three
   repositories — a protected `main` makes them moot regardless of file content, since there is no
   direct-push path left to carve out of.

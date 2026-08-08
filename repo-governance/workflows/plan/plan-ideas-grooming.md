@@ -106,7 +106,7 @@ orchestrator-run steps.
 
 Every git delivery under this workflow's `main-to-origin-main` default follows the
 `plans/**`-only **plan-docs-only carve-out**
-([`plan-planning`](./plan-planning.md#the-plan-docs-only-carve-out)): since every path this
+([`plan-planning`](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)): since every path this
 workflow touches sits under `plans/ideas/**`, a direct push to each processed repo's own `main`
 needs no PR review cycle. A caller may still override `delivery-mode` to `worktree-to-pr` for a
 specific invocation.
@@ -277,7 +277,7 @@ repo's own `plans/ideas/README.md` at the end of every run.
   idea against.
 - [Workflow Naming Convention](../../conventions/structure/workflow-naming.md) — defines the
   `grooming` type token this workflow's own filename uses (scope `plan`, type `grooming`).
-- [Plan-docs-only carve-out](./plan-planning.md#the-plan-docs-only-carve-out) — the basis for this
+- [Plan-docs-only carve-out](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) — the basis for this
   workflow's `main-to-origin-main` default delivery mode, since every path it touches sits under
   `plans/**`.
 - [File Naming Convention](../../conventions/structure/file-naming.md) — the kebab-case rule Step 9's

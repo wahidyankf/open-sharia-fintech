@@ -171,7 +171,7 @@ only when **one** of two conditions also holds:
 Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
 for the canonical statement of this restriction and its relationship to the
-[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out).
+[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos).
 
 ### Standard 3: Plans Must Declare a Delivery Mode Only to Override the Default
 
