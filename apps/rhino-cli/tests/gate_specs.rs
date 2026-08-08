@@ -1877,6 +1877,55 @@ fn emitted_md_lint_staged_command(w: &GateWorld) -> String {
         .to_owned()
 }
 
+// Binds `gate-emission.feature`'s "Node-resolved external tools render a
+// repository-local bin path" scenario. `emit.rs`'s own unit test module
+// already binds the same Gherkin text at the unit level, but this file's
+// cucumber harness also scans the shared `gate-emission.feature` file and
+// requires its own step definitions to avoid an undefined-step failure.
+
+#[given("the registry declares an external gate whose tool resolves from node_modules")]
+fn given_node_resolved_external_gate_emit_registry(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(
+            &gate(
+                "markdownlint",
+                "check",
+                "markdownlint-cli2",
+                "external",
+                "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+            )
+            .replace(
+                "kind: external\n",
+                "kind: external\n    doctor-tools: [npm]\n",
+            ),
+        ),
+    );
+    w.write(
+        "package.json",
+        "{\"name\":\"fixture\",\"lint-staged\":{}}\n",
+    );
+}
+
+#[then("the generated command invokes that tool through \"node_modules/.bin\"")]
+fn then_emit_invokes_node_modules_bin(w: &mut GateWorld) {
+    assert!(w.is_success(), "gate emit failed: {}", w.output);
+    let command = emitted_md_lint_staged_command(w);
+    assert!(
+        command.contains("node_modules/.bin/"),
+        "expected the generated command to invoke node_modules/.bin: {command}"
+    );
+}
+
+#[then("the generated command contains no \"npx\" substring")]
+fn then_emit_contains_no_npx(w: &mut GateWorld) {
+    let command = emitted_md_lint_staged_command(w);
+    assert!(
+        !command.contains("npx"),
+        "expected the generated command to contain no npx substring: {command}"
+    );
+}
+
 #[given("\"rhino-cli gate emit --surface=pre-commit\" has already run")]
 fn given_emit_has_already_run(w: &mut GateWorld) {
     given_per_file_emit_registry(w);
