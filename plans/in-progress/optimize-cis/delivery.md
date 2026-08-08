@@ -234,7 +234,8 @@ independent measurement pass.
 > This is the plan's **only** `ose-public` PR-open event. Every phase from here through Phase 12
 > pushes into this same branch; see §Delivery Boundaries for why it opens this early.
 
-- [ ] [AI] Commit Phase 1's changes thematically and push a new branch; open a draft PR against `main` titled `perf(gates): optimize pre-commit, pre-push, and PR quality gate` — acceptance: the PR exists and its number is recorded in `baseline/pr-numbers.md` under `ose-public`.
+- [x] [AI] Commit Phase 1's changes thematically and push a new branch; open a draft PR against `main` titled `perf(gates): optimize pre-commit, pre-push, and PR quality gate` — acceptance: the PR exists and its number is recorded in `baseline/pr-numbers.md` under `ose-public`.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: 3 commits (Phase 0 baseline, Phase 1 supersession, delivery.md progress ticks); added `baseline/pr-numbers.md`. **Notes**: pushed `worktree/optimize-cis` branch, opened draft PR #162 against `main`. Recorded in `baseline/pr-numbers.md`.
 
 ---
 
