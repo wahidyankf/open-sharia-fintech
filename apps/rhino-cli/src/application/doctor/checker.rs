@@ -95,15 +95,20 @@ pub(super) fn read_dotnet_version(path: &Path) -> Option<String> {
         .map(std::string::ToString::to_string)
 }
 
-/// Reads the `rust-version` (MSRV) from a `Cargo.toml` file.
+/// Reads the pinned `channel` from a `rust-toolchain.toml` file.
 ///
-/// Returns `None` when the file is missing or does not contain a
-/// `rust-version` key in the `[package]` table.
-pub(super) fn read_rust_version(path: &Path) -> Option<String> {
+/// This is the exact toolchain version `cargo` builds with — distinct from a
+/// `Cargo.toml` `rust-version` MSRV floor, which the installed compiler may
+/// legitimately exceed. A pinned channel is not a floor: `doctor` compares
+/// against it with exact equality, not `>=`.
+///
+/// Returns `None` when the file is missing or does not contain a `channel`
+/// key in the `[toolchain]` table.
+pub(super) fn read_rust_toolchain_channel(path: &Path) -> Option<String> {
     let data = std::fs::read_to_string(path).ok()?;
     for line in data.lines() {
         let t = line.trim();
-        if t.starts_with("rust-version") {
+        if t.starts_with("channel") {
             if let Some((_, rhs)) = t.split_once('=') {
                 let mut v = rhs.trim().to_string();
                 v = v.trim_matches('"').to_string();
@@ -599,11 +604,15 @@ mod tests {
     }
 
     #[test]
-    fn read_rust_version_from_cargo() {
+    fn read_rust_toolchain_channel_from_rust_toolchain_toml() {
         let dir = tempfile::tempdir().unwrap();
-        let p = dir.path().join("Cargo.toml");
-        std::fs::write(&p, "[package]\nname = \"x\"\nrust-version = \"1.88\"\n").unwrap();
-        assert_eq!(read_rust_version(&p).as_deref(), Some("1.88"));
+        let p = dir.path().join("rust-toolchain.toml");
+        std::fs::write(
+            &p,
+            "[toolchain]\nchannel = \"1.75.0\"\ncomponents = [\"clippy\"]\n",
+        )
+        .unwrap();
+        assert_eq!(read_rust_toolchain_channel(&p).as_deref(), Some("1.75.0"));
     }
 
     #[test]

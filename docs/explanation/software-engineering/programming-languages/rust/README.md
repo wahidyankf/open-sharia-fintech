@@ -78,7 +78,7 @@ OSE Platform Rust applications MUST use the following stack:
 **Rust Version Strategy**:
 
 - **Edition**: Rust 2024 (stabilized in 1.85.0, 2025-02-20; current `ose-public` crates use `edition = "2024"`)
-- **MSRV**: declared in [`apps/rhino-cli/Cargo.toml`](../../../../../apps/rhino-cli/Cargo.toml) (`rust-version` field); toolchain pin in `rust-toolchain.toml`
+- **MSRV**: declared in [`apps/rhino-cli/Cargo.toml`](../../../../../apps/rhino-cli/Cargo.toml) (`rust-version` field); the floor is deliberately pinned to the same value as the `rust-toolchain.toml` channel, so there is exactly one supported Rust version, not a floor-and-ceiling range
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md) for Rust-specific release documentation location
 
