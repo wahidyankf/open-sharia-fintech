@@ -331,22 +331,62 @@ flowchart TD
 
   **Date:** 2026-08-08  
   **Status:** passed  
-  **Files Changed:** `artifacts/reader-doc-disposition-ose-public.md` (678 `P1-doc-*` rows corrected,
-  no row count change)  
-  **Evidence:** Cycle 1 PR-review fixer pass on PR #159 corrected every Verify-column command the
-  review found non-executable or vacuous: 346 rows' `md links validate <path>` (invalid — the
-  subcommand takes no positional argument) became a `| grep "^### <path>$"` scope on the tool's
-  repo-wide report; 130 structurally vacuous hub-README `find -name '*.ext'` rows (their children are
-  subdirectories, not same-extension siblings) became `find -mindepth 1 -type d`; 117 already-correct
-  leaf rows and the 130 hub rows were all backtick-wrapped, and one further row outside the review's
-  own 247-count (`social-media-posts/linkedin`, `-maxdepth 2`) was fixed to the same standard on
-  discovery; 9 rows citing the now-archived
+  **Files Changed:** `artifacts/reader-doc-disposition-ose-public.md` (678 `P1-doc-*` rows total, no
+  row count change across either cycle)  
+  **Evidence:** Two PR-review fixer passes on PR #159, both against the same 678-row ledger.
+
+  _Cycle 1_ corrected the Verify-column defects its review found non-executable or vacuous: 346
+  family-A rows' `md links validate <path>` (invalid — the subcommand takes no positional argument)
+  became a `\| grep "^### <path>$"` scope on the tool's repo-wide report; 130 structurally vacuous
+  hub-README `find -name '*.ext'` rows (their children are subdirectories, not same-extension
+  siblings) became `find -mindepth 1 -type d`; the 117 already-correct leaf rows and the 130 hub rows
+  were meant to be backtick-wrapped, though 5 hub rows (libs/README.md, plans/README.md,
+  plans/backlog/README.md, plans/ideas/README.md, plans/in-progress/README.md) were missed; one
+  further row outside the review's own 247-count (`social-media-posts/linkedin`, `-maxdepth 2`) was
+  fixed to the same standard on discovery; 9 rows citing the now-archived
   `plans/in-progress/sdlc-gate-registry-enforcement/**` were repointed to
-  `plans/done/2026-08-07__sdlc-gate-registry-enforcement/**`; the 2 individually-authored rows
-  (root `README.md`, `docs/reference/related-repositories.md`) gained an explicit manual-diff step
-  since a link check alone cannot establish their content-equivalence Acceptance clause. All fixes
-  spot-checked by running the corrected commands against the working tree; `npx prettier --check`
-  and `npx markdownlint-cli2` both pass on the regenerated ledger.
+  `plans/done/2026-08-07__sdlc-gate-registry-enforcement/**`; the 2 individually-authored rows (root
+  `README.md`, `docs/reference/related-repositories.md`) gained an explicit manual-diff step since a
+  link check alone cannot establish their content-equivalence Acceptance clause. Generously summed,
+  Cycle 1's own categories total ~605 rows touched, not the 678 its own evidence text previously
+  claimed — corrected here per Cycle 2's review.
+
+  _Cycle 2_ found and fixed defects Cycle 1's own fix introduced or left standing, across five
+  findings: **(C1, 346 family-A rows)** the `md links validate` grep had inverted polarity — the
+  tool's report only ever emits a `### <path>` heading for a file that HAS broken links, so
+  `grep "^### <path>$"` exited 0 (pass) exactly when a doc was broken and exited 1 (fail) when clean,
+  the opposite of the row's own Acceptance; every row now reads
+  `` `! ... md links validate \| grep -q "^### <path>$"` `` (negated, quiet), verified in both
+  directions against the live tool (a clean doc exits 0, a doc with real broken links exits 1). The
+  review's own suggested escaping fix — a bare, unescaped `\|` inside a backtick code span — was
+  tested against GitHub's markdown-rendering API before being applied repo-wide and found to corrupt
+  the table (`cmark-gfm`'s table-cell splitter does not treat code-span content as protected from `|`
+  delimiters, confirmed by reproducing a 3-column row collapsing to 2 columns with data silently
+  dropped); the escaped `\|` form was kept instead, which still renders as a clean, single, copyable
+  `|` inside the code span in the rendered table — table-safe and rendered-view-copyable at once.
+  **(C2, 55 family-B rows)** 55 of the 135 `-type d` hub rows targeted directories whose real children
+  are files, not subdirectories, making the check permanently vacuous; reclassified to
+  `` `find <dir> -maxdepth 1 -mindepth 1 -type f -name '*.<ext>'` ``. The review's suggested extension
+  per row (mostly `.feature`, per each row's own stale Source-column text) was verified against the
+  actual working tree and found wrong for 51 of the 55 — those directories hold Markdown narrative
+  docs or YAML/JSON contract files per the `specs/README.md` authoring convention (`.feature` files
+  live only under `behavior/**/gherkin/**`), not Gherkin scenarios; used the real on-disk extension
+  instead (45 `.md`, 6 `.yaml`) and reworded the 51 rows' Purpose/Source/Acceptance text out of
+  "Gherkin .feature file" language to match, so the command doesn't trade a vacuity defect for an
+  H2-shaped prose-contradiction defect. All 55 rewritten commands verified non-empty against the
+  working tree. **(H2, 12 rows)** the remaining genuine hub rows (1-13 real subdirectories each) still
+  had Purpose/Source/Acceptance prose describing Markdown-file indexing though the command already
+  correctly checked subdirectories; reworded to describe subdirectory-indexing, matching
+  `libs/README.md`/`plans/README.md`'s existing correct wording. **(H3, 148 rows)** the compound
+  Acceptance clause on family-A rows demanded content-accuracy no command establishes; narrowed the
+  clause to state plainly that link-resolution is Verify-command-checked while content-accuracy is
+  manual-read-only, per the row's own Purpose column. **(H4, 16 family-E rows)** `grep -c '\[x\]'`
+  captured only the checked count, never the total, so no completion ratio was derivable; changed to
+  `` `grep -c '\[x\]' <path>; grep -c '\[ \]' <path>` `` (both counts). The 5 missed Cycle-1 hub rows
+  were also backtick-wrapped in this pass. All fixes spot-checked against the live working tree
+  (`find`, `grep`, and `cargo run ... md links validate` all executed directly, not just read);
+  `npx prettier --check` and `npx markdownlint-cli2` both pass on the regenerated ledger; row count
+  unchanged at 678 `P1-doc-*` entries across both cycles.
 
 - [ ] [AI] [P1-007] Mark `plans/done/**` and `archived/**` historical, generated mirrors generated,
       and shared Rhino paths identity-bound — acceptance: none is scheduled for ordinary hand-editing.
