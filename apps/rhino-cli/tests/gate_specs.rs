@@ -41,6 +41,10 @@ struct GateWorld {
     shim_override_bin: Option<PathBuf>,
     shim_gate_bin_mtime: Option<SystemTime>,
     shim_first_run: Option<Output>,
+    workflow_yaml: Option<String>,
+    build_rhino_publishes_artifact: Option<bool>,
+    gate_job_needs_build_rhino: Option<bool>,
+    gate_job_block: Option<String>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -69,6 +73,10 @@ impl GateWorld {
             shim_override_bin: None,
             shim_gate_bin_mtime: None,
             shim_first_run: None,
+            workflow_yaml: None,
+            build_rhino_publishes_artifact: None,
+            gate_job_needs_build_rhino: None,
+            gate_job_block: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -538,9 +546,10 @@ fn given_undeclared_ci_command(w: &mut GateWorld) {
         ".github/workflows/pr-quality-gate.yml",
         concat!(
             "jobs:\n",
-            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
-            "  quality-gate:\n    needs: [enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
+            "  build-rhino:\n    steps:\n      - uses: actions/upload-artifact@v4\n",
+            "  enumerate:\n    needs: build-rhino\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
+            "  gate:\n    needs: [build-rhino, enumerate]\n    strategy:\n      matrix:\n        group: '${{ fromJson(needs.enumerate.outputs.groups) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n        env:\n          GROUP_ID: ${{ matrix.group.group }}\n",
+            "  quality-gate:\n    needs: [build-rhino, enumerate, gate]\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=unknown-check\n",
         ),
     );
 }
@@ -1000,10 +1009,11 @@ fn given_complete_shipped_registry(w: &mut GateWorld) {
         ".github/workflows/pr-quality-gate.yml",
         concat!(
             "jobs:\n",
-            "  enumerate:\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "  gate:\n    needs: enumerate\n    strategy:\n      matrix:\n        gate: '${{ fromJson(needs.enumerate.outputs.gates) }}'\n    steps:\n      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n        env:\n          GATE_ID: ${{ matrix.gate.id }}\n",
+            "  build-rhino:\n    steps:\n      - uses: actions/upload-artifact@v4\n",
+            "  enumerate:\n    needs: build-rhino\n    steps:\n      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
+            "  gate:\n    needs: [build-rhino, enumerate]\n    strategy:\n      matrix:\n        group: '${{ fromJson(needs.enumerate.outputs.groups) }}'\n    steps:\n      - uses: actions/download-artifact@v4\n      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n        env:\n          GROUP_ID: ${{ matrix.group.group }}\n",
             "  test-quick:\n    steps:\n      - run: npx nx affected -t test:quick\n",
-            "  quality-gate:\n    needs: [enumerate, gate, test-quick]\n",
+            "  quality-gate:\n    needs: [build-rhino, enumerate, gate, test-quick]\n",
         ),
     );
 }
@@ -3030,6 +3040,116 @@ fn then_no_cargo_build_occurred(w: &mut GateWorld) {
     assert_eq!(
         mtime_before, mtime_after,
         "the real prebuilt binary must be untouched when RHINO_CLI_BIN overrides discovery"
+    );
+}
+
+// Binds `gate-execution.feature`'s "Gate group jobs consume a prebuilt
+// binary" scenario. Unlike the other scenarios in this file, this one is
+// fundamentally about the STATIC SHAPE of the real, checked-in
+// `.github/workflows/pr-quality-gate.yml` — there is nothing to execute, so
+// the honest binding parses that real file (via the same `repo_root()`
+// convention `gate-binary-resolution.feature`'s bindings already use for
+// repo-root-relative fixtures) and asserts on its actual structure.
+
+/// Returns the real `.github/workflows/pr-quality-gate.yml` contents.
+fn pr_quality_gate_workflow() -> String {
+    std::fs::read_to_string(repo_root().join(".github/workflows/pr-quality-gate.yml"))
+        .expect("read the real .github/workflows/pr-quality-gate.yml")
+}
+
+/// Extracts the line-based body of a top-level `jobs.<job_name>` block from
+/// `workflow`: everything after its `  <job_name>:` header up to (but not
+/// including) the next top-level job key. Plain line scanning — rather than a
+/// YAML parser — is sufficient for this repository's consistent two-space
+/// job-key indentation and keeps this structural assertion honest against the
+/// real file without pulling in `validate.rs`'s private `Workflow` struct.
+fn job_block(workflow: &str, job_name: &str) -> String {
+    let header = format!("  {job_name}:");
+    let mut found = false;
+    let mut block = Vec::new();
+    for line in workflow.lines() {
+        if !found {
+            if line.trim_end() == header {
+                found = true;
+            }
+            continue;
+        }
+        let is_sibling_job_header =
+            line.starts_with("  ") && !line.starts_with("   ") && line.trim_end().ends_with(':');
+        if is_sibling_job_header {
+            break;
+        }
+        block.push(line);
+    }
+    block.join("\n")
+}
+
+#[given("the build-rhino job has published the rhino-cli artifact for the run")]
+fn given_build_rhino_publishes_artifact(w: &mut GateWorld) {
+    let workflow = pr_quality_gate_workflow();
+    let build_rhino = job_block(&workflow, "build-rhino");
+    w.build_rhino_publishes_artifact = Some(build_rhino.contains("actions/upload-artifact"));
+    w.workflow_yaml = Some(workflow);
+}
+
+#[when("a gate group job executes")]
+fn when_gate_group_job_executes(w: &mut GateWorld) {
+    assert!(
+        w.build_rhino_publishes_artifact.unwrap_or(false),
+        "build-rhino must publish the rhino-cli artifact before a gate group job can consume it"
+    );
+    let workflow = w
+        .workflow_yaml
+        .clone()
+        .expect("the real workflow must be loaded by the Given step");
+    let gate_job = job_block(&workflow, "gate");
+    let needs_line = gate_job
+        .lines()
+        .find(|line| line.trim_start().starts_with("needs:"))
+        .unwrap_or_default();
+    w.gate_job_needs_build_rhino = Some(needs_line.contains("build-rhino"));
+    w.gate_job_block = Some(gate_job);
+}
+
+#[then("it downloads the artifact rather than building from source")]
+fn then_gate_downloads_artifact(w: &mut GateWorld) {
+    assert!(
+        w.gate_job_needs_build_rhino.unwrap_or(false),
+        "the gate job must declare needs: build-rhino"
+    );
+    let gate_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("gate job block must be captured by the When step");
+    assert!(
+        gate_job.contains("actions/download-artifact"),
+        "the gate job must download the prebuilt rhino-cli-gate-binary artifact instead of \
+         building from source: {gate_job}"
+    );
+}
+
+#[then("it runs no cargo install command")]
+fn then_gate_runs_no_cargo_install(w: &mut GateWorld) {
+    let gate_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("gate job block must be captured by the When step");
+    assert!(
+        !gate_job.contains("cargo install"),
+        "the gate job must never build rhino-cli from source via cargo install: {gate_job}"
+    );
+}
+
+#[then("its step list contains no Rust toolchain setup")]
+fn then_gate_has_no_rust_toolchain_setup(w: &mut GateWorld) {
+    let gate_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("gate job block must be captured by the When step");
+    assert!(
+        !gate_job.contains("setup-rust"),
+        "the gate job must not run a Rust toolchain setup step (it consumes a prebuilt binary): \
+         {gate_job}"
     );
 }
 

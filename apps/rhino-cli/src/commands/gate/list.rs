@@ -69,6 +69,11 @@ struct GateGroupEntry {
     group: String,
     /// Member gate ids in registry declaration order.
     gates: Vec<String>,
+    /// Deduped, sorted union of every member gate's `doctor_tools`. Lets a
+    /// CI job matrixed over groups (rather than individual gates) select the
+    /// Doctor tools its whole group needs in one `matrix.group.doctor_tools`
+    /// lookup (DD-4).
+    doctor_tools: Vec<String>,
 }
 
 /// List gates declared on one surface from `repo-config.yml`.
@@ -187,6 +192,7 @@ fn write_grouped(
                 .into_iter()
                 .map(|(group, members)| GateGroupEntry {
                     group,
+                    doctor_tools: union_doctor_tools(&members),
                     gates: members.into_iter().map(|gate| gate.id.clone()).collect(),
                 })
                 .collect();
@@ -233,6 +239,18 @@ fn group_by_ci_group<'a>(
         .into_iter()
         .map(|group_id| (group_id.to_string(), gates_in_ci_group(gates, group_id)))
         .collect())
+}
+
+/// Returns the deduped, sorted union of every gate's declared `doctor_tools`.
+fn union_doctor_tools(gates: &[&GateEntry]) -> Vec<String> {
+    let mut tools = gates
+        .iter()
+        .flat_map(|gate| gate.doctor_tools.iter().cloned())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    tools.sort();
+    tools
 }
 
 /// Returns the gates whose declared `ci_group` equals `group_id`, preserving
@@ -391,6 +409,68 @@ mod tests {
         );
         assert_eq!(groups[1]["group"], "shell");
         assert_eq!(groups[1]["gates"], serde_json::json!(["shell-lint"]));
+    }
+
+    /// Binds the Gherkin scenario "Grouped enumeration reports the union of
+    /// each group's Doctor tools"
+    /// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature).
+    #[test]
+    fn enumeration_unions_doctor_tools_per_declared_group() {
+        let repo = TempDir::new().unwrap();
+        std::fs::write(
+            repo.path().join("repo-config.yml"),
+            concat!(
+                "gates:\n",
+                "  - id: shell-lint\n",
+                "    type: check\n",
+                "    command: shell lint\n",
+                "    kind: external\n",
+                "    ci-group: shell\n",
+                "    doctor-tools: [shellcheck, jq]\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+                "  - id: shell-format-check\n",
+                "    type: check\n",
+                "    command: shfmt --diff\n",
+                "    kind: external\n",
+                "    ci-group: shell\n",
+                "    doctor-tools: [jq, shfmt]\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+                "  - id: markdown-links\n",
+                "    type: check\n",
+                "    command: md links validate\n",
+                "    kind: rhino-cli\n",
+                "    ci-group: markdown\n",
+                "    surfaces:\n",
+                "      ci: { scope: all-file-type }\n",
+            ),
+        )
+        .unwrap();
+
+        let mut output = Vec::new();
+        run_at_root(repo.path(), "ci", OutputFormat::Json, true, &mut output)
+            .expect("gate list --by-group must group CI gates as JSON");
+
+        let groups: Vec<serde_json::Value> = serde_json::from_slice(&output).unwrap();
+        let shell_group = groups
+            .iter()
+            .find(|group| group["group"] == "shell")
+            .expect("shell group present");
+        assert_eq!(
+            shell_group["doctor_tools"],
+            serde_json::json!(["jq", "shellcheck", "shfmt"]),
+            "doctor_tools must be the deduped, sorted union of every member gate's doctor_tools; got {shell_group:?}"
+        );
+        let markdown_group = groups
+            .iter()
+            .find(|group| group["group"] == "markdown")
+            .expect("markdown group present");
+        assert_eq!(
+            markdown_group["doctor_tools"],
+            serde_json::json!([]),
+            "a group whose members declare no doctor_tools must report an empty array; got {markdown_group:?}"
+        );
     }
 
     #[test]
