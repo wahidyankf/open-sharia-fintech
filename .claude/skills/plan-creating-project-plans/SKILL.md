@@ -256,7 +256,7 @@ If the plan grows past 1000 lines or authoring feels crowded, promote to the fiv
 
 ## Worktree Specification (Mandatory — Applies to ALL Plans)
 
-Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent. When the section is present, the executor enters the declared worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and prompts the user before deleting the worktree after the plan is archived and pushed.
+Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent. When the section is present, the executor enters the declared worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — per the [Worktree Cap HARD RULE](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) — is capped at **one worktree per repository per plan**, reused across every delivery unit landed there. Cleanup is immediate, not deferred: the worktree is removed the moment this plan is done using that repo, not batched with unrelated later steps.
 
 **Where to declare**:
 
@@ -281,7 +281,7 @@ Optional manual pre-provisioning (run from repo root):
 claude --worktree <plan-identifier>
 ```
 
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting the worktree after the plan is archived and pushed.
+The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — capped at one per repository per plan and reused across every delivery unit landed there — is removed immediately once the plan is done using this repo, not deferred to archival.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 ````
@@ -299,9 +299,20 @@ Every plan resolves to exactly one **delivery mode** before execution begins, de
 - **`main-to-origin-main`** — primary checkout (no worktree), direct push to `origin main`, `[AI]` pushes directly.
 - **`main-to-pr`** — primary checkout (no worktree), PR opened against `main`, `[AI]` merges once the hardened preconditions hold (a `[HUMAN]` merge gate applies only where the plan's own step says so).
 
-`worktree-to-pr` is the safest default absent a reason to pick another mode — it isolates work and routes it through review before it touches `main`.
+**Per-Repository Delivery Mode Restrictions (HARD RULE)**: the two direct-push modes above are not
+freely selectable in every repo. `main` is branch-protected (including for admins) in `ose-public`
+and `ose-primer`, so neither direct-push mode has an executable path there — `worktree-to-pr` is
+**mandatory**, not merely the safest default. `beaver-nest` is held to the same restriction by
+convention pending a `[HUMAN]`-only branch-protection settings change. Only `ose-private` retains a
+narrow surviving exception, and only for a genuinely infrastructure-as-code plan. See [Plans
+Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+for the full per-repo table and enforcement detail.
 
-**Declare it explicitly**: `## Delivery Mode: worktree-to-pr` (or one of the other three modes), placed immediately alongside the `## Worktree` declaration. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`) per the three-tier precedence algorithm (invocation argument → plan field → default).
+`worktree-to-pr` is mandatory in `ose-public` and `ose-primer` (and convention-mandatory in
+`beaver-nest`) — it is the safest choice everywhere else too, absent a reason to pick another mode
+in the one repo (`ose-private`) where an alternative is actually available.
+
+**Declare it explicitly**: `## Delivery Mode: worktree-to-pr` (or one of the other three modes, subject to the restriction above), placed immediately alongside the `## Worktree` declaration. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`) per the three-tier precedence algorithm (invocation argument → plan field → default).
 
 **`*-to-pr` modes run the PR-Review Maker→Fixer Cycle**: for `worktree-to-pr` and `main-to-pr`, the delivery checklist's finalization phase MUST emit the [PR-Review Maker→Fixer Cycle workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md) (a fixed N-cycle, default 3, sequential reviewer pipeline — `pr-review-scout-maker` classifies risk tier and assembles context, nine discipline specialists fan out, `pr-review-synthesis-maker` consolidates into one review, `pr-review-fixer` resolves it — loop with a hard CI-green gate between cycles) before the PR is considered done. The merge itself sits outside this done-boundary — `[AI]` merges by default once the hardened preconditions hold, and a `[HUMAN]` merge gate applies only where the plan's own step says so explicitly.
 
@@ -551,9 +562,12 @@ And their session is created with correct permissions
 - Draft PR against `main`; PR-Review Maker→Fixer Cycle before merge
 - Small, frequent commits; merge `[AI]` once the hardened preconditions hold
 
-**Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`)**:
+**Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`) — `ose-private` infrastructure-as-code plans only**:
 
-- For small, obviously-safe changes where a PR adds no review value
+- Not available in `ose-public`, `ose-primer` (branch-protected `main`, including for admins) or, by
+  convention, `beaver-nest` — see the Per-Repository Delivery Mode Restrictions HARD RULE above
+- Reachable only for a genuinely infrastructure-as-code plan in `ose-private`
+- For small, obviously-safe changes where a PR adds no review value, in that one repo
 - Declare the mode explicitly in `## Delivery Mode` — never assume it
 - No separate approval gate: declaring the mode IS the decision
 

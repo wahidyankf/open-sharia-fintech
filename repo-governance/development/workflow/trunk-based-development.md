@@ -19,9 +19,16 @@ created: 2025-11-26
   This is duplicated (intentionally) in multiple files for different audiences:
   1. repo-governance/development/workflow/trunk-based-development.md (this file - comprehensive reference)
   2. AGENTS.md (summary for AI agents)
-  3. .opencode/agents/plan-maker.md (context for plan creation)
+  3. .claude/agents/plan-maker.md (context for plan creation — hand-authored source; .opencode/ and
+     .cursor/ carry auto-generated mirrors, never hand-edited)
   4. repo-governance/workflows/plan/plan-execution.md (context for plan execution — orchestrated by the calling context)
-  When updating, synchronize all four locations.
+  5. .claude/skills/repo-practicing-trunk-based-development/SKILL.md (operator-facing invocable
+     entry point; not mirrored — OpenCode reads .claude/skills/ natively)
+  6. .claude/skills/plan-creating-project-plans/SKILL.md (plan-authoring skill's own Delivery Mode
+     summary; not mirrored)
+  7. .claude/skills/plan-grooming-idea-briefs/SKILL.md (plan-ideas-grooming workflow's invocable
+     entry point; not mirrored)
+  When updating, synchronize all seven locations.
 -->
 
 This document defines the **Trunk Based Development (TBD)** workflow used in the open-sharia-enterprise project. TBD is a branching strategy where developers commit directly to a single branch (the trunk), enabling continuous integration, rapid feedback, and simplified collaboration.
