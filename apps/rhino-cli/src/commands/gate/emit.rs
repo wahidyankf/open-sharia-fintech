@@ -444,3 +444,83 @@ fn lint_staged_shell_overrides_wrap_or_own_the_derived_file_invocation() {
         ]),
     );
 }
+
+/// Regression: a `lint-staged-shell` template that used a bare
+/// `for f; do <command> -f "$f" ...; done` loop with no `set -e` masked an
+/// earlier file's failure whenever a later file in the same batch succeeded —
+/// a POSIX `for` loop's exit status is the *last* command's, not the first
+/// failure's. The fix hands the whole batch to the wrapped command in one
+/// call (`{{command}} "$@"`) so that command's own exit status propagates
+/// untouched. This is a self-contained fixture (not the repository's own
+/// `repo-config.yml`, which is not required to be identical across the
+/// sibling repositories this file's parity manifest covers): it drives the
+/// exact emitted, wrapped command this file produces against a fixture batch
+/// whose checker fails on the first file and succeeds on the second, so a
+/// regression back to the fail-open shape is caught here rather than only in
+/// a specific repository's own registry declaration.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn lint_staged_shell_forwarding_the_whole_batch_fails_fast_on_a_leading_failure() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: fixture-checker\n",
+            "    type: check\n",
+            "    command: sh check.sh\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-commit:\n",
+            "        scope: affected-file-type\n",
+            "        glob: '*.fixture'\n",
+            "        lint-staged-shell: '{{command}} \"$@\"'\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        repo.path().join("check.sh"),
+        // Mirrors the shape of a real per-file wrapper script: it owns its
+        // own fail-fast loop over every argument it is handed.
+        "#!/bin/sh\nset -eu\nfor f; do\n  if grep -q FAIL \"$f\"; then\n    exit 1\n  fi\ndone\n",
+    )
+    .unwrap();
+
+    let config = repo_config::load(repo.path()).unwrap();
+    let command = lint_staged_from_config(&config)["*.fixture"][0]
+        .as_str()
+        .unwrap()
+        .to_string();
+
+    let invalid = repo.path().join("invalid.fixture");
+    std::fs::write(&invalid, "FAIL\n").unwrap();
+    let valid = repo.path().join("valid.fixture");
+    std::fs::write(&valid, "ok\n").unwrap();
+
+    // Forward the fixture files as "$@" to the emitted command exactly as
+    // lint-staged appends matched files after the configured command line.
+    let script = repo.path().join("run.sh");
+    std::fs::write(&script, format!("#!/bin/sh\n{command} \"$@\"\n")).unwrap();
+
+    let status = std::process::Command::new("sh")
+        .arg(&script)
+        .arg(&invalid)
+        .arg(&valid)
+        .current_dir(repo.path())
+        .status()
+        .expect("run the generated lint-staged command");
+    assert!(
+        !status.success(),
+        "an earlier failing file must fail the batch even when a later file passes"
+    );
+
+    // Control: an all-passing batch must still succeed.
+    let status = std::process::Command::new("sh")
+        .arg(&script)
+        .arg(&valid)
+        .current_dir(repo.path())
+        .status()
+        .expect("run the generated lint-staged command");
+    assert!(status.success(), "an all-passing batch must still succeed");
+}
