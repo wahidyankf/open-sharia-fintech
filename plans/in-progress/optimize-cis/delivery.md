@@ -637,15 +637,19 @@ Independent of Phase 3; may run in parallel.
 
 ## Phase 7 — Slim node setup and fix the cache key (DD-5, DD-8)
 
-- [ ] [AI] Add a boolean input to `.github/actions/setup-node/action.yml` controlling whether `npm ci` runs, defaulting to `true` so existing callers are unaffected
+- [x] [AI] Add a boolean input to `.github/actions/setup-node/action.yml` controlling whether `npm ci` runs, defaulting to `true` so existing callers are unaffected
       — acceptance: `actionlint` exits 0 and all existing call sites behave identically.
-- [ ] [AI] Set that input to `false` for every gate group whose gates require no node-resolved tool
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `.github/actions/setup-node/action.yml`. **Notes**: added `run-npm-ci` boolean input (default `"true"`), gated the "Cache npm dependencies" and "Install dependencies" steps on `if: inputs.run-npm-ci == 'true'`. All other existing callers (which never set the input) keep passing `"true"` implicitly, so behavior is unchanged for them.
+- [x] [AI] Set that input to `false` for every gate group whose gates require no node-resolved tool
       — acceptance: those jobs' logs contain no `npm ci` (AC-10).
-- [ ] [AI] Remove `-${{ github.sha }}` from the `.nx/cache` key at `.github/actions/setup-node/action.yml:30`, retaining the existing `restore-keys` fallbacks
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `.github/workflows/pr-quality-gate.yml`. **Notes**: rather than hardcoding a group list, wired `run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}` on the `gate` job's `setup-node` step — `doctor_tools` is already emitted per-group by `gate list --by-group` and carries `npm` exactly when a member gate declares `doctor-tools: [npm]` (currently `format-verify-prettier` and `markdownlint`). This is data-driven: it stays correct as gates move between groups, with no separate list to keep in sync. Verified against the real `repo-config.yml`: `formatting-verify` and `markdown` groups need npm; `shell-docker-actions`, `naming`, `specs`, `governance` do not.
+- [x] [AI] Remove `-${{ github.sha }}` from the `.nx/cache` key at `.github/actions/setup-node/action.yml:30`, retaining the existing `restore-keys` fallbacks
       — acceptance: the key no longer interpolates `github.sha`; `actionlint` exits 0.
-- [ ] [AI] Add the AC-10 scenario (deferred from Phase 5 — see that phase's corrected item) to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` and bind it in `apps/rhino-cli/tests/gate_specs.rs` against the real conditional `npm ci` input just added above
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `.github/actions/setup-node/action.yml`. **Notes**: key is now `nx-${{ runner.os }}-${{ hashFiles('nx.json', 'package-lock.json') }}` (no `github.sha`); the two `restore-keys` fallback lines are unchanged. `actionlint` exits 0.
+- [x] [AI] Add the AC-10 scenario (deferred from Phase 5 — see that phase's corrected item) to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature` and bind it in `apps/rhino-cli/tests/gate_specs.rs` against the real conditional `npm ci` input just added above
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --profile gate --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: exits 0 (73/73 scenarios, the AC-10 scenario included and passing).
+  - **Date**: 2026-08-09. **Status**: Done, with one correction to the acceptance figure. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`, `apps/rhino-cli/tests/gate_specs.rs`. **Notes**: scenario added verbatim as specified; bound with a `Given` step that scans the real `repo-config.yml` for a `ci-group` whose member gates never declare `doctor-tools: [npm]` (grounding the scenario in real repo state, matching this file's established "parse the real file" convention for workflow-shape scenarios), a `When` step capturing the real `gate` job block, and `Then` steps asserting (a) the `run-npm-ci` wiring found above plus `setup-node`'s `if: inputs.run-npm-ci == 'true'` guard, and (b) the `gate run --surface=ci` step itself carries no `if:` (skipping npm ci must never skip running the group's gates). The written acceptance said "73/73" — that count was estimated before this scenario existed; the actual current suite is **72 scenarios / 72 passed, 268/268 steps passed** (71 pre-existing + this 1 new one), exit 0. `cargo clippy --test gate_specs -- -D warnings` also exits 0.
 
   ```gherkin
   Scenario: A gate group with no node tooling skips npm ci
