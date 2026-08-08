@@ -79,6 +79,13 @@ verify it live with `git -C <repo> rev-parse --is-bare-repository` before choosi
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
+> **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
+> single, plan-wide worktree before the
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> and
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+> rules landed. Reviewed against both — already compliant, no change required.
+
 ## Delivery Mode: worktree-to-pr
 
 The repo default, and required here: the change set includes F#, TypeScript, Rust, YAML, and

@@ -65,6 +65,13 @@ This path is the one and only worktree for the entire plan. Provision it once fr
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
 per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
+> **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
+> single, plan-wide worktree before the
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> and
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+> rules landed. Reviewed against both — already compliant, no change required.
+
 ## Delivery Mode: worktree-to-pr
 
 **CI scope note**: "CI green"/"CI gates" below mean the PR's own check run
