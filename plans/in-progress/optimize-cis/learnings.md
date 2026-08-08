@@ -105,3 +105,20 @@
   committing, not rely on the pre-push gate to catch it after the fact. Worth flagging for Phase 12
   triage as a documentation gap: the RED-step convention in this plan's own delivery.md items only
   ever names the unit-test command, never the integration-test command, for scenarios of this kind.
+
+## Learning: `cargo hack check --rust-version` installs a major.minor toolchain distinct from the pinned patch
+
+- **Context**: Phase 4's MSRV bump set `rust-version = "1.95.0"` in all four `ose-public` manifests,
+  matching the already-installed `1.95.0-aarch64-apple-darwin` `rustup` toolchain exactly. The
+  `compat:min-version` Nx target (`cargo hack --manifest-path apps/rhino-cli/Cargo.toml check
+--rust-version`) was expected to need no new toolchain as a result.
+- **Observation**: it installed one anyway — a **new**, separate `1.95-aarch64-apple-darwin`
+  toolchain (1.3 GB), distinct from the already-present `1.95.0-aarch64-apple-darwin`. `cargo-hack`
+  appears to resolve/invoke the major.minor form of the pinned `rust-version` rather than the exact
+  patch, and `rustup` treats `1.95` and `1.95.0` as separate installed toolchains even though they
+  currently resolve to the same release.
+- **Why it might generalize**: Phase 9 (disk hygiene, this plan's own rustup-toolchain-pruning phase)
+  should expect and account for this extra toolchain when auditing what's installed and why — it is
+  a legitimate, reproducible side effect of running `compat:min-version` at all, not drift or a
+  concurrent-agent artifact. Any future MSRV bump anywhere in this repo should expect the same
+  `X.Y`-vs-`X.Y.Z` toolchain duplication from this exact Nx target.

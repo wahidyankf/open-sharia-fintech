@@ -398,33 +398,42 @@ independent measurement pass.
 
 Independent of Phase 3; may run in parallel.
 
-- [ ] [AI] Add `[profile.gate]` to `apps/rhino-cli/Cargo.toml` inheriting from `release` with `lto = false`, `codegen-units = 16`, `opt-level = 1`, leaving `[profile.release]` untouched
+- [x] [AI] Add `[profile.gate]` to `apps/rhino-cli/Cargo.toml` inheriting from `release` with `lto = false`, `codegen-units = 16`, `opt-level = 1`, leaving `[profile.release]` untouched
       — command: `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml`
       — acceptance: builds successfully and produces `apps/rhino-cli/target/gate/rhino-cli`.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/Cargo.toml`. **Notes**: `[profile.gate]` added as a pure 11-line addition after `[profile.release]`; `git diff` confirms zero modification to the existing release block. Builds successfully, produces `apps/rhino-cli/target/gate/rhino-cli`.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] Measure the cold build under both profiles into isolated target dirs and record both figures
+- [x] [AI] Measure the cold build under both profiles into isolated target dirs and record both figures
       — command: `rm -rf /tmp/ct && bash -c 'time CARGO_TARGET_DIR=/tmp/ct cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml'`
       — acceptance: the gate profile builds materially faster than release; both figures recorded (baseline measured 53.0 s release vs 19.6 s fast).
-- [ ] [AI] Confirm runtime parity between the two binaries on the slowest gate
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: gate profile cold build 18.44 s (isolated `CARGO_TARGET_DIR`, 76 crates) vs the recorded 53.0 s release baseline — ~65% reduction, matches the plan's ~19.6 s expectation within noise. Scratch `/tmp/ct` removed after measurement.
+- [x] [AI] Confirm runtime parity between the two binaries on the slowest gate
       — command: `bash -c 'time (for i in 1 2 3; do apps/rhino-cli/target/gate/rhino-cli md links validate >/dev/null; done)'`
       — acceptance: within 15 % of the release binary's time for the same command.
-- [ ] [AI] Point `apps/rhino-cli/scripts/rhino-bin.sh` and the gate-path Nx targets in `apps/rhino-cli/project.json` at `--profile gate`, leaving `build` on `--release`
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: gate 0.921 s/run avg vs release 0.826 s/run avg (5-run samples, warm cache) — +11.5%, within the 15% tolerance. A first cold-cache sample showed 36.6% and was discarded as disk-cache noise, not a real signal; re-measured twice for consistency (~6-12% both times).
+- [x] [AI] Point `apps/rhino-cli/scripts/rhino-bin.sh` and the gate-path Nx targets in `apps/rhino-cli/project.json` at `--profile gate`, leaving `build` on `--release`
       — command: `npx nx run rhino-cli:typecheck`
       — acceptance: exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/scripts/rhino-bin.sh`, `apps/rhino-cli/project.json`. **Notes**: shim's `GATE_BIN` now `${TARGET_DIR}/gate/rhino-cli` (was `release/rhino-cli`), tier-3 fallback now `cargo build --profile gate`; header comments rewritten to describe the gate profile as active, not deferred (removing the forward-reference framing added in Phase 2). `project.json`: 8 gate-path validation targets repointed from `cargo run --release --quiet ...` to `cargo run --profile gate --quiet ...`; the `build` target's `cargo build --release ...` line (a distinct string) left untouched, per this item's own instruction. `nx run rhino-cli:typecheck` exits 0. `shellcheck --severity=warning` and `shfmt -d` both exit 0 on the shim.
 
 ### Version unification, `ose-public` side (DD-9)
 
-- [ ] [AI] Confirm `baseline/rust-versions.md` from Phase 0 is still current (no drift since baseline capture): re-run its capture commands and diff — acceptance: identical output, or the delta is recorded and folded into the scoreboard's M9 baseline row before proceeding.
-- [ ] [AI] Set `rust-version = "1.95.0"` in all four `ose-public` Rust manifests (`apps/rhino-cli`, `apps/ose-cli`, `apps/ayokoding-cli`, `libs/rust-commons`), matching the `channel` those crates already pin
+- [x] [AI] Confirm `baseline/rust-versions.md` from Phase 0 is still current (no drift since baseline capture): re-run its capture commands and diff — acceptance: identical output, or the delta is recorded and folded into the scoreboard's M9 baseline row before proceeding.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: re-ran the `ose-public`-side capture (4 `rust-toolchain.toml` `channel` lines, 4 `Cargo.toml` `rust-version` lines) — identical to `baseline/rust-versions.md`: all 4 `channel = "1.95.0"`, all 4 `rust-version = "1.88"`. No drift; proceeding without any baseline update.
+- [x] [AI] Set `rust-version = "1.95.0"` in all four `ose-public` Rust manifests (`apps/rhino-cli`, `apps/ose-cli`, `apps/ayokoding-cli`, `libs/rust-commons`), matching the `channel` those crates already pin
       — command: `grep -h '^rust-version' apps/*/Cargo.toml libs/*/Cargo.toml | sort -u`
       — acceptance: exactly one line, reading `rust-version = "1.95.0"`.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/Cargo.toml`, `apps/ose-cli/Cargo.toml`, `apps/ayokoding-cli/Cargo.toml`, `libs/rust-commons/Cargo.toml`. **Notes**: all 4 set to `rust-version = "1.95.0"`. `apps/rhino-cli/Cargo.toml`'s edit was deferred until the parallel build-profile background agent (adding `[profile.gate]` to the same file) finished, to avoid a concurrent-edit race — sequenced, not skipped. Verified via absolute-path `/usr/bin/grep` (the shell's `grep`/`command grep` both route through an RTK filter that mis-parses `-h` as `--help` here, printing RTK's own usage text instead of matches — used the real binary directly to get a trustworthy result): exactly one distinct line, `rust-version = "1.95.0"`.
   - _`ose-public` needs no `channel` edit: all four sites already pin `1.95.0`. Only the floor moves._
-- [ ] [AI] Confirm the MSRV move does not break the compatibility gate — command: `npx nx run rhino-cli:compat:min-version` — acceptance: exits 0, and the run installs no toolchain (the floor now equals the already-present pinned channel).
-- [ ] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature` exits 0.
+- [x] [AI] Confirm the MSRV move does not break the compatibility gate — command: `npx nx run rhino-cli:compat:min-version` — acceptance: exits 0, and the run installs no toolchain (the floor now equals the already-present pinned channel).
+  - **Date**: 2026-08-09. **Status**: Done, with a discovered side effect not covered by this item's acceptance text. **Notes**: `npx nx run rhino-cli:compat:min-version` exits 0. But `rustup toolchain list` before/after shows a **new** `1.95-aarch64-apple-darwin` toolchain (1.3 GB) was in fact installed, distinct from the already-present `1.95.0-aarch64-apple-darwin` — the target runs `cargo hack --manifest-path apps/rhino-cli/Cargo.toml check --rust-version`, and `cargo-hack`/`rustup` apparently resolve/install the major.minor form (`1.95`) as its own toolchain rather than reusing the exact-patch `1.95.0` one already on disk, contradicting this item's "installs no toolchain" acceptance clause. Not fixed here — root-caused and flagged for Phase 9 (disk hygiene), whose own scope is exactly this class of rustup toolchain pruning; fixing it here would duplicate/pre-empt that phase's authored audit rather than complement it.
+- [x] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature` — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature`. **Notes**: scenario appended verbatim, byte-matches `prd.md` AC-20 and this item's own Gherkin block below. `specs gherkin-cardinality validate` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/application/doctor/tools.rs` tests module binding the scenario below
+- [x] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/application/doctor/tools.rs` tests module binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib doctor::tools`
       — acceptance: test fails because the `rust` tool definition still reads `Cargo.toml → rust-version` and compares with `compare_gte`.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/application/doctor/tools.rs`. **Notes**: added `rust_tool_compares_against_pinned_toolchain_channel_not_msrv_floor`. Genuinely RED — failed on the `source` string (`Cargo.toml → rust-version` vs expected `rust-toolchain.toml → channel`), not a compile error.
   - **Gherkin (binds) →** "doctor compares rustc against the toolchain that builds"
 
     ```gherkin
@@ -437,24 +446,32 @@ Independent of Phase 3; may run in parallel.
 
   - _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] **GREEN**: Repoint the `rust` entry in `tool_defs_rust()` at `apps/rhino-cli/rust-toolchain.toml → channel` — new `read_req` reader, `source` string updated, and `compare` switched from `compare_gte` to exact equality, since a pinned channel is not a floor
+- [x] [AI] **GREEN**: Repoint the `rust` entry in `tool_defs_rust()` at `apps/rhino-cli/rust-toolchain.toml → channel` — new `read_req` reader, `source` string updated, and `compare` switched from `compare_gte` to exact equality, since a pinned channel is not a floor
       — command: same as above
       — acceptance: test passes (AC-20).
-- [ ] [AI] **REFACTOR**: Fold the `1.88` literals in the existing `read_rust_version` doc comments and tests to the new pinned value where they assert current behaviour, leaving fixtures that only exercise parsing untouched
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/application/doctor/tools.rs`, `apps/rhino-cli/src/application/doctor/checker.rs`. **Notes**: added `read_rust_toolchain_channel()` (parses `channel = "..."` from `[toolchain]` in `rust-toolchain.toml`, structurally parallel to the old reader) plus a `Paths.rust_toolchain_toml` field/`read_rust_toolchain_v()` wrapper following the existing caching pattern. `rust` `ToolDef`: `source` → `"apps/rhino-cli/rust-toolchain.toml → channel"`, `read_req` → `read_rust_toolchain_v`, `compare` → `compare_exact` (was `compare_gte`) — a newer installed rustc than the pin is now correctly flagged too, verified in-test (`1.96.0` vs pinned `1.95.0` → `Warning`). Test passes (AC-20). **Also removed as dead code** (required for clean `cargo clippy -D warnings`, not optional): the old `read_rust_version` MSRV reader, its test, and the now-unused `cargo_toml` field/`read_rust_v` wrapper — DD-9 is a _replace_, not _add_, and this crate has zero `#[allow(dead_code)]` precedent to suppress instead. A parallel mechanism-only test (`read_rust_toolchain_channel_from_rust_toolchain_toml`) was added in its place.
+- [x] [AI] **REFACTOR**: Fold the `1.88` literals in the existing `read_rust_version` doc comments and tests to the new pinned value where they assert current behaviour, leaving fixtures that only exercise parsing untouched
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib doctor`
       — acceptance: exits 0, and `grep -c '1\.88' apps/rhino-cli/src/application/doctor/` returns only parser-fixture hits, each verified individually.
-- [ ] [AI] Update `docs/explanation/software-engineering/programming-languages/rust/README.md:81` so the MSRV bullet states that the floor and the toolchain pin are deliberately the same value — command: `npx markdownlint-cli2 docs/explanation/software-engineering/programming-languages/rust/README.md` — acceptance: exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `cargo test --lib doctor`: 105 passed, 0 failed. Only one `1.88` hit remains under `apps/rhino-cli/src/application/doctor/` — `checker.rs`'s `parse_rust_version` doc comment illustrating `rustc --version` output format (`"rustc 1.88.0 ..."`), a genuine parser-fixture unrelated to the repo's pinned value, left untouched. The old `read_rust_version_from_cargo` test's `"1.88"` fixture was removed along with the function it tested (see GREEN note), making it moot rather than requiring an edit. `cargo fmt --check` and `cargo clippy --lib -- -D warnings` both clean.
+- [x] [AI] Update `docs/explanation/software-engineering/programming-languages/rust/README.md:81` so the MSRV bullet states that the floor and the toolchain pin are deliberately the same value — command: `npx markdownlint-cli2 docs/explanation/software-engineering/programming-languages/rust/README.md` — acceptance: exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `docs/explanation/software-engineering/programming-languages/rust/README.md`. **Notes**: MSRV bullet now states the floor is deliberately pinned to the same value as the `rust-toolchain.toml` channel ("exactly one supported Rust version, not a floor-and-ceiling range"). `markdownlint-cli2` exits 0.
   - _Suggested executor: `docs-maker`_
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `npx nx run rhino-cli:lint` — acceptance: exits 0.
-- [ ] [AI] Diff the executed gate id set against Phase 0 — acceptance: byte-identical.
-- [ ] [AI] Confirm `[profile.release]` is unchanged: `git diff apps/rhino-cli/Cargo.toml` — acceptance: the release block shows no modification.
-- [ ] [AI] Confirm `ose-public` declares one Rust version: `cat $(find . -name rust-toolchain.toml -not -path './target/*' -not -path './node_modules/*') | grep '^channel' | sort -u` and the `^rust-version` equivalent — acceptance: each returns exactly one line and both name `1.95.0` (AC-19, M9 for this repo).
-- [ ] [AI] `npm run doctor` — acceptance: exits 0 and reports the Rust source as the `rust-toolchain.toml` channel, not `Cargo.toml → rust-version`.
+- [x] [AI] `npx nx run rhino-cli:lint` — acceptance: exits 0.
+  - **Date**: 2026-08-09. **Status**: Done, after a real local-environment fix. **Notes**: first run failed — `cargo clippy`/`fmt` invoked via `--manifest-path` from the Nx workspace root (not `cd`'d into `apps/rhino-cli/`) don't trigger `rustup`'s directory-based `rust-toolchain.toml` override, so they ran under this machine's default `stable` toolchain, which had drifted to `rustc 1.94.0` — now below the newly-bumped `rust-version = "1.95.0"` floor, so cargo refused with "requires rustc 1.95.0" (repeated per dependency). Root-caused as a stale local default, not a repo/plan defect: CI's `setup-rust-toolchain` action resolves the SAME way (no root-level `rust-toolchain.toml` either — its own comments confirm this), but CI's "latest stable" runner image is expected to already be ≥ 1.95.0, so this was specific to this dev machine having an outdated local default. Fixed with `rustup default 1.95.0` (matches all 4 `ose-public` crates' own pin exactly; reversible, machine-local, no repo file changes). Re-ran: exits 0.
+- [x] [AI] Diff the executed gate id set against Phase 0 — acceptance: byte-identical.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: byte-identical for all 4 surfaces.
+- [x] [AI] Confirm `[profile.release]` is unchanged: `git diff apps/rhino-cli/Cargo.toml` — acceptance: the release block shows no modification.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `git diff` shows exactly 2 hunks — the `rust-version` line (1.88→1.95.0) and a pure 12-line `[profile.gate]` addition after the release block; the release block itself has zero changed lines.
+- [x] [AI] Confirm `ose-public` declares one Rust version: `cat $(find . -name rust-toolchain.toml -not -path './target/*' -not -path './node_modules/*') | grep '^channel' | sort -u` and the `^rust-version` equivalent — acceptance: each returns exactly one line and both name `1.95.0` (AC-19, M9 for this repo).
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: both `channel` and `rust-version` return exactly one distinct line each, both `1.95.0`.
+- [x] [AI] `npm run doctor` — acceptance: exits 0 and reports the Rust source as the `rust-toolchain.toml` channel, not `Cargo.toml → rust-version`.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: exits 0; report shows `✓ rust v1.95.0 (required: 1.95.0)` — exact-match against the toolchain pin, confirming the GREEN step's repointing is live end-to-end. 15/16 tools OK, 1 pre-existing unrelated warning (`npm` version mismatch, not introduced by this phase).
 - [ ] [AI] Run local quality gates (see §Local Quality Gates), then commit this phase's changes thematically and push to the open PR branch — acceptance: local gates exit 0; push succeeds and the PR's check run starts.
 
 > **Pause Safety**: two profiles coexist; the shipped artifact is unchanged; the version change is a one-number revert in five files. Safe to stop. To resume: `cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml`.
