@@ -1,6 +1,6 @@
 ---
 title: "Git Push Default Convention"
-description: Default git push behavior — the repo-wide default integration target is a PR branch opened against main (worktree-to-pr), with direct push to origin main available via the worktree-to-origin-main and main-to-origin-main modes when explicitly selected. main-to-origin-main additionally requires an .md-only change set or explicit user go-ahead. Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
+description: Default git push behavior — every plan uses worktree-to-pr (a PR branch opened against main). Direct push to origin main is unavailable in ose-public, ose-primer, and beaver-nest (branch-protected, including for admins) and is restricted in ose-private to infrastructure-as-code plans only (main-to-origin-main, for local secrets/state access). Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
 category: explanation
 subcategory: development
 tags:
@@ -122,11 +122,22 @@ rides that first PR. This is not a mode override — it holds under every one of
 modes. See
 [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-### Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred
+### Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted
 
-`worktree-to-origin-main` and `main-to-origin-main` push directly to `origin main` with no PR. Either
-mode applies only when explicitly selected — via an invocation argument or a plan's `## Delivery Mode`
-field. Absent that explicit selection, the agent uses the `worktree-to-pr` default.
+`worktree-to-origin-main` and `main-to-origin-main` push directly to `origin main` with no PR. Before
+either signal below is even relevant, check repository availability first: in `ose-public`,
+`ose-primer`, and `beaver-nest`, `main` is branch-protected against direct pushes (including for
+admins) — **neither direct-push mode has an executable path in those three repositories, full stop**.
+In `ose-private`, both remain available only for infrastructure-as-code plans (Terraform, Ansible, and
+equivalent state-changing infra work needing the primary checkout's real secrets and local state).
+Every other plan, in all four repositories, uses `worktree-to-pr`. See
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+for the full per-repository rule — this is the current binding constraint, and it applies before the
+selection-signal and content-restriction tests below.
+
+Within a repository where a direct-push mode remains available, either mode applies only when
+explicitly selected — via an invocation argument or a plan's `## Delivery Mode` field. Absent that
+explicit selection, the agent uses the `worktree-to-pr` default.
 
 ```bash
 # worktree-to-origin-main — explicit selection only

@@ -100,13 +100,13 @@ Do not spawn a delegated agent for simple reads or lookups that take one or two 
 
 ## Operating Budgets
 
-These budgets bound how agents spend two scarce resources — external API rate limits and token burn — and how repository rules themselves are created and kept in sync. They apply to every agent and to the main conversation, across all three OSE repositories (`ose-private`, `ose-public`, `ose-primer`).
+These budgets bound how agents spend two scarce resources — external API rate limits and token burn — and how repository rules themselves are created and kept in sync. They apply to every agent and to the main conversation, across the OSE repositories — `ose-private`, `ose-public`, `ose-primer`, and, where a rule is generalizable, `beaver-nest`.
 
 ### Authoring and Propagating Repository Rules
 
 Repository rules and conventions are authored, maintained, and propagated using the `repo-rules-maker` agent. `repo-rules-maker` is the canonical maker for `repo-governance/` content; `repo-rules-checker` validates it and `repo-rules-fixer` applies validated fixes.
 
-A rule that should hold everywhere is created with `repo-rules-maker` in one repo and then carried across the OSE repositories on the bidirectional `ose-primer` sync, so the same rule text lands in `ose-private`, `ose-public`, and `ose-primer` rather than being retyped by hand per repo.
+A rule that should hold everywhere is created with `repo-rules-maker` in one repo and then carried across the OSE repositories, so the same rule text lands elsewhere rather than being retyped by hand per repo — but not on one uniform schedule: `ose-private` receives it in real time, `ose-primer` on a delayed sync, and `beaver-nest` not on an ongoing sync at all (it is expected to merge back into `ose-public`). See [Related Repositories §Sync cadence across repos](../../../docs/reference/related-repositories.md#sync-cadence-across-repos) for the full policy and rationale.
 
 ### Parallelism Budget
 
@@ -149,11 +149,11 @@ The DAG itself is the portable artifact: the same dependency graph drives a wide
 
 A worktree isolates **edits** — two agents writing to the same file in the same checkout would collide, and separate working trees prevent that. But isolated edits still have to land, and if N parallel units all funnel into one shared branch or one shared PR, they re-serialize at exactly the moment that matters. The **PR** is what makes them genuinely independent: N parallel units become **N PRs that review, gate, and merge independently**, none blocking any other. A slow review on one unit does not hold the other N-1 hostage.
 
-Concretely: **every DAG leaf that produces changes gets its own worktree and its own PR** — a strict one-node ↔ one-worktree ↔ one-PR mapping. What sits on the PR side of that mapping is a **delivery unit** — the contiguous run of phases ending at a **delivery boundary** — not necessarily a single phase: a PR opens at the natural delivery point, which may be once at the end of the unit or several times across a plan (see [§PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)). The corollary matters as much as the rule: nodes that are genuinely _dependent_ stay in one PR. The DAG governs. Never force-split an inseparable chain just to produce more PRs, and never batch independent nodes into one PR just to produce fewer.
+Concretely: **every DAG leaf that produces changes gets its own branch and its own PR** — a strict one-node ↔ one-branch ↔ one-PR mapping. The **worktree**, unlike the branch, is capped at **one per repository per plan** and reused — branch-switched — across every leaf that lands in that repo; see [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule). What sits on the PR side of the branch/PR mapping is a **delivery unit** — the contiguous run of phases ending at a **delivery boundary** — not necessarily a single phase: a PR opens at the natural delivery point, which may be once at the end of the unit or several times across a plan (see [§PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)). The corollary matters as much as the rule: nodes that are genuinely _dependent_ stay in one PR. The DAG governs. Never force-split an inseparable chain just to produce more PRs, and never batch independent nodes into one PR just to produce fewer.
 
 The qualifier **"that produces changes"** is load-bearing, and a plan's **Phase 0** is where it bites: Environment Setup and Baseline produces no reviewable change, so it is not a DAG leaf and gets **no PR** under any delivery mode. The earliest phase that may open one is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-Because the worktree is the unit that maps to a PR, it is also the unit that gets cleaned up when that PR lands.
+Because the worktree is now a per-repository unit rather than a per-PR one, it is cleaned up once — after every PR that used it has landed — not when the first one does. Cross-repo parallelism is unaffected: an N-repo plan still runs one worktree per repo, in parallel with the other repos' worktrees; the cap only forecloses opening a second worktree for a repo the plan already has one open in.
 
 ### CI and GitHub Actions Monitoring Cadence
 
