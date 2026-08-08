@@ -18,9 +18,12 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before
 deleting the worktree after the plan is archived and pushed.
 
-The three axes are independent DAG nodes and each takes **its own** worktree and branch —
-`worktrees/rhino-cli-opt-build/`, `worktrees/rhino-cli-opt-disk/`,
-`worktrees/rhino-cli-opt-types/`. The path above is the plan's serial-spine worktree.
+The three axes are independent DAG nodes and each takes **its own branch**, but per the
+[Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+they all share the **one** worktree declared above (`worktrees/rhino-cli-optimization/`) —
+branch-switched in sequence, never a second `git worktree add` for this repo. The per-axis branches
+are `rhino-cli-opt-build`, `rhino-cli-opt-disk`, `rhino-cli-opt-types` (plus `rhino-cli-opt-lang` and
+`rhino-cli-opt-docs` for the later conditional/documentation phases below).
 
 **No git-capable agent runs in the primary checkout while this plan has uncommitted work.** During
 authoring, a concurrent agent operating in the primary tree ran `git reset` and destroyed this
@@ -194,24 +197,28 @@ Delivery Boundaries table below.
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                              | Worktree / branch                  | PR opens          |
-| -------- | ---------------------------------------------------------- | ---------------------------------- | ----------------- |
-| 0        | — (setup and baseline)                                     | `worktrees/rhino-cli-optimization` | no                |
-| 1        | — (throwaway POC, scratchpad only)                         | `worktrees/rhino-cli-opt-build`    | no                |
-| 2        | Fast profile + project.json indirection + dead-dep removal | `worktrees/rhino-cli-opt-build`    | yes — at Phase 2  |
-| 3        | Test-binary consolidation + nextest                        | `worktrees/rhino-cli-opt-build`    | yes — at Phase 3  |
-| 4        | `nx affected` detection fix                                | `worktrees/rhino-cli-opt-build`    | yes — at Phase 4  |
-| 5        | — (throwaway POC, machine-level only)                      | `worktrees/rhino-cli-opt-disk`     | no                |
-| 6        | Toolchain reclamation + hygiene automation                 | `worktrees/rhino-cli-opt-disk`     | yes — at Phase 6  |
-| 7        | — (throwaway POC, one module, reverted)                    | `worktrees/rhino-cli-opt-types`    | no                |
-| 8        | Cheap lint adjacents                                       | `worktrees/rhino-cli-opt-types`    | yes — at Phase 8  |
-| 9        | `indexing_slicing` crate-wide                              | `worktrees/rhino-cli-opt-types`    | yes — at Phase 9  |
-| 10       | `arithmetic_side_effects` crate-wide                       | `worktrees/rhino-cli-opt-types`    | yes — at Phase 10 |
-| 11       | Malformed-input robustness tests                           | `worktrees/rhino-cli-opt-types`    | yes — at Phase 11 |
-| 12       | Measurement rollup + downstream hand-off + `[HUMAN]` gate  | `worktrees/rhino-cli-optimization` | yes — at Phase 12 |
-| 13       | Axis D spike (**conditional** — skipped if targets met)    | `worktrees/rhino-cli-opt-lang`     | yes — if entered  |
-| 14       | Documentation propagation across both repos                | `worktrees/rhino-cli-opt-docs`     | yes — at Phase 14 |
-| 15-16    | Knowledge capture and archival                             | `worktrees/rhino-cli-optimization` | yes — at Phase 16 |
+All phases share the single `worktrees/rhino-cli-optimization/` worktree declared above (per the
+[Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)) —
+the table's "Branch" column is what actually varies per axis.
+
+| Phase(s) | Delivery unit                                              | Branch                        | PR opens          |
+| -------- | ---------------------------------------------------------- | ----------------------------- | ----------------- |
+| 0        | — (setup and baseline)                                     | `rhino-cli-optimization-base` | no                |
+| 1        | — (throwaway POC, scratchpad only)                         | `rhino-cli-opt-build`         | no                |
+| 2        | Fast profile + project.json indirection + dead-dep removal | `rhino-cli-opt-build`         | yes — at Phase 2  |
+| 3        | Test-binary consolidation + nextest                        | `rhino-cli-opt-build`         | yes — at Phase 3  |
+| 4        | `nx affected` detection fix                                | `rhino-cli-opt-build`         | yes — at Phase 4  |
+| 5        | — (throwaway POC, machine-level only)                      | `rhino-cli-opt-disk`          | no                |
+| 6        | Toolchain reclamation + hygiene automation                 | `rhino-cli-opt-disk`          | yes — at Phase 6  |
+| 7        | — (throwaway POC, one module, reverted)                    | `rhino-cli-opt-types`         | no                |
+| 8        | Cheap lint adjacents                                       | `rhino-cli-opt-types`         | yes — at Phase 8  |
+| 9        | `indexing_slicing` crate-wide                              | `rhino-cli-opt-types`         | yes — at Phase 9  |
+| 10       | `arithmetic_side_effects` crate-wide                       | `rhino-cli-opt-types`         | yes — at Phase 10 |
+| 11       | Malformed-input robustness tests                           | `rhino-cli-opt-types`         | yes — at Phase 11 |
+| 12       | Measurement rollup + downstream hand-off + `[HUMAN]` gate  | `rhino-cli-optimization-base` | yes — at Phase 12 |
+| 13       | Axis D spike (**conditional** — skipped if targets met)    | `rhino-cli-opt-lang`          | yes — if entered  |
+| 14       | Documentation propagation across both repos                | `rhino-cli-opt-docs`          | yes — at Phase 14 |
+| 15-16    | Knowledge capture and archival                             | `rhino-cli-optimization-base` | yes — at Phase 16 |
 
 Phase 0 opens no PR; its evidence rides Phase 2's. Phases 1, 5, and 7 are POCs producing no tracked
 change and therefore open no PR — their findings ride the next phase's PR via `learnings.md`.
@@ -301,7 +308,7 @@ decision written down.
 
 ### Phase 2 — Fast profile, project.json indirection, dead dependencies
 
-Worktree `worktrees/rhino-cli-opt-build`. Opens a PR. Lands in `ose-private` in the same unit.
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-build`). Opens a PR. Lands in `ose-private` in the same unit.
 
 **RED**
 
@@ -379,7 +386,7 @@ incremental = true
 
 ### Phase 3 — Consolidate the test binaries
 
-Worktree `worktrees/rhino-cli-opt-build`. Opens a PR.
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-build`). Opens a PR.
 
 **RED**
 
@@ -424,7 +431,7 @@ test were renamed away and another added.
 
 ### Phase 4 — Root-cause the `nx affected` detection gap
 
-Worktree `worktrees/rhino-cli-opt-build`. Opens a PR. Absorbs the
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-build`). Opens a PR. Absorbs the
 `ose-public-nx-affected-rhino-cli-gap` idea two-pager.
 
 A gate that is silently skipped is not improved by being made faster. In `ose-public` only, a
@@ -496,7 +503,7 @@ completed cleanly, and the total reclaimable figure is measured rather than esti
 
 ### Phase 6 — Reclaim, then encode the hygiene
 
-Worktree `worktrees/rhino-cli-opt-disk`. Opens a PR.
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-disk`). Opens a PR.
 
 The reclamation itself is a machine action producing no diff. The PR is the **automation** that
 stops the footprint regrowing — which is the actual deliverable, since `rustup` has no built-in GC
@@ -576,7 +583,7 @@ the module, and a written module ordering for Phases 9 and 10.
 
 ### Phase 8 — Cheap lint adjacents
 
-Worktree `worktrees/rhino-cli-opt-types`. Opens a PR. Bounded, mechanical, and independent of the
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-types`). Opens a PR. Bounded, mechanical, and independent of the
 big sweep — landing it first proves the lint-tightening machinery works before the risky part.
 
 **RED**
@@ -614,7 +621,7 @@ big sweep — landing it first proves the lint-tightening machinery works before
 
 ### Phase 9 — `indexing_slicing` crate-wide
 
-Worktree `worktrees/rhino-cli-opt-types`. Opens a PR. The single largest change in the plan.
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-types`). Opens a PR. The single largest change in the plan.
 
 **RED**
 
@@ -652,7 +659,7 @@ Work module by module in the order Phase 7 established, cheapest first.
 
 ### Phase 10 — `arithmetic_side_effects` crate-wide
 
-Worktree `worktrees/rhino-cli-opt-types`. Opens a PR. Serial after Phase 9 — both rewrite
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-types`). Opens a PR. Serial after Phase 9 — both rewrite
 statements in the same 195 files.
 
 **RED**
@@ -685,7 +692,7 @@ statements in the same 195 files.
 
 ### Phase 11 — Malformed-input robustness
 
-Worktree `worktrees/rhino-cli-opt-types`. Opens a PR. This is the one phase that adds observable
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-types`). Opens a PR. This is the one phase that adds observable
 behaviour, so it is the one phase carrying a Gherkin obligation — everything else in this plan is a
 pure refactor and is exempt.
 
@@ -754,7 +761,7 @@ NO-GO closes the language question; the plan proceeds directly to Phase 14.
 
 ## Phase 13 — Axis D language spike (conditional)
 
-**Skipped entirely on a NO-GO at Phase 12.** Worktree `worktrees/rhino-cli-opt-lang`. Opens a PR
+**Skipped entirely on a NO-GO at Phase 12.** Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-lang`). Opens a PR
 only if entered.
 
 If entered, this phase answers the four figures no public source provides — OCaml cold-build time
@@ -787,7 +794,7 @@ plan's first design question.
 
 ## Phase 14 — Documentation propagation
 
-Worktree `worktrees/rhino-cli-opt-docs`. Opens a PR. Lands in `ose-public` and `ose-private`.
+Worktree `worktrees/rhino-cli-optimization` (branch `rhino-cli-opt-docs`). Opens a PR. Lands in `ose-public` and `ose-private`.
 
 This plan changes facts that are stated in prose all over both repositories: how the gate binary is
 invoked, how many test binaries exist, which lints are denied, what the toolchain footprint is, and
