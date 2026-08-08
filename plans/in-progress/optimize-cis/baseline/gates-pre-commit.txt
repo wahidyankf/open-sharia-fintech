@@ -1,0 +1,322 @@
+[
+  {
+    "id": "env-staged-guard",
+    "type": "check",
+    "command": "env staged-guard validate",
+    "doctor_tools": [],
+    "scope": "other",
+    "carve-out": "staged-only",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "repo-config-schema",
+    "type": "check",
+    "command": "repo-config validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "format-prettier",
+    "type": "mutation",
+    "command": "prettier --write",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-rustfmt",
+    "type": "mutation",
+    "command": "rustfmt --edition 2024",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-fantomas",
+    "type": "mutation",
+    "command": "fantomas",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-ruff",
+    "type": "mutation",
+    "command": "ruff format",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-gofmt",
+    "type": "mutation",
+    "command": "gofmt -w",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-elixir",
+    "type": "mutation",
+    "command": "scripts/format-elixir.sh",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-csharpier",
+    "type": "mutation",
+    "command": "dotnet csharpier format",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-dart",
+    "type": "mutation",
+    "command": "dart format",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-shfmt",
+    "type": "mutation",
+    "command": "shfmt -w",
+    "doctor_tools": [
+      "shfmt"
+    ],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-tofu",
+    "type": "mutation",
+    "command": "tofu fmt",
+    "doctor_tools": [
+      "tofu"
+    ],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-stylua",
+    "type": "mutation",
+    "command": "stylua",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-clang",
+    "type": "mutation",
+    "command": "clang-format -i",
+    "doctor_tools": [
+      "clang-format"
+    ],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "format-buildifier",
+    "type": "mutation",
+    "command": "buildifier",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "category": "formatter",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "markdownlint",
+    "type": "check",
+    "command": "markdownlint-cli2",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-mermaid",
+    "type": "check",
+    "command": "md mermaid validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-heading-hierarchy",
+    "type": "check",
+    "command": "md heading-hierarchy validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-naming",
+    "type": "check",
+    "command": "md naming validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-frontmatter",
+    "type": "check",
+    "command": "md frontmatter validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "actionlint",
+    "type": "check",
+    "command": "actionlint",
+    "doctor_tools": [
+      "actionlint"
+    ],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "shellcheck",
+    "type": "check",
+    "command": "shellcheck --severity=warning",
+    "doctor_tools": [
+      "shellcheck"
+    ],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "hadolint",
+    "type": "check",
+    "command": "hadolint --failure-threshold warning",
+    "doctor_tools": [
+      "hadolint"
+    ],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "convention-emoji",
+    "type": "check",
+    "command": "convention emoji validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "specs-gherkin-cardinality",
+    "type": "check",
+    "command": "specs gherkin-cardinality validate",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "docker-compose-config",
+    "type": "check",
+    "command": "sh -ec 'for f; do base=${f%.ci.yml}.yml; if [ \"$base\" != \"$f\" ] && [ -f \"$base\" ]; then docker compose -f \"$base\" -f \"$f\" config > /dev/null; else docker compose -f \"$f\" config > /dev/null; fi; done' --",
+    "doctor_tools": [
+      "docker"
+    ],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit",
+      "ci"
+    ]
+  },
+  {
+    "id": "harness-bindings-generate",
+    "type": "mutation",
+    "command": "harness bindings generate",
+    "doctor_tools": [],
+    "scope": "other",
+    "surfaces": [
+      "pre-commit"
+    ]
+  },
+  {
+    "id": "lockfile-sync",
+    "type": "mutation",
+    "command": "git lockfile sync",
+    "doctor_tools": [],
+    "scope": "affected-file-type",
+    "surfaces": [
+      "pre-commit"
+    ]
+  }
+]
