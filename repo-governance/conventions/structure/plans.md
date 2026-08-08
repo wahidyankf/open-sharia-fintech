@@ -911,44 +911,6 @@ reconcile when a plan folder's push includes non-markdown evidence files.
 **below, which is the current binding rule** — read that subsection before relying on either
 condition above.
 
-### Per-Repository Delivery Mode Restrictions (HARD RULE)
-
-The four-mode table and the content restriction above state what is theoretically possible; this
-subsection states what is **actually allowed per repository**, and is the narrower, binding rule.
-Direct push to `origin main` is a scarce, protected capability going forward — not a convenience
-available wherever a plan finds it easier.
-
-- **`ose-public`, `ose-primer`, `beaver-nest`**: `main` is branch-protected against direct pushes,
-  **including for repository admins**. `worktree-to-origin-main` and `main-to-origin-main` are
-  therefore **unavailable** — no credential or role can push to `main` outside a merged PR.
-  `main-to-pr` is not blocked by the protection (it still opens a PR) but is not used either: every
-  plan in these three repositories uses **`worktree-to-pr`**, with no exception. The
-  [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) and
-  the `.md`-only condition of the content restriction above are **retired** in these three
-  repositories — a protected `main` makes them moot regardless of file content, since there is no
-  direct-push path left to carve out of.
-- **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
-  infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
-  plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
-  infrastructure state (Terraform state and similar) that exist only in the primary checkout — never
-  in a worktree provisioned fresh from `origin/main` — per the
-  [secret- and state-dependent infra operations rule](../../workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
-  This is narrower than the general `.md`-only / explicit-go-ahead content restriction above: the
-  carve-out is granted for the **infrastructure secrets/state reason specifically**, not for any
-  `.md`-only plan-docs change or ad-hoc go-ahead. A non-IaC, plan-docs-only change in `ose-private`
-  uses `worktree-to-pr` like everything else — the old two-condition test no longer applies there.
-
-**Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
-discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that
-bypass is even possible, across all four repositories, to the one case with a genuine technical
-reason (secrets and state that cannot leave the primary checkout) closes the gap between "convenient"
-and "actually necessary" that the old `.md`-only carve-out left open everywhere.
-
-**Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
-`main-to-origin-main` in `ose-public`, `ose-primer`, or `beaver-nest` as **HIGH** — those modes have
-no executable path in those repositories. It flags the same fields in `ose-private` as **HIGH**
-unless the plan is genuinely an infrastructure-as-code plan.
-
 The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
 the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps at the plan's
@@ -1009,6 +971,44 @@ resolves to the tier-3 default per the algorithm above.
 
 See the [plan-execution workflow](../../workflows/plan/plan-execution.md) for how each mode changes
 Step 0 (worktree entry), the per-phase push target, and Step 8 (finalization and merge hand-off).
+
+### Per-Repository Delivery Mode Restrictions (HARD RULE)
+
+The four-mode table and the content restriction above state what is theoretically possible; this
+subsection states what is **actually allowed per repository**, and is the narrower, binding rule.
+Direct push to `origin main` is a scarce, protected capability going forward — not a convenience
+available wherever a plan finds it easier.
+
+- **`ose-public`, `ose-primer`, `beaver-nest`**: `main` is branch-protected against direct pushes,
+  **including for repository admins**. `worktree-to-origin-main` and `main-to-origin-main` are
+  therefore **unavailable** — no credential or role can push to `main` outside a merged PR.
+  `main-to-pr` is not blocked by the protection (it still opens a PR) but is not used either: every
+  plan in these three repositories uses **`worktree-to-pr`**, with no exception. The
+  [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) and
+  the `.md`-only condition of the content restriction above are **retired** in these three
+  repositories — a protected `main` makes them moot regardless of file content, since there is no
+  direct-push path left to carve out of.
+- **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
+  infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
+  plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
+  infrastructure state (Terraform state and similar) that exist only in the primary checkout — never
+  in a worktree provisioned fresh from `origin/main` — per the
+  [secret- and state-dependent infra operations rule](../../workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
+  This is narrower than the general `.md`-only / explicit-go-ahead content restriction above: the
+  carve-out is granted for the **infrastructure secrets/state reason specifically**, not for any
+  `.md`-only plan-docs change or ad-hoc go-ahead. A non-IaC, plan-docs-only change in `ose-private`
+  uses `worktree-to-pr` like everything else — the old two-condition test no longer applies there.
+
+**Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
+discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that
+bypass is even possible, across all four repositories, to the one case with a genuine technical
+reason (secrets and state that cannot leave the primary checkout) closes the gap between "convenient"
+and "actually necessary" that the old `.md`-only carve-out left open everywhere.
+
+**Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
+`main-to-origin-main` in `ose-public`, `ose-primer`, or `beaver-nest` as **HIGH** — those modes have
+no executable path in those repositories. It flags the same fields in `ose-private` as **HIGH**
+unless the plan is genuinely an infrastructure-as-code plan.
 
 ### Important Note on File Naming
 
