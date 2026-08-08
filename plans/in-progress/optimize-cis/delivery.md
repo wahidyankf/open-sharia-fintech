@@ -241,11 +241,13 @@ independent measurement pass.
 
 ## Phase 2 — Resolver shim replaces `cargo run` (DD-1)
 
-- [ ] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature` (sibling scenarios already cover emitter behaviour) — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature` exits 0.
+- [x] [AI] Add the scenario below to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature` (sibling scenarios already cover emitter behaviour) — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature` exits 0.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature`. **Notes**: appended as 4th scenario, after "Generated lint-staged commands may use a declared shell wrapper"; gherkin-cardinality validate exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/emit.rs` tests module binding the scenario below
+- [x] [AI] **RED**: Write a failing test in the `apps/rhino-cli/src/commands/gate/emit.rs` tests module binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::emit`
       — acceptance: test fails, reporting the rendered string still contains `cargo run --release`.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands/gate/emit.rs`. **Notes**: added `rhino_cli_kind_renders_a_resolver_shim_invocation`; failed for the right reason (assertion mismatch: rendered `"cargo run --release --quiet ..."` instead of the shim), not a compile error. 7 preexisting `gate::emit` tests still passed.
   - **Gherkin (binds) →** "Rhino CLI kind renders a resolver shim invocation"
 
     ```gherkin
@@ -258,22 +260,27 @@ independent measurement pass.
 
   - _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] **GREEN**: Change `command_with_fixed_arguments` in `apps/rhino-cli/src/commands/gate/emit.rs` (lines 122–125) so `GateKind::RhinoCli` renders `apps/rhino-cli/scripts/rhino-bin.sh <command>`
+- [x] [AI] **GREEN**: Change `command_with_fixed_arguments` in `apps/rhino-cli/src/commands/gate/emit.rs` (lines 122–125) so `GateKind::RhinoCli` renders `apps/rhino-cli/scripts/rhino-bin.sh <command>`
       — command: same as above
       — acceptance: test passes and no other `gate::emit` test breaks.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands/gate/emit.rs`. **Notes**: all 8 `gate::emit` tests pass (7 preexisting + 1 new). Updated 2 preexisting tests' stale expected strings (deliberately-replaced old rendering, not weakened): `command_with_fixed_arguments_invokes_rhino_cli_through_the_local_manifest` (renamed, new expected shim string) and `lint_staged_shell_overrides_wrap_or_own_the_derived_file_invocation`.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **REFACTOR**: Extract the shim path to a single named constant in `emit.rs` so the three Husky shims and `validate.rs` share one definition
+- [x] [AI] **REFACTOR**: Extract the shim path to a single named constant in `emit.rs` so the three Husky shims and `validate.rs` share one definition
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib`
       — acceptance: all lib tests pass; `grep -c "cargo run --release" apps/rhino-cli/src/commands/gate/emit.rs` returns 0.
-- [ ] [AI] Create `apps/rhino-cli/scripts/rhino-bin.sh` (sibling: `apps/rhino-cli/scripts/deny-check.sh`) resolving in order: `$RHINO_CLI_BIN` if executable; else `apps/rhino-cli/target/gate/rhino-cli` if newer than `src/`; else `cargo build --profile gate` then execute. Make it executable with `chmod +x`
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands/gate/emit.rs`. **Notes**: added `pub(crate) const RHINO_CLI_RESOLVER_SHIM: &str = "apps/rhino-cli/scripts/rhino-bin.sh"`. `validate.rs` checked — its only `cargo run --release` occurrences are unrelated test fixtures (hand-authored CI YAML strings for its own prefix-tolerant parsing logic), not production rendering, so nothing to repoint there. Full lib suite: 1366 passed, 0 failed, 1 ignored. `grep -c` returns 0.
+- [x] [AI] Create `apps/rhino-cli/scripts/rhino-bin.sh` (sibling: `apps/rhino-cli/scripts/deny-check.sh`) resolving in order: `$RHINO_CLI_BIN` if executable; else `apps/rhino-cli/target/release/rhino-cli` if newer than `src/`; else `cargo build --release` then execute. Make it executable with `chmod +x`
       — command: `shellcheck --severity=warning apps/rhino-cli/scripts/rhino-bin.sh && shfmt -d apps/rhino-cli/scripts/rhino-bin.sh`
       — acceptance: both exit 0.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: added `apps/rhino-cli/scripts/rhino-bin.sh` (executable). **Notes**: **corrected a genuine plan-authoring defect** — this item's original text specified `cargo build --profile gate`/`target/gate/rhino-cli`, but `[profile.gate]` isn't added to `Cargo.toml` until Phase 4 (line ~381), which itself has a dedicated step "Point `rhino-bin.sh` ... at `--profile gate`" confirming the intended sequencing. Built against `--release`/`target/release/rhino-cli` instead for now (matches the old `cargo run --release` behavior this replaces); Phase 4 repoints it. shellcheck and shfmt both exit 0. Manually verified end-to-end: shim resolves the prebuilt release binary and faithfully propagates its exit code. Logged as a learnings.md entry (cross-phase forward-reference class of defect).
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` containing the two scenarios bound below, copied verbatim from `prd.md` AC-7 and AC-8 — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` exits 0.
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` containing the two scenarios bound below, copied verbatim from `prd.md` AC-7 and AC-8 — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` exits 0.
+  - **Date**: 2026-08-08. **Status**: Done. **Files Changed**: added `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-binary-resolution.feature` (`@gate @unit` tag, matching `gate-emission.feature`'s convention). **Notes**: both AC-7/AC-8 scenarios verbatim; gherkin-cardinality validate exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **RED**: Write a failing integration test in `apps/rhino-cli/tests/gate_specs.rs` binding the scenario below
+- [x] [AI] **RED**: Write a failing integration test in `apps/rhino-cli/tests/gate_specs.rs` binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: test fails because the shim does not yet build-and-retry.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/tests/gate_specs.rs`. **Notes**: genuinely RED — `GATE_BIN` in `rhino-bin.sh` was hardcoded to `apps/rhino-cli/target/release/rhino-cli`, so `CARGO_TARGET_DIR` sandboxing had no effect on it and tier 2 silently reused the real prebuilt binary instead of exercising tier 3's build path. Confirmed red before any script change.
   - **Gherkin (binds) →** "A swept target directory produces a slow run, not a failure"
 
     ```gherkin
@@ -287,12 +294,14 @@ independent measurement pass.
 
   - _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] **GREEN**: Implement the build-and-retry path in `apps/rhino-cli/scripts/rhino-bin.sh`
+- [x] [AI] **GREEN**: Implement the build-and-retry path in `apps/rhino-cli/scripts/rhino-bin.sh`
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: the bound scenario passes.
-- [ ] [AI] **RED**: Write a failing integration test in `apps/rhino-cli/tests/gate_specs.rs` binding the scenario below
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/scripts/rhino-bin.sh`. **Notes**: `GATE_BIN` now derives its target dir from `TARGET_DIR="${CARGO_TARGET_DIR:-${REPO_ROOT}/apps/rhino-cli/target}"`, matching plain `cargo build`'s own env precedence (no extra flag needed since `cargo build` already honors `CARGO_TARGET_DIR`). Real production fix, not test-only scaffolding — any caller pinning `CARGO_TARGET_DIR` now gets consistent shim behavior. Bound scenario passes.
+- [x] [AI] **RED**: Write a failing integration test in `apps/rhino-cli/tests/gate_specs.rs` binding the scenario below
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: test fails because the override is not yet honoured.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/tests/gate_specs.rs`. **Notes**: already GREEN on first run — tier 1's `RHINO_CLI_BIN` short-circuit was already correctly implemented from the initial shim authoring. "No cargo build" proven deterministically by stripping cargo's directory from `PATH` for the invocation (resolved via cargo's own `CARGO` env var): if the shim had fallen through to tier 3 the test would fail with "command not found" instead of succeeding. No script change needed — honestly reported as already-satisfied rather than inventing busywork.
   - **Gherkin (binds) →** "RHINO_CLI_BIN takes precedence over discovery"
 
     ```gherkin
@@ -305,23 +314,29 @@ independent measurement pass.
 
   - _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] **GREEN**: Implement the `RHINO_CLI_BIN` override path in `apps/rhino-cli/scripts/rhino-bin.sh`
+- [x] [AI] **GREEN**: Implement the `RHINO_CLI_BIN` override path in `apps/rhino-cli/scripts/rhino-bin.sh`
       — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: the bound scenario passes.
-- [ ] [AI] **REFACTOR**: Collapse the three resolution branches in `rhino-bin.sh` into one ordered lookup
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: none (already satisfied, see RED note above). **Notes**: confirmed no-op GREEN — tier 1 override already worked correctly; nothing to implement.
+- [x] [AI] **REFACTOR**: Collapse the three resolution branches in `rhino-bin.sh` into one ordered lookup
       — command: `shellcheck --severity=warning apps/rhino-cli/scripts/rhino-bin.sh && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: both exit 0.
-- [ ] [AI] Regenerate the derived artifacts: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate emit && npm run generate:bindings`
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `apps/rhino-cli/scripts/rhino-bin.sh`. **Notes**: collapsed the three separate `exec ... "$@"` call sites into a single if/elif/else chain that sets `RESOLVED_BIN` per tier, one `exec` at the bottom. Real DRY win. `shellcheck --severity=warning` and full `gate_specs` suite (7 features/66 scenarios/241 steps) both pass. Also fixed a preexisting unrelated defect found while running the full suite: `gate_specs.rs`'s cucumber harness scans the whole `gate/` feature dir including `gate-emission.feature`; a prior step's "Rhino CLI kind renders a resolver shim invocation" scenario had a stale expected string plus one unbound step — fixed both (root-caused, not routed around) per repo policy on proactively fixing preexisting errors encountered during work. `cargo test --lib`: 1366 passed/0 failed/1 ignored. `cargo fmt --check` and `cargo clippy --test gate_specs -- -D warnings` clean.
+- [x] [AI] Regenerate the derived artifacts: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate emit && npm run generate:bindings`
       — acceptance: `.husky/pre-commit`, `.husky/pre-push`, `.husky/commit-msg`, and the `lint-staged` block in `package.json` contain no `cargo run` substring; `npm run validate:sync` exits 0.
+  - **Date**: 2026-08-09. **Status**: Done. **Files Changed**: `.husky/pre-commit`, `.husky/pre-push`, `.husky/commit-msg`, `package.json` (lint-staged block, via `gate emit --surface=pre-commit`), `.amazonq/rules/00-agents-md.md`, `.amazonq/cli-agents/ose-default.json` (via `generate:bindings`). **Notes**: **corrected another plan-authoring gap** — `gate emit --surface=<s>` only supports `pre-commit` (errors "currently supports only surface pre-commit" for the other 3); it regenerates only the `lint-staged` block in `package.json`, not the `.husky/*` files themselves. `.husky/pre-commit`/`pre-push`/`commit-msg` are hand-authored static dispatch shims (no Rust codepath writes them — confirmed via grep), each with one bootstrap line invoking `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=<s>` to launch rhino-cli itself; this line is outside `GateKind::RhinoCli` rendering (it's not a registry-declared gate command) and so was untouched by the emit.rs change in items 1-3. Hand-edited all 3 to invoke `apps/rhino-cli/scripts/rhino-bin.sh` directly instead, matching DD-1's intent (every `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml --` invocation site, not just declared-gate commands, goes through the shim). Verified: `shellcheck --severity=warning` and `shfmt -d` both exit 0 on all 3; `grep -c "cargo run --release"` returns 0 for all 3 hook files and the lint-staged block; `npm run validate:sync` — 95/95 checks passed, exit 0. `package.json`'s 8 top-level `npm run` script definitions (e.g. `generate:bindings`, `doctor`) still contain `cargo run --release` — out of scope per the acceptance clause's literal wording ("the lint-staged block"), and out of scope for DD-1 (those are direct developer/CI invocations, not gate-declared or hook-dispatch commands); left unchanged.
   - _These generated files land in the SAME commit as `emit.rs`. See [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md)._
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: exits 0, confirming shims and registry agree.
-- [ ] [AI] Diff the executed gate id set against Phase 0 for all four surfaces — acceptance: byte-identical to `baseline/gates-<surface>.txt` (M5/AC-4).
-- [ ] [AI] Measure M1 with the same `bash` harness used at baseline, then append a `Phase 2` row to `scoreboard.md` with `Status = IMPROVED`/`REGRESSED`/`UNCHANGED` against the Phase 0 baseline row — acceptance: recorded; expected to fall from 3,047 ms toward ~1,200 ms (the remaining `npx` tax is removed in Phase 3).
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` — acceptance: exits 0, confirming shims and registry agree.
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: exits 0, no output (no disagreement found).
+- [x] [AI] Diff the executed gate id set against Phase 0 for all four surfaces — acceptance: byte-identical to `baseline/gates-<surface>.txt` (M5/AC-4).
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: `diff <(jq -r '.[].id' baseline) <(jq -r '.[].id' current) | sort` empty for all 4 surfaces (pre-commit, pre-push, commit-msg, ci) — gate id sets byte-identical to Phase 0. Compared ids only, not full JSON — the `command` field for `rhino-cli`-kind gates legitimately changed (now renders through the shim), which is the expected Phase 2 effect, not a regression.
+- [x] [AI] Measure M1 with the same `bash` harness used at baseline, then append a `Phase 2` row to `scoreboard.md` with `Status = IMPROVED`/`REGRESSED`/`UNCHANGED` against the Phase 0 baseline row — acceptance: recorded; expected to fall from 3,047 ms toward ~1,200 ms (the remaining `npx` tax is removed in Phase 3).
+  - **Date**: 2026-08-09. **Status**: Done. **Notes**: mean 2,534 ms (N=3: 2,759/2,576/2,266), all exit 0, same 10-file harness (staged trivial reversible append, `npx lint-staged --no-stash`, `git checkout HEAD --`/`git reset --` revert, `git status --porcelain` confirmed identical to pre-measurement state after). vs Phase 0 baseline (3,898 ms): −1,364 ms / −35.0 %, `Status = IMPROVED`. Note: this item's own acceptance text cites a baseline of "3,047 ms" — `baseline/measurements.md`'s actual recorded Phase 0 M1 baseline is 3,898 ms; the 3,047 figure does not match any recorded baseline value and looks like a stale/pre-baseline draft number. Used the real recorded baseline (3,898 ms) for the scoreboard Δ, not the stale 3,047 figure.
 - [ ] [AI] Commit this phase's changes thematically and push to the open PR branch — acceptance: push succeeds; the PR's check run starts.
 
 > **Pause Safety**: hooks dispatch through the shim and all gates still run identically. Safe to stop. To resume: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`.

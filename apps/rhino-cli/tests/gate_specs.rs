@@ -10,7 +10,8 @@
 
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Output};
+use std::time::SystemTime;
 
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
@@ -34,6 +35,11 @@ struct GateWorld {
     path: Option<OsString>,
     ci_changed_base: Option<String>,
     ci_arguments: Option<PathBuf>,
+    shim_target_dir: Option<TempDir>,
+    shim_override_dir: Option<TempDir>,
+    shim_override_bin: Option<PathBuf>,
+    shim_gate_bin_mtime: Option<SystemTime>,
+    shim_first_run: Option<Output>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -56,6 +62,11 @@ impl GateWorld {
             path: None,
             ci_changed_base: None,
             ci_arguments: None,
+            shim_target_dir: None,
+            shim_override_dir: None,
+            shim_override_bin: None,
+            shim_gate_bin_mtime: None,
+            shim_first_run: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -1805,9 +1816,65 @@ fn then_emit_expands_kind_derived_command_once(w: &mut GateWorld) {
     assert_eq!(
         package["lint-staged"]["repo-config.yml"],
         serde_json::json!([
-            "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+            "bash -c 'apps/rhino-cli/scripts/rhino-bin.sh repo-config validate' --"
         ])
     );
+}
+
+// Binds `gate-emission.feature`'s "Rhino CLI kind renders a resolver shim
+// invocation" scenario. `emit.rs`'s own unit test module already binds the
+// same Gherkin text at the unit level (see its doc comment there), but this
+// file's cucumber harness also scans the shared `gate-emission.feature` file
+// and requires its own step definitions to avoid an undefined-step failure.
+
+#[given("the registry declares a gate of kind \"rhino-cli\" on surface \"pre-commit\"")]
+fn given_rhino_cli_kind_emit_registry(w: &mut GateWorld) {
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "md-mermaid",
+            "check",
+            "md mermaid validate",
+            "rhino-cli",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        )),
+    );
+    w.write(
+        "package.json",
+        "{\"name\":\"fixture\",\"lint-staged\":{}}\n",
+    );
+}
+
+#[then(
+    "the generated command invokes the resolver shim at \"apps/rhino-cli/scripts/rhino-bin.sh\""
+)]
+fn then_emit_invokes_resolver_shim(w: &mut GateWorld) {
+    assert!(w.is_success(), "gate emit failed: {}", w.output);
+    let command = emitted_md_lint_staged_command(w);
+    assert!(
+        command.contains("apps/rhino-cli/scripts/rhino-bin.sh"),
+        "expected the generated command to invoke the resolver shim: {command}"
+    );
+}
+
+#[then("the generated command contains no \"cargo run\" substring")]
+fn then_emit_contains_no_cargo_run(w: &mut GateWorld) {
+    let command = emitted_md_lint_staged_command(w);
+    assert!(
+        !command.contains("cargo run"),
+        "expected the generated command to contain no cargo run substring: {command}"
+    );
+}
+
+fn emitted_md_lint_staged_command(w: &GateWorld) -> String {
+    let package: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(w.root().join("package.json")).expect("read emitted package"),
+    )
+    .expect("parse emitted package");
+    package["lint-staged"]["*.md"][0]
+        .as_str()
+        .expect("emitted command string")
+        .to_owned()
 }
 
 #[given("\"rhino-cli gate emit --surface=pre-commit\" has already run")]
@@ -2527,6 +2594,211 @@ fn given_formatted_elixir_fixtures(w: &mut GateWorld) {
         "formatted.exs",
         "repo-config.yml",
     ]);
+}
+
+// Binds `gate-binary-resolution.feature`'s two scenarios — "A swept target
+// directory produces a slow run, not a failure" and "RHINO_CLI_BIN takes
+// precedence over discovery" — against the real `rhino-bin.sh` resolver shim
+// script (not a fixture stand-in). The first scenario sandboxes tier 3
+// (build-then-execute) via a scratch `CARGO_TARGET_DIR`, so the real
+// `apps/rhino-cli/target/release/rhino-cli` build artifact this test suite
+// itself may depend on is never touched. The second scenario proves no
+// `cargo build` occurred by stripping cargo's directory from PATH for that
+// invocation, rather than relying on timing.
+
+fn repo_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("rhino-cli manifest has a repository-root ancestor")
+        .to_path_buf()
+}
+
+fn rhino_bin_shim_path() -> PathBuf {
+    repo_root().join("apps/rhino-cli/scripts/rhino-bin.sh")
+}
+
+fn real_prebuilt_rhino_cli() -> PathBuf {
+    repo_root().join("apps/rhino-cli/target/release/rhino-cli")
+}
+
+/// Deterministic, side-effect-free probe args for exercising the resolver
+/// shim: `--say <msg>` echoes `<msg>` to stdout and exits `0` (unlike
+/// `--version`, which this CLI's own error-handling maps to exit `2` because
+/// clap's `DisplayVersion` pseudo-error is treated as a parse error).
+const RESOLVER_SHIM_PROBE_ARGS: [&str; 2] = ["--say", "resolver-shim-probe"];
+
+/// The current `PATH`, minus the directory containing the `cargo` binary
+/// that is running this test (resolved via the `CARGO` env var cargo sets
+/// for its own child processes). Used to prove a resolver-shim invocation
+/// never reached its `cargo build` fallback: if it had, the invocation would
+/// fail with "command not found" rather than succeed.
+fn path_without_cargo_directory() -> OsString {
+    let cargo_dir = std::env::var_os("CARGO")
+        .map(PathBuf::from)
+        .and_then(|cargo| cargo.parent().map(Path::to_path_buf));
+    let existing = std::env::var_os("PATH").expect("PATH is available");
+    let filtered =
+        std::env::split_paths(&existing).filter(|dir| Some(dir.as_path()) != cargo_dir.as_deref());
+    std::env::join_paths(filtered).expect("join PATH without cargo directory")
+}
+
+#[given("the rhino-cli binary is absent because the ambient sweeper removed target/")]
+fn given_swept_target_directory(w: &mut GateWorld) {
+    w.shim_target_dir = Some(TempDir::new().expect("create sandbox CARGO_TARGET_DIR"));
+}
+
+#[given("the environment variable RHINO_CLI_BIN points at an executable rhino-cli binary")]
+fn given_rhino_cli_bin_override(w: &mut GateWorld) {
+    let dir = TempDir::new().expect("create RHINO_CLI_BIN fixture directory");
+    let stub = dir.path().join("stub-rhino-cli");
+    std::fs::write(
+        &stub,
+        "#!/bin/sh\nprintf 'stub-rhino-cli-override-marker\\n'\nexit 0\n",
+    )
+    .expect("write RHINO_CLI_BIN stub");
+    make_executable(stub.clone());
+    w.shim_gate_bin_mtime = Some(
+        std::fs::metadata(real_prebuilt_rhino_cli())
+            .expect("read real prebuilt rhino-cli binary metadata")
+            .modified()
+            .expect("read real prebuilt rhino-cli binary mtime"),
+    );
+    w.shim_override_bin = Some(stub);
+    w.shim_override_dir = Some(dir);
+}
+
+#[when("a generated gate command runs through the resolver shim")]
+fn when_resolver_shim_runs(w: &mut GateWorld) {
+    let mut command = Command::new(rhino_bin_shim_path());
+    command.args(RESOLVER_SHIM_PROBE_ARGS);
+    if let Some(target_dir) = &w.shim_target_dir {
+        command.env("CARGO_TARGET_DIR", target_dir.path());
+    }
+    if let Some(bin) = &w.shim_override_bin {
+        command
+            .env("RHINO_CLI_BIN", bin)
+            .env("PATH", path_without_cargo_directory());
+    }
+    w.shim_first_run = Some(command.output().expect("run resolver shim"));
+}
+
+#[then("the shim builds the binary and then executes the requested gate")]
+fn then_shim_builds_and_executes(w: &mut GateWorld) {
+    let output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    assert!(
+        output.status.success(),
+        "resolver shim must build then execute successfully: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let built_binary = w
+        .shim_target_dir
+        .as_ref()
+        .expect("sandbox target dir configured")
+        .path()
+        .join("release/rhino-cli");
+    assert!(
+        built_binary.is_file(),
+        "resolver shim must build the binary into the sandbox target directory"
+    );
+}
+
+#[then("the gate reports the same result it would have reported with the binary present")]
+fn then_shim_output_matches_real_binary(w: &mut GateWorld) {
+    let shim_output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    let direct_output = Command::new(real_prebuilt_rhino_cli())
+        .args(RESOLVER_SHIM_PROBE_ARGS)
+        .output()
+        .expect("run the real prebuilt rhino-cli binary directly");
+    assert_eq!(shim_output.status.code(), direct_output.status.code());
+    assert_eq!(shim_output.stdout, direct_output.stdout);
+}
+
+#[then("a subsequent invocation reuses the built binary without rebuilding")]
+fn then_subsequent_invocation_reuses_binary(w: &mut GateWorld) {
+    let target_dir = w
+        .shim_target_dir
+        .as_ref()
+        .expect("sandbox target dir configured");
+    let built_binary = target_dir.path().join("release/rhino-cli");
+    let mtime_before = std::fs::metadata(&built_binary)
+        .expect("read sandbox binary metadata")
+        .modified()
+        .expect("read sandbox binary mtime");
+
+    let output = Command::new(rhino_bin_shim_path())
+        .args(RESOLVER_SHIM_PROBE_ARGS)
+        .env("CARGO_TARGET_DIR", target_dir.path())
+        .output()
+        .expect("run resolver shim a second time");
+    assert!(
+        output.status.success(),
+        "second resolver shim invocation must succeed: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let mtime_after = std::fs::metadata(&built_binary)
+        .expect("read sandbox binary metadata after second invocation")
+        .modified()
+        .expect("read sandbox binary mtime after second invocation");
+    assert_eq!(
+        mtime_before, mtime_after,
+        "a second invocation must reuse the already-built binary, not rebuild it"
+    );
+}
+
+#[then("the shim executes the binary at that path")]
+fn then_shim_executes_override_binary(w: &mut GateWorld) {
+    let output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    assert!(
+        output.status.success(),
+        "resolver shim must execute the RHINO_CLI_BIN override: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(
+        String::from_utf8_lossy(&output.stdout).trim(),
+        "stub-rhino-cli-override-marker",
+        "resolver shim must run the RHINO_CLI_BIN override binary, not a rebuilt one"
+    );
+}
+
+#[then("it performs no cargo build")]
+fn then_no_cargo_build_occurred(w: &mut GateWorld) {
+    // The invocation's PATH excluded cargo's directory (see
+    // `when_resolver_shim_runs`), so if the shim had fallen through to tier 3
+    // and invoked `cargo build`, the shell would report "command not found"
+    // and the shim would exit non-zero. A successful exit is therefore
+    // sufficient proof no cargo build was attempted; the mtime check below
+    // corroborates it.
+    let output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    assert!(
+        output.status.success(),
+        "resolver shim must not attempt cargo build when RHINO_CLI_BIN is set: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let mtime_before = w
+        .shim_gate_bin_mtime
+        .expect("captured real prebuilt binary mtime before invocation");
+    let mtime_after = std::fs::metadata(real_prebuilt_rhino_cli())
+        .expect("read real prebuilt rhino-cli binary metadata after invocation")
+        .modified()
+        .expect("read real prebuilt rhino-cli binary mtime after invocation");
+    assert_eq!(
+        mtime_before, mtime_after,
+        "the real prebuilt binary must be untouched when RHINO_CLI_BIN overrides discovery"
+    );
 }
 
 #[tokio::main]
