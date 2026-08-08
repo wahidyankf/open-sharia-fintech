@@ -325,9 +325,29 @@ flowchart TD
       other Markdown path by reader relevance and sensitivity — acceptance: no living onboarding,
       setup, architecture, navigation, security, contribution, relationship, or directly linked
       operator document is omitted.
-- [ ] [AI] [P1-006] Expand each audit-required or reader-related document into one exact `[AI]` task
+- [x] [AI] [P1-006] Expand each audit-required or reader-related document into one exact `[AI]` task
       row in its owning ledger — acceptance: each row names one path, one direct action, its source
       of truth, exact applicable command, concrete acceptance criterion, and implementation fields.
+
+  **Date:** 2026-08-08  
+  **Status:** passed  
+  **Files Changed:** `artifacts/reader-doc-disposition-ose-public.md` (678 `P1-doc-*` rows corrected,
+  no row count change)  
+  **Evidence:** Cycle 1 PR-review fixer pass on PR #159 corrected every Verify-column command the
+  review found non-executable or vacuous: 346 rows' `md links validate <path>` (invalid — the
+  subcommand takes no positional argument) became a `| grep "^### <path>$"` scope on the tool's
+  repo-wide report; 130 structurally vacuous hub-README `find -name '*.ext'` rows (their children are
+  subdirectories, not same-extension siblings) became `find -mindepth 1 -type d`; 117 already-correct
+  leaf rows and the 130 hub rows were all backtick-wrapped, and one further row outside the review's
+  own 247-count (`social-media-posts/linkedin`, `-maxdepth 2`) was fixed to the same standard on
+  discovery; 9 rows citing the now-archived
+  `plans/in-progress/sdlc-gate-registry-enforcement/**` were repointed to
+  `plans/done/2026-08-07__sdlc-gate-registry-enforcement/**`; the 2 individually-authored rows
+  (root `README.md`, `docs/reference/related-repositories.md`) gained an explicit manual-diff step
+  since a link check alone cannot establish their content-equivalence Acceptance clause. All fixes
+  spot-checked by running the corrected commands against the working tree; `npx prettier --check`
+  and `npx markdownlint-cli2` both pass on the regenerated ledger.
+
 - [ ] [AI] [P1-007] Mark `plans/done/**` and `archived/**` historical, generated mirrors generated,
       and shared Rhino paths identity-bound — acceptance: none is scheduled for ordinary hand-editing.
 - [x] [AI] [P1-008] Compute the primer ledger digest inside `ose-primer` and create
