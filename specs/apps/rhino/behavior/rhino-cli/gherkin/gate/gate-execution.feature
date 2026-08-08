@@ -110,3 +110,10 @@ Feature: Gate execution
     Then it exits non-zero
     And its output contains a per-gate summary line for every gate in the group
     And the failing gate id appears on a line marked FAIL
+
+  Scenario: Gate group jobs consume a prebuilt binary
+    Given the build-rhino job has published the rhino-cli artifact for the run
+    When a gate group job executes
+    Then it downloads the artifact rather than building from source
+    And it runs no cargo install command
+    And its step list contains no Rust toolchain setup
