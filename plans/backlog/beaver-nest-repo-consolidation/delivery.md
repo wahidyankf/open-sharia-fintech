@@ -59,6 +59,7 @@ One worktree per repo, at the same relative path inside each repo's own working 
 | `ose-public`  | `/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/`  |
 | `ose-primer`  | `/Users/wkf/ose-projects/ose-primer/worktrees/beaver-nest-repo-consolidation/`  |
 | `ose-private` | `/Users/wkf/ose-projects/ose-private/worktrees/beaver-nest-repo-consolidation/` |
+| `beaver-nest` | `/Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation/` |
 
 Optional manual pre-provisioning (run from each repo's own root):
 
@@ -79,12 +80,19 @@ verify it live with `git -C <repo> rev-parse --is-bare-repository` before choosi
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
-> **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
-> single, plan-wide worktree before the
+> **Worktree Cap conformance note (added when the rule landed, corrected on re-review):** this plan
+> already declared **one worktree per repo** (four repos, four rows in the table above — not "a
+> single, plan-wide worktree") before the
 > [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
-> and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
-> rules landed. Reviewed against both — already compliant, no change required.
+> rule landed, and is compliant with it: never more than one worktree open per repository. It was
+> **not** compliant with
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule):
+> Phase 8 (retiring `beaver-nest`) and Phases 9-10 (Knowledge Capture and Plan Archival in
+> `ose-public`) both described a direct push to a protected `main` under the retired
+> Plan-Docs-Only Carve-Out. Corrected below — Phase 8 now routes through a `beaver-nest` PR (added
+> as its own worktree row above), and Phases 9-10 route through one additional `ose-public` PR
+> instead of a direct push. See the [Delivery Mode](#delivery-mode-worktree-to-pr) section and the
+> `### Delivery Boundaries` table for the corrected shape.
 
 ## Delivery Mode: worktree-to-pr
 
@@ -93,8 +101,17 @@ generated mirror files, which the `main-to-origin-main` `.md`-only restriction e
 
 Phase 0 opens no PR under this or any mode. Phases 1-2 are non-boundary phases committing to Unit 1's
 branch. Phases 3, 4, 5, 6, and 7 each close a delivery unit and open exactly one PR. Phase 8 produces
-changes only in `beaver-nest` — a markdown-only README edit pushed directly to that repo immediately
-before it is archived — so it opens no `ose-public` PR.
+changes only in `beaver-nest` — a markdown-only README edit — and opens no `ose-public` PR, but per
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+`beaver-nest` is one of the three repos where every plan uses `worktree-to-pr` with no exception, so
+the README edit lands via its own `beaver-nest` PR (worktree row added above), reviewed and merged
+before the archive flip — never a direct push, regardless of whether `beaver-nest`'s branch
+protection is active at execution time (do not rely on the protection setting being live; the
+routing is unconditional). Phases 9-10 (Knowledge Capture and Plan Archival, both in `ose-public`)
+likewise no longer use the retired Plan-Docs-Only Carve-Out: Phase 9 commits to a new branch off the
+`ose-public` worktree without opening a PR (an intermediate, non-boundary phase), and Phase 10 is
+that unit's delivery boundary — it pushes the branch and opens the plan's final `ose-public` PR,
+which the archival commit rides inside.
 
 **Archival-in-PR applies to `ose-public` only.** `ose-primer` and `ose-private` carry no `plans/`
 entry for this work, so their PRs contain no plan-folder content. This is the ordinary cross-repo
@@ -126,17 +143,16 @@ the spine directly.
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                            | Worktree / branch                                         | PR opens                                 |
-| -------- | ---------------------------------------- | --------------------------------------------------------- | ---------------------------------------- |
-| 0        | — (setup and baseline)                   | —                                                         | no                                       |
-| 1-3      | BeaverNest product ported and green      | `ose-public` · `beaver-nest-repo-consolidation-port`      | yes — at Phase 3                         |
-| 4        | Vision, ideas, and app-setup disposition | `ose-public` · `beaver-nest-repo-consolidation-narrative` | yes — at Phase 4                         |
-| 5        | Four→three sweep, `ose-public`           | `ose-public` · `beaver-nest-repo-consolidation-sweep`     | yes — at Phase 5                         |
-| 6        | Four→three sweep, `ose-primer`           | `ose-primer` · `beaver-nest-repo-consolidation-sweep`     | yes — at Phase 6                         |
-| 7        | Four→three sweep, `ose-private`          | `ose-private` · `beaver-nest-repo-consolidation-sweep`    | yes — at Phase 7                         |
-| 8        | Repository retirement                    | `beaver-nest` · `main` (md-only direct push)              | no — direct push, then `gh repo archive` |
-| 9        | Knowledge Capture                        | `ose-public` · local `main` (plan-docs-only carve-out)    | no                                       |
-| 10       | Plan Archival and cleanup                | `ose-public` · local `main` (plan-docs-only carve-out)    | no                                       |
+| Phase(s) | Delivery unit                            | Worktree / branch                                         | PR opens                                             |
+| -------- | ---------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- |
+| 0        | — (setup and baseline)                   | —                                                         | no                                                   |
+| 1-3      | BeaverNest product ported and green      | `ose-public` · `beaver-nest-repo-consolidation-port`      | yes — at Phase 3                                     |
+| 4        | Vision, ideas, and app-setup disposition | `ose-public` · `beaver-nest-repo-consolidation-narrative` | yes — at Phase 4                                     |
+| 5        | Four→three sweep, `ose-public`           | `ose-public` · `beaver-nest-repo-consolidation-sweep`     | yes — at Phase 5                                     |
+| 6        | Four→three sweep, `ose-primer`           | `ose-primer` · `beaver-nest-repo-consolidation-sweep`     | yes — at Phase 6                                     |
+| 7        | Four→three sweep, `ose-private`          | `ose-private` · `beaver-nest-repo-consolidation-sweep`    | yes — at Phase 7                                     |
+| 8        | Repository retirement                    | `beaver-nest` · `beaver-nest-repo-consolidation-retire`   | yes — at Phase 8, then `gh repo archive` after merge |
+| 9-10     | Knowledge Capture and Plan Archival      | `ose-public` · `beaver-nest-repo-consolidation-archival`  | yes — at Phase 10                                    |
 
 ## Phase 0: Environment Setup and Baseline
 
@@ -753,27 +769,39 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 
 ## Phase 8: Retire the `beaver-nest` Repository
 
-Changes land only in `beaver-nest`, as a markdown-only direct push immediately before the archive
-flip. No `ose-public` PR opens. Archiving is reversible via `gh repo unarchive`
-[Web-cited, GitHub Docs, accessed 2026-08-06].
+Changes land only in `beaver-nest`, via that repo's own PR — never a direct push. Per
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
+`beaver-nest` is one of the three repos where every plan uses `worktree-to-pr` with no exception,
+regardless of whether its branch protection is confirmed active at execution time. Archiving is
+reversible via `gh repo unarchive` [Web-cited, GitHub Docs, accessed 2026-08-06].
 
 - [ ] [AI] Verify every prior unit merged — command: `gh pr list --repo wahidyankf/ose-public --state merged --search 'beaver-nest-repo-consolidation' --json number,title`
       — acceptance: PRs for Phases 3, 4, and 5 are listed as merged, and the `ose-primer` / `ose-private` sweep PRs are merged in their own repos
 - [ ] [AI] Confirm no surviving repo still references the fourth — command: `for r in ose-public ose-primer ose-private; do grep -rn 'beaver-nest' /Users/wkf/ose-projects/$r/AGENTS.md /Users/wkf/ose-projects/$r/README.md /Users/wkf/ose-projects/$r/docs /Users/wkf/ose-projects/$r/repo-governance; done`
       — acceptance: zero matches outside `plans/done/**`
-- [ ] [AI] Rewrite `beaver-nest`'s `README.md` to a retirement notice stating the product now lives in
+- [ ] [AI] Provision the `beaver-nest` worktree and branch — command: `git -C /Users/wkf/ose-projects/beaver-nest worktree add worktrees/beaver-nest-repo-consolidation -b beaver-nest-repo-consolidation-retire origin/main`
+      — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest worktree list` shows the new worktree on branch `beaver-nest-repo-consolidation-retire`
+- [ ] [AI] Rewrite `beaver-nest`'s `README.md` (inside the new worktree) to a retirement notice stating the product now lives in
       `ose-public` as `apps/beavernest-be` and `apps/beavernest-app-web`, and linking to
       `https://github.com/wahidyankf/ose-public` — this follows GitHub's own pre-archive guidance to
       update the README before archiving
-      — command: `grep -c 'ose-public' /Users/wkf/ose-projects/beaver-nest/README.md`
+      — command: `grep -c 'ose-public' /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation/README.md`
       — acceptance: prints at least 1
+- [ ] [AI] Commit and push the branch — command: `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation add README.md && git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation commit -m 'docs(readme): point to ose-public ahead of archival' && git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation push origin beaver-nest-repo-consolidation-retire`
+      — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation status -sb` shows the branch pushed
+      — note: the pre-existing uncommitted modifications recorded in `evidence/phase-0-beaver-nest-status.txt`,
+      in the separate primary `/Users/wkf/ose-projects/beaver-nest` checkout, are **not** committed here,
+      whatever their count is by execution time; this step only ever stages `README.md` inside the new worktree
+- [ ] [AI] Open the PR — command: `gh pr create --repo wahidyankf/beaver-nest --base main --head beaver-nest-repo-consolidation-retire --title "docs(readme): retirement notice ahead of archival" --body "Final change before this repo archives — product now lives in ose-public."`
+      — acceptance: `gh pr list --repo wahidyankf/beaver-nest --head beaver-nest-repo-consolidation-retire --json number` returns one open PR
+- [ ] [AI] Run the PR-Review Maker→Fixer Cycle against the `beaver-nest` PR per the
+      [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
+      — acceptance: 0 CRITICAL/HIGH outstanding, CI green, all threads answered/resolved
+- [ ] [AI] Merge the PR — command: `gh pr merge --repo wahidyankf/beaver-nest --squash <PR-number>`
+      — acceptance: `gh pr view --repo wahidyankf/beaver-nest <PR-number> --json state` reports `MERGED`
 - [ ] [AI] Update the repository description to match — command: `gh repo edit wahidyankf/beaver-nest --description 'Archived — BeaverNest now lives in wahidyankf/ose-public'`
       — acceptance: `gh repo view wahidyankf/beaver-nest --json description` reflects the new text
-- [ ] [AI] Commit and push the retirement notice to `beaver-nest` origin `main` — command: `git -C /Users/wkf/ose-projects/beaver-nest add README.md && git -C /Users/wkf/ose-projects/beaver-nest commit -m 'docs(readme): point to ose-public ahead of archival' && git -C /Users/wkf/ose-projects/beaver-nest push origin main`
-      — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest status -sb` shows no divergence from `origin/main`
-      — note: the pre-existing uncommitted modifications recorded in `evidence/phase-0-beaver-nest-status.txt`
-      are **not** committed here, whatever their count is by execution time; stage `README.md` explicitly
-- [ ] [AI] Close any open issues and pull requests — command: `gh pr list --repo wahidyankf/beaver-nest --state open --json number` and `gh issue list --repo wahidyankf/beaver-nest --state open --json number`
+- [ ] [AI] Close any remaining open issues and pull requests — command: `gh pr list --repo wahidyankf/beaver-nest --state open --json number` and `gh issue list --repo wahidyankf/beaver-nest --state open --json number`
       — acceptance: both report an empty array
 - [ ] [AI] Archive the repository — command: `gh repo archive wahidyankf/beaver-nest --yes`
       — acceptance: `gh repo view wahidyankf/beaver-nest --json isArchived` reports `true`
@@ -785,23 +813,30 @@ flip. No `ose-public` PR opens. Archiving is reversible via `gh repo unarchive`
 > All checks below must pass before starting Phase 9. If any check fails, fix it in Phase 8 before
 > proceeding.
 
+- [ ] [AI] `gh pr view --repo wahidyankf/beaver-nest <PR-number> --json state` — acceptance: reports `MERGED`
 - [ ] [AI] `gh repo view wahidyankf/beaver-nest --json isArchived,visibility` — acceptance: reports `isArchived: true` and `visibility: PUBLIC`
 - [ ] [AI] `npx nx run-many -t test:quick -p beavernest-be,beavernest-app-web,beavernest-be-e2e,beavernest-app-web-e2e` in `ose-public` — acceptance: exits 0, proving the product is unaffected by the archive
 
 > **Pause Safety**: the OSE family is three repositories. BeaverNest's product, vision, and backlog
-> live in `ose-public`; the fourth repository is read-only with a retirement notice, and its history
-> and URL remain intact. Safe to stop.
+> live in `ose-public`; the fourth repository's retirement notice is merged, it is read-only, and its
+> history and URL remain intact. Safe to stop.
 > To resume: `gh repo view wahidyankf/beaver-nest --json isArchived`.
 
 ## Phase 9: Knowledge Capture
 
-Executed once, in `ose-public`, on the local `main` checkout under the plan-docs-only carve-out —
-no worktree, no PR.
+Executed in `ose-public`, inside the plan's already-provisioned `ose-public` worktree
+(`worktrees/beaver-nest-repo-consolidation/`) — the Worktree Cap sequencing rule reuses this single
+worktree across every `ose-public` delivery unit, so this phase branches off the latest `origin/main`
+in the same worktree directory rather than provisioning a new one. This is a non-boundary,
+intermediate phase: it commits to the unit's branch and pushes for durability, but opens no PR of its
+own — Phase 10 below is this unit's delivery boundary.
 
+- [ ] [AI] Branch off the latest `origin/main` inside the existing `ose-public` worktree — command: `git -C worktrees/beaver-nest-repo-consolidation fetch origin && git -C worktrees/beaver-nest-repo-consolidation checkout -b beaver-nest-repo-consolidation-archival origin/main`
+      — acceptance: `git -C worktrees/beaver-nest-repo-consolidation status -sb` shows the new branch tracking `origin/main`
 - [ ] [AI] Triage every entry in `plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
       through the [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)'s
       routing matrix — each surviving learning routes to exactly one durable home
-      — command: `grep -c '^## Learning:' plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
+      — command: `grep -c '^## Learning:' worktrees/beaver-nest-repo-consolidation/plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
       — acceptance: every counted entry has a recorded terminal state, or the explicit escape
       `No generalizable learnings — <reason>` is present
 - [ ] [AI] Apply the secret/sensitivity gate and the repo-relevance gate to every surviving entry
@@ -812,8 +847,8 @@ no worktree, no PR.
 - [ ] [AI] For any learning routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       briefs first and fold in rather than adding a near-duplicate
       — acceptance: the fold-or-create decision is recorded per entry
-- [ ] [AI] Commit and push to origin main — command: `git add plans/ && git commit -m 'docs(plans): record knowledge-capture learnings for beaver-nest-repo-consolidation' && git push origin main`
-      — acceptance: `git status -sb` shows no divergence
+- [ ] [AI] Commit and push the branch (not `main`) — command: `git -C worktrees/beaver-nest-repo-consolidation add plans/ && git -C worktrees/beaver-nest-repo-consolidation commit -m 'docs(plans): record knowledge-capture learnings for beaver-nest-repo-consolidation' && git -C worktrees/beaver-nest-repo-consolidation push origin beaver-nest-repo-consolidation-archival`
+      — acceptance: `git -C worktrees/beaver-nest-repo-consolidation status -sb` shows the branch pushed, no PR opened yet
 
 ### Phase 9 Gate
 
@@ -822,20 +857,23 @@ no worktree, no PR.
 
 - [ ] [AI] Every `learnings.md` entry reached a terminal state (routed inline / filed as backlog at a named path / discarded with a reason), or the explicit "none" escape is present
 - [ ] [AI] No code-homed learning landed inline in this plan's commits
-- [ ] [AI] `npm run lint:md:fix && git diff --exit-code` — acceptance: exits 0
+- [ ] [AI] `npm run lint:md:fix && git diff --exit-code` (run inside `worktrees/beaver-nest-repo-consolidation`) — acceptance: exits 0
 
 > **Pause Safety**: every learning has a durable home and nothing depends on `learnings.md`
-> surviving. The plan is substantively complete; only archival remains. Safe to stop.
-> To resume: `git log --oneline -3`.
+> surviving. The archival commit is pushed to its branch but the PR has not opened yet. Safe to stop.
+> To resume: `git -C worktrees/beaver-nest-repo-consolidation log --oneline -3`.
 
-## Phase 10: Plan Archival and Cleanup
+## Phase 10: Plan Archival, PR, and Cleanup
 
-This phase's `git mv` to `plans/done/` lands as a direct push to local `main` under the
-Plan-Docs-Only Carve-Out, not committed inside a PR. This is a deliberate, cited exception to the
-[Archival-in-PR HARD RULE](../../../repo-governance/conventions/structure/plans.md#delivery-mode) —
-see [tech-docs.md D11](./tech-docs.md#design-decisions) for why: the last `ose-public` PR is Phase
-5's, and Phases 6-8 still have to land in `ose-primer`, `ose-private`, and against `beaver-nest`
-before the plan is actually done, so no `ose-public` PR remains open to carry the archival commit.
+This unit's delivery boundary. Per
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+the retired Plan-Docs-Only Carve-Out no longer applies to `ose-public` — every plan there uses
+`worktree-to-pr`, with no exception — so the archival commit lands via this phase's own PR, the
+plan's final `ose-public` PR, rather than a direct push. This corrects
+[tech-docs.md D11](./tech-docs.md#design-decisions), whose "no `ose-public` PR remains open to carry
+the archival commit" observation is still true (Phase 5's PR is not it) but whose resolution — a
+direct push under the carve-out — is no longer available; the resolution is now "open one more PR",
+not "push directly."
 
 ### Plan Archival
 
@@ -847,14 +885,23 @@ before the plan is actually done, so no `ose-public` PR remains open to carry th
 - [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed — **Not applicable**: no UI
       feature change (see [tech-docs.md §Testing](./tech-docs.md#testing--verification-strategy))
 - [ ] [AI] Verify every rule-16 AET defect finding is fixed — **Not applicable**: no API change
-- [ ] [AI] Move the plan folder — command: `git mv plans/in-progress/beaver-nest-repo-consolidation "plans/done/$(date +%Y-%m-%d)__beaver-nest-repo-consolidation"`
-      — acceptance: the folder exists under `plans/done/` with a completion-date prefix
+- [ ] [AI] Move the plan folder (inside the `ose-public` worktree, on the `beaver-nest-repo-consolidation-archival` branch) — command: `git -C worktrees/beaver-nest-repo-consolidation mv plans/in-progress/beaver-nest-repo-consolidation "plans/done/$(date +%Y-%m-%d)__beaver-nest-repo-consolidation"`
+      — acceptance: the folder exists under `plans/done/` with a completion-date prefix, on that branch
 - [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
 - [ ] [AI] Update `plans/done/README.md` — add the plan entry with its completion date
 - [ ] [AI] Update any other READMEs that reference this plan
 - [ ] [AI] Commit: `chore(plans): move beaver-nest-repo-consolidation to done`
-- [ ] [AI] Push to origin main — command: `git push origin main`
-      — acceptance: `git status -sb` shows no divergence
+- [ ] [AI] Push the branch — command: `git -C worktrees/beaver-nest-repo-consolidation push origin beaver-nest-repo-consolidation-archival`
+      — acceptance: `git -C worktrees/beaver-nest-repo-consolidation status -sb` shows the branch pushed
+- [ ] [AI] Open the PR — command: `gh pr create --repo wahidyankf/ose-public --base main --head beaver-nest-repo-consolidation-archival --title "docs(plans): knowledge capture and archival for beaver-nest-repo-consolidation" --body "Final unit of this plan — knowledge capture plus plan archival."`
+      — acceptance: `gh pr list --repo wahidyankf/ose-public --head beaver-nest-repo-consolidation-archival --json number` returns one open PR
+- [ ] [AI] Run the PR-Review Maker→Fixer Cycle against this PR per the
+      [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
+      — acceptance: 0 CRITICAL/HIGH outstanding, CI green, all threads answered/resolved
+- [ ] [AI] Merge the PR — command: `gh pr merge --repo wahidyankf/ose-public --squash <PR-number>`
+      — acceptance: `gh pr view --repo wahidyankf/ose-public <PR-number> --json state` reports `MERGED`
+- [ ] [AI] Confirm the merge landed on `origin/main` — command: `git fetch origin && git log origin/main -1 --grep 'move beaver-nest-repo-consolidation to done'`
+      — acceptance: prints the archival commit
 
 ### Cleanup (terminal node — depends on every delivery node)
 
@@ -864,6 +911,8 @@ before the plan is actually done, so no `ose-public` PR remains open to carry th
       — acceptance: `git -C /Users/wkf/ose-projects/ose-primer worktree list` no longer lists it
 - [ ] [AI] Remove the `ose-private` worktree — command: `git -C /Users/wkf/ose-projects/ose-private worktree remove worktrees/beaver-nest-repo-consolidation`
       — acceptance: `git -C /Users/wkf/ose-projects/ose-private worktree list` no longer lists it
+- [ ] [AI] Remove the `beaver-nest` worktree — command: `git -C /Users/wkf/ose-projects/beaver-nest worktree remove worktrees/beaver-nest-repo-consolidation`
+      — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest worktree list` no longer lists it
 - [ ] [HUMAN] Decide the fate of the local `/Users/wkf/ose-projects/beaver-nest` clone, which still
       holds the uncommitted modifications recorded in `evidence/phase-0-beaver-nest-status.txt`
       — acceptance: the maintainer either
@@ -876,11 +925,11 @@ before the plan is actually done, so no `ose-public` PR remains open to carry th
 > All checks below must pass before the plan is considered complete.
 
 - [ ] [AI] `test -d plans/done/*__beaver-nest-repo-consolidation` — acceptance: exits 0
-- [ ] [AI] `git worktree list` in all three repos — acceptance: none lists `beaver-nest-repo-consolidation`
+- [ ] [AI] `git worktree list` in all four repos — acceptance: none lists `beaver-nest-repo-consolidation`
 - [ ] [AI] `npx nx run-many -t test:quick --all` — acceptance: exits 0
 
-> **Pause Safety**: the plan is archived, all worktrees are removed, and the OSE family is three
-> repositories. Nothing is in flight.
+> **Pause Safety**: the plan is archived, its final PR is merged, all worktrees are removed, and the
+> OSE family is three repositories. Nothing is in flight.
 > To resume: nothing to resume — the plan is complete.
 
 ## Validation Checklist

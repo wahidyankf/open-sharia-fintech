@@ -112,7 +112,9 @@ a deliberate departure from the `worktree-to-pr` default rather than the assumed
 TBD forbids **long-lived** branches, not branches. A plan branch that opens, integrates, and is
 deleted within a day or two is fully consistent with TBD; a branch that accumulates weeks of work is
 the anti-pattern. Under the `worktree-to-pr` default, each branch is single-purpose and disposable —
-one branch, one worktree, one PR, deleted at the cleanup gate.
+one branch, one PR, deleted at the cleanup gate. The worktree itself is a coarser, per-repository
+resource — capped at one per repo per plan and reused across every branch/PR the plan lands there,
+not deleted until every such delivery unit has landed.
 
 Branch lifespan discipline still applies with full force:
 

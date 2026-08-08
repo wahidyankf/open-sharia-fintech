@@ -689,8 +689,10 @@ is the contiguous run of phases ending at a delivery boundary — the unit, not 
 is what maps to a PR.
 
 The mapping from [Delivery Checklists Express a DAG](#delivery-checklists-express-a-dag-hard-rule)
-above sharpens: **one worktree → one branch → one PR → one delivery unit**, not one worktree → one
-branch → one PR → one phase.
+above sharpens: **one branch → one PR → one delivery unit**, not one branch → one PR → one phase. The
+**worktree** is a coarser, per-repository unit — capped at one per repo per plan and reused across
+every delivery unit landed there, never provisioned fresh per unit — per
+[Worktree Cap](#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below.
 
 1. **A PR opens only at a delivery boundary.** Phases inside a delivery unit that are not its
    boundary commit to the unit's branch and must still pass their own `### Phase N Gate`, but they
@@ -979,15 +981,29 @@ subsection states what is **actually allowed per repository**, and is the narrow
 Direct push to `origin main` is a scarce, protected capability going forward — not a convenience
 available wherever a plan finds it easier.
 
-- **`ose-public`, `ose-primer`, `beaver-nest`**: `main` is branch-protected against direct pushes,
-  **including for repository admins**. `worktree-to-origin-main` and `main-to-origin-main` are
-  therefore **unavailable** — no credential or role can push to `main` outside a merged PR.
-  `main-to-pr` is not blocked by the protection (it still opens a PR) but is not used either: every
-  plan in these three repositories uses **`worktree-to-pr`**, with no exception. The
+- **`ose-public`, `ose-primer`**: `main` is branch-protected against direct pushes, **including for
+  repository admins** — verified live via a legacy `/branches/main/protection` check for
+  `ose-public` and a ruleset check for `ose-primer` (its protection is a repository ruleset, which
+  the legacy endpoint alone would misreport as unprotected). `worktree-to-origin-main` and
+  `main-to-origin-main` are therefore **unavailable** in these two repos — no credential or role can
+  push to `main` outside a merged PR.
+- **`beaver-nest`**: this rule requires the same restriction, but **as of this PR its `main` carries
+  no branch protection yet** — verified live: the legacy `/branches/main/protection` endpoint
+  returns 404 and its rulesets list is empty, on a non-archived repo. A direct push to `beaver-nest`
+  `main` would currently succeed rather than being mechanically rejected. Until a human enables a
+  ruleset matching `ose-primer`'s, this repository's restriction is **convention-enforced only**, not
+  mechanically guaranteed — `worktree-to-origin-main` and `main-to-origin-main` are still forbidden by
+  this rule and every plan in `beaver-nest` still uses `worktree-to-pr` with no exception, but nothing
+  currently stops a credential from bypassing that on the GitHub side. Enabling the ruleset is a
+  repository security setting change — `[HUMAN]`-only; an agent verifies the resulting state via
+  `gh api` but never changes it.
+  `main-to-pr` is not blocked by protection in any of the three (it still opens a PR) but is not used
+  either: every plan in `ose-public`, `ose-primer`, and `beaver-nest` uses **`worktree-to-pr`**, with
+  no exception. The
   [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) and
   the `.md`-only condition of the content restriction above are **retired** in these three
-  repositories — a protected `main` makes them moot regardless of file content, since there is no
-  direct-push path left to carve out of.
+  repositories — direct push is disallowed by this rule regardless of file content, whether or not
+  `main` is mechanically protected yet in every one of them.
 - **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
   infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
   plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
@@ -998,6 +1014,10 @@ available wherever a plan finds it easier.
   carve-out is granted for the **infrastructure secrets/state reason specifically**, not for any
   `.md`-only plan-docs change or ad-hoc go-ahead. A non-IaC, plan-docs-only change in `ose-private`
   uses `worktree-to-pr` like everything else — the old two-condition test no longer applies there.
+  **`ose-private`'s own branch-protection state is unverified as of this PR** — its rules API returned
+  `403 Upgrade to GitHub Pro` when checked live, so this rule's restriction there rests on the same
+  convention-enforced (not independently confirmed mechanically-enforced) footing as `beaver-nest`
+  until it is checked with sufficient API access.
 
 **Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
 discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that

@@ -118,7 +118,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[AI+HUMAN]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
 - **Phase gate & natural pause (HARD RULE)**: every phase ends with a `### Phase N Gate` (must-pass checklist + Pause Safety note) and reaches a safe-to-stop state. Flag a phase missing its gate as **HIGH**; a non-pause phase that should be merged as **MEDIUM**. Validated in detail by Step 5i (rule 15).
 - **Phase 0 opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline — it carries no PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step, under **any** Delivery Mode; the earliest phase that may open a PR is **Phase 1**. Flag any such step inside Phase 0, and any unscoped Per-Phase Integration Protocol block, as **HIGH**. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 7). See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
-- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a plan opens a PR at each **delivery boundary** — the phase after which the accumulated work is independently shippable — not once per phase. The contiguous phases ending at a boundary form a **delivery unit**, and the unit maps to one worktree, one branch, one PR. Flag as **HIGH** a PR-creation, PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does **not** name as a boundary; a change-producing phase absent from the `### Delivery Boundaries` table; or a final change-producing phase that is not a boundary. Flag as **MEDIUM** a missing `### Delivery Boundaries` table on a non-trivial plan, and a single end-of-plan boundary on a plan whose `## Parallelization Model` declares independent parallel nodes. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 8). See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a plan opens a PR at each **delivery boundary** — the phase after which the accumulated work is independently shippable — not once per phase. The contiguous phases ending at a boundary form a **delivery unit**, and the unit maps to one branch, one PR — the **worktree** stays a coarser, per-repository unit, capped at one per repo per plan and reused across every delivery unit landed there (see [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)). Flag as **HIGH** a PR-creation, PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does **not** name as a boundary; a change-producing phase absent from the `### Delivery Boundaries` table; or a final change-producing phase that is not a boundary. Flag as **MEDIUM** a missing `### Delivery Boundaries` table on a non-trivial plan, and a single end-of-plan boundary on a plan whose `## Parallelization Model` declares independent parallel nodes. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 8). See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 - **Specs & Gherkin delivery (per Two Paths)**: a plan that creates, modifies, or deletes observable behavior in `apps/`, `libs/`, or `specs/` MUST include delivery steps that add/update the companion `specs/` Gherkin `.feature` files and run `specs:coverage`. Validated in detail by Step 5j (rule 16). See [Feature Change Completeness Convention §Two Paths](../../repo-governance/development/quality/feature-change-completeness.md).
 - **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior-implementing RED→GREEN→REFACTOR cycle MUST target **exactly one** Gherkin scenario — the RED step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embeds that scenario's complete `Given/When/Then` inline as a fenced ` ```gherkin ` block, verbatim-equal to the companion `.feature`. Flag as **HIGH**: a behavior RED step whose `binds` tag lists **more than one** scenario (must be split one-cycle-per-scenario), a behavior step missing its Gherkin tag, or a step whose inline `Given/When/Then` is absent or not verbatim-equal to the `.feature`. Two exceptions keep a multi-scenario `;`-list tag and are NOT split: pure-core (`**Gherkin (underpins) →**`) data/calc unit tests, and aggregate BDD binders (a feature-consuming unit test or `playwright-bdd` step-def file consuming the whole `.feature` for `specs:coverage`/E2E). Pure refactors, no-behavior-change bumps, and docs/governance-only steps are exempt. See [Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
 - **UI-design-funnel completeness (UI-bearing plans)**: a plan that adds/changes user-facing screens or components under `apps/` or `libs/` MUST carry the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale, a grounding/prior-art note, and a **responsive** strategy across mobile/tablet/desktop). Validated in detail by Step 5k (rule 17). Pure-refactor / no-UI / governance-only plans are exempt. See [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
@@ -553,12 +553,26 @@ After validating manual assertions (Step 5c), verify the plan declares a worktre
    - The section SHOULD link to [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
    - Missing cross-reference: **LOW** finding.
 
+5. **Worktree cap — at most one worktree path per repository (enforces [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))**
+   - This check runs against the single repository `plan-checker` is invoked in (confirm with
+     `git remote get-url origin` or `repo-config.yml`'s declared repo name) — a plan's `delivery.md`
+     for this repo is scoped to that one repo, so every worktree path it names is implicitly a
+     same-repo claim.
+   - Collect every worktree path named in the plan: the top-level `## Worktree` declaration, every
+     `Worktree` column value in the `### Delivery Boundaries` table (inside `## Parallelization
+Model`), and any other `worktrees/<...>/` path mentioned in that section.
+   - **More than one distinct `worktrees/<...>/` path collected for this repo: HIGH finding.** The
+     cap permits exactly one worktree per repository per plan, reused — branch-switched — across
+     every delivery unit; a second distinct path is a defect even if each individual path is
+     correctly formatted per item 2 above.
+
 #### Finding Severity
 
 - Missing `## Worktree` section entirely: **HIGH**
 - Wrong path format or identifier mismatch: **HIGH**
 - Missing provisioning command: **MEDIUM**
 - Missing cross-reference link: **LOW**
+- More than one distinct worktree path named for this repository within one plan: **HIGH**
 
 ### 11. Execution-Grade Clarity Validation (Step 5e — MANDATORY HARD RULE)
 
@@ -988,6 +1002,19 @@ mode additionally fixes the integration target and merge authority.
    and confirm the phases carrying integration steps are a subset of the phases the
    `### Delivery Boundaries` table declares. Also confirm every change-producing phase appears in
    exactly one table row and that the last change-producing phase is a boundary.
+9. **Per-repository delivery mode restriction (enforces [Per-Repository Delivery Mode
+   Restrictions](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule))**
+   — determine the repository `plan-checker` is invoked in (`git remote get-url origin` or
+   `repo-config.yml`'s declared repo name); the resolved `## Delivery Mode` value (declared field, or
+   the tier-3 `worktree-to-pr` default when absent) is then checked against that repo:
+   - **`ose-public`, `ose-primer`, `beaver-nest`**: a resolved mode of `worktree-to-origin-main` or
+     `main-to-origin-main` is **HIGH** — those modes have no executable path in these three
+     repositories (`main` is branch-protected against direct pushes, including for admins).
+   - **`ose-private`**: a resolved mode of `worktree-to-origin-main` or `main-to-origin-main` is
+     **HIGH** unless the plan is genuinely an infrastructure-as-code plan (its BRD/PRD or folder
+     content scopes it to Terraform, Ansible, or equivalent state-changing infra work needing the
+     primary checkout's real credentials/state) — read the plan's stated scope to decide, do not rely
+     on a bare self-declared label.
 
 #### Finding Severity
 
@@ -1007,6 +1034,10 @@ mode additionally fixes the integration target and merge authority.
 - Final change-producing phase that is not a delivery boundary: **HIGH**
 - Missing `### Delivery Boundaries` table on a non-trivial plan: **MEDIUM**
 - Single end-of-plan boundary on a plan declaring independent parallel nodes: **MEDIUM**
+- Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `ose-public`, `ose-primer`, or
+  `beaver-nest`: **HIGH**
+- Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `ose-private` on a plan that is
+  not genuinely infrastructure-as-code: **HIGH**
 
 ### 20. Learning-Bearing Syllabus Completeness (Step 5n — CONDITIONAL)
 

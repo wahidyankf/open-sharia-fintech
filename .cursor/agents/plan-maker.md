@@ -580,7 +580,7 @@ When a plan uses a **Per-Phase Integration Protocol** block (branch → commit �
 
 #### Delivery Boundaries Authoring Rule (HARD RULE)
 
-**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one worktree, one branch, and one PR.
+**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one branch and one PR. The **worktree** stays a coarser, per-repository unit: capped at one per repo per plan and reused — branch-switched — across every delivery unit landed there, per [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 Decide boundaries at authoring time using the four-part boundary test (coherent / green standalone / defensible on `main` / reviewable whole) in [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), then:
 
