@@ -397,7 +397,7 @@ repositories the plan folder does not live in.
 **Rationale — the maintainer's standing instruction (secondary reason)**: independent of the
 structural argument above, plan-document lifecycle work (authoring, stage promotion, quality-gate
 review cycles, and archival) is standing maintainer policy to run on local `main`, landing via the
-[Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out)
+[Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)
 rather than through a worktree/PR — the worktree and its PR are reserved for this plan's C1-C7
 implementation phases (DD-4).
 

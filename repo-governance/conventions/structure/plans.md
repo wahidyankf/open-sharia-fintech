@@ -994,16 +994,10 @@ available wherever a plan finds it easier.
   ruleset matching `ose-primer`'s, this repository's restriction is **convention-enforced only**, not
   mechanically guaranteed — `worktree-to-origin-main` and `main-to-origin-main` are still forbidden by
   this rule and every plan in `beaver-nest` still uses `worktree-to-pr` with no exception, but nothing
-  currently stops a credential from bypassing that on the GitHub side. Enabling the ruleset is a
-  repository security setting change — `[HUMAN]`-only; an agent verifies the resulting state via
-  `gh api` but never changes it.
-  `main-to-pr` is not blocked by protection in any of the three (it still opens a PR) but is not used
-  either: every plan in `ose-public`, `ose-primer`, and `beaver-nest` uses **`worktree-to-pr`**, with
-  no exception. The
-  [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) and
-  the `.md`-only condition of the content restriction above are **retired** in these three
-  repositories — direct push is disallowed by this rule regardless of file content, whether or not
-  `main` is mechanically protected yet in every one of them.
+  currently stops a credential from bypassing that on the GitHub side. A direct push that lands there
+  anyway is a convention violation, not evidence of bypassed protection — there is nothing to bypass
+  yet. Enabling the ruleset is a repository security setting change — `[HUMAN]`-only; an agent
+  verifies the resulting state via `gh api` but never changes it.
 - **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
   infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
   plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
@@ -1019,6 +1013,14 @@ available wherever a plan finds it easier.
   convention-enforced (not independently confirmed mechanically-enforced) footing as `beaver-nest`
   until it is checked with sufficient API access.
 
+`main-to-pr` is not blocked by protection in any of the three (`ose-public`, `ose-primer`,
+`beaver-nest`) — it still opens a PR — but is not used either: every plan in all three uses
+**`worktree-to-pr`**, with no exception. The
+[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)
+and the `.md`-only condition of the content restriction above are **retired** in these three
+repositories — direct push is disallowed by this rule regardless of file content, whether or not
+`main` is mechanically protected yet in every one of them.
+
 **Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
 discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that
 bypass is even possible, across all four repositories, to the one case with a genuine technical
@@ -1026,9 +1028,13 @@ reason (secrets and state that cannot leave the primary checkout) closes the gap
 and "actually necessary" that the old `.md`-only carve-out left open everywhere.
 
 **Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
-`main-to-origin-main` in `ose-public`, `ose-primer`, or `beaver-nest` as **HIGH** — those modes have
-no executable path in those repositories. It flags the same fields in `ose-private` as **HIGH**
-unless the plan is genuinely an infrastructure-as-code plan.
+`main-to-origin-main` in `ose-public` or `ose-primer` as **HIGH** — those modes have no executable
+path in those two repositories. It flags the same field for `beaver-nest` as **HIGH** too, as a
+policy violation of the convention above rather than a technical-inexecutability claim, since
+`beaver-nest`'s `main` is not yet GitHub-branch-protected (see above) — a direct push that actually
+lands there is a convention violation, not a bypassed-protection finding, until the protection gap is
+closed. It flags the same fields in `ose-private` as **HIGH** unless the plan is genuinely an
+infrastructure-as-code plan.
 
 ### Important Note on File Naming
 

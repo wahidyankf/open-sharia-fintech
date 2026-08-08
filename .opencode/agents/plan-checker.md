@@ -1023,9 +1023,15 @@ mode additionally fixes the integration target and merge authority.
    — determine the repository `plan-checker` is invoked in (`git remote get-url origin` or
    `repo-config.yml`'s declared repo name); the resolved `## Delivery Mode` value (declared field, or
    the tier-3 `worktree-to-pr` default when absent) is then checked against that repo:
-   - **`ose-public`, `ose-primer`, `beaver-nest`**: a resolved mode of `worktree-to-origin-main` or
-     `main-to-origin-main` is **HIGH** — those modes have no executable path in these three
+   - **`ose-public`, `ose-primer`**: a resolved mode of `worktree-to-origin-main` or
+     `main-to-origin-main` is **HIGH** — those modes have no executable path in these two
      repositories (`main` is branch-protected against direct pushes, including for admins).
+   - **`beaver-nest`**: a resolved mode of `worktree-to-origin-main` or `main-to-origin-main` is
+     **HIGH** too, but as a **convention violation**, not a technical-inexecutability finding —
+     `beaver-nest`'s `main` is not yet actually GitHub-branch-protected (verified live 2026-08-08:
+     `protected: false`, no rulesets), pending a `[HUMAN]`-only GitHub settings change. A declared
+     direct-push mode there would technically succeed if pushed; flag it the same HIGH severity as
+     the other two repos, but do not describe it as bypassing a protection that does not yet exist.
    - **`ose-private`**: a resolved mode of `worktree-to-origin-main` or `main-to-origin-main` is
      **HIGH** unless the plan is genuinely an infrastructure-as-code plan (its BRD/PRD or folder
      content scopes it to Terraform, Ansible, or equivalent state-changing infra work needing the
@@ -1050,8 +1056,10 @@ mode additionally fixes the integration target and merge authority.
 - Final change-producing phase that is not a delivery boundary: **HIGH**
 - Missing `### Delivery Boundaries` table on a non-trivial plan: **MEDIUM**
 - Single end-of-plan boundary on a plan declaring independent parallel nodes: **MEDIUM**
-- Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `ose-public`, `ose-primer`, or
-  `beaver-nest`: **HIGH**
+- Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `ose-public` or `ose-primer`
+  (no executable path — mechanically protected `main`): **HIGH**
+- Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `beaver-nest` (convention
+  violation — `main` not yet GitHub-branch-protected, see item 9 above): **HIGH**
 - Resolved mode of `worktree-to-origin-main`/`main-to-origin-main` in `ose-private` on a plan that is
   not genuinely infrastructure-as-code: **HIGH**
 

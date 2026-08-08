@@ -270,10 +270,15 @@ Full rule, capability boundary, operational limits, and identifier hygiene:
 ### The Plan-Docs-Only Carve-Out (Superseded — Retired in Three of Four Repos)
 
 **This carve-out is retired in `ose-public`, `ose-primer`, and `beaver-nest`**: `main` is
-branch-protected against direct pushes in those three repositories (including for admins), so there
-is no direct-push path left to carve out of — a plan-docs-only change there uses `worktree-to-pr`
-like any other change. It survives, narrowed, in `ose-private` only as the infrastructure-as-code
-carve-out — see
+branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins), and
+`beaver-nest` is held to the same restriction by convention — its `main` is not yet actually
+GitHub-branch-protected (verified live 2026-08-08; see the
+[Git Push Default Convention](../../development/workflow/git-push-default.md) for the
+live-verification detail and the pending `[HUMAN]`-only settings change that closes the gap) — so in
+all three repositories a plan-docs-only change uses `worktree-to-pr` like any other change, whether
+that is because there is no direct-push path left to carve out of (`ose-public`/`ose-primer`) or
+because using one would be a convention violation (`beaver-nest`). It survives, narrowed, in
+`ose-private` only as the infrastructure-as-code carve-out — see
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the current binding rule. The historical description below is kept for context.
 
