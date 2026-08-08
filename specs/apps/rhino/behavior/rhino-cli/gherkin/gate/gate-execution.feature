@@ -111,6 +111,12 @@ Feature: Gate execution
     And its output contains a per-gate summary line for every gate in the group
     And the failing gate id appears on a line marked FAIL
 
+  Scenario: A hand-wired gate never runs a second time inside its CI group
+    Given a CI group contains both an auto-dispatched gate and a hand-wired gate
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then only the auto-dispatched gate executes
+    And the hand-wired gate is absent from the group's summary
+
   Scenario: Gate group jobs consume a prebuilt binary
     Given the build-rhino job has published the rhino-cli artifact for the run
     When a gate group job executes

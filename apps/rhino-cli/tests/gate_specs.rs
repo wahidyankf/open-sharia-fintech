@@ -2840,6 +2840,44 @@ fn then_failing_gate_marked_fail(w: &mut GateWorld) {
     );
 }
 
+#[given("a CI group contains both an auto-dispatched gate and a hand-wired gate")]
+fn given_ci_group_with_hand_wired_gate(w: &mut GateWorld) {
+    w.init_git();
+    w.write(
+        "repo-config.yml",
+        &config(concat!(
+            "  - id: auto-dispatched\n    type: check\n    command: true\n    kind: external\n    ci-group: sample-group\n    surfaces:\n      ci: { scope: other }\n",
+            "  - id: hand-wired-gate\n    type: check\n    command: false\n    kind: external\n    wiring: hand-wired\n    ci-group: sample-group\n    surfaces:\n      ci: { scope: other }\n",
+        )),
+    );
+    w.pending_ci_group = Some("sample-group".to_owned());
+}
+
+#[then("only the auto-dispatched gate executes")]
+fn then_only_auto_dispatched_gate_executes(w: &mut GateWorld) {
+    assert!(
+        w.succeeded.unwrap_or(false),
+        "a group containing only an auto-dispatched gate (after excluding the hand-wired one) \
+         must succeed: {}",
+        w.output
+    );
+    assert!(
+        w.output.contains("auto-dispatched"),
+        "the auto-dispatched gate must appear in the group's summary: {}",
+        w.output
+    );
+}
+
+#[then("the hand-wired gate is absent from the group's summary")]
+fn then_hand_wired_gate_absent_from_summary(w: &mut GateWorld) {
+    assert!(
+        !w.output.contains("hand-wired-gate"),
+        "the hand-wired gate must never appear in the group's summary — it is dispatched by its \
+         own dedicated CI job, not by --group: {}",
+        w.output
+    );
+}
+
 // Binds `gate-binary-resolution.feature`'s two scenarios — "A swept target
 // directory produces a slow run, not a failure" and "RHINO_CLI_BIN takes
 // precedence over discovery" — against the real `rhino-bin.sh` resolver shim

@@ -162,3 +162,25 @@ affected` or `git diff` directly in the workflow YAML.
   dispatched CLI/script does _underneath_, including any commands that further dispatch to other
   tools. Any future fetch-depth or similar shallow-clone optimization in this repo's CI should trace
   the full call chain of what a job actually invokes, not just its literal `run:` lines.
+
+## Learning: `gate list --by-group`'s hand-wired exclusion and `gate run --group`'s membership must be the same filter, not two independent implementations of "which gates belong to this group"
+
+- **Context**: Phase 7's `run-npm-ci` wiring derives per-group node-need from `matrix.group.doctor_tools`,
+  which comes from `gate list --format=json --by-group` — a code path that already excludes hand-wired
+  gates (`gate/list.rs`'s `visible_gates` filter, JSON format only) from the emitted group membership.
+- **Observation**: `gate/run.rs`'s `resolve_group_gates` (the code path `gate run --surface=ci --group=<id>`
+  actually executes) shared the group-_bucketing_ predicate with `list.rs` (`gates_in_ci_group`) but not
+  its hand-wired _exclusion_. So the `specs` CI group's emitted membership (used to compute
+  `run-npm-ci`) was `[specs-gherkin-cardinality]`, while the group actually **executed** was
+  `[specs-gherkin-cardinality, specs-structure]` — `specs-structure` is `kind: nx`/`wiring: hand-wired`
+  and needs `node_modules`, which `run-npm-ci=false` (correctly computed from the visible membership)
+  then stopped installing. Live CI (`31284082843`) failed with "Could not find Nx modules" the moment
+  this stopped being masked by `npm ci` always running unconditionally beforehand — a pre-existing,
+  silently-redundant double-execution of a hand-wired gate that Phase 7's optimization exposed rather
+  than caused.
+- **Why it might generalize**: whenever two code paths both claim to answer "which gates are in this
+  group" (one for _reporting/enumeration_, one for _execution_), a filter applied to one but not the
+  other is invisible until something downstream depends on the two agreeing — here, until execution
+  behavior (`npm ci` or not) started depending on enumeration output (`doctor_tools`). The fix folds
+  the same hand-wired exclusion into `resolve_group_gates` so both paths compute identical membership
+  from one predicate, closing the class rather than the single instance.

@@ -8,7 +8,9 @@ use std::process::Command;
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, GateKind, GateSurface, GateType, ScopeKind};
+use crate::application::repo_config::{
+    self, GateKind, GateSurface, GateType, GateWiring, ScopeKind,
+};
 use crate::commands::repo_config_validate;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
@@ -249,6 +251,15 @@ fn run_at_root_with_only_and_message_file(
 /// bucketing (via [`list::gates_in_ci_group`]) so neither command file
 /// carries its own copy.
 ///
+/// Hand-wired gates (`wiring: hand-wired`) are excluded from the returned
+/// members: they are dispatched by their own dedicated CI workflow job, not
+/// by `--group`, matching `gate list --format=json --by-group`'s own
+/// hand-wired exclusion. Without this, a `--group` run would redundantly
+/// re-execute a hand-wired gate inside its CI-group job, which can fail
+/// there even though the gate's dedicated job runs it correctly (e.g. an
+/// `nx`-kind hand-wired gate needs `node_modules`, which a CI-group job may
+/// skip installing when none of its *other* members need it).
+///
 /// # Errors
 ///
 /// Returns an error when `group` is set and matches no gate on the surface.
@@ -259,7 +270,10 @@ fn resolve_group_gates<'a>(
     let Some(group_id) = group else {
         return Ok(None);
     };
-    let members = list::gates_in_ci_group(surface_gates, group_id);
+    let members = list::gates_in_ci_group(surface_gates, group_id)
+        .into_iter()
+        .filter(|gate| gate.wiring.as_ref() != Some(&GateWiring::HandWired))
+        .collect::<Vec<_>>();
     if members.is_empty() {
         return Err(anyhow!(
             "--group id {group_id:?} matched no gates on surface"
@@ -935,6 +949,61 @@ fn failing_gate_inside_a_group_is_named_in_the_output() {
     assert!(
         !repo.path().join("must-not-run.txt").exists(),
         "a gate outside the selected group must not run"
+    );
+}
+
+/// Binds the Gherkin scenario "A hand-wired gate never runs a second time
+/// inside its CI group"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
+///
+/// A hand-wired gate (`wiring: hand-wired`) is dispatched by its own
+/// dedicated CI workflow job, never by `gate run --group`. Before this fix,
+/// `--group` execution ran every gate whose `ci_group` matched, including
+/// hand-wired ones — silently redundant (and harmless) whenever the
+/// hand-wired gate's underlying command happened to succeed in the matrix
+/// job's environment, but a real failure once that environment stopped
+/// matching the hand-wired gate's dedicated job (e.g. missing `node_modules`
+/// for an `nx`-kind hand-wired gate once a CI-group job skips `npm ci`).
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn hand_wired_gate_never_reruns_inside_its_ci_group() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: auto-dispatched\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: hand-wired-gate\n",
+            "    type: check\n",
+            "    command: false\n",
+            "    kind: external\n",
+            "    wiring: hand-wired\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root_with_group(repo.path(), "ci", "sample-group", &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_ok(),
+        "a group containing only an auto-dispatched gate (after excluding the hand-wired one) \
+         must succeed: {rendered}"
+    );
+    assert!(
+        rendered.contains("auto-dispatched") && !rendered.contains("hand-wired-gate"),
+        "the hand-wired gate must never appear in the group's summary — it is dispatched by its \
+         own dedicated CI job, not by --group: {rendered}"
     );
 }
 
