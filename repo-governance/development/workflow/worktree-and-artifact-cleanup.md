@@ -18,10 +18,17 @@ A plan that creates worktrees, branches, and build output must remove them when 
 the **teardown** half of the worktree lifecycle; provisioning and toolchain initialization are covered
 separately.
 
-Cleanup is a **mandatory plan-end gate**, not a courtesy. It is also the one gate most likely to cause
-harm if executed carelessly, because every action it takes is a deletion. The whole convention exists
-to make that combination safe: delete thoroughly, delete only what is yours, and verify before each
-removal.
+Cleanup is a **mandatory gate**, not a courtesy. It is also the one gate most likely to cause harm if
+executed carelessly, because every action it takes is a deletion. The whole convention exists to make
+that combination safe: delete thoroughly, delete only what is yours, and verify before each removal.
+
+**Cleanup is immediate, not deferred.** Remove a repo's worktree the moment this plan is done using
+it — when every delivery unit this plan places in that repo is confirmed merged (see the checks
+below) — right then, not batched with unrelated later steps and not left in place "in case it's
+needed again." Under the [Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
+repo's worktree is torn down as soon as that repo's own units land, independently of whether the
+plan's other repos are still in flight.
 
 ## Principles Implemented/Respected
 
@@ -54,9 +61,10 @@ removal.
 On a shared machine, uncleaned artifacts are not a tidiness issue — they accumulate against a resource
 everyone is using.
 
-- **Disk.** Each worktree is a full checkout. A multi-phase plan under the 1-PR ↔ 1-worktree mapping
-  creates one per **delivery unit** per repo; several such plans in flight fill a disk that CI runners, builds,
-  and every other agent share.
+- **Disk.** Each worktree is a full checkout. A multi-phase plan is capped at **one worktree per
+  repository**, reused across every delivery unit that repo produces — several such plans in flight
+  still fill a disk that CI runners, builds, and every other agent share, which is exactly why the cap
+  exists (see [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)).
 - **The ref namespace.** Removing a worktree leaves its branch behind. A plan that cleans worktrees but
   not refs still leaves stale local and remote branches on every repo it touched, and those
   accumulate permanently.
@@ -145,9 +153,10 @@ and was correctly left in place.
 
 ## Branch Cleanup
 
-Removing a worktree leaves its branch behind. Under the 1-PR ↔ 1-worktree mapping, a multi-phase plan
-accumulates one branch per **delivery unit** per repo — so a plan that cleans worktrees but not refs still leaves
-stale local and remote branches on every repo it touched. Run this after each worktree removal.
+Removing a worktree leaves its branches behind. Under the 1-PR ↔ 1-branch mapping, a multi-phase plan
+accumulates one branch per **delivery unit** in a repo, even though it shares a single worktree across
+all of them — so a plan that cleans its (one) worktree but not refs still leaves stale local and
+remote branches on every repo it touched. Run this after removing a repo's worktree.
 
 **Delete only branches this plan created**, and only after the branch's PR is confirmed MERGED by the
 same `gh pr list --head <branch> --state all --json number,state,mergedAt` test used in check 1.

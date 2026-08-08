@@ -119,8 +119,12 @@ plans touching it propagate one repo at a time rather than concurrently.
 ### Delivery Shape Per Repo
 
 Each repo's plan is authored to the `worktree-to-pr` default, and each independent node lands as
-its **own PR** — a strict **one worktree → one branch → one PR → one delivery unit** mapping, opened
-and merged at that unit's **delivery boundary** rather than at every phase or batched at the end. Partial work reaches `main` merged-but-dark behind a
+its **own PR** — a strict **one branch → one PR → one delivery unit** mapping, opened and merged at
+that unit's **delivery boundary** rather than at every phase or batched at the end. The **worktree**
+is a coarser, per-repository unit: each repo's plan is capped at one worktree, reused across every
+delivery unit it lands in that repo — see
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+Partial work reaches `main` merged-but-dark behind a
 **feature flag**; a phase lands unflagged only when it ships no user-reachable behaviour change and
 the step names that exemption. See
 [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity) for the full rule,

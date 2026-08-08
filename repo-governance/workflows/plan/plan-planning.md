@@ -115,11 +115,17 @@ User: "Establish a plan to [describe desired change]"
 How a plan is cut into phases determines how much of it can proceed in parallel and how early each
 piece reaches `main`. These rules bind at authoring time, not merely at execution time.
 
-### One Worktree, One Branch, One PR, One Delivery Unit (HARD RULE)
+### One Branch, One PR, One Delivery Unit (HARD RULE)
 
 Each independent node of the plan's dependency DAG **that produces changes** lands as **its own
-PR**. The mapping is strict and one-to-one: **one worktree → one branch → one PR → one delivery
-unit**. Never open two PRs from one worktree, and never drive one PR from two worktrees.
+PR**. The mapping is strict and one-to-one: **one branch → one PR → one delivery unit**. Never open
+two PRs from one branch, and never drive one PR from two branches.
+
+The **worktree** is not part of this 1:1 mapping. A plan provisions **at most one worktree per
+repository**, reused — branch-switched — across every delivery unit it produces in that repo; see
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+Never provision a second worktree for a repo the plan already has one open in — switch branches
+inside the existing one instead.
 
 A **delivery unit** is the contiguous run of phases ending at a **delivery boundary** — the phase
 after which the accumulated work is independently shippable. The unit, not the individual phase, is
@@ -261,11 +267,24 @@ Phase 0 so the human actions land in one sitting and the remaining phases stay `
 Full rule, capability boundary, operational limits, and identifier hygiene:
 [Vercel MCP Capability Convention](../../development/infra/vercel-mcp.md).
 
-### The Plan-Docs-Only Carve-Out
+### The Plan-Docs-Only Carve-Out (Superseded — Retired in Three of Four Repos)
 
-A change touching **only** `plans/**`, with no `apps/` or `libs/` code, may push direct to `main`.
-This **plan-docs-only** carve-out stands on its own footing as a general convention: such a change
-ships no runtime behaviour, so the PR review cycle has no code surface to review.
+**This carve-out is retired in `ose-public`, `ose-primer`, and `beaver-nest`**: `main` is
+branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins), and
+`beaver-nest` is held to the same restriction by convention — its `main` is not yet actually
+GitHub-branch-protected (verified live 2026-08-08; see the
+[Git Push Default Convention](../../development/workflow/git-push-default.md) for the
+live-verification detail and the pending `[HUMAN]`-only settings change that closes the gap) — so in
+all three repositories a plan-docs-only change uses `worktree-to-pr` like any other change, whether
+that is because there is no direct-push path left to carve out of (`ose-public`/`ose-primer`) or
+because using one would be a convention violation (`beaver-nest`). It survives, narrowed, in
+`ose-private` only as the infrastructure-as-code carve-out — see
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+for the current binding rule. The historical description below is kept for context.
+
+A change touching **only** `plans/**`, with no `apps/` or `libs/` code, previously could push direct
+to `main`. This **plan-docs-only** carve-out stood on its own footing as a general convention: such a
+change ships no runtime behaviour, so the PR review cycle has no code surface to review.
 
 It is stated here in its own right and is **not** derived from DD-11 of any individual plan, which
 disclaims being a general precedent.

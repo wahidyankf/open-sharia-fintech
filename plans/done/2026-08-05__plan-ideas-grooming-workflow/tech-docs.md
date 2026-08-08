@@ -156,7 +156,7 @@ workflow's own runs, each independently justified.** Two distinct claims, not on
 - **The future `plan-ideas-grooming` workflow's own runs** (independently) specify
   `main-to-origin-main` as their **documented default** execution mode: `plans/ideas/**` is
   entirely under `plans/**`, and per the
-  [plan-docs-only carve-out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out),
+  [plan-docs-only carve-out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos),
   a change touching only `plans/**` may push direct to `main` — no PR review cycle is warranted for
   idea-brief reshaping, since idea docs are already framed as low-stakes backlog documentation (see
   [Ideas Folder convention](../../../repo-governance/conventions/structure/plans.md#ideas-folder-two-pagers)).

@@ -69,7 +69,7 @@ policy, not by this section.** Authoring this plan, promoting it between `plans/
 own quality-gate review cycles, and archiving it at completion (Phase 7) are **plan-document work**:
 they touch only paths under `plans/`, ship no runtime behaviour, and land on the local `main` branch
 via direct push under the
-[Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out).
+[Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos).
 DD-4 states this split directly: "the plan **documents** are pushed to `origin main`. The plan's own
 future **execution** runs `worktree-to-pr`." Phase 7's archival commit is therefore the terminal
 instance of that standing policy, not a per-plan divergence from it — the worktree and its PR are for
@@ -2482,7 +2482,7 @@ apps/rhino-cli/Cargo.toml -- md links validate --staged-only` (no `--exclude` fl
 - [x] [AI] **Land the archival commit on `origin/main`.** Archival is plan-document work, not
       implementation (see [Delivery Mode](#delivery-mode-worktree-to-pr) above) — it lands on the
       local `main` branch via direct push under the
-      [Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out),
+      [Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos),
       which permits a direct push for any change touching only `plans/**` with no `apps/`/`libs/`
       code. Push it:
       `git push origin HEAD:main`

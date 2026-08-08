@@ -105,7 +105,7 @@ f6fa57246449b8ae40d51d9958cd96cb2fc6ca816147888d8e468d953e75b24c  apps/rhino-cli
 94712c3653f9e91111f0136cd90ab434f58d2ec6d20ce80b4dec2fc2364fd899  apps/rhino-cli/src/commands/env_restore.rs
 2eb52e7dbd4601beb261cc17c34e72e604eab1ac0444586f05cbda7f3691e58b  apps/rhino-cli/src/commands/env_staged_guard.rs
 abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli/src/commands/env_validate.rs
-58ba9bae8e1402d058305fe9314289312f0100078d6d0af7e8683f58b03b2402  apps/rhino-cli/src/commands/gate/emit.rs
+c601b0e8e0b65877d7d0f55a1eb22be6f4a553851c6f4dda9f9b682181cc3ba4  apps/rhino-cli/src/commands/gate/emit.rs
 e3b5d928187db598a68b67f097810515cb517327834694b2780d991e45763991  apps/rhino-cli/src/commands/gate/list.rs
 d500838c85c402bd260502f1a28d489db2ea4e74bc5769f4adf42bb4fc2035b9  apps/rhino-cli/src/commands/gate/mod.rs
 d64b1bff0e34d30918e3d5b04363cf2d2cd1ef06764f7b3f7fabe7efd4153fb3  apps/rhino-cli/src/commands/gate/run.rs

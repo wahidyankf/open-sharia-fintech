@@ -105,26 +105,22 @@ repo-local `WorktreeCreate` hook.
 
 ### Delivery Mode
 
-Every plan declares one of four Delivery Modes — `worktree-to-pr` (**the default**),
-`worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr` — naming its work location (worktree
-or primary checkout) and integration target (draft PR or direct push). `*-to-pr` modes run the
-**PR-Review Maker→Fixer Cycle** (default 3 sequential CI-gated cycles) before the merge. **`[AI]` merges by default** in every mode; a
-`[HUMAN]` merge gate applies only where a plan's own step says so explicitly, with identical
-preconditions — only the actor differs.
+**`worktree-to-pr` is mandatory here** — `main` is branch-protected (even for admins), so the other
+three modes have no path in this repo (ose-private has a narrow infra-as-code exception). Runs the
+**PR-Review Maker→Fixer Cycle** (3 CI-gated cycles) before merge. **`[AI]` merges by default**;
+`[HUMAN]` only where a plan's step says so — same preconditions either way.
 
-**The PR is the independent merge point** — N parallel units become N PRs reviewed, gated, and merged
-independently, which is why `worktree-to-pr` is the default; each change-producing DAG leaf gets its
-own worktree and PR (strict 1-PR ↔ 1-worktree), dependent nodes staying one PR. A PR merges only when
-**all five hardened preconditions** (a)-(e) hold — see the PR Merge Protocol.
-**PRs open at delivery boundaries, not every phase** — a PR covers a **delivery unit**: the
-contiguous phases ending where work becomes independently shippable, so a plan opens one once at the
-end or several times through. Folding independent nodes together to cut PR count stays forbidden.
-**Phase 0 opens none under any mode** — the earliest PR is Phase 1, and Phase 0's evidence rides it.
+**One worktree per repo per plan (HARD RULE)** — reused across every delivery unit landed there; an
+N-repo plan opens ≤N worktrees. The **PR**, not the worktree, is the merge unit: each DAG leaf still
+gets its own branch and PR (1-PR↔1-branch), dependent nodes staying one PR; independent leaves in one
+repo share its worktree, sequentially. Merges need **all five hardened preconditions** (a)-(e).
+**PRs open at delivery boundaries, not every phase** — once at plan end or several times through;
+folding independent nodes to cut PR count stays forbidden. **Phase 0 opens none** — earliest is Phase 1.
 
 **See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
-[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
-and [§Phase 0 Opens No PR](./repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)
-and [§PRs Open at Delivery Boundaries](./repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule),
+[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
+[§Worktree Cap](./repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+[§Per-Repository Delivery Mode Restrictions](./repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
 ### Integration Diff Review

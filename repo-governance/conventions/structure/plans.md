@@ -643,15 +643,18 @@ shared branch, or an ordering constraint makes them dependent however separable 
 as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
 
 **Each independent DAG node that produces changes lands as its own delivery unit and PR** — one
-worktree → one branch → one PR → one delivery unit, opened and merged when that unit's delivery
-boundary is reached rather than held for a batch merge at plan end. Partial work reaches `main`
-merged-but-dark behind a feature flag; dependent nodes that cannot be separated stay a single
-delivery unit. Exactly how a plan's phases map onto delivery units and PRs — including which phase
-inside a unit is the boundary that actually opens one — is stated in
+branch → one PR → one delivery unit, opened and merged when that unit's delivery boundary is
+reached rather than held for a batch merge at plan end. The **worktree** is a coarser unit than the
+branch: a plan provisions **at most one worktree per repository**, reused — branch-switched — across
+every delivery unit the plan produces in that repo, rather than a fresh worktree per unit. See
+[Worktree Cap](#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below. Partial work
+reaches `main` merged-but-dark behind a feature flag; dependent nodes that cannot be separated stay a
+single delivery unit. Exactly how a plan's phases map onto delivery units and PRs — including which
+phase inside a unit is the boundary that actually opens one — is stated in
 [PRs Open at Delivery Boundaries, Not Every Phase](#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
-below. The remaining planning-granularity rules — the strict 1-PR↔1-worktree mapping, the
-feature-flag default with its unflagged escape and named removal step, and how the `worktree-to-pr`
-default binds as a design obligation at authoring time — are stated in the
+below. The remaining planning-granularity rules — the strict 1-PR↔1-branch mapping, the worktree cap,
+the feature-flag default with its unflagged escape and named removal step, and how the
+`worktree-to-pr` default binds as a design obligation at authoring time — are stated in the
 [plan-planning workflow §Planning Granularity](../../workflows/plan/plan-planning.md#planning-granularity).
 
 ### Phase 0 Opens No PR — the Earliest PR Is Phase 1 (HARD RULE)
@@ -686,8 +689,10 @@ is the contiguous run of phases ending at a delivery boundary — the unit, not 
 is what maps to a PR.
 
 The mapping from [Delivery Checklists Express a DAG](#delivery-checklists-express-a-dag-hard-rule)
-above sharpens: **one worktree → one branch → one PR → one delivery unit**, not one worktree → one
-branch → one PR → one phase.
+above sharpens: **one branch → one PR → one delivery unit**, not one branch → one PR → one phase. The
+**worktree** is a coarser, per-repository unit — capped at one per repo per plan and reused across
+every delivery unit landed there, never provisioned fresh per unit — per
+[Worktree Cap](#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below.
 
 1. **A PR opens only at a delivery boundary.** Phases inside a delivery unit that are not its
    boundary commit to the unit's branch and must still pass their own `### Phase N Gate`, but they
@@ -747,11 +752,11 @@ Delivery boundaries are the calibration point between those two failure modes.
 ```markdown
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit          | Worktree / branch      | PR opens         |
-| -------- | ---------------------- | ---------------------- | ---------------- |
-| 0        | — (setup and baseline) | —                      | no               |
-| 1-3      | Schema and loader      | `worktrees/foo-schema` | yes — at Phase 3 |
-| 4-5      | Navigation UI          | `worktrees/foo-nav`    | yes — at Phase 5 |
+| Phase(s) | Delivery unit          | Worktree        | Branch       | PR opens         |
+| -------- | ---------------------- | --------------- | ------------ | ---------------- |
+| 0        | — (setup and baseline) | —               | —            | no               |
+| 1-3      | Schema and loader      | `worktrees/foo` | `foo-schema` | yes — at Phase 3 |
+| 4-5      | Navigation UI          | `worktrees/foo` | `foo-nav`    | yes — at Phase 5 |
 ```
 
 Every change-producing phase must appear in exactly one row. A phase absent from the table is a
@@ -797,11 +802,45 @@ Manual pre-provisioning is OPTIONAL: the [plan-execution workflow Step 0 gate](.
 
 **Executor lifecycle** (enforced by the plan-execution workflow):
 
-1. **Enter or provision**: execution always happens inside the declared worktree. The executor navigates to it if it exists, or provisions it from the latest `origin/main` (`git fetch origin && git worktree add -b <plan-identifier> worktrees/<plan-identifier> origin/main`) if it does not.
-2. **Freshness sync**: before any implementation, the worktree is synced with the latest `origin/main` (ff-merge, or rebase when the worktree carries local commits). Dirty state or rebase conflicts stop execution for an explicit user decision.
-3. **Prompted cleanup**: when the plan completes (`pass`), is archived, and all work is pushed to `origin main`, the executor verifies nothing is uncommitted or unpushed and then PROMPTS the user before deleting the worktree and its local branch. Worktrees are never deleted without explicit confirmation, and never deleted on `partial`/`fail`.
+1. **Enter or provision**: execution always happens inside the declared worktree. The executor navigates to it if it exists, or provisions it from the latest `origin/main` (`git fetch origin && git worktree add -b <plan-identifier> worktrees/<plan-identifier> origin/main`) if it does not. When the plan produces more than one delivery unit in this repo, the SAME worktree is reused for every one of them (see [Worktree Cap](#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) below) — never provision a second worktree for a repo the plan already has one open in.
+2. **Freshness sync**: before any implementation, the worktree is synced with the latest `origin/main` (ff-merge, or rebase when the worktree carries local commits). Dirty state or rebase conflicts stop execution for an explicit user decision. Starting a new delivery unit inside an already-provisioned worktree runs this same sync before branching off it.
+3. **Prompted cleanup**: when the plan completes (`pass`), is archived, and all work is pushed to `origin main`, the executor verifies nothing is uncommitted or unpushed and then PROMPTS the user before deleting the worktree and its local branch(es). Worktrees are never deleted without explicit confirmation, and never deleted on `partial`/`fail`. For a multi-unit plan, this means the shared worktree is removed once — after every delivery unit's PR that used it has landed — not after the first one.
 
 **This requirement applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
+
+### Worktree Cap — One Worktree Per Repository Per Plan (HARD RULE)
+
+A plan provisions **at most one worktree per repository**, regardless of how many independent DAG
+leaves or delivery units that plan produces in that repo. The worktree is reused — branch-switched —
+across every delivery unit the plan lands in that repository; provisioning a second `git worktree add`
+for the same repo within one plan is a defect. A plan touching **N** repositories therefore provisions
+**at most N worktrees total**, one per repo, never more than one concurrently open per repo.
+
+This caps a genuinely scarce shared resource: each worktree is a full checkout plus a converged
+polyglot toolchain (`npm install && npm run doctor -- --fix`), and on the same-machine assumption
+(other agents, engineers, and CI runners sharing this disk concurrently — see the
+[Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md#parallelism-budget))
+that setup cost is worth paying once per repo, not once per delivery unit.
+
+**What stays one-per-delivery-unit**: the **branch** and the **PR** — unchanged from
+[One Branch, One PR, One Delivery Unit](../../workflows/plan/plan-planning.md#one-branch-one-pr-one-delivery-unit-hard-rule).
+Only the **worktree** moves from a per-delivery-unit unit to a per-repository one.
+
+**Sequencing consequence**: because only one worktree exists per repo, delivery units that share a
+repo execute their file edits **serially** within that shared worktree — finish and push unit A's
+branch, open its PR, then `git fetch origin && git checkout -b <unit-B-branch> origin/main` in the
+same worktree directory for unit B. **Cross-repo parallelism is unaffected**: an N-repo plan's N
+worktrees (one per repo) still proceed in parallel with each other; the cap only forecloses running
+two delivery units of the **same** repo concurrently in separate worktrees.
+
+**Cleanup timing**: a repo's shared worktree is removed only once **every** delivery unit's PR that
+used it has landed — never when the first one does. See the
+[Worktree and Artifact Cleanup Convention](../../development/workflow/worktree-and-artifact-cleanup.md).
+
+**Enforcement**: `plan-checker` flags a plan whose `## Parallelization Model` or `### Delivery
+Boundaries` table names more than one worktree path for the same repository as **HIGH**.
+`plan-execution-checker` flags an execution history showing more than one `git worktree add` for the
+same repo within one plan as **HIGH**.
 
 See [Worktree Path Convention](./worktree-path.md) for the full routing and directory structure specification.
 
@@ -854,7 +893,7 @@ choice absent a reason to pick another mode.
 
 **`main-to-origin-main` carries a further content restriction, on top of Standard 2's
 selection-signal test in the
-[Git Push Default Convention](../../development/workflow/git-push-default.md#standard-2-direct-push-modes-are-explicit-selections-not-inferred).**
+[Git Push Default Convention](../../development/workflow/git-push-default.md#standard-2-direct-push-modes-are-explicit-selections-not-inferred--and-are-repo-restricted).**
 An explicit selection signal (invocation argument or plan field) is necessary but not sufficient:
 choosing `main-to-origin-main` is additionally valid only when **one** of two conditions holds —
 
@@ -865,9 +904,14 @@ Absent one of these two, use `worktree-to-pr` even if a direct-push mode would o
 convenient. This restriction targets `main-to-origin-main` specifically — working directly in the
 primary checkout skips both PR review and worktree isolation, so it is held to a narrower bar than
 `worktree-to-origin-main`, which still isolates work from the primary checkout even though it also
-skips review. The [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out)
+skips review. The [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)
 is the plan-authoring-time instance of condition 1 above — see that section for how the two
 reconcile when a plan folder's push includes non-markdown evidence files.
+
+**This two-condition test is the general historical rule. It is now narrowed per repository by**
+[Per-Repository Delivery Mode Restrictions](#per-repository-delivery-mode-restrictions-hard-rule)
+**below, which is the current binding rule** — read that subsection before relying on either
+condition above.
 
 The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
@@ -929,6 +973,68 @@ resolves to the tier-3 default per the algorithm above.
 
 See the [plan-execution workflow](../../workflows/plan/plan-execution.md) for how each mode changes
 Step 0 (worktree entry), the per-phase push target, and Step 8 (finalization and merge hand-off).
+
+### Per-Repository Delivery Mode Restrictions (HARD RULE)
+
+The four-mode table and the content restriction above state what is theoretically possible; this
+subsection states what is **actually allowed per repository**, and is the narrower, binding rule.
+Direct push to `origin main` is a scarce, protected capability going forward — not a convenience
+available wherever a plan finds it easier.
+
+- **`ose-public`, `ose-primer`**: `main` is branch-protected against direct pushes, **including for
+  repository admins** — verified live via a legacy `/branches/main/protection` check for
+  `ose-public` and a ruleset check for `ose-primer` (its protection is a repository ruleset, which
+  the legacy endpoint alone would misreport as unprotected). `worktree-to-origin-main` and
+  `main-to-origin-main` are therefore **unavailable** in these two repos — no credential or role can
+  push to `main` outside a merged PR.
+- **`beaver-nest`**: this rule requires the same restriction, but **as of this PR its `main` carries
+  no branch protection yet** — verified live: the legacy `/branches/main/protection` endpoint
+  returns 404 and its rulesets list is empty, on a non-archived repo. A direct push to `beaver-nest`
+  `main` would currently succeed rather than being mechanically rejected. Until a human enables a
+  ruleset matching `ose-primer`'s, this repository's restriction is **convention-enforced only**, not
+  mechanically guaranteed — `worktree-to-origin-main` and `main-to-origin-main` are still forbidden by
+  this rule and every plan in `beaver-nest` still uses `worktree-to-pr` with no exception, but nothing
+  currently stops a credential from bypassing that on the GitHub side. A direct push that lands there
+  anyway is a convention violation, not evidence of bypassed protection — there is nothing to bypass
+  yet. Enabling the ruleset is a repository security setting change — `[HUMAN]`-only; an agent
+  verifies the resulting state via `gh api` but never changes it.
+- **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
+  infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
+  plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
+  infrastructure state (Terraform state and similar) that exist only in the primary checkout — never
+  in a worktree provisioned fresh from `origin/main` — per the
+  [secret- and state-dependent infra operations rule](../../workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
+  This is narrower than the general `.md`-only / explicit-go-ahead content restriction above: the
+  carve-out is granted for the **infrastructure secrets/state reason specifically**, not for any
+  `.md`-only plan-docs change or ad-hoc go-ahead. A non-IaC, plan-docs-only change in `ose-private`
+  uses `worktree-to-pr` like everything else — the old two-condition test no longer applies there.
+  **`ose-private`'s own branch-protection state is unverified as of this PR** — its rules API returned
+  `403 Upgrade to GitHub Pro` when checked live, so this rule's restriction there rests on the same
+  convention-enforced (not independently confirmed mechanically-enforced) footing as `beaver-nest`
+  until it is checked with sufficient API access.
+
+`main-to-pr` is not blocked by protection in any of the three (`ose-public`, `ose-primer`,
+`beaver-nest`) — it still opens a PR — but is not used either: every plan in all three uses
+**`worktree-to-pr`**, with no exception. The
+[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos)
+and the `.md`-only condition of the content restriction above are **retired** in these three
+repositories — direct push is disallowed by this rule regardless of file content, whether or not
+`main` is mechanically protected yet in every one of them.
+
+**Why this is a hard rule**: a direct push bypasses the PR-Review Maker→Fixer Cycle entirely — no
+discipline-specialist fan-out, no synthesis pass, no fixer pass. Narrowing the surface where that
+bypass is even possible, across all four repositories, to the one case with a genuine technical
+reason (secrets and state that cannot leave the primary checkout) closes the gap between "convenient"
+and "actually necessary" that the old `.md`-only carve-out left open everywhere.
+
+**Enforcement**: `plan-checker` flags a `## Delivery Mode` field naming `worktree-to-origin-main` or
+`main-to-origin-main` in `ose-public` or `ose-primer` as **HIGH** — those modes have no executable
+path in those two repositories. It flags the same field for `beaver-nest` as **HIGH** too, as a
+policy violation of the convention above rather than a technical-inexecutability claim, since
+`beaver-nest`'s `main` is not yet GitHub-branch-protected (see above) — a direct push that actually
+lands there is a convention violation, not a bypassed-protection finding, until the protection gap is
+closed. It flags the same fields in `ose-private` as **HIGH** unless the plan is genuinely an
+infrastructure-as-code plan.
 
 ### Important Note on File Naming
 

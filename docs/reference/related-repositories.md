@@ -43,6 +43,26 @@ The `apps/rhino-cli` source must stay byte-identical across `ose-public`, `ose-p
 `ose-private`. BeaverNest uses a fork and is outside that identity boundary. See the
 [SDLC gate standard](./sdlc-gate-standard.md#rhino-cli-byte-identity-boundary) for the policy.
 
+## Sync cadence across repos
+
+Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;
+this answers **how often** each sibling repo is brought current with `ose-public` — the three repos
+differ, and the difference is deliberate, not an oversight:
+
+- **`ose-private`** — kept **in real time**. `rhino-cli` and the shared `repo-governance/` content
+  (conventions, workflows, agent definitions) propagate to `ose-private` as they land in
+  `ose-public`, not on a batched schedule. This repo backs live authorized-maintainer and
+  infrastructure operations, so governance and tooling drift there is costly immediately, not just
+  eventually.
+- **`ose-primer`** — kept on a **delayed** sync. As the reusable polyglot starter, `ose-primer` does
+  not need every `ose-public` governance change the moment it lands; batching updates conserves the
+  review and propagation cost of a sync that public downstream adopters do not need on a real-time
+  cadence.
+- **`beaver-nest`** — **not synced** on an ongoing basis. BeaverNest is planned to merge back into
+  `ose-public` in the near term, so investing in an ongoing sync mechanism for a repo expected to be
+  reabsorbed is not worth the cost; its `rhino-cli` fork and governance content are addressed at
+  merge time instead.
+
 ## Contribution and access boundaries
 
 External contribution intake is closed across this coordinated delivery. Public readers can explore,
