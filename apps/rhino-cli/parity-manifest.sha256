@@ -108,7 +108,7 @@ abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli
 c30bbe0aeabc93d5d50d17749453deb4dcd72314010b4fe98381548e59b3eb6f  apps/rhino-cli/src/commands/gate/emit.rs
 3f768c0146bc7ad870f4089448e32db66adee1eef0d8c5bdf348242dd07267f2  apps/rhino-cli/src/commands/gate/list.rs
 d500838c85c402bd260502f1a28d489db2ea4e74bc5769f4adf42bb4fc2035b9  apps/rhino-cli/src/commands/gate/mod.rs
-2f8dfa36cfacea1c571a81e36c4583142290d623b85e1268fe006e07b864c8bc  apps/rhino-cli/src/commands/gate/run.rs
+286f132d0028e548a1a98e6729b7122b68928221d5efa9065497532b07ee9210  apps/rhino-cli/src/commands/gate/run.rs
 8f022ea4b364e23f4e8523fe0d7c6b947762ee19f8b1beba7fa4ac3b337c0c6f  apps/rhino-cli/src/commands/gate/validate.rs
 82984cf76f12f92e8d4e9d9cd804c8b72377d2e168b9cc64d46d0ff3730eb908  apps/rhino-cli/src/commands/git/lockfile.rs
 e15eb24ffe611254491ab849e7acce1ab51996e2a38f04f9bf2f7c5fe447a0a7  apps/rhino-cli/src/commands/git/mod.rs
@@ -241,7 +241,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli
 6c0b9f8b59856ce909bf279a88775412ebb4c30a718345652e7be532bb4d71ef  apps/rhino-cli/tests/fsharp_tool_invocation.rs
 90a14ced042f94074025e5aefcdfb15fe831b669fe6585742cb162bb5aac8dee  apps/rhino-cli/tests/gate_dispatch.rs
 9475ba3fd02d131ad86b7379ed3097603b3b83d7f1d1d1bdf2e49fde89ecad7f  apps/rhino-cli/tests/gate_format_verify_wrappers.rs
-e2b72c8e6be01668c6bb6eca045f5cdf8377e3de04c503093650d93fa1262cca  apps/rhino-cli/tests/gate_specs.rs
+5ca66e0be97d9bed80c07c786d38b4a069541c80bdec369077c8833b28d5b7ea  apps/rhino-cli/tests/gate_specs.rs
 8d718301f583b660b8da28dfced1f8ee18387850d8a025c83d91a5e908568c79  apps/rhino-cli/tests/git_hooks.rs
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/convention-audit.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/convention-audit.stderr
@@ -597,7 +597,7 @@ d376cab0d09b2168998bb234663a059b58d5d3c9fd3c784b05acc94f55d70116  specs/apps/rhi
 147b55728155da0dfc2e7e10df064bcf879bb0df7ed77d2c2bdd6153330c3169  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature
 70dbf099375e02ba0a19e23f7145308417e43711f3eb7435bd7848395deefd8c  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature
 ffee29fc10aca182ff6e3b376df1aa48aadeaeb31e7d3e7fee60a8bdb196ff38  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature
-c548ad4cd1ad31acd9371ba10764aa60e156d526a1f57fcad71849dc4e3190a4  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
+58696e1210986e96908f7f415166396fce2be35d734322b9f4aaa3132234fffc  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
 26720948cb21d83fa1ff60aa3425db6872d45f44a66edd323558f51f245e57c0  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature
 56f28b43334cd1fe997eebf78e4c1e436dc4b1ef85c458d3c6d2b322818ec059  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature
 ea0050aee27166f3a3f74a3a225c0c391e48b681abcd063a26f5931f0d840925  specs/apps/rhino/behavior/rhino-cli/gherkin/git/README.md
