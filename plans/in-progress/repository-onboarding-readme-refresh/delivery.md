@@ -280,20 +280,54 @@ flowchart TD
   - Status: passed
   - Notes: Active workflow names were read for all three repositories. The plan’s run listing, single-run polling, and required-check query procedure remains the monitoring record.
 
-- [ ] [AI] [P0-007] Provision the exact plan-control worktree/branch, then provision the Phase 1–2
+- [x] [AI] [P0-007] Provision the exact plan-control worktree/branch, then provision the Phase 1–2
       contract worktree and branch from public
       `origin/main` — acceptance: `git worktree list` shows the declared path/branch pair.
-- [ ] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the contract worktree —
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: Plan-control worktree already existed (`worktrees/repository-onboarding-readme-refresh`,
+    branch `docs/repository-onboarding-plan-control-2`). Provisioned the contract worktree at
+    `worktrees/repository-onboarding-readme-refresh-contract` from the pre-existing empty local
+    branch `docs/repository-onboarding-contract` (0 commits ahead of `origin/main`, not pushed —
+    adopted per the "adopt, never reprovision" rule rather than deleted and recreated). `git worktree
+list` confirms both declared path/branch pairs.
+- [x] [AI] [P0-008] Run `npm install` and then `npm run doctor -- --fix` in the contract worktree —
       acceptance: both exit 0 and no real `.env*` is accessed.
-- [ ] [AI] [P0-009] Run the public baseline gates in the contract worktree and classify each
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: Both commands exited 0 in the contract worktree. `npm install` reported only pre-existing
+    `allow-scripts` warnings (baseline, not a failure). `doctor --fix` reported 15/16 tools OK, 1
+    npm-version warning (baseline drift, non-blocking), 4 target-share fixes applied. No real
+    `.env*` file was read or written.
+- [x] [AI] [P0-009] Run the public baseline gates in the contract worktree and classify each
       repository-wide result as ledgered-path or unrelated-baseline evidence — acceptance: every
       ledgered path is clean and any unrelated baseline result is recorded without expanding scope.
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: Ran every "full unit gates" command in the contract worktree (fresh checkout, zero diff
+    vs. `origin/main`). `git diff --check`: clean. `format:md:check`: 63 pre-existing files with
+    Prettier drift, unrelated-baseline (none are paths this unit will touch). `lint:md`: 0 errors,
+    3640 files. `md mermaid validate`: 0 violations, 5 pre-existing `subgraph_density` warnings on
+    unrelated files (unrelated-baseline). `md heading-hierarchy validate`, `md links validate
+--exclude plans/done`, `md readme-index validate`: all passed clean. `validate:sync`: 95/95 checks
+    passed. `env staged-guard validate`: passed (nothing staged). `nx affected` (both target sets,
+    `--base=origin/main`): "No tasks were run" — zero diff, so nothing is affected. Every ledgered
+    path (none yet touched by this unit) is clean; all baseline results are unrelated pre-existing
+    drift, recorded without expanding scope.
 
 ### Phase 0 Gate
 
-- [ ] [AI] [P0-G01] Verify every P0 execution-record row is complete and Phase 0 opened no PR,
+- [x] [AI] [P0-G01] Verify every P0 execution-record row is complete and Phase 0 opened no PR,
       pushed no branch, and mutated no metadata — acceptance: all baseline evidence is local and
       secret-free.
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: All P0-000 through P0-009 rows are complete with Date/Status/Notes. Phase 0 opened no PR
+    (only two worktrees provisioned locally, no `gh pr create` run), pushed no branch (`git push`
+    never invoked for `docs/repository-onboarding-contract` or the plan-control branch's Phase-0
+    content), and mutated no repository metadata (P0-006/P0-006A were read-only `gh repo view` calls).
+    All evidence lives in the gitignored local execution record and this tracked delivery checklist;
+    no secret or private-repo fact was copied.
 
 > **Pause Safety**: reader documentation and metadata remain unchanged. To resume, inspect the P0
 > execution record and rerun only failed baselines.
