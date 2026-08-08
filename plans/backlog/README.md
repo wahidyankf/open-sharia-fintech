@@ -96,25 +96,6 @@ added no decision value):
   [`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md), which
   scopes all four repos and needs `beaver-nest` live and writable.
 
-**Toolchain** (direct-authored on maintainer request 2026-08-07):
-
-- [rhino-cli-optimization](./rhino-cli-optimization/README.md) — make
-  [`apps/rhino-cli`](../../apps/rhino-cli/README.md) fast to build, cheap on disk, and more provably
-  type-safe, working from a measured first-principles cost model rather than a language swap.
-  Three independent axes: build time (68.4 s incremental rebuild → a **&lt; 10 s** gate, already
-  demonstrated at 1.83 s by a profile change, since 53 invocation sites across 27 `project.json`
-  files shell out to `cargo run --release`); disk (~16 GB → **&lt; 6 GB**, ~7 GB of it five
-  superseded rustup toolchains and a sibling repo's stale cache that nothing owns); and type safety
-  (`indexing_slicing` and `arithmetic_side_effects` denied crate-wide across 1,983 sites). Every
-  substantive phase opens with a bounded POC carrying an abandon-if threshold, because local
-  measurement disqualified four separately well-cited interventions during authoring. A language
-  rewrite survives only as a **gated last-resort phase** reached if the measured targets go unmet,
-  carrying the four-way Rust/Go/OCaml/F# comparison as its decision record. Absorbs the
-  `rhino-cli-language-rewrite-tradeoffs` and `ose-public-nx-affected-rhino-cli-gap` two-pagers.
-  Sequenced after
-  [`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md), which
-  owns the `repo-config.yml` gate registry this plan builds its build-speed work on.
-
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
 `reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state

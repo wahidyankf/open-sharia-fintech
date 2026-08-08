@@ -24,16 +24,18 @@ Phases 6-7 execute in `ose-primer` and `ose-private` respectively; Phase 8 execu
 ## Blocking Preconditions
 
 This plan is the **last of three**:
-`sdlc-gate-registry-enforcement` → `rhino-cli-optimization` → this plan. Both predecessors must be
+`sdlc-gate-registry-enforcement` → `optimize-cis` → this plan. Both predecessors must be
 archived before Phase 0 begins. See
 [README.md §Ordering Constraint](./README.md#ordering-constraint) for why each blocks.
+`rhino-cli-optimization`, the predecessor originally named here, was superseded by `optimize-cis`
+and deleted 2026-08-08 — its scope is absorbed, not dropped.
 
 - [ ] [AI] Verify [`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
       has completed — command: `test -d plans/done/*__sdlc-gate-registry-enforcement && echo COMPLETE`
       — acceptance: prints `COMPLETE`; if the folder is still under `plans/in-progress/`, **stop and
       do not begin Phase 0** (see [tech-docs.md D5](./tech-docs.md#design-decisions))
-- [ ] [AI] Verify [`plans/backlog/rhino-cli-optimization`](../rhino-cli-optimization/README.md) has
-      completed — command: `test -d plans/done/*__rhino-cli-optimization && echo COMPLETE` —
+- [ ] [AI] Verify [`plans/in-progress/optimize-cis`](../../in-progress/optimize-cis/README.md) has
+      completed — command: `test -d plans/done/*__optimize-cis && echo COMPLETE` —
       acceptance: prints `COMPLETE`; if the folder is still under `plans/backlog/` or
       `plans/in-progress/`, **stop and do not begin Phase 0**
 - [ ] [AI] Re-derive this checklist's `apps/rhino-cli` citations against the post-optimization tree,
