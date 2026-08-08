@@ -388,10 +388,19 @@ list` confirms both declared path/branch pairs.
   **Evidence:** The merged private summary records a complete local inventory and opaque digest; its
   path-complete ledger remains untracked inside `ose-private`.
 
-- [ ] [AI] [P1-005] In the private session, classify every private README as audit-required and every
+- [x] [AI] [P1-005] In the private session, classify every private README as audit-required and every
       other Markdown path by reader relevance and sensitivity — acceptance: no living onboarding,
       setup, architecture, navigation, security, contribution, relationship, or directly linked
       operator document is omitted.
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: Verified the existing private local-temp ledger against the private session's pinned
+    revision (row count and revision recorded only in the private, gitignored execution record, per
+    this plan's sensitivity boundary). Every README row is `audit-required`; every other path is
+    differentiated across `reader-related`, `historical`, and `not-reader-doc` buckets — a real
+    semantic pass, not a blanket default. Spot-checked root `README.md` (audit-required) and
+    `AGENTS.md` (not-reader-doc, defensible since it's agent-instruction not human-reader content).
+
 - [x] [AI] [P1-006] Expand each audit-required or reader-related document into one exact `[AI]` task
       row in its owning ledger — acceptance: each row names one path, one direct action, its source
       of truth, exact applicable command, concrete acceptance criterion, and implementation fields.
@@ -493,8 +502,17 @@ list` confirms both declared path/branch pairs.
   just read); `npx prettier --check` and `npx markdownlint-cli2` both pass on the regenerated ledger;
   row count unchanged at 678 `P1-doc-*` entries.
 
-- [ ] [AI] [P1-007] Mark `plans/done/**` and `archived/**` historical, generated mirrors generated,
+- [x] [AI] [P1-007] Mark `plans/done/**` and `archived/**` historical, generated mirrors generated,
       and shared Rhino paths identity-bound — acceptance: none is scheduled for ordinary hand-editing.
+  - Date: 2026-08-08
+  - Status: passed
+  - Notes: Verified in the public ledger: every `plans/done/**` row is `historical`. Generated-mirror
+    directories (`.opencode/`, `.amazonq/`, `.cursor/`) and `apps/rhino-cli/**` source paths are
+    `not-reader-doc` (not scheduled for ordinary hand-editing) — with the deliberate, correct
+    exception of `apps/rhino-cli/README.md` itself, which is genuinely reader-facing tool
+    documentation (not byte-identity-bound source) and is handled through Phase 6's Rhino Identity
+    Delivery, not ordinary hand-editing.
+
 - [x] [AI] [P1-008] Compute the primer ledger digest inside `ose-primer` and create
       `artifacts/reader-doc-disposition-ose-primer-summary.md` in the contract worktree — acceptance:
       the public summary contains only primer revision, validation result, and opaque digest.
