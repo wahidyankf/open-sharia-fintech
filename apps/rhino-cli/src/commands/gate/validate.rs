@@ -452,6 +452,15 @@ fn validate_ci_doctor_bootstrap(
     // same name. This is deliberately name-agnostic rather than hardcoding
     // `DOCTOR_TOOLS`, matching `dispatches_selected_group` above so a repo
     // naming its variable differently is not spuriously rejected.
+    //
+    // Unlike the `format` job's check above, the `gate` job's provisioning
+    // step must invoke `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix
+    // --tools`, not `npm run doctor -- --fix --tools`: the `gate` job runs
+    // on a runner with no ambient Rust toolchain, so `npm run doctor` would
+    // fall back to rebuilding rhino-cli from source via cargo and fail with
+    // "cargo: not found". The `format` job legitimately keeps `npm run
+    // doctor` because it does carry a full Rust toolchain via `setup-rust`,
+    // making that rebuild cheap and cached.
     let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
         job.steps.iter().any(|step| {
             let Some(run) = step.run.as_deref() else {
@@ -461,7 +470,7 @@ fn validate_ci_doctor_bootstrap(
             step.env.iter().any(|(name, value)| {
                 value.contains("matrix.group.doctor_tools")
                     && normalized_run.contains(&format!("tools=\"${name}\""))
-                    && normalized_run.contains("npm run doctor -- --fix --tools")
+                    && normalized_run.contains("rhino-bin.sh doctor --fix --tools")
                     && normalized_run.contains("if [ -n \"$tools\" ]")
             })
         })
@@ -2521,7 +2530,7 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "      - run: |\n",
         "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
         "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
@@ -2531,6 +2540,62 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
     assert!(
         validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
         "registry-derived Doctor selections must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_rejects_npm_run_doctor_in_gate_job() {
+    // The `gate` job runs on a runner with no ambient Rust toolchain, so
+    // `npm run doctor -- --fix --tools` (which rebuilds rhino-cli from
+    // source via cargo) must not be accepted there anymore — only the
+    // prebuilt gate-profile binary shim
+    // `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools` is valid.
+    // The `format` job legitimately keeps the `npm run doctor` form since
+    // it does have a full Rust toolchain via `setup-rust`.
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    ci-group: fixture-group\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"$DOCTOR_TOOLS\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "        env:\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_doctor_bootstrap(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("format and matrix Doctor selections"),
+        "the gate job's provisioning step must use the rhino-bin.sh shim, not npm run doctor; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -2573,7 +2638,7 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "      - run: |\n",
         "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
         "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
@@ -2626,7 +2691,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "      - run: |\n",
         "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
         "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
@@ -2681,7 +2746,7 @@ fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
         "      - run: |\n",
         "          tools=\"$CI_SELECTED_DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
         "          CI_SELECTED_DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
