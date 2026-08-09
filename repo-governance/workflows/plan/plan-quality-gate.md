@@ -433,7 +433,7 @@ The plan-checker validates:
 - **Codebase Alignment**: References to existing files, patterns, and conventions
 - **Clarity**: Clear problem statements, well-defined scope, unambiguous requirements
 - **Operational Readiness** (CRITICAL): Plans must include all of the following:
-  - **Local quality gates**: Steps to run affected tests, linting, typecheck locally before pushing (`nx affected -t typecheck lint test:quick specs:coverage`)
+  - **Local quality gates**: Steps to run affected tests, linting, typecheck locally before pushing (`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, the same registry-declared gate set `.husky/pre-push` invokes; includes `nx affected -t test:quick`)
   - **Post-push CI verification**: Steps to monitor and verify GitHub Actions/workflows pass after
     the push — against the plan's declared delivery target (the PR's check run under `*-to-pr`,
     `origin main` under the direct-push modes) — with instructions to fix failures immediately. This

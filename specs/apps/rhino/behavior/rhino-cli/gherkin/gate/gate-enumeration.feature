@@ -37,3 +37,15 @@ Feature: Gate enumeration
     When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output contains an entry with id "format-verify-rustfmt"
     And that entry reports type "check"
+
+  Scenario: Enumeration can group CI gates by declared group
+    Given every ci-surface gate in the registry declares a ci_group
+    When "rhino-cli gate list --surface=ci --format=json --by-group" runs
+    Then it emits one entry per distinct ci_group value
+    And each entry lists its member gate ids in registry declaration order
+
+  Scenario: Grouped enumeration reports the union of each group's Doctor tools
+    Given a ci_group's member gates declare overlapping and non-overlapping doctor_tools
+    When "rhino-cli gate list --surface=ci --format=json --by-group" runs
+    Then each group entry's doctor_tools is the deduped, sorted union of its members' doctor_tools
+    And a group whose members declare no doctor_tools reports an empty array

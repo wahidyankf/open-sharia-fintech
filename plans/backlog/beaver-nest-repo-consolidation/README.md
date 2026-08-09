@@ -130,7 +130,7 @@ Four delivery units, executed in order:
 This plan is the **last of three**, executed in this order:
 
 ```text
-sdlc-gate-registry-enforcement  →  rhino-cli-optimization  →  beaver-nest-repo-consolidation
+sdlc-gate-registry-enforcement  →  optimize-cis  →  beaver-nest-repo-consolidation
 ```
 
 All three touch `apps/rhino-cli`, and this plan must not start until **both** predecessors are
@@ -145,30 +145,34 @@ scope on 2026-08-07** to `ose-public` and `ose-private` only, with `beaver-nest`
 cancelled precisely because this consolidation retires it. The ordering still holds, now for the
 simpler reason that it owns `repo-config.yml`, the generated Husky shims, and the CI gate surface.
 
-### `blockedBy` — `rhino-cli-optimization`
+### `blockedBy` — `optimize-cis`
 
-[`plans/backlog/rhino-cli-optimization`](../rhino-cli-optimization/README.md) rewrites how
-`apps/rhino-cli` is built, invoked, and lint-gated. It changes three things this plan's delivery
-checklist currently depends on, and **that plan owns repairing every citation** — its Phase 2 and
-Phase 3 carry explicit hand-off steps, and its Phase 12 gate verifies every command named here
-still resolves:
+[`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) — successor to, and
+supersedes, the `rhino-cli-optimization` idea this section originally named (deleted 2026-08-08,
+absorbed into `optimize-cis`'s scope) — rewrites how `apps/rhino-cli` is built, invoked, and
+lint-gated. It changes three things this plan's delivery checklist currently depends on, and **that
+plan owns repairing every citation** — its Phase 2 carries explicit resolver-shim hand-off steps,
+and its Phase 10 sweep (`grep -rn "cargo run --release --quiet --manifest-path apps/rhino-cli"`)
+verifies every old-form command citation across the repo, including this doc, resolves:
 
 | What changes                                                              | This plan's affected steps                                                                  |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `apps/rhino-cli/tests/gate_specs.rs` is consolidated into one test binary | The parity-message TDD cycle's RED target and its `cargo test --test gate_specs` invocation |
+| `apps/rhino-cli/tests/gate_specs.rs` gains new RED-step integration tests | The parity-message TDD cycle's RED target and its `cargo test --test gate_specs` invocation |
 | `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml`   | Four steps, including `repo-config validate` and `parity manifest generate`/`validate`      |
-| `docs/reference/sdlc-gate-standard.md` invocation-form references         | Both plans edit this file for different reasons; `rhino-cli-optimization` lands first       |
+| `docs/reference/sdlc-gate-standard.md` invocation-form references         | Both plans edit this file for different reasons; `optimize-cis` lands first                 |
 
 **Do not pre-emptively rewrite these steps.** Re-derive them against `apps/rhino-cli`'s actual
-post-optimization state at Phase 0, since the predecessor's own POC phases may change the shape of
-the resolver it introduces.
+post-optimization state at Phase 0, since `optimize-cis`'s own phases may change the shape of the
+resolver it introduces from what is described here.
 
-One terminology nuance to preserve rather than "correct": this plan's four→three sweep makes
-`parity.rs` name **three** repos (`ose-public`, `ose-primer`, `ose-private`) in its parity message.
-That is not in conflict with `rhino-cli-optimization` scoping itself to **two** — `ose-primer` is
-named in the message and synced manually on a delay, but sits outside _continuously enforced_
-byte-identity per commit `a0383faed`. The message names membership; enforcement is narrower. Do not
-collapse the two concepts in either direction.
+Note this supersedes an earlier nuance: the predecessor plan (`rhino-cli-optimization`) scoped its
+own continuous byte-identity enforcement to only two of the three repos named in `parity.rs`'s
+message, with `ose-primer` named but synced manually on a delay rather than continuously enforced.
+`optimize-cis` closes that gap — its own Phase 10 gate requires `parity manifest validate` to exit 0
+with an identical hash in **all three** repos (`ose-public`, `ose-primer`, `ose-private`) before its
+PRs merge, matching this plan's four→three `parity.rs` message rather than merely coexisting with
+it. Re-verify this at Phase 0 rather than assume it, since it is `optimize-cis`'s current design,
+not yet its landed state as of this writing.
 
 ## Worktree and Delivery Mode
 

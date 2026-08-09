@@ -150,9 +150,53 @@ fn is_correct_symlink(link: &Path, expected_target: &Path) -> bool {
     std::fs::read_link(link).is_ok_and(|actual| actual == expected_target)
 }
 
-/// Reports every crate under `repo_root` whose `target/` is not yet the
-/// correct symlink into the shared cache. Read-only — never mutates the
-/// filesystem. Returns an empty list under CI (`ci == true`).
+/// Every checkout of this repo whose crates the target-share step should
+/// operate on: the main checkout plus every linked worktree.
+///
+/// The shared-cache path is keyed on the repo name (from the git *common*
+/// dir, identical across worktrees) and the crate leaf, so every worktree's
+/// `apps/<crate>/target` resolves to the same physical directory. Without
+/// this enumeration, `doctor --fix` would only ever share the one checkout it
+/// was invoked from, and each additional worktree would keep a full private
+/// copy of that crate's build artifacts (221.8 MB for `rhino-cli`) until
+/// someone remembered to run `doctor --fix` inside it.
+///
+/// Falls back to just `repo_root` when the enumeration fails — the caller is
+/// a fix/check step whose correct degraded behaviour is "do what you can for
+/// the checkout in hand". [`live_referenced_entries`] uses the same helper
+/// but must NOT degrade this way: a prune that cannot enumerate has to fail
+/// closed, so it keeps the `Option` and deletes nothing.
+fn worktree_roots(repo_root: &Path) -> Option<Vec<PathBuf>> {
+    let output = std::process::Command::new("git")
+        .args(["worktree", "list", "--porcelain"])
+        .current_dir(repo_root)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let mut roots: Vec<PathBuf> = stdout
+        .lines()
+        .filter_map(|line| line.strip_prefix("worktree "))
+        .map(PathBuf::from)
+        .collect();
+    roots.sort();
+    roots.dedup();
+    Some(roots)
+}
+
+/// [`worktree_roots`] with the fix/check step's degraded fallback applied.
+fn roots_or_self(repo_root: &Path) -> Vec<PathBuf> {
+    worktree_roots(repo_root).unwrap_or_else(|| vec![repo_root.to_path_buf()])
+}
+
+/// Reports every crate in every checkout of this repo — the main checkout and
+/// each linked worktree — whose `target/` is not yet the correct symlink into
+/// the shared cache. Read-only — never mutates the filesystem. Returns an
+/// empty list under CI (`ci == true`).
 pub fn check_target_shares(
     repo_root: &Path,
     cache_root: &Path,
@@ -163,14 +207,16 @@ pub fn check_target_shares(
         return Vec::new();
     }
     let mut result = Vec::new();
-    for crate_dir in discover_crates(repo_root) {
-        let target = crate_dir.join("target");
-        let shared_path = shared_target_path(cache_root, repo_name, &crate_dir);
-        if !is_correct_symlink(&target, &shared_path) {
-            result.push(TargetShareStatus {
-                crate_dir,
-                shared_path,
-            });
+    for root in roots_or_self(repo_root) {
+        for crate_dir in discover_crates(&root) {
+            let target = crate_dir.join("target");
+            let shared_path = shared_target_path(cache_root, repo_name, &crate_dir);
+            if !is_correct_symlink(&target, &shared_path) {
+                result.push(TargetShareStatus {
+                    crate_dir,
+                    shared_path,
+                });
+            }
         }
     }
     result
@@ -191,7 +237,8 @@ pub struct FixOutcome {
 }
 
 /// Creates or repairs each discovered crate's `target/` symlink into the
-/// shared cache. No-ops entirely under CI (`ci == true`).
+/// shared cache, across the main checkout **and every linked worktree** (see
+/// [`worktree_roots`]). No-ops entirely under CI (`ci == true`).
 pub fn fix_target_shares(
     repo_root: &Path,
     cache_root: &Path,
@@ -203,7 +250,11 @@ pub fn fix_target_shares(
         outcome.skipped_ci = true;
         return outcome;
     }
-    for crate_dir in discover_crates(repo_root) {
+    let crate_dirs = roots_or_self(repo_root)
+        .iter()
+        .flat_map(|root| discover_crates(root))
+        .collect::<Vec<_>>();
+    for crate_dir in crate_dirs {
         let target = crate_dir.join("target");
         let shared_path = shared_target_path(cache_root, repo_name, &crate_dir);
         let _ = std::fs::create_dir_all(&shared_path);
@@ -263,24 +314,10 @@ pub fn fix_target_shares(
 /// orphan.
 fn live_referenced_entries(repo_root: &Path) -> Option<HashSet<PathBuf>> {
     let mut live = HashSet::new();
-    let Ok(output) = std::process::Command::new("git")
-        .args(["worktree", "list", "--porcelain"])
-        .current_dir(repo_root)
-        .env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE")
-        .output()
-    else {
-        return None;
-    };
-    if !output.status.success() {
-        return None;
-    }
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    for worktree in stdout
-        .lines()
-        .filter_map(|line| line.strip_prefix("worktree "))
-        .map(PathBuf::from)
-    {
+    // Deliberately keeps the `Option` rather than using `roots_or_self`: prune
+    // must fail closed when the enumeration fails, never degrade to "just this
+    // checkout" and treat every other worktree's live entry as an orphan.
+    for worktree in worktree_roots(repo_root)? {
         for crate_dir in discover_crates(&worktree) {
             let target = crate_dir.join("target");
             let Ok(meta) = std::fs::symlink_metadata(&target) else {
@@ -713,6 +750,58 @@ mod tests {
         );
     }
 
+    /// `fix_target_shares` run from the **main checkout** also shares every
+    /// linked worktree's crates, not just the checkout it was invoked from.
+    ///
+    /// Without this, a developer with N worktrees pays 221.8 MB of duplicated
+    /// `apps/rhino-cli/target` per worktree until they remember to run
+    /// `doctor --fix` inside each one — the shared cache only helps the
+    /// checkout that happened to invoke it.
+    ///
+    /// Gherkin (binds) — "doctor --fix from the main checkout also shares
+    /// every linked worktree's target":
+    ///   Given a linked worktree holds a crate whose target is still a plain directory outside CI
+    ///   When the developer runs the doctor command with the fix flag from the main checkout
+    ///   Then that linked worktree's crate target becomes a symlink into the shared cache
+    ///   And it resolves to the same shared-cache entry as the main checkout's crate
+    #[test]
+    fn fix_covers_linked_worktrees_from_the_main_checkout() {
+        let repo = tempfile::tempdir().unwrap();
+        build_throwaway_repo(repo.path());
+        let cache_root = tempfile::tempdir().unwrap();
+
+        // The main checkout's crate, plus the same crate in a linked worktree
+        // whose `target/` is still a plain directory.
+        make_crate(repo.path(), "foo");
+        let linked = repo.path().join("linked-wt");
+        add_linked_worktree(repo.path(), &linked);
+        let linked_crate = make_crate(&linked, "foo");
+        let linked_target = linked_crate.join("target");
+        std::fs::create_dir_all(&linked_target).unwrap();
+
+        let outcome = super::fix_target_shares(repo.path(), cache_root.path(), "myrepo", false);
+        assert_eq!(
+            outcome.created, 2,
+            "both the main checkout and the linked worktree must be symlinked, got {outcome:?}"
+        );
+
+        let shared = cache_root.path().join("myrepo").join("foo");
+        assert!(
+            linked_target.is_symlink(),
+            "the linked worktree's target must become a symlink"
+        );
+        assert_eq!(
+            std::fs::read_link(&linked_target).unwrap(),
+            shared,
+            "the linked worktree must resolve to the same shared-cache entry as the main checkout"
+        );
+        assert_eq!(
+            std::fs::read_link(repo.path().join("apps/foo/target")).unwrap(),
+            shared,
+            "the main checkout must resolve to that same entry"
+        );
+    }
+
     /// `prune_orphans` deletes a shared-cache entry that no live checkout
     /// references. `repo_root` is a real (fully-isolated) throwaway repo, so
     /// `live_referenced_entries` *succeeds* and returns a genuine empty live
@@ -833,6 +922,24 @@ mod tests {
         std::fs::write(repo_dir.join("README.md"), "throwaway fixture").expect("write README");
         run_checked(&["add", "."]);
         run_checked(&["commit", "-m", "init"]);
+    }
+
+    /// Adds a linked worktree at `worktree_dir` to the throwaway repo at
+    /// `repo_dir`, under the same [`iso_git`] isolation every other fixture
+    /// write uses. The worktree lives inside `repo_dir` so the whole fixture
+    /// stays inside one tempdir (Standard 1 containment).
+    fn add_linked_worktree(repo_dir: &Path, worktree_dir: &Path) {
+        assert_no_escape(repo_dir); // Standard 4, before a write
+        let output = iso_git(repo_dir)
+            .args(["worktree", "add", "--detach"])
+            .arg(worktree_dir)
+            .output()
+            .expect("git worktree add must spawn");
+        assert!(
+            output.status.success(), // Standard 5
+            "git worktree add {worktree_dir:?} must exit zero, got: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
     }
 
     /// `prune_orphans` preserves a shared-cache entry that is the symlink

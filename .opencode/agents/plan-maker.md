@@ -789,7 +789,7 @@ step. Emit it exactly in this shape:
 > All checks below must pass before starting Phase 1.
 
 - [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:coverage` baseline recorded and
+- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` baseline recorded and
       every preexisting failure resolved (zero unresolved)
 - [ ] [AI] Nothing was pushed and no PR exists for this branch — run both, reading the printed
       number (never `&&`-chaining, since `grep -c` exits 1 on a zero count):
@@ -809,10 +809,7 @@ step. Emit it exactly in this shape:
 ```markdown
 ### Local Quality Gates (Before Push)
 
-- [ ] Run affected typecheck: `npx nx affected -t typecheck`
-- [ ] Run affected linting: `npx nx affected -t lint`
-- [ ] Run affected quick tests: `npx nx affected -t test:quick`
-- [ ] Run affected spec coverage: `npx nx affected -t specs:coverage`
+- [ ] Run the local pre-push gate set: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (includes `nx affected -t test:quick`)
 - [ ] Fix ALL failures — including preexisting issues not caused by your changes
 - [ ] Re-run failing checks to confirm resolution
 - [ ] Verify zero failures before pushing

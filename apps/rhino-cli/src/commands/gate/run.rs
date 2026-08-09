@@ -8,7 +8,9 @@ use std::process::Command;
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::repo_config::{self, GateKind, GateSurface, GateType, ScopeKind};
+use crate::application::repo_config::{
+    self, GateKind, GateSurface, GateType, GateWiring, ScopeKind,
+};
 use crate::commands::repo_config_validate;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
@@ -43,6 +45,9 @@ pub struct RunArgs {
     /// Run only the gate with this id.
     #[arg(long)]
     pub only: Option<String>,
+    /// Run only gates whose declared `ci_group` matches this id.
+    #[arg(long)]
+    pub group: Option<String>,
     /// Commit-message file forwarded only to the `commit-msg` surface.
     #[arg(last = true)]
     pub commit_message_file: Option<PathBuf>,
@@ -61,6 +66,7 @@ pub fn run(args: &RunArgs, _output_format: OutputFormat) -> Result<(), Error> {
         &repo_root,
         &args.surface,
         args.only.as_deref(),
+        args.group.as_deref(),
         args.commit_message_file.as_deref(),
         &mut std::io::stdout(),
     )
@@ -88,14 +94,36 @@ pub fn run_at_root_with_only(
     only: Option<&str>,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
-    run_at_root_with_only_and_message_file(repo_root, surface, only, None, writer)
+    run_at_root_with_only_and_message_file(repo_root, surface, only, None, None, writer)
 }
 
-/// Run gates declared on a surface, optionally selecting one gate and forwarding a commit message.
+/// Run gates declared on a surface at a known root, restricted to one declared CI group.
+///
+/// Unlike [`run_at_root_with_only`], every gate in the selected group runs
+/// regardless of an earlier gate's failure, and a per-gate summary line
+/// (`PASS`/`FAIL`) is written for every gate in the group once the group
+/// finishes.
+///
+/// # Errors
+///
+/// Returns an error when the surface is invalid, `repo-config.yml` cannot be
+/// read, the group id matches no declared gate, a command cannot be started,
+/// or any gate in the group fails.
+pub fn run_at_root_with_group(
+    repo_root: &Path,
+    surface: &str,
+    group: &str,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    run_at_root_with_only_and_message_file(repo_root, surface, None, Some(group), None, writer)
+}
+
+/// Run gates declared on a surface, optionally selecting one gate or CI group and forwarding a commit message.
 fn run_at_root_with_only_and_message_file(
     repo_root: &Path,
     surface: &str,
     only: Option<&str>,
+    group: Option<&str>,
     commit_message_file: Option<&Path>,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
@@ -114,8 +142,10 @@ fn run_at_root_with_only_and_message_file(
     if only.is_some() {
         list::validate_gate_ids(&surface_gates, only)?;
     }
+    let group_gates = resolve_group_gates(&surface_gates, group)?;
     validate_registry_semantics(&config, writer)?;
-    let selected_gates = surface_gates
+    let selected_gates = group_gates
+        .unwrap_or(surface_gates)
         .into_iter()
         .filter(|gate| only.is_none_or(|id| gate.id == id))
         .collect::<Vec<_>>();
@@ -131,6 +161,11 @@ fn run_at_root_with_only_and_message_file(
     // loss of per-gate mutation-output attribution — see
     // `worktree_changed_paths` and `restage_mutation_outputs`.
     let mut worktree_snapshot: Option<BTreeSet<String>> = None;
+    // Every gate's outcome when running a selected group, reported as a
+    // trailing summary once the whole group finishes (see below) — unlike the
+    // ungrouped path, a group run does not stop at the first failure so every
+    // group member gets an observable outcome line.
+    let mut group_summary: Vec<(String, bool)> = Vec::new();
     for gate in selected_gates {
         let scope = &gate.surfaces[&surface];
         if scope.scope == ScopeKind::PathGated
@@ -187,19 +222,85 @@ fn run_at_root_with_only_and_message_file(
             commit_message_file,
             repo_root,
         )?;
-        if !status.success() {
-            return Err(anyhow!("gate {} failed", gate.id));
+        match group {
+            Some(_) => group_summary.push((gate.id.clone(), status.success())),
+            None if !status.success() => return Err(anyhow!("gate {} failed", gate.id)),
+            None => {}
         }
-        if let Some(changed_before) = changed_before {
-            let changed_after = restage_mutation_outputs(repo_root, &changed_before)?;
-            worktree_snapshot = Some(changed_after);
-        } else if gate.gate_type == GateType::Mutation {
-            // A non-restaging mutation (none exist in the registry today, but
-            // the schema permits one) can also change the worktree; drop the
-            // cache defensively rather than let a future gate misattribute
-            // outputs to the wrong gate.
-            worktree_snapshot = None;
+        if status.success() {
+            if let Some(changed_before) = changed_before {
+                let changed_after = restage_mutation_outputs(repo_root, &changed_before)?;
+                worktree_snapshot = Some(changed_after);
+            } else if gate.gate_type == GateType::Mutation {
+                // A non-restaging mutation (none exist in the registry today, but
+                // the schema permits one) can also change the worktree; drop the
+                // cache defensively rather than let a future gate misattribute
+                // outputs to the wrong gate.
+                worktree_snapshot = None;
+            }
         }
+    }
+    if let Some(group_id) = group {
+        report_group_summary(group_id, &group_summary, writer)?;
+    }
+    Ok(())
+}
+
+/// Resolves the gates selected by a declared CI group, sharing the
+/// "select gates by `ci_group`" predicate with `gate list --by-group`'s
+/// bucketing (via [`list::gates_in_ci_group`]) so neither command file
+/// carries its own copy.
+///
+/// Hand-wired gates (`wiring: hand-wired`) are excluded from the returned
+/// members: they are dispatched by their own dedicated CI workflow job, not
+/// by `--group`, matching `gate list --format=json --by-group`'s own
+/// hand-wired exclusion. Without this, a `--group` run would redundantly
+/// re-execute a hand-wired gate inside its CI-group job, which can fail
+/// there even though the gate's dedicated job runs it correctly (e.g. an
+/// `nx`-kind hand-wired gate needs `node_modules`, which a CI-group job may
+/// skip installing when none of its *other* members need it).
+///
+/// # Errors
+///
+/// Returns an error when `group` is set and matches no gate on the surface.
+fn resolve_group_gates<'a>(
+    surface_gates: &[&'a repo_config::GateEntry],
+    group: Option<&str>,
+) -> Result<Option<Vec<&'a repo_config::GateEntry>>, Error> {
+    let Some(group_id) = group else {
+        return Ok(None);
+    };
+    let members = list::gates_in_ci_group(surface_gates, group_id)
+        .into_iter()
+        .filter(|gate| gate.wiring.as_ref() != Some(&GateWiring::HandWired))
+        .collect::<Vec<_>>();
+    if members.is_empty() {
+        return Err(anyhow!(
+            "--group id {group_id:?} matched no gates on surface"
+        ));
+    }
+    Ok(Some(members))
+}
+
+/// Writes every group member's `PASS`/`FAIL` outcome line, then fails the
+/// overall group run if any member failed.
+///
+/// # Errors
+///
+/// Returns an error when a summary line cannot be written or any gate in
+/// `group_summary` failed.
+fn report_group_summary(
+    group_id: &str,
+    group_summary: &[(String, bool)],
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    let mut any_failed = false;
+    for (id, passed) in group_summary {
+        writeln!(writer, "{id}\t{}", if *passed { "PASS" } else { "FAIL" })?;
+        any_failed |= !passed;
+    }
+    if any_failed {
+        return Err(anyhow!("gate group {group_id} failed"));
     }
     Ok(())
 }
@@ -786,6 +887,167 @@ fn fixture_git_command(repo_root: &Path) -> Command {
     command
 }
 
+/// Binds the Gherkin scenario "A failing gate inside a group is named in the
+/// output"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn failing_gate_inside_a_group_is_named_in_the_output() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: group-first\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: group-failing\n",
+            "    type: check\n",
+            "    command: false\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: group-third\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: other-group-gate\n",
+            "    type: check\n",
+            "    command: touch must-not-run.txt\n",
+            "    kind: external\n",
+            "    ci-group: other-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root_with_group(repo.path(), "ci", "sample-group", &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("group-first")
+            && rendered.contains("group-failing")
+            && rendered.contains("group-third")
+            && rendered
+                .lines()
+                .any(|line| line.contains("group-failing") && line.contains("FAIL")),
+        "a failing gate inside a group must be named on a FAIL line, alongside every other \
+         gate in the group; result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+    assert!(
+        !repo.path().join("must-not-run.txt").exists(),
+        "a gate outside the selected group must not run"
+    );
+}
+
+/// Binds the Gherkin scenario "A hand-wired gate never runs a second time
+/// inside its CI group"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
+///
+/// A hand-wired gate (`wiring: hand-wired`) is dispatched by its own
+/// dedicated CI workflow job, never by `gate run --group`. Before this fix,
+/// `--group` execution ran every gate whose `ci_group` matched, including
+/// hand-wired ones — silently redundant (and harmless) whenever the
+/// hand-wired gate's underlying command happened to succeed in the matrix
+/// job's environment, but a real failure once that environment stopped
+/// matching the hand-wired gate's dedicated job (e.g. missing `node_modules`
+/// for an `nx`-kind hand-wired gate once a CI-group job skips `npm ci`).
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn hand_wired_gate_never_reruns_inside_its_ci_group() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: auto-dispatched\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: hand-wired-gate\n",
+            "    type: check\n",
+            "    command: false\n",
+            "    kind: external\n",
+            "    wiring: hand-wired\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root_with_group(repo.path(), "ci", "sample-group", &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_ok(),
+        "a group containing only an auto-dispatched gate (after excluding the hand-wired one) \
+         must succeed: {rendered}"
+    );
+    assert!(
+        rendered.contains("auto-dispatched") && !rendered.contains("hand-wired-gate"),
+        "the hand-wired gate must never appear in the group's summary — it is dispatched by its \
+         own dedicated CI job, not by --group: {rendered}"
+    );
+}
+
+/// Binds the Gherkin scenario "An unknown group id fails before execution"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
+///
+/// Mirrors `--only`'s "Unknown or duplicate only ids fail before execution"
+/// coverage for the sibling `--group` selector: `resolve_group_gates`'s
+/// "no matching gates" `Err` path (LOG5) previously had zero test coverage.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn unknown_group_id_fails_before_execution() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: group-member\n",
+            "    type: check\n",
+            "    command: touch must-not-run.txt\n",
+            "    kind: external\n",
+            "    ci-group: real-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let error = run_at_root_with_group(repo.path(), "ci", "unregistered-group", &mut Vec::new())
+        .unwrap_err()
+        .to_string();
+
+    assert!(
+        error.contains("unregistered-group"),
+        "an unknown --group id must fail before any leaf invocation and name the offending id; \
+         error={error:?}"
+    );
+    assert!(
+        !repo.path().join("must-not-run.txt").exists(),
+        "no gate must run when the selected group id matches nothing"
+    );
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
@@ -1192,6 +1454,7 @@ fn linked_worktree_uses_its_own_repo_config() {
         &RunArgs {
             surface: "pre-push".to_string(),
             only: None,
+            group: None,
             commit_message_file: None,
         },
         OutputFormat::Text,

@@ -199,13 +199,13 @@ When rewriting governance prose, replace vendor-specific terms with the vendor-n
 
 Each AI coding platform that integrates with this repository has a dedicated binding directory at the repo root:
 
-| Platform       | Binding directory                         | Root instruction file                     | Status   |
-| -------------- | ----------------------------------------- | ----------------------------------------- | -------- |
-| Claude Code    | `.claude/`                                | `CLAUDE.md` (shim → `AGENTS.md`)          | Active   |
-| OpenCode       | `.opencode/agents/`                       | `AGENTS.md` (read natively)               | Active   |
-| Cursor         | `.cursor/agents/` (generated), `.cursor/rules/` (optional) | `AGENTS.md` (read natively)               | Active   |
-| GitHub Copilot | `.github/copilot-instructions.md`         | `AGENTS.md` (coding-agent mode)           | Reserved |
-| Others         | see `docs/reference/platform-bindings.md` | `AGENTS.md`                               | Varies   |
+| Platform       | Binding directory                                          | Root instruction file            | Status   |
+| -------------- | ---------------------------------------------------------- | -------------------------------- | -------- |
+| Claude Code    | `.claude/`                                                 | `CLAUDE.md` (shim → `AGENTS.md`) | Active   |
+| OpenCode       | `.opencode/agents/`                                        | `AGENTS.md` (read natively)      | Active   |
+| Cursor         | `.cursor/agents/` (generated), `.cursor/rules/` (optional) | `AGENTS.md` (read natively)      | Active   |
+| GitHub Copilot | `.github/copilot-instructions.md`                          | `AGENTS.md` (coding-agent mode)  | Reserved |
+| Others         | see `docs/reference/platform-bindings.md`                  | `AGENTS.md`                      | Varies   |
 
 The governance layer refers to these binding directories collectively as "the platform binding" rather than naming specific directories in load-bearing prose.
 
@@ -233,7 +233,7 @@ Enforcement is automated via `rhino-cli repo-governance vendor validate`.
 
 ```bash
 # Audit the repo-governance/ directory (default)
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
+apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
 
 # Or via Nx (cached)
 npx nx run rhino-cli:governance:vendor-audit-validation

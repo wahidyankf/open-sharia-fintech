@@ -56,9 +56,24 @@ runs:
     # ("could not rename downloaded file ... No such file or directory"). Pre-install each pinned
     # rust-version sequentially so the parallel compat:min-version tasks only ever read a toolchain
     # that is already present.
+    #
+    # Both name forms are installed on purpose: cargo-hack resolves a `rust-version = "X.Y.Z"` floor
+    # to the toolchain name `X.Y` (`rustup toolchain add X.Y`), and rustup stores `X.Y` under a
+    # different directory from `X.Y.Z`. Installing only the declared patch-level string therefore
+    # leaves the `X.Y` download to race exactly as before.
+    #
+    # Extraction uses `sed` rather than `grep -P`: BSD grep (macOS) has no `-P`, and a silent
+    # extraction failure there installs nothing at all while still exiting 0.
     - name: Pre-install pinned MSRV toolchain(s) (avoids rustup download race under parallel cargo-hack)
       shell: bash
       run: |
-        for v in $(grep -rhoP '^rust-version\s*=\s*"\K[^"]+' apps/*/Cargo.toml libs/*/Cargo.toml 2>/dev/null | sort -u); do
+        shopt -s nullglob
+        floors=$(sed -n 's/^rust-version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
+          apps/*/Cargo.toml libs/*/Cargo.toml 2>/dev/null | sort -u)
+        for v in $floors; do
           rustup toolchain install "$v" --profile minimal
+          mm=$(printf '%s\n' "$v" | cut -d. -f1,2)
+          if [ "$mm" != "$v" ]; then
+            rustup toolchain install "$mm" --profile minimal
+          fi
         done

@@ -95,15 +95,20 @@ pub(super) fn read_dotnet_version(path: &Path) -> Option<String> {
         .map(std::string::ToString::to_string)
 }
 
-/// Reads the `rust-version` (MSRV) from a `Cargo.toml` file.
+/// Reads the pinned `channel` from a `rust-toolchain.toml` file.
 ///
-/// Returns `None` when the file is missing or does not contain a
-/// `rust-version` key in the `[package]` table.
-pub(super) fn read_rust_version(path: &Path) -> Option<String> {
+/// This is the exact toolchain version `cargo` builds with — distinct from a
+/// `Cargo.toml` `rust-version` MSRV floor, which the installed compiler may
+/// legitimately exceed. A pinned channel is not a floor: `doctor` compares
+/// against it with exact equality, not `>=`.
+///
+/// Returns `None` when the file is missing or does not contain a `channel`
+/// key in the `[toolchain]` table.
+pub(super) fn read_rust_toolchain_channel(path: &Path) -> Option<String> {
     let data = std::fs::read_to_string(path).ok()?;
     for line in data.lines() {
         let t = line.trim();
-        if t.starts_with("rust-version") {
+        if t.starts_with("channel") {
             if let Some((_, rhs)) = t.split_once('=') {
                 let mut v = rhs.trim().to_string();
                 v = v.trim_matches('"').to_string();
@@ -112,6 +117,163 @@ pub(super) fn read_rust_version(path: &Path) -> Option<String> {
         }
     }
     None
+}
+
+/// Components every pinned Rust toolchain must declare so lint gates can run.
+///
+/// `cargo fmt` ships as the `rustfmt` component and `cargo clippy` as `clippy`;
+/// neither is part of rustup's `minimal` profile.
+pub(super) const REQUIRED_RUST_TOOLCHAIN_COMPONENTS: [&str; 2] = ["rustfmt", "clippy"];
+
+/// Enumerates repo-relative `rust-toolchain.toml` paths, workspace root first.
+///
+/// Only the workspace root and the immediate `apps/*` and `libs/*` project
+/// directories are scanned; `rust-toolchain.toml` files nested any deeper
+/// (vendored copies under `target/`, `node_modules/`, or a local cargo home)
+/// are deliberately out of scope.
+pub(super) fn rust_toolchain_manifests(repo_root: &Path) -> Vec<String> {
+    const FILE_NAME: &str = "rust-toolchain.toml";
+    let mut found = Vec::new();
+    if repo_root.join(FILE_NAME).is_file() {
+        found.push(FILE_NAME.to_string());
+    }
+    for parent in ["apps", "libs"] {
+        let Ok(entries) = std::fs::read_dir(repo_root.join(parent)) else {
+            continue;
+        };
+        let mut in_parent: Vec<String> = entries
+            .flatten()
+            .filter(|entry| entry.path().join(FILE_NAME).is_file())
+            .filter_map(|entry| entry.file_name().into_string().ok())
+            .map(|project| format!("{parent}/{project}/{FILE_NAME}"))
+            .collect();
+        in_parent.sort();
+        found.extend(in_parent);
+    }
+    found
+}
+
+/// Strips a trailing `#` comment from one line, if the line is not entirely
+/// a comment.
+///
+/// This file class never puts `#` inside a component name, so an unquoted,
+/// position-based strip is sufficient — no TOML string-literal awareness is
+/// needed. A line that is a comment in its entirety (e.g. a commented-out
+/// decoy key) collapses to an empty string, which never satisfies the
+/// key-equality check in [`read_rust_toolchain_components`].
+fn strip_trailing_comment(line: &str) -> &str {
+    match line.find('#') {
+        Some(index) => &line[..index],
+        None => line,
+    }
+}
+
+/// Splits a comma-separated array segment into trimmed, unquoted entries.
+///
+/// Recognizes both TOML basic strings (`"clippy"`) and literal strings
+/// (`'clippy'`), and drops empty segments produced by a trailing comma.
+fn parse_component_entries(segment: &str) -> Vec<String> {
+    segment
+        .split(',')
+        .map(str::trim)
+        .filter(|entry| !entry.is_empty())
+        .map(|entry| entry.trim_matches('"').trim_matches('\'').to_string())
+        .filter(|entry| !entry.is_empty())
+        .collect()
+}
+
+/// Extracts the `components` array declared under `[toolchain]` in a
+/// `rust-toolchain.toml` body.
+///
+/// Line-anchored, unlike a raw substring search: a line opens the array only
+/// when its non-comment key (the text before an unquoted `=`) is exactly
+/// `components` — a commented-out decoy (`# components = [...]`) or an
+/// unrelated key that merely contains the substring (`excluded_components =
+/// [...]`) is never accepted, because neither line's key trims to exactly
+/// `components`. Once opened, the array may continue across multiple lines;
+/// each line has its trailing `# comment` stripped before entries are split,
+/// and each entry is trimmed of both `"..."` (basic) and `'...'` (literal)
+/// TOML string quoting.
+///
+/// Returns an empty vector when the file declares no `components` key.
+pub(super) fn read_rust_toolchain_components(contents: &str) -> Vec<String> {
+    let mut in_array = false;
+    let mut components = Vec::new();
+    for raw_line in contents.lines() {
+        let line = strip_trailing_comment(raw_line);
+        if !in_array {
+            let trimmed = line.trim();
+            let Some((key, rhs)) = trimmed.split_once('=') else {
+                continue;
+            };
+            if key.trim() != "components" {
+                continue;
+            }
+            let Some(after_open) = rhs.trim().strip_prefix('[') else {
+                continue;
+            };
+            in_array = true;
+            if let Some((body, _rest)) = after_open.split_once(']') {
+                components.extend(parse_component_entries(body));
+                break;
+            }
+            components.extend(parse_component_entries(after_open));
+            continue;
+        }
+        if let Some((body, _rest)) = line.split_once(']') {
+            components.extend(parse_component_entries(body));
+            break;
+        }
+        components.extend(parse_component_entries(line));
+    }
+    components
+}
+
+/// Builds one [`ToolCheck`] per scanned `rust-toolchain.toml` that omits a
+/// required lint component.
+///
+/// Reported as [`ToolStatus::Warning`], matching Doctor's existing severity
+/// convention for a version mismatch (e.g. a stale `rustc`): a missing
+/// component does not fail `rustc`/`cargo`'s own presence check, so it does
+/// not fail Doctor's exit code either — see `needs_remediation`, which never
+/// treats a `Warning` on this check name as actionable. A crate that pins a
+/// `channel` without listing `components` relies on that exact toolchain
+/// having been installed with a non-minimal profile, or on a sibling crate's
+/// toolchain file having added the components first; CI pre-installs each
+/// declared MSRV with `--profile minimal`, so an omission here is a latent,
+/// intermittent `'cargo-fmt' is not installed for the toolchain '<channel>'`
+/// failure waiting to race a parallel lint job.
+pub(super) fn rust_toolchain_lint_component_checks(repo_root: &Path) -> Vec<ToolCheck> {
+    let mut checks = Vec::new();
+    for relative in rust_toolchain_manifests(repo_root) {
+        let Ok(contents) = std::fs::read_to_string(repo_root.join(&relative)) else {
+            continue;
+        };
+        let declared = read_rust_toolchain_components(&contents);
+        let missing: Vec<&str> = REQUIRED_RUST_TOOLCHAIN_COMPONENTS
+            .into_iter()
+            .filter(|required| !declared.iter().any(|found| found == required))
+            .collect();
+        if missing.is_empty() {
+            continue;
+        }
+        let note = format!(
+            "{relative} pins a Rust toolchain but does not declare the {} component(s); \
+             a lint gate running cargo fmt/clippy under that channel fails whenever rustup \
+             installed it with --profile minimal",
+            missing.join(", ")
+        );
+        checks.push(ToolCheck {
+            name: "rust-toolchain-components".to_string(),
+            binary: String::new(),
+            status: ToolStatus::Warning,
+            installed_version: declared.join(", "),
+            required_version: REQUIRED_RUST_TOOLCHAIN_COMPONENTS.join(", "),
+            source: relative,
+            note,
+        });
+    }
+    checks
 }
 
 // --- Parsers for tool output ---
@@ -451,6 +613,21 @@ pub fn check_all(opts: &CheckOptions<'_>) -> DoctorResult {
         checks.push(run_one_def(runner, def));
     }
 
+    // Tied to the same selection/scope/skip-tools filtering as the `rust`
+    // tool itself (Minimal scope and `doctor.skip-tools: [rust]` both
+    // exclude it, `--tools rust` includes it alone) rather than running
+    // unconditionally — this is Rust toolchain hygiene, not an independent
+    // probe. Appended after every `ToolDef`-backed check, never spliced in
+    // among them: `fix()` (fixer.rs) looks up `defs[i]` by the same index as
+    // `checks[i]` to find install steps, so any check without a same-index
+    // `ToolDef` counterpart must sit past `defs.len() - 1`. It always does:
+    // `needs_remediation` returns `false` for a `Warning` whose name isn't
+    // `"tofu"`, so `fix()` short-circuits to `already_ok` before ever
+    // indexing into `defs` for these entries.
+    if defs.iter().any(|definition| definition.name == "rust") {
+        checks.extend(rust_toolchain_lint_component_checks(&opts.repo_root));
+    }
+
     let mut ok = 0usize;
     let mut warn = 0usize;
     let mut missing = 0usize;
@@ -599,11 +776,15 @@ mod tests {
     }
 
     #[test]
-    fn read_rust_version_from_cargo() {
+    fn read_rust_toolchain_channel_from_rust_toolchain_toml() {
         let dir = tempfile::tempdir().unwrap();
-        let p = dir.path().join("Cargo.toml");
-        std::fs::write(&p, "[package]\nname = \"x\"\nrust-version = \"1.88\"\n").unwrap();
-        assert_eq!(read_rust_version(&p).as_deref(), Some("1.88"));
+        let p = dir.path().join("rust-toolchain.toml");
+        std::fs::write(
+            &p,
+            "[toolchain]\nchannel = \"1.75.0\"\ncomponents = [\"clippy\"]\n",
+        )
+        .unwrap();
+        assert_eq!(read_rust_toolchain_channel(&p).as_deref(), Some("1.75.0"));
     }
 
     #[test]
@@ -763,5 +944,257 @@ mod tests {
 
         assert_eq!(result.checks.len(), 1);
         assert_eq!(result.checks[0].name, "tofu");
+    }
+
+    // --- rust-toolchain.toml lint-component checks ---
+    //
+    // Six inputs, matching the cases verified in the PR #31 review: A/B are
+    // baseline-pass forms, C-F each reproduce a distinct parser defect a
+    // substring-based extractor gets wrong (false rejection for C/D, false
+    // acceptance — the more dangerous direction — for E/F).
+
+    #[test]
+    fn components_case_a_baseline_single_line() {
+        let contents = "[toolchain]\nchannel = \"1.95.0\"\ncomponents = [\"clippy\", \"rustfmt\", \"llvm-tools\"]\n";
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            vec![
+                "clippy".to_string(),
+                "rustfmt".to_string(),
+                "llvm-tools".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn components_case_b_multi_line_no_comments() {
+        let contents = concat!(
+            "[toolchain]\n",
+            "channel = \"1.95.0\"\n",
+            "components = [\n",
+            "  \"clippy\",\n",
+            "  \"rustfmt\",\n",
+            "]\n",
+        );
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            vec!["clippy".to_string(), "rustfmt".to_string()],
+            "the multi-line components array form must parse into its component names"
+        );
+    }
+
+    #[test]
+    fn components_case_c_multi_line_with_per_entry_comments() {
+        let contents = concat!(
+            "[toolchain]\n",
+            "channel = \"1.95.0\"\n",
+            "components = [\n",
+            "  \"clippy\",  # linter\n",
+            "  \"rustfmt\", # formatter\n",
+            "]\n",
+        );
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            vec!["clippy".to_string(), "rustfmt".to_string()],
+            "a per-entry trailing # comment must not corrupt the following entry"
+        );
+    }
+
+    #[test]
+    fn components_case_d_single_quoted_literal_strings() {
+        let contents = "[toolchain]\nchannel = \"1.95.0\"\ncomponents = ['clippy', 'rustfmt']\n";
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            vec!["clippy".to_string(), "rustfmt".to_string()],
+            "TOML literal strings ('clippy') must parse the same as basic strings (\"clippy\")"
+        );
+    }
+
+    #[test]
+    fn components_case_e_commented_out_decoy_is_ignored() {
+        let contents = concat!(
+            "# components = [\"clippy\", \"rustfmt\"]\n",
+            "[toolchain]\n",
+            "channel = \"1.95.0\"\n",
+        );
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            Vec::<String>::new(),
+            "a commented-out components line must never satisfy the check — false \
+             acceptance is the more dangerous direction than false rejection here"
+        );
+    }
+
+    #[test]
+    fn components_case_f_unrelated_key_is_ignored() {
+        let contents =
+            "[toolchain]\nchannel = \"1.95.0\"\nexcluded_components = [\"clippy\", \"rustfmt\"]\n";
+        assert_eq!(
+            read_rust_toolchain_components(contents),
+            Vec::<String>::new(),
+            "a key that merely contains the substring \"components\" must not satisfy the check"
+        );
+    }
+
+    #[test]
+    fn rust_toolchain_manifests_covers_root_and_project_dirs() {
+        let repo = tempfile::TempDir::new().unwrap();
+        let body = "[toolchain]\nchannel = \"1.95.0\"\ncomponents = [\"clippy\", \"rustfmt\"]\n";
+        std::fs::write(repo.path().join("rust-toolchain.toml"), body).unwrap();
+        for project in ["apps/rhino-cli", "libs/rust-commons"] {
+            let dir = repo.path().join(project);
+            std::fs::create_dir_all(&dir).unwrap();
+            std::fs::write(dir.join("rust-toolchain.toml"), body).unwrap();
+        }
+        // A vendored copy below the scanned depth must stay out of scope.
+        let vendored = repo.path().join("apps/rhino-cli/target/pkg");
+        std::fs::create_dir_all(&vendored).unwrap();
+        std::fs::write(vendored.join("rust-toolchain.toml"), "[toolchain]\n").unwrap();
+
+        assert_eq!(
+            rust_toolchain_manifests(repo.path()),
+            vec![
+                "rust-toolchain.toml".to_string(),
+                "apps/rhino-cli/rust-toolchain.toml".to_string(),
+                "libs/rust-commons/rust-toolchain.toml".to_string(),
+            ],
+            "only the workspace root and immediate apps/libs project dirs are scanned"
+        );
+    }
+
+    #[test]
+    fn rust_toolchain_lint_component_checks_flags_missing_components() {
+        let repo = tempfile::TempDir::new().unwrap();
+        let project = repo.path().join("apps").join("coralpolyp-be");
+        std::fs::create_dir_all(&project).unwrap();
+        std::fs::write(
+            project.join("rust-toolchain.toml"),
+            "[toolchain]\nchannel = \"1.95.0\"\n",
+        )
+        .unwrap();
+
+        let checks = rust_toolchain_lint_component_checks(repo.path());
+
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].name, "rust-toolchain-components");
+        assert_eq!(checks[0].status, ToolStatus::Warning);
+        assert_eq!(checks[0].source, "apps/coralpolyp-be/rust-toolchain.toml");
+        assert!(checks[0].note.contains("rustfmt") && checks[0].note.contains("clippy"));
+    }
+
+    #[test]
+    fn rust_toolchain_lint_component_checks_passes_when_declared() {
+        let repo = tempfile::TempDir::new().unwrap();
+        for project in ["apps/rhino-cli", "libs/rust-commons"] {
+            let dir = repo.path().join(project);
+            std::fs::create_dir_all(&dir).unwrap();
+            std::fs::write(
+                dir.join("rust-toolchain.toml"),
+                "[toolchain]\nchannel = \"1.95.0\"\ncomponents = [\"clippy\", \"rustfmt\", \"llvm-tools\"]\nprofile = \"minimal\"\n",
+            )
+            .unwrap();
+        }
+
+        assert!(
+            rust_toolchain_lint_component_checks(repo.path()).is_empty(),
+            "rust-toolchain.toml files declaring rustfmt and clippy must produce no warning"
+        );
+    }
+
+    /// A `rust-toolchain.toml` declaring exactly one required component must
+    /// name only the genuinely missing one — proves `missing.join(", ")`
+    /// does not regress to printing the full required list regardless of
+    /// what is actually declared.
+    #[test]
+    fn rust_toolchain_lint_component_checks_names_only_the_missing_component() {
+        let repo = tempfile::TempDir::new().unwrap();
+        let project = repo.path().join("apps").join("coralpolyp-be");
+        std::fs::create_dir_all(&project).unwrap();
+        std::fs::write(
+            project.join("rust-toolchain.toml"),
+            "[toolchain]\nchannel = \"1.95.0\"\ncomponents = [\"clippy\"]\n",
+        )
+        .unwrap();
+
+        let checks = rust_toolchain_lint_component_checks(repo.path());
+
+        assert_eq!(checks.len(), 1);
+        assert!(
+            checks[0].note.contains("rustfmt") && !checks[0].note.contains("clippy component"),
+            "note must name only the missing rustfmt component, not the already-declared \
+             clippy one: {}",
+            checks[0].note
+        );
+        assert!(
+            !checks[0].note.contains("the clippy, rustfmt component"),
+            "must not regress to printing the full required list: {}",
+            checks[0].note
+        );
+    }
+
+    /// Binds the Gherkin scenario "A pinned Rust toolchain without lint
+    /// components is reported as a warning, not a failure"
+    /// (specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature).
+    #[test]
+    fn check_all_reports_missing_lint_components_as_warning_not_missing() {
+        let repo = tempfile::TempDir::new().unwrap();
+        std::fs::write(repo.path().join("package.json"), "{}").unwrap();
+        let project = repo.path().join("apps").join("rhino-cli");
+        std::fs::create_dir_all(&project).unwrap();
+        std::fs::write(
+            project.join("rust-toolchain.toml"),
+            "[toolchain]\nchannel = \"1.95.0\"\n",
+        )
+        .unwrap();
+        let runner: CommandRunner = &|_name, _args| Ok(("1.95.0\n".into(), String::new(), 0));
+        let opts = CheckOptions {
+            repo_root: repo.path().to_path_buf(),
+            runner: Some(runner),
+            scope: Scope::Full,
+            selected_tools: Some(vec!["rust".into()]),
+        };
+
+        let result = check_all(&opts);
+
+        let component_check = result
+            .checks
+            .iter()
+            .find(|check| check.name == "rust-toolchain-components")
+            .expect("component check must be present when the rust tool is selected");
+        assert_eq!(component_check.status, ToolStatus::Warning);
+        assert_eq!(
+            result.missing_count, 0,
+            "a component warning must never count as missing"
+        );
+    }
+
+    #[test]
+    fn check_all_omits_lint_component_checks_in_minimal_scope() {
+        let repo = tempfile::TempDir::new().unwrap();
+        std::fs::write(repo.path().join("package.json"), "{}").unwrap();
+        let project = repo.path().join("apps").join("rhino-cli");
+        std::fs::create_dir_all(&project).unwrap();
+        std::fs::write(
+            project.join("rust-toolchain.toml"),
+            "[toolchain]\nchannel = \"1.95.0\"\n",
+        )
+        .unwrap();
+        let runner: CommandRunner = &|_name, _args| Ok(("1.0.0\n".into(), String::new(), 0));
+        let opts = CheckOptions {
+            repo_root: repo.path().to_path_buf(),
+            runner: Some(runner),
+            scope: Scope::Minimal,
+            selected_tools: None,
+        };
+
+        let result = check_all(&opts);
+
+        assert!(
+            !result
+                .checks
+                .iter()
+                .any(|check| check.name == "rust-toolchain-components"),
+            "Minimal scope excludes the rust tool, and the component check with it"
+        );
     }
 }

@@ -14,7 +14,7 @@ use super::checker::{
     parse_cargo_llvm_cov, parse_clang_format_version, parse_docker_version, parse_dotnet_version,
     parse_hadolint_version, parse_jq_version, parse_line_word, parse_playwright_version,
     parse_rust_version, parse_shellcheck_version, parse_trim_version, read_dotnet_version,
-    read_node_version, read_npm_version, read_rust_version,
+    read_node_version, read_npm_version, read_rust_toolchain_channel,
 };
 
 /// A single step in an auto-install sequence.
@@ -114,8 +114,8 @@ struct Paths {
     package_json: PathBuf,
     /// Path to the repository's backend `global.json` (for .NET `sdk.version`).
     global_json: PathBuf,
-    /// Path to `apps/rhino-cli/Cargo.toml` (for `rust-version`).
-    cargo_toml: PathBuf,
+    /// Path to `apps/rhino-cli/rust-toolchain.toml` (for the pinned `channel`).
+    rust_toolchain_toml: PathBuf,
 }
 
 /// Initialises [`PATHS`] from `repo_root`.
@@ -126,7 +126,10 @@ fn set_paths(repo_root: &Path) {
     let p = Paths {
         package_json: repo_root.join("package.json"),
         global_json: configured_dotnet_global_json(repo_root),
-        cargo_toml: repo_root.join("apps").join("rhino-cli").join("Cargo.toml"),
+        rust_toolchain_toml: repo_root
+            .join("apps")
+            .join("rhino-cli")
+            .join("rust-toolchain.toml"),
     };
     // OnceLock — only the first writer wins. For tests we reset via reset_paths.
     let _ = PATHS.set(p);
@@ -176,9 +179,9 @@ fn read_npm_v() -> String {
 fn read_dotnet_v() -> String {
     read_dotnet_version(&p().global_json).unwrap_or_default()
 }
-/// Reads the `rust-version` (MSRV) from the cached `Cargo.toml`.
-fn read_rust_v() -> String {
-    read_rust_version(&p().cargo_toml).unwrap_or_default()
+/// Reads the pinned toolchain `channel` from the cached `rust-toolchain.toml`.
+fn read_rust_toolchain_v() -> String {
+    read_rust_toolchain_channel(&p().rust_toolchain_toml).unwrap_or_default()
 }
 
 // --- Install commands ---
@@ -695,12 +698,12 @@ fn tool_defs_rust() -> Vec<ToolDef> {
         ToolDef {
             name: "rust".into(),
             binary: "rustc".into(),
-            source: "apps/rhino-cli/Cargo.toml → rust-version".into(),
+            source: "apps/rhino-cli/rust-toolchain.toml → channel".into(),
             args: vec!["--version".into()],
             use_stderr: false,
             parse_ver: parse_rust_version,
-            compare: compare_gte,
-            read_req: read_rust_v,
+            compare: compare_exact,
+            read_req: read_rust_toolchain_v,
             install_cmd: Some(install_rust),
         },
         ToolDef {
@@ -1198,5 +1201,45 @@ mod tests {
         let steps = install_clang_format("", "linux");
         assert_eq!(steps[0].command, "sudo");
         assert!(steps[0].args.contains(&"clang-format".to_string()));
+    }
+
+    /// Binds the Gherkin scenario "doctor compares rustc against the
+    /// toolchain that builds"
+    /// (specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature).
+    /// `doctor` must validate installed `rustc` against the exact pinned
+    /// channel in `rust-toolchain.toml` — the toolchain that `cargo`
+    /// actually builds with — rather than the MSRV floor in `Cargo.toml`.
+    /// A pinned channel is not a floor you can exceed, so the comparator
+    /// must be exact-equality, not `compare_gte`.
+    #[test]
+    fn rust_tool_compares_against_pinned_toolchain_channel_not_msrv_floor() {
+        let rust = tool_defs_rust()
+            .into_iter()
+            .find(|d| d.name == "rust")
+            .expect("rust definition must exist");
+
+        assert_eq!(
+            rust.source, "apps/rhino-cli/rust-toolchain.toml → channel",
+            "doctor must report the pinned toolchain channel as the Rust \
+             version source, not the Cargo.toml MSRV floor"
+        );
+
+        assert_eq!(
+            (rust.compare)("1.94.0", "1.95.0").0,
+            ToolStatus::Warning,
+            "an installed rustc older than the pinned channel must be a mismatch"
+        );
+        assert_eq!(
+            (rust.compare)("1.96.0", "1.95.0").0,
+            ToolStatus::Warning,
+            "an installed rustc NEWER than the pinned channel must ALSO be a \
+             mismatch — a pinned channel is exact-match, not a floor \
+             (this is what distinguishes it from compare_gte)"
+        );
+        assert_eq!(
+            (rust.compare)("1.95.0", "1.95.0").0,
+            ToolStatus::Ok,
+            "an installed rustc matching the pinned channel exactly must pass"
+        );
     }
 }

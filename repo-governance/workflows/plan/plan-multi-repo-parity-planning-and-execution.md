@@ -277,10 +277,25 @@ fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer`, 
 
 Two constraints override that fan-out and force strict serialization:
 
-- **`apps/rhino-cli` byte-identity** across all four bound repos — a plan touching it propagates one repo
-  at a time, never concurrently.
+- **`apps/rhino-cli` byte-identity** across the three parity repos — `ose-public`, `ose-primer`,
+  `ose-private` — a plan touching it propagates one repo at a time, never concurrently. `beaver-nest`
+  is outside the boundary: it carries a **fork** of `rhino-cli` with no
+  `apps/rhino-cli/parity-manifest.sha256`
+  ([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
   dependency, but a shared write target is.
+
+**Expect the local `parity-manifest` pre-push gate to fire on the very first push, before any
+cross-repo work.** Editing a byte-identity-governed file (`apps/rhino-cli/src/`, `Cargo.toml`,
+`Cargo.lock`, `project.json`, `LICENSE`, the shared Gherkin tree) invalidates **this repo's own**
+recorded checksum the moment the file changes. The gate is a same-repo self-consistency check, not a
+cross-repo diff — it is not a signal that propagation is overdue, and it fires identically whether
+the other repos are already in sync or untouched. Clear it with
+`rhino-cli parity manifest generate`, committed as its own follow-up commit, then push.
+
+Regenerating the local manifest **does not discharge the propagation obligation** — the gate's own
+error text says so. It unblocks this repo's push and nothing more; the identical change still has to
+reach the other two parity repos.
 
 **Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
 **one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged at its

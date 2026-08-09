@@ -58,7 +58,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/rhino/behavior/rhino-cli/gherkin apps/rhino-cli"
       },
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature", "{projectRoot}/**/*.rs"]
@@ -93,7 +93,6 @@
           "npx nx run rhino-cli:typecheck",
           "npx nx run rhino-cli:lint",
           "npx nx run rhino-cli:test:unit",
-          "npx nx run rhino-cli:test:coverage",
           "npx nx run rhino-cli:test:specs"
         ],
         "parallel": false
@@ -106,12 +105,7 @@
       "options": {
         "commands": [
           "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test env_contract",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test fsharp_tool_invocation",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_dispatch"
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch"
         ],
         "cwd": "{workspaceRoot}",
         "parallel": false
@@ -142,7 +136,7 @@
     "specs:structure-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
@@ -159,7 +153,7 @@
     "specs:gherkin-cardinality-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/specs/**/*.feature"]
@@ -167,7 +161,7 @@
     "naming:harness-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness naming validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness naming validate"
       },
       "cache": true,
       "inputs": [
@@ -180,7 +174,7 @@
     "naming:workflows-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance workflows naming validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance workflows naming validate"
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/workflows/**/*.md"]
@@ -188,7 +182,7 @@
     "governance:vendor-audit-validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/"
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/**/*.md"]
@@ -196,7 +190,7 @@
     "instruction-size:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness instruction-size validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness instruction-size validate"
       },
       "cache": true,
       "inputs": [
@@ -209,7 +203,7 @@
     "env:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env validate"
       },
       "cache": true,
       "inputs": [

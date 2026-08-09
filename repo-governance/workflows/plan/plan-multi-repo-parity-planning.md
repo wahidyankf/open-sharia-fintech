@@ -113,8 +113,11 @@ parallel under the N+1 model (`1 main thread + N background agents`, default **N
 serialized behind one another. `ose-private` does not participate in the parity loop for content it
 does not carry.
 
-The one hard serialization: **`apps/rhino-cli` must stay byte-identical across all four bound repos**, so
-plans touching it propagate one repo at a time rather than concurrently.
+The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the three parity repos
+— `ose-public`, `ose-primer`, `ose-private`** — so plans touching it propagate one repo at a time
+rather than concurrently. `beaver-nest` is deliberately outside this boundary: it carries a **fork**
+of `rhino-cli` and has no `apps/rhino-cli/parity-manifest.sha256` to propagate into
+([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 
 ### Delivery Shape Per Repo
 
@@ -259,12 +262,13 @@ configs, grep the files, run the tools — do not trust docs alone.
   behavior tree): run the canonical manifest validator in each bound repository:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate
+  apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate
   ```
 
-  It covers the four-repository boundary and the tracked `apps/rhino-cli` source, tests, and Gherkin
-  behavior tree. Any failure is drift that MUST become its own deviation-matrix row in Step 2 — surface it
-  before grilling, never silently re-sync it.
+  It covers the three-repository parity boundary (`ose-public`, `ose-primer`, `ose-private` —
+  `beaver-nest` is deliberately outside it, see §Parallel Propagation Shape above) and the tracked
+  `apps/rhino-cli` source, tests, and Gherkin behavior tree. Any failure is drift that MUST become
+  its own deviation-matrix row in Step 2 — surface it before grilling, never silently re-sync it.
 
 **Survey freshness**: a clean survey is a point-in-time result, not a standing fact. If execution of a
 phase that carries copy-ready artifacts (a file to be propagated verbatim, a cross-repository

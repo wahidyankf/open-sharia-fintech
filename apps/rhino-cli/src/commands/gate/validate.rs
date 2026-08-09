@@ -1,6 +1,6 @@
 //! `gate validate` command adapter.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 use std::io::Write;
 use std::path::Path;
 
@@ -38,12 +38,36 @@ pub fn run(_args: &ValidateArgs, _output_format: OutputFormat) -> Result<(), Err
 pub fn run_at_root(repo_root: &Path, writer: &mut dyn Write) -> Result<(), Error> {
     let config = repo_config::load(repo_root)?;
 
+    validate_ci_group_declared(&config, writer)?;
     validate_local_hook_composition(&config, writer)?;
     validate_verifies_references(&config, writer)?;
     validate_formatter_verification(&config, writer)?;
     validate_local_hook_shims(repo_root, &config, writer)?;
     validate_ci_workflow(repo_root, &config, writer)?;
     validate_lint_staged(repo_root, &config, writer)
+}
+
+/// Validates that every gate declaring a `ci` surface also declares `ci_group`.
+///
+/// # Errors
+///
+/// Returns an error when a `ci`-surface gate has no declared `ci_group` or the
+/// diagnostic cannot be written.
+fn validate_ci_group_declared(
+    config: &repo_config::RepoConfig,
+    writer: &mut dyn Write,
+) -> Result<(), Error> {
+    for gate in &config.gates {
+        if gate.surfaces.contains_key(&GateSurface::Ci) && gate.ci_group.is_none() {
+            let message = format!(
+                "Gate {:?} carries a ci surface but declares no ci_group; ci_group is required for gates carrying a ci surface",
+                gate.id
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
+        }
+    }
+    Ok(())
 }
 
 /// Validates the local-hook check-to-CI composition rule.
@@ -291,7 +315,7 @@ fn workflow_jobs(
 
 /// Whether any step's `run:` body, in any job, references `needle` at all —
 /// used to reject a raw, unindirected splice of a matrix expression (e.g.
-/// `matrix.gate.id`, `matrix.gate.doctor_tools`) into a shell string. The
+/// `matrix.group.group`, `matrix.group.doctor_tools`) into a shell string. The
 /// safe env-indirected pattern never puts the matrix expression text in
 /// `run:` (it lives in the step's `env:` map instead), so this is a sound
 /// absence check, not merely a presence check for the unsafe pattern's most
@@ -325,27 +349,27 @@ fn validate_ci_matrix_contract(
             .any(|run| run.contains("gate list --surface=ci"))
     });
     let has_matrix_dispatcher = workflow.jobs.get("gate").is_some_and(|job| {
-        let derives_gate_matrix = job.needs.contains("enumerate")
-            && job
-                .strategy
-                .matrix
-                .get("gate")
-                .is_some_and(|entry| entry.contains("fromJson(needs.enumerate.outputs.gates)"));
-        // A matrix gate id must reach the shell through a step-level `env:`
-        // variable, never spliced as a raw `${{ matrix.gate.id }}` expression
-        // into `run:` (GitHub Actions expression injection). Accept any
-        // step-env variable name that carries the matrix expression, so long
-        // as the run body expands it via a quoted shell variable of the same
-        // name — this is deliberately name-agnostic rather than hardcoding
-        // `GATE_ID`.
-        let dispatches_selected_gate = job.steps.iter().any(|step| {
+        let derives_group_matrix =
+            job.needs.contains("enumerate")
+                && job.strategy.matrix.get("group").is_some_and(|entry| {
+                    entry.contains("fromJson(needs.enumerate.outputs.groups)")
+                });
+        // A matrix group id must reach the shell through a step-level `env:`
+        // variable, never spliced as a raw `${{ matrix.group.group }}`
+        // expression into `run:` (GitHub Actions expression injection).
+        // Accept any step-env variable name that carries the matrix
+        // expression, so long as the run body expands it via a quoted shell
+        // variable of the same name — this is deliberately name-agnostic
+        // rather than hardcoding `GROUP_ID`.
+        let dispatches_selected_group = job.steps.iter().any(|step| {
             let Some(run) = step.run.as_deref() else {
                 return false;
             };
             let normalized_run = run.split_whitespace().collect::<Vec<_>>().join(" ");
             step.env.iter().any(|(name, value)| {
-                value.contains("matrix.gate.id")
-                    && normalized_run.contains(&format!("gate run --surface=ci --only=\"${name}\""))
+                value.contains("matrix.group.group")
+                    && normalized_run
+                        .contains(&format!("gate run --surface=ci --group=\"${name}\""))
             })
         });
         // Existence of the safe env-indirected step is not enough: a later
@@ -353,17 +377,28 @@ fn validate_ci_matrix_contract(
         // expression directly into a `run:` shell string. Reject that
         // regardless of whether the safe pattern is also present, so a
         // regression cannot hide behind an unrelated compliant step.
-        let no_raw_gate_id_splice = !workflow_run_bodies_reference(workflow, "matrix.gate.id");
-        derives_gate_matrix && dispatches_selected_gate && no_raw_gate_id_splice
+        let no_raw_group_id_splice = !workflow_run_bodies_reference(workflow, "matrix.group.group");
+        derives_group_matrix && dispatches_selected_group && no_raw_group_id_splice
     });
-    let aggregate_requires_matrix_prerequisites = workflow
-        .jobs
-        .get("quality-gate")
-        .is_some_and(|job| job.needs.contains("enumerate") && job.needs.contains("gate"));
+    // `quality-gate` must directly depend on `enumerate` and `gate` so a
+    // matrix-derivation failure in either is visible as `failure` rather than
+    // silently downgraded to `skipped`. It must also depend on `build-rhino`:
+    // `enumerate`/`gate` both `needs: build-rhino`, so a `build-rhino` failure
+    // SKIPS (not fails) `enumerate`/`gate` — and GitHub Actions'
+    // `contains(needs.*.result, 'failure')` check only inspects jobs literally
+    // named in ITS OWN `needs:` list, so without `build-rhino` here that root
+    // cause would be invisible to `quality-gate` and it would wrongly report
+    // "All quality gates passed".
+    let aggregate_requires_matrix_prerequisites =
+        workflow.jobs.get("quality-gate").is_some_and(|job| {
+            job.needs.contains("enumerate")
+                && job.needs.contains("gate")
+                && job.needs.contains("build-rhino")
+        });
     if has_enumeration && has_matrix_dispatcher && aggregate_requires_matrix_prerequisites {
         return Ok(());
     }
-    let message = "CI workflow must derive its gate matrix from the enumerate job's gate list, dispatch it through the gate job, and make quality-gate depend on enumerate and gate";
+    let message = "CI workflow must derive its gate matrix from the enumerate job's grouped gate list, dispatch it through the gate job, and make quality-gate depend on build-rhino, enumerate, and gate";
     writeln!(writer, "{message}")?;
     Err(anyhow!(message))
 }
@@ -403,20 +438,33 @@ fn validate_ci_doctor_bootstrap(
                 run.contains("gate list --surface=pre-commit --format=json")
                     && run.contains("[.[] | .doctor_tools[]]")
                     && run.contains("unique")
-                    && run.contains("npm run doctor -- --fix --tools")
+                    && run.contains("rhino-bin.sh doctor --fix --tools")
                     && run.contains("if [ -n \"$tools\" ]")
             })
     });
     // The matrix doctor-tools selection must reach the shell through a
     // step-level `env:` variable, never spliced as a raw
-    // `${{ join(matrix.gate.doctor_tools, ',') }}` expression into `run:`
+    // `${{ join(matrix.group.doctor_tools, ',') }}` expression into `run:`
     // (GitHub Actions expression injection) — the same class of fix as
-    // `GATE_ID` above, and now implemented the same way: accept any
+    // `GROUP_ID` above, and now implemented the same way: accept any
     // step-env variable name that carries the matrix expression, so long as
     // the run body assigns it to the local `tools` shell variable of that
     // same name. This is deliberately name-agnostic rather than hardcoding
-    // `DOCTOR_TOOLS`, matching `dispatches_selected_gate` above so a repo
+    // `DOCTOR_TOOLS`, matching `dispatches_selected_group` above so a repo
     // naming its variable differently is not spuriously rejected.
+    //
+    // Both the `format` job's check above and the `gate` job's check below
+    // require `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools`,
+    // never `npm run doctor -- --fix --tools`: `format` migrated off `npm
+    // run doctor` onto the resolver shim (the shim resolves the prebuilt
+    // `build-rhino` artifact at tier 1, so no in-job cargo compile is paid
+    // even though `format` also runs `setup-rust`), and `gate` never carried
+    // `npm run doctor` in the first place, since its runner has no ambient
+    // Rust toolchain and `npm run doctor` would fall back to rebuilding
+    // rhino-cli from source via cargo and fail with "cargo: not found".
+    // There is no longer an asymmetry between the two jobs' provisioning
+    // mechanism — only which surface (`pre-commit` vs. the matrix env var)
+    // supplies the tool selection.
     let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
         job.steps.iter().any(|step| {
             let Some(run) = step.run.as_deref() else {
@@ -424,19 +472,19 @@ fn validate_ci_doctor_bootstrap(
             };
             let normalized_run = run.split_whitespace().collect::<Vec<_>>().join(" ");
             step.env.iter().any(|(name, value)| {
-                value.contains("matrix.gate.doctor_tools")
+                value.contains("matrix.group.doctor_tools")
                     && normalized_run.contains(&format!("tools=\"${name}\""))
-                    && normalized_run.contains("npm run doctor -- --fix --tools")
+                    && normalized_run.contains("rhino-bin.sh doctor --fix --tools")
                     && normalized_run.contains("if [ -n \"$tools\" ]")
             })
         })
     });
-    // As with `GATE_ID` above, existence of the safe env-indirected step does
+    // As with `GROUP_ID` above, existence of the safe env-indirected step does
     // not preclude a second, unsafe step from splicing the raw matrix
     // expression directly into a `run:` shell string. Reject that
     // regardless of whether the safe pattern is also present.
     let no_raw_doctor_tools_splice =
-        !workflow_run_bodies_reference(workflow, "matrix.gate.doctor_tools");
+        !workflow_run_bodies_reference(workflow, "matrix.group.doctor_tools");
     if format_derives_tool_union && matrix_uses_declared_tools && no_raw_doctor_tools_splice {
         return Ok(());
     }
@@ -447,11 +495,22 @@ fn validate_ci_doctor_bootstrap(
 }
 
 /// Checks only explicit CI gate-driver invocations, leaving setup/control shell alone.
+///
+/// Two selector shapes are valid: `--only=<gate-id>` (the `format` job's
+/// per-gate `format-verify-*` loop, validated against declared gate ids) and
+/// `--group=<ci-group>` (the `gate` job's group matrix dispatch, validated
+/// against the set of `ci_group` values declared anywhere in the registry). A
+/// `gate run --surface=ci` line with neither selector is rejected.
 fn validate_ci_gate_invocations(
     config: &repo_config::RepoConfig,
     workflow: &Workflow,
     writer: &mut dyn Write,
 ) -> Result<(), Error> {
+    let declared_ci_groups: HashSet<&str> = config
+        .gates
+        .iter()
+        .filter_map(|gate| gate.ci_group.as_deref())
+        .collect();
     for command in workflow
         .jobs
         .values()
@@ -464,26 +523,41 @@ fn validate_ci_gate_invocations(
         if !command.contains("gate run --surface=ci") {
             continue;
         }
-        let Some(selector) = command.split("--only=").nth(1) else {
+        if let Some(selector) = command.split("--only=").nth(1) {
+            let selector = selector.trim().trim_matches('"').trim_matches('\'');
+            if selector.contains("${{") || selector.starts_with('$') {
+                continue;
+            }
+            if config
+                .gates
+                .iter()
+                .any(|gate| gate.id == selector && gate.surfaces.contains_key(&GateSurface::Ci))
+            {
+                continue;
+            }
             let message = format!(
-                "CI workflow gate run invocation {command:?} must select exactly one matrix gate"
+                "CI workflow invokes undeclared CI gate selector {selector:?} via {command:?}"
             );
             writeln!(writer, "{message}")?;
             return Err(anyhow!(message));
-        };
-        let selector = selector.trim().trim_matches('"').trim_matches('\'');
-        if selector.contains("${{") || selector.starts_with('$') {
-            continue;
         }
-        if config
-            .gates
-            .iter()
-            .any(|gate| gate.id == selector && gate.surfaces.contains_key(&GateSurface::Ci))
-        {
-            continue;
+        if let Some(selector) = command.split("--group=").nth(1) {
+            let selector = selector.trim().trim_matches('"').trim_matches('\'');
+            if selector.contains("${{") || selector.starts_with('$') {
+                continue;
+            }
+            if declared_ci_groups.contains(selector) {
+                continue;
+            }
+            let message = format!(
+                "CI workflow invokes undeclared CI group selector {selector:?} via {command:?}"
+            );
+            writeln!(writer, "{message}")?;
+            return Err(anyhow!(message));
         }
-        let message =
-            format!("CI workflow invokes undeclared CI gate selector {selector:?} via {command:?}");
+        let message = format!(
+            "CI workflow gate run invocation {command:?} must select exactly one matrix gate"
+        );
         writeln!(writer, "{message}")?;
         return Err(anyhow!(message));
     }
@@ -556,7 +630,7 @@ struct WorkflowStep {
     #[serde(default)]
     run: Option<String>,
     /// Optional step-level environment variables, e.g. deriving a shell-safe
-    /// variable from a matrix expression (`GATE_ID: ${{ matrix.gate.id }}`)
+    /// variable from a matrix expression (`GROUP_ID: ${{ matrix.group.group }}`)
     /// so `run:` never splices the raw expression into the shell string.
     /// Matrix-derived values must always enter shell commands through these
     /// variables, never as inline `${{ }}` expressions.
@@ -781,6 +855,41 @@ fn validate_lint_staged(
     Ok(())
 }
 
+/// Binds the Gherkin scenario "A gate declared without a CI group fails
+/// validation"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature).
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn ci_group_required_for_ci_surface_gate() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: missing-ci-group\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+    assert!(
+        result.is_err()
+            && rendered.contains("missing-ci-group")
+            && rendered.contains("ci_group is required"),
+        "a ci-surface gate without ci_group must fail validation; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
@@ -939,6 +1048,7 @@ fn missing_surface_shim() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-push: { scope: affected-projects }\n",
             "      ci: { scope: affected-projects }\n",
@@ -971,6 +1081,7 @@ fn missing_pre_commit_surface_shim() {
             "    type: check\n",
             "    command: md naming validate\n",
             "    kind: rhino-cli\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-commit: { scope: other }\n",
             "      ci: { scope: all-file-type }\n",
@@ -1005,6 +1116,7 @@ fn commented_surface_shim_is_not_a_registry_delegation() {
             "    type: check\n",
             "    command: md naming validate\n",
             "    kind: rhino-cli\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      pre-commit: { scope: other }\n",
             "      ci: { scope: all-file-type }\n",
@@ -1163,6 +1275,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: mutation\n",
             "    command: prettier --write\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    category: formatter\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1170,6 +1283,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: format-markdown\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1177,6 +1291,7 @@ fn formatter_requires_exactly_one_verifying_check() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: format-markdown\n",
             "    surfaces:\n",
             "      ci: { scope: all-file-type }\n",
@@ -1207,6 +1322,7 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1216,20 +1332,24 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1243,7 +1363,7 @@ fn matrix_ci_dispatcher_is_accepted_when_derived_from_gate_list() {
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
-fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() {
+fn matrix_ci_dispatcher_rejects_unsafe_group_id_splice_without_env_indirection() {
     let repo = tempfile::TempDir::new().unwrap();
     let workflows = repo.path().join(".github/workflows");
     std::fs::create_dir_all(&workflows).unwrap();
@@ -1255,6 +1375,7 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1269,21 +1390,25 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
-            "      - run: echo \"debug gate id is ${{ matrix.gate.id }}\"\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
+            "      - run: echo \"debug group id is ${{ matrix.group.group }}\"\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1294,7 +1419,7 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
 
     assert!(
         result.is_err() && rendered.contains("must derive its gate matrix"),
-        "a raw matrix.gate.id splice alongside the safe dispatcher step must still fail; \
+        "a raw matrix.group.group splice alongside the safe dispatcher step must still fail; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
     );
@@ -1303,49 +1428,54 @@ fn matrix_ci_dispatcher_rejects_unsafe_gate_id_splice_without_env_indirection() 
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
-fn matrix_ci_dispatcher_rejects_an_inline_gate_id_expression() {
+fn matrix_ci_dispatcher_rejects_an_inline_group_id_expression() {
     let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
         "gates:\n",
         "  - id: declared-ci-check\n",
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
     ))
     .unwrap();
     let workflow: Workflow = serde_norway::from_str(concat!(
         "jobs:\n",
-        "  enumerate:\n",
+        "  build-rhino:\n",
         "    steps:\n",
-        "      - run: rhino-cli gate list --surface=ci --format=json\n",
+        "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+        "  enumerate:\n",
+        "    needs: build-rhino\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
         "  gate:\n",
-        "    needs: enumerate\n",
+        "    needs: [build-rhino, enumerate]\n",
         "    strategy:\n",
         "      matrix:\n",
-        "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+        "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
         "    steps:\n",
-        "      - run: rhino-cli gate run --surface=ci --only=${{ matrix.gate.id }}\n",
+        "      - run: rhino-cli gate run --surface=ci --group=${{ matrix.group.group }}\n",
         "  quality-gate:\n",
-        "    needs: [enumerate, gate]\n",
+        "    needs: [build-rhino, enumerate, gate]\n",
     ))
     .unwrap();
     let mut output = Vec::new();
 
     assert!(
         validate_ci_matrix_contract(&config, &workflow, &mut output).is_err(),
-        "a matrix gate id must not be template-spliced into a shell command"
+        "a matrix group id must not be template-spliced into a shell command"
     );
 }
 
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
-fn matrix_ci_dispatcher_accepts_a_non_default_gate_id_env_var_name() {
-    // `dispatches_selected_gate` is deliberately name-agnostic. Exercise that
-    // dimension directly: no fixture anywhere else in this suite uses an
-    // env-var name other than the literal `GATE_ID`, so without this test
-    // the name-agnostic capability itself is unexercised.
+fn matrix_ci_dispatcher_accepts_a_non_default_group_id_env_var_name() {
+    // `dispatches_selected_group` is deliberately name-agnostic. Exercise
+    // that dimension directly: no fixture anywhere else in this suite uses
+    // an env-var name other than the literal `GROUP_ID`, so without this
+    // test the name-agnostic capability itself is unexercised.
     let repo = tempfile::TempDir::new().unwrap();
     let workflows = repo.path().join(".github/workflows");
     std::fs::create_dir_all(&workflows).unwrap();
@@ -1357,6 +1487,7 @@ fn matrix_ci_dispatcher_accepts_a_non_default_gate_id_env_var_name() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1366,27 +1497,31 @@ fn matrix_ci_dispatcher_accepts_a_non_default_gate_id_env_var_name() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$CI_SELECTED_GATE\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$CI_SELECTED_GROUP\"\n",
             "        env:\n",
-            "          CI_SELECTED_GATE: ${{ matrix.gate.id }}\n",
+            "          CI_SELECTED_GROUP: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
         ),
     )
     .unwrap();
 
     assert!(
         run_at_root(repo.path(), &mut Vec::new()).is_ok(),
-        "a differently-named env var carrying matrix.gate.id must still validate"
+        "a differently-named env var carrying matrix.group.group must still validate"
     );
 }
 
@@ -1405,6 +1540,7 @@ fn quality_gate_requires_enumerate_as_well_as_gate() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1414,20 +1550,24 @@ fn quality_gate_requires_enumerate_as_well_as_gate() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: gate\n",
+            "    needs: [build-rhino, gate]\n",
         ),
     )
     .unwrap();
@@ -1439,6 +1579,72 @@ fn quality_gate_requires_enumerate_as_well_as_gate() {
     assert!(
         result.is_err() && rendered.contains("enumerate") && rendered.contains("quality-gate"),
         "quality-gate must directly depend on enumerate and gate; result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn quality_gate_requires_build_rhino_alongside_enumerate_and_gate() {
+    // Regression guard for the skip-vs-failure trap: `enumerate` and `gate`
+    // both `needs: build-rhino`, so a `build-rhino` failure SKIPS them
+    // instead of failing them. `quality-gate`'s own
+    // `contains(needs.*.result, 'failure')` check only inspects jobs
+    // literally named in its own `needs:` list, so omitting `build-rhino`
+    // there would hide a real `build-rhino` failure behind two merely
+    // "skipped" dependents.
+    let repo = tempfile::TempDir::new().unwrap();
+    let workflows = repo.path().join(".github/workflows");
+    std::fs::create_dir_all(&workflows).unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: declared-ci-check\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    ci-group: fixture-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        workflows.join("pr-quality-gate.yml"),
+        concat!(
+            "jobs:\n",
+            "  build-rhino:\n",
+            "    steps:\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
+            "  gate:\n",
+            "    needs: [build-rhino, enumerate]\n",
+            "    strategy:\n",
+            "      matrix:\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
+            "        env:\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
+            "  quality-gate:\n",
+            "    needs: [enumerate, gate]\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = run_at_root(repo.path(), &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("build-rhino"),
+        "quality-gate must directly depend on build-rhino as well as enumerate and gate; \
+         result_ok={}, output={rendered:?}",
         result.is_ok()
     );
 }
@@ -1458,6 +1664,7 @@ fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1467,21 +1674,25 @@ fn cargo_prefixed_matrix_dispatcher_ignores_ci_setup_shell() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
+            "  build-rhino:\n",
+            "    steps:\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
             "  enumerate:\n",
+            "    needs: build-rhino\n",
             "    steps:\n",
             "      - run: echo setup complete\n",
-            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json\n",
+            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1507,6 +1718,7 @@ fn missing_named_ci_matrix_job_is_rejected() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1518,10 +1730,10 @@ fn missing_named_ci_matrix_job_is_rejected() {
             "jobs:\n",
             "  enumerate:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
-            "      - run: echo '${{ fromJson(needs.enumerate.outputs.gates) }}'\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
+            "      - run: echo '${{ fromJson(needs.enumerate.outputs.groups) }}'\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
         ),
     )
     .unwrap();
@@ -1551,6 +1763,7 @@ fn undeclared_ci_command() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1561,20 +1774,24 @@ fn undeclared_ci_command() {
         concat!(
             "name: PR quality gate\n",
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
             "  unexpected:\n",
             "    steps:\n",
             "      - run: rhino-cli gate run --surface=ci --only=unregistered-check\n",
@@ -1596,6 +1813,108 @@ fn undeclared_ci_command() {
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
+fn undeclared_ci_group_selector_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: declared-ci-check\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    ci-group: fixture-group\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate run --surface=ci --group=unregistered-group\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_gate_invocations(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("unregistered-group"),
+        "a CI group invocation absent from the registry must name the undeclared selector; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn gate_run_invocation_without_either_selector_is_rejected() {
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: declared-ci-check\n",
+        "    type: check\n",
+        "    command: test:quick\n",
+        "    kind: nx\n",
+        "    ci-group: fixture-group\n",
+        "    surfaces:\n",
+        "      ci: { scope: affected-projects }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate run --surface=ci\n",
+    ))
+    .unwrap();
+
+    let mut output = Vec::new();
+    let result = validate_ci_gate_invocations(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
+    assert!(
+        result.is_err() && rendered.contains("must select exactly one matrix gate"),
+        "a gate run --surface=ci line with neither --only= nor --group= must fail; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_job_only_selector_still_validates_against_declared_gate_ids() {
+    // The `format` job's push-path per-gate `format-verify-*` loop is
+    // unrelated to the group matrix and keeps using `--only=`; this must
+    // still validate cleanly alongside the group-matrix `gate` job.
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: format-verify-prettier\n",
+        "    type: check\n",
+        "    command: prettier --check\n",
+        "    kind: external\n",
+        "    ci-group: fixture-group\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: rhino-cli gate run --surface=ci --only=\"format-verify-prettier\"\n",
+    ))
+    .unwrap();
+
+    assert!(
+        validate_ci_gate_invocations(&config, &workflow, &mut Vec::new()).is_ok(),
+        "an --only= invocation against a declared gate id must still validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
 fn named_block_ci_step_is_checked_against_the_registry() {
     let repo = tempfile::TempDir::new().unwrap();
     let workflows = repo.path().join(".github/workflows");
@@ -1608,6 +1927,7 @@ fn named_block_ci_step_is_checked_against_the_registry() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
         ),
@@ -1617,20 +1937,24 @@ fn named_block_ci_step_is_checked_against_the_registry() {
         workflows.join("pr-quality-gate.yml"),
         concat!(
             "jobs:\n",
-            "  enumerate:\n",
+            "  build-rhino:\n",
             "    steps:\n",
-            "      - run: rhino-cli gate list --surface=ci --format=json\n",
+            "      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml\n",
+            "  enumerate:\n",
+            "    needs: build-rhino\n",
+            "    steps:\n",
+            "      - run: rhino-cli gate list --surface=ci --format=json --by-group\n",
             "  gate:\n",
-            "    needs: enumerate\n",
+            "    needs: [build-rhino, enumerate]\n",
             "    strategy:\n",
             "      matrix:\n",
-            "        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}\n",
+            "        group: ${{ fromJson(needs.enumerate.outputs.groups) }}\n",
             "    steps:\n",
-            "      - run: rhino-cli gate run --surface=ci --only=\"$GATE_ID\"\n",
+            "      - run: rhino-cli gate run --surface=ci --group=\"$GROUP_ID\"\n",
             "        env:\n",
-            "          GATE_ID: ${{ matrix.gate.id }}\n",
+            "          GROUP_ID: ${{ matrix.group.group }}\n",
             "  quality-gate:\n",
-            "    needs: [enumerate, gate]\n",
+            "    needs: [build-rhino, enumerate, gate]\n",
             "  unexpected:\n",
             "    steps:\n",
             "      - name: undeclared block gate invocation\n",
@@ -1664,6 +1988,7 @@ fn orphan_verifies_reference() {
             "    type: check\n",
             "    command: prettier --check\n",
             "    kind: external\n",
+            "    ci-group: fixture-group\n",
             "    verifies: missing-format\n",
             "    surfaces:\n",
             "      ci: { scope: affected-file-type, glob: '*.md' }\n",
@@ -1780,6 +2105,7 @@ fn hand_wired_present() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    wiring: hand-wired\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
@@ -1815,6 +2141,7 @@ fn hand_wired_gate_requires_a_quality_gate_dependency() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1854,6 +2181,7 @@ fn commented_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1885,6 +2213,7 @@ fn disabled_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1929,6 +2258,7 @@ fn inline_comment_or_quoted_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -1964,6 +2294,7 @@ fn unspaced_false_expression_hand_wired_guards_are_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2000,6 +2331,7 @@ fn falsey_expression_hand_wired_guards_are_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2042,6 +2374,7 @@ fn non_executing_nx_subcommands_do_not_satisfy_hand_wired_gates() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2077,6 +2410,7 @@ fn error_masked_hand_wired_command_is_rejected() {
         "    type: check\n",
         "    command: test:quick\n",
         "    kind: nx\n",
+        "    ci-group: fixture-group\n",
         "    wiring: hand-wired\n",
         "    surfaces:\n",
         "      ci: { scope: affected-projects }\n",
@@ -2113,6 +2447,7 @@ fn hand_wired_job_deleted() {
             "    type: check\n",
             "    command: test:quick\n",
             "    kind: nx\n",
+            "    ci-group: fixture-group\n",
             "    wiring: hand-wired\n",
             "    surfaces:\n",
             "      ci: { scope: affected-projects }\n",
@@ -2144,6 +2479,7 @@ fn doctor_tool_metadata_rejects_an_unconditional_ci_bootstrap() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2178,6 +2514,7 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2190,7 +2527,59 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "  gate:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=\"$DOCTOR_TOOLS\"\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
+        "          fi\n",
+        "        env:\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
+    ))
+    .unwrap();
+
+    assert!(
+        validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
+        "registry-derived Doctor selections must validate"
+    );
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn doctor_tool_metadata_rejects_npm_run_doctor_in_gate_job() {
+    // Neither job runs on a runner with an assumption of an ambient Rust
+    // toolchain compile being cheap enough to redo per-job anymore: both
+    // `format` and `gate` provision Doctor tools through the prebuilt
+    // gate-profile binary shim, `apps/rhino-cli/scripts/rhino-bin.sh doctor
+    // --fix --tools`. `npm run doctor -- --fix --tools` (which rebuilds
+    // rhino-cli from source via cargo) is no longer valid in either job —
+    // this fixture keeps the `format` step already migrated to the shim (so
+    // the failure below is isolated to the `gate` job's stale form, not a
+    // side effect of `format` also being wrong).
+    let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
+        "gates:\n",
+        "  - id: shellcheck\n",
+        "    type: check\n",
+        "    command: shellcheck\n",
+        "    kind: external\n",
+        "    ci-group: fixture-group\n",
+        "    doctor-tools: [shellcheck]\n",
+        "    surfaces:\n",
+        "      ci: { scope: all-file-type }\n",
+    ))
+    .unwrap();
+    let workflow: Workflow = serde_norway::from_str(concat!(
+        "jobs:\n",
+        "  format:\n",
+        "    steps:\n",
+        "      - run: |\n",
+        "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
+        "          if [ -n \"$tools\" ]; then\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
@@ -2200,13 +2589,19 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "            npm run doctor -- --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
-        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
     ))
     .unwrap();
 
+    let mut output = Vec::new();
+    let result = validate_ci_doctor_bootstrap(&config, &workflow, &mut output);
+    let rendered = String::from_utf8_lossy(&output);
+
     assert!(
-        validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
-        "registry-derived Doctor selections must validate"
+        result.is_err() && rendered.contains("format and matrix Doctor selections"),
+        "the gate job's provisioning step must use the rhino-bin.sh shim, not npm run doctor; \
+         result_ok={}, output={rendered:?}",
+        result.is_ok()
     );
 }
 
@@ -2228,6 +2623,7 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      pre-commit: { scope: all-file-type }\n",
@@ -2241,17 +2637,17 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | select(.type == \"mutation\" and .category == \"formatter\") | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
         "      - run: |\n",
         "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
-        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
     ))
     .unwrap();
 
@@ -2276,6 +2672,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2293,18 +2690,18 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
         "      - run: |\n",
         "          tools=\"$DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
-        "          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
-        "      - run: npm run doctor -- --fix --tools \"${{ join(matrix.gate.doctor_tools, ',') }}\"\n",
+        "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
+        "      - run: apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"${{ join(matrix.group.doctor_tools, ',') }}\"\n",
     ))
     .unwrap();
 
@@ -2314,7 +2711,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
 
     assert!(
         result.is_err() && rendered.contains("format and matrix Doctor selections"),
-        "a raw matrix.gate.doctor_tools splice alongside the safe step must still fail; \
+        "a raw matrix.group.doctor_tools splice alongside the safe step must still fail; \
          result_ok={}, output={rendered:?}",
         result.is_ok()
     );
@@ -2335,6 +2732,7 @@ fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
         "    type: check\n",
         "    command: shellcheck\n",
         "    kind: external\n",
+        "    ci-group: fixture-group\n",
         "    doctor-tools: [shellcheck]\n",
         "    surfaces:\n",
         "      ci: { scope: all-file-type }\n",
@@ -2347,22 +2745,22 @@ fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
         "      - run: |\n",
         "          tools=\"$CI_SELECTED_DOCTOR_TOOLS\"\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "        env:\n",
-        "          CI_SELECTED_DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}\n",
+        "          CI_SELECTED_DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
     ))
     .unwrap();
 
     assert!(
         validate_ci_doctor_bootstrap(&config, &workflow, &mut Vec::new()).is_ok(),
-        "a differently-named env var carrying matrix.gate.doctor_tools must still validate"
+        "a differently-named env var carrying matrix.group.doctor_tools must still validate"
     );
 }

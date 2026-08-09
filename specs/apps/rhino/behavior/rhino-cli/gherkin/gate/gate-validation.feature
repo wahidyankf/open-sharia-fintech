@@ -96,3 +96,40 @@ Feature: Gate conformance validation
     Given the registry and surfaces as shipped by this plan
     When "rhino-cli gate validate" runs
     Then it exits zero
+
+  Scenario: A gate declared without a CI group fails validation
+    Given a gate entry in repo-config.yml carrying a ci surface and no ci_group field
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And its output names the offending gate id
+    And its output states that ci_group is required
+
+  Scenario: quality-gate must depend on build-rhino as well as enumerate and gate
+    Given the quality-gate job's needs list omits build-rhino
+    When "rhino-cli gate validate" runs
+    Then it fails and names build-rhino
+
+  Scenario: A gate run --surface=ci invocation must carry a selector
+    Given a gate run --surface=ci step declares neither --only= nor --group=
+    When "rhino-cli gate validate" runs
+    Then it fails and states that the invocation must select exactly one matrix gate
+
+  Scenario: An undeclared --group selector is rejected
+    Given a gate run --surface=ci step's --group value matches no declared ci_group
+    When "rhino-cli gate validate" runs
+    Then it fails and names the undeclared group id
+
+  Scenario: The gate job's Doctor bootstrap must use the resolver shim
+    Given the gate job provisions Doctor tools via npm run doctor instead of the rhino-bin.sh shim
+    When "rhino-cli gate validate" runs
+    Then it fails and names the gate job's stale Doctor bootstrap
+
+  Scenario: A matrix group id spliced directly into a shell command is rejected
+    Given a CI matrix dispatcher step interpolates matrix.group.group directly into its run body without env indirection
+    When "rhino-cli gate validate" runs
+    Then it fails and states that the gate matrix id must be derived through env indirection
+
+  Scenario: A matrix group id with a non-default env var name still validates
+    Given a CI matrix dispatcher step carries matrix.group.group through a differently-named env var
+    When "rhino-cli gate validate" runs
+    Then it exits zero

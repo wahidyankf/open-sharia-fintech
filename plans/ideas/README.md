@@ -19,12 +19,15 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
+- [plan-checker-forward-reference-detection](./q1-urgent-important/plan-checker-forward-reference-detection.md) — a step can name an artifact only a later phase creates; two instances hard-errored in one plan after five clean checker passes.
 - [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
+- [rhino-cli-parity-propagation-optimize-cis](./q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md) — `apps/rhino-cli` byte-identity parity is broken across a 17-file union against `ose-primer`/`ose-private`, both already-merged siblings, with nothing left to propagate it automatically.
 
 ### Q2 — Important, Not Urgent
 
 No active plan waits on these and no live defect is running, but each carries a real stake. This is the plan-from-here quadrant.
 
+- [actions-cache-eviction-policy](./q2-not-urgent-important/actions-cache-eviction-policy.md) — the Actions cache sits at 99.29 % of its 10 GiB ceiling because nothing ever deletes an entry; only GitHub's LRU relieves pressure.
 - [audit-e2e-reuse-existing-server-config](./q2-not-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`.
 - [ayokoding-content-checker-coverage](./q2-not-urgent-important/ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
 - [ayokoding-database-internals-ruff-config](./q2-not-urgent-important/ayokoding-database-internals-ruff-config.md) — 22 sibling courses carry a scoped `ruff.toml` and this one does not, though `ruff format --check` currently passes clean.
@@ -60,6 +63,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [rhino-cli-tools-superset-carveout](./q2-not-urgent-important/rhino-cli-tools-superset-carveout.md) — `doctor/tools.rs`'s "zero carve-outs" byte-identity target collides with `ose-private`'s real, needed IaC tool-provisioning extensions.
 - [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
 - [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
+- [shared-cargo-target-lock-contention](./q2-not-urgent-important/shared-cargo-target-lock-contention.md) — one shared cargo target directory reclaims disk but serializes concurrent worktree builds; a 65 s pure-lock-wait stall was measured.
 - [sibling-main-ci-never-runs-on-merge](./q2-not-urgent-important/sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in both siblings, so a merge to their `main` gets no post-merge CI signal.
 - [source-code-credential-scanning](./q2-not-urgent-important/source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
 - [specs-checker-phantom-nx-targets](./q2-not-urgent-important/specs-checker-phantom-nx-targets.md) — `specs-checker.md`'s Drift Detection section names Nx targets that don't exist.

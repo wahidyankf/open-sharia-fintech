@@ -406,12 +406,70 @@ fn then_all_inherited_git_variables_are_cleared(w: &mut TargetShareWorld) {
     }
 }
 
+/// Every direct `cargo test` / `cargo llvm-cov` invocation declared anywhere in
+/// `rhino-cli`'s `project.json`, whichever target it sits under.
+///
+/// This is the *ground truth* the isolation guard must cover. Deriving it by
+/// scanning the whole file — rather than hardcoding a count — is what makes the
+/// guard survive legitimate restructuring of the targets while still catching
+/// the failure it exists for: a direct Cargo test command added somewhere that
+/// [`rust_test_and_coverage_commands`] does not inspect, and which therefore
+/// never gets its inherited Git state checked.
+///
+/// Wrapper invocations (`npx nx run …`) are not direct Cargo calls — the target
+/// they delegate to is inspected on its own account — and `cargo build`,
+/// `check`, `fmt`, `clippy`, `hack`, and `run` neither execute tests nor read
+/// the ambient repo, so none of them are in scope.
+fn all_direct_cargo_test_commands() -> Vec<String> {
+    let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let project_path = manifest
+        .parent()
+        .and_then(Path::parent)
+        .expect("rhino-cli manifest must live under apps/")
+        .join("apps/rhino-cli/project.json");
+    let source = std::fs::read_to_string(&project_path).expect("read rhino-cli project.json");
+    let project: serde_json::Value =
+        serde_json::from_str(&source).expect("rhino-cli project.json must be valid JSON");
+
+    let mut found = Vec::new();
+    let mut visit = |value: &serde_json::Value| {
+        if let Some(text) = value.as_str()
+            && (text.contains("cargo test ") || text.contains("cargo llvm-cov "))
+        {
+            found.push(text.to_owned());
+        }
+    };
+    for target in project["targets"]
+        .as_object()
+        .expect("rhino-cli project.json must define targets")
+        .values()
+    {
+        let options = &target["options"];
+        visit(&options["command"]);
+        if let Some(commands) = options["commands"].as_array() {
+            for command in commands {
+                visit(command);
+            }
+        }
+    }
+    found.sort();
+    found
+}
+
 #[then("a regression test protects the target configuration before any downstream copy")]
 fn then_regression_protects_target_configuration(w: &mut TargetShareWorld) {
+    let mut inspected = w
+        .git_state_isolation_commands
+        .iter()
+        .map(|(_, command)| command.clone())
+        .collect::<Vec<_>>();
+    inspected.sort();
     assert_eq!(
-        w.git_state_isolation_commands.len(),
-        9,
-        "the regression must protect seven serialized unit commands plus integration and coverage"
+        inspected,
+        all_direct_cargo_test_commands(),
+        "every direct `cargo test`/`cargo llvm-cov` command in project.json must be inspected by \
+         the isolation guard — one declared outside test:unit/test:integration/test:coverage would \
+         escape it entirely"
     );
 }
 
@@ -630,11 +688,47 @@ fn given_entry_referenced_only_by_linked_worktree(w: &mut TargetShareWorld) {
     );
     w.fix = false; // the When runs prune from A only — never fix in A.
 
+    // `fix` is repo-global: run from B, it also shares A's crates. That is
+    // deliberate (one `doctor --fix` covers every worktree), but it would
+    // quietly destroy THIS scenario's precondition — A must hold no symlink,
+    // so that prune launched from A can only learn the entry is live by
+    // consulting B. Drop A's symlink to restore it. Without this the scenario
+    // would still pass, but for the wrong reason, and would stop guarding the
+    // cross-worktree referrer scan.
+    let main_target = w.repo.path().join("apps").join("foo").join("target");
+    if main_target.is_symlink() {
+        std::fs::remove_file(&main_target).expect("drop the main checkout's symlink");
+    }
+
     // Seed a genuine orphan (no live referrer in any worktree) so the paired
     // Then proves prune still removes true orphans while sparing B's entry.
     let orphan = w.cache.path().join(w.repo_name()).join("orphan-crate");
     std::fs::create_dir_all(&orphan).expect("mkdir orphan cache entry");
     std::fs::write(orphan.join("marker.txt"), "stale").expect("write marker");
+
+    w.second_repo = Some((wt_holder, wt_crate_dir));
+    w.ci = false;
+}
+
+#[given("a linked worktree holds a crate whose target is still a plain directory outside CI")]
+fn given_linked_worktree_target_is_plain_dir(w: &mut TargetShareWorld) {
+    // Commit the crate so a linked worktree's HEAD checkout contains it too.
+    let crate_dir = make_crate(w.repo.path(), "foo");
+    commit_all(w.repo.path(), "add apps/foo");
+    w.crate_dir = Some(crate_dir);
+
+    let wt_holder = TempDir::new().expect("temp worktree holder");
+    let wt_path = wt_holder.path().join("linked-wt");
+    add_worktree(w.repo.path(), &wt_path);
+
+    // The linked worktree's crate carries a plain, unshared target directory —
+    // the state a developer lands in after building in a worktree that has
+    // never had `doctor --fix` run inside it. Nothing is fixed here; the When
+    // runs fix from the MAIN checkout only.
+    let wt_crate_dir = wt_path.join("apps").join("foo");
+    let wt_target = wt_crate_dir.join("target");
+    std::fs::create_dir_all(&wt_target).expect("mkdir linked worktree target");
+    std::fs::write(wt_target.join("stale.txt"), "stale").expect("write stale marker");
 
     w.second_repo = Some((wt_holder, wt_crate_dir));
     w.ci = false;
@@ -646,6 +740,15 @@ fn given_entry_referenced_only_by_linked_worktree(w: &mut TargetShareWorld) {
 
 #[when("the developer runs the doctor command with the fix flag")]
 fn when_run_fix(w: &mut TargetShareWorld) {
+    w.fix = true;
+    w.exec();
+}
+
+#[when("the developer runs the doctor command with the fix flag from the main checkout")]
+fn when_run_fix_from_main_checkout(w: &mut TargetShareWorld) {
+    // `exec` runs against `w.repo.path()` — the main checkout — never the
+    // linked worktree. That is the whole point: one invocation, from one
+    // checkout, must share every worktree's crates.
     w.fix = true;
     w.exec();
 }
@@ -1004,6 +1107,50 @@ fn then_referenced_entry_left_in_place(w: &mut TargetShareWorld) {
     assert!(
         link.exists(),
         "the live-referenced entry must survive prune"
+    );
+}
+
+#[then("that linked worktree's crate target becomes a symlink into the shared cache")]
+fn then_linked_worktree_target_becomes_symlink(w: &mut TargetShareWorld) {
+    assert_eq!(w.exit_code(), 0, "stdout: {}", w.stdout());
+    let (_, wt_crate_dir) = w
+        .second_repo
+        .as_ref()
+        .expect("linked worktree set by Given");
+    let wt_target = wt_crate_dir.join("target");
+    assert!(
+        wt_target.is_symlink(),
+        "one fix run from the main checkout must share the linked worktree's target too, \
+         but it is still a plain directory. stdout: {}",
+        w.stdout()
+    );
+    let shared = w.cache.path().join(w.repo_name()).join("foo");
+    assert!(
+        !shared.join("stale.txt").exists(),
+        "the discarded plain directory's contents must not be merged into the shared cache"
+    );
+}
+
+#[then("it resolves to the same shared-cache entry as the main checkout's crate")]
+fn then_linked_worktree_shares_main_checkout_entry(w: &mut TargetShareWorld) {
+    let (_, wt_crate_dir) = w
+        .second_repo
+        .as_ref()
+        .expect("linked worktree set by Given");
+    let main_crate_dir = w.crate_dir.as_ref().expect("crate_dir set by Given");
+    let wt_link =
+        std::fs::read_link(wt_crate_dir.join("target")).expect("linked worktree target is a link");
+    let main_link =
+        std::fs::read_link(main_crate_dir.join("target")).expect("main checkout target is a link");
+    assert_eq!(
+        wt_link, main_link,
+        "both checkouts must resolve to one physical build directory — that sharing is the \
+         entire point of the step"
+    );
+    assert_eq!(
+        wt_link,
+        w.cache.path().join(w.repo_name()).join("foo"),
+        "and that directory must sit in this repo's own shared-cache namespace"
     );
 }
 

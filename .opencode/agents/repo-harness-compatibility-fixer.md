@@ -292,7 +292,7 @@ to the next finding.
 6. Re-run binding validation:
 
    ```bash
-   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- agents validate-bindings
+   apps/rhino-cli/scripts/rhino-bin.sh agents validate-bindings
    ```
 
    - **Pass**: exits 0 → log as VALIDATED
@@ -301,7 +301,7 @@ to the next finding.
 7. Re-run vendor audit (Rust `apps/rhino-cli/` only):
 
    ```bash
-   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
+   apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
    ```
 
    - **Pass**: exits 0 → log as VALIDATED

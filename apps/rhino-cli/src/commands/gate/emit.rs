@@ -10,6 +10,19 @@ use crate::application::repo_config::{self, GateSurface, GateType, RepoConfig, S
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
+/// The lightweight resolver shim that generated `rhino-cli` gate kind
+/// commands invoke instead of the old `cargo`-based invocation (`cargo`,
+/// then `run`, `--release`, `--quiet`, `--manifest-path
+/// apps/rhino-cli/Cargo.toml`, `--`). The old form paid cargo's
+/// invocation-check tax (hundreds of milliseconds) on every single hook/gate
+/// call even when the binary is already built; the shim resolves straight to
+/// the built binary. Single source of truth for every generated artifact
+/// that must invoke the rhino-cli binary: this module's `lint-staged`
+/// rendering, the generated Husky shims (pre-commit/pre-push/commit-msg),
+/// and `gate::validate`'s composition checks, should all reference this
+/// constant rather than duplicating the literal path.
+pub(crate) const RHINO_CLI_RESOLVER_SHIM: &str = "apps/rhino-cli/scripts/rhino-bin.sh";
+
 /// Arguments for `gate emit`.
 #[derive(Args, Debug)]
 pub struct EmitArgs {
@@ -119,10 +132,12 @@ fn is_lint_staged_eligible(gate: &repo_config::GateEntry) -> bool {
 /// Render a registry command with its fixed arguments for a generated shell command.
 fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
     let command = match gate.kind {
-        repo_config::GateKind::RhinoCli => format!(
-            "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- {}",
-            gate.command
-        ),
+        repo_config::GateKind::RhinoCli => {
+            format!("{RHINO_CLI_RESOLVER_SHIM} {}", gate.command)
+        }
+        repo_config::GateKind::External if is_node_resolved(gate) => {
+            node_modules_bin_command(&gate.command)
+        }
         repo_config::GateKind::External | repo_config::GateKind::Nx => gate.command.clone(),
     };
     let fixed_arguments = repo_config::fixed_arguments(gate);
@@ -141,6 +156,56 @@ fn command_with_fixed_arguments(gate: &repo_config::GateEntry) -> String {
             })
             .collect::<Vec<_>>();
         format!("{command} {}", quoted_arguments.join(" "))
+    }
+}
+
+/// Whether a gate's `kind: external` command resolves its tool from this
+/// repository's `node_modules` (an npm package) rather than a system `PATH`
+/// binary. `doctor-tools: [npm]` is the registry's existing signal for a
+/// tool provisioned by `npm install`; reusing it here needs no new schema
+/// field, matching how `doctor-tools: [shellcheck]` already flags a system
+/// tool's own prerequisite.
+fn is_node_resolved(gate: &repo_config::GateEntry) -> bool {
+    gate.doctor_tools.iter().any(|tool| tool == "npm")
+}
+
+/// Rewrite a node-resolved gate's command to invoke its tool through the
+/// repository-local `node_modules/.bin` directory instead of `npx`. `npx`
+/// pays its own resolution/download-check overhead on every invocation even
+/// when the package is already installed; resolving straight to the binary
+/// mirrors the `RHINO_CLI_RESOLVER_SHIM` shortcut for `kind: rhino-cli`
+/// gates.
+///
+/// Handles both a bare tool invocation (`prettier --write`) and an
+/// `npx`-wrapped one (`npx --no -- commitlint --edit "$1"`), skipping `npx`'s
+/// own flags and `--` separator to find the wrapped tool's name.
+fn node_modules_bin_command(command: &str) -> String {
+    let (mut tool, mut arguments) = split_leading_token(command);
+    if tool == "npx" {
+        loop {
+            let (next_tool, next_arguments) = split_leading_token(arguments);
+            if next_tool.starts_with('-') {
+                arguments = next_arguments;
+                continue;
+            }
+            tool = next_tool;
+            arguments = next_arguments;
+            break;
+        }
+    }
+    if arguments.is_empty() {
+        format!("node_modules/.bin/{tool}")
+    } else {
+        format!("node_modules/.bin/{tool} {arguments}")
+    }
+}
+
+/// Split a command string into its leading whitespace-delimited token and
+/// the (whitespace-trimmed) remainder.
+fn split_leading_token(command: &str) -> (&str, &str) {
+    match command.split_once(char::is_whitespace) {
+        Some((first, rest)) => (first, rest.trim_start()),
+        None => (command, ""),
     }
 }
 
@@ -343,6 +408,7 @@ fn command_with_fixed_arguments_quotes_shell_sensitive_values() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     assert_eq!(
@@ -354,7 +420,7 @@ fn command_with_fixed_arguments_quotes_shell_sensitive_values() {
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
-fn command_with_fixed_arguments_invokes_rhino_cli_through_the_local_manifest() {
+fn command_with_fixed_arguments_invokes_rhino_cli_through_the_resolver_shim() {
     use std::collections::BTreeMap;
 
     use crate::application::repo_config::{GateKind, GateType};
@@ -378,11 +444,98 @@ fn command_with_fixed_arguments_invokes_rhino_cli_through_the_local_manifest() {
         carve_out: None,
         verifies: None,
         category: None,
+        ci_group: None,
     };
 
     assert_eq!(
         command_with_fixed_arguments(&gate),
-        "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude \"apps/example/content\" --exempt \"*__draft__*.md\""
+        "apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate --exclude \"apps/example/content\" --exempt \"*__draft__*.md\""
+    );
+}
+
+/// Binds the Gherkin scenario "Rhino CLI kind renders a resolver shim
+/// invocation"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature).
+/// The `cargo run` form pays cargo's invocation-check tax on every gate call;
+/// generated commands must instead invoke the lightweight resolver shim.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn rhino_cli_kind_renders_a_resolver_shim_invocation() {
+    use std::collections::BTreeMap;
+
+    use crate::application::repo_config::{GateKind, GateType};
+
+    let gate = repo_config::GateEntry {
+        id: "fixture".to_string(),
+        gate_type: GateType::Check,
+        command: "md mermaid validate".to_string(),
+        kind: GateKind::RhinoCli,
+        doctor_tools: Vec::new(),
+        wiring: None,
+        restages: false,
+        args: BTreeMap::new(),
+        surfaces: BTreeMap::new(),
+        carve_out: None,
+        verifies: None,
+        category: None,
+        ci_group: None,
+    };
+
+    let rendered = command_with_fixed_arguments(&gate);
+
+    assert!(
+        rendered.contains("apps/rhino-cli/scripts/rhino-bin.sh"),
+        "expected the generated command to invoke the resolver shim at \
+         apps/rhino-cli/scripts/rhino-bin.sh, got {rendered:?}"
+    );
+    assert!(
+        !rendered.contains("cargo run"),
+        "expected the generated command to contain no cargo run substring, got {rendered:?}"
+    );
+}
+
+/// Binds the Gherkin scenario "Node-resolved external tools render a
+/// repository-local bin path"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature).
+/// `npx` pays its own resolution/download-check tax on every invocation even
+/// when the tool is already installed in `node_modules`; generated commands
+/// for node-resolved external tools must instead invoke the repository-local
+/// `node_modules/.bin` path directly.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn external_node_resolved_kind_renders_a_node_modules_bin_invocation() {
+    use std::collections::BTreeMap;
+
+    use crate::application::repo_config::{GateKind, GateType};
+
+    let gate = repo_config::GateEntry {
+        id: "fixture".to_string(),
+        gate_type: GateType::Check,
+        command: r#"npx --no -- commitlint --edit "$1""#.to_string(),
+        kind: GateKind::External,
+        doctor_tools: vec!["npm".to_string()],
+        wiring: None,
+        restages: false,
+        args: BTreeMap::new(),
+        surfaces: BTreeMap::new(),
+        carve_out: None,
+        verifies: None,
+        category: None,
+        ci_group: None,
+    };
+
+    let rendered = command_with_fixed_arguments(&gate);
+
+    assert!(
+        rendered.contains("node_modules/.bin/commitlint"),
+        "expected the generated command to invoke the tool through \
+         node_modules/.bin/commitlint, got {rendered:?}"
+    );
+    assert!(
+        !rendered.contains("npx"),
+        "expected the generated command to contain no npx substring, got {rendered:?}"
     );
 }
 
@@ -426,13 +579,13 @@ fn lint_staged_shell_overrides_wrap_or_own_the_derived_file_invocation() {
             (
                 "repo-config.yml".to_string(),
                 serde_json::json!([
-                    "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+                    "bash -c 'apps/rhino-cli/scripts/rhino-bin.sh repo-config validate' --"
                 ]),
             ),
             (
                 "repo-settings.yml".to_string(),
                 serde_json::json!([
-                    "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+                    "bash -c 'apps/rhino-cli/scripts/rhino-bin.sh repo-config validate' --"
                 ]),
             ),
             (

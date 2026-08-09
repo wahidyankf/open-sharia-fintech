@@ -11,6 +11,7 @@
 #   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
 harness:
   # Authoritative harness registry — all 11 supported coding-agent harnesses.
@@ -367,11 +368,31 @@ env-injection:
       environments: []
 
 gates:
+  # Declared quality-gate registry. Fields per entry:
+  #   id           — stable, unique gate identifier
+  #   type         — check (verifies content) or mutation (rewrites content)
+  #   command      — leaf command run for this gate
+  #   kind         — command runner: rhino-cli | external | nx
+  #   doctor-tools — ordered Doctor tool ids needed before this gate can run (optional)
+  #   wiring       — execution-wiring override, e.g. hand-wired (optional; see below)
+  #   restages     — whether a mutation must re-stage its generated output (optional, default false)
+  #   args         — command-specific arguments such as exclusion lists (optional)
+  #   surfaces     — per-surface ({commit-msg,pre-commit,pre-push,ci}) execution scope; required
+  #   carve-out    — exemption from the cross-surface composition rule (optional)
+  #   verifies     — id of the mutation gate this check verifies (optional)
+  #   category     — mutation category, e.g. formatter (optional)
+  #   ci-group     — CI job group this gate belongs to (DD-3). REQUIRED for every gate whose
+  #                  `surfaces` includes `ci` — `gate validate` hard-errors on a `ci`-surface gate
+  #                  with no declared `ci-group`. Read by `gate list --by-group` (bucketing) and
+  #                  `gate run --group` (dispatch); a gate with `wiring: hand-wired` is excluded
+  #                  from its `ci-group`'s `--group` dispatch in every output format — it runs in
+  #                  its own dedicated CI workflow job instead.
   # ---------------------------------------------------------------- commit-msg
   - id: commitlint
     type: check
     command: 'npx --no -- commitlint --edit "$1"'
     kind: external
+    doctor-tools: [npm]
     surfaces:
       commit-msg: { scope: other }
 
@@ -388,6 +409,7 @@ gates:
     type: check
     command: repo-config validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-commit:
         scope: affected-file-type
@@ -402,6 +424,7 @@ gates:
     category: formatter
     command: prettier --write
     kind: external
+    doctor-tools: [npm]
     restages: true
     surfaces:
       pre-commit:
@@ -419,6 +442,8 @@ gates:
     type: check
     command: prettier --check
     kind: external
+    ci-group: formatting-verify
+    doctor-tools: [npm]
     verifies: format-prettier
     surfaces:
       ci:
@@ -438,6 +463,7 @@ gates:
     type: check
     command: rustfmt --edition 2024 --check
     kind: external
+    ci-group: formatting-verify
     verifies: format-rustfmt
     surfaces:
       ci: { scope: affected-file-type, glob: "*.rs" }
@@ -459,6 +485,7 @@ gates:
     # install needs `dotnet fantomas`. Phase 0 confirms which this repo uses.
     command: fantomas --check
     kind: external
+    ci-group: formatting-verify
     verifies: format-fantomas
     surfaces:
       ci: { scope: affected-file-type, glob: "*.fs" }
@@ -476,6 +503,7 @@ gates:
     type: check
     command: ruff format --check
     kind: external
+    ci-group: formatting-verify
     verifies: format-ruff
     surfaces:
       ci: { scope: affected-file-type, glob: "*.py" }
@@ -494,6 +522,7 @@ gates:
     # `gofmt -l` always exits 0; the wrapper converts non-empty output to failure.
     command: scripts/verify-gofmt.sh
     kind: external
+    ci-group: formatting-verify
     verifies: format-gofmt
     surfaces:
       ci: { scope: affected-file-type, glob: "*.go" }
@@ -512,6 +541,7 @@ gates:
     # The wrapper discovers each mix project; do not add --no-exit.
     command: scripts/format-elixir.sh --check
     kind: external
+    ci-group: formatting-verify
     verifies: format-elixir
     surfaces:
       ci: { scope: affected-file-type, glob: "*.{ex,exs}" }
@@ -530,6 +560,7 @@ gates:
     # `check` fails on unformatted files; do not use `--unformatted-as-warnings`.
     command: dotnet csharpier check
     kind: external
+    ci-group: formatting-verify
     verifies: format-csharpier
     surfaces:
       ci: { scope: affected-file-type, glob: "*.cs" }
@@ -548,6 +579,7 @@ gates:
     # `-o none` prevents the verifier from rewriting files before it fails.
     command: dart format -o none --set-exit-if-changed
     kind: external
+    ci-group: formatting-verify
     verifies: format-dart
     surfaces:
       ci: { scope: affected-file-type, glob: "*.dart" }
@@ -566,6 +598,7 @@ gates:
     type: check
     command: shfmt -d
     kind: external
+    ci-group: formatting-verify
     doctor-tools: [shfmt]
     verifies: format-shfmt
     surfaces:
@@ -585,6 +618,7 @@ gates:
     type: check
     command: tofu fmt -check
     kind: external
+    ci-group: formatting-verify
     doctor-tools: [tofu]
     verifies: format-tofu
     surfaces:
@@ -603,6 +637,7 @@ gates:
     type: check
     command: stylua --check
     kind: external
+    ci-group: formatting-verify
     verifies: format-stylua
     surfaces:
       ci: { scope: affected-file-type, glob: "*.lua" }
@@ -623,6 +658,7 @@ gates:
     # "code should be clang-formatted" warning to an error so the exit is non-zero.
     command: clang-format --dry-run --Werror
     kind: external
+    ci-group: formatting-verify
     doctor-tools: [clang-format]
     verifies: format-clang
     surfaces:
@@ -643,6 +679,7 @@ gates:
     type: check
     command: buildifier --mode=check
     kind: external
+    ci-group: formatting-verify
     verifies: format-buildifier
     surfaces:
       ci:
@@ -654,6 +691,8 @@ gates:
     type: check
     command: markdownlint-cli2
     kind: external
+    ci-group: markdown
+    doctor-tools: [npm]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
@@ -662,6 +701,7 @@ gates:
     type: check
     command: md mermaid validate
     kind: rhino-cli
+    ci-group: markdown
     args:
       exclude:
         - apps/rhino-cli/tests/fixtures
@@ -675,6 +715,7 @@ gates:
     type: check
     command: md heading-hierarchy validate
     kind: rhino-cli
+    ci-group: markdown
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
@@ -683,6 +724,7 @@ gates:
     type: check
     command: md naming validate
     kind: rhino-cli
+    ci-group: markdown
     args:
       exempt:
         - "*__linkedin__*.md"
@@ -695,6 +737,7 @@ gates:
     type: check
     command: md frontmatter validate
     kind: rhino-cli
+    ci-group: markdown
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.md" }
       ci: { scope: all-file-type }
@@ -703,6 +746,7 @@ gates:
     type: check
     command: actionlint
     kind: external
+    ci-group: shell-docker-actions
     doctor-tools: [actionlint]
     surfaces:
       pre-commit:
@@ -714,6 +758,7 @@ gates:
     type: check
     command: shellcheck --severity=warning
     kind: external
+    ci-group: shell-docker-actions
     doctor-tools: [shellcheck]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.sh" }
@@ -723,6 +768,7 @@ gates:
     type: check
     command: hadolint --failure-threshold warning
     kind: external
+    ci-group: shell-docker-actions
     doctor-tools: [hadolint]
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "**/Dockerfile*" }
@@ -732,6 +778,7 @@ gates:
     type: check
     command: convention emoji validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-commit:
         scope: affected-file-type
@@ -742,6 +789,7 @@ gates:
     type: check
     command: specs gherkin-cardinality validate
     kind: rhino-cli
+    ci-group: specs
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "*.feature" }
       ci: { scope: all-file-type }
@@ -750,6 +798,7 @@ gates:
     type: check
     command: 'sh -ec ''for f; do base=${f%.ci.yml}.yml; if [ "$base" != "$f" ] && [ -f "$base" ]; then docker compose -f "$base" -f "$f" config > /dev/null; else docker compose -f "$f" config > /dev/null; fi; done'' --'
     kind: external
+    ci-group: shell-docker-actions
     doctor-tools: [docker]
     surfaces:
       pre-commit:
@@ -785,6 +834,7 @@ gates:
     command: "test:quick"
     kind: nx
     wiring: hand-wired
+    ci-group: rust
     surfaces:
       pre-push: { scope: affected-projects }
       ci: { scope: affected-projects }
@@ -794,6 +844,7 @@ gates:
     command: "compat:min-version"
     kind: nx
     wiring: hand-wired
+    ci-group: rust
     surfaces:
       pre-push: { scope: affected-projects }
       ci: { scope: affected-projects }
@@ -803,6 +854,7 @@ gates:
     command: "specs:structure-validation"
     kind: nx
     wiring: hand-wired
+    ci-group: specs
     surfaces:
       pre-push: { scope: affected-projects }
       ci: { scope: affected-projects }
@@ -811,6 +863,7 @@ gates:
     type: check
     command: env validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push: { scope: other }
       ci: { scope: other }
@@ -819,6 +872,7 @@ gates:
     type: check
     command: md links validate
     kind: rhino-cli
+    ci-group: markdown
     args:
       exclude:
         - plans/done
@@ -832,6 +886,7 @@ gates:
     type: check
     command: md readme-index validate
     kind: rhino-cli
+    ci-group: markdown
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
@@ -840,6 +895,7 @@ gates:
     type: check
     command: harness duplication validate
     kind: rhino-cli
+    ci-group: naming
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
@@ -848,6 +904,7 @@ gates:
     type: check
     command: parity manifest validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push: { scope: other }
       ci: { scope: other }
@@ -857,6 +914,7 @@ gates:
     type: check
     command: harness naming validate
     kind: rhino-cli
+    ci-group: naming
     surfaces:
       pre-push:
         scope: path-gated
@@ -869,6 +927,7 @@ gates:
     type: check
     command: repo-governance workflows naming validate
     kind: rhino-cli
+    ci-group: naming
     surfaces:
       pre-push:
         scope: path-gated
@@ -880,6 +939,7 @@ gates:
     type: check
     command: repo-governance vendor validate repo-governance/
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push:
         scope: path-gated
@@ -891,6 +951,7 @@ gates:
     type: check
     command: convention license validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push:
         scope: path-gated
@@ -902,6 +963,7 @@ gates:
     type: check
     command: harness bindings validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push:
         scope: path-gated
@@ -926,6 +988,7 @@ gates:
     type: check
     command: harness instruction-size validate
     kind: rhino-cli
+    ci-group: governance
     surfaces:
       pre-push:
         scope: path-gated

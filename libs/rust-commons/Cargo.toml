@@ -2,7 +2,7 @@
 name = "rust-commons"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.95.0"
 description = "Shared Rust utilities for ose-public CLI tools"
 license = "MIT"
 publish = false

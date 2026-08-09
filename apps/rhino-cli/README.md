@@ -100,6 +100,32 @@ exist (run `npx bddgen` first). See
 [`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
 for the full behavior contract.
 
+## Adding a Gherkin Scenario: Two Binding Sites
+
+A new scenario anywhere under
+[`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/README.md)
+needs updating in **two** places, not one:
+
+1. the relevant **unit-test module** (e.g. `src/commands/gate/emit.rs`'s `#[cfg(test)]` block) — a
+   plain Rust unit test covering the same behavior, not a step binding, and
+2. **`tests/gate_specs.rs`** — the cucumber harness, the only place that carries actual
+   `#[given]`/`#[when]`/`#[then]` step bindings.
+
+The harness scans the entire feature directory regardless of which change a given scenario belongs
+to, so binding only the unit-test side leaves an undefined-step failure that surfaces on the next
+`test:quick` / pre-push run — after a full commit cycle has already been spent. This has recurred;
+budget for both sites up front.
+
+```bash
+# Verify BEFORE committing — the narrower --lib filter will not catch it
+cargo test --test gate_specs
+```
+
+**Author a scenario in the phase that creates its behavior, or an earlier one — never a later one.**
+The harness requires a literal, _passing_ binding for every scenario in the tree at all times, so a
+scenario describing behavior that does not exist yet cannot be bound truthfully; forcing a binding
+means fabricating a fixture that asserts against nothing.
+
 ## Dependency Status
 
 Reviewed 2026-05-23. Policy paths per [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).

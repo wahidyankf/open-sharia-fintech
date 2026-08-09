@@ -62,6 +62,9 @@ struct DoctorWorld {
     bin: TempDir,
     /// Override the node requirement to force a version mismatch (warning).
     node_req_override: Option<String>,
+    /// Override the pinned rust-toolchain.toml channel to force a version
+    /// mismatch against the `rustc` stub (warning).
+    rust_channel_override: Option<String>,
     scope: Option<String>,
     tools: Vec<String>,
     fix: bool,
@@ -84,6 +87,7 @@ impl DoctorWorld {
             repo,
             bin: TempDir::new().expect("temp bin"),
             node_req_override: None,
+            rust_channel_override: None,
             scope: None,
             tools: Vec::new(),
             fix: false,
@@ -98,8 +102,9 @@ impl DoctorWorld {
     }
 
     /// Writes all doctor config files into the synthetic repo. `node_req` lets
-    /// the warning scenario inject a mismatching requirement.
-    fn write_config(&self, node_req: &str) {
+    /// the node warning scenario inject a mismatching requirement; `rust_channel`
+    /// lets the rust warning scenario do the same for the pinned toolchain.
+    fn write_config(&self, node_req: &str, rust_channel: &str) {
         let w = |rel: &str, content: &str| {
             let p = self.repo_path().join(rel);
             std::fs::create_dir_all(p.parent().expect("parent")).expect("mkdir");
@@ -130,6 +135,12 @@ impl DoctorWorld {
         w(
             "apps/crud-be-rust-axum/Cargo.toml",
             "[package]\nname = \"t\"\nrust-version = \"1.80\"\n",
+        );
+        w(
+            "apps/rhino-cli/rust-toolchain.toml",
+            &format!(
+                "[toolchain]\nchannel = \"{rust_channel}\"\ncomponents = [\"clippy\", \"rustfmt\", \"llvm-tools\"]\n"
+            ),
         );
     }
 
@@ -203,7 +214,11 @@ impl DoctorWorld {
                 .node_req_override
                 .clone()
                 .unwrap_or_else(|| "24.11.1".to_string());
-            self.write_config(&node_req);
+            let rust_channel = self
+                .rust_channel_override
+                .clone()
+                .unwrap_or_else(|| "1.90.0".to_string());
+            self.write_config(&node_req, &rust_channel);
         }
 
         let mut args = vec!["doctor".to_string()];
@@ -260,13 +275,58 @@ fn shell_quote(s: &str) -> String {
     format!("'{}'", s.replace('\'', "'\\''"))
 }
 
+/// Finds the `rust` tool's report line in `doctor`'s text output.
+///
+/// Scoped to lines before the `"Target-share:"` marker (the unrelated
+/// cargo-target-share doctor step, whose output may legitimately mention
+/// crate directory names such as `crud-be-rust-axum` that coincidentally
+/// contain "rust" as a substring — see [`then_minimal_set`]'s identical
+/// scoping) and to report lines whose second whitespace-delimited token
+/// (the tool name column) is exactly `"rust"`, not merely a substring match.
+fn rust_report_line(out: &str) -> String {
+    out.split("Target-share:")
+        .next()
+        .unwrap_or(out)
+        .lines()
+        .find(|line| {
+            (line.starts_with('\u{2713}')
+                || line.starts_with('\u{26a0}')
+                || line.starts_with('\u{2717}'))
+                && line.split_whitespace().nth(1) == Some("rust")
+        })
+        .unwrap_or_default()
+        .to_string()
+}
+
+/// Finds the `rust-toolchain-components` check's report line in `doctor`'s
+/// text output.
+///
+/// Scoped and matched the same way as [`rust_report_line`]: before the
+/// `"Target-share:"` marker, and by the report line's second
+/// whitespace-delimited token (the name column) being exactly
+/// `"rust-toolchain-components"`.
+fn component_check_line(out: &str) -> String {
+    out.split("Target-share:")
+        .next()
+        .unwrap_or(out)
+        .lines()
+        .find(|line| {
+            (line.starts_with('\u{2713}')
+                || line.starts_with('\u{26a0}')
+                || line.starts_with('\u{2717}'))
+                && line.split_whitespace().nth(1) == Some("rust-toolchain-components")
+        })
+        .unwrap_or_default()
+        .to_string()
+}
+
 // ===========================================================================
 // Given
 // ===========================================================================
 
 #[given("all required development tools are present with matching versions")]
 fn given_all_present(w: &mut DoctorWorld) {
-    w.write_config("24.11.1");
+    w.write_config("24.11.1", "1.90.0");
     w.write_stubs();
 }
 
@@ -276,14 +336,14 @@ fn given_tool_missing(w: &mut DoctorWorld) {
     // so an entirely empty PATH would fail root-discovery before any tool report
     // is printed. Instead, keep every stub present except one probed tool
     // (`shellcheck`) so `doctor` runs and reports exactly that tool missing.
-    w.write_config("24.11.1");
+    w.write_config("24.11.1", "1.90.0");
     w.write_stubs();
     let _ = std::fs::remove_file(w.bin.path().join("shellcheck"));
 }
 
 #[given("the tofu tool is not found in the system PATH")]
 fn given_tofu_missing(w: &mut DoctorWorld) {
-    w.write_config("24.11.1");
+    w.write_config("24.11.1", "1.90.0");
     w.write_stubs();
     let _ = std::fs::remove_file(w.bin.path().join("tofu"));
 }
@@ -306,13 +366,13 @@ fn given_unknown_tool_selected(w: &mut DoctorWorld) {
 #[given("a required development tool is installed with a non-matching version")]
 fn given_tool_mismatch(w: &mut DoctorWorld) {
     // node requirement "1.0.0" but the stub reports v24.11.1 → warning.
-    w.write_config("1.0.0");
+    w.write_config("1.0.0", "1.90.0");
     w.write_stubs();
 }
 
 #[given("a tool is listed under the doctor skip-tools section of repo-config.yml")]
 fn given_skip_tools(w: &mut DoctorWorld) {
-    w.write_config("24.11.1");
+    w.write_config("24.11.1", "1.90.0");
     w.write_stubs();
     // Deliberately remove the skipped tool's stub too: if `doctor` still
     // probed it despite the skip-tools declaration, it would come back
@@ -323,6 +383,38 @@ fn given_skip_tools(w: &mut DoctorWorld) {
         "doctor:\n  skip-tools: [shfmt]\n",
     )
     .expect("write repo-config.yml");
+}
+
+#[given("the installed rustc differs from the pinned rust-toolchain.toml channel")]
+fn given_rust_channel_mismatch(w: &mut DoctorWorld) {
+    // rustc stub reports "1.90.0"; pin a different channel (this plan's real
+    // pinned value, for narrative consistency) to force a mismatch → warning.
+    let rust_channel = "1.95.0".to_string();
+    w.rust_channel_override = Some(rust_channel.clone());
+    w.write_config("24.11.1", &rust_channel);
+    w.write_stubs();
+}
+
+#[given("a rust-toolchain.toml pins a channel and declares no lint components")]
+fn given_rust_toolchain_without_lint_components(w: &mut DoctorWorld) {
+    w.write_config("24.11.1", "1.90.0");
+    w.write_stubs();
+    std::fs::write(
+        w.repo_path().join("apps/rhino-cli/rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"1.90.0\"\n",
+    )
+    .expect("write rust-toolchain.toml without lint components");
+}
+
+#[given("a rust-toolchain.toml declares only the clippy lint component")]
+fn given_rust_toolchain_partial_lint_components(w: &mut DoctorWorld) {
+    w.write_config("24.11.1", "1.90.0");
+    w.write_stubs();
+    std::fs::write(
+        w.repo_path().join("apps/rhino-cli/rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"1.90.0\"\ncomponents = [\"clippy\"]\n",
+    )
+    .expect("write rust-toolchain.toml with a partial lint-component declaration");
 }
 
 // ===========================================================================
@@ -356,6 +448,11 @@ fn when_run_doctor_fix(w: &mut DoctorWorld) {
 fn when_run_doctor_fix_dry_run(w: &mut DoctorWorld) {
     w.fix = true;
     w.dry_run = true;
+    w.exec();
+}
+
+#[when("\"npm run doctor\" runs")]
+fn when_npm_run_doctor(w: &mut DoctorWorld) {
     w.exec();
 }
 
@@ -551,6 +648,63 @@ fn then_nothing_to_fix(w: &mut DoctorWorld) {
 fn then_skipped_tool_absent(w: &mut DoctorWorld) {
     let out = w.stdout();
     assert!(!out.contains("shfmt"), "got: {out}");
+}
+
+#[then("it reports the Rust toolchain as mismatched")]
+fn then_rust_mismatched(w: &mut DoctorWorld) {
+    assert_eq!(w.exit_code(), 0, "warnings must not fail: {}", w.stdout());
+    let out = w.stdout();
+    let rust_line = rust_report_line(&out);
+    assert!(
+        rust_line.starts_with('\u{26a0}') || rust_line.to_lowercase().contains("warning"),
+        "expected rust tool warning line, got: {out}"
+    );
+}
+
+#[then("it names the pinned channel as the expected value")]
+fn then_rust_names_pinned_channel(w: &mut DoctorWorld) {
+    let expected = w
+        .rust_channel_override
+        .clone()
+        .expect("rust_channel_override set by a prior Given step");
+    let out = w.stdout();
+    let rust_line = rust_report_line(&out);
+    assert!(
+        rust_line.contains(&format!("required: {expected}")),
+        "expected pinned channel {expected} named, got: {out}"
+    );
+}
+
+#[then("it reports the toolchain component check as a warning naming rustfmt and clippy")]
+fn then_reports_components_warning_both(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    let line = component_check_line(&out);
+    assert!(
+        line.starts_with('\u{26a0}') || line.to_lowercase().contains("warning"),
+        "expected a warning line for rust-toolchain-components, got: {out}"
+    );
+    assert!(
+        line.contains("rustfmt") && line.contains("clippy"),
+        "expected both missing components named, got: {line}"
+    );
+}
+
+#[then("it reports the toolchain component check as a warning naming only rustfmt")]
+fn then_reports_components_warning_rustfmt_only(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    let line = component_check_line(&out);
+    assert!(
+        line.starts_with('\u{26a0}') || line.to_lowercase().contains("warning"),
+        "expected a warning line for rust-toolchain-components, got: {out}"
+    );
+    assert!(
+        line.contains("does not declare the rustfmt component"),
+        "expected only rustfmt named as missing, got: {line}"
+    );
+    assert!(
+        !line.contains("rustfmt, clippy") && !line.contains("clippy, rustfmt"),
+        "clippy was already declared and must not be named as missing alongside rustfmt, got: {line}"
+    );
 }
 
 #[tokio::main]

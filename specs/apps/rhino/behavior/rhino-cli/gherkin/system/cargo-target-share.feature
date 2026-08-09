@@ -45,6 +45,12 @@ Feature: Shared Cargo Target Directories via Doctor
     Then both point at the same shared-cache directory for that repo and crate
     And a disk usage measurement across the worktrees counts that directory only once
 
+  Scenario: doctor --fix from the main checkout also shares every linked worktree's target
+    Given a linked worktree holds a crate whose target is still a plain directory outside CI
+    When the developer runs the doctor command with the fix flag from the main checkout
+    Then that linked worktree's crate target becomes a symlink into the shared cache
+    And it resolves to the same shared-cache entry as the main checkout's crate
+
   Scenario: builds and tests resolve through the symlink
     Given a crate's target is a symlink into the shared cache
     When the developer builds and tests that crate through Nx

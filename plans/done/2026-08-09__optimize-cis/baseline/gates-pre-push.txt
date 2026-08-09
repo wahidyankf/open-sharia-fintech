@@ -1,0 +1,123 @@
+[
+  {
+    "id": "env-validate",
+    "type": "check",
+    "command": "env validate",
+    "doctor_tools": [],
+    "scope": "other",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-links",
+    "type": "check",
+    "command": "md links validate",
+    "doctor_tools": [],
+    "scope": "all-file-type",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "md-readme-index",
+    "type": "check",
+    "command": "md readme-index validate",
+    "doctor_tools": [],
+    "scope": "all-file-type",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "harness-duplication",
+    "type": "check",
+    "command": "harness duplication validate",
+    "doctor_tools": [],
+    "scope": "all-file-type",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "parity-manifest",
+    "type": "check",
+    "command": "parity manifest validate",
+    "doctor_tools": [],
+    "scope": "other",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "harness-naming",
+    "type": "check",
+    "command": "harness naming validate",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "workflows-naming",
+    "type": "check",
+    "command": "repo-governance workflows naming validate",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "vendor-independence",
+    "type": "check",
+    "command": "repo-governance vendor validate repo-governance/",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "convention-license",
+    "type": "check",
+    "command": "convention license validate",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "harness-bindings",
+    "type": "check",
+    "command": "harness bindings validate",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  },
+  {
+    "id": "instruction-size",
+    "type": "check",
+    "command": "harness instruction-size validate",
+    "doctor_tools": [],
+    "scope": "path-gated",
+    "surfaces": [
+      "pre-push",
+      "ci"
+    ]
+  }
+]

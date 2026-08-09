@@ -5,6 +5,10 @@ inputs:
     description: "Node.js version"
     required: false
     default: "24"
+  run-npm-ci:
+    description: "Whether to restore the npm cache and run npm ci. Set false for jobs whose gates resolve no node-managed tool."
+    required: false
+    default: "true"
 runs:
   using: "composite"
   steps:
@@ -12,6 +16,7 @@ runs:
       uses: volta-cli/action@v5
 
     - name: Cache npm dependencies
+      if: inputs.run-npm-ci == 'true'
       uses: actions/cache@v5
       with:
         path: ~/.npm
@@ -20,6 +25,7 @@ runs:
           npm-${{ runner.os }}-
 
     - name: Install dependencies
+      if: inputs.run-npm-ci == 'true'
       shell: bash
       run: npm ci
 
@@ -27,7 +33,10 @@ runs:
       uses: actions/cache@v5
       with:
         path: .nx/cache
-        key: nx-${{ runner.os }}-${{ hashFiles('nx.json', 'package-lock.json') }}-${{ github.sha }}
+        key: nx-${{ runner.os }}-${{ hashFiles('nx.json', 'package-lock.json') }}
+        # Only the broadest OS-level fallback is a meaningful restore-keys
+        # prefix here: the exact `key` above has no dynamic suffix (DD-8), so
+        # a middle tier reproducing that same key plus a trailing "-" can
+        # never prefix-match anything actually saved under this scheme.
         restore-keys: |
-          nx-${{ runner.os }}-${{ hashFiles('nx.json', 'package-lock.json') }}-
           nx-${{ runner.os }}-

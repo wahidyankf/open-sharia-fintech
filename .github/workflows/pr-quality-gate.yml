@@ -62,9 +62,29 @@ jobs:
 
   format:
     name: Auto-format affected (lint-staged)
+    needs: build-rhino
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      # Every rhino-bin.sh call in this job — including the ones inside
+      # lint-staged's own `repo-config.yml`/`*.md`/`*.feature` commands —
+      # resolves this prebuilt `--profile gate` artifact at tier 1 instead
+      # of falling back to a from-source `cargo build`/`cargo run` compile.
+      #
+      # Provenance trade-off (accepted, not an oversight): `build-rhino`
+      # checks out with no `ref:` override, so on `pull_request` events it
+      # compiles this binary from GitHub's synthetic base+head merge commit,
+      # while this job checks out head-only content (see `ref:` below).
+      # Every rhino-bin.sh call in this job therefore applies merge-commit
+      # gate logic to head-only content. All affected commands are
+      # read-only validators — none rewrite files — so the worst outcome is
+      # a wrong pass/fail verdict, never rhino-derived content written back
+      # to the branch, and it self-corrects on rebase against a current
+      # `main`. A second, head-sha-pinned artifact built solely for this job
+      # was judged not worth the extra CI job for that bound; revisit if a
+      # validator invoked here ever gains file-mutating behavior.
+      RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
     steps:
       - uses: actions/checkout@v6
         with:
@@ -72,12 +92,17 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - name: Provision registry-declared pre-commit tools
         run: |
-          tools=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=json |
+          tools=$(apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=json |
             jq -r '[.[] | .doctor_tools[]] | unique | join(",")')
           if [ -n "$tools" ]; then
-            npm run doctor -- --fix --tools "$tools"
+            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools "$tools"
           fi
       - name: Format affected files with the project formatters (lint-staged)
         if: github.event_name == 'pull_request'
@@ -100,56 +125,83 @@ jobs:
 
       - name: Verify affected formatting on main
         if: github.event_name == 'push'
-        run: |
-          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json |
-            jq -r '.[] | select(.id | startswith("format-verify-")) | .id' |
-            while IFS= read -r gate_id; do
-              cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$gate_id"
-            done
+        # Runs every formatting-verify gate as a single --group dispatch
+        # instead of the pre-optimization one-at-a-time --only loop, mirroring
+        # every other CI surface's group-based invocation.
+        run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group=formatting-verify
 
-  enumerate:
-    name: Enumerate registry CI gates
+  build-rhino:
+    name: Build rhino-cli (gate profile)
     runs-on: ubuntu-latest
-    outputs:
-      gates: ${{ steps.list.outputs.gates }}
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - run: cargo build --profile gate --manifest-path apps/rhino-cli/Cargo.toml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate/rhino-cli
+
+  enumerate:
+    name: Enumerate registry CI gate groups
+    needs: build-rhino
+    runs-on: ubuntu-latest
+    outputs:
+      groups: ${{ steps.list.outputs.groups }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+        with:
+          # `enumerate` only lists gate groups via the shim; the `list` step
+          # later in this job sets RHINO_CLI_BIN inline for that one
+          # invocation so rhino-bin.sh resolves the artifact downloaded by
+          # the `download-artifact` step (also later in this job) instead of
+          # falling back to cargo/node. jq is runner-provided; no npm-managed
+          # tool is needed here.
+          run-npm-ci: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - id: list
         run: |
-          gates=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json | jq -c .)
-          echo "gates=$gates" >> "$GITHUB_OUTPUT"
+          groups=$(RHINO_CLI_BIN="$PWD/apps/rhino-cli/target/gate/rhino-cli" apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=json --by-group | jq -c .)
+          echo "groups=$groups" >> "$GITHUB_OUTPUT"
 
   gate:
-    needs: enumerate
-    name: ${{ matrix.gate.id }}
+    needs: [build-rhino, enumerate]
+    name: ${{ matrix.group.group }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        gate: ${{ fromJson(needs.enumerate.outputs.gates) }}
+        group: ${{ fromJson(needs.enumerate.outputs.groups) }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-rust
+        with:
+          run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - name: Provision registry-declared tools
         run: |
           tools="$DOCTOR_TOOLS"
           if [ -n "$tools" ]; then
-            npm run doctor -- --fix --tools "$tools"
+            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools "$tools"
           fi
         env:
-          DOCTOR_TOOLS: ${{ join(matrix.gate.doctor_tools, ',') }}
-      - run: >-
-          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run
-          --surface=ci --only="$GATE_ID"
+          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}
+          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
+      - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
         env:
-          GATE_ID: ${{ matrix.gate.id }}
+          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
+          GROUP_ID: ${{ matrix.group.group }}
 
   typescript:
     name: TypeScript quality gate
@@ -192,6 +244,10 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
       - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp'
+      # Coverage was lifted out of the local `test:quick` chain (DD-7) so pre-push stays fast. It
+      # still gates merge — `--fail-under-lines 90` lives in the target itself, so a coverage drop
+      # turns this job red exactly as it previously turned pre-push red.
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp'
 
   compat-min-version:
     name: Minimum version compatibility (all affected)
@@ -217,7 +273,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

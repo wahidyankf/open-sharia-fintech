@@ -56,6 +56,11 @@ Feature: Gate execution
     When gate run executes
     Then it fails before any leaf invocation
 
+  Scenario: An unknown group id fails before execution
+    Given a --group selector names a CI group id absent from the registry
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then it fails before any leaf invocation and names the unknown group id
+
   Scenario: A re-staging mutation stages only its outputs
     Given a successful restaging mutation changes generated output
     When it runs with unrelated worktree edits
@@ -103,3 +108,35 @@ Feature: Gate execution
     When the gate with id "format-verify-elixir" runs
     Then it exits zero
     And no tracked file is rewritten
+
+  Scenario: A failing gate inside a group is named in the output
+    Given a CI group containing several gates where exactly one fails
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then it exits non-zero
+    And its output contains a per-gate summary line for every gate in the group
+    And the failing gate id appears on a line marked FAIL
+
+  Scenario: A hand-wired gate never runs a second time inside its CI group
+    Given a CI group contains both an auto-dispatched gate and a hand-wired gate
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then only the auto-dispatched gate executes
+    And the hand-wired gate is absent from the group's summary
+
+  Scenario: Gate group jobs consume a prebuilt binary
+    Given the build-rhino job has published the rhino-cli artifact for the run
+    When a gate group job executes
+    Then it downloads the artifact rather than building from source
+    And it runs no cargo install command
+    And its step list contains no Rust toolchain setup
+
+  Scenario: A gate group with no node tooling skips npm ci
+    Given a CI gate group whose gates require no node-resolved tool
+    When that group's job executes
+    Then its step list contains no npm ci invocation
+    And every gate in the group still reports its baseline result
+
+  Scenario: The MSRV pre-install covers the toolchain name cargo-hack requests
+    Given a crate declares a patch-level rust-version floor
+    When the Rust setup action pre-installs the pinned MSRV toolchains
+    Then it installs that floor's major-minor toolchain name
+    And it installs the patch-level toolchain name too

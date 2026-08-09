@@ -57,8 +57,9 @@ for canonical target names, coverage thresholds, caching rules, and the three-le
 
 All markdown auto-linted via Prettier (pre-commit), markdownlint-cli2 (pre-push), and rhino-cli's
 `md mermaid validate`, `md links validate`, and `md heading-hierarchy validate` subcommands (wired
-into pre-commit/pre-push hooks and CI as raw `cargo run` invocations — not Nx targets). Quick fix:
-`npm run lint:md:fix`.
+into pre-commit/pre-push hooks and CI through the `rhino-bin.sh` resolver shim — see
+[Git Hooks (Automated Quality)](#git-hooks-automated-quality) below — not raw `cargo run`
+invocations, not Nx targets). Quick fix: `npm run lint:md:fix`.
 
 **See**: [markdown.md](./repo-governance/development/quality/markdown.md),
 [repository-validation.md](./repo-governance/development/quality/repository-validation.md)
@@ -134,11 +135,12 @@ conflict-free integration is not proof the incoming changes are safe to ignore.
 ## Git Hooks (Automated Quality)
 
 The three executable Husky files are registry shims: use
-`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=<surface> --format=text`
+`apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=<surface> --format=text`
 to inspect their current commands and `gate validate` to verify shim, generated-artifact, and CI
 conformance. Do not hand-maintain command lists in hooks; `repo-config.yml` is authoritative.
 
-**See**: [code.md](./repo-governance/development/quality/code.md)
+**See**: [code.md](./repo-governance/development/quality/code.md) — includes the `RHINO_CLI_BIN`
+tier-1 override contract
 
 ## Documentation Organization
 

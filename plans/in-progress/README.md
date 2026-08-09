@@ -15,10 +15,6 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety.
-- [optimize-cis](./optimize-cis/README.md) — Cuts fixed overhead from the pre-commit, pre-push, and
-  PR-quality-gate lifecycle across the OSE repos — invocation tax, CI job topology, cargo build
-  profile, and disk footprint — with gate coverage held provably invariant. Supersedes and deletes
-  `../backlog/rhino-cli-optimization/`.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
