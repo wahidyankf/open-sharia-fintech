@@ -50,7 +50,7 @@ every additional divergence makes a full reconciliation pass harder to reason ab
 - **The `nx affected` rhino-cli-detection gap** — the adjacent rhino-cli-in-`ose-public` finding from
   the same plan; distinct problem, same family. Promoted 2026-08-07 into `rhino-cli-optimization`,
   which was superseded and deleted 2026-08-08 by
-  [optimize-cis](../../in-progress/optimize-cis/README.md) — **this specific concern is not carried
+  [optimize-cis](../../done/2026-08-09__optimize-cis/README.md) — **this specific concern is not carried
   forward into `optimize-cis`'s scope** (verified against its `brd.md`/`tech-docs.md` 2026-08-08; no
   `nx affected` detection-gap workstream present). It currently has no tracking home and should be
   re-filed as its own idea brief if still relevant at pickup, rather than assumed covered.
@@ -82,7 +82,7 @@ Out of scope, carried forward verbatim from the source plan:
   its own idea if pursued.
 - The `ose-public`-specific `nx affected` rhino-cli-detection gap — previously slated for
   `rhino-cli-optimization` (superseded and deleted 2026-08-08); not carried by its successor
-  [optimize-cis](../../in-progress/optimize-cis/README.md), so currently untracked pending re-filing.
+  [optimize-cis](../../done/2026-08-09__optimize-cis/README.md), so currently untracked pending re-filing.
 - Reconciling `ose-primer`'s copy, unless it turns out to carry this specific string — verify first, do
   not assume drift where none exists.
 - Any change to the wrong-model _behavior_. Only the fixture string identity moves.

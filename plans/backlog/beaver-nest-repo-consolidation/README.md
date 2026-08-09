@@ -147,7 +147,7 @@ simpler reason that it owns `repo-config.yml`, the generated Husky shims, and th
 
 ### `blockedBy` — `optimize-cis`
 
-[`plans/in-progress/optimize-cis`](../../in-progress/optimize-cis/README.md) — successor to, and
+[`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) — successor to, and
 supersedes, the `rhino-cli-optimization` idea this section originally named (deleted 2026-08-08,
 absorbed into `optimize-cis`'s scope) — rewrites how `apps/rhino-cli` is built, invoked, and
 lint-gated. It changes three things this plan's delivery checklist currently depends on, and **that

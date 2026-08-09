@@ -9,6 +9,15 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-09: optimize-cis](./2026-08-09__optimize-cis/README.md) —
+  Cut fixed overhead from the pre-commit, pre-push, and PR-quality-gate lifecycle across the three
+  parity repos: a resolver shim and `node_modules/.bin` dispatch removed the per-gate invocation tax,
+  a grouped CI matrix replaced 45 serial jobs, a dedicated cargo `gate` profile plus coverage-to-CI
+  cut local build cost, and the same topology propagated to `ose-primer` and `ose-private`. Gate
+  coverage held provably invariant throughout — 76 gate ids, byte-identical to the Phase 0 capture on
+  all four surfaces. Three of nine metrics met their targets; the six misses are recorded with
+  measured shortfalls in [`results.md`](./2026-08-09__optimize-cis/results.md) rather than rescoped.
+
 - [2026-08-07: sdlc-gate-registry-enforcement](./2026-08-07__sdlc-gate-registry-enforcement/README.md) —
   Made the already-ratified Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically
   enforced via a `gates:` registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and

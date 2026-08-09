@@ -34,7 +34,7 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       has completed — command: `test -d plans/done/*__sdlc-gate-registry-enforcement && echo COMPLETE`
       — acceptance: prints `COMPLETE`; if the folder is still under `plans/in-progress/`, **stop and
       do not begin Phase 0** (see [tech-docs.md D5](./tech-docs.md#design-decisions))
-- [ ] [AI] Verify [`plans/in-progress/optimize-cis`](../../in-progress/optimize-cis/README.md) has
+- [ ] [AI] Verify [`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) has
       completed — command: `test -d plans/done/*__optimize-cis && echo COMPLETE` —
       acceptance: prints `COMPLETE`; if the folder is still under `plans/backlog/` or
       `plans/in-progress/`, **stop and do not begin Phase 0**
