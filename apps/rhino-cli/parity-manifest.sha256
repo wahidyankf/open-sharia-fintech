@@ -31,7 +31,7 @@ eba685bf44ff001226c3e94bbc24f654561d067b5701531fca9b567b09ea27af  apps/rhino-cli
 1afaae392a270d957cb1866e79ae1c10facc9e1ffa5ce199ce0658eccd574eb6  apps/rhino-cli/src/application/doctor/fixer.rs
 19f992b068892d7650b14af89ffaaa830f1bb15853c0c0bd4df1a11e0aeb07e0  apps/rhino-cli/src/application/doctor/mod.rs
 e20bb5f2b82fb4d98e3a04d38e6aeb798c7d78d9fd10f92c2cb55a4f8fe4b86c  apps/rhino-cli/src/application/doctor/reporter.rs
-3385de3ba10c2cc753a6916b84540ebfe14850a49f05aff82ca7496f07d2803b  apps/rhino-cli/src/application/doctor/target_share.rs
+e76d32422d0dbac0354f89d4c32a0f353bb856eed81e20a4d76dd546f345d58a  apps/rhino-cli/src/application/doctor/target_share.rs
 a9453573b1e30fe916e04222e7ebf8ad7f4b742fc00a605dfecba7d2c592922a  apps/rhino-cli/src/application/doctor/tools.rs
 37c7ee117b00fcd3f5f1d0b4a5e3b775f883c4f896133f6a82940047ad41d3bb  apps/rhino-cli/src/application/domain_coverage/mod.rs
 0eddabf3beee49972c41d96c979deeef8ee8de8af8f77eab7512596725f1154c  apps/rhino-cli/src/application/e2e_coverage/diff.rs
@@ -199,7 +199,7 @@ f1026443fbcd7f1c673c9fa7ce2cc1aadb881aad012e5d034f6757f3d85b4c82  apps/rhino-cli
 af6651b2adb5ee6d5becf743af675eab72210e35cb5e3c510c08d78dbb07f838  apps/rhino-cli/src/test_support.rs
 1acfdaa6fb586bae30ed0ae223222f9d551d5adc3ebaa6574424db5c8d1ac36e  apps/rhino-cli/tests/agent_naming_validator.rs
 5f8ecb74e759e92304bfe2099c1faea84a3e12b07589887e4f0937cdffdb9c1a  apps/rhino-cli/tests/agents.rs
-2e577c82d3e9fec50ec7b2dc2489e1cba548a40d55c2b16377d712ddffbe7b06  apps/rhino-cli/tests/cargo_target_share.rs
+e03252f08309ffdc8bf9109e0a9e5a3fc1df3b825ccff08e15a613dba689da3d  apps/rhino-cli/tests/cargo_target_share.rs
 d6b8c614e58d37f36e0b6a6813e2b8e89138cc5a2053a90e14c2a71f1d6e3462  apps/rhino-cli/tests/cli_smoke.rs
 ecee8e2b0c870d14a905a561a0f4cf7e6887a7492e85b61f1f4adb9ef3be3bee  apps/rhino-cli/tests/contracts.rs
 5edf933f7cec00d41e1d6eafe2d95e8772e70d22040a7eda611c90cadf3db5e3  apps/rhino-cli/tests/convention.rs
@@ -648,7 +648,7 @@ dc0533b835b12c0ffad47be531eb98063e46ad4356646ee457182fa4bdaf1245  specs/apps/rhi
 4adf044e8981e0e0d99d2f7f8aef1437e65af013812f9dd5dd4b81f34e746513  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-tree.feature
 f45e16b233ce1794eca625fd2da002608df2788647d9b7a293849ee0f8429879  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/worktree-agnostic.feature
 d8bbce013eec21f3e4c0e867c89750fee4d107aeeb1f4c62f7a1ee4726128914  specs/apps/rhino/behavior/rhino-cli/gherkin/system/README.md
-4ab318d0a91f042c6e45004920d80295a9743784859954bfd6e931a5b284ff5d  specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature
+21004df98eba0e5329fa08cd5f72dbcf3086efb4024442a487260eae27fd7faa  specs/apps/rhino/behavior/rhino-cli/gherkin/system/cargo-target-share.feature
 45281491be5ab60867ba3ffb0caa9b5092200f8475c8a2462c74e7c2c71565d9  specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature
 cfa6a3c410689a43dcfbc8682044d0d2b98cc7f3f7b6ecf0c9baf0582145f562  specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature
 352502457d7b8f2d7472f9980514a2505fc06fb31fdae47f6841383e69ef4360  specs/apps/rhino/behavior/rhino-cli/gherkin/test-coverage/README.md
