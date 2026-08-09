@@ -229,3 +229,46 @@ affected` or `git diff` directly in the workflow YAML.
   _on_ it. The same asymmetry explains why M3 (runner-seconds, a sum) fell 47.6 % in the same runs
   where M4 rose — the two metrics were never going to move together, and a plan that treats both as
   symptoms of one cause will mis-diagnose whichever one it reads second.
+
+## Learning: sharing one build directory across worktrees converts a disk problem into a serialization problem
+
+- **Context**: DD-1..DD-8's target-share step points every worktree's `apps/<crate>/target` at one
+  physical directory under `~/.cache/ose-cargo-target/<repo>/<crate>`. Phase 9 extended it so a
+  single `doctor --fix` covers every worktree rather than only the checkout it was invoked from —
+  which reclaimed 221 MB the moment it ran, because the main checkout's `apps/rhino-cli/target` was
+  still a plain 221 MB directory that no one had ever shared.
+- **Observation**: the saving is real and it is not free. Cargo takes an exclusive build lock on the
+  target directory, so two worktrees building the same crate no longer proceed in parallel — one
+  blocks. A **65 s** block was observed during this plan, with the waiting build reporting that it
+  was "Blocking waiting for file lock on build directory". Widening the sharing widens the
+  contention: before this change only the worktrees that had individually run `doctor --fix`
+  contended; after it, every worktree does.
+- **Why it might generalize**: deduplication and parallelism are in direct tension whenever the
+  deduplicated resource carries a mutual-exclusion lock. The disk saving scales with the number of
+  worktrees (N copies collapse to 1) and so does the contention (N builders queue on 1 lock), so the
+  same parameter that makes the optimization look better makes the regression worse — there is no
+  N at which one wins and the other stops mattering. Deliberately **not** fixed here: reversing the
+  tradeoff means per-worktree target directories with a shared _cache_ layer (sccache or an
+  equivalent), which is a design question with its own rollback story, not a tweak to a doctor step.
+  Recorded so the next person meeting a mysterious 65 s stall knows it is a designed-in consequence
+  and not a hung build.
+
+## Learning: a hardcoded count is the wrong guard for "nothing escaped the check"
+
+- **Context**: `cargo_target_share.rs` guarded the inherited-Git-state isolation rule with
+  `assert_eq!(commands.len(), 9, "seven serialized unit commands plus integration and coverage")`.
+  Phase 8 legitimately collapsed six `cargo test --test X` invocations into one, and the guard went
+  red at 4 — reporting a defect where there was only a restructure.
+- **Observation**: the count was a proxy for the property that actually matters, which the _previous_
+  assertion already checks — every inspected command starts with
+  `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR`. What the count was reaching for is coverage:
+  that the inspected set is the _whole_ set, so no direct Cargo test command escapes the property
+  check. Replaced with an equality against every `cargo test` / `cargo llvm-cov` string found by
+  scanning all of `project.json` — which cannot go stale on restructuring, and unlike the count
+  actually fails when a new direct Cargo command is added to a target the guard does not read.
+- **Why it might generalize**: a magic number in a regression test is almost always a stand-in for a
+  derivable set. It fails open in the case that matters (add a command to an uninspected target and
+  the count can still be made to match) and fails closed in the case that does not (any legitimate
+  refactor), which is exactly backwards. Whenever a test asserts "how many", ask what set it is
+  really asserting membership of, and derive that set from the same source of truth the production
+  code reads.
