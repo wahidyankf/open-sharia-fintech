@@ -272,3 +272,64 @@ affected` or `git diff` directly in the workflow YAML.
   refactor), which is exactly backwards. Whenever a test asserts "how many", ask what set it is
   really asserting membership of, and derive that set from the same source of truth the production
   code reads.
+
+## Learning: a pinned toolchain without declared components is a race, not a pin
+
+- **Context**: `ose-private`'s Rust quality gate failed intermittently across four runs.
+  `apps/coralpolyp-be/rust-toolchain.toml` pinned `channel = "1.95.0"` and stopped there, while
+  `apps/rhino-cli/rust-toolchain.toml` pinned the same channel _and_ declared
+  `components = ["clippy", "rustfmt", "llvm-tools"]`. CI pre-installs every declared MSRV with
+  `rustup toolchain install <v> --profile minimal`, which ships neither rustfmt nor clippy, so the
+  `1.95.0` toolchain acquired rustfmt only as a side effect of rhino-cli's toolchain file being
+  read first. `nx run-many` runs the per-crate lint targets in parallel, so whether
+  `coralpolyp-be:lint` saw a usable `cargo fmt` came down to task ordering:
+  `error: 'cargo-fmt' is not installed for the toolchain '1.95.0-x86_64-unknown-linux-gnu'`.
+- **Observation**: the pin looked complete because the channel was pinned — the part that varied was
+  invisible. A toolchain file states two things, _which_ toolchain and _what it contains_, and only
+  the first is obviously a pin. Omitting the second does not fall back to a default; it falls back
+  to whatever a concurrent actor happened to install. Declaring the components makes rustup
+  provision them before the first cargo proxy call in that directory, which is deterministic.
+- **Why it might generalize**: whenever a pin is split across "identity" and "contents", pinning only
+  the identity produces a dependency on installation order that is invisible in the file, invisible
+  in the diff, and reproduces only under parallelism. The tell is a failure that alternates with no
+  corresponding change — and the fix is to make the contents declarative at every site, then guard
+  the class rather than the site that happened to fail (here, a `gate validate` check over every
+  `rust-toolchain.toml`, since the next crate added would reintroduce it).
+
+## Learning: read Nx's group markers, not the tail of the log
+
+- **Context**: the same failure was triaged three times as a silent crash under runner resource
+  contention. The evidence was the end of the job log: a stream of `test ... ok` lines cut off
+  mid-flight, then `##[error]Process completed with exit code 1` with no summary.
+- **Observation**: that tail was rhino-cli's **passing** `test:quick` output. Nx flushes each task's
+  captured output as the task completes, so the last block in the log belongs to whichever task
+  finished last — not to the one that failed. The failing task was four blocks earlier, marked
+  `##[group]❌ > nx run coralpolyp-be:lint`. Grepping the `##[group]✅` / `##[group]❌` markers
+  located it immediately, and the real error was a one-line rustup message, not a crash.
+- **Why it might generalize**: any tool that buffers per-task output and interleaves it breaks the
+  usual "read the bottom of the log" heuristic, and breaks it in the most misleading direction — the
+  tail looks truncated, which reads as a crash. Under a parallel task runner, always locate the
+  failing unit by its status marker before reading any output, and treat "log ends mid-stream" as a
+  statement about flush order rather than about the process.
+
+## Learning: cgroup delegation is a precondition for `systemd --user` in CI
+
+- **Context**: `coralpolyp-sandbox-linux-integration` starts a disposable `systemd --user` manager to
+  exercise the Linux sandbox. It had never passed on the self-hosted fleet, failing with
+  `Failed to retrieve unit state: Process org.freedesktop.systemd1 exited with status 1` and
+  `error: CI could not start the disposable systemd user manager`. The script's own preconditions —
+  `dbus-daemon`, `systemd`, `systemctl` present, `XDG_RUNTIME_DIR` and `DBUS_SESSION_BUS_ADDRESS`
+  exported — were all satisfied.
+- **Observation**: the GitHub Actions runner runs as a system service under `system.slice` with
+  `Delegate=no`, so a user manager launched from a job cannot create the cgroup subtree it needs and
+  exits before `systemctl --user` can reach it. Confirmed causally rather than by inspection:
+  `systemd-run --slice=system.slice --property=Delegate=no --uid=1000` reproduces the error
+  verbatim, and the identical invocation with `Delegate=yes` starts the manager. The fix is a
+  `Delegate=yes` line in the runner service's drop-in override, expressed in the ansible playbook so
+  it survives a VM rebuild.
+- **Why it might generalize**: a test that needs its own process supervisor, container runtime, or
+  namespace has a precondition that lives on the _host_, not in the repo, and no amount of
+  in-script capability checking will surface it — `systemd` was on `PATH` the whole time. When a
+  gate fails identically on every runner while its stated preconditions all pass, the missing
+  precondition is one the script cannot name. Prove it with a two-arm probe that differs only in
+  the suspected property before changing any provisioning.
