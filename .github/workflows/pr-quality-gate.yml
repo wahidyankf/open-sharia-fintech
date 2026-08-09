@@ -153,10 +153,11 @@ jobs:
       - uses: ./.github/actions/setup-node
         with:
           # `enumerate` only lists gate groups via the shim; the `list` step
-          # below sets RHINO_CLI_BIN inline for that one invocation so
-          # rhino-bin.sh resolves the artifact downloaded by the step above
-          # instead of falling back to cargo/node. jq is runner-provided; no
-          # npm-managed tool is needed here.
+          # later in this job sets RHINO_CLI_BIN inline for that one
+          # invocation so rhino-bin.sh resolves the artifact downloaded by
+          # the `download-artifact` step (also later in this job) instead of
+          # falling back to cargo/node. jq is runner-provided; no npm-managed
+          # tool is needed here.
           run-npm-ci: false
       - uses: actions/download-artifact@v4
         with:
