@@ -2910,8 +2910,36 @@ fn rhino_bin_shim_path() -> PathBuf {
     repo_root().join("apps/rhino-cli/scripts/rhino-bin.sh")
 }
 
+/// The gate-profile binary these scenarios compare the resolver shim against,
+/// built on first use if it is absent.
+///
+/// The artifact is never guaranteed to exist: a fresh clone has never built it,
+/// and the ambient build-artifact sweeper deletes `target/` at any time,
+/// mid-run included. Assuming its presence made these scenarios pass only on a
+/// machine that happened to have built it. Building it here — once per test
+/// binary, under the same `--profile gate` the resolver shim itself uses —
+/// makes the comparison self-contained instead of environment-dependent.
 fn real_prebuilt_rhino_cli() -> PathBuf {
-    repo_root().join("apps/rhino-cli/target/gate/rhino-cli")
+    static BUILT: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
+    BUILT
+        .get_or_init(|| {
+            let binary = repo_root().join("apps/rhino-cli/target/gate/rhino-cli");
+            if binary.is_file() {
+                return binary;
+            }
+            let status = Command::new(std::env::var_os("CARGO").unwrap_or_else(|| "cargo".into()))
+                .args(["build", "--profile", "gate", "--manifest-path"])
+                .arg(repo_root().join("apps/rhino-cli/Cargo.toml"))
+                .status()
+                .expect("build the gate-profile rhino-cli binary");
+            assert!(
+                status.success() && binary.is_file(),
+                "cargo build --profile gate must produce {}",
+                binary.display()
+            );
+            binary
+        })
+        .clone()
 }
 
 /// Deterministic, side-effect-free probe args for exercising the resolver

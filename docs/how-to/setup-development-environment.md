@@ -215,7 +215,7 @@ step above.
 
 ```bash
 # Run the staged-file gate without creating a throwaway commit
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=pre-commit
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit
 ```
 
 **Pre-push** (runs affected quality and specification checks):

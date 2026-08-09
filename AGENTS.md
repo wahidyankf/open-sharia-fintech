@@ -134,7 +134,7 @@ conflict-free integration is not proof the incoming changes are safe to ignore.
 ## Git Hooks (Automated Quality)
 
 The three executable Husky files are registry shims: use
-`cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=<surface> --format=text`
+`apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=<surface> --format=text`
 to inspect their current commands and `gate validate` to verify shim, generated-artifact, and CI
 conformance. Do not hand-maintain command lists in hooks; `repo-config.yml` is authoritative.
 

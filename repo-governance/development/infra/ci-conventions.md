@@ -345,26 +345,28 @@ Two failure modes recur whenever a workflow step's `run:` block references a `${
 expression directly:
 
 1. **Matrix/context values feeding a shell command must route through `env:`, never splice
-   into `run:` directly.** `run: cargo run ... --only=${{ matrix.gate.id }}` lets a
+   into `run:` directly.** `run: rhino-bin.sh gate run ... --group=${{ matrix.group.group }}` lets a
    matrix value that contains shell metacharacters execute as shell code (GitHub's documented
    script-injection class for `pull_request`-triggered workflows, where matrix/context values can
    originate from untrusted input). Fix: set a step-level `env:` mapping the expression to a
    variable, then reference the **shell** variable in `run:`:
 
    ```yaml
-   - run: cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$GATE_ID"
+   - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
      env:
-       GATE_ID: ${{ matrix.gate.id }}
+       GROUP_ID: ${{ matrix.group.group }}
    ```
 
    `rhino-cli`'s `gate validate` command enforces this pattern for **both** matrix values that
-   currently reach the shell — `matrix.gate.id` (via `validate_ci_matrix_contract`) and
-   `matrix.gate.doctor_tools` (via `validate_ci_doctor_bootstrap`), both in
+   currently reach the shell — `matrix.group.group` (via `validate_ci_matrix_contract`) and
+   `matrix.group.doctor_tools` (via `validate_ci_doctor_bootstrap`), both in
    `apps/rhino-cli/src/commands/gate/validate.rs`. Each function requires the safe `env:`-indirected
    step **and** rejects a raw, unindirected splice of its matrix expression anywhere in the
-   workflow's `run:` bodies — so any step referencing `matrix.gate.id` or
-   `matrix.gate.doctor_tools` directly, without an `env:` indirection, fails validation, regardless
-   of whether a compliant step is also present.
+   workflow's `run:` bodies — so any step referencing `matrix.group.group` or
+   `matrix.group.doctor_tools` directly, without an `env:` indirection, fails validation, regardless
+   of whether a compliant step is also present. Both checks are deliberately **name-agnostic**: any
+   step-env variable name carrying the matrix expression is accepted, so a repo naming its variable
+   `GATE_DOCTOR_TOOLS` rather than `DOCTOR_TOOLS` is not spuriously rejected.
 
 2. **`condition && 0 || fallback` never evaluates to `0`.** GitHub Actions expressions use
    JavaScript-like short-circuit `&&`/`||`, and `0` (like `''` and `false`) is falsy — so

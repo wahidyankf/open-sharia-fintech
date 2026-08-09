@@ -23,11 +23,11 @@ scope, order, and CI relationship. Do not copy a command list into a hook or thi
 Use the registry projection for the repository and surface being inspected:
 
 ```sh
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=commit-msg --format=text
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=text
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-push --format=text
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=text
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=commit-msg --format=text
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=text
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push --format=text
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=ci --format=text
+apps/rhino-cli/scripts/rhino-bin.sh gate validate
 ```
 
 `gate validate` is the conformance check: it rejects a declared hook surface whose executable shim
