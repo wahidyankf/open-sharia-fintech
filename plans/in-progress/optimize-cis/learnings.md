@@ -209,3 +209,23 @@ affected` or `git diff` directly in the workflow YAML.
   that — it executes the real checked-in script with a stub `rustup` on `PATH` and asserts on the
   toolchain names the script genuinely requests, so any future drift between "what we pre-install"
   and "what the tool asks for" fails locally instead of after ~50 minutes of CI.
+
+## Learning: A wall-clock target can only be moved by the critical path, so check which job actually holds it before applying the remedy the plan prescribes
+
+- **Context**: Phase 7 Gate treats an M4 (CI wall-clock p50) regression as a hard stop and prescribes
+  a specific remedy — "re-balance group composition before proceeding." Measured p50 came in at
+  1,219 s against a 974.5 s baseline: nominally +25.1 %, squarely in hard-stop territory.
+- **Observation**: the per-job timeline showed the run's critical path was the **TypeScript quality
+  gate at 1,033 s**, and that same job took 1,030 s and 1,018 s on this branch _before_ the topology
+  change — it was untouched. All six gate groups finished by 01:03:45 in a run that ended 01:16:41,
+  putting them ~13 minutes clear of the critical path. Re-balancing group composition could not have
+  moved wall-clock by a single second. The real gap was diff scope: this branch edits
+  `repo-config.yml`, `.github/`, and governance docs, so every TypeScript project is affected,
+  whereas the Phase 0 baseline sampled 18 much narrower PRs.
+- **Why it might generalize**: a plan can correctly identify a metric, correctly set a threshold, and
+  still hard-code a remedy aimed at the wrong component — because the remedy is written before anyone
+  has seen a real timeline. Wall-clock in a fan-out DAG is a **max**, not a sum: it is insensitive to
+  everything off the critical path, so any wall-clock remedy must first prove the thing it changes is
+  _on_ it. The same asymmetry explains why M3 (runner-seconds, a sum) fell 47.6 % in the same runs
+  where M4 rose — the two metrics were never going to move together, and a plan that treats both as
+  symptoms of one cause will mis-diagnose whichever one it reads second.
