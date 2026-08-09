@@ -17,15 +17,15 @@ Inline skill providing CI/CD standards knowledge from the governance documentati
 
 ## Mandatory Nx Targets Per App Type
 
-| App Type         | Required Targets                                                                         |
-| ---------------- | ---------------------------------------------------------------------------------------- |
-| Demo-be backend  | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:coverage |
-| Demo-fe frontend | codegen, typecheck, lint, build, test:unit, test:quick, specs:coverage                   |
-| Fullstack app    | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:coverage |
-| CLI app (Rust)   | typecheck, lint, build, test:unit, test:quick, test:integration, specs:coverage          |
-| Content platform | typecheck, lint, build, test:unit, test:quick, test:integration, specs:coverage          |
-| Library          | lint, build, test:unit, test:quick                                                       |
-| E2E runner       | lint, test:e2e, test:e2e:ui, specs:coverage                                              |
+| App Type         | Required Targets                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| Demo-be backend  | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
+| Demo-fe frontend | codegen, typecheck, lint, build, test:unit, test:quick, specs:behavior:coverage                   |
+| Fullstack app    | codegen, typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage |
+| CLI app (Rust)   | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
+| Content platform | typecheck, lint, build, test:unit, test:quick, test:integration, specs:behavior:coverage          |
+| Library          | lint, build, test:unit, test:quick                                                                |
+| E2E runner       | lint, test:e2e, test:e2e:ui, specs:behavior:coverage                                              |
 
 ## Coverage Thresholds
 

@@ -774,7 +774,7 @@ step. Emit it exactly in this shape:
 > All checks below must pass before starting Phase 1.
 
 - [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:coverage` baseline recorded and
+- [ ] [AI] `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` baseline recorded and
       every preexisting failure resolved (zero unresolved)
 - [ ] [AI] Nothing was pushed and no PR exists for this branch — run both, reading the printed
       number (never `&&`-chaining, since `grep -c` exits 1 on a zero count):

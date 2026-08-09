@@ -79,8 +79,9 @@ Read the full error output. Not just the summary line -- the full stack trace, t
 Determine which projects are affected:
 
 ```bash
-# See which projects are affected by your changes
-npx nx affected -t typecheck lint test:quick specs:coverage --dry-run
+# See which projects are affected by your changes (test:quick internally chains
+# typecheck -> lint -> test:unit -> test:coverage -> test:specs; see Nx Target Standards)
+npx nx affected -t test:quick --dry-run
 ```
 
 If a project you did not modify is failing, it is a preexisting issue. Your changes did not cause it, but you are responsible for fixing it because you discovered it.
@@ -94,7 +95,7 @@ Reproduce the failure in isolation to confirm it is preexisting:
 npx nx run <project>:typecheck
 npx nx run <project>:lint
 npx nx run <project>:test:quick
-npx nx run <project>:specs:coverage
+npx nx run <project>:specs:behavior:coverage
 ```
 
 ### Step 4: Trace to Root Cause
@@ -127,10 +128,13 @@ git commit -m "fix(project-name): resolve preexisting typecheck failure in share
 
 ### Step 6: Verify
 
-Re-run the quality gates to confirm the fix resolves the failure:
+Re-run the quality gates to confirm the fix resolves the failure — either the affected `test:quick`
+target directly, or the full local pre-push gate set via the same shim `.husky/pre-push` invokes:
 
 ```bash
-npx nx affected -t typecheck lint test:quick specs:coverage
+npx nx affected -t test:quick
+# or, to run every registry-declared pre-push gate exactly as the hook does:
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 ```
 
 ### Step 7: When a mitigation already exists and the symptom persists, audit the mitigation

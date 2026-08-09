@@ -72,7 +72,7 @@ The root worktree is the primary checkout of the repository — the directory th
 A new or newly-entered worktree session can hit two independent kinds of toolchain drift, and a single command does not cover both:
 
 1. **Node/Nx dependency drift** — handled by `npm install`. `node_modules/` is not tracked by git, so it is not automatically synchronized between worktrees.
-2. **Polyglot native toolchain drift** — handled by `npm run doctor -- --fix`. The monorepo spans 18+ toolchains across 11 languages (see [Native-First Toolchain Management](./native-first-toolchain.md)); a session needs any of them to be correct the moment the pre-push hook fans out `nx affected -t typecheck lint test:quick specs:coverage`.
+2. **Polyglot native toolchain drift** — handled by `npm run doctor -- --fix`. The monorepo spans 18+ toolchains across 11 languages (see [Native-First Toolchain Management](./native-first-toolchain.md)); a session needs any of them to be correct the moment the pre-push hook (`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`) fans out its affected-projects gates, including `nx affected -t test:quick`.
 
 Skipping either step leaves the other layer vulnerable. Doing only `npm install` handles `node_modules/` but leaves native toolchain drift undetected; doing only `npm run doctor -- --fix` converges the native toolchain but can leave the Nx workspace operating against a stale `node_modules/`.
 
@@ -92,7 +92,7 @@ When the Nx workspace resolves dependencies, it reads from `node_modules/` relat
 
 AI agents working on worktrees routinely touch apps across many languages: `ose-be` and `organiclever-be` (F#/Giraffe), `rhino-cli` and `crane-cli` (Rust CLIs), `ayokoding-cli` and `ose-cli` (Rust CLIs), TypeScript frontends, and more. The probability that a new worktree session will need a toolchain that has drifted is high, and the cost of discovering the drift mid-task — through an obscure Gradle, Cargo, `mix`, or `dotnet` error — is much higher than the cost of running `npm run doctor -- --fix` deliberately upfront.
 
-Even worktree sessions whose stated intent is "I'm just editing docs" should run the full two-step init, because the pre-push hook runs `nx affected -t typecheck lint test:quick specs:coverage` which can fan out to arbitrary language tasks depending on what the doc change touches.
+Even worktree sessions whose stated intent is "I'm just editing docs" should run the full two-step init, because the pre-push hook runs `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (including `nx affected -t test:quick`) which can fan out to arbitrary language tasks depending on what the doc change touches.
 
 ### `doctor --fix` Is Idempotent and Fast When Healthy
 
@@ -139,7 +139,7 @@ mix deps.get
 dotnet restore
 ```
 
-Symptom without this step: `nx affected -t typecheck lint test:quick specs:coverage` fails on
+Symptom without this step: `nx affected -t test:quick` fails on
 Elixir projects with `Unchecked dependencies ... run "mix deps.get"`, or on F# projects with
 `NETSDK1004: Assets file ... not found. Run a NuGet package restore`, even though the toolchain
 itself (`mix`, `dotnet`) is correctly installed. Root-cause the failure to this gap before

@@ -514,12 +514,13 @@ git checkout README.md
 #### 13.2 Verify pre-push targets (cache warm)
 
 ```bash
-# Run the same targets pre-push would run, for affected projects
-npx nx affected -t typecheck lint test:quick specs:coverage
+# Run the same gate set pre-push would run, exactly as .husky/pre-push invokes it
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 ```
 
-**Success criteria**: All affected targets pass. This also warms the Nx cache so subsequent
-pushes are fast.
+**Success criteria**: Every declared gate passes. This also warms the Nx cache (via the
+`test:quick` affected-projects gate) so subsequent pushes are fast. Discover the live gate set
+with `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push --format=text`.
 
 #### 13.3 Verify integration tests (one backend)
 
@@ -553,7 +554,7 @@ kill %1
 
 ## Termination Criteria
 
-- **Success**: `npm run doctor` shows all tools OK, `nx affected -t typecheck lint test:quick specs:coverage`
+- **Success**: `npm run doctor` shows all tools OK, `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`
   passes, at least one integration test and one E2E test pass
 - **Partial**: Doctor shows all tools OK but some tests fail (likely a project-specific issue,
   not a toolchain issue)

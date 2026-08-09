@@ -220,7 +220,7 @@ escalation — no other repository-write action is exercised from this role.
 ## Re-Run Quality Gates Before Every Push
 
 Before pushing any fix to the PR branch, re-run the local quality gates relevant to whatever this
-agent touched (for example `nx affected -t typecheck lint test:quick specs:coverage`, or the
+agent touched (for example `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, or the
 narrower per-project target set when the fix is scoped to one project). Never push a fix that
 breaks a check that was previously green — a fix that trades one finding for a CI regression is not
 a fix. If a gate fails after applying a fix, resolve the root cause before pushing, per the

@@ -572,7 +572,7 @@ ab2858b4a5657f6782fc39eda4b8f7e1bb7906a5e543f75af77b2ff7d88c9f48  apps/rhino-cli
 aebafa49a2adb721e75584841c0ed0f3bdd2dbed4867ac1ca653984e2300aba8  apps/rhino-cli/tests/specs_tree.rs
 471afb2c45384e1a61f2a5c4b7dc6659c9edfd320bcd2fcdaccb137277f3d90a  apps/rhino-cli/tests/test_coverage.rs
 f8983a5676413904646b46b87f9774cd553908e1049e4f695a4d5285ac0a97b9  apps/rhino-cli/tests/workflows.rs
-14343e06f5ec1be94cc81c2ba8fe4eda6ad8a693bae3e69d83f57ca6c73741aa  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
+9672dd77249ddbb66d1e73435d58aa802a95597229ddfed48caed537f22fef88  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
 ea2926668f675b722a69efc3f1ff360d29bdd506f26d20c4c1cc142483182a32  specs/apps/rhino/behavior/rhino-cli/gherkin/agent-naming/agent-naming-validator.feature
 bb853f3672a697c577c5f2d29cb7135a1a6cadc08fdc12f882b8b7183a61bcb2  specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/README.md
 794a661fe7d935ebc5ea7a2704b0160ed611b206320aeff9f3a8c295c0553508  specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/contracts-dart-scaffold.feature

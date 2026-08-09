@@ -245,72 +245,43 @@ $ git commit -m "added new feature"
 **Execution Order**:
 
 1. You run `git push`
-2. Pre-push hook triggers
-3. Nx detects affected projects since last push
-4. `typecheck` runs for each affected project that declares it
-5. `lint` runs for each affected project
-6. `test:quick` runs for each affected project
-7. `specs:coverage` runs for each affected project that declares it
-8. Push proceeds if all four gates pass
+2. Pre-push hook triggers (`.husky/pre-push` — a shim line invoking
+   `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`)
+3. `gate run --surface=pre-push` orchestrates every registry-declared `pre-push`-surface gate in
+   declaration order, failing fast. The gate set is registry-driven and changes as `repo-config.yml`
+   changes — it is **not** the fixed `typecheck`/`lint`/`test:quick`/`specs:coverage` list an
+   earlier version of this doc hardcoded (that list is stale: `specs:coverage` is no longer even a
+   live Nx target, and the live surface runs 14 distinct gates, mixing affected-project checks,
+   always-run checks, and path-gated checks). Discover the live inventory rather than trusting
+   prose here:
 
-**What It Validates**:
+   ```bash
+   apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push --format=text
+   ```
 
-- **Type correctness** (`typecheck`): Catches type errors in TypeScript, Rust, .NET/F#, and other
-  statically typed projects. Projects without a `typecheck` target are silently skipped by Nx.
-- **Code quality** (`lint`): Static analysis across all projects (includes static a11y checks via
-  oxlint jsx-a11y plugin for TypeScript UI projects). Also enforced remotely in the PR quality gate
-  and in all scheduled Test CI workflows.
-- **Fast quality gate** (`test:quick`): Unit tests, build smoke tests, or other fast checks
-  defined per project. Also enforced remotely as a required GitHub Actions status check before PR
-  merge.
-- **Spec coverage** (`specs:coverage`): Validates that every Gherkin step in feature files has a
-  matching step definition in source code. Compulsory for all apps and E2E runners. Uses
-  `rhino-cli specs coverage`.
+   See [Git Hook Lifecycle](../workflow/git-hook-lifecycle.md) for the shared discovery/conformance
+   workflow (`gate list`, `gate validate`) across all three Husky surfaces.
+
+4. Push proceeds if every declared gate passes.
+
+**What It Validates**: whatever gates `repo-config.yml` currently declares on the `pre-push`
+surface. Consult the live `gate list --surface=pre-push` output above for the current set and
+their exact commands rather than this prose, which will go stale the next time the registry
+changes.
 
 **What Happens on Failure**:
 
 - Push is blocked
-- Error message shows which target and project failed
+- Error message shows which gate failed
 - Fix the issue and try again
-
-**Example**:
-
-```bash
-$ git push origin main
-
-> nx affected -t typecheck
-
- Running target typecheck for affected projects...
-   organiclever-www
- All checks passed
-
-> nx affected -t lint
-
- Running target lint for affected projects...
-   organiclever-www
- All checks passed
-
-> nx affected -t test:quick
-
- Running target test:quick for affected projects...
-   organiclever-www
- All checks passed
-
-> nx affected -t specs:coverage
-
- Running target specs:coverage for affected projects...
-   organiclever-www
- All checks passed
-
-Enumerating objects: 5, done.
-[main abc1234] Successfully pushed
-```
 
 **Benefits**:
 
 - Prevents broken code from reaching remote repository
-- Only runs checks on affected projects (faster than checking everything)
-- Catches type errors, lint violations, and test failures before CI/CD
+- Affected-project-scoped gates only run checks on affected projects (faster than checking
+  everything)
+- Registry-declared gates keep local pre-push and CI's PR gate in sync — see
+  [Git Hook Lifecycle §CI relationship](../workflow/git-hook-lifecycle.md#ci-relationship)
 - Nx caching means repeated checks on unchanged code are near-instant
 
 ## Bypassing Hooks (Not Recommended)
@@ -367,17 +338,24 @@ Bypassing hooks regularly defeats the purpose of automated quality checks.
 
 **Symptom**: Pre-push hook takes too long or times out on large changesets
 
-**Solution** — warm the Nx cache before pushing:
+**Solution** — warm the Nx cache before pushing, using the same registry-declared gate set
+`.husky/pre-push` invokes:
 
 ```bash
-# Run all four targets first (this warms the cache)
-npx nx affected -t typecheck lint test:quick specs:coverage
+# Run the full pre-push gate set first (this warms the cache)
+apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
 
 # Now push — the hook replays from cache (near-instant)
 git push
 ```
 
-**Why this works**: `typecheck`, `lint`, `test:quick`, and `specs:coverage` are all cacheable Nx targets (`cache: true` in `nx.json`). Running them manually stores results in the local Nx cache. When the pre-push hook runs the same targets, Nx replays from cache instead of re-executing — making the hook near-instant regardless of how many projects are affected.
+**Why this works**: `test:quick` (the affected-projects-scoped gate in the pre-push set) is a
+cacheable Nx target (`cache: true` in `nx.json`). Running it manually stores results in the local
+Nx cache. When the pre-push hook runs the same target, Nx replays from cache instead of
+re-executing — making the hook near-instant regardless of how many projects are affected. The
+`.claude/hooks/warm-cache-before-push.sh` coding-agent hook automates this same warm-up on every
+`git push` invocation, deriving its target list from `gate list --surface=pre-push --format=text`
+rather than a hardcoded list.
 
 ### Tests Fail on Pre-push
 

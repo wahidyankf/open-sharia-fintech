@@ -265,9 +265,10 @@ configs, grep the files, run the tools — do not trust docs alone.
   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate
   ```
 
-  It covers the four-repository boundary and the tracked `apps/rhino-cli` source, tests, and Gherkin
-  behavior tree. Any failure is drift that MUST become its own deviation-matrix row in Step 2 — surface it
-  before grilling, never silently re-sync it.
+  It covers the three-repository parity boundary (`ose-public`, `ose-primer`, `ose-private` —
+  `beaver-nest` is deliberately outside it, see §Parallel Propagation Shape above) and the tracked
+  `apps/rhino-cli` source, tests, and Gherkin behavior tree. Any failure is drift that MUST become
+  its own deviation-matrix row in Step 2 — surface it before grilling, never silently re-sync it.
 
 **Survey freshness**: a clean survey is a point-in-time result, not a standing fact. If execution of a
 phase that carries copy-ready artifacts (a file to be propagated verbatim, a cross-repository

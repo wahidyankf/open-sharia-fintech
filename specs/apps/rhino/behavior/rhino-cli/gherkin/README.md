@@ -49,14 +49,15 @@ behavior/rhino-cli/gherkin/
 
 ### gate
 
-| File                       | Command(s)                            | Scenarios |
-| -------------------------- | ------------------------------------- | --------- |
-| `gate-declaration.feature` | `repo-config validate` / `gate list`  | 9         |
-| `gate-emission.feature`    | `gate emit`                           | 2         |
-| `gate-enumeration.feature` | `gate list`                           | 6         |
-| `gate-execution.feature`   | `gate run`                            | 11        |
-| `gate-validation.feature`  | `gate validate`                       | 20        |
-| `parity-manifest.feature`  | `parity manifest generate`/`validate` | 4         |
+| File                             | Command(s)                            | Scenarios |
+| -------------------------------- | ------------------------------------- | --------- |
+| `gate-binary-resolution.feature` | `gate run` (binary resolution)        | 4         |
+| `gate-declaration.feature`       | `repo-config validate` / `gate list`  | 9         |
+| `gate-emission.feature`          | `gate emit`                           | 5         |
+| `gate-enumeration.feature`       | `gate list`                           | 7         |
+| `gate-execution.feature`         | `gate run`                            | 25        |
+| `gate-validation.feature`        | `gate validate`                       | 20        |
+| `parity-manifest.feature`        | `parity manifest generate`/`validate` | 4         |
 
 ### git
 
@@ -127,7 +128,7 @@ behavior/rhino-cli/gherkin/
 
 | File                         | Command(s) | Scenarios |
 | ---------------------------- | ---------- | --------- |
-| `cargo-target-share.feature` | `doctor`   | 15        |
+| `cargo-target-share.feature` | `doctor`   | 18        |
 | `doctor.feature`             | `doctor`   | 17        |
 
 ### workflows

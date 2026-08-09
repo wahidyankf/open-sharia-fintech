@@ -456,7 +456,7 @@ After validating delivery checklist structure (Step 5), verify the plan includes
 
 1. **Local Quality Gates Before Push**
    - Plan MUST include steps to run affected tests/checks locally before pushing
-   - Must reference the correct Nx commands: `nx affected -t typecheck lint test:quick specs:coverage`
+   - Must reference the correct local invocation: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (the same registry-declared gate set `.husky/pre-push` invokes; includes `nx affected -t test:quick`)
    - Must mention the blast radius concept — only affected projects, not the entire repo
    - Must specify all relevant test levels: unit, integration, e2e (as applicable)
    - Must include linting and typecheck steps

@@ -98,35 +98,33 @@ with a period.
 
 ### pre-push
 
-The pre-push hook runs two commands in sequence:
+The pre-push hook delegates entirely to
+`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`, which executes every
+registry-declared `pre-push`-surface gate in declaration order, failing fast. It is **not** a
+fixed `typecheck`/`lint`/`test:quick`/`specs:coverage` invocation — `specs:coverage` was renamed
+to `specs:behavior:coverage` and, per DD-7, coverage validation was lifted out of the local
+pre-push chain entirely so pre-push stays fast (it runs on CI instead; see
+[Nx Target Standards](./nx-targets.md)). Discover the live, current gate set rather than trusting
+a hardcoded list:
 
 ```bash
-nx affected -t typecheck lint test:quick specs:coverage --parallel=cores-1
-npm run lint:md
+apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-push --format=text
 ```
 
-`nx affected` computes which projects changed since the merge base and runs only those projects.
-`--parallel=cores-1` reserves one core for system responsiveness. `lint:md` runs
-`markdownlint-cli2` over all markdown files as a final gate. `specs:coverage` validates that every
-Gherkin step has a matching step definition and is compulsory for all apps and E2E runners.
+See [Git Hook Lifecycle](../workflow/git-hook-lifecycle.md) for the shared discovery/conformance
+workflow (`gate list`, `gate validate`) across all three Husky surfaces.
 
-If the pre-push hook times out, warm the Nx cache first:
+If the pre-push hook times out, warm the Nx cache first — see
+[`.claude/hooks/warm-cache-before-push.sh`](../../../.claude/hooks/warm-cache-before-push.sh),
+which derives its warm-target list from the same `gate list --surface=pre-push` registry
+projection rather than a hardcoded target list — then push again; cached results make the second
+run fast.
 
-```bash
-npx nx affected -t typecheck lint test:quick specs:coverage
-```
-
-Then push again — the cached results make the second run fast.
-
-After the baseline gate, the hook conditionally runs the naming validators when the push range
-touches the relevant trees:
-
-- `nx run rhino-cli:naming:harness-validation` — fires when `.claude/agents/**` or `.opencode/agents/**` changed
-- `nx run rhino-cli:naming:workflows-validation` — fires when `repo-governance/workflows/**` changed
-
-Both are cacheable, so no-op pushes pay near-zero cost. The CI quality-gate workflow also runs
-both targets unconditionally on every PR against `main` to catch drift from hand-edited files
-that bypassed the local hook.
+The registry set includes path-gated entries (e.g. `harness-naming` fires when `.claude/agents/**`
+or `.opencode/agents/**` changed; `workflows-naming` fires when `repo-governance/workflows/**`
+changed) that carry their own trigger lists and are skipped when their triggers miss, so no-op
+pushes pay near-zero cost. The CI quality-gate workflow runs the equivalent checks unconditionally
+on every PR against `main` to catch drift from hand-edited files that bypassed the local hook.
 
 ## Nx Target Naming and Caching Rules
 
@@ -533,16 +531,16 @@ only — it does **not** validate `.github/workflows/` filenames.
 
 Three Husky hooks, each with a fixed shape:
 
-| Hook         | Required steps (in order)                                                                                                                                            |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commit-msg` | `commitlint --edit "$1"` — enforces Conventional Commits format                                                                                                      |
-| `pre-commit` | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit` (validate configs, format staged, validate links, lint markdown, shellcheck/hadolint/actionlint) |
-| `pre-push`   | `npx nx affected -t typecheck lint test:quick specs:coverage --parallel=<cores-1>` → `npm run lint:md` → conditional naming validators (harness + workflows)         |
+| Hook         | Required steps (in order)                                                                                                                                                                                                                                                                                       |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commit-msg` | `commitlint --edit "$1"` — enforces Conventional Commits format                                                                                                                                                                                                                                                 |
+| `pre-commit` | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit` (validate configs, format staged, validate links, lint markdown, shellcheck/hadolint/actionlint)                                                                                                                                            |
+| `pre-push`   | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` — every registry-declared `pre-push`-surface gate, in declaration order; see [Git Hook Lifecycle](../workflow/git-hook-lifecycle.md) and discover the live set with `gate list --surface=pre-push --format=text` rather than a hardcoded list |
 
-Conditional pre-push naming validators:
+Two of the registry-declared `pre-push` gates are path-gated naming validators:
 
-- `nx run rhino-cli:naming:harness-validation` — fires when `.claude/agents/**` or `.opencode/agents/**` changed
-- `nx run rhino-cli:naming:workflows-validation` — fires when `repo-governance/workflows/**` changed
+- `harness-naming` (`harness naming validate`) — fires when `.claude/agents/**` or `.opencode/agents/**` changed
+- `workflows-naming` (`repo-governance workflows naming validate`) — fires when `repo-governance/workflows/**` changed
 
 ### Invariant B2 — No Heavy Tests in Fast Gates
 
@@ -550,13 +548,13 @@ Conditional pre-push naming validators:
 **only** in the scheduled tiered pipelines and must never appear on the fast feedback path. See
 tech-docs §"Fast-gate test policy" for the rationale and the current compliance state.
 
-| Surface                           | Runs                                                            | `test:integration` / `test:e2e`? |
-| --------------------------------- | --------------------------------------------------------------- | -------------------------------- |
-| `.husky/pre-commit`               | `nx affected -t test:quick`                                     | **never**                        |
-| `.husky/pre-push`                 | `typecheck`, `lint`, `test:quick`, `specs:coverage`             | **never**                        |
-| `pr-quality-gate` (PR gate)       | `typecheck`, `lint`, `test:quick`, `specs:coverage` + lint jobs | **never**                        |
-| `*-test-local-*` (CRON scheduled) | `test:integration` + `test:e2e` via docker-compose              | **yes**                          |
-| `*-test-stag-*` (CRON scheduled)  | `test:e2e` against deployed staging                             | **yes**                          |
+| Surface                           | Runs                                                                                                                                   | `test:integration` / `test:e2e`? |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `.husky/pre-commit`               | Registry-declared `pre-commit`-surface gates via `gate run` (no test target — formatters/linters)                                      | **never**                        |
+| `.husky/pre-push`                 | Registry-declared `pre-push`-surface gates via `gate run`, including `test:quick` (no `specs:behavior:coverage` — lifted out per DD-7) | **never**                        |
+| `pr-quality-gate` (PR gate)       | `typecheck`, `lint`, `test:quick`, `specs:behavior:coverage` + lint jobs                                                               | **never**                        |
+| `*-test-local-*` (CRON scheduled) | `test:integration` + `test:e2e` via docker-compose                                                                                     | **yes**                          |
+| `*-test-stag-*` (CRON scheduled)  | `test:e2e` against deployed staging                                                                                                    | **yes**                          |
 
 Any workflow that wires `test:integration` or `test:e2e` into a `pull_request` or `push` trigger
 (rather than a `schedule` trigger) violates this invariant and must be corrected or removed before

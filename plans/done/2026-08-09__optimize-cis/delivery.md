@@ -118,17 +118,22 @@ overrides two parameters:
 
 **This plan also authors a third, narrower deviation, dated 2026-08-09: two additional follow-up
 PRs beyond the 3-PR budget above — `ose-primer` #31 and `ose-private` #30.** Both were opened after
-each sibling's own budgeted PR had already merged clean: `ose-primer` #30 merged 2026-08-09T05:39:32Z
+each sibling's own budgeted PR had already merged: `ose-primer` #30 merged 2026-08-09T05:39:32Z
 and #31 opened 07:04:15Z (+1h 24m later); `ose-private` #29 merged 2026-08-09T05:52:40Z and #30
 opened 07:03:59Z (+1h 11m later). A lint-component defect on the pinned Rust toolchain(s) (missing
-`clippy`/`rustfmt` component declarations) was discovered independently, after both budgeted PRs had
-already merged clean — it did not block either budgeted PR's own CI (`ose-primer` #30 merged
-23/23 checks green; `ose-private` #29's checks were likewise all green), and no admin override was
-needed or used to merge either one. Splitting the fix into a separate PR — rather than reopening or
-force-amending the already-merged budgeted PR — was the only path that kept each repo's branch
-protection intact (no direct-push, no amend-after-merge). Maintainer authorization for this
-deviation was given 2026-08-09. Both follow-up PRs are now merged: `ose-primer` #31 merged clean
-(23/23 checks green, clean squash-merge). `ose-private` #30 merged via `--admin` override, with the pre-existing,
+`clippy`/`rustfmt` component declarations) did not block `ose-primer` #30, which merged 23/23 checks
+green. `ose-private` #29 did **not** merge clean: the same lint-component defect was already failing
+inside its own CI run at merge time — `coralpolyp` had failed by 05:48:10Z (before the 05:52:40Z
+merge), and both `Rust quality gate` (completed 05:55:45Z) and the cascading `Quality gate`
+aggregator (completed 05:58:26Z) finished with FAILURE conclusions minutes after the merge, per
+`gh api repos/wahidyankf/ose-private/commits/aaa1b55353115fd60ddf2e5238836f383ce8c325/check-runs`.
+The defect was therefore not "discovered independently after" merge for `ose-private` #29 — it was
+already visible and failing inside that PR's own CI run, which had not even finished when the merge
+happened. Splitting the fix into a separate PR — rather than reopening or force-amending the
+already-merged budgeted PR — was the only path that kept each repo's branch protection intact (no
+direct-push, no amend-after-merge). Maintainer authorization for this deviation was given
+2026-08-09. Both follow-up PRs are now merged: `ose-primer` #31 merged clean (23/23 checks green,
+clean squash-merge). `ose-private` #30 merged via `--admin` override, with the pre-existing,
 unrelated `coralpolyp` infra flake (a self-hosted-runner systemd-sandbox issue, already
 root-caused as unrelated to this plan's changes earlier in the session) still red on its cascading
 `Quality gate` aggregator — per the maintainer's standing, explicit authorization to merge
@@ -137,6 +142,23 @@ merged 2026-08-08 before #162 opened), is a sixth plan-attributable PR but was n
 against the 3-PR budget since no repo ever held two PRs open simultaneously; it is recorded in
 `baseline/pr-numbers.md` for accounting completeness. See `baseline/pr-numbers.md` for the full,
 current PR ledger across all three repos.
+
+**A 4th item is recorded here, dated 2026-08-09, not as a fresh maintainer-authorized deviation
+but as accepted-with-reason residue under the closure clause the maintainer already authorized
+above** (cap-at-10-cycles, "record any still-open finding as accepted-with-reason in the PR
+description"): AC-15's `apps/rhino-cli` byte-identity parity across `ose-public`/`ose-primer`/
+`ose-private` does **not** currently hold. Cycle 6's `validate.rs` fix landed in `ose-public` only;
+both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were already merged by the time
+the gap was re-confirmed at cycle 7 of the PR-Review Maker→Fixer Cycle on `ose-public` #162, so
+nothing propagates automatically. A full manifest diff against both siblings' current `main` (not
+just `ose-primer`'s, which is what the raw review finding checked) found a **16-file union** —
+2 files diverge only against `ose-private` and were not in the review finding's 14-file list. See
+the AC-15 checkbox annotation in Phase 10 Gate below for the full file list and the filed follow-up
+tracking propagation. Opening propagation PRs in `ose-primer`/`ose-private` from this cycle was
+considered and rejected: both sibling PRs are already merged, this agent's write scope for a
+PR-review fixer pass is limited to the `ose-public` PR under review (no cross-repo PR authority),
+and reopening either merged sibling mid-cycle is exactly the "heavy" cost this plan's own
+cap-and-accept closure clause exists to avoid paying unconditionally.
 
 ## Parallelization Model
 
@@ -885,7 +907,27 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 
 > All checks below must pass before starting Phase 11.
 
-- [x] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
+- [ ] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
+  - **Date**: 2026-08-09. **Status**: NOT MET as literally specified — left unchecked rather than
+    ticked against a caveat. Both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were
+    already merged by the time this gap was found, so re-verification at cycle 7 of the PR-Review
+    Maker→Fixer Cycle on `ose-public` #162 found `apps/rhino-cli` byte-identity broken across a
+    **16-file union** (not 14 — the review thread's own reproduction command diffed only against
+    `ose-primer`'s manifest; a same-shape diff against `ose-private`'s manifest surfaces 2 further
+    files the `ose-primer`-only check missed: `apps/rhino-cli/src/commands/harness_generate_bindings.rs`
+    and `apps/rhino-cli/tests/gate_format_verify_wrappers.rs`). Full list, `apps/rhino-cli/src/`
+    unless noted: `application/doctor/tools.rs`, `application/parity.rs`, `commands/gate/run.rs`,
+    `commands/gate/validate.rs`, `commands/harness_generate_bindings.rs`,
+    `commands/md_validate_frontmatter_dates.rs`, `commands/repo_config_validate.rs`,
+    `apps/rhino-cli/tests/{agents,cursor_binding,docs,gate_dispatch,gate_format_verify_wrappers,gate_specs,specs_tree}.rs`,
+    `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/{gate-declaration,gate-execution}.feature`.
+    Accepted-with-reason under this plan's already-authorized closure clause (§Delivery Boundaries'
+    4th item, dated 2026-08-09) rather than reopening either already-merged sibling PR mid-cycle:
+    propagation is filed as a follow-up rather than folded into this PR — see
+    [plans/ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md](../../ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md).
+    This is the same accepted-as-is pattern already used above for the M7 cache measurement and
+    Phase 10's CI-green check, and mirrors the `.nx/cache` (DD-8) precedent: disclosed in the PR
+    body, `delivery.md`, and a filed follow-up.
 - [ ] [AI] CI green in all three repos — acceptance: latest `pr-quality-gate` conclusion is `success` in each.
   - **Date**: 2026-08-09. **Status**: NOT MET as literally specified — left unchecked rather than ticked against a caveat. `ose-public` #162 is genuinely green (`Quality gate`: `SUCCESS`). `ose-primer` #31 merged clean (23/23 checks). `ose-private` #30 merged via `--admin` override with its `Quality gate` aggregator (via the `coralpolyp` job) still red — the pre-existing, unrelated self-hosted-runner systemd-sandbox flake already root-caused earlier this session, not a defect this plan introduced — per the maintainer's standing, explicit authorization to accept this specific check red. `ose-private`'s post-merge `main` branch run had not completed as of this measurement; the most recent completed run on `main` concluded `failure` on the same `coralpolyp` flake. This item stays honestly unchecked rather than claiming a green it cannot currently show.
 - [x] [AI] Measure M3 per sibling repo, then append `Phase 10` rows to `scoreboard.md` (one per repo) — acceptance: `ose-primer` and `ose-private` each record a post-change median runner-seconds figure against their Phase 0 baselines (11,683 s and 9,239 s respectively); both show a reduction.
@@ -956,7 +998,7 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-public` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
 - [ ] [AI] Flip the `ose-public` PR to ready for review — `gh pr ready -R wahidyankf/ose-public <n>` — acceptance: `gh pr view -R wahidyankf/ose-public <n> --json isDraft` reports `false`.
 - [ ] [AI] Merge once the five hardened preconditions hold.
-- [ ] [AI] Final confirmation, closing the plan's full PR set: `parity manifest validate` exits 0 in `ose-public`, `ose-primer`, and `ose-private` with an identical hash, and all 6 plan-attributable PRs are merged — `ose-public` #161, #162; `ose-primer` #30, #31; `ose-private` #29, #30 (3 budgeted plus the 3rd deviation's 2 authorized follow-ups plus #161 — see `baseline/pr-numbers.md`) — acceptance: `gh pr view -R wahidyankf/<repo> <n> --json state -q .state` reports `MERGED` for each of the 6 PR numbers above (a plan-scoped check per PR number, not `gh pr list --state open`, which any unrelated open PR in the repo — e.g. `ose-primer` #29 — would falsify).
+- [ ] [AI] Final confirmation, closing the plan's full PR set: all 6 plan-attributable PRs are merged — `ose-public` #161, #162; `ose-primer` #30, #31; `ose-private` #29, #30 (3 budgeted plus the 3rd deviation's 2 authorized follow-ups plus #161 — see `baseline/pr-numbers.md`) — acceptance: `gh pr view -R wahidyankf/<repo> <n> --json state -q .state` reports `MERGED` for each of the 6 PR numbers above (a plan-scoped check per PR number, not `gh pr list --state open`, which any unrelated open PR in the repo — e.g. `ose-primer` #29 — would falsify). `parity manifest validate` returning an identical hash in all three repos is **not** part of this acceptance clause as of 2026-08-09 — AC-15 is open, accepted-with-reason (see Phase 10 Gate's AC-15 annotation and the 4th §Delivery Boundaries item above); this closing item does not assert a condition the plan does not currently satisfy.
 
 ---
 

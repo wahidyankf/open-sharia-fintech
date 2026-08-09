@@ -132,35 +132,25 @@ GIT_AUTHOR_NAME="Your Name" GIT_AUTHOR_EMAIL="other@example.com" \
 Environment variables override config for a single invocation without touching any
 `.git/config` file.
 
-### Standard 3: Pre-Commit Hook Enforces the Rule in `ose-public`
+### Standard 3: Enforcement Is a Behavioral Guardrail, Not a Pre-Commit Script
 
-`ose-public` enforces Standard 1 automatically. The guard runs as the first step of the
-Husky pre-commit hook so it fails fast before any other hook logic executes.
+`ose-public` previously enforced Standard 1 with an automated `scripts/git-identity-check.sh`
+pre-commit guard. That script has been **removed** — see
+[Reproducible Environments Convention §Git Identity Guardrail](./reproducible-environments.md#git-identity-guardrail)
+for the removal rationale: it over-restricted human developers who legitimately maintain
+per-repository identities via `includeIf`.
 
-**Guard script**: `scripts/git-identity-check.sh`
+Enforcement today is the **Git Identity Guardrail** documented in
+[Reproducible Environments Convention §Git Identity Guardrail](./reproducible-environments.md#git-identity-guardrail)
+and in `AGENTS.md`: no AI agent may set or modify git identity at any scope
+(`git config --local/--global/--system user.*`, or a direct `.git/config` `[user]`-block edit).
+This is a behavioral rule enforced by agent instruction-following, not a Husky hook — human
+developers remain free to use `includeIf` for legitimate multi-identity workflows, which is
+exactly what the removed script could not distinguish from a violation.
 
-The script calls `git config --local --get user.name` and `git config --local --get
-user.email`. If either returns a non-empty value, the commit is aborted with a clear error
-message listing the offending values and the exact commands needed to remove them:
-
-```bash
-git config --local --unset user.name
-git config --local --unset user.email
-git config --local --remove-section user 2>/dev/null || true
-```
-
-**Husky pre-commit hook** (`.husky/pre-commit`):
-
-```bash
-./scripts/git-identity-check.sh
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git pre-commit
-```
-
-The identity check runs before `rhino-cli` to ensure an invalid identity cannot slip
-through even if later hook steps succeed.
-
-The guard is intentionally **identity-agnostic**: it does not compare against any specific
-name or email. It only verifies that no local override of any kind exists.
+For the current, registry-backed shape of the three Husky hook shims themselves (which no
+longer include an identity-check step), see
+[Git Hook Lifecycle](./git-hook-lifecycle.md).
 
 ## Examples
 
@@ -187,7 +177,8 @@ name or email. It only verifies that no local override of any kind exists.
     merge = refs/heads/main
 ```
 
-`git log --format="%an <%ae>"` outputs the global identity. Pre-commit hook exits 0.
+`git log --format="%an <%ae>"` outputs the global identity. No `[user]` override exists for any
+hook or agent to catch — there is nothing to detect.
 
 ### FAIL: Per-repo override present
 
@@ -200,25 +191,18 @@ name or email. It only verifies that no local override of any kind exists.
     email = t@test.com
 ```
 
-Pre-commit hook output:
+Manual detection (no automated hook currently catches this for human developers — see
+Standard 3 above):
 
-```text
-ERROR: Per-repo git identity override detected in /path/to/ose-public/.git/config
-
-  [user]
-      name  = Test
-      email = t@test.com
-
-Repo policy is identity-from-global-config only. To clear the override:
-
-  git -C "/path/to/ose-public" config --local --unset user.name
-  git -C "/path/to/ose-public" config --local --unset user.email
-  git -C "/path/to/ose-public" config --local --remove-section user 2>/dev/null || true
-
-Then retry your commit. The global config from ~/.gitconfig will take effect.
+```bash
+git config --local --list | grep "^user\."
+# user.name=Test
+# user.email=t@test.com
 ```
 
-Commit is aborted. Developer removes the section and retries.
+An AI agent encountering this state MUST NOT modify it under any of the forbidden actions in
+[Reproducible Environments Convention §Git Identity Guardrail](./reproducible-environments.md#git-identity-guardrail)
+— removal is a human-only fix, applied via the commands in Remediation below.
 
 ### PASS: Per-directory identity via `includeIf` (multi-identity workflow)
 
@@ -240,12 +224,13 @@ Commit is aborted. Developer removes the section and retries.
 ```
 
 Commits inside `~/work/` use the work identity; commits outside use the personal identity.
-Neither subrepo's `.git/config` contains a `[user]` section. Pre-commit hook exits 0 in
-both contexts.
+Neither subrepo's `.git/config` contains a `[user]` section, so this remains fully compliant
+with Standard 1.
 
 ## Remediation
 
-If the pre-commit hook blocks a commit due to an existing override:
+If manual verification (or the AI agent Git Identity Guardrail's own read-before-commit check)
+finds an existing override:
 
 ```bash
 # Remove name override (if present)
@@ -267,19 +252,14 @@ git config --local --list | grep "^user\."
 
 Then retry the commit. The global `~/.gitconfig` takes effect immediately.
 
-## Future Work: Sibling Repos
+## Sibling Repos
 
-The enforcement described above is **currently active in `ose-public` only**. The two sibling
-repositories — `ose-private` and `ose-primer` — are
-expected to adopt identical guards as a future plan:
-
-- Copy `scripts/git-identity-check.sh` into each sibling subrepo.
-- Add `./scripts/git-identity-check.sh` as the first line of each sibling's
-  `.husky/pre-commit`.
-- Audit and remove any existing `[user]` block from each sibling's `.git/config`.
-
-Until that plan executes, developers working in `ose-private` or `ose-primer` must manually
-verify that no `[user]` section exists in those repos' `.git/config` files:
+The automated `scripts/git-identity-check.sh` guard was removed in `ose-public`, not merely
+never propagated to siblings — so there is no script-based mechanism left to propagate. The
+behavioral Git Identity Guardrail (Standard 3 above) is a shared `AGENTS.md` guardrail and
+applies identically wherever each sibling's own `AGENTS.md` copy is loaded. Human developers in
+any of the three repos should periodically verify that no `[user]` section exists in that repo's
+`.git/config`:
 
 ```bash
 git -C /path/to/ose-private config --local --list | grep "^user\." || echo "clean"

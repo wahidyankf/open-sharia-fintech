@@ -274,7 +274,7 @@ These rules govern ALL execution steps. No exception. No shortcut.
 2. **Never Stop Before All Done (except [HUMAN] gates)**: Execute ALL `[AI]` items from first to last without stopping. No pauses between phases for `[AI]` work. No skipping items. The acceptable stops are: a hard technical blocker, OR a `[HUMAN]` / `[AI+HUMAN]` checkbox (including a `[HUMAN]` phase gate). At a `[HUMAN]` item the orchestrator STOPS, surfaces the item to the user with its acceptance criterion, and waits for the human to confirm completion before resuming — this is a legitimate, expected stop per [Plans Organization Convention §Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule). Unmarked checkboxes are treated as `[AI]`.
 3. **Fix ALL Issues — Including Preexisting**: When ANY test, lint, typecheck, or quality gate fails — fix it. Even if it existed before your changes. Do NOT defer. Do NOT skip. Commit preexisting fixes separately.
 4. **Delivery.md Is Sacred — Atomic Sync Ritual**: After each item's work is done, run the three-step ritual before touching the next item: (a) `Edit` checkbox `- [ ]` → `- [x]` for THIS one item (no `replace_all`), (b) `Edit` implementation-notes block under the ticked checkbox (Date, Status, Files Changed, brief notes), (c) `TaskUpdate completed`. All three MUST land before moving on. If any step fails, roll back the others and leave the task in `in_progress`. Ticking multiple checkboxes in one Edit or deferring notes to end-of-phase is forbidden.
-5. **Local Quality Gates Before Push**: Run `npx nx affected -t typecheck lint test:quick specs:coverage` before every push. Fix ALL failures. Do NOT push with any failing check.
+5. **Local Quality Gates Before Push**: Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (the same registry-declared gate set `.husky/pre-push` invokes; includes `nx affected -t test:quick`) before every push. Fix ALL failures. Do NOT push with any failing check.
 6. **Post-Push CI Verification**: After every push, monitor ALL GitHub Actions workflows triggered by that push. Fix ALL failures (including preexisting). Do NOT proceed until CI is fully green.
 7. **Thematic Commits**: Group related changes. Split different concerns. Follow Conventional Commits. Preexisting fixes get their own commits.
 8. **Manual Behavioral Assertions**: After quality gates pass, use Playwright MCP for web UI verification and curl for API verification. Fix any broken behavior before proceeding.
@@ -1154,7 +1154,7 @@ The plan-execution-checker validates:
 - **Testing Requirements**: Tests written and passing as specified in plan
 - **Documentation**: Required documentation created and accurate
 - **Operational Readiness** (CRITICAL): The checker verifies ALL of the following were executed:
-  - **Local quality gates passed**: `nx affected -t typecheck lint test:quick specs:coverage` was run and passed with zero failures before every push
+  - **Local quality gates passed**: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (or the equivalent `.husky/pre-push` invocation) was run and passed with zero failures before every push
   - **CI/CD fully green**: All GitHub Actions workflows passed after every push — no exceptions
   - **Preexisting issues fixed**: All encountered failures were fixed, including those not caused by the plan's changes (root cause orientation)
   - **Delivery.md updated progressively**: Checkboxes ticked sequentially with implementation notes, not batch-ticked at the end (verified via git history)

@@ -203,7 +203,7 @@ After assessing code quality (Step 5), verify that the executor followed ALL ope
 1. **Local Quality Gates Were Executed**
    - Check git log for evidence that quality gates were run before each push
    - Verify no lint, typecheck, or test failures remain in the affected projects
-   - Run `npx nx affected -t typecheck lint test:quick specs:coverage` and confirm zero failures
+   - Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (the same registry-declared gate set `.husky/pre-push` invokes; includes `nx affected -t test:quick`) and confirm zero failures
    - If ANY failure exists, report as CRITICAL finding
 
 2. **Post-Push CI Passed**
