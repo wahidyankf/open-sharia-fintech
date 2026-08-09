@@ -162,10 +162,11 @@ jobs:
         run: |
           tools="$DOCTOR_TOOLS"
           if [ -n "$tools" ]; then
-            npm run doctor -- --fix --tools "$tools"
+            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools "$tools"
           fi
         env:
           DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}
+          RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
       - run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group="$GROUP_ID"
         env:
           RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
