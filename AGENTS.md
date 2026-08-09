@@ -138,6 +138,8 @@ The three executable Husky files are registry shims: use
 `apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=<surface> --format=text`
 to inspect their current commands and `gate validate` to verify shim, generated-artifact, and CI
 conformance. Do not hand-maintain command lists in hooks; `repo-config.yml` is authoritative.
+`RHINO_CLI_BIN` is CI's tier-1 override for this shim: set to an executable path, it is used
+directly and skips the tier-2 staleness check, so a stale pinned binary is never detected as stale.
 
 **See**: [code.md](./repo-governance/development/quality/code.md)
 

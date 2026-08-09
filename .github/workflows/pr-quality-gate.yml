@@ -71,6 +71,19 @@ jobs:
       # lint-staged's own `repo-config.yml`/`*.md`/`*.feature` commands —
       # resolves this prebuilt `--profile gate` artifact at tier 1 instead
       # of falling back to a from-source `cargo build`/`cargo run` compile.
+      #
+      # Provenance trade-off (accepted, not an oversight): `build-rhino`
+      # checks out with no `ref:` override, so on `pull_request` events it
+      # compiles this binary from GitHub's synthetic base+head merge commit,
+      # while this job checks out head-only content (see `ref:` below).
+      # Every rhino-bin.sh call in this job therefore applies merge-commit
+      # gate logic to head-only content. All affected commands are
+      # read-only validators — none rewrite files — so the worst outcome is
+      # a wrong pass/fail verdict, never rhino-derived content written back
+      # to the branch, and it self-corrects on rebase against a current
+      # `main`. A second, head-sha-pinned artifact built solely for this job
+      # was judged not worth the extra CI job for that bound; revisit if a
+      # validator invoked here ever gains file-mutating behavior.
       RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
     steps:
       - uses: actions/checkout@v6
@@ -139,10 +152,11 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
         with:
-          # `enumerate` only lists gate groups via the shim (RHINO_CLI_BIN
-          # already resolves to the downloaded binary at line 138, so
-          # rhino-bin.sh never falls back to cargo/node); jq is
-          # runner-provided. No npm-managed tool is needed here.
+          # `enumerate` only lists gate groups via the shim; the `list` step
+          # below sets RHINO_CLI_BIN inline for that one invocation so
+          # rhino-bin.sh resolves the artifact downloaded by the step above
+          # instead of falling back to cargo/node. jq is runner-provided; no
+          # npm-managed tool is needed here.
           run-npm-ci: false
       - uses: actions/download-artifact@v4
         with:

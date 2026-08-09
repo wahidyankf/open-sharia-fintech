@@ -40,7 +40,6 @@ struct GateWorld {
     shim_override_dir: Option<TempDir>,
     shim_override_bin: Option<PathBuf>,
     shim_invalid_override: Option<PathBuf>,
-    shim_gate_bin_mtime: Option<SystemTime>,
     shim_stale_bin_mtime_before: Option<SystemTime>,
     shim_first_run: Option<Output>,
     workflow_yaml: Option<String>,
@@ -76,7 +75,6 @@ impl GateWorld {
             shim_override_dir: None,
             shim_override_bin: None,
             shim_invalid_override: None,
-            shim_gate_bin_mtime: None,
             shim_stale_bin_mtime_before: None,
             shim_first_run: None,
             workflow_yaml: None,
@@ -2992,12 +2990,6 @@ fn given_rhino_cli_bin_override(w: &mut GateWorld) {
     )
     .expect("write RHINO_CLI_BIN stub");
     make_executable(stub.clone());
-    w.shim_gate_bin_mtime = Some(
-        std::fs::metadata(real_prebuilt_rhino_cli())
-            .expect("read real prebuilt rhino-cli binary metadata")
-            .modified()
-            .expect("read real prebuilt rhino-cli binary mtime"),
-    );
     w.shim_override_bin = Some(stub);
     w.shim_override_dir = Some(dir);
 }
@@ -3219,8 +3211,18 @@ fn then_no_cargo_build_occurred(w: &mut GateWorld) {
     // `when_resolver_shim_runs`), so if the shim had fallen through to tier 3
     // and invoked `cargo build`, the shell would report "command not found"
     // and the shim would exit non-zero. A successful exit is therefore
-    // sufficient proof no cargo build was attempted; the mtime check below
-    // corroborates it.
+    // conclusive proof no cargo build was attempted.
+    //
+    // A prior version of this step corroborated that proof with a second
+    // check: capturing the real, checked-out `apps/rhino-cli/target/gate/`
+    // binary's mtime before the invocation and asserting it was unchanged
+    // afterward. That corroboration was removed (PR #162 cycle-2 review,
+    // r3743500939) because it read a real, shared, un-sandboxed path outside
+    // this test's control. It reproduced a flake within 5 local runs of this
+    // suite: an unrelated concurrent invocation of this same test binary (or
+    // the documented ambient build-artifact sweeper) can touch that path in
+    // the narrow window between the two reads, and it added no proof beyond
+    // what the PATH-stripping check above already establishes.
     let output = w
         .shim_first_run
         .as_ref()
@@ -3229,17 +3231,6 @@ fn then_no_cargo_build_occurred(w: &mut GateWorld) {
         output.status.success(),
         "resolver shim must not attempt cargo build when RHINO_CLI_BIN is set: {}",
         String::from_utf8_lossy(&output.stderr)
-    );
-    let mtime_before = w
-        .shim_gate_bin_mtime
-        .expect("captured real prebuilt binary mtime before invocation");
-    let mtime_after = std::fs::metadata(real_prebuilt_rhino_cli())
-        .expect("read real prebuilt rhino-cli binary metadata after invocation")
-        .modified()
-        .expect("read real prebuilt rhino-cli binary mtime after invocation");
-    assert_eq!(
-        mtime_before, mtime_after,
-        "the real prebuilt binary must be untouched when RHINO_CLI_BIN overrides discovery"
     );
 }
 
