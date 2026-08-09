@@ -43,3 +43,9 @@ Feature: Gate enumeration
     When "rhino-cli gate list --surface=ci --format=json --by-group" runs
     Then it emits one entry per distinct ci_group value
     And each entry lists its member gate ids in registry declaration order
+
+  Scenario: Grouped enumeration reports the union of each group's Doctor tools
+    Given a ci_group's member gates declare overlapping and non-overlapping doctor_tools
+    When "rhino-cli gate list --surface=ci --format=json --by-group" runs
+    Then each group entry's doctor_tools is the deduped, sorted union of its members' doctor_tools
+    And a group whose members declare no doctor_tools reports an empty array

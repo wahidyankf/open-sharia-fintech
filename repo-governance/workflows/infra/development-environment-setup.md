@@ -432,17 +432,17 @@ This also triggers Husky to install git hooks (pre-commit, commit-msg, pre-push)
 
 ```bash
 # Restore .env files from default backup location (~/ose-public-env-backup)
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env restore --force
+apps/rhino-cli/scripts/rhino-bin.sh env restore --force
 
 # Include uncommitted config files (AI tool settings, Docker overrides, direnv, etc.)
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env restore --force --include-config
+apps/rhino-cli/scripts/rhino-bin.sh env restore --force --include-config
 ```
 
 **Condition**: Skip if this is a brand-new setup with no previous backup. Instead, use
 `env init` to bootstrap `.env` files from `.env.example` templates:
 
 ```bash
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env init
+apps/rhino-cli/scripts/rhino-bin.sh env init
 ```
 
 This creates `.env` files from all `.env.example` templates in `infra/dev/`. Use `--force`

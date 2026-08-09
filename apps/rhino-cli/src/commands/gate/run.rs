@@ -1007,6 +1007,47 @@ fn hand_wired_gate_never_reruns_inside_its_ci_group() {
     );
 }
 
+/// Binds the Gherkin scenario "An unknown group id fails before execution"
+/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
+///
+/// Mirrors `--only`'s "Unknown or duplicate only ids fail before execution"
+/// coverage for the sibling `--group` selector: `resolve_group_gates`'s
+/// "no matching gates" `Err` path (LOG5) previously had zero test coverage.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn unknown_group_id_fails_before_execution() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: group-member\n",
+            "    type: check\n",
+            "    command: touch must-not-run.txt\n",
+            "    kind: external\n",
+            "    ci-group: real-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let error = run_at_root_with_group(repo.path(), "ci", "unregistered-group", &mut Vec::new())
+        .unwrap_err()
+        .to_string();
+
+    assert!(
+        error.contains("unregistered-group"),
+        "an unknown --group id must fail before any leaf invocation and name the offending id; \
+         error={error:?}"
+    );
+    assert!(
+        !repo.path().join("must-not-run.txt").exists(),
+        "no gate must run when the selected group id matches nothing"
+    );
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]

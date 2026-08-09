@@ -262,7 +262,7 @@ configs, grep the files, run the tools — do not trust docs alone.
   behavior tree): run the canonical manifest validator in each bound repository:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate
+  apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate
   ```
 
   It covers the three-repository parity boundary (`ose-public`, `ose-primer`, `ose-private` —

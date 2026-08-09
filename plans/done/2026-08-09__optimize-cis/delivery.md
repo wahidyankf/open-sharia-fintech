@@ -148,7 +148,7 @@ but as accepted-with-reason residue under the closure clause the maintainer alre
 above** (cap-at-10-cycles, "record any still-open finding as accepted-with-reason in the PR
 description"): AC-15's `apps/rhino-cli` byte-identity parity across `ose-public`/`ose-primer`/
 `ose-private` does **not** currently hold. Cycle 6's `validate.rs` fix landed in `ose-public` only;
-both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were already merged by the time
+both siblings' follow-up PRs (`ose-primer` #31, `ose-private` #30) were already merged by the time
 the gap was re-confirmed at cycle 7 of the PR-Review Maker→Fixer Cycle on `ose-public` #162, so
 nothing propagates automatically. A full manifest diff against both siblings' current `main` (not
 just `ose-primer`'s, which is what the raw review finding checked) found a **17-file union** — 15
@@ -910,7 +910,7 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 
 - [ ] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
   - **Date**: 2026-08-09. **Status**: NOT MET as literally specified — left unchecked rather than
-    ticked against a caveat. Both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were
+    ticked against a caveat. Both siblings' follow-up PRs (`ose-primer` #31, `ose-private` #30) were
     already merged by the time this gap was found, so re-verification at cycle 7 of the PR-Review
     Maker→Fixer Cycle on `ose-public` #162 found `apps/rhino-cli` byte-identity broken across a
     **17-file union** (not 14 — the cycle-7 reproduction command diffed only against `ose-primer`'s

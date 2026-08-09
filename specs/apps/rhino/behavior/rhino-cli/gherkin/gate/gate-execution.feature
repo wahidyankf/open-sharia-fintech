@@ -56,6 +56,11 @@ Feature: Gate execution
     When gate run executes
     Then it fails before any leaf invocation
 
+  Scenario: An unknown group id fails before execution
+    Given a --group selector names a CI group id absent from the registry
+    When "rhino-cli gate run --surface=ci --group=<id>" runs
+    Then it fails before any leaf invocation and names the unknown group id
+
   Scenario: A re-staging mutation stages only its outputs
     Given a successful restaging mutation changes generated output
     When it runs with unrelated worktree edits
