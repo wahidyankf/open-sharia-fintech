@@ -38,6 +38,7 @@ These practices define **HOW developers and AI agents should behave** when encou
 - [Task List Discipline](./task-list-discipline.md) - For any non-trivial multi-step work (3+ steps or spanning multiple files/phases), maintain a live task list from the start and keep it continuously in sync with actual progress
 - [File-Touch Discipline](./file-touch-discipline.md) - Keep a deliberate, append-only record of every file you touch, carry it intact through every compaction and handoff, and treat any path not on it as another actor's in-flight work; covers the ledger standards, degraded mode when the ledger is lost, and the rule that generated harness mirrors ship in the same commit as their source
 - [Mechanize Cross-File Invariants](./mechanize-cross-file-invariants.md) - When a rule must hold across more than one file, generate the dependent file(s) from a single declared source and validate the result, rather than stating the rule in prose and trusting hand-sync
+- [Trustworthy Measurement](./trustworthy-measurement.md) - Before a number justifies a decision, prove the command ran, prove it measured the path that actually executes, and prove the metric can respond to the change; covers false-zero timing harnesses, isolated-vs-batched benchmarks, and critical-path reasoning for max-type metrics
 
 ## Related Documentation
 

@@ -18,6 +18,8 @@
   Same family as the recorded `grep -L`, `ls`-is-eza, and RTK-output-transform traps: a builtin
   quietly transforms the thing being measured and a false zero reads as a pass.
 
+**Terminal state**: ROUTED INLINE to [Trustworthy Measurement](../../../repo-governance/development/practice/trustworthy-measurement.md) §1 — a new practice doc created by this triage, registered in both the practice and development indexes.
+
 ## Learning: cross-worktree cargo build-lock contention costs more than the disk it saves
 
 - **Context**: first `cargo run` invocation of the session in a fresh worktree.
@@ -29,6 +31,8 @@
   one disk, so shared-mutable-build-state is a standing design tension, not a one-off. Whether the
   disk saving is worth the serialization is a real design question — possibly answered by per-profile
   sharing or a content-addressed cache instead of a shared target dir.
+
+**Terminal state**: FILED as [`plans/ideas/q2-not-urgent-important/shared-cargo-target-lock-contention.md`](../../ideas/q2-not-urgent-important/shared-cargo-target-lock-contention.md), merged with the Phase 9 entry below on the same subject. Not landed inline: reversing the trade means per-worktree targets plus a shared cache layer, which is a design question with its own rollback story.
 
 ## Learning: cross-phase forward-references in a checklist item's own text can hard-error
 
@@ -47,6 +51,8 @@
   artifact — profile, flag, file — that a later phase's step is the one that creates it?) would
   catch this class before execution, not during it.
 
+**Terminal state**: FILED as [`plans/ideas/q1-urgent-important/plan-checker-forward-reference-detection.md`](../../ideas/q1-urgent-important/plan-checker-forward-reference-detection.md), merged with the second instance below. Not landed inline: naive detection would drown in false positives, so the brief's first step is measuring that rate over the `done/` corpus.
+
 ## Learning: a byte-identity-governed file trips its local parity-manifest gate on the very next push
 
 - **Context**: Phase 2's `emit.rs` edit (DD-1 resolver-shim rendering) is inside the zero-carve-out
@@ -63,6 +69,8 @@
   edit) touching a byte-identity-governed `apps/rhino-cli` file should expect this same local gate to
   fire on the very next push, immediately, before any cross-repo work has happened — it is a
   same-repo self-consistency check, not a signal that propagation is already done or overdue.
+
+**Terminal state**: ROUTED INLINE to [plan-multi-repo-parity-planning-and-execution](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md), as an explicit note that the gate fires on the first push, is a same-repo self-consistency check, and that regenerating the manifest does not discharge the propagation obligation.
 
 ## Learning: isolated single-shot benchmarks overstated a batched-execution saving by ~4x
 
@@ -87,6 +95,8 @@
   benchmark does not necessarily predict its saving inside a batched/child-process execution model —
   measure the actual integrated path before hard-gating a phase on the isolated number.
 
+**Terminal state**: ROUTED INLINE to [Trustworthy Measurement](../../../repo-governance/development/practice/trustworthy-measurement.md) §2, with this exact 4x overstatement as the worked example. The `DD-10`-class candidate it mentions (replacing the outer `npx --no -- lint-staged` spawn with a direct `node_modules/.bin` call) is recorded in [`results.md`](./results.md) under M1's accepted-as-is disposition rather than filed separately — it is one line of a larger structural question about what pre-commit does.
+
 ## Learning: a new gate-emission.feature scenario needs step bindings in TWO places, every time
 
 - **Context**: both Phase 2 (resolver-shim scenario) and Phase 3 (node_modules/.bin scenario) added
@@ -106,6 +116,8 @@
   triage as a documentation gap: the RED-step convention in this plan's own delivery.md items only
   ever names the unit-test command, never the integration-test command, for scenarios of this kind.
 
+**Terminal state**: DEFERRED WITHIN THIS PHASE — routes to the rhino-cli Gherkin README, which a concurrent PR-review fixer is editing in this same worktree. Landing it now would collide with another actor's in-flight work. Carried into the ose-public PR's final commit once that file is free.
+
 ## Learning: `cargo hack check --rust-version` installs a major.minor toolchain distinct from the pinned patch
 
 - **Context**: Phase 4's MSRV bump set `rust-version = "1.95.0"` in all four `ose-public` manifests,
@@ -122,6 +134,8 @@
   a legitimate, reproducible side effect of running `compat:min-version` at all, not drift or a
   concurrent-agent artifact. Any future MSRV bump anywhere in this repo should expect the same
   `X.Y`-vs-`X.Y.Z` toolchain duplication from this exact Nx target.
+
+**Terminal state**: DEFERRED WITHIN THIS PHASE — routes to `docs/explanation/software-engineering/programming-languages/rust/build-configuration.md`, which a concurrent PR-review fixer is editing in this same worktree. Carried into the ose-public PR's final commit once that file is free.
 
 ## Learning: a plan step can add a Gherkin scenario that no phase can yet bind — 2nd instance of the cross-phase forward-reference class
 
@@ -145,6 +159,8 @@
   but for whether the behavior it describes is created by an **earlier or same** phase — never a
   later one — since this repo's coverage tools require whole-tree, always-live bindings.
 
+**Terminal state**: MERGED into the forward-reference brief filed above — [`plan-checker-forward-reference-detection`](../../ideas/q1-urgent-important/plan-checker-forward-reference-detection.md) carries both instances, since two instances at two layers is what makes it a class.
+
 ## Learning: "does this job run git diff/nx affected" must be checked one layer deeper than the workflow YAML
 
 - **Context**: Phase 6's fetch-depth reduction item reasoned that `build-rhino`, `enumerate`, and
@@ -162,6 +178,8 @@ affected` or `git diff` directly in the workflow YAML.
   dispatched CLI/script does _underneath_, including any commands that further dispatch to other
   tools. Any future fetch-depth or similar shallow-clone optimization in this repo's CI should trace
   the full call chain of what a job actually invokes, not just its literal `run:` lines.
+
+**Terminal state**: DISCARDED as a standalone rule — it is the specific case of a general principle already stated in [Trustworthy Measurement](../../../repo-governance/development/practice/trustworthy-measurement.md) §3 (establish what actually holds the property before applying the remedy) and in the CI-blocker Step 7 addition (verify by observing the consumer, not by re-reading intent). A third near-duplicate rule would dilute both rather than add coverage.
 
 ## Learning: `gate list --by-group`'s hand-wired exclusion and `gate run --group`'s membership must be the same filter, not two independent implementations of "which gates belong to this group"
 
@@ -184,6 +202,8 @@ affected` or `git diff` directly in the workflow YAML.
   behavior (`npm ci` or not) started depending on enumeration output (`doctor_tools`). The fix folds
   the same hand-wired exclusion into `resolve_group_gates` so both paths compute identical membership
   from one predicate, closing the class rather than the single instance.
+
+**Terminal state**: DISCARDED — the class is already closed in code. The fix folded the hand-wired exclusion into `resolve_group_gates` so enumeration and execution compute identical membership from one predicate, and the regression test added with it fails if they diverge again. A durable surface would not catch this better than the guard already does.
 
 ## Learning: A "pre-install the pinned toolchain" race fix only works if it installs the toolchain _name_ the racing tool actually asks rustup for
 
@@ -210,6 +230,8 @@ affected` or `git diff` directly in the workflow YAML.
   toolchain names the script genuinely requests, so any future drift between "what we pre-install"
   and "what the tool asks for" fails locally instead of after ~50 minutes of CI.
 
+**Terminal state**: ROUTED INLINE to [CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md) as a new Step 7 — audit the mitigation when one already exists and the symptom persists, verify by observing the consumer's actual invocation, and watch for silent no-ops (the `grep -rhoP` BSD-portability defect) in the mitigation itself.
+
 ## Learning: A wall-clock target can only be moved by the critical path, so check which job actually holds it before applying the remedy the plan prescribes
 
 - **Context**: Phase 7 Gate treats an M4 (CI wall-clock p50) regression as a hard stop and prescribes
@@ -229,6 +251,8 @@ affected` or `git diff` directly in the workflow YAML.
   _on_ it. The same asymmetry explains why M3 (runner-seconds, a sum) fell 47.6 % in the same runs
   where M4 rose — the two metrics were never going to move together, and a plan that treats both as
   symptoms of one cause will mis-diagnose whichever one it reads second.
+
+**Terminal state**: ROUTED INLINE to [Trustworthy Measurement](../../../repo-governance/development/practice/trustworthy-measurement.md) §3 and §4 — wall-clock in a fan-out DAG is a max, sum-type and max-type metrics do not move together, and a remedy authored before anyone saw a timeline is a hypothesis.
 
 ## Learning: sharing one build directory across worktrees converts a disk problem into a serialization problem
 
@@ -253,6 +277,8 @@ affected` or `git diff` directly in the workflow YAML.
   Recorded so the next person meeting a mysterious 65 s stall knows it is a designed-in consequence
   and not a hung build.
 
+**Terminal state**: MERGED into [`shared-cargo-target-lock-contention`](../../ideas/q2-not-urgent-important/shared-cargo-target-lock-contention.md) filed above, which carries both this entry and the 65 s measurement from the earlier one.
+
 ## Learning: a hardcoded count is the wrong guard for "nothing escaped the check"
 
 - **Context**: `cargo_target_share.rs` guarded the inherited-Git-state isolation rule with
@@ -272,6 +298,8 @@ affected` or `git diff` directly in the workflow YAML.
   refactor), which is exactly backwards. Whenever a test asserts "how many", ask what set it is
   really asserting membership of, and derive that set from the same source of truth the production
   code reads.
+
+**Terminal state**: ROUTED INLINE to [Regression Test Mandate](../../../repo-governance/development/quality/regression-test-mandate.md) as a new subsection — never guard coverage with a hardcoded count; derive the set from the same source of truth the production code reads.
 
 ## Learning: a pinned toolchain without declared components is a race, not a pin
 
@@ -296,6 +324,8 @@ affected` or `git diff` directly in the workflow YAML.
   the class rather than the site that happened to fail (here, a `gate validate` check over every
   `rust-toolchain.toml`, since the next crate added would reintroduce it).
 
+**Terminal state**: DISCARDED as a documentation entry — the class is closed by the `gate validate` check added in this plan, which fails when any `rust-toolchain.toml` in the repo omits `rustfmt` or `clippy`, with a reproducing test. The next crate added cannot reintroduce it silently, which is exactly what the litmus test asks for.
+
 ## Learning: read Nx's group markers, not the tail of the log
 
 - **Context**: the same failure was triaged three times as a silent crash under runner resource
@@ -311,6 +341,8 @@ affected` or `git diff` directly in the workflow YAML.
   tail looks truncated, which reads as a crash. Under a parallel task runner, always locate the
   failing unit by its status marker before reading any output, and treat "log ends mid-stream" as a
   statement about flush order rather than about the process.
+
+**Terminal state**: ROUTED INLINE to [CI Monitoring](../../../repo-governance/development/workflow/ci-monitoring.md) as a new section — locate the failing task by its `##[group]❌` status marker before reading any output, and treat a mid-stream log ending as a statement about flush order rather than about the process.
 
 ## Learning: cgroup delegation is a precondition for `systemd --user` in CI
 
@@ -333,3 +365,5 @@ affected` or `git diff` directly in the workflow YAML.
   gate fails identically on every runner while its stated preconditions all pass, the missing
   precondition is one the script cannot name. Prove it with a two-arm probe that differs only in
   the suspected property before changing any provisioning.
+
+**Terminal state**: ROUTED to `ose-private` — the causal analysis is folded into that repo's `plans/ideas/q2-not-urgent-important/preexisting-deploy-workflow-failures.md` (commit `73adc2e7c`), and the `Delegate=yes` fix with its probe evidence is committed in that repo's `infra/on-premise/ansible/playbook-runner.yml`. Kept out of `ose-public` under the repo-relevance gate: it describes private on-premise runner infrastructure.
