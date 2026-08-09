@@ -438,7 +438,7 @@ fn validate_ci_doctor_bootstrap(
                 run.contains("gate list --surface=pre-commit --format=json")
                     && run.contains("[.[] | .doctor_tools[]]")
                     && run.contains("unique")
-                    && run.contains("npm run doctor -- --fix --tools")
+                    && run.contains("rhino-bin.sh doctor --fix --tools")
                     && run.contains("if [ -n \"$tools\" ]")
             })
     });
@@ -453,14 +453,18 @@ fn validate_ci_doctor_bootstrap(
     // `DOCTOR_TOOLS`, matching `dispatches_selected_group` above so a repo
     // naming its variable differently is not spuriously rejected.
     //
-    // Unlike the `format` job's check above, the `gate` job's provisioning
-    // step must invoke `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix
-    // --tools`, not `npm run doctor -- --fix --tools`: the `gate` job runs
-    // on a runner with no ambient Rust toolchain, so `npm run doctor` would
-    // fall back to rebuilding rhino-cli from source via cargo and fail with
-    // "cargo: not found". The `format` job legitimately keeps `npm run
-    // doctor` because it does carry a full Rust toolchain via `setup-rust`,
-    // making that rebuild cheap and cached.
+    // Both the `format` job's check above and the `gate` job's check below
+    // require `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools`,
+    // never `npm run doctor -- --fix --tools`: `format` migrated off `npm
+    // run doctor` onto the resolver shim (the shim resolves the prebuilt
+    // `build-rhino` artifact at tier 1, so no in-job cargo compile is paid
+    // even though `format` also runs `setup-rust`), and `gate` never carried
+    // `npm run doctor` in the first place, since its runner has no ambient
+    // Rust toolchain and `npm run doctor` would fall back to rebuilding
+    // rhino-cli from source via cargo and fail with "cargo: not found".
+    // There is no longer an asymmetry between the two jobs' provisioning
+    // mechanism — only which surface (`pre-commit` vs. the matrix env var)
+    // supplies the tool selection.
     let matrix_uses_declared_tools = workflow.jobs.get("gate").is_some_and(|job| {
         job.steps.iter().any(|step| {
             let Some(run) = step.run.as_deref() else {
@@ -2523,7 +2527,7 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
@@ -2547,13 +2551,15 @@ fn doctor_tool_metadata_requires_registry_derived_format_and_matrix_selection() 
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
 fn doctor_tool_metadata_rejects_npm_run_doctor_in_gate_job() {
-    // The `gate` job runs on a runner with no ambient Rust toolchain, so
-    // `npm run doctor -- --fix --tools` (which rebuilds rhino-cli from
-    // source via cargo) must not be accepted there anymore — only the
-    // prebuilt gate-profile binary shim
-    // `apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools` is valid.
-    // The `format` job legitimately keeps the `npm run doctor` form since
-    // it does have a full Rust toolchain via `setup-rust`.
+    // Neither job runs on a runner with an assumption of an ambient Rust
+    // toolchain compile being cheap enough to redo per-job anymore: both
+    // `format` and `gate` provision Doctor tools through the prebuilt
+    // gate-profile binary shim, `apps/rhino-cli/scripts/rhino-bin.sh doctor
+    // --fix --tools`. `npm run doctor -- --fix --tools` (which rebuilds
+    // rhino-cli from source via cargo) is no longer valid in either job —
+    // this fixture keeps the `format` step already migrated to the shim (so
+    // the failure below is isolated to the `gate` job's stale form, not a
+    // side effect of `format` also being wrong).
     let config: repo_config::RepoConfig = serde_norway::from_str(concat!(
         "gates:\n",
         "  - id: shellcheck\n",
@@ -2573,7 +2579,7 @@ fn doctor_tool_metadata_rejects_npm_run_doctor_in_gate_job() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
@@ -2631,7 +2637,7 @@ fn doctor_tool_metadata_rejects_formatter_only_format_selection() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | select(.type == \"mutation\" and .category == \"formatter\") | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
@@ -2684,7 +2690,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",
@@ -2695,7 +2701,7 @@ fn doctor_tool_metadata_rejects_unsafe_matrix_splice_without_env_indirection() {
         "          fi\n",
         "        env:\n",
         "          DOCTOR_TOOLS: ${{ join(matrix.group.doctor_tools, ',') }}\n",
-        "      - run: npm run doctor -- --fix --tools \"${{ join(matrix.group.doctor_tools, ',') }}\"\n",
+        "      - run: apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"${{ join(matrix.group.doctor_tools, ',') }}\"\n",
     ))
     .unwrap();
 
@@ -2739,7 +2745,7 @@ fn doctor_tool_metadata_accepts_a_non_default_doctor_tools_env_var_name() {
         "      - run: |\n",
         "          tools=$(rhino-cli gate list --surface=pre-commit --format=json | jq -r '[.[] | .doctor_tools[]] | unique | join(\",\")')\n",
         "          if [ -n \"$tools\" ]; then\n",
-        "            npm run doctor -- --fix --tools \"$tools\"\n",
+        "            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools \"$tools\"\n",
         "          fi\n",
         "  gate:\n",
         "    steps:\n",

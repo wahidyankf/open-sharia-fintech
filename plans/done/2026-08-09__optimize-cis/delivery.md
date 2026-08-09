@@ -117,15 +117,18 @@ overrides two parameters:
    workflow's own exhaustion behavior.
 
 **This plan also authors a third, narrower deviation, dated 2026-08-09: two additional follow-up
-PRs beyond the 3-PR budget above — `ose-primer` #31 and `ose-private` #30.** Both were opened
-during the PR-Review Maker→Fixer Cycle running independently on each sibling's own budgeted PR
-(`ose-primer` #30, `ose-private` #29): that cycle surfaced a lint-component defect on the pinned
-Rust toolchain(s) (missing `clippy`/`rustfmt` component declarations) that blocked the budgeted
-PR's own CI. Splitting the fix into a separate PR — rather than reopening or force-amending the
-already-merged budgeted PR — was the only path that kept each repo's branch protection intact (no
-direct-push, no amend-after-merge). Maintainer authorization for this deviation was given
-2026-08-09. Both follow-up PRs are now merged: `ose-primer` #31 merged clean (23/23 checks green,
-clean squash-merge). `ose-private` #30 merged via `--admin` override, with the pre-existing,
+PRs beyond the 3-PR budget above — `ose-primer` #31 and `ose-private` #30.** Both were opened after
+each sibling's own budgeted PR had already merged clean: `ose-primer` #30 merged 2026-08-09T05:39:32Z
+and #31 opened 07:04:15Z (+1h 24m later); `ose-private` #29 merged 2026-08-09T05:52:40Z and #30
+opened 07:03:59Z (+1h 11m later). A lint-component defect on the pinned Rust toolchain(s) (missing
+`clippy`/`rustfmt` component declarations) was discovered independently, after both budgeted PRs had
+already merged clean — it did not block either budgeted PR's own CI (`ose-primer` #30 merged
+23/23 checks green; `ose-private` #29's checks were likewise all green), and no admin override was
+needed or used to merge either one. Splitting the fix into a separate PR — rather than reopening or
+force-amending the already-merged budgeted PR — was the only path that kept each repo's branch
+protection intact (no direct-push, no amend-after-merge). Maintainer authorization for this
+deviation was given 2026-08-09. Both follow-up PRs are now merged: `ose-primer` #31 merged clean
+(23/23 checks green, clean squash-merge). `ose-private` #30 merged via `--admin` override, with the pre-existing,
 unrelated `coralpolyp` infra flake (a self-hosted-runner systemd-sandbox issue, already
 root-caused as unrelated to this plan's changes earlier in the session) still red on its cascading
 `Quality gate` aggregator — per the maintainer's standing, explicit authorization to merge

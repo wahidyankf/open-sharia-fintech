@@ -61,8 +61,9 @@ to keep the raw hook files thin and testable.
 
 ### pre-commit
 
-The pre-commit hook delegates entirely to `rhino-cli git pre-commit`, which executes these steps in
-order:
+The pre-commit hook delegates entirely to
+`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit`, which executes these
+registry-declared `pre-commit`-surface gates in declaration order:
 
 | Step | Action                                                                                         | Failure Mode                |
 | ---- | ---------------------------------------------------------------------------------------------- | --------------------------- |
@@ -532,11 +533,11 @@ only — it does **not** validate `.github/workflows/` filenames.
 
 Three Husky hooks, each with a fixed shape:
 
-| Hook         | Required steps (in order)                                                                                                                                           |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commit-msg` | `commitlint --edit "$1"` — enforces Conventional Commits format                                                                                                     |
-| `pre-commit` | `npx nx run rhino-cli:env:validation` → `rhino-cli git pre-commit` (validate configs, format staged, validate links, lint markdown, shellcheck/hadolint/actionlint) |
-| `pre-push`   | `npx nx affected -t typecheck lint test:quick specs:coverage --parallel=<cores-1>` → `npm run lint:md` → conditional naming validators (harness + workflows)        |
+| Hook         | Required steps (in order)                                                                                                                                            |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `commit-msg` | `commitlint --edit "$1"` — enforces Conventional Commits format                                                                                                      |
+| `pre-commit` | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit` (validate configs, format staged, validate links, lint markdown, shellcheck/hadolint/actionlint) |
+| `pre-push`   | `npx nx affected -t typecheck lint test:quick specs:coverage --parallel=<cores-1>` → `npm run lint:md` → conditional naming validators (harness + workflows)         |
 
 Conditional pre-push naming validators:
 

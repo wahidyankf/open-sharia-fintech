@@ -136,8 +136,10 @@ stale pinned binary is never detected as stale.
 **Execution Order**:
 
 1. You run `git commit`
-2. Pre-commit hook triggers (`.husky/pre-commit` — a single `go run` line)
-3. `rhino-cli git pre-commit` orchestrates all steps in order, failing fast:
+2. Pre-commit hook triggers (`.husky/pre-commit` — a shim line invoking
+   `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit`)
+3. `gate run --surface=pre-commit` orchestrates all registry-declared `pre-commit`-surface gates in
+   declaration order, failing fast:
 
 | Step | Trigger                                | Action                                                                       | On failure |
 | ---- | -------------------------------------- | ---------------------------------------------------------------------------- | ---------- |
