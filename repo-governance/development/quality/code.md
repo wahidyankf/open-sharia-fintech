@@ -121,6 +121,14 @@ npx prettier --write [file-path]
 
 ## Git Hook Workflow
 
+All three Husky hooks below (`pre-commit`, `commit-msg`, `pre-push`) invoke `rhino-cli` gates through
+the same `apps/rhino-cli/scripts/rhino-bin.sh` resolver shim, so the following override applies
+identically to each — it is documented once here rather than repeated per hook.
+
+**`RHINO_CLI_BIN` override**: CI's tier-1 override for the `apps/rhino-cli/scripts/rhino-bin.sh`
+shim. Set to an executable path, it is used directly and skips the tier-2 staleness check, so a
+stale pinned binary is never detected as stale.
+
 ### Pre-commit Hook
 
 **Location**: `.husky/pre-commit`
@@ -148,10 +156,6 @@ npx prettier --write [file-path]
 1. Commit proceeds if no errors
 
 **Implementation**: `apps/rhino-cli/src/` — all steps call internal Rust functions directly (no subprocess round-trips for rhino-cli-owned logic); external tools are shelled out via `std::process::Command`.
-
-**`RHINO_CLI_BIN` override**: CI's tier-1 override for the `apps/rhino-cli/scripts/rhino-bin.sh`
-shim. Set to an executable path, it is used directly and skips the tier-2 staleness check, so a
-stale pinned binary is never detected as stale.
 
 **What It Validates**:
 
