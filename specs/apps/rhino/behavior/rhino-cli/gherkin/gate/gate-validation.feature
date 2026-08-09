@@ -103,3 +103,15 @@ Feature: Gate conformance validation
     Then it exits non-zero
     And its output names the offending gate id
     And its output states that ci_group is required
+
+  Scenario: A pinned Rust toolchain without lint components fails validation
+    Given a rust-toolchain.toml pins a channel and declares no components
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And its output names the offending rust-toolchain.toml path
+    And its output names the missing rustfmt and clippy components
+
+  Scenario: A pinned Rust toolchain declaring the lint components passes validation
+    Given every rust-toolchain.toml declares the rustfmt and clippy components
+    When "rhino-cli gate validate" runs
+    Then the Rust toolchain component check exits zero
