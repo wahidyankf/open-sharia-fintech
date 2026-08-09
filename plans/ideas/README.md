@@ -25,6 +25,7 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 
 No active plan waits on these and no live defect is running, but each carries a real stake. This is the plan-from-here quadrant.
 
+- [actions-cache-eviction-policy](./q2-not-urgent-important/actions-cache-eviction-policy.md) — the Actions cache sits at 99.29 % of its 10 GiB ceiling because nothing ever deletes an entry; only GitHub's LRU relieves pressure.
 - [audit-e2e-reuse-existing-server-config](./q2-not-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`.
 - [ayokoding-content-checker-coverage](./q2-not-urgent-important/ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
 - [ayokoding-database-internals-ruff-config](./q2-not-urgent-important/ayokoding-database-internals-ruff-config.md) — 22 sibling courses carry a scoped `ruff.toml` and this one does not, though `ruff format --check` currently passes clean.
