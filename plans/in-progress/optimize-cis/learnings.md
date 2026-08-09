@@ -184,3 +184,28 @@ affected` or `git diff` directly in the workflow YAML.
   behavior (`npm ci` or not) started depending on enumeration output (`doctor_tools`). The fix folds
   the same hand-wired exclusion into `resolve_group_gates` so both paths compute identical membership
   from one predicate, closing the class rather than the single instance.
+
+## Learning: A "pre-install the pinned toolchain" race fix only works if it installs the toolchain _name_ the racing tool actually asks rustup for
+
+- **Context**: The `setup-rust` composite action already carried a pre-install step whose stated
+  purpose was to defeat the rustup download race that parallel `cargo hack check --rust-version`
+  tasks trigger. Its loop read each crate's declared `rust-version` and ran
+  `rustup toolchain install "$v"`, with `$v` being the full `1.95.0` string.
+- **Observation**: `cargo hack --rust-version` does not request `1.95.0` — it resolves the floor to
+  its **major-minor** form and shells out to `rustup toolchain add 1.95 --no-self-update`. rustup
+  stores `1.95` and `1.95.0` as **distinct toolchains in distinct directories**, so pre-installing
+  `1.95.0` satisfied nothing: all four Rust crates still raced rustup for `1.95` in parallel, and
+  three of four failed live in CI (`31285020618`) with a bare
+  `error: process didn't exit successfully: rustup toolchain add 1.95 --no-self-update (exit status: 1)`.
+  The mitigation had been in place and passing review for several phases while providing zero
+  protection — its failure mode looked exactly like the original flake it was written to fix, which
+  is why four prior occurrences were all classified as accepted infra flake rather than a live bug.
+- **Second defect, same step**: the extraction used `grep -rhoP`. BSD grep (macOS) has no `-P`, so on
+  a non-GNU-grep host the loop iterates over an empty list, installs nothing, and still exits 0 —
+  a silent no-op that a local run cannot distinguish from success. Rewritten with portable `sed`.
+- **Why it might generalize**: a mitigation that names a resource must name it in the **same
+  vocabulary the consumer uses**, and the way to verify that is to observe the consumer's actual
+  invocation, not to re-read the mitigation's own intent. The regression test added here does exactly
+  that — it executes the real checked-in script with a stub `rustup` on `PATH` and asserts on the
+  toolchain names the script genuinely requests, so any future drift between "what we pre-install"
+  and "what the tool asks for" fails locally instead of after ~50 minutes of CI.

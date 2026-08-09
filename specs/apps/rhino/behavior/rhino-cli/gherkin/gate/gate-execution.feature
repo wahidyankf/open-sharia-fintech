@@ -129,3 +129,9 @@ Feature: Gate execution
     When that group's job executes
     Then its step list contains no npm ci invocation
     And every gate in the group still reports its baseline result
+
+  Scenario: The MSRV pre-install covers the toolchain name cargo-hack requests
+    Given a crate declares a patch-level rust-version floor
+    When the Rust setup action pre-installs the pinned MSRV toolchains
+    Then it installs that floor's major-minor toolchain name
+    And it installs the patch-level toolchain name too

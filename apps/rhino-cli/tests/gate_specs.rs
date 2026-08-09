@@ -46,6 +46,7 @@ struct GateWorld {
     gate_job_needs_build_rhino: Option<bool>,
     gate_job_block: Option<String>,
     no_npm_group_id: Option<String>,
+    msrv_preinstall_invocations: Option<Vec<String>>,
 }
 
 impl std::fmt::Debug for GateWorld {
@@ -79,6 +80,7 @@ impl GateWorld {
             gate_job_needs_build_rhino: None,
             gate_job_block: None,
             no_npm_group_id: None,
+            msrv_preinstall_invocations: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
             let path = world.root().join(".husky").join(hook);
@@ -3292,6 +3294,129 @@ fn then_group_gates_still_run(w: &mut GateWorld) {
         "the gate run step must be unconditional for group {group_id} — skipping npm ci must \
          never skip running its gates: {step_lines:?}"
     );
+}
+
+// Binds `gate-execution.feature`'s "The MSRV pre-install covers the toolchain
+// name cargo-hack requests" scenario. `cargo hack check --rust-version`
+// resolves a crate's `rust-version = "X.Y.Z"` floor to the toolchain name
+// `X.Y`, and rustup stores `X.Y` in a different directory from `X.Y.Z` — so
+// pre-installing only the patch-level name leaves every parallel
+// `compat:min-version` task racing rustup to download `X.Y` itself, which is
+// the exact race the pre-install step exists to prevent. This runs the real,
+// checked-in pre-install script against a fixture crate with a stub `rustup`
+// on PATH and asserts on the toolchain names it actually asks for.
+
+#[given("a crate declares a patch-level rust-version floor")]
+fn given_patch_level_msrv_floor(w: &mut GateWorld) {
+    w.write(
+        "apps/fixture-cli/Cargo.toml",
+        "[package]\nname = \"fixture-cli\"\nversion = \"0.1.0\"\nrust-version = \"1.95.0\"\n",
+    );
+    std::fs::create_dir_all(w.root().join("libs")).expect("create fixture libs directory");
+}
+
+#[when("the Rust setup action pre-installs the pinned MSRV toolchains")]
+fn when_msrv_preinstall_runs(w: &mut GateWorld) {
+    let action = std::fs::read_to_string(repo_root().join(".github/actions/setup-rust/action.yml"))
+        .expect("read the real .github/actions/setup-rust/action.yml");
+    let script = run_block(&action, "Pre-install pinned MSRV toolchain");
+
+    let stub_dir = w.root().join("stub-bin");
+    std::fs::create_dir_all(&stub_dir).expect("create stub bin directory");
+    let log = w.root().join("rustup-invocations.log");
+    let stub = stub_dir.join("rustup");
+    std::fs::write(
+        &stub,
+        format!("#!/bin/sh\nprintf '%s\\n' \"$*\" >>'{}'\n", log.display()),
+    )
+    .expect("write the stub rustup recorder");
+    make_executable(stub);
+
+    let inherited_path = std::env::var("PATH").unwrap_or_default();
+    let output = Command::new("bash")
+        .arg("-c")
+        .arg(&script)
+        .current_dir(w.root())
+        .env("PATH", format!("{}:{inherited_path}", stub_dir.display()))
+        .output()
+        .expect("run the real MSRV pre-install script");
+    assert!(
+        output.status.success(),
+        "the MSRV pre-install script must succeed on every supported host shell — stdout: {} \
+         stderr: {}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+
+    let recorded = std::fs::read_to_string(&log).unwrap_or_default();
+    w.msrv_preinstall_invocations = Some(recorded.lines().map(str::to_string).collect());
+}
+
+#[then("it installs that floor's major-minor toolchain name")]
+fn then_preinstall_covers_major_minor(w: &mut GateWorld) {
+    let invocations = w
+        .msrv_preinstall_invocations
+        .as_ref()
+        .expect("invocations must be recorded by the When step");
+    assert!(
+        invocations
+            .iter()
+            .any(|call| call.starts_with("toolchain install 1.95 ")
+                || call == "toolchain install 1.95"),
+        "the pre-install must install the major-minor toolchain `1.95` that cargo-hack resolves \
+         a `1.95.0` floor to, otherwise parallel compat:min-version tasks race rustup for it: \
+         {invocations:?}"
+    );
+}
+
+#[then("it installs the patch-level toolchain name too")]
+fn then_preinstall_covers_patch_level(w: &mut GateWorld) {
+    let invocations = w
+        .msrv_preinstall_invocations
+        .as_ref()
+        .expect("invocations must be recorded by the When step");
+    assert!(
+        invocations
+            .iter()
+            .any(|call| call.starts_with("toolchain install 1.95.0 ")
+                || call == "toolchain install 1.95.0"),
+        "the pre-install must still install the exact declared floor `1.95.0`, so a direct \
+         `cargo +1.95.0` invocation stays race-free too: {invocations:?}"
+    );
+}
+
+/// Extracts the body of the `run: |` block belonging to the first step whose
+/// `name:` contains `step_name_fragment`, dedented to column zero so it can be
+/// executed directly.
+fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
+    let lines: Vec<&str> = action_yaml.lines().collect();
+    let name_idx = lines
+        .iter()
+        .position(|line| line.contains("name:") && line.contains(step_name_fragment))
+        .unwrap_or_else(|| {
+            panic!("the action must declare a step named like {step_name_fragment}")
+        });
+    let run_idx = lines[name_idx..]
+        .iter()
+        .position(|line| line.trim_start().starts_with("run: |"))
+        .map_or_else(
+            || panic!("step {step_name_fragment} must carry a `run: |` block"),
+            |offset| name_idx + offset,
+        );
+    let first_body = lines
+        .get(run_idx + 1)
+        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a non-empty run block"));
+    let body_indent = first_body.len() - first_body.trim_start().len();
+
+    let mut body = String::new();
+    for line in &lines[run_idx + 1..] {
+        if !line.trim().is_empty() && line.len() - line.trim_start().len() < body_indent {
+            break;
+        }
+        body.push_str(line.get(body_indent..).unwrap_or(""));
+        body.push('\n');
+    }
+    body
 }
 
 #[tokio::main]
