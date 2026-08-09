@@ -151,8 +151,9 @@ description"): AC-15's `apps/rhino-cli` byte-identity parity across `ose-public`
 both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were already merged by the time
 the gap was re-confirmed at cycle 7 of the PR-Review Maker→Fixer Cycle on `ose-public` #162, so
 nothing propagates automatically. A full manifest diff against both siblings' current `main` (not
-just `ose-primer`'s, which is what the raw review finding checked) found a **16-file union** —
-2 files diverge only against `ose-private` and were not in the review finding's 14-file list. See
+just `ose-primer`'s, which is what the raw review finding checked) found a **17-file union** — 15
+files diverge against `ose-primer`, 8 against `ose-private`, 6 overlap, and 1
+(`specs/apps/rhino/behavior/rhino-cli/gherkin/README.md`) was omitted from the cycle-7 count. See
 the AC-15 checkbox annotation in Phase 10 Gate below for the full file list and the filed follow-up
 tracking propagation. Opening propagation PRs in `ose-primer`/`ose-private` from this cycle was
 considered and rejected: both sibling PRs are already merged, this agent's write scope for a
@@ -912,15 +913,18 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
     ticked against a caveat. Both siblings' budgeted PRs (`ose-primer` #31, `ose-private` #30) were
     already merged by the time this gap was found, so re-verification at cycle 7 of the PR-Review
     Maker→Fixer Cycle on `ose-public` #162 found `apps/rhino-cli` byte-identity broken across a
-    **16-file union** (not 14 — the review thread's own reproduction command diffed only against
-    `ose-primer`'s manifest; a same-shape diff against `ose-private`'s manifest surfaces 2 further
-    files the `ose-primer`-only check missed: `apps/rhino-cli/src/commands/harness_generate_bindings.rs`
-    and `apps/rhino-cli/tests/gate_format_verify_wrappers.rs`). Full list, `apps/rhino-cli/src/`
-    unless noted: `application/doctor/tools.rs`, `application/parity.rs`, `commands/gate/run.rs`,
+    **17-file union** (not 14 — the cycle-7 reproduction command diffed only against `ose-primer`'s
+    manifest, surfacing 15 files there; a same-shape diff against `ose-private`'s manifest surfaces
+    8 files, 6 of which overlap the `ose-primer` set, for a 17-file union. Independently
+    re-reproduced at cycle 8 by diffing git blob OIDs for all 659 `parity-manifest.sha256` paths
+    directly, confirming 15/8/6/17). Full list, `apps/rhino-cli/src/` unless noted:
+    `application/doctor/tools.rs`, `application/parity.rs`, `commands/gate/run.rs`,
     `commands/gate/validate.rs`, `commands/harness_generate_bindings.rs`,
     `commands/md_validate_frontmatter_dates.rs`, `commands/repo_config_validate.rs`,
     `apps/rhino-cli/tests/{agents,cursor_binding,docs,gate_dispatch,gate_format_verify_wrappers,gate_specs,specs_tree}.rs`,
-    `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/{gate-declaration,gate-execution}.feature`.
+    `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/{gate-declaration,gate-execution}.feature`,
+    and `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md` (diverges against both siblings;
+    omitted from the cycle-7 count).
     Accepted-with-reason under this plan's already-authorized closure clause (§Delivery Boundaries'
     4th item, dated 2026-08-09) rather than reopening either already-merged sibling PR mid-cycle:
     propagation is filed as a follow-up rather than folded into this PR — see

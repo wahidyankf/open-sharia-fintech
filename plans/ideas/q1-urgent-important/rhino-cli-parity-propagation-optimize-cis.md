@@ -1,7 +1,7 @@
 # Propagate the optimize-cis-era `apps/rhino-cli` byte-identity drift to `ose-primer`/`ose-private`
 
 One-line summary: `apps/rhino-cli` byte-identity parity across `ose-public`/`ose-primer`/`ose-private`
-— a zero-carve-out MUST boundary — is currently broken across a 16-file union, and both sibling
+— a zero-carve-out MUST boundary — is currently broken across a 17-file union, and both sibling
 `optimize-cis` PRs are already merged, so nothing propagates it automatically.
 
 ## Problem / context
@@ -10,16 +10,18 @@ Measured on **2026-08-09** during cycle 7 of the PR-Review Maker→Fixer Cycle o
 (the `optimize-cis` plan's own PR), by diffing `apps/rhino-cli/parity-manifest.sha256` (659 entries)
 against both siblings' live `main` via the GitHub Contents API:
 
-- Against `ose-primer`: 14 files diverge.
-- Against `ose-private`: 7 files diverge, 5 of which overlap with the `ose-primer` set.
-- **Union across both siblings: 16 distinct files.** The original PR-review finding (`AR5`,
-  `pr-review-architecture-maker`) reproduced only the `ose-primer` diff and reported 14 — it did not
-  separately audit `ose-private`, so 2 files
+- Against `ose-primer`: 15 files diverge.
+- Against `ose-private`: 8 files diverge, 6 of which overlap with the `ose-primer` set.
+- **Union across both siblings: 17 distinct files.** The original PR-review finding (`AR5`,
+  `pr-review-architecture-maker`) reproduced only the `ose-primer` diff and reported 14 (later
+  corrected to 15) — it did not separately audit `ose-private`, so 2 files
   (`apps/rhino-cli/src/commands/harness_generate_bindings.rs`,
   `apps/rhino-cli/tests/gate_format_verify_wrappers.rs`) diverge only against `ose-private` and were
-  never named in the finding.
+  never named in the finding, and a 17th file
+  (`specs/apps/rhino/behavior/rhino-cli/gherkin/README.md`, diverging against both siblings) was
+  independently found during the cycle-8 PR-review re-verification.
 
-Full 16-file union (`apps/rhino-cli/` root implied unless noted):
+Full 17-file union (`apps/rhino-cli/` root implied unless noted):
 
 - `src/application/doctor/tools.rs`
 - `src/application/parity.rs`
@@ -37,6 +39,7 @@ Full 16-file union (`apps/rhino-cli/` root implied unless noted):
 - `tests/specs_tree.rs`
 - `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature`
 - `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature`
+- `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md`
 
 Root cause: cycle 6 of the same PR-review cycle fixed a `validate.rs` staleness finding in
 `ose-public` only (commit `891ef597a`), then regenerated `ose-public`'s own
@@ -70,9 +73,9 @@ either sibling's `rhino-cli` changes independently before this is closed.
 ## Proposed direction (sketch)
 
 - **Step 0 — reproduce.** Re-run the manifest diff against both siblings' current `main` (drift may
-  have grown since 2026-08-09) before assuming the 16-file list above is still exhaustive or still
+  have grown since 2026-08-09) before assuming the 17-file list above is still exhaustive or still
   accurate file-by-file.
-- **Step 1 — classify each file.** For each of the 16 files, determine which side is authoritative:
+- **Step 1 — classify each file.** For each of the 17 files, determine which side is authoritative:
   some are plainly this `optimize-cis` PR's own Phase 2-9 work that Phase 10 propagated and a
   sibling then diverged from post-merge; others may be the reverse. Do not assume `ose-public` wins
   by default.
@@ -86,7 +89,7 @@ either sibling's `rhino-cli` changes independently before this is closed.
 
 ## Rough scope & non-goals
 
-**In scope**: reproducing and classifying the 16-file drift; a propagation plan/PR pair per sibling
+**In scope**: reproducing and classifying the 17-file drift; a propagation plan/PR pair per sibling
 repo; re-verification of `parity manifest validate` across all three repos.
 
 **Out of scope**:
@@ -99,7 +102,7 @@ repo; re-verification of `parity manifest validate` across all three repos.
 
 ## Risks & open questions
 
-- Is the 16-file list still current, or has independent `rhino-cli` work in either sibling grown it
+- Is the 17-file list still current, or has independent `rhino-cli` work in either sibling grown it
   further since 2026-08-09? **(open — re-check at Step 0)**
 - For each file, which repo's version is actually correct? Naively copying `ose-public`'s version
   over both siblings risks reverting a sibling-side fix that never made it back upstream. **(open)**

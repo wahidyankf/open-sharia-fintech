@@ -118,3 +118,9 @@ measurement of the repo.
   and the promotion signal here — an inventory of the 40 cache entries — has not been gathered.
 - **M1, M3, M4, M8** — accepted as-is with the reasoning above; no follow-up filed. Each records a
   measured shortfall against a stated target rather than a silently rescoped one.
+- **AC-15 cross-repo parity** — filed as
+  [`plans/ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md`](../../ideas/q1-urgent-important/rhino-cli-parity-propagation-optimize-cis.md).
+  `apps/rhino-cli` byte-identity across `ose-public`, `ose-primer`, and `ose-private` does not
+  currently hold (see `delivery.md`'s Phase 10 Gate AC-15 annotation and §Delivery Boundaries' 4th
+  item for the full file list and reproduction). Filed as a follow-up rather than reopening either
+  already-merged sibling PR mid-cycle.
