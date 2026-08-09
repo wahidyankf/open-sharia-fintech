@@ -104,7 +104,7 @@ in a plan, a gate, or a PR, it is in scope.
 
 ## Related Documentation
 
-- [Acceptance clauses must be falsifiable](../workflow/test-driven-development.md) — a target that
+- [Acceptance clauses must be falsifiable](../quality/plan-anti-hallucination.md#absence-and-completeness-claims-hard) — a target that
   cannot fail is not a target; these rules are how you keep it from failing for the wrong reason.
 - [Mechanize Cross-File Invariants](./mechanize-cross-file-invariants.md) — the same instinct
   applied to rules rather than numbers.

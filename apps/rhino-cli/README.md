@@ -104,10 +104,12 @@ for the full behavior contract.
 
 A new scenario anywhere under
 [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/README.md)
-needs a step binding in **two** places, not one:
+needs updating in **two** places, not one:
 
-1. the relevant **unit-test module** (e.g. `src/commands/gate/emit.rs`'s `#[cfg(test)]` block), and
-2. **`tests/gate_specs.rs`** — the cucumber harness.
+1. the relevant **unit-test module** (e.g. `src/commands/gate/emit.rs`'s `#[cfg(test)]` block) — a
+   plain Rust unit test covering the same behavior, not a step binding, and
+2. **`tests/gate_specs.rs`** — the cucumber harness, the only place that carries actual
+   `#[given]`/`#[when]`/`#[then]` step bindings.
 
 The harness scans the entire feature directory regardless of which change a given scenario belongs
 to, so binding only the unit-test side leaves an undefined-step failure that surfaces on the next

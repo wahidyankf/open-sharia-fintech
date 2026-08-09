@@ -39,7 +39,9 @@ struct GateWorld {
     shim_target_dir: Option<TempDir>,
     shim_override_dir: Option<TempDir>,
     shim_override_bin: Option<PathBuf>,
+    shim_invalid_override: Option<PathBuf>,
     shim_gate_bin_mtime: Option<SystemTime>,
+    shim_stale_bin_mtime_before: Option<SystemTime>,
     shim_first_run: Option<Output>,
     workflow_yaml: Option<String>,
     build_rhino_publishes_artifact: Option<bool>,
@@ -73,7 +75,9 @@ impl GateWorld {
             shim_target_dir: None,
             shim_override_dir: None,
             shim_override_bin: None,
+            shim_invalid_override: None,
             shim_gate_bin_mtime: None,
+            shim_stale_bin_mtime_before: None,
             shim_first_run: None,
             workflow_yaml: None,
             build_rhino_publishes_artifact: None,
@@ -2837,6 +2841,16 @@ fn then_output_contains_group_summary(w: &mut GateWorld) {
         "a gate outside the selected group must not appear in the summary: {}",
         w.output
     );
+    // The fixture's excluded gate is `command: touch must-not-run.txt`,
+    // deliberately chosen so a leaked execution leaves a filesystem trace.
+    // Checking stdout alone only catches a leak that also prints a summary
+    // line for the excluded gate; a display-layer regression that filtered
+    // the summary line while still running the gate would pass the assertion
+    // above while the gate silently executed. Check the trace directly.
+    assert!(
+        !w.root().join("must-not-run.txt").exists(),
+        "a gate outside the selected group must not execute"
+    );
 }
 
 #[then("the failing gate id appears on a line marked FAIL")]
@@ -2988,6 +3002,53 @@ fn given_rhino_cli_bin_override(w: &mut GateWorld) {
     w.shim_override_dir = Some(dir);
 }
 
+#[given(
+    "the prebuilt gate-profile binary in target/ is older than the source tree it was built from"
+)]
+fn given_stale_prebuilt_binary(w: &mut GateWorld) {
+    let target_dir = TempDir::new().expect("create sandbox CARGO_TARGET_DIR");
+    let gate_dir = target_dir.path().join("gate");
+    std::fs::create_dir_all(&gate_dir).expect("create sandbox gate/ directory");
+    let placeholder = gate_dir.join("rhino-cli");
+    // A trivial executable stub, deliberately NOT the real binary — its
+    // distinguishing marker output proves whether the shim actually rebuilt
+    // it (tier 3) or silently kept serving it (the regression this scenario
+    // guards against).
+    std::fs::write(
+        &placeholder,
+        "#!/bin/sh\nprintf 'stale-placeholder-marker\\n'\nexit 0\n",
+    )
+    .expect("write stale placeholder binary");
+    make_executable(placeholder.clone());
+    // Backdate the placeholder's mtime far enough into the past that it
+    // predates every real file under apps/rhino-cli/src, Cargo.toml, and
+    // Cargo.lock — the shim's staleness check (`find ... -newer`) always
+    // compares against those real, un-sandboxable paths, since SRC_DIR is
+    // resolved relative to the shim script's own real location, not to
+    // CARGO_TARGET_DIR.
+    let backdated = std::time::UNIX_EPOCH + std::time::Duration::from_hours(24);
+    std::fs::OpenOptions::new()
+        .write(true)
+        .open(&placeholder)
+        .expect("open placeholder binary to backdate its mtime")
+        .set_modified(backdated)
+        .expect("backdate placeholder binary mtime");
+    w.shim_stale_bin_mtime_before = Some(backdated);
+    w.shim_target_dir = Some(target_dir);
+}
+
+#[given("the environment variable RHINO_CLI_BIN points at a path that does not exist")]
+fn given_rhino_cli_bin_invalid_override(w: &mut GateWorld) {
+    // Sandboxed so the fallthrough deterministically hits tier 3 (build)
+    // regardless of whatever the real apps/rhino-cli/target/gate/rhino-cli
+    // happens to contain on the machine running this test.
+    w.shim_target_dir = Some(TempDir::new().expect("create sandbox CARGO_TARGET_DIR"));
+    let dir = TempDir::new().expect("create RHINO_CLI_BIN invalid-override fixture directory");
+    let missing = dir.path().join("does-not-exist-rhino-cli");
+    w.shim_invalid_override = Some(missing);
+    w.shim_override_dir = Some(dir);
+}
+
 #[when("a generated gate command runs through the resolver shim")]
 fn when_resolver_shim_runs(w: &mut GateWorld) {
     let mut command = Command::new(rhino_bin_shim_path());
@@ -2999,6 +3060,9 @@ fn when_resolver_shim_runs(w: &mut GateWorld) {
         command
             .env("RHINO_CLI_BIN", bin)
             .env("PATH", path_without_cargo_directory());
+    }
+    if let Some(invalid_bin) = &w.shim_invalid_override {
+        command.env("RHINO_CLI_BIN", invalid_bin);
     }
     w.shim_first_run = Some(command.output().expect("run resolver shim"));
 }
@@ -3070,6 +3134,64 @@ fn then_subsequent_invocation_reuses_binary(w: &mut GateWorld) {
     assert_eq!(
         mtime_before, mtime_after,
         "a second invocation must reuse the already-built binary, not rebuild it"
+    );
+}
+
+#[then("the shim rebuilds the binary before executing the requested gate")]
+fn then_shim_rebuilds_stale_binary(w: &mut GateWorld) {
+    let output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    assert!(
+        output.status.success(),
+        "resolver shim must rebuild a stale binary then execute successfully: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let target_dir = w
+        .shim_target_dir
+        .as_ref()
+        .expect("sandbox target dir configured");
+    let built_binary = target_dir.path().join("gate/rhino-cli");
+    let mtime_after = std::fs::metadata(&built_binary)
+        .expect("read sandbox binary metadata after invocation")
+        .modified()
+        .expect("read sandbox binary mtime after invocation");
+    let mtime_before = w
+        .shim_stale_bin_mtime_before
+        .expect("captured stale placeholder mtime before invocation");
+    assert!(
+        mtime_after > mtime_before,
+        "a stale prebuilt binary must be rebuilt (newer mtime), not silently reused: \
+         before={mtime_before:?} after={mtime_after:?}"
+    );
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        !stdout.contains("stale-placeholder-marker"),
+        "the shim must not silently execute the stale placeholder binary: {stdout}"
+    );
+}
+
+#[then("the shim falls back to discovery instead of the invalid override")]
+fn then_shim_falls_back_to_discovery(w: &mut GateWorld) {
+    let output = w
+        .shim_first_run
+        .as_ref()
+        .expect("resolver shim invocation recorded");
+    assert!(
+        output.status.success(),
+        "resolver shim must fall back to discovery when RHINO_CLI_BIN is invalid, not fail: {}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let target_dir = w
+        .shim_target_dir
+        .as_ref()
+        .expect("sandbox target dir configured");
+    let built_binary = target_dir.path().join("gate/rhino-cli");
+    assert!(
+        built_binary.is_file(),
+        "an invalid RHINO_CLI_BIN must fall through to tier 2/3 discovery, which must build \
+         into the resolved CARGO_TARGET_DIR"
     );
 }
 

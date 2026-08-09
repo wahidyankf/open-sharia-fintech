@@ -11,6 +11,7 @@
 #   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
 harness:
   # Authoritative harness registry — all 11 supported coding-agent harnesses.
@@ -367,6 +368,25 @@ env-injection:
       environments: []
 
 gates:
+  # Declared quality-gate registry. Fields per entry:
+  #   id           — stable, unique gate identifier
+  #   type         — check (verifies content) or mutation (rewrites content)
+  #   command      — leaf command run for this gate
+  #   kind         — command runner: rhino-cli | external | nx
+  #   doctor-tools — ordered Doctor tool ids needed before this gate can run (optional)
+  #   wiring       — execution-wiring override, e.g. hand-wired (optional; see below)
+  #   restages     — whether a mutation must re-stage its generated output (optional, default false)
+  #   args         — command-specific arguments such as exclusion lists (optional)
+  #   surfaces     — per-surface ({commit-msg,pre-commit,pre-push,ci}) execution scope; required
+  #   carve-out    — exemption from the cross-surface composition rule (optional)
+  #   verifies     — id of the mutation gate this check verifies (optional)
+  #   category     — mutation category, e.g. formatter (optional)
+  #   ci-group     — CI job group this gate belongs to (DD-3). REQUIRED for every gate whose
+  #                  `surfaces` includes `ci` — `gate validate` hard-errors on a `ci`-surface gate
+  #                  with no declared `ci-group`. Read by `gate list --by-group` (bucketing) and
+  #                  `gate run --group` (dispatch); a gate with `wiring: hand-wired` is excluded
+  #                  from its `ci-group`'s `--group` dispatch in every output format — it runs in
+  #                  its own dedicated CI workflow job instead.
   # ---------------------------------------------------------------- commit-msg
   - id: commitlint
     type: check

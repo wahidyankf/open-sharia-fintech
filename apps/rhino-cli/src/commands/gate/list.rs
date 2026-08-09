@@ -115,6 +115,22 @@ pub fn run_at_root(
         .filter(|gate| gate.surfaces.contains_key(&surface))
         .collect::<Vec<_>>();
     validate_gate_ids(&surface_gates, None)?;
+
+    if by_group {
+        // Hand-wired gates are excluded from every grouped output format,
+        // not just JSON: they are dispatched by their own dedicated CI
+        // workflow job rather than by `--group`, matching `gate run
+        // --group`'s `resolve_group_gates` (run.rs), which filters them
+        // unconditionally. Without this, `--by-group` in text format would
+        // advertise a group membership `--group` cannot actually execute.
+        let group_gates = surface_gates
+            .iter()
+            .copied()
+            .filter(|gate| gate.wiring.as_ref() != Some(&GateWiring::HandWired))
+            .collect::<Vec<_>>();
+        return write_grouped(&group_gates, output_format, writer);
+    }
+
     let visible_gates = surface_gates
         .iter()
         .copied()
@@ -123,10 +139,6 @@ pub fn run_at_root(
                 || gate.wiring.as_ref() != Some(&GateWiring::HandWired)
         })
         .collect::<Vec<_>>();
-
-    if by_group {
-        return write_grouped(&visible_gates, output_format, writer);
-    }
 
     let entries: Vec<GateListEntry> = visible_gates
         .iter()
@@ -679,6 +691,96 @@ fn format_text_includes_hand_wired() {
     let output = String::from_utf8(output).unwrap();
     assert!(output.contains("test-quick"));
     assert!(output.contains("hand-wired"));
+}
+
+/// Regression test for the finding that `gate list --by-group` (text) and
+/// `gate run --group` disagreed on group membership: the text path's
+/// hand-wired exclusion was gated on JSON output only, so `--by-group` in
+/// text format advertised a group `--group` could not actually execute.
+/// This mirrors `run.rs`'s `resolve_group_gates`, which filters hand-wired
+/// gates unconditionally regardless of `--format`.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_text_by_group_excludes_hand_wired_gates() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: auto-dispatched\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+            "  - id: hand-wired-gate\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    run_at_root(repo.path(), "ci", OutputFormat::Text, true, &mut output).unwrap();
+    let output = String::from_utf8(output).unwrap();
+    assert!(
+        output.contains("auto-dispatched") && !output.contains("hand-wired-gate"),
+        "text --by-group must exclude the hand-wired gate from its group's membership, matching \
+         `gate run --group`'s resolve_group_gates: {output}"
+    );
+}
+
+/// Regression test for the coverage gap the same finding named: a group
+/// whose members are **all** hand-wired (like the live `rust` ci-group) must
+/// vanish entirely from `--by-group` output in every format, matching
+/// `gate run --group`'s "matched no gates" error — not merely have its
+/// hand-wired members individually filtered while the group id still
+/// appears.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn format_text_by_group_omits_group_that_is_entirely_hand_wired() {
+    let repo = tempfile::TempDir::new().unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: hand-wired-only\n",
+            "    type: check\n",
+            "    command: test:quick\n",
+            "    kind: nx\n",
+            "    wiring: hand-wired\n",
+            "    ci-group: all-hand-wired\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-projects }\n",
+            "  - id: mixed-group-gate\n",
+            "    type: check\n",
+            "    command: true\n",
+            "    kind: external\n",
+            "    ci-group: sample-group\n",
+            "    surfaces:\n",
+            "      ci: { scope: other }\n",
+        ),
+    )
+    .unwrap();
+
+    let mut output = Vec::new();
+    run_at_root(repo.path(), "ci", OutputFormat::Text, true, &mut output).unwrap();
+    let output = String::from_utf8(output).unwrap();
+    assert!(
+        !output.contains("all-hand-wired") && !output.contains("hand-wired-only"),
+        "a group whose members are entirely hand-wired must not appear in --by-group output at \
+         all — a contributor reading it must never see a group `gate run --group` would then \
+         reject with \"matched no gates\": {output}"
+    );
+    assert!(output.contains("sample-group") && output.contains("mixed-group-gate"));
 }
 
 #[cfg(test)]

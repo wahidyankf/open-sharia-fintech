@@ -62,9 +62,16 @@ jobs:
 
   format:
     name: Auto-format affected (lint-staged)
+    needs: build-rhino
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      # Every rhino-bin.sh call in this job — including the ones inside
+      # lint-staged's own `repo-config.yml`/`*.md`/`*.feature` commands —
+      # resolves this prebuilt `--profile gate` artifact at tier 1 instead
+      # of falling back to a from-source `cargo build`/`cargo run` compile.
+      RHINO_CLI_BIN: ${{ github.workspace }}/apps/rhino-cli/target/gate/rhino-cli
     steps:
       - uses: actions/checkout@v6
         with:
@@ -72,9 +79,14 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      - uses: actions/download-artifact@v4
+        with:
+          name: rhino-cli-gate-binary
+          path: apps/rhino-cli/target/gate
+      - run: chmod +x apps/rhino-cli/target/gate/rhino-cli
       - name: Provision registry-declared pre-commit tools
         run: |
-          tools=$(cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=pre-commit --format=json |
+          tools=$(apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=json |
             jq -r '[.[] | .doctor_tools[]] | unique | join(",")')
           if [ -n "$tools" ]; then
             npm run doctor -- --fix --tools "$tools"
@@ -100,12 +112,10 @@ jobs:
 
       - name: Verify affected formatting on main
         if: github.event_name == 'push'
-        run: |
-          cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate list --surface=ci --format=json |
-            jq -r '.[] | select(.id | startswith("format-verify-")) | .id' |
-            while IFS= read -r gate_id; do
-              cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate run --surface=ci --only="$gate_id"
-            done
+        # Runs every formatting-verify gate as a single --group dispatch
+        # instead of the pre-optimization one-at-a-time --only loop, mirroring
+        # every other CI surface's group-based invocation.
+        run: apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=ci --group=formatting-verify
 
   build-rhino:
     name: Build rhino-cli (gate profile)
@@ -128,6 +138,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
+        with:
+          # `enumerate` only lists gate groups via the shim (RHINO_CLI_BIN
+          # already resolves to the downloaded binary at line 138, so
+          # rhino-bin.sh never falls back to cargo/node); jq is
+          # runner-provided. No npm-managed tool is needed here.
+          run-npm-ci: false
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
