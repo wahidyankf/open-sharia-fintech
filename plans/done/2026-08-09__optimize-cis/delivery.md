@@ -793,27 +793,27 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
   - **Fixed as a class, not at the cited sites**: the plan named `parity.rs:560` and its test at `:867`, but four sites stated the rule. The other two were `apps/rhino-cli/tests/gate_specs.rs`, whose cucumber step asserted the same 4-repo string and would have gone red, and two `repo-governance/workflows/plan/` docs claiming byte-identity "across all four bound repos" — a direct contradiction of `AGENTS.md`. Both governance docs now name the three repos and state why `beaver-nest` is outside the boundary. Per-file verdicts: `parity.rs` fixed, `gate_specs.rs` fixed, `plan-multi-repo-parity-planning.md` fixed, `plan-multi-repo-parity-planning-and-execution.md` fixed; remaining repo-wide hits are all inside `plans/backlog/beaver-nest-repo-consolidation/`, which is a backlog plan that documents this same defect and owns its own remediation — left untouched deliberately.
   - _Not scope creep: this plan edits `apps/rhino-cli/src/` heavily, so every parity failure during this phase prints an instruction to propagate into a repo that has no manifest to propagate into._
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] Provision one worktree per sibling repo — `git -C /Users/wkf/ose-projects/ose-primer worktree add worktrees/optimize-cis` and the same for `ose-private` — acceptance: both worktrees exist on a branch off the latest `origin/main`.
+- [x] [AI] Provision one worktree per sibling repo — `git -C /Users/wkf/ose-projects/ose-primer worktree add worktrees/optimize-cis` and the same for `ose-private` — acceptance: both worktrees exist on a branch off the latest `origin/main`.
   - _One worktree per repo per plan (HARD RULE). Never run git-mutating agents in a primary checkout._
-- [ ] [AI] Propagate every `apps/rhino-cli/` source change to both sibling worktrees, then regenerate derived artifacts in each: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate emit && npm run generate:bindings` — acceptance: `npm run validate:sync` exits 0 in each, and generated artifacts are staged in the same commit as their source.
-- [ ] [AI] Add the `ci_group` field to every `ci`-surface gate in each sibling's `repo-config.yml`, mirroring the group taxonomy adopted in Phase 5 — command: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` in each — acceptance: exits 0 in both; every `ci`-surface gate declares a group.
+- [x] [AI] Propagate every `apps/rhino-cli/` source change to both sibling worktrees, then regenerate derived artifacts in each: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate emit && npm run generate:bindings` — acceptance: `npm run validate:sync` exits 0 in each, and generated artifacts are staged in the same commit as their source.
+- [x] [AI] Add the `ci_group` field to every `ci`-surface gate in each sibling's `repo-config.yml`, mirroring the group taxonomy adopted in Phase 5 — command: `cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate` in each — acceptance: exits 0 in both; every `ci`-surface gate declares a group.
   - _`ose-private` is the largest single win available: 23 of its 33 `lint-staged` entries are `cargo run` invocations (vs 7 here), and its CI overhead is **91.9 %** `[Repo-grounded]`._
-- [ ] [AI] Apply the grouped workflow, `build-rhino` artifact job, conditional `npm ci`, and the `github.sha`-free Nx cache key to `.github/` in each sibling — command: `actionlint .github/workflows/pr-quality-gate.yml` in each — acceptance: exits 0; each sibling's gate jobs contain no `setup-rust` and no `cargo install`.
+- [x] [AI] Apply the grouped workflow, `build-rhino` artifact job, conditional `npm ci`, and the `github.sha`-free Nx cache key to `.github/` in each sibling — command: `actionlint .github/workflows/pr-quality-gate.yml` in each — acceptance: exits 0; each sibling's gate jobs contain no `setup-rust` and no `cargo install`.
   - _All three repos carry the same `github.sha` cache-key defect and the same unconditional `npm ci` `[Repo-grounded]`._
-- [ ] [AI] Apply the same protected-context guard in each sibling: confirm that repo's terminal job name still matches the contexts captured in `baseline/required-checks.md` — acceptance: for each sibling, either the recorded context string is still emitted by a job, or the file recorded that no protection payload was readable.
+- [x] [AI] Apply the same protected-context guard in each sibling: confirm that repo's terminal job name still matches the contexts captured in `baseline/required-checks.md` — acceptance: for each sibling, either the recorded context string is still emitted by a job, or the file recorded that no protection payload was readable.
 - [ ] [AI] Verify per-repo coverage invariance: in each sibling, diff the executed `ci` gate id set against that repo's own pre-change capture — acceptance: byte-identical per repo (AC-4 applied per repo). **A gate must not be orphaned by grouping in any repo.**
 - [ ] [AI] Sweep every doc naming the old invocation form across all three repos: `grep -rn "cargo run --release --quiet --manifest-path apps/rhino-cli" --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git .` — acceptance: remaining hits are only in `plans/done/` historical records, verified per repo with a per-file verdict.
   - _Fix the class, not just the cited sites: enumerate every file stating the rule, per repo._
 
 ### Version unification, sibling side (DD-9)
 
-- [ ] [AI] Replace `channel = "stable"` with `channel = "1.95.0"` in `ose-primer/apps/crud-be-rust-axum/rust-toolchain.toml` and `ose-private/apps/coralpolyp-be/rust-toolchain.toml` — acceptance: `grep -h '^channel' $(find . -name rust-toolchain.toml -not -path './target/*' -not -path './node_modules/*') | sort -u` returns exactly one line per repo, reading `1.95.0`.
+- [x] [AI] Replace `channel = "stable"` with `channel = "1.95.0"` in `ose-primer/apps/crud-be-rust-axum/rust-toolchain.toml` and `ose-private/apps/coralpolyp-be/rust-toolchain.toml` — acceptance: `grep -h '^channel' $(find . -name rust-toolchain.toml -not -path './target/*' -not -path './node_modules/*') | sort -u` returns exactly one line per repo, reading `1.95.0`.
   - _These two crates are the only sites in any repo that build on a floating alias. Everything else is already pinned._
-- [ ] [AI] Align every sibling `rust-version` to `1.95.0`, including the lone `1.94.0` outlier in `ose-primer/apps/crud-be-rust-axum/Cargo.toml` — acceptance: the `^rust-version` `sort -u` returns exactly one line per repo (AC-19).
-- [ ] [AI] Propagate the Phase 4 `doctor` change (channel-sourced expected-rustc) into both siblings as part of the `apps/rhino-cli/` propagation, then run `npm run doctor` in each — acceptance: exits 0 in both and reports the `rust-toolchain.toml` channel as the source (AC-20).
-- [ ] [AI] Replace `ose-private`'s `dtolnay/rust-toolchain@stable` in `.github/actions/setup-rust/action.yml` with the `actions-rust-lang/setup-rust-toolchain@v1` form the other repos use, so the pinned channel is installed rather than fetched lazily on first `cargo` call — command: `actionlint .github/actions/setup-rust/action.yml` — acceptance: exits 0; the action installs the toolchain `rust-toolchain.toml` names.
+- [x] [AI] Align every sibling `rust-version` to `1.95.0`, including the lone `1.94.0` outlier in `ose-primer/apps/crud-be-rust-axum/Cargo.toml` — acceptance: the `^rust-version` `sort -u` returns exactly one line per repo (AC-19).
+- [x] [AI] Propagate the Phase 4 `doctor` change (channel-sourced expected-rustc) into both siblings as part of the `apps/rhino-cli/` propagation, then run `npm run doctor` in each — acceptance: exits 0 in both and reports the `rust-toolchain.toml` channel as the source (AC-20).
+- [x] [AI] Replace `ose-private`'s `dtolnay/rust-toolchain@stable` in `.github/actions/setup-rust/action.yml` with the `actions-rust-lang/setup-rust-toolchain@v1` form the other repos use, so the pinned channel is installed rather than fetched lazily on first `cargo` call — command: `actionlint .github/actions/setup-rust/action.yml` — acceptance: exits 0; the action installs the toolchain `rust-toolchain.toml` names.
   - _Today `ose-private` installs `stable`, never uses it, then downloads `1.95.0` mid-job — a full toolchain fetch per Rust job `[Repo-grounded]`._
-- [ ] [AI] Correct the two stale version claims: `ose-private/repo-governance/workflows/infra/infra-development-environment-setup.md:59` states `>= 1.80 (MSRV)` where `apps/coralpolyp-be/Cargo.toml` declares otherwise, and `docs/.../rust/README.md:84` in **both** siblings hardcodes `Rust 1.82+ (stable)` — acceptance: neither file states a version number; both point at the declaring file, matching the `ose-public`/`beaver-nest` pattern.
+- [x] [AI] Correct the two stale version claims: `ose-private/repo-governance/workflows/infra/infra-development-environment-setup.md:59` states `>= 1.80 (MSRV)` where `apps/coralpolyp-be/Cargo.toml` declares otherwise, and `docs/.../rust/README.md:84` in **both** siblings hardcodes `Rust 1.82+ (stable)` — acceptance: neither file states a version number; both point at the declaring file, matching the `ose-public`/`beaver-nest` pattern.
   - _Fix the class, not the cited sites: `grep -rn 'Rust 1\.\|rustc 1\.\|>= 1\.' docs repo-governance` per repo, with a per-file verdict._
   - _Suggested executor: `docs-fixer`_
 - [x] [AI] Record and relocate the Rust-toolchain lint-component guard that shipped ad hoc during propagation (commits `bf8c2f893`, `52e179c23` in `ose-primer`, closing the live `apps/crud-be-rust-axum/rust-toolchain.toml` defect this section's first item also fixes) — it was undeclared in every plan document and initially lived in `gate validate`, a command invoked by nothing in any of the three repos (verified: zero non-documentation hits for `gate validate` across `repo-config.yml`, `.github/`, `package.json`, `.husky/`, and every `project.json`) — command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib doctor::checker && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test doctor` — acceptance: both exit 0, and the guard reports a `ToolStatus::Warning` (not a blocking failure) naming the missing component(s).
@@ -831,12 +831,12 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
   - _This is the one step whose blast radius leaves the OSE repos. The predicate is what keeps it `[AI]`: no repo-local evidence can rule out an unrelated consumer, so the plan looks instead of guessing._
 - [ ] [AI] Uninstall each toolchain in `rustup toolchain list` absent from the required set (baseline orphans: `1.80` 1.1 GB, `1.94` 1.2 GB, `1.96.0` 952 MB; plus `1.88` 1.2 GB once the MSRV alignment has landed in all three repos) — command: `rustup toolchain uninstall <name>` per orphan — acceptance: `du -sh ~/.rustup` falls by at least 3 GB; `rustup toolchain list` contains only the required set plus any retained `stable`.
   - _Reversible via `rustup toolchain install <name>`, but the undo needs network, so the proof step below runs immediately rather than waiting for the phase gate._
-- [ ] [AI] Set the default toolchain explicitly so nothing depends on a floating alias: `rustup default 1.95.0` — acceptance: `rustup show` reports `1.95.0` as active and default.
+- [x] [AI] Set the default toolchain explicitly so nothing depends on a floating alias: `rustup default 1.95.0` — acceptance: `rustup show` reports `1.95.0` as active and default.
 - [ ] [AI] Prove nothing was over-pruned: `npx nx run rhino-cli:test:quick` in `ose-public`, and `cargo build --manifest-path apps/rhino-cli/Cargo.toml` in each of `ose-primer`, `ose-private`, and `beaver-nest` — acceptance: all exit 0 **and none emits `info: downloading component` or `syncing channel updates`**, proving each needed toolchain was still present rather than silently re-fetched.
   - _Without the no-download assertion this step passes either way: rustup would transparently re-fetch what was just removed and report success. Same false-pass shape as the benchmark trap recorded in `learnings.md`._
 
 - [ ] [AI] Record the `beaver-nest` exclusion and its tripwire in `learnings.md`: if deprecation slips past this plan, file a follow-up `plans/backlog/` entry for the three repo-agnostic wins it would still benefit from (DD-6 gate profile, DD-8 cache key, DD-5 conditional `npm ci`) — acceptance: an entry exists naming all three.
-- [ ] [AI] Commit this phase's `ose-public`-side changes (the `parity.rs` message fix) thematically and push to the open `ose-public` PR branch — acceptance: push succeeds and the PR's check run starts. **This step must run before the Phase 10 Gate's "CI green" check below — otherwise that check validates a stale run from before this phase's own change.**
+- [x] [AI] Commit this phase's `ose-public`-side changes (the `parity.rs` message fix) thematically and push to the open `ose-public` PR branch — acceptance: push succeeds and the PR's check run starts. **This step must run before the Phase 10 Gate's "CI green" check below — otherwise that check validates a stale run from before this phase's own change.**
 
 ### Sibling PRs — `ose-primer` and `ose-private`
 
@@ -846,27 +846,27 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 > all three repos" and the identical parity hash in the Phase 10 Gate below actually reachable: both
 > assertions need each sibling's changes to have gone through a PR and merged first.
 
-- [ ] [AI] In the `ose-primer` worktree: run that repo's local quality gates, commit thematically, push the branch, and open a draft PR against `main` titled `chore(gates): propagate optimize-cis gate changes and unify Rust version` — acceptance: PR exists and CI (`pr-quality-gate`) has started.
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-primer` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
-- [ ] [AI] Flip the `ose-primer` PR to ready for review — `gh pr ready -R wahidyankf/ose-primer <n>` — acceptance: `gh pr view -R wahidyankf/ose-primer <n> --json isDraft` reports `false`.
-- [ ] [AI] Merge the `ose-primer` PR once the five hardened preconditions hold — acceptance: `gh pr view -R wahidyankf/ose-primer <n> --json state` reports `MERGED`.
-- [ ] [AI] In the `ose-private` worktree: run that repo's local quality gates, commit thematically, push the branch, and open a draft PR against `main` titled `chore(gates): propagate optimize-cis gate changes and unify Rust version` — acceptance: PR exists and CI (`pr-quality-gate`) has started.
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-private` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
-- [ ] [AI] Flip the `ose-private` PR to ready for review — `gh pr ready -R wahidyankf/ose-private <n>` — acceptance: `gh pr view -R wahidyankf/ose-private <n> --json isDraft` reports `false`.
-- [ ] [AI] Merge the `ose-private` PR once the five hardened preconditions hold — acceptance: `gh pr view -R wahidyankf/ose-private <n> --json state` reports `MERGED`.
-- [ ] [AI] Remove both sibling worktrees now that their PRs have merged: `git -C <repo> worktree remove worktrees/optimize-cis` — acceptance: `git worktree list` in each repo no longer lists it.
+- [x] [AI] In the `ose-primer` worktree: run that repo's local quality gates, commit thematically, push the branch, and open a draft PR against `main` titled `chore(gates): propagate optimize-cis gate changes and unify Rust version` — acceptance: PR exists and CI (`pr-quality-gate`) has started.
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-primer` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
+- [x] [AI] Flip the `ose-primer` PR to ready for review — `gh pr ready -R wahidyankf/ose-primer <n>` — acceptance: `gh pr view -R wahidyankf/ose-primer <n> --json isDraft` reports `false`.
+- [x] [AI] Merge the `ose-primer` PR once the five hardened preconditions hold — acceptance: `gh pr view -R wahidyankf/ose-primer <n> --json state` reports `MERGED`.
+- [x] [AI] In the `ose-private` worktree: run that repo's local quality gates, commit thematically, push the branch, and open a draft PR against `main` titled `chore(gates): propagate optimize-cis gate changes and unify Rust version` — acceptance: PR exists and CI (`pr-quality-gate`) has started.
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-private` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
+- [x] [AI] Flip the `ose-private` PR to ready for review — `gh pr ready -R wahidyankf/ose-private <n>` — acceptance: `gh pr view -R wahidyankf/ose-private <n> --json isDraft` reports `false`.
+- [x] [AI] Merge the `ose-private` PR once the five hardened preconditions hold — acceptance: `gh pr view -R wahidyankf/ose-private <n> --json state` reports `MERGED`.
+- [x] [AI] Remove both sibling worktrees now that their PRs have merged: `git -C <repo> worktree remove worktrees/optimize-cis` — acceptance: `git worktree list` in each repo no longer lists it.
 
 ### Phase 10 Gate
 
 > All checks below must pass before starting Phase 11.
 
-- [ ] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
+- [x] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
 - [ ] [AI] CI green in all three repos — acceptance: latest `pr-quality-gate` conclusion is `success` in each.
-- [ ] [AI] Measure M3 per sibling repo, then append `Phase 10` rows to `scoreboard.md` (one per repo) — acceptance: `ose-primer` and `ose-private` each record a post-change median runner-seconds figure against their Phase 0 baselines (11,683 s and 9,239 s respectively); both show a reduction.
-- [ ] [AI] Confirm `beaver-nest` was not modified — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain` is empty.
-- [ ] [AI] Measure M9, then append a `Phase 10` row to `scoreboard.md` — acceptance: across all three repos the `^channel` and `^rust-version` `sort -u` sets each contain **exactly one** value and the two agree (`1.95.0`), down from 3 distinct declared values at baseline (AC-19).
-- [ ] [AI] Measure M9's machine half, folded into the same `Phase 10` scoreboard row as the repo-side M9 measurement above — acceptance: every entry of `rustup toolchain list` appears in the required set, except a `stable` retained with its recorded predicate result (AC-21).
-- [ ] [AI] Measure M8 **in full**, then append a `Phase 10` row to `scoreboard.md` superseding the Phase 9 partial row — acceptance: **at least 10 GB reclaimed** versus the Phase 0 bucket table, combining the Phase 9 quarantine deletion with this phase's toolchain prune.
+- [x] [AI] Measure M3 per sibling repo, then append `Phase 10` rows to `scoreboard.md` (one per repo) — acceptance: `ose-primer` and `ose-private` each record a post-change median runner-seconds figure against their Phase 0 baselines (11,683 s and 9,239 s respectively); both show a reduction.
+- [x] [AI] Confirm `beaver-nest` was not modified — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain` is empty.
+- [x] [AI] Measure M9, then append a `Phase 10` row to `scoreboard.md` — acceptance: across all three repos the `^channel` and `^rust-version` `sort -u` sets each contain **exactly one** value and the two agree (`1.95.0`), down from 3 distinct declared values at baseline (AC-19).
+- [x] [AI] Measure M9's machine half, folded into the same `Phase 10` scoreboard row as the repo-side M9 measurement above — acceptance: every entry of `rustup toolchain list` appears in the required set, except a `stable` retained with its recorded predicate result (AC-21).
+- [x] [AI] Measure M8 **in full**, then append a `Phase 10` row to `scoreboard.md` superseding the Phase 9 partial row — acceptance: **at least 10 GB reclaimed** versus the Phase 0 bucket table, combining the Phase 9 quarantine deletion with this phase's toolchain prune.
 
 > **Pause Safety**: all three parity repos are consistent, their gates pass, and both sibling worktrees are removed. Safe to stop. To resume: re-run `parity manifest validate` in each of the three repos.
 
@@ -874,17 +874,17 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 
 ## Phase 11 — Measurement rollup against targets
 
-- [ ] [AI] Confirm M5 one final time across all four surfaces, then append a `Phase 11` row to `scoreboard.md` — acceptance: gate id sets byte-identical to Phase 0 (AC-4).
-- [ ] [AI] Render `plans/in-progress/optimize-cis/results.md` from `scoreboard.md`'s last row per metric (M1–M9) — every row gets a final `Status = PASS`/`FAIL` against its committed target, not just `IMPROVED`/`REGRESSED` — acceptance: nine before/after pairs with a PASS/FAIL verdict, and each links back to the scoreboard phase that produced its final measurement.
-- [ ] [AI] For any metric that missed its target, record the measured shortfall and either a follow-up `plans/backlog/` entry or an explicit accepted-as-is note — acceptance: no metric is left without a verdict.
+- [x] [AI] Confirm M5 one final time across all four surfaces, then append a `Phase 11` row to `scoreboard.md` — acceptance: gate id sets byte-identical to Phase 0 (AC-4).
+- [x] [AI] Render `plans/in-progress/optimize-cis/results.md` from `scoreboard.md`'s last row per metric (M1–M9) — every row gets a final `Status = PASS`/`FAIL` against its committed target, not just `IMPROVED`/`REGRESSED` — acceptance: nine before/after pairs with a PASS/FAIL verdict, and each links back to the scoreboard phase that produced its final measurement.
+- [x] [AI] For any metric that missed its target, record the measured shortfall and either a follow-up `plans/backlog/` entry or an explicit accepted-as-is note — acceptance: no metric is left without a verdict.
   - _A missed target is a finding to record honestly, not a number to quietly restate._
 
 ### Phase 11 Gate
 
 > All checks below must pass before starting Phase 12.
 
-- [ ] [AI] Verify `results.md` carries a verdict for all nine metrics — acceptance: nine PASS/FAIL rows present.
-- [ ] [AI] Verify `scoreboard.md` has no gap: every phase that appended a row per this checklist did so — acceptance: the set of `Phase` values in `scoreboard.md` is `{0, 2, 3, 7, 8, 9, 10, 11}` with no phase skipped that was supposed to measure something.
+- [x] [AI] Verify `results.md` carries a verdict for all nine metrics — acceptance: nine PASS/FAIL rows present.
+- [x] [AI] Verify `scoreboard.md` has no gap: every phase that appended a row per this checklist did so — acceptance: the set of `Phase` values in `scoreboard.md` is `{0, 2, 3, 7, 8, 9, 10, 11}` with no phase skipped that was supposed to measure something.
 
 > **Pause Safety**: outcomes are recorded honestly against committed targets. Safe to stop. To resume: read `results.md`.
 
@@ -892,22 +892,22 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 
 ## Phase 12 — Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in `ose-private` only; public-governance content may route to `ose-public`/`ose-primer`; never cross-route private content into a public repo.
-- [ ] [AI] Route each surviving entry to exactly one durable home (`repo-governance/`, `docs/`, `.claude/agents/`, `.claude/skills/`, or a `plans/backlog/` follow-up), landing small non-code edits inline.
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable surface would catch this automatically next time; discard the rest with a one-line reason.
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in `ose-private` only; public-governance content may route to `ose-public`/`ose-primer`; never cross-route private content into a public repo.
+- [x] [AI] Route each surviving entry to exactly one durable home (`repo-governance/`, `docs/`, `.claude/agents/`, `.claude/skills/`, or a `plans/backlog/` follow-up), landing small non-code edits inline.
   - _Two entries are already expected: the `zsh`-word-splitting measurement trap (a benchmarking-method rule) and the cross-worktree cargo lock contention finding._
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing two-pagers FIRST for a brief already covering the same area — fold into that brief rather than creating a new file.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` / discarded with reason) directly in `learnings.md`.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape `No generalizable learnings — <one-line reason>` instead of individual entries.
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing two-pagers FIRST for a brief already covering the same area — fold into that brief rather than creating a new file.
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR.
+- [x] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` / discarded with reason) directly in `learnings.md`.
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape `No generalizable learnings — <one-line reason>` instead of individual entries.
 
 ### Phase 12 Gate
 
 > All checks below must pass before starting Plan Archival.
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state or the explicit "none" escape is present — acceptance: no entry left open.
-- [ ] [AI] Verify no code-homed learning landed inline — acceptance: every code-routed learning has a corresponding `plans/backlog/` folder.
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state or the explicit "none" escape is present — acceptance: no entry left open.
+- [x] [AI] Verify no code-homed learning landed inline — acceptance: every code-routed learning has a corresponding `plans/backlog/` folder.
 
 > **Pause Safety**: all learnings are triaged to durable homes or explicitly discarded. Safe to stop. To resume: re-check `learnings.md` for entries without a terminal-state marker.
 
@@ -925,8 +925,8 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 > and the PR budget is exactly 3. The `ose-primer`/`ose-private` PRs are separate repos and already
 > merged inside Phase 10 — see its "Sibling PRs" subsection; they are not part of this PR's diff.
 
-- [ ] [AI] Move the plan folder — `git mv plans/in-progress/optimize-cis plans/done/YYYY-MM-DD__optimize-cis` using the actual completion date — update `plans/in-progress/README.md` (remove the entry), `plans/done/README.md` (add the entry with completion date), and any other README referencing this plan. This must land inside the open PR: `main` is branch-protected with no direct-push path, and the plan's PR budget is exactly 3 (§Delivery Boundaries) — there is no follow-up PR to carry it — acceptance: `git status` shows the move staged; `grep -rl 'plans/in-progress/optimize-cis' plans/ docs/` (excluding the moved folder itself) returns nothing.
-- [ ] [AI] Run local quality gates (see §Local Quality Gates), then commit Phase 11/12's changes and the plan-archival move thematically and push a final time to the open PR branch — acceptance: local gates exit 0; push succeeds and the PR's check run starts.
+- [x] [AI] Move the plan folder — `git mv plans/in-progress/optimize-cis plans/done/YYYY-MM-DD__optimize-cis` using the actual completion date — update `plans/in-progress/README.md` (remove the entry), `plans/done/README.md` (add the entry with completion date), and any other README referencing this plan. This must land inside the open PR: `main` is branch-protected with no direct-push path, and the plan's PR budget is exactly 3 (§Delivery Boundaries) — there is no follow-up PR to carry it — acceptance: `git status` shows the move staged; `grep -rl 'plans/in-progress/optimize-cis' plans/ docs/` (excluding the moved folder itself) returns nothing.
+- [x] [AI] Run local quality gates (see §Local Quality Gates), then commit Phase 11/12's changes and the plan-archival move thematically and push a final time to the open PR branch — acceptance: local gates exit 0; push succeeds and the PR's check run starts.
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-public` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
 - [ ] [AI] Flip the `ose-public` PR to ready for review — `gh pr ready -R wahidyankf/ose-public <n>` — acceptance: `gh pr view -R wahidyankf/ose-public <n> --json isDraft` reports `false`.
 - [ ] [AI] Merge once the five hardened preconditions hold.
