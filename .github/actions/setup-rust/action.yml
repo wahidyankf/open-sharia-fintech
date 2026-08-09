@@ -67,6 +67,7 @@ runs:
     - name: Pre-install pinned MSRV toolchain(s) (avoids rustup download race under parallel cargo-hack)
       shell: bash
       run: |
+        shopt -s nullglob
         floors=$(sed -n 's/^rust-version[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' \
           apps/*/Cargo.toml libs/*/Cargo.toml 2>/dev/null | sort -u)
         for v in $floors; do
