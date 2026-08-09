@@ -102,7 +102,7 @@ jobs:
           tools=$(apps/rhino-cli/scripts/rhino-bin.sh gate list --surface=pre-commit --format=json |
             jq -r '[.[] | .doctor_tools[]] | unique | join(",")')
           if [ -n "$tools" ]; then
-            npm run doctor -- --fix --tools "$tools"
+            apps/rhino-cli/scripts/rhino-bin.sh doctor --fix --tools "$tools"
           fi
       - name: Format affected files with the project formatters (lint-staged)
         if: github.event_name == 'pull_request'
