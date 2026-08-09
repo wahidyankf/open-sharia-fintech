@@ -9,10 +9,10 @@
 #      it directly (no build, no discovery). Lets CI/local callers pin an
 #      already-built binary explicitly.
 #   2. <target-dir>/gate/rhino-cli — the `--profile gate` build output — if it
-#      exists and is newer than every file under apps/rhino-cli/src/, use it
-#      directly (no rebuild). <target-dir> is CARGO_TARGET_DIR if that env
-#      var is set (matching plain `cargo build`'s own precedence), otherwise
-#      apps/rhino-cli/target.
+#      exists and is newer than every file under apps/rhino-cli/src/ and its
+#      Cargo.toml/Cargo.lock, use it directly (no rebuild). <target-dir> is
+#      CARGO_TARGET_DIR if that env var is set (matching plain `cargo build`'s
+#      own precedence), otherwise apps/rhino-cli/target.
 #   3. Otherwise, build it with `cargo build --profile gate` and then use
 #      the resulting binary. `cargo build` honors CARGO_TARGET_DIR itself, so
 #      no extra flag is needed here to keep step 2 and step 3 in sync.
@@ -36,6 +36,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 MANIFEST="${REPO_ROOT}/apps/rhino-cli/Cargo.toml"
 SRC_DIR="${REPO_ROOT}/apps/rhino-cli/src"
+LOCKFILE="${REPO_ROOT}/apps/rhino-cli/Cargo.lock"
 TARGET_DIR="${CARGO_TARGET_DIR:-${REPO_ROOT}/apps/rhino-cli/target}"
 GATE_BIN="${TARGET_DIR}/gate/rhino-cli"
 
@@ -45,9 +46,10 @@ GATE_BIN="${TARGET_DIR}/gate/rhino-cli"
 if [[ -n "${RHINO_CLI_BIN:-}" && -f "${RHINO_CLI_BIN}" && -x "${RHINO_CLI_BIN}" ]]; then
 	# Tier 1: explicit override via RHINO_CLI_BIN.
 	RESOLVED_BIN="${RHINO_CLI_BIN}"
-elif [[ -x "${GATE_BIN}" ]] && [[ -z "$(find "${SRC_DIR}" -type f -newer "${GATE_BIN}" -print -quit)" ]]; then
+elif [[ -x "${GATE_BIN}" ]] && [[ -z "$(find "${SRC_DIR}" "${MANIFEST}" "${LOCKFILE}" -type f -newer "${GATE_BIN}" -print -quit)" ]]; then
 	# Tier 2: reuse the prebuilt `--profile gate` binary if it is at least as
-	# fresh as every source file (i.e. nothing under src/ is newer than it).
+	# fresh as every source file, Cargo.toml, and Cargo.lock (i.e. nothing
+	# that affects the build is newer than it).
 	RESOLVED_BIN="${GATE_BIN}"
 else
 	# Tier 3: (re)build the gate-profile binary, then use it.
