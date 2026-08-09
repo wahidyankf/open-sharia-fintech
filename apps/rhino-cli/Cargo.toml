@@ -180,6 +180,23 @@ undocumented_unsafe_blocks = "deny"
 indexing_slicing = "allow"
 arithmetic_side_effects = "allow"
 
+# Test/dev builds emit line tables instead of full debuginfo. Full DWARF for every dependency and
+# every one of the seven test binaries is what makes a cold `test:quick` target directory multi-
+# gigabyte; line tables are a small fraction of that and still carry everything the test workflow
+# actually reads — `file:line` in panic messages, assertion failures, and backtraces. Interactive
+# debugger use (variable inspection, type reconstruction) is what is given up; recover it ad hoc
+# with `RUSTFLAGS="-C debuginfo=2"`. `[profile.test]` inherits `[profile.dev]`, so setting it here
+# covers unit tests, integration tests, and their dependencies alike.
+#
+# Incremental compilation is off for the same reason. Its dep-graph and query-cache files were 703
+# MiB of a 1,739 MiB cold target directory — 46 % — and they only pay for themselves across repeated
+# edit-rebuild cycles against a warm directory. `test:quick` is a gate: CI always builds cold, and
+# local runs rebuild whole crates rather than single functions, so the caches were being written far
+# more often than they were being read.
+[profile.dev]
+debug = "line-tables-only"
+incremental = false
+
 [profile.release]
 opt-level = 3
 lto = "thin"
