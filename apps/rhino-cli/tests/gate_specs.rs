@@ -3469,3 +3469,78 @@ fn feature_dir() -> PathBuf {
         .canonicalize()
         .expect("gate feature directory is resolvable")
 }
+
+#[given("a rust-toolchain.toml pins a channel and declares no components")]
+fn given_rust_toolchain_without_lint_components(w: &mut GateWorld) {
+    // A pre-commit mutation needs no CI counterpart, so this fixture reaches the
+    // Rust-toolchain check without also having to satisfy the CI workflow check.
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "format",
+            "mutation",
+            "prettier --write",
+            "external",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        )),
+    );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    );
+    w.write(
+        "apps/coralpolyp-be/rust-toolchain.toml",
+        "[toolchain]\nchannel = \"1.95.0\"\n",
+    );
+}
+
+#[then("its output names the offending rust-toolchain.toml path")]
+fn then_toolchain_error_names_path(w: &mut GateWorld) {
+    assert!(
+        w.output.contains("apps/coralpolyp-be/rust-toolchain.toml"),
+        "missing offending rust-toolchain.toml path in {}",
+        w.output
+    );
+}
+
+#[then("its output names the missing rustfmt and clippy components")]
+fn then_toolchain_error_names_components(w: &mut GateWorld) {
+    assert!(
+        w.output.contains("rustfmt") && w.output.contains("clippy"),
+        "missing rustfmt/clippy component names in {}",
+        w.output
+    );
+}
+
+#[given("every rust-toolchain.toml declares the rustfmt and clippy components")]
+fn given_rust_toolchain_with_lint_components(w: &mut GateWorld) {
+    // A pre-commit mutation needs no CI counterpart, so this fixture reaches the
+    // Rust-toolchain check without also having to satisfy the CI workflow check.
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "format",
+            "mutation",
+            "prettier --write",
+            "external",
+            "      pre-commit: { scope: affected-file-type, glob: '*.md' }\n",
+        )),
+    );
+    w.write(
+        ".husky/pre-commit",
+        "#!/bin/sh\nrhino-cli gate run --surface=pre-commit\n",
+    );
+    w.write(
+        "apps/coralpolyp-be/rust-toolchain.toml",
+        "[toolchain]\nchannel = \"1.95.0\"\ncomponents = [\"clippy\", \"rustfmt\", \"llvm-tools\"]\nprofile = \"minimal\"\n",
+    );
+}
+
+#[then("the Rust toolchain component check exits zero")]
+fn then_toolchain_component_check_passes(w: &mut GateWorld) {
+    assert!(
+        !w.output.contains("does not declare the"),
+        "the Rust toolchain component check must not fire in {}",
+        w.output
+    );
+}
