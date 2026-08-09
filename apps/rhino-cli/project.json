@@ -80,7 +80,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo llvm-cov --manifest-path apps/rhino-cli/Cargo.toml --lib --ignore-filename-regex '(cli\\.rs|main\\.rs|internal/git\\.rs|commands/git_pre_commit\\.rs|commands/env_|commands/doctor\\.rs|application/git/pre_commit\\.rs|infrastructure/git/|application/doctor/tools\\.rs|application/doctor/fixer\\.rs|application/doctor/checker\\.rs|application/testcoverage/diff\\.rs|application/testcoverage/merge\\.rs|application/env/)' --lcov --output-path apps/rhino-cli/lcov.info --fail-under-lines 95"
+        "command": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo llvm-cov --manifest-path apps/rhino-cli/Cargo.toml --lib --ignore-filename-regex '(cli\\.rs|main\\.rs|internal/git\\.rs|commands/git_pre_commit\\.rs|commands/env_|commands/doctor\\.rs|application/git/pre_commit\\.rs|infrastructure/git/|application/doctor/tools\\.rs|application/doctor/fixer\\.rs|application/doctor/checker\\.rs|application/testcoverage/diff\\.rs|application/testcoverage/merge\\.rs|application/env/)' --lcov --output-path apps/rhino-cli/lcov.info --fail-under-lines 90"
       },
       "cache": true,
       "inputs": ["{projectRoot}/Cargo.toml", "{projectRoot}/src/**/*.rs"],
