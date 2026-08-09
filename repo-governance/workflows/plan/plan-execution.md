@@ -396,7 +396,7 @@ Before implementing anything, ensure the development environment is ready.
 - Run `npm run doctor` to verify all tooling is installed
 - Set up project-specific requirements (env vars, DB, Docker, etc.) as specified in the plan
 - Verify dev server starts for affected projects
-- Run existing quality gates to establish a baseline: `npx nx affected -t typecheck lint test:quick`
+- Run existing quality gates to establish a baseline: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (includes `nx affected -t test:quick`)
 - Note any preexisting failures — these MUST be fixed during execution (Iron Rule 3)
 - If the plan touches a Vercel-deployed surface, probe Vercel MCP availability and record the outcome
   (see [§Vercel MCP Availability](#vercel-mcp-availability-surface-conditional)). Where the plan's
@@ -473,11 +473,10 @@ After completing all items in a delivery phase, verify the phase's authored gate
 1. Run local quality gates:
 
    ```bash
-   npx nx affected -t typecheck
-   npx nx affected -t lint
-   npx nx affected -t test:quick
-   npx nx affected -t specs:coverage
+   apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push
    ```
+
+   (the same registry-declared gate set `.husky/pre-push` invokes; includes `nx affected -t test:quick`)
 
 2. If the plan involves integration or e2e tests, also run:
 

@@ -794,10 +794,7 @@ step. Emit it exactly in this shape:
 ```markdown
 ### Local Quality Gates (Before Push)
 
-- [ ] Run affected typecheck: `npx nx affected -t typecheck`
-- [ ] Run affected linting: `npx nx affected -t lint`
-- [ ] Run affected quick tests: `npx nx affected -t test:quick`
-- [ ] Run affected spec coverage: `npx nx affected -t specs:coverage`
+- [ ] Run the local pre-push gate set: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (includes `nx affected -t test:quick`)
 - [ ] Fix ALL failures — including preexisting issues not caused by your changes
 - [ ] Re-run failing checks to confirm resolution
 - [ ] Verify zero failures before pushing
