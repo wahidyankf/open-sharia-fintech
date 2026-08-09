@@ -25,12 +25,19 @@ the PR gate, and at main merge. `test:quick` is a sequential 5-step composition
 (typecheck → lint → test:unit → test:coverage → test:specs) so the specs gate is already
 folded in — there is no separate `specs:behavior:coverage` step at pre-push or PR.
 
+**One documented exception — `rhino-cli`**: its `test:quick` is a 4-step composition
+(typecheck → lint → test:unit → test:specs). `test:coverage` was lifted out of the local chain
+because instrumented rebuilds dominated pre-push wall time, and it now runs in the CI Rust
+quality-gate job instead. The `test:coverage` target itself is unchanged and still carries
+`--fail-under-lines 90`, so a coverage drop still blocks merge — it blocks at the PR gate rather
+than at pre-push. No other project takes this exception.
+
 ```mermaid
 flowchart TD
     A[Developer pushes code] --> B[Pre-push hook]
     B --> C["typecheck<br/>nx affected -t typecheck"]
     B --> D["lint<br/>nx affected -t lint"]
-    C --> E["test:quick<br/>nx affected -t test:quick<br/>(includes unit+cov+specs)"]
+    C --> E["test:quick<br/>nx affected -t test:quick<br/>(unit+cov+specs)"]
     D --> E
     E --> F{All pass?}
     F -- No --> G[Push blocked]
@@ -102,7 +109,7 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 | `build`                   | Produce deployable or runnable artifacts                                                                                                                                                                                                                                                                     | Compiled and bundled projects      |
 | `typecheck`               | Verify type correctness without producing artifacts                                                                                                                                                                                                                                                          | Statically typed languages         |
 | `lint`                    | Static analysis, code style checks, and static a11y checks (oxlint jsx-a11y for TS UI projects)                                                                                                                                                                                                              | All projects                       |
-| `test:quick`              | Sequential 5-step quality gate (`typecheck` → `lint` → `test:unit` → `test:coverage` → `test:specs`); runs with `parallel: false`; enforced at pre-push, PR, and main merge                                                                                                                                  | All projects                       |
+| `test:quick`              | Sequential 5-step quality gate (`typecheck` → `lint` → `test:unit` → `test:coverage` → `test:specs`); runs with `parallel: false`; enforced at pre-push, PR, and main merge. **`rhino-cli` only**: 4 steps — `test:coverage` runs in the CI Rust quality-gate job instead                                    | All projects                       |
 | `specs:behavior:coverage` | Validate Gherkin feature/scenario coverage at the behavior level; every scenario exercised at the correct test level (renamed from `specs:coverage`)                                                                                                                                                         | All apps and E2E runners           |
 | `specs:domain:coverage`   | Validate domain-area coverage gated by the explicit `specs.domain-areas` allowlist in `repo-config.yml` (not folder-presence)                                                                                                                                                                                | All apps                           |
 | `test:specs`              | Aggregate of every `specs:*` validator for the project (`specs:structure-validation`, `specs:behavior:coverage`, `specs:domain:coverage` where in the `specs.domain-areas` allowlist; `echo` elsewhere); present on all projects; runs inside `test:quick` — replaces the separate specs-structural gate job | All projects (echo where no specs) |
@@ -124,7 +131,7 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 
 - Use `dev` for the development server — never `serve`, never `start:dev`
 - Use `start` for the production server — never `serve`
-- Use `test:quick` for the sequential 5-step quality gate (typecheck → lint → test:unit → test:coverage → test:specs); `test:unit` for isolated unit tests with mocked dependencies (Rust CLI apps consume Gherkin specs at this level; `echo` where N/A); `test:integration` for tests with real infrastructure (demo-be: PostgreSQL via docker-compose) or in-process mocking (MSW, Godog) — `echo` where N/A; `test:e2e` for Playwright E2E tests on `*-e2e` projects (CRON-only; `echo` on non-e2e projects); `test:coverage` for the native per-project coverage gate (≥ 90% line; `echo` where `test:unit` is `echo`); `test:specs` for the aggregate of all `specs:*` validators (runs inside `test:quick`); `specs:behavior:coverage` for Gherkin behavior-level coverage validation; `specs:domain:coverage` for domain-area coverage gated by `repo-config.yml`
+- Use `test:quick` for the sequential 5-step quality gate (typecheck → lint → test:unit → test:coverage → test:specs; 4 steps on `rhino-cli`, where coverage runs on CI instead); `test:unit` for isolated unit tests with mocked dependencies (Rust CLI apps consume Gherkin specs at this level; `echo` where N/A); `test:integration` for tests with real infrastructure (demo-be: PostgreSQL via docker-compose) or in-process mocking (MSW, Godog) — `echo` where N/A; `test:e2e` for Playwright E2E tests on `*-e2e` projects (CRON-only; `echo` on non-e2e projects); `test:coverage` for the native per-project coverage gate (≥ 90% line; `echo` where `test:unit` is `echo`); `test:specs` for the aggregate of all `specs:*` validators (runs inside `test:quick`); `specs:behavior:coverage` for Gherkin behavior-level coverage validation; `specs:domain:coverage` for domain-area coverage gated by `repo-config.yml`
 - Separate target variants with a colon (`build:web`, `test:e2e:ui`), not a hyphen or underscore
 - All target names use lowercase with hyphens for multi-word names (`run-pre-commit`)
 
@@ -311,7 +318,7 @@ all six targets below**, even when the body is a no-op `echo` placeholder. This 
 | `test:unit`        | Isolated unit tests with mocked dependencies; must consume Gherkin specs. `echo "no unit tests"` where no real unit tests exist                                                                  |
 | `test:integration` | Service-level or in-process integration tests; real PostgreSQL (BE) or MSW/PGlite (FE). `echo "no integration tests"` where no real integration tests exist                                      |
 | `test:e2e`         | Playwright E2E tests over HTTP/UI — real only on `*-e2e` projects; CRON-only (never pre-push/PR). `echo "no e2e tests"` on all non-e2e projects                                                  |
-| `test:quick`       | Sequential 5-step gate — see canonical composition below; enforced at pre-push, PR merge gate, and main merge gate                                                                               |
+| `test:quick`       | Sequential 5-step gate (4 on `rhino-cli`) — see canonical composition below; enforced at pre-push, PR merge gate, and main merge gate                                                            |
 | `lint`             | Static analysis and code-style checks; exit non-zero on violations; UI projects add `oxlint --jsx-a11y-plugin`. `echo` is not acceptable here — every project must have a real linter            |
 | `typecheck`        | Type-correctness check without emitting artifacts (`tsc --noEmit`, `dotnet build`, `cargo check`). `echo "no typecheck"` for dynamically typed projects where compilation already enforces types |
 
