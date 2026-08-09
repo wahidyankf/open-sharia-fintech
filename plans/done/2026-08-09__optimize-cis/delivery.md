@@ -65,7 +65,9 @@ to make a merge possible. If merging is blocked, the change is wrong — not the
 Phase 1's gate passes and keeps it open through Phase 12; `ose-primer` and `ose-private` each open
 their own single PR inside Phase 10. **Phase 0 opens no PR.** No phase opens a second PR in a repo
 that already has one open — if a phase is about to open one, stop: that means this section drifted,
-not that a new PR is warranted.
+not that a new PR is warranted. (This budget was exceeded in practice by 2 authorized follow-up PRs
+during Phase 10's review cycles — see the third, 2026-08-09-dated deviation below, and the full
+plan-attributable PR ledger in `baseline/pr-numbers.md`.)
 
 **This plan authors an explicit, maintainer-authorized deviation from the
 [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
@@ -113,6 +115,25 @@ overrides two parameters:
    cap is chosen so a clean review is expected well before it binds, not so it is expected to bind
    routinely; reaching it is not a hard stop (Autonomy Contract, above), unlike the governance
    workflow's own exhaustion behavior.
+
+**This plan also authors a third, narrower deviation, dated 2026-08-09: two additional follow-up
+PRs beyond the 3-PR budget above — `ose-primer` #31 and `ose-private` #30.** Both were opened
+during the PR-Review Maker→Fixer Cycle running independently on each sibling's own budgeted PR
+(`ose-primer` #30, `ose-private` #29): that cycle surfaced a lint-component defect on the pinned
+Rust toolchain(s) (missing `clippy`/`rustfmt` component declarations) that blocked the budgeted
+PR's own CI. Splitting the fix into a separate PR — rather than reopening or force-amending the
+already-merged budgeted PR — was the only path that kept each repo's branch protection intact (no
+direct-push, no amend-after-merge). Maintainer authorization for this deviation was given
+2026-08-09. Both follow-up PRs are now merged: `ose-primer` #31 merged clean (23/23 checks green,
+clean squash-merge). `ose-private` #30 merged via `--admin` override, with the pre-existing,
+unrelated `coralpolyp` infra flake (a self-hosted-runner systemd-sandbox issue, already
+root-caused as unrelated to this plan's changes earlier in the session) still red on its cascading
+`Quality gate` aggregator — per the maintainer's standing, explicit authorization to merge
+`ose-private` with this specific check red. `ose-public`'s own plan-authoring PR, #161 (docs-only,
+merged 2026-08-08 before #162 opened), is a sixth plan-attributable PR but was never counted
+against the 3-PR budget since no repo ever held two PRs open simultaneously; it is recorded in
+`baseline/pr-numbers.md` for accounting completeness. See `baseline/pr-numbers.md` for the full,
+current PR ledger across all three repos.
 
 ## Parallelization Model
 
@@ -676,6 +697,7 @@ Independent of Phase 3; may run in parallel.
   - **Date**: 2026-08-09. **Status**: CONFOUNDED, not REGRESSED — the hard stop is resolved by evidence rather than by re-balancing. p50 **1,219 s** over N=3 (988 / 1,219 / 1,681) versus a 974.5 s baseline, nominally +25.1 %.
   - **Notes**: the job timeline shows the critical path is the **TypeScript quality gate at 1,033 s**, which ran **1,030 s and 1,018 s on this same branch before the topology change** — the topology did not move it. All six gate groups complete by 01:03:45 against a run that ends 01:16:41, so they sit ~13 minutes off the critical path and re-balancing their composition provably cannot change wall-clock. The gap to baseline is diff scope: this branch edits `repo-config.yml`, `.github/`, and governance docs, so every TypeScript project is affected, whereas the Phase 0 baseline's 18 runs were narrower PRs. Re-balancing was therefore **not** performed; doing so would have been motion against a metric the change cannot reach.
 - [ ] [AI] After 10 further commits, measure M7, then append a `Phase 7` row to `scoreboard.md` — acceptance: **cache at most 60 % of the 10 GiB ceiling** (AC-11).
+  - **Date**: 2026-08-09. **Status**: NOT MET as specified — see Phase 11 row in `scoreboard.md` instead. This exact Phase-7-scoped measurement (a dedicated M7 re-check specifically 10 commits after the Phase 7 topology change) was never separately performed; the only post-baseline M7 row lives at Phase 11 (`scoreboard.md` line 36 as of this writing), measured **9.93 GiB / 99.29 % of the 10 GiB ceiling — NOT MET, and regressed** versus the Phase 0 baseline's 77.12 %. That Phase 11 measurement supersedes what this item asked for rather than satisfying it as literally written, so this checkbox stays unchecked and honest rather than ticked against evidence that doesn't match its own acceptance clause.
 
 > **Pause Safety**: CI topology is complete and measured against targets. Safe to stop. To resume: re-measure M3 and M4.
 
@@ -862,6 +884,7 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 
 - [x] [AI] `parity manifest validate` in `ose-public`, `ose-primer`, and `ose-private` — acceptance: exits 0 with an identical manifest hash in all three (AC-15).
 - [ ] [AI] CI green in all three repos — acceptance: latest `pr-quality-gate` conclusion is `success` in each.
+  - **Date**: 2026-08-09. **Status**: NOT MET as literally specified — left unchecked rather than ticked against a caveat. `ose-public` #162 is genuinely green (`Quality gate`: `SUCCESS`). `ose-primer` #31 merged clean (23/23 checks). `ose-private` #30 merged via `--admin` override with its `Quality gate` aggregator (via the `coralpolyp` job) still red — the pre-existing, unrelated self-hosted-runner systemd-sandbox flake already root-caused earlier this session, not a defect this plan introduced — per the maintainer's standing, explicit authorization to accept this specific check red. `ose-private`'s post-merge `main` branch run had not completed as of this measurement; the most recent completed run on `main` concluded `failure` on the same `coralpolyp` flake. This item stays honestly unchecked rather than claiming a green it cannot currently show.
 - [x] [AI] Measure M3 per sibling repo, then append `Phase 10` rows to `scoreboard.md` (one per repo) — acceptance: `ose-primer` and `ose-private` each record a post-change median runner-seconds figure against their Phase 0 baselines (11,683 s and 9,239 s respectively); both show a reduction.
 - [x] [AI] Confirm `beaver-nest` was not modified — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain` is empty.
 - [x] [AI] Measure M9, then append a `Phase 10` row to `scoreboard.md` — acceptance: across all three repos the `^channel` and `^rust-version` `sort -u` sets each contain **exactly one** value and the two agree (`1.95.0`), down from 3 distinct declared values at baseline (AC-19).
@@ -930,7 +953,7 @@ fastest repo of the four, and it is slated for deprecation immediately after thi
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle on the `ose-public` PR, iteratively until clean, capped at 10 cycles (see §Delivery Boundaries) — acceptance: a cycle reports zero CRITICAL/HIGH/MEDIUM findings, or the cap is reached with residue recorded as accepted-with-reason.
 - [ ] [AI] Flip the `ose-public` PR to ready for review — `gh pr ready -R wahidyankf/ose-public <n>` — acceptance: `gh pr view -R wahidyankf/ose-public <n> --json isDraft` reports `false`.
 - [ ] [AI] Merge once the five hardened preconditions hold.
-- [ ] [AI] Final confirmation, closing the plan's full PR budget: `parity manifest validate` exits 0 in `ose-public`, `ose-primer`, and `ose-private` with an identical hash, and all 3 PRs opened across this plan (1 per repo) are merged — acceptance: `gh pr list -R wahidyankf/<repo> --state open` returns empty for all three repos.
+- [ ] [AI] Final confirmation, closing the plan's full PR set: `parity manifest validate` exits 0 in `ose-public`, `ose-primer`, and `ose-private` with an identical hash, and all 6 plan-attributable PRs are merged — `ose-public` #161, #162; `ose-primer` #30, #31; `ose-private` #29, #30 (3 budgeted plus the 3rd deviation's 2 authorized follow-ups plus #161 — see `baseline/pr-numbers.md`) — acceptance: `gh pr view -R wahidyankf/<repo> <n> --json state -q .state` reports `MERGED` for each of the 6 PR numbers above (a plan-scoped check per PR number, not `gh pr list --state open`, which any unrelated open PR in the repo — e.g. `ose-primer` #29 — would falsify).
 
 ---
 
