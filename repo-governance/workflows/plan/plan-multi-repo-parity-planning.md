@@ -113,8 +113,11 @@ parallel under the N+1 model (`1 main thread + N background agents`, default **N
 serialized behind one another. `ose-private` does not participate in the parity loop for content it
 does not carry.
 
-The one hard serialization: **`apps/rhino-cli` must stay byte-identical across all four bound repos**, so
-plans touching it propagate one repo at a time rather than concurrently.
+The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the three parity repos
+— `ose-public`, `ose-primer`, `ose-private`** — so plans touching it propagate one repo at a time
+rather than concurrently. `beaver-nest` is deliberately outside this boundary: it carries a **fork**
+of `rhino-cli` and has no `apps/rhino-cli/parity-manifest.sha256` to propagate into
+([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 
 ### Delivery Shape Per Repo
 

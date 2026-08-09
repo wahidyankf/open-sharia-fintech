@@ -277,8 +277,11 @@ fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer`, 
 
 Two constraints override that fan-out and force strict serialization:
 
-- **`apps/rhino-cli` byte-identity** across all four bound repos — a plan touching it propagates one repo
-  at a time, never concurrently.
+- **`apps/rhino-cli` byte-identity** across the three parity repos — `ose-public`, `ose-primer`,
+  `ose-private` — a plan touching it propagates one repo at a time, never concurrently. `beaver-nest`
+  is outside the boundary: it carries a **fork** of `rhino-cli` with no
+  `apps/rhino-cli/parity-manifest.sha256`
+  ([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
   dependency, but a shared write target is.
 

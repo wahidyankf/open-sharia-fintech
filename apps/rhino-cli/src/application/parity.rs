@@ -557,7 +557,7 @@ fn parse_manifest(manifest: &str) -> Result<BTreeMap<String, String>, Error> {
 /// Explain an intentional shared-source edit without silently repairing it.
 fn drift_error(path: &str) -> Error {
     anyhow!(
-        "{path} no longer matches {MANIFEST_PATH}.\n\nThis file is byte-identical across ose-public, ose-primer, ose-private, and beaver-nest.\nChanging it here obligates propagating the identical change to the other three repos.\nIf that is intended, run: rhino-cli parity manifest generate"
+        "{path} no longer matches {MANIFEST_PATH}.\n\nThis file is byte-identical across ose-public, ose-primer, and ose-private.\nChanging it here obligates propagating the identical change to the other two repos.\nIf that is intended, run: rhino-cli parity manifest generate"
     )
 }
 
@@ -863,10 +863,17 @@ mod tests {
         let error = validate_at_root(repo.path()).expect_err("source drift must fail validation");
         let message = format!("{error:#}");
         assert!(message.contains("apps/rhino-cli/src/main.rs"));
-        assert!(message.contains(
-            "byte-identical across ose-public, ose-primer, ose-private, and beaver-nest"
-        ));
+        assert!(message.contains("byte-identical across ose-public, ose-primer, and ose-private"));
         assert!(message.contains("rhino-cli parity manifest generate"));
+        // The boundary is three repos (AGENTS.md §Related Repositories). beaver-nest
+        // carries a *fork* of rhino-cli and has no parity-manifest.sha256 at all, so
+        // naming it sent every drift report chasing a propagation target that cannot
+        // receive one. Asserted negatively as well as positively so the message
+        // cannot silently regain a fourth repo.
+        assert!(
+            !message.contains("beaver-nest"),
+            "the parity boundary must not name beaver-nest: {message}"
+        );
     }
 
     #[test]
