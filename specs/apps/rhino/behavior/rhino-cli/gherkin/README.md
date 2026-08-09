@@ -55,7 +55,7 @@ behavior/rhino-cli/gherkin/
 | `gate-emission.feature`    | `gate emit`                           | 2         |
 | `gate-enumeration.feature` | `gate list`                           | 6         |
 | `gate-execution.feature`   | `gate run`                            | 11        |
-| `gate-validation.feature`  | `gate validate`                       | 11        |
+| `gate-validation.feature`  | `gate validate`                       | 20        |
 | `parity-manifest.feature`  | `parity manifest generate`/`validate` | 4         |
 
 ### git
@@ -128,7 +128,7 @@ behavior/rhino-cli/gherkin/
 | File                         | Command(s) | Scenarios |
 | ---------------------------- | ---------- | --------- |
 | `cargo-target-share.feature` | `doctor`   | 15        |
-| `doctor.feature`             | `doctor`   | 9         |
+| `doctor.feature`             | `doctor`   | 17        |
 
 ### workflows
 

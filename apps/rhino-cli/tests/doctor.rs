@@ -138,7 +138,9 @@ impl DoctorWorld {
         );
         w(
             "apps/rhino-cli/rust-toolchain.toml",
-            &format!("[toolchain]\nchannel = \"{rust_channel}\"\n"),
+            &format!(
+                "[toolchain]\nchannel = \"{rust_channel}\"\ncomponents = [\"clippy\", \"rustfmt\", \"llvm-tools\"]\n"
+            ),
         );
     }
 
@@ -296,6 +298,28 @@ fn rust_report_line(out: &str) -> String {
         .to_string()
 }
 
+/// Finds the `rust-toolchain-components` check's report line in `doctor`'s
+/// text output.
+///
+/// Scoped and matched the same way as [`rust_report_line`]: before the
+/// `"Target-share:"` marker, and by the report line's second
+/// whitespace-delimited token (the name column) being exactly
+/// `"rust-toolchain-components"`.
+fn component_check_line(out: &str) -> String {
+    out.split("Target-share:")
+        .next()
+        .unwrap_or(out)
+        .lines()
+        .find(|line| {
+            (line.starts_with('\u{2713}')
+                || line.starts_with('\u{26a0}')
+                || line.starts_with('\u{2717}'))
+                && line.split_whitespace().nth(1) == Some("rust-toolchain-components")
+        })
+        .unwrap_or_default()
+        .to_string()
+}
+
 // ===========================================================================
 // Given
 // ===========================================================================
@@ -369,6 +393,28 @@ fn given_rust_channel_mismatch(w: &mut DoctorWorld) {
     w.rust_channel_override = Some(rust_channel.clone());
     w.write_config("24.11.1", &rust_channel);
     w.write_stubs();
+}
+
+#[given("a rust-toolchain.toml pins a channel and declares no lint components")]
+fn given_rust_toolchain_without_lint_components(w: &mut DoctorWorld) {
+    w.write_config("24.11.1", "1.90.0");
+    w.write_stubs();
+    std::fs::write(
+        w.repo_path().join("apps/rhino-cli/rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"1.90.0\"\n",
+    )
+    .expect("write rust-toolchain.toml without lint components");
+}
+
+#[given("a rust-toolchain.toml declares only the clippy lint component")]
+fn given_rust_toolchain_partial_lint_components(w: &mut DoctorWorld) {
+    w.write_config("24.11.1", "1.90.0");
+    w.write_stubs();
+    std::fs::write(
+        w.repo_path().join("apps/rhino-cli/rust-toolchain.toml"),
+        "[toolchain]\nchannel = \"1.90.0\"\ncomponents = [\"clippy\"]\n",
+    )
+    .expect("write rust-toolchain.toml with a partial lint-component declaration");
 }
 
 // ===========================================================================
@@ -626,6 +672,38 @@ fn then_rust_names_pinned_channel(w: &mut DoctorWorld) {
     assert!(
         rust_line.contains(&format!("required: {expected}")),
         "expected pinned channel {expected} named, got: {out}"
+    );
+}
+
+#[then("it reports the toolchain component check as a warning naming rustfmt and clippy")]
+fn then_reports_components_warning_both(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    let line = component_check_line(&out);
+    assert!(
+        line.starts_with('\u{26a0}') || line.to_lowercase().contains("warning"),
+        "expected a warning line for rust-toolchain-components, got: {out}"
+    );
+    assert!(
+        line.contains("rustfmt") && line.contains("clippy"),
+        "expected both missing components named, got: {line}"
+    );
+}
+
+#[then("it reports the toolchain component check as a warning naming only rustfmt")]
+fn then_reports_components_warning_rustfmt_only(w: &mut DoctorWorld) {
+    let out = w.stdout();
+    let line = component_check_line(&out);
+    assert!(
+        line.starts_with('\u{26a0}') || line.to_lowercase().contains("warning"),
+        "expected a warning line for rust-toolchain-components, got: {out}"
+    );
+    assert!(
+        line.contains("does not declare the rustfmt component"),
+        "expected only rustfmt named as missing, got: {line}"
+    );
+    assert!(
+        !line.contains("rustfmt, clippy") && !line.contains("clippy, rustfmt"),
+        "clippy was already declared and must not be named as missing alongside rustfmt, got: {line}"
     );
 }
 

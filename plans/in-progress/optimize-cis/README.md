@@ -104,18 +104,18 @@ consumed **414,000 runner-seconds (115 hours)**.
 
 ### In scope
 
-| Area                                          | What changes                                                                                                                   |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `apps/rhino-cli/src/commands/gate/emit.rs`    | Generated gate commands resolve a prebuilt binary instead of prefixing `cargo run --release`                                   |
-| `.husky/` shims, `package.json` `lint-staged` | Regenerated to the resolved-binary form; `npx` replaced by direct `node_modules/.bin` dispatch                                 |
-| `repo-config.yml` `gates:`                    | New **required** `ci_group` field per gate entry; groups are declared, never derived                                           |
-| `.github/workflows/pr-quality-gate.yml`       | Matrix runs over declared groups, not individual gates; `rhino-cli` built once and passed to jobs as an artifact               |
-| `.github/actions/setup-node/action.yml`       | Nx cache key stops minting a fresh 237.9 MB entry per commit                                                                   |
-| `apps/rhino-cli/Cargo.toml`                   | A dedicated fast gate profile alongside the shipped release profile                                                            |
-| `apps/rhino-cli/project.json`                 | `test:quick` stops compiling the same tree under three profiles                                                                |
-| Disk hygiene                                  | `local-temp/` retention; unpinned toolchain pruning; worktree `target/` sharing                                                |
-| `rust-toolchain.toml` + `Cargo.toml` MSRV     | One Rust version (`1.95.0`) across all three repos, replacing 3 disagreeing declared values; `doctor` validates the channel    |
-| Cross-repo parity                             | `ose-primer` and `ose-private` receive the full change set under the byte-identity gate; `beaver-nest` is excluded (see below) |
+| Area                                          | What changes                                                                                                                                                                                                                                                                      |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/rhino-cli/src/commands/gate/emit.rs`    | Generated gate commands resolve a prebuilt binary instead of prefixing `cargo run --release`                                                                                                                                                                                      |
+| `.husky/` shims, `package.json` `lint-staged` | Regenerated to the resolved-binary form; `npx` replaced by direct `node_modules/.bin` dispatch                                                                                                                                                                                    |
+| `repo-config.yml` `gates:`                    | New **required** `ci_group` field per gate entry; groups are declared, never derived                                                                                                                                                                                              |
+| `.github/workflows/pr-quality-gate.yml`       | Matrix runs over declared groups, not individual gates; `rhino-cli` built once and passed to jobs as an artifact                                                                                                                                                                  |
+| `.github/actions/setup-node/action.yml`       | Nx cache key stops minting a fresh 237.9 MB entry per commit                                                                                                                                                                                                                      |
+| `apps/rhino-cli/Cargo.toml`                   | A dedicated fast gate profile alongside the shipped release profile                                                                                                                                                                                                               |
+| `apps/rhino-cli/project.json`                 | `test:quick` stops compiling the same tree under three profiles                                                                                                                                                                                                                   |
+| Disk hygiene                                  | `local-temp/` retention; unpinned toolchain pruning; worktree `target/` sharing                                                                                                                                                                                                   |
+| `rust-toolchain.toml` + `Cargo.toml` MSRV     | One Rust version (`1.95.0`) across all three repos, replacing 3 disagreeing declared values; `doctor` validates the channel and, repo-wide, that every `rust-toolchain.toml` declares the `rustfmt`/`clippy` lint components (`apps/rhino-cli/src/application/doctor/checker.rs`) |
+| Cross-repo parity                             | `ose-primer` and `ose-private` receive the full change set under the byte-identity gate; `beaver-nest` is excluded (see below)                                                                                                                                                    |
 
 ### Out of scope
 

@@ -151,6 +151,13 @@ volta install npm@11.11.0
 
 Required for `rhino-cli`, `ose-cli`, `ayokoding-cli`, and `libs/rust-commons`. The toolchain version is pinned via `rust-toolchain.toml` in each project — `rustup` picks it up automatically.
 
+`doctor` additionally checks that every `rust-toolchain.toml` (the workspace root and each
+`apps/*`/`libs/*` project) declares the `rustfmt` and `clippy` components. A toolchain pinned
+without them installs with rustup's `minimal` profile, and `cargo fmt`/`cargo clippy` then fail
+intermittently under it — the failure races with whichever gate happens to run first against that
+toolchain. A missing component is reported as a warning, not a blocking failure, matching how
+`doctor` reports every other version mismatch.
+
 ```bash
 # Install rustup (if not present)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -309,13 +316,14 @@ npx playwright install-deps
 
 All version requirements are auto-detected by `npm run doctor` from these config files:
 
-| Tool       | Version Source                                                                                        |
-| ---------- | ----------------------------------------------------------------------------------------------------- |
-| Node.js    | `package.json` → `volta.node`                                                                         |
-| npm        | `package.json` → `volta.npm`                                                                          |
-| Rust       | `apps/rhino-cli/rust-toolchain.toml` → `channel`                                                      |
-| .NET       | `repo-config.yml` → `doctor.dotnet-global-json` → `sdk.version` (currently `apps/ose-be/global.json`) |
-| Docker, jq | Any (no pinned version)                                                                               |
+| Tool                 | Version Source                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| Node.js              | `package.json` → `volta.node`                                                                          |
+| npm                  | `package.json` → `volta.npm`                                                                           |
+| Rust                 | `apps/rhino-cli/rust-toolchain.toml` → `channel`                                                       |
+| Rust lint components | every `rust-toolchain.toml` (root + `apps/*`/`libs/*`) → `components` must include `rustfmt`, `clippy` |
+| .NET                 | `repo-config.yml` → `doctor.dotnet-global-json` → `sdk.version` (currently `apps/ose-be/global.json`)  |
+| Docker, jq           | Any (no pinned version)                                                                                |
 
 Never hardcode version numbers in scripts — always read from these source-of-truth files.
 

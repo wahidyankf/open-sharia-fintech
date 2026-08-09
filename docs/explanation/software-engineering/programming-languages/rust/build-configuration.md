@@ -222,13 +222,19 @@ target/
 
 ## rust-toolchain.toml
 
-**MUST** use `rust-toolchain.toml` at the workspace root to pin the exact toolchain version:
+**MUST** use `rust-toolchain.toml` at the workspace root to pin the exact toolchain version, and
+**MUST** declare `rustfmt` and `clippy` in `components` — neither ships with rustup's `minimal`
+profile, and CI pre-installs each pinned toolchain with exactly that profile. Omitting them lets
+`cargo fmt`/`cargo clippy` fail intermittently under that toolchain, racing whichever lint job
+provisions the missing component first.
+[`rhino-cli doctor`](../../../../how-to/setup-development-environment.md#version-reference) checks
+this repo-wide (root plus every `apps/*`/`libs/*` project) and reports an omission as a warning.
 
 ```toml
 # rust-toolchain.toml
 [toolchain]
 channel = "1.95.0"
-components = ["rustfmt", "clippy", "rust-src"]
+components = ["clippy", "rustfmt", "llvm-tools"]
 targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 ```
 
