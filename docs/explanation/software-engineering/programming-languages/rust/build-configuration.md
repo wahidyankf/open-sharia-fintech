@@ -238,6 +238,19 @@ components = ["clippy", "rustfmt", "llvm-tools"]
 targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 ```
 
+### Expect an extra `X.Y` toolchain from the MSRV compatibility gate
+
+Bumping `rust-version` to an exact patch does **not** mean the MSRV gate reuses the toolchain you
+already have. `cargo hack check --rust-version` (the `compat:min-version` Nx target) resolves the
+declared floor to its **major-minor** form and asks rustup for that, so a repo pinned to `1.95.0`
+gets a second, separate `1.95` toolchain installed — roughly 1.3 GB — even though both currently
+resolve to the same release. rustup treats `1.95` and `1.95.0` as distinct toolchains in distinct
+directories.
+
+This is a legitimate, reproducible side effect of running the compatibility gate at all, not drift
+and not a concurrent-agent artifact. Any disk audit of installed toolchains should expect it, and
+any future MSRV bump should expect the same `X.Y`-vs-`X.Y.Z` duplication.
+
 ## Build Profiles
 
 **MUST** configure release profile for optimized production builds:

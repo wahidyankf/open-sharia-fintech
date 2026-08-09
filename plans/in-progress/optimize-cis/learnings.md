@@ -116,7 +116,7 @@
   triage as a documentation gap: the RED-step convention in this plan's own delivery.md items only
   ever names the unit-test command, never the integration-test command, for scenarios of this kind.
 
-**Terminal state**: DEFERRED WITHIN THIS PHASE — routes to the rhino-cli Gherkin README, which a concurrent PR-review fixer is editing in this same worktree. Landing it now would collide with another actor's in-flight work. Carried into the ose-public PR's final commit once that file is free.
+**Terminal state**: ROUTED INLINE to [`apps/rhino-cli/README.md`](../../../apps/rhino-cli/README.md) §Adding a Gherkin Scenario: Two Binding Sites — both sites named, `cargo test --test gate_specs` given as the pre-commit verification, and the same-or-earlier-phase rule stated. Deliberately **not** placed in the Gherkin tree's own README, which is manifest-tracked inside the `apps/rhino-cli` byte-identity boundary: putting a documentation note there would have obligated byte-identical propagation to `ose-primer` and `ose-private`, re-opening two sibling worktrees for a doc line. `apps/rhino-cli/README.md` is outside the manifest and is where a contributor adding a scenario already looks.
 
 ## Learning: `cargo hack check --rust-version` installs a major.minor toolchain distinct from the pinned patch
 
@@ -135,7 +135,7 @@
   concurrent-agent artifact. Any future MSRV bump anywhere in this repo should expect the same
   `X.Y`-vs-`X.Y.Z` toolchain duplication from this exact Nx target.
 
-**Terminal state**: DEFERRED WITHIN THIS PHASE — routes to `docs/explanation/software-engineering/programming-languages/rust/build-configuration.md`, which a concurrent PR-review fixer is editing in this same worktree. Carried into the ose-public PR's final commit once that file is free.
+**Terminal state**: ROUTED INLINE to [Rust Build Configuration](../../../docs/explanation/software-engineering/programming-languages/rust/build-configuration.md) — the MSRV compatibility gate resolves the declared floor to its major-minor form, so an exact-patch pin still yields a second `X.Y` toolchain; expect it in any disk audit and on any future MSRV bump. Landed after the concurrent PR-review fixer released the file.
 
 ## Learning: a plan step can add a Gherkin scenario that no phase can yet bind — 2nd instance of the cross-phase forward-reference class
 
