@@ -1,6 +1,6 @@
 {
   "fsharp-crane-core.dll": {
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Convert.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Convert.fs": {
       "CraneCore.Convert": {
         "Microsoft.FSharp.Core.FSharpResult`2<System.String,System.String> CraneCore.Convert::convertPdfToMarkdown(CraneCore.Ports/IPdfPort,CraneCore.Ports/IOcrPort,System.String)": {
           "Lines": {
@@ -49,7 +49,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs": {
       "CraneCore.Logic.PdfExtractionCache": {
         "System.String CraneCore.Logic.PdfExtractionCache::pdfSha256(System.String)": {
           "Lines": {
@@ -426,7 +426,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs": {
       "CraneCore.Logic.SkiplistManager": {
         "System.String CraneCore.Logic.SkiplistManager::resolveSkiplistPath()": {
           "Lines": {
@@ -1072,7 +1072,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs": {
       "CraneCore.Logic.ReportManager": {
         "System.String CraneCore.Logic.ReportManager::getOrExtendChain(System.String)": {
           "Lines": {
@@ -1238,7 +1238,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs": {
       "CraneCore.Logic.OcrAssessor": {
         "System.Double CraneCore.Logic.OcrAssessor::estimateOCRErrorRate(System.String)": {
           "Lines": {
@@ -1464,7 +1464,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs": {
       "CraneCore.Logic.MermaidValidator": {
         "Microsoft.FSharp.Core.FSharpResult`2<Microsoft.FSharp.Core.Unit,System.String> CraneCore.Logic.MermaidValidator::validateBlock(System.String)": {
           "Lines": {
@@ -1763,7 +1763,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs": {
       "CraneCore.Logic.FigureChecker": {
         "Microsoft.FSharp.Collections.FSharpList`1<CraneCore.Logic.FigureChecker/FigureRef> CraneCore.Logic.FigureChecker::detectFigures(System.String)": {
           "Lines": {
@@ -1909,7 +1909,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs": {
       "CraneCore.Logic.TableChecker": {
         "System.Boolean CraneCore.Logic.TableChecker::isSeparatorLine(System.String)": {
           "Lines": {
@@ -2147,7 +2147,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs": {
       "CraneCore.Logic.NestingChecker": {
         "Microsoft.FSharp.Collections.FSharpList`1<CraneCore.Logic.NestingChecker/NestingItem> CraneCore.Logic.NestingChecker::extractNestingLevels(System.String)": {
           "Lines": {
@@ -2342,7 +2342,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs": {
       "CraneCore.Logic.HeadingChecker": {
         "Microsoft.FSharp.Core.FSharpOption`1<System.Tuple`2<System.Int32,System.String>> CraneCore.Logic.HeadingChecker::inferDepthFromNumbering(System.String)": {
           "Lines": {
@@ -2587,7 +2587,7 @@
         }
       }
     },
-    "/Users/wkf/ose-projects/ose-public/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs": {
+    "/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs": {
       "CraneCore.Logic.TextChecker": {
         "System.String CraneCore.Logic.TextChecker::normalize(System.String)": {
           "Lines": {

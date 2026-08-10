@@ -103,6 +103,8 @@ pretend that a short list is the whole roster.
 - [apps-ayokoding-www-primer-checker](apps-ayokoding-www-primer-checker.md)
 - [apps-ayokoding-www-primer-fixer](apps-ayokoding-www-primer-fixer.md)
 - [apps-ayokoding-www-primer-maker](apps-ayokoding-www-primer-maker.md)
+- [apps-beavernest-app-web-deployer](apps-beavernest-app-web-deployer.md)
+- [apps-beavernest-be-deployer](apps-beavernest-be-deployer.md)
 - [apps-organiclever-app-web-deployer](apps-organiclever-app-web-deployer.md)
 - [apps-organiclever-www-deployer](apps-organiclever-www-deployer.md)
 - [apps-ose-app-web-deployer](apps-ose-app-web-deployer.md)
