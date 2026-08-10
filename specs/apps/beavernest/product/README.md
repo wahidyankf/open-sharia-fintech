@@ -31,8 +31,6 @@ mistake the hello-world quad for a foundation to build on directly:
 - Deploy provisioning — CI caller workflows ship wired but dormant; the first real deploy belongs
   to its own plan
 
-See [ROADMAP.md](../../../../ROADMAP.md) for the full phase sequence.
-
 ## Related
 
 - [overview.md](./overview.md) — one-page product overview
