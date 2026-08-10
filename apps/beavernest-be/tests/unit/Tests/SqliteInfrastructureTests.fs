@@ -72,3 +72,4 @@ let ``readiness connections require an existing database and never create one`` 
 
     Assert.Equal(databasePath configuration, builder.DataSource)
     Assert.Equal(SqliteOpenMode.ReadOnly, builder.Mode)
+    Assert.False(builder.Pooling)

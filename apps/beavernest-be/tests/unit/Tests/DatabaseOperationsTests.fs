@@ -130,6 +130,17 @@ let ``disposable SQLite backup and restore preserve a recoverable live database`
     Assert.True(Directory.GetFiles(dataDirectoryPath, "beavernest.sqlite3.replaced-*").Length = 1)
     Assert.False(File.Exists(databasePath configuration + "-wal"))
     Assert.False(File.Exists(databasePath configuration + "-shm"))
+    // Verifying the staged copy (even read-only) can leave its own -wal/-shm
+    // companions on disk; only the staged database file itself is renamed to
+    // `live`, so any companion left at the discarded `.restore-<guid>` path
+    // would strand a file container-entrypoint.sh's file-mode validator
+    // rejects on the next boot.
+    Assert.Empty(Directory.GetFiles(dataDirectoryPath, "beavernest.sqlite3.restore-*"))
+    // File.Copy leaves the new file's mode governed by the process umask —
+    // the same container-entrypoint.sh validator requires exactly mode 600
+    // on the live database on the next fresh container start, regardless of
+    // what umask restored it.
+    Assert.Equal(UnixFileMode.UserRead ||| UnixFileMode.UserWrite, File.GetUnixFileMode(databasePath configuration))
 
     use restored = openConfigured configuration
     use verify = restored.CreateCommand()
@@ -303,6 +314,25 @@ let ``backup and restore reject symbolic-link roots, files, and data-directory a
         )
     finally
         Directory.Delete(root, true)
+
+[<Fact>]
+let ``the operation lock file is created with mode 600 regardless of the process umask`` () =
+    // container-entrypoint.sh's file-mode validator runs on every fresh
+    // `docker compose run` (e.g. a stopped-service restore), rejecting any
+    // file under the data directory that isn't exactly mode 600 — including
+    // a lock file left behind by an earlier `docker compose exec`, whose
+    // process umask (unlike the entrypoint's own `umask 0077`) is never
+    // guaranteed. The lock file's permissions must not depend on umask.
+    let root =
+        Path.Combine(Path.GetTempPath(), "beavernest-lock-mode-" + Guid.NewGuid().ToString("N"))
+
+    let configuration = create root 1000 |> Result.defaultWith failwith
+
+    use _operationLock =
+        acquireDataDirectoryOperationLock configuration |> Result.defaultWith failwith
+
+    let lockPath = Path.Combine(root, ".beavernest-operation.lock")
+    Assert.Equal(UnixFileMode.UserRead ||| UnixFileMode.UserWrite, File.GetUnixFileMode(lockPath))
 
 [<Fact>]
 let ``database operations fail closed while another operation owns the data-directory lock`` () =

@@ -131,6 +131,15 @@ let private acquireDataDirectoryLock fileName unavailableMessage configuration :
                 let lockStream =
                     new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
 
+                // The process umask governs FileStream's default mode, which
+                // varies by how the process was spawned (e.g. `docker
+                // compose exec` never inherits container-entrypoint.sh's own
+                // `umask 0077`). container-entrypoint.sh's own validator
+                // requires exactly mode 600 on every file under the data
+                // directory on the next fresh container start, so this must
+                // not depend on umask.
+                File.SetUnixFileMode(lockPath, UnixFileMode.UserRead ||| UnixFileMode.UserWrite)
+
                 Ok(lockStream :> IDisposable)
         with
         | :? IOException -> Error unavailableMessage
@@ -224,6 +233,11 @@ let backupAt backupRoot configuration name =
                             use target = createConnection destination SqliteOpenMode.ReadWriteCreate
                             target.Open()
                             source.BackupDatabase target
+                            // The SQLite provider creates `destination` under whatever umask the
+                            // invoking process has — never guaranteed to be container-entrypoint.sh's
+                            // own `umask 0077` (e.g. a `docker compose exec` backup command never
+                            // goes through the entrypoint at all).
+                            File.SetUnixFileMode(destination, UnixFileMode.UserRead ||| UnixFileMode.UserWrite)
 
                             if verify destination then
                                 Ok destination
@@ -259,24 +273,41 @@ let restoreAt backupRoot configuration name =
                                 | Error error -> Error error
                                 | Ok() ->
                                     File.Copy(source, staged, false)
+                                    // File.Copy leaves `staged`'s mode governed by the process
+                                    // umask, not the source backup's mode. `staged` becomes `live`
+                                    // below, and container-entrypoint.sh's validator requires
+                                    // exactly mode 600 on it at the next fresh container start.
+                                    File.SetUnixFileMode(staged, UnixFileMode.UserRead ||| UnixFileMode.UserWrite)
 
+                                    // Opening `staged` to verify it (even read-only) can leave
+                                    // its own -wal/-shm companions on disk. Only the single
+                                    // `staged` path below moves to `live` — leaving these behind
+                                    // would strand a stray file container-entrypoint.sh's file-mode
+                                    // validator rejects on the next boot.
                                     if not (verify staged) then
                                         File.Delete staged
+                                        removeCompanions staged |> ignore
                                         Error "backup verification failed"
-                                    elif File.Exists live then
-                                        checkpoint live
-                                        File.Move(live, preserved, false)
-
-                                        match removeCompanions live with
+                                    else
+                                        match removeCompanions staged with
                                         | Error error ->
-                                            File.Move(preserved, live, false)
+                                            File.Delete staged
                                             Error error
                                         | Ok() ->
-                                            File.Move(staged, live, false)
-                                            Ok()
-                                    else
-                                        File.Move(staged, live, false)
-                                        Ok()
+                                            if File.Exists live then
+                                                checkpoint live
+                                                File.Move(live, preserved, false)
+
+                                                match removeCompanions live with
+                                                | Error error ->
+                                                    File.Move(preserved, live, false)
+                                                    Error error
+                                                | Ok() ->
+                                                    File.Move(staged, live, false)
+                                                    Ok()
+                                            else
+                                                File.Move(staged, live, false)
+                                                Ok()
                             with
                             | :? IOException -> Error "restore failed"
                             | :? UnauthorizedAccessException -> Error "restore failed"

@@ -61,6 +61,31 @@ let ``readiness requires an unchanged migration journal without creating databas
     Assert.False(isReady configuration)
 
 [<Fact>]
+let ``readiness observes a database file atomically replaced after an earlier readiness probe warmed a pooled connection``
+    ()
+    =
+    let directory = temporaryDirectory ()
+    let configuration = create directory 1000 |> Result.defaultWith failwith
+    Assert.Equal(Ok(), initialize configuration)
+    // Warms any pooled read-only connection Microsoft.Data.Sqlite may cache
+    // for this exact connection string, mirroring a live service that has
+    // already answered at least one readiness probe.
+    Assert.True(isReady configuration)
+
+    // A restore replaces the live file at the OS level (same pattern as
+    // BeaverNestBe.Operations.Database.restoreAt): the old inode is moved
+    // aside and an unrelated, non-migrated file takes the live path's name.
+    let replacementPath = Path.Combine(temporaryDirectory (), "replacement.sqlite3")
+
+    File.WriteAllText(replacementPath, "not a migrated database")
+    let livePath = databasePath configuration
+    File.Delete(livePath + "-wal")
+    File.Delete(livePath + "-shm")
+    File.Move(replacementPath, livePath, true)
+
+    Assert.False(isReady configuration)
+
+[<Fact>]
 let ``invalid SQL fails before a service can listen`` () =
     let directory = temporaryDirectory ()
     let configuration = create directory 1000 |> Result.defaultWith failwith
