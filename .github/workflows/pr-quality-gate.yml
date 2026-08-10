@@ -34,6 +34,20 @@ jobs:
       - uses: ./.github/actions/setup-node
       - id: detect
         run: |
+          # Cumulative diff for this run: NX_BASE already resolves per
+          # event type (origin/$GITHUB_BASE_REF on pull_request,
+          # github.event.before on push) — the same GATE_CHANGED_BASE
+          # formula the `format`/`gate` jobs' fantomas/csharpier checks
+          # consume. has-dotnet is computed straight from this file diff
+          # (like has-markdown below), not from nx's affected-PROJECT-tag
+          # graph: the two signals answer different questions (which
+          # nx projects are graph-affected vs. which files literally
+          # changed) and can disagree, which previously broke the
+          # `format` job's conditional dotnet-SDK install on some pushes.
+          # Computing has-dotnet the same file-diff way format-verify-fantomas
+          # scopes itself keeps the two in permanent agreement.
+          CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD 2>/dev/null || echo "")
+
           AFFECTED=$(npx nx show projects --affected 2>/dev/null || echo "")
           # Check language tags for affected projects
           {
@@ -48,21 +62,22 @@ jobs:
             for tag in $TAGS; do
               case "$tag" in
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
-                lang:fsharp|lang:csharp) echo "has-dotnet=true" >> "$GITHUB_OUTPUT" ;;
                 lang:rust) echo "has-rust=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
           done
 
-          # Check for markdown changes
-          CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD 2>/dev/null || echo "")
+          if echo "$CHANGED_FILES" | grep -qE '\.(fs|fsi|fsx|fsproj|cs|csproj)$'; then
+            echo "has-dotnet=true" >> "$GITHUB_OUTPUT"
+          fi
+
           if echo "$CHANGED_FILES" | grep -q '\.md$'; then
             echo "has-markdown=true" >> "$GITHUB_OUTPUT"
           fi
 
   format:
     name: Auto-format affected (lint-staged)
-    needs: build-rhino
+    needs: [build-rhino, detect]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -95,13 +110,16 @@ jobs:
       # format-verify-fantomas (surfaces=["ci"]) and lint-staged's own "*.fs"
       # handler both invoke the bare `fantomas` binary, which only this
       # composite action installs (dotnet SDK + global fantomas tool).
-      # Unconditional: this job's own affected-file-type scoping (not the
-      # `detect` job's push-delta-scoped has-dotnet) decides whether fantomas
-      # actually runs, and the two scopes don't agree — gating this step on
-      # `detect`'s output skipped the install on a push whose delta had no
-      # .fs files even though the gate itself still tried to invoke fantomas
-      # against the full diff.
+      # Gated on `detect`'s has-dotnet, which is now computed from the same
+      # file-diff (`.fs`/`.fsproj`/`.cs`/`.csproj` glob against NX_BASE) that
+      # format-verify-fantomas's own affected-file-type scope uses — see the
+      # `detect` job's has-dotnet comment. The two previously disagreed
+      # because has-dotnet was nx-affected-PROJECT-tag-based while this job's
+      # own gate is file-glob-based; computing both from the identical file
+      # diff removes that divergence at the root instead of leaving this
+      # step unconditional.
       - uses: ./.github/actions/setup-dotnet
+        if: needs.detect.outputs.has-dotnet == 'true'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
