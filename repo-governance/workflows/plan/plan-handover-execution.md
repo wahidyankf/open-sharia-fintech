@@ -16,7 +16,8 @@ outputs:
   - name: handover-doc
     type: file
     pattern: local-tmp/handovers/*__*-implementation.md
-    description: The written handover document, named `<date>__<plan-identifier>-implementation.md`
+    default: local-tmp/handovers/<date>__<plan-identifier>-implementation.md
+    description: The written handover document. Default filename/folder is `local-tmp/handovers/<date>__<plan-identifier>-implementation.md` — the exact same default `plan-takeover-execution.md`'s Phase A0.5 looks up (see its frontmatter `inputs`/discovery-path note); keep both in sync if this default ever changes.
 ---
 
 # Plan Handover Execution Workflow
@@ -38,13 +39,13 @@ session's context — can resume from fact rather than from re-discovery or gues
 
 - The plan is fully complete — route it through Phase 9/10 (Knowledge Capture, Archival) instead; a
   finished plan needs an archive entry, not a resume document.
-- The plan never started — there is no state to hand over; a fresh `plan-take-over-execution.md` run
+- The plan never started — there is no state to hand over; a fresh `plan-takeover-execution.md` run
   on a never-touched plan is already a no-op discovery, per that workflow's own "When NOT to use".
 
-## Relationship to plan-take-over-execution.md (write side / read side)
+## Relationship to plan-takeover-execution.md (write side / read side)
 
 This workflow is the **write-side counterpart** to
-[`plan-take-over-execution.md`](./plan-take-over-execution.md)'s **read side**: that workflow's Phase
+[`plan-takeover-execution.md`](./plan-takeover-execution.md)'s **read side**: that workflow's Phase
 A0.5 checks `local-tmp/handovers/` for a document this workflow produces, using it as a fast, informal
 lead that narrows and accelerates the git/`gh` ground-truth probes Phase A2 still runs in full — a
 handover document is a hint, never a substitute for verification, since it can go stale the moment
@@ -65,14 +66,14 @@ A plan spanning several sessions and several repos accumulates two kinds of know
   way the first session did.
 
 Skipping a handover when one is warranted risks the same three outcomes
-[`plan-take-over-execution.md`](./plan-take-over-execution.md#why-this-workflow-exists) already names
+[`plan-takeover-execution.md`](./plan-takeover-execution.md#why-this-workflow-exists) already names
 for skipping discovery: re-work, abandoned state, and orphaned leftovers — this workflow prevents them
 by making the state explicit before anyone has to go looking for it.
 
 ## Required Document Structure
 
 Every handover document uses this exact section shape, in this order — not a suggestion, a contract.
-The read side ([`plan-take-over-execution.md`](./plan-take-over-execution.md) A0.5) is a human or an
+The read side ([`plan-takeover-execution.md`](./plan-takeover-execution.md) A0.5) is a human or an
 agent skimming under time pressure; a fixed, predictable shape is what makes a handover **fast** to
 consume instead of just informative. A handover missing a required section is incomplete — go back and
 fill it in rather than shipping a partial document.
@@ -83,7 +84,7 @@ fill it in rather than shipping a partial document.
 **Written**: <date>
 **Plan-identifier**: `<plan-identifier>`
 **Plan folder**: `plans/<stage>/<plan-identifier>/` (in `<repo>`, on `origin/main` or `<branch>`)
-**Consuming workflow**: [`plan-take-over-execution.md`](../../repo-governance/workflows/plan/plan-take-over-execution.md)
+**Consuming workflow**: [`plan-takeover-execution.md`](../../repo-governance/workflows/plan/plan-takeover-execution.md)
 
 ## One-line status
 
@@ -98,7 +99,7 @@ to answer "do I need to read further right now?">
 - Concrete facts only: PR numbers with state (open/draft/merged) and merge commit if merged, branch
   name, worktree path, HEAD commit, uncommitted-changes status. Every claim here must be a fact you
   verified this session, not an assumption — cite the command or evidence if it isn't obvious
-  (mirrors A2's "log every hit verbatim" discipline in plan-take-over-execution.md).
+  (mirrors A2's "log every hit verbatim" discipline in plan-takeover-execution.md).
 
 <Repeat this subsection once per repo touched or relevant to the plan this session — omit repos with
 nothing to report rather than padding with "no changes".>
@@ -145,7 +146,7 @@ short, targeted re-check of current git/PR status) does not warrant a delegated 
 ## Steps
 
 1. **Resolve the plan-identifier and date.** Same resolution rule as
-   [`plan-take-over-execution.md` A0](./plan-take-over-execution.md#phase-a--discover-every-trace-of-this-plan-sequential-per-repo-hard-gate):
+   [`plan-takeover-execution.md` A0](./plan-takeover-execution.md#phase-a--discover-every-trace-of-this-plan-sequential-per-repo-hard-gate):
    the plan folder's bare slug, no date prefix. Default `date` to the current date if not supplied.
 2. **Gather current state, per repo touched this session.** For each: worktree path and branch (if
    any), its HEAD commit, whether it has uncommitted changes, any PR number/state/CI status, and the
@@ -169,17 +170,17 @@ short, targeted re-check of current git/PR status) does not warrant a delegated 
    [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md#parallelism-budget)
    already documents elsewhere. Do not rely on it surviving a fresh clone or a different machine.
 6. **If a handover already exists for this plan-identifier from an earlier date, leave it in place.**
-   Multiple dated handovers may accumulate; `plan-take-over-execution.md`'s read side picks the
+   Multiple dated handovers may accumulate; `plan-takeover-execution.md`'s read side picks the
    most recent by filename date. Do not delete or overwrite an older one — it is a historical record of
    what an earlier session believed, useful if a discrepancy ever needs tracing.
 7. **Report the written path back** to the user or calling context, and confirm the file is non-empty.
 
 ## Related Documentation
 
-- [Plan Take-Over Execution](./plan-take-over-execution.md) — the read-side workflow this one's output
+- [Plan Takeover Execution](./plan-takeover-execution.md) — the read-side workflow this one's output
   feeds into; owns discovery, reconciliation, and takeover once a handover (or none) is found.
 - [Plan Execution](./plan-execution.md) — the workflow a resumed plan ultimately continues in, once
-  `plan-take-over-execution.md` has adopted its worktree.
+  `plan-takeover-execution.md` has adopted its worktree.
 - [Knowledge Capture](../../development/quality/knowledge-capture.md) — the entry-shape convention this
   workflow's gotcha-capture step mirrors, and the destination for a gotcha that turns out to be durable
   rather than session-specific.

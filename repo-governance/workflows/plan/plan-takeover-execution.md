@@ -1,6 +1,6 @@
 ---
-name: plan-take-over-execution
-title: "plan-take-over-execution"
+name: plan-takeover-execution
+title: "plan-takeover-execution"
 goal: Given a path to a plan, discover its true execution state across every candidate repository — local worktrees, local and remote branches, and GitHub PRs — reconcile that state into one authoritative picture, take over any in-flight implementation found rather than restarting it, remove confirmed-stale leftover worktrees/branches/build artifacts, and hand off to plan-execution.md against the reconciled state
 termination: Every candidate repo's plan state is classified, all confirmed-stale leftovers are removed (or explicitly held with a reason), and each live or fresh target has been handed to plan-execution.md, which reaches its own termination for that repo
 inputs:
@@ -25,7 +25,7 @@ inputs:
 outputs:
   - name: takeover-report
     type: file
-    pattern: generated-reports/plan-take-over-execution__*__discovery.md
+    pattern: generated-reports/plan-takeover-execution__*__discovery.md
     description: Per-repo raw findings, bucket classification, adopted targets, removed leftovers, and any anomalies escalated (with their resolution, if resolved during the run)
   - name: reconciled-targets
     type: map
@@ -35,7 +35,7 @@ outputs:
     description: Every output plan-execution.md itself defines, produced once per repo this workflow hands off to
 ---
 
-# Plan Take-Over Execution Workflow
+# Plan Takeover Execution Workflow
 
 **Purpose**: Before executing a plan, find out whether it has already been worked — anywhere. This
 workflow probes for existing worktrees, branches, and PRs across the current repo and its siblings,
@@ -162,8 +162,12 @@ the [Worktree Path Convention](../../conventions/structure/worktree-path.md) and
 already used in multi-repo-parity plans, branch names across repos.
 
 **A0.5. Check for a handover document first — a lead, never a substitute.** Before the repo/artifact
-probes below, look for `local-tmp/handovers/*__<plan-identifier>-implementation.md` in the current
-repo (produced by [`plan-handover-execution.md`](./plan-handover-execution.md)). If more than one date
+probes below, look in the current repo for the default filename/folder
+`local-tmp/handovers/<date>__<plan-identifier>-implementation.md` (glob:
+`local-tmp/handovers/*__<plan-identifier>-implementation.md`) — the same default
+[`plan-handover-execution.md`](./plan-handover-execution.md)'s frontmatter `outputs.handover-doc`
+declares; the two workflows are kept in sync on this one default, changed in both places together if
+ever changed. If more than one date
 exists for the same plan-identifier, use the most recent by filename date. When found, read it as a
 **fast, informal lead** that can narrow and accelerate Phase A2's probes (which repos to check first,
 which worktree/branch to expect, which gotchas to watch for) — it is gitignored, local-only, and can
