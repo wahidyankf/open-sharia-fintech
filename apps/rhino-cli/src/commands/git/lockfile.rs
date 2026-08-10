@@ -29,7 +29,12 @@ const LOCKFILE_ROOT_FIELDS: &[&str] = &[
 
 /// Arguments for `git lockfile sync`.
 #[derive(Args, Debug)]
-pub struct SyncArgs {}
+pub struct SyncArgs {
+    /// Optional positional paths, accepted for pre-commit `affected-file-type`
+    /// gate compatibility and otherwise ignored: staged `package.json` files
+    /// are always rediscovered directly from `git diff --cached`.
+    pub positional: Vec<String>,
+}
 
 /// Synchronize lockfiles from the repository root.
 ///
