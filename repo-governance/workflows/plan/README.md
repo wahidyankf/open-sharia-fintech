@@ -51,9 +51,9 @@ validation at the end.
   (`local-tmp/handovers/<date>__<plan-identifier>-implementation.md`) capturing an in-progress plan's
   per-repo state, concrete next step, and non-obvious gotchas learned this session, so a different
   agent or session can resume without re-discovering already-known state. Local, gitignored,
-  single-machine artifact — read by `plan-take-over-execution` as a lead, never a substitute for its
+  single-machine artifact — read by `plan-takeover-execution` as a lead, never a substitute for its
   own verification
-- [Plan Take-Over Execution](./plan-take-over-execution.md) - Before executing a plan, discover
+- [Plan Takeover Execution](./plan-takeover-execution.md) - Before executing a plan, discover
   whether it has already been worked anywhere — local worktrees, local/remote branches, and PRs
   across the current repo and its siblings (`ose-primer`, `ose-private` at minimum) — reconcile
   findings into one authoritative picture, adopt any live in-flight work instead of reprovisioning
