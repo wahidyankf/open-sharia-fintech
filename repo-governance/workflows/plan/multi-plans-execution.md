@@ -418,7 +418,7 @@ assumed:
 
 - All four edit **different** files, so they are disjoint on disk. But all four touch
   `apps/rhino-cli/**`, so all four carry the **byte-identity flag** and serialize at their merge +
-  4-repo propagation nodes (A6.2 / Iron Rule 3) — disjoint-on-disk does **not** imply
+  three-repo propagation nodes (A6.2 / Iron Rule 3) — disjoint-on-disk does **not** imply
   parallelizable-to-merge.
 - `rust-cargo-target-dir-sharing` had pivoted from a `scripts/*.sh` helper into `rhino-cli doctor`,
   moving it **inside** the byte-identity boundary. A stale pre-pivot reading would have scheduled it
