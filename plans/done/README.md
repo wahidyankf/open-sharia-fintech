@@ -9,6 +9,15 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-10: beavernest-app-setup](./2026-08-10__beavernest-app-setup/README.md) — **Closed
+  delivered-as-descoped.** Carried from `beaver-nest`'s stalled in-progress plan (72.5% complete,
+  279/385 checkboxes) by the `beaver-nest-repo-consolidation` plan's Phase 4. Shipped: generalized
+  governance real-database testing rules, the SQLite + DbUp migration + recovery backend and
+  readiness contract, and the Vite client-side-rendered SPA migration with the combined same-origin
+  Compose runtime. Did not ship: human runtime attestation, Knowledge Capture, and archival — Phases
+  4-6 had already reached `beaver-nest`'s `main` by direct push before the plan stalled, so no PR #3
+  ever opened and its review cycles never ran.
+
 - [2026-08-09: optimize-cis](./2026-08-09__optimize-cis/README.md) —
   Cut fixed overhead from the pre-commit, pre-push, and PR-quality-gate lifecycle across the three
   parity repos: a resolver shim and `node_modules/.bin` dispatch removed the per-gate invocation tax,

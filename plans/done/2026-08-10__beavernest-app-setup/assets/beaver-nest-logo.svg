@@ -1,0 +1,29 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">BeaverNest logo</title>
+  <desc id="desc">A friendly beaver sheltered inside a nest-shaped home.</desc>
+  <g
+    fill="none"
+    stroke="#6669ce"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="18"
+  >
+    <path d="M86 254 256 92l170 162v142c0 21-17 38-38 38H124c-21 0-38-17-38-38V254Z" />
+    <path d="M146 436h220" opacity=".35" />
+    <path d="M179 367c-25-40-17-92 19-122 31-26 77-26 116 0 36 30 44 82 19 122" />
+    <path d="M207 249c-16-27-55-23-64 8-5 17 4 35 20 42" />
+    <path d="M305 249c16-27 55-23 64 8 5 17-4 35-20 42" />
+    <path d="M214 362c12 19 25 27 42 27s30-8 42-27" />
+    <path d="M240 337c4 5 9 8 16 8s12-3 16-8" />
+    <path d="M226 305h1" />
+    <path d="M285 305h1" />
+    <path d="M256 345v26" />
+    <path d="M238 371h36v19c0 9-8 17-18 17s-18-8-18-17v-19Z" fill="#fff" />
+    <path d="M256 371v36" />
+  </g>
+</svg>
