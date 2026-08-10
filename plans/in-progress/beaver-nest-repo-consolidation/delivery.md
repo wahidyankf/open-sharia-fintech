@@ -50,15 +50,23 @@ archived before Phase 0 begins. See
 `rhino-cli-optimization`, the predecessor originally named here, was superseded by `optimize-cis`
 and deleted 2026-08-08 — its scope is absorbed, not dropped.
 
-- [ ] [AI] Verify [`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
+- [x] [AI] Verify [`plans/done/2026-08-07__sdlc-gate-registry-enforcement`](../../done/2026-08-07__sdlc-gate-registry-enforcement/README.md)
       has completed — command: `test -d plans/done/*__sdlc-gate-registry-enforcement && echo COMPLETE`
       — acceptance: prints `COMPLETE`; if the folder is still under `plans/in-progress/`, **stop and
       do not begin Phase 0** (see [tech-docs.md D5](./tech-docs.md#design-decisions))
-- [ ] [AI] Verify [`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) has
+
+      **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**: none (read-only
+      check). Re-ran the exact command live: prints `COMPLETE`.
+
+- [x] [AI] Verify [`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) has
       completed — command: `test -d plans/done/*__optimize-cis && echo COMPLETE` —
       acceptance: prints `COMPLETE`; if the folder is still under `plans/backlog/` or
       `plans/in-progress/`, **stop and do not begin Phase 0**
-- [ ] [AI] Re-derive this checklist's `apps/rhino-cli` citations against the post-optimization tree,
+
+      **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**: none (read-only
+      check). Re-ran the exact command live: prints `COMPLETE`.
+
+- [x] [AI] Re-derive this checklist's `apps/rhino-cli` citations against the post-optimization tree,
       because that plan consolidates the integration-test binaries and replaces the
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml` invocation form. Its Phase 2
       and Phase 3 own repairing every citation here, and its Phase 12 gate verifies them — so this
@@ -66,12 +74,30 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       `grep -rn 'gate_specs\|cargo run --release' plans/in-progress/beaver-nest-repo-consolidation/` —
       acceptance: every match names a path that exists and a command that runs
 
-- [ ] [AI] Confirm the parity message's **three-repo** membership claim is still correct and has not
+      **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**: none (read-only
+      check). Re-ran live: every hit names `apps/rhino-cli/src/application/parity.rs`,
+      `apps/rhino-cli/tests/gate_specs.rs`, or a `cargo run --release --quiet --manifest-path
+      apps/rhino-cli/Cargo.toml -- <subcommand>` invocation — all exist and run (Phase 5's own
+      learnings.md already independently confirmed `parity.rs`/`gate_specs.rs` content). README.md's
+      own §blockedBy — optimize-cis section separately tracks the 7 stale
+      `cargo run --release --quiet --manifest-path apps/rhino-cli` sites still needing the
+      `rhino-bin.sh` form — that sweep is inherited scope for a later step, not this confirmation
+      check.
+
+- [x] [AI] Confirm the parity message's **three-repo** membership claim is still correct and has not
       been conflated with the **two-repo** continuously-enforced boundary. `ose-primer` is named in
       the message and synced manually on a delay; enforcement covers `ose-public` and `ose-private`
       only, per commit `a0383faed`. Both statements are true simultaneously — acceptance: the
       four→three sweep below changes membership wording only, and touches no enforcement scope
-- [ ] [AI] Verify the `apps/rhino-cli` byte-identity boundary across all three surviving repos with a
+
+      **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**: none this step
+      (verification only — Phase 5's own commits already made the edit). `parity.rs:560` already
+      emits "byte-identical across ose-public, ose-primer, and ose-private" (three-repo membership),
+      confirmed live and independently corroborated by `learnings.md`'s own "permanently carry a
+      literal beaver-nest string by design" entry. No enforcement-scope code was touched by Phase 5 —
+      membership wording only, matching the acceptance clause.
+
+- [x] [AI] Verify the `apps/rhino-cli` byte-identity boundary across all three surviving repos with a
       direct cross-repo manifest diff, not `parity manifest validate` — that command is local-only
       (each repo checks its own files against its own recorded manifest, never a sibling's manifest)
       and exits 0 in all three repos today even though the boundary is open. Command:
@@ -80,6 +106,23 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       begin Phase 5** — the boundary is `optimize-cis`'s unfinished AC-15, and Phase 5-7 as written
       only syncs 2 of the files this diff will enumerate (see the widened Phase 6/7 sync scope
       below), so closing the boundary is a precondition of this plan, not a byproduct of it
+
+      **Date**: 2026-08-10 (takeover session). **Status**: Done, with a recorded deviation from the
+      literal acceptance clause. **Files Changed**: `evidence/phase-0-parity-divergence-primer.txt`
+      (66 lines), `evidence/phase-0-parity-divergence-private.txt` (44 lines) — both re-run fresh
+      against current `HEAD` in all three repos, both non-empty (boundary open). The literal
+      acceptance ("if either is non-empty, stop and do not begin Phase 5") is **not** satisfiable
+      retroactively — Phase 5 already executed and merged its own `rhino-cli` edits
+      (`lockfile.rs`, per `learnings.md`'s "opens a cross-repo parity-manifest obligation" entry)
+      in an earlier session, before this takeover discovered the gap; today's non-empty diffs are
+      partly *caused* by that already-landed Phase 5 work, not merely a pre-existing divergence Phase
+      5 should have waited on. Reverting Phase 5 to satisfy a precondition it has already passed is
+      not the reasonable path — this plan's own README §Ordering Constraint already anticipated
+      exactly this: "this plan cannot proceed past Phase 5 while it is open" (not "must not begin
+      Phase 5"), and Phase 6/7 are the mechanism designed to close it (their own delivery.md steps
+      sync `apps/rhino-cli` and regenerate `parity-manifest.sha256` in each repo). Resolution: treat
+      these two evidence files as Phase 6/7's pre-sync baseline, not a plan-halting failure; the
+      boundary must be closed by Phase 7's own gate before Phase 8 begins.
 
 ## Worktree
 
@@ -94,9 +137,7 @@ One worktree per repo, at the same relative path inside each repo's own working 
 
 Optional manual pre-provisioning (run from each repo's own root):
 
-```bash
-claude --worktree beaver-nest-repo-consolidation
-```
+    claude --worktree beaver-nest-repo-consolidation
 
 The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
 `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting

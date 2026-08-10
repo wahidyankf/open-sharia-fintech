@@ -1,0 +1,66 @@
+15a16
+> 09a74644eb3e13acfb82cd05c23b93eb6ed5265a32d34adc07f225ea83df8861  apps/rhino-cli/src/application/doctor/tools.rs
+26c27,28
+< 147b55728155da0dfc2e7e10df064bcf879bb0df7ed77d2c2bdd6153330c3169  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature
+---
+> 138b5a25e37f5540abf87a281f299451af7e7a0dc54fedff3d495910ecc03663  apps/rhino-cli/src/commands/md_validate_frontmatter_dates.rs
+> 14343e06f5ec1be94cc81c2ba8fe4eda6ad8a693bae3e69d83f57ca6c73741aa  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
+28d29
+< 156ec69ca964d760499b9e8b3c3587aab99a60544eb81bc73b514981d243534e  apps/rhino-cli/src/commands/gate/run.rs
+31a33
+> 16f7e848178f81d2024c223e6c42a27248dc808b21dd088933a6ad32d41c174f  apps/rhino-cli/src/commands/gate/run.rs
+41d42
+< 1ba39d7ebbf78b788f8190791821487577d9d49a428d31839d3de48a08547001  apps/rhino-cli/src/commands/md_validate_frontmatter_dates.rs
+44a46
+> 1f0588beb78e418ab5c01a1a6e457fd6c0c81c7cc4ab36e7721fa8327cb2dcbe  apps/rhino-cli/tests/specs_tree.rs
+55a58
+> 26720948cb21d83fa1ff60aa3425db6872d45f44a66edd323558f51f245e57c0  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature
+90d92
+< 3e18cfc97d47cb07e93a7faa00cec6c94580723dc76666f23258daf89b5be5c8  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
+221d222
+< 5f8ecb74e759e92304bfe2099c1faea84a3e12b07589887e4f0937cdffdb9c1a  apps/rhino-cli/tests/agents.rs
+243d243
+< 70cd5e4416236420d1aef57e703af1f8f5c00a69a3e3fd1fbb3a5534c24fd3e8  apps/rhino-cli/src/commands/gate/validate.rs
+246d245
+< 720632fc23373b94f9fec7612d15d84593ed2e9c696fe0f2cdc6a8a1e9550ef4  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature
+262a262
+> 7d6f2608e1589c82816c946588a3d9d1bd9f430cffe23cd012aa0c7d213f6ec4  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature
+277d276
+< 8a66224806500ae8beedd7ac33f8ef9f74fda2665f6bd9d9b2a921f528ac1529  apps/rhino-cli/tests/gate_specs.rs
+289c288
+< 90a14ced042f94074025e5aefcdfb15fe831b669fe6585742cb162bb5aac8dee  apps/rhino-cli/tests/gate_dispatch.rs
+---
+> 91ab94eed7bc6247b639bc34d992bfa41be6ffa2ee341a9a45aa2f768e12c5a9  apps/rhino-cli/tests/docs.rs
+300d298
+< 9672dd77249ddbb66d1e73435d58aa802a95597229ddfed48caed537f22fef88  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
+305d302
+< 991b36ae431b50e18141880d487ed4cd9380628fb387ccbcbb4dba4dfd052408  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature
+372a370,371
+> 9afa4752e5549a3814d9db827e430de97ccc22f50d303d13089d700cb47683c7  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
+> 9b169e498c61e45938775aa96804b3c24297b6e8b490c451b6dbbbd505b7ba15  apps/rhino-cli/tests/gate_dispatch.rs
+376a376
+> 9d27c85963c49537c3da63fb5e7013c34c08ee9b23cebfe950caf401f5de4f25  apps/rhino-cli/src/commands/gate/validate.rs
+394d393
+< a9453573b1e30fe916e04222e7ebf8ad7f4b742fc00a605dfecba7d2c592922a  apps/rhino-cli/src/application/doctor/tools.rs
+402a402
+> ac87cd7cd86d59bfea8243425f24e87bcaf7eea22dfeaed27904095dfc5fcc41  apps/rhino-cli/src/application/parity.rs
+405d404
+< aebafa49a2adb721e75584841c0ed0f3bdd2dbed4867ac1ca653984e2300aba8  apps/rhino-cli/tests/specs_tree.rs
+421a421
+> bf668a4f7b74511acb4cedbbbd231830c8b19f46aa2a9383e13b7eeaacc81f6b  apps/rhino-cli/src/commands/repo_config_validate.rs
+462d461
+< db531a996b50b7a882b40770d893ecbbd1028465110161555dbfe5d78079d5bb  apps/rhino-cli/tests/cursor_binding.rs
+473a473
+> e013106467081fd1de863849ff99d413707845559850715aafe33c66472f7daf  apps/rhino-cli/tests/agents.rs
+587a588
+> e3f6ff6bfccf39bb8a51de2d396f38b3136a236cc9caf701d74856127120d6dc  apps/rhino-cli/tests/gate_specs.rs
+588a590
+> e5260c85b56fa0abd4ca038ca8ec079da4e210fb7150668f00a0c10378966e1c  apps/rhino-cli/tests/cursor_binding.rs
+599d600
+< ec6f75d372c686de45046605e5deb005a09ec75f2a69e3044020f7c4f218d402  apps/rhino-cli/tests/docs.rs
+613d613
+< f17121bb589b9971c9f72b34b4b91b954c56b1ce750413c35fb6ad48362363a5  apps/rhino-cli/src/application/parity.rs
+649d648
+< f800c74e74cbb4539b7bb08103f0d2ef98ec5053737997eec5e23070b8da2edd  apps/rhino-cli/src/commands/repo_config_validate.rs
+659a659
+> ffee29fc10aca182ff6e3b376df1aa48aadeaeb31e7d3e7fee60a8bdb196ff38  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature
