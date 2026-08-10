@@ -129,8 +129,9 @@ change lands there beyond the final archive flip.
 **Out of scope**
 
 - Any git-history merge. Commit history stays in the archived repository (see D1).
-- `beaver-nest`'s governance tree, its `apps/rhino-cli` fork, and its 35 duplicate idea two-pagers.
-  `ose-public` is upstream and authoritative for all three (see D2).
+- `beaver-nest`'s governance tree, its `apps/rhino-cli` fork, and its duplicate idea two-pagers (35
+  at the 2026-08-06 baseline, 0 as of 2026-08-10, per finding 2 above). `ose-public` is upstream and
+  authoritative for all three (see D2).
 - `libs/web-ui` reconciliation. The ported frontend consumes **this** repo's `web-ui`; the
   `beaver-nest` copy's 43 divergent files are discarded, not merged.
 - Building any actual BeaverNest product capability. The walking skeleton lands as-is.
@@ -153,12 +154,12 @@ Four delivery units, executed in order:
 
 ## Resolved Design Decisions (from grilling)
 
-| ID  | Decision                                                                                                                       | Rationale                                                                                                                                                                                                                           |
-| --- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | **Selective file port, no git-history merge.** Copy `beaver-nest`-unique paths in as new files.                                | The two trees share a root commit but have both rewritten governance heavily since the fork; a real merge conflicts on essentially every governance file for history nobody will read. History stays readable in the archived repo. |
+| ID  | Decision                                                                                                                                                                                                                                                                    | Rationale                                                                                                                                                                                                                           |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Selective file port, no git-history merge.** Copy `beaver-nest`-unique paths in as new files.                                                                                                                                                                             | The two trees share a root commit but have both rewritten governance heavily since the fork; a real merge conflicts on essentially every governance file for history nobody will read. History stays readable in the archived repo. |
 | D2  | **Carry product + vision + unique ideas only.** Discard the governance tree and the `rhino-cli` fork (the duplicate-ideas overlap the 2026-08-06 baseline measured has since resolved itself through cross-repo grooming — see [README.md finding 2](./README.md#context)). | `ose-public` is upstream and authoritative for all three surfaces, and is strictly ahead on each.                                                                                                                                   |
-| D3  | **Single-token domain `beavernest`.** Apps become `beavernest-be`, `beavernest-app-web`, plus `-e2e` pairs.                    | `fe` is not a legal type suffix in [`file-naming.md`](../../../repo-governance/conventions/structure/file-naming.md); the single-token domain matches `ayokoding`, `organiclever`, and `wahidyankf`.                                |
-| D4  | **Archive the GitHub repo, do not delete it.**                                                                                 | Keeps history, issues, and every inbound link resolving; reversible via `gh repo unarchive`. Deleting breaks links already published in this repo's docs and in past LinkedIn posts.                                                |
+| D3  | **Single-token domain `beavernest`.** Apps become `beavernest-be`, `beavernest-app-web`, plus `-e2e` pairs.                                                                                                                                                                 | `fe` is not a legal type suffix in [`file-naming.md`](../../../repo-governance/conventions/structure/file-naming.md); the single-token domain matches `ayokoding`, `organiclever`, and `wahidyankf`.                                |
+| D4  | **Archive the GitHub repo, do not delete it.**                                                                                                                                                                                                                              | Keeps history, issues, and every inbound link resolving; reversible via `gh repo unarchive`. Deleting breaks links already published in this repo's docs and in past LinkedIn posts.                                                |
 
 ## Ordering Constraint
 
@@ -188,11 +189,18 @@ now historical context, not a live blocker.
 [`plans/done/2026-08-09__optimize-cis`](../../done/2026-08-09__optimize-cis/README.md) — successor to, and
 supersedes, the `rhino-cli-optimization` idea this section originally named (deleted 2026-08-08,
 absorbed into `optimize-cis`'s scope) — rewrote how `apps/rhino-cli` is built, invoked, and
-lint-gated, and archived 2026-08-09. Its own Phase 10 sweep resolved every old-form
-`cargo run --release --quiet --manifest-path apps/rhino-cli` command citation across the repo,
-including this doc — this plan's delivery checklist already reflects the post-optimization
-resolver-shim invocation form (`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=<surface>`)
-as of that sweep.
+lint-gated, and archived 2026-08-09. **Correction (re-verified 2026-08-10): its Phase 10 sweep task
+did not resolve this doc's citations** — that task is still unchecked in `optimize-cis`'s own
+`delivery.md`, and this plan's `delivery.md` still carries 10 occurrences of the old
+`cargo run --release --quiet --manifest-path apps/rhino-cli` invocation form (8 of them live
+executable commands, at `delivery.md:285,577,650,659,677,708,728,759`) and zero occurrences of
+`rhino-bin.sh`. This sweep is still owed and is inherited from `optimize-cis`, not new scope this
+plan invents. Note also that `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=<surface>` is
+**not** the general replacement form — it is specifically for declared gate-surface runs (the
+git-hook context this doc's own bullet above cites). 8 of `delivery.md`'s 10 sites invoke direct
+subcommands (`parity manifest validate`, `parity manifest generate`, `repo-config validate`), whose
+correct post-optimization form is `apps/rhino-cli/scripts/rhino-bin.sh <subcommand>` directly — e.g.
+`apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` — not `gate run --surface=`.
 
 **One item `optimize-cis` did not close, and this plan inherits as a live precondition rather than a
 historical note**: its own closing acceptance clause states plainly that "`parity manifest validate`
@@ -218,8 +226,11 @@ Worktree path: `worktrees/beaver-nest-repo-consolidation/` (one per repo, at the
 inside each of the three surviving repos plus `beaver-nest` itself — four worktrees total, per
 [delivery.md's Worktree table](./delivery.md#worktree); `beaver-nest`'s is used only for Phase 8's
 retirement-notice PR). Delivery Mode: **`worktree-to-pr`** — the repo
-default, and required here because the change set includes F#, TypeScript, Rust, and generated
-mirror files, which the `main-to-origin-main` `.md`-only restriction excludes.
+default, and the only available mode: per
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
+`ose-public`'s `main` is branch-protected against direct pushes — including for repository admins —
+so `worktree-to-origin-main` and `main-to-origin-main` have no path here, regardless of the change
+set's file types.
 
 Full declarations in [delivery.md](./delivery.md).
 
