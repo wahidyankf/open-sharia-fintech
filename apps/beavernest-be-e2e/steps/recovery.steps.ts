@@ -1,16 +1,24 @@
-/** Aggregate BDD bindings for real CLI backup and stopped-app restore observations. */
+/**
+ * Aggregate BDD bindings for real CLI backup and stopped-app restore
+ * observations. `backup`/`restore` run inside the disposable Compose
+ * container against the exact published `BeaverNestBe.dll` the production
+ * image ships (no SDK required). Verifying the resulting SQLite files' raw
+ * contents runs `dotnet fsi` on the Playwright test runner's own host
+ * machine against the same files via the Compose stack's host bind mounts —
+ * see utils/host-runtime.ts.
+ */
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import {
   backendShell,
   requireComposeRuntime,
   runBackendCommand,
-  runFsi,
   runStoppedBackendCommand,
   startBackend,
   stoppedBackendShell,
   stopBackend,
 } from "../utils/compose-runtime";
+import { hostBackupPath, hostDatabasePath, requireHostRuntimeAccess, runFsiOnHost } from "../utils/host-runtime";
 import { expectCurrentReadiness } from "../utils/readiness";
 
 const { Given, When, Then } = createBdd();
@@ -52,8 +60,9 @@ async function createValidatedBackup(): Promise<void> {
 
 Given("BeaverNest is ready with WAL enabled", async ({ request }) => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
   await expectCurrentReadiness(request);
-  const output = await runFsi(databaseCheckScript("/var/lib/beavernest/beavernest.sqlite3"));
+  const output = await runFsiOnHost(databaseCheckScript(hostDatabasePath()));
   expect(outputValue(output, "integrity")).toBe("ok");
 });
 
@@ -68,17 +77,18 @@ Then("the backup completes through the SQLite backup API", async () => {
 
 // oxlint-disable-next-line no-empty-pattern
 Then("integrity_check returns {string} for the backup", async ({}, result: string) => {
-  const output = await runFsi(databaseCheckScript(`/var/backups/beavernest/${backupName}`));
+  const output = await runFsiOnHost(databaseCheckScript(hostBackupPath(backupName)));
   expect(outputValue(output, "integrity")).toBe(result);
 });
 
 Then("foreign_key_check returns no rows for the backup", async () => {
-  const output = await runFsi(databaseCheckScript(`/var/backups/beavernest/${backupName}`));
+  const output = await runFsiOnHost(databaseCheckScript(hostBackupPath(backupName)));
   expect(outputValue(output, "foreignKeyRows")).toBe("false");
 });
 
 Given("a validated backup and the application is stopped", async ({ request }) => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
   await expectCurrentReadiness(request);
   await createValidatedBackup();
   await stopBackend();
@@ -97,7 +107,7 @@ Then("the replaced database is preserved at a recoverable path", async () => {
 });
 
 Then("the restored migration journal is current", async () => {
-  const output = await runFsi(databaseCheckScript("/var/lib/beavernest/beavernest.sqlite3"), true);
+  const output = await runFsiOnHost(databaseCheckScript(hostDatabasePath()));
   expect(outputValue(output, "journal")).toBe("1");
 });
 

@@ -19,6 +19,11 @@ services:
         target: /var/lib/beavernest
         bind:
           create_host_path: false
+      - type: bind
+        source: ${BEAVERNEST_BE_BACKUP_DIRECTORY:-/tmp/beavernest-unconfigured-backups}
+        target: /var/backups/beavernest
+        bind:
+          create_host_path: false
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:19300/api/v1/readiness"]
       interval: 10s

@@ -61,33 +61,16 @@ export async function composeResult(arguments_: readonly string[]): Promise<Comm
   return commandResult("docker", composeArguments(arguments_));
 }
 
+// The published runtime image's WORKDIR is /app, containing the exact
+// BeaverNestBe.dll the entrypoint's own CMD invokes — running it directly
+// (rather than `dotnet run --project ...`) exercises the real shipped
+// production binary and needs no .NET SDK inside the container.
 export async function runBackendCommand(arguments_: readonly string[]): Promise<void> {
-  await compose([
-    "exec",
-    "-T",
-    backendService,
-    "dotnet",
-    "run",
-    "--project",
-    "src/BeaverNestBe/BeaverNestBe.fsproj",
-    "--",
-    ...arguments_,
-  ]);
+  await compose(["exec", "-T", backendService, "dotnet", "BeaverNestBe.dll", ...arguments_]);
 }
 
 export async function runStoppedBackendCommand(arguments_: readonly string[]): Promise<void> {
-  await compose([
-    "run",
-    "--rm",
-    "--no-deps",
-    backendService,
-    "dotnet",
-    "run",
-    "--project",
-    "src/BeaverNestBe/BeaverNestBe.fsproj",
-    "--",
-    ...arguments_,
-  ]);
+  await compose(["run", "--rm", "--no-deps", backendService, "dotnet", "BeaverNestBe.dll", ...arguments_]);
 }
 
 export async function backendShell(script: string): Promise<void> {
@@ -96,17 +79,6 @@ export async function backendShell(script: string): Promise<void> {
 
 export async function stoppedBackendShell(script: string): Promise<void> {
   await compose(["run", "--rm", "--no-deps", backendService, "sh", "-ceu", script]);
-}
-
-export async function runFsi(script: string, stopped = false): Promise<string> {
-  const encoded = Buffer.from(script, "utf8").toString("base64");
-  const command = `printf '%s' '${encoded}' | base64 -d > /tmp/beavernest-e2e-probe.fsx\ndotnet fsi --exec /tmp/beavernest-e2e-probe.fsx\nrm -f /tmp/beavernest-e2e-probe.fsx`;
-  const arguments_ = stopped
-    ? ["run", "--rm", "--no-deps", backendService, "sh", "-ceu", command]
-    : ["exec", "-T", backendService, "sh", "-ceu", command];
-  const result = await composeResult(arguments_);
-  expect(result.exitCode, result.output).toBe(0);
-  return result.output;
 }
 
 export async function stopBackend(): Promise<void> {
@@ -135,7 +107,19 @@ export async function waitForHealth(): Promise<void> {
   throw new Error("the restarted disposable backend did not become live");
 }
 
+/**
+ * Recovers from a scenario that intentionally corrupted the live SQLite file
+ * (readiness.steps.ts). `down -v` alone never touches the bind-mounted host
+ * data directory, so the corrupted file would otherwise persist across the
+ * restart below and keep every later scenario failing readiness. Deleting it
+ * first — while the still-running (uncrashed) container is reachable — lets
+ * DbUp perform a clean fresh migration on the next boot, exactly like the
+ * "fresh database" scenario's own successful empty-directory boot.
+ */
 export async function resetBackendData(): Promise<void> {
+  await backendShell(
+    "rm -f /var/lib/beavernest/beavernest.sqlite3 /var/lib/beavernest/beavernest.sqlite3-wal /var/lib/beavernest/beavernest.sqlite3-shm",
+  );
   await compose(["down", "-v"]);
   await compose(["up", "-d", backendService]);
   await waitForHealth();

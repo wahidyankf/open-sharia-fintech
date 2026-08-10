@@ -45,17 +45,31 @@ cleanup() {
 trap cleanup EXIT
 
 install -d -m 0700 "$beavernest_fixture_root/data" "$beavernest_fixture_root/backups"
+# Randomized (not the fixed production default 19300) so a backend and a
+# frontend disposable runtime — each its own `docker compose` project, each
+# started by this same script — can run concurrently (e.g.
+# `nx run-many -t test:e2e -p beavernest-be-e2e,beavernest-app-web-e2e`)
+# without one's host port bind failing on the other's.
+beavernest_public_port=$((20000 + (RANDOM % 10000)))
 export BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1
-export BEAVERNEST_BE_PUBLIC_PORT=19300
+export BEAVERNEST_BE_PUBLIC_PORT=$beavernest_public_port
 export BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_fixture_root/data"
 export BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture_root/backups"
 
+# The beavernest-be-e2e Playwright suite talks deep SQLite internals directly
+# on this machine's own dotnet SDK (never inside the SDK-less runtime
+# container — see apps/beavernest-be-e2e/utils/host-runtime.ts) against these
+# same host-bind-mounted files, and needs a fresh Debug build to `#r`.
+dotnet build "$beavernest_root/apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj" --nologo -v quiet
+export BEAVERNEST_BE_E2E_DATA_DIRECTORY="$beavernest_fixture_root/data"
+export BEAVERNEST_BE_E2E_BACKUP_DIRECTORY="$beavernest_fixture_root/backups"
+
 "${beavernest_compose[@]}" build beavernest-app
 "${beavernest_compose[@]}" run --rm --no-deps --user 0:0 --entrypoint sh beavernest-app -ceu \
-	'chown 10001:10001 /var/lib/beavernest && chmod 0700 /var/lib/beavernest'
+	'chown 10001:10001 /var/lib/beavernest /var/backups/beavernest && chmod 0700 /var/lib/beavernest /var/backups/beavernest'
 "${beavernest_compose[@]}" up -d beavernest-app
 
-beavernest_api_base_url=http://127.0.0.1:19300
+beavernest_api_base_url="http://127.0.0.1:$beavernest_public_port"
 for beavernest_attempt in $(seq 1 120); do
 	if curl -fsS "$beavernest_api_base_url/api/v1/readiness" >/dev/null 2>&1; then
 		break

@@ -1,11 +1,22 @@
 /**
- * Aggregate Playwright-BDD bindings for durable-store observations. These
- * bindings use only the disposable Compose runtime: no production test route
- * or host database access is introduced.
+ * Aggregate Playwright-BDD bindings for durable-store observations. No
+ * production test route is introduced. Deep SQLite-internals observations
+ * run `dotnet fsi`/`dotnet build` on the Playwright test runner's own host
+ * machine against the disposable Compose stack's host-bind-mounted SQLite
+ * files — see utils/host-runtime.ts for why this, not
+ * `docker compose exec`, is the correct place for them.
  */
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
-import { composeResult, requireComposeRuntime, runFsi, startBackend, stopBackend } from "../utils/compose-runtime";
+import { requireComposeRuntime, startBackend, stopBackend } from "../utils/compose-runtime";
+import {
+  bootIsolatedBackendWithBrokenMigration,
+  hostAssemblyPath,
+  hostDataDirectoryPath,
+  hostDatabasePath,
+  requireHostRuntimeAccess,
+  runFsiOnHost,
+} from "../utils/host-runtime";
 import { expectCurrentReadiness, expectReadinessResponse } from "../utils/readiness";
 
 const { Given, When, Then } = createBdd();
@@ -15,31 +26,35 @@ type DatabaseSnapshot = {
   tables: string[];
 };
 
-const journalSnapshotScript = `
+const journalSnapshotScript = (databasePath: string): string => `
 #r "nuget: Microsoft.Data.Sqlite, 10.0.10"
 open Microsoft.Data.Sqlite
 
-use connection = new SqliteConnection("Data Source=/var/lib/beavernest/beavernest.sqlite3;Mode=ReadOnly")
+use connection = new SqliteConnection("Data Source=${databasePath};Mode=ReadOnly")
 connection.Open()
 use journal = connection.CreateCommand()
 journal.CommandText <- "SELECT COUNT(*) FROM SchemaVersions;"
 let journalEntries = System.Convert.ToInt32(journal.ExecuteScalar())
 use tables = connection.CreateCommand()
-tables.CommandText <- "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name;"
+// sqlite_sequence is SQLite's own AUTOINCREMENT bookkeeping table (DbUp's
+// SchemaVersions journal declares an AUTOINCREMENT primary key) — engine
+// housekeeping, not a product or domain table. GLOB (not LIKE) treats
+// underscore as a literal character, so this needs no ESCAPE clause.
+tables.CommandText <- "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT GLOB 'sqlite_*' ORDER BY name;"
 use rows = tables.ExecuteReader()
 let names = [ while rows.Read() do rows.GetString(0) ]
 printfn "journal=%d" journalEntries
 printfn "tables=%s" (System.String.Join(",", names))
 `;
 
-const configuredSettingsScript = `
+const configuredSettingsScript = (dataDirectory: string, assemblyPath: string): string => `
 #r "nuget: Microsoft.Data.Sqlite, 10.0.10"
-#r "/workspace/src/BeaverNestBe/bin/Debug/net10.0/BeaverNestBe.dll"
+#r "${assemblyPath}"
 open Microsoft.Data.Sqlite
 open BeaverNestBe.Domain.DatabaseConfiguration
 open BeaverNestBe.Infrastructure.Sqlite.Connection
 
-let configuration = create "/var/lib/beavernest" 1000 |> Result.defaultWith failwith
+let configuration = create "${dataDirectory}" 1000 |> Result.defaultWith failwith
 use connection = openConfigured configuration
 let scalar commandText =
     use command = connection.CreateCommand()
@@ -51,15 +66,15 @@ printfn "journalMode=%s" (scalar "PRAGMA journal_mode;")
 printfn "busyTimeout=%s" (scalar "PRAGMA busy_timeout;")
 `;
 
-const contentionScript = `
+const contentionScript = (dataDirectory: string, assemblyPath: string): string => `
 #r "nuget: Microsoft.Data.Sqlite, 10.0.10"
-#r "/workspace/src/BeaverNestBe/bin/Debug/net10.0/BeaverNestBe.dll"
+#r "${assemblyPath}"
 open System
 open BeaverNestBe.Domain.DatabaseConfiguration
 open BeaverNestBe.Infrastructure.Sqlite.Connection
 open BeaverNestBe.Infrastructure.Sqlite.Errors
 
-let configuration = create "/var/lib/beavernest" 1000 |> Result.defaultWith failwith
+let configuration = create "${dataDirectory}" 1000 |> Result.defaultWith failwith
 use first = openConfigured configuration
 use setup = first.CreateCommand()
 setup.CommandText <- "CREATE TABLE IF NOT EXISTS E2eContentionFixture (Id INTEGER PRIMARY KEY);"
@@ -92,7 +107,7 @@ let contentionOutput: string | undefined;
 let settingsOutput: string | undefined;
 
 async function databaseSnapshot(): Promise<DatabaseSnapshot> {
-  const output = await runFsi(journalSnapshotScript);
+  const output = await runFsiOnHost(journalSnapshotScript(hostDatabasePath()));
   const journalMatch = /^journal=(\d+)$/m.exec(output);
   const tablesMatch = /^tables=(.*)$/m.exec(output);
 
@@ -113,6 +128,7 @@ function outputValue(output: string, name: string): string {
 
 Given("the configured durable database directory is writable and contains no database", async () => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
   freshSnapshot = undefined;
 });
 
@@ -132,6 +148,7 @@ Then("no product or domain table is created", async () => {
 
 Given("the database contains a completed DbUp migration journal", async () => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
   freshSnapshot = await databaseSnapshot();
   expect(freshSnapshot.journalEntries).toBe(1);
 });
@@ -153,26 +170,11 @@ Then("readiness reports schema {string}", async ({ request }, schema: string) =>
 });
 
 Given("the migration set contains an intentionally invalid SQL script in an isolated test fixture", async () => {
-  requireComposeRuntime();
   brokenMigrationOutput = undefined;
 });
 
 When("the BeaverNest application starts against a disposable database", async () => {
-  const result = await composeResult([
-    "run",
-    "--rm",
-    "--no-deps",
-    "beavernest-app",
-    "sh",
-    "-ceu",
-    `source=/tmp/beavernest-e2e-broken-source
-rm -rf "$source"
-mkdir -p "$source"
-cp -a /workspace/. "$source"
-printf '%s\\n' 'not valid SQL' > "$source/src/BeaverNestBe/Migrations/999-e2e-broken.sql"
-dotnet build "$source/src/BeaverNestBe/BeaverNestBe.fsproj" --no-restore >/dev/null
-BEAVERNEST_BE_DATA_DIRECTORY="$source/data" BEAVERNEST_BE_HTTP_LISTEN_ADDRESS=127.0.0.1 BEAVERNEST_BE_HTTP_LISTEN_PORT=19321 dotnet "$source/src/BeaverNestBe/bin/Debug/net10.0/BeaverNestBe.dll"`,
-  ]);
+  const result = await bootIsolatedBackendWithBrokenMigration();
   expect(result.exitCode, result.output).not.toBe(0);
   brokenMigrationOutput = result.output;
 });
@@ -185,15 +187,16 @@ Then("startup exits non-zero before publishing the HTTP endpoint", async () => {
 Then("the migration failure is logged without exposing sensitive configuration", async () => {
   const output = brokenMigrationOutput ?? "";
   expect(output).not.toContain("not valid SQL");
-  expect(output).not.toContain("/tmp/beavernest-e2e-broken-source/data");
+  expect(output).not.toMatch(/beavernest-e2e-broken-[^/\\]*[/\\]data/);
 });
 
 Given("a migrated BeaverNest database is open", async () => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
 });
 
 When("the SQLite operating settings are inspected", async () => {
-  settingsOutput = await runFsi(configuredSettingsScript);
+  settingsOutput = await runFsiOnHost(configuredSettingsScript(hostDataDirectoryPath(), hostAssemblyPath));
 });
 
 Then("foreign key enforcement is enabled", async () => {
@@ -210,10 +213,11 @@ Then("a finite busy timeout is configured", async () => {
 
 Given("one disposable SQLite connection holds a short write transaction", async () => {
   requireComposeRuntime();
+  requireHostRuntimeAccess();
 });
 
 When("a second connection attempts a write through the configured data boundary", async () => {
-  contentionOutput = await runFsi(contentionScript);
+  contentionOutput = await runFsiOnHost(contentionScript(hostDataDirectoryPath(), hostAssemblyPath));
 });
 
 Then("the second operation retries only until the configured busy timeout", async () => {
