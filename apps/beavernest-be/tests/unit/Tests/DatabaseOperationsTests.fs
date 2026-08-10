@@ -242,6 +242,63 @@ let ``restore reports a distinguishable error when the rollback move also fails`
     )
 
 [<Fact>]
+let ``restore reports a distinguishable error when the removeCompanions-live rollback move also fails`` () =
+    // Regression test for a rollback-of-rollback gap in the sibling
+    // `removeCompanions live` failure branch (line 318 of Database.fs) that
+    // cycle 5's `promoteStagedOverPreviousLive` fix did not cover — that fix
+    // guarded the later `File.Move(staged, live, ...)` promote step, but the
+    // earlier `File.Move(preserved, live, ...)` rollback triggered by a
+    // failed `removeCompanions live` had no fault handling of its own, so a
+    // throw there fell through to `restoreAt`'s outer try/with and collapsed
+    // to the exact same generic "restore failed" string as a clean rollback
+    // — making "safe to retry" and "live database is now missing entirely"
+    // indistinguishable from the return value alone.
+    // `rollbackPreservedAfterCompanionRemovalFailure` is exercised directly
+    // (with an injected `moveFile`) instead of racing real filesystem timing
+    // to reproduce a `File.Move` failure inside a full `restoreAt` call
+    // deterministically.
+    let mutable moves = []
+
+    let failRollback (source: string) (destination: string) =
+        moves <- moves @ [ source, destination ]
+        raise (IOException "simulated failure")
+
+    Assert.Equal(
+        Error
+            "restore failed and rollback failed - live database is missing; recover it manually from the preserved copy",
+        rollbackPreservedAfterCompanionRemovalFailure
+            failRollback
+            "preserved.sqlite3"
+            "live.sqlite3"
+            "companion removal failed"
+    )
+
+    Assert.Equal<(string * string) list>([ ("preserved.sqlite3", "live.sqlite3") ], moves)
+
+[<Fact>]
+let ``restore rolls back to the preserved database when removeCompanions live fails and the rollback move succeeds``
+    ()
+    =
+    // Companion test to the double-failure case above: confirms the rollback
+    // move succeeding still surfaces the original `removeCompanions live`
+    // error rather than swallowing it.
+    let mutable moves = []
+
+    let recordRollback (source: string) (destination: string) =
+        moves <- moves @ [ source, destination ]
+
+    Assert.Equal(
+        Error "companion removal failed",
+        rollbackPreservedAfterCompanionRemovalFailure
+            recordRollback
+            "preserved.sqlite3"
+            "live.sqlite3"
+            "companion removal failed"
+    )
+
+    Assert.Equal<(string * string) list>([ ("preserved.sqlite3", "live.sqlite3") ], moves)
+
+[<Fact>]
 let ``restore returns sanitized errors for missing and corrupt backup files`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-invalid-restore-" + Guid.NewGuid().ToString("N"))

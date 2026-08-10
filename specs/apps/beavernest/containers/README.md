@@ -8,10 +8,12 @@ Container-level specifications for the BeaverNest foundation.
 - [contracts/](./contracts/README.md) — OpenAPI 3.1 contract spec (`beavernest-contracts` Nx
   project) defining the two `beavernest-be` routes `beavernest-app-web` consumes
 
-Two runtime containers exist: `beavernest-app-web` (Vite/React CSR, port 19310) and `beavernest-be`
-(F#/Giraffe, port 19320). A dedicated `container.md` diagram and `deployment.md` topology doc are
-deferred until Phase 6/8 land the actual runtimes — see [product/](../product/README.md) for the
-deferred-scope list.
+Production ships **one** combined runtime container: `beavernest-be` (F#/Giraffe, port 19300) serves
+the pre-built `beavernest-app-web` (Vite/React CSR) static assets same-origin — no FE/BE network
+boundary exists in production. The "two processes" split (`beavernest-app-web` on port 19310 proxying
+API calls to `beavernest-be` on port 19320) is local-development-only, via the Vite dev server's
+proxy. A dedicated `container.md` diagram and `deployment.md` topology doc are deferred until later
+phases land further runtimes — see [product/](../product/README.md) for the deferred-scope list.
 
 ## Related
 

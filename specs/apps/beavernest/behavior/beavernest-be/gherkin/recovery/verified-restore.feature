@@ -25,3 +25,18 @@ Feature: Verified restore
     When I run the restore command against the configured durable directory
     Then the command reports that the restore failed and the rollback failed
     And the command instructs the operator to recover the live database manually
+
+  # Fault-injected via `rollbackPreservedAfterCompanionRemovalFailure`'s
+  # testable `moveFile` seam (see its doc comment in Operations/Database.fs)
+  # rather than real filesystem timing — unit-only, excluded from
+  # beavernest-be-e2e collection. Sibling scenario to the two above: guards
+  # the earlier `removeCompanions live` rollback point in the restore
+  # sequence rather than the later final-promote point.
+  @unit
+  Scenario: Restore reports a distinguishable error when the companion-removal rollback also fails
+    Given a validated backup and the application is stopped
+    And companion removal for the live database will fail
+    And the rollback to the preserved database will also fail
+    When I run the restore command against the configured durable directory
+    Then the command reports that the restore failed and the rollback failed
+    And the command instructs the operator to recover the live database manually

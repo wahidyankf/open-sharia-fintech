@@ -389,7 +389,7 @@ modes) serving agents — not a governance layer.
 | ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302  | —                           |
 | organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202  | —                           |
 | beavernest-app-web   | TBD (Vite/React, same-origin dev port 19310)             | 19310 | —                           |
-| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19300 | —                           |
+| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
 
 Each app README at `apps/[app-name]/README.md` covers framework, deployment, E2E tests, and content
 details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.

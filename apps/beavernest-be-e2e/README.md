@@ -21,5 +21,5 @@ Compose stack. This is required by the full-stack CI workflow.
 
 ## Feature Files
 
-- [liveness.feature](../../specs/apps/beavernest/behavior/beavernest-be/gherkin/health/liveness.feature)
-- [readiness-ready.feature](../../specs/apps/beavernest/behavior/beavernest-be/gherkin/health/readiness-ready.feature)
+The behavior source of truth is
+[the BeaverNest backend Gherkin suite](../../specs/apps/beavernest/behavior/beavernest-be/gherkin/README.md).

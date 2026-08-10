@@ -225,6 +225,22 @@ let promoteStagedOverPreviousLive (moveFile: string -> string -> unit) staged li
             Error
                 "restore failed and rollback failed - live database is missing; recover it manually from the preserved copy"
 
+/// Rolls back `preserved` to `live` when `removeCompanions live` fails after
+/// `live` has already been moved aside during `restoreAt` — the sibling
+/// rollback to `promoteStagedOverPreviousLive` above, guarding the same class
+/// of double-failure at the earlier point in the restore sequence. Public for
+/// the same reason: unit-testable with an injected `moveFile` without racing
+/// real filesystem timing to reproduce a `File.Move` failure deterministically.
+let rollbackPreservedAfterCompanionRemovalFailure (moveFile: string -> string -> unit) preserved live error =
+    try
+        moveFile preserved live
+        Error error
+    with
+    | :? IOException
+    | :? UnauthorizedAccessException ->
+        Error
+            "restore failed and rollback failed - live database is missing; recover it manually from the preserved copy"
+
 /// Shared operation body; the public command below supplies the fixed production
 /// directory, while this function makes filesystem behavior testable in a
 /// disposable directory without widening the production command surface.
@@ -317,8 +333,12 @@ let restoreAt backupRoot configuration name =
 
                                                 match removeCompanions live with
                                                 | Error error ->
-                                                    File.Move(preserved, live, false)
-                                                    Error error
+                                                    rollbackPreservedAfterCompanionRemovalFailure
+                                                        (fun source destination ->
+                                                            File.Move(source, destination, false))
+                                                        preserved
+                                                        live
+                                                        error
                                                 | Ok() ->
                                                     promoteStagedOverPreviousLive
                                                         (fun source destination ->

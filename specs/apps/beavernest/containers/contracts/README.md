@@ -26,7 +26,7 @@ contracts/
 ├── project.json     # Nx project targets
 ├── tests/
 │   └── readiness-contract.sh # Assertion-only readiness contract guard
-└── generated/        # Output (gitignored)
+└── generated/        # Output (committed — regenerate via :bundle, drift caught in review)
     └── openapi-bundled.yaml
 ```
 

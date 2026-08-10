@@ -44,6 +44,9 @@ let ``the command reports that the restore failed`` () = ()
 [<Given>]
 let ``the rollback to the preserved database will also fail`` () = ()
 
+[<Given>]
+let ``companion removal for the live database will fail`` () = ()
+
 [<Then>]
 let ``the command reports that the restore failed and the rollback failed`` () = ()
 

@@ -152,6 +152,11 @@ Given(
   unitOnlyStep("the rollback to the preserved database will also fail"),
 );
 
+Given(
+  "companion removal for the live database will fail",
+  unitOnlyStep("companion removal for the live database will fail"),
+);
+
 Then(
   "the command reports that the restore failed and the rollback failed",
   unitOnlyStep("the command reports that the restore failed and the rollback failed"),
