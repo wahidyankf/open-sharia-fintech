@@ -35,4 +35,29 @@ describe("fetchReadiness", () => {
 
     await expect(fetchReadiness()).rejects.toThrow("foundation status");
   });
+
+  it("rejects a well-formed status with components missing entirely", async () => {
+    // Regression test: the guard previously validated only `status`, so a
+    // body with the right status but no `components` at all passed through
+    // as if it were a fully-shaped ReadinessResponse.
+    server.use(http.get("*/api/v1/readiness", () => HttpResponse.json({ status: "ready" })));
+
+    await expect(fetchReadiness()).rejects.toThrow("foundation status");
+  });
+
+  it("rejects a well-formed status with a null components value", async () => {
+    server.use(http.get("*/api/v1/readiness", () => HttpResponse.json({ status: "ready", components: null })));
+
+    await expect(fetchReadiness()).rejects.toThrow("foundation status");
+  });
+
+  it("rejects a well-formed status with a structurally wrong components value", async () => {
+    server.use(
+      http.get("*/api/v1/readiness", () =>
+        HttpResponse.json({ status: "not-ready", components: { database: "ready", schema: "unknown" } }, { status: 503 }),
+      ),
+    );
+
+    await expect(fetchReadiness()).rejects.toThrow("foundation status");
+  });
 });
