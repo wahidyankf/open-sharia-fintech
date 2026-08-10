@@ -5,6 +5,10 @@ const testDir = defineBddConfig({
   featuresRoot: "../../specs/apps/beavernest/behavior/beavernest-be/gherkin",
   features: "../../specs/apps/beavernest/behavior/beavernest-be/gherkin/**/*.feature",
   steps: ["./steps/**/*.ts"],
+  // Exclude @unit scenarios (F# TickSpec unit tests exercising
+  // promoteStagedOverPreviousLive's injected-failure seam directly). All
+  // other scenarios (including untagged) run here via Playwright/Compose.
+  tags: "not @unit",
 });
 
 export default defineConfig({

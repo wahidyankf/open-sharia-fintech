@@ -115,3 +115,49 @@ Then("the restarted application reports ready", async ({ request }) => {
   await startBackend();
   await expectCurrentReadiness(request);
 });
+
+// The six steps below back the two `@unit`-tagged scenarios in
+// verified-restore.feature (rollback and rollback-of-rollback). Those
+// scenarios exercise `promoteStagedOverPreviousLive`'s injected `moveFile`
+// seam directly in BeaverNestBe.UnitTests (see DatabaseOperationsTests.fs)
+// and are excluded from this project's collection by the `tags: "not @unit"`
+// filter in playwright.config.ts — real filesystem-move failures cannot be
+// injected deterministically into the published CLI binary running inside
+// the disposable Compose container. These bindings exist only so the
+// text-traceability coverage check (which does not read Playwright BDD tags)
+// finds a matching implementation; they throw if ever actually invoked so a
+// tag-filter regression fails loudly instead of silently passing.
+function unitOnlyStep(stepText: string): () => never {
+  return () => {
+    throw new Error(
+      `"${stepText}" is a @unit-only step (see verified-restore.feature) and must never run under Playwright — check the "not @unit" tag filter in playwright.config.ts`,
+    );
+  };
+}
+
+Given(
+  "the final promote of the staged database will fail",
+  unitOnlyStep("the final promote of the staged database will fail"),
+);
+
+Then(
+  "the pre-restore database is restored at the live path",
+  unitOnlyStep("the pre-restore database is restored at the live path"),
+);
+
+Then("the command reports that the restore failed", unitOnlyStep("the command reports that the restore failed"));
+
+Given(
+  "the rollback to the preserved database will also fail",
+  unitOnlyStep("the rollback to the preserved database will also fail"),
+);
+
+Then(
+  "the command reports that the restore failed and the rollback failed",
+  unitOnlyStep("the command reports that the restore failed and the rollback failed"),
+);
+
+Then(
+  "the command instructs the operator to recover the live database manually",
+  unitOnlyStep("the command instructs the operator to recover the live database manually"),
+);
