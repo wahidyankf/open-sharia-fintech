@@ -1,8 +1,5 @@
 module BeaverNestBe.Domain.Readiness
 
-/// The single liveness payload shape, serialised once at the health handler.
-type Liveness = { Status: string }
-
 /// Closed, provider-independent result passed from the application boundary to
 /// HTTP. It intentionally carries no file, SQL, exception, or provider detail.
 type ReadinessResult =
@@ -14,8 +11,6 @@ type ReadinessComponents = { Database: string; Schema: string }
 type ReadinessResponse =
     { Status: string
       Components: ReadinessComponents }
-
-let ok: Liveness = { Status = "ok" }
 
 let readyResponse: ReadinessResponse =
     { Status = "ready"

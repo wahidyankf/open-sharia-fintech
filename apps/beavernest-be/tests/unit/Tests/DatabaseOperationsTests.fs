@@ -79,6 +79,26 @@ let ``backup operations reject blank, privileged, and file-shaped backup roots``
         Directory.Delete(root, true)
 
 [<Fact>]
+let ``backup operations reject a backup root nested inside the current working directory`` () =
+    let root =
+        Path.Combine(Path.GetTempPath(), "beavernest-invalid-nested-backup-root-" + Guid.NewGuid().ToString("N"))
+
+    let dataDirectoryPath = Path.Combine(root, "data")
+    let configuration = create dataDirectoryPath 100 |> Result.defaultWith failwith
+
+    let nestedBackupRoot =
+        Path.Combine(Directory.GetCurrentDirectory(), "beavernest-subdir-" + Guid.NewGuid().ToString("N"))
+
+    Directory.CreateDirectory(root) |> ignore
+    Directory.CreateDirectory(nestedBackupRoot) |> ignore
+
+    try
+        Assert.Equal(Error "backup directory is invalid", backupAt nestedBackupRoot configuration "snapshot.sqlite3")
+    finally
+        Directory.Delete(root, true)
+        Directory.Delete(nestedBackupRoot, true)
+
+[<Fact>]
 let ``backup and restore reject invalid names before touching the filesystem`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-invalid-operation-name-" + Guid.NewGuid().ToString("N"))

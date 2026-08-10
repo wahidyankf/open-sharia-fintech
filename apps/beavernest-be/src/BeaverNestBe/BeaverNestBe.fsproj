@@ -14,6 +14,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Generated contract types from the OpenAPI spec (generated-contracts/, gitignored).
+         Only Health.fs is wired: ReadinessReady.fs/ReadinessUnavailable.fs generate their
+         status/component fields as single-case-DU-wrapped enums with no established JSON
+         converter in this codebase, so wiring them without one would silently change the
+         wire format the Gherkin/contract suite already tests against. Error.fs is excluded
+         for the same documented reason the sibling backends exclude it (generator emits a
+         broken `_Error` field name for a property called `error`) — see Domain/ErrorBody.fs. -->
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\BeaverNestBe.Contracts\Health.fs" />
     <Compile Include="Domain/HttpConfiguration.fs" />
     <Compile Include="Domain/DatabaseConfiguration.fs" />
     <Compile Include="Domain/Readiness.fs" />

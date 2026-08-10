@@ -30,6 +30,18 @@ let ``database configuration refuses empty, root, home, repository, and nonposit
     |> List.iter (fun (directory, timeout) -> Assert.True(create directory timeout |> Result.isError))
 
 [<Fact>]
+let ``database configuration refuses a directory nested inside the current working directory`` () =
+    let subdirectory =
+        Path.Combine(Directory.GetCurrentDirectory(), "beavernest-subdir-" + Guid.NewGuid().ToString("N"))
+
+    Directory.CreateDirectory(subdirectory) |> ignore
+
+    try
+        Assert.True(create subdirectory 100 |> Result.isError)
+    finally
+        Directory.Delete(subdirectory, true)
+
+[<Fact>]
 let ``database configuration refuses an explicit symbolic-link component`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-link-" + Guid.NewGuid().ToString("N"))

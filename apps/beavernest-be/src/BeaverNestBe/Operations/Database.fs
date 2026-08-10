@@ -28,7 +28,11 @@ let private isDisallowedDirectory (path: string) =
         |> normalizeDirectoryPath
 
     let repository = Directory.GetCurrentDirectory() |> normalizeDirectoryPath
-    path = root || path = home || path = repository
+
+    path = root
+    || path = home
+    || path = repository
+    || path.StartsWith(repository + string Path.DirectorySeparatorChar, StringComparison.Ordinal)
 
 let private isSymbolicLink (path: string) =
     try
