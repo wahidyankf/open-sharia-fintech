@@ -101,15 +101,15 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       direct cross-repo manifest diff, not `parity manifest validate` — that command is local-only
       (each repo checks its own files against its own recorded manifest, never a sibling's manifest)
       and exits 0 in all three repos today even though the boundary is open. Command:
-      `mkdir -p evidence && diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-primer.txt; diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-private.txt`
+      `mkdir -p evidence && diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt; diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt`
       — acceptance: both evidence files are recorded; if either is non-empty, **stop and do not
       begin Phase 5** — the boundary is `optimize-cis`'s unfinished AC-15, and Phase 5-7 as written
       only syncs 2 of the files this diff will enumerate (see the widened Phase 6/7 sync scope
       below), so closing the boundary is a precondition of this plan, not a byproduct of it
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done, with a recorded deviation from the
-      literal acceptance clause. **Files Changed**: `evidence/phase-0-parity-divergence-primer.txt`
-      (66 lines), `evidence/phase-0-parity-divergence-private.txt` (44 lines) — both re-run fresh
+      literal acceptance clause. **Files Changed**: `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt`
+      (66 lines), `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt` (44 lines) — both re-run fresh
       against current `HEAD` in all three repos, both non-empty (boundary open). The literal
       acceptance ("if either is non-empty, stop and do not begin Phase 5") is **not** satisfiable
       retroactively — Phase 5 already executed and merged its own `rhino-cli` edits
@@ -261,15 +261,15 @@ nothing, and has no CI run of its own. Its artifacts ride Phase 5's PR.
       — acceptance: `npm run doctor` exits 0 with no missing-tool findings
 - [ ] [AI] Create the Knowledge Capture scaffold at `plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
       — acceptance: file exists and its first heading is `# Learnings: beaver-nest-repo-consolidation`
-- [ ] [AI] Record the `beaver-nest` working-tree state per [D9](./tech-docs.md#design-decisions) — command: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain > evidence/phase-0-beaver-nest-status.txt`
+- [ ] [AI] Record the `beaver-nest` working-tree state per [D9](./tech-docs.md#design-decisions) — command: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-beaver-nest-status.txt`
       — acceptance: the file is written; if any listed path falls outside the governance files this plan discards, stop and triage it before copying anything
-- [ ] [AI] Enumerate the exact source path set — command: `git -C /Users/wkf/ose-projects/beaver-nest ls-files apps/beaver-nest-be apps/beaver-nest-fe apps/beaver-nest-be-e2e apps/beaver-nest-fe-e2e specs/apps/beaver-nest infra/dev/beaver-nest-app > evidence/phase-0-source-manifest.txt`
+- [ ] [AI] Enumerate the exact source path set — command: `git -C /Users/wkf/ose-projects/beaver-nest ls-files apps/beaver-nest-be apps/beaver-nest-fe apps/beaver-nest-be-e2e apps/beaver-nest-fe-e2e specs/apps/beaver-nest infra/dev/beaver-nest-app > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-source-manifest.txt`
       — acceptance: the manifest is non-empty and its line count is recorded in the file-touch ledger
 - [ ] [AI] Freeze a **fresh** unique-idea-brief manifest — the generic half of this set is volatile
       (both repos' `plans/ideas/` trees are under active cross-repo grooming, so the names and count
       cited in [tech-docs.md §More Detail](./tech-docs.md#more-detail) are a stale 2026-08-06
       snapshot, not an execution input)
-      — command: `git -C /Users/wkf/ose-projects/beaver-nest fetch origin && comm -13 <(find plans/ideas -name '*.md' ! -name README.md -exec basename {} \; | sort -u) <(git -C /Users/wkf/ose-projects/beaver-nest ls-tree -r --name-only origin/main -- plans/ideas | grep '\.md$' | xargs -n1 basename | grep -v '^README.md$' | sort -u) > evidence/phase-0-unique-ideas-manifest.txt`
+      — command: `git -C /Users/wkf/ose-projects/beaver-nest fetch origin && comm -13 <(find plans/ideas -name '*.md' ! -name README.md -exec basename {} \; | sort -u) <(git -C /Users/wkf/ose-projects/beaver-nest ls-tree -r --name-only origin/main -- plans/ideas | grep '\.md$' | xargs -n1 basename | grep -v '^README.md$' | sort -u) > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-unique-ideas-manifest.txt`
       — note: read `origin/main` with `ls-tree`, **never** `ls-files` — `ls-files` reads the local
       index, so a lagging clone would silently reproduce a stale manifest that the `diff` check in
       Phase 4 would then pass
@@ -277,9 +277,9 @@ nothing, and has no CI run of its own. Its artifacts ride Phase 5's PR.
       same-named counterpart in `ose-public`; the four `beaver-nest-*` product briefs appear in it
       (they exist nowhere else), and its line count is recorded in the file-touch ledger as the
       authoritative count Phase 4 triages — superseding the number 8 wherever this plan states it
-- [ ] [AI] Record the pre-change baseline test run — command: `npx nx run-many -t test:quick --all > evidence/phase-0-baseline.txt 2>&1; echo "exit=$?" >> evidence/phase-0-baseline.txt`
+- [ ] [AI] Record the pre-change baseline test run — command: `npx nx run-many -t test:quick --all > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-baseline.txt 2>&1; echo "exit=$?" >> plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-baseline.txt`
       — acceptance: the file records the exit status; any preexisting failure is fixed before Phase 1 per Root Cause Orientation
-- [ ] [AI] Record the pre-sweep four-repo reference count — command: `grep -rc 'beaver-nest' AGENTS.md README.md docs/reference repo-governance .claude apps/rhino-cli/src > evidence/phase-0-sweep-baseline.txt`
+- [ ] [AI] Record the pre-sweep four-repo reference count — command: `grep -rc 'beaver-nest' AGENTS.md README.md docs/reference repo-governance .claude apps/rhino-cli/src > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-sweep-baseline.txt`
       — acceptance: the file is written and is the falsifiable "before" for Phase 5's zero-match gate
 
 ### Phase 0 Gate
@@ -289,7 +289,7 @@ nothing, and has no CI run of its own. Its artifacts ride Phase 5's PR.
 
 - [ ] [AI] `npx nx run-many -t test:quick --all` — acceptance: exits 0 with zero failures
 - [ ] [AI] `git status --porcelain` in the worktree — acceptance: only the five `evidence/` files written above (`phase-0-beaver-nest-status.txt`, `phase-0-source-manifest.txt`, `phase-0-unique-ideas-manifest.txt`, `phase-0-baseline.txt`, `phase-0-sweep-baseline.txt`) and `learnings.md` appear
-- [ ] [AI] `test -s evidence/phase-0-source-manifest.txt && test -s evidence/phase-0-unique-ideas-manifest.txt` — acceptance: exits 0
+- [ ] [AI] `test -s plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-source-manifest.txt && test -s plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-unique-ideas-manifest.txt` — acceptance: exits 0
 
 > **Pause Safety**: a clean baseline is recorded and the source manifest is frozen. No product file
 > has been copied and no repository has been modified. Safe to stop.
@@ -322,7 +322,7 @@ Copies preserve content verbatim; the rename happens in Phase 2.
       — acceptance: `libs/web-ui-token/src/beavernest.css` exists and the four existing brand sheets are unmodified
 - [ ] [AI] Copy the staging CI caller — command: `cp /Users/wkf/ose-projects/beaver-nest/.github/workflows/beaver-nest-app-test-local-deploy-stag.yml .github/workflows/beavernest-app-test-local-deploy-stag.yml`
       — acceptance: the new workflow file exists; no other workflow file is added or removed
-- [ ] [AI] Confirm nothing outside the manifest was copied — command: `git status --porcelain | grep -v -e '^?? apps/beavernest' -e '^?? specs/apps/beavernest' -e '^?? infra/dev/beavernest' -e '^?? libs/web-ui-token/src/beavernest.css' -e '^?? .github/workflows/beavernest' -e '^?? evidence/' -e 'learnings.md'`
+- [ ] [AI] Confirm nothing outside the manifest was copied — command: `git status --porcelain | grep -v -e '^?? apps/beavernest' -e '^?? specs/apps/beavernest' -e '^?? infra/dev/beavernest' -e '^?? libs/web-ui-token/src/beavernest.css' -e '^?? .github/workflows/beavernest' -e '^?? plans/in-progress/beaver-nest-repo-consolidation/evidence/' -e 'learnings.md'`
       — acceptance: prints nothing
 
 ### Phase 1 Gate
@@ -331,7 +331,7 @@ Copies preserve content verbatim; the rename happens in Phase 2.
 > proceeding.
 
 - [ ] [AI] `find apps/beavernest-be apps/beavernest-app-web apps/beavernest-be-e2e apps/beavernest-app-web-e2e -type f | grep -c .` — acceptance: total matches the manifest's app line count minus the one deleted `next-env.d.ts`
-- [ ] [AI] `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain` — acceptance: byte-identical to `evidence/phase-0-beaver-nest-status.txt`, proving the source repo was only read
+- [ ] [AI] `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain` — acceptance: byte-identical to `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-beaver-nest-status.txt`, proving the source repo was only read
 - [ ] [AI] `npx nx run-many -t test:quick --all` — acceptance: exits 0; the copied trees are not yet registered as Nx projects, so existing projects must be unaffected
 
 > **Pause Safety**: the product files exist in `ose-public` under their new paths but are not yet
@@ -429,22 +429,22 @@ cycle driven by the ported tests. Configuration and index edits are direct actio
       — acceptance: exits 0 and the output attributes 19 feature files to the `beavernest` spec area rather than reporting it empty
 - [ ] [AI] Start the compose stack — command: `docker compose -f infra/dev/beavernest-app/docker-compose.yml up -d`
       — acceptance: `docker compose -f infra/dev/beavernest-app/docker-compose.yml ps` reports the app service healthy
-- [x] [AI] Capture runtime evidence for the readiness endpoint — command: `curl -sS -i http://127.0.0.1:19300/api/v1/readiness > evidence/phase-3-readiness.txt`
+- [x] [AI] Capture runtime evidence for the readiness endpoint — command: `curl -sS -i http://127.0.0.1:19300/api/v1/readiness > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-readiness.txt`
       — acceptance: the file's status line is `HTTP/1.1 200` and its body contains `"status":"ready"`
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — recaptured (the original Phase 3
       artifact never survived, per `learnings.md`). **Files Changed**:
-      `evidence/phase-3-readiness.txt`. Stood up a disposable combined-runtime Compose stack
+      `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-readiness.txt`. Stood up a disposable combined-runtime Compose stack
       (mirroring `apps/beavernest-be/scripts/run-e2e.sh`'s pattern — randomized port, isolated
       Compose project, own fixture dirs), curled `/api/v1/readiness`:
       `HTTP/1.1 200 OK`, body `{"status":"ready","components":{"database":"ready","schema":"current"}}`.
       Stack torn down (`docker compose down --remove-orphans`) and fixture dir removed afterward.
 
-- [x] [AI] Capture runtime evidence for the health endpoint — command: `curl -sS -i http://127.0.0.1:19300/api/v1/health > evidence/phase-3-health.txt`
+- [x] [AI] Capture runtime evidence for the health endpoint — command: `curl -sS -i http://127.0.0.1:19300/api/v1/health > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-health.txt`
       — acceptance: the file's status line is `HTTP/1.1 200` and its body contains `"status":"ok"`
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — recaptured. **Files Changed**:
-      `evidence/phase-3-health.txt`. Same disposable stack as the readiness capture above; curled
+      `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-health.txt`. Same disposable stack as the readiness capture above; curled
       `/api/v1/health`: `HTTP/1.1 200 OK`, body `{"status":"ok"}`.
 
 - [ ] [AI] Run both ported E2E suites — command: `npx nx run-many -t test:e2e -p beavernest-be-e2e,beavernest-app-web-e2e`
@@ -486,36 +486,36 @@ with the compose stack from the steps above still running.
       landed.
 
 - [x] [AI] Capture the mobile viewport — command: `browser_resize` to 375x812, then
-      `browser_take_screenshot` saved to `evidence/phase-3-beavernest-app-web-mobile-375px.png`
+      `browser_take_screenshot` saved to `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-mobile-375px.png`
       — acceptance: the file exists and is non-empty
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**:
-      `evidence/phase-3-beavernest-app-web-mobile-375px.png`. Used device-viewport emulation
+      `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-mobile-375px.png`. Used device-viewport emulation
       (375x812x2, mobile+touch) rather than the plain window-resize tool — the latter left
       `window.innerWidth` unchanged in this harness, which would have silently produced 3 identical
       screenshots; verified via `window.innerWidth`/`innerHeight` before capture (375x812) and the
       saved PNG's actual pixel dimensions after (750x1624, i.e. 2x DPR).
 
 - [x] [AI] Capture the tablet viewport — command: `browser_resize` to 768x1024, then
-      `browser_take_screenshot` saved to `evidence/phase-3-beavernest-app-web-tablet-768px.png`
+      `browser_take_screenshot` saved to `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-tablet-768px.png`
       — acceptance: the file exists and is non-empty
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**:
-      `evidence/phase-3-beavernest-app-web-tablet-768px.png`. Emulated 768x1024x2 (touch); verified
+      `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-tablet-768px.png`. Emulated 768x1024x2 (touch); verified
       `window.innerWidth`/`innerHeight` = 768x1024 before capture; saved PNG is 1536x2048 (2x DPR).
 
 - [x] [AI] Capture the desktop viewport — command: `browser_resize` to 1280x800, then
-      `browser_take_screenshot` saved to `evidence/phase-3-beavernest-app-web-desktop-1280px.png`
+      `browser_take_screenshot` saved to `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-desktop-1280px.png`
       — acceptance: the file exists and is non-empty
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. **Files Changed**:
-      `evidence/phase-3-beavernest-app-web-desktop-1280px.png`. Emulated 1280x800x1; verified
+      `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-desktop-1280px.png`. Emulated 1280x800x1; verified
       `window.innerWidth`/`innerHeight` = 1280x800 before capture; saved PNG is exactly 1280x800.
 
 - [x] [AI] Document the three screenshots in this checklist — embed each with
       `![BeaverNest app-web readiness screen, <viewport> viewport](./evidence/phase-3-beavernest-app-web-<viewport>-<width>px.png)`,
       each carrying alt text naming its viewport
-      — command: `grep -c 'evidence/phase-3-beavernest-app-web-.*px.png)' delivery.md`
+      — command: `grep -c 'plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-.*px.png)' delivery.md`
       — acceptance: prints `3` — one embed per viewport — and every referenced file exists on disk
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — embeds already present from an
@@ -533,11 +533,11 @@ with the compose stack from the steps above still running.
       set for the production form in this session); fixture data/backup tmpdir removed afterward.
       `docker ps` confirms no `beavernest-manual-verify-*` containers remain.
 
-![BeaverNest app-web readiness screen, mobile viewport](../../../evidence/phase-3-beavernest-app-web-mobile-375px.png)
+![BeaverNest app-web readiness screen, mobile viewport](./evidence/phase-3-beavernest-app-web-mobile-375px.png)
 
-![BeaverNest app-web readiness screen, tablet viewport](../../../evidence/phase-3-beavernest-app-web-tablet-768px.png)
+![BeaverNest app-web readiness screen, tablet viewport](./evidence/phase-3-beavernest-app-web-tablet-768px.png)
 
-![BeaverNest app-web readiness screen, desktop viewport](../../../evidence/phase-3-beavernest-app-web-desktop-1280px.png)
+![BeaverNest app-web readiness screen, desktop viewport](./evidence/phase-3-beavernest-app-web-desktop-1280px.png)
 
 ### Local Quality Gates (Before Push)
 
@@ -576,12 +576,12 @@ boundary — see [tech-docs.md D12](./tech-docs.md#design-decisions). Push for d
       CI checks covering this same diff (`.NET quality gate`, `TypeScript quality gate`, `Rust quality
       gate` all green at HEAD `8387df205`), not re-run locally as a separate step.
 
-- [x] [AI] `grep -c 'HTTP/1.1 200' evidence/phase-3-readiness.txt evidence/phase-3-health.txt` — acceptance: each file reports 1
+- [x] [AI] `grep -c 'HTTP/1.1 200' plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-readiness.txt plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-health.txt` — acceptance: each file reports 1
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. Re-ran live after recapturing both
       evidence files (see the Manual UI Verification section above): prints `1` for each file.
 
-- [x] [AI] `ls evidence/phase-3-beavernest-app-web-mobile-375px.png evidence/phase-3-beavernest-app-web-tablet-768px.png evidence/phase-3-beavernest-app-web-desktop-1280px.png` — acceptance: all three screenshot files exist
+- [x] [AI] `ls plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-mobile-375px.png plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-tablet-768px.png plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-desktop-1280px.png` — acceptance: all three screenshot files exist
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. All three regenerated and confirmed
       present (see the Manual UI Verification section above).
@@ -617,18 +617,18 @@ branch is provisioned (see [tech-docs.md D12](./tech-docs.md#design-decisions)).
       — command: `find plans/ideas -mindepth 1 -maxdepth 1 -type d`
       — acceptance: the quadrant set in effect at execution time is recorded in `learnings.md`
 - [ ] [AI] Re-freeze the unique-brief manifest against **current** `origin/main` in both repos before
-      triaging — Phase 0's `evidence/phase-0-unique-ideas-manifest.txt` may itself have gone stale
+      triaging — Phase 0's `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-unique-ideas-manifest.txt` may itself have gone stale
       while Phases 1-3 ran, since both trees are under active grooming
-      — command: `git -C /Users/wkf/ose-projects/beaver-nest fetch origin && comm -13 <(find plans/ideas -name '*.md' ! -name README.md -exec basename {} \; | sort -u) <(git -C /Users/wkf/ose-projects/beaver-nest ls-tree -r --name-only origin/main -- plans/ideas | grep '\.md$' | xargs -n1 basename | grep -v '^README.md$' | sort -u) > evidence/phase-4-unique-ideas-manifest.txt; diff evidence/phase-0-unique-ideas-manifest.txt evidence/phase-4-unique-ideas-manifest.txt`
+      — command: `git -C /Users/wkf/ose-projects/beaver-nest fetch origin && comm -13 <(find plans/ideas -name '*.md' ! -name README.md -exec basename {} \; | sort -u) <(git -C /Users/wkf/ose-projects/beaver-nest ls-tree -r --name-only origin/main -- plans/ideas | grep '\.md$' | xargs -n1 basename | grep -v '^README.md$' | sort -u) > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-4-unique-ideas-manifest.txt; diff plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-unique-ideas-manifest.txt plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-4-unique-ideas-manifest.txt`
       — acceptance: both manifests exist; if `diff` reports any change, the Phase 4 manifest wins and
       the delta is written into `learnings.md` with a one-line reason per added or removed brief
-- [ ] [AI] Triage **every brief on `evidence/phase-4-unique-ideas-manifest.txt`** against
+- [ ] [AI] Triage **every brief on `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-4-unique-ideas-manifest.txt`** against
       `plans/ideas/README.md` and the existing briefs under Integrate-Before-You-Add, folding rather
       than duplicating where an existing brief covers the same problem. Do **not** use any brief name
       quoted elsewhere in this plan as the input set — those are a stale 2026-08-06 snapshot
-      — command: `while read -r b; do echo "== $b"; grep -rl "${b%.md}" plans/ideas/ || echo "  no name-overlap"; done < evidence/phase-4-unique-ideas-manifest.txt`
+      — command: `while read -r b; do echo "== $b"; grep -rl "${b%.md}" plans/ideas/ || echo "  no name-overlap"; done < plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-4-unique-ideas-manifest.txt`
       — acceptance: the number of recorded decisions in `learnings.md` equals
-      `grep -c . evidence/phase-4-unique-ideas-manifest.txt`, and each decision is either a new
+      `grep -c . plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-4-unique-ideas-manifest.txt`, and each decision is either a new
       distinctly-named file or a fold into a named existing brief
 - [ ] [AI] Rename the four carried product briefs from `beaver-nest-*` to `beavernest-*` to match D3
       — command: `find plans/ideas -name 'beaver-nest-*.md' | grep -c .`
@@ -706,7 +706,7 @@ carries all of it — see [tech-docs.md D12](./tech-docs.md#design-decisions).
 
 - [ ] [AI] Confirm still on Unit 1's branch, up to date with the Phase 4 push — command: `git -C worktrees/beaver-nest-repo-consolidation rev-parse --abbrev-ref HEAD`
       — acceptance: prints `beaver-nest-repo-consolidation-unit1`
-- [ ] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > evidence/phase-5-sweep-targets.txt`
+- [ ] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-5-sweep-targets.txt`
       — acceptance: the file lists at least the 11 known targets and is recorded in the file-touch ledger
 
 ### `rhino-cli` three-repo parity message — already covered, no outstanding TDD cycle
@@ -814,12 +814,12 @@ to close this behavior, since it already shipped via `optimize-cis`.
 > proceeding.
 
 - [ ] [AI] `npx nx run-many -t test:quick -p beavernest-be,beavernest-app-web,beavernest-be-e2e,beavernest-app-web-e2e` — acceptance: exits 0 (re-verified at the true PR boundary, covering all of Phases 1-5's diff)
-- [x] [AI] `grep -c 'HTTP/1.1 200' evidence/phase-3-readiness.txt evidence/phase-3-health.txt` — acceptance: each file reports 1
+- [x] [AI] `grep -c 'HTTP/1.1 200' plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-readiness.txt plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-health.txt` — acceptance: each file reports 1
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — same evidence as the Phase 3 Gate
       re-verification above (this is the identical check re-run at the Phase 5/PR boundary).
 
-- [x] [AI] `ls evidence/phase-3-beavernest-app-web-mobile-375px.png evidence/phase-3-beavernest-app-web-tablet-768px.png evidence/phase-3-beavernest-app-web-desktop-1280px.png` — acceptance: all three screenshot files exist
+- [x] [AI] `ls plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-mobile-375px.png plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-tablet-768px.png plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-beavernest-app-web-desktop-1280px.png` — acceptance: all three screenshot files exist
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — same evidence as above.
 
@@ -867,7 +867,7 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/primer-sweep-targets.txt`
       — acceptance: the list is non-empty and recorded in the file-touch ledger; a target absent here is a non-event, not a failed edit
 - [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
-      cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-primer.txt`), not
+      cross-repo manifest diff enumerated (`plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt`), not
       just `parity.rs` and `gate_specs.rs` — the diff is the source of truth for scope, since the
       divergence set changes as `optimize-cis`-era edits land; the two named files are the expected
       majority of it but not necessarily all of it
@@ -875,7 +875,7 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
       written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
       against the wrong repo and the loop would silently iterate zero times, so the evidence file is
       addressed by its absolute path back into `ose-public`
-      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
       — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
       evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
       `DIVERGENT:` lines — every enumerated file is now byte-identical to `ose-public`'s merged
@@ -932,13 +932,13 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/private-sweep-targets.txt`
       — acceptance: the list is non-empty and recorded in the file-touch ledger
 - [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
-      cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-private.txt`), not
+      cross-repo manifest diff enumerated (`plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt`), not
       just `parity.rs` and `gate_specs.rs` — same widened-scope reasoning as Phase 6
       This step runs from **inside `ose-private`** (see the `cd` above), while the evidence file was
       written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
       against the wrong repo and the loop would silently iterate zero times, so the evidence file is
       addressed by its absolute path back into `ose-public`
-      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
       — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
       evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
       `DIVERGENT:` lines
@@ -1011,7 +1011,7 @@ reversible via `gh repo unarchive` [Web-cited, GitHub Docs, accessed 2026-08-06]
       — acceptance: prints at least 1
 - [ ] [AI] Commit and push the branch — command: `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation add README.md && git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation commit -m 'docs(readme): point to ose-public ahead of archival' && git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation push origin beaver-nest-repo-consolidation-retire`
       — acceptance: `git -C /Users/wkf/ose-projects/beaver-nest/worktrees/beaver-nest-repo-consolidation status -sb` shows the branch pushed
-      — note: the pre-existing uncommitted modifications recorded in `evidence/phase-0-beaver-nest-status.txt`,
+      — note: the pre-existing uncommitted modifications recorded in `plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-0-beaver-nest-status.txt`,
       in the separate primary `/Users/wkf/ose-projects/beaver-nest` checkout, are **not** committed here,
       whatever their count is by execution time; this step only ever stages `README.md` inside the new worktree
 - [ ] [AI] Open the PR — command: `gh pr create --repo wahidyankf/beaver-nest --base main --head beaver-nest-repo-consolidation-retire --title "docs(readme): retirement notice ahead of archival" --body "Final change before this repo archives — product now lives in ose-public."`

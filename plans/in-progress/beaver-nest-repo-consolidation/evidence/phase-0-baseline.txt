@@ -38,8 +38,8 @@
 > dotnet build libs/fsharp-crane-core/fsharp-crane-core.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
 
 Build succeeded.
     0 Warning(s)
@@ -106,10 +106,10 @@ Time Elapsed 00:00:04.23
 > dotnet build apps/crane-cli/crane-cli.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
   1 of 2 projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  crane-cli -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  crane-cli -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
 
 Build succeeded.
     0 Warning(s)
@@ -126,17 +126,17 @@ Time Elapsed 00:00:02.26
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -156,20 +156,20 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -187,8 +187,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -204,8 +204,8 @@ Time Elapsed 00:00:02.63
 > dotnet build apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -226,43 +226,43 @@ Restore was successful.
 
 > dotnet fsharplint lint libs/fsharp-crane-core/fsharp-crane-core.fsproj --lint-config libs/fsharp-crane-core/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/fsharp-crane-core.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/fsharp-crane-core.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Finding.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Finding.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/PdfMetadata.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/PdfMetadata.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Report.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Report.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Ports.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Ports.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/PdfAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/PdfAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/OcrAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/OcrAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Convert.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Convert.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project libs/fsharp-crane-core/fsharp-crane-core.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -281,79 +281,79 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/ose-be/src/OseBe/OseBe.fsproj --lint-config apps/ose-be/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/WebApp.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/WebApp.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/ose-be/src/OseBe/OseBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -372,49 +372,49 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj --lint-config apps/organiclever-be/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/OrganicleverBe.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/OrganicleverBe.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/AppDbContext.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/AppDbContext.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/Database.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/Database.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/NatsClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/NatsClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Domain/HealthDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Application/HealthService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Application/HealthService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Api/HealthApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Domain/JournalDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Domain/JournalDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Infrastructure/JournalInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Infrastructure/JournalInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Application/JournalService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Application/JournalService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Api/JournalApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Api/JournalApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Api/MessagingApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Handlers/HealthHandler.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Handlers/HealthHandler.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/WebApp.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/WebApp.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -430,11 +430,11 @@ Restore was successful.
 [2m> [22mnext build
 
 [33m[1m⚠[22m[39m Warning: Next.js inferred your workspace root, but it may not be correct.
- We detected multiple lockfiles and selected the directory of /Users/wkf/ose-projects/ose-public/package-lock.json as the root directory.
+ We detected multiple lockfiles and selected the directory of <REPO_ROOT>/ose-projects/ose-public/package-lock.json as the root directory.
  To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
    See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
  Detected additional lockfiles: 
-   * /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/package-lock.json
+   * <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/package-lock.json
 
 [1m[38;2;173;127;168m▲ Next.js 16.2.6[39m[22m (Turbopack)
 
@@ -482,13 +482,13 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/crane-cli/crane-cli.fsproj --lint-config apps/crane-cli/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/crane-cli.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/crane-cli.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Adapters/In/CliAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Adapters/In/CliAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/crane-cli/crane-cli.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -531,7 +531,7 @@ No lint configured for web-ui-token (CSS + minimal TS)
 [2m> [22mnpx vitest run
 
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui-token[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui-token[39m
 
 
 [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
@@ -610,7 +610,7 @@ Spec coverage valid! 1 specs, 1 scenarios, 6 steps — all covered.
 
 [2m> [22mcargo check --manifest-path libs/rust-commons/Cargo.toml --all-targets
 
-    Checking rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+    Checking rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.17s
 
 [2m[32m[39m[22m
@@ -627,7 +627,7 @@ Spec coverage valid! 1 specs, 1 scenarios, 6 steps — all covered.
 
 [2m> [22mcargo clippy --manifest-path libs/rust-commons/Cargo.toml --all-targets -- -D warnings
 
-    Checking rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+    Checking rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.92s
 
 [2m[32m[39m[22m
@@ -642,7 +642,7 @@ Spec coverage valid! 1 specs, 1 scenarios, 6 steps — all covered.
 
 [2m> [22mcargo test --manifest-path libs/rust-commons/Cargo.toml --lib --test check_links
 
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 6.07s
      Running unittests src/lib.rs (libs/rust-commons/target/debug/deps/rust_commons-a8be8ce37eb840e7)
 
@@ -721,7 +721,7 @@ Feature: Internal markdown link checking
 [2m> [22mcargo llvm-cov --manifest-path libs/rust-commons/Cargo.toml --lib --fail-under-lines 90
 
 info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 2.76s
      Running unittests src/lib.rs (libs/rust-commons/target/llvm-cov-target/debug/deps/rust_commons-a8be8ce37eb840e7)
 
@@ -774,7 +774,7 @@ test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fin
 
 Filename                                                                                                           Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons/src/links/mod.rs         862                28    96.75%          57                 2    96.49%         538                16    97.03%           0                 0         -
+<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons/src/links/mod.rs         862                28    96.75%          57                 2    96.49%         538                16    97.03%           0                 0         -
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 TOTAL                                                                                                                  862                28    96.75%          57                 2    96.49%         538                16    97.03%           0                 0         -
 
@@ -865,7 +865,7 @@ src/components/card/card.tsx:27:5: warning jsx-a11y(heading-has-content): Headin
 [2m> [22mif grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\b(it|test|describe)\.(skip|only|todo)\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --coverage
 
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
@@ -998,7 +998,7 @@ File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 [2m> [22mnpx vitest run --coverage --coverage.thresholds.lines=70
 
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/web-ui[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
@@ -1421,20 +1421,20 @@ specs:behavior:coverage: no Gherkin behavior specs for this OpenAPI contract pro
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -1452,8 +1452,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -1484,20 +1484,20 @@ Time Elapsed 00:00:02.53
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -1515,8 +1515,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -1537,49 +1537,49 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj --lint-config apps/organiclever-be/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/OrganicleverBe.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/OrganicleverBe.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/AppDbContext.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/AppDbContext.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/Database.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/Database.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/NatsClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Infrastructure/NatsClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Domain/HealthDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Application/HealthService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Application/HealthService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Health/Api/HealthApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Domain/JournalDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Domain/JournalDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Infrastructure/JournalInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Infrastructure/JournalInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Application/JournalService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Application/JournalService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Api/JournalApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Journal/Api/JournalApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Contexts/Messaging/Api/MessagingApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Handlers/HealthHandler.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Handlers/HealthHandler.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/WebApp.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/WebApp.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -1608,20 +1608,20 @@ Restore was successful.
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/UpdateJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/NewJournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/JournalEntry.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/generated-contracts/OpenAPI/src/OrganicleverBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -1639,8 +1639,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/OrganicleverBe.fsproj (in 136 ms).
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -1653,11 +1653,11 @@ Time Elapsed 00:00:02.53
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' apps/organiclever-be/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/organiclever-be/tests/unit/OrganicleverBe.UnitTests.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/OrganicleverBe.UnitTests.fsproj (in 300 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/OrganicleverBe.UnitTests.fsproj (in 300 ms).
   1 of 2 projects are up-to-date for restore.
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
-  OrganicleverBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  OrganicleverBe.UnitTests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    24, Skipped:     0, Total:    24, Duration: 124 ms - OrganicleverBe.UnitTests.dll (net10.0)
@@ -1677,9 +1677,9 @@ Passed!  - Failed:     0, Passed:    24, Skipped:     0, Total:    24, Duration:
 
   Determining projects to restore...
   All projects are up-to-date for restore.
-  OrganicleverBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
-  OrganicleverBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  OrganicleverBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/src/OrganicleverBe/bin/Debug/net10.0/OrganicleverBe.dll
+  OrganicleverBe.UnitTests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-be/tests/unit/bin/Debug/net10.0/OrganicleverBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 Data collection : Unable to find a datacollector with friendly name 'XPlat Code Coverage'.
 Data collection : Could not find data collector 'XPlat Code Coverage'
@@ -1759,8 +1759,8 @@ Spec coverage valid! 3 specs, 11 scenarios, 31 steps — all covered.
 
 [2m> [22mcargo check --manifest-path apps/ose-cli/Cargo.toml --all-targets
 
-    Checking rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-    Checking ose-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
+    Checking rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+    Checking ose-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.91s
 
 [2m[32m[39m[22m
@@ -1777,7 +1777,7 @@ Spec coverage valid! 3 specs, 11 scenarios, 31 steps — all covered.
 
 [2m> [22mcargo clippy --manifest-path apps/ose-cli/Cargo.toml --all-targets -- -D warnings
 
-    Checking ose-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
+    Checking ose-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.48s
 
 [2m[32m[39m[22m
@@ -1792,8 +1792,8 @@ Spec coverage valid! 3 specs, 11 scenarios, 31 steps — all covered.
 
 [2m> [22mcargo test --manifest-path apps/ose-cli/Cargo.toml --lib
 
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-   Compiling ose-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling ose-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
      Running unittests src/lib.rs (apps/ose-cli/target/debug/deps/ose_cli-4ad6d6e29c4b6e30)
 
@@ -1830,8 +1830,8 @@ test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fin
 
 info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
     Blocking waiting for file lock on package cache
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-   Compiling ose-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling ose-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.26s
      Running unittests src/lib.rs (apps/ose-cli/target/llvm-cov-target/debug/deps/ose_cli-4ad6d6e29c4b6e30)
 
@@ -1919,8 +1919,8 @@ Spec coverage valid! 1 specs, 4 scenarios, 13 steps — all covered.
 
 [2m> [22mcargo check --manifest-path apps/ayokoding-cli/Cargo.toml --all-targets
 
-    Checking rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-    Checking ayokoding-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
+    Checking rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+    Checking ayokoding-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.96s
 
 [2m[32m[39m[22m
@@ -1939,7 +1939,7 @@ Spec coverage valid! 1 specs, 4 scenarios, 13 steps — all covered.
 
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
-    Checking ayokoding-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
+    Checking ayokoding-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.66s
 
 [2m[32m[39m[22m
@@ -1954,8 +1954,8 @@ Spec coverage valid! 1 specs, 4 scenarios, 13 steps — all covered.
 
 [2m> [22mcargo test --manifest-path apps/ayokoding-cli/Cargo.toml --lib
 
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-   Compiling ayokoding-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling ayokoding-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.39s
      Running unittests src/lib.rs (apps/ayokoding-cli/target/debug/deps/ayokoding_cli-a7190ff87cb8d14f)
 
@@ -1995,8 +1995,8 @@ test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fin
 [2m> [22mcargo llvm-cov --manifest-path apps/ayokoding-cli/Cargo.toml --lib --fail-under-lines 90
 
 info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
-   Compiling rust-commons v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
-   Compiling ayokoding-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
+   Compiling rust-commons v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/rust-commons)
+   Compiling ayokoding-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1.21s
      Running unittests src/lib.rs (apps/ayokoding-cli/target/llvm-cov-target/debug/deps/ayokoding_cli-a7190ff87cb8d14f)
 
@@ -2098,17 +2098,17 @@ Spec coverage valid! 1 specs, 4 scenarios, 13 steps — all covered.
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -2126,8 +2126,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -2158,17 +2158,17 @@ Time Elapsed 00:00:02.63
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -2186,8 +2186,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -2208,79 +2208,79 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/ose-be/src/OseBe/OseBe.fsproj --lint-config apps/ose-be/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/OseBe.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Domain/Readiness.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/AppDbContext.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/RepositoryTypes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Repositories/EfRepositories.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/OpenRouterClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/Database.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Infrastructure/NatsClient.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Db/Infrastructure/DbMigrations.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Domain/HealthDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Application/HealthService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Infrastructure/HealthInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Health/Api/HealthApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Domain/RegulatorySourceDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Application/RegulatorySourceService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Infrastructure/RegulatorySourceInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/RegulatorySource/Api/RegulatorySourceApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Domain/InternalPolicyDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Application/InternalPolicyService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Infrastructure/InternalPolicyInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/InternalPolicy/Api/InternalPolicyApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Domain/GapAnalysisDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Application/GapAnalysisService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Infrastructure/GapAnalysisInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/GapAnalysis/Api/GapAnalysisApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Domain/AiOrchestrationDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Application/AiOrchestrationService.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Infrastructure/AiOrchestrationInfrastructure.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/AiOrchestration/Api/AiOrchestrationApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Domain/MessagingDomain.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Application/MessagingStatus.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Infrastructure/JetStreamDemo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Contexts/Messaging/Api/MessagingApi.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/WebApp.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/WebApp.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/ose-be/src/OseBe/OseBe.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -2309,17 +2309,17 @@ Restore was successful.
 [33mDownload 7.20.0 ...[39m
 [32mDownloaded 7.20.0[39m
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.github.benmanes.caffeine.cache.UnsafeAccess (file:<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/node_modules/@openapitools/openapi-generator-cli/versions/7.20.0.jar)
 WARNING: Please consider reporting this to the maintainers of class com.github.benmanes.caffeine.cache.UnsafeAccess
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
 [main] INFO  o.o.codegen.DefaultGenerator - Generating with dryRun=false
-[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
+[main] INFO  o.o.c.ignore.CodegenIgnoreProcessor - Output directory (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts) does not exist, or is inaccessible. No file (.openapi-generator-ignore) will be evaluated.
 [main] INFO  o.o.codegen.DefaultGenerator - OpenAPI Generator: fsharp-giraffe-server (server)
 [main] INFO  o.o.codegen.DefaultGenerator - Generator 'fsharp-giraffe-server' is considered beta.
 [main] WARN  o.o.codegen.DefaultCodegen - OpenAPI 3.1 support is still in beta. To report an issue related to 3.1 spec, please kindly open an issue in the Github repo: https://github.com/openAPITools/openapi-generator.
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
-[main] INFO  o.o.codegen.TemplateManager - writing file /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/HealthResponse.fs
+[main] INFO  o.o.codegen.TemplateManager - writing file <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/generated-contracts/OpenAPI/src/OseBe.Contracts/ErrorResponse.fs
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of APIs.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of Webhooks.
 [main] INFO  o.o.codegen.DefaultGenerator - Skipping generation of supporting files.
@@ -2337,8 +2337,8 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 > dotnet build apps/ose-be/src/OseBe/OseBe.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/OseBe.fsproj (in 145 ms).
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
 
 Build succeeded.
     0 Warning(s)
@@ -2351,11 +2351,11 @@ Time Elapsed 00:00:02.63
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' apps/ose-be/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/ose-be/tests/unit/OseBe.UnitTests.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/OseBe.UnitTests.fsproj (in 204 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/OseBe.UnitTests.fsproj (in 204 ms).
   1 of 2 projects are up-to-date for restore.
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
-  OseBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  OseBe.UnitTests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 101 ms - OseBe.UnitTests.dll (net10.0)
@@ -2375,9 +2375,9 @@ Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration:
 
   Determining projects to restore...
   All projects are up-to-date for restore.
-  OseBe -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
-  OseBe.UnitTests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
+  OseBe -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/src/OseBe/bin/Debug/net10.0/OseBe.dll
+  OseBe.UnitTests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-be/tests/unit/bin/Debug/net10.0/OseBe.UnitTests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 Data collection : Unable to find a datacollector with friendly name 'XPlat Code Coverage'.
 Data collection : Could not find data collector 'XPlat Code Coverage'
@@ -2458,8 +2458,8 @@ Spec coverage valid! 6 specs, 6 scenarios, 19 steps — all covered.
 > dotnet build libs/fsharp-crane-core/fsharp-crane-core.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
 
 Build succeeded.
     0 Warning(s)
@@ -2485,8 +2485,8 @@ Time Elapsed 00:00:04.23
 > dotnet build libs/fsharp-crane-core/fsharp-crane-core.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/fsharp-crane-core.fsproj (in 2.01 sec).
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
 
 Build succeeded.
     0 Warning(s)
@@ -2507,43 +2507,43 @@ Restore was successful.
 
 > dotnet fsharplint lint libs/fsharp-crane-core/fsharp-crane-core.fsproj --lint-config libs/fsharp-crane-core/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/fsharp-crane-core.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/fsharp-crane-core.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Finding.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Finding.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/PdfMetadata.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/PdfMetadata.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Report.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Domain/Report.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Ports.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Ports.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TextChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/HeadingChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/NestingChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/TableChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/FigureChecker.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/MermaidValidator.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/OcrAssessor.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/ReportManager.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/SkiplistManager.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Core/Logic/PdfExtractionCache.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/PdfAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/PdfAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/OcrAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Adapters/Out/OcrAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Convert.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/src/Convert.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project libs/fsharp-crane-core/fsharp-crane-core.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -2563,11 +2563,11 @@ Restore was successful.
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' libs/fsharp-crane-core/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj (in 203 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/fsharp-crane-core-unit-tests.fsproj (in 203 ms).
   1 of 2 projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  fsharp-crane-core-unit-tests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll (.NETCoreApp,Version=v10.0)
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  fsharp-crane-core-unit-tests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    88, Skipped:     0, Total:    88, Duration: 115 ms - fsharp-crane-core-unit-tests.dll (net10.0)
@@ -2586,16 +2586,16 @@ Passed!  - Failed:     0, Passed:    88, Skipped:     0, Total:    88, Duration:
 
   Determining projects to restore...
   All projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  fsharp-crane-core-unit-tests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  fsharp-crane-core-unit-tests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll
   [coverlet] _mapping file name: 'CoverletSourceRootsMapping_fsharp-crane-core-unit-tests'
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll (.NETCoreApp,Version=v10.0)
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/bin/Debug/net10.0/fsharp-crane-core-unit-tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    88, Skipped:     0, Total:    88, Duration: 99 ms - fsharp-crane-core-unit-tests.dll (net10.0)
   [coverlet] 
   Calculating coverage result...
-   Generating report '/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/coverage.json'
+   Generating report '<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/tests/unit/coverage.json'
 
 +-------------------+------+--------+--------+
 | Module            | Line | Branch | Method |
@@ -2693,7 +2693,7 @@ Generated src/contexts/journal/infrastructure/migrations/index.generated.ts with
 
 [2m> [22mnpx oxlint@latest --jsx-a11y-plugin . && npx eslint .
 
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
 src/contexts/journal/presentation/components/add-entry-sheet.tsx:27:5: warning jsx-a11y(click-events-have-key-events): Enforce a clickable non-interactive element has at least one keyboard event listener. help: Visible, non-interactive elements with click handlers must have one of `keyup`, `keydown`, or `keypress` listener.
 src/contexts/journal/presentation/components/add-entry-sheet.tsx:27:6: warning jsx-a11y(no-static-element-interactions): Static HTML elements with event handlers require a role. help: Add a role attribute to this element, or use a semantic HTML element instead.
 src/contexts/journal/presentation/components/add-entry-sheet.tsx:119:11: warning jsx-a11y(control-has-associated-label): A control must be associated with a text label. help: Add a text label to the control element. This can be done by adding text content, an `aria-label` attribute, or an `aria-labelledby` attribute.
@@ -2727,9 +2727,9 @@ src/contexts/app-shell/presentation/components/home/routine-card.tsx:44:8: warni
 src/contexts/app-shell/presentation/components/home/entry-detail-sheet.tsx:94:5: warning jsx-a11y(click-events-have-key-events): Enforce a clickable non-interactive element has at least one keyboard event listener. help: Visible, non-interactive elements with click handlers must have one of `keyup`, `keydown`, or `keypress` listener.
 src/contexts/app-shell/presentation/components/home/entry-detail-sheet.tsx:94:6: warning jsx-a11y(no-static-element-interactions): Static HTML elements with event handlers require a role. help: Add a role attribute to this element, or use a semantic HTML element instead.
 src/contexts/routine/presentation/components/edit-routine-screen.tsx:113:7: warning unicorn(no-useless-fallback-in-spread): Empty fallbacks in spreads are unnecessary help: Spreading falsy values in object literals won't add any unexpected properties, so it's unnecessary to add an empty object as fallback.
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
 [0m[0m
-[0m[4m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/src/contexts/workout-session/presentation/components/workout-screen.tsx[24m[0m
+[0m[4m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/src/contexts/workout-session/presentation/components/workout-screen.tsx[24m[0m
 [0m  [2m80:11[22m  [33mwarning[39m  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')[0m
 [0m[0m
 [0m[33m[1m✖ 1 problem (0 errors, 1 warning)[22m[39m[0m
@@ -2748,11 +2748,11 @@ npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/
 
 [2m> [22mif grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\b(it|test|describe)\.(skip|only|todo)\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit
 
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web[39m
 
 
 [2m Test Files [22m [1m[32m56 passed[39m[22m[90m (56)[39m
@@ -2774,12 +2774,12 @@ npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/
 [2m> [22mnode scripts/gen-migrations.mjs && npx vitest run --coverage --coverage.thresholds.lines=74
 
 Generated src/contexts/journal/infrastructure/migrations/index.generated.ts with 2 migration(s).
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web/.npmrc
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-app-web[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
@@ -2999,7 +2999,7 @@ Spec coverage valid! 14 specs, 77 scenarios, 312 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-www[39m
 
 
 [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
@@ -3023,7 +3023,7 @@ Spec coverage valid! 14 specs, 77 scenarios, 312 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/organiclever-www[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
@@ -3128,8 +3128,8 @@ Spec coverage valid! 2 specs, 15 scenarios, 34 steps — all covered.
 
 [2m> [22mnpx oxlint@latest --jsx-a11y-plugin . && npx eslint .
 
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
 
 [2m[32m[39m[22m
 
@@ -3143,11 +3143,11 @@ npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/
 
 [2m> [22mif grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\b(it|test|describe)\.(skip|only|todo)\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit
 
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web[39m
 
 
 [2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
@@ -3168,12 +3168,12 @@ npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/
 
 [2m> [22mnpx vitest run --coverage --coverage.thresholds.lines=88
 
-npm warn config ignoring workspace config at /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
+npm warn config ignoring workspace config at <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web/.npmrc
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-app-web[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
@@ -3319,7 +3319,7 @@ Spec coverage valid! 1 specs, 1 scenarios, 3 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-www[39m
 
 
 [2m Test Files [22m [1m[32m13 passed[39m[22m[90m (13)[39m
@@ -3344,7 +3344,7 @@ Spec coverage valid! 1 specs, 1 scenarios, 3 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ose-www[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
@@ -3440,7 +3440,7 @@ Spec coverage valid! 11 specs, 38 scenarios, 111 steps — all covered.
 
 [2m> [22mcargo check --manifest-path apps/rhino-cli/Cargo.toml --all-targets
 
-    Checking rhino-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
+    Checking rhino-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.02s
 
 [2m[32m[39m[22m
@@ -3457,7 +3457,7 @@ Spec coverage valid! 11 specs, 38 scenarios, 111 steps — all covered.
 
 [2m> [22mcargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings
 
-    Checking rhino-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
+    Checking rhino-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.69s
 
 [2m[32m[39m[22m
@@ -3472,7 +3472,7 @@ Spec coverage valid! 11 specs, 38 scenarios, 111 steps — all covered.
 
 [2m> [22menv -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1
 
-   Compiling rhino-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
+   Compiling rhino-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 8.46s
      Running unittests src/lib.rs (apps/rhino-cli/target/debug/deps/rhino_cli-2c91c8bbedfc6c92)
 
@@ -4913,7 +4913,7 @@ test result: ok. 1394 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; f
 
 [2m> [22menv -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch
 
-   Compiling rhino-cli v0.1.0 (/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
+   Compiling rhino-cli v0.1.0 (<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/rhino-cli)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 24.08s
      Running tests/env_contract.rs (apps/rhino-cli/target/debug/deps/env_contract-dfbbc251254c8fa1)
 Feature: IaC env-validation dispatch for terraform and ansible surfaces
@@ -5631,7 +5631,7 @@ Spec coverage valid! 68 specs, 472 scenarios, 1922 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/wahidyankf-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/wahidyankf-www[39m
 
 
 [2m Test Files [22m [1m[32m20 passed[39m[22m[90m (20)[39m
@@ -5655,7 +5655,7 @@ Spec coverage valid! 68 specs, 472 scenarios, 1922 steps — all covered.
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/wahidyankf-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/wahidyankf-www[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
@@ -5761,10 +5761,10 @@ Spec coverage valid! 8 specs, 40 scenarios, 94 steps — all covered.
 > dotnet build apps/crane-cli/crane-cli.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
   1 of 2 projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  crane-cli -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  crane-cli -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
 
 Build succeeded.
     0 Warning(s)
@@ -5793,10 +5793,10 @@ Time Elapsed 00:00:02.26
 > dotnet build apps/crane-cli/crane-cli.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/crane-cli.fsproj (in 157 ms).
   1 of 2 projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  crane-cli -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  crane-cli -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
 
 Build succeeded.
     0 Warning(s)
@@ -5817,13 +5817,13 @@ Restore was successful.
 
 > dotnet fsharplint lint apps/crane-cli/crane-cli.fsproj --lint-config apps/crane-cli/fsharplint.json
 
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/crane-cli.AssemblyInfo.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/crane-cli.AssemblyInfo.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Adapters/In/CliAdapter.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Adapters/In/CliAdapter.fs ==========
 ========== Finished: 0 warnings ==========
-========== Linting /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Program.fs ==========
+========== Linting <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/src/Program.fs ==========
 ========== Finished: 0 warnings ==========
 ========== Summary: 0 warnings ==========
 > dotnet fsharp-analyzers --project apps/crane-cli/crane-cli.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001
@@ -5843,12 +5843,12 @@ Restore was successful.
 [2m> [22mif grep -rn -E --include='*.fs' 'Skip\s*=' apps/crane-cli/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj
 
   Determining projects to restore...
-  Restored /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj (in 375 ms).
+  Restored <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/crane-cli-unit-tests.fsproj (in 375 ms).
   2 of 3 projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  crane-cli -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
-  crane-cli-unit-tests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll (.NETCoreApp,Version=v10.0)
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  crane-cli -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
+  crane-cli-unit-tests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    99, Skipped:     0, Total:    99, Duration: 239 ms - crane-cli-unit-tests.dll (net10.0)
@@ -5867,17 +5867,17 @@ Passed!  - Failed:     0, Passed:    99, Skipped:     0, Total:    99, Duration:
 
   Determining projects to restore...
   All projects are up-to-date for restore.
-  fsharp-crane-core -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
-  crane-cli -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
-  crane-cli-unit-tests -> /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll
+  fsharp-crane-core -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/libs/fsharp-crane-core/bin/Debug/net10.0/fsharp-crane-core.dll
+  crane-cli -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/bin/Debug/net10.0/crane.dll
+  crane-cli-unit-tests -> <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll
   [coverlet] _mapping file name: 'CoverletSourceRootsMapping_crane-cli-unit-tests'
-Test run for /Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll (.NETCoreApp,Version=v10.0)
+Test run for <REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/bin/Debug/net10.0/crane-cli-unit-tests.dll (.NETCoreApp,Version=v10.0)
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    99, Skipped:     0, Total:    99, Duration: 160 ms - crane-cli-unit-tests.dll (net10.0)
   [coverlet] 
   Calculating coverage result...
-   Generating report '/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/coverage.json'
+   Generating report '<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/crane-cli/tests/unit/coverage.json'
 
 +-------------------+------+--------+--------+
 | Module            | Line | Branch | Method |
@@ -7334,7 +7334,7 @@ content/en/learn/courses/advanced-frontend/drilling/code/kata-05-controlled-mode
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-www[39m
 
 
 [2m Test Files [22m [1m[32m158 passed[39m[22m[90m (158)[39m
@@ -7359,7 +7359,7 @@ content/en/learn/courses/advanced-frontend/drilling/code/kata-05-controlled-mode
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
 
-[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-www[39m
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m<REPO_ROOT>/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/apps/ayokoding-www[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
 
