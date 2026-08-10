@@ -90,11 +90,14 @@ diverging CLI fork, and a duplicated idea backlog, and in exchange holds ~1,300 
 source with no shipped capability. **The maintainer's stated reason for this plan is exactly that
 burden: four open repositories are too many to maintain, and three is enough.**
 
-Consolidation also resolves a live governance contradiction. `docs/reference/sdlc-gate-standard.md`
-declares `apps/rhino-cli` byte-identical across "all four bound repos", and
-`apps/rhino-cli/src/application/parity.rs:557` emits that same four-repo claim at runtime — while
-[`docs/reference/related-repositories.md`](../../../docs/reference/related-repositories.md) states
-that `beaver-nest` carries an unbound fork and sits in neither cross-repo boundary
+Consolidation also resolves a live governance contradiction, though `optimize-cis` already fixed half
+of it. `docs/reference/sdlc-gate-standard.md` still declares `apps/rhino-cli` byte-identical across
+"all four bound repos" — `apps/rhino-cli/src/application/parity.rs:560` no longer agrees: it was
+fixed, as a side effect of `optimize-cis`'s own Phase 7 (commit `c182c543a`, 2026-08-09), to emit the
+three-repo message instead (see finding 3 above), with a test asserting it never names
+`beaver-nest`. So the contradiction survives only in `sdlc-gate-standard.md`, not in `parity.rs`.
+Separately, [`docs/reference/related-repositories.md`](../../../docs/reference/related-repositories.md)
+states that `beaver-nest` carries an unbound fork and sits in neither cross-repo boundary
 [Repo-grounded — all three read 2026-08-06]. Removing the fourth repo removes the contradiction
 rather than papering over it.
 
@@ -191,14 +194,17 @@ supersedes, the `rhino-cli-optimization` idea this section originally named (del
 absorbed into `optimize-cis`'s scope) — rewrote how `apps/rhino-cli` is built, invoked, and
 lint-gated, and archived 2026-08-09. **Correction (re-verified 2026-08-10): its Phase 10 sweep task
 did not resolve this doc's citations** — that task is still unchecked in `optimize-cis`'s own
-`delivery.md`, and this plan's `delivery.md` still carries 9 occurrences of the old
-`cargo run --release --quiet --manifest-path apps/rhino-cli` invocation form (7 of them live
-executable commands, at `delivery.md:298,594,668,677,699,731,753`) and zero occurrences of
-`rhino-bin.sh`. This sweep is still owed and is inherited from `optimize-cis`, not new scope this
-plan invents. Note also that `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=<surface>` is
-**not** the general replacement form — it is specifically for declared gate-surface runs (the
-git-hook context this doc's own bullet above cites). 7 of `delivery.md`'s 9 sites invoke direct
-subcommands (`parity manifest validate`, `parity manifest generate`, `repo-config validate`), whose
+`delivery.md`, and this plan's `delivery.md` still carries 7 occurrences of the old
+`cargo run --release --quiet --manifest-path apps/rhino-cli` invocation form — all 7 of them live
+executable commands, at `delivery.md:298,594,668,677,699,731,753` — and zero occurrences of
+`rhino-bin.sh`. (Verify with
+`grep -c 'cargo run --release --quiet --manifest-path apps/rhino-cli' delivery.md`, run from this
+plan folder, so this count stops drifting across future review cycles.) This sweep is still owed and
+is inherited from `optimize-cis`, not new scope this plan invents. Note also that
+`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=<surface>` is **not** the general replacement
+form — it is specifically for declared gate-surface runs (the git-hook context this doc's own bullet
+above cites). All 7 of `delivery.md`'s sites invoke direct subcommands (`parity manifest validate`,
+`parity manifest generate`, `repo-config validate`), whose
 correct post-optimization form is `apps/rhino-cli/scripts/rhino-bin.sh <subcommand>` directly — e.g.
 `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` — not `gate run --surface=`.
 

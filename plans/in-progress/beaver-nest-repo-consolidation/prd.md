@@ -191,7 +191,7 @@ Feature: Retirement of the fourth repository
 - Relocation and rename of the four BeaverNest Nx projects, plus the `beaver-nest-contracts`
   project that lives under `specs/`.
 - The `specs/apps/beavernest/` tree — 19 feature files, the OpenAPI contract, and the C4 scaffold.
-- `infra/dev/beavernest-app/` — compose files, scripts, and the 14-file shell-test harness.
+- `infra/dev/beavernest-app/` — compose files, scripts, and the 16-file shell-test harness.
 - `libs/web-ui-token/src/beavernest.css` — the brand token sheet the frontend imports.
 - The staging CI caller, renamed to match the new domain token.
 - The three F# projects added to `open-sharia-enterprise.sln`.
@@ -214,13 +214,13 @@ Feature: Retirement of the fourth repository
 
 ## Product-Level Risks
 
-| Risk                                                                                                                                       | Impact | Mitigation                                                                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The rename touches F# namespaces, env-var prefixes, Dockerfiles, and the `.sln` — a partial rename leaves a half-working app               | HIGH   | The rename is a single delivery unit with a grep-based zero-match gate covering `apps`, `libs`, `specs`, `infra`, `.github`, `.claude`, and `repo-config.yml`.                                                  |
+| Risk                                                                                                                                       | Impact | Mitigation                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The rename touches F# namespaces, env-var prefixes, Dockerfiles, and the `.sln` — a partial rename leaves a half-working app               | HIGH   | The rename is a single delivery unit with a grep-based zero-match gate covering `apps`, `libs`, `specs`, `infra`, `.github`, `.claude`, and `repo-config.yml`.                                                                                      |
 | `beavernest-app-web` breaks against `ose-public`'s older `libs/web-ui`                                                                     | MEDIUM | Anticipated: the two copies differ across 43 files (re-verified 2026-08-10, unchanged) including a `@storybook/nextjs-vite` → `@storybook/react-vite` swap. Fixed inside the app during Unit 1, with dependency pinning as the documented fallback. |
-| `app-web` implies an `app.*` subdomain the product does not have — the SPA is co-served by the backend on one origin                       | LOW    | Recorded as a naming caveat in `tech-docs.md`. The tier vocabulary has no better fit, and the co-served topology is unchanged by the rename.                                                                    |
-| Ported no-op echo targets (`test:e2e` on the backend, five on the frontend E2E suite) read as passing coverage they do not provide         | LOW    | Carried over as-is and named explicitly, so no acceptance clause in this plan cites a no-op target as evidence.                                                                                                 |
-| A stale artifact rides along — `next-env.d.ts` from the abandoned Next.js migration, a README citing a nonexistent `specs:coverage` target | LOW    | Both are named in `tech-docs.md`'s file-impact tree for deletion or correction during the port.                                                                                                                 |
+| `app-web` implies an `app.*` subdomain the product does not have — the SPA is co-served by the backend on one origin                       | LOW    | Recorded as a naming caveat in `tech-docs.md`. The tier vocabulary has no better fit, and the co-served topology is unchanged by the rename.                                                                                                        |
+| Ported no-op echo targets (`test:e2e` on the backend, five on the frontend E2E suite) read as passing coverage they do not provide         | LOW    | Carried over as-is and named explicitly, so no acceptance clause in this plan cites a no-op target as evidence.                                                                                                                                     |
+| A stale artifact rides along — `next-env.d.ts` from the abandoned Next.js migration, a README citing a nonexistent `specs:coverage` target | LOW    | Both are named in `tech-docs.md`'s file-impact tree for deletion or correction during the port.                                                                                                                                                     |
 
 ## Related Documentation
 

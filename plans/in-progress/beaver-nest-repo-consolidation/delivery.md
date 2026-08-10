@@ -86,7 +86,12 @@ the worktree after the plan is archived and pushed.
 repo only. Phases 6 and 7 execute in a different repo than the one holding this plan folder, so each
 requires `cd /Users/wkf/ose-projects/<repo>` first. `ose-primer` and `ose-private`'s topology (bare
 repo with linked worktrees, vs. a normal working tree) is not assumed here and drifts over time —
-verify it live with `git -C <repo> rev-parse --is-bare-repository` before choosing a git method there.
+verify it live per the
+[Bare-Repo Base-Worktree Landing Method's Verify Topology First step](../../../repo-governance/development/workflow/bare-repo-landing-method.md#verify-topology-first)
+(`git worktree list`, or — after `cd`-ing into the repo —
+`git config --file "$(git rev-parse --git-common-dir)/config" core.bare`) before choosing a git
+method there. **Never** `git rev-parse --is-bare-repository`: that command is explicitly forbidden
+for this question because it false-negatives from inside a linked worktree.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
@@ -131,7 +136,7 @@ which the archival commit rides inside.
 **Archival-in-PR applies to `ose-public` only.** `ose-primer` and `ose-private` carry no `plans/`
 entry for this work, so their PRs contain no plan-folder content. This is the ordinary cross-repo
 carve-out from the
-[Archival-in-PR rule](../../../repo-governance/conventions/structure/plans.md#delivery-mode).
+[Archival-in-PR rule](../../../repo-governance/workflows/plan/plan-execution.md#8-finalization-and-archival-sequential).
 
 ## Parallelization Model
 
@@ -143,7 +148,7 @@ carve-out from the
 - Phase 4 → 5: the sweep asserts a three-repo family, which is only true once the product has landed.
 - Phase 5 → 6 → 7: **byte-identity serialization**. All three repos must converge on the identical
   `apps/rhino-cli/src/application/parity.rs` content and a matching `parity-manifest.sha256`.
-  [`multi-plans-execution.md:205`](../../../repo-governance/workflows/plan/multi-plans-execution.md)
+  [`multi-plans-execution.md:207`](../../../repo-governance/workflows/plan/multi-plans-execution.md)
   states this boundary "cannot tolerate two concurrent divergent edits", so these three are ordered,
   not parallel.
 - Phase 7 → 8: archiving is safe only once no surviving repo still references the fourth.
@@ -681,8 +686,10 @@ to close this behavior, since it already shipped via `optimize-cis`.
 Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-primer` has no
 `beavernest` product and no `plans/` entry for this plan.
 
-- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-primer && git rev-parse --is-bare-repository`
-      — acceptance: the output records whether the bare-repo git method applies (see [Bare Repo notes](../../../repo-governance/conventions/structure/worktree-path.md))
+- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-primer && git config --file "$(git rev-parse --git-common-dir)/config" core.bare`
+      — acceptance: the output (`true`, or empty/`false`) records whether the bare-repo git method applies, per the
+      [Bare-Repo Base-Worktree Landing Method](../../../repo-governance/development/workflow/bare-repo-landing-method.md#scriptable-form--the-corebare-read) —
+      never `git rev-parse --is-bare-repository`, the explicitly forbidden command for this question
 - [ ] [AI] Provision the worktree — command: `claude --worktree beaver-nest-repo-consolidation`
       — acceptance: the worktree exists off the latest `origin/main`
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/primer-sweep-targets.txt`
@@ -692,9 +699,15 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
       just `parity.rs` and `gate_specs.rs` — the diff is the source of truth for scope, since the
       divergence set changes as `optimize-cis`-era edits land; the two named files are the expected
       majority of it but not necessarily all of it
-      — command: `for f in $(awk '/^[<>] /{print $NF}' evidence/phase-0-parity-divergence-primer.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
-      — acceptance: the loop prints no `DIVERGENT:` lines — every enumerated file is now
-      byte-identical to `ose-public`'s merged version
+      This step runs from **inside `ose-primer`** (see the `cd` above), while the evidence file was
+      written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
+      against the wrong repo and the loop would silently iterate zero times, so the evidence file is
+      addressed by its absolute path back into `ose-public`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
+      evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
+      `DIVERGENT:` lines — every enumerated file is now byte-identical to `ose-public`'s merged
+      version
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] Regenerate the parity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`
       — acceptance: `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(sort apps/rhino-cli/parity-manifest.sha256)` prints nothing —
@@ -738,8 +751,10 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 
 ## Phase 7: Four→Three Sweep in `ose-private` (delivery boundary — PR #5)
 
-- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-private && git rev-parse --is-bare-repository`
-      — acceptance: the output records whether the bare-repo git method applies
+- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-private && git config --file "$(git rev-parse --git-common-dir)/config" core.bare`
+      — acceptance: the output (`true`, or empty/`false`) records whether the bare-repo git method applies, per the
+      [Bare-Repo Base-Worktree Landing Method](../../../repo-governance/development/workflow/bare-repo-landing-method.md#scriptable-form--the-corebare-read) —
+      never `git rev-parse --is-bare-repository`, the explicitly forbidden command for this question
 - [ ] [AI] Provision the worktree — command: `claude --worktree beaver-nest-repo-consolidation`
       — acceptance: the worktree exists off the latest `origin/main`
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/private-sweep-targets.txt`
@@ -747,8 +762,14 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 - [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
       cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-private.txt`), not
       just `parity.rs` and `gate_specs.rs` — same widened-scope reasoning as Phase 6
-      — command: `for f in $(awk '/^[<>] /{print $NF}' evidence/phase-0-parity-divergence-private.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
-      — acceptance: the loop prints no `DIVERGENT:` lines
+      This step runs from **inside `ose-private`** (see the `cd` above), while the evidence file was
+      written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
+      against the wrong repo and the loop would silently iterate zero times, so the evidence file is
+      addressed by its absolute path back into `ose-public`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
+      evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
+      `DIVERGENT:` lines
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] Regenerate the parity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`
       — acceptance: `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(sort apps/rhino-cli/parity-manifest.sha256)` prints nothing
