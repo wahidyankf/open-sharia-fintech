@@ -295,7 +295,33 @@ standalone parity-sync commit before/alongside them) so all three repos' `git lo
 byte-identical and functional. Until then, `ose-primer` and `ose-private` will fail the same
 "unexpected argument" error the moment either stages a new `apps/*/package.json`.
 
+**Second file under the same obligation (PR #164 cycle-2 review, added without reopening this
+entry):** the cycle-1 review fix that satisfied GRA-TYPE-ANNOTATE-001 added a CLI-layer test to
+`apps/rhino-cli/src/cli.rs`, which forced a `parity-manifest.sha256` regeneration
+(`apps/rhino-cli/parity-manifest.sha256:95` now carries a new hash for `cli.rs`) — confirming `cli.rs`
+joined the same `ose-public`/`ose-primer`/`ose-private` byte-identity boundary mid-plan. **`cli.rs`
+carries the identical unpropagated obligation `lockfile.rs` does above**: Phase 6/7 must fold in
+`cli.rs`'s test-only change alongside `lockfile.rs`'s positional-args fix when propagating to
+`ose-primer`/`ose-private`, not `lockfile.rs` alone. Phase 6's own next step already fails closed on a
+missed file (its manifest-regeneration acceptance check is a byte-for-byte `diff` against
+`ose-public`'s manifest, so nothing escapes to `main`), but it reports a mismatch, not which file was
+missed — routing both files here up front avoids that re-derivation.
+
 ## Learning: Phase 0-3's `evidence/` scratch files never survived to this Phase 4 execution — re-derived from scratch, cross-checked clean
+
+**Superseded 2026-08-10 (same session, commit `d7479af7a`)**: this entry's premise — that Phase 3's
+`evidence/` artifacts had no recoverable path back onto disk or into git — was true only up to the
+point this entry was written. Later in the same takeover session, commit `d7479af7a` stood up a
+disposable `beavernest-app` Compose stack, recaptured readiness/health HTTP 200 evidence, and
+captured genuinely distinct mobile/tablet/desktop viewport screenshots, then committed all of it
+under `plans/in-progress/beaver-nest-repo-consolidation/evidence/` — `git log --oneline -- ...
+evidence/phase-3-health.txt` now returns that commit, and `git ls-tree HEAD ... evidence/` lists
+every Phase 0 and Phase 3 artifact this entry originally described as unrecoverable, including
+`phase-0-unique-ideas-manifest.txt` and all three Phase 3 viewport screenshots. `delivery.md`'s own
+Phase 3/5 Gate checkboxes are ticked "Done — recaptured" against that same commit. Kept below as
+history rather than deleted, per this repo's Knowledge Capture convention — but any reader (including
+`delivery.md`'s own Takeover Reconciliation note, now corrected) should treat the gap this entry
+describes as closed, not open.
 
 Phase 0's `evidence/phase-0-unique-ideas-manifest.txt` (and Phase 3's three viewport screenshots) do
 not exist anywhere on disk in this execution's worktree, and `git log --all` shows no commit ever
