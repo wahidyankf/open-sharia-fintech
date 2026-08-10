@@ -85,7 +85,11 @@ See [Repository Governance Architecture](../repository-governance-architecture.m
 
 ## Vision Documents
 
-### [Open Sharia Enterprise Vision](./open-sharia-enterprise.md)
+This directory carries two vision documents in a **parent/child** relationship: the ecosystem
+vision (why OSE exists at all) and the product vision (why this specific product, within that
+ecosystem, exists).
+
+### [Open Sharia Enterprise Vision](./open-sharia-enterprise.md) — Parent (Ecosystem)
 
 The foundational vision document answering WHY we exist and WHAT change we seek.
 
@@ -97,6 +101,11 @@ The foundational vision document answering WHY we exist and WHAT change we seek.
 - **Islamic Foundation**: How this serves Islamic values and principles
 - **Target Audience**: Developers, businesses, individuals seeking ethical finance
 - **Success Vision**: What the world looks like when we succeed
+
+### [BeaverNest Vision](./beavernest.md) — Child (Product)
+
+The product vision for **BeaverNest**, a personal operating layer (assistant, content building,
+posting) built as a product **within** the OSE ecosystem above, not a replacement for it.
 
 ## How Vision Governs Everything
 
