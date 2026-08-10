@@ -1324,4 +1324,40 @@ mod cli_uniform_grammar_tests {
             "workflows validate naming must no longer parse (cross-domain moved to repo-governance)"
         );
     }
+
+    #[test]
+    fn git_lockfile_sync_accepts_a_positional_path() {
+        // Regression test for the clap parsing layer: `git lockfile sync <path>` previously
+        // failed with an unexpected-argument error because SyncArgs declared no positional
+        // field. This parses through the real `Cli` type (not `sync_at_root` directly) so it
+        // actually exercises the layer that broke.
+        use super::{Commands, GitCommands, GitLockfileCommands};
+
+        let result = Cli::try_parse_from([
+            "rhino-cli",
+            "git",
+            "lockfile",
+            "sync",
+            "apps/example/package.json",
+        ]);
+        let cli = result.expect("git lockfile sync must accept a positional path argument");
+        assert!(
+            matches!(
+                cli.command,
+                Some(Commands::Git(GitCommands::Lockfile(
+                    GitLockfileCommands::Sync(_)
+                )))
+            ),
+            "expected `git lockfile sync` to parse into its own args, got {:?}",
+            cli.command
+        );
+        if let Some(Commands::Git(GitCommands::Lockfile(GitLockfileCommands::Sync(args)))) =
+            cli.command
+        {
+            assert_eq!(
+                args.positional,
+                vec!["apps/example/package.json".to_string()]
+            );
+        }
+    }
 }
