@@ -57,3 +57,23 @@ if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \
 	printf '%s\n' 'FAIL: data directory nested inside the git repository passed preflight' >&2
 	exit 1
 fi
+
+# Reverse containment direction: a data directory that is an *ancestor* of the
+# repository root (e.g. a dev running the backend with cwd nested under $HOME)
+# must be rejected too — beavernest_validate_safe_directory's second `case`
+# arm (`"$beavernest_repository_root" in "$beavernest_canonical"/*)`).
+# Skip the immediate parent if it happens to equal $HOME on this host, since
+# that would exercise the (already-tested) home-equality arm instead of the
+# ancestor arm this test targets.
+beavernest_repo_ancestor=$(dirname -- "$beavernest_root")
+beavernest_home_canonical=$(cd -P -- "$HOME" && pwd -P)
+if [[ "$beavernest_repo_ancestor" == "$beavernest_home_canonical" ]]; then
+	beavernest_repo_ancestor=$(dirname -- "$beavernest_repo_ancestor")
+fi
+if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \
+	BEAVERNEST_BE_ALLOW_LOOPBACK_CI=1 BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_repo_ancestor" \
+	BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture/backups" \
+	bash "$beavernest_root/infra/dev/beavernest-app/scripts/preflight.sh" >/dev/null 2>&1; then
+	printf '%s\n' 'FAIL: data directory that is an ancestor of the git repository passed preflight' >&2
+	exit 1
+fi

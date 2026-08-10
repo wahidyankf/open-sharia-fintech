@@ -99,6 +99,27 @@ let ``backup operations reject a backup root nested inside the current working d
         Directory.Delete(nestedBackupRoot, true)
 
 [<Fact>]
+let ``backup operations reject a backup root that is an ancestor of the current working directory`` () =
+    // Reverse containment direction from the "nested inside cwd" case above —
+    // mirrors infra/dev/beavernest-app/scripts/lib.sh's second
+    // `case "$beavernest_repository_root" in "$beavernest_canonical"/*)` arm.
+    let root =
+        Path.Combine(Path.GetTempPath(), "beavernest-invalid-ancestor-backup-root-" + Guid.NewGuid().ToString("N"))
+
+    let dataDirectoryPath = Path.Combine(root, "data")
+    let configuration = create dataDirectoryPath 100 |> Result.defaultWith failwith
+
+    let ancestorBackupRoot =
+        Directory.GetParent(Directory.GetCurrentDirectory()).FullName
+
+    Directory.CreateDirectory(root) |> ignore
+
+    try
+        Assert.Equal(Error "backup directory is invalid", backupAt ancestorBackupRoot configuration "snapshot.sqlite3")
+    finally
+        Directory.Delete(root, true)
+
+[<Fact>]
 let ``backup and restore reject invalid names before touching the filesystem`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-invalid-operation-name-" + Guid.NewGuid().ToString("N"))

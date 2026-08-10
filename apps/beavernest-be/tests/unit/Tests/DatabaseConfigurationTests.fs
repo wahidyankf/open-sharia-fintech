@@ -42,6 +42,16 @@ let ``database configuration refuses a directory nested inside the current worki
         Directory.Delete(subdirectory, true)
 
 [<Fact>]
+let ``database configuration refuses a directory that is an ancestor of the current working directory`` () =
+    // The reverse containment direction from the "nested inside cwd" case above:
+    // a data directory that is an *ancestor* of cwd (e.g. cwd's parent) must be
+    // rejected too, mirroring infra/dev/beavernest-app/scripts/lib.sh's second
+    // `case "$beavernest_repository_root" in "$beavernest_canonical"/*)` arm.
+    let ancestor = Directory.GetParent(Directory.GetCurrentDirectory()).FullName
+
+    Assert.True(create ancestor 100 |> Result.isError)
+
+[<Fact>]
 let ``database configuration refuses an explicit symbolic-link component`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-link-" + Guid.NewGuid().ToString("N"))

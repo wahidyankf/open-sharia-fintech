@@ -11,10 +11,22 @@ type DatabaseConfiguration =
 
 let databaseFileName = "beavernest.sqlite3"
 
-let private normalizeDirectoryPath (path: string) =
+/// Shared with `BeaverNestBe.Operations.Database` (internal, not private) so both
+/// modules normalize paths identically instead of maintaining independent copies
+/// that can drift — see `isDisallowedDirectory` below for why that drift matters.
+let internal normalizeDirectoryPath (path: string) =
     Path.GetFullPath(path) |> Path.TrimEndingDirectorySeparator
 
-let private isDisallowedDirectory (path: string) =
+/// Shared with `BeaverNestBe.Operations.Database` (internal, not private). Rejects
+/// a directory in either containment direction relative to the repository root —
+/// nested inside it, or an ancestor of it — mirroring
+/// `infra/dev/beavernest-app/scripts/lib.sh`'s `beavernest_validate_safe_directory`,
+/// which checks both `case "$beavernest_canonical" in "$beavernest_repository_root"/*)`
+/// and `case "$beavernest_repository_root" in "$beavernest_canonical"/*)`. Only
+/// implementing the first arm let a data/backup directory that is an *ancestor* of
+/// the working directory (e.g. the parent of `cwd`) pass this guard while the
+/// shell guard rejected it.
+let internal isDisallowedDirectory (path: string) =
     let normalized = normalizeDirectoryPath path
     let root = Path.GetPathRoot normalized
 
@@ -28,6 +40,7 @@ let private isDisallowedDirectory (path: string) =
     || normalized = home
     || normalized = repository
     || normalized.StartsWith(repository + Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+    || repository.StartsWith(normalized + Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
 
 let private isSymbolicLink (path: string) =
     try

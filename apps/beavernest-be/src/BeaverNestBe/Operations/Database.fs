@@ -17,22 +17,12 @@ let private validName name =
     && (name.Substring(0, name.Length - ".sqlite3".Length)
         |> Seq.forall (fun character -> Char.IsAsciiLetterOrDigit character || character = '-' || character = '_'))
 
-let private normalizeDirectoryPath (path: string) =
-    Path.GetFullPath(path) |> Path.TrimEndingDirectorySeparator
-
-let private isDisallowedDirectory (path: string) =
-    let root = Path.GetPathRoot path
-
-    let home =
-        Environment.GetFolderPath Environment.SpecialFolder.UserProfile
-        |> normalizeDirectoryPath
-
-    let repository = Directory.GetCurrentDirectory() |> normalizeDirectoryPath
-
-    path = root
-    || path = home
-    || path = repository
-    || path.StartsWith(repository + Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+// normalizeDirectoryPath and isDisallowedDirectory are shared (internal) from
+// BeaverNestBe.Domain.DatabaseConfiguration via the `open` above, the same way
+// hasSymbolicLinkComponent already is — this module no longer keeps its own
+// copies, which previously drifted from the shared implementation (one
+// self-normalized its input, the other didn't) and missed the same
+// reverse-containment arm the shared implementation now covers.
 
 let private isSymbolicLink (path: string) =
     try
