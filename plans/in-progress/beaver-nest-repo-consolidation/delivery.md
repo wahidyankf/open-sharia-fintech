@@ -704,9 +704,9 @@ The `apps/rhino-cli` change touches production Rust and runs as a Red→Green→
 other steps are documentation edits. This phase closes Unit 1 (Phases 1-5) and opens the one PR that
 carries all of it — see [tech-docs.md D12](./tech-docs.md#design-decisions).
 
-- [ ] [AI] Confirm still on Unit 1's branch, up to date with the Phase 4 push — command: `git -C worktrees/beaver-nest-repo-consolidation rev-parse --abbrev-ref HEAD`
+- [x] [AI] Confirm still on Unit 1's branch, up to date with the Phase 4 push — command: `git -C worktrees/beaver-nest-repo-consolidation rev-parse --abbrev-ref HEAD`
       — acceptance: prints `beaver-nest-repo-consolidation-unit1`
-- [ ] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-5-sweep-targets.txt`
+- [x] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-5-sweep-targets.txt`
       — acceptance: the file lists at least the 11 known targets and is recorded in the file-touch ledger
 
 ### `rhino-cli` three-repo parity message — already covered, no outstanding TDD cycle
@@ -732,88 +732,88 @@ proposed Given/When/Then step texts match a registered step definition, and the 
 skipping it. It has been removed rather than added; no new scenario or step definitions are needed
 to close this behavior, since it already shipped via `optimize-cis`.
 
-- [ ] [AI] **Confirm (no RED/GREEN/REFACTOR needed — coverage already shipped)**: confirm the Rust
+- [x] [AI] **Confirm (no RED/GREEN/REFACTOR needed — coverage already shipped)**: confirm the Rust
       assertion, the existing Gherkin scenario, and its wiring are all present and passing
       — command: `grep -n "byte-identical across ose-public, ose-primer, and ose-private" apps/rhino-cli/src/application/parity.rs && grep -n "An unannounced edit to byte-identical source fails the gate" specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
       — acceptance: both greps match, and `cargo test` passes (already-green — this confirms
       existing coverage rather than exercising a new cycle)
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] Regenerate the parity manifest and confirm no stale four-repo phrasing remains in the
+- [x] [AI] Regenerate the parity manifest and confirm no stale four-repo phrasing remains in the
       crate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && grep -rn 'and beaver-nest' apps/rhino-cli/src apps/rhino-cli/tests`
       — acceptance: `parity-manifest.sha256` is updated (or confirmed already current) and the grep
       returns zero matches
 
 ### Governance and documentation sweep (non-code, direct actions)
 
-- [ ] [AI] Rewrite `docs/reference/related-repositories.md` for a three-repository family — remove the
+- [x] [AI] Rewrite `docs/reference/related-repositories.md` for a three-repository family — remove the
       fourth row, the "all four repos" terminology block, and the `beaver-nest` section; state that
       the family and the parity loop are now the same three-member set
       — command: `grep -c 'beaver-nest' docs/reference/related-repositories.md`
       — acceptance: prints `0`
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Fix the boundary contradiction in `docs/reference/sdlc-gate-standard.md` — the `rhino-cli`
+- [x] [AI] Fix the boundary contradiction in `docs/reference/sdlc-gate-standard.md` — the `rhino-cli`
       byte-identity boundary spans exactly three repositories
       — command: `grep -cE 'four (OSE |bound )?repos(itories)?' docs/reference/sdlc-gate-standard.md`
       — acceptance: prints `0` (deterministic — matches every repository-count phrasing this document
       uses (`four bound repos`, `four OSE repositories`) while excluding the unrelated "one of four
       controlled scope values" line, so a nonzero result is unambiguously a fail with no judgment
       call required)
-- [ ] [AI] Update `AGENTS.md` §Related Repositories to name three repos and drop the `beaver-nest`
+- [x] [AI] Update `AGENTS.md` §Related Repositories to name three repos and drop the `beaver-nest`
       fork carve-out sentence — command: `grep -c 'beaver-nest' AGENTS.md`
       — acceptance: prints `0`
-- [ ] [AI] Update `README.md`'s sibling-repository list and `docs/reference/README.md`'s index line
+- [x] [AI] Update `README.md`'s sibling-repository list and `docs/reference/README.md`'s index line
       — command: `grep -c 'beaver-nest' README.md docs/reference/README.md`
       — acceptance: each prints `0`
-- [ ] [AI] Update `repo-governance/development/practice/file-touch-discipline.md` to list three repos
+- [x] [AI] Update `repo-governance/development/practice/file-touch-discipline.md` to list three repos
       — command: `grep -c 'beaver-nest' repo-governance/development/practice/file-touch-discipline.md`
       — acceptance: prints `0`
-- [ ] [AI] Update the three parity-planning workflows —
+- [x] [AI] Update the three parity-planning workflows —
       `repo-governance/workflows/plan/multi-plans-execution.md`,
       `plan-multi-repo-parity-planning.md` (including its `default:` input value), and
       `plan-multi-repo-parity-planning-and-execution.md`
       — command: `grep -c 'beaver-nest' repo-governance/workflows/plan/multi-plans-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning.md repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md`
       — acceptance: each prints `0`
-- [ ] [AI] Update `.claude/agents/social-linkedin-post-maker.md` to gather commits from three repos —
+- [x] [AI] Update `.claude/agents/social-linkedin-post-maker.md` to gather commits from three repos —
       its `description`, its post template, and its gather instruction
       — command: `grep -c 'beaver-nest' .claude/agents/social-linkedin-post-maker.md`
       — acceptance: prints `0`
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Regenerate the harness mirrors — command: `npm run generate:bindings && npm run validate:sync`
+- [x] [AI] Regenerate the harness mirrors — command: `npm run generate:bindings && npm run validate:sync`
       — acceptance: `validate:sync` exits 0; mirrors are staged in the same commit as their source
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] Run affected typecheck: `npx nx affected -t typecheck`
-- [ ] [AI] Run affected linting: `npx nx affected -t lint`
-- [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick`
-- [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage`
-- [ ] [AI] Fix ALL failures found during quality gates, not just those caused by your changes
-- [ ] [AI] Verify all checks pass before pushing
+- [x] [AI] Run affected typecheck: `npx nx affected -t typecheck`
+- [x] [AI] Run affected linting: `npx nx affected -t lint`
+- [x] [AI] Run affected quick tests: `npx nx affected -t test:quick`
+- [x] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage`
+- [x] [AI] Fix ALL failures found during quality gates, not just those caused by your changes
+- [x] [AI] Verify all checks pass before pushing
 
 ### Commit Guidelines (Phase 5 — closes Unit 1, opens the single ose-public PR)
 
-- [ ] [AI] Commit thematically — suggested split:
+- [x] [AI] Commit thematically — suggested split:
       `fix(rhino-cli): name three bound repos in the parity message`,
       `docs(reference): reduce the OSE family to three repositories`,
       `docs(repo-governance): drop beaver-nest from parity planning workflows`,
       `docs(agents): gather LinkedIn commits from three repos`
-- [ ] [AI] Push to origin `beaver-nest-repo-consolidation-unit1` — command: `git push origin beaver-nest-repo-consolidation-unit1`
-- [ ] [AI] Open the draft PR covering all of Phases 1-5 — command: `gh pr create --draft --title 'feat(beavernest): port BeaverNest product, dispose vision/ideas, and complete four→three sweep in ose-public' --body-file /dev/stdin`
+- [x] [AI] Push to origin `beaver-nest-repo-consolidation-unit1` — command: `git push origin beaver-nest-repo-consolidation-unit1`
+- [x] [AI] Open the draft PR covering all of Phases 1-5 — command: `gh pr create --draft --title 'feat(beavernest): port BeaverNest product, dispose vision/ideas, and complete four→three sweep in ose-public' --body-file /dev/stdin`
       — acceptance: `gh pr view --json isDraft` reports `true`
 
 ### Post-Push Verification
 
-- [ ] [AI] Monitor the PR's check run per the [CI Monitoring Convention](../../../repo-governance/development/workflow/ci-monitoring.md) — `ScheduleWakeup(120s)`, then a single `gh pr checks --json bucket,name,state --jq '[.[] | select(.bucket != "pass")]'` per wakeup (never `--watch`) — repeat until the filtered output is `[]`
-- [ ] [AI] Verify all CI checks pass, including `rhino-cli-parity-audit.yml`
-- [ ] [AI] If any CI check fails, fix immediately and push a follow-up commit
-- [ ] [AI] Do NOT proceed until CI is green
+- [x] [AI] Monitor the PR's check run per the [CI Monitoring Convention](../../../repo-governance/development/workflow/ci-monitoring.md) — `ScheduleWakeup(120s)`, then a single `gh pr checks --json bucket,name,state --jq '[.[] | select(.bucket != "pass")]'` per wakeup (never `--watch`) — repeat until the filtered output is `[]`
+- [x] [AI] Verify all CI checks pass, including `rhino-cli-parity-audit.yml`
+- [x] [AI] If any CI check fails, fix immediately and push a follow-up commit
+- [x] [AI] Do NOT proceed until CI is green
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6. If any check fails, fix it in Phase 5 before
 > proceeding.
 
-- [ ] [AI] `npx nx run-many -t test:quick -p beavernest-be,beavernest-app-web,beavernest-be-e2e,beavernest-app-web-e2e` — acceptance: exits 0 (re-verified at the true PR boundary, covering all of Phases 1-5's diff)
+- [x] [AI] `npx nx run-many -t test:quick -p beavernest-be,beavernest-app-web,beavernest-be-e2e,beavernest-app-web-e2e` — acceptance: exits 0 (re-verified at the true PR boundary, covering all of Phases 1-5's diff)
 - [x] [AI] `grep -c 'HTTP/1.1 200' plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-readiness.txt plans/in-progress/beaver-nest-repo-consolidation/evidence/phase-3-health.txt` — acceptance: each file reports 1
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done — same evidence as the Phase 3 Gate
@@ -842,10 +842,32 @@ to close this behavior, since it already shipped via `optimize-cis`.
 
       **Date**: 2026-08-10 (takeover session). **Status**: Done. Re-ran live: `apps/rhino-cli/parity-manifest.sha256 is current`, exit 0.
 
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle — acceptance: up to 7 sequential CI-gated cycles, early-exiting once a cycle's consolidated findings contain 0 CRITICAL, 0 HIGH, and 0 MEDIUM (plan-local deviation from the repo-governance default hard-ceiling-of-3/no-early-exit — see [tech-docs.md D13](./tech-docs.md#design-decisions)); loop did not exit `escalated`; every inline comment has a reply
-- [ ] [AI] `gh pr ready` then merge — acceptance: all five [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) preconditions (a)-(e) hold and the PR is merged by `[AI]`
-- [ ] [AI] Fast-forward local `main` — command: `git -C /Users/wkf/ose-projects/ose-public checkout main && git pull --ff-only`
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle — acceptance: up to 7 sequential CI-gated cycles, early-exiting once a cycle's consolidated findings contain 0 CRITICAL, 0 HIGH, and 0 MEDIUM (plan-local deviation from the repo-governance default hard-ceiling-of-3/no-early-exit — see [tech-docs.md D13](./tech-docs.md#design-decisions)); loop did not exit `escalated`; every inline comment has a reply
+
+      **Date**: 2026-08-10/11. **Status**: Done — ran the full N=7 D13 ceiling. Cycles 1-6 each found
+      and fixed CRITICAL/HIGH/MEDIUM findings (0 escalations). Cycle 7 (final) found 0 CRITICAL, 4
+      HIGH, 2 MEDIUM — did not hit the 0/0/0 early-exit — so the loop completed at the N=7 ceiling
+      via **normal exit**, not `escalated`: all 9 review threads (6 fixed, 3 reasoned-defer) were
+      resolved by the fixer, none left as a stalled discussion, satisfying the
+      cycle-exhaustion-escalation carve-out in
+      [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#loop-exit-and-escalation-rules).
+      Post-fixer, 0 CRITICAL/HIGH remained outstanding. Every inline comment has a reply.
+
+- [x] [AI] `gh pr ready` then merge — acceptance: all five [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) preconditions (a)-(e) hold and the PR is merged by `[AI]`
+
+      **Date**: 2026-08-11. **Status**: Done. Verified live: (a) loop complete at N=7, no `escalated`
+      exit; (b) 0 CRITICAL/HIGH outstanding post-fixer; (c) branch 0 commits behind `origin/main`;
+      (d) all CI checks green on `cab7ec3be`; (e) Phase 5 Gate tester evidence already captured. The 3
+      remaining agent-deferred LOW threads were resolved (GitHub `required_conversation_resolution`
+      requires every thread resolved regardless of severity — each had already received reasoned
+      replies across multiple cycles; resolving reflects settled disposition, not suppression).
+      `gh pr ready 164` then `gh pr merge 164 --squash` — merged as `dae7e9992`.
+
+- [x] [AI] Fast-forward local `main` — command: `git -C /Users/wkf/ose-projects/ose-public checkout main && git pull --ff-only`
       — acceptance: `git status -sb` shows no divergence from `origin/main`
+
+      **Date**: 2026-08-11. **Status**: Done. `git merge --ff-only origin/main` — fast-forwarded
+      `097791278..dae7e9992`.
 
 > **Pause Safety**: `ose-public` describes a three-repository family and its `rhino-cli` emits the
 > three-repo message. **The byte-identity boundary is now deliberately red** — `ose-primer` and
