@@ -162,7 +162,7 @@ by reconciling the mode and the step rather than reflexively deleting the step:
 
 When plan-checker flags its item 9 HIGH finding — a resolved `## Delivery Mode` of
 `worktree-to-origin-main` or `main-to-origin-main` in a repo where that mode has no executable path
-(`ose-public`, `ose-primer`) or is a convention violation (`beaver-nest`) — this is a **different
+(`ose-public`, `ose-primer`) — this is a **different
 finding class from PR Step / Delivery Mode Reconciliation above** and takes a different fix:
 
 - **Always rewrite the resolved `## Delivery Mode` field to `worktree-to-pr`** (or `main-to-pr` if

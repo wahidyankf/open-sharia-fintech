@@ -1,13 +1,13 @@
 ---
 name: repo-practicing-trunk-based-development
-description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public or ose-primer, main is branch-protected including for admins, beaver-nest is held to the same restriction by convention, and only ose-private infrastructure-as-code plans retain a surviving direct-push exception). Essential for understanding repository git workflow and keeping branches short-lived
+description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public or ose-primer, main is branch-protected including for admins, and only ose-private infrastructure-as-code plans retain a surviving direct-push exception). Essential for understanding repository git workflow and keeping branches short-lived
 ---
 
 # Trunk Based Development Skill
 
 ## Purpose
 
-This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository: small, frequent commits integrated continuously into `main` through short-lived, single-purpose branches. The repo-wide default delivery mode is `worktree-to-pr`; direct commit to `main` has no executable path in `ose-public` or `ose-primer` (branch-protected, including for admins), `beaver-nest` is held to the same restriction by convention, and only `ose-private` infrastructure-as-code plans retain a surviving direct-push exception.
+This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository: small, frequent commits integrated continuously into `main` through short-lived, single-purpose branches. The repo-wide default delivery mode is `worktree-to-pr`; direct commit to `main` has no executable path in `ose-public` or `ose-primer` (branch-protected, including for admins), and only `ose-private` infrastructure-as-code plans retain a surviving direct-push exception.
 
 **When to use this Skill:**
 
@@ -34,11 +34,10 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 In this repo the default shape is `worktree-to-pr`: a short-lived plan branch in a disposable
 worktree, pushed to a draft PR, merged once the hardened preconditions hold. Committing straight to
 `main` is the `worktree-to-origin-main` / `main-to-origin-main` modes — neither has an executable
-path in `ose-public` or `ose-primer` (`main` is branch-protected, including for admins);
-`beaver-nest` is held to the same restriction by convention; only an `ose-private`
-infrastructure-as-code plan retains a surviving, explicitly declared exception. See [When a
-Direct-Push Mode Is Appropriate](#when-a-direct-push-mode-is-appropriate) below for the
-live-verification detail.
+path in `ose-public` or `ose-primer` (`main` is branch-protected, including for admins); only an
+`ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception. See
+[When a Direct-Push Mode Is Appropriate](#when-a-direct-push-mode-is-appropriate) below for the
+full detail.
 
 ### Why TBD?
 
@@ -61,7 +60,7 @@ live-verification detail.
 
 ### Default Behavior
 
-**Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` via the `worktree-to-origin-main` and `main-to-origin-main` modes has no executable path in `ose-public` or `ose-primer` (`main` is branch-protected against direct pushes, including for admins); `beaver-nest` is held to the same restriction by convention pending a `[HUMAN]`-only settings change; only an `ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception — see [When a Direct-Push Mode Is Appropriate](#when-a-direct-push-mode-is-appropriate) below.
+**Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` via the `worktree-to-origin-main` and `main-to-origin-main` modes has no executable path in `ose-public` or `ose-primer` (`main` is branch-protected against direct pushes, including for admins); only an `ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception — see [When a Direct-Push Mode Is Appropriate](#when-a-direct-push-mode-is-appropriate) below.
 
 **Standard workflow** (the default `worktree-to-pr` mode):
 
@@ -102,10 +101,7 @@ that is available in exactly one place: **`ose-private`, and only for a genuinel
 infrastructure-as-code plan** (Terraform, Ansible, and equivalent state-changing infra work needing
 the primary checkout's real secrets and local state). `main` is branch-protected against direct
 pushes, including for admins, in `ose-public` and `ose-primer` — neither direct-push mode has an
-executable path there, regardless of how small or well-understood the change is. `beaver-nest` is
-held to the same restriction by convention (its `main` is not yet actually GitHub-branch-protected;
-a direct push there today is technically executable but is a convention violation, pending a
-`[HUMAN]`-only settings change).
+executable path there, regardless of how small or well-understood the change is.
 
 Within that one surviving `ose-private` infrastructure-as-code case, select a direct-push mode for
 changes that are also small, well-understood, and safe to integrate immediately:
@@ -325,8 +321,7 @@ review buffer:
 delivery-mode: main-to-origin-main
 rationale: "ose-private infrastructure-as-code plan updating a single Terraform resource tag;
   needs the primary checkout's local secrets/state access; trivial and well-understood; full gate
-  passes locally. Not executable in ose-public/ose-primer (branch-protected main) and not
-  convention-sanctioned in beaver-nest."
+  passes locally. Not executable in ose-public/ose-primer (branch-protected main)."
 ```
 
 ### Agent Behavior Rules

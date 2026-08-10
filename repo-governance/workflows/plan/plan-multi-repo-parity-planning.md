@@ -10,9 +10,9 @@ inputs:
     required: true
   - name: repos
     type: string
-    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-primer, ose-private, beaver-nest')"
+    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-primer, ose-private')"
     required: false
-    default: "ose-public, ose-primer, ose-private, beaver-nest"
+    default: "ose-public, ose-primer, ose-private"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main, worktree-to-pr]
@@ -115,8 +115,7 @@ does not carry.
 
 The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the three parity repos
 — `ose-public`, `ose-primer`, `ose-private`** — so plans touching it propagate one repo at a time
-rather than concurrently. `beaver-nest` is deliberately outside this boundary: it carries a **fork**
-of `rhino-cli` and has no `apps/rhino-cli/parity-manifest.sha256` to propagate into
+rather than concurrently
 ([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 
 ### Delivery Shape Per Repo
@@ -265,8 +264,8 @@ configs, grep the files, run the tools — do not trust docs alone.
   apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate
   ```
 
-  It covers the three-repository parity boundary (`ose-public`, `ose-primer`, `ose-private` —
-  `beaver-nest` is deliberately outside it, see §Parallel Propagation Shape above) and the tracked
+  It covers the three-repository parity boundary (`ose-public`, `ose-primer`, `ose-private`,
+  see §Parallel Propagation Shape above) and the tracked
   `apps/rhino-cli` source, tests, and Gherkin behavior tree. Any failure is drift that MUST become
   its own deviation-matrix row in Step 2 — surface it before grilling, never silently re-sync it.
 

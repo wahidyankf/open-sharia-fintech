@@ -12,7 +12,7 @@ inputs:
     type: string
     description: "Comma-separated target repository names or absolute paths in the parity set"
     required: false
-    default: "ose-public, ose-primer, ose-private, beaver-nest"
+    default: "ose-public, ose-primer, ose-private"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main]
@@ -270,17 +270,15 @@ Every plan-execution rule applies unchanged, including:
 repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
 
 **Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
-fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer`, `ose-private`, and
-`beaver-nest` are **independent downstream nodes** that read from it without reading each other. Once
+fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` and `ose-private` are
+**independent downstream nodes** that read from it without reading each other. Once
 `ose-public` reaches `pass`, the downstream repos may run as concurrent DAG nodes under the N+1 model
 (`1 main thread + N background agents`, default **N=3**) rather than serialized behind one another.
 
 Two constraints override that fan-out and force strict serialization:
 
 - **`apps/rhino-cli` byte-identity** across the three parity repos — `ose-public`, `ose-primer`,
-  `ose-private` — a plan touching it propagates one repo at a time, never concurrently. `beaver-nest`
-  is outside the boundary: it carries a **fork** of `rhino-cli` with no
-  `apps/rhino-cli/parity-manifest.sha256`
+  `ose-private` — a plan touching it propagates one repo at a time, never concurrently
   ([AGENTS.md §Related Repositories](../../../AGENTS.md#related-repositories)).
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
   dependency, but a shared write target is.

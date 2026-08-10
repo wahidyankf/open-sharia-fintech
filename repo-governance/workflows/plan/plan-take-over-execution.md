@@ -166,9 +166,7 @@ already used in multi-repo-parity plans, branch names across repos.
 this repo (per [Related Repositories](../../../docs/reference/related-repositories.md)) — this is a
 **floor, not a ceiling**. If the plan's own `README.md`/`delivery.md` names other repos in its scope
 (an explicit "Affected subrepos and apps" table, or a multi-repo-parity companion plan), add those
-too. `beaver-nest`, if present as a sibling checkout, is probed only when the plan or the user names
-it explicitly — it sits outside the generic-content parity loop by convention. `TaskCreate` one
-discovery task per (repo × artifact-class) pair before probing begins.
+too. `TaskCreate` one discovery task per (repo × artifact-class) pair before probing begins.
 
 **A2. Per repo, in this order, log every hit verbatim** — never summarize a hit away as "probably
 stale" at discovery time; that judgment belongs to Phase B, with evidence in hand:
