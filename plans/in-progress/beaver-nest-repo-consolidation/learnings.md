@@ -245,3 +245,22 @@ in this same sandboxed environment will need to repeat the `podman machine start
 a plan-doc fix — an environment/tooling note; consider documenting the `DOCKER_HOST` podman-substitute
 pattern in a worktree-setup or troubleshooting doc if this sandboxed-Docker-Desktop gap recurs across
 future plan executions.
+
+## Learning: rhino-cli `lockfile.rs` fix opens a cross-repo parity-manifest obligation for ose-primer and ose-private
+
+Fixing the `git lockfile sync` positional-args bug (see the fix above) edited
+`apps/rhino-cli/src/commands/git/lockfile.rs`, one of the files under `apps/rhino-cli/parity-manifest.sha256`'s
+byte-identity coverage spanning `ose-public`, `ose-primer`, and `ose-private` (per
+[Related Repositories](../../../docs/reference/related-repositories.md) — `beaver-nest` carries a
+fork and is out of scope). The pre-push `parity-manifest` gate correctly refused to let this land
+silently: `Error: apps/rhino-cli/src/commands/git/lockfile.rs no longer matches
+apps/rhino-cli/parity-manifest.sha256 ... obligates propagating the identical change to the other two
+repos.` Ran `rhino-cli parity manifest generate` to update the manifest for `ose-public` (the only
+scoped-in repo for this Phase 3 execution) so the push gate passes, but did **not** propagate the
+one-line `lockfile.rs` fix to `ose-primer`/`ose-private` — those repos are out of this worktree's
+scope. Routed: this plan's own Phase 6/7 already open worktrees in `ose-primer`/`ose-private` and
+carry an "apply parity-divergence file content" + "regenerate parity manifest" step each; the
+identical `lockfile.rs` positional-args fix should be folded into those steps (or applied as a small
+standalone parity-sync commit before/alongside them) so all three repos' `git lockfile sync` stays
+byte-identical and functional. Until then, `ose-primer` and `ose-private` will fail the same
+"unexpected argument" error the moment either stages a new `apps/*/package.json`.
