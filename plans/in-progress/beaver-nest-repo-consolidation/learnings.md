@@ -462,25 +462,32 @@ incidental wording. Fixed by rewording the comment ("— beaver-nest carries a f
 zero matches. This is a legitimate, narrowly-scoped edit to the file delivery.md said not to add new
 scenarios/steps to — a comment reword is neither. Routed: none, self-contained fix already applied.
 
-## Learning: renaming `plan-planning.md`'s "Retired in Three of Four Repos" heading to reflect the new three-repo family breaks 5 pre-existing anchor links in already-archived `plans/done`/`plans/ideas` files — accepted per the same historical-citation precedent, and the underlying `md links validate` gate already had 147 unrelated pre-existing failures before this phase touched anything
+## Learning: renaming `plan-planning.md`'s "Retired in Three of Four Repos" heading to reflect the new three-repo family breaks 5 pre-existing anchor links — 4 accepted as historical-citation drift in already-archived `plans/done`, 1 fixed directly because the pre-push `md-links` gate scopes to live docs (`plans/ideas` included, `plans/done` excluded) and actually blocked the push
 
 The governance-sweep sub-agent renamed `repo-governance/workflows/plan/plan-planning.md`'s
 `### The Plan-Docs-Only Carve-Out (Superseded — Retired in Three of Four Repos)` heading to
 "...Retired in Two of Three Repos" — necessary for narrative accuracy (the count of "how many of the
 family's repos have retired the carve-out" changes once the family itself shrinks from four to
 three), not merely to satisfy a literal `beaver-nest` grep (the old heading text never contained that
-substring). This broke the markdown anchor fragment in 5 pre-existing links across 4 already-archived
-files this phase has no mandate to edit: `plans/done/2026-07-22__bare-repo-governance-hardening/{delivery,tech-docs}.md`,
-`plans/done/2026-08-05__plan-ideas-grooming-workflow/tech-docs.md`, and
-`plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md`. Verified via
-`git stash -u` (isolating this phase's changes) that `apps/rhino-cli/scripts/rhino-bin.sh md links
-validate` already reported **147 broken links** against the pre-Phase-5 baseline (unrelated
-pre-existing anchor/path drift across dozens of old `plans/done/**` files, e.g. `#w1-governance--documentation`-style
-headings from a 2026-04-22 plan) — this phase's edits add exactly 5 more instances of the same
-already-broken, non-blocking check (147 → 152 with this phase's changes present). Since (a) the
-affected files live under the same `plans/done`/`plans/ideas` historical-record convention Phase 4
-already established as out-of-scope-to-edit, and (b) the gate was already non-blocking/already-failing
-at baseline (Phases 1-4 pushed and merged successfully with the pre-existing 147 present), this is
-additional non-blocking drift, not a new class of failure. Routed: fold the pre-existing 147-broken-link
-backlog into a dedicated future plan (out of scope for this consolidation plan entirely) — not urgent
-enough to block this phase.
+substring). This broke the markdown anchor fragment in 5 pre-existing links across 4 files: 3
+already-archived `plans/done/**` files
+(`plans/done/2026-07-22__bare-repo-governance-hardening/{delivery,tech-docs}.md`,
+`plans/done/2026-08-05__plan-ideas-grooming-workflow/tech-docs.md` — 4 link instances) and 1 live
+backlog brief (`plans/ideas/q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md` — 1
+instance). Verified via `git stash -u` (isolating this phase's changes) that the full-repo
+`apps/rhino-cli/scripts/rhino-bin.sh md links validate` already reported **147 broken links** against
+the pre-Phase-5 baseline (unrelated pre-existing anchor/path drift across dozens of old
+`plans/done/**` files, e.g. `#w1-governance--documentation`-style headings from a 2026-04-22 plan).
+Initially assumed all 5 of this phase's new breaks were the same already-non-blocking class and left
+them — but `git push` then failed at the `md-links` pre-push gate with exactly 1 broken link: the
+`plans/ideas` one. Re-running the validator with `--exclude "plans/done"` (matching the same
+exclusion the pre-commit `md-mermaid` gate already uses) reproduced the same single failure,
+confirming the actual gate scopes `plans/done` out (historical record, consistent with Phase 4's
+precedent) but does **not** exclude `plans/ideas` (a live backlog directory expected to stay
+internally consistent). Fixed by updating the one live file's anchor to
+`#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos`; re-ran the same excluded
+validation afterward — zero broken links. Left the 4 links in already-archived `plans/done/**` files
+untouched, per Phase 4's established historical-citation-retention precedent (confirmed those are
+excluded from the actual blocking gate). Routed: fold the pre-existing 147-broken-link `plans/done`
+backlog into a dedicated future plan (out of scope for this consolidation plan) — not urgent enough
+to block this phase, since the actual gate already excludes that directory.
