@@ -1,0 +1,151 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "beavernest-app-web",
+  "sourceRoot": "apps/beavernest-app-web/src",
+  "projectType": "application",
+  "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx @hey-api/openapi-ts -i specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml -o apps/beavernest-app-web/src/generated-contracts -s"
+      },
+      "dependsOn": ["beavernest-contracts:bundle"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/src/generated-contracts"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite --host 127.0.0.1 --port 19310",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite build",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["codegen"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["codegen"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint@latest --jsx-a11y-plugin .",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/oxlint.json", "{projectRoot}/tsconfig.json"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["codegen"],
+      "inputs": ["default", "{projectRoot}/src/generated-contracts/**/*"],
+      "options": {
+        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --coverage",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true,
+      "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["{projectRoot}/src/**/*"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --config vitest.integration.config.ts",
+        "cwd": "{projectRoot}"
+      },
+      "cache": false
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project'"
+      },
+      "cache": true
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "commands": [
+          "npx nx run beavernest-app-web:typecheck",
+          "npx nx run beavernest-app-web:lint",
+          "npx nx run beavernest-app-web:test:unit",
+          "npx nx run beavernest-app-web:test:coverage",
+          "npx nx run beavernest-app-web:test:specs"
+        ],
+        "parallel": false
+      },
+      "inputs": ["default", "specs"]
+    },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-app-web/gherkin apps/beavernest-app-web"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/beavernest/behavior/beavernest-app-web/gherkin/**/*.feature",
+        "{projectRoot}/src/**/*.tsx"
+      ]
+    },
+    "deps:audit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm audit"
+      },
+      "cache": false
+    },
+    "compat:min-version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'compat:min-version: no standard min-version floor for TypeScript'"
+      },
+      "cache": true
+    },
+    "specs:structure-validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/apps/rhino-cli/src/**/*.rs", "{workspaceRoot}/specs/apps/**/*"]
+    },
+    "test:specs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run beavernest-app-web:specs:structure-validation",
+          "npx nx run beavernest-app-web:specs:behavior:coverage"
+        ],
+        "parallel": false
+      },
+      "cache": true,
+      "inputs": ["default", "specs"]
+    }
+  },
+  "namedInputs": {
+    "specs": ["{workspaceRoot}/specs/apps/beavernest/behavior/beavernest-app-web/gherkin/**/*.feature"]
+  },
+  "tags": ["type:app", "platform:vite", "lang:ts", "domain:beavernest"],
+  "implicitDependencies": ["beavernest-contracts", "web-ui", "web-ui-token"]
+}
