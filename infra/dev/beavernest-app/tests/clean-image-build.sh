@@ -36,4 +36,9 @@ docker build \
 docker run --rm --entrypoint sh "$beavernest_image" \
 	-c 'test ! -x /usr/bin/node && test "$(id -u):$(id -g)" = "10001:10001"'
 
-printf '%s\n' 'PASS: production image builds from source-only inputs as 10001:10001'
+# Regression coverage for the runtime-image curl fix: the compose healthcheck
+# (infra/dev/beavernest-app/docker-compose.yml) shells out to `curl` inside
+# this same image, and the base aspnet runtime image does not ship it.
+docker run --rm --entrypoint sh "$beavernest_image" -c 'command -v curl >/dev/null'
+
+printf '%s\n' 'PASS: production image builds from source-only inputs as 10001:10001, and ships curl'

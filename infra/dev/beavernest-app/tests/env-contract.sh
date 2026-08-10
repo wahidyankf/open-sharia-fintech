@@ -51,7 +51,7 @@ done < <(sed -nE 's/^([A-Z][A-Z0-9_]*)=.*/\1/p' "$backend_environment_template")
 
 assert_contains "$repository_config" '    - root: apps/beavernest-be'
 assert_contains "$repository_config" '      lang: fsharp'
-assert_contains "$repository_config" '      runtime: { local: env-local, local-ci: compose }'
+assert_contains "$repository_config" '      runtime: { local-ci: compose }'
 assert_contains "$repository_config" '      keys-from: apps/beavernest-be/.env.example'
 assert_contains "$backend_project" '        "command": "scripts/start-development.sh"'
 assert_contains "$compose_definition" '    BEAVERNEST_BE_HTTP_LISTEN_ADDRESS: 0.0.0.0'

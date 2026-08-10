@@ -40,6 +40,13 @@ beavernest_validate_safe_directory() {
 	[[ "$beavernest_canonical" != / && "$beavernest_canonical" != "$beavernest_home" && "$beavernest_canonical" != "$beavernest_repository_root" ]] ||
 		beavernest_fail "$beavernest_label is not an allowed directory" || return 1
 
+	case "$beavernest_canonical" in
+	"$beavernest_repository_root"/*)
+		beavernest_fail "$beavernest_label is not an allowed directory"
+		return 1
+		;;
+	esac
+
 	case "$beavernest_repository_root" in
 	"$beavernest_canonical"/*)
 		beavernest_fail "$beavernest_label is not an allowed directory"

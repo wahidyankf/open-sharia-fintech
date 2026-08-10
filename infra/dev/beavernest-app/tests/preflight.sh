@@ -46,3 +46,14 @@ if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \
 	printf '%s\n' 'FAIL: symlinked data directory passed preflight' >&2
 	exit 1
 fi
+
+beavernest_repo_subdir="$beavernest_root/local-temp/beavernest-preflight-subdir-of-repo-$$"
+install -d -m 0700 "$beavernest_repo_subdir"
+trap 'rm -rf -- "$beavernest_fixture" "$beavernest_repo_subdir"' EXIT
+if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \
+	BEAVERNEST_BE_ALLOW_LOOPBACK_CI=1 BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_repo_subdir" \
+	BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture/backups" \
+	bash "$beavernest_root/infra/dev/beavernest-app/scripts/preflight.sh" >/dev/null 2>&1; then
+	printf '%s\n' 'FAIL: data directory nested inside the git repository passed preflight' >&2
+	exit 1
+fi
