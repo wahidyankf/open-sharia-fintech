@@ -62,7 +62,7 @@ jobs:
 
   format:
     name: Auto-format affected (lint-staged)
-    needs: build-rhino
+    needs: [build-rhino, detect]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -92,6 +92,12 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      # format-verify-fantomas (surfaces=["ci"]) and lint-staged's own "*.fs"
+      # handler both invoke the bare `fantomas` binary, which only this
+      # composite action installs (dotnet SDK + global fantomas tool). Gated
+      # on has-dotnet so non-F#-touching runs skip the SDK setup cost.
+      - if: needs.detect.outputs.has-dotnet == 'true'
+        uses: ./.github/actions/setup-dotnet
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary

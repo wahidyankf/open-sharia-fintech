@@ -491,3 +491,26 @@ untouched, per Phase 4's established historical-citation-retention precedent (co
 excluded from the actual blocking gate). Routed: fold the pre-existing 147-broken-link `plans/done`
 backlog into a dedicated future plan (out of scope for this consolidation plan) — not urgent enough
 to block this phase, since the actual gate already excludes that directory.
+
+## Learning: PR #164's `formatting-verify` CI job never installs fantomas — preexisting infra gap
+
+Both the `format` job's `pull_request`-path (`lint-staged`'s `"*.fs": ["fantomas"]` handler) and its
+`push`-path (`format-verify-fantomas`, a `surfaces: ["ci"]`-only registry gate invoking bare
+`fantomas --check`) require the `fantomas` binary on `PATH`, but the job never ran
+`./.github/actions/setup-dotnet` (the composite action that installs the .NET SDK and
+`dotnet tool install -g fantomas`) — only the separate `.NET quality gate` job (gated on
+`needs.detect.outputs.has-dotnet`) did. `git log -p` on `.github/workflows/pr-quality-gate.yml`
+shows the setup-dotnet step present in four other jobs but absent from `format`; likely dropped
+during `846fe8922` ("perf(gates): optimize pre-commit, pre-push, and PR quality gate (#162)"), the
+commit immediately preceding this plan's Blocking Preconditions. This is a genuine, repo-wide gap —
+any prior PR touching `.fs` files that landed via a bare `push` (not through a PR's `synchronize`
+auto-fix path) would have hit the same failure; it simply hadn't surfaced yet because F# changes are
+infrequent and PR-path lint-staged failures may have gone unnoticed if the corresponding push-path
+check wasn't a required status check.
+
+Fixed at the root: added `detect` to the `format` job's `needs`, and a conditional
+`./.github/actions/setup-dotnet` step (`if: needs.detect.outputs.has-dotnet == 'true'`) before tool
+provisioning, mirroring the existing `dotnet` job's pattern. `actionlint` passes. Routed: this fix
+ships in this plan's own PR (Phase 5, since it was discovered blocking that PR's CI) rather than a
+separate plan — it is a one-line-conditional, self-contained CI infra correction with no product
+scope creep, consistent with Root Cause Orientation.
