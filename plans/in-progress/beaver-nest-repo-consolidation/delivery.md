@@ -55,7 +55,7 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       direct cross-repo manifest diff, not `parity manifest validate` — that command is local-only
       (each repo checks its own files against its own recorded manifest, never a sibling's manifest)
       and exits 0 in all three repos today even though the boundary is open. Command:
-      `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-primer.txt; diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-private.txt`
+      `mkdir -p evidence && diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-primer.txt; diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-private.txt`
       — acceptance: both evidence files are recorded; if either is non-empty, **stop and do not
       begin Phase 5** — the boundary is `optimize-cis`'s unfinished AC-15, and Phase 5-7 as written
       only syncs 2 of the files this diff will enumerate (see the widened Phase 6/7 sync scope
@@ -561,49 +561,37 @@ other steps are documentation edits.
 - [ ] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > evidence/phase-5-sweep-targets.txt`
       — acceptance: the file lists at least the 11 known targets and is recorded in the file-touch ledger
 
-### TDD cycle: `rhino-cli` three-repo parity message
+### `rhino-cli` three-repo parity message — already covered, no outstanding TDD cycle
 
-`optimize-cis` (commit `c182c543a`, 2026-08-09) already landed the Rust half of this cycle:
-`apps/rhino-cli/src/application/parity.rs:560` already emits the three-repo string
-(`"byte-identical across ose-public, ose-primer, and ose-private"`), its own unit test
-(`parity.rs:866-875`) already asserts that phrasing with a negative `beaver-nest` guard, and
-`apps/rhino-cli/tests/gate_specs.rs:2972-2988` already carries the matching cucumber-step assertion,
-negative guard included. A RED step that asks the executor to make that already-green assertion fail
-cannot be satisfied — this sub-step is a **confirmation**, not a rewrite. The genuinely outstanding
-work is the companion Gherkin scenario, which does not yet exist (verified: no scenario named
-"Parity drift message names the three bound repositories" and zero repo-wide matches for "three
-bound repositories" / "names the three" under `specs/`).
+`optimize-cis` (commit `c182c543a`, 2026-08-09) already landed **both halves** of this behavior —
+source-level and Gherkin-level — so there is no outstanding RED/GREEN/REFACTOR cycle here:
 
-- [ ] [AI] **RED (confirm-already-green)**: confirm the Rust assertions above are present and
-      passing, and confirm the companion Gherkin scenario is still absent
-      — command: `grep -n "byte-identical across ose-public, ose-primer, and ose-private" apps/rhino-cli/src/application/parity.rs && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs && grep -rn "three bound repositories\|names the three" specs/`
-      — acceptance: the grep in `parity.rs` matches, `cargo test` passes (already-green, not a
-      failure — this confirms the prior claim rather than exercising a new RED), and the `specs/`
-      grep returns zero matches (confirms the scenario is still missing)
+- **Source**: `apps/rhino-cli/src/application/parity.rs:560` already emits the three-repo string
+  (`"byte-identical across ose-public, ose-primer, and ose-private"`), and its own unit test
+  (`parity.rs:866-875`) already asserts that phrasing with a negative `beaver-nest` guard.
+- **Gherkin**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature:15-20`
+  already carries `Scenario: An unannounced edit to byte-identical source fails the gate`, whose
+  `Then` step is bound to `then_parity_source_drift_is_actionable`
+  (`apps/rhino-cli/tests/gate_specs.rs:2972-2988`) — verified, that function already asserts both
+  the three-repo string **and** the negative `beaver-nest` guard.
+
+**Correction (this cycle)**: an earlier draft of this step proposed adding a new, differently-named
+scenario ("Parity drift message names the three bound repositories") asserting the identical
+behavior above as a GREEN step. Verified during review, that draft would have been (a) a
+behaviorally-redundant duplicate of the existing scenario, and (b) unwired — none of its four
+proposed Given/When/Then step texts match a registered step definition, and the harness runs with
+`.fail_on_skipped()` (`gate_specs.rs:3948-3952`), so an undefined step fails the run rather than
+skipping it. It has been removed rather than added; no new scenario or step definitions are needed
+to close this behavior, since it already shipped via `optimize-cis`.
+
+- [ ] [AI] **Confirm (no RED/GREEN/REFACTOR needed — coverage already shipped)**: confirm the Rust
+      assertion, the existing Gherkin scenario, and its wiring are all present and passing
+      — command: `grep -n "byte-identical across ose-public, ose-primer, and ose-private" apps/rhino-cli/src/application/parity.rs && grep -n "An unannounced edit to byte-identical source fails the gate" specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
+      — acceptance: both greps match, and `cargo test` passes (already-green — this confirms
+      existing coverage rather than exercising a new cycle)
   - _Suggested executor: `swe-rust-dev`_
-
-**Gherkin (binds) →** "Parity drift message names the three bound repositories" — _New scenario,
-add to `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature`_
-
-```gherkin
-Scenario: Parity drift message names the three bound repositories
-  Given a rhino-cli source file has drifted from the recorded parity manifest
-  When the parity manifest validation reports the drift
-  Then the message names ose-public, ose-primer, and ose-private
-  And the message does not name beaver-nest
-```
-
-- [ ] [AI] **GREEN**: Add the scenario above to
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature` and wire its
-      Given/When/Then to the existing `#[given]`/`#[when]`/`#[then]` step definitions in
-      `apps/rhino-cli/tests/gate_specs.rs` that already cover this behavior (see
-      `then_parity_source_drift_is_actionable`, `gate_specs.rs:2972-2988`) — no change to
-      `parity.rs` is needed, since its source already emits the three-repo string
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
-      — acceptance: passes, including the new scenario, and no other `rhino-cli` test breaks
-  - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **REFACTOR**: Regenerate the parity manifest and confirm no stale four-repo phrasing
-      remains in the crate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && grep -rn 'and beaver-nest' apps/rhino-cli/src apps/rhino-cli/tests`
+- [ ] [AI] Regenerate the parity manifest and confirm no stale four-repo phrasing remains in the
+      crate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && grep -rn 'and beaver-nest' apps/rhino-cli/src apps/rhino-cli/tests`
       — acceptance: `parity-manifest.sha256` is updated (or confirmed already current) and the grep
       returns zero matches
 
@@ -704,7 +692,7 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
       just `parity.rs` and `gate_specs.rs` — the diff is the source of truth for scope, since the
       divergence set changes as `optimize-cis`-era edits land; the two named files are the expected
       majority of it but not necessarily all of it
-      — command: `for f in $(awk '{print $NF}' evidence/phase-0-parity-divergence-primer.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
+      — command: `for f in $(awk '/^[<>] /{print $NF}' evidence/phase-0-parity-divergence-primer.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
       — acceptance: the loop prints no `DIVERGENT:` lines — every enumerated file is now
       byte-identical to `ose-public`'s merged version
   - _Suggested executor: `swe-rust-dev`_
@@ -759,7 +747,7 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 - [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
       cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-private.txt`), not
       just `parity.rs` and `gate_specs.rs` — same widened-scope reasoning as Phase 6
-      — command: `for f in $(awk '{print $NF}' evidence/phase-0-parity-divergence-private.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
+      — command: `for f in $(awk '/^[<>] /{print $NF}' evidence/phase-0-parity-divergence-private.txt | sort -u); do diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done`
       — acceptance: the loop prints no `DIVERGENT:` lines
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] Regenerate the parity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`

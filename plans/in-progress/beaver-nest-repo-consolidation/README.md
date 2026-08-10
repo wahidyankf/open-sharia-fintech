@@ -191,13 +191,13 @@ supersedes, the `rhino-cli-optimization` idea this section originally named (del
 absorbed into `optimize-cis`'s scope) — rewrote how `apps/rhino-cli` is built, invoked, and
 lint-gated, and archived 2026-08-09. **Correction (re-verified 2026-08-10): its Phase 10 sweep task
 did not resolve this doc's citations** — that task is still unchecked in `optimize-cis`'s own
-`delivery.md`, and this plan's `delivery.md` still carries 10 occurrences of the old
-`cargo run --release --quiet --manifest-path apps/rhino-cli` invocation form (8 of them live
-executable commands, at `delivery.md:285,577,650,659,677,708,728,759`) and zero occurrences of
+`delivery.md`, and this plan's `delivery.md` still carries 9 occurrences of the old
+`cargo run --release --quiet --manifest-path apps/rhino-cli` invocation form (7 of them live
+executable commands, at `delivery.md:298,594,668,677,699,731,753`) and zero occurrences of
 `rhino-bin.sh`. This sweep is still owed and is inherited from `optimize-cis`, not new scope this
 plan invents. Note also that `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=<surface>` is
 **not** the general replacement form — it is specifically for declared gate-surface runs (the
-git-hook context this doc's own bullet above cites). 8 of `delivery.md`'s 10 sites invoke direct
+git-hook context this doc's own bullet above cites). 7 of `delivery.md`'s 9 sites invoke direct
 subcommands (`parity manifest validate`, `parity manifest generate`, `repo-config validate`), whose
 correct post-optimization form is `apps/rhino-cli/scripts/rhino-bin.sh <subcommand>` directly — e.g.
 `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` — not `gate run --surface=`.
