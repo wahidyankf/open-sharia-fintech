@@ -1,0 +1,4 @@
+target/
+generated-contracts/
+.DS_Store
+tests/unit/coverage.json
