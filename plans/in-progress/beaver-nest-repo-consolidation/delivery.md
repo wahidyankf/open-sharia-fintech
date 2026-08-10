@@ -43,7 +43,7 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml` invocation form. Its Phase 2
       and Phase 3 own repairing every citation here, and its Phase 12 gate verifies them — so this
       step is a **confirmation**, not a rewrite. Command:
-      `grep -rn 'gate_specs\|cargo run --release' plans/backlog/beaver-nest-repo-consolidation/` —
+      `grep -rn 'gate_specs\|cargo run --release' plans/in-progress/beaver-nest-repo-consolidation/` —
       acceptance: every match names a path that exists and a command that runs
 
 - [ ] [AI] Confirm the parity message's **three-repo** membership claim is still correct and has not
@@ -51,6 +51,15 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       the message and synced manually on a delay; enforcement covers `ose-public` and `ose-private`
       only, per commit `a0383faed`. Both statements are true simultaneously — acceptance: the
       four→three sweep below changes membership wording only, and touches no enforcement scope
+- [ ] [AI] Verify the `apps/rhino-cli` byte-identity boundary across all three surviving repos with a
+      direct cross-repo manifest diff, not `parity manifest validate` — that command is local-only
+      (each repo checks its own files against its own recorded manifest, never a sibling's manifest)
+      and exits 0 in all three repos today even though the boundary is open. Command:
+      `mkdir -p evidence && diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-primer.txt; diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) > evidence/phase-0-parity-divergence-private.txt`
+      — acceptance: both evidence files are recorded; if either is non-empty, **stop and do not
+      begin Phase 5** — the boundary is `optimize-cis`'s unfinished AC-15, and Phase 5-7 as written
+      only syncs 2 of the files this diff will enumerate (see the widened Phase 6/7 sync scope
+      below), so closing the boundary is a precondition of this plan, not a byproduct of it
 
 ## Worktree
 
@@ -77,7 +86,12 @@ the worktree after the plan is archived and pushed.
 repo only. Phases 6 and 7 execute in a different repo than the one holding this plan folder, so each
 requires `cd /Users/wkf/ose-projects/<repo>` first. `ose-primer` and `ose-private`'s topology (bare
 repo with linked worktrees, vs. a normal working tree) is not assumed here and drifts over time —
-verify it live with `git -C <repo> rev-parse --is-bare-repository` before choosing a git method there.
+verify it live per the
+[Bare-Repo Base-Worktree Landing Method's Verify Topology First step](../../../repo-governance/development/workflow/bare-repo-landing-method.md#verify-topology-first)
+(`git worktree list`, or — after `cd`-ing into the repo —
+`git config --file "$(git rev-parse --git-common-dir)/config" core.bare`) before choosing a git
+method there. **Never** `git rev-parse --is-bare-repository`: that command is explicitly forbidden
+for this question because it false-negatives from inside a linked worktree.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
@@ -98,8 +112,12 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 
 ## Delivery Mode: worktree-to-pr
 
-The repo default, and required here: the change set includes F#, TypeScript, Rust, YAML, and
-generated mirror files, which the `main-to-origin-main` `.md`-only restriction excludes.
+The repo default, and the only available mode here: per
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
+`ose-public`'s `main` is branch-protected against direct pushes — including for repository admins —
+so `worktree-to-origin-main` and `main-to-origin-main` have no path here for **any** plan,
+regardless of what file types it touches. This holds independent of the change set's own mix of
+F#, TypeScript, Rust, YAML, and generated mirror files.
 
 Phase 0 opens no PR under this or any mode. Phases 1-2 are non-boundary phases committing to Unit 1's
 branch. Phases 3, 4, 5, 6, and 7 each close a delivery unit and open exactly one PR. Phase 8 produces
@@ -118,7 +136,7 @@ which the archival commit rides inside.
 **Archival-in-PR applies to `ose-public` only.** `ose-primer` and `ose-private` carry no `plans/`
 entry for this work, so their PRs contain no plan-folder content. This is the ordinary cross-repo
 carve-out from the
-[Archival-in-PR rule](../../../repo-governance/conventions/structure/plans.md#delivery-mode).
+[Archival-in-PR rule](../../../repo-governance/workflows/plan/plan-execution.md#8-finalization-and-archival-sequential).
 
 ## Parallelization Model
 
@@ -130,7 +148,7 @@ carve-out from the
 - Phase 4 → 5: the sweep asserts a three-repo family, which is only true once the product has landed.
 - Phase 5 → 6 → 7: **byte-identity serialization**. All three repos must converge on the identical
   `apps/rhino-cli/src/application/parity.rs` content and a matching `parity-manifest.sha256`.
-  [`multi-plans-execution.md:205`](../../../repo-governance/workflows/plan/multi-plans-execution.md)
+  [`multi-plans-execution.md:207`](../../../repo-governance/workflows/plan/multi-plans-execution.md)
   states this boundary "cannot tolerate two concurrent divergent edits", so these three are ordered,
   not parallel.
 - Phase 7 → 8: archiving is safe only once no surviving repo still references the fourth.
@@ -165,7 +183,7 @@ nothing, and has no CI run of its own. Its artifacts ride Phase 3's PR.
       — acceptance: `worktrees/beaver-nest-repo-consolidation/` exists and is on a branch off the latest `origin/main`
 - [ ] [AI] Initialize the toolchain in the **root** worktree, not the new one — command: `npm install && npm run doctor -- --fix`
       — acceptance: `npm run doctor` exits 0 with no missing-tool findings
-- [ ] [AI] Create the Knowledge Capture scaffold at `plans/backlog/beaver-nest-repo-consolidation/learnings.md`
+- [ ] [AI] Create the Knowledge Capture scaffold at `plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
       — acceptance: file exists and its first heading is `# Learnings: beaver-nest-repo-consolidation`
 - [ ] [AI] Record the `beaver-nest` working-tree state per [D9](./tech-docs.md#design-decisions) — command: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain > evidence/phase-0-beaver-nest-status.txt`
       — acceptance: the file is written; if any listed path falls outside the governance files this plan discards, stop and triage it before copying anything
@@ -548,34 +566,39 @@ other steps are documentation edits.
 - [ ] [AI] Enumerate this repo's sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > evidence/phase-5-sweep-targets.txt`
       — acceptance: the file lists at least the 11 known targets and is recorded in the file-touch ledger
 
-### TDD cycle: `rhino-cli` three-repo parity message
+### `rhino-cli` three-repo parity message — already covered, no outstanding TDD cycle
 
-- [ ] [AI] **RED**: Update the parity-message assertion in `apps/rhino-cli/tests/gate_specs.rs` to
-      expect a three-repo boundary, and add the companion scenario below to
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature`
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
-      — acceptance: the test **fails**, because `src/application/parity.rs` still emits the four-repo string
+`optimize-cis` (commit `c182c543a`, 2026-08-09) already landed **both halves** of this behavior —
+source-level and Gherkin-level — so there is no outstanding RED/GREEN/REFACTOR cycle here:
+
+- **Source**: `apps/rhino-cli/src/application/parity.rs:560` already emits the three-repo string
+  (`"byte-identical across ose-public, ose-primer, and ose-private"`), and its own unit test
+  (`parity.rs:866-875`) already asserts that phrasing with a negative `beaver-nest` guard.
+- **Gherkin**: `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature:15-20`
+  already carries `Scenario: An unannounced edit to byte-identical source fails the gate`, whose
+  `Then` step is bound to `then_parity_source_drift_is_actionable`
+  (`apps/rhino-cli/tests/gate_specs.rs:2972-2988`) — verified, that function already asserts both
+  the three-repo string **and** the negative `beaver-nest` guard.
+
+**Correction (this cycle)**: an earlier draft of this step proposed adding a new, differently-named
+scenario ("Parity drift message names the three bound repositories") asserting the identical
+behavior above as a GREEN step. Verified during review, that draft would have been (a) a
+behaviorally-redundant duplicate of the existing scenario, and (b) unwired — none of its four
+proposed Given/When/Then step texts match a registered step definition, and the harness runs with
+`.fail_on_skipped()` (`gate_specs.rs:3948-3952`), so an undefined step fails the run rather than
+skipping it. It has been removed rather than added; no new scenario or step definitions are needed
+to close this behavior, since it already shipped via `optimize-cis`.
+
+- [ ] [AI] **Confirm (no RED/GREEN/REFACTOR needed — coverage already shipped)**: confirm the Rust
+      assertion, the existing Gherkin scenario, and its wiring are all present and passing
+      — command: `grep -n "byte-identical across ose-public, ose-primer, and ose-private" apps/rhino-cli/src/application/parity.rs && grep -n "An unannounced edit to byte-identical source fails the gate" specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
+      — acceptance: both greps match, and `cargo test` passes (already-green — this confirms
+      existing coverage rather than exercising a new cycle)
   - _Suggested executor: `swe-rust-dev`_
-
-**Gherkin (binds) →** "Parity drift message names the three bound repositories" — _New scenario_
-
-```gherkin
-Scenario: Parity drift message names the three bound repositories
-  Given a rhino-cli source file has drifted from the recorded parity manifest
-  When the parity manifest validation reports the drift
-  Then the message names ose-public, ose-primer, and ose-private
-  And the message does not name beaver-nest
-```
-
-- [ ] [AI] **GREEN**: Change both four-repo strings in `apps/rhino-cli/src/application/parity.rs`
-      (the drift message and the boundary description) to name exactly `ose-public`, `ose-primer`,
-      and `ose-private`
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test gate_specs`
-      — acceptance: passes, and no other `rhino-cli` test breaks
-  - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **REFACTOR**: Regenerate the parity manifest and confirm no stale four-repo phrasing
-      remains in the crate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && grep -rn 'and beaver-nest' apps/rhino-cli/src apps/rhino-cli/tests`
-      — acceptance: `parity-manifest.sha256` is updated and the grep returns zero matches
+- [ ] [AI] Regenerate the parity manifest and confirm no stale four-repo phrasing remains in the
+      crate — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate && grep -rn 'and beaver-nest' apps/rhino-cli/src apps/rhino-cli/tests`
+      — acceptance: `parity-manifest.sha256` is updated (or confirmed already current) and the grep
+      returns zero matches
 
 ### Governance and documentation sweep (non-code, direct actions)
 
@@ -663,19 +686,32 @@ Scenario: Parity drift message names the three bound repositories
 Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-primer` has no
 `beavernest` product and no `plans/` entry for this plan.
 
-- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-primer && git rev-parse --is-bare-repository`
-      — acceptance: the output records whether the bare-repo git method applies (see [Bare Repo notes](../../../repo-governance/conventions/structure/worktree-path.md))
+- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-primer && git config --file "$(git rev-parse --git-common-dir)/config" core.bare`
+      — acceptance: the output (`true`, or empty/`false`) records whether the bare-repo git method applies, per the
+      [Bare-Repo Base-Worktree Landing Method](../../../repo-governance/development/workflow/bare-repo-landing-method.md#scriptable-form--the-corebare-read) —
+      never `git rev-parse --is-bare-repository`, the explicitly forbidden command for this question
 - [ ] [AI] Provision the worktree — command: `claude --worktree beaver-nest-repo-consolidation`
       — acceptance: the worktree exists off the latest `origin/main`
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/primer-sweep-targets.txt`
       — acceptance: the list is non-empty and recorded in the file-touch ledger; a target absent here is a non-event, not a failed edit
-- [ ] [AI] Apply the identical `apps/rhino-cli/src/application/parity.rs` and
-      `apps/rhino-cli/tests/gate_specs.rs` content that merged in Phase 5
-      — command: `diff <(git -C /Users/wkf/ose-projects/ose-public show main:apps/rhino-cli/src/application/parity.rs) apps/rhino-cli/src/application/parity.rs`
-      — acceptance: prints nothing — the file is byte-identical to `ose-public`'s merged version
+- [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
+      cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-primer.txt`), not
+      just `parity.rs` and `gate_specs.rs` — the diff is the source of truth for scope, since the
+      divergence set changes as `optimize-cis`-era edits land; the two named files are the expected
+      majority of it but not necessarily all of it
+      This step runs from **inside `ose-primer`** (see the `cd` above), while the evidence file was
+      written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
+      against the wrong repo and the loop would silently iterate zero times, so the evidence file is
+      addressed by its absolute path back into `ose-public`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-primer.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
+      evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
+      `DIVERGENT:` lines — every enumerated file is now byte-identical to `ose-public`'s merged
+      version
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] Regenerate the parity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`
-      — acceptance: `parity-manifest.sha256` matches `ose-public`'s
+      — acceptance: `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(sort apps/rhino-cli/parity-manifest.sha256)` prints nothing —
+      falsifiable, not just "matches `ose-public`'s" prose
 - [ ] [AI] Apply the four→three edits to each enumerated governance and documentation target
       — command: `grep -rn 'beaver-nest' AGENTS.md README.md docs repo-governance .claude`
       — acceptance: zero matches outside `plans/done/**`
@@ -715,18 +751,28 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 
 ## Phase 7: Four→Three Sweep in `ose-private` (delivery boundary — PR #5)
 
-- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-private && git rev-parse --is-bare-repository`
-      — acceptance: the output records whether the bare-repo git method applies
+- [ ] [AI] Change into the repo and verify topology — command: `cd /Users/wkf/ose-projects/ose-private && git config --file "$(git rev-parse --git-common-dir)/config" core.bare`
+      — acceptance: the output (`true`, or empty/`false`) records whether the bare-repo git method applies, per the
+      [Bare-Repo Base-Worktree Landing Method](../../../repo-governance/development/workflow/bare-repo-landing-method.md#scriptable-form--the-corebare-read) —
+      never `git rev-parse --is-bare-repository`, the explicitly forbidden command for this question
 - [ ] [AI] Provision the worktree — command: `claude --worktree beaver-nest-repo-consolidation`
       — acceptance: the worktree exists off the latest `origin/main`
 - [ ] [AI] Enumerate this repo's own sweep targets — command: `grep -rln 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli > /tmp/private-sweep-targets.txt`
       — acceptance: the list is non-empty and recorded in the file-touch ledger
-- [ ] [AI] Apply the identical `parity.rs` and `gate_specs.rs` content merged in Phase 5
-      — command: `diff <(git -C /Users/wkf/ose-projects/ose-public show main:apps/rhino-cli/src/application/parity.rs) apps/rhino-cli/src/application/parity.rs`
-      — acceptance: prints nothing
+- [ ] [AI] Apply the identical content for **every** file the Blocking Preconditions'
+      cross-repo manifest diff enumerated (`evidence/phase-0-parity-divergence-private.txt`), not
+      just `parity.rs` and `gate_specs.rs` — same widened-scope reasoning as Phase 6
+      This step runs from **inside `ose-private`** (see the `cd` above), while the evidence file was
+      written by Phase 0 inside `ose-public`'s own worktree — a bare relative path here would resolve
+      against the wrong repo and the loop would silently iterate zero times, so the evidence file is
+      addressed by its absolute path back into `ose-public`
+      — command: `EVIDENCE=/Users/wkf/ose-projects/ose-public/worktrees/beaver-nest-repo-consolidation/evidence/phase-0-parity-divergence-private.txt; test -s "$EVIDENCE" || { echo "MISSING-OR-EMPTY: $EVIDENCE"; exit 1; }; N=0; for f in $(awk '/^[<>] /{print $NF}' "$EVIDENCE" | sort -u); do N=$((N+1)); diff <(git -C /Users/wkf/ose-projects/ose-public show main:"$f") "$f" || echo "DIVERGENT: $f"; done; echo "files-checked=$N"`
+      — acceptance: `test -s "$EVIDENCE"` exits 0 (fails loudly, not silently, on a missing or empty
+      evidence file); the printed `files-checked=<N>` is greater than 0; and the loop prints no
+      `DIVERGENT:` lines
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] Regenerate the parity manifest — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`
-      — acceptance: `parity-manifest.sha256` matches the other two repos'
+      — acceptance: `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(sort apps/rhino-cli/parity-manifest.sha256)` prints nothing
 - [ ] [AI] Apply the four→three edits to each enumerated target
       — command: `grep -rn 'beaver-nest' AGENTS.md README.md docs repo-governance .claude`
       — acceptance: zero matches outside `plans/done/**`
@@ -756,8 +802,10 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 > proceeding.
 
 - [ ] [AI] `grep -rn 'beaver-nest' AGENTS.md README.md docs repo-governance .claude apps/rhino-cli/src` in `ose-private` — acceptance: zero matches outside `plans/done/**`
-- [ ] [AI] Verify the byte-identity boundary is closed — command: run `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate` in each of `ose-public`, `ose-primer`, `ose-private`
-      — acceptance: all three exit 0 and report the same digest
+- [ ] [AI] Verify the byte-identity boundary is closed with a direct cross-repo manifest diff (not
+      `parity manifest validate`, which is local-only and cannot detect cross-repo divergence) —
+      command: `diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-primer show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) && diff <(git -C /Users/wkf/ose-projects/ose-public show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort) <(git -C /Users/wkf/ose-projects/ose-private show HEAD:apps/rhino-cli/parity-manifest.sha256 | sort)`
+      — acceptance: both diffs print nothing
 - [ ] [AI] Confirm the scheduled parity audit is green — command: `gh run list --workflow=rhino-cli-parity-audit.yml --limit 1 --json conclusion`
       — acceptance: reports `success`
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle — acceptance: 3 cycles complete, loop not `escalated`

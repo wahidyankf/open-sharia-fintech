@@ -29,48 +29,67 @@ three form a parity loop." After this plan the family **is** the parity loop —
 no carve-out to explain. Every governance sentence that currently has to distinguish "all four repos"
 from "the three parity repos" loses a special case.
 
-## Current-State Baseline (Mechanically Verified, 2026-08-06)
+## Current-State Baseline (Mechanically Verified, 2026-08-06; Re-Verified 2026-08-10)
 
-All figures below were measured directly against `main` in both working trees on 2026-08-06
-[Repo-grounded].
+All figures below were measured directly against `main` in both working trees on 2026-08-06, and
+re-measured the same way on 2026-08-10 [Repo-grounded]. Where the two differ, the table shows
+`2026-08-06 → 2026-08-10`.
 
-| Measure                                | Value                                                                                                                                                                                                                                                                                                                                  |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shared root commit                     | `8257d1ff44007d1d425944e3952cb94aca919f42` — identical in both repos                                                                                                                                                                                                                                                                   |
-| Commits on `main`                      | `beaver-nest` 5,340 · `ose-public` 5,464                                                                                                                                                                                                                                                                                               |
-| Tracked files                          | `beaver-nest` 1,969 · `ose-public` 14,866                                                                                                                                                                                                                                                                                              |
-| `repo-governance/` files               | 202 vs 208; **200 shared, of which 118 (59%) have diverged**                                                                                                                                                                                                                                                                           |
-| `plans/ideas/` two-pagers              | 43 in `beaver-nest`; **35 are name-duplicates** of `ose-public`'s                                                                                                                                                                                                                                                                      |
-| `beaver-nest`-unique ideas             | 8 (4 product-specific, 4 generic-governance)                                                                                                                                                                                                                                                                                           |
-| `apps/rhino-cli` divergence            | genuine fork — 58 differing paths; `parity.rs`, `commands/gate/`, `commands/git/`, `parity-manifest.sha256` are upstream-only                                                                                                                                                                                                          |
-| `beaver-nest-be` implemented endpoints | **2** — `GET /api/v1/health`, `GET /api/v1/readiness`                                                                                                                                                                                                                                                                                  |
-| `beaver-nest-be` source                | 858 lines F#+SQL; sole DB migration is literally `SELECT 1;`, zero domain tables                                                                                                                                                                                                                                                       |
-| `beaver-nest-fe` source                | 211 lines; single-screen Vite/React SPA whose own copy reads "No workspace features yet" [methodology: `find src -type f -not -path 'src/generated-contracts/*' -not -path 'src/test/*' -not -name '*.test.*' -not -name '*.spec.*' \| xargs wc -l`, run from `apps/beaver-nest-fe`, excluding tests and the generated OpenAPI client] |
-| `beaver-nest` deploy branches          | **none** — `git branch -r` shows only `origin/main` plus one PR branch                                                                                                                                                                                                                                                                 |
-| `beaver-nest` open PRs                 | 0                                                                                                                                                                                                                                                                                                                                      |
-| `beaver-nest`-specific CI              | 1 workflow of 8 (`beaver-nest-app-test-local-deploy-stag.yml`); the other 7 are the shared harness                                                                                                                                                                                                                                     |
-| Ports in use                           | 19300 / 19310 / 19320 — **no collision** with `ose-public`'s 3100-3300, 8202, 8302                                                                                                                                                                                                                                                     |
+| Measure                                        | Value                                                                                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shared root commit                             | `8257d1ff44007d1d425944e3952cb94aca919f42` — identical in both repos                                                                                                                                                                                                                                                                                            |
+| Commits on `main`                              | `beaver-nest` 5,340 → 5,349 · `ose-public` 5,464 → 5,529                                                                                                                                                                                                                                                                                                        |
+| Commits since fork `32ec0270f`                 | `ose-public` 317 · `beaver-nest` 137 (measured fresh 2026-08-10)                                                                                                                                                                                                                                                                                                |
+| Tracked files                                  | `beaver-nest` 1,969 → 1,936 · `ose-public` 14,866 → 14,921                                                                                                                                                                                                                                                                                                      |
+| `beaver-nest` working tree                     | dirty, 11 files → **clean, 0 files** — [D9](./tech-docs.md#design-decisions) is currently moot                                                                                                                                                                                                                                                                  |
+| `repo-governance/` files                       | 202 vs 208 → 203 vs 212; **200 shared → 201 shared, of which 118 (59%) → 141 (70%) have diverged**                                                                                                                                                                                                                                                              |
+| `plans/ideas/` two-pagers                      | 43 in `beaver-nest`, 35 duplicates → **8 in `beaver-nest`, 0 duplicates** (all 8 now unique)                                                                                                                                                                                                                                                                    |
+| `beaver-nest`-unique ideas                     | 8 (4 product-specific, 4 generic-governance) — split unchanged though totals moved                                                                                                                                                                                                                                                                              |
+| `apps/rhino-cli` divergence                    | genuine fork — 58 → **95** differing/upstream-only paths (widened post-`optimize-cis`); `parity.rs`, `commands/gate/`, `commands/git/`, `parity-manifest.sha256` remain upstream-only                                                                                                                                                                           |
+| 3-repo `parity-manifest.sha256`                | **open** as of 2026-08-10 — `ose-public`/`ose-primer`/`ose-private` carry three different contents; `optimize-cis`'s own AC-15 records this accepted-with-reason, not closed                                                                                                                                                                                    |
+| `beaver-nest-be` implemented endpoints         | **2** — `GET /api/v1/health`, `GET /api/v1/readiness`                                                                                                                                                                                                                                                                                                           |
+| `beaver-nest-be` source                        | 858 → 980 lines F#+SQL; sole DB migration is still an empty-journal script, zero domain tables                                                                                                                                                                                                                                                                  |
+| `beaver-nest-fe` source                        | 211 lines; single-screen Vite/React SPA whose own copy reads "No workspace features yet" [methodology: `find src -type f -not -path 'src/generated-contracts/*' -not -path 'src/test/*' -not -name '*.test.*' -not -name '*.spec.*' \| xargs wc -l`, run from `apps/beaver-nest-fe`, excluding tests and the generated OpenAPI client]                          |
+| `beaver-nest` deploy branches                  | **none** — `git branch -r` shows only `origin/main` plus one stale PR-source branch, unchanged                                                                                                                                                                                                                                                                  |
+| `beaver-nest` open PRs                         | 0, unchanged                                                                                                                                                                                                                                                                                                                                                    |
+| `beaver-nest`-specific CI                      | 1 workflow of 8 → **1 of 9** (`beaver-nest-app-test-local-deploy-stag.yml`); the rest are shared harness                                                                                                                                                                                                                                                        |
+| Ports in use                                   | 19300 / 19310 / 19320 — **no collision** with `ose-public`'s 3100-3300, 8202, 8302, unchanged                                                                                                                                                                                                                                                                   |
+| Governance gaps where `beaver-nest` was behind | 2026-08-06: Type-soundness PR discipline, gate-registry git-hook model, Build-Artifact Sweeper convention, `main-to-origin-main` restriction. 2026-08-10: **three of four closed**; the gate-registry git-hook gap **widened** — `beaver-nest`'s `.husky/pre-push` is still ~30 hand-written lines vs. `ose-public`'s post-`optimize-cis` 2-line generated shim |
 
 Three findings from this baseline drive the plan's shape:
 
-1. **The divergence is overwhelmingly rename churn, not rule difference.** Of the 118 differing
-   governance files, the dominant class is mechanical substitution of app names in prose and command
-   examples. A second class is roster softening. Only a third, small class is genuine rule
-   divergence — and in every observed instance of it, **`beaver-nest` is the one that is behind**
-   (missing the Type-soundness PR-review discipline, the gate-registry git-hook model, the
-   Build-Artifact Sweeper convention, and the `main-to-origin-main` selection-signal restriction).
-   This is why the plan discards `beaver-nest`'s governance tree wholesale rather than reconciling
-   it: a rename-driven merge would silently resurrect superseded rules.
+1. **The divergence is overwhelmingly rename churn, not rule difference.** Of the 141 differing
+   governance files (re-measured 2026-08-10, up from 118), the dominant class is mechanical
+   substitution of app names in prose and command examples. A second class is roster softening. Only
+   a third, small class is genuine rule divergence, and it has **narrowed** since the 2026-08-06
+   baseline: `beaver-nest` has since caught up on the Type-soundness PR-review discipline and the
+   Build-Artifact Sweeper convention, and now carries the `main-to-origin-main` selection-signal
+   restriction text too. The one item still missing — and now the **largest single gap**, not one of
+   four — is the gate-registry git-hook model: `beaver-nest`'s `.husky/pre-push` is still ~30 lines of
+   hand-written `cargo run` invocations, unchanged since before `optimize-cis` collapsed
+   `ose-public`'s own pre-push hook to a 2-line generated shim. This is why the plan discards
+   `beaver-nest`'s governance tree wholesale rather than reconciling it: a rename-driven merge would
+   silently resurrect superseded rules.
 2. **The product is genuinely small and genuinely inert.** Porting it is a bounded, low-risk file
    move, not a system integration.
-3. **A live governance contradiction already exists.**
-   `docs/reference/sdlc-gate-standard.md:186` asserts `apps/rhino-cli` is byte-identical across "all
-   four bound repos", and `apps/rhino-cli/src/application/parity.rs:557` emits that same four-repo
-   claim at runtime — while
+3. **A governance contradiction exists, though `optimize-cis` already resolved half of it.** At the
+   2026-08-06 baseline both `docs/reference/sdlc-gate-standard.md:186` and
+   `apps/rhino-cli/src/application/parity.rs:557` asserted `apps/rhino-cli` is byte-identical across
+   "all four bound repos". Re-verified 2026-08-10: `parity.rs` (now around line 560) **already emits
+   the three-repo message** — `"byte-identical across ose-public, ose-primer, and ose-private"`, with
+   an explicit test asserting the string never contains `beaver-nest` — landed by `optimize-cis`'s own
+   Phase 7 (commit `c182c543a`, 2026-08-09) as a side effect of resolving a contradiction _that plan_
+   tripped over. `docs/reference/sdlc-gate-standard.md` was **not** part of that fix and still says
+   "four OSE repositories" / "four bound repos" and names `beaver-nest` explicitly (lines 18-19, 113,
+   186, 191, 202). So the contradiction survives, just inverted: the runtime code now agrees with this
+   plan's target state, and the standard document is what still needs the sweep. This plan's Phase 5
+   TDD cycle must be re-derived at Phase 0 against this — the RED step ("`parity.rs` still emits the
+   four-repo string") will no longer fail, so that sub-step is done; the GREEN step's actual remaining
+   work is `sdlc-gate-standard.md` and the rest of the documentation sweep — while
    [`docs/reference/related-repositories.md`](../../../docs/reference/related-repositories.md)
    states `beaver-nest` carries an unbound **fork** and sits in neither cross-repo boundary. The
-   measured 58-path fork confirms `related-repositories.md` is the accurate one. Retiring the fourth
-   repo removes the contradiction at its source.
+   measured 95-path fork (re-verified 2026-08-10) confirms `related-repositories.md` is the accurate
+   one. Retiring the fourth repo removes the contradiction at its source.
 
 ## Prior Art and Precedent
 
@@ -140,8 +159,11 @@ that genuinely applies** and is carried into the risk table below.
 
 - A fourth propagation target for every governance change, each requiring its own worktree, PR,
   review cycle, and CI run.
-- A duplicated idea backlog where 35 of 43 briefs shadow `ose-public`'s own, with 16 of those already
-  diverged from their upstream twin — so a reader cannot tell which copy is current.
+- A duplicated idea backlog: the 2026-08-06 baseline measured 35 of 43 briefs shadowing
+  `ose-public`'s own, 16 of those already diverged from their upstream twin. This has since
+  self-resolved via unrelated cross-repo grooming — the baseline table above now records 0
+  duplicates as of 2026-08-10 — so it is historical context for why this plan discards
+  `beaver-nest`'s idea backlog wholesale (D2), not a live pain point this plan itself fixes.
 - A `rhino-cli` fork drifting further from the tri-repo byte-identity boundary with every upstream
   CLI change.
 - A standing governance contradiction about whether the byte-identity boundary spans three repos or
