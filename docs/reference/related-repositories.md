@@ -12,15 +12,14 @@ created: 2026-04-18
 
 # Related Repositories
 
-The OSE ecosystem has four sibling repositories. Each has a different job, so choose the one that
+The OSE ecosystem has three sibling repositories. Each has a different job, so choose the one that
 matches what you are trying to understand rather than treating them as interchangeable copies.
 
-| Repository                                                 | Visibility  | Role                                                            | Start there when…                                                  |
-| ---------------------------------------------------------- | ----------- | --------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [`ose-public`](https://github.com/wahidyankf/ose-public)   | Public, MIT | The OSE product platform and its public research                | You want to understand or run OSE itself.                          |
-| [`ose-primer`](https://github.com/wahidyankf/ose-primer)   | Public, MIT | A reusable polyglot Nx starter built from OSE practices         | You want a starting point for a different product.                 |
-| `ose-private`                                              | Private     | Authorized product operations and local CoralPolyp sandbox work | You are an authorized maintainer following its private onboarding. |
-| [`beaver-nest`](https://github.com/wahidyankf/beaver-nest) | Public, MIT | A separate product in the wider ecosystem                       | You want to work on BeaverNest.                                    |
+| Repository                                               | Visibility  | Role                                                            | Start there when…                                                  |
+| -------------------------------------------------------- | ----------- | --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public, MIT | The OSE product platform and its public research                | You want to understand or run OSE itself.                          |
+| [`ose-primer`](https://github.com/wahidyankf/ose-primer) | Public, MIT | A reusable polyglot Nx starter built from OSE practices         | You want a starting point for a different product.                 |
+| `ose-private`                                            | Private     | Authorized product operations and local CoralPolyp sandbox work | You are an authorized maintainer following its private onboarding. |
 
 ## The two reader paths that matter most
 
@@ -40,13 +39,13 @@ deliberately different: the former is the product platform; the latter is a star
 parity is planned and reviewed, not assumed from folder names.
 
 The `apps/rhino-cli` source must stay byte-identical across `ose-public`, `ose-primer`, and
-`ose-private`. BeaverNest uses a fork and is outside that identity boundary. See the
+`ose-private` — the same three-repository family this page describes. See the
 [SDLC gate standard](./sdlc-gate-standard.md#rhino-cli-byte-identity-boundary) for the policy.
 
 ## Sync cadence across repos
 
 Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;
-this answers **how often** each sibling repo is brought current with `ose-public` — the three repos
+this answers **how often** each sibling repo is brought current with `ose-public` — the two siblings
 differ, and the difference is deliberate, not an oversight:
 
 - **`ose-private`** — kept **in real time**. `rhino-cli` and the shared `repo-governance/` content
@@ -58,10 +57,6 @@ differ, and the difference is deliberate, not an oversight:
   not need every `ose-public` governance change the moment it lands; batching updates conserves the
   review and propagation cost of a sync that public downstream adopters do not need on a real-time
   cadence.
-- **`beaver-nest`** — **not synced** on an ongoing basis. BeaverNest is planned to merge back into
-  `ose-public` in the near term, so investing in an ongoing sync mechanism for a repo expected to be
-  reabsorbed is not worth the cost; its `rhino-cli` fork and governance content are addressed at
-  merge time instead.
 
 ## Contribution and access boundaries
 

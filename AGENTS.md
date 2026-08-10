@@ -319,9 +319,9 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
   Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
-- **Runner contention (frequent — do not mistake for a code defect)**: All 4 OSE repos share a
-  limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`/
-  `beaver-nest`, a small self-hosted pool for `ose-private`. A queued or stalled job is often just
+- **Runner contention (frequent — do not mistake for a code defect)**: All 3 OSE repos share a
+  limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`, a small
+  self-hosted pool for `ose-private`. A queued or stalled job is often just
   contention. Response: wait patiently (same 2-min cadence), check `gh run list
 --status=queued --status=in_progress` across repos or [github.com/wahidyankf](https://github.com/wahidyankf)
   before debugging code. If no contention is found and the run is still stuck, rebase onto latest
@@ -439,16 +439,14 @@ is not the sweeper.
 
 ## Related Repositories
 
-Four sibling repos, no parent coordination repo — **"all of the OSE repos" means exactly these four**:
+Three sibling repos, no parent coordination repo — **"all of the OSE repos" means exactly these three**:
 [`ose-public`](https://github.com/wahidyankf/ose-public) (this repo, MIT — upstream source of truth),
 [`ose-primer`](https://github.com/wahidyankf/ose-primer) (MIT — downstream template),
-[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public),
-[`beaver-nest`](https://github.com/wahidyankf/beaver-nest) (MIT — product on this ecosystem).
+[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public).
 
 Two cross-repo boundaries cover **different** repo sets — do not conflate: **content parity** is
-`ose-public` ↔ `ose-primer` only; **`apps/rhino-cli` byte-identity** spans `ose-public`,
-`ose-primer`, `ose-private` with zero carve-outs. `beaver-nest` is in neither and carries a **fork**
-of `rhino-cli` — still a full member of the four-repo set.
+`ose-public` ↔ `ose-primer` only; **`apps/rhino-cli` byte-identity** spans all three repos —
+`ose-public`, `ose-primer`, `ose-private` — with zero carve-outs.
 
 **See**: [Related Repositories reference](./docs/reference/related-repositories.md) — both boundaries
 in full, the parity workflow, and the byte-identity gate.
