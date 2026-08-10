@@ -131,32 +131,62 @@ next entry for the genuinely unresolved remainder. Routed: inline fix, already a
 literal sites are the only occurrences (`grep -rn '"beavernest-be"' apps/beavernest-be-e2e` after the
 fix returns only comment/doc-string matches, not compose-argument literals).
 
-## Learning: 5 of 15 backend E2E scenarios need `dotnet fsi`/`dotnet run` inside `beavernest-app`, but the production runtime image intentionally has no .NET SDK — unresolved, needs a follow-up plan
+## Learning: resolved — the 8 remaining `beavernest-be-e2e` scenarios needed `dotnet fsi`/`dotnet build` run on the test runner's own host, not inside the SDK-less runtime container, plus four genuine latent SQLite/filesystem bugs the black-box conversion exposed
 
-After the service-name fix above, `compose-runtime.ts`'s `runFsi`, `runBackendCommand`, and
-`runStoppedBackendCommand` helpers (used by 5 of the 8 remaining failing scenarios — fresh-database,
-migration-restart, sqlite-contention, sqlite-settings, online-backup, verified-restore) execute
-`dotnet fsi --exec ...` / `dotnet run --project ...` _inside_ the running `beavernest-app` container.
-`apps/beavernest-be/Dockerfile`'s final `runtime` stage is deliberately
-`mcr.microsoft.com/dotnet/aspnet:10.0.10-noble` (ASP.NET **runtime**, no SDK — a hardening choice, not
-an oversight: the image also runs as a non-root UID with a strict entrypoint permission validator).
-No Compose file wires an SDK-having image for this disposable E2E stack — the only SDK-based image in
-the tree is `infra/dev/beavernest-app/Dockerfile.be.dev`, used exclusively by `npm run beavernest:dev`
-(local dev, independent of Compose), not by `run-e2e.sh`'s disposable stack. The `broken-migration`
-scenario additionally fails because its step script does `cp -a /workspace/. "$source"` assuming a
-`/workspace` source-tree layout that doesn't exist in any current image stage. This is a genuine,
-pre-existing architectural mismatch between the ported E2E test suite's assumptions and the current
-(security-hardened, single-stage) container design — not a typo or config fix, and not something
-introduced by this porting work. Verified it's not a rootless-podman UID-mapping artifact: identical
-failures reproduced after switching the local podman machine from rootless to rootful. A proper fix
-needs a dedicated CI-only image variant (e.g. an additional Dockerfile stage that keeps the SDK
-alongside the full `/workspace` source, wired via `docker-compose.ci.yml`'s `build.target`) or a
-rewrite of the affected step helpers to stop needing an SDK inside the runtime container — both are
-non-trivial engineering, out of scope for a "prove it's green" verification phase. Current state:
-backend E2E 7/15 pass (up from effectively 0 reachable before the two fixes above), frontend E2E 4/4
-pass. Routed: needs a new backlog plan item to redesign the E2E-vs-runtime-image contract for
-`beavernest-be-e2e`; flagged prominently in this execution's final report rather than silently
-declared green.
+Supersedes the previous "unresolved, needs a follow-up plan" entry above — this got a full fix, no
+follow-up plan needed. The prior entry's diagnosis was correct (`apps/beavernest-be/Dockerfile`'s
+`runtime` stage is intentionally SDK-less) but its proposed remedies (a CI-only SDK image variant, or
+rewriting the step helpers) were the wrong shape. `apps/ose-be-e2e`/`apps/organiclever-be-e2e` (this
+repo's working sibling backend E2E suites) establish the actual convention: black-box HTTP/CLI-only
+testing against a built Compose image, with **no** SDK-dependent step ever running inside the
+container. `beavernest-be-e2e` diverged because it was ported carrying beaver-nest's own dev-mode
+assumption (hot-reload F# source available at runtime) that doesn't hold for a built production image.
+
+Fix: added `apps/beavernest-be-e2e/utils/host-runtime.ts`, which runs `dotnet fsi`/`dotnet build` on
+the Playwright test runner's **own** host machine (which has the SDK) against the disposable Compose
+stack's host-bind-mounted SQLite files (`BEAVERNEST_BE_E2E_DATA_DIRECTORY`/`_BACKUP_DIRECTORY`, now
+exported by `apps/beavernest-be/scripts/run-e2e.sh`) — never `docker compose exec`/`run` for anything
+SDK-dependent. `compose-runtime.ts`'s `runFsi` was deleted entirely; `runBackendCommand`/
+`runStoppedBackendCommand` now invoke the already-published `dotnet BeaverNestBe.dll <args>` inside the
+container (the container has the ASP.NET runtime, so running the built DLL directly — not `dotnet run`
+or `dotnet fsi` — works with no SDK). The `broken-migration` scenario's `/workspace`-copy assumption
+was replaced with `bootIsolatedBackendWithBrokenMigration()`, which copies `apps/beavernest-be/src/BeaverNestBe`
+to an isolated host tmp dir, injects a broken migration SQL file, and runs `dotnet build` + the built
+DLL as an isolated host process — again never inside the container.
+
+This conversion from "assert on container internals" to "assert on externally observable behavior"
+surfaced four genuine, previously-latent F# production defects in
+`apps/beavernest-be/src/BeaverNestBe/Infrastructure/Sqlite/Connection.fs` and
+`apps/beavernest-be/src/BeaverNestBe/Operations/Database.fs` (each now has a regression test in
+`tests/integration/SqliteMigrationTests.fs`, `tests/integration/SqliteSettingsTests.fs`,
+`tests/unit/Tests/DatabaseOperationsTests.fs`, `tests/unit/Tests/SqliteInfrastructureTests.fs`):
+(1) the readiness read-only connection had pooling enabled, so it could observe a stale, moved-aside
+file handle after `restoreAt` atomically replaced the database — fixed with `builder.Pooling <- false`;
+(2) Microsoft.Data.Sqlite's `SqliteCommand` re-applies `sqlite3_busy_timeout` from the connection's
+`DefaultTimeout` (provider default 30s) before every command, silently overriding a `PRAGMA
+busy_timeout` statement issued once — so contention hung for 30s instead of the configured ~1s — fixed
+by setting `builder.DefaultTimeout` directly on the connection string; (3) the operation lock file,
+online-backup destination file, and restore's staged file were all created under whatever ambient
+process umask the invoking command happened to have (`docker compose exec` never inherits
+`container-entrypoint.sh`'s own `umask 0077`), so `container-entrypoint.sh`'s strict mode-600 validator
+rejected the next container start — fixed with explicit `File.SetUnixFileMode(path,
+UnixFileMode.UserRead ||| UnixFileMode.UserWrite)` at each site; (4) `restoreAt`'s integrity-verify step
+could leave orphaned `-wal`/`-shm` companion files of the staged (not yet live) database path, which
+the same mode-600 validator also rejected — fixed by calling `removeCompanions` on the staged path
+before promoting it to live. None of these fixes reintroduce the .NET SDK into the production image.
+
+A fifth, unrelated infra gap surfaced the same way: `infra/dev/beavernest-app/docker-compose.yml`'s
+`beavernest-app` service was missing the backup-directory bind mount that `preflight.sh` already
+required — fixed by adding it, matching the pattern already used by `docker-compose.ci.yml`.
+
+Final state, verified via the exact acceptance command `npx nx run-many -t test:e2e -p
+beavernest-be-e2e,beavernest-app-web-e2e`: exits 0, 15/15 backend + 4/4 frontend BDD scenarios pass,
+none skipped/narrowed. A related, unrelated-to-the-SDK-issue port collision was also found and fixed
+while verifying the combined command: both E2E projects' `test:e2e` targets invoke the same
+`run-e2e.sh` script, which hardcoded the same `BEAVERNEST_BE_PUBLIC_PORT=19300` for both, so
+`nx run-many`'s default parallel execution of independent projects raced on the same host port; fixed
+by randomizing the port per invocation (`$((20000 + (RANDOM % 10000)))`). Routed: inline fix, already
+applied — no follow-up plan needed for either issue.
 
 ## Learning: `beavernest-app`'s Compose healthcheck always failed — the runtime image never had `curl`
 
