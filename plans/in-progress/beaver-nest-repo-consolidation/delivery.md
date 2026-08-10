@@ -21,6 +21,26 @@ Phases 6-7 execute in `ose-primer` and `ose-private` respectively; Phase 8 execu
 > `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
 > privileged-credential handling). `[AI+HUMAN]`: agent prepares, human approves or finishes.
 
+## Takeover Reconciliation (2026-08-10, via plan-take-over-execution)
+
+This checklist's `[ ]`/`[x]` markers had drifted far behind the branch's actual 25-commit history —
+the Atomic Sync Ritual was never run mid-execution in the prior session(s). Rather than mass-tick
+from commit messages, every claim below was re-verified live against the current worktree before
+being trusted, per the Bucket-3 takeover procedure's "tick only from positive evidence" rule:
+
+- **Phases 1-2 (product port + rename): confirmed live.** `find apps/beavernest-{be,app-web,be-e2e,app-web-e2e} -type f | wc -l` = 4526; `nx show projects` includes all four renamed projects and zero `beaver-nest*` projects; `grep -rn 'beaver-nest-fe' apps libs specs infra .github .claude repo-config.yml` = 0 matches.
+- **Phase 3 (prove green): functionally landed per `learnings.md`'s extensive fix log, but its own evidence artifacts (viewport screenshots, readiness/health curl captures) do not exist on disk or in git history** — `learnings.md`'s own "Phase 0-3's evidence/ files never survived" entry already documents this. Not re-ticked; the Phase 5 Gate below re-runs `test:quick` for the ported projects at the true PR boundary regardless, so this doesn't block progress, but the Manual UI Verification screenshots should be recaptured before Phase 5 closes if a strict audit trail is wanted.
+- **Phase 4 (vision/ideas/app-setup disposition): confirmed live.** `repo-governance/vision/beavernest.md` exists and is registered; `plans/done/2026-08-10__beavernest-app-setup/` exists with `delivered-as-descoped` status; the residual `beaver-nest` grep hits in `plans/ideas/`/`plans/done/` are the documented historical-citation exception (see `learnings.md`'s own entry on this), not drift.
+- **Phase 5 (four→three sweep, `ose-public`): governance/doc sweep landed** (`related-repositories.md`, `sdlc-gate-standard.md`, `AGENTS.md`, `README.md`, workflow docs, `social-linkedin-post-maker.md` — all in the 25-commit history); `parity.rs` already emits the three-repo string (verified live, `parity manifest validate` reports current). **Not yet done**: PR #164 (opened for this unit) is still open with CI red on `formatting-verify`/`Quality gate` — root-caused and fixed in commit `64191410f` (this takeover session), pushed, CI re-running. PR-Review Maker→Fixer Cycle, merge, and local-`main` fast-forward remain outstanding.
+- **Phases 6-10**: not started in any repo — no worktree/branch/PR trace found in `ose-primer`, `ose-private`, or `beaver-nest` (all Bucket 1, fresh start, per this workflow's Phase A/B). `beaver-nest` has no local sibling checkout on this machine (removed 2026-08-10 per this delivery.md's own Phase 10 Cleanup item, already ticked below) — Phase 8's worktree provisioning will need a fresh `git clone` first.
+
+Per-checkbox ticks are deliberately **not** applied wholesale below — the underlying `[ ]` markers
+for Phases 0-4 remain as authored, since re-deriving true per-bullet completion for ~180 historical
+checkboxes from a 25-commit range carries real risk of a false tick. The phase-level evidence above,
+plus each phase's own **Gate** (already falsifiable, already re-run live where cited), is the
+authoritative resume signal — the exact escape the [Resume Reconciliation](../../../repo-governance/workflows/plan/plan-execution.md#resume-reconciliation-disk-is-truth)
+convention describes for a stale checklist with strong indirect completion evidence.
+
 ## Blocking Preconditions
 
 This plan is the **last of three**:
