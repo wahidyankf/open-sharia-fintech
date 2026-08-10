@@ -492,7 +492,7 @@ Depends-on: [rhino-cli-source-drift-reconciliation]
 - [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — the per-plan pre-merge gate run for
   each `*-to-pr` plan (D1).
 - [`plan-multi-repo-parity-planning-and-execution.md`](./plan-multi-repo-parity-planning-and-execution.md)
-  — the distinct concern of propagating one change byte-identically across the four bound repos
+  — the distinct concern of propagating one change byte-identically across the three bound repos
   (a plan whose scope this scheduler treats as a single serialized unit).
 
 ## Principles Implemented/Respected
