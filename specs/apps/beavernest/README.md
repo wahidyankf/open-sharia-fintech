@@ -1,12 +1,12 @@
 # BeaverNest Specs
 
 Gherkin behavioral specifications and C4 architecture documentation for
-[BeaverNest](../../../README.md) — the hello-world quad (`beavernest-be`, `beavernest-app-web`) proving the
-engineering harness end-to-end.
+[BeaverNest](../../../README.md) — the walking-skeleton foundation (`beavernest-be`,
+`beavernest-app-web`) proving the engineering harness end-to-end.
 
 ## Purpose
 
-These specs define the **observable behavior** of the BeaverNest hello-world quad and the C4
+These specs define the **observable behavior** of the BeaverNest foundation and the C4
 architecture it sits inside. They are the single source of truth for correctness and serve as the
 contract between the `beavernest-be`/`beavernest-app-web` implementations and their consumers.
 
@@ -15,13 +15,13 @@ contract between the `beavernest-be`/`beavernest-app-web` implementations and th
 ```
 specs/apps/beavernest/
 ├── README.md
-├── product/          # PM-first hello-world scope framing
+├── product/          # PM-first foundation scope framing
 ├── system-context/    # C4 L1 — actors and external systems
 ├── containers/        # C4 L2 — deployable units + beavernest-contracts OpenAPI spec
 ├── components/        # C4 L3 — component-level detail (deferred to Phase 6/8)
 └── behavior/           # Cross-cutting Gherkin
-    ├── beavernest-be/gherkin/   # health/, hello/ — 2 feature files
-    └── beavernest-app-web/gherkin/   # hello/ — 1 feature file
+    ├── beavernest-be/gherkin/   # health, routing, persistence, development, recovery — 15 feature files
+    └── beavernest-app-web/gherkin/   # workspace, network — 4 feature files
 ```
 
 ## Running the Tests
@@ -44,7 +44,7 @@ npx nx run beavernest-contracts:bundle
 
 ## Related
 
-- [product/](./product/README.md) — hello-world scope
+- [product/](./product/README.md) — foundation scope
 - [system-context/](./system-context/README.md) — C4 L1
 - [containers/](./containers/README.md) — C4 L2
 - [components/](./components/README.md) — C4 L3

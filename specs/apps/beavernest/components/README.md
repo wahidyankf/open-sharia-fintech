@@ -1,11 +1,11 @@
 # BeaverNest — Components (C4 L3)
 
-Component-level (inside-the-container) detail for the BeaverNest hello-world quad.
+Component-level (inside-the-container) detail for the BeaverNest foundation.
 
-Both `beavernest-be` and `beavernest-app-web` are still hello-world stubs (Phase 1) — a single route/page
-each, no internal module boundaries worth diagramming yet. Component-level `be/` and `web/`
-subfolders land once the apps exist (Phase 6 and Phase 8) and have enough internal structure to
-document. See [product/](../product/README.md) for the phase sequence.
+Both `beavernest-be` and `beavernest-app-web` are still foundation-phase (Phase 1) — a small,
+readiness-focused surface each, no internal module boundaries worth diagramming yet.
+Component-level `be/` and `web/` subfolders land once the apps have grown enough internal structure
+to document (Phase 6 and Phase 8). See [product/](../product/README.md) for the phase sequence.
 
 ## Related
 

@@ -5,29 +5,29 @@ BeaverNest is a personal AI assistant and content operating layer, built
 agents) end-to-end with the smallest possible surface, before any real product capability is
 designed.
 
-## Hello-World Scope (Phase 1)
+## Foundation Scope (Phase 1)
 
 The entire product surface for this phase is:
 
-- `beavernest-be` — a stateless F#/Giraffe REST API exposing exactly two `GET` routes
-  (`/api/v1/health`, `/api/v1/hello`) and a 404 handler for anything else
-- `beavernest-app-web` — a single Next.js landing page (`/`) that names the product and shows the
-  greeting fetched live from `beavernest-be`
+- `beavernest-be` — a F#/Giraffe REST API, backed by SQLite, exposing exactly two `GET` routes
+  (`/api/v1/health` for liveness, `/api/v1/readiness` for database/schema readiness) and a 404
+  handler for anything else. The earlier `/api/v1/hello` greeting route is retired — it now returns
+  404, verified by its own regression scenario.
+- `beavernest-app-web` — a Vite/React client-side-rendered app that renders a single "Foundation
+  status" panel, polling `beavernest-be`'s readiness endpoint and recovering in place when the
+  network call fails.
 
-No other route, page, or capability exists yet. The greeting text is a hardcoded constant on the
-backend; the frontend never hardcodes it — it fetches it over HTTP, so the FE → BE wiring is
-genuinely exercised.
+No other route, page, or capability exists yet.
 
 ## Deferred Capabilities
 
 Everything below is explicitly out of scope for Phase 1 and named here so later readers don't
-mistake the hello-world quad for a foundation to build on directly:
+mistake the foundation for a product to build on directly:
 
 - **Assistant Core** (Phase 2) — LLM integration, conversation memory, assistant-facing UI
 - **Content Building** (Phase 3) — note capture, draft generation, persistence layer
 - **Posting & Scheduling** (Phase 4) — multi-platform posting, scheduling, workflow automation
 - Any form of authentication, multi-user concept, or write endpoint
-- Any database or in-memory store — the greeting is a constant, not derived data
 - Deploy provisioning — CI caller workflows ship wired but dormant; the first real deploy belongs
   to its own plan
 
@@ -35,5 +35,5 @@ mistake the hello-world quad for a foundation to build on directly:
 
 - [overview.md](./overview.md) — one-page product overview
 - [system-context/](../system-context/README.md) — C4 L1 actors and external systems
-- `repo-governance/vision/beavernest.md` — why BeaverNest exists (not yet ported into this repo;
-  tracked by the `beaver-nest-repo-consolidation` plan's vision-porting phase)
+- [`repo-governance/vision/beavernest.md`](../../../../repo-governance/vision/beavernest.md) — why
+  BeaverNest exists
