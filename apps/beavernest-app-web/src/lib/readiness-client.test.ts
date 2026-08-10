@@ -54,7 +54,10 @@ describe("fetchReadiness", () => {
   it("rejects a well-formed status with a structurally wrong components value", async () => {
     server.use(
       http.get("*/api/v1/readiness", () =>
-        HttpResponse.json({ status: "not-ready", components: { database: "ready", schema: "unknown" } }, { status: 503 }),
+        HttpResponse.json(
+          { status: "not-ready", components: { database: "ready", schema: "unknown" } },
+          { status: 503 },
+        ),
       ),
     );
 
