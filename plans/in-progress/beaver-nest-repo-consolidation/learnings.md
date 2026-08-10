@@ -508,9 +508,16 @@ auto-fix path) would have hit the same failure; it simply hadn't surfaced yet be
 infrequent and PR-path lint-staged failures may have gone unnoticed if the corresponding push-path
 check wasn't a required status check.
 
-Fixed at the root: added `detect` to the `format` job's `needs`, and a conditional
-`./.github/actions/setup-dotnet` step (`if: needs.detect.outputs.has-dotnet == 'true'`) before tool
-provisioning, mirroring the existing `dotnet` job's pattern. `actionlint` passes. Routed: this fix
-ships in this plan's own PR (Phase 5, since it was discovered blocking that PR's CI) rather than a
-separate plan — it is a one-line-conditional, self-contained CI infra correction with no product
-scope creep, consistent with Root Cause Orientation.
+First fix attempt (added `detect` to `format` job's `needs`, gated `setup-dotnet` on
+`needs.detect.outputs.has-dotnet == 'true'`, commit `f1b0f435d`) did NOT resolve it — re-poll showed
+identical failure. Root cause was narrower than assumed: `detect`'s `has-dotnet` output is scoped to
+the incremental push diff (`NX_BASE = github.event.before`), not the cumulative PR diff, so a push
+whose own delta touched no `.fs` files evaluated `has-dotnet=false` even though
+`format-verify-fantomas`'s own scope still tried to invoke fantomas regardless.
+
+Fixed at the root: reverted `format` job's `needs` to `build-rhino` only (dropped `detect`), made
+`./.github/actions/setup-dotnet` run unconditionally in that job — the job's own affected-file-type
+scoping decides whether fantomas runs, not `detect`'s push-delta-scoped output, and the two scopes
+don't agree. `actionlint` passes. Routed: this fix ships in this plan's own PR (Phase 5, since it was
+discovered blocking that PR's CI) rather than a separate plan — it is a self-contained CI infra
+correction with no product scope creep, consistent with Root Cause Orientation.
