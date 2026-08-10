@@ -16,8 +16,8 @@
 - **Node.js**: 24.13.1 (LTS, managed by Volta) · **npm**: 11.10.1 · **Monorepo**: Nx workspace
 - **App naming tiers**: `[domain]-www` = public website at the domain root; `[domain]-app-web` = product
   web client at `app.*`; `[domain]-be` = generic HTTP backend for a product domain.
-- **Current Apps**: Next.js sites, F# backends, Rust and F# CLIs, a contract spec, and paired E2E
-  suites — names and ports in the Web Sites table below and in
+- **Current Apps**: Next.js sites (plus one Vite/React app), F# backends, Rust and F# CLIs, a
+  contract spec, and paired E2E suites — names and ports in the Web Sites table below and in
   [monorepo structure](./docs/reference/monorepo-structure.md).
 
 Polyglot demo apps extracted 2026-04-18 to [`ose-primer`](https://github.com/wahidyankf/ose-primer)
@@ -378,18 +378,18 @@ modes) serving agents — not a governance layer.
 
 ## Web Sites
 
-| App                  | Domain                                                   | Port  | Prod Branch                 |
-| -------------------- | -------------------------------------------------------- | ----- | --------------------------- |
-| ose-www              | [oseplatform.com](https://oseplatform.com)               | 3100  | `prod-ose-www`              |
-| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                   | 3101  | `prod-ayokoding-www`        |
-| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)    | 3200  | `prod-organiclever-www`     |
-| organiclever-app-web | TBD                                                      | 3202  | `prod-organiclever-app-web` |
-| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)        | 3201  | `prod-wahidyankf-www`       |
-| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300  | `prod-ose-app-web` (TBD)    |
-| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302  | —                           |
-| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202  | —                           |
-| beavernest-app-web   | TBD (Vite/React, same-origin dev port 19310)             | 19310 | —                           |
-| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
+| App                  | Domain                                                                                   | Port  | Prod Branch                 |
+| -------------------- | ---------------------------------------------------------------------------------------- | ----- | --------------------------- |
+| ose-www              | [oseplatform.com](https://oseplatform.com)                                               | 3100  | `prod-ose-www`              |
+| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                                                   | 3101  | `prod-ayokoding-www`        |
+| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)                                    | 3200  | `prod-organiclever-www`     |
+| organiclever-app-web | TBD                                                                                      | 3202  | `prod-organiclever-app-web` |
+| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)                                        | 3201  | `prod-wahidyankf-www`       |
+| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD)                                 | 3300  | `prod-ose-app-web` (TBD)    |
+| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)                                          | 8302  | —                           |
+| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                                                  | 8202  | —                           |
+| beavernest-app-web   | TBD (Vite/React, same-origin dev port 19310)                                             | 19310 | —                           |
+| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, local dev port 19320; production combined runtime 19300) | 19320 | —                           |
 
 Each app README at `apps/[app-name]/README.md` covers framework, deployment, E2E tests, and content
 details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.

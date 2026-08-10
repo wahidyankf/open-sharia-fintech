@@ -189,6 +189,34 @@ let ``disposable SQLite backup and restore preserve a recoverable live database`
     Assert.Equal("kept", string (verify.ExecuteScalar()))
 
 [<Fact>]
+let ``restore rolls back to the preserved database when the final promote move fails`` () =
+    // Regression test for a rollback gap: the final `File.Move(staged, live,
+    // false)` inside `restoreAt` used to have no fault handling, unlike the
+    // sibling `removeCompanions live` failure branch immediately above it —
+    // a throw here left the service with nothing at `live` at all rather
+    // than reverting to the pre-restore database. `promoteStagedOverPreviousLive`
+    // is exercised directly (with an injected `moveFile`) instead of racing
+    // real filesystem timing to reproduce a `File.Move` failure inside a
+    // full `restoreAt` call deterministically.
+    let mutable moves = []
+
+    let failPromoteThenRecordRollback (source: string) (destination: string) =
+        moves <- moves @ [ source, destination ]
+
+        if moves.Length = 1 then
+            raise (IOException "simulated final promote failure")
+
+    Assert.Equal(
+        Error "restore failed",
+        promoteStagedOverPreviousLive failPromoteThenRecordRollback "staged.sqlite3" "live.sqlite3" "preserved.sqlite3"
+    )
+
+    Assert.Equal<(string * string) list>(
+        [ ("staged.sqlite3", "live.sqlite3"); ("preserved.sqlite3", "live.sqlite3") ],
+        moves
+    )
+
+[<Fact>]
 let ``restore returns sanitized errors for missing and corrupt backup files`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-invalid-restore-" + Guid.NewGuid().ToString("N"))

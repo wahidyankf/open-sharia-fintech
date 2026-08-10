@@ -541,9 +541,36 @@ the incremental push diff (`NX_BASE = github.event.before`), not the cumulative 
 whose own delta touched no `.fs` files evaluated `has-dotnet=false` even though
 `format-verify-fantomas`'s own scope still tried to invoke fantomas regardless.
 
-Fixed at the root: reverted `format` job's `needs` to `build-rhino` only (dropped `detect`), made
-`./.github/actions/setup-dotnet` run unconditionally in that job — the job's own affected-file-type
-scoping decides whether fantomas runs, not `detect`'s push-delta-scoped output, and the two scopes
-don't agree. `actionlint` passes. Routed: this fix ships in this plan's own PR (Phase 5, since it was
-discovered blocking that PR's CI) rather than a separate plan — it is a self-contained CI infra
-correction with no product scope creep, consistent with Root Cause Orientation.
+Fixed (attempt 2 of 3, commit `64191410f`): reverted `format` job's `needs` to `build-rhino` only
+(dropped `detect`), made `./.github/actions/setup-dotnet` run unconditionally in that job — the
+job's own affected-file-type scoping decides whether fantomas runs, not `detect`'s push-delta-scoped
+output, and the two scopes don't agree. `actionlint` passes. Routed: this fix ships in this plan's
+own PR (Phase 5, since it was discovered blocking that PR's CI) rather than a separate plan — it is
+a self-contained CI infra correction with no product scope creep, consistent with Root Cause
+Orientation.
+
+**This was not the final state.** Two more rewrites followed, both driven by PR #164's own
+maker→fixer review cycles rather than a separate plan:
+
+- **Cycle 2 review** (commit `00cc43629`): restored gating on `format`'s `setup-dotnet` step
+  (re-added `needs: detect`), computing `detect`'s `has-dotnet` output from a file-glob diff
+  (matching `format-verify-fantomas`'s own file-glob scope) instead of the nx-affected-PROJECT-tag
+  basis `has-ts`/`has-rust` already used. This reintroduced `format`'s serialization behind `detect`.
+- **Cycle 3 review** caught that the same file-glob-based `has-dotnet` flag — now also gating the
+  separate merge-blocking `dotnet` job — was narrower than what that job's own `nx affected`
+  invocation needs: a `project.json`/`global.json`/`repo-config.yml` edit can mark an F#/C# project
+  affected via nx's default `namedInputs` without touching a `.fs`/`.cs` file, silently skipping the
+  merge-blocking gate.
+- **Cycle 3's fix** (commit `3bb008588`) split the single flag into two: `has-dotnet-projects`
+  (graph/tag-based, same pattern as `has-ts`/`has-rust`) now gates the merge-blocking `dotnet` job,
+  while `format` computes its own cheap `has-dotnet-files` file-glob check locally (no
+  `needs: detect` edge, restoring `format`'s parallelism with `detect`). Both `detect`'s and
+  `format`'s `git diff` invocations now fail **closed** (treat dotnet as present) on a real git
+  error instead of failing open.
+
+**Current shipped state** (re-verify against `.github/workflows/pr-quality-gate.yml` before citing
+this entry as authoritative): the `format` job's `setup-dotnet` step is **conditional** on a
+locally-computed `has-dotnet-files` file-glob check — not unconditional, contrary to the "attempt 2"
+description above. The merge-blocking `dotnet` job gates on `detect`'s separately-computed
+`has-dotnet-projects` graph/tag signal, with fail-closed error handling on both `git diff`
+invocations.

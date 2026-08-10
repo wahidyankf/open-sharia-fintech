@@ -202,6 +202,23 @@ let private validateLiveForRestore live =
     else
         Ok()
 
+/// Promotes `staged` to `live`, rolling back to `preserved` (the previous
+/// live database, captured earlier in the restore) if the promote itself
+/// throws — otherwise a failed final step would leave the service with
+/// nothing at `live` rather than reverting to the pre-restore state. Public
+/// (not `private`), like `backupAt`/`restoreAt` below, so the rollback path
+/// is unit-testable with an injected `moveFile` without racing real
+/// filesystem timing to reproduce a `File.Move` failure deterministically.
+let promoteStagedOverPreviousLive (moveFile: string -> string -> unit) staged live preserved =
+    try
+        moveFile staged live
+        Ok()
+    with
+    | :? IOException
+    | :? UnauthorizedAccessException ->
+        moveFile preserved live
+        Error "restore failed"
+
 /// Shared operation body; the public command below supplies the fixed production
 /// directory, while this function makes filesystem behavior testable in a
 /// disposable directory without widening the production command surface.
@@ -297,8 +314,12 @@ let restoreAt backupRoot configuration name =
                                                     File.Move(preserved, live, false)
                                                     Error error
                                                 | Ok() ->
-                                                    File.Move(staged, live, false)
-                                                    Ok()
+                                                    promoteStagedOverPreviousLive
+                                                        (fun source destination ->
+                                                            File.Move(source, destination, false))
+                                                        staged
+                                                        live
+                                                        preserved
                                             else
                                                 File.Move(staged, live, false)
                                                 Ok()
