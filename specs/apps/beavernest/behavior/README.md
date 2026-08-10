@@ -17,7 +17,7 @@ behavior/
     └── network/                   # readiness-recovery
 ```
 
-19 feature files, 19 scenarios total.
+19 feature files, 21 scenarios total.
 
 ## Surfaces
 

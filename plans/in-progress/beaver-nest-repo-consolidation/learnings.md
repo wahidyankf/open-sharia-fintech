@@ -574,3 +574,31 @@ locally-computed `has-dotnet-files` file-glob check — not unconditional, contr
 description above. The merge-blocking `dotnet` job gates on `detect`'s separately-computed
 `has-dotnet-projects` graph/tag signal, with fail-closed error handling on both `git diff`
 invocations.
+
+## Learning: `restoreAt`'s rollback-of-rollback path was itself unhandled — a second PR-review-driven fix on top of cycle 4's rollback introduction
+
+Cycle 4's review (commit `0ff5457a6`) introduced `promoteStagedOverPreviousLive` to fix a real gap:
+`restoreAt`'s final promote (staged database over live) had no rollback at all if that move threw,
+leaving the service with nothing at `live` instead of reverting to the pre-restore database. The fix
+added a rollback move (`preserved` back onto `live`) inside the promote's `with` handler.
+
+That rollback move itself had no fault handling of its own. If it also threw, the exception either
+escaped uncaught or, via `restoreAt`'s outer `try/with`, collapsed to the exact same `"restore
+failed"` string a clean rollback would return — an operator running `beavernest-be restore` had no
+way to tell "safe to retry" apart from "the live database is now missing entirely, recover
+manually" from the return value alone.
+
+**Fixed in cycle 5** (commit `bba04adfb`): nested the rollback move in its own `try/with`, returning
+a new, distinguishable error string (`"restore failed and rollback failed - live database is
+missing; recover it manually from the preserved copy"`) when the rollback itself fails. Added a
+regression test that fails both the primary promote and the rollback move and asserts the new error
+string (RED against the prior implementation, GREEN after), plus two new
+`verified-restore.feature` scenarios covering the rollback-succeeds and rollback-also-fails paths.
+
+**Follow-up in the same cycle** (commit `3a48a2cdc`): the two new scenarios are fault-injected
+through `promoteStagedOverPreviousLive`'s testable `moveFile` seam (F# TickSpec, unit-level) — a
+real filesystem-move failure cannot be deterministically injected into the published CLI binary
+running inside the disposable e2e Compose container. Tagged them `@unit` and added the established
+`tags: "not @unit"` playwright-bdd filter (matching the `ose-be-e2e` precedent) so
+`beavernest-be-e2e`'s Playwright suite never tries to collect them, with throwing stand-in step
+definitions so a tag-filter regression fails loudly instead of silently reporting a false pass.

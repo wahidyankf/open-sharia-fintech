@@ -3,6 +3,16 @@
 set -euo pipefail
 
 beavernest_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd -P)
+
+# Fail fast (before paying for docker-compose/dotnet startup) on any unconditional
+# test.skip() left in either e2e suite this script can hand off to.
+# test.skip(condition, reason) - the documented Playwright environment-guard form -
+# is intentionally allowed through.
+if grep -rn -E --include='*.ts' --exclude-dir=node_modules --exclude-dir=.features-gen --exclude-dir=test-results --exclude-dir=playwright-report '\$?test\.skip\([^,)]*\)' "${beavernest_root}/apps/beavernest-be-e2e" "${beavernest_root}/apps/beavernest-app-web-e2e"; then
+	echo "ERROR: unconditional test.skip() found in test files above - use test.skip(condition, reason) for legitimate environment guards, or remove" >&2
+	exit 1
+fi
+
 beavernest_suite=backend
 if [[ "${1:-}" == --frontend ]]; then
 	beavernest_suite=frontend
