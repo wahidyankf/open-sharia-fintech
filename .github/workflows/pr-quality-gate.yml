@@ -194,6 +194,16 @@ jobs:
       - uses: ./.github/actions/setup-node
         with:
           run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
+      # format-verify-fantomas (ci-group: formatting-verify) invokes the bare
+      # `fantomas` binary, which only this composite action installs (dotnet
+      # SDK + global fantomas tool). Its repo-config.yml gate entry declares
+      # no `doctor_tools` (fantomas isn't in the doctor tool inventory —
+      # see application/doctor/tools.rs), so the generic "Provision
+      # registry-declared tools" step below never installs it. Scoped to
+      # this one group rather than every matrix member to avoid paying the
+      # dotnet-SDK-install cost on unrelated CI groups.
+      - uses: ./.github/actions/setup-dotnet
+        if: matrix.group.group == 'formatting-verify'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
