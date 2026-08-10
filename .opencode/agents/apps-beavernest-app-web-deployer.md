@@ -31,8 +31,8 @@ BeaverNest currently has **no provisioned staging or production deploy target** 
 runtime. `beavernest-app-test-local-deploy-stag.yml` therefore does not call the shared
 `_reusable-app-test-local-deploy-stag.yml` (that reusable workflow's `deploy` job unconditionally
 force-pushes stag branches BeaverNest does not have). It runs `specs-coverage`, `fe-lint`,
-`be-integration`, `fe-integration`, `e2e`, and `specs-gate` only, on a twice-daily schedule and on
-`workflow_dispatch`. This agent's job is to trigger and monitor that test-only pipeline for the
+`be-integration`, `fe-integration`, `e2e`, `infra-tests`, and `specs-gate` only, on a twice-daily
+schedule and on `workflow_dispatch`. This agent's job is to trigger and monitor that test-only pipeline for the
 `beavernest-app-web` surface — **not** to promote anything to staging or production, since neither
 exists yet.
 
@@ -77,9 +77,9 @@ branch, or claim a deployment succeeded — none of that machinery exists.
 
 ## Safety Checks
 
-The workflow itself enforces the safety gate: `fe-lint`, `be-integration`, `fe-integration`, and
-`e2e` must all pass. There is nothing further for this agent to validate locally, since the workflow
-tests `main` directly inside the GitHub Actions runner.
+The workflow itself enforces the safety gate: `fe-lint`, `be-integration`, `fe-integration`, `e2e`,
+and `infra-tests` must all pass. There is nothing further for this agent to validate locally, since
+the workflow tests `main` directly inside the GitHub Actions runner.
 
 ## Common Issues
 
@@ -99,6 +99,18 @@ gh run list \
 their own disposable `docker compose` runtime via `apps/beavernest-be/scripts/run-e2e.sh`. A timeout
 usually means the combined image failed its readiness probe (`/api/v1/readiness`) — inspect the
 job's container logs, not this agent.
+
+### Issue 3: `infra-tests` job fails
+
+Runs every script in `infra/dev/beavernest-app/tests/*.sh` (the shell-test harness for BeaverNest's
+local-dev infra tooling). Two scripts are deliberately skipped rather than run — `affected-propagation.sh`
+(its `nx affected --base=origin/main --head=HEAD` assertion is always vacuously empty on this
+workflow's schedule/`workflow_dispatch`-only triggers, since `HEAD` already equals `origin/main`
+post-merge) and `workflow-contract.sh` (asserts a k3s staging deploy wiring BeaverNest does not have
+yet, and that this workflow calls the shared reusable workflow, which it deliberately does not — see
+`## No Staging or Production Target Yet` above). Both skips are logged inline in the job with the
+same justification. A failure in any other script is a real infra-tooling regression — inspect that
+script's output, not this agent.
 
 ## When to Use This Agent
 
