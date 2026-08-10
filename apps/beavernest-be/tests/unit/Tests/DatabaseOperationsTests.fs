@@ -217,6 +217,31 @@ let ``restore rolls back to the preserved database when the final promote move f
     )
 
 [<Fact>]
+let ``restore reports a distinguishable error when the rollback move also fails`` () =
+    // Regression test for the rollback-of-rollback gap: the rollback move at
+    // line 219 of Database.fs used to have no fault handling of its own, so a
+    // throw there either escaped uncaught or (via `restoreAt`'s outer
+    // try/with) collapsed to the exact same "restore failed" string as a
+    // clean rollback — making "safe to retry" and "live database is now
+    // missing entirely" indistinguishable from the return value alone.
+    let mutable moves = []
+
+    let failBothMoves (source: string) (destination: string) =
+        moves <- moves @ [ source, destination ]
+        raise (IOException "simulated failure")
+
+    Assert.Equal(
+        Error
+            "restore failed and rollback failed - live database is missing; recover it manually from the preserved copy",
+        promoteStagedOverPreviousLive failBothMoves "staged.sqlite3" "live.sqlite3" "preserved.sqlite3"
+    )
+
+    Assert.Equal<(string * string) list>(
+        [ ("staged.sqlite3", "live.sqlite3"); ("preserved.sqlite3", "live.sqlite3") ],
+        moves
+    )
+
+[<Fact>]
 let ``restore returns sanitized errors for missing and corrupt backup files`` () =
     let root =
         Path.Combine(Path.GetTempPath(), "beavernest-invalid-restore-" + Guid.NewGuid().ToString("N"))

@@ -31,3 +31,21 @@ let ``the restored migration journal is current`` () = ()
 
 [<Then>]
 let ``the restarted application reports ready`` () = ()
+
+[<Given>]
+let ``the final promote of the staged database will fail`` () = ()
+
+[<Then>]
+let ``the pre-restore database is restored at the live path`` () = ()
+
+[<Then>]
+let ``the command reports that the restore failed`` () = ()
+
+[<Given>]
+let ``the rollback to the preserved database will also fail`` () = ()
+
+[<Then>]
+let ``the command reports that the restore failed and the rollback failed`` () = ()
+
+[<Then>]
+let ``the command instructs the operator to recover the live database manually`` () = ()

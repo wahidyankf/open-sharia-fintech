@@ -216,8 +216,14 @@ let promoteStagedOverPreviousLive (moveFile: string -> string -> unit) staged li
     with
     | :? IOException
     | :? UnauthorizedAccessException ->
-        moveFile preserved live
-        Error "restore failed"
+        try
+            moveFile preserved live
+            Error "restore failed"
+        with
+        | :? IOException
+        | :? UnauthorizedAccessException ->
+            Error
+                "restore failed and rollback failed - live database is missing; recover it manually from the preserved copy"
 
 /// Shared operation body; the public command below supplies the fixed production
 /// directory, while this function makes filesystem behavior testable in a
