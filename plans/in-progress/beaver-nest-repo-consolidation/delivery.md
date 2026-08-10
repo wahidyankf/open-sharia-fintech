@@ -43,7 +43,7 @@ and deleted 2026-08-08 — its scope is absorbed, not dropped.
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml` invocation form. Its Phase 2
       and Phase 3 own repairing every citation here, and its Phase 12 gate verifies them — so this
       step is a **confirmation**, not a rewrite. Command:
-      `grep -rn 'gate_specs\|cargo run --release' plans/backlog/beaver-nest-repo-consolidation/` —
+      `grep -rn 'gate_specs\|cargo run --release' plans/in-progress/beaver-nest-repo-consolidation/` —
       acceptance: every match names a path that exists and a command that runs
 
 - [ ] [AI] Confirm the parity message's **three-repo** membership claim is still correct and has not
@@ -165,7 +165,7 @@ nothing, and has no CI run of its own. Its artifacts ride Phase 3's PR.
       — acceptance: `worktrees/beaver-nest-repo-consolidation/` exists and is on a branch off the latest `origin/main`
 - [ ] [AI] Initialize the toolchain in the **root** worktree, not the new one — command: `npm install && npm run doctor -- --fix`
       — acceptance: `npm run doctor` exits 0 with no missing-tool findings
-- [ ] [AI] Create the Knowledge Capture scaffold at `plans/backlog/beaver-nest-repo-consolidation/learnings.md`
+- [ ] [AI] Create the Knowledge Capture scaffold at `plans/in-progress/beaver-nest-repo-consolidation/learnings.md`
       — acceptance: file exists and its first heading is `# Learnings: beaver-nest-repo-consolidation`
 - [ ] [AI] Record the `beaver-nest` working-tree state per [D9](./tech-docs.md#design-decisions) — command: `git -C /Users/wkf/ose-projects/beaver-nest status --porcelain > evidence/phase-0-beaver-nest-status.txt`
       — acceptance: the file is written; if any listed path falls outside the governance files this plan discards, stop and triage it before copying anything

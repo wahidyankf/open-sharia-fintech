@@ -85,17 +85,6 @@ permanently reports `MERGED` regardless of the revert):
   — 15 courses (Stage B + C merged, `blockedBy 17`; soft-overall/hard-at-two-gates on `15`/`16` at
   stage granularity): conventional enterprise depth, then the Sharia-compliant design stage.
 
-**Cross-repo consolidation** (direct-authored on maintainer request 2026-08-06, not promoted from a
-two-pager — the problem statement and scope arrived fully formed, so the two-pager stage would have
-added no decision value):
-
-- [beaver-nest-repo-consolidation](./beaver-nest-repo-consolidation/README.md) — fold the BeaverNest
-  product into `ose-public` as `apps/beavernest-be` / `apps/beavernest-app-web`, sweep four-repo
-  terminology to three across `ose-public`, `ose-primer`, and `ose-private`, and archive
-  `github.com/wahidyankf/beaver-nest`. Hard `blockedBy`
-  [`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md), which
-  scopes all four repos and needs `beaver-nest` live and writable.
-
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
 `reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state

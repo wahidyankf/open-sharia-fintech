@@ -15,6 +15,13 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety.
+- [beaver-nest-repo-consolidation](./beaver-nest-repo-consolidation/README.md) — folds the BeaverNest
+  product into `ose-public` as `apps/beavernest-be` / `apps/beavernest-app-web`, sweeps four-repo
+  terminology to three across `ose-public`, `ose-primer`, and `ose-private`, and archives
+  `github.com/wahidyankf/beaver-nest`. Both `blockedBy` predecessors
+  ([`sdlc-gate-registry-enforcement`](../done/2026-08-07__sdlc-gate-registry-enforcement/README.md),
+  [`optimize-cis`](../done/2026-08-09__optimize-cis/README.md)) are archived; unblocked as of
+  2026-08-10.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
