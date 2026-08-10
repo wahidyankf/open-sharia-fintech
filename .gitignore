@@ -81,6 +81,7 @@ tmp/
 temp/
 *.tmp
 local-temp/
+local-tmp/
 
 # Generated reports
 generated-reports/

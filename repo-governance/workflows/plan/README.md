@@ -47,6 +47,12 @@ validation at the end.
   prior-art `web-researcher` study → promotion checkpoint → `plan-planning` (target-stage=backlog) →
   retire the two-pager (delete + de-index) so the idea now lives as a plan. Not-yet-ripe briefs get a
   readiness report and no plan. Deliverable is the plan, never the implementation.
+- [Plan Handover Execution](./plan-handover-execution.md) - Write a structured handover document
+  (`local-tmp/handovers/<date>__<plan-identifier>-implementation.md`) capturing an in-progress plan's
+  per-repo state, concrete next step, and non-obvious gotchas learned this session, so a different
+  agent or session can resume without re-discovering already-known state. Local, gitignored,
+  single-machine artifact — read by `plan-take-over-execution` as a lead, never a substitute for its
+  own verification
 - [Plan Take-Over Execution](./plan-take-over-execution.md) - Before executing a plan, discover
   whether it has already been worked anywhere — local worktrees, local/remote branches, and PRs
   across the current repo and its siblings (`ose-primer`, `ose-private` at minimum) — reconcile

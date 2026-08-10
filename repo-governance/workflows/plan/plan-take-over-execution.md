@@ -161,12 +161,24 @@ bare slug (no date prefix), the same string that builds the `worktrees/<plan-ide
 the [Worktree Path Convention](../../conventions/structure/worktree-path.md) and, by the convention
 already used in multi-repo-parity plans, branch names across repos.
 
+**A0.5. Check for a handover document first — a lead, never a substitute.** Before the repo/artifact
+probes below, look for `local-tmp/handovers/*__<plan-identifier>-implementation.md` in the current
+repo (produced by [`plan-handover-execution.md`](./plan-handover-execution.md)). If more than one date
+exists for the same plan-identifier, use the most recent by filename date. When found, read it as a
+**fast, informal lead** that can narrow and accelerate Phase A2's probes (which repos to check first,
+which worktree/branch to expect, which gotchas to watch for) — it is gitignored, local-only, and can
+be stale the moment another actor has touched the plan since it was written, so it never substitutes
+for A2's own ground-truth verification. Nothing found here is itself evidence; treat it exactly as you
+would a colleague's verbal summary — useful context, independently checked before acting on it. Absence
+of a handover document is a non-event, not an anomaly — most plans will never have one.
+
 **A1. Resolve the candidate repo set.** Always include: the current repo, plus `ose-primer` and
 `ose-private` whenever they exist as sibling checkouts reachable from the same parent directory as
 this repo (per [Related Repositories](../../../docs/reference/related-repositories.md)) — this is a
 **floor, not a ceiling**. If the plan's own `README.md`/`delivery.md` names other repos in its scope
 (an explicit "Affected subrepos and apps" table, or a multi-repo-parity companion plan), add those
-too. `TaskCreate` one discovery task per (repo × artifact-class) pair before probing begins.
+too. A handover document found in A0.5 naming other repos also widens this set. `TaskCreate` one
+discovery task per (repo × artifact-class) pair before probing begins.
 
 **A2. Per repo, in this order, log every hit verbatim** — never summarize a hit away as "probably
 stale" at discovery time; that judgment belongs to Phase B, with evidence in hand:
@@ -309,6 +321,9 @@ never removed on a default-to-delete basis.
 
 ## Related Documentation
 
+- [Plan Handover Execution](./plan-handover-execution.md) — the write-side counterpart this
+  workflow's Phase A0.5 reads from; produces the `local-tmp/handovers/` document that seeds a lead
+  before Phase A's own ground-truth probes run.
 - [Plan Execution](./plan-execution.md) — the workflow this one hands off to; owns everything about
   single-plan delivery once the worktree is resolved.
 - [Multi-Plans Execution](./multi-plans-execution.md) — the sibling scheduling-layer workflow, for
