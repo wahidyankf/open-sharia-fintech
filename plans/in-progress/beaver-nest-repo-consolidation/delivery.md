@@ -408,11 +408,11 @@ with the compose stack from the steps above still running.
 - [ ] [AI] Stop the compose stack — command: `docker compose -f infra/dev/beavernest-app/docker-compose.yml down`
       — acceptance: `docker compose -f infra/dev/beavernest-app/docker-compose.yml ps` lists no running service
 
-![BeaverNest app-web readiness screen, mobile viewport](./evidence/phase-3-beavernest-app-web-mobile-375px.png)
+![BeaverNest app-web readiness screen, mobile viewport](../../../evidence/phase-3-beavernest-app-web-mobile-375px.png)
 
-![BeaverNest app-web readiness screen, tablet viewport](./evidence/phase-3-beavernest-app-web-tablet-768px.png)
+![BeaverNest app-web readiness screen, tablet viewport](../../../evidence/phase-3-beavernest-app-web-tablet-768px.png)
 
-![BeaverNest app-web readiness screen, desktop viewport](./evidence/phase-3-beavernest-app-web-desktop-1280px.png)
+![BeaverNest app-web readiness screen, desktop viewport](../../../evidence/phase-3-beavernest-app-web-desktop-1280px.png)
 
 ### Local Quality Gates (Before Push)
 

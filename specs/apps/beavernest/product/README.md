@@ -37,5 +37,5 @@ See [ROADMAP.md](../../../../ROADMAP.md) for the full phase sequence.
 
 - [overview.md](./overview.md) — one-page product overview
 - [system-context/](../system-context/README.md) — C4 L1 actors and external systems
-- [repo-governance/vision/beavernest.md](../../../../repo-governance/vision/beavernest.md) — why
-  BeaverNest exists
+- `repo-governance/vision/beavernest.md` — why BeaverNest exists (not yet ported into this repo;
+  tracked by the `beaver-nest-repo-consolidation` plan's vision-porting phase)
