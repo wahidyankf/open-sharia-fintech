@@ -32,7 +32,7 @@ let private isDisallowedDirectory (path: string) =
     path = root
     || path = home
     || path = repository
-    || path.StartsWith(repository + string Path.DirectorySeparatorChar, StringComparison.Ordinal)
+    || path.StartsWith(repository + Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
 
 let private isSymbolicLink (path: string) =
     try
