@@ -16,8 +16,8 @@
 - **Node.js**: 24.13.1 (LTS, managed by Volta) · **npm**: 11.10.1 · **Monorepo**: Nx workspace
 - **App naming tiers**: `[domain]-www` = public website at the domain root; `[domain]-app-web` = product
   web client at `app.*`; `[domain]-be` = generic HTTP backend for a product domain.
-- **Current Apps**: Next.js sites, F# backends, Rust and F# CLIs, a contract spec, and paired E2E
-  suites — names and ports in the Web Sites table below and in
+- **Current Apps**: Next.js sites (plus one Vite/React app), F# backends, Rust and F# CLIs, a
+  contract spec, and paired E2E suites — names and ports in the Web Sites table below and in
   [monorepo structure](./docs/reference/monorepo-structure.md).
 
 Polyglot demo apps extracted 2026-04-18 to [`ose-primer`](https://github.com/wahidyankf/ose-primer)
@@ -319,9 +319,9 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
   Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
-- **Runner contention (frequent — do not mistake for a code defect)**: All 4 OSE repos share a
-  limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`/
-  `beaver-nest`, a small self-hosted pool for `ose-private`. A queued or stalled job is often just
+- **Runner contention (frequent — do not mistake for a code defect)**: All 3 OSE repos share a
+  limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`, a small
+  self-hosted pool for `ose-private`. A queued or stalled job is often just
   contention. Response: wait patiently (same 2-min cadence), check `gh run list
 --status=queued --status=in_progress` across repos or [github.com/wahidyankf](https://github.com/wahidyankf)
   before debugging code. If no contention is found and the run is still stuck, rebase onto latest
@@ -378,16 +378,18 @@ modes) serving agents — not a governance layer.
 
 ## Web Sites
 
-| App                  | Domain                                                   | Port | Prod Branch                 |
-| -------------------- | -------------------------------------------------------- | ---- | --------------------------- |
-| ose-www              | [oseplatform.com](https://oseplatform.com)               | 3100 | `prod-ose-www`              |
-| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                   | 3101 | `prod-ayokoding-www`        |
-| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)    | 3200 | `prod-organiclever-www`     |
-| organiclever-app-web | TBD                                                      | 3202 | `prod-organiclever-app-web` |
-| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)        | 3201 | `prod-wahidyankf-www`       |
-| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300 | `prod-ose-app-web` (TBD)    |
-| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302 | —                           |
-| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202 | —                           |
+| App                  | Domain                                                   | Port  | Prod Branch                 |
+| -------------------- | -------------------------------------------------------- | ----- | --------------------------- |
+| ose-www              | [oseplatform.com](https://oseplatform.com)               | 3100  | `prod-ose-www`              |
+| ayokoding-www        | [ayokoding.com](https://ayokoding.com)                   | 3101  | `prod-ayokoding-www`        |
+| organiclever-www     | [www.organiclever.com](https://www.organiclever.com/)    | 3200  | `prod-organiclever-www`     |
+| organiclever-app-web | TBD                                                      | 3202  | `prod-organiclever-app-web` |
+| wahidyankf-www       | [www.wahidyankf.com](https://www.wahidyankf.com/)        | 3201  | `prod-wahidyankf-www`       |
+| ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300  | `prod-ose-app-web` (TBD)    |
+| ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302  | —                           |
+| organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202  | —                           |
+| beavernest-app-web   | TBD (Vite/React, same-origin dev port 19310)             | 19310 | —                           |
+| beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
 
 Each app README at `apps/[app-name]/README.md` covers framework, deployment, E2E tests, and content
 details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
@@ -437,16 +439,14 @@ is not the sweeper.
 
 ## Related Repositories
 
-Four sibling repos, no parent coordination repo — **"all of the OSE repos" means exactly these four**:
+Three sibling repos, no parent coordination repo — **"all of the OSE repos" means exactly these three**:
 [`ose-public`](https://github.com/wahidyankf/ose-public) (this repo, MIT — upstream source of truth),
 [`ose-primer`](https://github.com/wahidyankf/ose-primer) (MIT — downstream template),
-[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public),
-[`beaver-nest`](https://github.com/wahidyankf/beaver-nest) (MIT — product on this ecosystem).
+[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public).
 
 Two cross-repo boundaries cover **different** repo sets — do not conflate: **content parity** is
-`ose-public` ↔ `ose-primer` only; **`apps/rhino-cli` byte-identity** spans `ose-public`,
-`ose-primer`, `ose-private` with zero carve-outs. `beaver-nest` is in neither and carries a **fork**
-of `rhino-cli` — still a full member of the four-repo set.
+`ose-public` ↔ `ose-primer` only; **`apps/rhino-cli` byte-identity** spans all three repos —
+`ose-public`, `ose-primer`, `ose-private` — with zero carve-outs.
 
 **See**: [Related Repositories reference](./docs/reference/related-repositories.md) — both boundaries
 in full, the parity workflow, and the byte-identity gate.

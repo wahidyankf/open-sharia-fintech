@@ -139,7 +139,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Location**: `repo-governance/vision/`
 
-**Key Document**: [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md)
+**Key Document**: [Vision Index](./vision/README.md)
 
 **Core Vision**:
 

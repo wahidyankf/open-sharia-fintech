@@ -110,14 +110,11 @@ Every git delivery under this workflow's `worktree-to-pr` default — unconditio
 runs the full PR-Review Maker→Fixer Cycle in the processed repo before the change lands, per
 [Plans Organization Convention §Per-Repository Delivery Mode
 Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule):
-`main` is branch-protected against direct pushes in `ose-public` and `ose-primer`, and `beaver-nest`
-is restricted to the same effect by convention (its `main` is not yet actually
-GitHub-branch-protected — see the
-[Git Push Default Convention](../../development/workflow/git-push-default.md) for the
-live-verification detail), so the historical `plans/**`-only **plan-docs-only carve-out**
-([`plan-planning`](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos))
+`main` is branch-protected against direct pushes in `ose-public` and `ose-primer`, so the historical
+`plans/**`-only **plan-docs-only carve-out**
+([`plan-planning`](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos))
 that once let this workflow push directly to each processed repo's own `main` with no review cycle
-is retired in those three repositories — a plan-docs-only change there uses `worktree-to-pr` like
+is retired in those two repositories — a plan-docs-only change there uses `worktree-to-pr` like
 any other change. The carve-out survives, narrowed, only in `ose-private` as an
 infrastructure-as-code exception — but this workflow's write scope is strictly `plans/ideas/**`
 (see the Scope Boundary above), which is never infrastructure-as-code work, so no invocation of this
@@ -290,7 +287,7 @@ repo's own `plans/ideas/README.md` at the end of every run.
   idea against.
 - [Workflow Naming Convention](../../conventions/structure/workflow-naming.md) — defines the
   `grooming` type token this workflow's own filename uses (scope `plan`, type `grooming`).
-- [Plan-docs-only carve-out](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos) — the
+- [Plan-docs-only carve-out](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos) — the
   retired convention that once justified a `main-to-origin-main` default for this workflow, since
   every path it touches sits under `plans/**`; superseded by [Per-Repository Delivery Mode
   Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),

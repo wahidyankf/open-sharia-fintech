@@ -77,11 +77,11 @@ Every workflow filename follows this grammar:
 [_reusable-]{domain}-{action-chain}.yml
 ```
 
-| Token            | Description                                                                                                                                                                                                                                                                                                    |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_reusable-`     | Optional prefix. Use **only** for `workflow_call` reusables. Never use on caller workflows.                                                                                                                                                                                                                    |
-| `{domain}`       | The app or cross-cutting group the workflow serves. App/group values: `ose-www`, `ayokoding-www`, `organiclever-www`, `wahidyankf-www`, `organiclever-app`, `ose-app`, `organiclever-be`, `ose-be`. Cross-cutting values: `commons`, `markdown`, `docs`, `dependency`, or any `{cli-name}` (e.g. `crane-cli`). |
-| `{action-chain}` | One or more verbs and environment qualifiers joined by `-`, written left-to-right in execution order (see vocabulary below).                                                                                                                                                                                   |
+| Token            | Description                                                                                                                                                                                                                                                                                                                      |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_reusable-`     | Optional prefix. Use **only** for `workflow_call` reusables. Never use on caller workflows.                                                                                                                                                                                                                                      |
+| `{domain}`       | The app or cross-cutting group the workflow serves. App/group values: `ose-www`, `ayokoding-www`, `organiclever-www`, `wahidyankf-www`, `organiclever-app`, `ose-app`, `beavernest-app`, `organiclever-be`, `ose-be`. Cross-cutting values: `commons`, `markdown`, `docs`, `dependency`, or any `{cli-name}` (e.g. `crane-cli`). |
+| `{action-chain}` | One or more verbs and environment qualifiers joined by `-`, written left-to-right in execution order (see vocabulary below).                                                                                                                                                                                                     |
 
 ### Verb and Qualifier Vocabulary
 
@@ -191,12 +191,13 @@ canonical set, organized by tier:
 
 ### app tier — callers of `_reusable-app-test-local-deploy-stag.yml` / `_reusable-app-test-stag.yml`
 
-| Filename                                      | Domain             | Force-pushes                                         |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------- |
-| `organiclever-app-test-local-deploy-stag.yml` | `organiclever-app` | `stag-organiclever-app-web` + `stag-organiclever-be` |
-| `organiclever-app-test-stag.yml`              | `organiclever-app` | (stops on pass — prod CD deferred)                   |
-| `ose-app-test-local-deploy-stag.yml`          | `ose-app`          | `stag-ose-app-web` + `stag-ose-be`                   |
-| `ose-app-test-stag.yml`                       | `ose-app`          | (stops on pass — prod CD deferred)                   |
+| Filename                                      | Domain             | Force-pushes                                                                                                                        |
+| --------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `organiclever-app-test-local-deploy-stag.yml` | `organiclever-app` | `stag-organiclever-app-web` + `stag-organiclever-be`                                                                                |
+| `organiclever-app-test-stag.yml`              | `organiclever-app` | (stops on pass — prod CD deferred)                                                                                                  |
+| `ose-app-test-local-deploy-stag.yml`          | `ose-app`          | `stag-ose-app-web` + `stag-ose-be`                                                                                                  |
+| `ose-app-test-stag.yml`                       | `ose-app`          | (stops on pass — prod CD deferred)                                                                                                  |
+| `beavernest-app-test-local-deploy-stag.yml`   | `beavernest-app`   | none provisioned (mirrors the reusable's non-deploy stages directly rather than calling it — see the workflow's own header comment) |
 
 ### Backend build-deploy (triggered on push to `stag-*-be`)
 

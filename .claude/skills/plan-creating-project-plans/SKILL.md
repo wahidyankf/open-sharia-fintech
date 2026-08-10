@@ -302,15 +302,14 @@ Every plan resolves to exactly one **delivery mode** before execution begins, de
 **Per-Repository Delivery Mode Restrictions (HARD RULE)**: the two direct-push modes above are not
 freely selectable in every repo. `main` is branch-protected (including for admins) in `ose-public`
 and `ose-primer`, so neither direct-push mode has an executable path there — `worktree-to-pr` is
-**mandatory**, not merely the safest default. `beaver-nest` is held to the same restriction by
-convention pending a `[HUMAN]`-only branch-protection settings change. Only `ose-private` retains a
+**mandatory**, not merely the safest default. Only `ose-private` retains a
 narrow surviving exception, and only for a genuinely infrastructure-as-code plan. See [Plans
 Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repo table and enforcement detail.
 
-`worktree-to-pr` is mandatory in `ose-public` and `ose-primer` (and convention-mandatory in
-`beaver-nest`) — it is the safest choice everywhere else too, absent a reason to pick another mode
-in the one repo (`ose-private`) where an alternative is actually available.
+`worktree-to-pr` is mandatory in `ose-public` and `ose-primer` — it is the safest choice everywhere
+else too, absent a reason to pick another mode in the one repo (`ose-private`) where an alternative
+is actually available.
 
 **Declare it explicitly**: `## Delivery Mode: worktree-to-pr` (or one of the other three modes, subject to the restriction above), placed immediately alongside the `## Worktree` declaration. An unmarked plan resolves to the tier-3 default (`worktree-to-pr`) per the three-tier precedence algorithm (invocation argument → plan field → default).
 
@@ -564,8 +563,8 @@ And their session is created with correct permissions
 
 **Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`) — `ose-private` infrastructure-as-code plans only**:
 
-- Not available in `ose-public`, `ose-primer` (branch-protected `main`, including for admins) or, by
-  convention, `beaver-nest` — see the Per-Repository Delivery Mode Restrictions HARD RULE above
+- Not available in `ose-public`, `ose-primer` (branch-protected `main`, including for admins) — see
+  the Per-Repository Delivery Mode Restrictions HARD RULE above
 - Reachable only for a genuinely infrastructure-as-code plan in `ose-private`
 - For small, obviously-safe changes where a PR adds no review value, in that one repo
 - Declare the mode explicitly in `## Delivery Mode` — never assume it

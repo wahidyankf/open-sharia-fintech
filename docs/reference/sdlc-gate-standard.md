@@ -15,8 +15,8 @@ created: 2026-06-30
 
 > Source of truth: [`tech-docs.md`](../../plans/done/2026-07-01__standardize-rhino-cli-sdlc-parity/tech-docs.md)
 
-This document defines the target standard for SDLC gate mechanics across the four OSE repositories:
-`ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`. **Identical gate mechanics** means the
+This document defines the target standard for SDLC gate mechanics across the three OSE repositories:
+`ose-public`, `ose-primer`, and `ose-private`. **Identical gate mechanics** means the
 same check set, the same order, and the same invocation mechanism across the bound repos. The only sanctioned variation
 is the project/app set (and therefore the per-app deploy/CRON workflows and language-specific gate
 jobs). See [Divergence Policy](#divergence-policy) for the exact boundary.
@@ -110,7 +110,7 @@ workflow from configuring a service-account/bot identity in its own YAML (for ex
 
 ### Stage 2: commit-msg
 
-`.husky/commit-msg`. Identical in all four bound repos:
+`.husky/commit-msg`. Identical in all three bound repos:
 
 | #   | Command                              | Scope | What it does                                                                                                                          |
 | --- | ------------------------------------ | ----- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -183,12 +183,12 @@ means changing `ose-public`. The named winner per surface:
 | **pre-push scoped validator set**                                                                       | Union including `governance:vendor-audit-validation`                                                                                                                                                             | Public/infra include it; primer must add it.                                                                                                                                                                                                                                                                          |
 | **Hook/gate step order**                                                                                | See [Lifecycle Stages](#lifecycle-stages)                                                                                                                                                                        | The normative registry-backed hook and PR-gate sequence is defined in the Lifecycle Stages section of this document.                                                                                                                                                                                                  |
 | **CRON pipeline shape**                                                                                 | `*-test-local-deploy-{stag,prod}.yml` + paired `*-test-{stag}.yml` calling shared `_reusable-*` workflows                                                                                                        | Public's reusable-workflow factoring is cleanest; primer/infra keep their own app set but adopt the naming and reusable-call shape.                                                                                                                                                                                   |
-| **rhino-cli source identity** (`src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, `tests/`) | Byte-identical across all four bound repos — zero carve-outs, canonical source carries the union command surface (repo-inapplicable verbs dormant, not absent)                                                   | A committed manifest gate enforces the hermetic boundary and the scheduled parity audit detects cross-repository drift.                                                                                                                                                                                               |
+| **rhino-cli source identity** (`src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, `tests/`) | Byte-identical across all three bound repos — zero carve-outs, canonical source carries the union command surface (repo-inapplicable verbs dormant, not absent)                                                  | A committed manifest gate enforces the hermetic boundary and the scheduled parity audit detects cross-repository drift.                                                                                                                                                                                               |
 | **`repo-config.yml` schema parity**                                                                     | `rhino-cli repo-config validate` — strict-deserialize schema check (deny-unknown-fields + required/enum checks), wired at pre-commit (staged-gated fast path) and the PR quality gate                            | Converts the "identical key set across `repo-config.yml`" boundary from prose review into an enforced, automated gate.                                                                                                                                                                                                |
 
 ## Divergence Policy
 
-Per the identical-result invariant, the standardization layer is identical across all four bound repos. The
+Per the identical-result invariant, the standardization layer is identical across all three bound repos. The
 only sanctioned variation is what each repo actually ships (its project/app set) and the data that
 follows from it. Everything in "Drift" below must converge to one form.
 
@@ -198,8 +198,8 @@ follows from it. Everything in "Drift" below must converge to one form.
 carve-outs**. `apps/rhino-cli`'s `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and
 `tests/`, plus
 the Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**` (every `.feature` file and
-every `README.md`), are byte-identical across `ose-public`, `ose-primer`, `ose-private`, and
-`beaver-nest`. The canonical source carries the
+every `README.md`), are byte-identical across `ose-public`, `ose-primer`, and `ose-private`. The
+canonical source carries the
 **union command surface** — every repo's `rhino-cli` binary exposes the full command superset, and a
 command with no applicable projects in a given repo (for example, `java` in `ose-public`) is
 **dormant, not absent**, rather than removed from the binary. A **schema-parity gate**

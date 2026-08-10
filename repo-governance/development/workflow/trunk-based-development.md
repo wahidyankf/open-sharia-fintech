@@ -75,7 +75,7 @@ lands on `main` therefore does not contradict TBD; it is one of TBD's recognized
 
 This repository's **repo-wide default delivery mode is `worktree-to-pr`**: a short-lived plan branch
 inside a disposable git worktree, pushed to a PR, driven to a green and fully-reviewed state, then
-merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` is not a generally available alternative in this repo: `main` is branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins), and `beaver-nest` is held to the same restriction by convention -- see [Direct-Push Modes Remain Available Where the Topology Supports Them](#direct-push-modes-remain-available-where-the-topology-supports-them) below for the live-verification detail and the one surviving exception (`ose-private` infrastructure-as-code plans). See
+merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` is not a generally available alternative in this repo: `main` is branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins) -- see [Direct-Push Modes Remain Available Where the Topology Supports Them](#direct-push-modes-remain-available-where-the-topology-supports-them) below for the one surviving exception (`ose-private` infrastructure-as-code plans). See
 [Default Push and Worktree Execution](#default-push-and-worktree-execution) below for the mechanics of
 all four delivery modes, and the
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) for
@@ -116,12 +116,8 @@ TBD addresses common problems with long-lived feature branches:
 >
 > **Per-repository restriction (independent of the shape described here)**: in `ose-public` and
 > `ose-primer`, `main` is branch-protected against direct pushes — including for admins — so
-> **neither direct-push mode has an executable path in those two repositories at all**. `beaver-nest`
-> is held to the same restriction **by convention**, though its `main` is not yet actually
-> GitHub-branch-protected (verified live 2026-08-08 — `protected: false`, no rulesets); a direct push
-> that lands there is convention-noncompliant, not a bypass of protection that does not yet exist,
-> pending a `[HUMAN]`-only GitHub settings change to add it. In `ose-private`, both remain available
-> only for infrastructure-as-code plans. See
+> **neither direct-push mode has an executable path in those two repositories at all**. In
+> `ose-private`, both remain available only for infrastructure-as-code plans. See
 > [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
 > for the full rule. The PASS example immediately below is therefore **not executable in this repo
 > (`ose-public`)** — it is retained as illustrative TBD vocabulary and remains genuinely runnable only
@@ -161,8 +157,8 @@ git push origin main
 ### Short-Lived Branches (the Default Shape)
 
 Under the repo-wide `worktree-to-pr` default, a short-lived plan branch is the norm for every plan in
-`ose-public`, `ose-primer`, and (by convention) `beaver-nest` -- direct commit to `main`
-(`worktree-to-origin-main`, `main-to-origin-main`) is not a routine alternative in any of the three;
+`ose-public` and `ose-primer` -- direct commit to `main`
+(`worktree-to-origin-main`, `main-to-origin-main`) is not a routine alternative in either;
 it survives only as an `ose-private` infrastructure-as-code exception -- see
 [Direct-Push Modes Remain Available Where the Topology Supports Them](#direct-push-modes-remain-available-where-the-topology-supports-them)
 below.
@@ -426,12 +422,7 @@ branch, no PR, no review gate:
 `main` is branch-protected against direct pushes for every actor, including admins, in `ose-public`
 and `ose-primer` -- a `pull_request` ruleset rule is active with `bypass_actors: []` and
 `current_user_can_bypass: "never"`. **Neither direct-push mode has an executable path in those two
-repositories, regardless of topology or worktree usage.** `beaver-nest` is held to the same
-restriction **by convention**, not by GitHub enforcement: verified live 2026-08-08,
-`gh api repos/wahidyankf/beaver-nest/branches/main` reports `"protected": false` and
-`gh api repos/wahidyankf/beaver-nest/rulesets` returns `[]` -- a direct push there is technically
-executable today, and landing one is a convention violation rather than evidence of a bypassed
-protection, pending a `[HUMAN]`-only GitHub settings change to add matching protection. In
+repositories, regardless of topology or worktree usage.** In
 `ose-private`, both remain available only for infrastructure-as-code plans (Terraform, Ansible, and
 equivalent state-changing infra work needing the primary checkout's real secrets and local state), and
 only when the change is small, well-understood, and does not warrant a review pass. See the
@@ -596,11 +587,8 @@ When creating project plans in `plans/` folder:
 - **If a direct-push mode is chosen** (`worktree-to-origin-main`, `main-to-origin-main`): document why
   in the plan (e.g., "single-line config fix, no review warranted") -- and confirm the mode is
   actually permitted under the per-repository branch-protection restriction: neither direct-push mode
-  has an executable path in `ose-public` or `ose-primer`; `beaver-nest` is restricted to the same
-  effect by convention (its `main` is not yet actually GitHub-branch-protected -- see
-  [Direct-Push Modes Remain Available Where the Topology Supports Them](#direct-push-modes-remain-available-where-the-topology-supports-them)
-  above); both direct-push modes remain available only for `ose-private` infrastructure-as-code
-  plans. See
+  has an executable path in `ose-public` or `ose-primer`; both direct-push modes remain available
+  only for `ose-private` infrastructure-as-code plans. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **Example plan delivery.md (default mode, no field needed)**:
@@ -631,10 +619,8 @@ Specify a non-default `## Delivery Mode` field in a plan if:
 - **Trivial, well-understood change**: A single-line fix or mechanical rename that does not warrant a
   review pass -- use `worktree-to-origin-main` or `main-to-origin-main`.
   **Also subject to the branch-protection axis, independent of the trivial-change rationale**:
-  neither direct-push mode has an executable path in `ose-public` or `ose-primer`; `beaver-nest` is
-  restricted to the same effect by convention, not yet by GitHub enforcement (see the branch-protection
-  callout above); both direct-push modes remain available only for `ose-private` infrastructure-as-code
-  plans. See
+  neither direct-push mode has an executable path in `ose-public` or `ose-primer`; both direct-push
+  modes remain available only for `ose-private` infrastructure-as-code plans. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
 - **External integration**: Working with a third party that requires a specific branch/PR shape.
 - **Compliance**: A regulatory requirement changes the review process beyond the standard PR-review
@@ -643,10 +629,8 @@ Specify a non-default `## Delivery Mode` field in a plan if:
 **Example plan overriding the default** -- recast here as an `ose-private` infrastructure-as-code
 plan, the case this repo's convention treats as the only one where a direct-push mode is genuinely
 sanctioned today (see the branch-protection callout above; a `worktree-to-origin-main`/
-`main-to-origin-main` example targeting `ose-public`, `ose-primer`, or `beaver-nest` would fail this
-repo's own `plan-checker` gate on sight -- for `ose-public`/`ose-primer` because the mode has no
-executable path at all, and for `beaver-nest` as a convention violation even though a push there
-would technically succeed):
+`main-to-origin-main` example targeting `ose-public` or `ose-primer` would fail this
+repo's own `plan-checker` gate on sight, because neither mode has an executable path there):
 
 ```markdown
 ## Delivery Mode
@@ -656,7 +640,7 @@ would technically succeed):
 **Justification**: This `ose-private` infrastructure-as-code plan updates a single Terraform
 resource tag and needs the primary checkout's local secrets/state access. The change is trivial and
 well-understood; a full PR-review cycle is unnecessary overhead. Not executable in `ose-public` or
-`ose-primer`, and not sanctioned by convention in `beaver-nest` either -- see
+`ose-primer` -- see
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
 ```
 

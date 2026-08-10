@@ -144,6 +144,30 @@ The platform consists of the following applications across its technology stacks
   - Hexagonal DDD architecture with 5 bounded contexts
   - OpenAPI 3.1 contract-first development (planned)
 
+### BeaverNest Applications
+
+#### beavernest-be
+
+- **Purpose**: Combined BeaverNest runtime — same-origin REST API and static host for the
+  Vite CSR client, served from a single container image
+- **Technology**: F# + Giraffe + ASP.NET 10 + SQLite
+- **Build Command**: `nx build beavernest-be`
+- **Dev Command**: `nx dev beavernest-be` (loopback dev port 19320)
+- **Runtime Port**: 19300 (combined image)
+- **Location**: `apps/beavernest-be/`
+- **Features**:
+  - Coverlet code coverage enforcement (>=90%)
+  - Production Dockerfile builds both the F# API and the Vite client in one multi-stage image
+  - No production branch yet — CI runs on a schedule only; deployment is deferred
+
+#### beavernest-app-web
+
+- **Purpose**: Vite/React client for BeaverNest, built into `beavernest-be`'s combined image
+- **Technology**: Vite + React 19 + TypeScript
+- **Build Command**: `nx build beavernest-app-web`
+- **Dev Command**: `nx dev beavernest-app-web` (dev port 19310)
+- **Location**: `apps/beavernest-app-web/`
+
 ### E2E Test Suites (Playwright)
 
 #### ose-www-fe-e2e
@@ -201,6 +225,22 @@ The platform consists of the following applications across its technology stacks
 - **Technology**: Playwright
 - **Run Command**: `nx run organiclever-be-e2e:test:e2e`
 - **Location**: `apps/organiclever-be-e2e/`
+
+#### beavernest-app-web-e2e
+
+- **Purpose**: Frontend E2E tests for beavernest-app-web UI, run against a disposable
+  combined-runtime container
+- **Technology**: Playwright
+- **Run Command**: `nx run beavernest-app-web-e2e:test:e2e`
+- **Location**: `apps/beavernest-app-web-e2e/`
+
+#### beavernest-be-e2e
+
+- **Purpose**: End-to-end tests for the beavernest-be REST API, run against a disposable
+  combined-runtime container
+- **Technology**: Playwright
+- **Run Command**: `nx run beavernest-be-e2e:test:e2e`
+- **Location**: `apps/beavernest-be-e2e/`
 
 ## C4 Level 2: Container Diagram
 

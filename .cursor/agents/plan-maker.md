@@ -259,10 +259,10 @@ treat it as a grill question instead (Step 8).
 
 **Per-Repository Delivery Mode Restrictions (HARD RULE) apply before a direct-push mode is ever
 authored**: `worktree-to-origin-main` and `main-to-origin-main` have no executable path in
-`ose-public` or `ose-primer` (`main` is branch-protected, including for admins), and `beaver-nest`
-is held to the same restriction by convention. Only a genuinely infrastructure-as-code plan
-targeting `ose-private` may declare a direct-push mode. Do not author `worktree-to-origin-main` or
-`main-to-origin-main` for any plan targeting a restricted repo — resolve to `worktree-to-pr` (or
+`ose-public` or `ose-primer` (`main` is branch-protected, including for admins). Only a genuinely
+infrastructure-as-code plan targeting `ose-private` may declare a direct-push mode. Do not author
+`worktree-to-origin-main` or `main-to-origin-main` for any plan targeting a restricted repo — resolve
+to `worktree-to-pr` (or
 `main-to-pr`) instead, since `plan-checker` item 9 will HIGH-flag the restricted mode on the very
 next check pass. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions
 (HARD RULE)](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).

@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has-ts: ${{ steps.detect.outputs.has-ts }}
-      has-dotnet: ${{ steps.detect.outputs.has-dotnet }}
+      has-dotnet-projects: ${{ steps.detect.outputs.has-dotnet-projects }}
       has-rust: ${{ steps.detect.outputs.has-rust }}
       has-markdown: ${{ steps.detect.outputs.has-markdown }}
     steps:
@@ -34,11 +34,59 @@ jobs:
       - uses: ./.github/actions/setup-node
       - id: detect
         run: |
-          AFFECTED=$(npx nx show projects --affected 2>/dev/null || echo "")
+          # has-dotnet-projects (like has-ts / has-rust) answers "which nx
+          # projects does the affected-graph mark as touched", via each
+          # project's `lang:*` tag — the same question the merge-blocking
+          # `dotnet` job's own `nx affected` invocation answers. That is a
+          # DIFFERENT question from "did a file literally change": a
+          # project.json/global.json/*.sln/repo-config.yml edit marks an
+          # F#/C# project affected via nx's default namedInputs without
+          # touching a .fs/.cs file, so a file-glob predicate here would be
+          # narrower than what the `dotnet` job's own targets need and could
+          # silently skip that merge-blocking gate. The `format` job needs a
+          # much cheaper, narrower signal (just "should we install the
+          # dotnet SDK for fantomas") and now computes that itself locally
+          # via a file-glob check — see that job's own `dotnet-files` step —
+          # rather than depending on this job's affected-graph precision.
+          DETECT_FAILED=false
+
+          # A real git-diff error (bad ref, corrupted repo, etc.) is NOT the
+          # same outcome as "no files changed" — swallowing it into an empty
+          # CHANGED_FILES would silently disable has-markdown detection.
+          # Fail safe below instead of fail open.
+          if ! CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD); then
+            echo "::warning::git diff --name-only $NX_BASE...HEAD failed (a real error, not simply \"no changes\") — failing safe below instead of silently disabling quality gates" >&2
+            CHANGED_FILES=""
+            DETECT_FAILED=true
+          fi
+
+          if ! AFFECTED=$(npx nx show projects --affected); then
+            echo "::warning::nx show projects --affected failed — failing safe below instead of silently disabling quality gates" >&2
+            AFFECTED=""
+            DETECT_FAILED=true
+          fi
+
+          if [ "$DETECT_FAILED" = "true" ]; then
+            # Conservative fallback (fail closed, not open): when detection
+            # itself errors, run every language's quality gate rather than
+            # silently skip a merge-blocking check. Deliberately does NOT
+            # fail this job outright — a hard `detect` failure would make
+            # `typescript`/`dotnet`/`rust` report "skipped" (failed
+            # dependency), not "failure", which `quality-gate`'s
+            # `contains(needs.*.result, 'failure')` check would not catch.
+            {
+              echo "has-ts=true"
+              echo "has-dotnet-projects=true"
+              echo "has-rust=true"
+              echo "has-markdown=true"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           # Check language tags for affected projects
           {
             echo "has-ts=false"
-            echo "has-dotnet=false"
+            echo "has-dotnet-projects=false"
             echo "has-rust=false"
             echo "has-markdown=false"
           } >> "$GITHUB_OUTPUT"
@@ -48,14 +96,12 @@ jobs:
             for tag in $TAGS; do
               case "$tag" in
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
-                lang:fsharp|lang:csharp) echo "has-dotnet=true" >> "$GITHUB_OUTPUT" ;;
+                lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
                 lang:rust) echo "has-rust=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
           done
 
-          # Check for markdown changes
-          CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD 2>/dev/null || echo "")
           if echo "$CHANGED_FILES" | grep -q '\.md$'; then
             echo "has-markdown=true" >> "$GITHUB_OUTPUT"
           fi
@@ -92,6 +138,38 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      # format-verify-fantomas (surfaces=["ci"]) and lint-staged's own "*.fs"
+      # handler both invoke the bare `fantomas` binary, which only the
+      # setup-dotnet composite action installs (dotnet SDK + global fantomas
+      # tool). This job only needs a cheap "did a .fs/.fsi/.fsx/.fsproj/.cs/
+      # .csproj file literally change" signal to decide whether to pay that
+      # SDK-install cost — a narrower, cheaper question than the `detect`
+      # job's affected-PROJECT-graph precision (which the merge-blocking
+      # `dotnet` job needs instead — see `detect`'s has-dotnet-projects
+      # comment for why those are different questions). Computing it locally
+      # here removes the `needs: detect` edge this job previously carried
+      # purely to read that narrower signal, which had re-serialized
+      # `format` behind `detect` on every run even though `format`'s only
+      # other prerequisite (`build-rhino`) already runs in parallel with
+      # `detect`.
+      - name: Detect dotnet file changes (fast local check for SDK install)
+        id: dotnet-files
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            git fetch --no-tags origin "$GITHUB_BASE_REF" 2>/dev/null || true
+          fi
+          if ! CHANGED_FILES=$(git diff --name-only "$NX_BASE"...HEAD); then
+            echo "::warning::git diff --name-only $NX_BASE...HEAD failed — failing safe by installing the dotnet SDK anyway" >&2
+            echo "has-dotnet-files=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if echo "$CHANGED_FILES" | grep -qE '\.(fs|fsi|fsx|fsproj|cs|csproj)$'; then
+            echo "has-dotnet-files=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-dotnet-files=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: ./.github/actions/setup-dotnet
+        if: steps.dotnet-files.outputs.has-dotnet-files == 'true'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -184,6 +262,16 @@ jobs:
       - uses: ./.github/actions/setup-node
         with:
           run-npm-ci: ${{ contains(matrix.group.doctor_tools, 'npm') }}
+      # format-verify-fantomas (ci-group: formatting-verify) invokes the bare
+      # `fantomas` binary, which only this composite action installs (dotnet
+      # SDK + global fantomas tool). Its repo-config.yml gate entry declares
+      # no `doctor_tools` (fantomas isn't in the doctor tool inventory —
+      # see application/doctor/tools.rs), so the generic "Provision
+      # registry-declared tools" step below never installs it. Scoped to
+      # this one group rather than every matrix member to avoid paying the
+      # dotnet-SDK-install cost on unrelated CI groups.
+      - uses: ./.github/actions/setup-dotnet
+        if: matrix.group.group == 'formatting-verify'
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -220,7 +308,7 @@ jobs:
   dotnet:
     name: .NET quality gate
     needs: detect
-    if: needs.detect.outputs.has-dotnet == 'true'
+    if: needs.detect.outputs.has-dotnet-projects == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

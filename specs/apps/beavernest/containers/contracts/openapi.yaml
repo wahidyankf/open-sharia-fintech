@@ -1,0 +1,149 @@
+openapi: 3.1.0
+info:
+  title: BeaverNest API
+  description: >-
+    BeaverNest foundation contract. Liveness and readiness are the declared operations;
+    unmatched API routes return a JSON error envelope. No write operations exist in this phase.
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:19320
+    description: Local beavernest-be
+security: []
+paths:
+  /api/v1/health:
+    get:
+      operationId: getHealth
+      summary: Liveness check
+      description: Reports whether beavernest-be has finished starting and is serving traffic.
+      responses:
+        "200":
+          description: The service is live.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "404":
+          description: No matching route.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/v1/readiness:
+    get:
+      operationId: getReadiness
+      summary: Workspace readiness
+      description: Reports the safe database and schema readiness state after startup migrations.
+      responses:
+        "200":
+          description: The workspace is ready for use.
+          headers:
+            Cache-Control:
+              description: Readiness state must not be stored by caches.
+              required: true
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessReady"
+        "503":
+          description: The workspace is not ready; implementation details are intentionally withheld.
+          headers:
+            Cache-Control:
+              description: Readiness state must not be stored by caches.
+              required: true
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessUnavailable"
+        "404":
+          description: No matching route.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Health:
+      type: object
+      description: Liveness response body.
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: Always "ok" when the service is live.
+          example: ok
+    ReadinessReady:
+      type: object
+      description: Safe readiness response for a workspace with a queryable current database schema.
+      additionalProperties: false
+      required:
+        - status
+        - components
+      properties:
+        status:
+          type: string
+          description: Fixed readiness status.
+          const: ready
+        components:
+          type: object
+          description: Safe readiness component states.
+          additionalProperties: false
+          required:
+            - database
+            - schema
+          properties:
+            database:
+              type: string
+              description: Fixed database readiness state.
+              const: ready
+            schema:
+              type: string
+              description: Fixed schema readiness state.
+              const: current
+    ReadinessUnavailable:
+      type: object
+      description: Safe readiness response when the workspace cannot complete its readiness query.
+      additionalProperties: false
+      required:
+        - status
+        - components
+      properties:
+        status:
+          type: string
+          description: Fixed unavailable readiness status.
+          const: not-ready
+        components:
+          type: object
+          description: Safe unavailable component states without operational detail.
+          additionalProperties: false
+          required:
+            - database
+            - schema
+          properties:
+            database:
+              type: string
+              description: Fixed unavailable database state.
+              const: unavailable
+            schema:
+              type: string
+              description: Fixed unknown schema state.
+              const: unknown
+    Error:
+      type: object
+      description: Response body for any unmatched route (404).
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Non-empty human-readable error message.
+          example: not found

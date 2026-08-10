@@ -1,6 +1,6 @@
 ---
 title: "Git Push Default Convention"
-description: Default git push behavior — every plan uses worktree-to-pr (a PR branch opened against main). Direct push to origin main is unavailable in ose-public and ose-primer (branch-protected, including for admins); beaver-nest is treated the same by convention pending a human-only GitHub settings change, since its main is not yet actually branch-protected. Restricted in ose-private to infrastructure-as-code plans only (main-to-origin-main, for local secrets/state access). Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
+description: Default git push behavior — every plan uses worktree-to-pr (a PR branch opened against main). Direct push to origin main is unavailable in ose-public and ose-primer (branch-protected, including for admins). Restricted in ose-private to infrastructure-as-code plans only (main-to-origin-main, for local secrets/state access). Covers linear history requirement and proactive preexisting compliance. Governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior.
 category: explanation
 subcategory: development
 tags:
@@ -18,9 +18,7 @@ The repo-wide default integration target for every push is a **PR branch opened 
 (the `worktree-to-pr` delivery mode). Direct push to `origin main` — through the
 `worktree-to-origin-main` and `main-to-origin-main` modes — has **no executable path at all in
 `ose-public` or `ose-primer`**, where `main` is branch-protected against direct pushes for every
-actor, including admins. `beaver-nest` is treated identically **by convention**, though its `main` is
-not yet actually GitHub-branch-protected — see Standard 2 below for the live-verification detail and
-the pending human action that closes this gap. In `ose-private`, both direct-push modes remain
+actor, including admins. In `ose-private`, both direct-push modes remain
 available, but only for an infrastructure-as-code plan (Terraform, Ansible, and equivalent
 state-changing infra work needing the primary checkout's real secrets and local state), and only as
 an explicit selection, never an inferred one; `main-to-origin-main` specifically carries a further
@@ -136,17 +134,9 @@ either signal below is even relevant, check repository availability first: in `o
 `ose-primer`, `main` is branch-protected against direct pushes (including for admins) — **neither
 direct-push mode has an executable path in those two repositories, full stop**.
 
-**`beaver-nest`**: `main` is **NOT currently GitHub-branch-protected** (verified live 2026-08-08 —
-`gh api repos/wahidyankf/beaver-nest/branches/main` reports `"protected": false`, and
-`gh api repos/wahidyankf/beaver-nest/rulesets` returns `[]`). A direct push there is technically
-executable today. This repository is nonetheless treated the same as `ose-public`/`ose-primer` by
-this repo's own convention, pending a `[HUMAN]`-only GitHub settings change to add matching
-protection — until that gap is closed, a direct push that lands on `beaver-nest`'s `main` is
-convention-noncompliant, not evidence of bypassed protection (there is nothing to bypass yet).
-
 In `ose-private`, both direct-push modes remain available only for infrastructure-as-code plans
 (Terraform, Ansible, and equivalent state-changing infra work needing the primary checkout's real
-secrets and local state). Every other plan, in all four repositories, uses `worktree-to-pr`. See
+secrets and local state). Every other plan, in all three repositories, uses `worktree-to-pr`. See
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule — this is the current binding constraint, and it applies before the
 selection-signal and content-restriction tests below.
@@ -187,7 +177,7 @@ only when **one** of two conditions also holds:
 Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
 for the canonical statement of this restriction and its relationship to the
-[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos).
+[Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos).
 
 ### Standard 3: Plans Must Declare a Delivery Mode Only to Override the Default
 

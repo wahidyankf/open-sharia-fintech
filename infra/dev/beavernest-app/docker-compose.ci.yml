@@ -1,0 +1,9 @@
+services:
+  beavernest-app:
+    build:
+      context: ../../..
+      dockerfile: apps/beavernest-be/Dockerfile
+    environment:
+      BEAVERNEST_BE_HTTP_LISTEN_ADDRESS: 0.0.0.0
+      BEAVERNEST_BE_HTTP_LISTEN_PORT: "19300"
+      BEAVERNEST_BE_SQLITE_BUSY_TIMEOUT_MILLISECONDS: "1000"

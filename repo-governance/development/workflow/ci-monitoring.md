@@ -21,7 +21,7 @@ Monitoring CI runs is a required step after every push, whether the target is a 
 
 ## Runner Contention Across the OSE Repos (Read First)
 
-**Runner capacity across the OSE repos is limited and shared — contention is expected, not a bug.** `ose-public`, `ose-primer`, and `beaver-nest` run CI on GitHub's free-tier hosted runners (`runs-on: ubuntu-latest`), which share GitHub's per-account concurrent-job cap across every public repo under [github.com/wahidyankf](https://github.com/wahidyankf). `ose-private` runs on a small, fixed pool of self-hosted runners (`runs-on: [self-hosted, linux, ose-self-hosted]`). Both pools are finite. When multiple repos or workflows queue jobs at the same time, a run can sit `queued`, or a step can stall with no progress — this is runner/action contention, not a defect in the pushed code, and it is not something a code fix or a retry resolves.
+**Runner capacity across the OSE repos is limited and shared — contention is expected, not a bug.** `ose-public` and `ose-primer` run CI on GitHub's free-tier hosted runners (`runs-on: ubuntu-latest`), which share GitHub's per-account concurrent-job cap across every public repo under [github.com/wahidyankf](https://github.com/wahidyankf). `ose-private` runs on a small, fixed pool of self-hosted runners (`runs-on: [self-hosted, linux, ose-self-hosted]`). Both pools are finite. When multiple repos or workflows queue jobs at the same time, a run can sit `queued`, or a step can stall with no progress — this is runner/action contention, not a defect in the pushed code, and it is not something a code fix or a retry resolves.
 
 **Response: wait patiently, then check what else is running before assuming anything is broken.**
 
@@ -30,7 +30,7 @@ Monitoring CI runs is a required step after every push, whether the target is a 
 gh run list --status=queued --status=in_progress --limit=20
 
 # Same check across every OSE repo
-for repo in ose-public ose-primer ose-private beaver-nest; do
+for repo in ose-public ose-primer ose-private; do
   echo "== $repo =="
   gh run list --repo wahidyankf/$repo --status=queued --status=in_progress --limit=10
 done

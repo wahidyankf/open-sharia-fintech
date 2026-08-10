@@ -1,0 +1,35 @@
+# Integration test runner for beavernest-be.
+# Build context is the monorepo root (../../ relative to this file, per docker-compose.integration.yml).
+FROM mcr.microsoft.com/dotnet/sdk:10.0.302-noble@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+
+WORKDIR /build
+
+# Docker Compose supplies the same explicit, sanitized values and mounts this
+# directory as tmpfs. Keeping defaults here makes direct image execution use a
+# disposable database and loopback-only listener as well.
+ENV BEAVERNEST_BE_DATA_DIRECTORY=/tmp/beavernest-integration \
+    BEAVERNEST_BE_HTTP_LISTEN_ADDRESS=127.0.0.1 \
+    BEAVERNEST_BE_HTTP_LISTEN_PORT=19320 \
+    BEAVERNEST_BE_SQLITE_BUSY_TIMEOUT_MILLISECONDS=1000
+
+# Copy solution-level files first for dependency caching.
+COPY apps/beavernest-be/global.json .
+COPY apps/beavernest-be/dotnet-tools.json .
+COPY apps/beavernest-be/.editorconfig .
+
+# Copy project files for restore (before code to cache the restore layer).
+COPY apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj src/BeaverNestBe/
+COPY apps/beavernest-be/tests/integration/BeaverNestBe.IntegrationTests.fsproj tests/integration/
+
+RUN dotnet restore tests/integration/BeaverNestBe.IntegrationTests.fsproj
+
+# Copy source and test code.
+COPY apps/beavernest-be/src/ src/
+COPY apps/beavernest-be/tests/integration/ tests/integration/
+
+# Build the test project (restore already ran; --no-restore keeps the layer cache useful).
+RUN dotnet build tests/integration/BeaverNestBe.IntegrationTests.fsproj --no-restore
+
+# HostBootTests.fs boots the real Kestrel host in-process and calls it over HTTP —
+# no external services (DB, message bus) required.
+CMD ["dotnet", "test", "tests/integration/BeaverNestBe.IntegrationTests.fsproj", "--no-build", "--logger", "console;verbosity=normal"]
