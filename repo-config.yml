@@ -377,6 +377,9 @@ env-injection:
     - app: ose-be
       keys-from: apps/ose-be/.env.example
       runtime: { local-ci: compose, staging: k3s-coralpolyp }
+    - app: beavernest-be
+      keys-from: apps/beavernest-be/.env.example
+      runtime: { local-ci: compose }
 
   # CI test-harness keys — test-only, NEVER in any apps/<app>/.env.example.
   ci-harness:
