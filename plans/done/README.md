@@ -9,6 +9,12 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-11: beaver-nest-repo-consolidation](./2026-08-11__beaver-nest-repo-consolidation/README.md) —
+  Consolidated BeaverNest into `ose-public` as `apps/beavernest-be` and
+  `apps/beavernest-app-web`, swept the three surviving repositories, and archived
+  `wahidyankf/beaver-nest`. Delivery Mode: `worktree-to-pr`; terminal retirement PR:
+  [beaver-nest#4](https://github.com/wahidyankf/beaver-nest/pull/4).
+
 - [2026-08-10: beavernest-app-setup](./2026-08-10__beavernest-app-setup/README.md) — **Closed
   delivered-as-descoped.** Carried from `beaver-nest`'s stalled in-progress plan (72.5% complete,
   279/385 checkboxes) by the `beaver-nest-repo-consolidation` plan's Phase 4. Shipped: generalized
