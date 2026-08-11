@@ -20,9 +20,9 @@ This Skill provides comprehensive guidance for creating **structured project pla
 
 ## Mandatory Pre-Write and Post-Write Grilling
 
-Before writing any plan content, resolve all open design decisions with the user via structured
-multiple-choice grilling (pre-write grill). After writing the plan, validate and stress-test it
-with the user the same way (post-write grill). Neither gate is optional.
+Before writing any plan content, the calling root resolves all open design decisions through a
+structured multiple-choice pre-write grill. After writing the plan, the root runs the same
+post-write validation grill. Neither gate is optional.
 
 **HARD RULE — 2-4 options required**: Every grilling question MUST present **2-4 concrete,
 mutually exclusive options**. Each option MUST state its trade-off in one sentence. Exactly one
@@ -30,12 +30,20 @@ option MUST be marked `(Recommended)` with a one-sentence rationale. Open-ended 
 options are FORBIDDEN. Resolve one decision per question; tightly coupled decisions may be batched
 in a single multi-question prompt.
 
-**Mechanism**: use the `AskUserQuestion` tool (or the harness's native interactive multiple-choice
-tool) first when available; fall back to inline markdown options when it is not.
+**Interaction ownership**: the root owns native UI interaction and, when it is noninteractive or
+lacks a native tool, emits markdown choices to its caller. A plan specialist never questions the
+user directly. It returns `## User Decisions Required` using the
+[canonical envelope schema](../../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+with stable decision ID, question, recommended option and rationale, and exhaustive option objects
+with trade-offs, then stops. The root resolves the envelope and resumes or reinvokes the specialist
+with the canonical [Resolved User Decisions Envelope](../../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope),
+constructed from the original IDs after rendering and passed verbatim. The specialist validates it
+before dependent work. A direct custom-agent or noninteractive specialist caller receives the same
+envelope.
 
-**Explore before asking**: read the relevant repo artifacts before composing any question. Never
-ask the user something a file read can answer — the repo is the ground truth; the user is the
-tiebreaker for genuinely ambiguous decisions.
+**Explore before composing**: read the relevant repo artifacts before creating an envelope or root
+question. Never surface a decision a file read can answer — the repo is the ground truth; the user
+is the tiebreaker for genuinely ambiguous decisions.
 
 **Pre-write grill covers** (each as a structured multiple-choice question):
 
@@ -58,7 +66,8 @@ tiebreaker for genuinely ambiguous decisions.
 - Does `delivery.md` open with the `[AI]`/`[HUMAN]` executor legend, and is every step that only a human can do tagged `[HUMAN]`?
 - Does every phase end with a `### Phase N Gate` (must-pass verification) followed by a Pause Safety note?
 
-**Do NOT proceed to writing until all pre-write branches are resolved.** Unresolved design
+**Do NOT proceed to writing until all pre-write branches are resolved.** A specialist with any open
+branch returns `## User Decisions Required` and stops; it never infers an answer. Unresolved design
 decisions force expensive rewrites.
 
 See [Grilling-With-Options Convention](../../../repo-governance/development/workflow/grilling-with-options.md)
@@ -165,9 +174,9 @@ without its design funnel.
 
 ### Design-funnel grilling questions (UI-bearing plans)
 
-When grilling the user on a UI-bearing plan, the pre-write grill MUST cover the UI-design-funnel
-decisions as structured multiple-choice questions (each with 2-4 concrete options plus the two
-standing options — a free-form blank-state type and "chat about this"):
+For a UI-bearing plan, the specialist's envelope and the root-owned pre-write grill MUST cover the
+UI-design-funnel decisions as structured multiple-choice questions (each with 2-4 concrete options
+plus the two standing options — a free-form blank-state type and "chat about this"):
 
 - **Which alternatives?** Present 2-4 candidate low-fi layouts for the screen (e.g. Ranked Table /
   Card Grid / Split Layout), each option stating its trade-off in one sentence, one marked
@@ -175,8 +184,8 @@ standing options — a free-form blank-state type and "chat about this"):
 - **What prior art?** Present 2-4 ways to ground the alternatives (e.g. delegate a
   `web-researcher` survey of comparable tools / reuse a named sibling screen pattern / blend the
   web-ui kit only), so the diverge stage is informed rather than invented.
-- **Which selection, and why?** Present the finalists as options (e.g. Option A / Option B) and ask
-  which design wins and the one-sentence rationale, so the Select + Justify stages are explicit.
+- **Which selection, and why?** Present the finalists as options (e.g. Option A / Option B) and
+  capture the winning design plus one-sentence rationale, so Select + Justify are explicit.
 - **What responsive strategy?** Present 2-4 ways the selected layout reflows from **mobile** to
   **desktop** (e.g. table collapses to stacked cards / side rail moves into a top sheet / two-pane
   split becomes a single column), so the **responsive** behaviour across mobile/tablet/desktop is
@@ -584,8 +593,9 @@ sections, and new Skills for agent coverage, with its open questions and promoti
 
 ### 2. Planning (backlog/)
 
-**Gate**: Resolve all open design decisions with the user via pre-write grilling before writing
-any plan content. See [Mandatory Pre-Write and Post-Write Grilling](#mandatory-pre-write-and-post-write-grilling).
+**Gate**: The root resolves all open design decisions via pre-write grilling before the specialist
+writes plan content. A specialist returns `## User Decisions Required` and stops when any branch is
+open. See [Mandatory Pre-Write and Post-Write Grilling](#mandatory-pre-write-and-post-write-grilling).
 
 **Actions**:
 
@@ -609,8 +619,9 @@ any plan content. See [Mandatory Pre-Write and Post-Write Grilling](#mandatory-p
 
 ### 4. Completion (done/)
 
-**Gate**: Validate the finished plan with the user via post-write grilling before archiving. See
-[Mandatory Pre-Write and Post-Write Grilling](#mandatory-pre-write-and-post-write-grilling).
+**Gate**: The root validates the finished plan via post-write grilling before archiving. A
+specialist returns `## User Decisions Required` and stops until the root resumes it with answers.
+See [Mandatory Pre-Write and Post-Write Grilling](#mandatory-pre-write-and-post-write-grilling).
 
 **Actions**:
 
@@ -1023,7 +1034,8 @@ Every delivery plan MUST end with a plan archival section:
 
 **Related Skills**:
 
-- `grill-me` - Mandatory pre-write and post-write grilling; every question presents 2-4 concrete options
+- `grill-me` - Mandatory pre-write and post-write grilling; specialists return the exact
+  `## User Decisions Required` envelope and the root renders its exhaustive choices
 - `plan-writing-gherkin-criteria` - Detailed Gherkin guidance
 - `repo-practicing-trunk-based-development` - Git workflow
 - `docs-applying-content-quality` - Universal content standards

@@ -3,6 +3,7 @@ command = "npx"
 args = [ "nx-mcp@latest", "--minimal" ]
 
 [features]
+default_mode_request_user_input = true
 multi_agent = true
 
 [agents.ci-monitor-subagent]

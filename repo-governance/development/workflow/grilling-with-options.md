@@ -159,12 +159,109 @@ independent. Present them separately.
 
 ### Rule 6 — Mechanism: Native Interactive Tool First, Markdown Fallback
 
-When the AI coding agent harness provides a native interactive multiple-choice question tool,
-grilling MUST use it. The native tool renders options as selectable UI elements and returns
-the user's choice as structured data, eliminating parse ambiguity.
+When the interactive root thread provides a native multiple-choice question tool, grilling MUST
+use it. The native tool renders options as selectable UI elements and returns the user's choice as
+structured data, eliminating parse ambiguity.
 
-When no such native tool is available, fall back to inline markdown options in the following
-format:
+#### User Decisions Required Envelope
+
+A subagent MUST NOT render markdown as if it were asking the user. It returns this exact envelope to
+the root orchestrator and stops before work that depends on the answer:
+
+````markdown
+## User Decisions Required
+
+```yaml
+decisions:
+  - id: stable_snake_case_id
+    question: One self-contained decision prompt
+    recommended:
+      option_id: recommended_option_id
+      rationale: One context-grounded recommendation rationale
+    options:
+      - id: recommended_option_id
+        label: Recommended option label
+        tradeoff: One decision-specific trade-off
+      - id: alternative_option_id
+        label: Alternative option label
+        tradeoff: One decision-specific trade-off
+```
+````
+
+The stable `id` identifies the decision across reinvocation. `options` exhaustively lists every
+substantive leaf with its trade-off; the root adds the standing chat option and relies on the
+client's implicit custom answer. After the envelope, the specialist stops. The root presents the
+decision through its native UI, then resumes or reinvokes the specialist with the resolved answer.
+Direct custom-agent callers receive the same envelope.
+
+#### Resolved User Decisions Envelope
+
+After rendering an outbound envelope, the root MUST return this versioned, harness-neutral payload
+to the specialist **verbatim**. It is the only inbound representation of a resolved decision:
+
+````markdown
+## Resolved User Decisions
+
+```yaml
+schema_version: 1
+decisions:
+  - id: stable_snake_case_id
+    answer:
+      kind: selected_option
+      option_id: original_option_id
+  - id: another_stable_snake_case_id
+    answer:
+      kind: custom_answer
+      value: Exact user-supplied answer
+```
+````
+
+`id` MUST be the original decision ID from `## User Decisions Required`. A `selected_option`
+answer MUST name the original leaf ID in `option_id`, including when staged rendering reaches that
+leaf through a branch group. A `custom_answer` MUST preserve the user's answer in `value`; the root
+MUST NOT recast a write-in as a selected option because its text resembles an option label. These
+two discriminated forms make listed selections and user-authored answers unambiguous across every
+harness.
+
+Before performing work that depends on an answer, the receiving specialist MUST validate that the
+payload has `schema_version: 1`, contains each requested decision ID exactly once and no unknown ID,
+uses a known original leaf ID for every `selected_option`, and carries a non-empty `value` for every
+`custom_answer`. On failure, it MUST stop and request a corrected resolved-decision payload; it
+MUST NOT infer, normalize, or silently repair an answer. The root constructs this payload only after
+rendering is complete and passes it unchanged on every resume or reinvocation.
+
+#### Staged Native Rendering
+
+When a native tool can display only 2–3 substantive options while a decision envelope contains
+3–4 substantive leaves, the root MUST render a complete staged decision tree rather than trimming
+the envelope. This procedure applies to Claude, Codex, and every other native tool with that
+effective limit:
+
+1. Retain every original leaf, its stable ID, trade-off, and the one recommendation in the envelope.
+2. Partition the leaves into two named branch groups: one leaf versus the remaining two for three
+   leaves, or two leaves versus two leaves for four. Each root-stage label and description MUST name
+   every leaf it contains; a grouped branch is navigation, never a collapsed or selected outcome.
+3. Render the two branch groups plus **"Let's chat about this"**. The tool-provided free-form
+   **"Other"** entry remains the type-your-own blank state. The root-stage recommendation identifies
+   the recommended branch and gives its context-grounded rationale.
+4. After the user selects a group containing multiple original leaves, render those leaves as the
+   next single-choice question, again with chat and type available and exactly one context-grounded
+   recommendation. If the selected group contains one original leaf, it is terminal: record that
+   original leaf ID immediately and do not pose a singleton follow-up. Continue staging only when a
+   selected group has multiple leaves; a write-in that creates a new branch follows Rule 7 before
+   continuing.
+5. Record the final original leaf ID through the `selected_option` form in the Resolved User
+   Decisions Envelope. Every original leaf MUST remain reachable exactly once; the root MUST NOT
+   omit, silently collapse, auto-select, or reinterpret any leaf to fit a native tool's limit.
+
+The staged UI is a rendering of the exhaustive envelope, not a weaker substitute for it. Chat and
+the blank-state type path are required at every rendered stage, and the resulting final leaf remains
+subject to the envelope's one-decision, trade-off, and recommendation requirements. Every staged
+root renders two branch groups plus Chat at the first stage, and two leaves plus Chat at a multi-leaf
+follow-up; its platform binding defines any additional native-tool constraints.
+
+Only a genuinely non-interactive root or harness without a native tool falls back to inline
+markdown options emitted to its caller in the following format:
 
 ```markdown
 **Question**: [Decision to resolve]
@@ -338,12 +435,14 @@ A grill question is invalid when ANY of the following hold:
 
 When `plan-maker` is invoked by `plan-planning`, the macro design decisions
 are already resolved by Steps 1 and 3 of that workflow. The `plan-maker` grilling sessions
-in that context become **validation passes** for micro-decisions (exact Gherkin phrasing,
-section ordering, step granularity). The structured format (Rules 2–5) still applies, but
-questions are narrower.
+in that context become root-orchestrated **validation passes** for micro-decisions (exact Gherkin
+phrasing, section ordering, step granularity). The specialist returns `## User Decisions Required`
+and stops; the root resolves it and resumes or reinvokes the specialist. The structured format
+(Rules 2–5) still applies, but questions are narrower.
 
-When `plan-maker` is invoked standalone (not via `plan-establishment`), both the pre-write
-and post-write grills are full grill sessions resolving all open decisions.
+Standalone plan-maker triggers still require full pre-write and post-write grill sessions, but the
+calling root orchestrates them. A directly invoked specialist returns the envelope; it never renders
+the native UI itself.
 
 ### Grilling Is a Process Artifact, Not a Document Artifact
 
@@ -388,18 +487,24 @@ heading or end of file.
 ### Primary Coding Harness — Claude Code
 
 Claude Code exposes `AskUserQuestion` as its native interactive multiple-choice tool. When
-grilling inside a Claude Code session, the `grill-me` skill MUST invoke `AskUserQuestion`
+grilling inside an interactive Claude Code root session, the `grill-me` skill MUST invoke
+`AskUserQuestion`
 with:
 
 - `questions`: 1–4 questions (one per tightly-coupled decision cluster)
-- `options` per question: 2–3 substantive selectable options plus a standing
-  `"Let's chat about this"` option (≤4 array entries total, reserving room for chat)
+- `header` per question: a short label of at most 12 characters
+- `question` per question: one self-contained decision prompt
+- `options` per question: 2–3 substantive `{ label, description }` option objects plus the standing
+  `"Let's chat about this"` option (3–4 total)
+- `multiSelect` per question: `false`
 - The harness's auto-provided free-text `"Other"` entry is the blank-state type option — the
   answer is whatever the user writes; it is always present and satisfies the Rule 8 blank-state
   requirement
 
 `AskUserQuestion` returns a structured response the agent uses directly without parsing
-free-text. Markdown option lists are only a fallback when `AskUserQuestion` is unavailable.
+free-text. A delegated agent returns unresolved decisions to the root and stops; only a genuinely
+non-interactive root without `AskUserQuestion` emits the markdown fallback to its caller.
+For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering).
 
 Example invocation shape:
 
@@ -407,12 +512,23 @@ Example invocation shape:
 AskUserQuestion({
   questions: [
     {
+      header: "Plan scope",
       question: "Where should the new convention live?",
       options: [
-        "development/workflow/grilling-with-options.md  [RECOMMENDED — layer-coherent, matches adjacent workflow docs]",
-        "conventions/writing/grilling-with-options.md  [fails layer-coherence; conventions/ is documentation-scoped]",
-        "Let's chat about this  [discuss the decision before committing]"
-      ]
+        {
+          label: "Development workflow (Recommended)",
+          description: "Layer-coherent and matches adjacent workflow documentation."
+        },
+        {
+          label: "Writing convention",
+          description: "Co-locates writing rules but conflicts with the documentation-only layer."
+        },
+        {
+          label: "Let's chat about this",
+          description: "Discuss the placement before selecting an option."
+        }
+      ],
+      multiSelect: false
       // The harness auto-appends a free-text "Other" entry — that is the blank-state type
       // option (answer = whatever the user writes), always present per Rule 8.
     }
@@ -422,16 +538,53 @@ AskUserQuestion({
 
 ### Secondary Harness — OpenCode
 
-OpenCode provides an interactive prompt equivalent. When running in an OpenCode session, use
-its interactive prompt API with 2-4 selectable options per question. If the interactive
-prompt API is unavailable in the current OpenCode version, fall back to the markdown option
-format defined in Rule 6.
+OpenCode provides the `question` tool. When running in an interactive OpenCode root session, use
+`question` with 2-4 substantive options plus the standing `"Let's chat about this"` option per
+question. The client-provided custom answer remains implicit. If `question` is unavailable in the
+current OpenCode version, fall back to the markdown option format defined in Rule 6.
+
+### OpenAI Codex
+
+Codex exposes `request_user_input` to the interactive root thread when the repository enables
+`[features].default_mode_request_user_input = true` in `.codex/config.toml`. Codex currently marks
+this feature as under development and keeps it off by default, so the repository-level opt-in is
+required.
+
+The root orchestrator MUST own every grill and invoke `request_user_input` directly. After the user
+resolves the questions, it constructs and passes the canonical Resolved User Decisions Envelope
+verbatim to any delegated `plan-maker` or `plan-fixer`; it MUST NOT delegate the user interaction
+itself.
+
+One `request_user_input` call carries 1–3 tightly coupled question objects. Each object MUST use:
+
+- `header`: a short label of at most 12 characters
+- `id`: a stable `snake_case` identifier
+- `question`: one self-contained decision prompt
+- `options`: 2–3 option objects total; Rule 2's two-substantive-option minimum plus the standing
+  **"Let's chat about this"** option means a grill uses exactly 3
+
+Put the Recommended option first and suffix its label with `(Recommended)`. Every option object has
+a 1–5 word `label`, including that suffix, and a one-sentence trade-off in `description`. Do not add
+an `Other` option because the client supplies the free-form entry. Each question accepts one answer
+only; never request or simulate multi-select.
+
+For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering): the
+first stage has two branch groups plus Chat, and a multi-leaf follow-up has two original leaves plus
+Chat. A selected singleton group is terminal and records its original leaf ID without a follow-up
+prompt.
+
+A non-root subagent returns `## User Decisions Required` to the root and stops; it MUST NOT render a
+user prompt or select an answer. The root asks through `request_user_input`, then resumes or
+reinvokes the delegated agent with the resolved answers. A non-interactive root, including
+`codex exec`, emits the Rule 6 markdown fallback to its caller.
 
 ### All Other Harnesses
 
-Any harness that does not provide a native interactive multiple-choice tool falls back to the
-inline markdown format defined in Rule 6. The structured format requirements (Rules 2–5) are
-identical regardless of rendering mechanism.
+A genuinely non-interactive root or harness without a native interactive multiple-choice tool emits
+the inline markdown format defined in Rule 6 to its caller. A subagent returns unresolved decisions
+to the root and stops. A native tool with a 2–3-substantive-option limit follows
+[Staged Native Rendering](#staged-native-rendering). The structured format requirements (Rules 2–5)
+are identical regardless of rendering mechanism.
 
 ## Related Documentation
 
