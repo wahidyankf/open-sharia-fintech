@@ -281,30 +281,46 @@ Use `git add -- <ledger-paths>`, `git commit -m 'docs(governance): converge PR r
 `gh pr create --draft --base main --head governance/pr-review-rule-convergence-public` for P3-004,
 C6 for its status, and `gh pr merge <public-pr> --merge --delete-branch` only after P3-005 passes.
 
-- [ ] [AI] [P3-001] Create a sanitized OSE-private companion diff and governed-path equivalence manifest
+- [x] [AI] [P3-001] Create a sanitized OSE-private companion diff and governed-path equivalence manifest
       in its own repository/worktree — acceptance: no private facts are copied into OSE-public.
-- [ ] [AI] [P3-002] Prepare the OSE-private worktree diff and verify its intended post-public base,
+  - Evidence: the companion used the recorded governed-path manifest; its public-safe outcome was
+    byte-identical with no private content copied into this plan.
+- [x] [AI] [P3-002] Prepare the OSE-private worktree diff and verify its intended post-public base,
       secret-safety status, and public/private byte-identity manifest — acceptance: it is ready for the
       one-plan direct push without a PR or PR-quality wait.
-- [ ] [AI] [P3-002A] Record the narrow user-authorized OSE-private direct-push exception in sanitized
+  - Evidence: the clean companion was based on the public canonical policy and its manifest matched
+    before delivery.
+- [x] [AI] [P3-002A] Record the narrow user-authorized OSE-private direct-push exception in sanitized
       delivery evidence — acceptance: it names this plan only, never a reusable bypass.
-- [ ] [AI] [P3-003] Commit and push the public policy branch using a Conventional Commit — acceptance:
+  - Evidence: this plan alone authorized `HEAD:main` from its self-created private worktree; it did
+    not authorize a general check bypass or a reusable direct-push path.
+- [x] [AI] [P3-003] Commit and push the public policy branch using a Conventional Commit — acceptance:
       the explicit file-touch ledger matches the staged paths.
-- [ ] [AI] [P3-004] Open a draft public PR and verify the `pr-quality-gate` workflow's final-head run —
+  - Evidence: public commit `7ea0b6f` was pushed from the recorded policy worktree with only ledger
+    paths staged.
+- [x] [AI] [P3-004] Open a draft public PR and verify the `pr-quality-gate` workflow's final-head run —
       acceptance: every required job in that workflow is green.
-- [ ] [AI] [P3-004A] If the public workflow is queued or stalled, investigate shared runner contention
+  - Evidence: public PR #171's 14 final-head checks passed before merge.
+- [x] [AI] [P3-004A] If the public workflow is queued or stalled, investigate shared runner contention
       and continue polling at the documented cadence — acceptance: the active goal remains active and no
       run is cancelled merely to escape a queue.
-- [ ] [AI] [P3-005] Classify this policy PR under the new behavior-based rule and perform only the
+  - Evidence: shared-runner state was checked during the public delivery; no run or active goal was
+    cancelled for queue contention.
+- [x] [AI] [P3-005] Classify this policy PR under the new behavior-based rule and perform only the
       applicable review route — acceptance: the route and evidence are recorded without circular guessing.
-- [ ] [AI] [P3-006] Merge the public PR after its selected route and named workflow pass — acceptance:
+  - Evidence: PR #171 changed static governance, plans, instructions, and generated bindings only;
+    it was noneligible and required the named quality workflow, not a specialist review cycle.
+- [x] [AI] [P3-006] Merge the public PR after its selected route and named workflow pass — acceptance:
       public canonical content is on `main`.
+  - Evidence: PR #171 merged to public `main` as squash revision `55a35066b`.
 
 ### Phase 3 Gate
 
-- [ ] [AI] [P3-007] Run `git fetch origin && git rev-parse origin/main` in OSE Public and
+- [x] [AI] [P3-007] Run `git fetch origin && git rev-parse origin/main` in OSE Public and
       `git rev-parse HEAD` in the private worktree; record the revisions and manifest digest in the
       sanitized reconciliation record — acceptance: P4 can execute without rediscovery.
+  - Evidence: public `origin/main` resolved to `55a35066b`; private companion revision `d6c9302`
+    was reconciled against the same governed-path manifest before direct delivery.
 
 > **Pause Safety:** Public is canonical and private is prepared. Resume immediately with P4-001.
 
@@ -313,21 +329,30 @@ C6 for its status, and `gh pr merge <public-pr> --merge --delete-branch` only af
 Use `git add -- <private-ledger-paths>`, `git commit -m 'docs(governance): converge PR review rules'`,
 and `git push origin HEAD:main` only for this plan's exact private worktree after P4-001 succeeds.
 
-- [ ] [AI] [P4-001] Reconfirm the private companion still matches the final public governed-path
+- [x] [AI] [P4-001] Reconfirm the private companion still matches the final public governed-path
       manifest byte-for-byte — acceptance: any public merge-time edit is propagated before private merge.
-- [ ] [AI] [P4-002] Commit the OSE-private worktree and push its verified change directly to
+  - Evidence: the final portable manifest had zero public/private divergence.
+- [x] [AI] [P4-002] Commit the OSE-private worktree and push its verified change directly to
       `origin/main` immediately after public merge — acceptance: post-public base, secret-safety, and
       manifest checks passed; no PR or quality-check result is required.
-- [ ] [AI] [P4-003] Record public/private revisions, manifest outcome, and temporary-skew closure using
+  - Evidence: private revision `d6c9302` was pushed directly to `origin/main` under P3-002A; no PR
+    or check result was awaited.
+- [x] [AI] [P4-003] Record public/private revisions, manifest outcome, and temporary-skew closure using
       safe identifiers only — acceptance: governed paths are on-par after the companion merge.
-- [ ] [AI] [P4-005] Run C7 in `worktrees/pr-review-rule-convergence/` for OSE-private, then run C8
+  - Evidence: public `55a35066b` and private `d6c9302` close the temporary delivery skew; the
+    governed-path manifest remains byte-identical.
+- [x] [AI] [P4-005] Run C7 in `worktrees/pr-review-rule-convergence/` for OSE-private, then run C8
       against that exact path — acceptance: only this plan's clean private worktree is removed immediately.
+  - Evidence: the exact clean self-created private worktree was removed; the unrelated private
+    worktree remains untouched.
 
 ### Phase 4 Gate
 
-- [ ] [AI] [P4-004] Run `shasum -a 256 <manifest-paths>` in the public and private repository roots and
+- [x] [AI] [P4-004] Run `shasum -a 256 <manifest-paths>` in the public and private repository roots and
       compare the sanitized manifest — acceptance: zero unintended divergence; the ready OSE Primer
       companion is explicitly in scope.
+  - Evidence: all governed-path SHA-256 values match; Primer is the remaining in-scope companion and
+    its documented partial-corpus link adaptations are not public/private portable-policy divergence.
 
 > **Pause Safety:** Public/private parity is restored. Resume with P4P-001.
 
@@ -338,37 +363,78 @@ before push, `git push -u origin governance/pr-review-rule-convergence-primer`,
 `gh pr create --draft --base main --head governance/pr-review-rule-convergence-primer`, C6, and
 `gh pr merge <primer-pr> --merge --delete-branch` after the selected review route passes.
 
-- [ ] [AI] [P4P-001] Provision or enter the plan's single OSE Primer worktree and record its separate
+- [x] [AI] [P4P-001] Provision or enter the plan's single OSE Primer worktree and record its separate
       file-touch ledger — acceptance: no OSE-public or OSE-private working tree is modified from Primer.
-- [ ] [AI] [P4P-002] Build an applicable-policy manifest from final public canonical files, naming each
+  - Evidence: the self-created Primer worktree is the only Primer working tree used for this plan;
+    its source and generated-file changes are isolated there.
+- [x] [AI] [P4P-002] Build an applicable-policy manifest from final public canonical files, naming each
       documented Primer-specific path or wording exception — acceptance: every routing, convergence, and
       secret-response rule has a Primer disposition.
-- [ ] [AI] [P4P-003] Propagate the applicable PR-review workflow, merge protocol, plan convention,
+  - Evidence: the final public governed paths were propagated; only documented Primer partial-corpus
+    links use canonical public URLs instead of importing unrelated history.
+- [x] [AI] [P4P-003] Propagate the applicable PR-review workflow, merge protocol, plan convention,
       CI-monitoring, root instructions, and repo-rules-maker guidance in OSE Primer — acceptance: its
       canonical sources implement the same policy semantics.
-- [ ] [AI] [P4P-004] Regenerate OSE Primer bindings from `.claude/` and run its binding-sync validation
+  - Evidence: the Primer policy sources now implement the same eligibility, seven-cycle convergence,
+    secret-remediation, runner-contention, and self-created-worktree cleanup semantics.
+- [x] [AI] [P4P-004] Regenerate OSE Primer bindings from `.claude/` and run its binding-sync validation
       — acceptance: no generated mirror is hand-edited or omitted from the companion diff.
-- [ ] [AI] [P4P-005] Search OSE Primer's `plans/backlog/` and `plans/in-progress/`, classify every
+  - Evidence: `npm run generate:bindings` and `npm run validate:sync` passed with 69/69 checks on the
+    final-source candidate; generated mirrors were emitted from `.claude/`.
+- [x] [AI] [P4P-005] Search OSE Primer's `plans/backlog/` and `plans/in-progress/`, classify every
       retired-rule match, and retrofit each forward-facing plan document — acceptance: its live plans no
       longer encode the retired fixed-cycle rule; historical execution records stay historical.
-- [ ] [AI] [P4P-006] Run applicable OSE Primer Markdown, policy-manifest, and quality-gate checks —
+  - Evidence: a fresh current-main scan found one retained active-plan instruction; it was completed
+    by P4P-005A and the final re-scan has no forward-facing fixed-cycle result.
+- [x] [AI] [P4P-005A] Retrofit every forward-facing OSE Primer live-plan match found by the fresh-root
+      scan, using the canonical behavior classifier instead of a fixed cycle count — acceptance: a
+      re-scan has zero retained forward-facing fixed-cycle review instruction, with historical records
+      explicitly exempted.
+  - Evidence: `plans/in-progress/add-investment-oracle-app/delivery.md` now delegates to the canonical
+    eligible/noneligible classifier; second companion PR #36 delivered this static-plan retrofit.
+- [x] [AI] [P4P-006] Run applicable OSE Primer Markdown, policy-manifest, and quality-gate checks —
       acceptance: changed canonical, generated, and plan files pass without a bypass.
-- [ ] [AI] [P4P-007] Commit, push, open a draft OSE Primer companion PR, apply its classifier-selected
+  - Evidence: local link validation excluding `plans/done`, format validation, diff checks, and binding
+    synchronization passed. A later local full pre-push rebuild exhausted disposable `rhino-cli/target`
+    capacity and was cleaned at that exact ignored path; it is an environment limit, not a code finding.
+    The final remote quality-gate run remains the required completion evidence in P4P-007B.
+- [x] [AI] [P4P-006A] Diagnose and repair the initial Primer quality-gate link failure without weakening
+      or bypassing the gate — acceptance: final local validation has no active broken link and the new
+      commit retriggers the named workflow.
+  - Evidence: the first final-head candidate exposed partial-corpus internal links. Canonical public
+    links replaced the unsupported local historical imports; no secret, gate bypass, or unrelated
+    history import was introduced, and the repaired candidate was pushed as `7b40648`.
+- [x] [AI] [P4P-007] Commit, push, open a draft OSE Primer companion PR, apply its classifier-selected
       review route, and verify its final-head `pr-quality-gate` run — acceptance: the PR is ready to merge
       under the new plan-independent policy.
-- [ ] [AI] [P4P-007A] If the OSE Primer workflow is queued or stalled, investigate contention and
+  - Evidence: initial companion PR #35 carried the canonical policy and generated bindings; repaired
+    final head `7b40648` passed all 14 checks and was classified noneligible.
+- [x] [AI] [P4P-007A] If the OSE Primer workflow is queued or stalled, investigate contention and
       continue patient monitoring — acceptance: runner availability never cancels the active goal.
-- [ ] [AI] [P4P-008] Merge the passing OSE Primer companion and record public/private/Primer revision
+  - Evidence: the repaired quality-gate run queued on the shared runner pool, then began execution;
+    queue state was checked across all OSE repositories and no run or goal was cancelled.
+- [x] [AI] [P4P-007B] Deliver the P4P-005A retrofit through a second, static-document OSE Primer PR
+      and verify its final-head named quality workflow — acceptance: the noneligible route is recorded,
+      no specialist cycle is run, and the second PR merges before P4P-008.
+  - Evidence: PR #36's final head `44cd68a` passed all 14 checks, was noneligible static plan prose,
+    and merged without a specialist cycle.
+- [x] [AI] [P4P-008] Merge the passing OSE Primer companion and record public/private/Primer revision
       reconciliation using safe identifiers only — acceptance: this plan's three-repository policy change
       is complete.
-- [ ] [AI] [P4P-010] Run C7 in the OSE Primer `worktrees/pr-review-rule-convergence/`, then run C8
+  - Evidence: Primer PR #35 merged at `d3acb54`; its live-plan retrofit PR #36 merged at `9d25bb6`.
+    Together with public `55a35066b` and private `d6c9302`, all scoped delivery is complete.
+- [x] [AI] [P4P-010] Run C7 in the OSE Primer `worktrees/pr-review-rule-convergence/`, then run C8
       against that exact path — acceptance: only this plan's clean OSE Primer worktree is removed immediately.
+  - Evidence: the exact clean Primer worktree was removed after each companion delivery; its recreated
+    instance was removed after PR #36, and no Primer root checkout was targeted.
 
 ### Phase 4P Gate
 
-- [ ] [AI] [P4P-009] Run `git fetch origin && git rev-parse origin/main` and C2 against OSE Primer
+- [x] [AI] [P4P-009] Run `git fetch origin && git rev-parse origin/main` and C2 against OSE Primer
       `plans/backlog/ plans/in-progress/` — acceptance: all in-scope Primer changes landed and every
       exception is documented.
+  - Evidence: fetched Primer `origin/main` is `9d25bb6`; the final C2 scan reports no retained
+    forward-facing fixed-cycle rule. External canonical URLs remain the sole partial-corpus adaptation.
 
 > **Pause Safety:** The three-repository policy rollout is complete. Resume with P5-001.
 
@@ -378,20 +444,34 @@ Use `git mv plans/in-progress/pr-review-rule-convergence
 plans/done/2026-08-11__pr-review-rule-convergence`, update the two plan indexes, run C3 and C5, then
 create and merge the `docs/pr-review-rule-convergence-closeout` archival PR before P5-004.
 
-- [ ] [AI] [P5-001] Triage every `learnings.md` item: move reusable items into an existing/new
+- [x] [AI] [P5-001] Triage every `learnings.md` item: move reusable items into an existing/new
       `plans/ideas/` two-pager, or record the explicit none outcome — acceptance: no untriaged learning
       remains.
-- [ ] [AI] [P5-002] Move the completed plan to `plans/done/YYYY-MM-DD__pr-review-rule-convergence/`
+  - Evidence: no code-related LOW finding or cycle-six/seven non-convergence occurred. The Primer
+    partial-corpus and local disposable-build observations are resolved inline in `learnings.md`; no
+    new idea has a concrete reusable problem statement.
+- [x] [AI] [P5-002] Move the completed plan to `plans/done/YYYY-MM-DD__pr-review-rule-convergence/`
       and update plan indexes — acceptance: archival is included in the public delivery boundary.
-- [ ] [AI] [P5-003] Reconcile `git status --short` with the full file-touch ledger — acceptance:
+  - Evidence: moved to `plans/done/2026-08-11__pr-review-rule-convergence/`; the active and completed
+    plan indexes are updated in this archival delivery.
+- [x] [AI] [P5-003] Reconcile `git status --short` with the full file-touch ledger — acceptance:
       no foreign file is staged or committed.
-- [ ] [AI] [P5-004] Run C7 in `worktrees/ose-new-rules/`, verify its public delivery units and archival
-      PR are complete, then run C8 against `worktrees/ose-new-rules/` — acceptance: only this plan's clean
-      public worktree is removed immediately; no root checkout, broad path, glob, or foreign worktree is targeted.
+  - Evidence: the archival diff contains only this plan folder and the two plan indexes; generated audit
+    reports remain untracked/ignored operational evidence.
+- [x] [AI] [P5-005] Before terminal cleanup, confirm P0–P4P and P5-001 through P5-003 have evidence,
+      planned indexes are current, the archival PR's current head has passed the named quality workflow,
+      and this is the only remaining
+      self-created plan worktree — acceptance: P5-004 has a safe, fully committed terminal-cleanup
+      precondition.
+  - Evidence: public archival PR #172 final head `6198455` passed all 14 checks. P0–P4P and
+    P5-001 through P5-003 are checked with evidence; private and Primer worktrees are absent, so
+    this exact public worktree is the only remaining self-created plan worktree.
 
 ### Phase 5 Gate
 
-- [ ] [AI] [P5-005] Confirm all delivery nodes P0–P5 have evidence, planned indexes are current, and
-      only repository root checkouts remain — acceptance: the plan has a safe terminal state.
+- [ ] [AI] [P5-004] Run C7 in `worktrees/ose-new-rules/` after P5-005, then run C8 against that exact
+      path — acceptance: only this plan's clean public worktree is removed immediately; no root checkout,
+      broad path, glob, or foreign worktree is targeted. Record terminal confirmation in the delivery
+      handoff because the removed worktree cannot commit a later checklist update.
 
 > **Pause Safety:** The implementation is archived, all exact plan worktrees are removed, and root checkouts remain for final synchronization.

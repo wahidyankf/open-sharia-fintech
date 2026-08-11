@@ -6,6 +6,8 @@
 
 ## File-Touch Ledger
 
+- `plans/in-progress/pr-review-rule-convergence/README.md` and `brd.md` — current delivery status and
+  canonical Markdown table formatting during closeout.
 - `plans/in-progress/pr-review-rule-convergence/learnings.md` — P0-001 baseline and execution notes.
 - `plans/in-progress/pr-review-rule-convergence/delivery.md` — P0 task status and evidence.
 - `repo-governance/workflows/pr/pr-review-quality-gate.md` — P1-001 through P1-004A canonical
@@ -115,6 +117,33 @@ diagnosis.
 Immediate cleanup is safe only when the exact path is recorded as self-created for the plan and is
 clean, pushed, and no longer needed. Those checks replace a confirmation prompt; broad paths and
 foreign worktrees remain categorically out of scope.
+
+## Delivery Evidence and Knowledge Triage
+
+- Public PR #171 was a static governance and generated-binding delivery. The classifier selected the
+  noneligible route, and its final-head quality workflow passed before its squash merge
+  (`55a35066b`). This confirms that a policy-plan PR does not acquire a specialist review loop merely
+  because it edits the review workflow itself.
+- The plan-local private exception delivered verified revision `d6c9302` directly to `origin/main`.
+  The portable governed-path manifest remained byte-identical with public; the clean exact private
+  worktree was then removed. This is delivery evidence, not a general direct-push precedent.
+- Primer's initially failing quality run revealed partial-repository link targets, not a policy or
+  implementation failure. Canonical public URLs are the documented Primer-only adaptation for such
+  targets; the shared policy semantics and generated bindings remain in scope. The re-triggered run
+  is monitored under the existing runner-contention rule.
+- A local final Primer pre-push rebuild can encounter disposable build-artifact disk exhaustion even
+  after document checks pass. The exact ignored `rhino-cli/target` path was safely swept; the running
+  remote named workflow remains the authoritative final build evidence. This is an environment
+  observation, not a reusable code-review finding.
+- The first Primer policy companion did not alter a separately retained active-plan review instruction.
+  A fresh check of the actual current main tree isolated one forward-facing occurrence, delivered in
+  static-only PR #36. The closeout scan is tied to fetched current main rather than an outdated root
+  checkout, preventing stale-inventory conclusions.
+- Archive status: the six plan documents were moved unchanged in substance to this dated completed-plan
+  folder, except for the terminal execution evidence. The plan indexes are the only additional tracked
+  closeout paths; generated plan-audit reports remain operational evidence outside the commit.
+- Knowledge-capture disposition: no code-related LOW finding and no cycle-six-or-seven
+  non-convergence was produced by this plan. No new `plans/ideas/` item is warranted.
 
 ## P1R Retrofit Manifest
 

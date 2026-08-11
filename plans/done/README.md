@@ -9,6 +9,13 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-11: pr-review-rule-convergence](./2026-08-11__pr-review-rule-convergence/README.md) —
+  Replaced universal fixed-cycle PR review with behavior-based routing: executable behavior receives
+  a maximum seven-cycle, early-clean review loop; static prose uses the named quality workflow.
+  Documented full reachable-history secret remediation, patient runner contention, AI-only delivery,
+  immediate exact-worktree cleanup, and public/private portable-policy parity. Delivered by public
+  PR #171, a plan-local private direct push, Primer PR #35, and Primer plan-retrofit PR #36.
+
 - [2026-08-11: beaver-nest-repo-consolidation](./2026-08-11__beaver-nest-repo-consolidation/README.md) —
   Consolidated BeaverNest into `ose-public` as `apps/beavernest-be` and
   `apps/beavernest-app-web`, swept the three surviving repositories, and archived
