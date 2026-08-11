@@ -4,7 +4,7 @@
 
 ```mermaid
 %% Color palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Purple #CC78BC
-flowchart LR
+flowchart TD
   D["PR diff classifier"]:::blue --> E{"Executable behavior?"}:::blue
   E -->|Yes| R["Sequential review: max 7\nexit when code M/H/C = 0"]:::orange
   E -->|No| Q["pr-quality-gate workflow"]:::teal
