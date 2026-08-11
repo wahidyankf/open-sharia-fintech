@@ -85,6 +85,15 @@ custom answer. The root invokes this skill through its native UI when available,
 reinvokes the specialist with the resolved answers. Direct custom-agent callers receive the same
 envelope.
 
+### Staged native rendering
+
+When a native tool permits only 2–3 substantive options but the envelope has 3–4 leaves, preserve
+the whole envelope and use the [canonical staged procedure](../../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering).
+The root first presents two named branch groups that enumerate their contained leaves, plus chat and
+the client-provided type-your-own entry; it then presents the selected group's original leaves. Do
+not omit, collapse, auto-select, or reinterpret a leaf. Chat and the blank-state type path remain
+available at every stage, and only the final original leaf is recorded as the answer.
+
 **Fallback only for a genuinely non-interactive root or harness without a native tool**: emit
 inline markdown options to the caller, still satisfying Rules 2–5:
 
@@ -121,7 +130,8 @@ Use `AskUserQuestion` with 1–4 tightly coupled questions per call. Each questi
 `header` of at most 12 characters, a self-contained `question`, 2–3 substantive
 `{ label, description }` option objects plus **"Let's chat about this"** (3–4 total), and
 `multiSelect: false`. The client-provided free-text **"Other"** entry remains implicit and satisfies
-the blank-state type requirement.
+the blank-state type requirement. For a 3–4-leaf envelope, follow [Staged native
+rendering](#staged-native-rendering).
 
 ### OpenCode
 
@@ -146,11 +156,7 @@ Put the Recommended option first and suffix its label with `(Recommended)`. Give
 `Other` option: the client supplies the free-form entry. Each question accepts one answer only; do
 not request or simulate multi-select.
 
-When any decision has 3–4 substantive leaves, render a complete staged decision tree.
-Every `request_user_input` question still has exactly 2 substantive branch options plus chat. A
-branch may group remaining leaves only when its label and description enumerate them; selecting it
-opens a subsequent question until every leaf is reachable exactly once. Never truncate the envelope
-to fit one prompt.
+For a 3–4-leaf envelope, follow [Staged native rendering](#staged-native-rendering).
 
 Codex currently classifies `default_mode_request_user_input` as under development and keeps it off
 by default. This repository opts in through `.codex/config.toml` so interactive root threads expose

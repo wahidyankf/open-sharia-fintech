@@ -750,9 +750,10 @@ for the authoritative mode table and precedence rule.
   the merge step carries a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`. Do NOT guess which of
   the four modes (or which of the three tags) was intended — follow the Grilling Interaction
   Contract with the valid options (four modes, `worktree-to-pr` marked `(Recommended)`; or the three
-  tags), before writing a value. The envelope lists every leaf; on Codex the root uses the staged
-  decision tree, adding chat to each node and relying on the client custom answer. A merge step's tag
-  is never mechanically retagged, at any confidence level — see
+  tags), before writing a value. The envelope lists every leaf; when a native tool's option limit
+  requires staging, the root uses the convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering),
+  preserving chat and the client-provided custom answer at every node. A merge step's tag is never
+  mechanically retagged, at any confidence level — see
   [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) below.
 
 ### How to Fix a Missing `## Delivery Mode` Section
@@ -767,8 +768,10 @@ defaulting.
 ### How to Fix an Invalid Non-Empty Value
 
 Never silently coerce an invalid value to the default. Follow the Grilling Interaction Contract with
-all four modes (`worktree-to-pr` marked `(Recommended)`), then write the resolved mode. On Codex the
-root renders all four leaves through the complete staged decision tree.
+all four modes (`worktree-to-pr` marked `(Recommended)`), then write the resolved mode. When the
+native tool's option limit requires staging, the root follows the convention's [staged decision
+procedure](../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering)
+so every leaf remains reachable.
 
 ### How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
 
@@ -803,8 +806,9 @@ a narrower check layered on top, never a substitute. Concretely:
 
 - `*-to-pr` mode with the merge step carrying a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]` →
   do NOT retag it. Follow the Grilling Interaction Contract with all three valid tags and apply only
-  the resolved tag. On Codex the root renders all three leaves through the complete staged decision
-  tree. An unrecognized tag may carry human-actor semantics this agent must not silently strip —
+  the resolved tag. When the native tool's option limit requires staging, the root follows the
+  convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering).
+  An unrecognized tag may carry human-actor semantics this agent must not silently strip —
   never assume it is safe to overwrite.
 - **Never retag, delete, or otherwise remove a `[HUMAN]`- or `[AI+HUMAN]`-tagged merge step, in any
   Delivery Mode.** Per [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode),

@@ -194,6 +194,32 @@ client's implicit custom answer. After the envelope, the specialist stops. The r
 decision through its native UI, then resumes or reinvokes the specialist with the resolved answer.
 Direct custom-agent callers receive the same envelope.
 
+#### Staged Native Rendering
+
+When a native tool can display only 2–3 substantive options while a decision envelope contains
+3–4 substantive leaves, the root MUST render a complete staged decision tree rather than trimming
+the envelope. This procedure applies to Claude, Codex, and every other native tool with that
+effective limit:
+
+1. Retain every original leaf, its stable ID, trade-off, and the one recommendation in the envelope.
+2. Partition the leaves into two named branch groups: one leaf versus the remaining two for three
+   leaves, or two leaves versus two leaves for four. Each root-stage label and description MUST name
+   every leaf it contains; a grouped branch is navigation, never a collapsed or selected outcome.
+3. Render the two branch groups plus **"Let's chat about this"**. The tool-provided free-form
+   **"Other"** entry remains the type-your-own blank state. The root-stage recommendation identifies
+   the recommended branch and gives its context-grounded rationale.
+4. After the user selects a group, render that group's original leaves as the next single-choice
+   question, again with chat and type available and exactly one context-grounded recommendation.
+   Continue staging if a future tool limit requires it; a write-in that creates a new branch follows
+   Rule 7 before continuing.
+5. Record only the final original leaf as the answer. Every original leaf MUST remain reachable
+   exactly once; the root MUST NOT omit, silently collapse, auto-select, or reinterpret any leaf to
+   fit a native tool's limit.
+
+The staged UI is a rendering of the exhaustive envelope, not a weaker substitute for it. Chat and
+the blank-state type path are required at every stage, and the resulting final leaf remains subject
+to the envelope's one-decision, trade-off, and recommendation requirements.
+
 Only a genuinely non-interactive root or harness without a native tool falls back to inline
 markdown options emitted to its caller in the following format:
 
@@ -438,6 +464,7 @@ with:
 `AskUserQuestion` returns a structured response the agent uses directly without parsing
 free-text. A delegated agent returns unresolved decisions to the root and stops; only a genuinely
 non-interactive root without `AskUserQuestion` emits the markdown fallback to its caller.
+For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering).
 
 Example invocation shape:
 
@@ -500,11 +527,7 @@ a 1–5 word `label`, including that suffix, and a one-sentence trade-off in `de
 an `Other` option because the client supplies the free-form entry. Each question accepts one answer
 only; never request or simulate multi-select.
 
-When any decision has 3–4 substantive leaves, the root MUST render a complete staged
-decision tree. Every `request_user_input` question still carries exactly 2 substantive branch
-options plus chat. A branch may group remaining leaves only when its label and description enumerate
-them; selecting it opens a subsequent question until every original leaf is reachable exactly once.
-The root MUST NOT omit or silently collapse leaves to satisfy the per-question limit.
+For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering).
 
 A non-root subagent returns `## User Decisions Required` to the root and stops; it MUST NOT render a
 user prompt or select an answer. The root asks through `request_user_input`, then resumes or
@@ -515,8 +538,9 @@ reinvokes the delegated agent with the resolved answers. A non-interactive root,
 
 A genuinely non-interactive root or harness without a native interactive multiple-choice tool emits
 the inline markdown format defined in Rule 6 to its caller. A subagent returns unresolved decisions
-to the root and stops. The structured format requirements (Rules 2–5) are identical regardless of
-rendering mechanism.
+to the root and stops. A native tool with a 2–3-substantive-option limit follows
+[Staged Native Rendering](#staged-native-rendering). The structured format requirements (Rules 2–5)
+are identical regardless of rendering mechanism.
 
 ## Related Documentation
 

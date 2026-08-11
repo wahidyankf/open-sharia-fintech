@@ -52,8 +52,11 @@ See [Plans Organization Convention](../../repo-governance/conventions/structure/
 
 ### Step 1: Resolve the Grill (Mandatory — Pre-Write)
 
-Before reading the codebase or creating any files, invoke the `grill-me` skill
-(`.claude/skills/grill-me/SKILL.md`) to resolve all open design decisions.
+Before composing the decision envelope, perform a read-only discovery pass sufficient to ground its
+options in repo reality. The pass MAY read files and run non-mutating searches, but MUST NOT create,
+edit, delete, stage, or otherwise write any workspace artifact. Then invoke the `grill-me` skill
+(`.claude/skills/grill-me/SKILL.md`) to resolve all open design decisions. No plan artifact or other
+write may occur until the root returns resolved answers.
 
 **Interaction ownership (HARD RULE)**: This specialist agent never owns user interaction. Return
 `## User Decisions Required` using the
@@ -61,15 +64,16 @@ Before reading the codebase or creating any files, invoke the `grill-me` skill
 then stop before Step 2. Every `options` array MUST exhaustively list all substantive leaves. The
 root invokes `grill-me` through its native UI when available, then resumes or reinvokes this agent
 with the resolved answers. A direct custom-agent or noninteractive caller receives the same
-envelope; never render a user prompt or infer an answer.
+envelope; never render a user prompt or infer an answer. The discovery pass is the only permitted
+work before that handoff.
 
 **Multiple-options requirement (HARD RULE)**: Every grill question MUST present 2-4 concrete
 options with trade-off descriptions — open-ended questions without options are FORBIDDEN. Every
 question MUST ALSO carry two standing options: a free-form **type-your-own (blank state)** path
 (explicit, never merely implicit — the most common omission) and a **"chat about this"** option
 for discussing the branch before deciding. Format every unresolved choice with the linked canonical
-envelope per the `grill-me` skill. Read the codebase before composing it so options are grounded in
-repo reality.
+envelope per the `grill-me` skill. Use the read-only discovery pass before composing it so options
+are grounded in repo reality.
 See [Grilling-With-Options Convention](../../repo-governance/development/workflow/grilling-with-options.md).
 
 Ask about (each as a structured multiple-choice question):
