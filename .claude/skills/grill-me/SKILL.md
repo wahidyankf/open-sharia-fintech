@@ -62,23 +62,31 @@ yourself writing a question without listing concrete options, rewrite it with op
 sending. **Dropping the blank-state type option (Rule 6) is the second most common failure** —
 every question MUST let the user type their own answer.
 
-## Mechanism — use the AskUserQuestion tool
+## Mechanism — use the native interactive tool
 
-Grilling MUST use the **`AskUserQuestion` tool** (the harness's native interactive
-multiple-choice mechanism), not free-text prose questions. It renders options as selectable
-choices and returns a structured answer — eliminating parse ambiguity — and always offers a
-free-form "Other" path.
+Grilling in an interactive root thread MUST use the harness's native interactive
+multiple-choice tool when available, not free-text prose questions. It renders options as
+selectable choices and returns a structured answer, eliminating parse ambiguity. The root
+orchestrator owns every grill and passes resolved answers to a delegated `plan-maker` or
+`plan-fixer`; it MUST NOT delegate the user interaction itself.
 
-- One `AskUserQuestion` call carries 1–4 questions; use multiple questions only for
-  tightly-coupled decision clusters (Rule 4).
-- Each question carries 2–4 options (Rule 2); put the Recommended one first and append
-  `(Recommended)` to its label with the rationale in its description (Rule 3).
-- Every question keeps a standing **"Let's chat about this"** option and relies on the
-  auto-provided free-text **"Other"** entry for the blank-state type (Rule 6); use ≤3
-  substantive options so the chat option fits within the 4-option cap.
+Use the harness-specific invocation contract in
+[Platform Binding Examples](#platform-binding-examples). In all bindings, put the Recommended
+option first and append `(Recommended)` to its label, place the rationale in its description,
+keep **"Let's chat about this"** as the final explicit option, and rely on the client-provided
+free-text **"Other"** entry for the blank-state type.
 
-**Fallback only when `AskUserQuestion` is unavailable** (non-interactive harness): use inline
-markdown options instead, still satisfying Rules 2–5:
+**Delegated-agent handoff**: a subagent MUST NOT render markdown as if it were asking the user.
+It returns `## User Decisions Required` using the
+[canonical envelope schema](../../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope)
+and stops before work that depends on those answers. Every `options` array exhaustively lists all
+substantive leaves; the root adds the standing chat option and relies on the client's implicit
+custom answer. The root invokes this skill through its native UI when available, then resumes or
+reinvokes the specialist with the resolved answers. Direct custom-agent callers receive the same
+envelope.
+
+**Fallback only for a genuinely non-interactive root or harness without a native tool**: emit
+inline markdown options to the caller, still satisfying Rules 2–5:
 
 > **[Question]**
 >
@@ -89,7 +97,8 @@ markdown options instead, still satisfying Rules 2–5:
 > - **Chat about this**: talk the decision through before deciding. Always present.
 
 No bare "What do you think about X?" questions. No yes/no questions without an options list.
-Present the choices; let the user pick or override.
+Present the choices; let the user pick or override. Never silently select the Recommended option
+or infer an answer because interactive input is unavailable.
 
 ## After the grilling
 
@@ -98,3 +107,53 @@ When all decision tree branches are resolved:
 1. Summarize every decision made and its rationale
 2. Confirm shared understanding explicitly
 3. Signal readiness to proceed to plan writing or implementation
+
+## Platform Binding Examples
+
+The content under this heading is intentionally vendor-specific. Per the
+[Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md),
+the vendor-audit scanner skips every line under this heading until the next same-level heading or
+end of file.
+
+### Claude Code
+
+Use `AskUserQuestion` with 1–4 tightly coupled questions per call. Each question object has a
+`header` of at most 12 characters, a self-contained `question`, 2–3 substantive
+`{ label, description }` option objects plus **"Let's chat about this"** (3–4 total), and
+`multiSelect: false`. The client-provided free-text **"Other"** entry remains implicit and satisfies
+the blank-state type requirement.
+
+### OpenCode
+
+Use OpenCode's `question` tool with 2–4 substantive options plus the standing **"Let's chat about
+this"** option per question, preserving its rich multiple-choice UI path. The client-provided custom
+answer remains implicit. If the current version does not expose `question` to the interactive root
+thread, use the markdown fallback.
+
+### Codex
+
+Use `request_user_input` in the root thread. One call carries 1–3 tightly coupled question objects;
+each object MUST have:
+
+- `header`: a short label of at most 12 characters
+- `id`: a stable `snake_case` identifier
+- `question`: one self-contained decision prompt
+- `options`: 2–3 option objects total; Rule 2's two-substantive-option minimum plus the standing
+  **"Let's chat about this"** option means a grill uses exactly 3
+
+Put the Recommended option first and suffix its label with `(Recommended)`. Give every option a
+1–5 word `label`, including that suffix, and a one-sentence trade-off in `description`. Do not add an
+`Other` option: the client supplies the free-form entry. Each question accepts one answer only; do
+not request or simulate multi-select.
+
+When any decision has 3–4 substantive leaves, render a complete staged decision tree.
+Every `request_user_input` question still has exactly 2 substantive branch options plus chat. A
+branch may group remaining leaves only when its label and description enumerate them; selecting it
+opens a subsequent question until every leaf is reachable exactly once. Never truncate the envelope
+to fit one prompt.
+
+Codex currently classifies `default_mode_request_user_input` as under development and keeps it off
+by default. This repository opts in through `.codex/config.toml` so interactive root threads expose
+the native tool outside plan mode. A non-root subagent returns `## User Decisions Required` to the
+root and stops. A non-interactive root, including `codex exec`, emits the markdown fallback to its
+caller. No context chooses silently.

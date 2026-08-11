@@ -51,6 +51,7 @@ outputs:
 
 **Preferred Mode**: Agent Delegation — invoke `plan-checker` and `plan-fixer` via the Agent
 tool with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
+The calling root owns every user interaction; delegated specialists return decision envelopes.
 
 **Fallback Mode**: Manual Orchestration — execute workflow logic directly using
 Read/Write/Edit tools when Agent Delegation is unavailable.
@@ -68,9 +69,11 @@ The AI will:
 
 1. Invoke `plan-checker` via the Agent tool (reads plan files, writes audit report)
 2. Invoke `plan-fixer` via the Agent tool (reads audit, applies fixes, writes fix report)
-3. Iterate until zero findings achieved
-4. Show git status with modified files
-5. Wait for user commit approval
+3. Resolve any `## User Decisions Required` envelope through root-owned `grill-me`, then resume or
+   reinvoke the fixer
+4. Iterate until zero findings achieved
+5. Show git status with modified files
+6. Wait for user commit approval
 
 **Fallback (Manual Mode)**:
 
@@ -195,7 +198,16 @@ Apply all validated fixes from the audit report.
 
 **Success criteria**: Fixer successfully applies all fixes without errors.
 
-**On failure**: Log errors, proceed to step 4 for verification.
+**Decision-envelope loop (HARD GATE)**: If `plan-fixer` returns `## User Decisions Required`, the
+root validates it against the
+[canonical envelope schema](../../development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+invokes `grill-me` through its native UI when available (or emits the convention's markdown fallback
+to its caller), records answers by stable decision ID, and resumes or reinvokes `plan-fixer`. Repeat
+until the fixer returns completed fixes without an envelope. An envelope is not a failure, skipped
+fix, or iteration; do not advance to Step 4 while it remains unresolved.
+
+**On failure**: For a technical error, log it and proceed to Step 4 for verification. Never classify
+a `## User Decisions Required` envelope as failure.
 
 **Notes**:
 
@@ -279,6 +291,8 @@ Report final status and summary.
 **Failure** (`fail`):
 
 - Checker or fixer encountered technical errors
+
+`## User Decisions Required` is a resumable checkpoint, not a failure or partial result.
 
 **Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).
 
@@ -493,7 +507,8 @@ Track across executions:
 
 ## Notes
 
-- **Fully automated**: No human checkpoints, runs to completion
+- **Root-orchestrated**: Runs automatically except explicit `## User Decisions Required`
+  checkpoints, which the root resolves and feeds back to the specialist
 - **Idempotent**: Safe to run multiple times, won't break working plans
 - **Conservative**: Fixer skips uncertain changes (preserves plan intent)
 - **Observable**: Generates audit reports for every iteration
@@ -505,7 +520,8 @@ This workflow ensures plan quality and implementation readiness through iterativ
 ## Principles Implemented/Respected
 
 - PASS: **Explicit Over Implicit**: All steps, conditions, and termination criteria are explicit
-- PASS: **Automation Over Manual**: Fully automated validation and fixing without human intervention
+- PASS: **Automation Over Manual**: Automates validation and unambiguous fixes while routing genuine
+  decisions through explicit root-owned checkpoints
 - PASS: **Simplicity Over Complexity**: Clear linear flow with loop control
 - PASS: **Accessibility First**: Generates human-readable audit reports
 - PASS: **Progressive Disclosure**: Can run with different scopes and iteration limits

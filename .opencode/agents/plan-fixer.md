@@ -17,6 +17,7 @@ skills:
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans
   - docs-validating-factual-accuracy
+  - grill-me
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
   - repo-generating-validation-reports
@@ -98,6 +99,17 @@ finding as MEDIUM (manual review) or FALSE_POSITIVE rather than spawning a subag
 ## Mode Parameter Handling
 
 The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter logic including mode levels, filtering, reporting, and workflow integration.
+
+## Grilling Interaction Contract
+
+When a MEDIUM-confidence finding requires an external decision, this specialist returns unresolved
+decisions as `## User Decisions Required` using the
+[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+then stops before applying the dependent fix. Every `options` array MUST exhaustively list all
+substantive leaves. The root invokes `grill-me` through its native UI when available, then resumes or
+reinvokes this agent with the resolved answers. A direct custom-agent or noninteractive caller
+receives the same envelope; never render a user prompt or infer an answer. For a four-mode or
+three-tag decision, the envelope lists all leaves; a Codex root uses the complete staged tree.
 
 ## How This Agent Works
 
@@ -755,10 +767,11 @@ for the authoritative mode table and precedence rule.
   is never in scope for this fix, and neither is any other merge-step tag value (see below).
 - **MEDIUM Confidence → grill first**: the declared Delivery Mode value is invalid/unrecognized, OR
   the merge step carries a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`. Do NOT guess which of
-  the four modes (or which of the three tags) was intended — surface it as a grill question (per
-  `grill-me`) with the valid options (four modes, `worktree-to-pr` marked `(Recommended)`; or the
-  three tags, plus the standing blank-state/"chat about this" options), before writing a value. A
-  merge step's tag is never mechanically retagged, at any confidence level — see
+  the four modes (or which of the three tags) was intended — follow the Grilling Interaction
+  Contract with the valid options (four modes, `worktree-to-pr` marked `(Recommended)`; or the three
+  tags), before writing a value. The envelope lists every leaf; on Codex the root uses the staged
+  decision tree, adding chat to each node and relying on the client custom answer. A merge step's tag
+  is never mechanically retagged, at any confidence level — see
   [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) below.
 
 ### How to Fix a Missing `## Delivery Mode` Section
@@ -767,13 +780,14 @@ Insert `## Delivery Mode: worktree-to-pr` immediately after the `## Worktree` se
 mode, absent any signal the user wants otherwise) — multi-file plans: in `delivery.md` before the
 first phase heading; single-file plans: in `README.md` before `## Delivery Checklist`. If the
 plan's existing checklist already shows direct-push-only steps (no PR step anywhere and no
-worktree at all), that is itself a signal to grill the user rather than silently defaulting.
+worktree at all), resolve it through the Grilling Interaction Contract rather than silently
+defaulting.
 
 ### How to Fix an Invalid Non-Empty Value
 
-Never silently coerce an invalid value to the default. Grill the user with the four-mode table
-(`worktree-to-pr` marked `(Recommended)`) plus the standing blank-state/"chat about this" options,
-then write whichever mode they select.
+Never silently coerce an invalid value to the default. Follow the Grilling Interaction Contract with
+all four modes (`worktree-to-pr` marked `(Recommended)`), then write the resolved mode. On Codex the
+root renders all four leaves through the complete staged decision tree.
 
 ### How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
 
@@ -807,10 +821,10 @@ and a recipe's own confidence table (however "mechanical" or "HIGH confidence" i
 a narrower check layered on top, never a substitute. Concretely:
 
 - `*-to-pr` mode with the merge step carrying a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]` →
-  do NOT retag it. Surface it as a MEDIUM-confidence grill question (per the Confidence Assessment
-  above) offering the three valid tags plus the standing blank-state/"chat about this" options, and
-  apply only whichever tag the user selects. An unrecognized tag may carry human-actor semantics
-  this agent must not silently strip — never assume it is safe to overwrite.
+  do NOT retag it. Follow the Grilling Interaction Contract with all three valid tags and apply only
+  the resolved tag. On Codex the root renders all three leaves through the complete staged decision
+  tree. An unrecognized tag may carry human-actor semantics this agent must not silently strip —
+  never assume it is safe to overwrite.
 - **Never retag, delete, or otherwise remove a `[HUMAN]`- or `[AI+HUMAN]`-tagged merge step, in any
   Delivery Mode.** Per [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode),
   the tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in"

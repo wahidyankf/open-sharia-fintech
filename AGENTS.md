@@ -489,25 +489,22 @@ same-level heading or end of file.
 
 ### Platform Bindings Catalog
 
-Concrete tool integrations live **outside** `repo-governance/` in platform-binding directories:
+Codex interactive roots MUST use `request_user_input` at
+[Grilling-With-Options](./repo-governance/development/workflow/grilling-with-options.md) checkpoints;
+specialists return a `## User Decisions Required` envelope.
 
-Tier-1 harnesses — OpenAI Codex CLI, GitHub Copilot, Cursor, Windsurf, Junie, Antigravity CLI, Pi,
-and Kiro CLI — read `AGENTS.md` natively and get **no** per-tool instruction file (no-shadowing).
-The exceptions:
+Tier-1 harnesses in the [platform catalog](./docs/reference/platform-bindings.md) read `AGENTS.md`
+natively with no per-tool instruction file. Exceptions:
 
-- **Claude Code** → `.claude/`, with `CLAUDE.md` as the discoverable shim importing this file
-- **OpenCode** → `.opencode/agents/`; reads `AGENTS.md` and `.claude/skills/<name>/SKILL.md` natively
+- **Claude Code** → `.claude/`; `CLAUDE.md` imports this file
+- **OpenCode** → `.opencode/agents/`; natively reads `AGENTS.md` and `.claude/skills/`
 - **Cursor** → additionally emits `.cursor/agents/`
-- **Amazon Q Developer** (sunsetting — IDE plugins EOS 2027-04-30, succeeded by Kiro CLI) → does not
-  read `AGENTS.md`; gets a generated `.amazonq/` bridge (`rules/00-agents-md.md` + agent config)
-- **Aider** → reads `CONVENTIONS.md` per [its own docs](https://aider.chat/docs/usage/conventions.html)
+- **Amazon Q Developer** → generated `.amazonq/` bridge; does not read `AGENTS.md`
+- **Aider** → `CONVENTIONS.md`
 
-Every generated directory above is emitted by `rhino-cli harness bindings generate` — never hand-edited.
-
-See [platform-bindings.md](./docs/reference/platform-bindings.md) for the full catalog
-of binding directories, root instruction files, and mechanical translation artifacts. The two-tier
-binding model and no-shadowing rule are defined in
-[multi-harness-binding.md](./repo-governance/conventions/structure/multi-harness-binding.md).
+Generate mirrors with `rhino-cli harness bindings generate`; never hand-edit. Complete paths and
+rules: [platform catalog](./docs/reference/platform-bindings.md),
+[binding convention](./repo-governance/conventions/structure/multi-harness-binding.md).
 
 ### Concrete Vendor Model IDs
 

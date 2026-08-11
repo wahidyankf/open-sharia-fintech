@@ -479,14 +479,20 @@ Delegate via the Agent tool. Provide a self-contained handoff prompt containing 
 scaffold in the plan folder as part of every generated plan, per the
 [Knowledge Capture Convention](../../development/quality/knowledge-capture.md).
 
-**Note on plan-maker's own grill protocol**: `plan-maker` mandates a pre-write grill (Step 1) and
-a post-write grill (Step 8). When invoked by `plan-establishment`, these become
-**validation passes** — macro-decisions are already resolved. Micro-decisions (exact Gherkin
-phrasing, section ordering, step granularity) are still resolved by plan-maker's grills.
+**Decision-envelope loop (HARD GATE)**: After every `plan-maker` invocation, inspect its response.
+If it returns `## User Decisions Required` in the
+[canonical envelope schema](../../development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+the root invokes `grill-me` through the native UI when available (or emits the convention's markdown
+fallback to its caller), records the answers by stable decision ID, and resumes or reinvokes
+`plan-maker` with them. Repeat until `plan-maker` returns completed artifacts without an envelope.
+An envelope is a required checkpoint, not a failure, and MUST NOT skip plan-maker's post-write
+validation grill. Macro-decisions from Steps 1 and 3 remain resolved; later envelopes cover only
+newly discovered or validation-pass micro-decisions.
 
 **Output**: Plan files created in the resolved `<plan-dir>`.
 
-**On failure**: Terminate with status `fail`. Surface the error.
+**On failure**: Terminate with status `fail` only for a technical error. A
+`## User Decisions Required` envelope enters the loop above instead.
 
 ### 5. Plan Review (Sequential)
 
@@ -516,7 +522,9 @@ Read the created plan files and verify structural completeness before the qualit
 10. Verify `tech-docs.md` has a `## File-Impact Analysis` whose primary view is one root-relative,
     annotated file tree with `[E]`/`[N]`/`[D]`/`[G]` markers. If `### More Detail` exists, verify it
     immediately follows the tree and provides context rather than a second prose scope list.
-11. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`
+11. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`.
+    Any reinvoked `plan-maker` response follows the same decision-envelope loop from Step 4; do not
+    treat its envelope as the one-retry failure.
 
 **Output**: Plan structurally complete. Ready for quality gate.
 
