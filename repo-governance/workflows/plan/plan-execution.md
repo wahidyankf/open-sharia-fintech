@@ -85,7 +85,10 @@ plans/backlog/<slug>/ plans/in-progress/<slug>/` (no date prefix; `in-progress/`
 8. Move plan folder to plans/done/ using git mv
 9. Show git status with modified files
 10. Wait for user commit approval
-11. After the archival is pushed to `origin main`, prompt the user to delete the plan's worktree (Step 8 worktree cleanup — never deletes without explicit confirmation)
+11. After the final delivery for each repository is pushed or merged, run the exact-path worktree
+    cleanup immediately. Verify the worktree is recorded as self-created for this plan, clean, and
+    fully pushed/merged; then use non-force `git worktree remove <exact-path>` without a confirmation
+    prompt. Never remove a repository root, wildcard path, or another actor's worktree.
 
 ## Orchestration Model
 

@@ -178,17 +178,15 @@ gh api graphql -f query='
   }' -f threadId="$THREAD_ID"
 ```
 
-## Escalation on Repeated Rejection
+## Repeated-Finding Handling
 
 The orchestrating [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)
 feeds each fresh cycle the accumulated `prior` findings and their resolution state. This agent uses
-that fed-in history to detect repetition: when the **same** consolidated finding (posted by
-`pr-review-synthesis-maker`) has been rejected by this agent across **2 or more consecutive
-cycles**, it does not silently reject a third time. Instead it stops re-litigating the point and escalates by surfacing the finding and **both**
-rejection justifications (this cycle's and the prior cycle's) into the PR description, framed for
-the `[HUMAN]` reviewer to decide. See
-[Loop-Exit and Escalation Rules](../../repo-governance/workflows/pr/pr-review-quality-gate.md#loop-exit-and-escalation-rules)
-for the full escalation contract this agent must honor.
+that fed-in history to detect repetition. A reasoned rejection does not erase a code-related
+MEDIUM/HIGH/CRITICAL finding: the next eligible cycle independently verifies the evidence. If it
+remains, it stays merge-blocking and the PR reaches `blocked` at the seven-cycle ceiling rather than
+being handed to a human gate or silently suppressed. Capture sanitized learning at cycles six and
+seven; see [Loop-Exit and Block Rules](../../repo-governance/workflows/pr/pr-review-quality-gate.md#loop-exit-and-block-rules).
 
 ## Untrusted-Input Handling
 

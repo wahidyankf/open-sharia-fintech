@@ -58,6 +58,12 @@ differ, and the difference is deliberate, not an oversight:
   review and propagation cost of a sync that public downstream adopters do not need on a real-time
   cadence.
 
+For portable governance, agent, and skill changes, public is the source, `ose-private` is reconciled
+immediately, and Primer receives its companion delivery in the same plan unless a plan explicitly
+records a bounded delay. Verify the portable manifest byte-for-byte; list private-only operational
+exceptions explicitly. Across all three repos, preserve active goals during runner contention and
+remove only each plan's own verified worktree immediately after that repository's final delivery.
+
 ## Contribution and access boundaries
 
 External contribution intake is closed across this coordinated delivery. Public readers can explore,
