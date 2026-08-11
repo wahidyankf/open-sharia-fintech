@@ -71,9 +71,11 @@ write may occur until the root returns resolved answers.
 [canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
 then stop before Step 2. Every `options` array MUST exhaustively list all substantive leaves. The
 root invokes `grill-me` through its native UI when available, then resumes or reinvokes this agent
-with the resolved answers. A direct custom-agent or noninteractive caller receives the same
-envelope; never render a user prompt or infer an answer. The discovery pass is the only permitted
-work before that handoff.
+with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope).
+The root builds it from the original IDs after rendering and passes it verbatim; validate it before
+dependent work. A direct custom-agent or noninteractive caller receives the same envelope; never
+render a user prompt or infer an answer. The discovery pass is the only permitted work before that
+handoff.
 
 **Multiple-options requirement (HARD RULE)**: Every grill question MUST present 2-4 concrete
 options with trade-off descriptions — open-ended questions without options are FORBIDDEN. Every
@@ -310,7 +312,8 @@ for the underlying git-workflow details.
 After all plan files are written, invoke the `grill-me` skill again and resolve the validation grill
 before signaling done. Apply the Step 1 interaction-ownership rule: a delegated or noninteractive
 agent returns the exact `## User Decisions Required` envelope and stops; after the root resolves it
-through `grill-me`, resume or reinvoke this agent with the answers.
+through `grill-me`, resume or reinvoke this agent with the verbatim Resolved User Decisions Envelope
+and validate it before dependent work.
 
 **Multiple-options requirement (HARD RULE)**: Same as Step 1 — every validation question MUST
 present 2-4 concrete options plus the two standing options (free-form blank-state type and "chat

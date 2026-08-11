@@ -107,9 +107,11 @@ decisions as `## User Decisions Required` using the
 [canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
 then stops before applying the dependent fix. Every `options` array MUST exhaustively list all
 substantive leaves. The root invokes `grill-me` through its native UI when available, then resumes or
-reinvokes this agent with the resolved answers. A direct custom-agent or noninteractive caller
-receives the same envelope; never render a user prompt or infer an answer. For a four-mode or
-three-tag decision, the envelope lists all leaves; a Codex root uses the complete staged tree.
+reinvokes this agent with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope).
+The root builds it from the original IDs after rendering and passes it verbatim; validate it before
+dependent work. A direct custom-agent or noninteractive caller receives the same envelope; never
+render a user prompt or infer an answer. For a four-mode or three-tag decision, the envelope lists
+all leaves; a Codex root uses the complete staged tree.
 
 ## How This Agent Works
 

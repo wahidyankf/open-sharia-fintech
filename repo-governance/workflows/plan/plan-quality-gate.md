@@ -203,8 +203,11 @@ root validates it against the
 [canonical envelope schema](../../development/workflow/grilling-with-options.md#user-decisions-required-envelope),
 invokes `grill-me` through its native UI when available (or emits the convention's markdown fallback
 to its caller), records answers by stable decision ID, and resumes or reinvokes `plan-fixer`. Repeat
-until the fixer returns completed fixes without an envelope. An envelope is not a failure, skipped
-fix, or iteration; do not advance to Step 4 while it remains unresolved.
+until the fixer returns completed fixes without an envelope. After rendering, the root MUST
+construct the canonical [Resolved User Decisions Envelope](../../development/workflow/grilling-with-options.md#resolved-user-decisions-envelope)
+from the original IDs and pass that payload verbatim; `plan-fixer` validates it before dependent
+work. An envelope is not a failure, skipped fix, or iteration; do not advance to Step 4 while it
+remains unresolved.
 
 **On failure**: For a technical error, log it and proceed to Step 4 for verification. Never classify
 a `## User Decisions Required` envelope as failure.

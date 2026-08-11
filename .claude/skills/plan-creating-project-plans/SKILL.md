@@ -35,8 +35,11 @@ lacks a native tool, emits markdown choices to its caller. A plan specialist nev
 user directly. It returns `## User Decisions Required` using the
 [canonical envelope schema](../../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
 with stable decision ID, question, recommended option and rationale, and exhaustive option objects
-with trade-offs, then stops. The root resolves the envelope and resumes or reinvokes the specialist.
-A direct custom-agent or noninteractive specialist caller receives the same envelope.
+with trade-offs, then stops. The root resolves the envelope and resumes or reinvokes the specialist
+with the canonical [Resolved User Decisions Envelope](../../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope),
+constructed from the original IDs after rendering and passed verbatim. The specialist validates it
+before dependent work. A direct custom-agent or noninteractive specialist caller receives the same
+envelope.
 
 **Explore before composing**: read the relevant repo artifacts before creating an envelope or root
 question. Never surface a decision a file read can answer — the repo is the ground truth; the user

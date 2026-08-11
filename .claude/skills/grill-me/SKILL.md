@@ -82,7 +82,9 @@ It returns `## User Decisions Required` using the
 and stops before work that depends on those answers. Every `options` array exhaustively lists all
 substantive leaves; the root adds the standing chat option and relies on the client's implicit
 custom answer. The root invokes this skill through its native UI when available, then resumes or
-reinvokes the specialist with the resolved answers. Direct custom-agent callers receive the same
+reinvokes the specialist with the canonical [Resolved User Decisions Envelope](../../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope).
+It builds that payload from the original IDs only after rendering and passes it verbatim; the
+specialist validates it before dependent work. Direct custom-agent callers receive the same
 envelope.
 
 ### Staged native rendering
@@ -90,9 +92,11 @@ envelope.
 When a native tool permits only 2–3 substantive options but the envelope has 3–4 leaves, preserve
 the whole envelope and use the [canonical staged procedure](../../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering).
 The root first presents two named branch groups that enumerate their contained leaves, plus chat and
-the client-provided type-your-own entry; it then presents the selected group's original leaves. Do
-not omit, collapse, auto-select, or reinterpret a leaf. Chat and the blank-state type path remain
-available at every stage, and only the final original leaf is recorded as the answer.
+the client-provided type-your-own entry. A selected singleton group is terminal: record its original
+leaf ID immediately in the Resolved User Decisions Envelope. Render a follow-up only for a selected
+multi-leaf group. Do not omit, collapse, auto-select, or reinterpret a leaf. Chat and the blank-state
+type path remain available at every rendered stage, and only the final original leaf is recorded as
+the answer.
 
 **Fallback only for a genuinely non-interactive root or harness without a native tool**: emit
 inline markdown options to the caller, still satisfying Rules 2–5:

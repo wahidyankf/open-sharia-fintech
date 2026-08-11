@@ -484,7 +484,10 @@ If it returns `## User Decisions Required` in the
 [canonical envelope schema](../../development/workflow/grilling-with-options.md#user-decisions-required-envelope),
 the root invokes `grill-me` through the native UI when available (or emits the convention's markdown
 fallback to its caller), records the answers by stable decision ID, and resumes or reinvokes
-`plan-maker` with them. Repeat until `plan-maker` returns completed artifacts without an envelope.
+`plan-maker` with them. After rendering, the root MUST construct the canonical
+[Resolved User Decisions Envelope](../../development/workflow/grilling-with-options.md#resolved-user-decisions-envelope)
+from the original IDs and pass that payload verbatim; `plan-maker` validates it before dependent
+work. Repeat until `plan-maker` returns completed artifacts without an envelope.
 An envelope is a required checkpoint, not a failure, and MUST NOT skip plan-maker's post-write
 validation grill. Macro-decisions from Steps 1 and 3 remain resolved; later envelopes cover only
 newly discovered or validation-pass micro-decisions.

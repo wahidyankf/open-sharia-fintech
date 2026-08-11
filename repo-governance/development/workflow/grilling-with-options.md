@@ -194,6 +194,42 @@ client's implicit custom answer. After the envelope, the specialist stops. The r
 decision through its native UI, then resumes or reinvokes the specialist with the resolved answer.
 Direct custom-agent callers receive the same envelope.
 
+#### Resolved User Decisions Envelope
+
+After rendering an outbound envelope, the root MUST return this versioned, harness-neutral payload
+to the specialist **verbatim**. It is the only inbound representation of a resolved decision:
+
+````markdown
+## Resolved User Decisions
+
+```yaml
+schema_version: 1
+decisions:
+  - id: stable_snake_case_id
+    answer:
+      kind: selected_option
+      option_id: original_option_id
+  - id: another_stable_snake_case_id
+    answer:
+      kind: custom_answer
+      value: Exact user-supplied answer
+```
+````
+
+`id` MUST be the original decision ID from `## User Decisions Required`. A `selected_option`
+answer MUST name the original leaf ID in `option_id`, including when staged rendering reaches that
+leaf through a branch group. A `custom_answer` MUST preserve the user's answer in `value`; the root
+MUST NOT recast a write-in as a selected option because its text resembles an option label. These
+two discriminated forms make listed selections and user-authored answers unambiguous across every
+harness.
+
+Before performing work that depends on an answer, the receiving specialist MUST validate that the
+payload has `schema_version: 1`, contains each requested decision ID exactly once and no unknown ID,
+uses a known original leaf ID for every `selected_option`, and carries a non-empty `value` for every
+`custom_answer`. On failure, it MUST stop and request a corrected resolved-decision payload; it
+MUST NOT infer, normalize, or silently repair an answer. The root constructs this payload only after
+rendering is complete and passes it unchanged on every resume or reinvocation.
+
 #### Staged Native Rendering
 
 When a native tool can display only 2–3 substantive options while a decision envelope contains
@@ -208,17 +244,21 @@ effective limit:
 3. Render the two branch groups plus **"Let's chat about this"**. The tool-provided free-form
    **"Other"** entry remains the type-your-own blank state. The root-stage recommendation identifies
    the recommended branch and gives its context-grounded rationale.
-4. After the user selects a group, render that group's original leaves as the next single-choice
-   question, again with chat and type available and exactly one context-grounded recommendation.
-   Continue staging if a future tool limit requires it; a write-in that creates a new branch follows
-   Rule 7 before continuing.
-5. Record only the final original leaf as the answer. Every original leaf MUST remain reachable
-   exactly once; the root MUST NOT omit, silently collapse, auto-select, or reinterpret any leaf to
-   fit a native tool's limit.
+4. After the user selects a group containing multiple original leaves, render those leaves as the
+   next single-choice question, again with chat and type available and exactly one context-grounded
+   recommendation. If the selected group contains one original leaf, it is terminal: record that
+   original leaf ID immediately and do not pose a singleton follow-up. Continue staging only when a
+   selected group has multiple leaves; a write-in that creates a new branch follows Rule 7 before
+   continuing.
+5. Record the final original leaf ID through the `selected_option` form in the Resolved User
+   Decisions Envelope. Every original leaf MUST remain reachable exactly once; the root MUST NOT
+   omit, silently collapse, auto-select, or reinterpret any leaf to fit a native tool's limit.
 
 The staged UI is a rendering of the exhaustive envelope, not a weaker substitute for it. Chat and
-the blank-state type path are required at every stage, and the resulting final leaf remains subject
-to the envelope's one-decision, trade-off, and recommendation requirements.
+the blank-state type path are required at every rendered stage, and the resulting final leaf remains
+subject to the envelope's one-decision, trade-off, and recommendation requirements. Every staged
+root renders two branch groups plus Chat at the first stage, and two leaves plus Chat at a multi-leaf
+follow-up; its platform binding defines any additional native-tool constraints.
 
 Only a genuinely non-interactive root or harness without a native tool falls back to inline
 markdown options emitted to its caller in the following format:
@@ -511,8 +551,9 @@ this feature as under development and keeps it off by default, so the repository
 required.
 
 The root orchestrator MUST own every grill and invoke `request_user_input` directly. After the user
-resolves the questions, it passes the structured answers to any delegated `plan-maker` or
-`plan-fixer`; it MUST NOT delegate the user interaction itself.
+resolves the questions, it constructs and passes the canonical Resolved User Decisions Envelope
+verbatim to any delegated `plan-maker` or `plan-fixer`; it MUST NOT delegate the user interaction
+itself.
 
 One `request_user_input` call carries 1–3 tightly coupled question objects. Each object MUST use:
 
@@ -527,7 +568,10 @@ a 1–5 word `label`, including that suffix, and a one-sentence trade-off in `de
 an `Other` option because the client supplies the free-form entry. Each question accepts one answer
 only; never request or simulate multi-select.
 
-For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering).
+For a 3–4-leaf envelope, the root follows [Staged Native Rendering](#staged-native-rendering): the
+first stage has two branch groups plus Chat, and a multi-leaf follow-up has two original leaves plus
+Chat. A selected singleton group is terminal and records its original leaf ID without a follow-up
+prompt.
 
 A non-root subagent returns `## User Decisions Required` to the root and stops; it MUST NOT render a
 user prompt or select an answer. The root asks through `request_user_input`, then resumes or
