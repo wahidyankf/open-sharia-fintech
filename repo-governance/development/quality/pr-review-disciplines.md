@@ -27,6 +27,21 @@ the reference the
 [PR Merge Protocol](../workflow/pr-merge-protocol.md) point to whenever a finding needs
 categorizing.
 
+## Applicability and Finding Disposition
+
+The specialist disciplines run only after the [PR Review Quality Gate
+classifier](../../workflows/pr/pr-review-quality-gate.md#pr-applicability-classifier) marks a PR
+**eligible**. They review behavior-changing code and executable configuration, not a PR whose full
+diff is static prose, plans, governance text, agent guidance, or skills. The classifier owns that
+decision and defaults an ambiguous diff to eligible; a specialist must not independently opt a PR
+into or out of the loop.
+
+Every finding must identify whether it is **code-related**. Code-related MEDIUM, HIGH, and CRITICAL
+findings are merge-blocking until resolved with evidence. A LOW finding still needs the same cited
+evidence, confidence threshold, severity label, and non-secret-safe wording, but it is recorded and
+deduplicated into `plans/ideas` rather than prolonging an otherwise clean review loop. The
+coordinator preserves that disposition in the consolidated review.
+
 ## Principles Implemented/Respected
 
 This convention implements/respects the following core principles:
@@ -368,19 +383,18 @@ finding — it is held at a lower severity, or held for further verification und
 [Selective Adversarial Verification](#selective-adversarial-verification-d4) rule above when the
 diff is also high-risk, until a reproduction is attached.
 
-### Fixed 3-Cycle Ceiling With No Early Exit
+### Seven-Cycle Maximum With Early Clean Exit
 
-The [PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md) runs a fixed
-ceiling of three sequential CI-gated review cycles with no early exit, even when a cycle produces
-zero new findings and even after a diff has already passed the
-[Selective Adversarial Verification](#selective-adversarial-verification-d4) pass above. This
-convention records that choice explicitly as a **predictability** policy choice, not a
-data-derived optimum: running all three cycles every time keeps the pipeline's duration and cost
-uniform and predictable across every PR, regardless of how quickly a given PR's findings taper
-off. This rationale is recorded here so the fixed-3-cycle policy is never mistaken for an
-evidence-backed optimum — the convention explicitly disclaims any claim that three cycles (rather
-than two, or an early-exit rule) was derived from measuring this repository's review outcomes; it
-is a deliberate predictability trade-off, full stop.
+For an eligible PR, the [PR Review Quality Gate
+workflow](../../workflows/pr/pr-review-quality-gate.md) runs sequential CI-gated cycles only until
+the first completed cycle with no code-related MEDIUM/HIGH/CRITICAL findings, with seven cycles as
+the default maximum. This is a convergence policy, not a target count: extra cycles after a clean
+result add cost without improving the merge decision.
+
+If code-related MEDIUM/HIGH/CRITICAL findings remain at cycle six or seven, the execution captures
+sanitized learning and a deduplicated improvement idea. At the ceiling, the PR is blocked rather
+than merged or extended automatically. LOW findings retain full evidence but are non-blocking and
+do not prevent the early clean exit.
 
 ## Post-Cutover Monitoring & Rollback
 

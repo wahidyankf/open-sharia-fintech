@@ -292,8 +292,9 @@ next check pass. See [Plans Organization Convention §Per-Repository Delivery Mo
 **For `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`)**: the delivery checklist MUST emit the
 **PR-Review Maker→Fixer Cycle** steps (see
 [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)) —
-strictly sequential maker→fixer→maker→fixer→maker→fixer cycles (default 3), each cycle gated by a
-green CI run — **before** the PR-merge step. Recall "done" (a green, fully-reviewed PR) is NOT the
+first classify changed behavior: eligible work runs up to seven strictly sequential, CI-gated cycles
+and exits at the earliest clean code M/H/C result; noneligible work requires the named
+`pr-quality-gate.yml` workflow — **before** the PR-merge step. Recall "done" (a green, fully-reviewed PR) is NOT the
 same as "merged" — tag the PR merge itself `[AI]`, which is the default actor once the hardened
 preconditions hold, and do not treat plan completion as blocked on the merge happening. Emit a
 `[HUMAN]` merge step only where the plan explicitly opts into that gate; the preconditions are

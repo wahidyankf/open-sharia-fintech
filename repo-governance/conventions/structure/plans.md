@@ -553,7 +553,7 @@ Every delivery checklist item MUST make clear **who can execute it**. Some work 
 
 - **Create / provision the worktree** — `git worktree add worktrees/<id> -b <id>` is an ordinary git command the executor runs; the [plan-execution workflow](../../workflows/plan/plan-execution.md) Step 0 gate even auto-provisions it. Tag `[AI]`, never `[HUMAN]`.
 - **Commit and push** — the push target follows the plan's Delivery Mode (see [Delivery Mode](#delivery-mode) below), but the push itself is always `[AI]`. Under the repo-wide default `worktree-to-pr`, write the step as `- [ ] [AI] Commit and push to origin <pr-branch>`; under the direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`), write `- [ ] [AI] Commit and push to origin main`. See the [Git Push Default Convention](../../development/workflow/git-push-default.md). There is **no** `[HUMAN]` "review the diff and approve push" gate in either case — pushing to a PR branch is not a merge, and the PR's own review cycle plus the hardened merge preconditions are what gate integration. Drop any approve-push gate unless the user or plan explicitly asked for an out-of-band sign-off on that change.
-- **Remove the worktree after archival** — `git worktree remove worktrees/<id>` is mechanical; the executor self-confirms via the safety preconditions (nothing uncommitted or unpushed) and prompts inline before deleting. Tag `[AI]`, never `[HUMAN]`.
+- **Remove the worktree after archival** — `git worktree remove worktrees/<id>` is mechanical; the executor self-confirms the safety preconditions (nothing uncommitted or unpushed), verifies that the exact path is this plan's own worktree, then removes it immediately without a confirmation prompt. Tag `[AI]`, never `[HUMAN]`.
 
 Any of these three steps becomes `[HUMAN]` or `[AI+HUMAN]` ONLY when the user or plan explicitly requested an out-of-band approval or sign-off for that specific change. Absent that explicit request, all three are `[AI]`.
 
@@ -921,17 +921,14 @@ the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps at the
 never at Phase 0 under any mode, per
 [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-**[AI] merges by default.** A `[HUMAN]` merge gate applies only where a plan's own step says so explicitly.
-The **preconditions are unchanged — only the actor is.** A PR still merges only when
-all five hardened merge preconditions hold (3 review cycles complete — a **hard ceiling, not a
-floor**; a PR merges once (b)-(e) also hold, never on additional cycles beyond this count
-— **and the review loop not exited `escalated`**, 0 CRITICAL + 0 HIGH outstanding, branch up-to-date with the latest
-`origin/main` via a non-destructive forward update, all quality gates green, and the
-surface-conditional tester gates run-and-resolved or explicitly exempt — see the
-[PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md)). Inverting the
-default does not weaken any gate; it removes a queueing step that added latency without adding a
-check, since a human merging a PR that has already satisfied all five is performing a click, not a
-judgment.
+**[AI] merges by default.** Every PR first uses the canonical behavior classifier, not a separate
+plan-specific review path. Eligible executable work must reach its earliest clean code
+MEDIUM/HIGH/CRITICAL cycle within the seven-cycle maximum; noneligible static work requires the
+named `pr-quality-gate.yml` workflow. A blocked eligible PR never merges. The shared hardened
+preconditions still apply: no code-related CRITICAL/HIGH/MEDIUM finding outstanding, branch current
+with `origin/main` via a non-destructive forward update, route-required quality checks green, and
+eligible surface tester gates run and resolved — see the
+[PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md).
 
 Where a plan **does** want human judgment at the merge point — an irreversible migration, a
 production cutover, a change whose blast radius the gates cannot express — it says so explicitly in

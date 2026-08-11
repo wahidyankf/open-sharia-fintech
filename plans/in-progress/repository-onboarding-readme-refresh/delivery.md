@@ -28,9 +28,10 @@ provisioning and reconciliation.
 ## Delivery Mode and Worktrees
 
 **Delivery mode: `worktree-to-pr`.** Every change-producing unit uses one exact worktree, one branch,
-and one draft PR against that repository's `main`. AI runs the three-cycle PR Review Maker→Fixer
-gate, verifies CI, and merges after all hardened preconditions hold. Phase 0 opens no PR and pushes
-no branch.
+and one draft PR against that repository's `main`. AI first applies the canonical behavior classifier:
+eligible PRs run up to seven sequential review cycles and stop at the first clean code M/H/C result;
+noneligible PRs require only a green `pr-quality-gate.yml` run before AI merges. Phase 0 opens no PR
+and pushes no branch.
 
 The plan folder exists only in `ose-public`. `ose-primer` and `ose-private` never receive a companion
 plan. Sessions may read approved sibling evidence but may write only inside their owning repository.
@@ -70,7 +71,7 @@ Exact record ownership:
 
 At each delivery boundary, the phase carries separate checkboxes for worktree reconciliation,
 formatting, Markdown/Rhino validation, generated-binding sync, secret gates, commit, push, draft PR,
-three review cycles, forward-update, CI, and merge. Commit messages use Conventional Commits,
+the canonical behavior-routed review requirement, forward-update, CI, and merge. Commit messages use Conventional Commits,
 generated mirrors stay with their canonical source, and no commit message contains sensitive facts.
 
 “Full unit gates” means running these exact commands from the owning repository root, plus any
@@ -651,8 +652,9 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
       contains one cohesive public plan/control-plane change and no unrelated file.
 - [ ] [AI] [P2-011] Push the exact contract branch and open its draft PR against public `main` —
       acceptance: the PR links this megaplan and contains no raw private evidence.
-- [ ] [AI] [P2-012] Run three sequential PR Review Maker→Fixer cycles — acceptance: every cycle is
-      CI-gated, accepted findings are fixed, and the final synthesis has no unresolved finding.
+- [ ] [AI] [P2-012] Classify the PR with the canonical behavior classifier, then run only its
+      applicable route — acceptance: eligible work reaches the earliest clean code M/H/C cycle within
+      seven; noneligible work has a green `pr-quality-gate.yml` run.
 - [ ] [AI] [P2-013] Forward-update from current public `origin/main`, rerun all unit gates, and verify
       PR CI — acceptance: the head is current and green without destructive history edits.
 - [ ] [AI] [P2-014] Merge the contract PR as AI after all hardened preconditions hold — acceptance:
@@ -2399,9 +2401,10 @@ repos/wahidyankf/ose-public/pulls/153/reviews` returns an empty array), consiste
 - [ ] [AI] [P9B-028] Commit the correction, push its dedicated branch, and open a scoped draft PR —
       acceptance: a focused Conventional Commit series and one PR contain only declared correction
       paths.
-- [ ] [AI] [P9B-029] Complete three PR Review Maker→Fixer cycles, forward-update from Primer
-      `origin/main`, and rerun gates/CI or the authorized runner exception — acceptance: every
-      accepted finding is resolved and the head is current.
+- [ ] [AI] [P9B-029] Apply the canonical behavior-routed PR review, forward-update from Primer
+      `origin/main`, and rerun the route-required gates/CI — acceptance: eligible work reaches the
+      earliest clean code M/H/C cycle within seven, noneligible work has `pr-quality-gate.yml` green,
+      and the head is current.
 - [ ] [AI] [P9B-030] AI-merge the analytics-correction PR and re-read Primer `origin/main` —
       acceptance: the noninteractive first-start correction is durable on main.
 
@@ -2709,8 +2712,9 @@ repos/wahidyankf/ose-public/pulls/153/reviews` returns an empty array), consiste
 - [ ] [AI] [P12-006] Push the exact closeout branch — acceptance: `origin` contains the unit head.
 - [ ] [AI] [P12-007] Open the closeout draft PR against public `main` — acceptance: its scope and
       archived-plan links are correct.
-- [ ] [AI] [P12-008] Run three sequential PR Review Maker→Fixer cycles — acceptance: every accepted
-      finding is fixed and all cycle CI checks are green.
+- [ ] [AI] [P12-008] Classify the PR and run the canonical route-required review — acceptance:
+      eligible work reaches the earliest clean code M/H/C cycle within seven; noneligible work has
+      `pr-quality-gate.yml` green; all route-required checks are green.
 - [ ] [AI] [P12-009] Forward-update from public `origin/main` without destructive history edits —
       acceptance: the branch contains current `origin/main`.
 - [ ] [AI] [P12-010] Rerun final gates and verify PR CI — acceptance: every result is green.

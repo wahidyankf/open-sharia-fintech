@@ -40,6 +40,12 @@ done
 
 Keep the same [2-minute `ScheduleWakeup` cadence](#preferred-monitoring-approaches-priority-order) already required by this convention while waiting — do not shorten it because the cause is suspected to be contention rather than a normal-length job. Do not cancel/rerun a queued or stalled job as a first response to suspected contention: that only consumes another slot in the same congested pool. Only escalate to the [stuck-runner diagnosis](#diagnosing-a-stuck-self-hosted-runner-job) below once contention has been ruled out — i.e., nothing else is queued or running and the job is still making zero progress.
 
+**The active goal stays active during runner contention.** A queued or stalled job is a wait and
+investigate condition, not a reason to cancel the plan, abandon the delivery, declare the work
+blocked, or substitute an unverified merge. Keep the on-disk checklist current, schedule the next
+cadenced check, and resume the same goal when capacity returns. This rule is independent of whether
+the affected job may later be retriggered after contention is ruled out.
+
 ## Principles Implemented/Respected
 
 This convention implements the following core principles:

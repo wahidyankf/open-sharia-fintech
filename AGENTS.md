@@ -107,9 +107,10 @@ repo-local `WorktreeCreate` hook.
 ### Delivery Mode
 
 **`worktree-to-pr` is mandatory here** — `main` is branch-protected (even for admins), so the other
-three modes have no path in this repo (ose-private has a narrow infra-as-code exception). Runs the
-**PR-Review Maker→Fixer Cycle** (3 CI-gated cycles) before merge. **`[AI]` merges by default**;
-`[HUMAN]` only where a plan's step says so — same preconditions either way.
+three modes have no path in this repo (ose-private has a narrow infra-as-code exception). Every PR is
+first classified by changed behavior: eligible executable work runs up to seven CI-gated review cycles
+and exits at the first clean code MEDIUM/HIGH/CRITICAL result; noneligible static work requires a
+green `.github/workflows/pr-quality-gate.yml` run. **`[AI]` merges by default**.
 
 **One worktree per repo per plan (HARD RULE)** — reused across every delivery unit landed there; an
 N-repo plan opens ≤N worktrees. The **PR**, not the worktree, is the merge unit: each DAG leaf still
@@ -322,9 +323,9 @@ maintain a live task list, marking in-progress/completed and adding discovered t
 - **Runner contention (frequent — do not mistake for a code defect)**: All 3 OSE repos share a
   limited runner pool — free GitHub-hosted (`ubuntu-latest`) for `ose-public`/`ose-primer`, a small
   self-hosted pool for `ose-private`. A queued or stalled job is often just
-  contention. Response: wait patiently (same 2-min cadence), check `gh run list
+  contention. Response: keep the active goal, wait patiently (same 2-min cadence), check `gh run list
 --status=queued --status=in_progress` across repos or [github.com/wahidyankf](https://github.com/wahidyankf)
-  before debugging code. If no contention is found and the run is still stuck, rebase onto latest
+  before debugging code; never cancel the goal solely for contention. If no contention is found and the run is still stuck, rebase onto latest
   `origin/main` and push to retrigger. See [Runner Contention section](./repo-governance/development/workflow/ci-monitoring.md#runner-contention-across-the-ose-repos-read-first)
 
 ## AI Agents
@@ -343,9 +344,9 @@ role. Do not maintain a second roster here. Names follow `<domain>-<role>`:
   Phase 0 first, `[AI]`/`[HUMAN]` tags, gated phases. See the
   [plan-execution](./repo-governance/workflows/plan/plan-execution.md) and
   [plan-planning](./repo-governance/workflows/plan/plan-planning.md) workflows.
-- **PR Review Cycle** — nine discipline `pr-review-*-maker` specialists fan out to
-  `pr-review-synthesis-maker` (coordinator, sole poster of record) to `pr-review-fixer`, for
-  `*-to-pr` Delivery Mode plans. See
+- **PR Review Cycle** — every open PR is behavior-classified; nine discipline
+  `pr-review-*-maker` specialists fan out to `pr-review-synthesis-maker` (coordinator, sole poster
+  of record) to `pr-review-fixer` only for eligible executable behavior. See
   [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
   [PR Review Quality Gate](./repo-governance/workflows/pr/pr-review-quality-gate.md),
   [PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md).

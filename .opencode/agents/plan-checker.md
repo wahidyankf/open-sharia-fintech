@@ -980,9 +980,10 @@ mode additionally fixes the integration target and merge authority.
    However, `plan-maker` is instructed to always author the section explicitly (see
    `.claude/agents/plan-maker.md` Step 7) — flag a freshly-authored plan missing it entirely at
    **LOW** as a best-practice gap, not a correctness defect.
-3. **`*-to-pr` modes carry the PR-Review Maker→Fixer Cycle** — when the resolved mode is
-   `worktree-to-pr` or `main-to-pr`, `delivery.md` MUST emit the PR-Review Maker→Fixer Cycle steps
-   (strictly sequential maker→fixer cycles, default 3, CI-green-gated) per the
+3. **Every PR carries the behavior classifier** — when the resolved mode produces a PR,
+   `delivery.md` MUST record the canonical classifier: eligible executable work runs sequential,
+   CI-green-gated specialist cycles to the earliest clean code M/H/C result within seven; noneligible
+   work requires the named `pr-quality-gate.yml` workflow, per the
    [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md),
    positioned before the PR-merge step. A `*-to-pr` plan whose checklist jumps straight
    from PR creation to the merge with no review-cycle steps is missing required steps.

@@ -1,8 +1,8 @@
 ---
 name: pr-review-quality-gate
 title: "pr-review-quality-gate"
-goal: "Run a strictly sequential N-cycle fan-out-to-specialists to pr-review-synthesis-maker to pr-review-fixer loop against a pull request until the *-to-pr done-definition is satisfied"
-termination: exactly N review cycles complete (default 3, a hard ceiling never extended past this count), every inline review comment answered with its fix committed and pushed, and CI green on the PR after each cycle
+goal: "Classify every pull request by changed-artifact behavior, then run up to seven strictly sequential specialist-review cycles only when the PR is eligible"
+termination: every PR has a recorded behavior classification; eligible PRs stop at the first completed cycle with no code-related MEDIUM/HIGH/CRITICAL findings or are blocked after seven cycles; noneligible PRs pass pr-quality-gate and merge without the specialist cycle
 inputs:
   - name: pr
     type: string
@@ -10,14 +10,14 @@ inputs:
     required: true
   - name: cycles
     type: number
-    description: "Number of sequential fan-out to synthesis to fixer cycles to run"
+    description: "Maximum sequential fan-out to synthesis to fixer cycles for an eligible PR; use a lower value only when the caller explicitly requests it"
     required: false
-    default: 3
+    default: 7
 outputs:
   - name: final-status
     type: enum
-    values: [done, escalated]
-    description: Whether the loop reached the done-definition or escalated to the human
+    values: [done, blocked, not-applicable]
+    description: Whether the PR met its route-specific done-definition, is blocked by unresolved code-related findings, or does not need the specialist cycle
   - name: cycles-completed
     type: number
     description: Number of fan-out-to-fixer cycles actually executed
@@ -28,26 +28,53 @@ outputs:
 
 # PR-Review Maker→Fixer Cycle Workflow
 
-**Purpose**: Run a strictly sequential, fixed-N-cycle review loop against a pull request, in which a
+**Purpose**: Classify every pull request by the behavior changed in its diff, then run a strictly
+sequential, bounded review loop only for an eligible pull request. In that loop, a
 tier-selected subset of nine fresh discipline specialists fans out raw findings, the mandatory
 coordinator `pr-review-synthesis-maker` deduplicates/re-categorizes/reasonableness-filters/tool-verifies
 them into ONE consolidated review posted via the GitHub Reviews API, and a fresh `pr-review-fixer`
-triages and resolves them, with a hard CI-green gate between cycles, until the `*-to-pr`
-done-definition is satisfied.
+triages and resolves them, with a hard CI-green gate between cycles. The loop ends as soon as a
+completed cycle leaves no code-related MEDIUM/HIGH/CRITICAL findings, never after more than seven
+cycles by default.
 
-**When to use**: Every `*-to-pr` delivery mode (`worktree-to-pr`, `main-to-pr`) — invoked from
-[plan-execution.md Step 8](../plan/plan-execution.md#8-finalization-and-archival-sequential) before
-archival and before the merge. Not applicable to the direct-push delivery modes
-(`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR.
+**When to use**: Every open PR, regardless of whether it came from a plan or delivery mode. The
+classifier below decides whether the specialist loop applies. Secret exposure is always handled by
+the incident procedure before either route; it is never exempted by a docs-only classification.
 
 ## Execution Mode
 
-Sequential, hard-gated: N cycles (default 3) run strictly one after another —
-fan-out→synthesize→fixer, fan-out→synthesize→fixer, fan-out→synthesize→fixer — never in parallel
+Sequential, hard-gated: up to seven cycles run strictly one after another —
+fan-out→synthesize→fixer — never in parallel
 **across** cycles. Within a single cycle's fan-out, the tier-selected discipline specialists DO run
 **concurrently** with each other (see [Participants](#participants) below); only the cross-cycle
-ordering is strictly sequential. Each cycle is blocked by a full CI-green gate before the next cycle
-starts.
+ordering is strictly sequential. Each cycle is blocked by a full CI-green gate before either the
+next cycle or the eligible-PR early-stop decision.
+
+## PR Applicability Classifier
+
+Run this classifier against the current PR head before starting a specialist cycle and record the
+result in the PR evidence. It applies to every open PR, including an already-open PR whose next
+review or merge action occurs after this policy lands.
+
+1. Inspect the complete changed-file list and diff, including generated artifacts and workflow
+   configuration. Do not classify by branch name, author, plan delivery mode, or file-count alone.
+2. Mark the PR **eligible** when any changed artifact can build, test, deploy, provision, validate,
+   run, or otherwise change reachable runtime or CI behavior. This includes `apps/`, `libs/`,
+   `scripts/`, `infra/`, `.github/` workflows/actions, and behavior-changing configuration wherever
+   it lives.
+3. Mark the PR **noneligible** only when the full diff is non-executing prose or static governance
+   material (for example, docs, plans, agent guidance, skills, or repository rules) and no changed
+   artifact changes executable behavior.
+4. If classification is ambiguous, missing evidence, or mixed in a way that cannot be safely
+   separated, mark it **eligible**. This fail-safe prevents a behavior-changing change from bypassing
+   specialist review.
+5. Check for a secret exposure on both routes. A suspected or confirmed exposure immediately blocks
+   normal merge handling and invokes the history-remediation procedure in
+   [Secrets and Environment Standards](../../conventions/security/secrets-and-env-standards.md).
+
+For a noneligible PR, do not run the specialist fan-out. Verify the current head has passed
+`.github/workflows/pr-quality-gate.yml`, verify the ordinary merge preconditions, and merge under
+the normal `[AI]` authority. For an eligible PR, follow the bounded loop below.
 
 ## Participants
 
@@ -135,9 +162,13 @@ flowchart LR
 ## Loop Algorithm
 
 ```text
-run_pr_review_cycle(PR, N = 3):            # N configurable, default 3, STRICTLY SEQUENTIAL
+review_pr(PR, maximum_cycles = 7):          # configurable ceiling, default 7, STRICTLY SEQUENTIAL
+    route = classify_changed_artifacts(PR)  # eligible | noneligible; ambiguity => eligible
+    if route == noneligible:
+        require pr_quality_gate_is_green(PR)
+        return not-applicable
     prior = []                              # accumulated consolidated findings + resolution state
-    for cycle in 1..=N:
+    for cycle in 1..=maximum_cycles:
         head = gh pr view <PR> --json headRefOid   # pin ONE head SHA for this pass
         scout = fresh pr-review-scout-maker(pr = PR, head = head, cycle = cycle, total_cycles = N, prior = prior)
                        # output: tier, specialists, context_brief, dismissals
@@ -149,12 +180,18 @@ run_pr_review_cycle(PR, N = 3):            # N configurable, default 3, STRICTLY
         post consolidated as ONE line-anchored review (Reviews API)
         fixer = pr-review-fixer()
         fixer.resolve(PR)                   # triage each unresolved thread, fix, push, reply
-        wait_until CI_is_GREEN(PR)          # HARD gate before next cycle
+        wait_until CI_is_GREEN(PR)          # HARD gate before decision or next cycle
         prior += consolidated + their resolution state
-    # done-definition checked by caller after the loop
+        unresolved = outstanding_code_findings(prior, severities = [MEDIUM, HIGH, CRITICAL])
+        if unresolved is empty:
+            return done                     # earliest safe exit; LOW findings do not keep loop open
+        if cycle >= 6:
+            capture_nonconvergence_learning_and_idea(PR, cycle, unresolved)
+    return blocked                           # ceiling reached with code M/H/C still outstanding
 ```
 
-- **N cycles, default 3, strictly sequential** — fan-out→synthesize→fixer, repeated across cycles,
+- **Up to N cycles, default 7, strictly sequential** — fan-out→synthesize→fixer, repeated only
+  until the earliest clean eligible cycle or the configured ceiling,
   never parallel **across** cycles (the specialist fan-out WITHIN a single cycle is concurrent — see
   [Participants](#participants)).
 - Each cycle spawns **fresh** specialist instances, tier-selected per
@@ -197,12 +234,17 @@ sequenceDiagram
 
 ## Steps
 
-### 0. Resolve Loop Inputs (Sequential)
+### 0. Classify the PR and Resolve Loop Inputs (Sequential)
 
 - **Agent**: Orchestrator (the caller — `plan-execution.md` Step 8, or a direct invocation)
-- **Args**: `{input.pr}`, `{input.cycles}` (default 3)
-- **Output**: Confirmed PR reference and cycle count for the loop
-- **Success criteria**: The PR exists and is open; `cycles` is a positive integer
+- **Args**: `{input.pr}`, `{input.cycles}` (default maximum 7)
+- **Output**: Confirmed PR reference, behavior classification, classification evidence, and maximum
+  cycle count when eligible
+- **Success criteria**: The PR exists and is open; the classifier has recorded `eligible` or
+  `noneligible`; `cycles` is a positive integer no greater than 7 unless the caller explicitly
+  authorizes a different ceiling
+- **Route**: A noneligible PR skips Steps 1–3 and proceeds to the `pr-quality-gate.yml` verification
+  in Step 4. An eligible PR proceeds through the loop.
 
 ### 1. Per-Cycle Scout Pass (Sequential, Repeats for cycle = 1..N)
 
@@ -211,11 +253,13 @@ sequenceDiagram
   (prior-cycle thread-resolution/dismissal state)
 - **Output**: Risk tier, specialist set, shared-context brief, dismissal state
 - **Depends on**: Step 0 (cycle 1); the previous cycle's CI-green gate (cycle > 1)
-- **Condition**: Runs once per cycle, for `cycle` in `1..={input.cycles}`
+- **Condition**: Runs once per eligible cycle, for `cycle` in `1..={input.cycles}`, stopping at the
+  earliest completed clean cycle
 - **Success criteria**: `tier` is exactly one of `trivial`/`lite`/`full` and is recorded for the
   header
-- **On failure**: If the scout cannot access the PR or an API call fails, retry once; if it fails
-  again, escalate to the user
+- **On failure**: If the scout cannot access the PR or an API call fails, retry once and record the
+  blocked condition. Do not relabel the PR noneligible merely because classification evidence is
+  unavailable.
 
 ### 2. Per-Cycle Fan-Out + Synthesis Pass (Sequential, Repeats for cycle = 1..N)
 
@@ -238,14 +282,15 @@ sequenceDiagram
   `COMMENT` — `REQUEST_CHANGES` is structurally unavailable here; blocking status lives in each
   finding's severity label, never in the review STATE
 - **Depends on**: Step 1 (same cycle)
-- **Condition**: Runs once per cycle, for `cycle` in `1..={input.cycles}`
+- **Condition**: Runs once per eligible cycle, for `cycle` in `1..={input.cycles}`, stopping at the
+  earliest completed clean cycle
 - **Success criteria**: Every finding surviving to the consolidated review carries confidence ≥ 80,
   cited evidence (blob URL + SHA + line range), and a CRITICAL/HIGH/MEDIUM/LOW severity mapping; the
   review's header records the risk tier, the specialist set fanned out, any diff-slicing applied, and
   the cycle number (N of {input.cycles}) (see the
   [PR Reviewer-Discipline Convention](../../development/quality/pr-review-disciplines.md))
 - **On failure**: If a specialist or the coordinator cannot access the PR or an API call fails, retry
-  once; if it fails again, escalate to the user
+  once and record the blocked condition; do not silently suppress the affected lens.
 - **Trivial-tier branch**: when Step 1 records `tier: trivial`, `specialists` is empty and there is
   no fan-out to dispatch. `pr-review-synthesis-maker` instead performs one consolidated generalist
   pass over the full PR context itself, originating the findings that in every other tier the
@@ -264,30 +309,33 @@ sequenceDiagram
 - **Success criteria**: Zero unresolved threads remain untouched; every reply carries either a fix
   reference or a cited rejection justification
 - **On failure**: If a fix cannot be applied safely, the fixer posts a reasoned reject reply rather
-  than a bare "won't fix"; 2+ consecutive same-finding rejections escalate to the user (see
-  [Loop-Exit and Escalation Rules](#loop-exit-and-escalation-rules))
+  than a bare "won't fix". A code-related MEDIUM/HIGH/CRITICAL finding remains merge-blocking until
+  independently resolved; a reasoned reply is evidence, not permission to merge.
 
 ### 4. Per-Cycle CI Gate (Sequential, After Each Fixer Pass, Hard Gate)
 
 - **Agent**: Orchestrator
 - **Args**: PR reference
-- **Output**: Confirmation that every CI check on the PR is GREEN
+- **Output**: Confirmation that the applicable CI checks on the PR are GREEN
 - **Depends on**: Step 3 (same cycle)
-- **Success criteria**: `gh pr checks <PR>` reports zero failing or pending checks
-- **On failure**: Fix locally, push, re-run local quality gates, and re-check — do NOT start the next
-  fan-out cycle until this gate is green
+- **Success criteria**: Eligible PRs have no failing or pending checks; noneligible PRs have a
+  successful `.github/workflows/pr-quality-gate.yml` run for the current head
+- **On failure**: Investigate and fix a code failure. For queued or stalled jobs, first investigate
+  runner contention and continue patient polling; never cancel the active goal merely because a
+  shared runner is busy. Do NOT start the next fan-out cycle until this gate is green.
 
-### 5. Done-Definition Check (Sequential, After the Loop)
+### 5. Done-Definition Check (Sequential, After the Route Completes)
 
 - **Agent**: Orchestrator
 - **Args**: Cycle count completed, thread resolution state, gate status, archival-commit presence
   (when invoked from `plan-execution.md` Step 8)
-- **Output**: `{output.final-status}` (`done` or `escalated`), `{output.cycles-completed}`,
+- **Output**: `{output.final-status}` (`done`, `blocked`, or `not-applicable`), `{output.cycles-completed}`,
   `{output.unresolved-threads}`
 - **Success criteria**: All items in the
-  [Done-Definition](#done-definition-for--to-pr-modes) are satisfied
-- **On failure**: If cycles are exhausted with unresolved threads, or a same-finding rejection
-  persists, escalate to the user rather than silently looping past `{input.cycles}`
+  [Route-Specific Done-Definition](#route-specific-done-definition) are satisfied
+- **On failure**: At the ceiling, unresolved code-related MEDIUM/HIGH/CRITICAL findings produce
+  `blocked`, not a merge. Capture the nonconvergence learning and a deduplicated improvement idea;
+  never silently loop past `{input.cycles}`.
 
 ## GitHub Reviews API Mechanics
 
@@ -334,13 +382,21 @@ sole poster of record every cycle.
   if more than a single doc fetch is needed) rather than assumed from this document — GitHub's
   GraphQL schema is a fast-moving surface.
 
-## Done-Definition for `*-to-pr` Modes
+## Route-Specific Done-Definition
 
-A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of the following hold:
+Every PR is **done** only when its classifier route's requirements hold:
 
-1. **N review cycles complete** (default 3 — a **hard ceiling**, never extended past this count) **and
-   the loop did not exit `escalated`** — an `escalated` exit blocks the done-definition on its own.
-2. **Every inline review comment is answered AND every accepted fix is COMMITTED AND PUSHED** —
+1. **Eligible route** — the specialist loop completed at least one cycle and stopped at the earliest
+   completed cycle that left **zero code-related MEDIUM/HIGH/CRITICAL findings outstanding**. The
+   default maximum is seven cycles; reaching the ceiling with any such finding is `blocked`, never
+   done. LOW findings are captured and deduplicated into `plans/ideas` but do not prevent this exit.
+   At cycles six and seven, record sanitized nonconvergence learning in the owning plan's
+   `learnings.md` (or execution evidence for ad-hoc work) and create or update a deduplicated
+   improvement idea in `plans/ideas`.
+2. **Noneligible route** — the classifier evidence shows that the full diff is non-executing, and
+   `.github/workflows/pr-quality-gate.yml` succeeded for the current PR head. No specialist cycle is
+   required or credited for this route.
+3. **Every inline review comment is answered AND every accepted fix is COMMITTED AND PUSHED** —
    thread state is not fix state. A thread may be legitimately replied to and resolved while the
    corresponding fix sits uncommitted in the working tree; GitHub then reports zero unresolved
    threads on a PR that still carries the blocking defect. Before this item is satisfied, verify
@@ -354,9 +410,9 @@ A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of 
 
    "All threads resolved" is never sufficient evidence that all findings are fixed.
 
-3. **All PR quality gates are GREEN** — both the local gates and CI on the PR, as of the PR's current
+4. **All applicable PR quality gates are GREEN** — both the local gates and CI on the PR, as of the PR's current
    head commit.
-4. **Archival-in-PR is committed** _(applicable when this workflow is invoked from
+5. **Archival-in-PR is committed** _(applicable when this workflow is invoked from
    `plan-execution.md` Step 8)_ — the plan-to-done archival move
    (`git mv plans/in-progress/<plan> plans/done/YYYY-MM-DD__<plan>` plus README index updates) is
    committed inside the delivering PR itself. This item is N/A for invocations that do not carry a
@@ -367,17 +423,12 @@ A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of 
 Being **done** is necessary but not sufficient to merge. A PR merges only when **all five** of the
 following hold:
 
-- **(a)** It has passed the configured PR-review cycle (fan-out → `pr-review-synthesis-maker` →
-  `pr-review-fixer`) for **3 cycles** **and the loop did not exit `escalated`** — an `escalated` exit
-  blocks the merge on its own, for any merge actor. The configured count is a **hard ceiling, not a
-  floor** — a PR merges once preconditions (b)-(e) also hold, never on additional cycles beyond this
-  count.
-- **(b)** **0 CRITICAL + 0 HIGH findings outstanding.** A thread `pr-review-fixer` disposed as
-  **defer-with-reason** (its own sanctioned 4-way triage outcome, re-affirmed rather than silently
-  carried across every subsequent cycle) does not count as "outstanding" against this precondition —
-  it is a deliberate, recorded non-resolution, not an unaddressed finding. Record the deferral and its
-  reasoning explicitly at merge time rather than treating the raw GraphQL unresolved-thread count as
-  the sole signal.
+- **(a)** The PR completed its route-specific review: an eligible PR reached the earliest clean cycle
+  within the maximum seven, while a noneligible PR has recorded classifier evidence and a green
+  `pr-quality-gate.yml` run. A `blocked` route status always blocks merge.
+- **(b)** **0 code-related CRITICAL + 0 HIGH + 0 MEDIUM findings outstanding.** A reasoned reject or
+  deferral does not erase an unresolved code finding; it remains blocking until independently
+  resolved in the PR's code or demonstrably shown false with recorded evidence.
 - **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
   bring it forward by a **non-destructive forward update** — `git fetch origin` then
   `git merge --ff-only origin/main`, or an ordinary forward merge. **Never** a shared-history rewrite,
@@ -401,7 +452,7 @@ following hold:
   subcommands and record the observed output; for a library: exercise it through a consuming caller,
   not only its unit tests) and records what was run and what was observed. Exemption is available
   **only** for a PR that changes no reachable behavior at all — docs, comments, or a pure refactor
-  with no behavioral delta — and that claim is recorded **explicitly**, with its justification,
+  with no behavioral delta — and that claim is recorded **explicitly**, with its classifier evidence,
   rather than left implicit.
 
 > **This (a)-(e) lettering is normative.** The delivery checklists that cite these preconditions use
@@ -422,7 +473,7 @@ another repo in the family.
 ```mermaid
 %% Color palette: Teal #029E73 (done-definition items), Blue #0173B2 (AI done-boundary), Orange #DE8F05 (merge step -- [AI] by default)
 flowchart LR
-  A["N cycles complete"]:::teal --> D{"AI done-boundary"}:::blue
+  A["Route-specific review complete"]:::teal --> D{"AI done-boundary"}:::blue
   B["comments answered"]:::teal --> D
   C["gates GREEN"]:::teal --> D
   E["archival in PR"]:::teal --> D
@@ -433,65 +484,41 @@ flowchart LR
   classDef orange fill:#DE8F05,stroke:#000000,color:#000000
 ```
 
-The PR merge sits **outside** this workflow's done-boundary: this workflow's job is to establish that
-the PR is green and fully reviewed, not to perform the merge. By default the `[AI]` merge follows
-immediately once all applicable done-items and the five hardened merge preconditions hold — see
-[Delivery Mode](../../conventions/structure/plans.md#delivery-mode). A `[HUMAN]` merge gate applies
-only where a plan's own step states it explicitly; where a plan does opt in, "done" (for this
-workflow) is not the same as "merged", and the workflow hands off a green PR for the human to merge
-on their own schedule. See
-[Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
+The PR merge sits **outside** this workflow's done-boundary: this workflow establishes that the PR is
+green and route-complete. By default `[AI]` merges immediately once the applicable done-items and the
+five hardened merge preconditions hold — see
+[Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
 
 **Three-repo nuance**: when this workflow runs against a plan whose plan folder lives in a different
 repo than the one carrying the PR (for example, a `plans/` folder that exists only in `ose-public`),
-item 4 (archival-in-PR) applies only to the PR in the repo that actually carries the plan folder.
-PRs in sibling repos with no plan folder use items 1–3 as their complete done-definition.
+item 5 (archival-in-PR) applies only to the PR in the repo that actually carries the plan folder.
+PRs in sibling repos with no plan folder use the applicable route requirements plus items 3–4.
 
-## Loop-Exit and Escalation Rules
+## Loop-Exit and Block Rules
 
-- **Normal exit**: the loop completes all `{input.cycles}` cycles (default 3) with the CI-green gate
-  passing after every cycle, and the [done-definition](#done-definition-for--to-pr-modes) is
-  satisfied — status `done`.
-- **Escalation on repeated rejection**: if the SAME consolidated finding (originally posted by
-  `pr-review-synthesis-maker`) is rejected by `pr-review-fixer` across 2 or more consecutive cycles,
-  the loop does not silently keep looping —
-  status is **`escalated`, not `done`**, and the caller **MUST NOT proceed to the merge** until a
-  human decides. This applies whether the merge actor is `[AI]` (the default) or a plan-declared
-  `[HUMAN]` gate. The loop surfaces the finding and both rejection justifications for that decision
-  rather than auto-suppressing it.
-
-  > **Why this carries an explicit merge block.** A repeatedly-rejected finding leaves no other
-  > trace: the fixer resolves the thread when it rejects with reason, so nothing is unresolved; the
-  > cycle-exhaustion rule below excludes it by name ("not a reasoned reject"); and precondition (b)
-  > is satisfiable because the fixer asserted the finding does not hold — which is precisely the
-  > disputed claim the escalation exists to adjudicate. Without this clause the loop exits `done` and
-  > an `[AI]` merge proceeds on the strength of one side of an unsettled argument. The neighbouring
-  > stuck-CI rule is safe only incidentally, because precondition (d) independently blocks a red
-  > gate; repeated rejection has no such independent backstop.
-
-- **Escalation on stuck CI**: if the CI-green gate (Step 4) does not clear after 3 fix-and-push
-  attempts within a single cycle, escalate to the human rather than exhausting further cycles on the
-  same failure.
-- **Escalation on cycle exhaustion with unresolved threads**: if `{input.cycles}` cycles complete and
-  any review thread remains genuinely unresolved (not a reasoned reject, but a stalled discussion),
-  status is `escalated`, not `done` — the caller (e.g., `plan-execution.md` Step 8) MUST NOT proceed
-  to the merge until resolved — this applies whether the merge actor is `[AI]` (the default) or a plan-declared `[HUMAN]` gate.
-- **No early exit, no extension**: the loop always runs the full `{input.cycles}` (default 3, a
-  **hard ceiling**) — it does not stop early merely because zero new findings appear in a single
-  cycle, and it is never extended past this count either. Once the loop completes, the merge
-  decision rests on preconditions (b)-(e), never on running additional cycles.
+- **Earliest clean exit**: after every eligible cycle's CI-green gate, evaluate unresolved
+  **code-related** findings. Zero MEDIUM/HIGH/CRITICAL findings means status `done`; do not spend an
+  additional cycle merely to reach a target count. Capture LOW findings as non-blocking improvement
+  work.
+- **Non-convergence learning**: at cycles six and seven, append sanitized evidence explaining why
+  convergence has not occurred to the active plan's `learnings.md`, and create or update a
+  deduplicated `plans/ideas` entry for a systemic improvement. Never place a secret, access token,
+  or copied vulnerable value in either record.
+- **Ceiling block**: when the configured ceiling (seven by default) is reached with an unresolved
+  code-related MEDIUM/HIGH/CRITICAL finding, status is `blocked`, not `done`; do not merge and do not
+  extend the cycle count as a substitute for resolving the finding.
+- **Repeated rejection block**: a reasoned reject is not an automatic resolution of a code-related
+  MEDIUM/HIGH/CRITICAL finding. The next cycle must independently verify it. If it remains, the PR
+  stays in the normal loop and ultimately blocks at the ceiling unless resolved with evidence.
+- **CI wait discipline**: investigate code failures and fix their root cause. For queued or stalled
+  jobs, first inspect runner contention across the OSE repositories, then continue patient two-minute
+  polling. Do not cancel the active goal or classify a runner wait as a code defect.
 
 ## Applicability
 
-This workflow is the mandatory pre-merge gate for every `*-to-pr` delivery mode:
-
-- `worktree-to-pr` — the default delivery mode (dedicated worktree, PR opened against `main`,
-  `[AI]` merge authority once the preconditions hold).
-- `main-to-pr` — same PR/merge semantics, run from the primary checkout instead of a worktree.
-
-It does **not** apply to the direct-push delivery modes (`worktree-to-origin-main`,
-`main-to-origin-main`), which push directly to `origin main` under `[AI]` authority and carry no PR
-to review.
+This workflow's classifier is mandatory for every open PR, regardless of delivery mode or plan
+origin. Its specialist loop applies only to the **eligible** route; the noneligible route requires a
+green `pr-quality-gate.yml` run and no specialist fan-out.
 
 It also does **not** apply to a plan's **Phase 0** under any mode. Phase 0 is Environment Setup and
 Baseline — it opens no PR, so there is no PR for the fan-out to review, no threads for
@@ -527,9 +554,10 @@ This workflow is composed with:
 
 Track across executions:
 
-- **Cycles to done**: how often the loop reaches `done` within the default 3 cycles versus needing
-  escalation.
-- **Escalation rate**: percentage of PRs that hit a repeated-rejection or stuck-CI escalation.
+- **Cycles to clean exit**: how often eligible PRs reach `done` before cycle six versus requiring
+  late-cycle learning capture.
+- **Non-convergence rate**: percentage of eligible PRs that reach the ceiling blocked by unresolved
+  code-related MEDIUM/HIGH/CRITICAL findings.
 - **Findings-per-cycle trend**: whether later cycles produce fewer consolidated findings than
   earlier ones (a healthy trend), tracked as an observability signal, not a loop-exit condition.
 - **Time to CI-green per cycle**: how many fix-and-push attempts each cycle needs to clear the
@@ -539,12 +567,9 @@ Track across executions:
 
 - **Strictly sequential, never parallel**: this is a hard requirement — the loop's dedup logic and
   the CI-green gate both depend on each cycle observing the previous cycle's fully-settled state.
-- **N is a hard ceiling, not a floor**: unlike the `*-quality-gate` workflows' pure
-  until-zero-findings loop, this loop runs a **fixed** `{input.cycles}` cycles (default 3) and never
-  extends past it, however many findings a late cycle turns up — a PR merges once preconditions
-  (b)-(e) hold, never on additional cycles. `{input.cycles}` bounds the loop; it never waives a
-  finding, since precondition (b) (0 CRITICAL + 0 HIGH outstanding) stays supreme regardless of how
-  many cycles have run.
+- **Seven is a ceiling, not a target**: the eligible loop exits at the earliest completed clean cycle
+  and never extends past `{input.cycles}` (default 7). The ceiling bounds work; it never waives a
+  code-related MEDIUM/HIGH/CRITICAL finding.
 - **AI-attribution, not a distinct bot identity**: both agents currently post under the existing
   personal `gh` identity with an explicit AI-attribution footer per comment/reply, because no
   dedicated bot/GitHub App identity is provisioned in this environment. This is a pragmatic fallback,
@@ -557,14 +582,10 @@ Track across executions:
   unchanged `pr-review-fixer` are this workflow's live actors as of the `worktree-to-pr-hardening`
   plan's Phase 4 cutover, which retired the single-maker `pr-review-maker` monolith immediately (D2)
   rather than running it alongside the split.
-- **No extension past `{input.cycles}`, by design**: an earlier revision of this workflow let the
-  orchestrator extend the loop past the configured count when a cycle kept finding genuinely new
-  CRITICAL/HIGH findings, proactively flagging the overrun to the user. That escape valve is
-  removed: `{input.cycles}` (default 3) is now a **hard ceiling**. If cycles are exhausted with
-  findings still outstanding, the [cycle-exhaustion escalation rule](#loop-exit-and-escalation-rules)
-  fires instead — the caller escalates to the human rather than running a fourth cycle. This keeps
-  the loop's effort bounded and visible, and keeps precondition (b) meaningful: a PR never merges on
-  the strength of "we ran more cycles," only on the strength of an actually-empty CRITICAL/HIGH list.
+- **No extension past `{input.cycles}`, by design**: a seventh cycle is the last automatic attempt.
+  If eligible review reaches it with code-related MEDIUM/HIGH/CRITICAL findings outstanding, the
+  [ceiling block](#loop-exit-and-block-rules) fires; the PR never merges on the strength of having
+  spent more cycles, only on the strength of an actually-empty blocking-findings list.
 - **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
   (e.g. `ose-primer`, `ose-private`), running all repos' review-cycle loops concurrently from the start

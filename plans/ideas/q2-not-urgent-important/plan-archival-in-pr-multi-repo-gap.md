@@ -46,10 +46,10 @@ already anticipated this exact situation arriving.
   archival push; its own text already names and disclaims "DD-11 of any individual plan" as a
   non-precedent.
   [plan-planning.md §The Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos)
-- **"Archival-in-PR" Done-Definition item 4** — the mirrored rule in the PR-review workflow, which
+- **"Archival-in-PR" route-specific done-definition item 5** — the mirrored rule in the PR-review workflow, which
   gestures at a "three-repo nuance" for invocations that do not carry a plan folder but never
   defines one for a plan that does.
-  [pr-review-quality-gate.md §Done-Definition](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#done-definition-for--to-pr-modes)
+  [pr-review-quality-gate.md §Route-Specific Done-Definition](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#route-specific-done-definition)
 
 ## Proposed direction (sketch)
 
