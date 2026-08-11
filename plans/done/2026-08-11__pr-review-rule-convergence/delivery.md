@@ -458,10 +458,14 @@ create and merge the `docs/pr-review-rule-convergence-closeout` archival PR befo
       no foreign file is staged or committed.
   - Evidence: the archival diff contains only this plan folder and the two plan indexes; generated audit
     reports remain untracked/ignored operational evidence.
-- [ ] [AI] [P5-005] Before terminal cleanup, confirm P0–P4P and P5-001 through P5-003 have evidence,
-      planned indexes are current, the archival PR is merged, and this is the only remaining
+- [x] [AI] [P5-005] Before terminal cleanup, confirm P0–P4P and P5-001 through P5-003 have evidence,
+      planned indexes are current, the archival PR's current head has passed the named quality workflow,
+      and this is the only remaining
       self-created plan worktree — acceptance: P5-004 has a safe, fully committed terminal-cleanup
       precondition.
+  - Evidence: public archival PR #172 final head `6198455` passed all 14 checks. P0–P4P and
+    P5-001 through P5-003 are checked with evidence; private and Primer worktrees are absent, so
+    this exact public worktree is the only remaining self-created plan worktree.
 
 ### Phase 5 Gate
 
