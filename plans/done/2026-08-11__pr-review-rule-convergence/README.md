@@ -2,8 +2,8 @@
 
 ## Status
 
-In Progress — plan-quality validation and the initial plan-delivery PR are the active prerequisites
-to implementation.
+Completed — public PR #171, private direct delivery, Primer PRs #35 and #36, and the public archival
+delivery were executed entirely by AI. The terminal worktree cleanup follows the archival PR merge.
 
 ## Context
 

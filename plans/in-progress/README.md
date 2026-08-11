@@ -11,9 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [pr-review-rule-convergence](./pr-review-rule-convergence/README.md) — Routes executable PRs through
-  a bounded, convergence-aware review cycle, keeps prose delivery on its named CI workflow, and
-  aligns secret remediation plus public/private governance parity.
 - [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
