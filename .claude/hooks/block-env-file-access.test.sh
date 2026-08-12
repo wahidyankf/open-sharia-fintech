@@ -157,6 +157,72 @@ assert_allow "Bash cat apps/<app>/src/secrets.env (not a restricted tier)" \
 assert_allow "Bash echo X > /abs/path/.env.local" \
 	'{"tool_name":"Bash","tool_input":{"command":"echo X > /r/apps/coralpolyp-be/.env.local"}}'
 
+# SEC-1 regressions — default-deny closes the verb-enumeration gap: any command whose text
+# references a restricted tier is denied, regardless of which tool/verb touches it.
+assert_deny "Bash python3 opening .env.prod (SEC-1, verb not on any enumerated blocklist)" \
+	'{"tool_name":"Bash","tool_input":{"command":"python3 -c import_shim -- .env.prod"}}'
+
+assert_deny "Bash rsync .env.prod exfil (SEC-1)" \
+	'{"tool_name":"Bash","tool_input":{"command":"rsync .env.prod /tmp/exfil/"}}'
+
+assert_deny "Bash awk on .env.stag (SEC-1)" \
+	'{"tool_name":"Bash","tool_input":{"command":"awk 1 .env.stag"}}'
+
+assert_deny "Bash xxd on .env.prod (SEC-1)" \
+	'{"tool_name":"Bash","tool_input":{"command":"xxd .env.prod"}}'
+
+assert_deny "Bash variable-indirection cat \"\$F\" where F=.env.prod (SEC-1)" \
+	'{"tool_name":"Bash","tool_input":{"command":"F=.env.prod; cat \"$F\""}}'
+
+# SEC-3 regressions — matching is case-insensitive, so a case-insensitive-filesystem alias
+# (.ENV.PROD resolving to the same inode as .env.prod) cannot bypass the guard.
+assert_deny "Bash cat .ENV.PROD (SEC-3 case bypass)" \
+	'{"tool_name":"Bash","tool_input":{"command":"cat .ENV.PROD"}}'
+
+assert_deny "Read apps/ose-www/.ENV.PROD (SEC-3 case bypass)" \
+	'{"tool_name":"Read","tool_input":{"file_path":"apps/ose-www/.ENV.PROD"}}'
+
+assert_deny "Bash CAT .Env.Stag mixed case (SEC-3 case bypass)" \
+	'{"tool_name":"Bash","tool_input":{"command":"cat .Env.Stag"}}'
+
+# SEC-4 — Grep/Glob now get the same file-tool coverage as Read/Edit/Write/MultiEdit.
+assert_deny "Grep pattern with path=.env.prod (SEC-4)" \
+	'{"tool_name":"Grep","tool_input":{"pattern":"foo","path":".env.prod"}}'
+
+assert_deny "Glob path=.env.stag (SEC-4)" \
+	'{"tool_name":"Glob","tool_input":{"pattern":"*","path":".env.stag"}}'
+
+assert_allow "Grep pattern with path=.env.local (SEC-4, not a restricted tier)" \
+	'{"tool_name":"Grep","tool_input":{"pattern":"foo","path":".env.local"}}'
+
+# Safe read-only git metadata queries stay allowed even when they name a restricted tier —
+# they reveal ignore/tracking status, never file content.
+assert_allow "Bash git check-ignore .env.prod (safe metadata query)" \
+	'{"tool_name":"Bash","tool_input":{"command":"git check-ignore .env.prod"}}'
+
+assert_allow "Bash git ls-files .env.stag (safe metadata query)" \
+	'{"tool_name":"Bash","tool_input":{"command":"git ls-files apps/rhino-cli/.env.stag"}}'
+
+assert_allow "Bash git status (safe metadata query, no tier reference)" \
+	'{"tool_name":"Bash","tool_input":{"command":"git status"}}'
+
+# SEC-2 — symlink bypass: a symlink whose own basename doesn't name a restricted tier but whose
+# resolved target does must still be denied.
+setup_symlink_fixture() {
+	SYMLINK_TMPDIR="$(mktemp -d)"
+	printf 'DUMMY=1\n' >"$SYMLINK_TMPDIR/.env.prod"
+	ln -s "$SYMLINK_TMPDIR/.env.prod" "$SYMLINK_TMPDIR/notenv"
+}
+
+teardown_symlink_fixture() {
+	rm -rf "$SYMLINK_TMPDIR"
+}
+
+setup_symlink_fixture
+assert_deny "Read symlink resolving to .env.prod (SEC-2)" \
+	"{\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$SYMLINK_TMPDIR/notenv\"}}"
+teardown_symlink_fixture
+
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]
