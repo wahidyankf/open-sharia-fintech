@@ -24,7 +24,7 @@ module Infrastructure =
     let private parseLine (line: string) : (string * string) option =
         let trimmed = line.Trim()
 
-        if trimmed = "" || trimmed.StartsWith("#") then
+        if trimmed = "" || trimmed.StartsWith("#", StringComparison.Ordinal) then
             None
         else
             match trimmed.IndexOf('=') with

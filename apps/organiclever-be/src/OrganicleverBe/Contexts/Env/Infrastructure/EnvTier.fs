@@ -25,7 +25,7 @@ module Infrastructure =
     let parseEnvLines (content: string) : (string * string) list =
         content.Split('\n')
         |> Array.map (fun line -> line.TrimEnd('\r').Trim())
-        |> Array.filter (fun line -> line <> "" && not (line.StartsWith("#")))
+        |> Array.filter (fun line -> line <> "" && not (line.StartsWith("#", StringComparison.Ordinal)))
         |> Array.choose (fun line ->
             match line.IndexOf('=') with
             | -1 -> None
