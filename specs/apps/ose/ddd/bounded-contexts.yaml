@@ -137,3 +137,18 @@ contexts:
       - fs
     glossary: specs/apps/ose/ddd/ubiquitous-language/messaging.md
     gherkin: specs/apps/ose/behavior/be/gherkin/messaging
+
+  - name: config
+    summary: >-
+      Loads exactly one .env.<APP_ENV> tier file at startup, before any other
+      configuration is read. Process environment variables always win over file
+      values, and a missing file is not an error — the normal case in CI, where
+      real env vars are already set. Cross-cutting infrastructure concern.
+    layers:
+      - Infrastructure
+    code:
+      - apps/ose-be/src/OseBe/Contexts/Config
+    code_lang:
+      - fs
+    glossary: specs/apps/ose/ddd/ubiquitous-language/config.md
+    gherkin: specs/apps/ose/behavior/be/gherkin/config

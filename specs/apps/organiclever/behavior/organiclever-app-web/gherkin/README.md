@@ -11,6 +11,8 @@ specs/apps/organiclever/behavior/organiclever-app-web/gherkin/
 ├── app-shell/             # Navigation, cross-cutting loggers
 │   ├── entry-loggers.feature
 │   └── navigation.feature
+├── env-loader/            # APP_ENV tier env-file loader (build-time tooling)
+│   └── env-loader.feature
 ├── health/                # Backend health diagnostic page
 │   └── system-status-be.feature
 ├── journal/               # Journal events — today's entries, filtering

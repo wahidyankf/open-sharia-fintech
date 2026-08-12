@@ -29,6 +29,7 @@
     <Compile Include="Infrastructure/Sqlite/Errors.fs" />
     <Compile Include="Infrastructure/Sqlite/Connection.fs" />
     <Compile Include="Infrastructure/Migrations.fs" />
+    <Compile Include="Infrastructure/EnvTierLoader.fs" />
     <Compile Include="Operations/Database.fs" />
     <Compile Include="Application/ReadinessPort.fs" />
     <Compile Include="Api/HealthHandlers.fs" />
@@ -62,6 +63,10 @@
     <PackageReference Include="G-Research.FSharp.Analyzers" Version="0.22.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../libs/fsharp-env-loader/fsharp-env-loader.fsproj" />
   </ItemGroup>
 
 </Project>

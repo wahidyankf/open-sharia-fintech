@@ -18,6 +18,10 @@ pub struct EnvStagedGuardValidateArgs {}
 
 /// Returns true if `path` (any segment) looks like a real `.env*` file that is NOT
 /// `.env.example`.
+///
+/// The **commit** policy deliberately stays deny-all across every `.env*` variant, even though
+/// the read policy narrowed to only restrict `.env.prod`/`.env.stag` — see `tech-docs.md` DD-1
+/// (Read policy and commit policy are decoupled).
 fn is_offending(path: &str) -> bool {
     let basename = Path::new(path)
         .file_name()
@@ -101,6 +105,14 @@ mod tests {
     }
 
     #[test]
+    fn is_offending_detects_new_tier_names() {
+        assert!(is_offending(".env.prod"));
+        assert!(is_offending(".env.stag"));
+        assert!(is_offending(".env.test"));
+        assert!(is_offending("apps/x/.env.local"));
+    }
+
+    #[test]
     fn is_offending_allows_dot_env_example() {
         assert!(!is_offending(".env.example"));
         assert!(!is_offending("apps/my-app/.env.example"));
@@ -135,6 +147,20 @@ mod tests {
             output.contains(".env"),
             "output must name the offending file; got: {output}"
         );
+    }
+
+    #[test]
+    fn staged_env_local_is_rejected() {
+        let mut out = Vec::new();
+        let result = run_with_staged_files(&[".env.local"], OutputFormat::Text, &mut out);
+        assert!(result.is_err(), "staging .env.local must be rejected");
+    }
+
+    #[test]
+    fn staged_env_prod_is_rejected() {
+        let mut out = Vec::new();
+        let result = run_with_staged_files(&[".env.prod"], OutputFormat::Text, &mut out);
+        assert!(result.is_err(), "staging .env.prod must be rejected");
     }
 
     #[test]

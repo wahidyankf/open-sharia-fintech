@@ -9,6 +9,7 @@
     "start": "next start --port 3100"
   },
   "dependencies": {
+    "@open-sharia-enterprise/ts-env-loader": "*",
     "@t3-oss/env-nextjs": "0.13.11",
     "@tanstack/react-query": "^5.62.8",
     "@trpc/client": "^11.0.0",

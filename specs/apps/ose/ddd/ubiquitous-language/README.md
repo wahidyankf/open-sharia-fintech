@@ -12,6 +12,7 @@ bounded contexts.
 | `internal-policy`   | [internal-policy.md](./internal-policy.md)     |
 | `gap-analysis`      | [gap-analysis.md](./gap-analysis.md)           |
 | `ai-orchestration`  | [ai-orchestration.md](./ai-orchestration.md)   |
+| `config`            | [config.md](./config.md)                       |
 
 ## Authoring rules
 

@@ -27,5 +27,10 @@ teach a journey, while how-to guides help you solve one specific problem.
 - [Fix bugs with regression tests](./fix-bugs-with-regression-tests.md) — turn a report into a
   repeatable check before changing implementation.
 
+## Configuration
+
+- [Configure app environments](./configure-app-environments.md) — select the right `APP_ENV` tier
+  and load the correct `.env.<tier>` file for local, test, staging, and production runs.
+
 External contribution intake is closed. These guides describe work in an authorized repository
 session; they do not promise review of externally submitted changes.

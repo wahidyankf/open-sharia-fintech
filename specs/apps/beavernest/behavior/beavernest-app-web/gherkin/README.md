@@ -8,6 +8,8 @@ Behavioral scenarios for the BeaverNest Vite workspace readiness surface.
 - [workspace/readiness-loading.feature](./workspace/readiness-loading.feature) — accessible checking state.
 - [network/readiness-recovery.feature](./network/readiness-recovery.feature) — in-place recovery.
 - [workspace/no-promotional-cta.feature](./workspace/no-promotional-cta.feature) — neutral foundation content.
+- [configuration/env-tier-loading.feature](./configuration/env-tier-loading.feature) — tiered
+  `.env.<APP_ENV>` loading via Vite's native `--mode` flag.
 
 ## Related
 

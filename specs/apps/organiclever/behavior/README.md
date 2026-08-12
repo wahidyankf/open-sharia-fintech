@@ -58,7 +58,8 @@ Greenfield-simple marketing surface (no DDD bounded contexts).
 | ------------- | --------------- | ----- |
 | home          | `home`          | 1     |
 | accessibility | `accessibility` | 1     |
-| **Total**     |                 | **2** |
+| env-loader    | `env-loader`    | 1     |
+| **Total**     |                 | **3** |
 
 ## Related
 

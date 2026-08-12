@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@open-sharia-enterprise/ts-env-loader",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "dotenv": "16.4.7"
+  },
+  "devDependencies": {
+    "@amiceli/vitest-cucumber": "6.3.0",
+    "vitest": "4.1.0"
+  }
+}

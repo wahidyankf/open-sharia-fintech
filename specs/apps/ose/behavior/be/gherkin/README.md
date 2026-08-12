@@ -15,3 +15,4 @@ Backend (HTTP-semantic) Gherkin scenarios for `ose-be`. Consumed by xUnit + Tick
 | [messaging/nats-connect.feature](./messaging/nats-connect.feature)     | messaging         |
 | [messaging/nats-config.feature](./messaging/nats-config.feature)       | messaging         |
 | [messaging/jetstream-demo.feature](./messaging/jetstream-demo.feature) | messaging         |
+| [config/env-tier-loading.feature](./config/env-tier-loading.feature)   | config            |

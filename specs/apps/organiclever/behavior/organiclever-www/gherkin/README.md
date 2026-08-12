@@ -11,8 +11,10 @@ greenfield-simple marketing surface carried over from the former
 specs/apps/organiclever/behavior/organiclever-www/gherkin/
 ├── home/                  # Marketing landing page (hero, features, principles)
 │   └── home.feature
-└── accessibility/         # WCAG AA compliance for the marketing surface
-    └── accessibility.feature
+├── accessibility/         # WCAG AA compliance for the marketing surface
+│   └── accessibility.feature
+└── env-loader/            # APP_ENV tier env-file loader (build-time tooling)
+    └── env-loader.feature
 ```
 
 ## Conventions

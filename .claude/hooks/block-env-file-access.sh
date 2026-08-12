@@ -1,80 +1,107 @@
 #!/usr/bin/env bash
-# PreToolUse guard: refuse Read/Write/Edit/MultiEdit on any .env* file except .env.example.
-# Also provides best-effort Bash guard for direct .env* manipulation and git add/commit.
-# Repo policy: guard-env-file-access
+# PreToolUse guard: named-file rule — refuse Read/Write/Edit/MultiEdit and direct Bash
+# manipulation of exactly .env.prod / .env.stag (the two restricted-secrets tiers). Every
+# other real .env* file (.env, .env.local, .env.test, .env.example, ...) is agent-readable.
+# Commit policy is unaffected and stays deny-all for every .env* file — see
+# `apps/rhino-cli/src/commands/env_staged_guard.rs`'s `is_offending` (guard-env-file-access).
 set -euo pipefail
+
+# The two restricted tiers, shared by both branches below — adding a tier is a one-line change.
+RESTRICTED_TIERS='prod|stag'
+
+# Case-insensitive matching throughout (grep -i / -qi): on a case-insensitive filesystem (e.g.
+# APFS in its default mode) the OS resolves `.ENV.PROD` to the same inode as `.env.prod`, so
+# tier matching must not depend on case — see guard-env-file-access SEC-3.
+
+# Resolves `$1` to its canonical, symlink-free absolute path if the path exists, echoing the
+# original string unchanged if it doesn't (e.g. a Write creating a brand-new file) or if no path
+# resolver is available. A restricted tier file accessed only via a symlink (`ln -s .env.prod
+# /tmp/x`) must be caught by resolving the real target before the basename check — see
+# guard-env-file-access SEC-2.
+resolve_path() {
+	if command -v realpath >/dev/null 2>&1; then
+		realpath -q -- "$1" 2>/dev/null || printf '%s' "$1"
+	elif command -v readlink >/dev/null 2>&1 && readlink -f -- "$1" >/dev/null 2>&1; then
+		readlink -f -- "$1" 2>/dev/null || printf '%s' "$1"
+	else
+		printf '%s' "$1"
+	fi
+}
 
 input="$(cat)"
 tool_name="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
 
-deny() {
-	cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Repo policy (guard-env-file-access): agents may not directly read, write, or edit .env* files. Only .env.example is permitted directly. Use a project script under apps/|libs/|scripts/, or ask the user to make the change manually."}}
+# --- File-tool branch (Read/Write/Edit/MultiEdit/Grep/Glob) ---
+if [ "$tool_name" != "Bash" ]; then
+	# Grep/Glob carry the target under `.tool_input.path`, not `.tool_input.file_path`.
+	file_path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.path // empty')"
+	[ -z "$file_path" ] && exit 0
+
+	deny_file() {
+		cat <<JSON
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Repo policy (guard-env-file-access): agents may not directly read, write, or edit .env.prod or .env.stag. Use a project script under apps/|libs/|scripts/, or ask the user to make the change manually."}}
 JSON
+		exit 0
+	}
+
+	# Literal-name check on the path as given.
+	base="$(basename "$file_path")"
+	if printf '%s' "$base" | grep -qiE "^\\.env\\.($RESTRICTED_TIERS)\$"; then
+		deny_file
+	fi
+
+	# Resolved-path check: catches a symlink whose own basename doesn't name a restricted tier
+	# but whose target does (SEC-2). Only meaningful when the path actually exists on disk.
+	resolved="$(resolve_path "$file_path")"
+	if [ "$resolved" != "$file_path" ]; then
+		resolved_base="$(basename "$resolved")"
+		if printf '%s' "$resolved_base" | grep -qiE "^\\.env\\.($RESTRICTED_TIERS)\$"; then
+			deny_file
+		fi
+	fi
+
+	exit 0
+fi
+
+# --- Bash branch ---
+cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
+[ -z "$cmd" ] && exit 0
+
+deny_env() {
+	cat <<'JSON'
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Repo policy (guard-env-file-access): agents may not directly manipulate .env.prod or .env.stag via Bash. Invoke a project script under apps/|libs/|scripts/ instead, or ask the user to make the change manually."}}
+JSON
+	exit 0
 }
 
-# ── File-tool branch (Read / Write / Edit / MultiEdit) ──────────────────────
-if [[ "$tool_name" == "Read" || "$tool_name" == "Write" ||
-	"$tool_name" == "Edit" || "$tool_name" == "MultiEdit" ]]; then
-	file_path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')"
-	[ -z "$file_path" ] && exit 0
-	base="$(basename "$file_path")"
-	case "$base" in
-	.env.example) exit 0 ;;
-	.env | .env.*) deny ;;
-	esac
+# Default-deny (SEC-1): an enumerated-verb blocklist can never be completed — any interpreter,
+# archiver, or hex viewer (python3 -c 'open(...)', rsync, awk, xxd, ...) reopens it. Instead,
+# deny the command outright the moment its raw text references either restricted tier ANYWHERE
+# — a bare argument, inside a quoted string, inside a variable assignment
+# (`f=.env.prod; cat "$f"`), split across quotes, or as a tool argument — and allow only a
+# narrow, explicitly-safe carve-out. This also closes the case-change bypass (grep -i) and the
+# "$var" indirection case where the restricted-tier literal still appears verbatim in the
+# command text. It does NOT close indirection that never spells the tier out literally (e.g.
+# `t=prod; cat ".env.$t"`) — that residual gap is inherent to text-based matching and is
+# documented in secrets-and-env-standards.md section 9; it is not fixable by a text regex in
+# principle.
+RESTRICTED_TIER_PATTERN="\\.env\\.($RESTRICTED_TIERS)([^a-zA-Z0-9_]|\$)"
+
+if ! printf '%s' "$cmd" | grep -qiE "$RESTRICTED_TIER_PATTERN"; then
+	# Command text never references a restricted tier — nothing to guard.
 	exit 0
 fi
 
-# ── Bash branch (best-effort heuristic) ─────────────────────────────────────
-if [[ "$tool_name" == "Bash" ]]; then
-	cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
-	[ -z "$cmd" ] && exit 0
-
-	# ALLOW: project script or package runner invocations (check before deny).
-	# Store regex in variable to avoid multiline-split-into-args issue.
-	re_allow='(^|[[:space:]])(bash|sh|node|python|ruby)[[:space:]]+\.?/?(apps|libs|scripts)/|(^|[[:space:]])\.?/?(apps|libs|scripts)/|(^|[[:space:]])(npm|npx|nx|pnpm|yarn|volta)[[:space:]]'
-	if printf '%s' "$cmd" | grep -qE "$re_allow"; then
-		exit 0
-	fi
-
-	# ALLOW: course/teaching fixtures under an app's published content tree, e.g.
-	# apps/ayokoding-www/content/**/kata.env. These are curriculum material, never
-	# real secrets. Matches absolute paths too. The char before `.env` must be
-	# neither `/` nor `.`, so dotfile `.env` / `.env.local` stay denied even under
-	# content/. See guard-env-file-access §9 content-fixture exclusion.
-	re_content_env='apps/[^/[:space:]]+/content/[^[:space:]]*[^/.[:space:]]\.env([[:space:]]|$)'
-	if printf '%s' "$cmd" | grep -qE "$re_content_env"; then
-		exit 0
-	fi
-
-	# DENY: direct read of a real .env* file via common read commands.
-	re_cat_deny='(cat|less|head|tail|grep)[[:space:]].*\.env[^e]|(cat|less|head|tail|grep)[[:space:]].*\.env$'
-	if printf '%s' "$cmd" | grep -qE "$re_cat_deny"; then
-		printf '%s' "$cmd" | grep -qE '\.env\.example' && exit 0
-		deny
-		exit 0
-	fi
-
-	# DENY: redirect write to a real .env* file.
-	# The `[^[:space:]]*` prefix lets the guard see redirect targets written as a
-	# path (`> /abs/path/.env`, `> apps/x/.env.local`), not only a bare `.env`.
-	re_redirect_deny='>[[:space:]]*[^[:space:]]*\.env([^e.]|$)|>[[:space:]]*[^[:space:]]*\.env\.[^e]|tee[[:space:]]+[^[:space:]]*\.env'
-	if printf '%s' "$cmd" | grep -qE "$re_redirect_deny"; then
-		printf '%s' "$cmd" | grep -qE '\.env\.example' && exit 0
-		deny
-		exit 0
-	fi
-
-	# DENY: git add or git commit explicitly naming a real .env* file.
-	re_git_deny='git[[:space:]]+(add|commit)[^|&;]*\.env([^e.]|$)|git[[:space:]]+(add|commit)[^|&;]*\.env\.[^e]'
-	if printf '%s' "$cmd" | grep -qE "$re_git_deny"; then
-		printf '%s' "$cmd" | grep -qE '\.env\.example' && exit 0
-		deny
-		exit 0
-	fi
-
+# Narrow safe carve-out: read-only git metadata queries that reveal only ignore/tracking/status
+# information, never file content, are allowed even when they name a restricted tier (e.g.
+# confirming `.env.prod` is git-ignored).
+if printf '%s' "$cmd" | grep -qiE "(^|[[:space:]])git[[:space:]]+(check-ignore|ls-files|status)([[:space:]]|\$)"; then
 	exit 0
 fi
 
-exit 0
+# Everything else that references a restricted tier is denied by default — including
+# apps/|libs/|scripts/-rooted invocations, since the agent's Bash tool is still the one placing
+# the restricted path on the command line. A project script that legitimately needs to touch
+# `.env.prod`/`.env.stag` should read the path itself rather than receive it as an
+# agent-supplied argument; otherwise ask the user to make the change manually.
+deny_env

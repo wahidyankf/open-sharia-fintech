@@ -10,6 +10,7 @@ open OrganicleverBe.Infrastructure.AppDbContext
 open OrganicleverBe.Infrastructure.Database
 open OrganicleverBe.Infrastructure.NatsClient
 open OrganicleverBe.Contexts.Db.Infrastructure
+open OrganicleverBe.Contexts.Env.Infrastructure
 open OrganicleverBe.Contexts.Messaging.Application
 open OrganicleverBe.Contexts.Messaging.Infrastructure
 open OrganicleverBe.Contexts.Messaging.Domain
@@ -33,6 +34,9 @@ let private buildHost (args: string[]) (connStr: string) (handler: HttpHandler) 
 
 [<EntryPoint>]
 let main args =
+    // 0. Tiered env-file load (APP_ENV-selected .env.<tier>; process env always wins).
+    loadEnvTier ()
+
     // 1. Config (fail-fast on missing DATABASE_URL).
     let connStr = requireDatabaseUrl ()
 

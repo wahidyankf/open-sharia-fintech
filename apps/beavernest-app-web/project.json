@@ -17,14 +17,14 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite --host 127.0.0.1 --port 19310",
+        "command": "VITE_MODE=$([ ${APP_ENV:-local} = local ] && echo development || echo ${APP_ENV:-local}) && vite --host 127.0.0.1 --port 19310 --mode $VITE_MODE",
         "cwd": "{projectRoot}"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vite build",
+        "command": "VITE_MODE=$([ ${APP_ENV:-local} = local ] && echo development || echo ${APP_ENV:-local}) && vite build --mode $VITE_MODE",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -52,7 +52,7 @@
       "dependsOn": ["codegen"],
       "inputs": ["default", "{projectRoot}/src/generated-contracts/**/*"],
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run",
+        "command": "if grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage '\\b(it|test|describe)\\.(skip|only|todo)\\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && VITE_MODE=$([ ${APP_ENV:-local} = local ] && echo development || echo ${APP_ENV:-local}) && npx vitest run --mode $VITE_MODE",
         "cwd": "{projectRoot}"
       }
     },

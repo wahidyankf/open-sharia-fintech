@@ -255,10 +255,9 @@ Every plan ends with a Knowledge Capture phase: `learnings.md` triaged to a home
 
 Volta for Node.js/npm pinning, package-lock.json, .env.example. **Hard iron rule — no secrets in
 committed files**: Never commit system secrets to any git-tracked file — history is permanent. Real
-values in uncommitted `.env*` (except `.env.example`). **Guardrail**: Agents must not
-read/write/edit/commit real `.env*` files — only `.env.example` is permitted; scripts under
-`apps/`/`libs/`/`scripts/` are exempt, as are non-dotfile course fixtures (`kata.env`, `app.env`)
-under an app's published `apps/<app>/content/**` tree. **Git Identity Guardrail**: No AI agent sets or modifies git
+values in uncommitted `.env*` (except `.env.example`). **Guardrail**: Agents must not read/write/edit `.env.prod`/`.env.stag`; other `.env*` files stay
+readable; scripts under `apps/`/`libs/`/`scripts/` are exempt, as are non-dotfile course
+fixtures (`kata.env`, `app.env`) under an app's published `apps/<app>/content/**` tree. **Git Identity Guardrail**: No AI agent sets or modifies git
 identity at **any** scope — `git config user.*` bare/`--local`/`--global`/`--system`, or direct
 `.git/config [user]` edits. Identity comes from the developer's `~/.gitconfig` (`includeIf` for
 per-tree overrides). CI service-account identity in workflow YAML is exempt.

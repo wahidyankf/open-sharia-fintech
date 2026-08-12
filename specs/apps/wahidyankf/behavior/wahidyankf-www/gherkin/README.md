@@ -16,6 +16,8 @@ specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/
 │   └── theme.feature
 ├── cv/
 │   └── cv.feature
+├── env-loader/            # APP_ENV tier env-file loader (build-time tooling)
+│   └── env-loader.feature
 ├── home/
 │   └── home.feature
 ├── personal-projects/
@@ -31,6 +33,7 @@ specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/
 | ------------------- | -------------------------------------- |
 | `app-shell`         | `accessibility`, `responsive`, `theme` |
 | `cv`                | `cv`                                   |
+| `env-loader`        | `env-loader`                           |
 | `home`              | `home`                                 |
 | `personal-projects` | `personal-projects`                    |
 | `search`            | `search`, `static-filterable-routes`   |

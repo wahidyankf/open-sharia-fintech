@@ -860,6 +860,29 @@ fn then_env_exits_zero(w: &mut SpecsTreeWorld) {
     assert!(out.status.success(), "got: {}", combined_output(out));
 }
 
+#[given(regex = r#"^a git index with "([^"]+)" staged$"#)]
+fn given_env_file_staged(w: &mut SpecsTreeWorld, file: String) {
+    w.write_and_stage(&file, "SECRET=shh\n");
+}
+
+#[when(regex = r#"^"rhino-cli env staged-guard validate" runs$"#)]
+fn when_env_staged_guard_validate_runs(w: &mut SpecsTreeWorld) {
+    w.exec(&["env", "staged-guard", "validate"]);
+}
+
+#[then("the command exits non-zero")]
+fn then_env_command_exits_nonzero(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    assert!(!out.status.success(), "got: {}", combined_output(out));
+}
+
+#[then(regex = r#"^the output names "([^"]+)" as offending$"#)]
+fn then_env_output_names_offending(w: &mut SpecsTreeWorld, file: String) {
+    let out = w.output.as_ref().expect("ran");
+    let combined = combined_output(out);
+    assert!(combined.contains(&file), "got: {combined}");
+}
+
 // ===========================================================================
 // harness-bindings.feature (in-process, against the real repository)
 // ===========================================================================

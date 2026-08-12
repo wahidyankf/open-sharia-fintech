@@ -16,7 +16,9 @@
     <Compile Include="Steps/BddState.fs" />
     <Compile Include="Steps/HealthSteps.fs" />
     <Compile Include="Steps/ContextReadinessSteps.fs" />
+    <Compile Include="Steps/EnvTierSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
+    <Compile Include="Tests/EnvTierTests.fs" />
     <Compile Include="Tests/AiOrchestrationTests.fs" />
     <Compile Include="Tests/GapAnalysisTests.fs" />
     <Compile Include="Tests/InternalPolicyTests.fs" />

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/third-parties": "16.2.6",
+    "@open-sharia-enterprise/ts-env-loader": "*",
     "@open-sharia-enterprise/web-ui": "*",
     "@t3-oss/env-nextjs": "0.13.11",
     "class-variance-authority": "^0.7.0",

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@effect/platform": "0.94.5",
+    "@open-sharia-enterprise/ts-env-loader": "*",
     "@open-sharia-enterprise/web-ui": "*",
     "@open-sharia-enterprise/web-ui-token": "*",
     "@testing-library/dom": "10.4.1",

@@ -101,9 +101,9 @@ f6fa57246449b8ae40d51d9958cd96cb2fc6ca816147888d8e468d953e75b24c  apps/rhino-cli
 42983e7cf7ee126a548a7022744cdba0b23e48592a47ece6efd906f2fdd6dcb3  apps/rhino-cli/src/commands/convention_validate_license.rs
 742562a6becfc8dea34beb6053b39a9d1fd2e3cebd248902ca82c4ba4ebf0e7c  apps/rhino-cli/src/commands/doctor.rs
 197c72ea93924bc00ab37c67a75e30cbab4010ca6fbc76444c9b4cef223fb8cc  apps/rhino-cli/src/commands/env_backup.rs
-8dd70e86bb4f609edfe379951a8664123485aa21bd0afc4fb9ee85c1fcd55b54  apps/rhino-cli/src/commands/env_init.rs
+c52114840bb5750815b8923105e8a63c17dd3d1c11b8b6e2ce5dcfbd903c800f  apps/rhino-cli/src/commands/env_init.rs
 94712c3653f9e91111f0136cd90ab434f58d2ec6d20ce80b4dec2fc2364fd899  apps/rhino-cli/src/commands/env_restore.rs
-2eb52e7dbd4601beb261cc17c34e72e604eab1ac0444586f05cbda7f3691e58b  apps/rhino-cli/src/commands/env_staged_guard.rs
+6b412d3ddc0689e1164e64f2496d7a54c633641f13c3b6aab67127a37360ccba  apps/rhino-cli/src/commands/env_staged_guard.rs
 abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli/src/commands/env_validate.rs
 c30bbe0aeabc93d5d50d17749453deb4dcd72314010b4fe98381548e59b3eb6f  apps/rhino-cli/src/commands/gate/emit.rs
 bd80157f5cb43f030d0101e0be9e76d060b23a623a576745bc7179057d3a4590  apps/rhino-cli/src/commands/gate/list.rs
@@ -207,7 +207,7 @@ db531a996b50b7a882b40770d893ecbbd1028465110161555dbfe5d78079d5bb  apps/rhino-cli
 02c4ecf18c05e1a7d97c2f6a615de801229214a55f312eaea41a15f277c431d6  apps/rhino-cli/tests/ddd.rs
 ec6f75d372c686de45046605e5deb005a09ec75f2a69e3044020f7c4f218d402  apps/rhino-cli/tests/docs.rs
 485f51eb59885b8aeaf2127fe5417f21aba149fd60d0addc2ad94443a04955ab  apps/rhino-cli/tests/doctor.rs
-cf54701a8a3de6bc27a3d4a08be3de91378ac681fc5962f540f0caffc4a512b3  apps/rhino-cli/tests/env.rs
+9db9e0a0b3ac75b34fde745cb7b2b10d8a61af1cbb929fcde10b8256c70ca21d  apps/rhino-cli/tests/env.rs
 1db90338c8835740493ef88e5919cfd1255f671bac27b1a938fa906e7b3c7a7c  apps/rhino-cli/tests/env_contract.rs
 754202ede64f461de860612a6701ba5ab1d81ba21ce320f5830e0d8df6cdc028  apps/rhino-cli/tests/env_validate_integration.rs
 59cfc03ba703a83dd05f6591b24434233d5557d15211c777767d4b289866df21  apps/rhino-cli/tests/fixtures/env-injection/matched/apps/demo-www/.env.example
@@ -569,7 +569,7 @@ ab2858b4a5657f6782fc39eda4b8f7e1bb7906a5e543f75af77b2ff7d88c9f48  apps/rhino-cli
 15cf0afb58b41e28accba1ea1c67515d82edffea3faf2e64d149a80a44c5f60d  apps/rhino-cli/tests/repo_config_validate.rs
 97f66d71265c3062512eba571f1c004cd6ae90e3f310105d608a72b66fba2114  apps/rhino-cli/tests/repo_governance.rs
 0322a21174f04014be8c01495897c0bbc6ee5a873b42c533a602f71d565ac503  apps/rhino-cli/tests/spec_coverage.rs
-aebafa49a2adb721e75584841c0ed0f3bdd2dbed4867ac1ca653984e2300aba8  apps/rhino-cli/tests/specs_tree.rs
+8b64f2db351ca8c9853793e5eb273ab0eae0cd32baec784ab729120c1b6e301b  apps/rhino-cli/tests/specs_tree.rs
 471afb2c45384e1a61f2a5c4b7dc6659c9edfd320bcd2fcdaccb137277f3d90a  apps/rhino-cli/tests/test_coverage.rs
 f8983a5676413904646b46b87f9774cd553908e1049e4f695a4d5285ac0a97b9  apps/rhino-cli/tests/workflows.rs
 9672dd77249ddbb66d1e73435d58aa802a95597229ddfed48caed537f22fef88  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
@@ -589,7 +589,7 @@ dbd14fee84d388d5aaa0025e1675ae99c68ce53f9478c0f92f86af55b8ea42f3  specs/apps/rhi
 667a7f7dfd1b0df1ab2dcbdb1afe1c349b11572824b5270985a9195ff9b755f6  specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract/iac-env-validation.feature
 bf13ab7beff5f28defc1f7cb80e117041b60f4c6e56249e0810690c501190373  specs/apps/rhino/behavior/rhino-cli/gherkin/env/README.md
 fb76727589bef3c5a054cc471b4483de474bb7e8f8da74d7cc71faf0fac2c304  specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-backup.feature
-3b41ae5feaf9299a67ae06b9735194c596c165f8a679f87c89b357b89d54864e  specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-init.feature
+5f2e7d37c18611c3200e14aeb788d153322c8e7048ac4725464274d40bd8c046  specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-init.feature
 f3e483d3c02e7ff91a5d7eeaaf0414b5749f698de5b09f3fe28f43b100f3c227  specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-restore.feature
 cdff5c19b5b7ea3949c4a305daaedba632e4b1b5446c6fa0e1e2b816bbd9b151  specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-validate-app-drift.feature
 d376cab0d09b2168998bb234663a059b58d5d3c9fd3c784b05acc94f55d70116  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/README.md
@@ -637,7 +637,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  specs/apps/rhi
 b2aec2a0641d7e956269931ccbba432b5b1eb9cc2a615fc3d591c21121b684ed  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/behavior-coverage.feature
 9e9d4a23cc54d45ce909bdc363876444b73e779ab9922f7458d46d528a744d24  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/domain-coverage.feature
 bd42aba4e9496160242ed178f2b33719494a2f7c050a83e4b52be17095ed714d  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature
-c41a3069c1b4c5702ae871cd35fa6ae613ec6511a8c7930cfe297d535e8c819b  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature
+7036dbbbb84d8f616721fea5aceac09cfb90362f2e0fe1c67b6d7af7f0470f75  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature
 c2a50b3eed5b6bcca94febc88e5d3f81ffbc2359bf28558714110d6e3286102c  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/gherkin-cardinality.feature
 1236ccf09822177af38e59ca2aa0f0753d0d2da690b1a2136abe5c57ec17f463  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature
 9f3de8e6cd16898d07e53833880e072571022e39550bf25545175ccc1405f980  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature

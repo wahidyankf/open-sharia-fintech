@@ -16,26 +16,18 @@
       "Edit(apps/*/content/**/*.env)"
     ],
     "deny": [
-      "Read(**/.env)",
-      "Edit(**/.env)",
-      "Read(**/.env.local)",
-      "Edit(**/.env.local)",
-      "Read(**/.env.*.local)",
-      "Edit(**/.env.*.local)",
-      "Read(**/.env.development)",
-      "Edit(**/.env.development)",
-      "Read(**/.env.production)",
-      "Edit(**/.env.production)",
-      "Read(**/.env.staging)",
-      "Edit(**/.env.staging)",
-      "Read(**/.env.test)",
-      "Edit(**/.env.test)"
+      "Read(**/.env.prod)",
+      "Write(**/.env.prod)",
+      "Edit(**/.env.prod)",
+      "Read(**/.env.stag)",
+      "Write(**/.env.stag)",
+      "Edit(**/.env.stag)"
     ]
   },
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Write|Edit|MultiEdit",
+        "matcher": "Read|Write|Edit|MultiEdit|Grep|Glob",
         "hooks": [
           {
             "type": "command",
@@ -47,6 +39,11 @@
       {
         "matcher": "Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-env-file-access.sh",
+            "statusMessage": "Checking env-file access guard..."
+          },
           {
             "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/warm-cache-before-push.sh",

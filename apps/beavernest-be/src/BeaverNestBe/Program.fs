@@ -10,6 +10,7 @@ open BeaverNestBe.Api.StaticContent
 open BeaverNestBe.WebApp
 open BeaverNestBe.Domain.HttpConfiguration
 open BeaverNestBe.Domain.DatabaseConfiguration
+open BeaverNestBe.Infrastructure.EnvTierLoader
 open BeaverNestBe.Infrastructure.Migrations
 open BeaverNestBe.Infrastructure.Sqlite.Errors
 open BeaverNestBe.Operations.Database
@@ -60,6 +61,10 @@ let private commandMode args databaseConfiguration =
 
 [<EntryPoint>]
 let main args =
+    // Loads .env.<APP_ENV> if present; process env always wins — see
+    // Infrastructure/EnvTierLoader.fs. Must run before any config read below.
+    loadEnvTier ()
+
     match configuration () with
     | Error error -> fail error
     | Ok databaseConfiguration ->

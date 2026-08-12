@@ -16,6 +16,8 @@ One markdown file per bounded context, plus this index. Each file lists the term
 | `app-shell`       | [app-shell.md](./app-shell.md)             |
 | `health`          | [health.md](./health.md)                   |
 | `routing`         | [routing.md](./routing.md)                 |
+| `env-loader`      | [env-loader.md](./env-loader.md)           |
+| `be-env`          | [be-env.md](./be-env.md)                   |
 
 The bounded-context map and the strategic-pattern relationships between these contexts live in [`ddd/bounded-context-map.md`](../bounded-context-map.md).
 

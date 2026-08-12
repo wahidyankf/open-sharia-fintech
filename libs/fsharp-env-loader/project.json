@@ -1,0 +1,109 @@
+{
+  "name": "fsharp-env-loader",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/fsharp-env-loader/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build libs/fsharp-env-loader/fsharp-env-loader.fsproj"
+      },
+      "outputs": ["{projectRoot}/bin", "{projectRoot}/obj"],
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/fsharp-env-loader.fsproj"]
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build libs/fsharp-env-loader/fsharp-env-loader.fsproj"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/fsharp-env-loader.fsproj"]
+    },
+    "lint": {
+      "dependsOn": ["typecheck"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet tool restore",
+          "dotnet tool run fantomas --check libs/fsharp-env-loader/src",
+          "dotnet fsharplint lint libs/fsharp-env-loader/fsharp-env-loader.fsproj --lint-config libs/fsharp-env-loader/fsharplint.json",
+          "dotnet fsharp-analyzers --project libs/fsharp-env-loader/fsharp-env-loader.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001"
+        ],
+        "parallel": false
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/fsharp-env-loader.fsproj"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "if grep -rn -E --include='*.fs' 'Skip\\s*=' libs/fsharp-env-loader/tests/unit; then echo 'ERROR: xunit Skip= attribute found in test files above'; exit 1; fi && dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/unit/**/*.fs",
+        "{projectRoot}/fsharp-env-loader.fsproj"
+      ]
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test libs/fsharp-env-loader/tests/unit/fsharp-env-loader-unit-tests.fsproj /p:CollectCoverage=true /p:Threshold=95 /p:ThresholdType=line"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/unit/**/*.fs",
+        "{projectRoot}/fsharp-env-loader.fsproj"
+      ]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run fsharp-env-loader:typecheck",
+          "npx nx run fsharp-env-loader:lint",
+          "npx nx run fsharp-env-loader:test:unit",
+          "npx nx run fsharp-env-loader:test:coverage"
+        ],
+        "parallel": false
+      },
+      "dependsOn": ["typecheck", "lint"],
+      "cache": true,
+      "inputs": ["default"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project'"
+      },
+      "cache": true
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project'"
+      },
+      "cache": true
+    },
+    "deps:audit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet list libs/fsharp-env-loader/fsharp-env-loader.fsproj package --vulnerable"
+      },
+      "cache": false
+    },
+    "compat:min-version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'compat:min-version: no standard min-version floor for F#'"
+      },
+      "cache": true
+    }
+  },
+  "tags": ["type:lib", "domain:config", "lang:fsharp"],
+  "implicitDependencies": []
+}

@@ -14,6 +14,7 @@ All scenarios use: `Given the app is running`
 ## Domains
 
 - **app-shell/** — Navigation chrome and entry-logging overlays
+- **env-loader/** — `APP_ENV` tier env-file loader scenarios (build-time tooling)
 - **health/** — Backend connectivity status page
 - **journal/** — Home screen and journal entry mechanism
 - **routine/** — Workout routine management

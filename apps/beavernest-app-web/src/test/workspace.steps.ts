@@ -20,3 +20,8 @@ Given("I am viewing the rendered workspace home", () => undefined);
 When("I inspect the visible page content and accessible links", () => undefined);
 Then("no promotional product description is present", () => undefined);
 Then("no external GitHub call to action is present", () => undefined);
+
+// Keeps this file's top-level `const`s module-scoped rather than global, so
+// they do not clash with an identical stub pattern in a sibling *.steps.ts
+// file (see src/test/configuration.steps.ts).
+export {};
