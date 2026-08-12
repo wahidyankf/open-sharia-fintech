@@ -28,6 +28,8 @@ Brewfile.lock.json
 .env.production
 .env.staging
 .env.test
+.env.prod
+.env.stag
 !.env.example
 
 # IDE and editor
