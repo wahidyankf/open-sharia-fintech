@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Pinned to match ../../fsharp-env-loader.fsproj's own pin: without this, this project's
+         SDK-implicit floor resolves lower and NuGet reports a package downgrade via the
+         ProjectReference below. -->
+    <PackageReference Update="FSharp.Core" Version="10.1.302" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
