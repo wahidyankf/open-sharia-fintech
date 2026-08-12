@@ -11,6 +11,8 @@ execution checklist.
 
 ## Active Plans
 
+- [beaver-flutter](./beaver-flutter/README.md) — Replaces the Vite/React BeaverNest client with a
+  responsive Flutter Web application, establishing a future-ready core and safe diagnostics.
 - [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
