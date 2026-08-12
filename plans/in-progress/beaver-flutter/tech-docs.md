@@ -123,19 +123,29 @@ doctor gate without bypassing it.
 ## Cross-Repository Execution Dependency
 
 This plan depends on `ose-private`'s
-`plans/in-progress/restrict-env-access-to-prod-and-stag` plan completing first.
-[Repo-grounded: checked 2026-08-12] Its Phase 8 changes the same
+`restrict-env-access-to-prod-and-stag` plan completing first.
+[Repo-grounded: checked 2026-08-13] Its Phase 8 changes the same
 `ose-public` BeaverNest application identities while it establishes the tiered `APP_ENV` contract and
 agent access restrictions. The Flutter migration must start from that finished state, not compete
 with it or absorb a half-applied environment convention.
 
-The predecessor's archive on `ose-private/main` is the authoritative completion signal. Phase 0
-queries that tree for a dated `plans/done/*__restrict-env-access-to-prod-and-stag/README.md` path and
-for the absence of the in-progress path, then saves the archive path and source SHA as BeaverNest
-evidence. A missing archive or remaining in-progress path is a hard stop: do not create a delivery
-branch, edit application code, or open a Flutter PR. This plan does not duplicate or amend the
-predecessor's environment-tier behavior; after the gate passes, its own implementation respects the
-resulting repository state.
+The predecessor's archive path on `ose-private/main` is necessary but not sufficient evidence of
+completion. Phase 0 must query the archived README for `**Status**: Complete`, reject any unchecked
+delivery items, and verify the archive has no
+remaining `plans/in-progress/` counterpart. It must then verify the linked `ose-public` implementation
+PR is merged and that its merge commit is reachable from `origin/main`; the evidence records both
+repository SHAs, the private archive path, and public PR/merge commit. Any failed predicate is a hard
+stop: do not create a delivery branch, edit application code, or open a Flutter PR.
+
+This plan does not duplicate or amend the predecessor's environment-tier behavior. It preserves
+`beavernest-be`'s `APP_ENV` composition-root loader: `loadEnvTier ()` remains the first operation in
+`Program.fs`, before any database or listener configuration, and process environment continues to
+override an optional `.env.<APP_ENV>` file. Flutter remains same-origin and does not recreate Vite
+mode or `.env` loading; `APP_ENV` is a backend and CI tier concern unless a later client requirement
+creates a concrete build-time configuration need.
+The only retirement is the legacy Vite guard and its frontend-specific spec identity, never the
+backend loader, its `fsharp-env-loader` `ProjectReference`, or backend configuration Gherkin and
+tests.
 
 ## API Contract
 
@@ -161,7 +171,19 @@ actual `build/web` output in `evidence/flutter-web-asset-inventory.md`; only a f
 content-addressed receives immutable caching. `index.html`, bootstrap/loader/main scripts, manifests,
 and un-hashed assets revalidate. Update `StaticContent.fs` fallback classification from this inventory.
 Browser E2E must deploy v1 then v2 to the F# hosted bundle and prove a normal navigation obtains a
-coherent v2 bundle, not only Flutter's development server.
+coherent v2 bundle, not only Flutter's development server. Both `Dockerfile` and
+`Dockerfile.integration` must retain the shared loader's project/source copy before restore/build,
+because `BeaverNestBe.fsproj` references `libs/fsharp-env-loader`; neither image may copy a real
+staging or production environment file. In `Dockerfile` (`WORKDIR /src`), copy
+`libs/fsharp-env-loader/fsharp-env-loader.fsproj` to `libs/fsharp-env-loader/` before restore and
+`libs/fsharp-env-loader/src/` to `libs/fsharp-env-loader/src/` before publish. In
+`Dockerfile.integration` (`WORKDIR /build`), copy the project to `/libs/fsharp-env-loader/` before
+restore and its source to `/libs/fsharp-env-loader/src/` before build, matching that image's existing
+relative project reference. The Compose/runtime boundary forwards caller `APP_ENV` to every service
+that invokes `BeaverNestBe.dll` (`beavernest-app`, backup, integrity, restore, and the CI override),
+without operation-specific `environment` mappings replacing it. `run-e2e.sh` exports
+`APP_ENV=${APP_ENV:-test}` before constructing or starting Compose so browser E2E exercises the
+intended tier.
 
 ## Browser Installation and Update Boundary
 
@@ -185,7 +207,7 @@ strategy.
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Unit                | pure reducers/use cases with fake repositories, generated-response-to-domain mapping, safe snapshot decoder, and architecture-boundary regression test. |
 | Widget              | loading/ready/unavailable/retry, diagnostics, semantics, phone/tablet/desktop reflow.                                                                   |
-| Backend integration | OpenAPI bundle, handler 200/503/no-store, forbidden-field regressions.                                                                                  |
+| Backend integration | OpenAPI bundle, handler 200/503/no-store, forbidden-field regressions, and `APP_ENV=test` loader-order regression proof.                                |
 | Browser integration | same-origin hosted Flutter bundle, refresh recovery, diagnostics, and responsive viewport proof.                                                        |
 | Build               | `fvm flutter build web`.                                                                                                                                |
 
@@ -207,14 +229,16 @@ applies to the live runtime/project/spec ownership at P2, not to the isolated fo
 │       ├── README.md [E] Flutter Web local/runtime instructions
 │       ├── src/BeaverNestBe/Api/DiagnosticsHandlers.fs [N] safe snapshot handler
 │       ├── src/BeaverNestBe/Application/DiagnosticsPort.fs [N] injected snapshot boundary
-│       ├── src/BeaverNestBe/{Program,WebApp}.fs [E] composition and route registration
+│       ├── src/BeaverNestBe/{Program,WebApp}.fs [E] composition and route registration; preserve first-operation `APP_ENV` loader
+│       ├── src/BeaverNestBe/Infrastructure/EnvTierLoader.fs [E] existing tier-loader adapter retained unchanged in behavior
 │       ├── src/BeaverNestBe/Api/StaticContent.fs [E] Flutter cache/fallback policy
-│       ├── src/BeaverNestBe/BeaverNestBe.fsproj [E] source order
+│       ├── src/BeaverNestBe/BeaverNestBe.fsproj [E] source order and retained fsharp-env-loader ProjectReference
 │       ├── tests/unit/Tests/{DiagnosticsHandlerTests,StaticRoutingTests}.fs [N/E] safe API and cache regression tests
-│       ├── tests/integration/DiagnosticsHttpTests.fs [N] 200/503/no-store contract proof
-│       ├── Dockerfile [E] Flutter Web build and copy source
-│       └── scripts/run-e2e.sh [E] renamed frontend suite
-├── apps/beavernest-be-e2e/ [E] safe diagnostics browser assertions
+│       ├── tests/integration/{BeaverNestBe.IntegrationTests.fsproj,DiagnosticsHttpTests,EnvTierCompositionTests.fs} [E/N] compile entry, 200/503/no-store, and composition-root loader-order proof
+│       ├── Dockerfile [E] Flutter Web build/copy and shared-loader restore inputs
+│       ├── Dockerfile.integration [E] integration image shared-loader restore inputs
+│       └── scripts/run-e2e.sh [E] renamed frontend suite and pre-Compose APP_ENV=test default
+├── apps/beavernest-be-e2e/ [E] safe diagnostics browser assertions and APP_ENV=test container proof
 ├── docs/reference/{monorepo-structure.md,system-architecture/applications.md} [E] application identity
 ├── specs/apps/beavernest/
 │   ├── containers/contracts/{openapi.yaml,generated/openapi-bundled.yaml} [E] diagnostics contract
@@ -229,7 +253,7 @@ applies to the live runtime/project/spec ownership at P2, not to the isolated fo
 ├── .github/workflows/{beavernest-app-test-local-deploy-stag.yml,publish-images.yml} [E] PR trigger, FVM setup, identity and artifacts
 ├── repo-governance/vision/beavernest.md [E] product application identity
 ├── {repo-config.yml,package.json,package-lock.json,.fvmrc} [E/N] project registry, dependency removal, exact FVM pin
-├── ose-private@main:plans/{in-progress,done}/ [G] external predecessor completion evidence only; no file is edited from this worktree
+├── ose-private@main:plans/{in-progress,done}/ [G] external predecessor README/delivery validation only; no file is edited from this worktree
 ├── plans/in-progress/README.md [E] active-plan index
 └── plans/in-progress/beaver-flutter/{README.md,brd.md,prd.md,tech-docs.md,delivery.md,learnings.md,assets/**,evidence/**} [E] plan, visual contract, and evidence
 ```
