@@ -15,6 +15,7 @@ All scenarios use: `Given the app is running`
 
 - **home/** — Marketing landing page scenarios
 - **accessibility/** — Accessibility compliance scenarios
+- **env-loader/** — `APP_ENV` tier env-file loader scenarios (build-time tooling)
 
 ## Related
 
