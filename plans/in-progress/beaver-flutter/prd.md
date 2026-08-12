@@ -252,8 +252,12 @@ Mobile (< 768 px)                 Tablet (768–1023 px)        Desktop (>= 1024
 
 Responsive strategy: mobile starts with a single-column status card; tablet groups related status
 and support details without clipping; desktop adds a rail. Widgets use flexible constraints, semantic
-labels, text plus icons plus color, and polite live state updates. The core widgets must not import
-`dart:html`, browser storage, or Web transport types; the Web adapter owns those concerns.
+labels, text plus icons plus color, and polite live state updates. Flutter widgets are primary
+adapters: they invoke the `LoadReadiness`, `RefreshReadiness`, and `LoadDiagnostics` input use
+cases. Those use cases receive fakeable `ReadinessRepository` and `DiagnosticsRepository` output
+ports at composition. The core widgets and use cases must not import `dart:html`, browser storage,
+HTTP clients, or generated transport types; the current Web adapter owns those concerns and maps
+transport responses to pure domain models.
 
 The selected diagnostics treatment is the compact snapshot in Diagnostics A: it keeps safe support
 data scannable without duplicating the main readiness task. The selected installation treatment is
@@ -274,6 +278,9 @@ focus while open, returns focus to Help on close, and closes on Escape.
 
 The Web client has no external profile editor, CORS mode, persisted diagnostic history, or native
 configuration. The new diagnostics endpoint is a live safe view, not a persistence feature. The
-planned future-native structure is an architectural constraint, not a delivery promise for this plan.
-The Install entry is progressive enhancement only; a later HTTPS/PWA plan owns manifest, service
-worker, offline caching, and immediate auto-update.
+planned lightweight hexagonal structure is an architectural constraint, not a delivery promise for a
+native target: only readiness and diagnostics are ports in this slice, and a browser-shortcut port is
+not introduced without a real second implementation. The Install entry is progressive enhancement
+only; a later HTTPS/PWA plan owns manifest, service worker, offline caching, and immediate auto-update.
+Execution is also sequenced after the `ose-private` `restrict-env-access-to-prod-and-stag` plan: no
+Flutter delivery begins while that plan is migrating the legacy BeaverNest environment contract.
