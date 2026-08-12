@@ -1,3 +1,4 @@
+import "./src/env-loader.ts";
 import "./src/env.ts";
 import type { NextConfig } from "next";
 
