@@ -44,6 +44,13 @@ write, or edit either file directly — see
 below. Every other tier file (`.env.local`, `.env.test`, and the committed `.env.example`
 template) is agent-readable and agent-editable.
 
+The `test` tier exists as its own file rather than reusing `local` because Next.js deliberately
+skips `.env.local` whenever `NODE_ENV=test` — [documented
+upstream](https://nextjs.org/docs/pages/guides/environment-variables#test-environment-variables) as
+"you expect tests to produce the same results for everyone." There is no framework option to make
+tests read `.env.local` instead; `.env.test` is the only tier file Next.js's own loader will pick up
+during a test run.
+
 ## The `APP_ENV` contract
 
 Every loader in the repo — Next.js, F#, and Vite alike — implements the same five rules:
