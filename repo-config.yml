@@ -268,6 +268,9 @@ env-contract:
         # (wired in later phases); declared in .env.example ahead of use.
         - ORGANICLEVER_BE_PORT
         - ORGANICLEVER_BE_CORS_ORIGINS
+        # Tier-selection control var (which .env.<tier> file to load), not an
+        # app config value — same treatment as PORT/HOSTNAME for the TS apps.
+        - APP_ENV
 
     - root: apps/ose-be
       kind: app
@@ -280,6 +283,9 @@ env-contract:
         - OSE_BE_OPENROUTER_API_KEY
         - OSE_BE_OPENROUTER_MODEL
         - OSE_BE_OPENROUTER_BASE_URL
+        # Tier-selection control var (which .env.<tier> file to load), not an
+        # app config value — same treatment as PORT/HOSTNAME for the TS apps.
+        - APP_ENV
 
     - root: apps/ose-www
       kind: app
@@ -335,6 +341,9 @@ env-contract:
         - BEAVERNEST_BE_VPN_HOST_IP
         - BEAVERNEST_BE_PUBLIC_PORT
         - BEAVERNEST_BE_BACKUP_DIRECTORY
+        # Tier-selection control var (which .env.<tier> file to load), not an
+        # app config value — same treatment as PORT/HOSTNAME for the TS apps.
+        - APP_ENV
 
 env-injection:
   # Value-less injection contract (extends env-contract:).
