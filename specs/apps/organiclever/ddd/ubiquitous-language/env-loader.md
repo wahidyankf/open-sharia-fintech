@@ -12,14 +12,18 @@ Tiered `.env.<APP_ENV>` loader for `organiclever-app-web`, wired as the first im
 file values, a missing file is not an error, and a stray auto-loaded `.env`/`.env.production` beside
 the tier file fails loudly at any non-local tier.
 
+The loader rules themselves (tier resolution, the stray-file guard, process-env-wins) live in the
+shared `libs/ts-env-loader` package, consumed by every Next.js app in this repo; this app's own
+`env-loader` context is a thin wrapper that re-exports and calls that package's `loadTierEnv()`.
+
 ## Term index
 
-| Term          | Code identifier(s)            | Used in features       |
-| ------------- | ----------------------------- | ---------------------- |
-| `Tier`        | `resolveTier`, `DEFAULT_TIER` | `env-loader/*.feature` |
-| `Tier file`   | `tierEnvFilePath`             | `env-loader/*.feature` |
-| `Stray guard` | `assertNoStrayEnvFile`        | `env-loader/*.feature` |
-| `Loader`      | `loadTierEnv`                 | `env-loader/*.feature` |
+| Term          | Code identifier(s)    | Used in features       |
+| ------------- | --------------------- | ---------------------- |
+| `Tier`        | `resolveTier`         | `env-loader/*.feature` |
+| `Tier file`   | `tierEnvFilePath`     | `env-loader/*.feature` |
+| `Stray guard` | (shared-lib internal) | `env-loader/*.feature` |
+| `Loader`      | `loadTierEnv`         | `env-loader/*.feature` |
 
 ## Terms in detail
 
@@ -37,7 +41,8 @@ read in the same process.
 
 A startup check that throws, at any non-local tier, if a bare `.env` or `.env.production` file exists
 beside the tier file — both of which Next.js's own `@next/env` would otherwise auto-load in addition to
-the explicit tier file, silently violating the "exactly one file" rule.
+the explicit tier file, silently violating the "exactly one file" rule. Implemented as a private
+function inside the shared `libs/ts-env-loader` package, run automatically by `loadTierEnv()`.
 
 ### Term: `Loader`
 

@@ -14,13 +14,16 @@ respecting its real environment variables. A missing tier file is not an
 error; only a required-but-absent variable (e.g. `DATABASE_URL`) fails fast,
 and that check is unchanged by this context.
 
+The tier-resolution, tier-file-selection, and process-env-wins rules themselves live in the shared
+`libs/fsharp-env-loader` library (`FsharpEnvLoader.EnvTier`), consumed via `ProjectReference` by every
+F# backend in this repo (`ose-be`, `organiclever-be`, `beavernest-be`); this bounded context is a thin
+wrapper that supplies its own composition-root search directories.
+
 ## Term index
 
-| Term        | Code identifier(s)                | Used in features         |
-| ----------- | --------------------------------- | ------------------------ |
-| tier        | `resolveTier`                     | env-tier-loading.feature |
-| tier file   | `loadEnvTierFrom`, `applyEnvFile` | env-tier-loading.feature |
-| tier loader | `loadEnvTier`                     | env-tier-loading.feature |
+| Term        | Code identifier(s) | Used in features         |
+| ----------- | ------------------ | ------------------------ |
+| tier loader | `loadEnvTier`      | env-tier-loading.feature |
 
 ## Out of scope
 

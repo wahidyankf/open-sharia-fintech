@@ -13,14 +13,16 @@ which sets real env vars with no file on disk. This is what lets `.env.stag`/`.e
 (agent-restricted, sensitive) files never need to be opened by an AI agent, while
 `.env.local`/`.env.test` stay agent-readable.
 
+The tier-resolution, tier-file-selection, and process-env-wins rules themselves live in the shared
+`libs/fsharp-env-loader` library (`FsharpEnvLoader.EnvTier`), consumed via `ProjectReference` by every
+F# backend in this repo (`ose-be`, `organiclever-be`, `beavernest-be`); this bounded context is a thin
+wrapper that supplies its own composition-root search directories.
+
 ## Term index
 
-| Term                 | Code identifier(s)   | Used in features        |
-| -------------------- | -------------------- | ----------------------- |
-| tier                 | `currentTier`        | env-tier-loader.feature |
-| tier file            | `loadEnvTierFromDir` | env-tier-loader.feature |
-| composition root     | `candidateDirs`      | env-tier-loader.feature |
-| tiered env-file load | `loadEnvTier`        | env-tier-loader.feature |
+| Term                 | Code identifier(s) | Used in features        |
+| -------------------- | ------------------ | ----------------------- |
+| tiered env-file load | `loadEnvTier`      | env-tier-loader.feature |
 
 ## Out of scope
 
