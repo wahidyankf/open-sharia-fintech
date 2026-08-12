@@ -1,6 +1,6 @@
 ---
 title: "Environment File Access Convention"
-description: AI agents must not directly read, write, edit, or commit any .env* file except .env.example. Full policy in secrets-and-env-standards.md.
+description: AI agents must not directly read, write, or edit exactly .env.prod or .env.stag; every other real .env* file is agent-readable. Full policy in secrets-and-env-standards.md.
 category: explanation
 subcategory: conventions
 tags:
@@ -16,9 +16,11 @@ created: 2026-05-24
 > **Stub.** The full `guard-env-file-access` policy lives in
 > [`secrets-and-env-standards.md` § 9](./secrets-and-env-standards.md#9-guard-env-file-access-policy).
 
-**Summary**: AI agents must not directly read, write, edit, or commit any `.env*` file except
-`.env.example`. Policy identifier: `guard-env-file-access`. Exceptions: project scripts under
-`apps/`, `libs/`, and `scripts/`.
+**Summary**: AI agents must not directly read, write, or edit **`.env.prod`** or **`.env.stag`** —
+the two restricted-secrets tiers. Every other real `.env*` file (`.env`, `.env.local`, `.env.test`,
+etc.) is agent-readable; `.env.example` remains the always-committable template. Commit policy stays
+deny-all for every real `.env*` file regardless. Policy identifier: `guard-env-file-access`.
+Exceptions: project scripts under `apps/`, `libs/`, and `scripts/`.
 
 **Content-fixture exclusion**: a non-dotfile `<word>.env` (e.g. `kata.env`, `app.env`) under an
 app's published content tree — `apps/<app>/content/**` — is curriculum material and is exempt.

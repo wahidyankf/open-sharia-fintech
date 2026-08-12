@@ -404,11 +404,42 @@ the `env-injection:` section in `repo-config.yml` is the in-repo record of which
 
 ## 9. `guard-env-file-access` Policy
 
-AI agents must not directly read, write, edit, or commit any `.env*` file except `.env.example`. The
-canonical identifier for this policy is **`guard-env-file-access`**.
+AI agents must not directly read, write, or edit **`.env.prod`** or **`.env.stag`** — the two
+restricted-secrets tiers that hold real production and staging credentials. The canonical identifier
+for this policy is **`guard-env-file-access`**.
+
+This is a **named-file rule**, not a blanket `.env*` deny: only `.env.prod` and `.env.stag` are
+denied. Every other real `.env*` file — `.env`, `.env.local`, `.env.test`, `.env.development`,
+`.env.staging`, `.env.preview`, and so on — is agent-readable and agent-editable, alongside the
+always-allowed committed template `.env.example`.
+
+**Agent-access policy and commit policy are deliberately decoupled.** Loosening agent read/write
+access to `.env.local`, `.env.test`, and the other permitted names is a deliberate trade for task
+throughput; it does **not** loosen what may be committed. **Commit policy is unchanged and stays
+deny-all for every real `.env*` file** (everything except `.env.example`), enforced independently by
+`rhino-cli env staged-guard validate` in the pre-commit path (`env_staged_guard.rs`'s
+`is_offending` predicate). An agent may open `.env.local`; it may never commit it.
 
 Exceptions: project scripts under `apps/`, `libs/`, and `scripts/` are exempt (they are part of the
 app's own startup/setup logic, not AI-agent operations).
+
+### Tiered env files — the `APP_ENV` contract
+
+Every app selects its runtime tier via the `APP_ENV` process variable (unset means `local`) and loads
+exactly one file for that tier — `.env.<tier>`. A variable already present in the process
+environment is never replaced by a file value, which is what lets CI run with no file on disk at
+all. A missing tier file is not an error — the app falls back to process-env values and
+framework/library defaults.
+
+| Tier    | `APP_ENV` value   | File loaded  | Storage    | Agent access | Role                      |
+| ------- | ----------------- | ------------ | ---------- | ------------ | ------------------------- |
+| `local` | `local` (default) | `.env.local` | gitignored | allow        | Developer machine         |
+| `test`  | `test`            | `.env.test`  | gitignored | allow        | CI / e2e test runs        |
+| `stag`  | `stag`            | `.env.stag`  | gitignored | **DENIED**   | Staging deploy secrets    |
+| `prod`  | `prod`            | `.env.prod`  | gitignored | **DENIED**   | Production deploy secrets |
+
+`.env.stag` is used rather than the more familiar `.env.staging` for symmetry with `.env.prod` — no
+framework recognizes either name natively, so nativeness is not a tiebreaker and symmetry is.
 
 ### Content-fixture exclusion
 
