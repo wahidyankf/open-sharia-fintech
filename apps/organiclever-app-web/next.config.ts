@@ -1,3 +1,4 @@
+import "./src/contexts/env-loader/infrastructure/env-loader.ts";
 import "./src/env.ts";
 import type { NextConfig } from "next";
 import path from "node:path";
