@@ -2,8 +2,8 @@ import path from "node:path";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { afterAll, expect } from "vitest";
-import { loadTierEnv } from "../../../src/env-loader";
+import { afterAll, describe, expect, it } from "vitest";
+import { loadTierEnv, resolveTier } from "../../../src/env-loader";
 
 // Each scenario below drives loadTierEnv() with an isolated appDir (a throwaway temp directory
 // holding fixture .env.* files) and an isolated env object (a plain record, not the real
@@ -139,5 +139,20 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
       expect((thrown as Error).message).toContain(String(variables.file));
       expect((thrown as Error).message).toContain(".env.stag");
     });
+  });
+});
+
+// Rule 1 of the loader contract (APP_ENV unset defaults to "local") is exercised directly against
+// the pure `resolveTier` function rather than through a Gherkin scenario — every other test above
+// always supplies a concrete APP_ENV, so this is the sole place the default branch executes.
+// Mirrors apps/organiclever-be/tests/unit/Tests/EnvTierLoaderTests.fs's
+// "currentTier defaults to local when APP_ENV is unset".
+describe("resolveTier", () => {
+  it("defaults to local when APP_ENV is unset", () => {
+    expect(resolveTier({})).toBe("local");
+  });
+
+  it("defaults to local when APP_ENV is an empty string", () => {
+    expect(resolveTier({ APP_ENV: "" })).toBe("local");
   });
 });
