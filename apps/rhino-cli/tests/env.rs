@@ -157,16 +157,16 @@ fn init_git_repo(dir: &Path) {
 // env init — Given
 // ===========================================================================
 
-#[given(".env.example files exist in infra/dev but no .env files")]
+#[given(".env.example files exist in infra/dev but no .env.local files")]
 fn given_examples_no_env(w: &mut EnvWorld) {
     w.write("infra/dev/svc-a/.env.example", "A=1\n");
     w.write("infra/dev/svc-b/.env.example", "B=1\n");
 }
 
-#[given(".env.example files exist in infra/dev and some .env files already exist")]
+#[given(".env.example files exist in infra/dev and some .env.local files already exist")]
 fn given_examples_and_some_env(w: &mut EnvWorld) {
     w.write("infra/dev/svc-a/.env.example", "A=1\n");
-    w.write("infra/dev/svc-a/.env", "EXISTING=1\n");
+    w.write("infra/dev/svc-a/.env.local", "EXISTING=1\n");
     w.write("infra/dev/svc-b/.env.example", "B=1\n");
 }
 
@@ -189,10 +189,16 @@ fn when_run_init_force(w: &mut EnvWorld) {
     w.exec(&["env", "init", "--force"]);
 }
 
-#[then(".env files are created from each .env.example")]
+#[then(".env.local files are created from each .env.example")]
 fn then_env_files_created(w: &mut EnvWorld) {
-    assert!(w.repo_path().join("infra/dev/svc-a/.env").exists());
-    assert!(w.repo_path().join("infra/dev/svc-b/.env").exists());
+    assert!(w.repo_path().join("infra/dev/svc-a/.env.local").exists());
+    assert!(w.repo_path().join("infra/dev/svc-b/.env.local").exists());
+}
+
+#[then("no bare .env file is created")]
+fn then_no_bare_env_created(w: &mut EnvWorld) {
+    assert!(!w.repo_path().join("infra/dev/svc-a/.env").exists());
+    assert!(!w.repo_path().join("infra/dev/svc-b/.env").exists());
 }
 
 #[then("the output lists each created file")]
@@ -200,10 +206,10 @@ fn then_output_lists_created(w: &mut EnvWorld) {
     assert!(w.stdout().contains("Created:"), "got: {}", w.stdout());
 }
 
-#[then("existing .env files are not overwritten")]
+#[then("existing .env.local files are not overwritten")]
 fn then_existing_not_overwritten(w: &mut EnvWorld) {
-    let content =
-        std::fs::read_to_string(w.repo_path().join("infra/dev/svc-a/.env")).expect("read .env");
+    let content = std::fs::read_to_string(w.repo_path().join("infra/dev/svc-a/.env.local"))
+        .expect("read .env.local");
     assert_eq!(content, "EXISTING=1\n");
 }
 
@@ -212,10 +218,10 @@ fn then_output_shows_skipped(w: &mut EnvWorld) {
     assert!(w.stdout().contains("Skipped:"), "got: {}", w.stdout());
 }
 
-#[then("all .env files are created or overwritten")]
+#[then("all .env.local files are created or overwritten")]
 fn then_all_created_or_overwritten(w: &mut EnvWorld) {
-    let content =
-        std::fs::read_to_string(w.repo_path().join("infra/dev/svc-a/.env")).expect("read .env");
+    let content = std::fs::read_to_string(w.repo_path().join("infra/dev/svc-a/.env.local"))
+        .expect("read .env.local");
     assert_eq!(content, "A=1\n", "force should overwrite from example");
 }
 
