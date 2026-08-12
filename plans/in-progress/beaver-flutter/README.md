@@ -11,6 +11,21 @@ This plan replaces that client with `apps/beavernest-app`, a Flutter Web applica
 the single-origin deployment and turns the readiness screen into a status-first operational Web
 surface with a safe backend diagnostics snapshot.
 
+## Execution Prerequisite
+
+This plan is **blocked from execution** until the cross-repository
+`ose-private/plans/in-progress/restrict-env-access-to-prod-and-stag` plan is complete.
+[Repo-grounded: checked 2026-08-12] That plan is currently in progress and changes
+the environment-tier and agent-access contract for the existing BeaverNest projects. Executing this
+Flutter replacement concurrently would race its Phase 8 `ose-public` parity migration against the
+legacy `beavernest-app-web` identity this plan removes.
+
+Completion is not inferred from a check box or PR description. Before this plan's Phase 0 begins,
+its executor must verify that the upstream plan has been archived under `ose-private/plans/done/` on
+`main` and no longer exists under `plans/in-progress/`; record the resolved archive path and
+`ose-private` `main` SHA in this plan's Phase 0 evidence. Only then may this plan create its first
+delivery branch or alter BeaverNest code.
+
 ## Scope
 
 In scope:
@@ -40,6 +55,7 @@ Out of scope:
 | Web connection  | Same-origin relative `/api` only                                                              |
 | Client behavior | Status-first readiness plus safe diagnostics view                                             |
 | Contract        | Generated Dart SDK from OpenAPI via a Dart-native generator selected by a compatibility spike |
+| App structure   | Lightweight hexagonal architecture: pure domain and use cases behind explicit ports/adapters  |
 | SDK             | Exact FVM pin                                                                                 |
 | Cutover         | Strict atomic replacement; approved exception to the default feature-flag rollout             |
 | Phone install   | Browser-specific install-as-app shortcut only; no PWA guarantee on production HTTP            |
@@ -49,8 +65,10 @@ Out of scope:
 
 The delivery proves a Dart-native OpenAPI generator and pins the Flutter toolchain, extends the
 backend contract safely, builds the Flutter Web client with TDD, and atomically removes every live
-Vite/React frontend reference. A later plan may add native targets only after this Web baseline is
-merged and independently stable.
+Vite/React frontend reference. The generated client is confined to outer platform adapters: Flutter
+widgets call application use cases, which depend on explicit repository ports and pure domain models.
+A later plan may add native adapters only after this Web baseline is merged and independently stable. This
+delivery starts only after the environment-access predecessor has completed and been archived.
 
 ## Documents
 

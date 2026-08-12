@@ -42,8 +42,9 @@ without delaying the existing browser-based private workspace.
 
 ## Risks and Mitigations
 
-| Risk                                                         | Mitigation                                                                                                      |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| Dart generator cannot represent the current OpenAPI contract | A Phase 0 compatibility spike blocks client code until generated closed response types and drift checks pass.   |
-| Flutter asset hosting differs from Vite                      | Combined-runtime browser E2E validates bootstrap, assets, cache headers, and fallback behavior.                 |
-| Atomic cutover causes an avoidable regression                | Retain the legacy test baseline until the replacement passes its own Web/browser and API evidence before merge. |
+| Risk                                                                 | Mitigation                                                                                                                                                                                         |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Environment-tier work changes the legacy BeaverNest app concurrently | Hard-block this plan until `ose-private`'s `restrict-env-access-to-prod-and-stag` plan is archived; Phase 0 records authoritative cross-repository completion evidence before a branch is created. |
+| Dart generator cannot represent the current OpenAPI contract         | A Phase 0 compatibility spike blocks client code until generated closed response types and drift checks pass.                                                                                      |
+| Flutter asset hosting differs from Vite                              | Combined-runtime browser E2E validates bootstrap, assets, cache headers, and fallback behavior.                                                                                                    |
+| Atomic cutover causes an avoidable regression                        | Retain the legacy test baseline until the replacement passes its own Web/browser and API evidence before merge.                                                                                    |

@@ -4,14 +4,15 @@
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#029E73','secondaryColor':'#DE8F05','tertiaryColor':'#CC78BC'}}}%%
-flowchart LR
-  WEB[Flutter Web adapter] -->|relative /api| API[beavernest-be]
-  WEB --> CORE[Platform-neutral Dart core]
-  CORE --> UI[Responsive Flutter widgets]
+flowchart TB
+  UI[Flutter presentation\nprimary adapter] --> APP[Application use cases]
+  APP --> DOMAIN[Domain models and policies]
+  APP --> PORTS[Output ports\nReadinessRepository\nDiagnosticsRepository]
+  PLATFORM[Platform adapters\nWeb today; native later] -.-> PORTS
+  PLATFORM -->|relative /api| API[beavernest-be]
   API --> SQLITE[(SQLite)]
   CONTRACT[OpenAPI 3.1 contract] --> GEN[Dart-native generator]
-  GEN --> CORE
-  FUTURE[Later native plan] -. adds adapters only .-> CORE
+  GEN --> PLATFORM
 ```
 
 ```mermaid
@@ -28,37 +29,72 @@ sequenceDiagram
   A-->>W: Safe snapshot
 ```
 
+## Lightweight Hexagonal Architecture
+
+`beavernest-app` uses ports-and-adapters architecture, deliberately kept small for this status and
+diagnostics slice. It is not a package-per-layer framework or a requirement to wrap every Flutter
+API behind an interface.
+
+- The **domain** is pure: immutable business models, state transitions, and policies. It imports no
+  Flutter package, Web API, HTTP client, generated OpenAPI DTO, or adapter.
+- The **application** owns input use cases and the small set of output-port contracts they need:
+  `ReadinessRepository` and `DiagnosticsRepository`. A use case depends on those contracts, never on
+  an HTTP client or generated type.
+- Flutter **presentation** is the primary adapter. Widgets and route-independent view models invoke
+  use cases; they never issue HTTP requests or consume generated DTOs.
+- `platform/web` is the current secondary adapter. It implements the two repositories using
+  same-origin HTTP and translates generated transport DTOs into domain models. Generated types and
+  HTTP clients belong in the outer `platform/**` ring; browser-only APIs belong only in
+  `platform/web`. A later native adapter may use the same generated transport types without
+  widening any inner boundary.
+- Browser-shortcut guidance remains a presentational, static Web capability in this slice. It has no
+  port because it does not vary across a current use case and no native implementation is being
+  delivered. Introduce a port only when a later platform has genuinely different behavior.
+
+Dependencies point inward: `presentation -> application -> domain`; `platform/**` depends on the
+application port contracts and domain models while implementing the ports at composition time. The
+generated client is a transport detail behind a platform adapter, not part of the application API.
+
 ## Future-Ready Structure
 
 The app uses package-private boundaries that a later native plan extends rather than replaces:
 
-- `lib/domain/`: immutable readiness and diagnostics models, URI-free result states, reducers, and
-  interfaces; no Flutter platform imports.
-- `lib/application/`: use cases for refresh and diagnostics; depends only on domain interfaces.
+- `lib/domain/`: immutable readiness and diagnostics models, URI-free result states, and pure
+  reducers; no Flutter, Web, HTTP, generated-contract, or adapter imports.
+- `lib/application/`: input use cases for refresh and diagnostics plus `ports/` containing
+  `ReadinessRepository` and `DiagnosticsRepository`; depends only on domain models and port
+  contracts.
 - `lib/presentation/`: responsive Flutter widgets and route-independent view models; no
-  `dart:html`, browser storage, or network implementation imports.
+  `dart:html`, browser storage, HTTP client, or generated-contract imports.
 - `lib/presentation/theme/beavernest_theme.dart`: a `ThemeExtension` for surveyed semantic
   readiness, surface, and focus tokens; it translates design intent without copying React/CSS.
-- `lib/platform/web/`: same-origin HTTP client and browser integration; the sole Web-specific edge.
-- `lib/generated/`: Dart OpenAPI types generated from the bundled contract; never handwritten.
-- `test/`: pure domain/application tests plus widget tests; `integration_test/`: browser flow.
+- `lib/platform/web/`: current same-origin HTTP repository adapters and browser integration; the
+  only layer with browser-specific APIs and the current generated-DTO-to-domain mapping location.
+- `lib/platform/{android,macos}/`: deliberately absent in this delivery; later secondary adapters
+  may implement the same repository ports and translate generated DTOs without importing an inner
+  layer.
+- `lib/generated/`: Dart OpenAPI transport types generated from the bundled contract; never
+  handwritten and never imported by domain, application, or presentation; outer platform adapters
+  may import them.
+- `test/`: pure domain/application tests, adapter mapping tests, widget tests, and an architecture
+  boundary test; `integration_test/`: browser flow.
 
-A later Android/macOS plan may add `lib/platform/android/` and `lib/platform/macos/`, native
-endpoint configuration, and packaging. It must not change the shared status widgets, domain models,
-or generated contract boundary unless a new feature requires it.
+A later Android/macOS plan may add `lib/platform/android/` and `lib/platform/macos/` implementations
+of the existing ports, native endpoint configuration, and packaging. It must not change shared status
+widgets, domain models, use cases, or generated-contract boundary unless a new feature requires it.
 
 ## Design Decisions
 
-| Decision                            | Rationale                                                                                                                                                                                                                       |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Flutter Web now, native later       | Removes the legacy UI risk without bundling platform provisioning, security, and device validation into the first migration.                                                                                                    |
-| Mobile-first responsive Web         | Browser phone/tablet layouts prove adaptable information hierarchy before a native plan exists.                                                                                                                                 |
-| Platform-neutral core plus Web edge | Limits browser coupling and makes later adapter addition additive rather than a rewrite.                                                                                                                                        |
-| Same-origin relative API            | Preserves the current combined-runtime security/deployment boundary and avoids CORS expansion.                                                                                                                                  |
-| Dart-native code-generation spike   | The user selected generated OpenAPI types; the candidate must prove OpenAPI 3.1 union compatibility before it enters the toolchain.                                                                                             |
-| Safe snapshot endpoint              | Adds operational context while retaining the backend's safe-response posture; it is live and non-persistent.                                                                                                                    |
-| Strict atomic cutover               | User-approved exception to the default feature-flag rollout: retaining a legacy Vite/React bundle would violate the selected no-parallel-client requirement.                                                                    |
-| `beavernest-app` name exception     | User-approved future-multiplatform exception to the normal `[domain]-app-web` naming tier; P2 updates `AGENTS.md` and reference inventories to record that this product identity is Flutter Web now with later native adapters. |
+| Decision                           | Rationale                                                                                                                                                                                                                              |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Flutter Web now, native later      | Removes the legacy UI risk without bundling platform provisioning, security, and device validation into the first migration.                                                                                                           |
+| Mobile-first responsive Web        | Browser phone/tablet layouts prove adaptable information hierarchy before a native plan exists.                                                                                                                                        |
+| Lightweight hexagonal architecture | Keeps only real variability behind ports: readiness and diagnostics repositories. Flutter is a primary adapter, Web HTTP/generated DTO mapping is a secondary adapter, and dependencies point inward without framework-heavy ceremony. |
+| Same-origin relative API           | Preserves the current combined-runtime security/deployment boundary and avoids CORS expansion.                                                                                                                                         |
+| Dart-native code-generation spike  | The user selected generated OpenAPI types; the candidate must prove OpenAPI 3.1 union compatibility before it enters the toolchain.                                                                                                    |
+| Safe snapshot endpoint             | Adds operational context while retaining the backend's safe-response posture; it is live and non-persistent.                                                                                                                           |
+| Strict atomic cutover              | User-approved exception to the default feature-flag rollout: retaining a legacy Vite/React bundle would violate the selected no-parallel-client requirement.                                                                           |
+| `beavernest-app` name exception    | User-approved future-multiplatform exception to the normal `[domain]-app-web` naming tier; P2 updates `AGENTS.md` and reference inventories to record that this product identity is Flutter Web now with later native adapters.        |
 
 ## Validated Build and Test Facts
 
@@ -83,6 +119,23 @@ Phase 1 records the selected digest-pinned Flutter builder image and its verific
 `plans/in-progress/beaver-flutter/evidence/flutter-builder-lock.md`. Extend `rhino-cli doctor` and
 `repo-config.yml` only when the compatibility spike proves FVM validation can join the canonical
 doctor gate without bypassing it.
+
+## Cross-Repository Execution Dependency
+
+This plan depends on `ose-private`'s
+`plans/in-progress/restrict-env-access-to-prod-and-stag` plan completing first.
+[Repo-grounded: checked 2026-08-12] Its Phase 8 changes the same
+`ose-public` BeaverNest application identities while it establishes the tiered `APP_ENV` contract and
+agent access restrictions. The Flutter migration must start from that finished state, not compete
+with it or absorb a half-applied environment convention.
+
+The predecessor's archive on `ose-private/main` is the authoritative completion signal. Phase 0
+queries that tree for a dated `plans/done/*__restrict-env-access-to-prod-and-stag/README.md` path and
+for the absence of the in-progress path, then saves the archive path and source SHA as BeaverNest
+evidence. A missing archive or remaining in-progress path is a hard stop: do not create a delivery
+branch, edit application code, or open a Flutter PR. This plan does not duplicate or amend the
+predecessor's environment-tier behavior; after the gate passes, its own implementation respects the
+resulting repository state.
 
 ## API Contract
 
@@ -128,13 +181,13 @@ strategy.
 
 ## Test Strategy
 
-| Layer               | Coverage                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------ |
-| Unit                | generated response mapping, status reducer, safe snapshot decoder.                               |
-| Widget              | loading/ready/unavailable/retry, diagnostics, semantics, phone/tablet/desktop reflow.            |
-| Backend integration | OpenAPI bundle, handler 200/503/no-store, forbidden-field regressions.                           |
-| Browser integration | same-origin hosted Flutter bundle, refresh recovery, diagnostics, and responsive viewport proof. |
-| Build               | `fvm flutter build web`.                                                                         |
+| Layer               | Coverage                                                                                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit                | pure reducers/use cases with fake repositories, generated-response-to-domain mapping, safe snapshot decoder, and architecture-boundary regression test. |
+| Widget              | loading/ready/unavailable/retry, diagnostics, semantics, phone/tablet/desktop reflow.                                                                   |
+| Backend integration | OpenAPI bundle, handler 200/503/no-store, forbidden-field regressions.                                                                                  |
+| Browser integration | same-origin hosted Flutter bundle, refresh recovery, diagnostics, and responsive viewport proof.                                                        |
+| Build               | `fvm flutter build web`.                                                                                                                                |
 
 ## File-Impact Analysis
 
@@ -148,7 +201,7 @@ applies to the live runtime/project/spec ownership at P2, not to the isolated fo
 │   ├── README.md [E] application inventory
 │   ├── beavernest-app-web/ [D] legacy React/Vite client, tests, Docker inputs
 │   ├── beavernest-app-web-e2e/ [D] legacy Playwright identity and steps
-│   ├── beavernest-app/ [N] Flutter Web: lib/{domain,application,presentation/theme,platform/web,generated}, test/, integration_test/, web/, project.json
+│   ├── beavernest-app/ [N] Flutter Web: lib/{domain,application/{ports,use_cases},presentation/theme,platform/web,generated}; platform adapters implement the two repository ports and map generated DTOs, while platform/web alone owns browser APIs in this delivery; test/, integration_test/, web/, project.json
 │   ├── beavernest-app-e2e/ [N] renamed Playwright hosted-bundle suite, targets, steps, coverage baseline, reports
 │   └── beavernest-be/
 │       ├── README.md [E] Flutter Web local/runtime instructions
@@ -176,6 +229,7 @@ applies to the live runtime/project/spec ownership at P2, not to the isolated fo
 ├── .github/workflows/{beavernest-app-test-local-deploy-stag.yml,publish-images.yml} [E] PR trigger, FVM setup, identity and artifacts
 ├── repo-governance/vision/beavernest.md [E] product application identity
 ├── {repo-config.yml,package.json,package-lock.json,.fvmrc} [E/N] project registry, dependency removal, exact FVM pin
+├── ose-private@main:plans/{in-progress,done}/ [G] external predecessor completion evidence only; no file is edited from this worktree
 ├── plans/in-progress/README.md [E] active-plan index
 └── plans/in-progress/beaver-flutter/{README.md,brd.md,prd.md,tech-docs.md,delivery.md,learnings.md,assets/**,evidence/**} [E] plan, visual contract, and evidence
 ```
