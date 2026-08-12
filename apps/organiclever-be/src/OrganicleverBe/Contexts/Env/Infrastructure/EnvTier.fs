@@ -36,11 +36,16 @@ module Infrastructure =
     /// for keys not already set — rule 3: process env always wins over file
     /// values. This is what lets CI work with no `.env.<tier>` file on disk:
     /// CI sets real env vars, and those are never replaced by a file value.
+    /// "Already set" means present at all (null-check only) — a variable
+    /// explicitly exported as an empty string still counts as set and is left
+    /// untouched, matching the six TS loaders' `dotenv({ override: false })`
+    /// presence semantics (they test via `hasOwnProperty`, which doesn't care
+    /// whether an existing value is empty).
     let private applyIfUnset (pairs: (string * string) list) : unit =
         for key, value in pairs do
             let current = Environment.GetEnvironmentVariable(key)
 
-            if String.IsNullOrEmpty(current) then
+            if isNull current then
                 Environment.SetEnvironmentVariable(key, value)
 
     /// Loads `<dir>/.env.<tier>` into the process environment
@@ -70,7 +75,7 @@ module Infrastructure =
     /// invoking dotnet directly gets CWD itself instead — both are searched,
     /// and only the first candidate whose file exists is loaded (rule 2: one
     /// file).
-    let private candidateDirs () : string list = [ "."; "apps/organiclever-be" ]
+    let private candidateDirs () : string list = [ "apps/organiclever-be"; "." ]
 
     /// Loads `.env.<APP_ENV>` per the repo's tiered env-file convention:
     /// reads APP_ENV (default "local"), searches this app's composition

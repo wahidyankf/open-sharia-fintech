@@ -37,16 +37,18 @@ let private parseLine (line: string) : (string * string) option =
 
 /// Rule 3 of the loader contract — process env always wins: applies a tier
 /// file's KEY=VALUE lines to the process environment, leaving a variable
-/// that is already set (non-null, non-empty) untouched, so CI's real
-/// environment variables are never overridden.
+/// that is already set (present at all — null-check only, so an explicit
+/// empty string still counts as set) untouched, so CI's real environment
+/// variables are never overridden. Matches the six TS loaders' `dotenv({
+/// override: false })` presence semantics (they test via `hasOwnProperty`,
+/// which doesn't care whether an existing value is empty).
 let private applyEnvFile (path: string) : unit =
     path
     |> File.ReadLines
     |> Seq.choose parseLine
     |> Seq.iter (fun (key, value) ->
         match Environment.GetEnvironmentVariable(key) with
-        | null
-        | "" -> Environment.SetEnvironmentVariable(key, value)
+        | null -> Environment.SetEnvironmentVariable(key, value)
         | _ -> ())
 
 /// Rules 2 and 4 of the loader contract — one file, and a missing file is not

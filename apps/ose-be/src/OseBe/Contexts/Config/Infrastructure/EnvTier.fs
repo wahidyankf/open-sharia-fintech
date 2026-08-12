@@ -35,17 +35,19 @@ module Infrastructure =
                 if key = "" then None else Some(key, value)
 
     /// Applies a tier file's KEY=VALUE lines to the process environment.
-    /// Process env always wins: a variable already set (non-null, non-empty)
-    /// is left untouched, so CI's real environment variables are never
-    /// overridden.
+    /// Process env always wins: a variable already set (present at all —
+    /// null-check only, so an explicit empty string still counts as set) is
+    /// left untouched, so CI's real environment variables are never
+    /// overridden. Matches the six TS loaders' `dotenv({ override: false })`
+    /// presence semantics (they test via `hasOwnProperty`, which doesn't care
+    /// whether an existing value is empty).
     let private applyEnvFile (path: string) : unit =
         path
         |> File.ReadLines
         |> Seq.choose parseLine
         |> Seq.iter (fun (key, value) ->
             match Environment.GetEnvironmentVariable(key) with
-            | null
-            | "" -> Environment.SetEnvironmentVariable(key, value)
+            | null -> Environment.SetEnvironmentVariable(key, value)
             | _ -> ())
 
     /// Loads .env.<APP_ENV> per the repo's tiered env-file convention: process
