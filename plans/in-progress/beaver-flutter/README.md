@@ -14,17 +14,21 @@ surface with a safe backend diagnostics snapshot.
 ## Execution Prerequisite
 
 This plan is **blocked from execution** until the cross-repository
-`ose-private/plans/in-progress/restrict-env-access-to-prod-and-stag` plan is complete.
-[Repo-grounded: checked 2026-08-12] That plan is currently in progress and changes
-the environment-tier and agent-access contract for the existing BeaverNest projects. Executing this
-Flutter replacement concurrently would race its Phase 8 `ose-public` parity migration against the
-legacy `beavernest-app-web` identity this plan removes.
+`ose-private` `restrict-env-access-to-prod-and-stag` plan is genuinely complete.
+[Repo-grounded: checked 2026-08-13] Its `ose-public` implementation is merged as PR #176, but a
+dated archive path alone is not enough: an archive can retain an `In Progress` status or unresolved
+delivery checklist. Executing this Flutter replacement before semantic completion would race or
+silently inherit an unfinished environment-tier and agent-access contract for the existing BeaverNest
+projects.
 
-Completion is not inferred from a check box or PR description. Before this plan's Phase 0 begins,
-its executor must verify that the upstream plan has been archived under `ose-private/plans/done/` on
-`main` and no longer exists under `plans/in-progress/`; record the resolved archive path and
-`ose-private` `main` SHA in this plan's Phase 0 evidence. Only then may this plan create its first
-delivery branch or alter BeaverNest code.
+Completion is not inferred from a path, check box, or PR description. Before this plan's Phase 0
+begins, its executor must verify that the upstream plan is archived under `ose-private/plans/done/`
+on `main`, absent from `plans/in-progress/`, has a `Complete` README status, and has no unchecked
+delivery items. It must also verify that the
+corresponding `ose-public` implementation PR is merged and reachable from `origin/main`; record the
+resolved private archive path, private and public `main` SHAs, and public PR/merge commit in this
+plan's Phase 0 evidence. Only then may this plan create its first delivery branch or alter BeaverNest
+code.
 
 ## Scope
 
@@ -68,7 +72,8 @@ backend contract safely, builds the Flutter Web client with TDD, and atomically 
 Vite/React frontend reference. The generated client is confined to outer platform adapters: Flutter
 widgets call application use cases, which depend on explicit repository ports and pure domain models.
 A later plan may add native adapters only after this Web baseline is merged and independently stable. This
-delivery starts only after the environment-access predecessor has completed and been archived.
+delivery starts only after the environment-access predecessor has semantically completed, been
+archived, and landed its public implementation on `origin/main`.
 
 ## Documents
 
