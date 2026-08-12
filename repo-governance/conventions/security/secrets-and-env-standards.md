@@ -423,6 +423,19 @@ deny-all for every real `.env*` file** (everything except `.env.example`), enfor
 Exceptions: project scripts under `apps/`, `libs/`, and `scripts/` are exempt (they are part of the
 app's own startup/setup logic, not AI-agent operations).
 
+**Enforcement mechanism and its residual gap.** The policy is enforced by
+`.claude/hooks/block-env-file-access.sh`, a `PreToolUse` hook. This is a **best-effort guard, not a
+hard technical guarantee**: the file-tool branch (Read/Write/Edit/MultiEdit/Grep/Glob) matches on a
+symlink-resolved basename, and the Bash branch default-denies any command whose raw text references
+`.env.prod`/`.env.stag` anywhere — both case-insensitively, closing the enumerated-verb and
+filename-case bypasses. What it **cannot** close, because it is inherent to text-based matching: a
+Bash command that never spells the restricted tier name out literally, constructing it instead from
+separately-innocuous pieces (e.g. `t=prod; cat ".env.$t"`, or reading the tier name from another
+file). No text regex can distinguish that from an unrelated string concatenation. This residual gap
+is accepted deliberately; it is why the operator-facing documentation
+([configure-app-environments.md](../../../docs/how-to/configure-app-environments.md)) describes the
+guard as best-effort rather than promising agents cannot touch these files.
+
 ### Tiered env files — the `APP_ENV` contract
 
 Every app selects its runtime tier via the `APP_ENV` process variable (unset means `local`) and loads

@@ -106,7 +106,12 @@ read:
 
 ```fsharp
 // apps/ose-be/src/OseBe/Program.fs
-Infrastructure.loadEnvTier ()
+open OseBe.Contexts.Config.Infrastructure
+
+[<EntryPoint>]
+let main args =
+    loadEnvTier ()
+    // ...
 ```
 
 ### Vite
@@ -183,9 +188,15 @@ for the full `createEnv()` pattern.
 ## Agent access to `.env.stag` and `.env.prod` is restricted
 
 AI agents must not directly read, write, or edit `.env.prod` or `.env.stag` — the
-`guard-env-file-access` policy. Only you, as the human operator, can create or edit those two
-files. Every other tier file (`.env.local`, `.env.test`) and the committed `.env.example`
-template remain agent-readable and agent-editable.
+`guard-env-file-access` policy. This is enforced on a **best-effort basis** by a `PreToolUse` hook
+(`.claude/hooks/block-env-file-access.sh`), not a hard technical guarantee: the hook denies the
+tool calls and Bash command shapes it can recognize, but it cannot see every way a shell command
+could reference a file, so treat it as a strong deterrent rather than a sandbox boundary. As the
+human operator, you are the primary and most reliable way to create or edit those two files, and
+you should apply compensating controls (secrets-manager storage, access logging, least-privilege
+credentials) rather than relying on the hook alone to keep production and staging secrets safe.
+Every other tier file (`.env.local`, `.env.test`) and the committed `.env.example` template
+remain agent-readable and agent-editable.
 
 This is a named-file rule, not a blanket deny on every `.env*` file — only `.env.prod` and
 `.env.stag` are denied. It is also independent of commit policy: commit policy stays deny-all for
