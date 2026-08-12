@@ -2,6 +2,11 @@ import path from "node:path";
 import { defineConfig } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
+// Pin the tier deterministically for e2e runs — leaving APP_ENV unset would fall back to
+// "local" per the loader contract in plans/in-progress/restrict-env-access-to-prod-and-stag,
+// which would read a developer's real .env.local instead of test fixtures.
+process.env.APP_ENV ??= "test";
+
 const workspaceRoot = path.resolve(__dirname, "../..");
 
 const testDir = defineBddConfig({
