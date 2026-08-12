@@ -14,6 +14,12 @@ Organized per bounded context (one folder per BC, matching
 | app-shell       | `app-shell/` | `accessibility`, `navigation`, `responsive`, `theme` | 4 files   |
 | landing         | `landing/`   | `landing-page`                                       | 1 file    |
 
+Build-tooling scenarios (not DDD bounded contexts, exempt from the "per BC" convention above):
+
+| Domain | Folder    | Features           | Scenarios |
+| ------ | --------- | ------------------ | --------- |
+| config | `config/` | `env-tier-loading` | 1 file    |
+
 ## File naming
 
 `[domain-capability].feature` (kebab-case). Stay UI-semantic — no HTTP, no tRPC procedure
