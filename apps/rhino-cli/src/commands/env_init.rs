@@ -1,4 +1,4 @@
-//! `env init` — copies `.env.example` files to `.env` files under `infra/dev/` and `apps/`.
+//! `env init` — copies `.env.example` files to `.env.local` files under `infra/dev/` and `apps/`.
 //!
 //! Port of `apps/rhino-cli/cmd/env_init.go`.
 
@@ -14,6 +14,15 @@ use crate::internal::git;
 
 /// Directories under `repo_root` that are scanned for `.env.example` files.
 const SCAN_ROOTS: &[&str] = &["infra/dev", "apps"];
+
+/// The tier `env init` bootstraps: local development, never committed.
+const ENV_TIER_DEFAULT: &str = ".env.local";
+
+/// Compute the target env file path for a discovered `.env.example` file,
+/// sitting alongside it in the same directory.
+fn target_env_path(example_path: &Path) -> Option<PathBuf> {
+    Some(example_path.parent()?.join(ENV_TIER_DEFAULT))
+}
 
 /// Collect all `.env.example` files found under `SCAN_ROOTS` in `repo_root`.
 pub fn collect_examples(repo_root: &Path) -> Vec<PathBuf> {
@@ -59,10 +68,7 @@ pub fn run(args: &EnvInitArgs, _output: OutputFormat) -> std::result::Result<(),
     let mut errs: Vec<String> = Vec::new();
 
     for path in collect_examples(&repo_root) {
-        let env_path = path
-            .parent()
-            .ok_or_else(|| anyhow!("invalid path"))?
-            .join(".env");
+        let env_path = target_env_path(&path).ok_or_else(|| anyhow!("invalid path"))?;
         let rel = env_path.strip_prefix(&repo_root).unwrap_or(&env_path);
         if !args.force && env_path.exists() {
             println!(
@@ -136,6 +142,24 @@ mod tests {
         assert!(
             found.contains(&"apps/ose-be/.env.example".to_string()),
             "apps/ose-be/.env.example must be discovered; got: {found:?}"
+        );
+    }
+
+    #[test]
+    fn target_env_path_uses_env_local_suffix() {
+        let example = Path::new("apps/ose-be/.env.example");
+        let target = target_env_path(example).unwrap();
+        assert_eq!(target, Path::new("apps/ose-be/.env.local"));
+    }
+
+    #[test]
+    fn env_init_does_not_create_bare_dot_env() {
+        let example = Path::new("apps/ose-be/.env.example");
+        let target = target_env_path(example).unwrap();
+        assert_ne!(
+            target.file_name(),
+            Some(std::ffi::OsStr::new(".env")),
+            "env init must never produce a bare .env file"
         );
     }
 }
