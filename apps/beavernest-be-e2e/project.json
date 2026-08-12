@@ -85,7 +85,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-be/gherkin apps/beavernest-be-e2e"
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps --exclude-dir configuration specs/apps/beavernest/behavior/beavernest-be/gherkin apps/beavernest-be-e2e"
       },
       "cache": true,
       "inputs": [

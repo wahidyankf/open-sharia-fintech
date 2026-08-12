@@ -19,6 +19,8 @@ Behavioral scenarios for the `beavernest-be` F#/Giraffe REST API, organized by d
   development uses an explicit isolated SQLite directory
 - [persistence/](./persistence/) — migration and SQLite safety behavior
 - [recovery/](./recovery/) — verified online backup and restore behavior
+- [configuration/env-tier-loading.feature](./configuration/env-tier-loading.feature) — tiered
+  `.env.<APP_ENV>` loading at startup
 
 Derived from the current BeaverNest foundation behavior contract.
 

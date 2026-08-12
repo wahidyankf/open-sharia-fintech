@@ -6,18 +6,20 @@ Cross-cutting Gherkin scenarios for the BeaverNest foundation, covering both C4 
 
 ```
 behavior/
-├── beavernest-be/gherkin/    # 15 feature files — health, routing, persistence, development, recovery
+├── beavernest-be/gherkin/    # 16 feature files — health, routing, persistence, development, recovery, configuration
 │   ├── health/                # liveness, readiness-ready, readiness-unready
 │   ├── routing/                # greeting-retirement, missing-asset, spa-fallback, unknown-api
 │   ├── persistence/            # migration and SQLite safety behavior
 │   ├── development/            # local data-directory isolation
-│   └── recovery/                # verified online backup and restore
-└── beavernest-app-web/gherkin/    # 4 feature files
+│   ├── recovery/                # verified online backup and restore
+│   └── configuration/           # tiered .env.<APP_ENV> loading
+└── beavernest-app-web/gherkin/    # 5 feature files
     ├── workspace/                # browser-readiness, readiness-loading, no-promotional-cta
-    └── network/                   # readiness-recovery
+    ├── network/                   # readiness-recovery
+    └── configuration/              # tiered .env.<APP_ENV> loading via Vite's --mode flag
 ```
 
-19 feature files, 21 scenarios total.
+21 feature files, 25 scenarios total.
 
 ## Surfaces
 

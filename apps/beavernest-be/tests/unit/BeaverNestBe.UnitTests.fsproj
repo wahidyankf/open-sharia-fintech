@@ -22,6 +22,7 @@
     <Compile Include="Steps/PersistenceSteps.fs" />
     <Compile Include="Steps/RecoverySteps.fs" />
     <Compile Include="Steps/DevelopmentSteps.fs" />
+    <Compile Include="Steps/ConfigurationSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
     <Compile Include="Tests/ReadinessHandlerTests.fs" />
     <Compile Include="Tests/NotFoundHandlerTests.fs" />
@@ -31,6 +32,7 @@
     <Compile Include="Tests/DatabaseConfigurationTests.fs" />
     <Compile Include="Tests/SqliteInfrastructureTests.fs" />
     <Compile Include="Tests/DatabaseOperationsTests.fs" />
+    <Compile Include="Tests/EnvTierLoaderTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

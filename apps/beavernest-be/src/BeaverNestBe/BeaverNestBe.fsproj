@@ -29,6 +29,7 @@
     <Compile Include="Infrastructure/Sqlite/Errors.fs" />
     <Compile Include="Infrastructure/Sqlite/Connection.fs" />
     <Compile Include="Infrastructure/Migrations.fs" />
+    <Compile Include="Infrastructure/EnvTierLoader.fs" />
     <Compile Include="Operations/Database.fs" />
     <Compile Include="Application/ReadinessPort.fs" />
     <Compile Include="Api/HealthHandlers.fs" />
