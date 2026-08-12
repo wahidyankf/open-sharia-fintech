@@ -1,72 +1,19 @@
 module BeaverNestBe.Infrastructure.EnvTierLoader
 
-open System
 open System.IO
 
-// Composition-root infrastructure: loads the tiered `.env.<APP_ENV>` file per
-// the repo-wide `APP_ENV` loader contract (`restrict-env-access-to-prod-and-
-// stag` plan, `tech-docs.md` §The APP_ENV loader contract) so that
-// agent-restricted tiers (.env.stag, .env.prod) never need to be opened by an
-// AI agent, while process environment variables set by CI always take
-// precedence over any file value. Mirrors the sibling `ose-be` /
-// `organiclever-be` F#/.NET loaders (same five rules, same shape) so the
-// three backends stay consistent.
-
-/// Rule 1 of the loader contract — the tier selector: reads APP_ENV (default
-/// "local").
-let private resolveTier () : string =
-    match Environment.GetEnvironmentVariable("APP_ENV") with
-    | null
-    | "" -> "local"
-    | value -> value
-
-/// Parses a single ".env" line into a KEY, VALUE pair. Blank lines and lines
-/// starting with "#" (comments) yield None, as do lines with no "=".
-let private parseLine (line: string) : (string * string) option =
-    let trimmed = line.Trim()
-
-    if trimmed = "" || trimmed.StartsWith("#", StringComparison.Ordinal) then
-        None
-    else
-        match trimmed.IndexOf('=') with
-        | -1 -> None
-        | index ->
-            let key = trimmed.Substring(0, index).Trim()
-            let value = trimmed.Substring(index + 1).Trim()
-            if key = "" then None else Some(key, value)
-
-/// Rule 3 of the loader contract — process env always wins: applies a tier
-/// file's KEY=VALUE lines to the process environment, leaving a variable
-/// that is already set (present at all — null-check only, so an explicit
-/// empty string still counts as set) untouched, so CI's real environment
-/// variables are never overridden. Matches the six TS loaders' `dotenv({
-/// override: false })` presence semantics (they test via `hasOwnProperty`,
-/// which doesn't care whether an existing value is empty).
-let private applyEnvFile (path: string) : unit =
-    path
-    |> File.ReadLines
-    |> Seq.choose parseLine
-    |> Seq.iter (fun (key, value) ->
-        match Environment.GetEnvironmentVariable(key) with
-        | null -> Environment.SetEnvironmentVariable(key, value)
-        | _ -> ())
-
-/// Rules 2 and 4 of the loader contract — one file, and a missing file is not
-/// an error: loads `.env.<APP_ENV>`, searching `searchDirs` in order for the
-/// first tier file that exists and doing nothing if none of them do (the
-/// normal case in CI, where real env vars are set with no file on disk).
-let loadEnvTierFrom (searchDirs: string list) : unit =
-    let fileName = $".env.%s{resolveTier ()}"
-
-    searchDirs
-    |> List.map (fun dir -> Path.Combine(dir, fileName))
-    |> List.tryFind File.Exists
-    |> Option.iter applyEnvFile
+// Composition-root infrastructure: thin wrapper around the shared
+// `libs/fsharp-env-loader` tiered `.env.<APP_ENV>` loader per the repo-wide
+// `APP_ENV` loader contract (`restrict-env-access-to-prod-and-stag` plan,
+// `tech-docs.md` §The APP_ENV loader contract) so that agent-restricted
+// tiers (.env.stag, .env.prod) never need to be opened by an AI agent. The
+// loader rules themselves (tier resolution, process-env-wins, missing-file
+// tolerance) live in `FsharpEnvLoader.EnvTier`, shared with the sibling
+// `ose-be` / `organiclever-be` backends.
 
 /// Composition-root entry point — call as the first statement in `main`,
-/// before any config is read. Rule 5 (fail loudly on required-but-absent
-/// config) is deliberately NOT this function's job: it stays exactly as-is
-/// downstream in `DatabaseConfiguration.fromEnvironment` and
+/// before any config is read. Fail-loudly-on-required-but-absent-config stays
+/// exactly as-is downstream in `DatabaseConfiguration.fromEnvironment` and
 /// `HttpConfiguration.parse`, which already fail when a required variable is
 /// absent once this loader has run.
 ///
@@ -77,4 +24,4 @@ let loadEnvTierFrom (searchDirs: string list) : unit =
 /// makes that directory the working directory itself, so "." is checked too
 /// — either way, the tier file resolves correctly.
 let loadEnvTier () : unit =
-    loadEnvTierFrom [ Path.Combine("apps", "beavernest-be"); "." ]
+    FsharpEnvLoader.EnvTier.loadEnvTierFrom [ Path.Combine("apps", "beavernest-be"); "." ]

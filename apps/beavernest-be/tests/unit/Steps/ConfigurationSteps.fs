@@ -17,9 +17,9 @@ let ``no value is read from any other env file`` () = ()
 // Raw no-op step bindings for the two scenarios below — same pattern as above and as
 // organiclever-be's Steps/EnvTierSteps.fs: these satisfy the spec coverage validator's
 // step-text matcher, while the actual rule 3 / rule 4 behavior is exercised in
-// Tests/EnvTierLoaderTests.fs's ``loadEnvTierFrom never overrides a variable already set in
-// the process environment`` and ``loadEnvTierFrom does nothing when the tier file is absent``
-// (both @covers-tagged to these two scenarios).
+// Tests/EnvTierLoaderTests.fs's ``loadEnvTier never overrides a variable already set in
+// the process environment`` and ``loadEnvTier does not throw when no tier file is present
+// at either search dir`` (both @covers-tagged to these two scenarios).
 
 [<Given>]
 let ``a tier file at the app's composition root sets a variable to a file value`` () = ()

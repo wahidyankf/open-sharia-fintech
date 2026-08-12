@@ -11,8 +11,8 @@ import path from "path";
 import { mkdtempSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { describe, expect, it } from "vitest";
-import { loadTierEnv, resolveTier } from "../../../src/contexts/env-loader/infrastructure/env-loader";
+import { expect } from "vitest";
+import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader";
 
 const feature = await loadFeature(
   path.resolve(
@@ -149,19 +149,4 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       });
     },
   );
-});
-
-// Rule 1 of the loader contract (APP_ENV unset defaults to "local") is exercised directly against
-// the pure `resolveTier` function rather than through a Gherkin scenario — every other test above
-// always supplies a concrete APP_ENV, so this is the sole place the default branch executes.
-// Mirrors apps/organiclever-be/tests/unit/Tests/EnvTierLoaderTests.fs's
-// "currentTier defaults to local when APP_ENV is unset".
-describe("resolveTier", () => {
-  it("defaults to local when APP_ENV is unset", () => {
-    expect(resolveTier({})).toBe("local");
-  });
-
-  it("defaults to local when APP_ENV is an empty string", () => {
-    expect(resolveTier({ APP_ENV: "" })).toBe("local");
-  });
 });

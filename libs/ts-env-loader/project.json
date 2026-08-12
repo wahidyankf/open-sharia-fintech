@@ -1,0 +1,118 @@
+{
+  "name": "ts-env-loader",
+  "sourceRoot": "libs/ts-env-loader/src",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc --noEmit",
+        "cwd": "libs/ts-env-loader"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint@latest .",
+        "cwd": "libs/ts-env-loader"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx vitest run",
+          "! grep -rnE '\\.(skip|todo)\\(' --include='*.test.*' --include='*.steps.*' src"
+        ],
+        "parallel": false,
+        "cwd": "libs/ts-env-loader"
+      },
+      "cache": true
+    },
+    "test:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --coverage --coverage.thresholds.lines=90",
+        "cwd": "libs/ts-env-loader"
+      },
+      "cache": true,
+      "outputs": ["{projectRoot}/coverage"],
+      "inputs": ["{projectRoot}/src/**/*"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project'"
+      },
+      "cache": true
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'no-op: target not applicable for this project'"
+      },
+      "cache": true
+    },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/libs/ts-env-loader/behavior/gherkin libs/ts-env-loader"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/behavior/gherkin/**/*.feature", "{projectRoot}/src/**/*"]
+    },
+    "specs:structure-validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs counts validate specs/libs/ts-env-loader"
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/**/*"]
+    },
+    "test:specs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run ts-env-loader:specs:structure-validation",
+          "npx nx run ts-env-loader:specs:behavior:coverage"
+        ],
+        "parallel": false
+      },
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/libs/ts-env-loader/**/*", "{projectRoot}/src/**/*", "specs"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx run ts-env-loader:typecheck",
+          "npx nx run ts-env-loader:lint",
+          "npx nx run ts-env-loader:test:unit",
+          "npx nx run ts-env-loader:test:coverage",
+          "npx nx run ts-env-loader:test:specs"
+        ],
+        "parallel": false
+      },
+      "cache": true,
+      "inputs": ["default", "specs"]
+    },
+    "deps:audit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm audit"
+      },
+      "cache": false
+    },
+    "compat:min-version": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'compat:min-version: no standard min-version floor for TypeScript'"
+      },
+      "cache": true
+    }
+  },
+  "namedInputs": {
+    "specs": ["{workspaceRoot}/specs/libs/ts-env-loader/behavior/gherkin/**/*.feature"]
+  },
+  "tags": ["type:lib", "lang:ts", "domain:config"]
+}

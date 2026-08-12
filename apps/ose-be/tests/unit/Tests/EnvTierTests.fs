@@ -12,69 +12,15 @@ let private newTempDir () : string =
     Directory.CreateDirectory(dir) |> ignore
     dir
 
-/// Runs `body` with APP_ENV set to `tier`, restoring the prior value afterwards.
-let private withAppEnv (tier: string) (body: unit -> unit) : unit =
-    let previous = Environment.GetEnvironmentVariable("APP_ENV")
-
-    try
-        Environment.SetEnvironmentVariable("APP_ENV", tier)
-        body ()
-    finally
-        Environment.SetEnvironmentVariable("APP_ENV", previous)
-
-// @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be loads exactly one tier file
-[<Theory>]
-[<InlineData("local")>]
-[<InlineData("test")>]
-[<InlineData("stag")>]
-[<InlineData("prod")>]
-let ``loadEnvTierFrom reads only the file matching APP_ENV`` (tier: string) =
-    let tempDir = newTempDir ()
-    let varName = $"OSE_BE_ENV_TIER_TEST_VALUE_{Guid.NewGuid():N}"
-
-    try
-        // A sibling tier file also exists — only the file matching APP_ENV must be read.
-        File.WriteAllText(Path.Combine(tempDir, $".env.{tier}"), $"{varName}=from-{tier}\n")
-        File.WriteAllText(Path.Combine(tempDir, ".env.other-tier"), $"{varName}=from-other-tier\n")
-
-        withAppEnv tier (fun () ->
-            loadEnvTierFrom [ tempDir ]
-            Assert.Equal($"from-{tier}", Environment.GetEnvironmentVariable(varName)))
-    finally
-        Environment.SetEnvironmentVariable(varName, null)
-        Directory.Delete(tempDir, true)
-
-// @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be process env wins over a tier file value
-[<Fact>]
-let ``loadEnvTierFrom never overrides a variable already set in the process environment`` () =
-    let tempDir = newTempDir ()
-    let varName = $"OSE_BE_ENV_TIER_TEST_PRECEDENCE_{Guid.NewGuid():N}"
-
-    try
-        File.WriteAllText(Path.Combine(tempDir, ".env.test"), $"{varName}=from-file\n")
-        Environment.SetEnvironmentVariable(varName, "from-process-env")
-
-        withAppEnv "test" (fun () ->
-            loadEnvTierFrom [ tempDir ]
-            Assert.Equal("from-process-env", Environment.GetEnvironmentVariable(varName)))
-    finally
-        Environment.SetEnvironmentVariable(varName, null)
-        Directory.Delete(tempDir, true)
-
-// @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be tolerates a missing tier file
-[<Fact>]
-let ``loadEnvTierFrom does nothing when the tier file is absent`` () =
-    let tempDir = newTempDir ()
-
-    try
-        // No .env.nonexistent-tier file is created — absence must not raise.
-        withAppEnv "nonexistent-tier" (fun () -> loadEnvTierFrom [ tempDir ])
-    finally
-        Directory.Delete(tempDir, true)
+// The loader's own rules (tier resolution, one-file, process-env-wins,
+// missing-file tolerance, and parsing edge cases) are covered once, in
+// libs/fsharp-env-loader/tests/unit/Tests/EnvTierTests.fs. This app's own
+// test focuses on the thin wrapper: `loadEnvTier` must resolve this app's own
+// composition-root search dirs (`apps/ose-be` then `.`) correctly.
 
 // @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be loads exactly one tier file
 [<Fact>]
-let ``loadEnvTier defaults to the local tier when APP_ENV is unset`` () =
+let ``loadEnvTier defaults to the local tier when APP_ENV is unset, and resolves this app's own composition root`` () =
     let tempDir = newTempDir ()
     let varName = $"OSE_BE_ENV_TIER_TEST_DEFAULT_{Guid.NewGuid():N}"
     let previousCwd = Directory.GetCurrentDirectory()
@@ -92,4 +38,45 @@ let ``loadEnvTier defaults to the local tier when APP_ENV is unset`` () =
         Directory.SetCurrentDirectory(previousCwd)
         Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
         Environment.SetEnvironmentVariable(varName, null)
+        Directory.Delete(tempDir, true)
+
+// @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be process env wins over a tier file value
+[<Fact>]
+let ``loadEnvTier never overrides a variable already set in the process environment`` () =
+    let tempDir = newTempDir ()
+    let varName = $"OSE_BE_ENV_TIER_TEST_PRECEDENCE_{Guid.NewGuid():N}"
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
+
+    try
+        File.WriteAllText(Path.Combine(tempDir, ".env.test"), $"{varName}=from-file\n")
+        Environment.SetEnvironmentVariable("APP_ENV", "test")
+        Environment.SetEnvironmentVariable(varName, "from-process-env")
+        Directory.SetCurrentDirectory(tempDir)
+
+        loadEnvTier ()
+
+        Assert.Equal("from-process-env", Environment.GetEnvironmentVariable(varName))
+    finally
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
+        Environment.SetEnvironmentVariable(varName, null)
+        Directory.Delete(tempDir, true)
+
+// @covers specs/apps/ose/behavior/be/gherkin/config/env-tier-loading.feature:ose-be tolerates a missing tier file
+[<Fact>]
+let ``loadEnvTier does not throw when no tier file is present at either search dir`` () =
+    let tempDir = newTempDir ()
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
+
+    try
+        // No .env.nonexistent-tier file is created — absence must not raise.
+        Environment.SetEnvironmentVariable("APP_ENV", "nonexistent-tier")
+        Directory.SetCurrentDirectory(tempDir)
+
+        loadEnvTier ()
+    finally
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
         Directory.Delete(tempDir, true)

@@ -65,4 +65,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../../../../libs/fsharp-env-loader/fsharp-env-loader.fsproj" />
+  </ItemGroup>
+
 </Project>

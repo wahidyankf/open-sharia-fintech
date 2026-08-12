@@ -13,77 +13,77 @@ let private makeTempDir () : string =
     Directory.CreateDirectory(dir) |> ignore
     dir
 
-[<Fact>]
-let ``currentTier defaults to local when APP_ENV is unset`` () =
-    let previous = Environment.GetEnvironmentVariable("APP_ENV")
-
-    try
-        Environment.SetEnvironmentVariable("APP_ENV", null)
-        Assert.Equal("local", currentTier ())
-    finally
-        Environment.SetEnvironmentVariable("APP_ENV", previous)
-
-[<Fact>]
-let ``currentTier reads APP_ENV when set`` () =
-    let previous = Environment.GetEnvironmentVariable("APP_ENV")
-
-    try
-        Environment.SetEnvironmentVariable("APP_ENV", "stag")
-        Assert.Equal("stag", currentTier ())
-    finally
-        Environment.SetEnvironmentVariable("APP_ENV", previous)
+// The loader's own rules (tier resolution, one-file, process-env-wins,
+// missing-file tolerance, and parsing edge cases) are covered once, in
+// libs/fsharp-env-loader/tests/unit/Tests/EnvTierTests.fs. This app's own
+// test focuses on the thin wrapper: `loadEnvTier` must resolve this app's own
+// composition-root search dirs (`apps/organiclever-be` then `.`) correctly.
 
 // @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be loads exactly one tier file
-[<Theory>]
-[<InlineData("local")>]
-[<InlineData("test")>]
-[<InlineData("stag")>]
-[<InlineData("prod")>]
-let ``loadEnvTierFromDir loads only the requested tier file`` (tier: string) =
-    let dir = makeTempDir ()
-    let varName = sprintf "ENV_TIER_MARKER_%s" (Guid.NewGuid().ToString("N"))
+[<Fact>]
+let ``loadEnvTier defaults to the local tier when APP_ENV is unset, and resolves this app's own composition root`` () =
+    let tempDir = makeTempDir ()
+
+    let varName =
+        sprintf "ORGANICLEVER_BE_ENV_TIER_TEST_DEFAULT_%s" (Guid.NewGuid().ToString("N"))
+
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
 
     try
-        // "the files .env.local and .env.stag both exist at the app's composition root"
-        File.WriteAllText(Path.Combine(dir, ".env.local"), sprintf "%s=local_value\n" varName)
-        File.WriteAllText(Path.Combine(dir, ".env.stag"), sprintf "%s=stag_value\n" varName)
-        // the tier under test always gets its own distinguishable value, so a
-        // wrong-file read is caught even when the tier under test is "local" or "stag"
-        File.WriteAllText(Path.Combine(dir, sprintf ".env.%s" tier), sprintf "%s=%s_value\n" varName tier)
+        File.WriteAllText(Path.Combine(tempDir, ".env.local"), sprintf "%s=from-local\n" varName)
+        Environment.SetEnvironmentVariable("APP_ENV", null)
+        Directory.SetCurrentDirectory(tempDir)
 
-        Environment.SetEnvironmentVariable(varName, null)
-        loadEnvTierFromDir dir tier
+        loadEnvTier ()
 
-        Assert.Equal(sprintf "%s_value" tier, Environment.GetEnvironmentVariable(varName))
+        Assert.Equal("from-local", Environment.GetEnvironmentVariable(varName))
     finally
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
         Environment.SetEnvironmentVariable(varName, null)
-        Directory.Delete(dir, true)
+        Directory.Delete(tempDir, true)
 
 // @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be process env wins over a tier file value
 [<Fact>]
-let ``loadEnvTierFromDir does not override an already-set process variable`` () =
-    let dir = makeTempDir ()
-    let varName = sprintf "ENV_TIER_MARKER_%s" (Guid.NewGuid().ToString("N"))
+let ``loadEnvTier never overrides a variable already set in the process environment`` () =
+    let tempDir = makeTempDir ()
+
+    let varName =
+        sprintf "ORGANICLEVER_BE_ENV_TIER_TEST_PRECEDENCE_%s" (Guid.NewGuid().ToString("N"))
+
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
 
     try
-        File.WriteAllText(Path.Combine(dir, ".env.test"), sprintf "%s=from_file\n" varName)
-        Environment.SetEnvironmentVariable(varName, "from_process")
+        File.WriteAllText(Path.Combine(tempDir, ".env.test"), sprintf "%s=from-file\n" varName)
+        Environment.SetEnvironmentVariable("APP_ENV", "test")
+        Environment.SetEnvironmentVariable(varName, "from-process-env")
+        Directory.SetCurrentDirectory(tempDir)
 
-        loadEnvTierFromDir dir "test"
+        loadEnvTier ()
 
-        Assert.Equal("from_process", Environment.GetEnvironmentVariable(varName))
+        Assert.Equal("from-process-env", Environment.GetEnvironmentVariable(varName))
     finally
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
         Environment.SetEnvironmentVariable(varName, null)
-        Directory.Delete(dir, true)
+        Directory.Delete(tempDir, true)
 
 // @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be tolerates a missing tier file
 [<Fact>]
-let ``loadEnvTierFromDir is a no-op when the tier file is absent`` () =
-    let dir = makeTempDir ()
+let ``loadEnvTier does not throw when no tier file is present at either search dir`` () =
+    let tempDir = makeTempDir ()
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
 
     try
-        // Absence must not throw and must not touch the process environment.
-        loadEnvTierFromDir dir "prod"
-        Assert.True(true)
+        // No .env.nonexistent-tier file is created — absence must not raise.
+        Environment.SetEnvironmentVariable("APP_ENV", "nonexistent-tier")
+        Directory.SetCurrentDirectory(tempDir)
+
+        loadEnvTier ()
     finally
-        Directory.Delete(dir, true)
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
+        Directory.Delete(tempDir, true)

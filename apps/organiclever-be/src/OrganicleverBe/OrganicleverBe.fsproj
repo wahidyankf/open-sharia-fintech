@@ -70,6 +70,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../../../libs/fsharp-env-loader/fsharp-env-loader.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="..\..\db\migrations\*.sql">
       <Link>db/migrations/%(Filename)%(Extension)</Link>
     </EmbeddedResource>
