@@ -15,14 +15,7 @@
       "Read(apps/*/content/**/*.env)",
       "Edit(apps/*/content/**/*.env)"
     ],
-    "deny": [
-      "Read(**/.env.prod)",
-      "Write(**/.env.prod)",
-      "Edit(**/.env.prod)",
-      "Read(**/.env.stag)",
-      "Write(**/.env.stag)",
-      "Edit(**/.env.stag)"
-    ]
+    "deny": ["Read(**/.env.prod)", "Edit(**/.env.prod)", "Read(**/.env.stag)", "Edit(**/.env.stag)"]
   },
   "hooks": {
     "PreToolUse": [
