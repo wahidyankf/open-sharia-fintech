@@ -147,6 +147,35 @@ contexts:
     gherkin: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/routing
     relationships: []
 
+  - name: env-loader
+    summary: >-
+      Tiered .env.<APP_ENV> loader for organiclever-app-web, wired as the
+      first import in next.config.ts. Loads exactly one .env.<tier> file at
+      startup; process env values always win over file values, a missing
+      file is not an error, and a stray auto-loaded .env/.env.production
+      beside the tier file fails loudly at any non-local tier.
+    layers:
+      - infrastructure
+    code:
+      - apps/organiclever-app-web/src/contexts/env-loader
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/env-loader.md
+    gherkin: specs/apps/organiclever/behavior/organiclever-app-web/gherkin/env-loader
+    relationships: []
+
+  - name: be-env
+    summary: >-
+      Tiered .env.<APP_ENV> loader shared by every app in this repo. Loads
+      exactly one .env.<tier> file at startup; process env values always win
+      over file values, and a missing file is not an error.
+    layers:
+      - Infrastructure
+    code:
+      - apps/organiclever-be/src/OrganicleverBe/Contexts/Env
+    code_lang:
+      - fs
+    glossary: specs/apps/organiclever/ddd/ubiquitous-language/be-env.md
+    gherkin: specs/apps/organiclever/behavior/organiclever-be/gherkin/env
+
   - name: be-db
     summary: >-
       Database schema lifecycle — applies pending DbUp embedded migrations on

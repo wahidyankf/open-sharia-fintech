@@ -1,6 +1,6 @@
 # OrganicLever Backend Gherkin Specs
 
-Gherkin feature files for the OrganicLever backend service. 6 files, 12 scenarios across 4
+Gherkin feature files for the OrganicLever backend service. 7 files, 13 scenarios across 5
 domains.
 
 ## Feature Files
@@ -13,6 +13,7 @@ domains.
 | messaging | `messaging/nats-connect.feature`   | 1         |
 | messaging | `messaging/nats-config.feature`    | 1         |
 | messaging | `messaging/jetstream-demo.feature` | 1         |
+| env       | `env/env-tier-loader.feature`      | 1         |
 
 ## Conventions
 

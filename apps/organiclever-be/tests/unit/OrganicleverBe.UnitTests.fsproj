@@ -16,11 +16,13 @@
     <Compile Include="Steps/BddState.fs" />
     <Compile Include="Steps/HealthSteps.fs" />
     <Compile Include="Steps/JournalSteps.fs" />
+    <Compile Include="Steps/EnvTierSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
     <Compile Include="Tests/HealthContextTests.fs" />
     <Compile Include="Tests/JournalDomainTests.fs" />
     <Compile Include="Tests/JournalApiTests.fs" />
     <Compile Include="Tests/MessagingTests.fs" />
+    <Compile Include="Tests/EnvTierLoaderTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
