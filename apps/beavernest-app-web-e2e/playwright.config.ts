@@ -10,12 +10,14 @@ const testDir = defineBddConfig({
   featuresRoot: "../../specs/apps/beavernest/behavior/beavernest-app-web/gherkin",
   features: "../../specs/apps/beavernest/behavior/beavernest-app-web/gherkin/**/*.feature",
   steps: ["./steps/**/*.steps.ts"],
-  // env-loader.feature's scenarios are plain @unit (covered by this app's own unit test, not
-  // e2e-relevant — a Node-process env-loading concern with no browser equivalent). Excluding them
-  // by tag, rather than the glob-wide `missingSteps: "skip-scenario"`, keeps default
-  // 'fail-on-gen' — bddgen still hard-fails generation if any non-@unit scenario in this app's
-  // Gherkin surface lacks a matching step def, instead of permanently weakening that safety net
-  // for every future scenario in this app.
+  // configuration/env-tier-loading.feature's scenarios are the only `@unit`-tagged ones anywhere
+  // in this app's Gherkin surface (verified: no other feature co-tags `@unit` with `@e2e`), so
+  // excluding them by tag — rather than the glob-wide `missingSteps: "skip-scenario"` — is safe
+  // and keeps default 'fail-on-gen': bddgen still hard-fails generation if any non-`@unit`
+  // scenario lacks a matching step def, instead of permanently weakening that safety net for
+  // every future scenario in this app. Contrast with organiclever-www-fe-e2e/
+  // organiclever-app-web-e2e/wahidyankf-www-fe-e2e, where this same tag filter was tried and
+  // reverted because those apps tag real, already-implemented e2e scenarios `@unit @e2e` too.
   tags: "not @unit",
 });
 
