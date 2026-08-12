@@ -59,6 +59,7 @@ let ``loadEnvTierFromDir loads only the requested tier file`` (tier: string) =
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(dir, true)
 
+// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be process env wins over a tier file value
 [<Fact>]
 let ``loadEnvTierFromDir does not override an already-set process variable`` () =
     let dir = makeTempDir ()
@@ -75,6 +76,7 @@ let ``loadEnvTierFromDir does not override an already-set process variable`` () 
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(dir, true)
 
+// @covers specs/apps/organiclever/behavior/organiclever-be/gherkin/env/env-tier-loader.feature:organiclever-be tolerates a missing tier file
 [<Fact>]
 let ``loadEnvTierFromDir is a no-op when the tier file is absent`` () =
     let dir = makeTempDir ()

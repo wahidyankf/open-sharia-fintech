@@ -47,6 +47,7 @@ let ``loadEnvTierFrom reads only the file matching APP_ENV`` (tier: string) =
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(tempDir, true)
 
+// @covers specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature:beavernest-be process env wins over a tier file value
 [<Fact>]
 let ``loadEnvTierFrom never overrides a variable already set in the process environment`` () =
     let tempDir = newTempDir ()
@@ -63,6 +64,7 @@ let ``loadEnvTierFrom never overrides a variable already set in the process envi
         Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(tempDir, true)
 
+// @covers specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature:beavernest-be tolerates a missing tier file
 [<Fact>]
 let ``loadEnvTierFrom does nothing when the tier file is absent`` () =
     let tempDir = newTempDir ()
@@ -71,6 +73,28 @@ let ``loadEnvTierFrom does nothing when the tier file is absent`` () =
         // No .env.nonexistent-tier file is created — absence must not raise.
         withAppEnv "nonexistent-tier" (fun () -> loadEnvTierFrom [ tempDir ])
     finally
+        Directory.Delete(tempDir, true)
+
+// @covers specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature:beavernest-be loads exactly one tier file
+[<Fact>]
+let ``loadEnvTier defaults to the local tier when APP_ENV is unset`` () =
+    let tempDir = newTempDir ()
+    let varName = $"BEAVERNEST_BE_ENV_TIER_TEST_DEFAULT_{Guid.NewGuid():N}"
+    let previousCwd = Directory.GetCurrentDirectory()
+    let previousAppEnv = Environment.GetEnvironmentVariable("APP_ENV")
+
+    try
+        File.WriteAllText(Path.Combine(tempDir, ".env.local"), $"{varName}=from-local\n")
+        Environment.SetEnvironmentVariable("APP_ENV", null)
+        Directory.SetCurrentDirectory(tempDir)
+
+        loadEnvTier ()
+
+        Assert.Equal("from-local", Environment.GetEnvironmentVariable(varName))
+    finally
+        Directory.SetCurrentDirectory(previousCwd)
+        Environment.SetEnvironmentVariable("APP_ENV", previousAppEnv)
+        Environment.SetEnvironmentVariable(varName, null)
         Directory.Delete(tempDir, true)
 
 [<Fact>]
