@@ -27,6 +27,8 @@
     <Compile Include="Infrastructure/OpenRouterClient.fs" />
     <Compile Include="Infrastructure/Database.fs" />
     <Compile Include="Infrastructure/NatsClient.fs" />
+    <!-- config context (tiered .env.<APP_ENV> loader) -->
+    <Compile Include="Contexts/Config/Infrastructure/EnvTier.fs" />
     <!-- db context (DbUp migration routine) -->
     <Compile Include="Contexts/Db/Infrastructure/DbMigrations.fs" />
     <!-- health context slice -->

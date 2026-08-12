@@ -8,6 +8,7 @@ open Microsoft.Extensions.Hosting
 open Giraffe
 open OseBe.Infrastructure.AppDbContext
 open OseBe.Infrastructure.Database
+open OseBe.Contexts.Config.Infrastructure
 open OseBe.Infrastructure.NatsClient
 open OseBe.Contexts.Db.Infrastructure
 open OseBe.Contexts.Messaging.Application
@@ -33,13 +34,17 @@ let private buildHost (args: string[]) (connStr: string) (handler: HttpHandler) 
 
 [<EntryPoint>]
 let main args =
-    // 1. Config (fail-fast on missing DATABASE_URL).
+    // 1. Env tier (loads .env.<APP_ENV> if present; process env always wins — see
+    //    Infrastructure/EnvTier.fs). Must run before any config read below.
+    loadEnvTier ()
+
+    // 2. Config (fail-fast on missing DATABASE_URL).
     let connStr = requireDatabaseUrl ()
 
-    // 2. Schema migration on boot (db context — DbUp embedded scripts).
+    // 3. Schema migration on boot (db context — DbUp embedded scripts).
     runMigrations connStr
 
-    // 3. Messaging: best-effort NATS connect + JetStream durable demo (non-fatal).
+    // 4. Messaging: best-effort NATS connect + JetStream durable demo (non-fatal).
     let status = newShared ()
 
     let natsConnection =
@@ -51,7 +56,7 @@ let main args =
         status.Set outcome
     | None -> status.Set(Failed "NATS unavailable at startup")
 
-    // 4. HTTP host (Giraffe routes for all bounded contexts + EF DbContext).
+    // 5. HTTP host (Giraffe routes for all bounded contexts + EF DbContext).
     let host = buildHost args connStr (buildWebApp status)
 
     host.Run()
