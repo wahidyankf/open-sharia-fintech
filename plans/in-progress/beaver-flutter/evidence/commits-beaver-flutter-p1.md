@@ -15,6 +15,12 @@
 | `dc5f0dc70eed11400472fe60b1e79bb554e9ff5d` | Recorded P1 review remediation, validation, and delivery state.                            |
 | `070ab6e9c4694095b669ab469ad22ebef2a23802` | Moved the readiness adapter into the required Flutter platform ring.                       |
 | `fce66af1a2f4375a9ef8e3eb0ce481fc77c39e4b` | PR-quality Flutter/Dart/FVM provisioning and isolated Flutter quality gate.                |
+| `f0eb99a2b77435754d250802a029d974c3955e6f` | Reconciled review evidence after Flutter CI provisioning.                                  |
+| `14e2d11db54cdb2ed9b94a6ff0ca2aa41ebaf9c1` | Recorded the P1 review-cycle reconciliation.                                               |
+| `42b4deea1402822e10b15f84458e50d2def33102` | Included Flutter package and SDK locks in Nx cache inputs.                                 |
+| `2c08fafecf0dfff890878bb05cf1b135a22e78c8` | Recorded the cache-integrity correction and validation.                                    |
+| `8937ad89a1c3706a94fb8da6a00bb26349750fb5` | Ran Flutter code generation through the Flutter SDK context.                               |
+| `16c9e078ff542df9c60ec781eefa709accb5ddf0` | Recorded the Flutter package-resolution correction and green CI evidence.                  |
 
 Each listed commit passed `git diff --cached --check` before commit. The following documentation
-commit records the remediated plan state and this updated ledger itself.
+commit records the complete remediated plan state, CI evidence, and this updated ledger itself.

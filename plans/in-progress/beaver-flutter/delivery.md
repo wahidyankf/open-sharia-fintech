@@ -32,7 +32,11 @@ after the hardened preconditions pass.
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/evidence/commits-beaver-flutter-p1.md`
   - **Notes**: Four ledger-scoped commits separate the backend build repair, Flutter foundation, P1 evidence, and corrected SHA ledger. Each was guarded by `git diff --cached --check`; the worktree was clean before this checklist-state update.
-- [ ] [AI] After every delivery-boundary push, inspect the branch/PR recorded in this `delivery.md` with `gh run list --branch <delivery-branch> --limit 20` and `gh run view <run-id> --json status,conclusion` every two minutes; after P2's `pull_request` trigger change, inspect its `PR Quality Gate` and `beavernest-app-test-local-deploy-stag` runs and record results in `plans/in-progress/beaver-flutter/evidence/ci-<delivery-branch>.md` — acceptance: every applicable run reaches `success`; investigate and fix every failure before the boundary can merge.
+- [x] [AI] After every delivery-boundary push, inspect the branch/PR recorded in this `delivery.md` with `gh run list --branch <delivery-branch> --limit 20` and `gh run view <run-id> --json status,conclusion` every two minutes; after P2's `pull_request` trigger change, inspect its `PR Quality Gate` and `beavernest-app-test-local-deploy-stag` runs and record results in `plans/in-progress/beaver-flutter/evidence/ci-<delivery-branch>.md` — acceptance: every applicable run reaches `success`; investigate and fix every failure before the boundary can merge.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/evidence/ci-beaver-flutter-p1.md`
+  - **Notes**: The P1 `pr-quality-gate` and `validate-env` pull-request runs both completed successfully at the reviewed P1 head; the source-only foundation is intentionally non-routable, so P2 retains the hosted browser and API verification obligation.
 
 ## Parallelization Model
 
