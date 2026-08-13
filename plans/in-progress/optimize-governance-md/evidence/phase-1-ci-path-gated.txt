@@ -1,0 +1,70 @@
+Phase 1d — proving `scope: path-gated` works on the `ci` surface
+====================================================================
+
+Context
+-------
+`governance-word-budget` and `governance-readme-completeness` (Phase 9) will be
+the first `ci`-surface users of `scope: path-gated` — all six pre-existing
+path-gated gate declarations in `repo-config.yml` are `pre-push` only. This
+evidence proves the mechanism works on `ci` before Phase 9 depends on it.
+
+Method
+------
+Isolated throwaway git fixture (not the real ose-public repo), following the
+same pattern as the existing `path_gated_skip`/`path_gated_run` Rust unit
+tests in `apps/rhino-cli/src/commands/gate/run.rs`, but exercised via the real
+CLI binary (`apps/rhino-cli/target/gate/rhino-cli`) end-to-end rather than an
+in-process function call — this is a genuine CLI-level proof of the `ci`
+surface specifically, which had no prior CLI-level coverage.
+
+Fixture `repo-config.yml`:
+
+  gates:
+    - id: throwaway-ci-path-gated-check
+      type: check
+      command: touch was-run-on-ci.txt
+      kind: external
+      surfaces:
+        ci:
+          scope: path-gated
+          trigger:
+            - docs/
+
+Run 1 — SKIP case (staged files do not touch the trigger path)
+----------------------------------------------------------------
+Staged: repo-config.yml, other.md (neither under docs/)
+
+  $ git status --short
+  A  other.md
+  A  repo-config.yml
+  $ rhino-cli gate run --surface=ci
+  exit: 0
+  marker file (was-run-on-ci.txt) exists: NO
+
+Result: gate correctly SKIPPED — no trigger-path intersection.
+
+Run 2 — EXECUTE case (staged files touch the trigger path)
+--------------------------------------------------------------
+Staged: repo-config.yml, other.md, docs/sample.md (added, matches `docs/`
+trigger)
+
+  $ git status --short
+  A  docs/sample.md
+  A  other.md
+  A  repo-config.yml
+  $ rhino-cli gate run --surface=ci
+  Running gate throwaway-ci-path-gated-check
+  exit: 0
+  marker file (was-run-on-ci.txt) exists: YES
+
+Result: gate correctly EXECUTED — trigger-path intersection found.
+
+Conclusion
+----------
+`scope: path-gated` on the `ci` surface behaves identically to `pre-push`:
+skips when no staged/changed path matches the `trigger` list, executes when
+one does. Phase 9's `governance-word-budget`/`governance-readme-completeness`
+`ci`-surface path-gating is safe to depend on. Fixture removed after this
+evidence was recorded — no artifacts left in the working repo.
+
+Date: 2026-08-13
