@@ -3,4 +3,4 @@ set -euo pipefail
 
 test -f apps/beavernest-app/lib/presentation/workspace_theme.dart
 test -f apps/beavernest-app/lib/presentation/status_dashboard.dart
-! grep -Eq 'vite|react|web-ui-token' apps/beavernest-app/lib apps/beavernest-app/web
+! grep -REq 'vite|react|web-ui-token' apps/beavernest-app/lib apps/beavernest-app/web
