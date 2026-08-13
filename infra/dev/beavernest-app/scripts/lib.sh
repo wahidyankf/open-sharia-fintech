@@ -41,17 +41,17 @@ beavernest_validate_safe_directory() {
 		beavernest_fail "$beavernest_label is not an allowed directory" || return 1
 
 	case "$beavernest_canonical" in
-	"$beavernest_repository_root"/*)
-		beavernest_fail "$beavernest_label is not an allowed directory"
-		return 1
-		;;
+		"$beavernest_repository_root"/*)
+			beavernest_fail "$beavernest_label is not an allowed directory"
+			return 1
+			;;
 	esac
 
 	case "$beavernest_repository_root" in
-	"$beavernest_canonical"/*)
-		beavernest_fail "$beavernest_label is not an allowed directory"
-		return 1
-		;;
+		"$beavernest_canonical"/*)
+			beavernest_fail "$beavernest_label is not an allowed directory"
+			return 1
+			;;
 	esac
 
 	printf '%s\n' "$beavernest_canonical"
@@ -61,7 +61,10 @@ beavernest_validate_directory_mode() {
 	local beavernest_label=$1
 	local beavernest_path=$2
 	local beavernest_mode
-	beavernest_mode=$(stat -f '%Lp' "$beavernest_path" 2>/dev/null || stat -c '%a' "$beavernest_path")
+	if ! beavernest_mode=$(stat -f '%Lp' "$beavernest_path" 2>/dev/null); then
+		beavernest_mode=$(stat -c '%a' "$beavernest_path" 2>/dev/null) ||
+			beavernest_fail "$beavernest_label must have mode 0700" || return 1
+	fi
 	[[ "$beavernest_mode" == 700 ]] || beavernest_fail "$beavernest_label must have mode 0700"
 }
 
