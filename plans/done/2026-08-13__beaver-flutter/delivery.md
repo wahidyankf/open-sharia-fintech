@@ -714,6 +714,6 @@ phase._
   - **Date**: 2026-08-14
   - **Status**: Done
   - **Files Changed**: `plans/done/2026-08-13__beaver-flutter/delivery.md`
-  - **Notes**: The terminal check found `git status --short` empty after the user directed cleanup of the two prior concurrent modifications. The archived plan, evidence, and audit reports remain in merged closure PR #185; certification PR #186 recorded the resolved terminal condition after its required checks passed.
+  - **Notes**: The terminal check found `git status --short` empty after the user directed cleanup of the two prior concurrent modifications. The archived plan, evidence, and audit reports remain in merged closure PR #185; certification PR #186 recorded the blocker, and this PR records its resolution after the required checks pass.
 
 **Pause Safety:** Safe to stop after the user is offered cleanup. Resume with `git -C worktrees/beaver-flutter status --short`.
