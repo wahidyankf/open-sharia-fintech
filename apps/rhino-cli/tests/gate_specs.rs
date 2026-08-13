@@ -4034,6 +4034,27 @@ fn has_npm_ci_command(run: &str) -> bool {
         .any(|line| line == "npm ci" || line.starts_with("npm ci "))
 }
 
+#[test]
+fn action_steps_detects_an_unnamed_npm_ci_command() {
+    let action = "runs:\n  using: composite\n  steps:\n    - name: guarded install\n      if: inputs.run-npm-ci == 'true'\n      run: npm ci\n    - run: npm ci --ignore-scripts\n";
+    let npm_ci_steps: Vec<String> = action_steps(action)
+        .into_iter()
+        .filter(|step| run_block_from_step(step).is_some_and(|run| has_npm_ci_command(&run)))
+        .collect();
+
+    assert_eq!(
+        npm_ci_steps.len(),
+        2,
+        "unnamed run steps must be discovered"
+    );
+    assert!(
+        npm_ci_steps
+            .iter()
+            .any(|step| !step.contains("if: inputs.run-npm-ci == 'true'")),
+        "the fixture must preserve the unguarded npm ci regression"
+    );
+}
+
 #[tokio::main]
 async fn main() {
     GateWorld::cucumber()
