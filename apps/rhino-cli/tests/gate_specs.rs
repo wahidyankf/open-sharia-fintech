@@ -3784,7 +3784,8 @@ fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
             .expect("read the real .github/actions/setup-node/action.yml");
     assert!(
         setup_node_action.contains("if: inputs.run-npm-ci == 'true'")
-            && setup_node_action.contains("npm ci"),
+            && (setup_node_action.contains("run: npm ci")
+                || setup_node_action.contains("\n        npm ci")),
         "setup-node's npm ci step must be gated on the run-npm-ci input, so a group whose \
          doctor_tools excludes npm never runs it: {setup_node_action}"
     );
