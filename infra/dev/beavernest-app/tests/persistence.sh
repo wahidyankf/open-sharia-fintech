@@ -4,6 +4,6 @@ set -euo pipefail
 
 beavernest_compose=infra/dev/beavernest-app/docker-compose.yml
 grep -q '^  beavernest-app:$' "$beavernest_compose"
-! grep -q '^  beavernest-(be|fe):$|down -v|beavernest-be-e2e-data' "$beavernest_compose"
+! grep -Eq '^  beavernest-(be|fe):$|down -v|beavernest-be-e2e-data' "$beavernest_compose"
 grep -Fq 'BEAVERNEST_BE_HOST_DATA_DIRECTORY:-/tmp/beavernest-unconfigured-data' "$beavernest_compose"
 grep -Fq 'create_host_path: false' "$beavernest_compose"
