@@ -13,6 +13,11 @@ execution checklist.
 
 - [beaver-flutter](./beaver-flutter/README.md) — Replaces the Vite/React BeaverNest client with a
   responsive Flutter Web application, establishing a future-ready core and safe diagnostics.
+- [optimize-governance-md](./optimize-governance-md/README.md) — Caps every governance Markdown
+  file at 500 words, replaces the byte budget with a word budget, requires annotated `README.md`
+  sibling indexes, and adds `when_to_use` frontmatter — across `ose-public` and `ose-private`.
+  545 files over the ceiling; remediation is progressive disclosure, enforced by rhino-cli at
+  pre-push and in the PR quality gate.
 - [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
