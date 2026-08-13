@@ -23,8 +23,30 @@ void main() {
   test('keeps transport details out of presentation', () {
     _expectNoImports('lib/presentation', const [
       'package:http/',
+      'dart:html',
+      'dart:js',
+      'package:web/',
       '/generated/',
     ]);
+  });
+
+  test('keeps browser APIs inside the Web platform adapter boundary', () {
+    for (final file in _dartFilesIn('lib')) {
+      if (file.path.contains(
+        '${Platform.pathSeparator}platform${Platform.pathSeparator}web${Platform.pathSeparator}',
+      )) {
+        continue;
+      }
+      final source = file.readAsStringSync();
+      for (final forbidden in const ['dart:html', 'dart:js', 'package:web/']) {
+        expect(
+          source,
+          isNot(contains(forbidden)),
+          reason:
+              '${file.path} must not use browser APIs outside platform/web.',
+        );
+      }
+    }
   });
 
   test('allows generated contracts only in platform adapters', () {

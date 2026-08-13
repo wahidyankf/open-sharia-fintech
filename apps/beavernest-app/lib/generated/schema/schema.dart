@@ -13,4 +13,6 @@ part 'schema.freezed.dart';
 part 'health.dart';
 part 'readiness_ready.dart';
 part 'readiness_unavailable.dart';
+part 'diagnostics_ready.dart';
+part 'diagnostics_unavailable.dart';
 part 'error.dart';

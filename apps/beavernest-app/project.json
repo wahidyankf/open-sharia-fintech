@@ -118,10 +118,26 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/**/*"]
     },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-app/gherkin apps/beavernest-app",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/beavernest/behavior/beavernest-app/gherkin/**/*.feature",
+        "{projectRoot}/lib/**/*.dart",
+        "{projectRoot}/test/**/*.dart"
+      ]
+    },
     "test:specs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npm exec nx run beavernest-app:specs:structure-validation"],
+        "commands": [
+          "npm exec nx run beavernest-app:specs:structure-validation",
+          "npm exec nx run beavernest-app:specs:behavior:coverage"
+        ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
@@ -136,7 +152,8 @@
           "npm exec nx run beavernest-app:lint",
           "npm exec nx run beavernest-app:test:unit",
           "npm exec nx run beavernest-app:test:coverage",
-          "npm exec nx run beavernest-app:specs:structure-validation"
+          "npm exec nx run beavernest-app:specs:structure-validation",
+          "npm exec nx run beavernest-app:specs:behavior:coverage"
         ],
         "parallel": false,
         "cwd": "{workspaceRoot}"

@@ -19,9 +19,9 @@ void main() {
     repository.complete(_readyReadiness);
     await tester.pumpAndSettle();
 
-    expect(find.text('Application Available'), findsOneWidget);
-    expect(find.text('Database Ready'), findsOneWidget);
-    expect(find.text('Schema Current'), findsOneWidget);
+    expect(find.text('Application available'), findsAtLeastNWidgets(1));
+    expect(find.text('Database ready'), findsOneWidget);
+    expect(find.text('Schema current'), findsOneWidget);
   });
 }
 

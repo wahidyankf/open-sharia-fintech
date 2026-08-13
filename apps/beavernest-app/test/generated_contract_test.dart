@@ -2,12 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:beavernest_app/platform/web/readiness_client.dart';
+import 'package:beavernest_app/platform/web/diagnostics_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
   test('generated client preserves the closed readiness response variants', () {
-    for (final model in const ['ReadinessReady', 'ReadinessUnavailable']) {
+    for (final model in const [
+      'ReadinessReady',
+      'ReadinessUnavailable',
+      'DiagnosticsReady',
+      'DiagnosticsUnavailable',
+    ]) {
       final source = File(
         'lib/generated/schema/${_modelFileName(model)}.dart',
       ).readAsStringSync();
@@ -64,6 +70,48 @@ void main() {
     );
     expect(client.request?.url, Uri(path: '/api/v1/readiness'));
   });
+
+  test(
+    'parses only closed safe diagnostics variants on the same origin',
+    () async {
+      final ready = {
+        'status': 'ready',
+        'version': '0.1.0',
+        'uptimeSeconds': 42,
+        'serverTimeUtc': '2026-08-13T00:00:00Z',
+        'components': {'database': 'ready', 'schema': 'current'},
+      };
+      final unavailable = {
+        'status': 'unavailable',
+        'components': {'database': 'unavailable', 'schema': 'unknown'},
+      };
+      expect(parseDiagnosticsResponse(200, ready), isA<ReadyDiagnostics>());
+      expect(
+        parseDiagnosticsResponse(503, unavailable),
+        isA<UnavailableDiagnostics>(),
+      );
+      expect(
+        () => parseDiagnosticsResponse(200, {...ready, 'cause': 'nope'}),
+        throwsFormatException,
+      );
+      expect(
+        () => parseDiagnosticsResponse(200, {
+          ...ready,
+          'serverTimeUtc': 'not-a-time',
+        }),
+        throwsFormatException,
+      );
+      final client = _RecordingClient(
+        http.Response(jsonEncode(unavailable), 503),
+      );
+      expect(defaultDiagnosticsUri, Uri(path: '/api/v1/diagnostics'));
+      expect(
+        await DiagnosticsClient(client).getDiagnostics(),
+        isA<UnavailableDiagnostics>(),
+      );
+      expect(client.request?.url, Uri(path: '/api/v1/diagnostics'));
+    },
+  );
 }
 
 Map<String, Object> _readyPayload() => {

@@ -1,0 +1,259 @@
+import 'dart:async';
+
+import 'package:beavernest_app/application/ports/diagnostics_repository.dart';
+import 'package:beavernest_app/application/ports/readiness_repository.dart';
+import 'package:beavernest_app/domain/diagnostics.dart';
+import 'package:beavernest_app/domain/readiness.dart';
+import 'package:beavernest_app/main.dart';
+import 'package:beavernest_app/platform/web/readiness_client.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('Web opens the same-origin workspace', (tester) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given('the combined BeaverNest runtime is ready', () async {
+      context.readiness.value = _ready;
+    });
+    await scenario.when(
+      'I open the Flutter Web root route',
+      context.openLoading,
+    );
+    await scenario.then(
+      'the Foundation status shell is visible before readiness resolves',
+      () async {
+        expect(find.text('Foundation status shell'), findsOneWidget);
+      },
+    );
+    await scenario.and(
+      'the client requests the relative "/api/v1/readiness" route',
+      () async {
+        expect(defaultReadinessUri, Uri(path: '/api/v1/readiness'));
+      },
+    );
+    await scenario.and(
+      'the status reports Application Available, Database Ready and Schema Current',
+      () async {
+        await context.completeLoading();
+        context.expectReadySummary();
+      },
+    );
+  });
+
+  testWidgets('A ready workspace presents every safe component state', (
+    tester,
+  ) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given(
+      'the BeaverNest readiness endpoint reports a ready workspace',
+      () async {
+        context.readiness.value = _ready;
+      },
+    );
+    await scenario.when('I open the Flutter Web root route', context.open);
+    await scenario.then(
+      'I can read the workspace availability, database and schema state',
+      () async {
+        context.expectReadySummary();
+      },
+    );
+    await scenario.and(
+      'the summary remains usable on mobile, tablet and desktop widths',
+      () async {
+        for (final width in const [360.0, 720.0, 1280.0]) {
+          await tester.binding.setSurfaceSize(Size(width, 800));
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+        }
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
+  });
+
+  testWidgets('Refresh recovers an unavailable workspace', (tester) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given('the workspace is unavailable', () async {
+      context.readiness.value = _unavailable;
+      await context.open();
+      expect(find.text('Application unavailable'), findsAtLeastNWidgets(1));
+    });
+    await scenario.when('I select Refresh status', () async {
+      context.readiness.value = _ready;
+      await tester.tap(find.widgetWithText(FilledButton, 'Refresh status'));
+      await tester.pumpAndSettle();
+    });
+    await scenario.and('the readiness endpoint becomes ready', () async {
+      expect(context.readiness.calls, 2);
+    });
+    await scenario.then(
+      'the workspace summary reports that the application is available',
+      () async {
+        context.expectReadySummary();
+      },
+    );
+  });
+
+  testWidgets('A ready diagnostics response is rendered safely', (
+    tester,
+  ) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given(
+      'the diagnostics endpoint reports a ready workspace',
+      () async {
+        context.diagnostics.value = _diagnostics;
+        context.readiness.value = _ready;
+      },
+    );
+    await scenario.when('I open Workspace diagnostics', () async {
+      await context.open();
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Diagnostics'));
+      await tester.pumpAndSettle();
+    });
+    await scenario.then(
+      'I can read the version, uptime and server time',
+      () async {
+        expect(find.text('Version 0.1.0'), findsOneWidget);
+        expect(find.text('Uptime 1m 1s'), findsOneWidget);
+        expect(find.text('Server time 2026-08-13T00:00:00Z'), findsOneWidget);
+      },
+    );
+    await scenario.and(
+      'I cannot read an unavailable cause or connection detail',
+      () async {
+        expect(find.textContaining('cause'), findsNothing);
+        expect(find.textContaining('connection'), findsNothing);
+      },
+    );
+  });
+
+  testWidgets('Browser guidance keeps focus predictable', (tester) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given('I am using the workspace in a browser', () async {
+      await context.open();
+    });
+    await scenario.when('I select Browser shortcut', () async {
+      await tester.tap(find.widgetWithText(TextButton, 'Browser shortcut'));
+      await tester.pumpAndSettle();
+    });
+    await scenario.then(
+      'I am told that the workspace is online only',
+      () async {
+        expect(
+          find.textContaining('This workspace is online only.'),
+          findsOneWidget,
+        );
+      },
+    );
+    await scenario.and(
+      'Escape closes the guidance and returns focus to Browser shortcut',
+      () async {
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        expect(
+          find.textContaining('This workspace is online only.'),
+          findsNothing,
+        );
+        expect(
+          FocusManager.instance.primaryFocus?.debugLabel,
+          'Browser shortcut',
+        );
+      },
+    );
+  });
+}
+
+/// Executes each coverage-recognised Gherkin step as a real widget assertion.
+final class _Scenario {
+  Future<void> given(String _, Future<void> Function() action) => action();
+  Future<void> when(String _, Future<void> Function() action) => action();
+  Future<void> then(String _, Future<void> Function() action) => action();
+  Future<void> and(String _, Future<void> Function() action) => action();
+}
+
+final class _WorkspaceContext {
+  _WorkspaceContext(this.tester);
+
+  final WidgetTester tester;
+  final _ReadinessRepository readiness = _ReadinessRepository();
+  final _DiagnosticsRepository diagnostics = _DiagnosticsRepository();
+
+  Future<void> open() async {
+    await tester.pumpWidget(
+      MainApp(
+        readinessRepository: readiness,
+        diagnosticsRepository: diagnostics,
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> openLoading() async {
+    readiness.loading = Completer<WorkspaceReadiness>();
+    await tester.pumpWidget(
+      MainApp(
+        readinessRepository: readiness,
+        diagnosticsRepository: diagnostics,
+      ),
+    );
+    await tester.pump();
+  }
+
+  Future<void> completeLoading() async {
+    readiness.loading!.complete(readiness.value);
+    await tester.pumpAndSettle();
+  }
+
+  void expectReadySummary() {
+    expect(find.text('Application available'), findsAtLeastNWidgets(1));
+    expect(find.text('Database ready'), findsOneWidget);
+    expect(find.text('Schema current'), findsOneWidget);
+  }
+}
+
+final class _ReadinessRepository implements ReadinessRepository {
+  WorkspaceReadiness value = _ready;
+  Completer<WorkspaceReadiness>? loading;
+  var calls = 0;
+
+  @override
+  Future<WorkspaceReadiness> loadReadiness() {
+    calls += 1;
+    return loading?.future ?? Future.value(value);
+  }
+}
+
+final class _DiagnosticsRepository implements DiagnosticsRepository {
+  WorkspaceDiagnostics value = _diagnostics;
+
+  @override
+  Future<WorkspaceDiagnostics> loadDiagnostics() async => value;
+}
+
+const _ready = WorkspaceReadiness(
+  availability: ReadinessAvailability.ready,
+  database: DatabaseReadiness.ready,
+  schema: SchemaReadiness.current,
+);
+const _unavailable = WorkspaceReadiness(
+  availability: ReadinessAvailability.unavailable,
+  database: DatabaseReadiness.unavailable,
+  schema: SchemaReadiness.unknown,
+);
+const _diagnostics = WorkspaceDiagnostics.ready(
+  version: '0.1.0',
+  uptimeSeconds: 61,
+  serverTimeUtc: '2026-08-13T00:00:00Z',
+  database: DatabaseReadiness.ready,
+  schema: SchemaReadiness.current,
+);
