@@ -419,4 +419,23 @@ class BeavernestApiClient {
     );
     return ReadinessReady.fromJson(_jsonDecode(r));
   }
+
+  // ---------------------------------------------------------------------------
+  // METHOD: getDiagnostics
+  // ---------------------------------------------------------------------------
+  /// Safe operational diagnostics
+  ///
+  /// Reports a live, non-persistent operational snapshot without internal details.
+  ///
+  /// `GET` `/api/v1/diagnostics`
+  Future<DiagnosticsReady> getDiagnostics() async {
+    final r = await makeRequest(
+      baseUrl: 'http://localhost:19320',
+      path: '/api/v1/diagnostics',
+      method: HttpMethod.get,
+      requestType: '',
+      responseType: 'application/json',
+    );
+    return DiagnosticsReady.fromJson(_jsonDecode(r));
+  }
 }

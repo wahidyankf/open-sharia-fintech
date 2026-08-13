@@ -1,0 +1,20 @@
+--- /tmp/beavernest-flutter-v1.sha256
++++ /tmp/beavernest-flutter-v2.sha256
+@@ -1,9 +1,7 @@
+ 1069a1d3f9ca18efbde4720662cb47c56fa591ea424e634e7ed83ff6f7425080  apps/beavernest-app/build/web/canvaskit/wimp.js.symbols
+ 28b1eb2b3d2e1ad60b8c8b0f9100b1ccbf492f7fa97f5bebb51ea97e73926e7d  apps/beavernest-app/build/web/assets/FontManifest.json
+-3b3258eb6c3cdd3702df1b036c6d0d350d20f2dec9951b24b3552f399bdcbfac  apps/beavernest-app/build/web/flutter_bootstrap.js
+ 3c9d8e7aa7d92a122c4714a6f239ba0a46d56d2f18395ac42cb9f2af8513a277  apps/beavernest-app/build/web/canvaskit/chromium/canvaskit.js.symbols
+-401910aeed2a17a8666c08905f16df39c2907d5906e6588f77512bee6b407966  apps/beavernest-app/build/web/main.dart.js
+ 461a759c657738e573f1c2f69e26489197e43db1bf6ec1e2c3b44c6721314cd1  apps/beavernest-app/build/web/canvaskit/skwasm.wasm
+ 4b0028e38d865b4673ec38c0c673299dff6b00d6cd8c5e53dda9f800f7bbdda2  apps/beavernest-app/build/web/canvaskit/skwasm_heavy.wasm
+ 5aee0e4ff369c0559eaa7af6d64dce812bab67afd9888d1d7d27046293b39ab5  apps/beavernest-app/build/web/assets/shaders/ink_sparkle.frag
+@@ -29,6 +27,8 @@
+ f0f3acc96b31be9d17e5a72ae9309d79d12436e51b8464690b12690fe0c0e020  apps/beavernest-app/build/web/canvaskit/skwasm_heavy.js.symbols
+ f566cc6fccc657365c0197accf3a7d6f80f85209ff666ff774f4dcbc524aa842  apps/beavernest-app/build/web/assets/AssetManifest.bin
+ f6c67bf7989fcb1b69a3203617882ac0d1541cc79e38f81c3f5d63ab4d73de33  apps/beavernest-app/build/web/canvaskit/chromium/canvaskit.wasm
++f8770b6328dd6744c8a32fd032a999f1ba61a7afcd4ea12bdcab487123b981cf  apps/beavernest-app/build/web/flutter_bootstrap.js
++f8b3ea10e37cce652bb51a317a1466c76bfde763af372e8e3e29ca46dd674662  apps/beavernest-app/build/web/main.dart.js
+ f9524cb044888dcf3f740e6f925b15a7b4394e5e5fc9064b5519ac0466bfeff0  apps/beavernest-app/build/web/version.json
+ fa58b2c534ef9c66dff68df1ea28c1739bb02ce34cc8eca459f716527d9b5cae  apps/beavernest-app/build/web/canvaskit/wimp.js
+ fd16a6941587957b8622290c1b2be2980ff49bbd06d898ddc3bfc79a05553159  apps/beavernest-app/build/web/assets/fonts/MaterialIcons-Regular.otf

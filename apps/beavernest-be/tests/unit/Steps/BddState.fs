@@ -9,7 +9,7 @@ open BeaverNestBe.Api.SecurityHeaders
 open BeaverNestBe.Api.StaticContent
 
 let private staticRoot =
-    System.IO.Path.Combine(System.AppContext.BaseDirectory, "Fixtures", "vite")
+    System.IO.Path.Combine(System.AppContext.BaseDirectory, "Fixtures", "flutter")
 
 /// Build an in-process test server from a Giraffe HttpHandler.
 let buildClient (handler: HttpHandler) : System.Net.Http.HttpClient =
@@ -21,7 +21,7 @@ let buildClient (handler: HttpHandler) : System.Net.Http.HttpClient =
     let server = new TestServer(builder)
     server.CreateClient()
 
-/// Build an in-process combined static/API server using a test Vite shell.
+/// Build an in-process combined static/API server using a test Flutter shell.
 let buildStaticClient (handler: HttpHandler) : System.Net.Http.HttpClient =
     let builder =
         WebHostBuilder()

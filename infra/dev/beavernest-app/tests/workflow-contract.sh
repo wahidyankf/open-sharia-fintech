@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/assertions.bash"
 
-rg -Fq 'beavernest-be | beavernest-app-web) echo "build-beavernest-be=true"' .github/workflows/publish-images.yml
-rg -Fq 'Combined same-origin E2E' .github/workflows/_reusable-app-test-local-deploy-stag.yml
-rg -Fq 'test:e2e:runner' .github/workflows/_reusable-app-test-local-deploy-stag.yml
-rg -Fq 'BEAVERNEST_BE_PUBLIC_PORT=19300' .github/workflows/_reusable-app-test-local-deploy-stag.yml
+grep -Fq 'subosito/flutter-action@v2' .github/workflows/beavernest-app-test-local-deploy-stag.yml
+grep -Fq 'beavernest-app-e2e:test:e2e' .github/workflows/beavernest-app-test-local-deploy-stag.yml
+grep -Fq 'beavernest-app:lint' .github/workflows/beavernest-app-test-local-deploy-stag.yml
 ! test -e .github/workflows/beavernest-app-test-stag.yml
-! rg -q 'stag-beavernest-app-web|Vercel preview|localhost:19320' .github/workflows/beavernest-app-test-local-deploy-stag.yml .github/workflows/_reusable-app-test-local-deploy-stag.yml
+assert_no_match grep -Eq 'beavernest-app-web|Vercel preview|localhost:19320' .github/workflows/beavernest-app-test-local-deploy-stag.yml

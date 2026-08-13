@@ -25,12 +25,10 @@ let staticFileOptions =
 
     options.OnPrepareResponse <-
         fun context ->
-            let path = context.Context.Request.Path.Value
-
-            if path = "/index.html" then
-                context.Context.Response.Headers[HeaderNames.CacheControl] <- "no-cache"
-            elif isAssetPath path then
-                context.Context.Response.Headers[HeaderNames.CacheControl] <- "public, max-age=31536000, immutable"
+            // The Flutter 3.41.5 release inventory contains only un-hashed
+            // asset names. Revalidate every static response until a future
+            // inventory proves a content-addressed filename safe to retain.
+            context.Context.Response.Headers[HeaderNames.CacheControl] <- "no-cache"
 
     options
 
@@ -52,6 +50,7 @@ let spaFallbackHandler: HttpHandler =
             let indexPath = Path.Combine(environment.WebRootPath, "index.html")
 
             if File.Exists(indexPath) then
+                context.Response.Headers[HeaderNames.CacheControl] <- "no-cache"
                 htmlFile indexPath next context
             else
                 skipPipeline

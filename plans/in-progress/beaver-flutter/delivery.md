@@ -290,17 +290,29 @@ phase._
   - **Status**: Done
   - **Files Changed**: `apps/beavernest-app/project.json`
   - **Notes**: The complete pre-push gate passes after the codegen correction, including generated-contract regeneration, Flutter quick/coverage, affected backend checks, formatting, links, and harness validation.
-- [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
+- [x] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/{delivery.md,evidence/ci-beaver-flutter-p1.md,evidence/commits-beaver-flutter-p1.md}`
+  - **Notes**: PR [#182](https://github.com/wahidyankf/ose-public/pull/182) was reviewed clean at `575f2fa585e645906a067000edc51b563e8b774c`; its `pr-quality-gate` and `validate-env` runs passed. Repository policy disallows merge commits, so the approved PR was squash-merged as `188f693ff174a9cc3bda58b2c56cae2027ee6829`.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
 
 ## Phase 2 Branch Handoff
 
-- [ ] [AI] After the P1 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main` in `worktrees/beaver-flutter/` — acceptance: P2 starts from the merged P1 foundation on a fresh delivery branch while reusing the plan's sole worktree.
+- [x] [AI] After the P1 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main` in `worktrees/beaver-flutter/` — acceptance: P2 starts from the merged P1 foundation on a fresh delivery branch while reusing the plan's sole worktree.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: The sole plan worktree now uses `beaver-flutter-p2`, tracking `origin/main` at the P1 squash merge `188f693ff174a9cc3bda58b2c56cae2027ee6829`.
 
 ## Phase 2: Responsive Flutter Web Atomic Cutover
 
-- [ ] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/ready.feature` and a failing 200/no-extra-field handler test under `apps/beavernest-be/tests/`; run `npm exec nx run beavernest-be:test:quick` — acceptance: no diagnostics-ready route/schema exists.
+- [x] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/ready.feature` and a failing 200/no-extra-field handler test under `apps/beavernest-be/tests/`; run `npm exec nx run beavernest-be:test:quick` — acceptance: no diagnostics-ready route/schema exists.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/ready.feature`, `apps/beavernest-be/tests/unit/Tests/DiagnosticsHandlerTests.fs`
+  - **Notes**: The initial test failed because `DiagnosticsPort` and `webAppWithDiagnostics` did not exist, proving no diagnostics route could satisfy the closed ready snapshot before implementation.
 
   **Gherkin (binds) →** "Ready service returns a closed safe snapshot"
 
@@ -311,9 +323,20 @@ phase._
     Then the response is 200 with only status, version, uptimeSeconds, serverTimeUtc, and readiness components
   ```
 
-- [ ] [AI] GREEN: add the 200 OpenAPI schema/example, `DiagnosticsPort.fs`, `DiagnosticsHandlers.fs`, deterministic composition, and handler test; run `npm exec nx run beavernest-contracts:bundle && npm exec nx run beavernest-be:test:quick` — acceptance: the ready scenario passes and rejects extra/sensitive fields.
-- [ ] [AI] REFACTOR: consolidate ready-response mapping and run `dotnet tool run fantomas --check apps/beavernest-be && npm exec nx run beavernest-be:test:quick` — acceptance: ready diagnostics remains deterministic and formatted.
-- [ ] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/unavailable.feature` and a failing 503/no-store test under `apps/beavernest-be/tests/`; run `npm exec nx run beavernest-be:test:quick` — acceptance: the unavailable route behavior fails.
+- [x] [AI] GREEN: add the 200 OpenAPI schema/example, `DiagnosticsPort.fs`, `DiagnosticsHandlers.fs`, deterministic composition, and handler test; run `npm exec nx run beavernest-contracts:bundle && npm exec nx run beavernest-be:test:quick` — acceptance: the ready scenario passes and rejects extra/sensitive fields.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/containers/contracts/{openapi.yaml,generated/openapi-bundled.yaml}`, `apps/beavernest-be/src/BeaverNestBe/{Domain/Diagnostics.fs,Application/DiagnosticsPort.fs,Api/DiagnosticsHandlers.fs,WebApp.fs,Program.fs,BeaverNestBe.fsproj}`, `apps/beavernest-be/tests/unit/{Tests/DiagnosticsHandlerTests.fs,BeaverNestBe.UnitTests.fsproj}`
+  - **Notes**: The generated bundle and backend quick suite pass with the deterministic 200 safe snapshot, including rounded-down integer uptime, UTC server time, exact top-level/component fields, and no cache validators.
+- [x] [AI] REFACTOR: consolidate ready-response mapping and run `dotnet tool run fantomas --check apps/beavernest-be && npm exec nx run beavernest-be:test:quick` — acceptance: ready diagnostics remains deterministic and formatted.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Notes**: The diagnostics handler keeps a single deterministic ready mapping; Fantomas and the final 86-test backend quick gate pass.
+- [x] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/unavailable.feature` and a failing 503/no-store test under `apps/beavernest-be/tests/`; run `npm exec nx run beavernest-be:test:quick` — acceptance: the unavailable route behavior fails.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/unavailable.feature`, `apps/beavernest-be/tests/unit/Tests/DiagnosticsHandlerTests.fs`
+  - **Notes**: The deliberately unfinished unavailable branch failed under the focused `dotnet test --no-restore` proof before the 503 mapping existed.
 
   **Gherkin (binds) →** "Unready service returns a closed unavailable snapshot"
 
@@ -324,9 +347,21 @@ phase._
     Then the response is 503 with Cache-Control no-store and no internal cause
   ```
 
-- [ ] [AI] GREEN: add the 503 OpenAPI schema/example and unavailable handler mapping; run `npm exec nx run beavernest-contracts:bundle && npm exec nx run beavernest-be:test:quick` — acceptance: the unavailable scenario passes with only its closed allow-list.
-- [ ] [AI] REFACTOR: remove duplicate unavailable fixtures and run `dotnet tool run fantomas --check apps/beavernest-be && npm exec nx run beavernest-be:test:quick` — acceptance: both diagnostics scenarios remain green.
-- [ ] [AI] PRESERVATION BASELINE: append the composition-root scenario below to `specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature`; add `apps/beavernest-be/tests/integration/EnvTierCompositionTests.fs` and its compile entry in `BeaverNestBe.IntegrationTests.fsproj`. The test saves, clears, and restores `APP_ENV`, `BEAVERNEST_BE_DATA_DIRECTORY`, `BEAVERNEST_BE_SQLITE_BUSY_TIMEOUT_MILLISECONDS`, `BEAVERNEST_BE_HTTP_LISTEN_ADDRESS`, and `BEAVERNEST_BE_HTTP_LISTEN_PORT`; creates two sibling temporary directories, using one only as CWD containing `.env.test` and the other as a non-symlink data directory (not the repository, home, root, CWD, or a CWD descendant). It allows at most three child launches (a 95 s total deadline): for each, reserve a fresh unused loopback port, rewrite `.env.test` with that port and the sibling data path as the only required safe values, dispose the reserving listener, and launch the built `BeaverNestBe.dll` through `dotnet` as a child process with that CWD and only `APP_ENV=test`. For that child, poll its file-only `GET /api/v1/readiness` endpoint every 250 ms for up to 30 s while also detecting early exit. Relaunch only when captured stderr confirms address-in-use; otherwise fail immediately with captured stdout/stderr. Between a confirmed bind-race failure and the next launch, terminate/await the child, release resources, and wait 100 ms. On launch exhaustion, report all captured diagnostics, clean fixtures, restore process state, and fail. On success, in `finally` terminate/await the child, release any listener, delete both temporary paths, and restore CWD and all process variables. Run `APP_ENV=test npm exec nx run beavernest-be:test:integration` — acceptance: this pre-existing #176 behavior is green before Flutter changes, proves the actual composition root searches only the isolated temporary `apps/beavernest-be` then CWD paths and loads the file-only test tier before database/listener configuration, and never reads a repository or real environment file.
+- [x] [AI] GREEN: add the 503 OpenAPI schema/example and unavailable handler mapping; run `npm exec nx run beavernest-contracts:bundle && npm exec nx run beavernest-be:test:quick` — acceptance: the unavailable scenario passes with only its closed allow-list.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/containers/contracts/{openapi.yaml,generated/openapi-bundled.yaml}`, `apps/beavernest-be/src/BeaverNestBe/{Domain/Diagnostics.fs,Application/DiagnosticsPort.fs,Api/DiagnosticsHandlers.fs,WebApp.fs,Program.fs,BeaverNestBe.fsproj}`, `apps/beavernest-be/tests/unit/{Tests/DiagnosticsHandlerTests.fs,BeaverNestBe.UnitTests.fsproj}`
+  - **Notes**: The unavailable variant now returns only `status` and closed readiness components with `503` and `Cache-Control: no-store`; injected clock, version, and uptime seams are never read for that response.
+- [x] [AI] REFACTOR: remove duplicate unavailable fixtures and run `dotnet tool run fantomas --check apps/beavernest-be/src && npm exec nx run beavernest-be:test:quick` — acceptance: both diagnostics scenarios remain green; the formatter scope matches the backend lint target and excludes ephemeral OpenAPI-generator output.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `apps/beavernest-be/src/BeaverNestBe/{Domain/Diagnostics.fs,Application/DiagnosticsPort.fs,Api/DiagnosticsHandlers.fs,WebApp.fs,Program.fs,BeaverNestBe.fsproj}`, `apps/beavernest-be/tests/unit/{Tests/DiagnosticsHandlerTests.fs,BeaverNestBe.UnitTests.fsproj}`
+  - **Notes**: The original broad Fantomas command incorrectly included ignored generator output; the repository's backend lint target correctly scopes formatting to `src`. The corrected source scope and the full backend quick suite pass (80 tests, 92.10% total coverage).
+- [x] [AI] PRESERVATION BASELINE: append the composition-root scenario below to `specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature`; add `apps/beavernest-be/tests/integration/EnvTierCompositionTests.fs` and its compile entry in `BeaverNestBe.IntegrationTests.fsproj`. The test saves, clears, and restores `APP_ENV`, `BEAVERNEST_BE_DATA_DIRECTORY`, `BEAVERNEST_BE_SQLITE_BUSY_TIMEOUT_MILLISECONDS`, `BEAVERNEST_BE_HTTP_LISTEN_ADDRESS`, and `BEAVERNEST_BE_HTTP_LISTEN_PORT`; creates two sibling temporary directories, using one only as CWD containing `.env.test` and the other as a non-symlink data directory (not the repository, home, root, CWD, or a CWD descendant). It allows at most three child launches (a 95 s total deadline): for each, reserve a fresh unused loopback port, rewrite `.env.test` with that port and the sibling data path as the only required safe values, dispose the reserving listener, and launch the built `BeaverNestBe.dll` through `dotnet` as a child process with that CWD and only `APP_ENV=test`. For that child, poll its file-only `GET /api/v1/readiness` endpoint every 250 ms for up to 30 s while also detecting early exit. Relaunch only when captured stderr confirms address-in-use; otherwise fail immediately with captured stdout/stderr. Between a confirmed bind-race failure and the next launch, terminate/await the child, release resources, and wait 100 ms. On launch exhaustion, report all captured diagnostics, clean fixtures, restore process state, and fail. On success, in `finally` terminate/await the child, release any listener, delete both temporary paths, and restore CWD and all process variables. Run `APP_ENV=test npm exec nx run beavernest-be:test:integration` — acceptance: this pre-existing #176 behavior is green before Flutter changes, proves the actual composition root searches only the isolated temporary `apps/beavernest-be` then CWD paths and loads the file-only test tier before database/listener configuration, and never reads a repository or real environment file.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/env-tier-loading.feature`, `apps/beavernest-be/tests/integration/{EnvTierCompositionTests.fs,BeaverNestBe.IntegrationTests.fsproj}`
+  - **Notes**: A Gherkin-bound and xUnit-shared child-process proof starts the actual Debug entrypoint from a file-only isolated `.env.test`; it passes 13 integration tests and restores all process/fixture state.
 
   **Gherkin (binds) →** "beavernest-be loads test-tier configuration before command dispatch"
 
@@ -339,9 +374,21 @@ phase._
     And test-tier configuration was loaded before database and listener configuration
   ```
 
-- [ ] [AI] PRESERVATION AFTER CUTOVER: keep `loadEnvTier ()` as the first executable `Program.main` operation, before `configuration ()`; bind the child-process endpoint test to the scenario and run `APP_ENV=test npm exec nx run beavernest-be:test:integration && npm exec nx run beavernest-be:specs:behavior:coverage` — acceptance: the composition-root scenario remains green after the atomic replacement without reading a real environment file.
-- [ ] [AI] REFACTOR: share isolated-working-directory cleanup with the existing integration fixtures and run `dotnet tool run fantomas --check apps/beavernest-be/tests/integration && APP_ENV=test npm exec nx run beavernest-be:test:integration` — acceptance: loader order remains regression-proven through the actual composition root.
-- [ ] [AI] RED: add failing 200/503 browser/API checks consuming `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/{ready,unavailable}.feature` in `apps/beavernest-be-e2e/steps/diagnostics.steps.ts` and update its `e2e-coverage-baseline.json`; run `npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: the existing hosted runtime cannot satisfy the new diagnostics feature steps.
+- [x] [AI] PRESERVATION AFTER CUTOVER: keep `loadEnvTier ()` as the first executable `Program.main` operation, before `configuration ()`; bind the child-process endpoint test to the scenario and run `APP_ENV=test npm exec nx run beavernest-be:test:integration && npm exec nx run beavernest-be:specs:behavior:coverage` — acceptance: the composition-root scenario remains green after the atomic replacement without reading a real environment file.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: `loadEnvTier ()` remains the first executable operation in `Program.main`. The isolated child-DLL proof passes after the cutover (13 integration tests); behavior coverage reports 18 specs, 24 scenarios, and 110 steps, including the executable TickSpec bindings.
+- [x] [AI] REFACTOR: retain the shared process-termination helpers inside the isolated composition-root fixture and run `dotnet tool run fantomas --check apps/beavernest-be/tests/integration && APP_ENV=test npm exec nx run beavernest-be:test:integration` — acceptance: loader order remains regression-proven through the actual composition root.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/tests/integration/EnvTierCompositionTests.fs`, `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: There was no pre-existing isolated-working-directory fixture to share with; the test instead centralizes `terminate` and `terminateAndDispose` for each child-launch and final cleanup. Fantomas and the 13-test integration target pass.
+- [x] [AI] RED: add failing 200/503 browser/API checks consuming `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/{ready,unavailable}.feature` in `apps/beavernest-be-e2e/steps/diagnostics.steps.ts` and update its `e2e-coverage-baseline.json`; run `npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: the existing hosted runtime cannot satisfy the new diagnostics feature steps.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be-e2e/{steps/diagnostics.steps.ts,playwright.config.ts}`
+  - **Notes**: Before the diagnostics bindings existed, the hosted Playwright boundary could not discover the newly added scenarios; the integration-only configuration feature stays excluded from browser generation rather than receiving synthetic TypeScript steps.
 
   **Gherkin (binds) →** "Ready service returns a closed safe snapshot"; "Unready service returns a closed unavailable snapshot"
 
@@ -357,9 +404,21 @@ phase._
     Then the response is 503 with Cache-Control no-store and no internal cause
   ```
 
-- [ ] [AI] GREEN: implement the diagnostics step definitions and API assertions in `apps/beavernest-be-e2e/steps/diagnostics.steps.ts`; run `npm exec nx run beavernest-be-e2e:test:e2e && npm exec nx run beavernest-be-e2e:test:specs` — acceptance: both 200/503 paths and `Cache-Control: no-store` are proven through the hosted runtime and the E2E coverage baseline accepts every diagnostics scenario.
-- [ ] [AI] REFACTOR: extract shared safe-field assertions to `apps/beavernest-be-e2e/utils/diagnostics.ts`; run `npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: response assertions reject forbidden and additional fields without duplicated step logic.
-- [ ] [AI] RED: add the same-origin shell Gherkin plus failing widget, application, and architecture-boundary tests in `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace-shell.feature`, `apps/beavernest-app/test/workspace_shell_test.dart`, `apps/beavernest-app/test/load_readiness_test.dart`, and `apps/beavernest-app/test/architecture_boundaries_test.dart`; have the widget invoke `LoadReadiness`, its application test use a fake `ReadinessRepository`, and the boundary test reject Flutter/Web/generated imports in `lib/domain/` and `lib/application/`, HTTP/generated imports in `lib/presentation/`, and generated imports outside `lib/platform/`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the shell cannot issue the relative readiness request and neither the `LoadReadiness` use case, `ReadinessRepository` port, nor their required isolation exists.
+- [x] [AI] GREEN: implement the diagnostics step definitions and API assertions in `apps/beavernest-be-e2e/steps/diagnostics.steps.ts`; run `npm exec nx run beavernest-be-e2e:test:e2e && npm exec nx run beavernest-be-e2e:test:specs` — acceptance: both 200/503 paths and `Cache-Control: no-store` are proven through the hosted runtime and the E2E coverage baseline accepts every diagnostics scenario.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be-e2e/{steps/diagnostics.steps.ts,playwright.config.ts}`
+  - **Notes**: The disposable Docker runtime passes all 13 Playwright scenarios, including exact closed ready/unavailable diagnostics bodies, 503/no-store, and the prohibited-detail checks; E2E coverage reports no unbound scenario.
+- [x] [AI] REFACTOR: extract shared safe-field assertions to `apps/beavernest-be-e2e/utils/diagnostics.ts`; run `npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: response assertions reject forbidden and additional fields without duplicated step logic.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be-e2e/{playwright.config.ts,steps/diagnostics.steps.ts,utils/diagnostics.ts}`
+  - **Notes**: The shared helper centralizes exact key, component, and prohibited-detail checks; hosted Docker E2E, TypeScript typecheck, and lint all pass after extraction.
+- [x] [AI] RED: add the same-origin shell Gherkin plus failing widget, application, and architecture-boundary tests in `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace-shell.feature`, `apps/beavernest-app/test/workspace_shell_test.dart`, `apps/beavernest-app/test/load_readiness_test.dart`, and `apps/beavernest-app/test/architecture_boundaries_test.dart`; have the widget invoke `LoadReadiness`, its application test use a fake `ReadinessRepository`, and the boundary test reject Flutter/Web/generated imports in `lib/domain/` and `lib/application/`, HTTP/generated imports in `lib/presentation/`, and generated imports outside `lib/platform/`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the shell cannot issue the relative readiness request and neither the `LoadReadiness` use case, `ReadinessRepository` port, nor their required isolation exists.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace-shell.feature`, `apps/beavernest-app/test/{workspace_shell_test.dart,load_readiness_test.dart,architecture_boundaries_test.dart}`
+  - **Notes**: The first unit run failed because the shell, application port/use case, and required architectural rings were absent, proving the same-origin behavior could not exist before implementation.
 
   **Gherkin (binds) →** "Web opens the same-origin workspace"
 
@@ -372,9 +431,21 @@ phase._
     And the status reports Application Available, Database Ready and Schema Current
   ```
 
-- [ ] [AI] GREEN: implement immutable readiness domain models under `apps/beavernest-app/lib/domain/`, `ReadinessRepository` and `LoadReadiness` under `lib/application/{ports,use_cases}/`, `HttpReadinessRepository` under `lib/platform/web/`, and the root shell under `lib/presentation/`; map generated readiness DTOs to domain models only inside `HttpReadinessRepository`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the same-origin shell scenario passes through the fakeable port without a configurable endpoint, CORS behavior, or generated DTO in a widget/use case.
-- [ ] [AI] REFACTOR: centralize the boundary checks in `apps/beavernest-app/test/architecture_boundaries_test.dart` and run `npm exec nx run beavernest-app:analyze && npm exec nx run beavernest-app:test:unit` — acceptance: dependencies point inward; only `lib/platform/**` owns HTTP/generated-contract imports; and only `lib/platform/web/` owns browser-specific APIs.
-- [ ] [AI] RED: add the responsive workspace Gherkin and failing widget tests in `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace.feature` and `apps/beavernest-app/test/status_dashboard_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the status shell, its three widths, and loading/unavailable states fail before widgets exist.
+- [x] [AI] GREEN: implement immutable readiness domain models under `apps/beavernest-app/lib/domain/`, `ReadinessRepository` and `LoadReadiness` under `lib/application/{ports,use_cases}/`, `HttpReadinessRepository` under `lib/platform/web/`, and the root shell under `lib/presentation/`; map generated readiness DTOs to domain models only inside `HttpReadinessRepository`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the same-origin shell scenario passes through the fakeable port without a configurable endpoint, CORS behavior, or generated DTO in a widget/use case.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/{domain/readiness.dart,application/ports/readiness_repository.dart,application/use_cases/load_readiness.dart,platform/web/readiness_repository.dart,presentation/workspace_shell.dart,main.dart}`, `apps/beavernest-app/test/{workspace_shell_test.dart,load_readiness_test.dart,architecture_boundaries_test.dart}`
+  - **Notes**: A fakeable application port drives the shell; DTO-to-domain mapping and HTTP stay in `lib/platform/web`, with the fixed relative readiness URI retained from P1.
+- [x] [AI] REFACTOR: centralize the boundary checks in `apps/beavernest-app/test/architecture_boundaries_test.dart` and run `npm exec nx run beavernest-app:analyze && npm exec nx run beavernest-app:test:unit` — acceptance: dependencies point inward; only `lib/platform/**` owns HTTP/generated-contract imports; and only `lib/platform/web/` owns browser-specific APIs.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/test/architecture_boundaries_test.dart`
+  - **Notes**: The inward dependency checks, analyzer, unit suite, and coverage pass; additional adapter mappings raised coverage from the initial 70.87% to 87.38%.
+- [x] [AI] RED: add the responsive workspace Gherkin and failing widget tests in `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace.feature` and `apps/beavernest-app/test/status_dashboard_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the status shell, its three widths, and loading/unavailable states fail before widgets exist.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/workspace/workspace.feature`, `apps/beavernest-app/test/status_dashboard_test.dart`
+  - **Notes**: The widget test failed before the responsive dashboard and semantic theme existed.
 
   **Gherkin (binds) →** "Status reflows across browser widths"
 
@@ -385,9 +456,21 @@ phase._
     Then every readiness component is visible without horizontal scrolling
   ```
 
-- [ ] [AI] GREEN: implement `StatusDashboard`, `ReadinessSummary`, and `BeaverNestThemeExtension` under `apps/beavernest-app/lib/presentation/`; run `npm exec nx run beavernest-app:test:unit && npm exec nx run beavernest-app:analyze` — acceptance: the responsive scenario passes with semantic colors, text, icons, and live-region states.
-- [ ] [AI] REFACTOR: share layout constraints instead of breakpoint-specific screens and run `fvm dart format --output=none --set-exit-if-changed lib test && npm exec nx run beavernest-app:test:coverage` — acceptance: the workspace scenario remains green with coverage threshold met.
-- [ ] [AI] RED: add retry Gherkin and a failing reducer/widget test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/retry.feature` and `apps/beavernest-app/test/readiness_retry_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: retry recovery fails without navigation.
+- [x] [AI] GREEN: implement `StatusDashboard`, `ReadinessSummary`, and `BeaverNestThemeExtension` under `apps/beavernest-app/lib/presentation/`; run `npm exec nx run beavernest-app:test:unit && npm exec nx run beavernest-app:analyze` — acceptance: the responsive scenario passes with semantic colors, text, icons, and live-region states.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{status_dashboard.dart,workspace_theme.dart,workspace_shell.dart}`, `apps/beavernest-app/test/status_dashboard_test.dart`
+  - **Notes**: The dashboard passes at 360, 720, and 1280 px with semantic text/icon states and a live status region.
+- [x] [AI] REFACTOR: share layout constraints instead of breakpoint-specific screens and run `fvm dart format --output=none --set-exit-if-changed lib test && npm exec nx run beavernest-app:test:coverage` — acceptance: the workspace scenario remains green with coverage threshold met.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{status_dashboard.dart,workspace_theme.dart}`, `apps/beavernest-app/test/status_dashboard_test.dart`
+  - **Notes**: Shared constraint-driven grid layout remains formatted and coverage is 83.54%.
+- [x] [AI] RED: add retry Gherkin and a failing reducer/widget test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/retry.feature` and `apps/beavernest-app/test/readiness_retry_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: retry recovery fails without navigation.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/retry/readiness-retry.feature`, `apps/beavernest-app/test/readiness_retry_test.dart`
+  - **Notes**: The retry widget/use-case test failed before refresh behavior existed.
 
   **Gherkin (binds) →** "Status refresh recovers without navigation"
 
@@ -398,9 +481,21 @@ phase._
     Then the status changes to Ready with a polite announcement
   ```
 
-- [ ] [AI] GREEN: implement `RefreshReadiness` in `apps/beavernest-app/lib/application/use_cases/` against the existing `ReadinessRepository`; run `npm exec nx run beavernest-app:test:unit` — acceptance: retry passes through a fakeable application port without `dart:html` or browser-storage imports in core layers.
-- [ ] [AI] REFACTOR: share `ReadinessRepository` result mapping between load and refresh use cases, then run `npm exec nx run beavernest-app:lint && npm exec nx run beavernest-app:typecheck` — acceptance: retry remains green and Web-only dependencies are confined to the adapter.
-- [ ] [AI] RED: add diagnostics Gherkin and a failing widget/port test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/diagnostics.feature` and `apps/beavernest-app/test/diagnostics_screen_test.dart`; use a fake `DiagnosticsRepository` returning domain snapshots; run `npm exec nx run beavernest-app:test:unit` — acceptance: only the safe fields render and the unavailable state has no cause before the application port and Web adapter exist.
+- [x] [AI] GREEN: implement `RefreshReadiness` in `apps/beavernest-app/lib/application/use_cases/` against the existing `ReadinessRepository`; run `npm exec nx run beavernest-app:test:unit` — acceptance: retry passes through a fakeable application port without `dart:html` or browser-storage imports in core layers.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/application/use_cases/refresh_readiness.dart`, `apps/beavernest-app/lib/presentation/workspace_shell.dart`, `apps/beavernest-app/test/readiness_retry_test.dart`
+  - **Notes**: Refresh reuses the application repository port and produces a polite recovered-ready update without navigation.
+- [x] [AI] REFACTOR: share `ReadinessRepository` result mapping between load and refresh use cases, then run `npm exec nx run beavernest-app:lint && npm exec nx run beavernest-app:typecheck` — acceptance: retry remains green and Web-only dependencies are confined to the adapter.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/application/{ports/readiness_repository.dart,use_cases/load_readiness.dart,use_cases/refresh_readiness.dart}`, `apps/beavernest-app/test/architecture_boundaries_test.dart`
+  - **Notes**: Load and refresh share the same narrow port; analyzer-backed architecture rules retain browser/HTTP isolation.
+- [x] [AI] RED: add diagnostics Gherkin and a failing widget/port test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/diagnostics.feature` and `apps/beavernest-app/test/diagnostics_screen_test.dart`; use a fake `DiagnosticsRepository` returning domain snapshots; run `npm exec nx run beavernest-app:test:unit` — acceptance: only the safe fields render and the unavailable state has no cause before the application port and Web adapter exist.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/diagnostics/diagnostics.feature`, `apps/beavernest-app/test/diagnostics_screen_test.dart`
+  - **Notes**: The safe diagnostics widget/port test failed before the domain snapshot and platform adapter existed.
 
   **Gherkin (binds) →** "Client presents a safe support snapshot"
 
@@ -411,9 +506,21 @@ phase._
     Then only its contracted safe fields are visible
   ```
 
-- [ ] [AI] GREEN: regenerate `apps/beavernest-app/lib/generated/`; implement domain diagnostics snapshots, `DiagnosticsRepository` and `LoadDiagnostics` under `lib/application/{ports,use_cases}/`, `HttpDiagnosticsRepository` under `lib/platform/web/`, and `DiagnosticsScreen`/`SupportSnapshotCard` under `lib/presentation/`; map both generated response variants to domain snapshots inside the Web adapter; run `npm exec nx run beavernest-app:codegen && npm exec nx run beavernest-app:test:unit` — acceptance: the diagnostics scenario passes for both response variants and generated types do not reach the application or presentation.
-- [ ] [AI] REFACTOR: centralize diagnostics allow-list presentation and generated-to-domain mapping, then run `fvm dart format --output=none --set-exit-if-changed lib test && npm exec nx run beavernest-app:test:coverage && npm exec nx run beavernest-app:test:unit` — acceptance: no forbidden field can reach the visual model and the architecture-boundary test rejects generated imports outside the platform adapter ring.
-- [ ] [AI] RED: add guidance Gherkin and a failing widget test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/browser-shortcut.feature` and `apps/beavernest-app/test/browser_shortcut_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the browser-dependent, online-only copy, Escape, focus trap, and return focus behavior fail before the Help card exists.
+- [x] [AI] GREEN: regenerate `apps/beavernest-app/lib/generated/`; implement domain diagnostics snapshots, `DiagnosticsRepository` and `LoadDiagnostics` under `lib/application/{ports,use_cases}/`, `HttpDiagnosticsRepository` under `lib/platform/web/`, and `DiagnosticsScreen`/`SupportSnapshotCard` under `lib/presentation/`; map both generated response variants to domain snapshots inside the Web adapter; run `npm exec nx run beavernest-app:codegen && npm exec nx run beavernest-app:test:unit` — acceptance: the diagnostics scenario passes for both response variants and generated types do not reach the application or presentation.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/{generated/**,domain/diagnostics.dart,application/ports/diagnostics_repository.dart,application/use_cases/load_diagnostics.dart,platform/web/diagnostics_client.dart,platform/web/diagnostics_repository.dart,presentation/diagnostics_sheet.dart}`, `apps/beavernest-app/test/{generated_contract_test.dart,diagnostics_screen_test.dart}`
+  - **Notes**: Codegen produced closed diagnostics DTOs; the client validates the exact ready/unavailable variants before mapping them exclusively in the Web adapter.
+- [x] [AI] REFACTOR: centralize diagnostics allow-list presentation and generated-to-domain mapping, then run `fvm dart format --output=none --set-exit-if-changed lib test && npm exec nx run beavernest-app:test:coverage && npm exec nx run beavernest-app:test:unit` — acceptance: no forbidden field can reach the visual model and the architecture-boundary test rejects generated imports outside the platform adapter ring.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/{platform/web/diagnostics_client.dart,platform/web/diagnostics_repository.dart,presentation/diagnostics_sheet.dart}`, `apps/beavernest-app/test/{diagnostics_screen_test.dart,architecture_boundaries_test.dart}`
+  - **Notes**: The allow-list mapper and presentation accept no internal cause/path/exception field; architecture tests reject generated imports outside the platform ring.
+- [x] [AI] RED: add guidance Gherkin and a failing widget test in `specs/apps/beavernest/behavior/beavernest-app/gherkin/browser-shortcut.feature` and `apps/beavernest-app/test/browser_shortcut_test.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the browser-dependent, online-only copy, Escape, focus trap, and return focus behavior fail before the Help card exists.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/browser-shortcut/browser-shortcut.feature`, `apps/beavernest-app/test/browser_shortcut_test.dart`
+  - **Notes**: The widget test failed before browser guidance, Escape dismissal, and return-focus behavior existed.
 
   **Gherkin (binds) →** "Browser shortcut guidance is honest and accessible"
 
@@ -425,9 +532,21 @@ phase._
     And Escape closes it and returns focus to Help
   ```
 
-- [ ] [AI] GREEN: implement `BrowserShortcutGuidance` in `apps/beavernest-app/lib/presentation/`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the guidance scenario passes without PWA, offline, auto-update, HTTPS, or native-install claims.
-- [ ] [AI] REFACTOR: validate focus order, 44 px targets, and contrast in the widget tests; add `beavernest-app:specs:behavior:coverage` to `apps/beavernest-app/project.json` with `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-app/gherkin apps/beavernest-app`, the new `gherkin/**/*.feature` glob, and Dart test/widget inputs; update `test:specs` and `test:quick` to compose it; run `npm exec nx run beavernest-app:lint && npm exec nx run beavernest-app:test:coverage && npm exec nx run beavernest-app:test:specs` — acceptance: keyboard and pointer accessibility assertions pass and affected `specs:behavior:coverage` discovers the Flutter behavior bindings.
-- [ ] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-app/gherkin/cache-update.feature`, a failing hosted-bundle cache scenario in `apps/beavernest-app-web-e2e/steps/`, and a failing cache/header test in `apps/beavernest-be/tests/unit/Tests/StaticRoutingTests.fs`; run `npm exec nx run beavernest-app-web-e2e:test:e2e` — acceptance: the legacy Vite bundle and stale deployment fail the same-origin hosted test.
+- [x] [AI] GREEN: implement `BrowserShortcutGuidance` in `apps/beavernest-app/lib/presentation/`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the guidance scenario passes without PWA, offline, auto-update, HTTPS, or native-install claims.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/browser_shortcut_dialog.dart`, `apps/beavernest-app/test/browser_shortcut_test.dart`
+  - **Notes**: Copy is explicitly browser-dependent and online-only; no PWA, offline, auto-update, HTTPS, or native-install promise is rendered.
+- [x] [AI] REFACTOR: validate focus order, 44 px targets, and contrast in the widget tests; add `beavernest-app:specs:behavior:coverage` to `apps/beavernest-app/project.json` with `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-app/gherkin apps/beavernest-app`, the new `gherkin/**/*.feature` glob, and Dart test/widget inputs; update `test:specs` and `test:quick` to compose it; run `npm exec nx run beavernest-app:lint && npm exec nx run beavernest-app:test:coverage && npm exec nx run beavernest-app:test:specs` — acceptance: keyboard and pointer accessibility assertions pass and affected `specs:behavior:coverage` discovers the Flutter behavior bindings.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/{project.json,test/browser_shortcut_test.dart,test/behavior_bindings_test.dart,test/architecture_boundaries_test.dart}`, `specs/apps/beavernest/behavior/beavernest-app/gherkin/**`
+  - **Notes**: The new behavior target covers five Flutter features, scenarios, and all 21 steps; it is composed by both Flutter specs and quick gates. Widget checks cover keyboard focus, Escape/return focus, contrast, and 44px controls.
+- [x] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-app/gherkin/cache-update.feature`, a failing hosted-bundle cache scenario in `apps/beavernest-app-web-e2e/steps/`, and a failing cache/header test in `apps/beavernest-be/tests/unit/Tests/StaticRoutingTests.fs`; run `npm exec nx run beavernest-app-web-e2e:test:e2e` — acceptance: the legacy Vite bundle and stale deployment fail the same-origin hosted test.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `specs/apps/beavernest/behavior/beavernest-app/gherkin/cache/cache-update.feature`, `apps/beavernest-be/tests/unit/Tests/StaticRoutingTests.fs`, `apps/beavernest-app-e2e/steps/hosted_bundle.steps.ts`
+  - **Notes**: The legacy Vite hosting and `/assets/` cache assumptions could not satisfy the Flutter hosted-bundle scenario or revalidation assertions.
 
   **Gherkin (binds) →** "Normal navigation receives a fresh hosted Flutter bundle"
 
@@ -438,21 +557,88 @@ phase._
     Then the browser loads a coherent version two bundle without a service worker
   ```
 
-- [ ] [AI] Inventory the candidate Flutter bundle before cache implementation: run `beavernest_cache_temp=$(mktemp -d) && npm exec nx run beavernest-app:build && find apps/beavernest-app/build/web -type f -exec shasum -a 256 {} \; | sort > "$beavernest_cache_temp/v1.sha256"`, change the version value in `apps/beavernest-app/lib/application/build_version.dart` that is deliberately rendered by the status shell, rebuild, and run `find apps/beavernest-app/build/web -type f -exec shasum -a 256 {} \; | sort > "$beavernest_cache_temp/v2.sha256" && diff -u "$beavernest_cache_temp/v1.sha256" "$beavernest_cache_temp/v2.sha256" > plans/in-progress/beaver-flutter/evidence/flutter-web-v1-v2.diff || true && rm -rf -- "$beavernest_cache_temp"`; record the filename/hash diff and the exact revalidate versus immutable map for `index.html`, bootstrap/loader/main scripts, manifests, CanvasKit, fonts, and hashed files in `plans/in-progress/beaver-flutter/evidence/flutter-web-asset-inventory.md` — acceptance: the production-consumed version value changes an observed v2 artifact, cache classifications are based on that evidence, and no un-hashed file is marked immutable.
-- [ ] [AI] GREEN: atomically rename `apps/beavernest-app-web-e2e/` to `apps/beavernest-app-e2e/`, replace the Vite client with `apps/beavernest-app/`, and update `AGENTS.md` to record the user-approved `[domain]-app` future-multiplatform exception, Docker, `StaticContent.fs` using the recorded cache map, static routing tests, `apps/beavernest-be/scripts/run-e2e.sh`, workflow trigger/FVM setup/artifact paths, specs, registries, docs, infra tests, and every file in the File-Impact Analysis; preserve `EnvTierLoader.fs`, its `BeaverNestBe.fsproj` compile entry and `fsharp-env-loader` `ProjectReference`, and keep `loadEnvTier ()` as the first `Program.fs` operation before configuration. In `Dockerfile`, copy `libs/fsharp-env-loader/fsharp-env-loader.fsproj` to `libs/fsharp-env-loader/` before restore and `libs/fsharp-env-loader/src/` to `libs/fsharp-env-loader/src/` before publish; in `Dockerfile.integration`, copy the project to `/libs/fsharp-env-loader/` before restore and source to `/libs/fsharp-env-loader/src/` before build. Forward `APP_ENV: "${APP_ENV:-local}"` to `beavernest-app`, backup, integrity, restore, and the CI override without nested YAML mappings removing it; set `APP_ENV=${APP_ENV:-test}` before `run-e2e.sh` constructs Compose; prove all operational mappings with `APP_ENV=contract-proof docker compose -f infra/dev/beavernest-app/docker-compose.yml -f infra/dev/beavernest-app/docker-compose.ci.yml config --format json | jq -e '[.services["beavernest-app"], .services["beavernest-backup"], .services["beavernest-integrity"], .services["beavernest-restore"] | .environment.APP_ENV == "contract-proof"] | all'`. Run `APP_ENV=test npm exec nx run beavernest-be:test:quick && bash infra/dev/beavernest-app/tests/clean-image-build.sh && npm exec nx run beavernest-app:build && APP_ENV=test npm exec nx run beavernest-app-e2e:test:e2e` — acceptance: the F# container serves a coherent Flutter `build/web` bundle without changing the backend tier-loader contract, source-only Docker builds retain the loader, rendered Compose proves every operational service receives its caller tier, container E2E receives `APP_ENV=test` before readiness, the naming exception is documented, and the normal-navigation cache scenario passes.
-- [ ] [AI] REFACTOR: verify the recorded cache map still classifies bootstrap/manifests/unhashed files for revalidation, delete legacy TypeScript contracts/Vite packages, and run `APP_ENV=test npm exec nx run fsharp-env-loader:test:quick && APP_ENV=test npm exec nx run beavernest-be:test:quick && npm exec nx run beavernest-app:test:specs && npm exec nx run beavernest-app-e2e:test:specs && rg -n 'beavernest-app-web|vite|react' AGENTS.md apps docs specs infra .github repo-config.yml package-lock.json` — acceptance: only historical plan/archive matches remain, the hosted-bundle scenario is green, and the backend tier-loader regression remains green.
-- [ ] [AI] Start the hosted combined runtime using the safe disposable setup from `apps/beavernest-be/scripts/run-e2e.sh`: run `beavernest_fixture_root=$(mktemp -d) && beavernest_project="beavernest-manual-${RANDOM}-${RANDOM}" && install -d -m 0700 "$beavernest_fixture_root/data" "$beavernest_fixture_root/backups" && export APP_ENV=test BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 BEAVERNEST_BE_PUBLIC_PORT=19320 BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_fixture_root/data" BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture_root/backups" && beavernest_compose=(docker compose --env-file /dev/null -p "$beavernest_project" -f infra/dev/beavernest-app/docker-compose.yml) && trap '"${beavernest_compose[@]}" down --remove-orphans; rm -rf -- "$beavernest_fixture_root"' EXIT && "${beavernest_compose[@]}" up -d --build beavernest-app && for beavernest_attempt in $(seq 1 120); do curl -fsS http://127.0.0.1:19320/api/v1/readiness >/dev/null && break; [ "$beavernest_attempt" -lt 120 ] || exit 1; sleep 1; done`; use Playwright MCP to `browser_navigate` to the root route, `browser_snapshot` loading, ready, and unavailable states, `browser_click` Refresh status and Diagnostics, inspect `browser_console_messages`, and `browser_take_screenshot` at mobile (<768 px), tablet (768–1023 px), and desktop (>=1024 px) widths; save `plans/in-progress/beaver-flutter/evidence/phase-2-web-{loading,ready,unavailable}-{mobile,tablet,desktop}.png` — acceptance: the container receives `APP_ENV=test` before readiness; this single-locale application has UI-to-API-to-UI recovery, no horizontal scroll, visible keyboard focus, compliant target sizes/contrast, and only approved browser-shortcut copy.
-- [ ] [AI] Run `curl --include --silent --show-error http://127.0.0.1:19320/api/v1/readiness` and `curl --include --silent --show-error http://127.0.0.1:19320/api/v1/diagnostics`; obtain the unavailable proof by running `npm exec nx run beavernest-be-e2e:test:e2e` with the existing disposable unready fixture and copy its sanitized 503 header/body assertion into `plans/in-progress/beaver-flutter/evidence/phase-2-api-diagnostics-unavailable.md`; capture the ready responses in `plans/in-progress/beaver-flutter/evidence/phase-2-api-{readiness,diagnostics-ready}.md` — acceptance: readiness succeeds, diagnostics returns respectively 200 and fixture-proven 503 with `Cache-Control: no-store`, and neither response includes path, exception, SQL, host identifier, migration name, or an extra field.
-- [ ] [AI] Run the static [UI quality gate](../../../repo-governance/workflows/ui/ui-quality-gate.md) and [API quality gate](../../../repo-governance/workflows/api/api-quality-gate.md) against the P2 diff; complete their maker→checker→fixer cycles and save reports below `generated-reports/` — acceptance: both gates report no blocking findings and their evidence links to the responsive screenshots and sanitized API captures.
-- [ ] [AI] Run Rule-15 web exploratory/usability/design retest and Rule-16 API exploratory retest against the running combined endpoint; append each `EWT-*`, `UWT-*`, `DWT-*`, or `AET-*` defect as an unchecked item below — acceptance: no defect remains unchecked before archival.
+- [x] [AI] Inventory the candidate Flutter bundle before cache implementation: run `beavernest_cache_temp=$(mktemp -d) && npm exec nx run beavernest-app:build && find apps/beavernest-app/build/web -type f -exec shasum -a 256 {} \; | sort > "$beavernest_cache_temp/v1.sha256"`, change the version value in `apps/beavernest-app/lib/application/build_version.dart` that is deliberately rendered by the status shell, rebuild, and run `find apps/beavernest-app/build/web -type f -exec shasum -a 256 {} \; | sort > "$beavernest_cache_temp/v2.sha256" && diff -u "$beavernest_cache_temp/v1.sha256" "$beavernest_cache_temp/v2.sha256" > plans/in-progress/beaver-flutter/evidence/flutter-web-v1-v2.diff || true && rm -rf -- "$beavernest_cache_temp"`; record the filename/hash diff and the exact revalidate versus immutable map for `index.html`, bootstrap/loader/main scripts, manifests, CanvasKit, fonts, and hashed files in `plans/in-progress/beaver-flutter/evidence/flutter-web-asset-inventory.md` — acceptance: the production-consumed version value changes an observed v2 artifact, cache classifications are based on that evidence, and no un-hashed file is marked immutable.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/application/build_version.dart`, `apps/beavernest-app/lib/presentation/status_dashboard.dart`, `plans/in-progress/beaver-flutter/evidence/{flutter-web-v1-v2.diff,flutter-web-asset-inventory.md}`
+  - **Notes**: The rendered v1→v2 marker changed un-hashed `flutter_bootstrap.js` and `main.dart.js`; no content-addressed filename was observed, so every observed Flutter asset is revalidated.
+- [x] [AI] GREEN: atomically rename `apps/beavernest-app-web-e2e/` to `apps/beavernest-app-e2e/`, replace the Vite client with `apps/beavernest-app/`, and update `AGENTS.md` to record the user-approved `[domain]-app` future-multiplatform exception, Docker, `StaticContent.fs` using the recorded cache map, static routing tests, `apps/beavernest-be/scripts/run-e2e.sh`, workflow trigger/FVM setup/artifact paths, specs, registries, docs, infra tests, and every file in the File-Impact Analysis; preserve `EnvTierLoader.fs`, its `BeaverNestBe.fsproj` compile entry and `fsharp-env-loader` `ProjectReference`, and keep `loadEnvTier ()` as the first `Program.fs` operation before configuration. In `Dockerfile`, copy `libs/fsharp-env-loader/fsharp-env-loader.fsproj` to `libs/fsharp-env-loader/` before restore and `libs/fsharp-env-loader/src/` to `libs/fsharp-env-loader/src/` before publish; in `Dockerfile.integration`, copy the project to `/libs/fsharp-env-loader/` before restore and source to `/libs/fsharp-env-loader/src/` before build. Forward `APP_ENV: "${APP_ENV:-local}"` to `beavernest-app`, backup, integrity, restore, and the CI override without nested YAML mappings removing it; set `APP_ENV=${APP_ENV:-test}` before `run-e2e.sh` constructs Compose; prove all operational mappings with `COMPOSE_PROFILES=operations APP_ENV=contract-proof docker compose -f infra/dev/beavernest-app/docker-compose.yml -f infra/dev/beavernest-app/docker-compose.ci.yml config --format json | jq -e '[.services["beavernest-app"], .services["beavernest-backup"], .services["beavernest-integrity"], .services["beavernest-restore"] | .environment.APP_ENV == "contract-proof"] | all'`. Run `APP_ENV=test npm exec nx run beavernest-be:test:quick && bash infra/dev/beavernest-app/tests/clean-image-build.sh && npm exec nx run beavernest-app:build && APP_ENV=test npm exec nx run beavernest-app-e2e:test:e2e` — acceptance: the F# container serves a coherent Flutter `build/web` bundle without changing the backend tier-loader contract, source-only Docker builds retain the loader, rendered Compose proves every operational service receives its caller tier, container E2E receives `APP_ENV=test` before readiness, the naming exception is documented, and the normal-navigation cache scenario passes.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app-web/**` (removed), `apps/beavernest-app-e2e/**` (renamed), `apps/beavernest-app/**`, `apps/beavernest-be/{Dockerfile,Dockerfile.integration,project.json,scripts/run-e2e.sh,src/**,tests/**}`, `infra/dev/beavernest-app/**`, `.github/workflows/beavernest-app-test-local-deploy-stag.yml`, `repo-config.yml`, `package-lock.json`, `AGENTS.md`, `.claude/**`, generated binding mirrors, and affected BeaverNest documentation/spec indexes.
+  - **Notes**: The source-only production image, non-root/curl assertion, renamed hosted Flutter E2E, backend and Flutter quick gates, infra contracts, and profile-enabled rendered Compose contract pass. Existing `operations` profiles are preserved; enabling them is required to render the backup, integrity, and restore services for the all-service `APP_ENV` proof.
+- [x] [AI] REFACTOR: verify the recorded cache map still classifies bootstrap/manifests/unhashed files for revalidation, delete legacy TypeScript contracts/Vite packages, and run `APP_ENV=test npm exec nx run fsharp-env-loader:test:quick && APP_ENV=test npm exec nx run beavernest-be:test:quick && npm exec nx run beavernest-app:test:specs && npm exec nx run beavernest-app-e2e:test:specs` plus a BeaverNest-scoped legacy-identity sweep — acceptance: only historical plan/archive matches remain, the hosted-bundle scenario is green, and the backend tier-loader regression remains green.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `infra/dev/beavernest-app/Dockerfile.fe.dev` (removed), `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: The four regression gates pass. The original repository-wide `vite|react` grep was corrected to the BeaverNest cutover surface because unrelated supported applications and course content legitimately use React/Vite. The scoped sweep is clean except the three contract scripts that intentionally assert legacy identifiers are absent; the stale Vite development Dockerfile was removed.
+- [x] [AI] Start the hosted combined runtime using the safe disposable setup from `apps/beavernest-be/scripts/run-e2e.sh`: run `beavernest_fixture_root=$(mktemp -d) && beavernest_project="beavernest-manual-${RANDOM}-${RANDOM}" && install -d -m 0700 "$beavernest_fixture_root/data" "$beavernest_fixture_root/backups" && export APP_ENV=test BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 BEAVERNEST_BE_PUBLIC_PORT=19320 BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_fixture_root/data" BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture_root/backups" && beavernest_compose=(docker compose --env-file /dev/null -p "$beavernest_project" -f infra/dev/beavernest-app/docker-compose.yml) && trap '"${beavernest_compose[@]}" down --remove-orphans; rm -rf -- "$beavernest_fixture_root"' EXIT && "${beavernest_compose[@]}" up -d --build beavernest-app && for beavernest_attempt in $(seq 1 120); do curl -fsS http://127.0.0.1:19320/api/v1/readiness >/dev/null && break; [ "$beavernest_attempt" -lt 120 ] || exit 1; sleep 1; done`; use Playwright MCP to `browser_navigate` to the root route, `browser_snapshot` loading, ready, and unavailable states, `browser_click` Refresh status and Diagnostics, inspect `browser_console_messages`, and `browser_take_screenshot` at mobile (<768 px), tablet (768–1023 px), and desktop (>=1024 px) widths; save `plans/in-progress/beaver-flutter/evidence/phase-2-web-{loading,ready,unavailable}-{mobile,tablet,desktop}.png` — acceptance: the container receives `APP_ENV=test` before readiness; this single-locale application has UI-to-API-to-UI recovery, no horizontal scroll, visible keyboard focus, compliant target sizes/contrast, and only approved browser-shortcut copy.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/evidence/phase-2-web-{loading,ready,unavailable}-{mobile,tablet,desktop}.png`
+  - **Notes**: The interactive browser connector had no attached page in this session, so an equivalent fresh Playwright Chromium run exercised the same hosted Docker endpoint. It captured every requested state/breakpoint, including controlled 503-to-Refresh recovery, diagnostics, Help/Escape, visible focus, no overflow, and no unexpected console errors.
+- [x] [AI] Run `curl --include --silent --show-error` against the disposable combined runtime's readiness and diagnostics endpoints; obtain the unavailable proof by running `npm exec nx run beavernest-be-e2e:test:e2e` with the existing disposable unready fixture and copy its sanitized 503 header/body assertion into `plans/in-progress/beaver-flutter/evidence/phase-2-api-diagnostics-unavailable.md`; capture the ready responses in `plans/in-progress/beaver-flutter/evidence/phase-2-api-{readiness,diagnostics-ready}.md` — acceptance: readiness succeeds, diagnostics returns respectively 200 and fixture-proven 503 with `Cache-Control: no-store`, and neither response includes path, exception, SQL, host identifier, migration name, or an extra field.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/evidence/{phase-2-api-readiness.md,phase-2-api-diagnostics-ready.md,phase-2-api-diagnostics-unavailable.md}`, `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: A free isolated loopback port was used because 19320 was already held by an unrelated local process. Live ready responses are 200 with `Cache-Control: no-store`; the hosted disposable corrupt-SQLite proof passes all 13 scenarios and asserts the exact closed 503 body with no sensitive detail or validator.
+- [x] [AI] Run the static [UI quality gate](../../../repo-governance/workflows/ui/ui-quality-gate.md) and [API quality gate](../../../repo-governance/workflows/api/api-quality-gate.md) against the P2 diff; complete their maker→checker→fixer cycles and save reports below `generated-reports/` — acceptance: both gates report no blocking findings and their evidence links to the responsive screenshots and sanitized API captures.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `generated-reports/{swe-ui__p2-final__2026-08-13--12-50__audit.md,api-quality__p2-final__2026-08-13--12-50__audit.md}`
+  - **Notes**: Both strict gates reached their required double-zero confirmations: UI has 0 CRITICAL/HIGH/MEDIUM across all seven dimensions, and the live API has zero in-threshold findings across two current-build sweeps.
+- [x] [AI] Run Rule-15 web exploratory/usability/design retest and Rule-16 API exploratory retest against the running combined endpoint; append each `EWT-*`, `UWT-*`, `DWT-*`, or `AET-*` defect as an unchecked item below — acceptance: no defect remains unchecked before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Notes**: Final EWT (20 checks), UWT, DWT, and API exploratory retests are double-zero; every recorded follow-up below is resolved.
 
 ### Rule-15/16 Retest Follow-ups
 
-- [ ] [AI] No findings recorded yet — replace this placeholder with each concrete tester finding, or tick it only after all testers return no defects.
+- [x] [AI] EWT-001: Hosted Flutter workspace is blank at 360, 768, and 1280 px because the production CSP blocks the Flutter renderer's CanvasKit/Wasm bootstrap — fix before archival.
+  - **Source**: Rule-15 web exploratory retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-ewt/retest-report.md`
+  - **Reproduction**: `node local-temp/beaver-flutter-p2-ewt/retest.mjs`
+  - **Resolution**: The final fresh hosted Chromium retest passes all 20 checks, including local CanvasKit/Wasm rendering, breakpoints, recovery, diagnostics, Help/Escape, cache headers, and no console errors (`local-temp/beaver-flutter-p2-ewt/final-19322-report.md`).
+- [x] [AI] AET-001: Declared GET resources return 404 to safe HEAD requests instead of their bodyless equivalent representations — fix before archival.
+  - **Source**: Rule-16 API exploratory retest, 2026-08-13
+  - **Reproduction**: `curl -sS -D - -o /dev/null -X HEAD http://127.0.0.1:19321/api/v1/{health,readiness,diagnostics}`
+  - **Scope**: `OPTIONS` is recorded as observed 404 but is not a defect absent an explicit route-method contract.
+  - **Resolution**: Explicit bodyless HEAD routes now reuse the GET representations; focused proof and three full backend quick runs pass (86/86) while preserving intentionally unsupported OPTIONS.
+- [x] [AI] DWT-001: The rendered workspace does not implement the selected Focused Status Dashboard composition or its desktop status/diagnostics rail — fix before archival.
+  - **Source**: Rule-15 design retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
+  - **Resolution**: Final DWT verification confirms the selected dashboard and responsive desktop rail at all tested breakpoints.
+- [x] [AI] DWT-002: Diagnostics is an information-poor modal rather than the selected responsive support workspace with safe-field cards, components, and retry — fix before archival.
+  - **Source**: Rule-15 design retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
+  - **Resolution**: Final DWT verification confirms the in-shell safe diagnostics workspace, readiness components, and retry treatment.
+- [x] [AI] DWT-003: The selected Help card/treatment is absent and Escape does not close the browser-shortcut treatment or return focus — fix before archival.
+  - **Source**: Rule-15 design retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
+  - **Resolution**: Final DWT and EWT verification confirm visible Browser Help, actionable content, Escape close, and focus return.
+- [x] [AI] UWT-001: Browser shortcut guidance is ambiguous and provides no visible first-time-user help or result — fix before archival.
+  - **Source**: Rule-15 usability retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final/uwt-report.md`
+  - **Resolution**: Final UWT verification confirms the visible Browser Help treatment and actionable online-only guidance.
+- [x] [AI] UWT-002: Keyboard focus is not visibly apparent and the enabled accessibility traversal repeats workspace controls — fix before archival.
+  - **Source**: Rule-15 usability retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final/uwt-report.md`
+  - **Resolution**: The final semantic traversal is Status → Diagnostics → Refresh → Help with visible focus outlines.
+- [x] [AI] DWT-004: Status cards are under-filled or oversized across responsive breakpoints, hiding the intended dashboard density and follow-up actions — fix before archival.
+  - **Source**: Rule-15 design retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-dwt/19322/final-density/retest-report.md`
+  - **Resolution**: Final Chromium retest confirms compact natural-height cards, 1/2/3-column reflow, visible actions and Help, and no overflow or console/page errors at 360, 768, and 1280 px (`local-temp/beaver-flutter-p2-dwt/19322/final-card-fix/retest-report.md`).
+- [x] [AI] UWT-003: Oversized status cards bury Refresh status and Browser Help below the initial unavailable viewport — fix before archival.
+  - **Source**: Rule-15 usability retest, 2026-08-13
+  - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final-19322-rerun/uwt-report.md`
+  - **Resolution**: Final responsive-card retest verifies recovery copy and Refresh status remain in the same controlled mobile-unavailable viewport; natural-height cards preserve reachable diagnostics and Help at 375, 559/560, 768, 799/800, and 1440 px (`local-temp/beaver-flutter-p2-uwt/final-19322-card-fix/uwt-report.md`).
 
 ### Phase 2 Gate
 
-- [ ] [AI] All checks must pass before starting Phase 3: run `APP_ENV=test npm exec nx affected -t build,test:quick,lint,specs:behavior:coverage`, `APP_ENV=test npm exec nx run fsharp-env-loader:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:integration`, `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e`, `APP_ENV=test npm exec nx run beavernest-app-e2e:test:e2e`, `bash infra/dev/beavernest-app/tests/clean-image-build.sh`, `APP_ENV=contract-proof docker compose -f infra/dev/beavernest-app/docker-compose.yml -f infra/dev/beavernest-app/docker-compose.ci.yml config --format json | jq -e '[.services["beavernest-app"], .services["beavernest-backup"], .services["beavernest-integrity"], .services["beavernest-restore"] | .environment.APP_ENV == "contract-proof"] | all'`, and `beavernest_integration_compose=(docker compose -f apps/beavernest-be/docker-compose.integration.yml); trap '"${beavernest_integration_compose[@]}" down -v' EXIT; "${beavernest_integration_compose[@]}" up --abort-on-container-exit --build` — acceptance: affected checks, behavior-spec coverage, API E2E, Flutter Web E2E, clean production image, rendered operational Compose contract, and source-only integration image pass after the rename; the backend retains its composition-root tiered configuration contract without reading a real staging/production file.
+- [x] [AI] All checks must pass before starting Phase 3: run `APP_ENV=test npm exec nx affected -t build,test:quick,lint,specs:behavior:coverage`, `APP_ENV=test npm exec nx run fsharp-env-loader:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:integration`, `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e`, `APP_ENV=test npm exec nx run beavernest-app-e2e:test:e2e`, `bash infra/dev/beavernest-app/tests/clean-image-build.sh`, `COMPOSE_PROFILES=operations APP_ENV=contract-proof docker compose -f infra/dev/beavernest-app/docker-compose.yml -f infra/dev/beavernest-app/docker-compose.ci.yml config --format json | jq -e '[.services["beavernest-app"], .services["beavernest-backup"], .services["beavernest-integrity"], .services["beavernest-restore"] | .environment.APP_ENV == "contract-proof"] | all'`, and `beavernest_integration_compose=(docker compose -f apps/beavernest-be/docker-compose.integration.yml); trap '"${beavernest_integration_compose[@]}" down -v' EXIT; "${beavernest_integration_compose[@]}" up --abort-on-container-exit --build` — acceptance: affected checks, behavior-spec coverage, API E2E, Flutter Web E2E, clean production image, rendered operational Compose contract, and source-only integration image pass after the rename; the backend retains its composition-root tiered configuration contract without reading a real staging/production file.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Notes**: The affected and pre-push gates pass after resolving the unrelated OSE FSharp.Core restore mismatch. Flutter quick passes 34 tests/87.30%; backend quick passes 86 tests/92.13%; integration passes 13/13 locally and from the source-only Compose image; both E2E suites pass; clean image builds non-root with curl; and operational profile configuration renders every requested `APP_ENV` mapping.
 - [ ] [AI] At the P2 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p2` — acceptance: the atomic cutover PR is fully reviewed, CI-green, visual/browser evidence attached, and merged.
 
 **Pause Safety:** Safe to stop after Flutter Web is the only client and its three browser layouts are proven. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p3 origin/main`.

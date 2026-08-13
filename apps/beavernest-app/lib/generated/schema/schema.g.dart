@@ -71,6 +71,70 @@ Map<String, dynamic> _$ReadinessUnavailableComponentsToJson(
   'schema': instance.schema,
 };
 
+_DiagnosticsReady _$DiagnosticsReadyFromJson(Map<String, dynamic> json) =>
+    _DiagnosticsReady(
+      status: json['status'] as String,
+      version: json['version'] as String,
+      uptimeSeconds: (json['uptimeSeconds'] as num).toInt(),
+      serverTimeUtc: json['serverTimeUtc'] as String,
+      components: DiagnosticsReadyComponents.fromJson(
+        json['components'] as Map<String, dynamic>,
+      ),
+    );
+
+Map<String, dynamic> _$DiagnosticsReadyToJson(_DiagnosticsReady instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'version': instance.version,
+      'uptimeSeconds': instance.uptimeSeconds,
+      'serverTimeUtc': instance.serverTimeUtc,
+      'components': instance.components,
+    };
+
+_DiagnosticsReadyComponents _$DiagnosticsReadyComponentsFromJson(
+  Map<String, dynamic> json,
+) => _DiagnosticsReadyComponents(
+  database: json['database'] as String,
+  schema: json['schema'] as String,
+);
+
+Map<String, dynamic> _$DiagnosticsReadyComponentsToJson(
+  _DiagnosticsReadyComponents instance,
+) => <String, dynamic>{
+  'database': instance.database,
+  'schema': instance.schema,
+};
+
+_DiagnosticsUnavailable _$DiagnosticsUnavailableFromJson(
+  Map<String, dynamic> json,
+) => _DiagnosticsUnavailable(
+  status: json['status'] as String,
+  components: DiagnosticsUnavailableComponents.fromJson(
+    json['components'] as Map<String, dynamic>,
+  ),
+);
+
+Map<String, dynamic> _$DiagnosticsUnavailableToJson(
+  _DiagnosticsUnavailable instance,
+) => <String, dynamic>{
+  'status': instance.status,
+  'components': instance.components,
+};
+
+_DiagnosticsUnavailableComponents _$DiagnosticsUnavailableComponentsFromJson(
+  Map<String, dynamic> json,
+) => _DiagnosticsUnavailableComponents(
+  database: json['database'] as String,
+  schema: json['schema'] as String,
+);
+
+Map<String, dynamic> _$DiagnosticsUnavailableComponentsToJson(
+  _DiagnosticsUnavailableComponents instance,
+) => <String, dynamic>{
+  'database': instance.database,
+  'schema': instance.schema,
+};
+
 _Error _$ErrorFromJson(Map<String, dynamic> json) =>
     _Error(error: json['error'] as String);
 

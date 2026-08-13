@@ -13,10 +13,12 @@ behavior/
 │   ├── development/            # local data-directory isolation
 │   ├── recovery/                # verified online backup and restore
 │   └── configuration/           # tiered .env.<APP_ENV> loading
-└── beavernest-app-web/gherkin/    # 5 feature files
-    ├── workspace/                # browser-readiness, readiness-loading, no-promotional-cta
-    ├── network/                   # readiness-recovery
-    └── configuration/              # tiered .env.<APP_ENV> loading via Vite's --mode flag
+└── beavernest-app/gherkin/        # 6 feature files
+    ├── workspace/                  # same-origin Flutter Web shell and responsive readiness summary
+    ├── retry/                      # readiness recovery without page reload
+    ├── diagnostics/                # contract-safe operational details
+    ├── browser-shortcut/           # accessible online-only browser guidance
+    └── cache/                      # fresh hosted Flutter Web bundle behavior
 ```
 
 21 feature files, 25 scenarios total.
@@ -25,8 +27,8 @@ behavior/
 
 - [beavernest-be/gherkin/](./beavernest-be/gherkin/README.md) — backend liveness/readiness, routing
   (including the retired `/api/v1/hello` route returning 404), SQLite persistence, and backup/restore
-- [beavernest-app-web/gherkin/](./beavernest-app-web/gherkin/README.md) — foundation-status readiness
-  panel content, loading state, and network recovery
+- [beavernest-app/gherkin/](./beavernest-app/gherkin/) — Flutter Web workspace shell, readiness
+  recovery, safe diagnostics, browser guidance, and cache behavior
 
 ## Running the Tests
 

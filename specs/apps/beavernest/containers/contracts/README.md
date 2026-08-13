@@ -5,7 +5,7 @@ OpenAPI 3.1 specification for the BeaverNest REST API.
 ## Purpose
 
 This contract defines the exact shape of every request and response for `beavernest-be`, consumed
-by `beavernest-app-web`. It is the single source of truth for API types for this phase.
+by `beavernest-app`. It is the single source of truth for API types for this phase.
 
 ## Quick Start
 

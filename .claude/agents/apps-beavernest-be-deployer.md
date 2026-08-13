@@ -30,7 +30,7 @@ BeaverNest currently has **no provisioned staging or production deploy target** 
 runtime. `beavernest-app-test-local-deploy-stag.yml` therefore does not call the shared
 `_reusable-app-test-local-deploy-stag.yml` (that reusable workflow's `deploy` job unconditionally
 force-pushes stag branches BeaverNest does not have). It runs `specs-coverage`, `fe-lint`,
-`be-integration`, `fe-integration`, `e2e`, `infra-tests`, and `specs-gate` only, on a twice-daily
+`be-integration`, `fe-widget`, `e2e`, `infra-tests`, and `specs-gate` only, on a twice-daily
 schedule and on `workflow_dispatch`. This agent's job is to trigger and monitor that test-only pipeline for the
 `beavernest-be` surface — **not** to promote anything to staging or production, since neither exists
 yet, and there is no GHCR image publish or k3s rollout wired for BeaverNest.
@@ -71,7 +71,7 @@ k3s rollout for BeaverNest.
 ## No Staging or Production Target Yet
 
 Unlike `organiclever-be`/`ose-be`, which publish images consumed by `ose-private` coralpolyp,
-`beavernest-be` ships only as half of a **single combined container image** (F# API + Vite client,
+`beavernest-be` ships only as half of a **single combined container image** (F# API + Flutter Web client,
 same origin, port 19300) built by `apps/beavernest-be/Dockerfile`. Standing up its first staging or
 production deploy target is tracked as a future idea/plan, not yet created under `plans/ideas/`. Do
 not invent or invoke a deploy workflow, force-push a `stag-*` branch, or claim a deployment
@@ -79,7 +79,7 @@ succeeded — none of that machinery exists.
 
 ## Safety Checks
 
-The workflow itself enforces the safety gate: `be-integration`, `fe-integration`, `e2e`, and
+The workflow itself enforces the safety gate: `be-integration`, `fe-widget`, `e2e`, and
 `infra-tests` must all pass. There is nothing further for this agent to validate locally, since the
 workflow tests `main` directly inside the GitHub Actions runner.
 
@@ -103,7 +103,7 @@ failure here is a real backend regression — inspect the job's `dotnet test` ou
 
 ### Issue 3: `e2e` job times out waiting for the combined runtime
 
-`apps/beavernest-be-e2e:test:e2e` and `apps/beavernest-app-web-e2e:test:e2e` each build and boot
+`apps/beavernest-be-e2e:test:e2e` and `apps/beavernest-app-e2e:test:e2e` each build and boot
 their own disposable `docker compose` runtime via `apps/beavernest-be/scripts/run-e2e.sh`. A timeout
 usually means the combined image failed its readiness probe (`/api/v1/readiness`) — inspect the
 job's container logs, not this agent.
@@ -143,7 +143,7 @@ script's output, not this agent.
 **Related Agents**:
 
 - `swe-fsharp-dev` - Develops beavernest-be F#/Giraffe code
-- `apps-beavernest-app-web-deployer` - Companion agent for the same combined-runtime test workflow
+- `apps-beavernest-app-deployer` - Companion agent for the same combined-runtime test workflow
 
 **Related Conventions**:
 

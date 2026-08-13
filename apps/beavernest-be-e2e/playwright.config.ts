@@ -8,7 +8,12 @@ process.env.APP_ENV ??= "test";
 
 const testDir = defineBddConfig({
   featuresRoot: "../../specs/apps/beavernest/behavior/beavernest-be/gherkin",
-  features: "../../specs/apps/beavernest/behavior/beavernest-be/gherkin/**/*.feature",
+  features: [
+    "../../specs/apps/beavernest/behavior/beavernest-be/gherkin/**/*.feature",
+    // Configuration scenarios execute through the F# integration suite. Do
+    // not generate Playwright files for that separate test boundary.
+    "!../../specs/apps/beavernest/behavior/beavernest-be/gherkin/configuration/**/*.feature",
+  ],
   steps: ["./steps/**/*.ts"],
   // Exclude @unit scenarios (F# TickSpec unit tests exercising
   // promoteStagedOverPreviousLive's injected-failure seam directly). All

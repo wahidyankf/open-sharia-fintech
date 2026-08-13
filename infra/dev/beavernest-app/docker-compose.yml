@@ -3,6 +3,7 @@ x-beavernest-app: &beavernest-app
     context: ../../..
     dockerfile: apps/beavernest-be/Dockerfile
   environment:
+    APP_ENV: "${APP_ENV:-local}"
     BEAVERNEST_BE_DATA_DIRECTORY: /var/lib/beavernest
     BEAVERNEST_BE_HTTP_LISTEN_ADDRESS: 0.0.0.0
     BEAVERNEST_BE_HTTP_LISTEN_PORT: "19300"
@@ -36,6 +37,7 @@ services:
     profiles: ["operations"]
     command: ["backup", "--name", "${BEAVERNEST_BE_OPERATION_NAME:-operation.sqlite3}"]
     environment:
+      APP_ENV: "${APP_ENV:-local}"
       BEAVERNEST_BE_BACKUP_DIRECTORY: /var/backups/beavernest
       BEAVERNEST_BE_DATA_DIRECTORY: /var/lib/beavernest
       BEAVERNEST_BE_HTTP_LISTEN_ADDRESS: 0.0.0.0
@@ -69,6 +71,7 @@ services:
     profiles: ["operations"]
     command: ["restore", "--name", "${BEAVERNEST_BE_OPERATION_NAME:-operation.sqlite3}"]
     environment:
+      APP_ENV: "${APP_ENV:-local}"
       BEAVERNEST_BE_BACKUP_DIRECTORY: /var/backups/beavernest
       BEAVERNEST_BE_DATA_DIRECTORY: /var/lib/beavernest
       BEAVERNEST_BE_HTTP_LISTEN_ADDRESS: 0.0.0.0

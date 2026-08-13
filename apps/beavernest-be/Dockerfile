@@ -1,27 +1,20 @@
 # Production multi-stage Dockerfile for the combined BeaverNest runtime.
 # Build context: repo root (e.g. `docker build -f apps/beavernest-be/Dockerfile .`).
 
-FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS frontend-build
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS contract-build
 WORKDIR /workspace
 
 # The F# OpenAPI generator is a Java CLI. This remains confined to the build
-# stage; neither the production runtime nor the Vite client depends on Java.
+# stage; neither the production runtime nor the Flutter client depends on Java.
 RUN apk add --no-cache openjdk17-jre-headless
 
-# Keep dependency installation cacheable while retaining the local workspace
-# packages required by the Vite client.
+# Keep contract tooling installation cacheable. The final image never relies on
+# host-generated contracts or Flutter artifacts.
 COPY package.json package-lock.json nx.json openapitools.json tsconfig.base.json ./
-COPY apps/beavernest-app-web/package.json apps/beavernest-app-web/package.json
-COPY libs/web-ui/package.json libs/web-ui/package.json
-COPY libs/web-ui-token/package.json libs/web-ui-token/package.json
-RUN npm ci --workspace=beavernest-app-web --include-workspace-root --ignore-scripts
+RUN npm ci --include-workspace-root --ignore-scripts
 
-# Build the contract bundle and generated frontend client from source; the
-# final image never relies on a host-generated client or frontend artifact.
+# Generate the two backend inputs from the source contract.
 COPY specs/apps/beavernest/containers/contracts/ specs/apps/beavernest/containers/contracts/
-COPY apps/beavernest-app-web/ apps/beavernest-app-web/
-COPY libs/web-ui/ libs/web-ui/
-COPY libs/web-ui-token/ libs/web-ui-token/
 RUN npx @redocly/cli bundle specs/apps/beavernest/containers/contracts/openapi.yaml \
     -o specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml \
   && npx openapi-generator-cli generate \
@@ -29,14 +22,32 @@ RUN npx @redocly/cli bundle specs/apps/beavernest/containers/contracts/openapi.y
     -g fsharp-giraffe-server \
     -o apps/beavernest-be/generated-contracts \
     --model-package BeaverNestBe.Contracts \
-    --global-property=models,modelDocs=false,apiDocs=false \
-  && npx @hey-api/openapi-ts \
-    -i specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml \
-    -o apps/beavernest-app-web/src/generated-contracts \
-    -s
-WORKDIR /workspace/apps/beavernest-app-web
-RUN VITE_MODE=$([ "${APP_ENV:-local}" = local ] && echo development || echo "${APP_ENV:-local}") \
-  && npx vite build --mode "$VITE_MODE"
+    --global-property=models,modelDocs=false,apiDocs=false
+
+# GitHub-hosted runners build this image on Linux amd64. Pin that platform's
+# manifest rather than the multi-platform index or an arm64 child manifest.
+FROM ghcr.io/cirruslabs/flutter:3.41.5@sha256:412113340bfd4e1658c6c7c421f361af17b52445c397c1466a2f6c5d97482ace AS flutter-build
+WORKDIR /workspace
+
+# Keep the pinned FVM workflow identical to the host and CI paths. The builder
+# digest and Flutter revision are recorded in flutter-builder-lock.md.
+RUN dart pub global activate fvm 4.0.5
+ENV PATH="/root/.pub-cache/bin:${PATH}"
+
+COPY .fvmrc ./
+COPY apps/beavernest-app/pubspec.yaml apps/beavernest-app/pubspec.lock apps/beavernest-app/
+WORKDIR /workspace/apps/beavernest-app
+RUN fvm install && fvm flutter pub get
+
+COPY apps/beavernest-app/ /workspace/apps/beavernest-app/
+COPY --from=contract-build /workspace/specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml /workspace/specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml
+RUN fvm flutter pub run openapi_spec generate \
+    --path ../../specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml \
+    --destination lib/generated \
+    --package_name beavernest_api \
+    --force \
+  && fvm flutter pub run build_runner build --delete-conflicting-outputs \
+  && fvm flutter build web --csp --wasm --no-web-resources-cdn
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0.302-noble@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 AS backend-build
 WORKDIR /src
@@ -49,7 +60,7 @@ RUN dotnet restore apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj
 
 COPY apps/beavernest-be/src/ apps/beavernest-be/src/
 COPY libs/fsharp-env-loader/src/ libs/fsharp-env-loader/src/
-COPY --from=frontend-build /workspace/apps/beavernest-be/generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs apps/beavernest-be/generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs
+COPY --from=contract-build /workspace/apps/beavernest-be/generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs apps/beavernest-be/generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs
 RUN dotnet publish apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj \
   --configuration Release \
   --output /app/publish \
@@ -68,7 +79,7 @@ RUN groupadd --gid 10001 beavernest \
   && install --directory --owner=10001 --group=10001 --mode=0700 /var/lib/beavernest
 
 COPY --from=backend-build --chown=10001:10001 /app/publish/ ./
-COPY --from=frontend-build --chown=10001:10001 /workspace/apps/beavernest-app-web/dist/ ./wwwroot/
+COPY --from=flutter-build --chown=10001:10001 /workspace/apps/beavernest-app/build/web/ ./wwwroot/
 COPY --chown=10001:10001 --chmod=0755 apps/beavernest-be/scripts/container-entrypoint.sh ./container-entrypoint.sh
 
 ENV DOTNET_RUNNING_IN_CONTAINER=true \

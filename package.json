@@ -138,7 +138,7 @@
       "actionlint"
     ],
     "**/Dockerfile*": [
-      "hadolint --failure-threshold warning"
+      "sh -ec 'for f; do [ ! -e \"$f\" ] || hadolint --failure-threshold warning \"$f\"; done' --"
     ],
     "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": [
       "apps/rhino-cli/scripts/rhino-bin.sh convention emoji validate"

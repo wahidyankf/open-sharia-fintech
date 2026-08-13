@@ -9,17 +9,17 @@ tags:
   - secrets
   - nextjs
   - fsharp
-  - vite
+  - flutter
   - playwright
 created: 2026-08-12
 ---
 
 # How to Configure App Environments
 
-Every app in this monorepo selects its runtime configuration tier through a single process
-variable, `APP_ENV`, and loads exactly one `.env.<tier>` file for that tier. This guide shows you
-how to work with that contract across the Next.js, F#, and Vite apps, and their Playwright e2e
-suites.
+Every Next.js app and F# backend in this monorepo selects its runtime configuration tier through a
+single process variable, `APP_ENV`, and loads exactly one `.env.<tier>` file for that tier. This
+guide shows you how to work with that contract across those applications and their Playwright e2e
+suites. The Flutter Web client is a deliberate no-runtime-environment exception.
 
 ## Prerequisites
 
@@ -53,7 +53,7 @@ during a test run.
 
 ## The `APP_ENV` contract
 
-Every loader in the repo — Next.js, F#, and Vite alike — implements the same five rules:
+Every tier loader in the repo — Next.js and F# alike — implements the same five rules:
 
 1. **Tier selector** — read `APP_ENV` from the process environment; unset means `local`.
 2. **One file** — load `.env.<tier>` and no other tier file.
@@ -121,22 +121,14 @@ let main args =
     // ...
 ```
 
-### Vite
+### Flutter Web
 
-`beavernest-app-web` is the one Vite app in the repo. Vite has no `local` mode — it rejects the
-literal mode name `"local"` — so `apps/beavernest-app-web/project.json`'s `dev` and `build`
-targets remap `APP_ENV=local` to Vite's built-in `development` mode before invoking Vite:
-
-```bash
-VITE_MODE=$([ ${APP_ENV:-local} = local ] && echo development || echo ${APP_ENV:-local})
-vite --host 127.0.0.1 --port 19310 --mode $VITE_MODE
-```
-
-Vite always auto-loads a bare `.env` and `.env.local` "in all cases," on top of whatever
-`--mode`-specific file it was told to load. `apps/beavernest-app-web/src/vite-env-guard.ts`
-closes that gap: call `guardStrayEnvFiles(tier, envDir)` at the top of `vite.config.ts`, before
-Vite resolves its own env files. At any tier other than `local`, it throws if a stray `.env` or
-`.env.local` sits beside the real tier file, turning a potential secret leak into a build failure.
+`beavernest-app` is the approved future-multiplatform app exception and currently targets Flutter
+Web. It has no `.env.*` files or `APP_ENV` loader: the deployed browser client calls only relative,
+same-origin API routes, while environment-dependent runtime configuration belongs to
+`beavernest-be`. Its Flutter toolchain is pinned in [`.fvmrc`](../../.fvmrc), and its production
+output is built into the combined backend image rather than served by a standalone development
+server.
 
 ### Playwright e2e
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Validates the combined-runtime environment contract. The Vite client is
+# Validates the combined-runtime environment contract. The Flutter client is
 # same-origin and therefore owns no runtime environment template.
 # Keep this value-free: committed templates may declare placeholders and defaults only.
 set -euo pipefail
@@ -68,8 +68,8 @@ for deferred_key in \
 	assert_contains "$repository_config" "        - ${deferred_key}"
 done
 
-if [[ -e "$repository_root/apps/beavernest-app-web/.env.example" ]] || rg -Fq 'root: apps/beavernest-app-web' "$repository_config"; then
+if [[ -e "$repository_root/apps/beavernest-app/.env.example" ]] || grep -Fq 'root: apps/beavernest-app' "$repository_config"; then
 
-	printf '%s\n' 'The same-origin Vite client must not own a runtime environment surface' >&2
+	printf '%s\n' 'The same-origin Flutter client must not own a runtime environment surface' >&2
 	exit 1
 fi
