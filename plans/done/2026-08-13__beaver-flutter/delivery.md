@@ -710,8 +710,10 @@ phase._
 
 ### Phase 3 Gate
 
-- [ ] [AI] All checks must pass before declaring closure: verify the archived plan, evidence, and audit reports are committed in the closure PR and `git status --short` is clean — acceptance: plan execution has a traceable terminal record.
-  - **Status**: Blocked on concurrent worktree changes
-  - **Notes**: Closure artifacts are in merged PR #185, and its final CI and review are green. However, the shared worktree still contains unowned modifications to `.vscode/settings.json` and `apps/ayokoding-www/content/en/learn/courses/just-enough-elixir/drilling/_index.md`; this plan must not claim the literal clean-status acceptance until their owner resolves them.
+- [x] [AI] All checks must pass before declaring closure: verify the archived plan, evidence, and audit reports are committed in the closure PR and `git status --short` is clean — acceptance: plan execution has a traceable terminal record.
+  - **Date**: 2026-08-14
+  - **Status**: Done
+  - **Files Changed**: `plans/done/2026-08-13__beaver-flutter/delivery.md`
+  - **Notes**: The terminal check found `git status --short` empty after the user directed cleanup of the two prior concurrent modifications. The archived plan, evidence, and audit reports remain in merged closure PR #185; certification PR #186 recorded the blocker, and this PR records its resolution after the required checks pass.
 
 **Pause Safety:** Safe to stop after the user is offered cleanup. Resume with `git -C worktrees/beaver-flutter status --short`.
