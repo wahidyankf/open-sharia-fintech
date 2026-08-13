@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 assert_no_match() {
-  local status
+  local result
 
   if "$@"; then
     return 1
+  else
+    result=$?
   fi
 
-  status=$?
-  [[ "$status" -eq 1 ]] || return "$status"
+  [[ "$result" -eq 1 ]] || return "$result"
 }
