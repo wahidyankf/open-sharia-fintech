@@ -42,7 +42,9 @@ let ``diagnostics returns HEAD with the GET status and headers but no body`` () 
     let diagnostics =
         create
             { Readiness = alwaysReady
-              Clock = fun () -> System.DateTimeOffset.UtcNow
+              // GET and HEAD are separate requests, so use a stable payload when
+              // proving their representation headers (including Content-Length).
+              Clock = fun () -> System.DateTimeOffset(2026, 8, 13, 12, 34, 56, System.TimeSpan.Zero)
               Version = fun () -> "unknown"
               Uptime = fun () -> System.TimeSpan.Zero }
 
