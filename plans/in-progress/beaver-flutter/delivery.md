@@ -27,7 +27,11 @@ after the hardened preconditions pass.
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/quality-beaver-flutter-p1.md`
   - **Notes**: Pre-push gates and the corrected affected-target sweep pass. The initial npm argument-forwarding failure is diagnosed and remedied in the quality evidence; affected Flutter and backend builds, tests, lint, and spec coverage are green.
-- [ ] [AI] For the boundary branch/PR recorded in this `delivery.md`, commit only ledger-owned changes thematically with Conventional Commit messages, splitting unrelated domains or concerns into separate commits; run `git diff --cached --check` before each commit and record commit hashes in `plans/in-progress/beaver-flutter/evidence/commits-<delivery-branch>.md` — acceptance: each commit is reviewable as one concern and has no whitespace error or foreign file.
+- [x] [AI] For the boundary branch/PR recorded in this `delivery.md`, commit only ledger-owned changes thematically with Conventional Commit messages, splitting unrelated domains or concerns into separate commits; run `git diff --cached --check` before each commit and record commit hashes in `plans/in-progress/beaver-flutter/evidence/commits-<delivery-branch>.md` — acceptance: each commit is reviewable as one concern and has no whitespace error or foreign file.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/evidence/commits-beaver-flutter-p1.md`
+  - **Notes**: Four ledger-scoped commits separate the backend build repair, Flutter foundation, P1 evidence, and corrected SHA ledger. Each was guarded by `git diff --cached --check`; the worktree was clean before this checklist-state update.
 - [ ] [AI] After every delivery-boundary push, inspect the branch/PR recorded in this `delivery.md` with `gh run list --branch <delivery-branch> --limit 20` and `gh run view <run-id> --json status,conclusion` every two minutes; after P2's `pull_request` trigger change, inspect its `PR Quality Gate` and `beavernest-app-test-local-deploy-stag` runs and record results in `plans/in-progress/beaver-flutter/evidence/ci-<delivery-branch>.md` — acceptance: every applicable run reaches `success`; investigate and fix every failure before the boundary can merge.
 
 ## Parallelization Model
