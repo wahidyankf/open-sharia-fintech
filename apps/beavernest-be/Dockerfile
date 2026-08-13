@@ -10,7 +10,7 @@ RUN apk add --no-cache openjdk17-jre-headless
 
 # Keep dependency installation cacheable while retaining the local workspace
 # packages required by the Vite client.
-COPY package.json package-lock.json nx.json tsconfig.base.json ./
+COPY package.json package-lock.json nx.json openapitools.json tsconfig.base.json ./
 COPY apps/beavernest-app-web/package.json apps/beavernest-app-web/package.json
 COPY libs/web-ui/package.json libs/web-ui/package.json
 COPY libs/web-ui-token/package.json libs/web-ui-token/package.json
