@@ -3812,7 +3812,7 @@ fn then_rust_targets_serialize_cargo_work(w: &mut GateWorld) {
         .expect("the real Rust job must be loaded by the Given step");
     let target_commands: Vec<&str> = rust_job
         .lines()
-        .filter(|line| line.contains("nx affected -t"))
+        .filter(|line| line.contains("nx affected -t") || line.contains("nx run-many -t"))
         .collect();
     assert_eq!(
         target_commands.len(),
@@ -3958,14 +3958,33 @@ fn step_block(action_yaml: &str, step_name_fragment: &str) -> String {
 
 fn action_steps(action_yaml: &str) -> Vec<String> {
     let lines: Vec<&str> = action_yaml.lines().collect();
-    lines
+    let steps_header = lines
+        .iter()
+        .position(|line| line.trim() == "steps:")
+        .expect("the action must declare a steps block");
+    let steps_indent = lines[steps_header].len() - lines[steps_header].trim_start().len();
+    let item_indent = lines[steps_header + 1..]
+        .iter()
+        .find_map(|line| {
+            let indent = line.len() - line.trim_start().len();
+            (indent > steps_indent && line.trim_start().starts_with("- ")).then_some(indent)
+        })
+        .expect("the action steps block must contain a step");
+    lines[steps_header + 1..]
         .iter()
         .enumerate()
-        .filter(|(_, line)| line.trim_start().starts_with("- name:"))
+        .filter(|(_, line)| {
+            let indent = line.len() - line.trim_start().len();
+            indent == item_indent && line.trim_start().starts_with("- ")
+        })
         .map(|(start, _)| {
+            let start = steps_header + 1 + start;
             let end = lines[start + 1..]
                 .iter()
-                .position(|line| line.trim_start().starts_with("- name:"))
+                .position(|line| {
+                    let indent = line.len() - line.trim_start().len();
+                    indent == item_indent && line.trim_start().starts_with("- ")
+                })
                 .map_or(lines.len(), |offset| start + 1 + offset);
             lines[start..end].join("\n")
         })
@@ -4011,6 +4030,7 @@ fn run_block_from_step(step: &str) -> Option<String> {
 fn has_npm_ci_command(run: &str) -> bool {
     run.lines()
         .map(str::trim_start)
+        .filter(|line| !line.starts_with('#'))
         .any(|line| line == "npm ci" || line.starts_with("npm ci "))
 }
 
