@@ -46,6 +46,43 @@ void main() {
     expect(find.text('Foundation status'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, 'Diagnostics'), findsOneWidget);
   });
+
+  testWidgets(
+    'starts the persistent desktop rail at the 1024 pixel breakpoint',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1024, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const MainApp(
+          readinessRepository: _ReadyReadinessRepository(),
+          diagnosticsRepository: _ReadyDiagnosticsRepository(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('workspace-navigation-rail')),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('offers an in-place readiness retry after a transport failure', (
+    tester,
+  ) async {
+    final repository = _FailThenReadyReadinessRepository();
+    await tester.pumpWidget(MainApp(readinessRepository: repository));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Status temporarily unavailable'), findsOneWidget);
+    final retry = find.widgetWithText(FilledButton, 'Refresh status');
+    await tester.tap(retry);
+    await tester.pumpAndSettle();
+
+    expect(repository.calls, 2);
+    expect(find.text('Application available'), findsAtLeastNWidgets(1));
+  });
 }
 
 const _readyReadiness = WorkspaceReadiness(
@@ -72,6 +109,17 @@ final class _ReadyReadinessRepository implements ReadinessRepository {
 
   @override
   Future<WorkspaceReadiness> loadReadiness() async => _readyReadiness;
+}
+
+final class _FailThenReadyReadinessRepository implements ReadinessRepository {
+  var calls = 0;
+
+  @override
+  Future<WorkspaceReadiness> loadReadiness() {
+    calls += 1;
+    if (calls == 1) return Future.error(StateError('network failure'));
+    return Future.value(_readyReadiness);
+  }
 }
 
 final class _ReadyDiagnosticsRepository implements DiagnosticsRepository {

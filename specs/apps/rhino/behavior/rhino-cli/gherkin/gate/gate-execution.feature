@@ -36,6 +36,11 @@ Feature: Gate execution
     When its candidate set contains matching and excluded paths
     Then the leaf receives only matching non-excluded repository-relative paths
 
+  Scenario: A deleted file is not passed to a file gate
+    Given an affected file gate includes a deleted Dockerfile and an existing Dockerfile
+    When its candidate paths are prepared for invocation
+    Then the deleted Dockerfile is not passed to the file gate
+
   Scenario: A registered Rhino CLI gate forwards and enforces configured exclusions
     Given the frontmatter-date gate declares an excluded violating website path
     When its CI gate runs by id

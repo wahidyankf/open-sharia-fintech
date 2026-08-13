@@ -34,6 +34,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.0" />
     <PackageReference Include="TickSpec" Version="2.0.5" />
+    <!-- Keep the test host's explicit FSharp.Core floor compatible with the
+         shared loader project reference. -->
+    <PackageReference Update="FSharp.Core" Version="10.1.302" />
   </ItemGroup>
 
   <ItemGroup>

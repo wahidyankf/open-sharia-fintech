@@ -36,6 +36,12 @@ final class _DiagnosticsWorkspaceState extends State<DiagnosticsWorkspace> {
   Widget build(BuildContext context) => FutureBuilder<WorkspaceDiagnostics>(
     future: _diagnostics,
     builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return _DiagnosticsRequestFailure(
+          onRetry: _retry,
+          onStatus: widget.onStatus,
+        );
+      }
       if (!snapshot.hasData) {
         return Semantics(
           label: 'Diagnostics loading',
@@ -49,6 +55,59 @@ final class _DiagnosticsWorkspaceState extends State<DiagnosticsWorkspace> {
         onStatus: widget.onStatus,
       );
     },
+  );
+}
+
+final class _DiagnosticsRequestFailure extends StatelessWidget {
+  const _DiagnosticsRequestFailure({
+    required this.onRetry,
+    required this.onStatus,
+  });
+
+  final VoidCallback onRetry;
+  final VoidCallback onStatus;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'Diagnostics temporarily unavailable',
+    liveRegion: true,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Diagnostics temporarily unavailable',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'The safe support snapshot could not be refreshed. Retry without leaving this workspace.',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        const SizedBox(height: 24),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            SizedBox(
+              height: 44,
+              child: FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry diagnostics'),
+              ),
+            ),
+            SizedBox(
+              height: 44,
+              child: OutlinedButton.icon(
+                onPressed: onStatus,
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Status'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
   );
 }
 

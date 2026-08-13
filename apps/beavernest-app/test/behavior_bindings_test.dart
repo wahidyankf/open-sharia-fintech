@@ -17,13 +17,13 @@ void main() {
     final scenario = _Scenario();
 
     await scenario.given(
-      'version two of the F# hosted Flutter bundle is available',
+      'version one of the F# hosted Flutter bundle has been loaded',
       () async {
         expect(buildVersion, 'v2');
       },
     );
     await scenario.when(
-      'I navigate normally to the workspace root',
+      'version two is deployed and I navigate normally',
       () async {},
     );
     await scenario.then(
@@ -143,6 +143,28 @@ void main() {
     );
   });
 
+  testWidgets('Refresh recovers a failed status request', (tester) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given('the workspace status request fails', () async {
+      context.readiness.failNext = true;
+      await context.open();
+      expect(find.text('Status temporarily unavailable'), findsOneWidget);
+    });
+    await scenario.when(
+      'I select Refresh status after a request failure',
+      () async {
+        await tester.tap(find.widgetWithText(FilledButton, 'Refresh status'));
+        await tester.pumpAndSettle();
+      },
+    );
+    await scenario.then(
+      'the workspace status retry reports that the application is available',
+      () async => context.expectReadySummary(),
+    );
+  });
+
   testWidgets('A ready diagnostics response is rendered safely', (
     tester,
   ) async {
@@ -234,6 +256,33 @@ void main() {
       },
     );
   });
+
+  testWidgets('Retry recovers a failed diagnostics request', (tester) async {
+    final context = _WorkspaceContext(tester);
+    final scenario = _Scenario();
+
+    await scenario.given('the workspace diagnostics request fails', () async {
+      context.diagnostics.failNext = true;
+      await context.open();
+      await tester.tap(
+        find.widgetWithText(OutlinedButton, 'Diagnostics').first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Diagnostics temporarily unavailable'), findsOneWidget);
+    });
+    await scenario.when(
+      'I retry diagnostics after a request failure',
+      () async {
+        await tester.tap(
+          find.widgetWithText(FilledButton, 'Retry diagnostics'),
+        );
+        await tester.pumpAndSettle();
+      },
+    );
+    await scenario.then('I can read a fresh safe support snapshot', () async {
+      expect(find.text('Safe support snapshot'), findsOneWidget);
+    });
+  });
 }
 
 /// Executes each coverage-recognised Gherkin step as a real widget assertion.
@@ -287,22 +336,32 @@ final class _WorkspaceContext {
 final class _ReadinessRepository implements ReadinessRepository {
   WorkspaceReadiness value = _ready;
   Completer<WorkspaceReadiness>? loading;
+  var failNext = false;
   var calls = 0;
 
   @override
   Future<WorkspaceReadiness> loadReadiness() {
     calls += 1;
+    if (failNext) {
+      failNext = false;
+      return Future.error(StateError('network failure'));
+    }
     return loading?.future ?? Future.value(value);
   }
 }
 
 final class _DiagnosticsRepository implements DiagnosticsRepository {
   WorkspaceDiagnostics value = _diagnostics;
+  var failNext = false;
   var calls = 0;
 
   @override
   Future<WorkspaceDiagnostics> loadDiagnostics() async {
     calls += 1;
+    if (failNext) {
+      failNext = false;
+      throw StateError('network failure');
+    }
     return value;
   }
 }

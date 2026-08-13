@@ -44,6 +44,31 @@ void main() {
     expect(diagnostics.calls, 2);
   });
 
+  testWidgets(
+    'offers an in-place diagnostics retry after a transport failure',
+    (tester) async {
+      final diagnostics = _FailThenReadyDiagnosticsRepository();
+      await tester.pumpWidget(
+        MainApp(
+          readinessRepository: const _ReadinessRepository(_ready),
+          diagnosticsRepository: diagnostics,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(OutlinedButton, 'Diagnostics').first,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Diagnostics temporarily unavailable'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Retry diagnostics'));
+      await tester.pumpAndSettle();
+
+      expect(diagnostics.calls, 2);
+      expect(find.text('Safe support snapshot'), findsOneWidget);
+    },
+  );
+
   for (final width in const [768.0, 1280.0]) {
     testWidgets(
       'renders compact support cards and readiness badges at $width pixels',
@@ -107,5 +132,17 @@ final class _DiagnosticsRepository implements DiagnosticsRepository {
   Future<WorkspaceDiagnostics> loadDiagnostics() async {
     calls += 1;
     return value;
+  }
+}
+
+final class _FailThenReadyDiagnosticsRepository
+    implements DiagnosticsRepository {
+  var calls = 0;
+
+  @override
+  Future<WorkspaceDiagnostics> loadDiagnostics() {
+    calls += 1;
+    if (calls == 1) return Future.error(StateError('network failure'));
+    return Future.value(_diagnostics);
   }
 }

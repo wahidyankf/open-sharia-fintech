@@ -55,6 +55,9 @@ final class _WorkspaceShellState extends State<WorkspaceShell> {
             child: FutureBuilder<WorkspaceReadiness>(
               future: _readiness,
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return _WorkspaceRequestFailure(onRetry: _refresh);
+                }
                 if (!snapshot.hasData) {
                   return Semantics(
                     label: 'Foundation status shell loading',
@@ -73,7 +76,10 @@ final class _WorkspaceShellState extends State<WorkspaceShell> {
                 }
                 return LayoutBuilder(
                   builder: (context, constraints) {
-                    final desktop = constraints.maxWidth >= 1024;
+                    // The 24px padding on each side is visual only: 976px of
+                    // inner width corresponds to the specified 1024px viewport
+                    // desktop breakpoint.
+                    final desktop = constraints.maxWidth >= 976;
                     final content = _view == _WorkspaceView.status
                         ? _StatusWorkspace(
                             readiness: snapshot.requireData,
@@ -105,6 +111,49 @@ final class _WorkspaceShellState extends State<WorkspaceShell> {
                 );
               },
             ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+final class _WorkspaceRequestFailure extends StatelessWidget {
+  const _WorkspaceRequestFailure({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'Status temporarily unavailable',
+    liveRegion: true,
+    child: Center(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Status temporarily unavailable',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'The workspace could not refresh its current status. Try again without leaving this page.',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 44,
+                child: FilledButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Refresh status'),
+                ),
+              ),
+            ],
           ),
         ),
       ),

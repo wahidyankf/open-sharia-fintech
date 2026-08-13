@@ -7,7 +7,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter pub run openapi_spec generate --path ../../specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml --destination lib/generated --package_name beavernest_api --force && fvm flutter pub run build_runner build --delete-conflicting-outputs",
+        "command": "fvm flutter pub run openapi_spec generate --path ../../specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml --destination lib/generated --package_name beavernest_api --force && fvm flutter pub run build_runner build --delete-conflicting-outputs && fvm dart format lib/generated",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["beavernest-contracts:bundle"],

@@ -24,7 +24,9 @@ RUN npx @redocly/cli bundle specs/apps/beavernest/containers/contracts/openapi.y
     --model-package BeaverNestBe.Contracts \
     --global-property=models,modelDocs=false,apiDocs=false
 
-FROM ghcr.io/cirruslabs/flutter:3.41.5@sha256:fc2b017ae33371f7be50cec243117ab57bf7d16c3c89f83c34cb3772a99f57cc AS flutter-build
+# GitHub-hosted runners build this image on Linux amd64. Pin that platform's
+# manifest rather than the multi-platform index or an arm64 child manifest.
+FROM ghcr.io/cirruslabs/flutter:3.41.5@sha256:412113340bfd4e1658c6c7c421f361af17b52445c397c1466a2f6c5d97482ace AS flutter-build
 WORKDIR /workspace
 
 # Keep the pinned FVM workflow identical to the host and CI paths. The builder
