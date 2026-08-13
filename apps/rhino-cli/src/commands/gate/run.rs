@@ -177,14 +177,23 @@ fn run_at_root_with_only_and_message_file(
         }
         let candidate_scope = candidate_scope(&scope.scope);
         let excludes = gate.args.get("exclude").map_or(&[][..], Vec::as_slice);
-        let files = gate_files(
-            repo_root,
-            candidate_scope,
-            changed_paths.as_deref(),
-            tracked_paths.as_deref(),
-            scope,
-            excludes,
-        );
+        let files = match candidate_scope {
+            CandidateScope::StagedFiles => matching_files(
+                changed_paths.as_deref().unwrap_or_default(),
+                scope,
+                excludes,
+            ),
+            CandidateScope::TrackedFiles => matching_files(
+                if scope_has_file_patterns(scope) {
+                    tracked_paths.as_deref().unwrap_or_default()
+                } else {
+                    &[]
+                },
+                scope,
+                excludes,
+            ),
+            _ => Vec::new(),
+        };
         if scope_has_file_patterns(scope)
             && report_empty_scope_skip(writer, &gate.id, candidate_scope, &files)?
         {
@@ -437,40 +446,6 @@ fn candidate_scope(scope: &ScopeKind) -> CandidateScope {
     }
 }
 
-/// Select usable filesystem inputs for one file-scoped gate.
-fn gate_files(
-    repo_root: &Path,
-    candidate_scope: CandidateScope,
-    changed_paths: Option<&[String]>,
-    tracked_paths: Option<&[String]>,
-    scope: &repo_config::SurfaceScope,
-    excludes: &[String],
-) -> Vec<String> {
-    let files = match candidate_scope {
-        CandidateScope::StagedFiles => {
-            matching_files(changed_paths.unwrap_or_default(), scope, excludes)
-        }
-        CandidateScope::TrackedFiles => matching_files(
-            if scope_has_file_patterns(scope) {
-                tracked_paths.unwrap_or_default()
-            } else {
-                &[]
-            },
-            scope,
-            excludes,
-        ),
-        CandidateScope::PathTriggers | CandidateScope::None => Vec::new(),
-    };
-    // `git diff --name-only` deliberately includes deleted paths. File linters
-    // cannot receive a path that no longer exists in the checkout, so remove it
-    // before command construction while path-trigger gates retain deletions.
-    if candidate_scope == CandidateScope::StagedFiles {
-        existing_file_candidates(repo_root, files)
-    } else {
-        files
-    }
-}
-
 /// Runs one declared gate through the executor for its declared kind.
 ///
 /// # Errors
@@ -529,17 +504,6 @@ fn filter_candidates(
                     }))
         })
         .cloned()
-        .collect()
-}
-
-/// Retain file-gate candidates that still exist in the checkout.
-///
-/// Changed-file lists include deletions, but formatters and linters operate on
-/// filesystem inputs and must not receive a removed path.
-fn existing_file_candidates(repo_root: &Path, candidates: Vec<String>) -> Vec<String> {
-    candidates
-        .into_iter()
-        .filter(|candidate| repo_root.join(candidate).is_file())
         .collect()
 }
 
@@ -1139,26 +1103,6 @@ fn external_leaf_forwards_derived_paths_as_literal_shell_arguments() {
         format!("{path}\n")
     );
     assert!(!repo.path().join("must-not-run.txt").exists());
-}
-
-/// Binds the Gherkin scenario "A deleted file is not passed to a file gate"
-/// (specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature).
-#[cfg(test)]
-#[test]
-#[allow(clippy::unwrap_used, clippy::panic)]
-fn deleted_file_is_not_passed_to_a_file_gate() {
-    let repo = tempfile::TempDir::new().unwrap();
-    std::fs::write(repo.path().join("kept.Dockerfile"), "FROM scratch\n").unwrap();
-    let candidates = vec![
-        "deleted.Dockerfile".to_string(),
-        "kept.Dockerfile".to_string(),
-    ];
-
-    assert_eq!(
-        existing_file_candidates(repo.path(), candidates),
-        vec!["kept.Dockerfile".to_string()],
-        "a deleted Dockerfile must be excluded before an affected-file-type linter receives paths"
-    );
 }
 
 #[cfg(unix)]
