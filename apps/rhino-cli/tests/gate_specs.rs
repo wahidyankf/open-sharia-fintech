@@ -3782,12 +3782,12 @@ fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
     let setup_node_action =
         std::fs::read_to_string(repo_root().join(".github/actions/setup-node/action.yml"))
             .expect("read the real .github/actions/setup-node/action.yml");
+    let install_step = step_block(&setup_node_action, "Install dependencies");
+    let install_body = run_block(&setup_node_action, "Install dependencies");
     assert!(
-        setup_node_action.contains("if: inputs.run-npm-ci == 'true'")
-            && (setup_node_action.contains("run: npm ci")
-                || setup_node_action.contains("\n        npm ci")),
-        "setup-node's npm ci step must be gated on the run-npm-ci input, so a group whose \
-         doctor_tools excludes npm never runs it: {setup_node_action}"
+        install_step.contains("if: inputs.run-npm-ci == 'true'") && install_body.contains("npm ci"),
+        "setup-node's Install dependencies step must both gate and execute npm ci, so a group \
+         whose doctor_tools excludes npm never runs it: {install_step}"
     );
 }
 
@@ -3914,7 +3914,7 @@ fn then_preinstall_covers_patch_level(w: &mut GateWorld) {
 /// Extracts the body of the `run: |` block belonging to the first step whose
 /// `name:` contains `step_name_fragment`, dedented to column zero so it can be
 /// executed directly.
-fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
+fn step_block(action_yaml: &str, step_name_fragment: &str) -> String {
     let lines: Vec<&str> = action_yaml.lines().collect();
     let name_idx = lines
         .iter()
@@ -3922,13 +3922,23 @@ fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
         .unwrap_or_else(|| {
             panic!("the action must declare a step named like {step_name_fragment}")
         });
-    let run_idx = lines[name_idx..]
+    let end_idx = lines[name_idx + 1..]
+        .iter()
+        .position(|line| line.trim_start().starts_with("- name:"))
+        .map_or(lines.len(), |offset| name_idx + 1 + offset);
+    lines[name_idx..end_idx].join("\n")
+}
+
+/// Extracts the body of the `run: |` block belonging to the first step whose
+/// `name:` contains `step_name_fragment`, dedented to column zero so it can be
+/// executed directly.
+fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
+    let step = step_block(action_yaml, step_name_fragment);
+    let lines: Vec<&str> = step.lines().collect();
+    let run_idx = lines
         .iter()
         .position(|line| line.trim_start().starts_with("run: |"))
-        .map_or_else(
-            || panic!("step {step_name_fragment} must carry a `run: |` block"),
-            |offset| name_idx + offset,
-        );
+        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a `run: |` block"));
     let first_body = lines
         .get(run_idx + 1)
         .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a non-empty run block"));
