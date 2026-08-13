@@ -12,6 +12,9 @@
 | `9d3670b460d7e286bb749495fe166e9687deb1cb` | Required per-directory MIT license for the Flutter deployable.                             |
 | `b241d2d9717659cfc4c617304b5fa05851bcabfb` | Strict app-facing 200/503 readiness adapter and its contract regression tests.             |
 | `84000f44d38a56f9988e1063f17a56d9ecb37989` | Docker build-stage OpenAPI Generator configuration pin.                                    |
+| `dc5f0dc70eed11400472fe60b1e79bb554e9ff5d` | Recorded P1 review remediation, validation, and delivery state.                            |
+| `070ab6e9c4694095b669ab469ad22ebef2a23802` | Moved the readiness adapter into the required Flutter platform ring.                       |
+| `fce66af1a2f4375a9ef8e3eb0ce481fc77c39e4b` | PR-quality Flutter/Dart/FVM provisioning and isolated Flutter quality gate.                |
 
 Each listed commit passed `git diff --cached --check` before commit. The following documentation
 commit records the remediated plan state and this updated ledger itself.

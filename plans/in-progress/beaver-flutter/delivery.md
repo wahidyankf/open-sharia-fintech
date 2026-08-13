@@ -187,7 +187,7 @@ phase._
   - **Date**: 2026-08-13
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
-  - **Notes**: All four required commands pass: the composite quick gate, explicit 100% (zero executable Dart lines in P1) coverage gate, structure validation, and 97/97 harness-binding sync checks. No Flutter route or endpoint is exposed.
+  - **Notes**: The original four required commands pass: the composite quick gate, initial zero-executable-line coverage gate, structure validation, and 97/97 harness-binding sync checks. The later P1 adapter remediation reran coverage at 87.76%; no Flutter route or endpoint is exposed.
 
 - [x] [AI] Revalidate the P1 gate after PR-review fixes: run the Flutter quick and coverage gates, the clean source-only image regression, `npm run validate:sync`, `git diff --check`, and the pre-push gate — acceptance: the app-facing readiness boundary and pinned Docker generator configuration preserve all P1 guarantees.
   - **Date**: 2026-08-13
@@ -210,6 +210,46 @@ phase._
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/commits-beaver-flutter-p1.md`
   - **Notes**: The ledger lists each completed P1 delivery commit through the contract-adapter and Docker-lock repairs; this documentation commit records the updated ledger and current execution state.
+
+- [x] [AI] RED: reproduce the P1 CI Flutter-toolchain failure from the affected workflow configuration — acceptance: identify every affected CI job that invokes bare Dart or `fvm` without provisioning the pinned Flutter SDK.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: None
+  - **Notes**: PR-quality run `31657957918` shows `format-verify-dart` failing with `dart: not found` and the TypeScript/.NET affected gates failing with `fvm: not found`. `pr-quality-gate.yml` provisions only Node/Rust/.NET, confirming the missing pinned Flutter toolchain.
+- [x] [AI] GREEN: provision the pinned Flutter/Dart/FVM toolchain in each affected PR-quality CI job and validate the workflow configuration — acceptance: formatting and affected Nx Flutter targets can execute on a clean GitHub runner.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `.github/workflows/pr-quality-gate.yml`
+  - **Notes**: CI detects `lang:dart`, runs its own Flutter quality job with `.fvmrc`, FVM 4.0.5, and an explicit global-pub PATH handoff, while excluding Dart targets from unprovisioned language jobs. Formatting jobs now receive bare Dart. `actionlint`, repository-tolerant YAML lint, Dart/FVM version checks, and Dart format validation pass locally.
+
+- [x] [AI] RED: update the readiness contract test to import the adapter from `lib/platform/web/` — acceptance: current P1 layout fails, proving the architecture boundary is not yet enforced.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: The Flutter contract suite fails because `lib/platform/web/readiness_client.dart` does not exist while the adapter remains under the forbidden `lib/api/` surface.
+- [x] [AI] GREEN: move the readiness adapter under `apps/beavernest-app/lib/platform/web/` and rerun its contract test — acceptance: HTTP and generated-DTO imports live exclusively below `lib/platform/**`, as the planned architecture test requires.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/platform/web/readiness_client.dart`, `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: The adapter now contains the app's HTTP/generated-DTO imports solely beneath `lib/platform/web/`. All five contract tests pass through `npm exec nx run beavernest-app:test:unit`.
+- [x] [AI] REFACTOR: run the Flutter quick and coverage gates after the boundary move — acceptance: no duplicate adapter remains and its strict response behavior remains covered.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/platform/web/readiness_client.dart`, `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: No copy remains under `lib/api/`. Flutter quick and coverage both pass at 87.76%, retaining all five strict contract scenarios.
+
+- [x] [AI] Correct the Flutter LCOV evidence and original P1 gate note with the verified handwritten adapter path and coverage result — acceptance: persistent evidence describes the current nonzero execution surface and preserves the narrow generated-model exclusion.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/flutter-lcov-paths.md`
+  - **Notes**: Current LCOV records the platform adapter and generated schemas; coverage is 87.76% (43/49). The exclusion remains limited to `lib/generated/*/*.dart`.
+
+- [x] [AI] Commit the P1 PR-quality Flutter toolchain remediation as a conventional workflow commit — acceptance: the CI repair is independently deliverable.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `.github/workflows/pr-quality-gate.yml`
+  - **Notes**: Committed as `fce66af` (`fix(ci): provision Flutter quality toolchain`) after the cached diff check passed.
+- [ ] [AI] Commit the P1 architecture move and evidence reconciliation as a conventional documentation commit — acceptance: the replacement PR head records every review finding and resolution.
 - [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
