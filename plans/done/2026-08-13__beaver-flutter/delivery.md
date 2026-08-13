@@ -702,10 +702,16 @@ phase._
   - **Status**: Done
   - **Files Changed**: `plans/{in-progress/README.md,done/README.md,done/2026-08-13__beaver-flutter/**}`, `.gitignore`, `apps/rhino-cli/src/application/docs/{naming,links}.rs`, `apps/beavernest-app/project.json`, `infra/dev/beavernest-app/tests/frontend-integration-target.sh`, `generated-reports/plan__{b44eabb8-5841-4f8c-85fe-61676111eb5c,dcb60c04-f441-4a03-8985-35fe0d785742,5ade3579-e5ad-4fd2-83a4-63f18e01fb5d}__2026-08-13--{17-03,17-14,17-17}__audit.md`
   - **Notes**: The plan was moved through the prescribed dated archive path; indexes now point to it. The first strict audit and both zero-finding confirmations are committed with the closure evidence. Root-cause regressions ensure mandated audit-report filenames and the local FVM cache cannot falsely fail the staged naming or repository link gates. Flutter targets use non-interactive FVM setup and explicitly bind Flutter subprocesses to that selected cache, preventing an ambient checkout from writing `0.0.0-unknown` metadata during a required gate.
-- [ ] [AI] At the P3 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p3` — acceptance: closure PR is reviewed, CI-green, and merged; then offer worktree cleanup to the user without deleting it silently.
+- [x] [AI] At the P3 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p3` — acceptance: closure PR is reviewed, CI-green, and merged; then offer worktree cleanup to the user without deleting it silently.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/done/2026-08-13__beaver-flutter/delivery.md`
+  - **Notes**: Public closure PR [#185](https://github.com/wahidyankf/ose-public/pull/185) merged at `83cf04fa` after its exact head `4700b84e` passed 25/25 checks and a final clean full review. The required Rhino parity companions are also merged: Primer [#37](https://github.com/wahidyankf/ose-primer/pull/37) at `f0f44df0` and Private [#42](https://github.com/wahidyankf/ose-private/pull/42) at `33c3e7fa`.
 
 ### Phase 3 Gate
 
 - [ ] [AI] All checks must pass before declaring closure: verify the archived plan, evidence, and audit reports are committed in the closure PR and `git status --short` is clean — acceptance: plan execution has a traceable terminal record.
+  - **Status**: Blocked on concurrent worktree changes
+  - **Notes**: Closure artifacts are in merged PR #185, and its final CI and review are green. However, the shared worktree still contains unowned modifications to `.vscode/settings.json` and `apps/ayokoding-www/content/en/learn/courses/just-enough-elixir/drilling/_index.md`; this plan must not claim the literal clean-status acceptance until their owner resolves them.
 
 **Pause Safety:** Safe to stop after the user is offered cleanup. Resume with `git -C worktrees/beaver-flutter status --short`.
