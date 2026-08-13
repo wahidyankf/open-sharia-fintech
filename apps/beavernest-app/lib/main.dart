@@ -1,3 +1,7 @@
+import 'package:beavernest_app/application/ports/readiness_repository.dart';
+import 'package:beavernest_app/application/use_cases/load_readiness.dart';
+import 'package:beavernest_app/platform/web/readiness_repository.dart';
+import 'package:beavernest_app/presentation/workspace_shell.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -5,12 +9,18 @@ void main() {
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, this.readinessRepository});
+
+  final ReadinessRepository? readinessRepository;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      home: WorkspaceShell(
+        loadReadiness: LoadReadiness(
+          readinessRepository ?? HttpReadinessRepository(),
+        ),
+      ),
     );
   }
 }
