@@ -344,7 +344,7 @@ as ReadinessReadyComponents,
 @override
 @pragma('vm:prefer-inline')
 $ReadinessReadyComponentsCopyWith<$Res> get components {
-  
+
   return $ReadinessReadyComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -557,7 +557,7 @@ as ReadinessReadyComponents,
 @override
 @pragma('vm:prefer-inline')
 $ReadinessReadyComponentsCopyWith<$Res> get components {
-  
+
   return $ReadinessReadyComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -902,7 +902,7 @@ as ReadinessUnavailableComponents,
 @override
 @pragma('vm:prefer-inline')
 $ReadinessUnavailableComponentsCopyWith<$Res> get components {
-  
+
   return $ReadinessUnavailableComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -1115,7 +1115,7 @@ as ReadinessUnavailableComponents,
 @override
 @pragma('vm:prefer-inline')
 $ReadinessUnavailableComponentsCopyWith<$Res> get components {
-  
+
   return $ReadinessUnavailableComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -1466,7 +1466,7 @@ as DiagnosticsReadyComponents,
 @override
 @pragma('vm:prefer-inline')
 $DiagnosticsReadyComponentsCopyWith<$Res> get components {
-  
+
   return $DiagnosticsReadyComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -1688,7 +1688,7 @@ as DiagnosticsReadyComponents,
 @override
 @pragma('vm:prefer-inline')
 $DiagnosticsReadyComponentsCopyWith<$Res> get components {
-  
+
   return $DiagnosticsReadyComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -2033,7 +2033,7 @@ as DiagnosticsUnavailableComponents,
 @override
 @pragma('vm:prefer-inline')
 $DiagnosticsUnavailableComponentsCopyWith<$Res> get components {
-  
+
   return $DiagnosticsUnavailableComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
@@ -2246,7 +2246,7 @@ as DiagnosticsUnavailableComponents,
 @override
 @pragma('vm:prefer-inline')
 $DiagnosticsUnavailableComponentsCopyWith<$Res> get components {
-  
+
   return $DiagnosticsUnavailableComponentsCopyWith<$Res>(_self.components, (value) {
     return _then(_self.copyWith(components: value));
   });
