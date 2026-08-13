@@ -254,6 +254,22 @@ phase._
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/{flutter-lcov-paths.md,commits-beaver-flutter-p1.md}`
   - **Notes**: Committed as `f0eb99a` (`docs(beaver-flutter): reconcile P1 review evidence`) after Markdown and cached-diff checks passed.
+
+- [x] [AI] RED: inspect Nx's resolved cached-target inputs for `.fvmrc`, `pubspec.yaml`, and `pubspec.lock` — acceptance: prove the current explicit target inputs omit reproducibility-critical Flutter configuration.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: None
+  - **Notes**: `npm exec nx show project beavernest-app --json` confirms every cached Flutter target except the composite quick gate bypasses `default`; none resolve `.fvmrc`, `pubspec.yaml`, or `pubspec.lock` as inputs.
+- [x] [AI] GREEN: add inherited project-default and explicit Flutter-toolchain inputs to every cached Flutter target — acceptance: codegen, build, analysis, lint, and tests invalidate when the SDK or pub lock changes.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/project.json`
+  - **Notes**: Each cached Flutter command target now inherits `default` (including the project pub manifest and lock) and a project-level `flutter-toolchain` named input for root `.fvmrc`; codegen retains its bundled-contract input.
+- [x] [AI] REFACTOR: verify the resolved Nx target inputs and run the Flutter quick gate — acceptance: targets retain narrow contract inputs while every FVM/pub dependency is cache-visible.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/project.json`
+  - **Notes**: The resolved-target assertion confirms every cached Flutter command target contains both `default` and `flutter-toolchain`; the full Flutter quick gate passes at 87.76% coverage.
 - [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
