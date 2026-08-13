@@ -4008,6 +4008,7 @@ fn run_block_from_step(step: &str) -> Option<String> {
         let trimmed = line.trim_start();
         trimmed
             .strip_prefix("run: ")
+            .or_else(|| trimmed.strip_prefix("- run: "))
             .map(|command| (index, command))
     })?;
     if scalar_command != "|" {
