@@ -35,7 +35,15 @@ fn kebab_case_re() -> &'static Regex {
 
 /// Directory names that are skipped during recursive walks (shared with
 /// [`super::frontmatter`] and [`super::heading_hierarchy`]).
-pub const SKIP_DIRS: &[&str] = &["node_modules", ".git", ".next", "dist", "build", "target"];
+pub const SKIP_DIRS: &[&str] = &[
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    "target",
+    "generated-reports",
+];
 
 /// Validates the filename convention for every `.md` file reachable from `paths`.
 ///
@@ -91,6 +99,9 @@ fn walk_naming_path(root: &str, exempt_globs: &[String]) -> Vec<DocsNamingFindin
         if !entry.file_type().is_file() {
             continue;
         }
+        if path_is_within_generated_reports(entry.path()) {
+            continue;
+        }
         let base = entry.file_name().to_string_lossy().to_string();
         if !base.ends_with(".md") {
             continue;
@@ -109,6 +120,15 @@ fn walk_naming_path(root: &str, exempt_globs: &[String]) -> Vec<DocsNamingFindin
         }
     }
     findings
+}
+
+/// Returns `true` when `path` is an audit artifact below the repository's
+/// mandated `generated-reports/` directory. The explicit component check is
+/// needed because lint-staged passes individual files to this validator, so a
+/// recursive directory walker never observes their parent directory entry.
+fn path_is_within_generated_reports(path: &Path) -> bool {
+    path.components()
+        .any(|component| component.as_os_str() == "generated-reports")
 }
 
 /// Returns `true` when `basename` should be skipped during naming validation.
@@ -275,6 +295,26 @@ mod tests {
         )
         .unwrap();
         assert!(findings.is_empty());
+    }
+
+    /// Regression: audit reports use the mandated double-underscore filename
+    /// convention and must be skipped even when lint-staged passes an
+    /// individual report path rather than the containing directory.
+    #[test]
+    fn skips_mandated_generated_report_filename_when_given_directly() {
+        let tmp = TempDir::new().unwrap();
+        let reports = tmp.path().join("generated-reports");
+        fs::create_dir(&reports).unwrap();
+        let report =
+            reports.join("plan__b44eabb8-5841-4f8c-85fe-61676111eb5c__2026-08-13--17-03__audit.md");
+        fs::write(&report, "# Audit\n").unwrap();
+
+        let findings = validate_docs_naming(&[report.to_string_lossy().to_string()], &[]).unwrap();
+
+        assert!(
+            findings.is_empty(),
+            "generated reports are not documentation filenames"
+        );
     }
 
     /// Verifies that `node_modules/` directories are skipped during the walk.

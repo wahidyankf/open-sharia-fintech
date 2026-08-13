@@ -331,6 +331,7 @@ phase._
 - [x] [AI] REFACTOR: consolidate ready-response mapping and run `dotnet tool run fantomas --check apps/beavernest-be && npm exec nx run beavernest-be:test:quick` — acceptance: ready diagnostics remains deterministic and formatted.
   - **Date**: 2026-08-13
   - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/src/BeaverNestBe/Api/DiagnosticsHandlers.fs`, `apps/beavernest-be/tests/unit/Tests/DiagnosticsHandlerTests.fs`
   - **Notes**: The diagnostics handler keeps a single deterministic ready mapping; Fantomas and the final 86-test backend quick gate pass.
 - [x] [AI] RED: add `specs/apps/beavernest/behavior/beavernest-be/gherkin/diagnostics/unavailable.feature` and a failing 503/no-store test under `apps/beavernest-be/tests/`; run `npm exec nx run beavernest-be:test:quick` — acceptance: the unavailable route behavior fails.
   - **Date**: 2026-08-13
@@ -590,68 +591,117 @@ phase._
 - [x] [AI] Run Rule-15 web exploratory/usability/design retest and Rule-16 API exploratory retest against the running combined endpoint; append each `EWT-*`, `UWT-*`, `DWT-*`, or `AET-*` defect as an unchecked item below — acceptance: no defect remains unchecked before archival.
   - **Date**: 2026-08-13
   - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
   - **Notes**: Final EWT (20 checks), UWT, DWT, and API exploratory retests are double-zero; every recorded follow-up below is resolved.
 
 ### Rule-15/16 Retest Follow-ups
 
 - [x] [AI] EWT-001: Hosted Flutter workspace is blank at 360, 768, and 1280 px because the production CSP blocks the Flutter renderer's CanvasKit/Wasm bootstrap — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/src/BeaverNestBe/Api/SecurityHeaders.fs`, `apps/beavernest-be/tests/unit/Tests/SecurityHeaderTests.fs`
   - **Source**: Rule-15 web exploratory retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-ewt/retest-report.md`
   - **Reproduction**: `node local-temp/beaver-flutter-p2-ewt/retest.mjs`
-  - **Resolution**: The final fresh hosted Chromium retest passes all 20 checks, including local CanvasKit/Wasm rendering, breakpoints, recovery, diagnostics, Help/Escape, cache headers, and no console errors (`local-temp/beaver-flutter-p2-ewt/final-19322-report.md`).
+  - **Notes**: The final fresh hosted Chromium retest passes all 20 checks, including local CanvasKit/Wasm rendering, breakpoints, recovery, diagnostics, Help/Escape, cache headers, and no console errors (`local-temp/beaver-flutter-p2-ewt/final-19322-report.md`).
 - [x] [AI] AET-001: Declared GET resources return 404 to safe HEAD requests instead of their bodyless equivalent representations — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/src/BeaverNestBe/WebApp.fs`, `apps/beavernest-be/tests/unit/Tests/HttpMethodSemanticsTests.fs`
   - **Source**: Rule-16 API exploratory retest, 2026-08-13
   - **Reproduction**: `curl -sS -D - -o /dev/null -X HEAD http://127.0.0.1:19321/api/v1/{health,readiness,diagnostics}`
   - **Scope**: `OPTIONS` is recorded as observed 404 but is not a defect absent an explicit route-method contract.
-  - **Resolution**: Explicit bodyless HEAD routes now reuse the GET representations; focused proof and three full backend quick runs pass (86/86) while preserving intentionally unsupported OPTIONS.
+  - **Notes**: Explicit bodyless HEAD routes now reuse the GET representations; focused proof and three full backend quick runs pass (86/86) while preserving intentionally unsupported OPTIONS.
 - [x] [AI] DWT-001: The rendered workspace does not implement the selected Focused Status Dashboard composition or its desktop status/diagnostics rail — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{status_dashboard.dart,workspace_shell.dart}`, `apps/beavernest-app/test/workspace_shell_test.dart`
   - **Source**: Rule-15 design retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
-  - **Resolution**: Final DWT verification confirms the selected dashboard and responsive desktop rail at all tested breakpoints.
+  - **Notes**: Final DWT verification confirms the selected dashboard and responsive desktop rail at all tested breakpoints.
 - [x] [AI] DWT-002: Diagnostics is an information-poor modal rather than the selected responsive support workspace with safe-field cards, components, and retry — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{diagnostics_sheet.dart,workspace_shell.dart}`, `apps/beavernest-app/test/diagnostics_screen_test.dart`
   - **Source**: Rule-15 design retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
-  - **Resolution**: Final DWT verification confirms the in-shell safe diagnostics workspace, readiness components, and retry treatment.
+  - **Notes**: Final DWT verification confirms the in-shell safe diagnostics workspace, readiness components, and retry treatment.
 - [x] [AI] DWT-003: The selected Help card/treatment is absent and Escape does not close the browser-shortcut treatment or return focus — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/browser_shortcut_dialog.dart`, `apps/beavernest-app/test/browser_shortcut_test.dart`
   - **Source**: Rule-15 design retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-dwt/retest-report.md`
-  - **Resolution**: Final DWT and EWT verification confirm visible Browser Help, actionable content, Escape close, and focus return.
+  - **Notes**: Final DWT and EWT verification confirm visible Browser Help, actionable content, Escape close, and focus return.
 - [x] [AI] UWT-001: Browser shortcut guidance is ambiguous and provides no visible first-time-user help or result — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/browser_shortcut_dialog.dart`, `apps/beavernest-app/test/browser_shortcut_test.dart`
   - **Source**: Rule-15 usability retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final/uwt-report.md`
-  - **Resolution**: Final UWT verification confirms the visible Browser Help treatment and actionable online-only guidance.
+  - **Notes**: Final UWT verification confirms the visible Browser Help treatment and actionable online-only guidance.
 - [x] [AI] UWT-002: Keyboard focus is not visibly apparent and the enabled accessibility traversal repeats workspace controls — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{browser_shortcut_dialog.dart,workspace_shell.dart}`, `apps/beavernest-app/test/{browser_shortcut_test.dart,workspace_shell_test.dart}`
   - **Source**: Rule-15 usability retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final/uwt-report.md`
-  - **Resolution**: The final semantic traversal is Status → Diagnostics → Refresh → Help with visible focus outlines.
+  - **Notes**: The final semantic traversal is Status → Diagnostics → Refresh → Help with visible focus outlines.
 - [x] [AI] DWT-004: Status cards are under-filled or oversized across responsive breakpoints, hiding the intended dashboard density and follow-up actions — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{status_dashboard.dart,workspace_shell.dart}`, `apps/beavernest-app/test/status_dashboard_test.dart`
   - **Source**: Rule-15 design retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-dwt/19322/final-density/retest-report.md`
-  - **Resolution**: Final Chromium retest confirms compact natural-height cards, 1/2/3-column reflow, visible actions and Help, and no overflow or console/page errors at 360, 768, and 1280 px (`local-temp/beaver-flutter-p2-dwt/19322/final-card-fix/retest-report.md`).
+  - **Notes**: Final Chromium retest confirms compact natural-height cards, 1/2/3-column reflow, visible actions and Help, and no overflow or console/page errors at 360, 768, and 1280 px (`local-temp/beaver-flutter-p2-dwt/19322/final-card-fix/retest-report.md`).
 - [x] [AI] UWT-003: Oversized status cards bury Refresh status and Browser Help below the initial unavailable viewport — fix before archival.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/presentation/{status_dashboard.dart,workspace_shell.dart}`, `apps/beavernest-app/test/{status_dashboard_test.dart,workspace_shell_test.dart}`
   - **Source**: Rule-15 usability retest, 2026-08-13
   - **Evidence**: `local-temp/beaver-flutter-p2-uwt/final-19322-rerun/uwt-report.md`
-  - **Resolution**: Final responsive-card retest verifies recovery copy and Refresh status remain in the same controlled mobile-unavailable viewport; natural-height cards preserve reachable diagnostics and Help at 375, 559/560, 768, 799/800, and 1440 px (`local-temp/beaver-flutter-p2-uwt/final-19322-card-fix/uwt-report.md`).
+  - **Notes**: Final responsive-card retest verifies recovery copy and Refresh status remain in the same controlled mobile-unavailable viewport; natural-height cards preserve reachable diagnostics and Help at 375, 559/560, 768, 799/800, and 1440 px (`local-temp/beaver-flutter-p2-uwt/final-19322-card-fix/uwt-report.md`).
 
 ### Phase 2 Gate
 
 - [x] [AI] All checks must pass before starting Phase 3: run `APP_ENV=test npm exec nx affected -t build,test:quick,lint,specs:behavior:coverage`, `APP_ENV=test npm exec nx run fsharp-env-loader:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:quick`, `APP_ENV=test npm exec nx run beavernest-be:test:integration`, `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e`, `APP_ENV=test npm exec nx run beavernest-app-e2e:test:e2e`, `bash infra/dev/beavernest-app/tests/clean-image-build.sh`, `COMPOSE_PROFILES=operations APP_ENV=contract-proof docker compose -f infra/dev/beavernest-app/docker-compose.yml -f infra/dev/beavernest-app/docker-compose.ci.yml config --format json | jq -e '[.services["beavernest-app"], .services["beavernest-backup"], .services["beavernest-integrity"], .services["beavernest-restore"] | .environment.APP_ENV == "contract-proof"] | all'`, and `beavernest_integration_compose=(docker compose -f apps/beavernest-be/docker-compose.integration.yml); trap '"${beavernest_integration_compose[@]}" down -v' EXIT; "${beavernest_integration_compose[@]}" up --abort-on-container-exit --build` — acceptance: affected checks, behavior-spec coverage, API E2E, Flutter Web E2E, clean production image, rendered operational Compose contract, and source-only integration image pass after the rename; the backend retains its composition-root tiered configuration contract without reading a real staging/production file.
   - **Date**: 2026-08-13
   - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
   - **Notes**: The affected and pre-push gates pass after resolving the unrelated OSE FSharp.Core restore mismatch. Flutter quick passes 34 tests/87.30%; backend quick passes 86 tests/92.13%; integration passes 13/13 locally and from the source-only Compose image; both E2E suites pass; clean image builds non-root with curl; and operational profile configuration renders every requested `APP_ENV` mapping.
-- [ ] [AI] At the P2 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p2` — acceptance: the atomic cutover PR is fully reviewed, CI-green, visual/browser evidence attached, and merged.
+- [x] [AI] At the P2 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p2` — acceptance: the atomic cutover PR is fully reviewed, CI-green, visual/browser evidence attached, and merged.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: PR #183 merged as `964b6f8b32e4be774046895d876958de44bdb63e` after an independently clean review and all 25 required checks passed. The committed Phase 2 visual, browser, and API evidence is retained under `evidence/`.
 
 **Pause Safety:** Safe to stop after Flutter Web is the only client and its three browser layouts are proven. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p3 origin/main`.
 
 ## Phase 3 Branch Handoff
 
-- [ ] [AI] After the P2 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p3 origin/main` in `worktrees/beaver-flutter/` — acceptance: P3 starts from the merged cutover on a fresh closure branch while reusing the plan's sole worktree.
+- [x] [AI] After the P2 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p3 origin/main` in `worktrees/beaver-flutter/` — acceptance: P3 starts from the merged cutover on a fresh closure branch while reusing the plan's sole worktree.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: Fetched merged `origin/main` and created `beaver-flutter-p3` at `964b6f8b32e4be774046895d876958de44bdb63e` inside the existing `worktrees/beaver-flutter/` worktree.
 
 ## Phase 3: Knowledge Capture and Plan Closure
 
-- [ ] [AI] Review `learnings.md`, classify every item through secret/sensitivity and repository-relevance gates, promote any code learning to a separate `plans/backlog/` plan rather than landing it inline, and compare any idea candidate with `plans/ideas/README.md` plus existing two-pagers before creating or extending a brief — acceptance: no secret, sensitive endpoint, duplicate idea, or inline code follow-up remains in the archived plan.
-- [ ] [AI] Run the plan-quality-gate in strict mode twice and save reports under `generated-reports/`; apply only validated plan fixes — acceptance: two consecutive strict validations have zero CRITICAL/HIGH/MEDIUM findings.
-- [ ] [AI] Update `plans/in-progress/README.md`, move the plan to `plans/done/YYYY-MM-DD__beaver-flutter/`, and update `plans/done/README.md` in the P3 branch; run `npm run lint:md:fix` and `npm run validate:sync` — acceptance: plan indexes, links, diagrams, mockup assets, and generated bindings are valid.
+- [x] [AI] Review `learnings.md`, classify every item through secret/sensitivity and repository-relevance gates, promote any code learning to a separate `plans/backlog/` plan rather than landing it inline, and compare any idea candidate with `plans/ideas/README.md` plus existing two-pagers before creating or extending a brief — acceptance: no secret, sensitive endpoint, duplicate idea, or inline code follow-up remains in the archived plan.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/{learnings.md,delivery.md}`
+  - **Notes**: The explicit terminal-none record confirms no sensitive/repository-relevant learning remains. Existing BeaverNest two-pagers already cover prospective follow-ups, so no duplicate idea or inline code work was created.
+- [x] [AI] Run the plan-quality-gate in strict mode twice and save reports under `generated-reports/`; apply only validated plan fixes — acceptance: two consecutive strict validations have zero CRITICAL/HIGH/MEDIUM findings.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/{delivery.md,prd.md}`, `apps/rhino-cli/src/application/docs/naming.rs`, `generated-reports/plan__{b44eabb8-5841-4f8c-85fe-61676111eb5c,dcb60c04-f441-4a03-8985-35fe0d785742,5ade3579-e5ad-4fd2-83a4-63f18e01fb5d}__2026-08-13--{17-03,17-14,17-17}__audit.md`
+  - **Notes**: The first strict audit found two MEDIUM documentation gaps, which were repaired. Two independent subsequent strict validations each report zero CRITICAL/HIGH/MEDIUM/LOW findings. A direct-path Rhino regression ensures the mandated `generated-reports/plan__...__audit.md` artifacts are not incorrectly treated as documentation filenames by the staged naming gate.
+- [x] [AI] Update `plans/in-progress/README.md`, move the plan to `plans/done/YYYY-MM-DD__beaver-flutter/`, and update `plans/done/README.md` in the P3 branch; run `npm run lint:md:fix` and `npm run validate:sync` — acceptance: plan indexes, links, diagrams, mockup assets, and generated bindings are valid.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/{in-progress/README.md,done/README.md,done/2026-08-13__beaver-flutter/**}`, `.gitignore`, `apps/rhino-cli/src/application/docs/{naming,links}.rs`, `apps/beavernest-app/project.json`, `infra/dev/beavernest-app/tests/frontend-integration-target.sh`, `generated-reports/plan__{b44eabb8-5841-4f8c-85fe-61676111eb5c,dcb60c04-f441-4a03-8985-35fe0d785742,5ade3579-e5ad-4fd2-83a4-63f18e01fb5d}__2026-08-13--{17-03,17-14,17-17}__audit.md`
+  - **Notes**: The plan was moved through the prescribed dated archive path; indexes now point to it. The first strict audit and both zero-finding confirmations are committed with the closure evidence. Root-cause regressions ensure mandated audit-report filenames and the local FVM cache cannot falsely fail the staged naming or repository link gates. Flutter targets use non-interactive FVM setup and explicitly bind Flutter subprocesses to that selected cache, preventing an ambient checkout from writing `0.0.0-unknown` metadata during a required gate.
 - [ ] [AI] At the P3 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p3` — acceptance: closure PR is reviewed, CI-green, and merged; then offer worktree cleanup to the user without deleting it silently.
 
 ### Phase 3 Gate

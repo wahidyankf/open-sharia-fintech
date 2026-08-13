@@ -24,9 +24,9 @@ c6c96632ac56255c4baa38fd9346b967edd14edd9fe967521455ee6b87129cf1  apps/rhino-cli
 62a8a54ec5b2399e990b250691490fbe7fff67c07e7dc48fc06ea64cb37bc148  apps/rhino-cli/src/application/behavior_coverage/validator.rs
 b78e77fcabf6f630151380d056ba9ae5c4239afbc6e0bb75717496f8608d634c  apps/rhino-cli/src/application/docs/frontmatter.rs
 e7a4b4e85ed279b296e5c51d48917ded4db42730d562eab05302f9a6e2a1f6bf  apps/rhino-cli/src/application/docs/heading_hierarchy.rs
-7c3200fe222c5d020aae09aa22893b545ff30c9fe6b378a0b4e522b7a63984b1  apps/rhino-cli/src/application/docs/links.rs
+50d654c34804273424fb4f44dfa206b347d322c48287ab2c24c2f9293de6da37  apps/rhino-cli/src/application/docs/links.rs
 97e68bd0123cba8bb6f722b151e6bbc5d5afe617d270bd28e295c6c036997d8c  apps/rhino-cli/src/application/docs/mod.rs
-eba685bf44ff001226c3e94bbc24f654561d067b5701531fca9b567b09ea27af  apps/rhino-cli/src/application/docs/naming.rs
+044d2b4a702c34bc9a60678ac4ce590e4cd273f5d35675a7212590627a40b389  apps/rhino-cli/src/application/docs/naming.rs
 78a915a22452327e37503384a191c25f25d64e5e70531aa8780c02a212b230c2  apps/rhino-cli/src/application/doctor/checker.rs
 1afaae392a270d957cb1866e79ae1c10facc9e1ffa5ce199ce0658eccd574eb6  apps/rhino-cli/src/application/doctor/fixer.rs
 19f992b068892d7650b14af89ffaaa830f1bb15853c0c0bd4df1a11e0aeb07e0  apps/rhino-cli/src/application/doctor/mod.rs

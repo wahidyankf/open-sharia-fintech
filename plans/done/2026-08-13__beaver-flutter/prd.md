@@ -121,7 +121,8 @@ defines net-new Dart widgets: `StatusDashboard`, `ReadinessSummary`, `Diagnostic
 `SupportSnapshotCard`.
 
 [Web-cited] Flutter documents that `flutter build web` "populates a `build/web` directory" and
-that browser integration testing launches Chrome through `flutter drive`. Sources:
+that browser integration testing launches Chrome through `flutter drive`; its integration-testing
+guide explicitly runs `flutter drive ... -d chrome` from the project root. Sources:
 [Flutter Web build](https://docs.flutter.dev/platform-integration/web/building) and
 [Flutter integration testing](https://docs.flutter.dev/testing/integration-tests), both accessed
 2026-08-12.
