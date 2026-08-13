@@ -198,7 +198,7 @@ jobs:
           git fetch --no-tags origin "$GITHUB_BASE_REF"
           CHANGED=$(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF...HEAD")
           if [ -n "$CHANGED" ]; then
-            printf '%s' "$CHANGED" | tr '\n' '\0' | xargs -0 -r git add --
+            printf '%s' "$CHANGED" | tr '\n' '\0' | xargs -0 -r git add -f --
             npx lint-staged --no-stash
           fi
       - name: Commit formatting to the PR branch
@@ -402,7 +402,8 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
+    needs:
+      [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:
