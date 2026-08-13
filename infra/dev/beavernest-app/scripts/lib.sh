@@ -41,17 +41,17 @@ beavernest_validate_safe_directory() {
 		beavernest_fail "$beavernest_label is not an allowed directory" || return 1
 
 	case "$beavernest_canonical" in
-		"$beavernest_repository_root"/*)
-			beavernest_fail "$beavernest_label is not an allowed directory"
-			return 1
-			;;
+	"$beavernest_repository_root"/*)
+		beavernest_fail "$beavernest_label is not an allowed directory"
+		return 1
+		;;
 	esac
 
 	case "$beavernest_repository_root" in
-		"$beavernest_canonical"/*)
-			beavernest_fail "$beavernest_label is not an allowed directory"
-			return 1
-			;;
+	"$beavernest_canonical"/*)
+		beavernest_fail "$beavernest_label is not an allowed directory"
+		return 1
+		;;
 	esac
 
 	printf '%s\n' "$beavernest_canonical"
