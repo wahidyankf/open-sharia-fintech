@@ -47,6 +47,7 @@ struct GateWorld {
     gate_job_needs_build_rhino: Option<bool>,
     gate_job_block: Option<String>,
     no_npm_group_id: Option<String>,
+    unnamed_npm_ci_is_unguarded: Option<bool>,
     msrv_preinstall_invocations: Option<Vec<String>>,
 }
 
@@ -82,6 +83,7 @@ impl GateWorld {
             gate_job_needs_build_rhino: None,
             gate_job_block: None,
             no_npm_group_id: None,
+            unnamed_npm_ci_is_unguarded: None,
             msrv_preinstall_invocations: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
@@ -4034,24 +4036,30 @@ fn has_npm_ci_command(run: &str) -> bool {
         .any(|line| line == "npm ci" || line.starts_with("npm ci "))
 }
 
-#[test]
-fn action_steps_detects_an_unnamed_npm_ci_command() {
+#[given("a composite action with an unnamed unguarded npm ci step")]
+fn given_unnamed_unguarded_npm_ci_step(w: &mut GateWorld) {
     let action = "runs:\n  using: composite\n  steps:\n    - name: guarded install\n      if: inputs.run-npm-ci == 'true'\n      run: npm ci\n    - run: npm ci --ignore-scripts\n";
     let npm_ci_steps: Vec<String> = action_steps(action)
         .into_iter()
         .filter(|step| run_block_from_step(step).is_some_and(|run| has_npm_ci_command(&run)))
         .collect();
 
-    assert_eq!(
-        npm_ci_steps.len(),
-        2,
-        "unnamed run steps must be discovered"
+    w.unnamed_npm_ci_is_unguarded = Some(
+        npm_ci_steps.len() == 2
+            && npm_ci_steps
+                .iter()
+                .any(|step| !step.contains("if: inputs.run-npm-ci == 'true'")),
     );
+}
+
+#[when("its npm ci steps are inspected")]
+fn when_npm_ci_steps_are_inspected(_w: &mut GateWorld) {}
+
+#[then("the unnamed npm ci step is reported unguarded")]
+fn then_unnamed_npm_ci_step_is_reported_unguarded(w: &mut GateWorld) {
     assert!(
-        npm_ci_steps
-            .iter()
-            .any(|step| !step.contains("if: inputs.run-npm-ci == 'true'")),
-        "the fixture must preserve the unguarded npm ci regression"
+        w.unnamed_npm_ci_is_unguarded.unwrap_or(false),
+        "unnamed run steps must be discovered and preserve the unguarded npm ci regression"
     );
 }
 
