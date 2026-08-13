@@ -3782,12 +3782,49 @@ fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
     let setup_node_action =
         std::fs::read_to_string(repo_root().join(".github/actions/setup-node/action.yml"))
             .expect("read the real .github/actions/setup-node/action.yml");
-    let install_step = step_block(&setup_node_action, "Install dependencies");
-    let install_body = run_block(&setup_node_action, "Install dependencies");
+    let npm_ci_steps: Vec<String> = action_steps(&setup_node_action)
+        .into_iter()
+        .filter(|step| run_block_from_step(step).is_some_and(|run| has_npm_ci_command(&run)))
+        .collect();
     assert!(
-        install_step.contains("if: inputs.run-npm-ci == 'true'") && install_body.contains("npm ci"),
-        "setup-node's Install dependencies step must both gate and execute npm ci, so a group \
-         whose doctor_tools excludes npm never runs it: {install_step}"
+        !npm_ci_steps.is_empty()
+            && npm_ci_steps
+                .iter()
+                .all(|step| step.contains("if: inputs.run-npm-ci == 'true'")),
+        "every executable npm ci command must belong to a step gated by run-npm-ci, so a group \
+         whose doctor_tools excludes npm never runs it: {npm_ci_steps:?}"
+    );
+}
+
+#[given("the real Rust quality gate")]
+fn given_real_rust_quality_gate(w: &mut GateWorld) {
+    w.gate_job_block = Some(job_block(&pr_quality_gate_workflow(), "rust"));
+}
+
+#[when("its target families execute")]
+fn when_rust_target_families_execute(_w: &mut GateWorld) {}
+
+#[then("every Rust target command serializes Cargo work")]
+fn then_rust_targets_serialize_cargo_work(w: &mut GateWorld) {
+    let rust_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("the real Rust job must be loaded by the Given step");
+    let target_commands: Vec<&str> = rust_job
+        .lines()
+        .filter(|line| line.contains("nx affected -t"))
+        .collect();
+    assert_eq!(
+        target_commands.len(),
+        2,
+        "the Rust quality job must retain both its quick/spec and coverage target commands: {target_commands:?}"
+    );
+    assert!(
+        target_commands.iter().all(|command| {
+            (command.contains("--parallel=1") || command.contains("--parallel=false"))
+                && command.contains("--outputStyle=stream")
+        }),
+        "every Rust target command must serialize Cargo work and stream progress: {target_commands:?}"
     );
 }
 
@@ -3911,37 +3948,53 @@ fn then_preinstall_covers_patch_level(w: &mut GateWorld) {
     );
 }
 
-/// Extracts the body of the `run: |` block belonging to the first step whose
-/// `name:` contains `step_name_fragment`, dedented to column zero so it can be
-/// executed directly.
+/// Extracts the first action step whose `name:` contains `step_name_fragment`.
 fn step_block(action_yaml: &str, step_name_fragment: &str) -> String {
-    let lines: Vec<&str> = action_yaml.lines().collect();
-    let name_idx = lines
-        .iter()
-        .position(|line| line.contains("name:") && line.contains(step_name_fragment))
-        .unwrap_or_else(|| {
-            panic!("the action must declare a step named like {step_name_fragment}")
-        });
-    let end_idx = lines[name_idx + 1..]
-        .iter()
-        .position(|line| line.trim_start().starts_with("- name:"))
-        .map_or(lines.len(), |offset| name_idx + 1 + offset);
-    lines[name_idx..end_idx].join("\n")
+    action_steps(action_yaml)
+        .into_iter()
+        .find(|step| step.contains("name:") && step.contains(step_name_fragment))
+        .unwrap_or_else(|| panic!("the action must declare a step named like {step_name_fragment}"))
 }
 
-/// Extracts the body of the `run: |` block belonging to the first step whose
-/// `name:` contains `step_name_fragment`, dedented to column zero so it can be
-/// executed directly.
+fn action_steps(action_yaml: &str) -> Vec<String> {
+    let lines: Vec<&str> = action_yaml.lines().collect();
+    lines
+        .iter()
+        .enumerate()
+        .filter(|(_, line)| line.trim_start().starts_with("- name:"))
+        .map(|(start, _)| {
+            let end = lines[start + 1..]
+                .iter()
+                .position(|line| line.trim_start().starts_with("- name:"))
+                .map_or(lines.len(), |offset| start + 1 + offset);
+            lines[start..end].join("\n")
+        })
+        .collect()
+}
+
+/// Extracts a scalar `run:` command or the body of a `run: |` block belonging
+/// to the first step whose `name:` contains `step_name_fragment`. Block bodies
+/// are dedented to column zero so they can be executed directly.
 fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
     let step = step_block(action_yaml, step_name_fragment);
+    run_block_from_step(&step)
+        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a `run:` command"))
+}
+
+fn run_block_from_step(step: &str) -> Option<String> {
     let lines: Vec<&str> = step.lines().collect();
-    let run_idx = lines
-        .iter()
-        .position(|line| line.trim_start().starts_with("run: |"))
-        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a `run: |` block"));
+    let (run_idx, scalar_command) = lines.iter().enumerate().find_map(|(index, line)| {
+        let trimmed = line.trim_start();
+        trimmed
+            .strip_prefix("run: ")
+            .map(|command| (index, command))
+    })?;
+    if scalar_command != "|" {
+        return Some(scalar_command.to_owned());
+    }
     let first_body = lines
         .get(run_idx + 1)
-        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a non-empty run block"));
+        .unwrap_or_else(|| panic!("step must carry a non-empty run block"));
     let body_indent = first_body.len() - first_body.trim_start().len();
 
     let mut body = String::new();
@@ -3952,7 +4005,13 @@ fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
         body.push_str(line.get(body_indent..).unwrap_or(""));
         body.push('\n');
     }
-    body
+    Some(body)
+}
+
+fn has_npm_ci_command(run: &str) -> bool {
+    run.lines()
+        .map(str::trim_start)
+        .any(|line| line == "npm ci" || line.starts_with("npm ci "))
 }
 
 #[tokio::main]
