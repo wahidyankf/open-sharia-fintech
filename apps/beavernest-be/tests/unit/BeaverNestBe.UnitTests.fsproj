@@ -25,6 +25,7 @@
     <Compile Include="Steps/ConfigurationSteps.fs" />
     <Compile Include="Tests/HealthHandlerTests.fs" />
     <Compile Include="Tests/ReadinessHandlerTests.fs" />
+    <Compile Include="Tests/DiagnosticsHandlerTests.fs" />
     <Compile Include="Tests/NotFoundHandlerTests.fs" />
     <Compile Include="Tests/StaticRoutingTests.fs" />
     <Compile Include="Tests/SecurityHeaderTests.fs" />
