@@ -57,6 +57,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
+      "dependsOn": ["beavernest-be:codegen"],
       "options": {
         "command": "apps/beavernest-be/scripts/run-e2e.sh"
       }

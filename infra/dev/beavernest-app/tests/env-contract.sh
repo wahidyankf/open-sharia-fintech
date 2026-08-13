@@ -68,7 +68,7 @@ for deferred_key in \
 	assert_contains "$repository_config" "        - ${deferred_key}"
 done
 
-if [[ -e "$repository_root/apps/beavernest-app/.env.example" ]] || rg -Fq 'root: apps/beavernest-app' "$repository_config"; then
+if [[ -e "$repository_root/apps/beavernest-app/.env.example" ]] || grep -Fq 'root: apps/beavernest-app' "$repository_config"; then
 
 	printf '%s\n' 'The same-origin Flutter client must not own a runtime environment surface' >&2
 	exit 1
