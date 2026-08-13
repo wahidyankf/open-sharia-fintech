@@ -66,6 +66,10 @@ export BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1
 export BEAVERNEST_BE_PUBLIC_PORT=$beavernest_public_port
 export BEAVERNEST_BE_HOST_DATA_DIRECTORY="$beavernest_fixture_root/data"
 export BEAVERNEST_BE_BACKUP_DIRECTORY="$beavernest_fixture_root/backups"
+beavernest_e2e_uid="$(id -u)"
+beavernest_e2e_gid="$(id -g)"
+export BEAVERNEST_BE_E2E_UID="$beavernest_e2e_uid"
+export BEAVERNEST_BE_E2E_GID="$beavernest_e2e_gid"
 
 # The beavernest-be-e2e Playwright suite talks deep SQLite internals directly
 # on this machine's own dotnet SDK (never inside the SDK-less runtime
@@ -76,8 +80,6 @@ export BEAVERNEST_BE_E2E_DATA_DIRECTORY="$beavernest_fixture_root/data"
 export BEAVERNEST_BE_E2E_BACKUP_DIRECTORY="$beavernest_fixture_root/backups"
 
 "${beavernest_compose[@]}" build beavernest-app
-"${beavernest_compose[@]}" run --rm --no-deps --user 0:0 --entrypoint sh beavernest-app -ceu \
-	'chown 10001:10001 /var/lib/beavernest /var/backups/beavernest && chmod 0700 /var/lib/beavernest /var/backups/beavernest'
 "${beavernest_compose[@]}" up -d beavernest-app
 
 beavernest_api_base_url="http://127.0.0.1:$beavernest_public_port"
