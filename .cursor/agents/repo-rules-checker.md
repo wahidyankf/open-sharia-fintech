@@ -658,7 +658,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - Suggest new Skill or extension
    - Write findings progressively
 
-### Step 6: Instruction-File Size Budget
+### Step 6: Governance Word Budget
 
 **Deterministic-gate annotation**: Word counts for all auto-loaded instruction surfaces are enforced by the deterministic `rhino-cli governance word-budget validate` gate (wired at pre-push, CI, and as `governance-word-budget` in the `repo-governance audit` preflight, once armed). If `governance-word-budget` is present in the Step 0.5 preflight JSON, its findings are already embedded verbatim in the `## Deterministic Findings` section — DO NOT re-derive word counts. Judge only qualitative concerns the mechanical gate cannot measure:
 

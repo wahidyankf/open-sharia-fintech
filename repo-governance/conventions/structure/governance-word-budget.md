@@ -24,15 +24,27 @@ count, not byte count, is the metric: a raw whole-file `split_whitespace()` coun
 Configured in the `governance-word-budget:` section of `repo-config.yml`; enforced by
 `rhino-cli governance word-budget validate`.
 
-| Surface                                                    | Target (✅) | Warn (⚠️)  | Fail (❌)  |
-| ---------------------------------------------------------- | ----------- | ---------- | ---------- |
-| `AGENTS.md` / `CLAUDE.md`                                  | 400 words   | 500 words  | 500 words  |
-| `.claude/`, `.cursor/`, `.opencode/`, `.amazonq/` (`*.md`) | 400         | 500        | 500        |
-| `**/README.md`                                             | 700 words   | 900 words  | 900 words  |
-| Resolved tree (`CLAUDE.md` + imports)                      | 1200 words  | 1500 words | 1500 words |
+| Surface                                                                       | Target (✅) | Warn (⚠️)  | Fail (❌)  |
+| ----------------------------------------------------------------------------- | ----------- | ---------- | ---------- |
+| `repo-governance/**/*.md`                                                     | 400 words   | 500 words  | 500 words  |
+| `AGENTS.md` / `CLAUDE.md`                                                     | 400 words   | 500 words  | 500 words  |
+| `.claude/`, `.cursor/`, `.codex/`, `.opencode/`, `.pi/`, `.amazonq/` (`*.md`) | 400         | 500        | 500        |
+| `**/README.md`                                                                | 700 words   | 900 words  | 900 words  |
+| Resolved tree (`CLAUDE.md` + imports)                                         | 1200 words  | 1500 words | 1500 words |
+
+`repo-governance/**/*.md` is the largest surface by file count and the primary target of the
+`optimize-governance-md` plan this convention's word-count metric belongs to.
 
 When a path matches more than one surface glob, the **last-declared** surface wins (select, then
-classify) — see `tech-docs.md` §1.3.
+classify) — see `tech-docs.md` §1.3. This is a declaration-order invariant, not a mechanical
+glob-specificity comparison: a more-specific surface glob MUST be declared after any more-general
+surface it overlaps. Today `**/README.md` is the only surface that overlaps others (every other
+surface's directory globs also match README.md files), which is why it is declared last in
+`repo-config.yml`. A future reorder, or a new general glob inserted after it, silently
+misclassifies every README.md under the wrong budget with no error signal —
+`application::governance::word_budget::tests::surfaces_declares_readme_glob_last` in `rhino-cli`
+enforces this mechanically against the live config; update that test if a future change
+legitimately needs a different declaration order.
 
 ## Enforcement Points
 

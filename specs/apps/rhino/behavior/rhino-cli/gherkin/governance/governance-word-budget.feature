@@ -96,7 +96,7 @@ Feature: Governance word budget
   Scenario: The old gate id is gone from the registry
     When the developer runs gate list with surface pre-push and format text
     Then the output contains no gate id "instruction-size"
-    And the output contains gate id "governance-word-budget"
+    And the output contains no gate id "governance-word-budget"
 
   Scenario: The resolved tree is measured in words
     Given "CLAUDE.md" contains 480 words

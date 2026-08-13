@@ -487,7 +487,7 @@ exactly as the UI-design-funnel delivery section does above for UI-bearing plans
 
 - [ ] [AI] Scaffold the folder layout: `syllabus/README.md`, `syllabus/courses/README.md`,
       `syllabus/paths/README.md` — acceptance: all three files exist and are indexed by
-      `rhino-cli md readme-index validate`
+      `rhino-cli governance readme-index validate`
 - [ ] [AI] Author course files under `syllabus/courses/` following the copy-paste template's
       REQUIRED skeleton — acceptance: `grep -l "## Why this exists" syllabus/courses/*.md` covers
       every new course file

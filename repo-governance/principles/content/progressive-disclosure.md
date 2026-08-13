@@ -239,11 +239,13 @@ What to avoid (for advanced users).
 - PASS: "Advanced Patterns" for experts
 - PASS: Each level optional
 
-### Instruction-File Size Budget
+### Governance Word Budget
 
 **Context**: Governance instruction files (`AGENTS.md`, `CLAUDE.md`, harness-specific surfaces)
-auto-loaded by coding-agent harnesses. Harnesses impose hard byte limits; content past the limit
-is silently truncated or ignored.
+auto-loaded by coding-agent harnesses. Harnesses impose hard limits, measured in words (a raw
+whole-file `split_whitespace()` count — see the
+[Governance Word-Budget Convention](../../conventions/structure/governance-word-budget.md));
+content past the limit is silently truncated or ignored.
 
 **Progressive Structure**:
 
@@ -504,7 +506,7 @@ docs/explanation/infrastructure/security/security-basics.md
 - [Tutorial Convention](../../conventions/tutorials/general.md) - Progressive tutorial structure
 - [Governance Word-Budget Convention](../../conventions/structure/governance-word-budget.md) -
   Progressive disclosure is the sole sanctioned remediation when an auto-loaded instruction file
-  exceeds its word budget; the "Instruction-File Size Budget" example in the "How It Applies"
+  exceeds its word budget; the "Governance Word Budget" example in the "How It Applies"
   section above demonstrates this pattern
 
 ## References

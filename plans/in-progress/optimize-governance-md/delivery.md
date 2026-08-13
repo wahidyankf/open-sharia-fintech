@@ -231,7 +231,7 @@ No PR. Establishes a clean, known-good starting state.
 - [x] `[AI]` Record frontmatter coverage to `evidence/phase-0-frontmatter.txt`
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**:
       `plans/in-progress/optimize-governance-md/evidence/phase-0-frontmatter.txt` (new). `md
-    frontmatter validate` passes with 37 warn findings, all `missing-description` — consistent
+frontmatter validate` passes with 37 warn findings, all `missing-description` — consistent
       with `brd.md`'s 187/214 baseline (214-187=27, plus non-`repo-governance` warns bring the
       total to 37).
 - [x] `[AI]` Run the full pre-push surface and resolve every preexisting failure:
@@ -287,7 +287,7 @@ No PR. Establishes a clean, known-good starting state.
   measured in words"; "An oversized resolved tree fails"; "Import cycles terminate"; "No inbound
   link to the renamed convention is left broken"
 
-- [ ] `[AI]` Write a dedicated unit test in `apps/rhino-cli/src/application/governance/
+- [x] `[AI]` Write a dedicated unit test in `apps/rhino-cli/src/application/governance/
 word_budget.rs` asserting `check_instruction_sizes` resolves surface overlap by
       **selecting the winning surface before classifying**, not by comparing candidate findings
       after the fact: build a `BudgetConfig` with two surfaces matching the same path (a general
@@ -317,7 +317,7 @@ word_budget.rs` asserting `check_instruction_sizes` resolves surface overlap by
   yet, so this test's actual pass/fail won't be observable until GREEN — at which point it must
   pass, proving the select-then-classify fix.
 
-- [ ] `[AI]` Write a second dedicated unit test in the same file covering the **Ok-winner case**:
+- [x] `[AI]` Write a second dedicated unit test in the same file covering the **Ok-winner case**:
       build a `BudgetConfig` with the same two overlapping surfaces (general `fail: 500` declared
       first, specific `fail: 900` declared second) against a fixture file sized at 670 words —
       large enough that the general surface alone would classify it `Fail`, but within the
@@ -430,7 +430,7 @@ word_budget.rs` asserting `check_instruction_sizes` resolves surface overlap by
       showing the old path deleted and new path untracked-then-present). Delegated to
       `swe-rust-dev`, independently verified: file exists at new path, old path gone,
       `split_whitespace().count()`-based metric confirmed by grep.
-- [ ] `[AI]` Implement per-path overlap precedence in `word_budget.rs`'s `check_instruction_sizes`
+- [x] `[AI]` Implement per-path overlap precedence in `word_budget.rs`'s `check_instruction_sizes`
       by restructuring the iteration order — **select the winning surface for each path before
       classifying it, never classify-then-compare**. Concretely: replace the current "for each
       surface, classify every matching file and push a candidate if non-Ok" loop with two passes.
@@ -457,7 +457,7 @@ word_budget.rs` asserting `check_instruction_sizes` resolves surface overlap by
   `HashMap<PathBuf, &Surface>` winners map at line 268, two-pass structure present. Both Phase 1a
   precedence tests (`_warn_case`, `_ok_case`) confirmed passing in the independent `test:unit` run.
 
-- [ ] `[AI]` `git mv` `commands/harness_validate_instruction_size.rs` →
+- [x] `[AI]` `git mv` `commands/harness_validate_instruction_size.rs` →
       `commands/governance_validate_word_budget.rs`; then fold
       `commands/convention_validate_instruction_size.rs`'s implementation body (the `SCHEMA`
       const, `run_for_root`, finding construction, and text/JSON/markdown formatters — the real
@@ -468,12 +468,12 @@ word_budget.rs` asserting `check_instruction_sizes` resolves surface overlap by
       `apps/rhino-cli/src/commands/governance_validate_word_budget.rs` (new, merged),
       `apps/rhino-cli/src/commands/convention_validate_instruction_size.rs` (deleted). Both
       confirmed via `git status`/`test -f`.
-- [ ] `[AI]` Update `apps/rhino-cli/src/commands.rs`: remove the `pub mod
+- [x] `[AI]` Update `apps/rhino-cli/src/commands.rs`: remove the `pub mod
 convention_validate_instruction_size;` declaration entirely (its file is merged away) and rename
       `pub mod harness_validate_instruction_size;` to `pub mod governance_validate_word_budget;`
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands.rs`.
       Verified via grep: both new mod lines present, both old ones absent.
-- [ ] `[AI]` Update `apps/rhino-cli/src/cli.rs`: rewrite the `#[command(name =
+- [x] `[AI]` Update `apps/rhino-cli/src/cli.rs`: rewrite the `#[command(name =
 "instruction-size", subcommand)]` command tree and the `Validate(...)` dispatch to
       `governance word-budget validate`, and rewrite the two unit tests that assert the OLD
       command structure — `verb_last_harness_instruction_size_validate_parses` and
@@ -483,7 +483,7 @@ convention_validate_instruction_size;` declaration entirely (its file is merged 
       `verb_last_governance_word_budget_validate_parses` and
       `verb_last_governance_readme_index_validate_parses` present; old-structure negative-assertion
       tests confirm the removed forms no longer parse.
-- [ ] `[AI]` Update `apps/rhino-cli/src/application/repo_governance/audit_orchestrator.rs`:
+- [x] `[AI]` Update `apps/rhino-cli/src/application/repo_governance/audit_orchestrator.rs`:
       rename the `"instruction-size"` category name, command-name mapping, and `match` arm
       dispatching to `audit_instruction_size` (which calls `merged_budget_config` directly — see
       the corrected FR-1.15 framing in `prd.md`) to `"governance-word-budget"`, and update its
@@ -492,14 +492,14 @@ convention_validate_instruction_size;` declaration entirely (its file is merged 
       `apps/rhino-cli/src/application/repo_governance/audit_orchestrator.rs`. Verified via grep:
       zero `"instruction-size"` matches, `"governance-word-budget"` used throughout category name,
       command mapping, match arm, and test assertions.
-- [ ] `[AI]` Update `apps/rhino-cli/src/commands/harness_audit.rs`: rename its separate
+- [x] `[AI]` Update `apps/rhino-cli/src/commands/harness_audit.rs`: rename its separate
       `"validate-instruction-size"` member, `match` arm, and unit test
       (`MEMBERS.contains(&"validate-instruction-size")`) to the new command name
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**:
       `apps/rhino-cli/src/commands/harness_audit.rs`. Renamed to `"validate-word-budget"`. Verified
       via grep: member, dispatch match arm, and test assertion all present; zero
       `"instruction-size"` matches.
-- [ ] `[AI]` In `apps/rhino-cli/src/application/repo_governance/mod.rs`, remove `pub mod
+- [x] `[AI]` In `apps/rhino-cli/src/application/repo_governance/mod.rs`, remove `pub mod
 instruction_size;` (the module moves to a new parent, not a sibling rename); in
       `apps/rhino-cli/src/application/mod.rs`, add a new `pub mod governance;` line — the
       `application/governance/` directory does not exist yet and needs this declaration
@@ -507,7 +507,7 @@ instruction_size;` (the module moves to a new parent, not a sibling rename); in
       `apps/rhino-cli/src/application/repo_governance/mod.rs`,
       `apps/rhino-cli/src/application/mod.rs`. Verified via grep: no stale `pub mod
       instruction_size;`/`readme_index_audit;`, `pub mod governance;` present.
-- [ ] `[AI]` Update `apps/rhino-cli/src/application/repo_config/mod.rs`: rename the
+- [x] `[AI]` Update `apps/rhino-cli/src/application/repo_config/mod.rs`: rename the
       `#[serde(rename = "instruction-size", default)] pub instruction_size: Option<BudgetConfig>`
       field to `governance-word-budget`, and repoint its `use` of `BudgetConfig` to
       `application::governance::word_budget`
@@ -515,7 +515,7 @@ instruction_size;` (the module moves to a new parent, not a sibling rename); in
       `apps/rhino-cli/src/application/repo_config/mod.rs`. Verified via grep: field
       `governance_word_budget` with `#[serde(rename = "governance-word-budget")]` at line 389-390;
       `use crate::application::governance::word_budget::BudgetConfig;` at line 17.
-- [ ] `[AI]` **Rename, do not rebuild** (per `prd.md` §FR-3 "Repurpose, do not rebuild" and
+- [x] `[AI]` **Rename, do not rebuild** (per `prd.md` §FR-3 "Repurpose, do not rebuild" and
       `tech-docs.md` §1.1): `git mv
 apps/rhino-cli/src/application/repo_governance/readme_index_audit.rs` →
       `apps/rhino-cli/src/application/governance/readme_index.rs`, and `git mv
@@ -527,7 +527,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `apps/rhino-cli/src/application/governance/readme_index.rs`,
       `apps/rhino-cli/src/commands/governance_validate_readme_index.rs` (renamed). Verified: both
       new paths exist, old paths gone, `DEFAULT_PATHS` still 4 entries unchanged.
-- [ ] `[AI]` In `apps/rhino-cli/src/cli.rs`, remove `ReadmeIndex(MdReadmeIndexCommands)` from
+- [x] `[AI]` In `apps/rhino-cli/src/cli.rs`, remove `ReadmeIndex(MdReadmeIndexCommands)` from
       `MdCommands` and add it under a new `#[command(name = "governance", subcommand)]` tree
       alongside `word-budget`, so the CLI surface becomes `governance readme-index validate`
       (was `md readme-index validate`)
@@ -539,7 +539,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `pub mod governance_validate_readme_index;`
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**: `apps/rhino-cli/src/commands.rs`.
       Verified via grep (already confirmed as part of task #84's check): `pub mod
-    governance_validate_readme_index;` present, old name absent.
+governance_validate_readme_index;` present, old name absent.
 - [x] `[AI]` Add a `generate` path (FR-3.12) and two new finding kinds to the renamed module:
       `missing` (a covered directory needing an index has none — FR-3.1) and `unannotated` (an
       entry lacks the derived-annotation format or has drifted from the target's frontmatter —
@@ -562,7 +562,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `grep` for `Generate` wiring in `cli.rs` (both the enum variant and the match arm), `grep`
       for the new mod declaration in `commands.rs` — then personally re-ran
       `npx nx run rhino-cli:test:unit --skip-nx-cache` myself (exit 0, `Successfully ran target
-    test:unit for project rhino-cli`), independent of the delegated agent's own test run. The
+test:unit for project rhino-cli`), independent of the delegated agent's own test run. The
       "widen the covered-tree constant" sub-requirement is satisfied structurally, not via a
       second Rust constant: `DEFAULT_PATHS` in `governance_validate_readme_index.rs` stays the
       original unwidened 4-entry list (confirmed via `grep`), and its own doc comment now states
@@ -575,7 +575,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       not this one. **Follow-up obligation flagged by the delegated agent (not yet acted on)**:
       `apps/rhino-cli/parity-manifest.sha256` needs regenerating before Phase 1e's PR, since new
       source files were added under the cross-repo parity boundary.
-- [ ] `[AI]` Add two repeatable CLI flags to `ReadmeIndexAuditArgs` in
+- [x] `[AI]` Add two repeatable CLI flags to `ReadmeIndexAuditArgs` in
       `apps/rhino-cli/src/commands/governance_validate_readme_index.rs` (per `tech-docs.md` §4
       "The mechanism" and `prd.md` FR-5.8/FR-1.10/FR-1.11): `--paths <path>` (when given, replaces
       `DEFAULT_PATHS` for this invocation; when absent, `DEFAULT_PATHS` is used exactly as today)
@@ -590,7 +590,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `--paths`/`--fail-kinds` args, `resolve_scan_paths`/`has_failing_finding` helpers all present
       with correct override/restrict semantics (empty `fail_kinds` = all kinds fail, preserving
       today's behavior).
-- [ ] `[AI]` In `repo-config.yml`, rename the `md-readme-index` gate entry **in place** to
+- [x] `[AI]` In `repo-config.yml`, rename the `md-readme-index` gate entry **in place** to
       `governance-readme-index` — same `command:` update, same `scope: all-file-type` on both
       `pre-push` and `ci`, plus one new `args: { fail-kinds: [orphan, ghost] }` block (`prd.md`
       FR-1.10/FR-1.11's YAML) so a `missing`/`unannotated` finding surfacing inside this gate's
@@ -599,8 +599,8 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       a straight rename, not a delete-then-re-add: the gate stays continuously armed through this
       commit (FR-3.19 — no enforcement gap)
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**: `repo-config.yml`. Verified: `id:
-    governance-readme-index` present with `command: governance readme-index validate`, `args:
-    fail-kinds: [orphan, ghost]`, `scope: all-file-type` on both `pre-push` and `ci`. No
+governance-readme-index` present with `command: governance readme-index validate`, `args:
+fail-kinds: [orphan, ghost]`, `scope: all-file-type` on both `pre-push` and `ci`. No
       `paths:` override. `md-readme-index` id no longer present anywhere.
 - [x] `[AI]` **Teach `harness bindings generate` to flatten** (FR-3.18). A grouped source at
       `.claude/agents/<group>/<file>.md` must still emit `.opencode/agents/<name>.md` and
@@ -641,7 +641,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `apps/rhino-cli/src/application/governance/word_budget.rs`. Verified via grep: no
       `instruction-size:` key, `governance-word-budget:` present at line 214;
       `deny_unknown_fields` + `scenario_config_schema_rejects_an_exemption_key` test confirmed.
-- [ ] `[AI]` Add a `**/README.md` glob entry (`target: 700, warn: 900, fail: 900`) to the new
+- [x] `[AI]` Add a `**/README.md` glob entry (`target: 700, warn: 900, fail: 900`) to the new
       `governance-word-budget:` block in `repo-config.yml`, declared **after** the general surface
       globs so the last-declared-surface-wins logic added above selects it on overlap, per
       FR-1.6/FR-3.15's precedence rule (`tech-docs.md` §1.3). This, combined with that selection
@@ -658,7 +658,7 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       **Date**: 2026-08-13. **Status**: Done. **Files Changed**: `repo-config.yml`. Verified: the
       `**/README.md` glob (target:700/warn:900/fail:900) is declared last, after all 9 general
       surface globs, with an explanatory comment confirming the intentional precedence.
-- [ ] `[AI]` Add `when_to_use` to the frontmatter validator (`KIND_MISSING_WHEN_TO_USE`),
+- [x] `[AI]` Add `when_to_use` to the frontmatter validator (`KIND_MISSING_WHEN_TO_USE`),
       scoped to `repo-governance/**/*.md`, reported at **WARN** severity (the same
       `SEVERITY_WARN` construction `description` already uses) — dark-launched, not yet armed;
       Phase 9 flips it to FAIL. `description`'s severity is **not** changed in this phase —
@@ -678,13 +678,13 @@ apps/rhino-cli/src/commands/md_validate_readme_index.rs` →
       `repo-governance/conventions/structure/governance-word-budget.md` (390 words),
       `repo-governance/conventions/structure/governance-word-budget-remediation.md` (424 words,
       split). Old `instruction-file-size-budget.md` confirmed gone.
-- [ ] `[AI]` Rewrite every inbound link to the old convention path — discover the set live with
+- [x] `[AI]` Rewrite every inbound link to the old convention path — discover the set live with
       `grep -rl "instruction-size\|instruction-file-size-budget" repo-governance .claude docs
 AGENTS.md` (10 files as of 2026-08-13, excluding the convention doc itself; **do not** use
       a fixed count) and rewrite each hit
       **Date**: 2026-08-13. **Status**: Done. Verified: `grep -rl "instruction-size\|
       instruction-file-size-budget" repo-governance .claude docs AGENTS.md` returns zero matches.
-- [ ] `[AI]` Separately, discover every `specs/` file naming the old gate — `grep -rl
+- [x] `[AI]` Separately, discover every `specs/` file naming the old gate — `grep -rl
 "instruction-size" specs` (9 files as of 2026-08-13, **do not** use a fixed count; a distinct
       sweep from the inbound-link grep above, since it targets Gherkin scenario/README text naming
       the gate, not markdown links to the convention doc) — and rewrite each hit: the 3
@@ -734,10 +734,10 @@ run rhino-cli:specs:behavior:coverage`
       **Date**: 2026-08-13. **Status**: Done. Personally ran all three commands
       (`--skip-nx-cache`, not relying on Nx's cache) after both follow-up fixes (#93, #96/#97)
       independently verified complete: `test:unit` — `Successfully ran target test:unit for
-    project rhino-cli`; `test:quick` (typecheck + lint/clippy `-D warnings` + test:unit +
+project rhino-cli`; `test:quick` (typecheck + lint/clippy `-D warnings` + test:unit +
       test:specs) — `Successfully ran target test:quick for project rhino-cli`;
       `specs:behavior:coverage` — `Spec coverage valid! 69 specs, 504 scenarios, 2059 steps —
-    all covered.` Phase 1b GREEN is complete.
+all covered.` Phase 1b GREEN is complete.
 
 ### 1c. REFACTOR
 
@@ -761,7 +761,7 @@ run rhino-cli:specs:behavior:coverage`
 - [x] `[AI]` `cargo clippy` clean at warning level; `cargo fmt`
       **Date**: 2026-08-13. **Status**: Done. `cargo fmt --manifest-path apps/rhino-cli/Cargo.toml`
       then `-- --check` → `FMT_CLEAN`. `cargo clippy --manifest-path apps/rhino-cli/Cargo.toml
-    --all-targets -- -D warnings` → zero output, zero warnings/errors, exit 0.
+--all-targets -- -D warnings` → zero output, zero warnings/errors, exit 0.
 - [x] **Command**: `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`
 - [x] **Acceptance**: exit 0
       **Date**: 2026-08-13. **Status**: Done, narrowed scope (user-approved). The full
@@ -773,7 +773,7 @@ run rhino-cli:specs:behavior:coverage`
       `daemon.log` stale 5+ min. Root cause: system-wide resource exhaustion from _unrelated_
       concurrent worktree processes (5x duplicate `dotnet watch run --project apps/ose-be`, a
       `beaver-flutter` worktree's long-running flutter/dart processes, etc.) — `sysctl
-    vm.swapusage` showed 92-94% swap used (17.4/18.4GB) throughout, `uptime` load average
+vm.swapusage` showed 92-94% swap used (17.4/18.4GB) throughout, `uptime` load average
       peaked at 31.6. The affected-projects set is large because `rhino-cli` is a shared
       dependency invoked by nearly every project's `specs:*` targets — this is correct affected-
       set computation, not a bug, but the full sweep is unreliable to run to completion under
@@ -783,7 +783,7 @@ run rhino-cli:specs:behavior:coverage`
       project (not the affected-projects sweep): `test:unit` 4 features/26 scenarios/102 steps
       all passed; `specs:structure-validation` 0 findings across all 7 spec areas;
       `specs:behavior:coverage` 69 specs/504 scenarios/2059 steps all covered — exit via `NX
-    Successfully ran target test:quick for project rhino-cli`. Combined with the already-
+Successfully ran target test:quick for project rhino-cli`. Combined with the already-
       verified `cargo clippy`/`cargo fmt` clean (previous checkbox), this confirms the FR-3.12/
       FR-3.18 rhino-cli changes are clean. The full cross-project `--surface=pre-push` sweep is
       **deferred, not verified this session** — must be re-run once host contention clears,
@@ -795,7 +795,7 @@ run rhino-cli:specs:behavior:coverage`
 - [x] `[AI]` Confirm the `gates:` registry does **not** yet contain
       `governance-word-budget` or `governance-readme-completeness` — Phase 9 arms them
       **Date**: 2026-08-13. **Status**: Done. `grep -n 'id: governance-word-budget'
-    repo-config.yml` and `grep -n 'id: governance-readme-completeness' repo-config.yml` both
+repo-config.yml` and `grep -n 'id: governance-readme-completeness' repo-config.yml` both
       return no matches — neither gate is registered yet, as expected pre-Phase-9.
 - [x] `[AI]` Confirm the `instruction-size` gate entry **is** removed
       **Date**: 2026-08-13. **Status**: Done. `grep -n 'id: instruction-size' repo-config.yml`
@@ -826,8 +826,8 @@ all-file-type`, both `pre-push` and `ci`) immediately after this commit — it i
       (which `changed_paths()` at `run.rs:655-670` resolves the same way as `pre-push` — via
       `merge_base_paths`, falling back to `staged_paths` when no origin/merge-base exists, exactly
       the throwaway fixture's condition). Fixture gate: `id:
-    throwaway-ci-path-gated-check`, `command: touch was-run-on-ci.txt`, `surfaces: { ci: {
-    scope: path-gated, trigger: [docs/] } }`. Run 1 (staged: `repo-config.yml`, `other.md` —
+throwaway-ci-path-gated-check`, `command: touch was-run-on-ci.txt`, `surfaces: { ci: {
+scope: path-gated, trigger: [docs/] } }`. Run 1 (staged: `repo-config.yml`, `other.md` —
       neither under `docs/`): `gate run --surface=ci` exit 0, marker file **not** created — gate
       correctly skipped. Run 2 (staged: same plus `docs/sample.md`): `gate run --surface=ci`
       printed `Running gate throwaway-ci-path-gated-check`, exit 0, marker file **created** — gate
@@ -855,7 +855,7 @@ all-file-type`, both `pre-push` and `ci`) immediately after this commit — it i
       `governance` module/tests/golden-master fixtures, updated Gherkin specs — no unrelated
       changes swept in, both paths scoped to this plan's own work). `parity manifest generate` →
       `generated apps/rhino-cli/parity-manifest.sha256`, exit 0. `git add
-    apps/rhino-cli/parity-manifest.sha256` staged.
+apps/rhino-cli/parity-manifest.sha256` staged.
 - [x] `[AI]` `rhino-cli parity manifest validate`
       **Date**: 2026-08-13. **Status**: Done. `apps/rhino-cli/parity-manifest.sha256 is current`,
       exit 0.

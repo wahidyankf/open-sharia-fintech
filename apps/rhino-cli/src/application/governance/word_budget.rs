@@ -17,6 +17,29 @@ use serde::Deserialize;
 
 use crate::application::fs::port::Fs;
 
+/// Directory names excluded from surface-glob matching. Mirrors the
+/// `SKIP_DIRS` convention already used by `governance::readme_index`,
+/// `docs::naming`, and `docs::frontmatter` — vendored/generated trees are
+/// never first-party governance surfaces, and (unlike those walkers, which
+/// use `Fs::walk_files`'s own `skip_dirs` parameter) `glob::glob` has no
+/// built-in ignore semantics, so matched paths are filtered post hoc against
+/// this list. `node_modules` is the one that matters in practice — the
+/// `**/README.md` surface glob otherwise descends into every vendored
+/// dependency tree in the workspace, producing findings that are unfixable
+/// by construction (a third-party README this repo does not author).
+const SKIP_DIRS: &[&str] = &["node_modules", "target", "dist", "build", ".next", ".git"];
+
+/// Returns `true` when any path component of `path` matches a name in
+/// [`SKIP_DIRS`] — i.e. the path lives inside a vendored/generated tree that
+/// must never be treated as a first-party governance surface.
+fn is_in_skipped_dir(path: &Path) -> bool {
+    path.components().any(|c| {
+        c.as_os_str()
+            .to_str()
+            .is_some_and(|s| SKIP_DIRS.contains(&s))
+    })
+}
+
 // ---------------------------------------------------------------------------
 // Configuration types
 // ---------------------------------------------------------------------------
@@ -276,6 +299,12 @@ pub fn check_instruction_sizes(
             continue;
         };
         for entry in paths.flatten() {
+            // Skip vendored/generated trees (`node_modules` in practice) —
+            // see `SKIP_DIRS`. `glob::glob` has no ignore semantics of its
+            // own, so this filters matched paths post hoc.
+            if is_in_skipped_dir(&entry) {
+                continue;
+            }
             // Later-declared surfaces overwrite earlier ones for the same
             // path — declaration-order iteration means this naturally holds
             // the last-declared (winning) surface per path.
@@ -1079,6 +1108,38 @@ resolved_tree:
     // Overlap-precedence: select-then-classify (tech-docs.md §1.1/§1.3)
     // -----------------------------------------------------------------------
 
+    /// Declaration-order invariant for `repo-config.yml`'s
+    /// `governance-word-budget.surfaces` list: `check_instruction_sizes`'s
+    /// select-then-classify pass has last-declared-wins semantics with no
+    /// mechanical glob-specificity comparison (`tech-docs.md` §1.1/§1.3), so
+    /// a more-specific surface glob MUST be declared after any more-general
+    /// surface glob it overlaps with, or it silently loses the overlap and
+    /// every file matching it is misclassified under the general surface's
+    /// (wrong) budget instead. `**/README.md` is the only surface today that
+    /// overlaps others (`repo-governance/**/*.md`, `.claude/**/*.md`, etc.
+    /// all match README.md files too) — see the comment on that entry in
+    /// `repo-config.yml`. This test enforces the invariant mechanically so a
+    /// future reorder or a new general glob inserted after `**/README.md`
+    /// fails loud here rather than silently misclassifying every README.
+    #[test]
+    fn surfaces_declares_readme_glob_last() {
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let config = merged_budget_config(&repo_root)
+            .expect("repo-config.yml must declare a governance-word-budget: section");
+        let last = config
+            .surfaces
+            .last()
+            .expect("governance-word-budget.surfaces must be non-empty");
+        assert_eq!(
+            last.glob, "**/README.md",
+            "the `**/README.md` surface must be declared last in \
+             repo-config.yml's governance-word-budget.surfaces list — it is the only surface \
+             glob that overlaps others, and last-declared wins the select-then-classify pass \
+             (see check_instruction_sizes doc comment); a reorder here silently misclassifies \
+             every README.md under a general surface's budget instead of the more-specific one"
+        );
+    }
+
     #[test]
     fn check_instruction_sizes_selects_winning_surface_before_classifying_warn_case() {
         let tmp = TempDir::new().unwrap();
@@ -1157,5 +1218,53 @@ resolved_tree:
             "select-then-classify: the winning (more specific) surface's own Ok verdict must \
              suppress the earlier, less-specific surface's Fail candidate entirely: {findings:?}"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // `node_modules` exclusion — regression test for the `**/README.md`
+    // surface glob descending into vendored dependency trees.
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn check_instruction_sizes_skips_node_modules() {
+        let tmp = TempDir::new().unwrap();
+        // A vendored README that would fail the budget if scanned — this
+        // finding is unfixable by construction (a third-party dependency's
+        // README, not authored by this repo).
+        fs::create_dir_all(tmp.path().join("node_modules/some-pkg")).unwrap();
+        fs::write(
+            tmp.path().join("node_modules/some-pkg/README.md"),
+            n_words(1_000),
+        )
+        .unwrap();
+        // A first-party README at the same depth, over budget too, so the
+        // test would fail loud if the exclusion swallowed more than
+        // `node_modules`.
+        fs::write(tmp.path().join("README.md"), n_words(1_000)).unwrap();
+        let config = BudgetConfig {
+            surfaces: vec![Surface {
+                glob: "**/README.md".to_string(),
+                target: 400,
+                warn: 900,
+                fail: 900,
+            }],
+            resolved_tree: ResolvedTree {
+                root: "CLAUDE.md".to_string(),
+                target: 1_200,
+                warn: 1_500,
+                fail: 1_500,
+            },
+        };
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        assert!(
+            findings.iter().all(|f| !f.path.contains("node_modules")),
+            "no finding path may contain node_modules: {findings:?}"
+        );
+        assert_eq!(
+            findings.len(),
+            1,
+            "the first-party README.md at repo root must still be reported: {findings:?}"
+        );
+        assert_eq!(findings[0].path, "README.md");
     }
 }

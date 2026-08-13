@@ -28,7 +28,7 @@
 #![allow(clippy::used_underscore_binding)] // cucumber-rs macro codegen references `_`-prefixed regex-capture params
 
 use std::fmt::Write as _;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Output;
 
 use assert_cmd::cargo::cargo_bin;
@@ -93,10 +93,26 @@ impl GovWorld {
     }
 
     fn exec(&mut self, args: &[&str]) {
+        // Defense-in-depth (Git Fixture Isolation convention, Standards 1 &
+        // 3): the `rhino-cli` subprocess under test resolves its own git
+        // root and may shell out to `git` internally (e.g. for
+        // `governance readme-index generate`, a write command). Capping
+        // discovery and blanking identity/config here means any such
+        // internal `git` call stays confined to the fixture even if a
+        // future code path forgets its own isolation. `GIT_DIR` is set to
+        // match the fixture's already-initialized `.git` for the same
+        // reason `run_git` sets it; `infrastructure::git::root::find_root_from`
+        // explicitly strips `GIT_DIR`/`GIT_WORK_TREE` before its own
+        // `git rev-parse` call, so this is a no-op for that specific path
+        // and purely a safety net for any other internal `git` invocation.
         let out = std::process::Command::new(Self::bin())
             .args(args)
             .arg("--no-color")
             .current_dir(self.work.path())
+            .env("GIT_CEILING_DIRECTORIES", self.work.path())
+            .env("GIT_DIR", self.work.path().join(".git"))
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null")
             .output()
             .expect("run rhino-cli");
         self.output = Some(out);
@@ -104,7 +120,13 @@ impl GovWorld {
 
     /// Runs `rhino-cli` against the real repository this crate lives in —
     /// for scenarios that assert facts about the live `repo-config.yml`
-    /// gates registry rather than a synthetic fixture.
+    /// gates registry rather than a synthetic fixture. Deliberately NOT
+    /// isolated with the fixture env vars `exec` uses above: this method's
+    /// entire purpose is to resolve and operate on the real repository root,
+    /// which is exactly what the Git Fixture Isolation convention's "does
+    /// NOT cover" carve-out describes ("production code paths that
+    /// intentionally operate on the real repository"). Pinning `GIT_DIR` to
+    /// a throwaway path here would break every scenario that depends on it.
     fn exec_real(&mut self, args: &[&str]) {
         let out = std::process::Command::new(Self::bin())
             .args(args)
@@ -138,19 +160,79 @@ impl GovWorld {
     }
 }
 
-fn run_git(dir: &std::path::Path, args: &[&str]) {
-    std::process::Command::new("git")
+/// Pre-write escape guard (Git Fixture Isolation convention, Standard 4).
+/// Panics unless git, under the same isolation env as [`run_git`], resolves
+/// its top-level to `dir` (canonicalized). Mirrors
+/// `tests/specs_tree.rs`'s `assert_no_escape` exactly — see that copy's doc
+/// comment for the full rationale. `GIT_WORK_TREE` is deliberately NOT set:
+/// it would make `--show-toplevel` merely echo the variable, defeating the
+/// guard.
+fn assert_no_escape(dir: &Path) {
+    let out = std::process::Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
+        .output()
+        .expect("escape-guard: git rev-parse must spawn");
+    assert!(
+        out.status.success(),
+        "escape-guard: `git rev-parse --show-toplevel` failed in {} (git could not confirm an \
+         isolated repository here): {}",
+        dir.display(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    let want = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_path_buf());
+    let got = std::fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
+    assert_eq!(
+        got,
+        want,
+        "escape-guard: fixture git resolves to {}, not the intended tempdir {} — refusing to \
+         proceed to avoid corrupting the real repository",
+        got.display(),
+        want.display()
+    );
+}
+
+/// Runs `git` with `args` inside `dir`, under full Git Fixture Isolation
+/// (all six mandatory layers — see
+/// `repo-governance/development/quality/git-fixture-isolation.md`). Mirrors
+/// `tests/specs_tree.rs`'s `run_git` exactly: explicit `GIT_DIR` closes
+/// ambient upward discovery (Standard 2), `GIT_CEILING_DIRECTORIES` caps any
+/// residual walk (Standard 1), the nulled `GIT_CONFIG_GLOBAL`/
+/// `GIT_CONFIG_SYSTEM` keep identity deterministic and out of the developer's
+/// real config (Standard 3), the pre-write escape guard runs before every
+/// write once `dir/.git` exists (Standard 4), and the exit status is checked
+/// via `status.success()` rather than a bare `.expect()` (Standard 5).
+fn run_git(dir: &Path, args: &[&str]) {
+    if dir.join(".git").is_dir() {
+        assert_no_escape(dir);
+    }
+    let output = std::process::Command::new("git")
         .args(args)
         .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
         .env("GIT_AUTHOR_NAME", "t")
         .env("GIT_AUTHOR_EMAIL", "t@t")
         .env("GIT_COMMITTER_NAME", "t")
         .env("GIT_COMMITTER_EMAIL", "t@t")
         .output()
-        .expect("git command");
+        .expect("git command must spawn");
+    assert!(
+        output.status.success(),
+        "git {args:?} in {} must exit zero, got: {}",
+        dir.display(),
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
-fn init_git_repo(dir: &std::path::Path) {
+fn init_git_repo(dir: &Path) {
     run_git(dir, &["init", "-q"]);
 }
 
@@ -446,22 +528,6 @@ fn when_gate_list_pre_push_text(w: &mut GovWorld) {
 fn then_output_no_gate_id(w: &mut GovWorld, id: String) {
     let out = w.stdout();
     assert!(!out.contains(&id), "got: {out}");
-}
-
-#[then(regex = r#"^the output contains gate id "([^"]+)"$"#)]
-fn then_output_has_gate_id(w: &mut GovWorld, id: String) {
-    // `governance-word-budget` is deliberately NOT registered in the
-    // `gates:` registry at Phase 1 — dark-launched, armed only at Phase 9
-    // (`delivery.md` Phase 9, mirroring the same judgment call already made
-    // in `word_budget.rs`'s `scenario_old_gate_id_is_gone_from_the_registry`
-    // unit test). `governance-readme-index` IS armed continuously (a
-    // straight rename of `md-readme-index`, `delivery.md` FR-3.19), so that
-    // id is asserted for real.
-    if id == "governance-word-budget" {
-        return;
-    }
-    let out = w.stdout();
-    assert!(out.contains(&id), "got: {out}");
 }
 
 // ===========================================================================
