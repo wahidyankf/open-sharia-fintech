@@ -6,3 +6,4 @@ Feature: Safe workspace diagnostics
     When I open Workspace diagnostics
     Then I can read the version, uptime and server time
     And I cannot read an unavailable cause or connection detail
+    And I can retry diagnostics to request a fresh safe snapshot

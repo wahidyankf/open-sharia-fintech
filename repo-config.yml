@@ -163,12 +163,12 @@ coverage:
     - name: beavernest-be-e2e
       levels: [e2e]
       specs: "specs/apps/beavernest/behavior/beavernest-be/gherkin/**"
-    - name: beavernest-app-web
+    - name: beavernest-app
       levels: [unit]
-      specs: "specs/apps/beavernest/behavior/beavernest-app-web/gherkin/**"
-    - name: beavernest-app-web-e2e
+      specs: "specs/apps/beavernest/behavior/beavernest-app/gherkin/**"
+    - name: beavernest-app-e2e
       levels: [e2e]
-      specs: "specs/apps/beavernest/behavior/beavernest-app-web/gherkin/**"
+      specs: "specs/apps/beavernest/behavior/beavernest-app/gherkin/**"
 
     # libs
     - name: rust-commons

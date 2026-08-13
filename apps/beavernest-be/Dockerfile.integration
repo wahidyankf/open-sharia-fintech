@@ -20,12 +20,15 @@ COPY apps/beavernest-be/.editorconfig .
 # Copy project files for restore (before code to cache the restore layer).
 COPY apps/beavernest-be/src/BeaverNestBe/BeaverNestBe.fsproj src/BeaverNestBe/
 COPY apps/beavernest-be/tests/integration/BeaverNestBe.IntegrationTests.fsproj tests/integration/
+COPY libs/fsharp-env-loader/fsharp-env-loader.fsproj /libs/fsharp-env-loader/
 
 RUN dotnet restore tests/integration/BeaverNestBe.IntegrationTests.fsproj
 
 # Copy source and test code.
 COPY apps/beavernest-be/src/ src/
 COPY apps/beavernest-be/tests/integration/ tests/integration/
+COPY libs/fsharp-env-loader/src/ /libs/fsharp-env-loader/src/
+COPY apps/beavernest-be/generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs generated-contracts/OpenAPI/src/BeaverNestBe.Contracts/Health.fs
 
 # Build the test project (restore already ran; --no-restore keeps the layer cache useful).
 RUN dotnet build tests/integration/BeaverNestBe.IntegrationTests.fsproj --no-restore

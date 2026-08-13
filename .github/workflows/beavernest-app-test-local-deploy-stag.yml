@@ -9,6 +9,15 @@ name: beavernest-app-test-local-deploy-stag
 # (frontend + backend served same-origin from one container on port 19300).
 
 on:
+  pull_request:
+    paths:
+      - "apps/beavernest-app/**"
+      - "apps/beavernest-app-e2e/**"
+      - "apps/beavernest-be/**"
+      - "infra/dev/beavernest-app/**"
+      - "specs/apps/beavernest/**"
+      - ".fvmrc"
+      - "repo-config.yml"
   schedule:
     - cron: "0 20 * * *" # 3 AM WIB (UTC+7)
     - cron: "0 8 * * *" # 3 PM WIB (UTC+7)
@@ -32,7 +41,7 @@ jobs:
       - name: Run specs:behavior:coverage for the app group
         run: |
           npx nx run beavernest-be:specs:behavior:coverage
-          npx nx run beavernest-app-web:specs:behavior:coverage
+          npx nx run beavernest-app:specs:behavior:coverage
 
   fe-lint:
     name: FE lint
@@ -41,7 +50,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
-      - run: npx nx run beavernest-app-web:lint
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+      - run: dart pub global activate fvm 4.0.5
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+      - run: npx nx run beavernest-app:lint
 
   be-integration:
     name: BE integration tests
@@ -60,19 +74,24 @@ jobs:
         if: always()
         run: docker compose -f apps/beavernest-be/docker-compose.integration.yml down -v
 
-  fe-integration:
+  fe-widget:
     name: FE integration tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+      - run: dart pub global activate fvm 4.0.5
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
       - name: Run integration tests
-        run: npx nx run beavernest-app-web:test:integration
+        run: npx nx run beavernest-app:test:unit
 
   e2e:
     name: E2E tests (BE + FE, same-origin combined runtime)
-    needs: [be-integration, fe-integration]
+    needs: [be-integration, fe-widget]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -80,6 +99,11 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-dotnet
       - uses: ./.github/actions/setup-playwright
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: .fvmrc
+      - run: dart pub global activate fvm 4.0.5
+      - run: echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
 
       # Each *-e2e project's test:e2e target owns its own disposable combined
       # runtime (apps/beavernest-be/scripts/run-e2e.sh): build image, boot,
@@ -96,14 +120,14 @@ jobs:
           retention-days: 7
 
       - name: Run FE E2E tests
-        run: npx nx run beavernest-app-web-e2e:test:e2e
+        run: npx nx run beavernest-app-e2e:test:e2e
 
       - name: Upload FE E2E report
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report-beavernest-app-web
-          path: apps/beavernest-app-web-e2e/playwright-report/
+          name: playwright-report-beavernest-app
+          path: apps/beavernest-app-e2e/playwright-report/
           retention-days: 7
 
   infra-tests:

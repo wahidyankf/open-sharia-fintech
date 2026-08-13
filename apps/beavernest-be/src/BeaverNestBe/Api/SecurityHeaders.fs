@@ -9,7 +9,7 @@ open Giraffe
 let policy: Map<string, string> =
     Map.ofList
         [ "Content-Security-Policy",
-          "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+          "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
           "X-Content-Type-Options", "nosniff"
           "Referrer-Policy", "strict-origin-when-cross-origin"
           "X-Frame-Options", "DENY"

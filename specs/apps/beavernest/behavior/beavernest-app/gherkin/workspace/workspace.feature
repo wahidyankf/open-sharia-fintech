@@ -6,3 +6,4 @@ Feature: BeaverNest workspace readiness
     When I open the Flutter Web root route
     Then I can read the workspace availability, database and schema state
     And the summary remains usable on mobile, tablet and desktop widths
+    And on desktop I can use the persistent status and diagnostics rail

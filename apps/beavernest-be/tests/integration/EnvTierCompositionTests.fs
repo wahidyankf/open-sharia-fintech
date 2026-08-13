@@ -24,7 +24,12 @@ let private executablePath =
     Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../src/BeaverNestBe/bin/Debug/net10.0/BeaverNestBe.dll"))
 
 let private repositoryRoot =
-    Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../../.."))
+    let candidate = Path.GetFullPath(Path.Combine(__SOURCE_DIRECTORY__, "../../../.."))
+
+    if String.Equals(Path.GetPathRoot(candidate), candidate, StringComparison.Ordinal) then
+        None
+    else
+        Some candidate
 
 let private isSameOrDescendant directory candidate =
     let relative = Path.GetRelativePath(directory, candidate)
@@ -153,7 +158,9 @@ let private proveCompositionRoot () =
             Assert.False(Directory.Exists(Path.Combine(workingDirectory, "apps", "beavernest-be")))
             Assert.False(DirectoryInfo(dataDirectory).LinkTarget <> null)
             Assert.False(String.Equals(Path.GetPathRoot(dataDirectory), dataDirectory, StringComparison.Ordinal))
-            Assert.False(isSameOrDescendant repositoryRoot dataDirectory)
+
+            repositoryRoot
+            |> Option.iter (fun root -> Assert.False(isSameOrDescendant root dataDirectory))
 
             Assert.False(
                 isSameOrDescendant (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)) dataDirectory

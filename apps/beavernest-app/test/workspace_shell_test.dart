@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:beavernest_app/application/ports/readiness_repository.dart';
+import 'package:beavernest_app/application/ports/diagnostics_repository.dart';
+import 'package:beavernest_app/domain/diagnostics.dart';
 import 'package:beavernest_app/domain/readiness.dart';
 import 'package:beavernest_app/main.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -22,6 +25,26 @@ void main() {
     expect(find.text('Application available'), findsAtLeastNWidgets(1));
     expect(find.text('Database ready'), findsOneWidget);
     expect(find.text('Schema current'), findsOneWidget);
+  });
+
+  testWidgets('uses a persistent status and diagnostics rail on desktop', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1280, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      const MainApp(
+        readinessRepository: _ReadyReadinessRepository(),
+        diagnosticsRepository: _ReadyDiagnosticsRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('workspace-navigation-rail')), findsOneWidget);
+    expect(find.text('BeaverNest'), findsOneWidget);
+    expect(find.text('Foundation status'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Diagnostics'), findsOneWidget);
   });
 }
 
@@ -43,3 +66,25 @@ final class _ControllableReadinessRepository implements ReadinessRepository {
 
   void complete(WorkspaceReadiness readiness) => _result.complete(readiness);
 }
+
+final class _ReadyReadinessRepository implements ReadinessRepository {
+  const _ReadyReadinessRepository();
+
+  @override
+  Future<WorkspaceReadiness> loadReadiness() async => _readyReadiness;
+}
+
+final class _ReadyDiagnosticsRepository implements DiagnosticsRepository {
+  const _ReadyDiagnosticsRepository();
+
+  @override
+  Future<WorkspaceDiagnostics> loadDiagnostics() async => _diagnostics;
+}
+
+const _diagnostics = WorkspaceDiagnostics.ready(
+  version: '0.1.0',
+  uptimeSeconds: 61,
+  serverTimeUtc: '2026-08-13T00:00:00Z',
+  database: DatabaseReadiness.ready,
+  schema: SchemaReadiness.current,
+);

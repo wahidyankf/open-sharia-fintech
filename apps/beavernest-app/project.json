@@ -22,7 +22,7 @@
     "build:web": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter build web",
+        "command": "fvm flutter build web --csp --wasm --no-web-resources-cdn",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],

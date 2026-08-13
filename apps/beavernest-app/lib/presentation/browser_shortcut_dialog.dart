@@ -10,7 +10,7 @@ final class BrowserShortcutButton extends StatefulWidget {
 }
 
 final class _BrowserShortcutButtonState extends State<BrowserShortcutButton> {
-  final _focusNode = FocusNode(debugLabel: 'Browser shortcut');
+  final _focusNode = FocusNode(debugLabel: 'Help');
 
   @override
   void dispose() {
@@ -22,16 +22,43 @@ final class _BrowserShortcutButtonState extends State<BrowserShortcutButton> {
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Browser shortcut'),
-        content: const Text(
-          'This workspace is online only. Use your browser’s own shortcut or menu to manage tabs and bookmarks.',
+        title: const Text('Browser Help'),
+        content: SingleChildScrollView(
+          child: FocusTraversalGroup(
+            policy: OrderedTraversalPolicy(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'This workspace is online only. Browser availability varies by device and browser.',
+                ),
+                SizedBox(height: 16),
+                Semantics(
+                  label: 'Browser availability steps',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('1. Open your browser menu.'),
+                      SizedBox(height: 8),
+                      Text(
+                        '2. Choose an available shortcut or install action.',
+                      ),
+                      SizedBox(height: 8),
+                      Text('3. Confirm the browser prompt if one appears.'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         actions: [
           SizedBox(
             height: 44,
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: const Text('Close Help'),
             ),
           ),
         ],
@@ -41,18 +68,30 @@ final class _BrowserShortcutButtonState extends State<BrowserShortcutButton> {
   }
 
   @override
-  Widget build(BuildContext context) => FocusableActionDetector(
-    focusNode: _focusNode,
-    child: Semantics(
-      label: 'Browser shortcut',
-      button: true,
-      child: SizedBox(
-        height: 44,
-        child: TextButton.icon(
-          onPressed: _showGuidance,
-          icon: const Icon(Icons.open_in_browser_outlined),
-          label: const Text('Browser shortcut'),
-        ),
+  Widget build(BuildContext context) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Browser Help', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          const Text(
+            'Find browser-specific shortcut guidance. An internet connection is required.',
+          ),
+          const SizedBox(height: 8),
+          FocusableActionDetector(
+            focusNode: _focusNode,
+            child: SizedBox(
+              height: 44,
+              child: TextButton.icon(
+                onPressed: _showGuidance,
+                icon: const Icon(Icons.help_outline),
+                label: const Text('Help'),
+              ),
+            ),
+          ),
+        ],
       ),
     ),
   );

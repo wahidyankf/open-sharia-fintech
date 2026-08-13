@@ -2,13 +2,13 @@
 
 Gherkin behavioral specifications and C4 architecture documentation for
 [BeaverNest](../../../README.md) — the walking-skeleton foundation (`beavernest-be`,
-`beavernest-app-web`) proving the engineering harness end-to-end.
+`beavernest-app`) proving the engineering harness end-to-end.
 
 ## Purpose
 
 These specs define the **observable behavior** of the BeaverNest foundation and the C4
 architecture it sits inside. They are the single source of truth for correctness and serve as the
-contract between the `beavernest-be`/`beavernest-app-web` implementations and their consumers.
+contract between the `beavernest-be`/`beavernest-app` implementations and their consumers.
 
 ## Structure
 
@@ -21,7 +21,7 @@ specs/apps/beavernest/
 ├── components/        # C4 L3 — component-level detail (deferred to Phase 6/8)
 └── behavior/           # Cross-cutting Gherkin
     ├── beavernest-be/gherkin/   # health, routing, persistence, development, recovery — 15 feature files
-    └── beavernest-app-web/gherkin/   # workspace, network — 4 feature files
+    └── beavernest-app/gherkin/       # workspace, retry, diagnostics, browser, cache — 6 feature files
 ```
 
 ## Running the Tests

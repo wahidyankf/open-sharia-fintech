@@ -23,12 +23,67 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Workspace status'), findsOneWidget);
+      expect(find.text('Foundation status'), findsOneWidget);
       expect(find.text('Application available'), findsAtLeastNWidgets(1));
       expect(find.text('Database ready'), findsOneWidget);
       expect(find.text('Schema current'), findsOneWidget);
       expect(find.byType(StatusDashboard), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('uses the dark workspace theme when the platform is dark', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.platformBrightnessTestValue =
+        Brightness.dark;
+    addTearDown(
+      tester.binding.platformDispatcher.clearPlatformBrightnessTestValue,
+    );
+
+    await tester.pumpWidget(
+      MainApp(
+        readinessRepository: _ReadinessRepository(_ready),
+        diagnosticsRepository: _DiagnosticsRepository(_diagnostics),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      Theme.of(tester.element(find.byType(StatusDashboard))).brightness,
+      Brightness.dark,
+    );
+    expect(find.text('Application available'), findsAtLeastNWidgets(1));
+  });
+
+  for (final width in const [768.0, 1280.0]) {
+    testWidgets('renders dense, explanatory state cards at $width pixels', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(Size(width, 900));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MainApp(
+          readinessRepository: _ReadinessRepository(_ready),
+          diagnosticsRepository: _DiagnosticsRepository(_diagnostics),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('BeaverNest application is reachable and responding.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Database connection established and healthy.'),
+        findsOneWidget,
+      );
+      expect(find.text('Database schema is up to date.'), findsOneWidget);
+      expect(find.text('Available'), findsOneWidget);
+      expect(find.text('Ready'), findsOneWidget);
+      expect(find.text('Current'), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsAtLeastNWidgets(1));
     });
   }
 }

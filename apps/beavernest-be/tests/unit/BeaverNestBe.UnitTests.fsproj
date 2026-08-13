@@ -27,6 +27,7 @@
     <Compile Include="Tests/ReadinessHandlerTests.fs" />
     <Compile Include="Tests/DiagnosticsHandlerTests.fs" />
     <Compile Include="Tests/NotFoundHandlerTests.fs" />
+    <Compile Include="Tests/HttpMethodSemanticsTests.fs" />
     <Compile Include="Tests/StaticRoutingTests.fs" />
     <Compile Include="Tests/SecurityHeaderTests.fs" />
     <Compile Include="Tests/HttpConfigurationTests.fs" />
@@ -37,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Fixtures/vite/**/*">
+    <Content Include="Fixtures/flutter/**/*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

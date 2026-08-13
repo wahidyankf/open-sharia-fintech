@@ -22,8 +22,11 @@ let webAppWithDiagnostics (readiness: ReadinessPort) (diagnostics: DiagnosticsPo
     handler
     >=> choose
             [ GET >=> route "/api/v1/health" >=> healthHandler
+              HEAD >=> route "/api/v1/health" >=> healthHandler
               GET >=> route "/api/v1/readiness" >=> readinessHandler readiness
+              HEAD >=> route "/api/v1/readiness" >=> readinessHandler readiness
               GET >=> route "/api/v1/diagnostics" >=> diagnosticsHandler diagnostics
+              HEAD >=> route "/api/v1/diagnostics" >=> diagnosticsHandler diagnostics
               routeStartsWith "/api/" >=> notFoundHandler
               routeStartsWith "/assets/" >=> notFoundHandler
               spaFallbackHandler

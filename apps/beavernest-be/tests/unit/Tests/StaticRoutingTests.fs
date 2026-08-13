@@ -14,14 +14,24 @@ let ``missing static asset returns a real 404 instead of the SPA shell`` () =
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode)
     Assert.DoesNotContain("id=\"root\"", body)
 
+// @covers specs/apps/beavernest/behavior/beavernest-app/gherkin/cache-update.feature:Normal navigation receives a fresh hosted Flutter bundle
+[<Fact>]
+let ``unhashed Flutter entrypoint revalidates on every normal navigation`` () =
+    let client = buildStaticClient webApp
+    let response = client.GetAsync("/main.dart.js").Result
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode)
+    Assert.Equal("no-cache", response.Headers.GetValues("Cache-Control") |> Seq.exactlyOne)
+
 // @covers specs/apps/beavernest/behavior/beavernest-be/gherkin/routing/spa-fallback.feature:Unknown client route receives the SPA shell
 [<Fact>]
-let ``unknown dotless client route returns the Vite application shell`` () =
+let ``unknown dotless client route returns the Flutter application shell`` () =
     let client = buildStaticClient webApp
     let response = client.GetAsync("/future-client-route").Result
     let body = response.Content.ReadAsStringAsync().Result
     Assert.Equal(HttpStatusCode.OK, response.StatusCode)
-    Assert.Contains("id=\"root\"", body)
+    Assert.Contains("flutter_bootstrap.js", body)
+    Assert.Equal("no-cache", response.Headers.GetValues("Cache-Control") |> Seq.exactlyOne)
 
 [<Theory>]
 [<InlineData("/api/v1/does-not-exist")>]
@@ -32,4 +42,4 @@ let ``API asset and file-like paths never receive the SPA shell`` (path: string)
     let response = client.GetAsync(path).Result
     let body = response.Content.ReadAsStringAsync().Result
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode)
-    Assert.DoesNotContain("id=\"root\"", body)
+    Assert.DoesNotContain("flutter_bootstrap.js", body)

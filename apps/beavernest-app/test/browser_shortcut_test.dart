@@ -8,31 +8,47 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Escape closes browser guidance and restores trigger focus', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MainApp(
-        readinessRepository: const _ReadinessRepository(_ready),
-        diagnosticsRepository: const _DiagnosticsRepository(_diagnostics),
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Browser Help gives numbered online-only guidance and restores focus',
+    (tester) async {
+      await tester.pumpWidget(
+        MainApp(
+          readinessRepository: const _ReadinessRepository(_ready),
+          diagnosticsRepository: const _DiagnosticsRepository(_diagnostics),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    final trigger = find.widgetWithText(TextButton, 'Browser shortcut');
-    await tester.tap(trigger);
-    await tester.pumpAndSettle();
-    expect(find.text('Browser shortcut'), findsAtLeastNWidgets(1));
-    expect(
-      find.textContaining('This workspace is online only.'),
-      findsOneWidget,
-    );
+      final trigger = find.widgetWithText(TextButton, 'Help');
+      await tester.ensureVisible(trigger);
+      await tester.tap(trigger);
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Browser Help'), findsAtLeastNWidgets(1));
+      expect(
+        find.textContaining('This workspace is online only.'),
+        findsOneWidget,
+      );
+      expect(find.text('1. Open your browser menu.'), findsOneWidget);
+      expect(
+        find.text('2. Choose an available shortcut or install action.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('3. Confirm the browser prompt if one appears.'),
+        findsOneWidget,
+      );
+      expect(find.text('Close Help'), findsOneWidget);
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-    await tester.pumpAndSettle();
-    expect(find.textContaining('This workspace is online only.'), findsNothing);
-    expect(FocusManager.instance.primaryFocus?.debugLabel, 'Browser shortcut');
-  });
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('This workspace is online only.'),
+        findsNothing,
+      );
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'Help');
+    },
+  );
 }
 
 const _ready = WorkspaceReadiness(

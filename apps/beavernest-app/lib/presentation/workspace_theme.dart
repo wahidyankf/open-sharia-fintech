@@ -42,7 +42,7 @@ final class WorkspaceStatusColors
 ThemeData beaverNestTheme() {
   const navy = Color(0xff102a43);
   const river = Color(0xff1f6f78);
-  const meadow = Color(0xff157a4d);
+  const meadow = Color(0xff14784c);
   const ember = Color(0xffb54708);
   const mist = Color(0xffedf5f5);
   const cloud = Color(0xfff8fbfc);
@@ -53,6 +53,15 @@ ThemeData beaverNestTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: cloud,
+    focusColor: navy,
+    fontFamily: 'Roboto',
+    filledButtonTheme: FilledButtonThemeData(
+      style: _focusableActionStyle(navy),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: _focusableActionStyle(navy),
+    ),
+    textButtonTheme: TextButtonThemeData(style: _focusableActionStyle(navy)),
     extensions: const [
       WorkspaceStatusColors(
         available: meadow,
@@ -62,3 +71,43 @@ ThemeData beaverNestTheme() {
     ],
   );
 }
+
+ThemeData beaverNestDarkTheme() {
+  const night = Color(0xff0b1f2a);
+  const ice = Color(0xfff3f7fa);
+  const aqua = Color(0xff5ed3dc);
+  const mint = Color(0xff64d99a);
+  const peach = Color(0xffffb58a);
+  const deepWater = Color(0xff17384a);
+  final scheme = ColorScheme.fromSeed(
+    seedColor: aqua,
+    brightness: Brightness.dark,
+  ).copyWith(surface: night, onSurface: ice, primary: aqua, error: peach);
+  return ThemeData(
+    colorScheme: scheme,
+    scaffoldBackgroundColor: night,
+    focusColor: ice,
+    fontFamily: 'Roboto',
+    filledButtonTheme: FilledButtonThemeData(style: _focusableActionStyle(ice)),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: _focusableActionStyle(ice),
+    ),
+    textButtonTheme: TextButtonThemeData(style: _focusableActionStyle(ice)),
+    extensions: const [
+      WorkspaceStatusColors(
+        available: mint,
+        unavailable: peach,
+        surfaceTint: deepWater,
+      ),
+    ],
+  );
+}
+
+ButtonStyle _focusableActionStyle(Color focusColor) => ButtonStyle(
+  minimumSize: const WidgetStatePropertyAll(Size(44, 44)),
+  side: WidgetStateProperty.resolveWith(
+    (states) => states.contains(WidgetState.focused)
+        ? BorderSide(color: focusColor, width: 3)
+        : null,
+  ),
+);

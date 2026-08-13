@@ -1,6 +1,6 @@
 # beavernest-be
 
-F# / Giraffe / ASP.NET 10 combined BeaverNest runtime. Its production image serves the Vite CSR
+F# / Giraffe / ASP.NET 10 combined BeaverNest runtime. Its production image serves the Flutter Web
 client and same-origin API from port `19300`; local API development remains loopback `19320`.
 
 ## Quick Start

@@ -19,12 +19,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Application unavailable'), findsAtLeastNWidgets(1));
-    await tester.tap(find.widgetWithText(FilledButton, 'Refresh status'));
+    final refreshButton = find.widgetWithText(FilledButton, 'Refresh status');
+    await tester.ensureVisible(refreshButton);
+    await tester.tap(refreshButton);
     await tester.pumpAndSettle();
 
     expect(readiness.calls, 2);
     expect(find.text('Application available'), findsAtLeastNWidgets(1));
-    expect(find.text('Workspace status'), findsOneWidget);
+    expect(find.text('Foundation status'), findsOneWidget);
   });
 }
 

@@ -16,9 +16,12 @@
 - **Node.js**: 24.13.1 (LTS, managed by Volta) · **npm**: 11.10.1 · **Monorepo**: Nx workspace
 - **App naming tiers**: `[domain]-www` = public website at the domain root; `[domain]-app-web` = product
   web client at `app.*`; `[domain]-be` = generic HTTP backend for a product domain.
-- **Current Apps**: Next.js sites (plus one Vite/React app), F# backends, Rust and F# CLIs, a
+- **Current Apps**: Next.js sites, a Flutter Web client, F# backends, Rust and F# CLIs, a
   contract spec, and paired E2E suites — names and ports in the Web Sites table below and in
   [monorepo structure](./docs/reference/monorepo-structure.md).
+- **Naming exception**: `beavernest-app` is the approved `[domain]-app` exception for a future
+  multiplatform product client. It currently targets Flutter Web and must not be renamed to
+  `[domain]-app-web`.
 
 Polyglot demo apps extracted 2026-04-18 to [`ose-primer`](https://github.com/wahidyankf/ose-primer)
 (now authoritative for the polyglot showcase).
@@ -388,7 +391,7 @@ modes) serving agents — not a governance layer.
 | ose-app-web          | [app.oseplatform.com](https://app.oseplatform.com) (TBD) | 3300  | `prod-ose-app-web` (TBD)    |
 | ose-be               | api.oseplatform.com (F# / Giraffe / ASP.NET 10)          | 8302  | —                           |
 | organiclever-be      | (F# / Giraffe / ASP.NET 10, Kubernetes)                  | 8202  | —                           |
-| beavernest-app-web   | TBD (Vite/React, same-origin dev port 19310)             | 19310 | —                           |
+| beavernest-app       | TBD (Flutter Web, same-origin combined runtime)          | 19300 | —                           |
 | beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
 
 Each app README at `apps/[app-name]/README.md` covers framework, deployment, E2E tests, and content

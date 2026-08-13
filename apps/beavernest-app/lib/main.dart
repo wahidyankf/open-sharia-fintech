@@ -28,7 +28,11 @@ class MainApp extends StatelessWidget {
     final readiness = readinessRepository ?? HttpReadinessRepository();
     final diagnostics = diagnosticsRepository ?? HttpDiagnosticsRepository();
     return MaterialApp(
+      title: 'BeaverNest',
+      debugShowCheckedModeBanner: false,
       theme: beaverNestTheme(),
+      darkTheme: beaverNestDarkTheme(),
+      themeMode: ThemeMode.system,
       home: WorkspaceShell(
         loadReadiness: LoadReadiness(readiness),
         refreshReadiness: RefreshReadiness(readiness),
