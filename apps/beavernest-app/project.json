@@ -12,7 +12,11 @@
       },
       "dependsOn": ["beavernest-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml"],
+      "inputs": [
+        "default",
+        "flutter-toolchain",
+        "{workspaceRoot}/specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml"
+      ],
       "outputs": ["{projectRoot}/lib/generated"]
     },
     "build:web": {
@@ -23,7 +27,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/web/**/*"],
+      "inputs": ["default", "flutter-toolchain"],
       "outputs": ["{projectRoot}/build/web"]
     },
     "build": {
@@ -34,7 +38,7 @@
       },
       "dependsOn": ["build:web"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/web/**/*"],
+      "inputs": ["default", "flutter-toolchain"],
       "outputs": ["{projectRoot}/build/web"]
     },
     "analyze": {
@@ -45,7 +49,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/test/**/*", "{projectRoot}/analysis_options.yaml"]
+      "inputs": ["default", "flutter-toolchain"]
     },
     "typecheck": {
       "executor": "nx:run-commands",
@@ -55,7 +59,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/test/**/*", "{projectRoot}/analysis_options.yaml"]
+      "inputs": ["default", "flutter-toolchain"]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -65,7 +69,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/test/**/*", "{projectRoot}/analysis_options.yaml"]
+      "inputs": ["default", "flutter-toolchain"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -75,7 +79,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/test/**/*"]
+      "inputs": ["default", "flutter-toolchain"]
     },
     "test:coverage": {
       "executor": "nx:run-commands",
@@ -85,7 +89,7 @@
       },
       "dependsOn": ["codegen"],
       "cache": true,
-      "inputs": ["{projectRoot}/lib/**/*", "{projectRoot}/test/**/*"],
+      "inputs": ["default", "flutter-toolchain"],
       "outputs": ["{projectRoot}/coverage/lcov.info"]
     },
     "test:integration": {
@@ -138,8 +142,11 @@
         "cwd": "{workspaceRoot}"
       },
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/specs/apps/**/*"]
+      "inputs": ["default", "flutter-toolchain", "{workspaceRoot}/specs/apps/**/*"]
     }
+  },
+  "namedInputs": {
+    "flutter-toolchain": ["{workspaceRoot}/.fvmrc"]
   },
   "tags": ["type:app", "platform:flutter", "lang:dart", "domain:beavernest"],
   "implicitDependencies": ["beavernest-contracts", "rhino-cli"]
