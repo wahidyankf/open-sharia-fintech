@@ -249,7 +249,11 @@ phase._
   - **Status**: Done
   - **Files Changed**: `.github/workflows/pr-quality-gate.yml`
   - **Notes**: Committed as `fce66af` (`fix(ci): provision Flutter quality toolchain`) after the cached diff check passed.
-- [ ] [AI] Commit the P1 architecture move and evidence reconciliation as a conventional documentation commit — acceptance: the replacement PR head records every review finding and resolution.
+- [x] [AI] Commit the P1 architecture move and evidence reconciliation as a conventional documentation commit — acceptance: the replacement PR head records every review finding and resolution.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/{flutter-lcov-paths.md,commits-beaver-flutter-p1.md}`
+  - **Notes**: Committed as `f0eb99a` (`docs(beaver-flutter): reconcile P1 review evidence`) after Markdown and cached-diff checks passed.
 - [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
