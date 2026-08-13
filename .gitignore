@@ -88,8 +88,6 @@ local-tmp/
 # Generated reports
 generated-reports/
 
-
-
 # Cache
 .eslintcache
 .cache/
@@ -188,3 +186,6 @@ actionlint
 
 # Vercel CLI link state — contains orgId/projectId, must not land in this public repo
 .vercel/
+
+# FVM Version Cache
+.fvm/

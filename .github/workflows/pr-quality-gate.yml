@@ -26,6 +26,7 @@ jobs:
       has-ts: ${{ steps.detect.outputs.has-ts }}
       has-dotnet-projects: ${{ steps.detect.outputs.has-dotnet-projects }}
       has-rust: ${{ steps.detect.outputs.has-rust }}
+      has-dart: ${{ steps.detect.outputs.has-dart }}
       has-markdown: ${{ steps.detect.outputs.has-markdown }}
     steps:
       - uses: actions/checkout@v6
@@ -78,6 +79,7 @@ jobs:
               echo "has-ts=true"
               echo "has-dotnet-projects=true"
               echo "has-rust=true"
+              echo "has-dart=true"
               echo "has-markdown=true"
             } >> "$GITHUB_OUTPUT"
             exit 0
@@ -88,6 +90,7 @@ jobs:
             echo "has-ts=false"
             echo "has-dotnet-projects=false"
             echo "has-rust=false"
+            echo "has-dart=false"
             echo "has-markdown=false"
           } >> "$GITHUB_OUTPUT"
 
@@ -98,6 +101,7 @@ jobs:
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
                 lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
                 lang:rust) echo "has-rust=true" >> "$GITHUB_OUTPUT" ;;
+                lang:dart) echo "has-dart=true" >> "$GITHUB_OUTPUT" ;;
               esac
             done
           done
@@ -138,6 +142,12 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
+      # lint-staged invokes the bare `dart format` command for changed Dart
+      # files, so the formatter must be available before it runs.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: .fvmrc
       # format-verify-fantomas (surfaces=["ci"]) and lint-staged's own "*.fs"
       # handler both invoke the bare `fantomas` binary, which only the
       # setup-dotnet composite action installs (dotnet SDK + global fantomas
@@ -272,6 +282,13 @@ jobs:
       # dotnet-SDK-install cost on unrelated CI groups.
       - uses: ./.github/actions/setup-dotnet
         if: matrix.group.group == 'formatting-verify'
+      # format-verify-dart invokes bare `dart format`, and runs only in this
+      # group alongside the similarly scoped Fantomas setup above.
+      - uses: subosito/flutter-action@v2
+        if: matrix.group.group == 'formatting-verify'
+        with:
+          channel: stable
+          flutter-version-file: .fvmrc
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
@@ -303,7 +320,7 @@ jobs:
       - uses: ./.github/actions/setup-node
       # --parallel=2 bounds peak memory when many TS projects are affected at once (e.g. a
       # shared-lib change).
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=2
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=2
 
   dotnet:
     name: .NET quality gate
@@ -318,7 +335,7 @@ jobs:
       - uses: ./.github/actions/setup-dotnet
       # Both affected F# backends invoke OpenAPI Generator during codegen. It initializes a shared
       # downloaded JAR, so serial execution prevents a first-run download race.
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:rust,tag:lang:dart' --parallel=1
 
   rust:
     name: Rust quality gate
@@ -331,11 +348,35 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp'
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart'
       # Coverage was lifted out of the local `test:quick` chain (DD-7) so pre-push stays fast. It
       # still gates merge — `--fail-under-lines 90` lives in the target itself, so a coverage drop
       # turns this job red exactly as it previously turned pre-push red.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp'
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart'
+
+  flutter:
+    name: Flutter quality gate
+    needs: detect
+    if: needs.detect.outputs.has-dart == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      # The action provides the bare `dart` binary. FVM then installs and
+      # selects the Flutter SDK pinned by the repository's .fvmrc.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: .fvmrc
+      - name: Install Flutter Version Management
+        run: |
+          dart pub global activate fvm 4.0.5
+          echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+      - name: Install the repository Flutter SDK
+        run: fvm install
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
 
   compat-min-version:
     name: Minimum version compatibility (all affected)
@@ -361,7 +402,7 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, compat-min-version, specs-structure]
+    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

@@ -130,7 +130,8 @@ agent access restrictions. The Flutter migration must start from that finished s
 with it or absorb a half-applied environment convention.
 
 The predecessor's archive path on `ose-private/main` is necessary but not sufficient evidence of
-completion. Phase 0 must query the archived README for `**Status**: Complete`, reject any unchecked
+completion. Phase 0 must query the archived README for a recognized terminal status
+(`**Status**: Done`, `**Status**: Complete`, or `**Status**: Completed`), reject any unchecked
 delivery items, and verify the archive has no
 remaining `plans/in-progress/` counterpart. It must then verify the linked `ose-public` implementation
 PR is merged and that its merge commit is reachable from `origin/main`; the evidence records both
