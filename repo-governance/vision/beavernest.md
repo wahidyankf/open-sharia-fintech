@@ -43,8 +43,8 @@ describe BeaverNest instead.
 ## Current Scope
 
 As of this vision document's writing, BeaverNest is a walking skeleton: an F#/Giraffe backend
-(`beavernest-be`) and a Vite/React client-side-rendered frontend (`beavernest-app-web`) proving the
-engineering harness end-to-end, with no assistant, content-building, or posting capability
+(`beavernest-be`) and a Flutter Web client (`beavernest-app`) proving the engineering harness
+end-to-end, with no assistant, content-building, or posting capability
 implemented yet. Those capabilities are the deferred roadmap this vision points toward, not
 yet-built claims.
 

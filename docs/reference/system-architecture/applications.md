@@ -149,7 +149,7 @@ The platform consists of the following applications across its technology stacks
 #### beavernest-be
 
 - **Purpose**: Combined BeaverNest runtime — same-origin REST API and static host for the
-  Vite CSR client, served from a single container image
+  Flutter Web client, served from a single container image
 - **Technology**: F# + Giraffe + ASP.NET 10 + SQLite
 - **Build Command**: `nx build beavernest-be`
 - **Dev Command**: `nx dev beavernest-be` (loopback dev port 19320)
@@ -157,16 +157,18 @@ The platform consists of the following applications across its technology stacks
 - **Location**: `apps/beavernest-be/`
 - **Features**:
   - Coverlet code coverage enforcement (>=90%)
-  - Production Dockerfile builds both the F# API and the Vite client in one multi-stage image
+  - Production Dockerfile builds both the F# API and the Flutter Web client in one multi-stage image
   - No production branch yet — CI runs on a schedule only; deployment is deferred
 
-#### beavernest-app-web
+#### beavernest-app
 
-- **Purpose**: Vite/React client for BeaverNest, built into `beavernest-be`'s combined image
-- **Technology**: Vite + React 19 + TypeScript
-- **Build Command**: `nx build beavernest-app-web`
-- **Dev Command**: `nx dev beavernest-app-web` (dev port 19310)
-- **Location**: `apps/beavernest-app-web/`
+- **Purpose**: Flutter Web client for BeaverNest, built into `beavernest-be`'s combined image
+- **Technology**: Flutter Web + Dart
+- **Build Command**: `nx build beavernest-app`
+- **Quality Command**: `nx run beavernest-app:test:quick`
+- **Location**: `apps/beavernest-app/`
+- **Runtime**: Uses relative same-origin API routes and is hosted by `beavernest-be`; it has no
+  standalone development server
 
 ### E2E Test Suites (Playwright)
 
@@ -226,13 +228,13 @@ The platform consists of the following applications across its technology stacks
 - **Run Command**: `nx run organiclever-be-e2e:test:e2e`
 - **Location**: `apps/organiclever-be-e2e/`
 
-#### beavernest-app-web-e2e
+#### beavernest-app-e2e
 
-- **Purpose**: Frontend E2E tests for beavernest-app-web UI, run against a disposable
+- **Purpose**: Browser E2E tests for the beavernest-app Flutter Web UI, run against a disposable
   combined-runtime container
 - **Technology**: Playwright
-- **Run Command**: `nx run beavernest-app-web-e2e:test:e2e`
-- **Location**: `apps/beavernest-app-web-e2e/`
+- **Run Command**: `nx run beavernest-app-e2e:test:e2e`
+- **Location**: `apps/beavernest-app-e2e/`
 
 #### beavernest-be-e2e
 

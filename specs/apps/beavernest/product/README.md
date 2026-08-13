@@ -13,9 +13,9 @@ The entire product surface for this phase is:
   (`/api/v1/health` for liveness, `/api/v1/readiness` for database/schema readiness) and a 404
   handler for anything else. The earlier `/api/v1/hello` greeting route is retired — it now returns
   404, verified by its own regression scenario.
-- `beavernest-app-web` — a Vite/React client-side-rendered app that renders a single "Foundation
-  status" panel, polling `beavernest-be`'s readiness endpoint and recovering in place when the
-  network call fails.
+- `beavernest-app` — a Flutter Web client that renders a same-origin Foundation status workspace,
+  refreshes `beavernest-be`'s readiness endpoint in place, and exposes contract-safe diagnostics
+  and online-only browser guidance.
 
 No other route, page, or capability exists yet.
 

@@ -7,7 +7,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter pub run openapi_spec generate --path ../../specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml --destination lib/generated --package_name beavernest_api --force && fvm flutter pub run build_runner build --delete-conflicting-outputs",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter pub run openapi_spec generate --path ../../specs/apps/beavernest/containers/contracts/generated/openapi-bundled.yaml --destination lib/generated --package_name beavernest_api --force && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter pub run build_runner build --delete-conflicting-outputs && CI=true FVM_CACHE_PATH=../../.fvm-cache fvm dart format lib/generated && perl -pi -e 's/[ \\t]+$//' lib/generated/schema/schema.freezed.dart",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["beavernest-contracts:bundle"],
@@ -22,7 +22,7 @@
     "build:web": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter build web",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter build web --csp --wasm --no-web-resources-cdn",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -44,7 +44,7 @@
     "analyze": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter analyze",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter analyze",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -54,7 +54,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter analyze",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter analyze",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -64,7 +64,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter analyze",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter analyze",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -74,7 +74,7 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter test test",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter test test",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -84,7 +84,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter test --coverage && cargo run --release --quiet --manifest-path ../../apps/rhino-cli/Cargo.toml -- test-coverage validate apps/beavernest-app/coverage/lcov.info 80 --exclude 'lib/generated/*/*.dart'",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter test --coverage && cargo run --release --quiet --manifest-path ../../apps/rhino-cli/Cargo.toml -- test-coverage validate apps/beavernest-app/coverage/lcov.info 80 --exclude 'lib/generated/*/*.dart'",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -95,7 +95,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "fvm flutter test integration_test -d chrome",
+        "command": "CI=true FVM_CACHE_PATH=../../.fvm-cache fvm install --skip-pub-get && CI=true FVM_CACHE_PATH=../../.fvm-cache FLUTTER_ROOT=../../.fvm-cache/versions/3.41.5 fvm flutter test integration_test -d chrome",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["codegen"],
@@ -118,10 +118,26 @@
       "cache": true,
       "inputs": ["{workspaceRoot}/specs/apps/**/*"]
     },
+    "specs:behavior:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/beavernest/behavior/beavernest-app/gherkin apps/beavernest-app",
+        "cwd": "{workspaceRoot}"
+      },
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/specs/apps/beavernest/behavior/beavernest-app/gherkin/**/*.feature",
+        "{projectRoot}/lib/**/*.dart",
+        "{projectRoot}/test/**/*.dart"
+      ]
+    },
     "test:specs": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npm exec nx run beavernest-app:specs:structure-validation"],
+        "commands": [
+          "npm exec nx run beavernest-app:specs:structure-validation",
+          "npm exec nx run beavernest-app:specs:behavior:coverage"
+        ],
         "parallel": false,
         "cwd": "{workspaceRoot}"
       },
@@ -136,7 +152,8 @@
           "npm exec nx run beavernest-app:lint",
           "npm exec nx run beavernest-app:test:unit",
           "npm exec nx run beavernest-app:test:coverage",
-          "npm exec nx run beavernest-app:specs:structure-validation"
+          "npm exec nx run beavernest-app:specs:structure-validation",
+          "npm exec nx run beavernest-app:specs:behavior:coverage"
         ],
         "parallel": false,
         "cwd": "{workspaceRoot}"

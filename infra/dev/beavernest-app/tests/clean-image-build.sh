@@ -23,7 +23,8 @@ rsync --archive --delete \
 	--exclude='.next/' \
 	--exclude='coverage/' \
 	--exclude='generated-reports/' \
-	--exclude='apps/beavernest-app-web/src/generated-contracts/' \
+	--exclude='apps/beavernest-app/build/' \
+	--exclude='apps/beavernest-app/.dart_tool/' \
 	--exclude='specs/apps/beavernest/containers/contracts/generated/' \
 	"$beavernest_repository_root/" \
 	"$beavernest_build_root/"

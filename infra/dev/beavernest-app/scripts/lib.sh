@@ -61,7 +61,10 @@ beavernest_validate_directory_mode() {
 	local beavernest_label=$1
 	local beavernest_path=$2
 	local beavernest_mode
-	beavernest_mode=$(stat -f '%Lp' "$beavernest_path" 2>/dev/null || stat -c '%a' "$beavernest_path")
+	if ! beavernest_mode=$(stat -f '%Lp' "$beavernest_path" 2>/dev/null); then
+		beavernest_mode=$(stat -c '%a' "$beavernest_path" 2>/dev/null) ||
+			beavernest_fail "$beavernest_label must have mode 0700" || return 1
+	fi
 	[[ "$beavernest_mode" == 700 ]] || beavernest_fail "$beavernest_label must have mode 0700"
 }
 

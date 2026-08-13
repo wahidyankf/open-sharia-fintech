@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="EnvTierCompositionTests.fs" />
     <Compile Include="HostBootTests.fs" />
     <Compile Include="ReadinessHttpTests.fs" />
     <Compile Include="SqliteMigrationTests.fs" />
@@ -26,6 +27,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="TickSpec" Version="2.0.5" />
   </ItemGroup>
 
   <ItemGroup>

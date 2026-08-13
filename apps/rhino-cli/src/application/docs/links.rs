@@ -38,6 +38,7 @@ const FULL_REPO_SKIP_DIRS: &[&str] = &[
     ".terraform",
     "generated-contracts",
     ".nx",
+    ".fvm-cache",
     ".git",
     "deps",
     "_build",
@@ -186,7 +187,7 @@ fn get_staged_markdown_files(repo_root: &Path) -> std::result::Result<Vec<PathBu
 
 /// Returns all `.md` files in the repository via a full recursive walk, skipping
 /// known noise directories (`node_modules`, `dist`, `target`, `.next`, `coverage`,
-/// `generated-reports`, `local-temp`, `archived`, `apps-labs`, `.git`).
+/// `generated-reports`, `local-temp`, `archived`, `apps-labs`, `.fvm-cache`, `.git`).
 ///
 /// # Errors
 ///
@@ -1122,6 +1123,31 @@ mod tests {
                 .all(|b| !b.source_file.contains("node_modules")),
             "node_modules/ should be skipped by full-repo walk"
         );
+    }
+
+    /// Regression: FVM's local cache is ignored by Git and must not be treated
+    /// as repository documentation by the full-repository link validator.
+    #[test]
+    fn repo_wide_scan_skips_ignored_fvm_cache() {
+        let tmp = TempDir::new().unwrap();
+        fs::create_dir_all(tmp.path().join("docs")).unwrap();
+        fs::write(tmp.path().join("docs/valid.md"), "# Valid\n").unwrap();
+        fs::create_dir_all(tmp.path().join(".fvm-cache/flutter-sdk")).unwrap();
+        fs::write(
+            tmp.path().join(".fvm-cache/flutter-sdk/README.md"),
+            "[bad](missing-cache-file.md)\n",
+        )
+        .unwrap();
+
+        let opts = ScanOptions {
+            repo_root: tmp.path().to_path_buf(),
+            staged_only: false,
+            skip_paths: Vec::new(),
+        };
+        let result = validate_all_links(&opts).unwrap();
+
+        assert_eq!(result.total_files, 1);
+        assert!(result.broken_links.is_empty());
     }
 
     /// (c) A cross-file anchor link `[X](./concepts.md#missing-section)` where

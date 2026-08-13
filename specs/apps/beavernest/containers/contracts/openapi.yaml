@@ -69,6 +69,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /api/v1/diagnostics:
+    get:
+      operationId: getDiagnostics
+      summary: Safe operational diagnostics
+      description: Reports a live, non-persistent operational snapshot without internal details.
+      responses:
+        "200":
+          description: The workspace is ready and the safe snapshot is available.
+          headers:
+            Cache-Control:
+              description: Diagnostic state must not be stored by caches.
+              required: true
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiagnosticsReady"
+        "503":
+          description: The workspace is unavailable; implementation details are intentionally withheld.
+          headers:
+            Cache-Control:
+              description: Diagnostic state must not be stored by caches.
+              required: true
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiagnosticsUnavailable"
+        "404":
+          description: No matching route.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     Health:
@@ -136,6 +174,73 @@ components:
             schema:
               type: string
               description: Fixed unknown schema state.
+              const: unknown
+    DiagnosticsReady:
+      type: object
+      description: Safe live snapshot for a ready workspace.
+      additionalProperties: false
+      required:
+        - status
+        - version
+        - uptimeSeconds
+        - serverTimeUtc
+        - components
+      properties:
+        status:
+          type: string
+          const: ready
+        version:
+          type: string
+          minLength: 1
+          example: 1.0.0
+        uptimeSeconds:
+          type: integer
+          minimum: 0
+          description: Whole elapsed seconds since the service process started, rounded down.
+          example: 42
+        serverTimeUtc:
+          type: string
+          format: date-time
+          description: Current UTC server time in RFC 3339 form.
+          example: 2026-08-13T00:00:00Z
+        components:
+          type: object
+          description: Fixed named readiness component states for a ready snapshot.
+          additionalProperties: false
+          required:
+            - database
+            - schema
+          properties:
+            database:
+              type: string
+              const: ready
+            schema:
+              type: string
+              const: current
+    DiagnosticsUnavailable:
+      type: object
+      description: Safe response when the workspace cannot provide a ready snapshot.
+      additionalProperties: false
+      required:
+        - status
+        - components
+      properties:
+        status:
+          type: string
+          const: unavailable
+        components:
+          type: object
+          description: Fixed named readiness component states without an unavailable cause.
+          additionalProperties: false
+          required:
+            - database
+            - schema
+          properties:
+            database:
+              type: string
+              const: unavailable
+            schema:
+              type: string
               const: unknown
     Error:
       type: object

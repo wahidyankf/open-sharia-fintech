@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/assertions.bash"
 
-rg -Fq 'apps/beavernest-be-e2e/scripts/run-playwright.sh' apps/beavernest-be/scripts/run-e2e.sh
-rg -Fq 'apps/beavernest-app-web-e2e/scripts/run-playwright.sh' apps/beavernest-be/scripts/run-e2e.sh
-! rg -q 'down -v' apps/beavernest-be/scripts/run-e2e.sh
-rg -Fq 'scripts/run-playwright.sh' apps/beavernest-be-e2e/project.json
-rg -Fq 'scripts/run-playwright.sh' apps/beavernest-app-web-e2e/project.json
-! rg -q 'docker compose|run-e2e.sh' apps/beavernest-be-e2e/scripts/run-playwright.sh apps/beavernest-app-web-e2e/scripts/run-playwright.sh
+grep -Fq 'apps/beavernest-be-e2e/scripts/run-playwright.sh' apps/beavernest-be/scripts/run-e2e.sh
+grep -Fq 'apps/beavernest-app-e2e/scripts/run-playwright.sh' apps/beavernest-be/scripts/run-e2e.sh
+assert_no_match grep -q 'down -v' apps/beavernest-be/scripts/run-e2e.sh
+grep -Fq 'scripts/run-playwright.sh' apps/beavernest-be-e2e/project.json
+grep -Fq 'scripts/run-playwright.sh' apps/beavernest-app-e2e/project.json
+assert_no_match grep -Eq 'docker compose|run-e2e.sh' apps/beavernest-be-e2e/scripts/run-playwright.sh apps/beavernest-app-e2e/scripts/run-playwright.sh

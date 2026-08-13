@@ -15,9 +15,22 @@ open BeaverNestBe.Infrastructure.Migrations
 open BeaverNestBe.Infrastructure.Sqlite.Errors
 open BeaverNestBe.Operations.Database
 open BeaverNestBe.Application.ReadinessPort
+open BeaverNestBe.Application.DiagnosticsPort
+
+let private runningVersion () =
+    System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()
 
 let private configureApp readiness (app: IApplicationBuilder) =
-    app.Use(middleware).UseStaticFiles(staticFileOptions).UseGiraffe(webAppWith readiness)
+    let startedAt = System.DateTimeOffset.UtcNow
+
+    let diagnostics =
+        create
+            { Readiness = readiness
+              Clock = fun () -> System.DateTimeOffset.UtcNow
+              Version = runningVersion
+              Uptime = fun () -> System.DateTimeOffset.UtcNow - startedAt }
+
+    app.Use(middleware).UseStaticFiles(staticFileOptions).UseGiraffe(webAppWithDiagnostics readiness diagnostics)
 
 let private configureServices (services: IServiceCollection) = services.AddGiraffe() |> ignore
 

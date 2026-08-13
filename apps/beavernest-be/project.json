@@ -195,5 +195,5 @@
     "specs": ["{workspaceRoot}/specs/apps/beavernest/behavior/beavernest-be/gherkin/**/*.feature"]
   },
   "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:beavernest"],
-  "implicitDependencies": ["beavernest-contracts", "beavernest-app-web", "rhino-cli"]
+  "implicitDependencies": ["beavernest-contracts", "beavernest-app", "rhino-cli"]
 }

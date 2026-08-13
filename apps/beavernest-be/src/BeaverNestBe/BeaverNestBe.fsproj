@@ -25,6 +25,7 @@
     <Compile Include="Domain/HttpConfiguration.fs" />
     <Compile Include="Domain/DatabaseConfiguration.fs" />
     <Compile Include="Domain/Readiness.fs" />
+    <Compile Include="Domain/Diagnostics.fs" />
     <Compile Include="Domain/ErrorBody.fs" />
     <Compile Include="Infrastructure/Sqlite/Errors.fs" />
     <Compile Include="Infrastructure/Sqlite/Connection.fs" />
@@ -32,8 +33,10 @@
     <Compile Include="Infrastructure/EnvTierLoader.fs" />
     <Compile Include="Operations/Database.fs" />
     <Compile Include="Application/ReadinessPort.fs" />
+    <Compile Include="Application/DiagnosticsPort.fs" />
     <Compile Include="Api/HealthHandlers.fs" />
     <Compile Include="Api/ReadinessHandlers.fs" />
+    <Compile Include="Api/DiagnosticsHandlers.fs" />
     <Compile Include="Api/SecurityHeaders.fs" />
     <Compile Include="Api/StaticContent.fs" />
     <!-- Composition root -->
