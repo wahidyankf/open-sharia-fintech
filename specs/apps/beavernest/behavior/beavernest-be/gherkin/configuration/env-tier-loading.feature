@@ -33,3 +33,10 @@ Feature: beavernest-be environment tier loading
     When the process starts with APP_ENV set to that tier
     Then startup does not throw
     And configuration proceeds using whatever the process environment already supplies
+
+  @integration
+  Scenario: beavernest-be loads test-tier configuration before command dispatch
+    Given an isolated test-tier file supplies the required safe backend configuration
+    When the composition root starts with APP_ENV set to "test"
+    Then the file-only test-tier listener accepts a readiness request
+    And test-tier configuration was loaded before database and listener configuration
