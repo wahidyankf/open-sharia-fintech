@@ -198,7 +198,7 @@ jobs:
           git fetch --no-tags origin "$GITHUB_BASE_REF"
           CHANGED=$(git diff --name-only --diff-filter=ACMR "origin/$GITHUB_BASE_REF...HEAD")
           if [ -n "$CHANGED" ]; then
-            printf '%s' "$CHANGED" | tr '\n' '\0' | xargs -0 -r git add --
+            printf '%s' "$CHANGED" | tr '\n' '\0' | xargs -0 -r git add -f --
             npx lint-staged --no-stash
           fi
       - name: Commit formatting to the PR branch
@@ -348,11 +348,13 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-rust
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart'
+      # Rust targets share Cargo's registry and build locks. Keep the target families serial so
+      # the nested test:quick gate cannot contend with standalone checks on CI runners.
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
       # Coverage was lifted out of the local `test:quick` chain (DD-7) so pre-push stays fast. It
       # still gates merge — `--fail-under-lines 90` lives in the target itself, so a coverage drop
       # turns this job red exactly as it previously turned pre-push red.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart'
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
 
   flutter:
     name: Flutter quality gate
@@ -402,7 +404,8 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
+    needs:
+      [build-rhino, format, enumerate, gate, typescript, dotnet, rust, flutter, compat-min-version, specs-structure]
     if: always()
     runs-on: ubuntu-latest
     steps:

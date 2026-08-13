@@ -11,8 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [beaver-flutter](./beaver-flutter/README.md) — Replaces the Vite/React BeaverNest client with a
-  responsive Flutter Web application, establishing a future-ready core and safe diagnostics.
 - [optimize-governance-md](./optimize-governance-md/README.md) — Caps every governance Markdown
   file at 500 words, replaces the byte budget with a word budget, requires annotated `README.md`
   sibling indexes, and adds `when_to_use` frontmatter — across `ose-public` and `ose-private`.

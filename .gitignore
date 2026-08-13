@@ -189,3 +189,4 @@ actionlint
 
 # FVM Version Cache
 .fvm/
+.fvm-cache/

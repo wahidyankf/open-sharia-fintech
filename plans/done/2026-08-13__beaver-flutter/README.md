@@ -1,5 +1,8 @@
 # BeaverNest Flutter Web Client
 
+**Status**: Done
+**Completed**: 2026-08-13
+
 ## Context
 
 [Repo-grounded] `beavernest-app-web` is a Vite/React client that renders a Foundation status panel

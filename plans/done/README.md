@@ -9,6 +9,10 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-13: beaver-flutter](./2026-08-13__beaver-flutter/README.md) — Replaced the BeaverNest
+  Vite/React client with a responsive same-origin Flutter Web client, safe diagnostics, and a
+  non-root combined runtime. Delivered by PRs #182 and #183.
+
 - [2026-08-11: pr-review-rule-convergence](./2026-08-11__pr-review-rule-convergence/README.md) —
   Replaced universal fixed-cycle PR review with behavior-based routing: executable behavior receives
   a maximum seven-cycle, early-clean review loop; static prose uses the named quality workflow.

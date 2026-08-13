@@ -47,6 +47,7 @@ struct GateWorld {
     gate_job_needs_build_rhino: Option<bool>,
     gate_job_block: Option<String>,
     no_npm_group_id: Option<String>,
+    unnamed_npm_ci_is_unguarded: Option<bool>,
     msrv_preinstall_invocations: Option<Vec<String>>,
 }
 
@@ -82,6 +83,7 @@ impl GateWorld {
             gate_job_needs_build_rhino: None,
             gate_job_block: None,
             no_npm_group_id: None,
+            unnamed_npm_ci_is_unguarded: None,
             msrv_preinstall_invocations: None,
         };
         for hook in ["commit-msg", "pre-commit", "pre-push"] {
@@ -3782,11 +3784,49 @@ fn then_no_npm_group_skips_npm_ci(w: &mut GateWorld) {
     let setup_node_action =
         std::fs::read_to_string(repo_root().join(".github/actions/setup-node/action.yml"))
             .expect("read the real .github/actions/setup-node/action.yml");
+    let npm_ci_steps: Vec<String> = action_steps(&setup_node_action)
+        .into_iter()
+        .filter(|step| run_block_from_step(step).is_some_and(|run| has_npm_ci_command(&run)))
+        .collect();
     assert!(
-        setup_node_action.contains("if: inputs.run-npm-ci == 'true'")
-            && setup_node_action.contains("run: npm ci"),
-        "setup-node's npm ci step must be gated on the run-npm-ci input, so a group whose \
-         doctor_tools excludes npm never runs it: {setup_node_action}"
+        !npm_ci_steps.is_empty()
+            && npm_ci_steps
+                .iter()
+                .all(|step| step.contains("if: inputs.run-npm-ci == 'true'")),
+        "every executable npm ci command must belong to a step gated by run-npm-ci, so a group \
+         whose doctor_tools excludes npm never runs it: {npm_ci_steps:?}"
+    );
+}
+
+#[given("the real Rust quality gate")]
+fn given_real_rust_quality_gate(w: &mut GateWorld) {
+    w.gate_job_block = Some(job_block(&pr_quality_gate_workflow(), "rust"));
+}
+
+#[when("its target families execute")]
+fn when_rust_target_families_execute(_w: &mut GateWorld) {}
+
+#[then("every Rust target command serializes Cargo work")]
+fn then_rust_targets_serialize_cargo_work(w: &mut GateWorld) {
+    let rust_job = w
+        .gate_job_block
+        .as_deref()
+        .expect("the real Rust job must be loaded by the Given step");
+    let target_commands: Vec<&str> = rust_job
+        .lines()
+        .filter(|line| line.contains("nx affected -t") || line.contains("nx run-many -t"))
+        .collect();
+    assert_eq!(
+        target_commands.len(),
+        2,
+        "the Rust quality job must retain both its quick/spec and coverage target commands: {target_commands:?}"
+    );
+    assert!(
+        target_commands.iter().all(|command| {
+            (command.contains("--parallel=1") || command.contains("--parallel=false"))
+                && command.contains("--outputStyle=stream")
+        }),
+        "every Rust target command must serialize Cargo work and stream progress: {target_commands:?}"
     );
 }
 
@@ -3910,27 +3950,73 @@ fn then_preinstall_covers_patch_level(w: &mut GateWorld) {
     );
 }
 
-/// Extracts the body of the `run: |` block belonging to the first step whose
-/// `name:` contains `step_name_fragment`, dedented to column zero so it can be
-/// executed directly.
-fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
+/// Extracts the first action step whose `name:` contains `step_name_fragment`.
+fn step_block(action_yaml: &str, step_name_fragment: &str) -> String {
+    action_steps(action_yaml)
+        .into_iter()
+        .find(|step| step.contains("name:") && step.contains(step_name_fragment))
+        .unwrap_or_else(|| panic!("the action must declare a step named like {step_name_fragment}"))
+}
+
+fn action_steps(action_yaml: &str) -> Vec<String> {
     let lines: Vec<&str> = action_yaml.lines().collect();
-    let name_idx = lines
+    let steps_header = lines
         .iter()
-        .position(|line| line.contains("name:") && line.contains(step_name_fragment))
-        .unwrap_or_else(|| {
-            panic!("the action must declare a step named like {step_name_fragment}")
-        });
-    let run_idx = lines[name_idx..]
+        .position(|line| line.trim() == "steps:")
+        .expect("the action must declare a steps block");
+    let steps_indent = lines[steps_header].len() - lines[steps_header].trim_start().len();
+    let item_indent = lines[steps_header + 1..]
         .iter()
-        .position(|line| line.trim_start().starts_with("run: |"))
-        .map_or_else(
-            || panic!("step {step_name_fragment} must carry a `run: |` block"),
-            |offset| name_idx + offset,
-        );
+        .find_map(|line| {
+            let indent = line.len() - line.trim_start().len();
+            (indent > steps_indent && line.trim_start().starts_with("- ")).then_some(indent)
+        })
+        .expect("the action steps block must contain a step");
+    lines[steps_header + 1..]
+        .iter()
+        .enumerate()
+        .filter(|(_, line)| {
+            let indent = line.len() - line.trim_start().len();
+            indent == item_indent && line.trim_start().starts_with("- ")
+        })
+        .map(|(start, _)| {
+            let start = steps_header + 1 + start;
+            let end = lines[start + 1..]
+                .iter()
+                .position(|line| {
+                    let indent = line.len() - line.trim_start().len();
+                    indent == item_indent && line.trim_start().starts_with("- ")
+                })
+                .map_or(lines.len(), |offset| start + 1 + offset);
+            lines[start..end].join("\n")
+        })
+        .collect()
+}
+
+/// Extracts a scalar `run:` command or the body of a `run: |` block belonging
+/// to the first step whose `name:` contains `step_name_fragment`. Block bodies
+/// are dedented to column zero so they can be executed directly.
+fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
+    let step = step_block(action_yaml, step_name_fragment);
+    run_block_from_step(&step)
+        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a `run:` command"))
+}
+
+fn run_block_from_step(step: &str) -> Option<String> {
+    let lines: Vec<&str> = step.lines().collect();
+    let (run_idx, scalar_command) = lines.iter().enumerate().find_map(|(index, line)| {
+        let trimmed = line.trim_start();
+        trimmed
+            .strip_prefix("run: ")
+            .or_else(|| trimmed.strip_prefix("- run: "))
+            .map(|command| (index, command))
+    })?;
+    if scalar_command != "|" {
+        return Some(scalar_command.to_owned());
+    }
     let first_body = lines
         .get(run_idx + 1)
-        .unwrap_or_else(|| panic!("step {step_name_fragment} must carry a non-empty run block"));
+        .unwrap_or_else(|| panic!("step must carry a non-empty run block"));
     let body_indent = first_body.len() - first_body.trim_start().len();
 
     let mut body = String::new();
@@ -3941,7 +4027,41 @@ fn run_block(action_yaml: &str, step_name_fragment: &str) -> String {
         body.push_str(line.get(body_indent..).unwrap_or(""));
         body.push('\n');
     }
-    body
+    Some(body)
+}
+
+fn has_npm_ci_command(run: &str) -> bool {
+    run.lines()
+        .map(str::trim_start)
+        .filter(|line| !line.starts_with('#'))
+        .any(|line| line == "npm ci" || line.starts_with("npm ci "))
+}
+
+#[given("a composite action with an unnamed unguarded npm ci step")]
+fn given_unnamed_unguarded_npm_ci_step(w: &mut GateWorld) {
+    let action = "runs:\n  using: composite\n  steps:\n    - name: guarded install\n      if: inputs.run-npm-ci == 'true'\n      run: npm ci\n    - run: npm ci --ignore-scripts\n";
+    let npm_ci_steps: Vec<String> = action_steps(action)
+        .into_iter()
+        .filter(|step| run_block_from_step(step).is_some_and(|run| has_npm_ci_command(&run)))
+        .collect();
+
+    w.unnamed_npm_ci_is_unguarded = Some(
+        npm_ci_steps.len() == 2
+            && npm_ci_steps
+                .iter()
+                .any(|step| !step.contains("if: inputs.run-npm-ci == 'true'")),
+    );
+}
+
+#[when("its npm ci steps are inspected")]
+fn when_npm_ci_steps_are_inspected(_w: &mut GateWorld) {}
+
+#[then("the unnamed npm ci step is reported unguarded")]
+fn then_unnamed_npm_ci_step_is_reported_unguarded(w: &mut GateWorld) {
+    assert!(
+        w.unnamed_npm_ci_is_unguarded.unwrap_or(false),
+        "unnamed run steps must be discovered and preserve the unguarded npm ci regression"
+    );
 }
 
 #[tokio::main]
