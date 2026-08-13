@@ -290,13 +290,21 @@ phase._
   - **Status**: Done
   - **Files Changed**: `apps/beavernest-app/project.json`
   - **Notes**: The complete pre-push gate passes after the codegen correction, including generated-contract regeneration, Flutter quick/coverage, affected backend checks, formatting, links, and harness validation.
-- [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
+- [x] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/{delivery.md,evidence/ci-beaver-flutter-p1.md,evidence/commits-beaver-flutter-p1.md}`
+  - **Notes**: PR [#182](https://github.com/wahidyankf/ose-public/pull/182) was reviewed clean at `575f2fa585e645906a067000edc51b563e8b774c`; its `pr-quality-gate` and `validate-env` runs passed. Repository policy disallows merge commits, so the approved PR was squash-merged as `188f693ff174a9cc3bda58b2c56cae2027ee6829`.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
 
 ## Phase 2 Branch Handoff
 
-- [ ] [AI] After the P1 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main` in `worktrees/beaver-flutter/` — acceptance: P2 starts from the merged P1 foundation on a fresh delivery branch while reusing the plan's sole worktree.
+- [x] [AI] After the P1 PR merges, run `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main` in `worktrees/beaver-flutter/` — acceptance: P2 starts from the merged P1 foundation on a fresh delivery branch while reusing the plan's sole worktree.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: The sole plan worktree now uses `beaver-flutter-p2`, tracking `origin/main` at the P1 squash merge `188f693ff174a9cc3bda58b2c56cae2027ee6829`.
 
 ## Phase 2: Responsive Flutter Web Atomic Cutover
 
