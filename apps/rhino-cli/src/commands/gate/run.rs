@@ -691,7 +691,13 @@ fn changed_paths_from_base(
     label: &str,
 ) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
-        .args(["diff", "--name-only", base.trim(), "HEAD"])
+        .args([
+            "diff",
+            "--name-only",
+            "--diff-filter=ACMR",
+            base.trim(),
+            "HEAD",
+        ])
         .current_dir(repo_root)
         .output()?;
     if !output.status.success() {
@@ -706,7 +712,7 @@ fn changed_paths_from_base(
 /// Returns paths staged in the Git index at the explicit repository root.
 fn staged_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
-        .args(["diff", "--cached", "--name-only"])
+        .args(["diff", "--cached", "--name-only", "--diff-filter=ACMR"])
         .current_dir(repo_root)
         .env("GIT_DIR", repo_root.join(".git"))
         .env("GIT_CEILING_DIRECTORIES", repo_root)
@@ -1395,6 +1401,84 @@ fn path_gated_run() {
         result.is_ok() && executed,
         "a path-gated gate must run when a trigger path changes; result_ok={}, executed={executed}",
         result.is_ok()
+    );
+}
+
+/// A deleted file can never satisfy a `check`/`mutation` gate (e.g.
+/// `rustfmt --check`) because the path no longer exists on disk — before this
+/// fix, `changed_paths_from_base` and `staged_paths` diffed without
+/// `--diff-filter`, so a gate command received a deleted path as a candidate
+/// and failed with "file does not exist" for reasons unrelated to its own
+/// content.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn affected_file_type_scope_excludes_deleted_paths_from_merge_base_diff() {
+    let repo = tempfile::TempDir::new().unwrap();
+
+    let git = |args: &[&str]| {
+        let status = fixture_git_command(repo.path())
+            .args(args)
+            .env("GIT_AUTHOR_NAME", "Rhino CLI Test")
+            .env("GIT_AUTHOR_EMAIL", "rhino-cli-test@example.invalid")
+            .env("GIT_COMMITTER_NAME", "Rhino CLI Test")
+            .env("GIT_COMMITTER_EMAIL", "rhino-cli-test@example.invalid")
+            .status()
+            .unwrap();
+        assert!(status.success(), "git {args:?} must succeed");
+    };
+
+    git(&["init", "--quiet"]);
+    std::fs::write(repo.path().join("kept.rs"), "fn kept() {}\n").unwrap();
+    std::fs::write(repo.path().join("deleted.rs"), "fn deleted() {}\n").unwrap();
+    std::fs::write(
+        repo.path().join("capture.sh"),
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" >> argv.txt\n",
+    )
+    .unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: capture-affected-rs\n",
+            "    type: check\n",
+            "    command: sh capture.sh\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      ci: { scope: affected-file-type, glob: '*.rs' }\n",
+        ),
+    )
+    .unwrap();
+    git(&["add", "."]);
+    git(&["commit", "--quiet", "-m", "base"]);
+    // `merge_base_paths` diffs against a ref literally named `origin/main`; a
+    // local branch by that name stands in for a real remote-tracking ref.
+    git(&["branch", "origin/main"]);
+
+    std::fs::write(repo.path().join("kept.rs"), "fn kept() { /* changed */ }\n").unwrap();
+    std::fs::remove_file(repo.path().join("deleted.rs")).unwrap();
+    git(&["add", "-A"]);
+    git(&[
+        "commit",
+        "--quiet",
+        "-m",
+        "delete one .rs file, modify another",
+    ]);
+
+    run_at_root(repo.path(), "ci", &mut Vec::new()).expect(
+        "a gate whose affected-file-type candidates include a deleted path must not fail — the \
+         deleted path must never reach the gate command",
+    );
+
+    let argv = std::fs::read_to_string(repo.path().join("argv.txt")).unwrap();
+    assert!(
+        argv.contains("kept.rs"),
+        "the modified file must still be an affected-file-type candidate: {argv:?}"
+    );
+    assert!(
+        !argv.contains("deleted.rs"),
+        "a deleted file must never be passed to a gate command — it cannot be linted, \
+         formatted, or checked because it no longer exists: {argv:?}"
     );
 }
 
