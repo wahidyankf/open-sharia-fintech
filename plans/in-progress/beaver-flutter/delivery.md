@@ -120,6 +120,12 @@ phase._
   - **Files Changed**: `.fvmrc`, `.gitignore`, `apps/beavernest-app/**`, `plans/in-progress/beaver-flutter/evidence/flutter-builder-lock.md`
   - **Notes**: Flutter `3.41.5` is pinned and available through FVM; the scaffold is Web-only and remains unregistered/unroutable. The FVM cache directory is ignored and the selected builder index digest is recorded.
 
+- [x] [AI] Fix the P1 PR quality-gate licensing finding by adding the repository-standard MIT `LICENSE` to `apps/beavernest-app/`; run the relevant license validation — acceptance: the new deployable directory satisfies the repository's mandatory per-directory license convention and PR quality gate.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/LICENSE`
+  - **Notes**: Added the repository-standard MIT text after PR #182's `convention-license` gate reported a missing deployable-directory license. `rhino-bin.sh convention license validate` passes; commit `9d3670b` is pushed.
+
 - [x] [AI] RED: in `apps/beavernest-app/test/generated_contract_test.dart`, write the one generator scenario below and record candidate commands/results in `plans/in-progress/beaver-flutter/evidence/dart-generator-spike.md`; run `fvm flutter test test/generated_contract_test.dart` from `apps/beavernest-app/` — acceptance: the test fails because no selected generator emits the two closed readiness variants.
   - **Date**: 2026-08-13
   - **Status**: Done (expected RED)
@@ -131,6 +137,33 @@ phase._
   - **Status**: Done
   - **Files Changed**: `apps/beavernest-app/{pubspec.yaml,pubspec.lock,build.yaml,lib/generated/**,test/generated_contract_test.dart}`, `plans/in-progress/beaver-flutter/evidence/dart-generator-spike.md`
   - **Notes**: Rejected the too-recent first spike and selected the 60-day-soaked `openapi_spec` 0.15.0. The bundled local contract regenerates Freezed-backed named readiness variants; its exact dependency, CVE, license, and functional review is recorded in the evidence.
+
+- [x] [AI] RED: extend `apps/beavernest-app/test/generated_contract_test.dart` with failing ready, unavailable, same-origin, and closed-payload scenarios — acceptance: the current generated client proves it cannot yet represent the 503 variant, uses a localhost base URL, and accepts invalid contract payloads.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: `npm exec nx run beavernest-app:test:unit` fails before the adapter exists: the missing import and symbols prove the generated client has no application-facing boundary for declared 503, closed-payload validation, or the required relative same-origin route.
+- [x] [AI] GREEN: add the narrow handwritten adapter/configuration around generated models to parse both closed readiness variants, reject extra or invalid values, and use a relative same-origin base URL; run the Flutter contract test — acceptance: generated transport remains reproducible while the application-facing contract is correct.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/api/readiness_client.dart`, `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: The application-facing adapter validates both declared response codes and every closed-object/const invariant before constructing reproducible generated models. It defaults to relative `/api/v1/readiness`; the five contract tests pass through `npm exec nx run beavernest-app:test:unit`.
+- [x] [AI] REFACTOR: remove adapter-test duplication and run `npm exec nx run beavernest-app:test:quick` — acceptance: ready/unavailable parsing and same-origin requests remain regression-proven.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: Shared ready/unavailable payload helpers keep the response-variant scenarios focused. The complete Flutter quick gate passes, including analysis, lint, all five contract tests, 87.76% line coverage, and specs structure validation.
+
+- [x] [AI] RED: inspect the clean-source Docker generator invocation against root `openapitools.json` — acceptance: prove whether the source-only stage receives the repository's pinned OpenAPI generator configuration.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: None
+  - **Notes**: Root metadata pins OpenAPI Generator `7.20.0`, while the frontend stage copied no `openapitools.json`; the prior clean-source build consequently downloaded `7.24.0`. The image was not reproducibly locked.
+- [x] [AI] GREEN: copy the pinned OpenAPI generator configuration into the frontend Docker build stage and run `bash infra/dev/beavernest-app/tests/clean-image-build.sh` — acceptance: source-only contract generation is locked to repository metadata and the production image regression remains green.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/Dockerfile`
+  - **Notes**: The dependency-layer copy now includes root `openapitools.json`. The clean source-only build reports `Download 7.20.0` and completes the image's non-root and curl assertions.
 
 - [x] [AI] REFACTOR: remove generator-test duplication in `apps/beavernest-app/test/generated_contract_test.dart` and run `fvm dart format --output=none --set-exit-if-changed test/generated_contract_test.dart && fvm flutter test test/generated_contract_test.dart` — acceptance: the one generated-client scenario remains green with no handwritten generated models.
   - **Date**: 2026-08-13
@@ -155,6 +188,28 @@ phase._
   - **Status**: Done
   - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`
   - **Notes**: All four required commands pass: the composite quick gate, explicit 100% (zero executable Dart lines in P1) coverage gate, structure validation, and 97/97 harness-binding sync checks. No Flutter route or endpoint is exposed.
+
+- [x] [AI] Revalidate the P1 gate after PR-review fixes: run the Flutter quick and coverage gates, the clean source-only image regression, `npm run validate:sync`, `git diff --check`, and the pre-push gate — acceptance: the app-facing readiness boundary and pinned Docker generator configuration preserve all P1 guarantees.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/api/readiness_client.dart`, `apps/beavernest-app/test/generated_contract_test.dart`, `apps/beavernest-be/Dockerfile`, `plans/in-progress/beaver-flutter/delivery.md`
+  - **Notes**: Flutter quick and coverage pass at 87.76%; the clean image uses OpenAPI Generator 7.20.0; 97/97 harness bindings, `git diff --check`, and the complete pre-push gate pass.
+
+- [x] [AI] Commit the app-facing readiness adapter and its regression test as one conventional code commit — acceptance: the strict 200/503, closed-payload, and same-origin behavior is independently deliverable.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/lib/api/readiness_client.dart`, `apps/beavernest-app/test/generated_contract_test.dart`
+  - **Notes**: Committed as `b241d2d` (`fix(beavernest-app): validate readiness contract responses`) after the cached diff check passed.
+- [x] [AI] Commit the Docker OpenAPI-generator configuration repair as one conventional code commit — acceptance: image reproducibility is independently deliverable.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-be/Dockerfile`
+  - **Notes**: Committed as `84000f4` (`fix(beavernest): pin Docker generator configuration`) after the cached diff check passed.
+- [x] [AI] Update the P1 commit ledger with every P1 delivery commit, then commit the plan-state and evidence updates — acceptance: plan provenance is exact before the PR head is replaced.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `plans/in-progress/beaver-flutter/delivery.md`, `plans/in-progress/beaver-flutter/evidence/commits-beaver-flutter-p1.md`
+  - **Notes**: The ledger lists each completed P1 delivery commit through the contract-adapter and Docker-lock repairs; this documentation commit records the updated ledger and current execution state.
 - [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
