@@ -102,14 +102,29 @@ export async function runFsiOnHost(script: string): Promise<string> {
  */
 export async function bootIsolatedBackendWithBrokenMigration(): Promise<HostCommandResult> {
   const workingDirectory = await mkdtemp(join(tmpdir(), "beavernest-e2e-broken-"));
-  const sourceDirectory = join(workingDirectory, "src");
+  // Preserve the production repository layout: BeaverNestBe.fsproj reaches the
+  // shared loader through ../../../../libs/fsharp-env-loader and generated
+  // contract types through ../../generated-contracts. A flat /src copy makes
+  // those project-relative inputs unavailable to dotnet build.
+  const sourceDirectory = join(workingDirectory, "apps", "beavernest-be", "src", "BeaverNestBe");
+  const generatedContractsDirectory = join(workingDirectory, "apps", "beavernest-be", "generated-contracts");
+  const envLoaderDirectory = join(workingDirectory, "libs", "fsharp-env-loader");
   const dataDirectory = join(workingDirectory, "data");
 
   try {
-    await cp(resolve(repositoryRoot, "apps/beavernest-be/src/BeaverNestBe"), sourceDirectory, {
-      recursive: true,
-      filter: (source) => !/[/\\](bin|obj)([/\\]|$)/.test(source),
-    });
+    await Promise.all([
+      cp(resolve(repositoryRoot, "apps/beavernest-be/src/BeaverNestBe"), sourceDirectory, {
+        recursive: true,
+        filter: (source) => !/[/\\](bin|obj)([/\\]|$)/.test(source),
+      }),
+      cp(resolve(repositoryRoot, "apps/beavernest-be/generated-contracts"), generatedContractsDirectory, {
+        recursive: true,
+      }),
+      cp(resolve(repositoryRoot, "libs/fsharp-env-loader"), envLoaderDirectory, {
+        recursive: true,
+        filter: (source) => !/[/\\](bin|obj)([/\\]|$)/.test(source),
+      }),
+    ]);
     await writeFile(join(sourceDirectory, "Migrations", "999-e2e-broken.sql"), "not valid SQL\n", "utf8");
 
     const fsproj = join(sourceDirectory, "BeaverNestBe.fsproj");
