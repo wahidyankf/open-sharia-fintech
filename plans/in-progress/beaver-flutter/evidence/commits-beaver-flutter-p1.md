@@ -4,8 +4,9 @@
 
 | Commit                                     | Scope                                                                                      |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `0a3f9315da7f9061b6b61a789b783569ab8b6f69` | Source-only backend Docker inputs and isolated broken-migration fixture layout.            |
-| `af2656482d2bd15bd14298d2fb3c259dc7ddb978` | Pinned Flutter foundation, generated local-contract client, Nx targets, and contract test. |
+| `0a3f9315d7ada1e9065af77b14c5c0a933476d93` | Source-only backend Docker inputs and isolated broken-migration fixture layout.            |
+| `af26564824295bd81cd88204a393d3d1c32bde43` | Pinned Flutter foundation, generated local-contract client, Nx targets, and contract test. |
+| `f1e3be0f7f439bcca0b6f4ac8f62da3a1e9364cc` | Plan state, P0/P1 evidence, quality-gate correction, and the initial commit ledger.        |
 
 Each listed commit passed `git diff --cached --check` before commit. The following documentation
 commit records the plan, evidence, quality-gate correction, and this ledger itself.
