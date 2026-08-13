@@ -23,8 +23,8 @@ projects.
 
 Completion is not inferred from a path, check box, or PR description. Before this plan's Phase 0
 begins, its executor must verify that the upstream plan is archived under `ose-private/plans/done/`
-on `main`, absent from `plans/in-progress/`, has a `Complete` README status, and has no unchecked
-delivery items. It must also verify that the
+on `main`, absent from `plans/in-progress/`, has a recognized terminal README status (`Done`,
+`Complete`, or `Completed`), and has no unchecked delivery items. It must also verify that the
 corresponding `ose-public` implementation PR is merged and reachable from `origin/main`; record the
 resolved private archive path, private and public `main` SHAs, and public PR/merge commit in this
 plan's Phase 0 evidence. Only then may this plan create its first delivery branch or alter BeaverNest
