@@ -127,7 +127,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | `harness validate naming`                    | `harness naming validate`                    |
 | `harness validate sync`                      | `harness sync validate`                      |
 | `harness validate claude`                    | `harness claude validate`                    |
-| `harness validate instruction-size`          | `harness instruction-size validate`          |
 | `harness generate bindings`                  | `harness bindings generate`                  |
 | `md validate links`                          | `md links validate`                          |
 | `md validate mermaid`                        | `md mermaid validate`                        |
@@ -135,7 +134,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | `md validate naming`                         | `md naming validate`                         |
 | `md validate frontmatter`                    | `md frontmatter validate`                    |
 | `md validate frontmatter-dates`              | `md frontmatter-dates validate`              |
-| `md validate readme-index`                   | `md readme-index validate`                   |
 | `repo-governance validate vendor`            | `repo-governance vendor validate`            |
 | `repo-governance validate layer-coherence`   | `repo-governance layer-coherence validate`   |
 | `repo-governance validate traceability`      | `repo-governance traceability validate`      |
@@ -144,14 +142,15 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 
 **Cross-domain moves** (domain changes, not just verb position):
 
-| Removed                                | Replaced by                                    |
-| -------------------------------------- | ---------------------------------------------- |
-| `convention validate instruction-size` | `harness instruction-size validate`            |
-| `workflows validate naming`            | `repo-governance workflows naming validate`    |
-| `harness sync opencode`                | `harness bindings generate --harness opencode` |
-| `harness emit amazonq`                 | `harness bindings generate --harness amazonq`  |
-| `convention validate agents-md-size`   | Removed (superseded by `instruction-size`)     |
-| `git pre-commit`                       | Removed (pre-commit steps call tools directly) |
+| Removed                                        | Replaced by                                      |
+| ---------------------------------------------- | ------------------------------------------------ |
+| legacy `convention` per-surface size validator | `governance word-budget validate`                |
+| `workflows validate naming`                    | `repo-governance workflows naming validate`      |
+| `harness sync opencode`                        | `harness bindings generate --harness opencode`   |
+| `harness emit amazonq`                         | `harness bindings generate --harness amazonq`    |
+| `convention validate agents-md-size`           | Removed (superseded by `governance-word-budget`) |
+| `md validate readme-index`                     | `governance readme-index validate`               |
+| `git pre-commit`                               | Removed (pre-commit steps call tools directly)   |
 
 **Stable commands** (already verb-last or single-word noun, unchanged):
 

@@ -72,7 +72,7 @@ infrastructure rather than invent a competing one.
 - **Instruction-File Size Budget Convention** — precedent for thresholds living in `repo-config.yml`
   as the single authority, with agent prose deferring to it rather than restating it. The 40k-vs-30k
   contradiction is what happens when that deference lapses.
-  [budget convention](../../../repo-governance/conventions/structure/instruction-file-size-budget.md)
+  [budget convention](../../../repo-governance/conventions/structure/governance-word-budget.md)
 - **AI Agents Convention** — states "clear responsibilities to avoid overlap with other agents" as a
   principle, but provides no per-path registry to enforce it.
   [ai-agents](../../../repo-governance/development/agents/ai-agents.md)

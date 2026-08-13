@@ -8,8 +8,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::commands::{
-    md_validate_frontmatter, md_validate_frontmatter_dates, md_validate_heading_hierarchy,
-    md_validate_links, md_validate_mermaid, md_validate_naming, md_validate_readme_index,
+    governance_validate_readme_index, md_validate_frontmatter, md_validate_frontmatter_dates,
+    md_validate_heading_hierarchy, md_validate_links, md_validate_mermaid, md_validate_naming,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -122,9 +122,11 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
             },
             output_format,
         ),
-        "readme-index" => md_validate_readme_index::run(
-            &md_validate_readme_index::ReadmeIndexAuditArgs {
+        "readme-index" => governance_validate_readme_index::run(
+            &governance_validate_readme_index::ReadmeIndexAuditArgs {
                 exclude: vec![],
+                paths: vec![],
+                fail_kinds: vec![],
                 positional: vec![],
             },
             output_format,

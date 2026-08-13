@@ -187,10 +187,10 @@
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/**/*.md"]
     },
-    "instruction-size:validation": {
+    "governance-word-budget:validation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness instruction-size validate"
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate"
       },
       "cache": true,
       "inputs": [
@@ -199,6 +199,14 @@
         "{workspaceRoot}/AGENTS.md",
         "{workspaceRoot}/CLAUDE.md"
       ]
+    },
+    "governance-readme-index:validation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/**/*.md"]
     },
     "env:validation": {
       "executor": "nx:run-commands",

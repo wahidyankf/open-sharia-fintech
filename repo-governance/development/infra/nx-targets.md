@@ -158,7 +158,8 @@ operation. This distinguishes governance targets from language-level lifecycle t
 | `naming:workflows-validation`          | Workflow file names match the naming convention                                            |
 | `governance:vendor-audit-validation`   | `repo-governance/` docs contain no vendor-specific content                                 |
 | `cross-vendor:parity-validation`       | Cross-vendor behavioral parity (Phase 0 deterministic invariants)                          |
-| `instruction-size:validation`          | Byte budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |
+| `governance-word-budget:validation`    | Word budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |
+| `governance-readme-index:validation`   | README index/completeness audit (`repo-governance/`, `.claude/agents/`, `.claude/skills/`) |
 | `harness:bindings-validation`          | `.claude/` ↔ `.opencode/` ↔ `.amazonq/` binding parity                                     |
 | `compat:min-version`                   | Minimum Supported Rust Version compatibility                                               |
 

@@ -9,6 +9,7 @@ Commands:
                    etc.)
   convention       Convention validators (emoji, license)
   harness          Harness (agent binding) validators and generators
+  governance       Cross-cutting governance gates (word budget, README index/completeness)
   specs            Spec tree validators and contract codegen helpers
   lang             Language-source correctness checks, nested by language
   repo-config      Repository configuration (`repo-config.yml`) schema-parity validator

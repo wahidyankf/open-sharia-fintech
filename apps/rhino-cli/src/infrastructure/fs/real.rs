@@ -62,6 +62,13 @@ impl Fs for RealFs {
             .map(walkdir::DirEntry::into_path)
             .collect()
     }
+
+    fn write_string(&self, path: &Path, content: &str) -> Result<()> {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(path, content)
+    }
 }
 
 #[cfg(test)]
@@ -110,6 +117,23 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let missing = tmp.path().join("does-not-exist");
         assert!(RealFs.walk_files(&missing, &[]).is_empty());
+    }
+
+    #[test]
+    fn write_string_creates_parent_dirs_and_writes_content() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("sub/dir/README.md");
+        RealFs.write_string(&p, "hello").unwrap();
+        assert_eq!(std::fs::read_to_string(&p).unwrap(), "hello");
+    }
+
+    #[test]
+    fn write_string_overwrites_existing_content() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("a.md");
+        std::fs::write(&p, "old").unwrap();
+        RealFs.write_string(&p, "new").unwrap();
+        assert_eq!(std::fs::read_to_string(&p).unwrap(), "new");
     }
 
     #[test]

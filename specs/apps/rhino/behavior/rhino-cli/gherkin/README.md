@@ -65,6 +65,13 @@ behavior/rhino-cli/gherkin/
 | ------------------------ | ---------------- | --------- |
 | `git-pre-commit.feature` | `git pre-commit` | 1         |
 
+### governance
+
+| File                              | Command(s)                         | Scenarios |
+| --------------------------------- | ---------------------------------- | --------- |
+| `governance-word-budget.feature`  | `governance word-budget validate`  | 6         |
+| `governance-readme-index.feature` | `governance readme-index validate` | 15        |
+
 ### harness
 
 | File                                                  | Command(s)                             | Scenarios |
@@ -74,22 +81,21 @@ behavior/rhino-cli/gherkin/
 | `agents-sync.feature`                                 | `harness sync validate`                | 7         |
 | `agents-validate-claude.feature`                      | `harness claude validate`              | 5         |
 | `agents-validate-naming.feature`                      | `harness naming validate`              | 4         |
-| `repo-governance-agents-md-size.feature`              | `harness instruction-size validate`    | 3         |
-| `repo-governance-instruction-size-governance.feature` | `harness instruction-size validate`    | 5         |
-| `repo-governance-instruction-size-pre-push.feature`   | `harness instruction-size validate`    | 3         |
-| `repo-governance-instruction-size.feature`            | `harness instruction-size validate`    | 6         |
+| `repo-governance-agents-md-size.feature`              | `governance word-budget validate`      | 3         |
+| `repo-governance-instruction-size-governance.feature` | `governance word-budget validate`      | 5         |
+| `repo-governance-instruction-size-pre-push.feature`   | `governance word-budget validate`      | 3         |
+| `repo-governance-instruction-size.feature`            | `governance word-budget validate`      | 6         |
 
 ### md
 
-| File                                         | Command(s)                      | Scenarios |
-| -------------------------------------------- | ------------------------------- | --------- |
-| `docs-validate-frontmatter.feature`          | `md frontmatter validate`       | 5         |
-| `docs-validate-heading-hierarchy.feature`    | `md heading-hierarchy validate` | 4         |
-| `docs-validate-links.feature`                | `md links validate`             | 4         |
-| `docs-validate-mermaid.feature`              | `md mermaid validate`           | 22        |
-| `docs-validate-naming.feature`               | `md naming validate`            | 3         |
-| `repo-governance-frontmatter-audit.feature`  | `md frontmatter-dates validate` | 5         |
-| `repo-governance-readme-index-audit.feature` | `md readme-index validate`      | 4         |
+| File                                        | Command(s)                      | Scenarios |
+| ------------------------------------------- | ------------------------------- | --------- |
+| `docs-validate-frontmatter.feature`         | `md frontmatter validate`       | 5         |
+| `docs-validate-heading-hierarchy.feature`   | `md heading-hierarchy validate` | 4         |
+| `docs-validate-links.feature`               | `md links validate`             | 4         |
+| `docs-validate-mermaid.feature`             | `md mermaid validate`           | 22        |
+| `docs-validate-naming.feature`              | `md naming validate`            | 3         |
+| `repo-governance-frontmatter-audit.feature` | `md frontmatter-dates validate` | 5         |
 
 ### repo-governance
 
@@ -108,21 +114,21 @@ behavior/rhino-cli/gherkin/
 
 ### specs
 
-| File                              | Command(s)                                                                                       | Scenarios |
-| --------------------------------- | ------------------------------------------------------------------------------------------------ | --------- |
-| `behavior-coverage.feature`       | `specs behavior-coverage validate`                                                               | 6         |
-| `domain-coverage.feature`         | `specs behavior-coverage validate` (domain allowlist gate)                                       | 2         |
-| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                                    | 9         |
-| `env-staged-guard.feature`        | `env staged-guard validate`                                                                      | 2         |
-| `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                             | 1         |
-| `harness-bindings.feature`        | `harness bindings validate`                                                                      | 1         |
-| `harness-registry-driven.feature` | `harness naming validate` / `harness instruction-size validate` / `harness duplication validate` | 1         |
-| `specs-audit.feature`             | `specs audit`                                                                                    | 1         |
-| `validate-adoption.feature`       | `specs structure validate` (merged; scenarios exercise `validate_spec_adoption` in-process)      | 4         |
-| `validate-counts.feature`         | `specs counts validate`                                                                          | 4         |
-| `validate-links.feature`          | `md links validate` (composed; standalone `specs validate-links` was deleted)                    | 4         |
-| `validate-tree.feature`           | `specs structure validate` (merged; scenarios exercise `validate_spec_tree` in-process)          | 4         |
-| `worktree-agnostic.feature`       | N/A — internal `find_root_from_worktree` regression (no CLI verb)                                | 1         |
+| File                              | Command(s)                                                                                  | Scenarios |
+| --------------------------------- | ------------------------------------------------------------------------------------------- | --------- |
+| `behavior-coverage.feature`       | `specs behavior-coverage validate`                                                          | 6         |
+| `domain-coverage.feature`         | `specs behavior-coverage validate` (domain allowlist gate)                                  | 2         |
+| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                               | 9         |
+| `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 2         |
+| `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                        | 1         |
+| `harness-bindings.feature`        | `harness bindings validate`                                                                 | 1         |
+| `harness-registry-driven.feature` | `harness naming validate` / `harness duplication validate`                                  | 1         |
+| `specs-audit.feature`             | `specs audit`                                                                               | 1         |
+| `validate-adoption.feature`       | `specs structure validate` (merged; scenarios exercise `validate_spec_adoption` in-process) | 4         |
+| `validate-counts.feature`         | `specs counts validate`                                                                     | 4         |
+| `validate-links.feature`          | `md links validate` (composed; standalone `specs validate-links` was deleted)               | 4         |
+| `validate-tree.feature`           | `specs structure validate` (merged; scenarios exercise `validate_spec_tree` in-process)     | 4         |
+| `worktree-agnostic.feature`       | N/A — internal `find_root_from_worktree` regression (no CLI verb)                           | 1         |
 
 ### system
 

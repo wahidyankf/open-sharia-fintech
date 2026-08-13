@@ -22,6 +22,8 @@ pub mod fs;
 pub mod git;
 /// Glossary validator use case.
 pub mod glossary;
+/// Instruction-word budget and README index/completeness governance gates.
+pub mod governance;
 /// Mermaid validation use cases and extractor port.
 pub mod mermaid;
 /// Agent and workflow naming convention validators.

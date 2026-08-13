@@ -104,14 +104,6 @@
     "args": ["md", "frontmatter-dates", "validate", "--help"]
   },
   {
-    "file": "md-readme-index",
-    "args": ["md", "readme-index", "--help"]
-  },
-  {
-    "file": "md-readme-index-validate",
-    "args": ["md", "readme-index", "validate", "--help"]
-  },
-  {
     "file": "convention-help",
     "args": ["convention", "--help"]
   },
@@ -188,12 +180,24 @@
     "args": ["harness", "bindings", "generate", "--help"]
   },
   {
-    "file": "harness-instruction-size",
-    "args": ["harness", "instruction-size", "--help"]
+    "file": "governance-help",
+    "args": ["governance", "--help"]
   },
   {
-    "file": "harness-instruction-size-validate",
-    "args": ["harness", "instruction-size", "validate", "--help"]
+    "file": "governance-word-budget",
+    "args": ["governance", "word-budget", "--help"]
+  },
+  {
+    "file": "governance-word-budget-validate",
+    "args": ["governance", "word-budget", "validate", "--help"]
+  },
+  {
+    "file": "governance-readme-index",
+    "args": ["governance", "readme-index", "--help"]
+  },
+  {
+    "file": "governance-readme-index-validate",
+    "args": ["governance", "readme-index", "validate", "--help"]
   },
   {
     "file": "specs-help",

@@ -8,7 +8,7 @@
 #   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
 #   coverage         — per-project test-level registry (specs:behavior:coverage + specs:domain:coverage)
 #   specs            — spec-tree structure config (specs:structure-validation)
-#   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
+#   governance-word-budget — per-surface instruction-file word budgets (rhino-cli governance word-budget validate)
 #   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
 #   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
 #   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
@@ -26,7 +26,7 @@ harness:
   #   config      — config file path (source-config tier)
   #   forbid-dir  — directory that must NOT exist (source-config tier)
   #   shadow      — thin-pointer file to check for no-shadowing (native tier)
-  #   instruction — instruction surfaces this harness reads (instruction-size budget)
+  #   instruction — instruction surfaces this harness reads (word budget, per governance-word-budget:)
   #
   # Adding a 12th harness = one entry here; every harness command picks it up automatically.
   - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills, instruction: [CLAUDE.md] }
@@ -205,49 +205,63 @@ specs:
     - organiclever-be
     - ose-be
 
-instruction-size:
+# governance-word-budget: registered here (config-only) at Phase 1 of
+# plans/in-progress/optimize-governance-md — dark-launched, not yet an armed
+# `gates:` entry (Phase 9 arms it). Word count is the raw whole-file
+# split_whitespace() count (tech-docs.md §1.2); see also FR-1.5: no exempt/
+# allow/ignore/waiver/override key is ever permitted in this block, enforced
+# by BudgetConfig's deny_unknown_fields schema.
+governance-word-budget:
   surfaces:
+    - glob: "repo-governance/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".claude/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".cursor/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".codex/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".opencode/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".pi/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".amazonq/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
     - glob: "AGENTS.md"
-      target: 24000
-      warn: 27000
-      fail: 30000
-    - glob: "**/AGENTS.md"
-      target: 24000
-      warn: 27000
-      fail: 30000
+      target: 400
+      warn: 500
+      fail: 500
     - glob: "CLAUDE.md"
-      target: 6000
-      warn: 8000
-      fail: 10000
-    - glob: ".amazonq/rules/*.md"
-      target: 4000
-      warn: 8000
-      fail: 12000
-    - glob: ".windsurf/rules/*.md"
-      target: 6000
-      warn: 9000
-      fail: 12000
-    - glob: ".cursor/rules/*.mdc"
-      target: 4000
-      warn: 8000
-      fail: 12000
-    - glob: ".junie/guidelines.md"
-      target: 6000
-      warn: 8000
-      fail: 10000
-    - glob: ".github/copilot-instructions.md"
-      target: 6000
-      warn: 8000
-      fail: 10000
-    - glob: "CONVENTIONS.md"
-      target: 10000
-      warn: 13000
-      fail: 16000
+      target: 400
+      warn: 500
+      fail: 500
+    # Declared last so the select-then-classify overlap rule
+    # (application::governance::word_budget::check_instruction_sizes) picks
+    # this more-specific surface over the general repo-governance/**/*.md
+    # surface above for every README.md, per FR-1.6/FR-3.15.
+    - glob: "**/README.md"
+      target: 700
+      warn: 900
+      fail: 900
   resolved_tree:
     root: "CLAUDE.md"
-    target: 30000
-    warn: 34000
-    fail: 38000
+    target: 1200
+    warn: 1500
+    fail: 1500
 
 env-contract:
   # Surface registry for rhino-cli env validate (code↔config drift detection).
@@ -920,11 +934,15 @@ gates:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
 
-  - id: md-readme-index
+  - id: governance-readme-index
     type: check
-    command: md readme-index validate
+    command: governance readme-index validate
     kind: rhino-cli
     ci-group: markdown
+    args:
+      fail-kinds:
+        - orphan
+        - ghost
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
@@ -1020,24 +1038,4 @@ gates:
           - CONVENTIONS.md
           - docs/reference/platform-bindings.md
           - repo-governance/
-      ci: { scope: other }
-
-  - id: instruction-size
-    type: check
-    command: harness instruction-size validate
-    kind: rhino-cli
-    ci-group: governance
-    surfaces:
-      pre-push:
-        scope: path-gated
-        trigger:
-          - AGENTS.md
-          - CLAUDE.md
-          - repo-config.yml
-          - .amazonq/rules/
-          - .windsurf/rules/
-          - .cursor/rules/
-          - .junie/guidelines.md
-          - .github/copilot-instructions.md
-          - CONVENTIONS.md
       ci: { scope: other }

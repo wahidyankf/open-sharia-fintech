@@ -62,4 +62,12 @@ pub trait Fs: Send + Sync {
     /// required to be sorted; callers that need a deterministic order sort it
     /// themselves.
     fn walk_files(&self, root: &Path, skip_dirs: &[&str]) -> Vec<PathBuf>;
+
+    /// Writes `content` to the file at `path`, creating any missing parent
+    /// directories and overwriting any existing file at `path` in full.
+    ///
+    /// # Errors
+    /// Returns an error when the parent directories cannot be created or the
+    /// file cannot be written.
+    fn write_string(&self, path: &Path, content: &str) -> std::io::Result<()>;
 }
