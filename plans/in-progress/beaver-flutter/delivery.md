@@ -270,6 +270,22 @@ phase._
   - **Status**: Done
   - **Files Changed**: `apps/beavernest-app/project.json`
   - **Notes**: The resolved-target assertion confirms every cached Flutter command target contains both `default` and `flutter-toolchain`; the full Flutter quick gate passes at 87.76% coverage.
+
+- [x] [AI] RED: reproduce the clean-runner Flutter package-resolution failure with the current codegen command — acceptance: capture why `fvm dart run` cannot resolve Flutter's SDK package set on GitHub Actions.
+  - **Date**: 2026-08-13
+  - **Status**: Done (expected RED)
+  - **Files Changed**: None
+  - **Notes**: Flutter CI run `31659510763` reaches the newly provisioned SDK but `fvm dart run` fails dependency solving because `sky_engine` is absent from that Dart-only resolution context. Local `fvm flutter pub run` proves the complete Flutter package context is available.
+- [x] [AI] GREEN: run code generation through `fvm flutter pub run` and verify the Flutter quick gate — acceptance: codegen uses the same pinned Flutter package context locally and on CI.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/project.json`
+  - **Notes**: Both generator commands now use `fvm flutter pub run`, retaining the app's pinned Flutter package context. The complete Flutter quick gate passes with all five contract tests and 87.76% coverage.
+- [x] [AI] REFACTOR: run the full pre-push gate after the clean-runner codegen correction — acceptance: generated contracts, cache inputs, and all affected quality gates remain green.
+  - **Date**: 2026-08-13
+  - **Status**: Done
+  - **Files Changed**: `apps/beavernest-app/project.json`
+  - **Notes**: The complete pre-push gate passes after the codegen correction, including generated-contract regeneration, Flutter quick/coverage, affected backend checks, formatting, links, and harness validation.
 - [ ] [AI] At the P1 boundary, follow the Delivery-Boundary Integration Protocol for `beaver-flutter-p1` — acceptance: the draft PR is green, behavior-classified, review-clean, and merged before P2 starts.
 
 **Pause Safety:** Safe to stop with an independently merged reproducible, non-routable Flutter foundation and complete visual contract. Resume with `git fetch origin --prune && git switch -c beaver-flutter-p2 origin/main`.
