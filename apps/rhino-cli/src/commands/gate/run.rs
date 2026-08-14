@@ -178,10 +178,13 @@ fn run_at_root_with_only_and_message_file(
         let candidate_scope = candidate_scope(&scope.scope);
         let excludes = gate.args.get("exclude").map_or(&[][..], Vec::as_slice);
         let files = match candidate_scope {
-            CandidateScope::StagedFiles => matching_files(
-                changed_paths.as_deref().unwrap_or_default(),
-                scope,
-                excludes,
+            CandidateScope::StagedFiles => retain_existing_paths(
+                repo_root,
+                matching_files(
+                    changed_paths.as_deref().unwrap_or_default(),
+                    scope,
+                    excludes,
+                ),
             ),
             CandidateScope::TrackedFiles => matching_files(
                 if scope_has_file_patterns(scope) {
@@ -483,6 +486,24 @@ fn matching_files(
     filter_candidates(changed_paths, &patterns, excludes)
 }
 
+/// Drops candidate paths no longer present in the working tree.
+///
+/// `changed_paths` (the source `matching_files` filters from) is
+/// deliberately left unfiltered by Git change-type, because a `path-gated`
+/// gate reads it directly to decide whether *anything* under its trigger
+/// changed — including a deletion (see the `PathGated` branch above, which
+/// never calls this function). A `StagedFiles`-scoped gate command instead
+/// receives file paths to read, lint, or format; a deleted path satisfies
+/// none of those, so it is dropped here, at the one consumption point that
+/// needs it, rather than upstream where doing so would also blind trigger
+/// detection to deletions.
+fn retain_existing_paths(repo_root: &Path, files: Vec<String>) -> Vec<String> {
+    files
+        .into_iter()
+        .filter(|path| repo_root.join(path).exists())
+        .collect()
+}
+
 /// Returns whether a file-scoped gate declares candidate-path patterns.
 fn scope_has_file_patterns(scope: &repo_config::SurfaceScope) -> bool {
     scope.glob.is_some() || !scope.globs.is_empty()
@@ -691,13 +712,7 @@ fn changed_paths_from_base(
     label: &str,
 ) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
-        .args([
-            "diff",
-            "--name-only",
-            "--diff-filter=ACMR",
-            base.trim(),
-            "HEAD",
-        ])
+        .args(["diff", "--name-only", base.trim(), "HEAD"])
         .current_dir(repo_root)
         .output()?;
     if !output.status.success() {
@@ -712,7 +727,7 @@ fn changed_paths_from_base(
 /// Returns paths staged in the Git index at the explicit repository root.
 fn staged_paths(repo_root: &Path) -> Result<Vec<String>, Error> {
     let output = Command::new("git")
-        .args(["diff", "--cached", "--name-only", "--diff-filter=ACMR"])
+        .args(["diff", "--cached", "--name-only"])
         .current_dir(repo_root)
         .env("GIT_DIR", repo_root.join(".git"))
         .env("GIT_CEILING_DIRECTORIES", repo_root)
@@ -1405,11 +1420,15 @@ fn path_gated_run() {
 }
 
 /// A deleted file can never satisfy a `check`/`mutation` gate (e.g.
-/// `rustfmt --check`) because the path no longer exists on disk — before this
-/// fix, `changed_paths_from_base` and `staged_paths` diffed without
-/// `--diff-filter`, so a gate command received a deleted path as a candidate
-/// and failed with "file does not exist" for reasons unrelated to its own
-/// content.
+/// `rustfmt --check`) because the path no longer exists on disk. This test
+/// covers the `ci`-surface path, which resolves candidates via
+/// `merge_base_paths` -> `changed_paths_from_base`. `retain_existing_paths`
+/// filters both this and the `pre-commit`-surface `staged_paths` path (see
+/// `affected_file_type_scope_excludes_deleted_paths_from_staged_diff` below)
+/// at their sole shared consumption point — the `StagedFiles` arm in
+/// `run_at_root_with_only_and_message_file` — rather than in the diff
+/// commands themselves, so `path-gated` gates (which read `changed_paths`
+/// directly) still see deletions; see `path_gated_run_survives_deleted_trigger_path`.
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 #[test]
@@ -1479,6 +1498,145 @@ fn affected_file_type_scope_excludes_deleted_paths_from_merge_base_diff() {
         !argv.contains("deleted.rs"),
         "a deleted file must never be passed to a gate command — it cannot be linted, \
          formatted, or checked because it no longer exists: {argv:?}"
+    );
+}
+
+/// Same defect as
+/// `affected_file_type_scope_excludes_deleted_paths_from_merge_base_diff`,
+/// exercised via `staged_paths` on the `pre-commit` surface instead of
+/// `changed_paths_from_base` on `ci` — a real `pre-commit: { scope:
+/// affected-file-type }` gate (e.g. `rustfmt`) reads staged paths directly
+/// and must never receive a staged deletion.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn affected_file_type_scope_excludes_deleted_paths_from_staged_diff() {
+    let repo = tempfile::TempDir::new().unwrap();
+
+    let git = |args: &[&str]| {
+        let status = fixture_git_command(repo.path())
+            .args(args)
+            .env("GIT_AUTHOR_NAME", "Rhino CLI Test")
+            .env("GIT_AUTHOR_EMAIL", "rhino-cli-test@example.invalid")
+            .env("GIT_COMMITTER_NAME", "Rhino CLI Test")
+            .env("GIT_COMMITTER_EMAIL", "rhino-cli-test@example.invalid")
+            .status()
+            .unwrap();
+        assert!(status.success(), "git {args:?} must succeed");
+    };
+
+    git(&["init", "--quiet"]);
+    std::fs::write(repo.path().join("kept.rs"), "fn kept() {}\n").unwrap();
+    std::fs::write(repo.path().join("deleted.rs"), "fn deleted() {}\n").unwrap();
+    std::fs::write(
+        repo.path().join("capture.sh"),
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" >> argv.txt\n",
+    )
+    .unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: capture-affected-rs\n",
+            "    type: mutation\n",
+            "    command: sh capture.sh\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-commit: { scope: affected-file-type, glob: '*.rs' }\n",
+        ),
+    )
+    .unwrap();
+    git(&["add", "."]);
+    git(&["commit", "--quiet", "-m", "base"]);
+
+    std::fs::write(repo.path().join("kept.rs"), "fn kept() { /* changed */ }\n").unwrap();
+    std::fs::remove_file(repo.path().join("deleted.rs")).unwrap();
+    git(&["add", "-A"]);
+
+    run_at_root(repo.path(), "pre-commit", &mut Vec::new()).expect(
+        "a gate whose affected-file-type candidates include a staged deletion must not fail — \
+         the deleted path must never reach the gate command",
+    );
+
+    let argv = std::fs::read_to_string(repo.path().join("argv.txt")).unwrap();
+    assert!(
+        argv.contains("kept.rs"),
+        "the modified file must still be an affected-file-type candidate: {argv:?}"
+    );
+    assert!(
+        !argv.contains("deleted.rs"),
+        "a staged deletion must never be passed to a gate command — it cannot be linted, \
+         formatted, or checked because it no longer exists: {argv:?}"
+    );
+}
+
+/// Falsifies Architecture cycle-2 Finding 1 against `b555d320b`: filtering
+/// deleted paths must happen only at the `StagedFiles` consumption point, not
+/// at the shared `changed_paths` source — otherwise a `path-gated` gate
+/// (which reads `changed_paths` directly via `trigger_matches`, bypassing
+/// `retain_existing_paths` entirely) would stop firing on a delete-only
+/// change under its trigger directory. This mirrors `path_gated_run` but
+/// deletes the triggering path instead of adding it.
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+#[test]
+fn path_gated_run_survives_deleted_trigger_path() {
+    let repo = tempfile::TempDir::new().unwrap();
+
+    let git = |args: &[&str]| {
+        let status = fixture_git_command(repo.path())
+            .args(args)
+            .env("GIT_AUTHOR_NAME", "Rhino CLI Test")
+            .env("GIT_AUTHOR_EMAIL", "rhino-cli-test@example.invalid")
+            .env("GIT_COMMITTER_NAME", "Rhino CLI Test")
+            .env("GIT_COMMITTER_EMAIL", "rhino-cli-test@example.invalid")
+            .status()
+            .unwrap();
+        assert!(status.success(), "git {args:?} must succeed");
+    };
+
+    git(&["init", "--quiet"]);
+    std::fs::create_dir_all(repo.path().join(".claude/agents")).unwrap();
+    std::fs::write(repo.path().join(".claude/agents/example.md"), "an agent\n").unwrap();
+    std::fs::write(
+        repo.path().join("repo-config.yml"),
+        concat!(
+            "gates:\n",
+            "  - id: path-gated-check\n",
+            "    type: check\n",
+            "    command: touch was-run.txt\n",
+            "    kind: external\n",
+            "    surfaces:\n",
+            "      pre-push:\n",
+            "        scope: path-gated\n",
+            "        trigger:\n",
+            "          - .claude/\n",
+        ),
+    )
+    .unwrap();
+    git(&["add", "."]);
+    git(&["commit", "--quiet", "-m", "base"]);
+    // `merge_base_paths` diffs against a ref literally named `origin/main`; a
+    // local branch by that name stands in for a real remote-tracking ref.
+    git(&["branch", "origin/main"]);
+
+    std::fs::remove_file(repo.path().join(".claude/agents/example.md")).unwrap();
+    git(&["add", "-A"]);
+    git(&[
+        "commit",
+        "--quiet",
+        "-m",
+        "delete the triggering agent file",
+    ]);
+
+    let result = run_at_root(repo.path(), "pre-push", &mut Vec::new());
+    let executed = repo.path().join("was-run.txt").exists();
+    assert!(
+        result.is_ok() && executed,
+        "a path-gated gate must still run when the ONLY change under its trigger directory is a \
+         deletion — deletion-exclusion for check/mutation gates must not blind trigger \
+         detection; result_ok={}, executed={executed}",
+        result.is_ok()
     );
 }
 

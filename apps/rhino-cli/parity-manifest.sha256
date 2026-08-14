@@ -108,7 +108,7 @@ abc10d0efefbfab5dba718cc5d0010d86adfc33fa8ec1191d35841c3625d6918  apps/rhino-cli
 c30bbe0aeabc93d5d50d17749453deb4dcd72314010b4fe98381548e59b3eb6f  apps/rhino-cli/src/commands/gate/emit.rs
 bd80157f5cb43f030d0101e0be9e76d060b23a623a576745bc7179057d3a4590  apps/rhino-cli/src/commands/gate/list.rs
 d500838c85c402bd260502f1a28d489db2ea4e74bc5769f4adf42bb4fc2035b9  apps/rhino-cli/src/commands/gate/mod.rs
-fc807dc8360ea47698b54b3e2e6e8d9039fe53eec50eadd930999a3c0fc7264f  apps/rhino-cli/src/commands/gate/run.rs
+4dde30147e688ef9d7546151427695fd24db40bf1c5196577030af0588d45ed1  apps/rhino-cli/src/commands/gate/run.rs
 70cd5e4416236420d1aef57e703af1f8f5c00a69a3e3fd1fbb3a5534c24fd3e8  apps/rhino-cli/src/commands/gate/validate.rs
 e9c874d47d04b17c2b50a8d3c95dc3a4b287b3ab6cb8861a0d3d7ddd7b0e57e5  apps/rhino-cli/src/commands/git/lockfile.rs
 e15eb24ffe611254491ab849e7acce1ab51996e2a38f04f9bf2f7c5fe447a0a7  apps/rhino-cli/src/commands/git/mod.rs
@@ -587,7 +587,7 @@ d376cab0d09b2168998bb234663a059b58d5d3c9fd3c784b05acc94f55d70116  specs/apps/rhi
 147b55728155da0dfc2e7e10df064bcf879bb0df7ed77d2c2bdd6153330c3169  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-declaration.feature
 70dbf099375e02ba0a19e23f7145308417e43711f3eb7435bd7848395deefd8c  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-emission.feature
 991b36ae431b50e18141880d487ed4cd9380628fb387ccbcbb4dba4dfd052408  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-enumeration.feature
-d6c5e6599e31a31a5eeb6b8c5b94acc74a02fa08a2f27efe30963c0c271c21e0  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
+1ffcdcefcfcb3f05ae2b23f5805c6f9bf08c469f50eea7334152f6b947cac8ea  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-execution.feature
 720632fc23373b94f9fec7612d15d84593ed2e9c696fe0f2cdc6a8a1e9550ef4  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/gate-validation.feature
 56f28b43334cd1fe997eebf78e4c1e436dc4b1ef85c458d3c6d2b322818ec059  specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature
 ea0050aee27166f3a3f74a3a225c0c391e48b681abcd063a26f5931f0d840925  specs/apps/rhino/behavior/rhino-cli/gherkin/git/README.md

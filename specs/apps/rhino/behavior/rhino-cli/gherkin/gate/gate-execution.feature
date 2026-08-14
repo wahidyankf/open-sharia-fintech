@@ -16,6 +16,17 @@ Feature: Gate execution
     When an affected-file-type CI gate runs after main advances
     Then the gate receives the files changed from the supplied base
 
+  Scenario: Affected-file-type gates exclude deleted paths on both CI and pre-commit surfaces
+    Given a changed-path set contains a deleted file alongside a modified file
+    When an affected-file-type gate resolves its candidate files
+    Then the deleted file is excluded because it no longer exists on disk
+    And the modified file is still passed to the gate command
+
+  Scenario: Path-gated gates still fire when a trigger path is only deleted
+    Given a path-gated gate's trigger directory contains only a deleted file
+    When the path-gated gate evaluates its trigger
+    Then the gate still runs because trigger matching is unaffected by on-disk existence
+
   Scenario: External kind resolves a repository-local binary
     Given an external gate command exists only in the repository node_modules bin directory
     When its repository-local external gate runs
