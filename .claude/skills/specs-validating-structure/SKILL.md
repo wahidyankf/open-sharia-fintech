@@ -1,6 +1,6 @@
 ---
 name: specs-validating-structure
-description: Validation methodology for specs/ folders — nine categories covering README/feature-file structural completeness, Gherkin format compliance, cross-folder consistency, C4 diagrams, cross-references, spec-to-implementation alignment, tree-shape compliance, and BDD/DDD/contracts adoption gaps. Used by specs-checker.
+description: Validation methodology for specs/ folders — nine categories covering README/feature-file structural completeness, Gherkin format compliance, cross-folder consistency, C4 diagrams, cross-references, spec-to-implementation alignment, tree-shape compliance, and BDD/DDD/contracts adoption gaps. Used by specs-checker and specs-fixer.
 ---
 
 # Validating Specs Structure
@@ -28,6 +28,12 @@ Shape Compliance (deterministic via `rhino-cli specs validate-tree`), and Adopti
 See [reference/02-drift-detection-and-reporting.md](reference/02-drift-detection-and-reporting.md)
 for the four `nx run rhino-cli:validate:specs-*` deterministic targets, the six-step execution
 pattern, and the full audit report template.
+
+## Fixer Mechanics
+
+See [reference/03-fixer-mechanics.md](reference/03-fixer-mechanics.md) for how `specs-fixer` maps
+each of the nine categories to a fix disposition (auto-fixable / requires review / skip), plus its
+execution pattern, fix report format, safety rules, and changed-file capture.
 
 ## What This Methodology Does NOT Cover
 
