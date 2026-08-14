@@ -11,6 +11,9 @@ execution checklist.
 
 ## Active Plans
 
+- [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
+  for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
+  selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
 - [optimize-governance-md](./optimize-governance-md/README.md) — Caps every governance Markdown
   file at 500 words, replaces the byte budget with a word budget, requires annotated `README.md`
   sibling indexes, and adds `when_to_use` frontmatter — across `ose-public` and `ose-private`.
