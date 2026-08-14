@@ -1,0 +1,46 @@
+---
+title: "Platform Binding Directory Pattern, and Migration Guidance"
+description: The catalog of per-platform binding directories and root instruction files, plus the step-by-step process for refactoring an existing governance file to be vendor-neutral.
+when_to_use: Use when you need the catalog of platform-binding directories, or the step-by-step process for scrubbing vendor terms from an existing governance file.
+category: explanation
+subcategory: conventions
+tags:
+  - conventions
+  - governance
+  - vendor-independence
+  - agents
+  - platform-bindings
+created: 2026-05-02
+---
+
+# Platform Binding Directory Pattern, and Migration Guidance
+
+## Platform Binding Directory Pattern
+
+Each AI coding platform that integrates with this repository has a dedicated binding directory at the repo root:
+
+| Platform       | Binding directory                                          | Root instruction file            | Status   |
+| -------------- | ---------------------------------------------------------- | -------------------------------- | -------- |
+| Claude Code    | `.claude/`                                                 | `CLAUDE.md` (shim → `AGENTS.md`) | Active   |
+| OpenCode       | `.opencode/agents/`                                        | `AGENTS.md` (read natively)      | Active   |
+| Cursor         | `.cursor/agents/` (generated), `.cursor/rules/` (optional) | `AGENTS.md` (read natively)      | Active   |
+| GitHub Copilot | `.github/copilot-instructions.md`                          | `AGENTS.md` (coding-agent mode)  | Reserved |
+| Others         | see `docs/reference/platform-bindings.md`                  | `AGENTS.md`                      | Varies   |
+
+The governance layer refers to these binding directories collectively as "the platform binding" rather than naming specific directories in load-bearing prose.
+
+See [`docs/reference/platform-bindings.md`](../../../../docs/reference/platform-bindings.md) for the full catalog.
+
+## Migration Guidance
+
+To refactor an existing governance file:
+
+1. **Scan**: prefer `rhino-cli repo-governance vendor validate <path>` (it respects all allowlist regions). For ad-hoc grep, use `grep -n -E "Claude Code|OpenCode|Cursor|Windsurf|Codeium|Copilot|Aider|Cline|Devin|Junie|JetBrains|Amazon Q|Antigravity|Pi Coding Agent|pi\.dev|Earendil|Anthropic|OpenAI|xAI|Sonnet|Opus|Haiku|GPT|Gemini|DeepSeek|Qwen|Llama|Mistral|Grok|Skills|\.claude/|\.opencode/|\.cursor/|\.windsurf/|\.continue/|\.clinerules/|\.junie/|\.amazonq/|\.pi/|\.gemini/|\.agent/|\.agents/" <file>` to find all matches.
+2. **Classify each match**:
+   - Load-bearing prose → rewrite using the Vocabulary Map above.
+   - Cross-reference link → rewrite anchor text and link target to neutral equivalent.
+   - Illustrative example → wrap in ` ```binding-example ` fence or move under "Platform Binding Examples" heading.
+   - Inside a genuinely agent-specific section → allowlist via section heading.
+3. **Verify**: re-run the grep; expect zero matches outside allowlisted regions.
+4. **Lint**: `npm run lint:md:fix` then `npm run lint:md`.
+5. **Commit**: one commit per file (or per logical group within a phase).

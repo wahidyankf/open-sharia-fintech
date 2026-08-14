@@ -1,0 +1,121 @@
+---
+title: "Guide Structure Part 4: Diagram Guidance and Authentication Flow"
+description: When to include Mermaid diagrams in a guide, plus the TDD state machine and Basic-Auth/JWT authentication-flow diagrams.
+when_to_use: Use when deciding whether a guide needs a diagram, or building a TDD/authentication-flow diagram.
+category: explanation
+subcategory: conventions
+tags:
+  - convention
+  - tutorial
+  - in-the-field
+  - education
+  - production-ready
+created: 2026-02-04
+---
+
+# Guide Structure Part 4: Diagram Guidance and Authentication Flow
+
+**When to include**:
+
+- Architecture patterns (multi-tier, microservices, event-driven)
+- Data flow across multiple systems
+- State machines or lifecycle diagrams
+- Deployment topologies
+- Integration patterns
+- Authentication/authorization flows
+- Database persistence patterns
+- Containerization architectures
+- CI/CD pipelines
+- Messaging patterns
+
+**When NOT to include**:
+
+- Simple linear processes
+- Single-service patterns
+- Trivial workflows
+
+**Diagram requirements**:
+
+- Use color-blind friendly palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+- Include descriptive labels
+- Focus on production architecture/flow
+- Use appropriate diagram type
+- Show progression from standard library to framework
+
+**Example 1: TDD State Machine**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> Red: Write test
+
+    Red --> Green: Test fails
+    Green --> Refactor: Test passes
+    Refactor --> Red: Tests still pass,<br/>next feature
+
+    note right of Red
+        🔴 RED
+        Write failing test
+        Specify desired behavior
+    end note
+
+    note right of Green
+        🟢 GREEN
+        Write minimum code
+        Make test pass
+    end note
+
+    note right of Refactor
+        ♻️ REFACTOR
+        Improve code quality
+        Keep tests passing
+    end note
+
+    classDef redState fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    classDef greenState fill:#029E73,stroke:#000000,color:#FFFFFF
+    classDef refactorState fill:#0173B2,stroke:#000000,color:#FFFFFF
+
+    class Red redState
+    class Green greenState
+    class Refactor refactorState
+```
+
+**Example 2a: Authentication Flow - Standard Library (Basic Auth)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    A1[Client] -->|Username + Password<br/>Base64 encoded| A2[Server]
+    A2 -->|Validates credentials<br/>every request| A3[Database]
+    A3 -->|User found| A2
+    A2 -->|200 OK + Resource| A1
+
+    style A1 fill:#0173B2,stroke:#000,color:#fff
+    style A2 fill:#0173B2,stroke:#000,color:#fff
+    style A3 fill:#0173B2,stroke:#000,color:#fff
+```
+
+**Limitation**: Database query on every request (high latency, database load).
+
+**Example 2b: Authentication Flow - Framework (JWT)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    B1[Client] -- credentials --> B2[Auth Server]
+    B2 -- validates --> B3[Database]
+    B3 -- user found --> B4[Auth Server: JWT]
+    B4 -- JWT token --> B5[Client: JWT]
+    B5 -- JWT in header --> B6[App Server]
+    B6 -- verify + respond --> B7[Protected Resource]
+
+    style B1 fill:#DE8F05,stroke:#000,color:#fff
+    style B2 fill:#DE8F05,stroke:#000,color:#fff
+    style B3 fill:#DE8F05,stroke:#000,color:#fff
+    style B4 fill:#DE8F05,stroke:#000,color:#fff
+    style B5 fill:#DE8F05,stroke:#000,color:#fff
+    style B6 fill:#DE8F05,stroke:#000,color:#fff
+    style B7 fill:#DE8F05,stroke:#000,color:#fff
+```
+
+**Improvement**: Single database query during login, subsequent requests use cryptographic verification (fast, stateless).

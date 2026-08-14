@@ -1,6 +1,7 @@
 ---
 title: "File Naming Convention"
 description: Standard markdown + GitHub-compatible kebab-case naming for all files
+when_to_use: Use when naming a new file under docs/, repo-governance/, or a similar repository location.
 category: explanation
 subcategory: conventions
 tags:
@@ -83,24 +84,12 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - Filenames explicitly describe content; directory hierarchy explicitly encodes category
 - **[Documentation First](../../principles/content/documentation-first.md)** - Consistent, predictable naming supports discoverability across GitHub web and standard markdown tooling
 
-## App Naming Types
+## Children
 
-Apps in `apps/` follow the `[domain]-[type]` naming convention. The following `[type]` suffixes are
-used in this repository:
-
-| Type suffix | Meaning                                                           | Example                                                          |
-| ----------- | ----------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `www`       | Public website at the domain root (marketing, portfolio, content) | `ose-www`, `ayokoding-www`, `wahidyankf-www`, `organiclever-www` |
-| `app-web`   | Web client at the `app.*` subdomain (the product application UI)  | `organiclever-app-web`, `ose-app-web`                            |
-| `be`        | Generic HTTP backend for a product domain                         | `organiclever-be`, `ose-be`                                      |
-| `cli`       | Command-line tool                                                 | `rhino-cli`, `ayokoding-cli`, `ose-cli`, `crane-cli`             |
-| `e2e`       | End-to-end test suite (Playwright)                                | `ose-www-fe-e2e`, `organiclever-be-e2e`                          |
-
-This type vocabulary ensures that the folder name alone communicates the tier and deployment target
-without ambiguity.
+- [App Naming Types](./file-naming/01-app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
 
 ## Related Documentation
 
 - [Linking Convention](../formatting/linking.md)
-- [Diátaxis Framework](./diataxis-framework.md)
+- [Diátaxis Framework](../structure/diataxis-framework.md)
 - [Conventions Index](../README.md)

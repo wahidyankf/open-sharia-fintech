@@ -23,7 +23,7 @@ This directory is a map, not a replacement for the documents it links to. Start 
 
 - To understand the whole model and how the layers relate, read the [Repository Governance Architecture](./repository-governance-architecture.md).
 - To learn why the project exists, begin with the [Vision](./vision/README.md).
-- To find a rule for writing or organizing documentation, use [Conventions](./conventions/README.md).
+- To find a rule for writing or organizing documentation, use [Conventions](./conventions/README.md) — rules for writing and organizing documentation.
 - To find a software practice, quality gate, or engineering workflow, use [Development](./development/README.md).
 - To run a defined multi-step process, use [Workflows](./workflows/README.md).
 

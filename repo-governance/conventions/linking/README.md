@@ -1,6 +1,7 @@
 ---
 title: "Linking Conventions"
 description: Rules for durable, repository-internal Markdown links
+when_to_use: Use when one repository document needs to link to another and you want the link to keep working in a fresh checkout, not just on a published site.
 category: explanation
 subcategory: conventions
 tags: []
@@ -17,9 +18,7 @@ Linking conventions ensure consistent, maintainable internal references across t
 
 ## Conventions
 
-### [Internal AyoKoding References](./internal-ayokoding-references.md)
-
-Standards for linking between AyoKoding educational content and OSE Platform documentation, including language prefix requirements, absolute path conventions, and cross-repository reference patterns.
+- [Internal AyoKoding Reference Links Convention](./internal-ayokoding-references.md) — Standards for linking from docs/ to apps/ayokoding-www/ content using relative paths instead of public web URLs. Use when linking from docs/ to educational content in apps/ayokoding-www/ and unsure whether to use a relative path or a public URL.
 
 ## Principles Implemented/Respected
 
@@ -29,5 +28,5 @@ Standards for linking between AyoKoding educational content and OSE Platform doc
 
 ## Related Conventions
 
-- [File Naming Convention](../structure/file-naming.md) - Correct file names enable accurate linking
-- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization affects link paths
+- [File Naming Convention](../structure/file-naming.md) — Correct file names enable accurate linking
+- [Diátaxis Framework](../structure/diataxis-framework.md) — Documentation organization affects link paths

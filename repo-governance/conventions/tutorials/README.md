@@ -1,6 +1,7 @@
 ---
 title: "Tutorial Conventions"
 description: Standards for creating learning-oriented tutorial content
+when_to_use: Use when authoring, reviewing, or scoping any tutorial content and need to find the convention for its type (by-concept, by-example, cookbook, in-the-field, etc.).
 category: explanation
 tags:
   - index
@@ -22,22 +23,22 @@ This directory contains standards for tutorial creation, structure, naming, and 
 
 ### Core Tutorial Standards
 
-- [Tutorial Convention](./general.md) - **Universal** standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements. Covers all 7 tutorial types that combine into Full Set Tutorial Package
-- [Tutorial Naming](./naming.md) - **Universal** Full Set Tutorial Package definition (5 mandatory components) and tutorial type standards (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example)
+- [Tutorial Convention](./general.md) — Standards for creating learning-oriented tutorials in open-sharia-enterprise. Use when authoring, reviewing, or scoping any tutorial, or when a type-specific tutorial convention needs the base standards it extends.
+- [Tutorial Naming Convention](./naming.md) — Standardized tutorial naming and depth levels for consistent learning experiences. Use when naming, scoping, or choosing the type of a new tutorial anywhere in the repository.
 
 ### Tutorial Types
 
-- [By Concept Tutorial](./by-concept.md) - Standards for narrative-driven by-concept tutorials (Component 4 of Full Set Tutorial Package) achieving 95% coverage through comprehensive concept explanations
-- [SWE By-Example Tutorial](./swe-by-example.md) - Standards for code-first by-example tutorials (Component 3 of Full Set Tutorial Package - PRIORITY) with 75-85 heavily annotated, self-contained, runnable examples for SWE languages and frameworks. Prioritized for fast learning
-- [Security By-Example Tutorial](./security-by-example.md) - Extends SWE by-example for security domains: tool output, lab scenarios, SIEM queries. Covers Foundations, Red Team, and Blue Team by-example tracks
-- [Scenario By-Example Tutorial](./scenario-by-example.md) - Extends SWE by-example for any domain where examples are annotated documents and decisions rather than code. Covers CISO and governance tracks
-- [Cookbook Tutorial](./cookbook.md) - Standards for problem-focused cookbook tutorials (Component 5 of Full Set Tutorial Package) with 30+ practical, copy-paste ready recipes organized by problem type
-- [In-the-Field Tutorial Convention](./in-the-field.md) - Standards for production-ready implementation guides building on by-example/by-concept foundations with frameworks, libraries, and enterprise patterns
+- [By-Concept Tutorial Convention](./by-concept.md) — Standards for creating comprehensive concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams. Use when authoring, reviewing, or scoping a By-Concept (narrative-driven) tutorial for any language or framework.
+- [By-Example Tutorial Convention](./swe-by-example.md) — Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations. Read before creating or reviewing SWE by-example tutorial content (code-first, 75-85 annotated examples) for any programming language or framework.
+- [Security By-Example Tutorial Convention](./security-by-example.md) — Standards for security-domain by-example tutorials using tool output, lab scenarios, and annotated security artifacts — extends the SWE By-Example Convention. Use when authoring, reviewing, or scoping a security-domain by-example tutorial (Foundations, Red Team, or Blue Team) and need the security-specific adaptations of the SWE By-Example convention.
+- [Scenario By-Example Tutorial Convention](./scenario-by-example.md) — Standards for scenario-domain by-example tutorials using annotated documents, decisions, and governance artifacts — extends the SWE By-Example Convention for any non-code domain. Use when writing or reviewing a non-code, scenario-driven by-example tutorial (security governance, ADRs, legal/compliance, risk) and you need the standard this content must follow.
+- [Cookbook Tutorial Convention](./cookbook.md) — Standards for creating problem-focused cookbook tutorials with practical, copy-paste ready recipes organized by problem type. Use when authoring, reviewing, or scoping a Cookbook (problem-focused recipe) tutorial for any language or framework.
+- [In-the-Field Tutorial Convention](./in-the-field.md) — Standards for creating production-ready implementation guides building on by-example/by-concept foundations with frameworks, libraries, and enterprise patterns. Use when writing, reviewing, or validating an In-the-Field production implementation guide.
 
 ### Programming Language Tutorials
 
-- [Programming Language Content Standard](./programming-language-content.md) - **Universal** Full Set Tutorial Package architecture for programming language education. Defines 5 mandatory components with by-example prioritized first
-- [Programming Language Tutorial Structure](./programming-language-structure.md) - **Universal** directory structure for Full Set Tutorial Package with 5 mandatory components
+- [Programming Language Content Standard](./programming-language-content.md) — Universal content architecture for programming language education on ayokoding-www with mandatory structure, coverage model, and quality benchmarks. Use before creating or reviewing any programming language tutorial content on ayokoding-www, to confirm the mandatory Full Set Tutorial Package structure, coverage levels, and quality benchmarks it must follow.
+- [Programming Language Tutorial Structure Convention](./programming-language-structure.md) — Dual-path tutorial organization pattern for programming language education with by-concept and by-example learning tracks. Use when creating, auditing, or restructuring a programming language's Full Set Tutorial Package directory structure on ayokoding-www.
 
 ## Full Set Tutorial Package
 
@@ -51,9 +52,9 @@ The Full Set Tutorial Package consists of 5 mandatory components:
 
 ## Related Documentation
 
-- [Writing Conventions](../writing/README.md) - Universal content quality standards (foundation)
-- [Structure Conventions](../structure/README.md) - File organization and Diataxis framework
-- [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md) - Step-by-step guide
+- [Writing Conventions](../writing/README.md) — Universal content quality standards (foundation)
+- [Structure Conventions](../structure/README.md) — File organization and Diataxis framework
+- [How to Add a Programming Language](../../../docs/how-to/add-programming-language.md) — Step-by-step guide
 
 ## Principles Implemented/Respected
 

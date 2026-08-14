@@ -1,6 +1,7 @@
 ---
 title: "Workflow Naming Convention"
 description: Single rule for workflow filename structure under repo-governance/workflows
+when_to_use: Read this when naming a new workflow file, or validating an existing workflow filename against the scope/type structure.
 category: explanation
 subcategory: conventions
 tags:
@@ -14,116 +15,10 @@ created: 2026-04-17
 
 Workflows under `repo-governance/workflows/` follow a **single filename rule with no exceptions**, except for reference documentation under `repo-governance/workflows/meta/` (which describes the workflow system rather than being a workflow).
 
-## Why This Rule Exists
+## In This Convention
 
-A uniform, exception-free naming rule gives the repository three concrete guarantees that loose naming cannot:
-
-- **Enforceable by checker**: A single regex suffix check (`-(quality-gate|execution|setup|planning|grooming)$`) decides conformance. No per-workflow judgement, no grandfathered `-validation` holdovers, no "this one is special" carve-outs. `repo-rules-checker` can audit the entire workflow tree in one pass and produce a deterministic result.
-- **Zero-exception discipline**: Exceptions erode conventions. Once one workflow is allowed a bespoke suffix, reviewers lose the ability to reject the next one on principle alone. Holding every workflow to the same structure keeps the rule teachable in one sentence and cheap to enforce forever.
-- **Semantic clarity**: The suffix immediately communicates the workflow's execution model. A reader sees `*-quality-gate` and knows to expect an iterative maker → checker → fixer loop terminating on zero findings; `*-execution` is a single forward procedure; `*-setup` provisions once and exits. No body scan required.
-
-## The Rule
-
-Every workflow filename (basename without the `.md` extension) MUST match the structure:
-
-```text
-<scope>(-<qualifier>)*-<type>
-```
-
-Token definitions:
-
-- **`<scope>`** — Exactly one token from the [Scope Vocabulary](#scope-vocabulary) below, matching the parent directory under `repo-governance/workflows/`. Appears first.
-- **`<qualifier>`** — Zero or more lowercase kebab tokens narrowing the scope. Each qualifier is a single hyphen-separated word or a compound kebab phrase (e.g., `rules`, `by-example`, `software-engineering-separation`). Qualifiers stack in order from broadest to narrowest.
-- **`<type>`** — Exactly one token from the [Type Vocabulary](#type-vocabulary) below. Names the execution model. Appears last.
-
-**No exceptions** (except `meta/` reference docs, below). Every workflow has exactly one scope (first) and exactly one type (last); everything between is qualifier. Filenames that cannot be parsed against this structure are governance violations regardless of history.
-
-Additional filename rules inherit from the [File Naming Convention](./file-naming.md).
-
-## Scope Vocabulary
-
-Workflow scope MUST match its parent directory under `repo-governance/workflows/`. Current scopes:
-
-- **`api`** — Workflows that operate against a live running HTTP API (REST or GraphQL): contract-conformance, auth/authz, pagination, idempotency, and edge-case exploratory testing of a deployed service. Aligned with agent scope `api` (`api-exploratory-tester`).
-- **`ayokoding-web`** — Workflows scoped to the AyoKoding Web application (content quality gates).
-- **`ci`** — Workflows that diagnose, validate, or repair continuous-integration pipelines.
-- **`docs`** — Workflows scoped to the `docs/` tree (Diátaxis content, link integrity, software-engineering separation).
-- **`infra`** — Workflows that provision development environments or infrastructure resources.
-- **`plan`** — Workflows in the plan lifecycle (authoring quality gate, plan execution).
-- **`pr`** — Workflows for the pull-request review lifecycle (maker→fixer review cycles gating the merge for `*-to-pr` delivery modes).
-- **`repo`** — Repository-wide governance workflows (conventions, workflows, cross-reference integrity). Aligned with agent scope `repo` (both use `repo`, not `repository`).
-- **`content`** — Workflows scoped to content processing and transformation. Acts as a directory grouping for a family of content workflows. Workflows within `content/` use a more specific scope prefix in their filename (e.g., `pdf-to-md`) to communicate the exact sub-scope, since the directory name groups related content workflows rather than naming a single scope.
-- **`pdf-to-md`** — Workflows for converting PDF documents to verbatim Markdown and validating conversion fidelity (text completeness, tables, figures, OCR quality). Hosted under the `content/` directory.
-- **`specs`** — Workflows scoped to the `specs/` tree (Gherkin features, OpenAPI contracts, C4 diagrams).
-- **`ui`** — Workflows scoped to UI component quality (tokens, accessibility, responsive design).
-- **`web`** — Workflows that operate against the public web or a live running website: spec-aware exploratory testing, spec-blind heuristic-usability evaluation, and design-aware design-fidelity evaluation of a running site, optionally combined into a fix-planning deliverable. Aligned with agent scope `web` (`web-researcher`, `web-exploratory-tester`, `web-usability-tester`, `web-design-tester`).
-
-New scope tokens MUST be added to this vocabulary first before any workflow is named against them.
-
-## Type Vocabulary
-
-Exactly one of the following tokens MUST appear as the last token of every workflow filename:
-
-| Type           | Semantics                                                                                                                                                                                                                                                                                                                                                                                                 | Example workflows                                            |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `quality-gate` | Iterative maker → checker → fixer loop that terminates on a zero-finding condition (usually two consecutive clean audits)                                                                                                                                                                                                                                                                                 | `ci-quality-gate`, `plan-quality-gate`, `specs-quality-gate` |
-| `execution`    | Executes a defined procedure or plan against inputs; no iterative fix loop; success is defined by the procedure completing                                                                                                                                                                                                                                                                                | `plan-execution`                                             |
-| `setup`        | One-time environment, tooling, or resource provisioning; idempotent on re-run but not iterative in the maker/checker/fixer sense                                                                                                                                                                                                                                                                          | `development-environment-setup`                              |
-| `planning`     | Surveys/analyzes repository or domain state and produces a plan in `plans/` (backlog or in-progress) as its terminal deliverable; a single forward procedure that completes when the validated plan exists and never implements it                                                                                                                                                                        | `repo-dependency-bump-planning`                              |
-| `grooming`     | Recurring sweep/reorganization workflow over already-existing documentation or artifact state (the Scrum "backlog grooming" analogy); does not converge to zero findings (unlike `quality-gate`), does not produce a new plan as terminal deliverable (unlike `planning`), and is not one-time provisioning (unlike `setup`) — it re-sweeps and re-organizes existing docs on a stated cadence or trigger | `plan-ideas-grooming`                                        |
-
-No other type suffixes are permitted. Introducing a new type requires amending this table first.
-
-**Note on composed workflows**: A workflow step can be an agent, a procedure, or another workflow (nested). The type suffix describes the execution model of the workflow as a whole, not the nature of its individual steps. A `quality-gate` workflow may orchestrate sub-workflows internally; it still carries the `quality-gate` suffix because that describes its overall iterative loop-to-zero-findings model.
-
-**Note on `planning` vs `execution`**: A `planning` workflow performs domain analysis to decide WHAT a future plan should contain, then typically delegates the generic plan-authoring lifecycle (grill → research → write → gate → push) to `plan-planning`; its deliverable is a plan document in `plans/`. `plan-planning` is itself a `planning` workflow — the generic plan-authoring lifecycle whose terminal deliverable is a validated plan in `plans/`; domain-specific `planning` workflows run their own survey/analysis and feed that lifecycle. An `execution` workflow, by contrast, runs a fixed defined procedure against inputs and is distinguished by completing that procedure rather than producing a plan as its deliverable.
-
-## Meta reference exception
-
-Files under `repo-governance/workflows/meta/` are **reference documentation about the workflow system itself** (e.g., `execution-modes.md`, `workflow-identifier.md`). They describe how workflows are identified, how they are executed, and which patterns govern them. They are not workflows and therefore are exempt from the type-suffix rule.
-
-This is the **only** exception. Every other file under `repo-governance/workflows/` that is not a `README.md` index MUST conform to the rule.
-
-## Applies To
-
-This convention applies to:
-
-- **All `.md` files under `repo-governance/workflows/**/\*.md`\*\* except:
-  - `repo-governance/workflows/README.md` and any per-scope `repo-governance/workflows/<scope>/README.md` index files.
-  - Everything under `repo-governance/workflows/meta/` (reference material).
-
-## Enforcement
-
-`repo-rules-checker` MUST run the following audit command as part of every governance pass:
-
-```bash
-find repo-governance/workflows -name '*.md' -not -name 'README.md' -not -path '*/meta/*' \
-  | sed 's|.*/||; s|\.md$||' \
-  | grep -vE -- '-(quality-gate|execution|setup|planning|grooming)$'
-```
-
-Any non-empty output is a governance violation. Each line printed is a workflow filename whose suffix does not match the Type Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass.
-
-The `rhino-cli repo-governance workflows naming validate` subcommand wraps this check plus a frontmatter `name:` field consistency check and is wired into Husky pre-push and the CI quality gate.
-
-## Examples
-
-Current workflows, grouped by type, all conforming to the rule:
-
-- **`quality-gate`** — `plan-quality-gate` (scope `plan`, type `quality-gate`), `repo-rules-quality-gate` (scope `repo`, qualifier `rules`, type `quality-gate`), `specs-quality-gate` (scope `specs`, type `quality-gate`), `docs-quality-gate` (scope `docs`, type `quality-gate`), `ci-quality-gate` (scope `ci`, type `quality-gate`), `ui-quality-gate` (scope `ui`, type `quality-gate`), `ayokoding-web-swe-by-example-quality-gate` (scope `ayokoding-web`, qualifier `by-example`, type `quality-gate`), `pdf-to-md-quality-gate` (scope `pdf-to-md`, type `quality-gate`, hosted in `content/` directory), `pr-review-quality-gate` (scope `pr`, qualifier `review`, type `quality-gate`)
-- **`execution`** — `plan-execution` (scope `plan`, type `execution`)
-- **`planning`** — `plan-planning` (scope `plan`, type `planning`), `plan-idea-promotion-planning` (scope `plan`, qualifier `idea-promotion`, type `planning`), `repo-dependency-bump-planning` (scope `repo`, qualifier `dependency-bump`, type `planning`), `web-ux-test-fixing-planning` (scope `web`, qualifier `ux`, descriptor `test-fixing`, type `planning`)
-- **`setup`** — `infra-development-environment-setup` would be the fully qualified form; the file is stored as `development-environment-setup.md` in the `infra/` directory, making the scope implicit from directory location. The enforcement command (type-suffix check) passes. New `setup` workflows SHOULD include the scope prefix explicitly (e.g., `infra-something-setup.md`).
-- **`grooming`** — `plan-ideas-grooming` (scope `plan`, type `grooming`)
-
-## Related
-
-- [`repo-governance/workflows/README.md`](../../workflows/README.md) — Operational catalog of workflows.
-- [Agent Naming Convention](./agent-naming.md) — Sibling rule governing `.claude/agents/*.md` and `.opencode/agents/*.md` filenames. Uses aligned scope vocabulary (`repo`, not `repository`).
-- [File Naming Convention](./file-naming.md) — Sibling filename rule for non-workflow files.
-
-## Principles Implemented/Respected
-
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** — The scope and type of every workflow are explicit in its filename; no convention-by-tribal-knowledge.
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** — One rule, one type list, one regex. One documented exception (meta).
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)** — A single-line `find | grep` decides conformance, enabling mechanical enforcement by `repo-rules-checker` and `rhino-cli repo-governance workflows naming validate`.
+- [Why This Rule Exists and The Rule](./workflow-naming/01-why-this-rule-exists-and-the-rule.md) — rationale plus the exact `<scope>(-<qualifier>)*-<type>` filename structure
+- [Scope Vocabulary](./workflow-naming/02-scope-vocabulary.md) — valid first-segment scope tokens
+- [Type Vocabulary](./workflow-naming/03-type-vocabulary.md) — valid last-segment type tokens and their semantics
+- [Meta Exception, Applies To, Enforcement, and Examples](./workflow-naming/04-meta-exception-applies-to-enforcement-and-examples.md) — the `meta/` exemption, scope of applicability, the enforcement command, and worked examples
+- [Related Documentation and Principles](./workflow-naming/05-related-and-principles.md) — sibling naming conventions and the principles this convention implements

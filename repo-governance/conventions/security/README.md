@@ -1,6 +1,7 @@
 ---
 title: "Security Conventions"
 description: Repository security conventions governing agent behavior and data protection
+when_to_use: Use before a change touches configuration, credentials, or environment files, to find the applicable security rule.
 category: explanation
 subcategory: conventions
 tags:
@@ -21,15 +22,19 @@ the safe path explicit.
 
 ## Conventions
 
-- [Secrets and Env Standards](./secrets-and-env-standards.md) — **Hub doc.** The authoritative
-  reference for naming convention, `.env.example` layout, annotation format, startup validation,
-  `rhino-cli env` toolchain, storage-tier ladder, drift guard (`env-contract:` section in
-  `repo-config.yml`), tiered injection standard (`env-injection:` section in `repo-config.yml`),
-  and `guard-env-file-access` policy.
-- [No Secrets in Committed Files](./no-secrets-in-committed-files.md) — Hard iron rule stub.
-  No system secret may enter any git-tracked file. Full details in the hub doc.
-- [Environment File Access](./env-file-access.md) — `guard-env-file-access` policy stub.
-  AI agents must not directly access `.env*` files except `.env.example`. Full details in the hub doc.
+- [Secrets and Environment-Variable Standards](./secrets-and-env-standards.md) — The authoritative
+  hub for how this repository handles secrets and environment variables — naming convention, layout,
+  annotation format, startup validation, tooling (rhino-cli env family), tiered injection standard
+  (env-injection section in repo-config.yml), storage tiers, and the env-contract drift guard. Use
+  when you need any rule about handling secrets or environment variables in this repository —
+  naming, storage, injection, or agent access.
+- [No Secrets in Committed Files](./no-secrets-in-committed-files.md) — Hard iron rule — no system
+  secret may enter any git-tracked file. Full standards in secrets-and-env-standards.md. Use when
+  checking whether a value is safe to commit to this repository.
+- [Environment File Access Convention](./env-file-access.md) — AI agents must not directly read,
+  write, or edit exactly .env.prod or .env.stag; every other real .env\* file is agent-readable.
+  Full policy in secrets-and-env-standards.md. Use when an AI agent needs to know whether it may
+  directly open a specific .env\* file.
 
 ## Related Documentation
 
