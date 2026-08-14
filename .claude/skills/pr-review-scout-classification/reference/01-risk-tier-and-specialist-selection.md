@@ -17,8 +17,8 @@ security-sensitive path, then select the specialist set accordingly:
   identity, CI/workflow files, `pr-merge-protocol.md`) → **all nine specialists, minus the
   Content-Type Applicability Filter below**.
 
-**Security-sensitive paths force `full` regardless of size** — non-negotiable, per this repo's
-no-secrets iron rule and git-identity guardrail. Compute the tier once per cycle (it is
+**Security-sensitive paths force `full` regardless of size** — non-negotiable, per the no-secrets
+and git-identity rules. Compute the tier once per cycle (it is
 **re-evaluated every cycle**, since the fixer's own commits can change the diff's size or touched
 paths) and record it in the shared-context brief so `pr-review-synthesis-maker` can carry it into
 the Consolidated Review Header it posts.
@@ -26,7 +26,7 @@ the Consolidated Review Header it posts.
 ## Content-Type Applicability Filter (DD-10) — `full` tier only, freshly re-derived every cycle
 
 Two specialists' own charters declare themselves gated on a specific artifact class existing in
-the diff rather than being applicable to any changed file. Skip a specialist from this cycle's
+the diff rather than applying to any changed file. Skip a specialist from this cycle's
 fan-out **only** when its own declared artifact class is verifiably absent from **this cycle's
 current diff** — never from a prior cycle's diff, never cached:
 
@@ -41,13 +41,13 @@ instruction) are never skipped by this filter, regardless of file type** — the
 about intent, tradeoffs, and conventions in _any_ changed content, prose or code alike (empirically
 confirmed: on this plan's own PR #139, a 38-file Markdown-only diff, all seven of these surfaced
 real, high-confidence findings, including a CRITICAL security finding a content-type skip would
-have prevented from ever being raised). **Default to including a specialist, not skipping it,
-whenever applicability is ambiguous** — this filter trims two structurally-gated disciplines only;
+have prevented from being raised). **Default to including a specialist when applicability is
+ambiguous** — this filter trims two structurally-gated disciplines only;
 it is not a general "is this specialist plausibly useful" judgment call.
 
 Because the diff's file-type composition can change between cycles (a fixer's pushed fix might add
-a test file that was absent in cycle 1, for example), this filter is **re-applied from a
-completely fresh reading of the current diff every cycle** — a specialist skipped in cycle 1 is
+a test file absent in cycle 1), this filter is **re-applied from a fresh reading of the current
+diff every cycle** — a specialist skipped in cycle 1 is
 not permanently excluded; re-evaluate it fresh in cycle 2 and cycle 3 exactly as the tier itself
 is re-evaluated fresh each cycle, per the `fresh pr-review-scout-maker(...)` instantiation in the
 workflow's Loop Algorithm.
