@@ -39,7 +39,7 @@ and technical validity (Mermaid syntax, OCR quality).
 
 ## Validation Workflow
 
-See [docs-converting-pdf-to-markdown/reference/01-checking-fidelity.md](../../skills/docs-converting-pdf-to-markdown/reference/01-checking-fidelity.md)
+See [docs-converting-pdf-to-markdown/reference/01-checking-fidelity.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/01-checking-fidelity.md)
 for the complete criticality table, the ten-step workflow (report init through finalization), the
 `crane check-*` command reference (including the single-pass `check-all` aggregator, per-dimension
 fallbacks, and the large-PDF timeout protocol), and the audit report format.
@@ -53,9 +53,9 @@ all apply as written.
 ## Reference Documentation
 
 - `repo-assessing-criticality-confidence` Skill — criticality/confidence system
-- [pdf-to-md-quality-gate workflow](../../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
+- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
 - **Related Agents**: `pdf-to-md-maker.md`, `pdf-to-md-fixer.md`
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

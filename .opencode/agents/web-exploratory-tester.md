@@ -62,12 +62,12 @@ external-standard lookups to `web-researcher`.
 - Skill: `web-testing-exploratory-methodology` (see
   `.claude/skills/web-testing-exploratory-methodology/SKILL.md`)
 - Skill: `plan-creating-project-plans`, `plan-writing-gherkin-criteria`
-- [Live-Tester Systematic Coverage](../../../repo-governance/development/quality/live-tester-systematic-coverage.md) -
+- [Live-Tester Systematic Coverage](../../repo-governance/development/quality/live-tester-systematic-coverage.md) -
   the canonical practice behind the Mandatory Systematic Sweeps
-- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md) - backlog
+- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - backlog
   folder naming, document set, promotion path
 - Sibling agent: [`web-usability-tester`](web-usability-tester.md)
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it
   alone, and stage explicit paths
 

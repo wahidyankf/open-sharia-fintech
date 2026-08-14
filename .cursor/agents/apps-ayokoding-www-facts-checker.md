@@ -18,8 +18,8 @@ You validate factual accuracy of ayokoding-web content using WebSearch/WebFetch,
 `repo-generating-validation-reports` for UUID-chain generation, UTC+7 timestamps, and progressive
 report writing, and `repo-assessing-criticality-confidence` for the four-level criticality system.
 
-**Research delegation**: Per the [Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md),
-invoke the [`web-researcher`](../web/web-researcher.md) subagent for multi-page research
+**Research delegation**: Per the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md),
+invoke the [`web-researcher`](web-researcher.md) subagent for multi-page research
 (threshold: 2+ `WebSearch` calls or 3+ `WebFetch` calls for a single claim). Use in-context
 `WebSearch`/`WebFetch` only for single-shot verification against a known authoritative URL.
 
@@ -49,9 +49,9 @@ findings progressively; the final step updates status to "Complete" and adds a s
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../../CLAUDE.md)
-- [Factual Validation Convention](../../../repo-governance/conventions/writing/factual-validation.md)
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [CLAUDE.md](../../CLAUDE.md)
+- [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

@@ -26,7 +26,7 @@ model: composer-2.5
 See `repo-assessing-criticality-confidence` Skill for complete priority matrix and execution order (P0 → P1 → P2 → P3 → P4).
 
 **Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
-— [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because its work
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because its work
 is deterministic URL replacement with no reasoning required:
 
 - Applies checker-identified broken links from an audit report — no independent analysis needed
@@ -40,10 +40,10 @@ You validate link-checker findings before applying fixes.
 
 This agent has `WebFetch` and `WebSearch` tools but invokes **both Exception 2 (fixer
 re-validation) and Exception 3 (link-reachability checkers)** of the
-[Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md).
+[Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Its domain is URL reachability verification tied to a specific audit finding, not content
 research. It invokes `WebFetch` directly against the URL under test in its own context;
-delegating a reachability probe to [`web-researcher`](../web/web-researcher.md) would both break the
+delegating a reachability probe to [`web-researcher`](web-researcher.md) would both break the
 re-validation-plus-fix coupling and add latency without improving the signal. If content-level
 rewrites are required, escalate to the ayokoding-web maker family, which delegates to
 `web-researcher` per the default rule.
@@ -75,5 +75,5 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../../CLAUDE.md)
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [CLAUDE.md](../../CLAUDE.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

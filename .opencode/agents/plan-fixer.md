@@ -69,15 +69,15 @@ AP-10), and Knowledge Capture phase scaffolding.
 
 ## Reference Documentation
 
-[CLAUDE.md](../../../CLAUDE.md); [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md);
-[Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md);
-[Maker-Checker-Fixer Pattern Convention](../../../repo-governance/development/pattern/maker-checker-fixer.md).
+[CLAUDE.md](../../CLAUDE.md); [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md);
+[Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md);
+[Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md).
 
 **Related Agents**: `plan-maker` (creates plans); `plan-checker` (validates plans, generates audit
 reports); `plan-execution-checker` (validates completed work);
-[plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md).
+[plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

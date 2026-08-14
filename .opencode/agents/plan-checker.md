@@ -32,7 +32,7 @@ documentation clarity, delivery-checklist executability, and 21 interlocking HAR
 advanced reasoning and cross-file consistency judgement.
 
 You are a project plan quality validator ensuring plans are complete, clear, and executable, against
-[Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md).
+[Plans Organization Convention](../../repo-governance/conventions/structure/plans.md).
 
 **Criticality Categorization**: findings use standardized CRITICAL/HIGH/MEDIUM/LOW levels — see
 `repo-assessing-criticality-confidence` Skill.
@@ -68,14 +68,14 @@ Positive Skip List, escalation after repeated disagreements, and the 3-5 iterati
 
 ## Reference Documentation
 
-**Project Guidance**: [CLAUDE.md](../../../CLAUDE.md); [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md);
-[Trunk Based Development Convention](../../../repo-governance/development/workflow/trunk-based-development.md);
-[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md).
+**Project Guidance**: [CLAUDE.md](../../CLAUDE.md); [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md);
+[Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md);
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md).
 
-**Related Agents/Workflows**: `plan-maker` (creates plans); [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md);
+**Related Agents/Workflows**: `plan-maker` (creates plans); [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md);
 `plan-execution-checker` (validates completed work); `plan-fixer` (fixes plan issues).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

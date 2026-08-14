@@ -80,14 +80,14 @@ memory, since context compaction can lose buffered findings during long validati
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
-[Software Design Reference](../../../docs/explanation/software-engineering/software-design-reference.md).
+**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
+[Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md).
 
 **Related Agents**: `docs-software-engineering-separation-fixer` (fixes prerequisite issues),
 `apps-ayokoding-www-general-checker` (AyoKoding content quality), `docs-link-checker`
 (cross-reference links).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

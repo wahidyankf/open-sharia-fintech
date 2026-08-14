@@ -18,7 +18,7 @@ skills:
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
   recognizing CI-gaming is pattern-matching against a known defect class; CRITICAL findings
   additionally require empirical reproduction, a safety net beyond model tier alone.
 
@@ -33,17 +33,17 @@ behavior.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: CI-gaming (weakened, skipped, or narrowed tests; coverage-gaming) and missing
 regression tests per the
-[Regression Test Mandate](../../../repo-governance/development/quality/regression-test-mandate.md).
+[Regression Test Mandate](../../repo-governance/development/quality/regression-test-mandate.md).
 Flag `CRITICAL`/`HIGH` any change that weakens, skips, or games a check instead of genuinely
 fixing the issue it exists to catch — loosening an assertion, an untracked
 `#[ignore]`/`.skip()`/`xit()`, widening a coverage threshold instead of adding coverage, or
 swallowing an error a test was designed to surface. Per
-[CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md): CI
+[CI Blocker Resolution](../../repo-governance/development/quality/ci-blocker-resolution.md): CI
 blockers get fixed at the root cause, never bypassed.
 
 **Routes elsewhere**: whether the underlying **behavior** is correct → `pr-review-logic-maker` —
@@ -65,13 +65,13 @@ minor test hygiene concern with no gaming risk.
 
 ## Reference Documentation
 
-[CI Blocker Resolution](../../../repo-governance/development/quality/ci-blocker-resolution.md),
-[Regression Test Mandate](../../../repo-governance/development/quality/regression-test-mandate.md),
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
+[CI Blocker Resolution](../../repo-governance/development/quality/ci-blocker-resolution.md),
+[Regression Test Mandate](../../repo-governance/development/quality/regression-test-mandate.md),
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-logic-maker`, `pr-review-synthesis-maker`, `pr-review-fixer`, `ci-checker`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

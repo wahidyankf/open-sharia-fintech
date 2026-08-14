@@ -61,12 +61,12 @@ No `Write`/`Edit` — output is posted through the GitHub Reviews API only.
 
 ## Reference Documentation
 
-[PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)
+[PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)
 (the boundary tie-breaker rule this agent owns),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-scout-maker`, the nine `pr-review-*-maker` specialists, `pr-review-fixer`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

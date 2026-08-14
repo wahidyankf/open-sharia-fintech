@@ -60,31 +60,31 @@ source of truth for these worked examples; do not re-derive them.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../../docs/reference/monorepo-structure.md) - Nx workspace organization
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
+- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Testing Standards** (Authoritative, all under `docs/explanation/software-engineering/automation-testing/tools/playwright/`):
-[README](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md),
-[Test Organization](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/test-organization.md),
-[Selectors](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/selectors.md),
-[Assertions](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/assertions.md),
-[Page Objects](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/page-objects.md),
-[Configuration](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/configuration.md),
-[Best Practices](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/best-practices.md),
-[Anti-Patterns](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/anti-patterns.md),
-[Idioms](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/idioms.md),
-[Debugging](../../../docs/explanation/software-engineering/automation-testing/tools/playwright/debugging.md).
+[README](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md),
+[Test Organization](../../docs/explanation/software-engineering/automation-testing/tools/playwright/test-organization.md),
+[Selectors](../../docs/explanation/software-engineering/automation-testing/tools/playwright/selectors.md),
+[Assertions](../../docs/explanation/software-engineering/automation-testing/tools/playwright/assertions.md),
+[Page Objects](../../docs/explanation/software-engineering/automation-testing/tools/playwright/page-objects.md),
+[Configuration](../../docs/explanation/software-engineering/automation-testing/tools/playwright/configuration.md),
+[Best Practices](../../docs/explanation/software-engineering/automation-testing/tools/playwright/best-practices.md),
+[Anti-Patterns](../../docs/explanation/software-engineering/automation-testing/tools/playwright/anti-patterns.md),
+[Idioms](../../docs/explanation/software-engineering/automation-testing/tools/playwright/idioms.md),
+[Debugging](../../docs/explanation/software-engineering/automation-testing/tools/playwright/debugging.md).
 
 **Related Agents**:
 
 - `swe-typescript-dev` - Develops TypeScript application code
-- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for test coverage
 
 **Related Conventions**:
 
-- [Manual Behavioral Verification](../../../repo-governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Manual Behavioral Verification](../../repo-governance/development/quality/manual-behavioral-verification.md) - Playwright MCP for UI, curl for API
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 
@@ -92,6 +92,6 @@ Before acting, read every skill listed in this file's `skills:` frontmatter. `sw
 holds the 6-step development workflow and Nx/git/pre-commit mechanics — not restated here. TDD for
 E2E means writing the failing `.spec.ts` (or a dated, repeatable manual Playwright-MCP verification
 script) before the feature lands, then Red→Green→Refactor; see
-[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md).
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md).
 `swe-developing-e2e-test-with-playwright` holds the Playwright idioms, page-object patterns, and
 worked examples this agent applies.

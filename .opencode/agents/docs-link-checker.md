@@ -25,7 +25,7 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: `model: haiku` ([benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45))
+**Model Selection Justification**: `model: haiku` ([benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45))
 — pattern-matching link extraction, sequential HTTP validation, and YAML cache read/write need no
 complex reasoning.
 
@@ -35,7 +35,7 @@ functional and accessible.
 ## Web Research Delegation
 
 This agent's `WebFetch`/`WebSearch` use invokes **Exception 3 (link-reachability checkers)** of the
-[Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md):
+[Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md):
 its domain is URL reachability (status codes, redirects), not content research, so it calls
 `WebFetch` directly against the URL under test rather than delegating to `web-researcher`.
 
@@ -45,7 +45,7 @@ This agent MUST use `docs/metadata/external-links-status.yaml` as its ONLY cache
 its `lastFullScan` timestamp on every run (even if zero links changed), and MUST generate an audit
 report in `generated-reports/` every run — regardless of how it is invoked (direct, spawned by
 another agent, or automated). See
-[docs-validating-links/reference/01-cache-and-workflow.md](../../skills/docs-validating-links/reference/01-cache-and-workflow.md)
+[docs-validating-links/reference/01-cache-and-workflow.md](../../.claude/skills/docs-validating-links/reference/01-cache-and-workflow.md)
 for the complete cache contract (fields, per-link 6-month expiry, pruning, two-output pattern),
 discovery/extraction patterns, the validation workflow, common issues, and the manual-fix
 procedure (no automated fixer exists for this agent).
@@ -57,7 +57,7 @@ cached WebFetch, internal via filesystem existence), prune orphaned cache entrie
 and `lastFullScan`, generate the audit report, and recommend fixes for broken links. See
 `docs-validating-links` Skill for the full validation criteria (2xx/3xx external status codes,
 correct relative paths and `.md` extensions per the
-[Linking Convention](../../../repo-governance/conventions/formatting/linking.md)).
+[Linking Convention](../../repo-governance/conventions/formatting/linking.md)).
 
 ## Convergence Safeguards
 
@@ -71,10 +71,10 @@ links outside `docs/`. Some sites (Wikipedia, government/academic) block automat
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
-[Timestamp Format Convention](../../../repo-governance/conventions/formatting/timestamp.md).
+**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
+[Timestamp Format Convention](../../repo-governance/conventions/formatting/timestamp.md).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

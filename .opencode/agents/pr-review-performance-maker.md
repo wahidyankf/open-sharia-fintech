@@ -18,7 +18,7 @@ skills:
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
   recognizing a concrete or likely complexity regression on an already-identified hot path is
   pattern-matching against known complexity classes, not the novel tradeoff-weighing that stays
   with architecture (ruling (e)); this repo has no high-throughput runtime service yet, keeping
@@ -35,7 +35,7 @@ behavior.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: Concrete or likely performance regressions, hot-path changes, algorithmic-complexity
@@ -63,13 +63,13 @@ bounded, moderate cost increase; `LOW` = a minor efficiency opportunity with neg
 
 ## Reference Documentation
 
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker` (owns quality-attribute tradeoffs, ruling (e)),
 `pr-review-governance-maker` (owns documented perf-budget-rule conformance),
 `pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

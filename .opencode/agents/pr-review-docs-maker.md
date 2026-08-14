@@ -18,7 +18,7 @@ skills:
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
   assessing substantive doc completeness/drift/clarity against a PR's linked plan is a bounded
   conformance check, not novel design; mechanical doc-convention conformance already routes to
   governance, and heading-hierarchy/linking/Mermaid are already gated mechanically.
@@ -34,11 +34,11 @@ behavior.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: Substantive documentation quality and completeness — README/docs/
-[Diátaxis](../../../repo-governance/conventions/structure/diataxis-framework.md) fit, doc drift
+[Diátaxis](../../repo-governance/conventions/structure/diataxis-framework.md) fit, doc drift
 versus the code it describes, clarity, and doc alt-text/accessibility.
 
 **Routes elsewhere**: mechanical doc-convention conformance (heading hierarchy, linking, naming)
@@ -59,20 +59,20 @@ gap that would confuse but not actively mislead; `LOW` = minor polish with no ma
 - Stylistic wording preferences with no substantive clarity or completeness impact.
 - Suggesting content that already exists elsewhere in the diff/document — verify absence first.
 - Time-based framing complaints already covered by
-  [No Time Estimates](../../../repo-governance/principles/content/no-time-estimates.md) unless the
+  [No Time Estimates](../../repo-governance/principles/content/no-time-estimates.md) unless the
   diff actually introduces a time estimate.
 
 ## Reference Documentation
 
-[Diátaxis Framework](../../../repo-governance/conventions/structure/diataxis-framework.md),
-[Content Quality Principles](../../../repo-governance/conventions/writing/quality.md),
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related
+[Diátaxis Framework](../../repo-governance/conventions/structure/diataxis-framework.md),
+[Content Quality Principles](../../repo-governance/conventions/writing/quality.md),
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related
 agents: `pr-review-governance-maker`, `pr-review-logic-maker`, `pr-review-synthesis-maker`,
 `pr-review-fixer`, `web-researcher`, `docs-checker` (repository-wide validation this discipline
 complements at PR-review time, not a substitute for).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

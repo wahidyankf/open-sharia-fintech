@@ -11,7 +11,7 @@ model: composer-2.5
 - **Role**: Maker (blue)
 
 **Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
-— [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
+— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
 follows defined template patterns, not open creative design:
 
 - Bilingual content follows a fixed template-pattern driven by skills
@@ -38,7 +38,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 
 **Related Agents**:
 
@@ -47,5 +47,5 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [Programming Language Content](../../../repo-governance/conventions/tutorials/programming-language-content.md)
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Programming Language Content](../../repo-governance/conventions/tutorials/programming-language-content.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -27,13 +27,13 @@ Pattern: `ayokoding-web-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **CRITICAL - Read these first**:
 
-- [By-Example Tutorial Convention](../../../repo-governance/conventions/tutorials/swe-by-example.md) - Primary validation authority
-- [By Example Content Standard](../../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../../repo-governance/conventions/tutorials/naming.md) - By Example definition
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md) - Primary validation authority
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example definition
 
 ## Validation Scope
 
-See [docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md](../../skills/docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md)
+See [docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md](../../.claude/skills/docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md)
 for the complete checklist and step-by-step validation order: example count (75-85), annotation
 density (1.0-2.25 ratio per example — formula direction and counting rules there are CRITICAL to
 get right), five-part structure, self-containment, grouping, ayokoding-web compliance, diagram
@@ -56,7 +56,7 @@ all apply as written.
 
 **Remember**: Annotation density is measured PER EXAMPLE, not tutorial-wide. Each example must meet the 1-2.25 ratio independently.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

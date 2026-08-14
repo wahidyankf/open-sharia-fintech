@@ -52,14 +52,14 @@ rules fixes (use `repo-rules-fixer`).
 
 ## Reference Documentation
 
-[Multi-Harness Binding Convention](../../../repo-governance/conventions/structure/multi-harness-binding.md),
-[Platform Bindings Catalog](../../../docs/reference/platform-bindings.md),
-[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md),
-[repo-harness-compatibility-quality-gate workflow](../../../repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md).
+[Multi-Harness Binding Convention](../../repo-governance/conventions/structure/multi-harness-binding.md),
+[Platform Bindings Catalog](../../docs/reference/platform-bindings.md),
+[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md),
+[repo-harness-compatibility-quality-gate workflow](../../repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md).
 Related: `repo-harness-compatibility-checker` (generates the audit reports this agent
 processes), `repo-rules-fixer` (different scope).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

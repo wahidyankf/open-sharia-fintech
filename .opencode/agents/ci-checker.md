@@ -35,7 +35,7 @@ For each project in `apps/` and `libs/`:
 1. **Mandatory Nx targets** - Verify `project.json` contains all required targets for the project type
 2. **Coverage thresholds** - Verify `test:quick` uses the correct coverage threshold (90/80/75/70)
 3. **Docker setup** - Verify `infra/dev/{app}/` exists with docker-compose.yml, docker-compose.ci.yml, .env.example
-4. **Gherkin specs** - Verify specs directory exists with `.feature` files per [Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md)
+4. **Gherkin specs** - Verify specs directory exists with `.feature` files per [Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md)
 5. **Unit test Gherkin consumption** - Verify BDD runner is configured in unit tests
 6. **specs:coverage target** - Verify `specs:coverage` Nx target exists for testable projects
 7. **Workflow file** - Verify `test-{app-name}.yml` exists calling reusable workflows
@@ -53,4 +53,4 @@ Progressive audit report in `generated-reports/` following the standard pattern.
 - **HIGH**: Missing Docker setup, missing Gherkin specs, missing workflow file
 - **MEDIUM**: Missing .env.example, missing specs:coverage target, incomplete tags
 - **LOW**: Missing OCI labels in Dockerfiles, missing .dockerignore
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

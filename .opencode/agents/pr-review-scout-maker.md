@@ -41,7 +41,7 @@ trivial-tier handoff, and the three-part output contract.
 ## When to Use This Agent
 
 **Use when**: running the
-[`pr-review-quality-gate`](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
+[`pr-review-quality-gate`](../../repo-governance/workflows/pr/pr-review-quality-gate.md)
 workflow's per-cycle pipeline, before any specialist fan-out decision.
 
 **Do NOT use for**: discovering findings (use a `pr-review-*-maker` specialist); dedup/filter/
@@ -53,13 +53,13 @@ to the PR's own diff, metadata, and plan files).
 
 ## Reference Documentation
 
-[PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)
+[PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)
 (risk-tier thresholds, shared-context posture, human-dismissal mechanics this agent owns),
-[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
+[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
 Related: `pr-review-synthesis-maker` (receives this agent's output every cycle), the nine
 `pr-review-*-maker` specialists, `pr-review-fixer`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

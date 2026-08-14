@@ -66,15 +66,15 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 ## Reference
 
-- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
+- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
 - Skills: `apps-ose-www-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
-- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -83,6 +83,6 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 **Related Conventions**:
 
-- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
-- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md)
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

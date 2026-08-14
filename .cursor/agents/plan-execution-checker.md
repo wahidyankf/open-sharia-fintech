@@ -49,15 +49,15 @@ rule domains, checked against the post-execution repo state instead of the autho
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md) - Plan
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - Plan
   standards
-- [Code Quality Convention](../../../repo-governance/development/quality/code.md) - Quality standards
-- [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md) -
+- [Code Quality Convention](../../repo-governance/development/quality/code.md) - Quality standards
+- [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md) -
   Blocking archival gate (Step 5h)
-- [Evidence Capture Convention](../../../repo-governance/development/quality/evidence-capture.md) -
+- [Evidence Capture Convention](../../repo-governance/development/quality/evidence-capture.md) -
   Manual-verification evidence requirements (Step 5c)
-- [User-Facing Delivery Hardening Convention](../../../repo-governance/development/quality/user-facing-delivery-hardening.md) -
+- [User-Facing Delivery Hardening Convention](../../repo-governance/development/quality/user-facing-delivery-hardening.md) -
   Rules 1, 11, 15, 16 (production sign-off, deploy-smoke-test, three-tester retest, API exploratory
   retest)
 
@@ -66,10 +66,10 @@ rule domains, checked against the post-execution repo state instead of the autho
 - `plan-maker` - Creates plans
 - `plan-checker` - Validates plans (authoring-time sibling)
 - `plan-fixer` - Fixes plan issues
-- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute plans
+- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute plans
   (calling context orchestrates; no dedicated subagent)
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it
   alone, and stage explicit paths
 

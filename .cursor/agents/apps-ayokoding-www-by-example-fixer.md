@@ -44,7 +44,7 @@ pages and append; bullet text not matching heading text → replace with current
 drift from `github-slugger` output → recompute and replace; a bullet pointing to a removed example,
 or a missing bullet → regenerate the whole section (safer than spot-edits); missing en-dash (`–`) in
 `(Examples N–M)` → replace hyphen with en-dash. Always recompute slugs against live heading text —
-never hand-edit. See the [Examples-by-Level Section rule](../../../repo-governance/conventions/tutorials/swe-by-example.md#examples-by-level-section-mandatory)
+never hand-edit. See the [Examples-by-Level Section rule](../../repo-governance/conventions/tutorials/swe-by-example.md#examples-by-level-section-mandatory)
 for the canonical algorithm.
 
 ## Convergence Safeguards
@@ -55,15 +55,15 @@ and re-read modified sections to log APPLIED/FAILED status in the fix report.
 
 ## Reference Documentation
 
-**Project Guidance:** [By-Example Tutorial Convention](../../../repo-governance/conventions/tutorials/swe-by-example.md),
-[CLAUDE.md](../../../CLAUDE.md), [By Example Content Standard](../../../repo-governance/conventions/tutorials/programming-language-content.md)
+**Project Guidance:** [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md),
+[CLAUDE.md](../../CLAUDE.md), [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md)
 (annotation requirements).
 
 **Related Agents:** `apps-ayokoding-www-by-example-maker` (creates content),
 `apps-ayokoding-www-by-example-checker` (validates content, generates audits).
 
-**Related Conventions:** [Fixer Confidence Levels](../../../repo-governance/development/quality/fixer-confidence-levels.md),
-[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
+**Related Conventions:** [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md),
+[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.
 
@@ -73,4 +73,4 @@ Before acting, read every skill in this file's `skills:` frontmatter — `repo-a
 and `repo-assessing-criticality-confidence` hold the full mode-parameter, workflow, and confidence
 mechanics referenced above.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

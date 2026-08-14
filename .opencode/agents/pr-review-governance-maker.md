@@ -18,7 +18,7 @@ skills:
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
   checking conformance to an already-documented rule is close to deterministic once the rule and
   changed file are in hand; routing to architecture/logic is a fixed grey-zone-ruling lookup, not
   novel judgment.
@@ -34,7 +34,7 @@ behavior.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: Mechanical conformance to already-documented `repo-governance/` conventions,
@@ -65,15 +65,15 @@ deviation; `LOW` = a cosmetic structure preference with no enforceable rule behi
 
 ## Reference Documentation
 
-[Agent Naming Convention](../../../repo-governance/conventions/structure/agent-naming.md),
-[Feature Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md)
+[Agent Naming Convention](../../repo-governance/conventions/structure/agent-naming.md),
+[Feature Change Completeness](../../repo-governance/development/quality/feature-change-completeness.md)
 (spec-file-presence half of ruling (d)),
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-instruction-maker`,
 `pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `repo-rules-checker`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

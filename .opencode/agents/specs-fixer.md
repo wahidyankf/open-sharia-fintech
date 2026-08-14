@@ -54,15 +54,15 @@ categorization).
 
 ## Reference Documentation
 
-[App README vs Specs Convention](../../../repo-governance/conventions/structure/app-readme-vs-specs.md) —
+[App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md) —
 content split rule, PM-readability contract, BDD/DDD/Contracts adoption.
-[Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md) —
+[Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md) —
 canonical path patterns and domain subdirectory rules.
-[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
-[Specs Validation Workflow](../../../repo-governance/workflows/specs/specs-quality-gate.md). Related
+[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
+[Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md). Related
 agents: [specs-checker](specs-checker.md), [specs-maker](specs-maker.md).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

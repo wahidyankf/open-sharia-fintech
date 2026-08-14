@@ -24,7 +24,7 @@ source for plan structure, naming, content-placement rules, Worktree/Delivery-Mo
 Execution-Grade Clarity, Executor Tagging, Phase Gates, Pre-Write Verification (Anti-Hallucination),
 UI-Design-Funnel and Learning-Bearing Syllabus requirements, Operational Readiness sections, Manual
 Behavioral Assertions, and Knowledge Capture. Plans must be executable via the
-[plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) and validatable by
+[plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) and validatable by
 `plan-checker` (authoring-time) and `plan-execution-checker` (post-execution).
 
 **Do NOT use for**: executing plans (use plan-execution workflow); validating plans (`plan-checker`);
@@ -52,14 +52,14 @@ validating completed work (`plan-execution-checker`).
 
 ## Reference Documentation
 
-[CLAUDE.md](../../../CLAUDE.md); [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md);
-[Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md);
-[Trunk Based Development Convention](../../../repo-governance/development/workflow/trunk-based-development.md).
+[CLAUDE.md](../../CLAUDE.md); [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md);
+[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md);
+[Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md).
 
 **Related Agents**: `plan-checker` (validates authored plans); `plan-execution-checker` (validates
-completed work); [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md).
+completed work); [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

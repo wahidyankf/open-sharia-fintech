@@ -9,7 +9,7 @@ model: composer-2.5
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
   comparing behavior against a PR's own Gherkin criteria is bounded conformance checking;
   error-shape vs. scenario-completeness is a fixed grey-zone-ruling lookup, not fresh judgment.
 
@@ -25,7 +25,7 @@ PR's plan folder.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: Behavior vs. domain intent, and Gherkin acceptance-criteria conformance across normal,
@@ -55,14 +55,14 @@ ambiguity with no material behavioral consequence.
 
 ## Reference Documentation
 
-[Feature Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md)
+[Feature Change Completeness](../../repo-governance/development/quality/feature-change-completeness.md)
 (companion-artifact completeness underlying ruling (d)),
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-synthesis-maker`
 (owns final architecture↔correctness re-categorization), `pr-review-fixer`, `web-researcher`.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

@@ -42,7 +42,7 @@ that is out of scope; recommend the relevant `apps-ayokoding-www-*-maker` instea
 
 ## What to Fix and How
 
-See [docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md](../../skills/docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md)
+See [docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md](../../.claude/skills/docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md)
 for the complete methodology: domain-specific confidence examples, the four fix categories
 (Software Design Reference updates, Prerequisites section additions, cross-reference link fixes,
 and the AyoKoding-content-structure scope boundary), the six-step fixing workflow, and the four
@@ -56,14 +56,14 @@ all apply as written.
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
-[Software Design Reference](../../../docs/explanation/software-engineering/software-design-reference.md).
+**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
+[Software Design Reference](../../docs/explanation/software-engineering/software-design-reference.md).
 
 **Related Agents**: `docs-software-engineering-separation-checker` (produces the audit report this
 fixer consumes), `apps-ayokoding-www-general-maker` (creates AyoKoding content this fixer defers
 to).
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

@@ -27,16 +27,16 @@ Pattern: `ayokoding-web-primer__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` —
 
 **CRITICAL - Read these first**:
 
-- [By-Example Tutorial Convention](../../../repo-governance/conventions/tutorials/swe-by-example.md) -
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md) -
   The five-part structure and density rule Primer authors at the same pace
-- [By Example Content Standard](../../../repo-governance/conventions/tutorials/programming-language-content.md) -
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) -
   Annotation requirements
-- [Tutorial Naming Convention](../../../repo-governance/conventions/tutorials/naming.md) - Base
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - Base
   tutorial-depth vocabulary
 
 ## Validation Scope
 
-See [docs-creating-by-example-tutorials/reference/01-checking-primer-format.md](../../skills/docs-creating-by-example-tutorials/reference/01-checking-primer-format.md)
+See [docs-creating-by-example-tutorials/reference/01-checking-primer-format.md](../../.claude/skills/docs-creating-by-example-tutorials/reference/01-checking-primer-format.md)
 for the complete 9-point checklist: example count (75-85 floor), annotation density (1.0-2.25
 ratio), five-part structure, self-containment, scope discipline (this format's CRITICAL defining
 constraint), example grouping, capstone type (light consolidation, not full project),
@@ -66,7 +66,7 @@ final step updates status to "Complete" and adds a summary.
 Example. Example count is a floor, not a cap. Scope discipline — "just enough to be productive,"
 never comprehensive coverage — is the CRITICAL check unique to this format.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

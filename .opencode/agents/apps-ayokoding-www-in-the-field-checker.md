@@ -40,11 +40,11 @@ Pattern: `ayokoding-web-in-the-field__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.m
 
 **CRITICAL - Read these first**:
 
-- [In-the-Field Tutorial Convention](../../../repo-governance/conventions/tutorials/in-the-field.md) - Primary validation authority
+- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - Primary validation authority
 
 ## Validation Scope
 
-See [docs-creating-in-the-field-tutorials/reference/01-checking-in-the-field-format.md](../../skills/docs-creating-in-the-field-tutorials/reference/01-checking-in-the-field-format.md)
+See [docs-creating-in-the-field-tutorials/reference/01-checking-in-the-field-format.md](../../.claude/skills/docs-creating-in-the-field-tutorials/reference/01-checking-in-the-field-format.md)
 for the complete checklist and step-by-step validation order: guide count (20-40), annotation
 density (1.0-2.25 ratio), standard library first progression (this format's CRITICAL check),
 production code quality, framework introduction quality, diagram count/palette, and ayokoding-web
@@ -71,7 +71,7 @@ progressively; the final step updates status to "Complete" and adds a prioritize
 
 **Remember**: Standard library first is CRITICAL. Every framework must be justified by showing standard library limitations first.
 
-- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 
