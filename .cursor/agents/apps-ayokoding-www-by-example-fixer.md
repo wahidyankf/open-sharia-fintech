@@ -39,14 +39,12 @@ effectiveness, complexity progression. **FALSE_POSITIVE** (report to checker): m
 misidentified structure, wrong ratio, or a slug that actually matches `github-slugger` output (verify
 via `node -e "import('github-slugger').then(m => console.log(new m.default().slug('<heading>')))"`).
 
-**Examples-by-Level section (HIGH confidence, auto-apply)**: missing `## Examples by Level` section →
-regenerate from level pages and append; bullet text not matching heading text character-for-character
-→ replace with current heading; anchor slug drift from `github-slugger` output → recompute and
-replace; a bullet pointing to a removed example, or an example missing a bullet → regenerate the
-whole section from current level-page headings (safer than spot-edits); subsection heading missing
-the en-dash (`–`) in `(Examples N–M)` → replace hyphen with en-dash. Always recompute slugs with
-`github-slugger` against live heading text — never hand-edit a slug. See the
-[Examples-by-Level Section rule](../../repo-governance/conventions/tutorials/swe-by-example.md#examples-by-level-section-mandatory)
+**Examples-by-Level section (HIGH confidence, auto-apply)**: missing section → regenerate from level
+pages and append; bullet text not matching heading text → replace with current heading; anchor slug
+drift from `github-slugger` output → recompute and replace; a bullet pointing to a removed example,
+or a missing bullet → regenerate the whole section (safer than spot-edits); missing en-dash (`–`) in
+`(Examples N–M)` → replace hyphen with en-dash. Always recompute slugs against live heading text —
+never hand-edit. See the [Examples-by-Level Section rule](../../repo-governance/conventions/tutorials/swe-by-example.md#examples-by-level-section-mandatory)
 for the canonical algorithm.
 
 ## Convergence Safeguards
