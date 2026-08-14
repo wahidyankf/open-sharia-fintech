@@ -828,7 +828,7 @@ pipeline concurrently through review, bounded by the cap.
 > [README §Rule-15](./README.md#rule-15-three-tester-retest--exemption-recorded). The exemption is
 > narrow — Playwright manual behavioural verification below is mandatory and performed.
 
-- [ ] [AI] Confirm `en` is the content locale for these 15 bodies — command:
+- [x] [AI] Confirm `en` is the content locale for these 15 bodies — command:
       `for s in $(cat plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt); do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "MISSING $s"; done | grep -c .`
       — acceptance: returns **0**.
 - [ ] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
@@ -852,7 +852,7 @@ pipeline concurrently through review, bounded by the cap.
       breakpoints), once staged or committed.
 - [ ] [AI] Document the evidence in this checklist: reference each screenshot
       (`![alt](./evidence/...)`) and note the console/network status per sampled course.
-- [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
+- [x] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad.
 - [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 6 is intermediate:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
