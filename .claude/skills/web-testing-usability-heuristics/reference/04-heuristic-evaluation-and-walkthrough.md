@@ -7,8 +7,7 @@ learnability (specific tasks, step by step, from a new user's seat).
 ## 1. Heuristic evaluation — Nielsen's 10 usability heuristics
 
 Sweep the interface against each heuristic; record every violation with its heuristic number and a
-0-4 severity (see the finding-anatomy reference module). Treat the agent pass as one disciplined
-evaluator session.
+0-4 severity (see the finding-anatomy reference module).
 
 1. **Visibility of system status** — the design keeps the user informed with timely feedback.
 2. **Match between system and the real world** — speaks the user's language; no internal jargon.
@@ -37,7 +36,7 @@ For each task (given or derived), walk every step as a first-time user and ask:
    confirm?)
 
 Any "no" or "uncertain" is a usability finding. Capture the full step transcript in `walkthrough.md`
-so the verdict is auditable, not asserted.
+so the verdict is auditable.
 
 ## 3. First-click & information scent
 
