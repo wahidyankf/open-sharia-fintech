@@ -1,7 +1,7 @@
 ---
 title: "44 · System Design"
 date: 2026-08-14T00:00:00+07:00
-draft: true
+draft: false
 weight: 444
 prerequisites: ["backend-at-scale", "advanced-networking", "advanced-sql-and-query-performance"]
 ---

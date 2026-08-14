@@ -1,7 +1,7 @@
 ---
-title: "Event-Driven Architecture"
+title: "45 · Event-Driven Architecture"
 date: 2026-08-14T00:00:00+07:00
-draft: true
+draft: false
 weight: 445
 prerequisites: ["software-architecture", "backend-essentials"]
 ---

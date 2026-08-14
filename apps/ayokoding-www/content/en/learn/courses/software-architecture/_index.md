@@ -1,7 +1,7 @@
 ---
 title: "42 · Software Architecture"
 date: 2026-08-14T00:00:00+07:00
-draft: true
+draft: false
 weight: 442
 prerequisites: ["backend-essentials", "object-oriented-design-and-patterns"]
 ---

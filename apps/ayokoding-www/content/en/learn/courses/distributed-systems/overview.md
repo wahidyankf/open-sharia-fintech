@@ -1,7 +1,7 @@
 ---
 title: "Overview"
 date: 2026-08-14T00:00:00+07:00
-draft: true
+draft: false
 weight: 1
 ---
 
@@ -24,9 +24,9 @@ and consistency choices through replication, consensus, CRDTs, coordination serv
 failure modes each mechanism cannot erase.
 
 **Scope boundary**: this course teaches the models and small simulations needed to judge distributed
-trade-offs. It does not implement a production Raft engine; [92 · Build Your Own Raft](../build-your-own-raft/overview.md)
-is the later construction course. It also does not substitute a toy simulation for operational
-testing against a real coordination-service deployment.
+trade-offs. It does not implement a production Raft engine; a later construction course covers that
+work. It also does not substitute a toy simulation for operational testing against a real
+coordination-service deployment.
 
 ## How the course is organized
 
