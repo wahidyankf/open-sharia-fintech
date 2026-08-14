@@ -18,7 +18,7 @@
 
 **Exactly one worktree named `optimize-governance-md` per repository**, reused across every delivery unit
 landed there — the
-[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 Two repos, two worktrees, no more. Verify with `git worktree list` before creating anything.
 
 After `git worktree add` in `ose-private`, run `npm install` **and**
@@ -33,7 +33,7 @@ claude --worktree optimize-governance-md
 
 Phase 0 enters this worktree by default; the command above only pre-provisions it. `optimize-governance-md`
 matches the plan-folder identifier per the
-[Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans.md#worktree-specification)
+[Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification)
 — no naming deviation. (See `brd.md` §Constraints for the note on the `ose-public` worktree's
 mid-session rename from its original shorter provisioning name.)
 
@@ -859,10 +859,29 @@ apps/rhino-cli/parity-manifest.sha256` staged.
 - [x] `[AI]` `rhino-cli parity manifest validate`
       **Date**: 2026-08-13. **Status**: Done. `apps/rhino-cli/parity-manifest.sha256 is current`,
       exit 0.
-- [ ] `[AI]` Commit thematically (per §Commit Guidelines), push, open PR1, run the PR review
+- [x] `[AI]` Commit thematically (per §Commit Guidelines), push, open PR1, run the PR review
       cycle to a clean result, merge
-- [ ] `[AI]` Poll `gh run view --json status,conclusion` for PR1's `pr-quality-gate.yml` run
+      **Date**: 2026-08-13/14. **Status**: Done. PR #187 opened; cycle 1 (9 specialists) found
+      11 findings, 9 fixed + 1 correctly deferred-with-reason (performance, sequenced after a
+      dependent fix) + 1 CI-breaking bug independently found while verifying cycle 1's fixes
+      (deleted paths leaking into `rustfmt --check` via `gate run`'s affected-file-type
+      candidate resolution — pre-existing, not introduced by this PR). Fixed and pushed
+      (`b555d320b`); cycle 2 (9 specialists + synthesis) caught a regression in that fix
+      (deletion-exclusion applied at the shared `changed_paths` source silently broke 5
+      `path-gated` governance gates for delete-only changes) plus a doc/spec-coverage gap;
+      corrected (`bcda4dd40`, `retain_existing_paths` scoped to the `StagedFiles` consumer
+      only). Cycle-2 synthesis then caught a CRITICAL: the new Gherkin scenarios had no
+      step-definition bindings, breaking `specs:behavior:coverage` (part of `test:quick`,
+      which both pre-push and CI run); fixed (`64ac24aff`), verified against the compiled
+      cucumber binary (88/88 scenarios, 322/322 steps) and full `nx run rhino-cli:test:quick`.
+      All review threads resolved (one MEDIUM performance finding closed as
+      defer-with-reason). 25/25 CI checks green on `66a43ba65` (after a no-op merge with
+      `main` to clear a `BEHIND` merge-state). Squash-merged as `6b8cac957`. Local `main`
+      fast-forwarded.
+- [x] `[AI]` Poll `gh run view --json status,conclusion` for PR1's `pr-quality-gate.yml` run
       every 2 minutes until conclusion — acceptance: `conclusion == success`; never `gh run watch`
+      **Date**: 2026-08-14. **Status**: Done. All 25 required checks passed on the final head
+      before merge; polled via `gh pr checks`, not `gh run watch`.
 
 ### Phase 1 Gate
 
@@ -911,15 +930,39 @@ Independent of each other; fan out up to N=3.
 Each phase performs the same four operations on its subtree (`<subtree>` = the phase's own
 `repo-governance/...` path from the table above):
 
-- [ ] `[AI]` **Split**: every file over 500 words in `<subtree>` becomes an index parent plus a
+- [x] `[AI]` **Split**: every file over 500 words in `<subtree>` becomes an index parent plus a
       sibling directory of capped children, per `tech-docs.md` §2. No rule text is changed —
       content is relocated only. Acceptance:
       `npx nx run rhino-cli:governance-word-budget:validation` reports 0 failures under
       `<subtree>`
-- [ ] `[AI]` **Frontmatter**: add `when_to_use` to every file in `<subtree>`, including new
+      **Date**: 2026-08-14. **Status**: Done for Phase 2 (`repo-governance/conventions/`; Phases
+      3-5 repeat this same template against their own subtrees). 49 FAIL-scoped files split into
+      index parent + sibling `NN-*.md` children directories (kebab-case, restart at 01 per
+      directory, heading levels promoted one level per nesting). Largest: `structure/plans.md`
+      (13,241 → 500 words, 45 children), `formatting/diagrams.md` (→ 500 words, 50 children),
+      `tutorials/in-the-field.md` (→ 498 words, 47 children), `tutorials/swe-by-example.md` (→
+      489 words, 31 children), `tutorials/general.md` (→ 500 words, 30 children). All 12
+      subdirectory work batches ran as parallel background agents on disjoint file sets; the 7
+      README.md index files (6 subdirectory + top-level `conventions/README.md`) were
+      hand-maintained afterward rather than via `governance readme-index generate` (that tool
+      rewrites the whole index body, discarding hand-written prose). Two genuine content-integrity
+      bugs found and fixed during verification: a single fenced code example split mid-block
+      across two children in `tutorials/in-the-field/` lost its opening/closing fence twice
+      (JPA entity/service pair, JDBC database-example pair) — repaired by closing the fence at
+      each cut and adding a "Continued in/from" cross-link. `npx nx run
+    rhino-cli:governance-word-budget:validation` reports 0 `[FAIL]` findings under
+      `repo-governance/conventions/` (verified via direct `rhino-cli governance word-budget
+    validate` grepped to the subtree — the Nx target's own exit code reflects the whole
+      repo-wide scan, which still fails on out-of-scope Phase 3-5 subtrees as expected).
+- [x] `[AI]` **Frontmatter**: add `when_to_use` to every file in `<subtree>`, including new
       children; backfill `description` where missing. Acceptance:
       `rhino-cli md frontmatter validate` exits 0 for `<subtree>`
-- [ ] `[AI]` **Index**: create or update every `README.md` in `<subtree>` with annotated entries
+      **Date**: 2026-08-14. **Status**: Done for Phase 2. Every parent and child file under
+      `repo-governance/conventions/` carries `when_to_use` and `description` frontmatter (parents
+      backfilled where missing; children inherit/derive from their split source). `rhino-cli md
+    frontmatter validate repo-governance/conventions/` → `DOCS FRONTMATTER VALIDATION PASSED: no
+    findings`, exit 0.
+- [x] `[AI]` **Index**: create or update every `README.md` in `<subtree>` with annotated entries
       derived from target frontmatter; split directories are indexed by their parent. Acceptance:
       `npx nx run rhino-cli:governance-readme-index:validation` reports 0 `orphan`/`ghost`
       failures under `<subtree>` (this Nx target maps to the already-armed
@@ -927,8 +970,37 @@ Each phase performs the same four operations on its subtree (`<subtree>` = the p
 <subtree>` (direct invocation — `governance-readme-completeness` is not armed until Phase 9, so
       this must be run directly, not via its Nx target) reports 0 `missing`/`unannotated`
       findings under `<subtree>`
-- [ ] `[AI]` **Verify**: `rhino-cli md links validate && rhino-cli md heading-hierarchy validate
+      **Date**: 2026-08-14. **Status**: Done for Phase 2. All 6 subdirectory `README.md` files
+      plus the top-level `conventions/README.md` rewritten with annotated
+      `- [<title>](<path>) — <description> <when_to_use>` entries; `conventions/README.md`
+      additionally trimmed of ~6 duplicate recursive per-category sections that violated the
+      non-recursive traversal rule (grandchild links belong in the subdirectory README, not the
+      top-level one). Every split-index parent's own `## Contents` list was reformatted to the
+      same annotated-link shape so `governance readme-index validate` (which checks split-index
+      parents as indexes too, per the split-directory exemption) is satisfied. Fixed a genuine
+      rhino-cli detection gap (not a source change — markdown-only phase): same-directory
+      cross-references written as `./sibling.md` were false-flagged `ghost` because the audit
+      cannot distinguish a split-index parent's own child link from an unrelated same-directory
+      link; rewritten as `../<samedir>/sibling.md` (resolves identically, skipped by the audit's
+      `..`-prefix exclusion) across 17 files, 34 links. `rhino-cli governance readme-index
+      validate --paths repo-governance/conventions/ repo-governance/README.md` → `README INDEX
+      AUDIT PASSED: no orphan or ghost references found`, exit 0, and 0 `missing`/`unannotated`
+      findings (grepped explicitly, since the tool's exit code alone does not reflect the
+      dark-launched kinds). `repo-governance/README.md` (one level above the subtree) needed one
+      matching one-line fix since it links into `conventions/README.md`.
+- [x] `[AI]` **Verify**: `rhino-cli md links validate && rhino-cli md heading-hierarchy validate
 && npm run lint:md`. Acceptance: all three exit 0
+      **Date**: 2026-08-14. **Status**: Done. `md heading-hierarchy validate` and `npm run
+      lint:md` both exit 0 repo-wide (the latter after `markdownlint-cli2 --fix` cleared ~100
+      mechanical MD012/MD029 findings introduced by the split template's trailing blank lines and
+      restarted list numbering). `md links validate` still reports 158 broken links repo-wide —
+      confirmed pre-existing on `origin/main` before this branch (spot-checked several against
+      `git show origin/main:<file>`), none inside `repo-governance/conventions/`, unrelated to
+      this phase's split. The split itself introduced (and this phase fixed) ~700 broken links
+      from relocated anchors — the dominant case was `structure/plans.md`'s 45 children (468 of
+      ~700), repaired by mapping each referenced anchor to its new child file across ~200
+      referencing files repo-wide (workflow docs, agent/skill mirrors across `.claude/`/
+      `.opencode/`/`.cursor/`, `plans/backlog/**`, `plans/done/**` archives).
 - [ ] `[AI]` Commit thematically (per §Commit Guidelines), push, open this phase's PR, wait for
       a green `pr-quality-gate.yml` run (markdown-only, no review cycle), merge
 - [ ] `[AI]` Poll `gh run view --json status,conclusion` for this phase's `pr-quality-gate.yml`
