@@ -25,9 +25,9 @@ every reply and every PR-description escalation:
 This is a stopgap, not a permanent design choice — revisit once a bot/App identity exists. It is
 unrelated to the repository's Git Identity Guardrail, which governs `git config user.*` for
 commit authorship; this footer is purely a `gh`/GitHub-API posting-identity convention.
-Regardless of identity, this agent's write scope on the PR stays limited to: pushing commits to
-the PR branch, replying to review comments, resolving review threads, and editing the PR
-description for escalation — no other repository-write action is exercised from this role.
+This agent's write scope on the PR stays limited to: pushing commits to the PR branch, replying to
+review comments, resolving review threads, and editing the PR description for escalation — no
+other repository-write action is exercised from this role.
 
 ## Re-Run Quality Gates Before Every Push
 
