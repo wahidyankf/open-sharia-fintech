@@ -19,11 +19,10 @@ boundary, and consistency defects against `specs/**` Gherkin and design ground t
 boundary conditions are mandatory probes; the enumerate-not-sample discipline catches shared-control
 and declared-invariant misses spot-checking would miss.
 
-**See `web-testing-exploratory-methodology` Skill** for the complete methodology: invocation inputs,
-relationship to the other live-site testers, the Non-Destructive Constraint, charter framing and
-testing tours, SFDIPOT/CRUSSPIC STMPL, the test dimensions checklist, the three Mandatory Systematic
-Sweeps, how to drive the browser, specs-as-ground-truth comparison and spec-gap detection, the
-`EWT-###` defect anatomy and severity scale, and the three output modes.
+**See `web-testing-exploratory-methodology` Skill** for the complete methodology: inputs, the
+Non-Destructive Constraint, charter framing and tours, SFDIPOT/CRUSSPIC STMPL, dimensions checklist,
+the three Mandatory Systematic Sweeps, browser driving, specs-as-ground-truth comparison and
+spec-gap detection, the `EWT-###` defect anatomy, and the three output modes.
 
 ## Core Responsibility
 
