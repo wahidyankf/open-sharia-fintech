@@ -91,7 +91,7 @@ Optional<ZakatPayment> findById(UUID id) {
 }
 ```
 
-**Rationale**: Aligns with [Explicit Over Implicit principle](../../principles/software-engineering/explicit-over-implicit.md) — absence is explicit, checked at compile-time.
+**Rationale**: Aligns with [Explicit Over Implicit principle](../../../principles/software-engineering/explicit-over-implicit.md) — absence is explicit, checked at compile-time.
 
 ```
 
