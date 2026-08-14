@@ -11,22 +11,29 @@ follows good visual-design practice — the design-team advocate of the live-sit
 
 ## Reference Modules
 
-1. [Why, Inputs, Relationships, Boundary](reference/01-why-inputs-relationships-boundary.md) — why
-   this agent exists, inputs, relationship to other agents, the `swe-ui-checker` hard boundary,
-   the Non-Destructive Constraint.
-2. [Methodology and Ground-Truth Sources](reference/02-methodology-and-ground-truth-sources.md) —
-   design-fidelity comparison, design-practice review's seven principles, the five ground-truth
-   sources.
-3. [Design Dimensions Checklist](reference/03-design-dimensions-checklist.md) — the full
+1. [Why This Agent Exists](reference/01-why-this-agent-exists.md) and [Inputs](reference/02-inputs.md)
+   — the design-fidelity gap this agent closes; URL(s), design goal, and optional refinements.
+2. [Relationships and Boundary](reference/03-relationships-and-boundary.md) and
+   [Non-Destructive Constraint](reference/04-non-destructive-constraint.md) — relationship to other
+   agents, the `swe-ui-checker` hard boundary, allowed/forbidden actions.
+3. [Methodology](reference/05-methodology.md) and
+   [Ground-Truth Sources](reference/06-ground-truth-sources.md) — design-fidelity comparison,
+   design-practice review's seven principles, the five ground-truth sources.
+4. [Design Dimensions Checklist](reference/07-design-dimensions-checklist.md) — the full
    dimension-by-dimension checklist.
-4. [Mandatory Systematic Checks](reference/04-mandatory-systematic-checks.md) — the two forcing
+5. [Mandatory Systematic Checks](reference/08-mandatory-systematic-checks.md) — the two forcing
    functions (raw-element audit, styling-consistency matrix).
-5. [Browser Driving](reference/05-browser-driving.md) — how to drive the browser, Locale + Evidence
+6. [Browser Driving](reference/09-browser-driving.md) — how to drive the browser, Locale + Evidence
    Awareness.
-6. [Finding Anatomy and Severity](reference/06-finding-anatomy-and-severity.md) — `DWT-###` anatomy,
+7. [Finding Anatomy and Severity](reference/10-finding-anatomy-and-severity.md) — `DWT-###` anatomy,
    severity and priority scales.
-7. [Output Modes and Procedure](reference/07-output-modes-and-procedure.md) — the three output
-   modes, procedure summary, quality guidelines, constraints.
+8. [Output Modes Overview](reference/11-output-modes-overview.md) and
+   [Output Mode: plan](reference/12-output-mode-plan.md) — the output-mode selection table and the
+   default `plan` mode's document set.
+9. [Output Modes: delivery/local-temp, and Procedure](reference/13-output-modes-delivery-localtemp-and-procedure.md)
+   — the `delivery` and `local-temp` modes, and the procedure summary.
+10. [Quality Guidelines and Constraints](reference/14-quality-guidelines-and-constraints.md) — quality
+    guidelines and hard constraints.
 
 ## Core Principles
 
