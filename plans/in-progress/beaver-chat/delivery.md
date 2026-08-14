@@ -14,9 +14,10 @@ This plan must execute in the existing `worktrees/beaver-chat/` checkout on bran
 `worktree/beaver-chat`. It is the sole worktree for this repository and is reused for every delivery
 unit. Do not provision any second worktree for this plan.
 
-If the existing checkout must be reconstructed, use `claude --worktree beaver-chat`, then run
-`npm install` and `npm run doctor -- --fix` from `worktrees/beaver-chat/`. The execution gate enters
-this path, synchronizes it with `origin/main`, and preserves it until the user authorizes removal.
+If `worktrees/beaver-chat/` is missing, pause execution and ask the user to restore that required
+checkout. Do not create a replacement worktree or change this plan's worktree identity. From the
+existing checkout, run `npm install` and `npm run doctor -- --fix`; the execution gate then
+synchronizes it with `origin/main` and preserves it until the user authorizes removal.
 
 ## Delivery Mode: worktree-to-pr
 
@@ -88,16 +89,54 @@ _No PR, push, review, merge, or CI monitoring occurs in this phase._
 
 ## Phase 1: Contract, Persistence, and Direct CLI Backend
 
-- [ ] [AI] RED: add failing chat-operation/schema assertions to `specs/apps/beavernest/containers/contracts/tests/chat-contract.sh` and failing Gherkin features under `specs/apps/beavernest/behavior/beavernest-be/gherkin/chat/`; run `npm exec nx run beavernest-contracts:test:unit` and `npm exec nx run beavernest-be:test:specs` — acceptance: tests fail because the closed thread/message/model/SSE contract and implementation bindings do not exist.
+- [ ] [AI] RED: add failing chat-operation/schema assertions to `specs/apps/beavernest/containers/contracts/tests/chat-contract.sh` and `specs/apps/beavernest/behavior/beavernest-be/gherkin/chat/threads.feature`; run `npm exec nx run beavernest-contracts:test:unit` and `npm exec nx run beavernest-be:test:specs` — acceptance: tests fail because the closed thread/message/model/SSE contract and implementation bindings do not exist. **Gherkin (binds) →** "Create a durable thread"
+
+  ```gherkin
+  Scenario: Create a durable thread
+    Given the combined BeaverNest runtime has an empty chat store
+    When I create a thread and send a text prompt
+    Then the thread and prompt appear in the shared thread list
+    And they remain available after the browser refreshes
+  ```
+
 - [ ] [AI] GREEN: update `specs/apps/beavernest/containers/contracts/openapi.yaml` with thread CRUD, model catalog, turn SSE, cancellation, no-store headers, and safe closed error states; run `npm exec nx run beavernest-contracts:bundle && npm exec nx run beavernest-contracts:test:quick` — acceptance: the source and bundled contract are valid and contract tests pass without a provider credential.
 - [ ] [AI] REFACTOR: remove duplicate schema descriptions in `openapi.yaml` and keep provider-specific fields isolated to the model/session schemas; run `npm exec nx run beavernest-contracts:lint` — acceptance: generated clients can distinguish Codex default from OpenCode discovered models without an open-ended payload.
-- [ ] [AI] RED: add failing tests in new `apps/beavernest-be/tests/unit/Tests/ChatDomainTests.fs` and `ChatStoreTests.fs` for ordered thread persistence, deletion cascade, bounded transcript replay, current-revision resume, and one active turn; run `npm exec nx run beavernest-be:test:unit` — acceptance: tests fail before domain/store implementation.
+- [ ] [AI] RED: add failing pure domain/store tests in `apps/beavernest-be/tests/unit/Tests/ChatDomainTests.fs` and `ChatStoreTests.fs` for ordered thread persistence, deletion cascade, bounded transcript replay, current-revision resume, and one active turn; run `npm exec nx run beavernest-be:test:unit` — acceptance: tests fail before domain/store implementation. **Gherkin (underpins) →** "Delete a shared thread"; "Switch providers in a thread"
 - [ ] [AI] GREEN: add `Domain/Chat.fs`, `Application/ChatPort.fs`, `Application/ChatService.fs`, `Infrastructure/Sqlite/ChatStore.fs`, and `Migrations/002-chat.sql`; update `BeaverNestBe.fsproj` compile order and `Program.fs` composition; run `APP_ENV=test npm exec nx run beavernest-be:test:unit` — acceptance: durable ordered storage, cascade deletion, bounded replay, and per-thread run exclusion pass at the existing 90% coverage threshold.
 - [ ] [AI] REFACTOR: extract pure replay/revision/lifecycle functions from SQLite/process effects in the new chat modules; run `npm exec nx run beavernest-be:lint` — acceptance: domain logic is immutable/testable and F# strict lint passes.
-- [ ] [AI] RED: add failing fake-process tests in `apps/beavernest-be/tests/unit/Tests/ChatCliAdapterTests.fs` for argument-list invocation, stdin prompt transport, JSON event normalization, safe failure classification, Codex default-only catalog, OpenCode live model catalog, and cancellation; run `npm exec nx run beavernest-be:test:unit` — acceptance: tests prove no adapter yet implements the closed application port.
-- [ ] [AI] GREEN: add provider adapters under `apps/beavernest-be/src/BeaverNestBe/Infrastructure/Cli/` using direct `codex exec --json` and `opencode run --format json` child processes, no shell, controlled environment, automatic approvals, and current-session resume/replay; run `APP_ENV=test npm exec nx run beavernest-be:test:unit` — acceptance: fixture streams persist safe ordered events, unknown events fail visibly, and no test log contains a prompt or credential.
-- [ ] [AI] REFACTOR: centralize process disposal, JSONL parsing, and safe error mapping behind provider-neutral functions; run `npm exec nx run beavernest-be:test:coverage` — acceptance: both adapters share lifecycle safety without collapsing provider-specific command semantics.
-- [ ] [AI] RED: add failing handler/host tests in `apps/beavernest-be/tests/unit/Tests/ChatHandlerTests.fs` and `apps/beavernest-be/tests/integration/ChatHostTests.fs`; run `npm exec nx run beavernest-be:test:integration` — acceptance: REST/SSE/cancellation routes are absent or fail their closed response expectations.
+- [ ] [AI] RED: add failing fake-process tests in `apps/beavernest-be/tests/unit/Tests/ChatCliAdapterTests.fs` for Codex argument-list invocation, stdin prompt transport, ordered JSON event normalization, and default-only catalog; run `npm exec nx run beavernest-be:test:unit` — acceptance: tests prove no Codex adapter implements the closed application port. **Gherkin (binds) →** "Stream a Codex reply"
+
+  ```gherkin
+  Scenario: Stream a Codex reply
+    Given a thread is open and Codex is available
+    When I submit a text prompt with Codex selected
+    Then the browser receives ordered streamed progress and Markdown reply events
+    And the completed assistant message records Codex and its configured default model
+  ```
+
+- [ ] [AI] GREEN: add the Codex adapter under `apps/beavernest-be/src/BeaverNestBe/Infrastructure/Cli/` using a direct `codex exec --json` child process, no shell, controlled environment, automatic approvals, and current-session resume/replay; run `APP_ENV=test npm exec nx run beavernest-be:test:unit` — acceptance: fixture streams persist safe ordered events and no test log contains a prompt or credential.
+- [ ] [AI] REFACTOR: centralize Codex process disposal, JSONL parsing, and safe error mapping behind provider-neutral functions; run `npm exec nx run beavernest-be:test:coverage` — acceptance: the Codex adapter shares lifecycle safety without imposing OpenCode command semantics.
+- [ ] [AI] RED: add failing fake-process tests in `apps/beavernest-be/tests/unit/Tests/OpenCodeCliAdapterTests.fs` for live model discovery, selected-model argument transport, JSON event normalization, and safe failure classification; run `npm exec nx run beavernest-be:test:unit` — acceptance: tests prove no OpenCode adapter implements the closed application port. **Gherkin (binds) →** "Stream an OpenCode reply with a discovered model"
+
+  ```gherkin
+  Scenario: Stream an OpenCode reply with a discovered model
+    Given OpenCode reports an available model through its installed CLI
+    When I select that model and submit a text prompt with OpenCode selected
+    Then the backend invokes OpenCode with that model and streams the normalized reply
+  ```
+
+- [ ] [AI] GREEN: extend `apps/beavernest-be/src/BeaverNestBe/Infrastructure/Cli/` with the tested OpenCode discovery/model path; run `APP_ENV=test npm exec nx run beavernest-be:test:unit` — acceptance: fixture streams persist safe ordered events, unknown events fail visibly, and no test log contains a prompt or credential.
+- [ ] [AI] REFACTOR: keep provider-specific model/discovery semantics in the OpenCode adapter while reusing only lifecycle/error helpers; run `npm exec nx run beavernest-be:test:coverage` — acceptance: the provider-neutral port remains closed and testable.
+- [ ] [AI] RED: add failing handler/host tests in `apps/beavernest-be/tests/unit/Tests/ChatHandlerTests.fs` and `apps/beavernest-be/tests/integration/ChatHostTests.fs`; run `npm exec nx run beavernest-be:test:integration` — acceptance: REST/SSE/cancellation routes are absent or fail their closed response expectations. **Gherkin (binds) →** "Cancel an active turn"
+
+  ```gherkin
+  Scenario: Cancel an active turn
+    Given a thread has one active streamed turn
+    When I activate Cancel
+    Then the backend terminates only that managed child process
+    And the thread accepts another prompt after the cancellation completes
+  ```
+
 - [ ] [AI] GREEN: add `Api/ChatHandlers.fs`, route it in `WebApp.fs`, and wire dependencies in `Program.fs`; run `APP_ENV=test npm exec nx run beavernest-be:test:quick && npm exec nx run beavernest-be:test:integration` — acceptance: API routes precede SPA fallback, all chat responses use no-store, an SSE turn streams ordered events, and cancellation targets only the active managed process.
 - [ ] [AI] REFACTOR: align handler error/envelope behavior with existing `errorBody`/security headers, then run `npm exec nx run beavernest-be:lint` — acceptance: no route reveals command, environment, filesystem, authentication, or provider diagnostic details.
 
@@ -113,13 +152,22 @@ _No PR, push, review, merge, or CI monitoring occurs in this phase._
 
 ## Phase 2: Responsive Flutter Chat Workspace
 
-- [ ] [AI] RED: add failing generated-contract assertions to `apps/beavernest-app/test/chat_contract_test.dart`, then run `npm exec nx run beavernest-app:test:unit` — acceptance: the generated bundle cannot yet represent the planned chat operations before code generation.
+- [ ] [AI] RED: add failing generated-contract assertions to `apps/beavernest-app/test/chat_contract_test.dart`, then run `npm exec nx run beavernest-app:test:unit` — acceptance: the generated bundle cannot yet represent the planned chat operations before code generation. **Gherkin (underpins) →** "Create a durable thread"; "Stream a Codex reply"; "Stream an OpenCode reply with a discovered model"; "Cancel an active turn"
 - [ ] [AI] GREEN: run `npm exec nx run beavernest-app:codegen` and implement typed Web boundary validation in new `apps/beavernest-app/lib/platform/web/chat_client.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: generated types stay outer-layer details and invalid/non-closed REST/SSE payloads are rejected.
 - [ ] [AI] REFACTOR: consolidate generated-to-domain conversions in `apps/beavernest-app/lib/platform/web/chat_repository.dart`; run `npm exec nx run beavernest-app:analyze` — acceptance: domain/application imports remain independent of generated transport types.
-- [ ] [AI] RED: add failing domain/use-case tests under `apps/beavernest-app/test/chat_*.dart` for pending/delta/completed/failed/cancelled turn state, provider labels, model selection, and thread deletion; run `npm exec nx run beavernest-app:test:unit` — acceptance: tests fail until the pure chat models and use cases exist.
+- [ ] [AI] RED: add failing pure domain/use-case tests under `apps/beavernest-app/test/chat_*.dart` for pending/delta/completed/failed/cancelled turn state, provider labels, model selection, and thread deletion; run `npm exec nx run beavernest-app:test:unit` — acceptance: tests fail until the pure chat models and use cases exist. **Gherkin (underpins) →** "Delete a shared thread"; "Switch providers in a thread"; "Preserve a failed provider turn"
 - [ ] [AI] GREEN: add `lib/domain/chat.dart`, `lib/application/ports/chat_repository.dart`, and `lib/application/use_cases/chat/`; update `lib/main.dart` composition; run `npm exec nx run beavernest-app:test:unit` — acceptance: in-memory fakes prove a provider switch retains replayed context and one active turn disables a duplicate submit.
 - [ ] [AI] REFACTOR: keep asynchronous Web/SSE effects in the repository adapter and pure state transitions in domain/use cases; run `npm exec nx run beavernest-app:test:coverage` — acceptance: coverage remains at or above the configured threshold.
-- [ ] [AI] RED: add failing widget/accessibility tests in `apps/beavernest-app/test/chat_workspace_test.dart` for the desktop rail, mobile sheet, focus restoration, live activity, authority notice, Markdown/code copy control, provider/model selectors, cancellation, safe failures, and 44 px actions; run `npm exec nx run beavernest-app:test:unit` — acceptance: the selected Option A layout is not yet rendered.
+- [ ] [AI] RED: add failing widget/accessibility tests in `apps/beavernest-app/test/chat_workspace_test.dart` for the desktop rail, mobile sheet, focus restoration, live activity, authority notice, Markdown/code copy control, provider/model selectors, cancellation, safe failures, and 44 px actions; run `npm exec nx run beavernest-app:test:unit` — acceptance: the selected Option A layout is not yet rendered. **Gherkin (binds) →** "Reflow chat from phone to desktop"
+
+  ```gherkin
+  Scenario: Reflow chat from phone to desktop
+    Given a shared thread has a streamed transcript
+    When I view it at mobile, tablet, and desktop widths
+    Then every message, provider control, composer, and cancellation control remains usable without horizontal scrolling
+    And thread navigation is a small-screen sheet and a desktop rail
+  ```
+
 - [ ] [AI] GREEN: add `lib/presentation/chat/` widgets and integrate the Chat destination into `lib/presentation/workspace_shell.dart`; run `npm exec nx run beavernest-app:test:unit` — acceptance: the UI matches selected thread-rail behavior, preserves visible provider attribution, uses the existing theme in light/dark modes, and never hides shared/full-authority semantics.
 - [ ] [AI] REFACTOR: share existing responsive/navigation/theme primitives where possible and remove duplicated spacing/focus code; run `npm exec nx run beavernest-app:lint` — acceptance: widgets are small, keyboard focus is visible, and no interaction relies on color alone.
 
@@ -131,7 +179,7 @@ _No PR, push, review, merge, or CI monitoring occurs in this phase._
 
 ## Phase 3: End-to-End Hardening and User-Facing Verification
 
-- [ ] [AI] RED: add failing browser/API scenarios in `apps/beavernest-app-e2e/steps/chat.steps.ts`, `apps/beavernest-be-e2e/steps/chat.steps.ts`, and their matching `specs/apps/beavernest/behavior/**/gherkin/chat/*.feature`; run `npm exec nx run beavernest-app-e2e:test:e2e` and `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: the scenarios fail before hosted runtime wiring proves stream, cancellation, persistence, and errors.
+- [ ] [AI] RED: add failing aggregate BDD binders in `apps/beavernest-app-e2e/steps/chat.steps.ts`, `apps/beavernest-be-e2e/steps/chat.steps.ts`, and their matching `specs/apps/beavernest/behavior/**/gherkin/chat/*.feature`; run `npm exec nx run beavernest-app-e2e:test:e2e` and `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: the binders fail before hosted runtime wiring proves every planned chat scenario. **Gherkin (underpins) →** "Create a durable thread"; "Delete a shared thread"; "Stream a Codex reply"; "Stream an OpenCode reply with a discovered model"; "Switch providers in a thread"; "Preserve a failed provider turn"; "Cancel an active turn"; "Reflow chat from phone to desktop"
 - [ ] [AI] GREEN: update only the required E2E host/runtime utilities and steps to use deterministic fake CLI executables under existing test fixtures; run `npm exec nx run beavernest-app-e2e:test:e2e` and `APP_ENV=test npm exec nx run beavernest-be-e2e:test:e2e` — acceptance: browser proof covers create/reload/delete, Codex default, OpenCode discovered model, provider-switch replay, ordered deltas, cancellation, unavailable failure, mobile sheet, desktop rail, and no horizontal scroll without calling real agents.
 - [ ] [AI] REFACTOR: remove fixture duplication and keep fake CLI events versioned/test-local; rerun `npm exec nx run beavernest-app-e2e:test:e2e` — acceptance: tests cannot read a real CLI config, token, prompt history, or sandbox filesystem.
 - [ ] [AI] Start the combined runtime in the externally secured sandbox with only operator-provided local configuration, then manually exercise Codex and OpenCode in a disposable shared thread using browser tooling; save redacted screenshots for mobile/tablet/desktop and a behavior log in `plans/in-progress/beaver-chat/evidence/phase-3-manual-verification.md` — acceptance: a real user can stream, cancel, retry, switch provider, reload history, and delete a thread; evidence contains no prompt content, transcript, secret, real path, or provider session ID.
