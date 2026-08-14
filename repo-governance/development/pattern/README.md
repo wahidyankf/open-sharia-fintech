@@ -5,6 +5,7 @@ category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
+when_to_use: "Use when a change needs a proven shape — an application boundary, an audit trail, or an independent review cycle."
 ---
 
 # Development Patterns
@@ -32,19 +33,16 @@ These patterns define **HOW to structure development workflows and code**, cover
 
 ## Documents
 
-- [Database Audit Trail Pattern](./database-audit-trail.md) - Required 6-column audit trail (created_at/by, updated_at/by, deleted_at/by) for every database table. Covers language-agnostic migration requirements, F#/DbUp patterns (versioned SQL scripts, EF Core entity mapping), and soft-delete discipline
-- [Functional Core / Imperative Shell — Web Apps](./functional-core-imperative-shell-web.md) - Next.js pattern: every `features/<name>/` module splits into a pure `core/` and an effectful `shell/` (React/IO/wiring); deliberately not hexagonal/DDD
-- [Functional Programming Practices](./functional-programming.md) - Guidelines for applying functional programming principles in TypeScript/JavaScript (immutability patterns, pure functions, function composition)
-- [Hexagonal Architecture](./hexagonal-architecture.md) - Core ports-and-adapters pattern: dependency rule, layer definitions (domain, application, infrastructure, inbound adapters), and links to app-type specializations
-- [Hexagonal Architecture — CLI Apps](./hexagonal-architecture-cli.md) - CLI specialization: `commands/` as inbound adapter, canonical directory layouts for rhino-cli/crane-cli/ose-cli/ayokoding-cli, layer responsibilities, and forbidden imports
-- [Hexagonal Architecture + DDD — Backend Apps](./hexagonal-architecture-be.md) - Backend specialization with DDD bounded contexts: F#/Giraffe directory layouts, error mapping at the API boundary, and inter-context isolation rules
-- [Maker-Checker-Fixer Pattern](./maker-checker-fixer.md) - Three-stage quality workflow for content creation and validation with user review gates and confidence level integration
-- [OpenAPI Contract-First Development](./openapi-contract-first.md) - Spec-first API development: OpenAPI YAML as single source of truth, codegen tooling per language, Nx targets, and CI drift enforcement
-
-## Companion Documents
-
-- [Anti-Patterns](./anti-patterns.md) - Common pattern mistakes to avoid (with examples and corrections)
-- [Best Practices](./best-practices.md) - Recommended pattern techniques and guidelines
+- [Anti-Patterns in Development Patterns](./anti-patterns.md) — Common mistakes when applying the development patterns in this directory. Use when reviewing a change for a known anti-pattern.
+- [Best Practices for Development Patterns](./best-practices.md) — Recommended techniques for applying the Maker-Checker-Fixer pattern and functional programming practices, with worked examples for each. Use when applying the Maker-Checker-Fixer pattern or functional programming practices and want a concrete good-example/bad-example pairing.
+- [Database Audit Trail Pattern](./database-audit-trail.md) — Required 6-column audit trail for every database table in open-sharia-enterprise. Use when creating a database table or migration.
+- [Functional Core / Imperative Shell — Web Apps](./functional-core-imperative-shell-web.md) — The architecture pattern for Next.js web apps — every feature module splits into a pure functional core and an effectful imperative shell under src/features/<name>/{core,shell}/. Use when structuring or reviewing a Next.js feature module, or deciding whether a file belongs in core/ or shell/.
+- [Functional Programming Practices](./functional-programming.md) — Guidelines for applying functional programming principles in TypeScript/JavaScript. Use when writing or reviewing TypeScript/JavaScript business logic.
+- [Hexagonal Architecture](./hexagonal-architecture.md) — Core hexagonal architecture pattern — ports, adapters, dependency rule, and app-type specializations. Use when structuring a backend or CLI app's layers, or deciding whether code belongs in domain, application, infrastructure, or an adapter.
+- [Hexagonal Architecture + DDD — Backend Apps](./hexagonal-architecture-be.md) — Hexagonal architecture with DDD bounded contexts for backend apps — F#/Giraffe directory layouts, language-specific idioms, and inter-context isolation rules. Use when structuring a backend bounded context, wiring F# dependency injection, or mapping a domain error to an HTTP response.
+- [Hexagonal Architecture — CLI Apps](./hexagonal-architecture-cli.md) — Hexagonal architecture specialization for CLI apps — commands as inbound adapters, layer responsibilities, and forbidden imports. Use when structuring a CLI app's commands/, domain/, application/, or infrastructure/ layer.
+- [Maker-Checker-Fixer Pattern Convention](./maker-checker-fixer.md) — Three-stage content quality workflow used across multiple agent families. Use when designing or invoking a maker/checker/fixer agent trio.
+- [OpenAPI Contract-First Development](./openapi-contract-first.md) — Spec-first API development — the OpenAPI YAML is the single source of truth; code is generated from it, not the reverse. Use when adding or changing an API endpoint, running codegen, or debugging a CI spec/codegen drift failure.
 
 ## Related Documentation
 
@@ -55,15 +53,11 @@ These patterns define **HOW to structure development workflows and code**, cover
 
 ## Principles Implemented/Respected
 
-This set of development practices implements/respects the following core principles:
-
 - **[Immutability Over Mutability](../../principles/software-engineering/immutability.md)**: Functional programming practices favor immutable data structures and pure functions, reducing side effects and improving code predictability.
 
 - **[Pure Functions Over Side Effects](../../principles/software-engineering/pure-functions.md)**: Functional programming guidelines emphasize pure functions for deterministic, testable, and composable code.
 
 ## Conventions Implemented/Respected
-
-This set of development practices respects the following conventions:
 
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Pattern documentation follows active voice, clear structure, and proper formatting standards.
 

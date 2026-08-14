@@ -1,0 +1,48 @@
+---
+title: "Worked Example — the 2026-07-21 Sibling Drift"
+description: A real transcript of two sibling repositories found with local main silently behind origin/main, and how the reconcile closed the gap.
+category: explanation
+subcategory: development
+tags:
+  - git
+  - workflow
+  - worktree
+  - bare-repo
+  - safety
+created: 2026-07-21
+when_to_use: Use as a concrete reference example when explaining why the terminal reconcile step is mandatory rather than conditional.
+---
+
+# Worked Example — the 2026-07-21 Sibling Drift
+
+Both `ose-primer` and `ose-infra` were found in exactly the state this method exists to close, on the
+same day this document was written:
+
+```console
+$ git -C ose-primer rev-list --left-right --count origin/main...main
+2 0
+$ git -C ose-infra rev-list --left-right --count origin/main...main
+2 0
+```
+
+Local `main` was **two commits behind** `origin/main` in both repositories. Neither repository's own
+history was wrong — the commits had genuinely reached `origin/main` through prior side-worktree
+landings — but no command in either landing had ever touched the repository's own `main` ref, because
+a push from a linked worktree updates only the remote and that worktree's own branch, never a
+same-named local branch sitting elsewhere. The bare-repo reconcile closed the gap in both:
+
+```console
+$ git -C ose-primer fetch origin main:main
+72640e287..53d9081b7  main       -> main
+$ git -C ose-primer rev-list --left-right --count origin/main...main
+0 0
+
+$ git -C ose-infra fetch origin main:main
+fe4a0a66e..f6ecdcc0b  main       -> main
+$ git -C ose-infra rev-list --left-right --count origin/main...main
+0 0
+```
+
+No command failed and nothing warned during the original landings — the lag was entirely silent, which
+is exactly why step 8 is a fixed part of the numbered method rather than a step performed only when
+something looks wrong.

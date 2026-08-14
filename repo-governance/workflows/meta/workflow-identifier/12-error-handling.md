@@ -1,0 +1,33 @@
+---
+title: "Error Handling"
+description: How each workflow step defines failure behavior, and the five common error-handling patterns (fail fast, continue, retry, user intervention, fallback).
+category: explanation
+subcategory: workflows
+tags:
+  - workflows
+  - agents
+  - orchestration
+  - patterns
+created: 2025-12-23
+when_to_use: Use when defining what a workflow step should do when it fails.
+---
+
+# Error Handling
+
+Each step defines failure behavior:
+
+```markdown
+**On failure**:
+
+- Retry 3 times with exponential backoff
+- If still failing, proceed to user review
+- User can: skip step, retry manually, terminate workflow
+```
+
+Common patterns:
+
+- **Fail fast**: Terminate workflow immediately
+- **Continue**: Log error, proceed to next step
+- **Retry**: Attempt step again (with limits)
+- **User intervention**: Ask user how to proceed
+- **Fallback**: Execute alternative step

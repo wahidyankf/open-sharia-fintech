@@ -10,6 +10,7 @@ tags:
   - ci-cd
   - quality
 created: 2026-06-13
+when_to_use: Use when a Husky hook is failing, when adding or changing a pre-commit/pre-push/commit-msg gate, or when you need to know how local hooks relate to CI checks.
 ---
 
 # Git Hook Lifecycle
@@ -65,11 +66,10 @@ flowchart LR
 
 The pre-commit dispatcher has one declaration-positioned `lint-staged` batch for eligible
 file-scoped formatters and checks. `gate emit --surface=pre-commit` regenerates its
-`package.json` block from the registry. Direct mutations such as platform-binding generation and
-lockfile synchronization remain declared registry entries and run in their declared order after the
-batch.
+`package.json` block from the registry. Direct mutations (platform-binding generation, lockfile
+sync) stay declared registry entries, run in order after the batch.
 
-Do not hand-edit the generated block. Regenerate it, then use `gate validate`.
+Do not hand-edit the generated block; regenerate, then `gate validate`.
 
 ## CI relationship
 

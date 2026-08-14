@@ -63,7 +63,7 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
-- [Frontend Development Documentation](../../repo-governance/development/README.md#frontend-development-documentation) - Frontend governance overview
+- [Frontend Development Documentation](../../repo-governance/development/frontend/README.md) - Frontend governance overview
 
 **Related Agents**:
 

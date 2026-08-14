@@ -1,0 +1,26 @@
+---
+title: "Related Documentation"
+description: "Cross-references to related testing, specs-sync, and regression conventions."
+category: explanation
+subcategory: development
+tags:
+  - feature-completeness
+  - specs
+  - contracts
+  - testing
+  - documentation
+  - quality
+created: 2026-04-04
+when_to_use: "Use when you need a related convention on testing, specs sync, or regressions."
+---
+
+# Related Documentation
+
+- [Specs-Application Sync Convention](.././specs-application-sync.md) -- Bidirectional sync between specs/ and application code
+- [Three-Level Testing Standard](.././three-level-testing-standard.md) -- Unit, integration, and E2E testing architecture
+- [Code Quality Convention](.././code.md) -- Automated quality gates
+- [BDD Spec-to-Test Mapping](../../infra/bdd-spec-test-mapping.md) -- Gherkin spec consumption at each test level
+- [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names and caching rules
+- [Implementation Workflow Convention](../../workflow/implementation.md) -- Three-stage workflow where completeness is verified at each stage
+- [User-Facing Delivery Hardening Convention](.././user-facing-delivery-hardening.md) -- Adds per-breakpoint responsive deliverables, labelled outputs, and a pre-archival visual sign-off to the completeness bar for user-facing changes
+- [Regression Test Mandate](.././regression-test-mandate.md) -- The bug-driven dual of this convention: a bug fix is not complete without a reproducing test. The two rules together cover all behavior-altering work -- feature changes and defect fixes alike

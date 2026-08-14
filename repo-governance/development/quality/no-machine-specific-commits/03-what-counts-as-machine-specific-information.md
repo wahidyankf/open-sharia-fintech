@@ -1,0 +1,48 @@
+---
+title: "What Counts as Machine-Specific Information"
+description: "The prohibited categories: absolute local paths, embedded usernames, local IPs/hostnames, and environment-specific literals."
+category: explanation
+subcategory: development
+tags:
+  - git
+  - commits
+  - security
+  - portability
+  - environment
+  - quality
+created: 2026-03-24
+when_to_use: "Use when deciding whether a specific value is machine-specific and must not be committed."
+---
+
+# What Counts as Machine-Specific Information
+
+The following categories must never appear in committed files:
+
+## Absolute Local Paths
+
+Paths rooted at a user's home directory or a tool's local installation prefix are machine-specific.
+
+**Prohibited examples:**
+
+```text
+/Users/jane/projects/open-sharia-enterprise
+/home/alice/go/bin/golangci-lint
+/opt/homebrew/bin/node
+C:\Users\bob\AppData\Local\Programs\...
+```
+
+**Acceptable alternatives:** relative paths, workspace-relative paths, or paths derived at runtime from environment variables such as `$HOME`, `$GOPATH`, or `$PROJECT_ROOT`.
+
+## Usernames Embedded in Paths or Configuration
+
+A username embedded in a path (e.g., `/Users/jane/`) is machine-specific by definition. The same applies to usernames used as literal database credentials or API identifiers in source files.
+
+## Local IP Addresses and Hostnames
+
+Addresses such as `192.168.1.42`, `10.0.0.5`, or a machine's local hostname reflect a developer's local network configuration.
+
+**Acceptable exceptions:** `127.0.0.1` and `localhost` are standard loopback references and may appear in test configuration that explicitly targets a locally running service. However, they must never appear alongside a literal password (see "Verifying a Commit Before Pushing" below).
+
+## Environment-Specific Configuration Committed as Literals
+
+Database connection strings, API keys, secret tokens, or tool paths that differ between developer machines and CI/CD must not appear as literal values in committed files.

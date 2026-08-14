@@ -1,6 +1,7 @@
 ---
 title: "Workflow Meta Documentation"
 description: Reference material for designing workflows that are understandable and reusable
+when_to_use: Use when routing to reference material about how workflows are structured or executed.
 category: explanation
 subcategory: workflows
 tags: []
@@ -33,8 +34,8 @@ This documentation defines **HOW workflows should be designed and documented**, 
 
 ## Documents
 
-- [Workflow Pattern Convention](./workflow-identifier.md) - Complete workflow structure convention including frontmatter schema, step definition patterns, and composition rules
-- [Workflow Execution Mode Convention](./execution-modes.md) - Defines execution modes — Agent Delegation (preferred via Agent tool) and Manual Orchestration (fallback when agents unavailable as delegated agent types)
+- [Workflow Pattern Convention](./workflow-identifier.md) — Standards for creating orchestrated multi-step processes that compose agents, procedures, and/or other workflows. Use when defining, structuring, or validating a new workflow document, or when deciding whether a task should become a workflow at all.
+- [Workflow Execution Mode Convention](./execution-modes.md) — Defines execution modes for workflows — Agent Delegation (preferred) and Manual Orchestration (fallback) — explaining how to use the Agent tool for delegated agent invocation and when to fall back to direct execution. Use when a workflow step needs to invoke an agent or run its logic directly, and you need to decide which execution mode applies and how to execute it correctly.
 
 ## Related Documentation
 

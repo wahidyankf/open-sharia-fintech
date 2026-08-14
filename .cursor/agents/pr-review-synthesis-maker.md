@@ -21,7 +21,7 @@ Opus is required here, specifically, because:
 - **Owning the highest-risk re-categorization boundary.** The architecture-versus-correctness
   boundary is the one place a genuinely new structural decision and a domain-behavior question can
   look identical in a raw finding; this agent is the sole place that boundary call gets made, per
-  [pr-review-disciplines.md's boundary tie-breaker rule](../../repo-governance/development/quality/pr-review-disciplines.md#the-boundary-tie-breaker-rule).
+  [pr-review-disciplines.md's boundary tie-breaker rule](../../repo-governance/development/quality/pr-review-disciplines/06-the-boundary-tie-breaker-rule.md#the-boundary-tie-breaker-rule).
   A misjudged re-categorization here propagates into every downstream finding the fixer sees.
 - **Tool-verifying uncertain findings, sometimes across sources.** When a specialist's raw finding is
   ambiguous, this agent re-reads the cited source and, if needed, delegates to `web-researcher` —
@@ -106,8 +106,8 @@ finding is postable:
    defect into one consolidated thread. Two specialists independently flagging the same line is
    confirmation, not two findings.
 2. **Re-categorize** — reassign a misfiled finding to the correct discipline using the
-   [boundary tie-breaker rule](../../repo-governance/development/quality/pr-review-disciplines.md#the-boundary-tie-breaker-rule)
-   and its [seven grey-zone rulings](../../repo-governance/development/quality/pr-review-disciplines.md#seven-grey-zone-rulings).
+   [boundary tie-breaker rule](../../repo-governance/development/quality/pr-review-disciplines/06-the-boundary-tie-breaker-rule.md#the-boundary-tie-breaker-rule)
+   and its [seven grey-zone rulings](../../repo-governance/development/quality/pr-review-disciplines/07-seven-grey-zone-rulings.md#seven-grey-zone-rulings).
    This agent **explicitly owns the architecture-versus-correctness boundary** — the highest-risk of
    the three tie-breaker outcomes, because a new structural decision and a domain-behavior question
    can look identical in a raw finding. No specialist self-adjudicates its own tie-breaker verdict once
@@ -133,7 +133,7 @@ root cause is itself a confidence signal worth surfacing, not collapsing away. A
 fanned-out specialist's total raw-finding count (before dedup/filter), including specialists that
 fired and found nothing, and specialists the Content-Type Applicability Filter (DD-10) skipped this
 cycle and why. This is the sole durable, per-cycle record of which disciplines earn their fan-out cost
-— the [Post-Cutover Monitoring Plan](../../repo-governance/development/quality/pr-review-disciplines.md#post-cutover-monitoring-plan)
+— the [Post-Cutover Monitoring Plan](../../repo-governance/development/quality/pr-review-disciplines/15-post-cutover-monitoring-rollback-monitoring-plan-part-1.md#post-cutover-monitoring-plan)
 depends on this data existing somewhere auditable; a posted review missing it is not analyzable later.
 
 ## Consolidated Review Header (Every Tier Decision Is Auditable)
@@ -329,7 +329,7 @@ job.
 - `pr-review-scout-maker` - Classifies each PR's risk tier and specialist set, assembles the
   shared-context brief, and reads prior-cycle thread-resolution status once per cycle, upstream of
   this agent's own dedup/re-categorize/filter/verify pipeline
-- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full specialist roster whose raw findings feed this agent
+- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md) - The full specialist roster whose raw findings feed this agent
 - `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-governance-maker`, `pr-review-security-maker`, `pr-review-integrity-maker`, `pr-review-performance-maker`, `pr-review-docs-maker`, `pr-review-instruction-maker`, `pr-review-types-maker` - The nine discipline specialists this agent coordinates, never discovers findings for
 - `pr-review-fixer` - Consumes this agent's single consolidated review, triages, fixes, pushes, and resolves threads
 - `web-researcher` - External fact verification during tool-verify

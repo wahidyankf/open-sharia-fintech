@@ -513,6 +513,35 @@ pub fn validate_bindings(repo_root: &Path) -> ValidationResult {
     result
 }
 
+/// Reads `path`'s content, plus (per the Split Pattern) the content of every
+/// `.md` child in its sibling split directory (`<parent>/<stem>/*.md`), when
+/// one exists. Governance docs relocate table content into split children
+/// while the parent keeps only a trimmed index, so a lookup scoped to the
+/// parent file alone would miss relocated tables.
+fn read_with_split_children(path: &Path) -> String {
+    let mut content = fs::read_to_string(path).unwrap_or_default();
+    if let Some(stem) = path.file_stem().and_then(|s| s.to_str())
+        && let Some(parent) = path.parent()
+    {
+        let split_dir = parent.join(stem);
+        if let Ok(entries) = fs::read_dir(&split_dir) {
+            let mut children: Vec<_> = entries
+                .flatten()
+                .map(|e| e.path())
+                .filter(|p| p.extension().and_then(|e| e.to_str()) == Some("md"))
+                .collect();
+            children.sort();
+            for child in children {
+                if let Ok(child_content) = fs::read_to_string(&child) {
+                    content.push('\n');
+                    content.push_str(&child_content);
+                }
+            }
+        }
+    }
+    content
+}
+
 /// Validates that every `color:` and `model:` value used in `.claude/agents/*.md`
 /// resolves in the governance translation-map documents (§5a/5b of the
 /// cross-vendor parity invariant).
@@ -528,8 +557,8 @@ fn validate_color_tier_maps(repo_root: &Path) -> Vec<ValidationCheck> {
     let color_map_path = repo_root.join("repo-governance/development/agents/ai-agents.md");
     let tier_map_path = repo_root.join("repo-governance/development/agents/model-selection.md");
 
-    let color_map = fs::read_to_string(&color_map_path).unwrap_or_default();
-    let tier_map = fs::read_to_string(&tier_map_path).unwrap_or_default();
+    let color_map = read_with_split_children(&color_map_path);
+    let tier_map = read_with_split_children(&tier_map_path);
 
     let mut checks = Vec::new();
     let mut seen_colors = std::collections::BTreeSet::new();
@@ -1197,6 +1226,69 @@ mod tests {
             has_opencode_check,
             "validate_bindings must produce an OpenCode/sync/agent check for all-11-harness coverage; got checks: {:?}",
             result.checks.iter().map(|c| &c.name).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn read_with_split_children_finds_table_relocated_to_a_child_file() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(
+            &root.join("docs/ai-agents.md"),
+            "# AI Agents\n\nindex only\n",
+        );
+        write(
+            &root.join("docs/ai-agents/17-agent-color-categorization.md"),
+            "| Claude Code | OpenCode |\n|---|---|\n| `purple` | secondary |\n",
+        );
+
+        let content = read_with_split_children(&root.join("docs/ai-agents.md"));
+
+        assert!(content.contains("index only"));
+        assert!(content.contains("`purple`"));
+    }
+
+    #[test]
+    fn read_with_split_children_handles_missing_split_dir() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(&root.join("docs/model-selection.md"), "no split children\n");
+
+        let content = read_with_split_children(&root.join("docs/model-selection.md"));
+
+        assert_eq!(content, "no split children\n");
+    }
+
+    #[test]
+    fn validate_color_tier_maps_resolves_tables_relocated_to_split_children() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(
+            &root.join(".claude/agents/fixture.md"),
+            "---\ncolor: purple\nmodel: opus\n---\n",
+        );
+        write(
+            &root.join("repo-governance/development/agents/ai-agents.md"),
+            "# AI Agents\n\nindex only\n",
+        );
+        write(
+            &root.join("repo-governance/development/agents/ai-agents/17-colors.md"),
+            "| Claude Code | OpenCode |\n|---|---|\n| `purple` | secondary |\n",
+        );
+        write(
+            &root.join("repo-governance/development/agents/model-selection.md"),
+            "# Model Selection\n\nindex only\n",
+        );
+        write(
+            &root.join("repo-governance/development/agents/model-selection/13-bindings.md"),
+            "Planning-grade: `opus`\n",
+        );
+
+        let checks = validate_color_tier_maps(root);
+
+        assert!(
+            checks.iter().all(|c| c.status == "passed"),
+            "expected all checks to pass once split-child tables are searched; got: {checks:?}"
         );
     }
 }

@@ -5,6 +5,7 @@ category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
+when_to_use: Use when the work is ambiguous, shared, or already in motion, and you need a behavioral practice rather than a code pattern or tool configuration.
 ---
 
 # Development Practices
@@ -33,12 +34,12 @@ These practices define **HOW developers and AI agents should behave** when encou
 
 ## Documents
 
-- [Proactive Preexisting Error Resolution](./proactive-preexisting-error-resolution.md) - When encountering preexisting errors during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem
-- [Parallel-by-Default Practice](./parallel-by-default.md) - Default to running independent units of work (tool calls, file reads, searches, delegated agents) in parallel rather than serially, capped at three concurrent units
-- [Task List Discipline](./task-list-discipline.md) - For any non-trivial multi-step work (3+ steps or spanning multiple files/phases), maintain a live task list from the start and keep it continuously in sync with actual progress
-- [File-Touch Discipline](./file-touch-discipline.md) - Keep a deliberate, append-only record of every file you touch, carry it intact through every compaction and handoff, and treat any path not on it as another actor's in-flight work; covers the ledger standards, degraded mode when the ledger is lost, and the rule that generated harness mirrors ship in the same commit as their source
-- [Mechanize Cross-File Invariants](./mechanize-cross-file-invariants.md) - When a rule must hold across more than one file, generate the dependent file(s) from a single declared source and validate the result, rather than stating the rule in prose and trusting hand-sync
-- [Trustworthy Measurement](./trustworthy-measurement.md) - Before a number justifies a decision, prove the command ran, prove it measured the path that actually executes, and prove the metric can respond to the change; covers false-zero timing harnesses, isolated-vs-batched benchmarks, and critical-path reasoning for max-type metrics
+- [Proactive Preexisting Error Resolution](./proactive-preexisting-error-resolution.md) — When encountering preexisting errors, bugs, or broken state during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem. Use whenever you encounter a preexisting error, broken test, incorrect configuration, or degraded code while doing other work.
+- [Parallel-by-Default Practice](./parallel-by-default.md) — When doing work with independent sub-units (tool calls, file reads/edits, searches, or delegated agents), default to running them in parallel rather than serially, capped at three concurrent units of work. Use whenever you have two or more independent units of work ready to launch.
+- [Task List Discipline](./task-list-discipline.md) — For any non-trivial multi-step work (3+ distinct steps, or any task spanning multiple files or phases), maintain a live task list from the start and keep it continuously in sync with actual progress. Use whenever you're about to start such work, before you touch the first file.
+- [File-Touch Discipline](./file-touch-discipline.md) — Every actor keeps a deliberate, append-only record of the files it touched, carries that record intact across context compaction, and treats every file not on the record as another actor's in-flight work. Use whenever you are about to mutate any file in a shared repository, and always before staging or committing.
+- [Mechanize Cross-File Invariants](./mechanize-cross-file-invariants.md) — When a rule must hold across more than one file, generate the dependent file(s) from a single declared source and validate the result, rather than stating the rule in prose and trusting hand-sync. Use when a rule must stay identical across two or more files.
+- [Trustworthy Measurement](./trustworthy-measurement.md) — Before a number is allowed to justify a decision, prove the command produced it, prove it measures the path that actually runs, and prove the metric responds to the thing being changed. Use before any benchmark timing or CI metric is used to justify a decision.
 
 ## Related Documentation
 

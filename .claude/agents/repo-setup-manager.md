@@ -101,7 +101,7 @@ Then reconcile against what the plan assumed:
 
 - **Probe agrees with the plan** — record the confirmation and proceed.
 - **Probe disagrees** — do NOT proceed as written. Report which `[AI]` steps must downgrade per
-  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp.md#degraded-mode). Silently
+  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp/04-identifier-hygiene-degraded-mode-and-when-to-check.md#degraded-mode). Silently
   skipping a verification step the plan can no longer perform is the failure this step prevents.
 
 **Capture ordering matters**: if the plan's Phase 0 also takes a deployment baseline for later

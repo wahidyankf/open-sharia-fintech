@@ -85,10 +85,10 @@ The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter l
 
 When a MEDIUM-confidence finding requires an external decision, this specialist returns unresolved
 decisions as `## User Decisions Required` using the
-[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options/06-user-decisions-required-envelope.md#user-decisions-required-envelope),
 then stops before applying the dependent fix. Every `options` array MUST exhaustively list all
 substantive leaves. The root invokes `grill-me` through its native UI when available, then resumes or
-reinvokes this agent with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope).
+reinvokes this agent with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options/07-resolved-user-decisions-envelope.md#resolved-user-decisions-envelope).
 The root builds it from the original IDs after rendering and passes it verbatim; validate it before
 dependent work. A direct custom-agent or noninteractive caller receives the same envelope; never
 render a user prompt or infer an answer. For a four-mode or three-tag decision, the envelope lists
@@ -334,7 +334,7 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 
 - [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
 - [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
-- [Test-Driven Development Convention §TDD Shape for Delivery Checklists](../../repo-governance/development/workflow/test-driven-development.md#tdd-shape-for-delivery-checklists) - Required three-substep template (RED/GREEN/REFACTOR) for rewriting TDD-shape violations flagged by plan-checker
+- [Test-Driven Development Convention §TDD Shape for Delivery Checklists](../../repo-governance/development/workflow/test-driven-development/08-tdd-shape-for-delivery-checklists.md#tdd-shape-for-delivery-checklists) - Required three-substep template (RED/GREEN/REFACTOR) for rewriting TDD-shape violations flagged by plan-checker
 - [Multi-Harness Binding Convention](../../repo-governance/conventions/structure/multi-harness-binding.md) - Rules applied during harness-neutrality scan fixes (Step 5g findings)
 - [Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule) - `[AI]`/`[HUMAN]` marker rules, legend, handoff/resume signal requirement (Step 5h fixes)
 - [Plans Organization Convention §Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule) - Phase gate scaffold, Pause Safety note, barrier rule (Step 5h fixes)
@@ -753,7 +753,7 @@ for the authoritative mode table and precedence rule.
   the four modes (or which of the three tags) was intended — follow the Grilling Interaction
   Contract with the valid options (four modes, `worktree-to-pr` marked `(Recommended)`; or the three
   tags), before writing a value. The envelope lists every leaf; when a native tool's option limit
-  requires staging, the root uses the convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering),
+  requires staging, the root uses the convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options/08-staged-native-rendering.md#staged-native-rendering),
   preserving chat and the client-provided custom answer at every node. A merge step's tag is never
   mechanically retagged, at any confidence level — see
   [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) below.
@@ -809,7 +809,7 @@ a narrower check layered on top, never a substitute. Concretely:
 - `*-to-pr` mode with the merge step carrying a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]` →
   do NOT retag it. Follow the Grilling Interaction Contract with all three valid tags and apply only
   the resolved tag. When the native tool's option limit requires staging, the root follows the
-  convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options.md#staged-native-rendering).
+  convention's [staged decision procedure](../../repo-governance/development/workflow/grilling-with-options/08-staged-native-rendering.md#staged-native-rendering).
   An unrecognized tag may carry human-actor semantics this agent must not silently strip —
   never assume it is safe to overwrite.
 - **Never retag, delete, or otherwise remove a `[HUMAN]`- or `[AI+HUMAN]`-tagged merge step, in any
@@ -1004,7 +1004,7 @@ another that happens to look more plausible.
 Before applying ANY fix that introduces or replaces a factual claim (file path, Nx target,
 package version, function name, agent name, test name, command, cross-link), re-verify per
 the recipe in
-[Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard):
+[Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination/05-repo-grounding-rule-hard.md#repo-grounding-rule-hard):
 
 ```bash
 # File path replacement — confirm the target exists OR mark _New file_

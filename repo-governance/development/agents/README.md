@@ -1,10 +1,11 @@
 ---
 title: "AI Agents Development"
-description: Standards for AI agents that work safely and predictably in this repository
+description: "Standards for AI agents that work safely and predictably in this repository"
 category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
+when_to_use: Use when defining or changing an AI agent, or when deciding where an agent-development topic belongs.
 ---
 
 # AI Agents Development
@@ -33,16 +34,13 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 
 ## Documents
 
-- [AI Agents Convention](./ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
-- [Skill Context Architecture](./skill-context-architecture.md) - Architectural constraint requiring all repository skills to use inline context for universal delegated agent compatibility
-- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks. Covers plan mode, delegated agent strategy, Operating Budgets (repo-rules-maker authoring/propagation, the N+1 parallelism budget, CI monitoring cadence floor), DAG-first ordering, background-slot preference, harness capability gating, verification before done, autonomous bug fixing, and the self-improvement loop
-- [Subagent Orchestration Convention](./subagent-orchestration.md) - Concurrency cap (default 2 simultaneous background Agent-tool spawns; main thread excluded) and 3-minute stuck-detection polling for background subagents. Controls token burn rate, prevents Claude API rate-limit hits, and ensures stalled agents are detected and relaunched via TaskStop + relaunch
-- [Model Selection Convention](./model-selection.md) - Standards for selecting the appropriate model tier (planning-grade, execution-grade, fast) for AI agents based on task complexity, with justification requirements and tier comparison
-
-## Companion Documents
-
-- [Anti-Patterns](./anti-patterns.md) - Common agent development mistakes to avoid (with examples and corrections)
-- [Best Practices](./best-practices.md) - Recommended agent development patterns and techniques
+- [AI Agents Convention](./ai-agents.md) — Standards for creating and managing AI agents in the platform binding directory (primary) and secondary agent directories. Use when authoring, reviewing, or restructuring an agent definition file in `.claude/agents/`, or when deciding which sub-topic of agent standards applies.
+- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) — Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks. Use when planning, delegating, verifying, or self-improving during a multi-step agent task.
+- [Anti-Patterns in AI Agents Development](./anti-patterns.md) — Common mistakes to avoid when developing AI agents, with problem, cause, and solution for each anti-pattern. Use when reviewing an agent definition for a common authoring mistake, or naming which anti-pattern a finding matches.
+- [Best Practices for AI Agents Development](./best-practices.md) — Proven practices for developing maintainable, secure, and effective AI agents in the `.claude/agents/` directory. Use when authoring a new agent and checking it against proven practices, or citing a best practice in a review.
+- [AI Agent Model Selection Convention](./model-selection.md) — Standards for selecting the appropriate model tier (planning-grade, execution-grade, fast) for AI agents based on task complexity. Use when deciding which model tier a new or existing agent should declare, or translating a tier to a concrete model ID.
+- [Skill Context Architecture](./skill-context-architecture.md) — Architectural guidance on skill context modes in `.claude/skills/`. Inline skills work universally; fork skills work from main conversation only. Use when authoring a Skill and deciding its context mode, or when a Skill needs to spawn or delegate work.
+- [Subagent Orchestration Convention](./subagent-orchestration.md) — Standards for concurrency caps and stuck-detection when a main agent spawns subagents via the Agent tool, capping concurrent background subagents at two (three total including the main agent/thread) to control token burn and avoid Claude API rate-limit hits. Use when spawning, polling, or capping background subagents, or diagnosing a stuck subagent.
 
 ## Related Documentation
 

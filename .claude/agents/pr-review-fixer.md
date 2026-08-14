@@ -186,7 +186,7 @@ that fed-in history to detect repetition. A reasoned rejection does not erase a 
 MEDIUM/HIGH/CRITICAL finding: the next eligible cycle independently verifies the evidence. If it
 remains, it stays merge-blocking and the PR reaches `blocked` at the seven-cycle ceiling rather than
 being handed to a human gate or silently suppressed. Capture sanitized learning at cycles six and
-seven; see [Loop-Exit and Block Rules](../../repo-governance/workflows/pr/pr-review-quality-gate.md#loop-exit-and-block-rules).
+seven; see [Loop-Exit and Block Rules](../../repo-governance/workflows/pr/pr-review-quality-gate/13-loop-exit-and-block-rules.md#loop-exit-and-block-rules).
 
 ## Untrusted-Input Handling
 

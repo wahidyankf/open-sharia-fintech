@@ -13,6 +13,7 @@ tags:
   - toolchain
   - doctor
 created: 2026-03-28
+when_to_use: Use immediately after creating or entering any git worktree, before running any Nx command in it.
 ---
 
 # Worktree Toolchain Initialization
@@ -24,229 +25,26 @@ After creating or entering a git worktree in this repository, always initialize 
 
 Both steps are required. The first ensures the Nx workspace and its Node/TypeScript dependencies remain functional; the second actively converges the polyglot toolchains (Rust, .NET/F#, TypeScript/Node) managed by `rhino-cli doctor` so that any language task the worktree's work touches resolves against a healthy toolchain.
 
-## Principles Implemented/Respected
-
-This practice respects the following core principles:
-
-- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Every worktree operates with a consistent, verified toolchain state. Running both `npm install` and `npm run doctor -- --fix` eliminates divergence between the root worktree's `node_modules/`, the current `package-lock.json`, and the installed native toolchain — making builds deterministic regardless of which worktree is active.
-
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The toolchain init is an explicit, required two-step action rather than an assumed side effect of worktree creation. The `postinstall` hook in `package.json` does run `npm run doctor || true`, but the trailing `|| true` deliberately swallows doctor failures so `npm install` can complete even when the polyglot toolchain is broken. That tolerance is the right default for `npm install`, but it means the explicit `npm run doctor -- --fix` invocation is the only thing that guarantees convergence. Developers and agents must perform the second step deliberately.
-
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Codifying a two-step rule enables automated agents and tooling to apply it consistently, reducing the chance of cryptic build, test, or lint failures caused by missing, stale, or drifted dependencies and toolchains.
-
-- **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: Addressing toolchain drift proactively at worktree-entry time is a root-cause fix. Discovering a missing or drifted language toolchain mid-task — through a cryptic Gradle, Cargo, mix, or dotnet error — is a symptom; the root cause is that the worktree's session started work without converging the toolchain first.
-
-## Conventions Implemented/Respected
-
-This practice does not directly implement Layer 2 documentation conventions. The operational context for this practice is governed by development practices referenced in the Related Documentation section.
-
-## The Rule
-
-**After every `git worktree add`, `EnterWorktree` invocation, or any other entry into a worktree session (human or agent), run BOTH of the following in the root repository worktree, in order:**
-
-```bash
-# Run these in the ROOT repository worktree path, not the new worktree.
-cd /path/to/root/open-sharia-enterprise
-
-# Step 1: Node/Nx workspace dependencies (node_modules/)
-npm install
-
-# Step 2: Toolchain convergence (Rust, .NET/F#, TypeScript/Node — all managed by rhino-cli)
-npm run doctor -- --fix
-```
-
-The root worktree is the primary checkout of the repository — the directory that contains the canonical `node_modules/` used by Nx across all worktrees. Replace `/path/to/root/open-sharia-enterprise` with the actual absolute path to the root checkout on the current machine.
-
-**Order matters.** Run `npm install` first, because `rhino-cli doctor` itself is a Rust binary built and invoked through the Node tooling; the doctor script may need a freshly synchronized `node_modules/` to run correctly. Run `npm run doctor -- --fix` second to actively converge the native toolchain.
-
-**Use `--fix`, not plain `doctor`.** Plain `npm run doctor` only detects drift and requires a second human action. `npm run doctor -- --fix` actively converges to the declared toolchain state in a single step. If a human wants a preview of what would change first, use `npm run doctor -- --fix --dry-run`.
-
-### Shared Cargo Target Directories (Local-Dev Only)
-
-`npm run doctor -- --fix` also creates per-crate `target/` symlinks pointing into a shared cargo build-artifact cache, so multiple worktrees of the same repo reuse build artifacts instead of recompiling the same crates independently. This step is **local-dev only** — it is a no-op under CI. See [Reproducible Environments §Shared Cargo Target Directories](./reproducible-environments.md#shared-cargo-target-directories) for the full mechanism, including the cache root, the `OSE_CARGO_TARGET_CACHE` override, and the worktree-aware `doctor --prune-cargo-cache` garbage collector.
-
-## Why This Is Necessary
-
-### Two Independent Layers of Drift
-
-A new or newly-entered worktree session can hit two independent kinds of toolchain drift, and a single command does not cover both:
-
-1. **Node/Nx dependency drift** — handled by `npm install`. `node_modules/` is not tracked by git, so it is not automatically synchronized between worktrees.
-2. **Polyglot native toolchain drift** — handled by `npm run doctor -- --fix`. The monorepo spans 18+ toolchains across 11 languages (see [Native-First Toolchain Management](./native-first-toolchain.md)); a session needs any of them to be correct the moment the pre-push hook (`apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`) fans out its affected-projects gates, including `nx affected -t test:quick`.
-
-Skipping either step leaves the other layer vulnerable. Doing only `npm install` handles `node_modules/` but leaves native toolchain drift undetected; doing only `npm run doctor -- --fix` converges the native toolchain but can leave the Nx workspace operating against a stale `node_modules/`.
-
-### The `postinstall` Hook Silently Tolerates Drift
-
-`package.json` defines a `postinstall` hook that runs `npm run doctor || true`. The `|| true` is deliberate — it prevents `npm install` from failing when the polyglot toolchain is drifted, which is the right default for `npm install` to remain usable as a dependency-sync command. But the consequence is that **`npm install` can complete "successfully" while the polyglot toolchain is actually broken**. A human developer or AI agent then tries to run a Rust, .NET, or TypeScript task in the new worktree and hits cryptic errors that aren't traceable to a missing or drifted toolchain.
-
-The explicit `npm run doctor -- --fix` call is the only mechanism that forces active convergence at the moment the worktree session begins.
-
-### Dependency Isolation in Git Worktrees
-
-Git worktrees share the `.git` directory but each worktree has its own working tree — its own copies of tracked files. `node_modules/` is not tracked by git, so it is not automatically synchronized between worktrees.
-
-When the Nx workspace resolves dependencies, it reads from `node_modules/` relative to the workspace root. If `package-lock.json` was updated in a worktree that is not the root, the root `node_modules/` becomes stale. Nx commands in any worktree then operate against dependency versions that do not match the lockfile.
-
-### Worktrees Routinely Touch Many Languages
-
-AI agents working on worktrees routinely touch apps across many languages: `ose-be` and `organiclever-be` (F#/Giraffe), `rhino-cli` and `crane-cli` (Rust CLIs), `ayokoding-cli` and `ose-cli` (Rust CLIs), TypeScript frontends, and more. The probability that a new worktree session will need a toolchain that has drifted is high, and the cost of discovering the drift mid-task — through an obscure Gradle, Cargo, `mix`, or `dotnet` error — is much higher than the cost of running `npm run doctor -- --fix` deliberately upfront.
-
-Even worktree sessions whose stated intent is "I'm just editing docs" should run the full two-step init, because the pre-push hook runs `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` (including `nx affected -t test:quick`) which can fan out to arbitrary language tasks depending on what the doc change touches.
-
-### `doctor --fix` Is Idempotent and Fast When Healthy
-
-Per [Native-First Toolchain Management](./native-first-toolchain.md), every package manager backing `doctor --fix` (`brew`, `volta`, `asdf`, `pyenv`, `cargo install`, `rustup`, etc.) is idempotent. When the toolchain is already healthy, `doctor --fix` is a no-op pass; when it has drifted, it actively converges. The cost of running it unconditionally on every worktree entry is very low; the cost of skipping it and hitting drift later is high.
-
-### What Goes Wrong Without Both Steps
-
-Without running both steps after worktree creation or entry, these failures can occur:
-
-- **Build failures**: A dependency that a new worktree's code requires may be absent or at the wrong version, or a native compiler (`rustc`, `dotnet`) may be missing entirely.
-- **Test failures**: Test runners (Vitest, Playwright, Cargo, `dotnet test`) may resolve the wrong module versions or fail to launch at all.
-- **Lint failures**: Linters may behave differently when versions mismatch, or may not be installed at all for the language a new file uses.
-- **Nx cache invalidation**: Nx computes cache keys based on inputs including resolved module versions. A stale `node_modules/` causes cache misses or incorrect cache hits.
-- **Cryptic errors**: Dependency and toolchain mismatches often surface as obscure runtime errors rather than clear "missing module" or "missing tool" messages, making them harder to diagnose.
-
-### Nx Workspace Dependency on `node_modules` State
-
-Nx task caching, project graph resolution, and executor plugins all depend on a consistent `node_modules/` state in the workspace root. When `node_modules/` diverges from `package-lock.json`, the entire workspace behaves unpredictably — not just the files that changed.
-
-## Known Gaps Beyond the Two-Step Init
-
-Two further gaps have surfaced in practice that the two-step init above does not cover. Both are
-one-time, worktree-local, and require no source or config changes — but agents should account for
-them explicitly rather than rediscover them mid-task.
-
-### Per-Project Dependency Restoration for Some Language Ecosystems
-
-`npm run doctor -- --fix` converges the _toolchain_ (the `mix`, `dotnet`, `cargo`, etc. CLIs
-themselves) but does not run _per-project_ dependency restoration for every polyglot project in
-the workspace. Most language ecosystems restore dependencies automatically as a side effect of
-their own build/test/typecheck invocation (Rust's `cargo`, TypeScript's package-manager-driven Nx
-executors, Go's module cache, Python's `uv`/`pip`), so this gap is invisible for them. Two
-ecosystems do NOT auto-restore and need an explicit one-time step in a freshly provisioned
-worktree — this surfaced concretely in **ose-primer**'s polyglot demo-app fan-out (`ose-public`
-itself currently has no Elixir projects; its own F# apps, e.g. `ose-be`/`organiclever-be`, use
-per-domain names rather than the `*-fsharp-*` demo-app naming below and are unaffected by this
-specific glob):
-
-```bash
-# Elixir projects — run once per affected libs/apps/*-elixir-* project
-mix deps.get
-
-# F#/.NET polyglot-demo projects — run once per affected apps/*-fsharp-*/src and .../tests project
-dotnet restore
-```
-
-Symptom without this step: `nx affected -t test:quick` fails on
-Elixir projects with `Unchecked dependencies ... run "mix deps.get"`, or on F# projects with
-`NETSDK1004: Assets file ... not found. Run a NuGet package restore`, even though the toolchain
-itself (`mix`, `dotnet`) is correctly installed. Root-cause the failure to this gap before
-assuming a real regression — it reproduces on every freshly provisioned worktree that touches an
-Elixir or F# polyglot-demo project, not just once. In a repo with no such projects in scope
-(`ose-public`, until it gains one), this section is a no-op to skip past, not a step to run
-blindly.
-
-### Sibling-Repo Relative Paths From Inside a Worktree (Multi-Repo Plans)
-
-A delivery checklist command that references a sibling repo with a relative path (e.g.
-`../ose-primer/apps/rhino-cli`) resolves correctly only from each repo's **root checkout**. Plan
-execution runs inside a **worktree** (`ose-public/worktrees/<plan-id>/`), which is two directory
-levels deeper than the repo root, so a naively-written `../ose-primer` resolves to a nonexistent
-path. If the sibling repo's own work also happens inside a matching worktree (the common case for
-a tri-repo `worktree-to-pr` plan), the correct relative path has to account for BOTH the local and
-the sibling's worktree nesting:
-
-```bash
-# WRONG from inside ose-public/worktrees/<plan-id>/: resolves outside the checkout entirely
-../ose-primer/apps/rhino-cli
-
-# CORRECT: 3 levels up (out of the plan folder, out of worktrees/, out of ose-public/),
-# then into the sibling's OWN worktree for the same plan
-../../../ose-primer/worktrees/<plan-id>/apps/rhino-cli
-```
-
-Author (or review) multi-repo delivery-checklist commands with this nesting in mind before running
-them, rather than discovering the wrong path mid-execution.
-
-### Absolute Source Paths in Delivery-Checklist Commands (Same-Repo Worktree vs. Primary Checkout)
-
-A related but distinct failure mode: a delivery-checklist command can hardcode a fully-qualified
-**absolute** path to a repo's **primary checkout** (e.g. `/Users/you/ose-public/apps/rhino-cli/...`)
-when it should point at that same repo's **worktree** copy
-(`/Users/you/ose-public/worktrees/<plan-id>/apps/rhino-cli/...`). Unlike the relative-path case
-above, this is not a nesting-depth arithmetic error — the path is syntactically valid and resolves
-to a real, existing file, just the stale one on `main` instead of the branch's in-progress copy.
-This makes it dangerous: a `cp`/`diff` command sourcing from the wrong checkout does not error, it
-silently succeeds with stale content.
-
-This surfaced concretely in a tri-repo `worktree-to-pr` plan's own Phase 3 sibling-propagation `cp`
-commands (verbatim text written into `delivery.md` itself, not a live agent misread): the source
-path omitted the `worktrees/<plan-id>/` segment, so the first propagation copy silently pulled
-pre-Phase-1 content. It was caught only because the sibling's subsequent test run showed fewer new
-tests than expected — a downstream symptom, not a copy-time error.
-
-Before running ANY command in a delivery checklist that reads from an absolute path into a repo this
-plan is also modifying, verify the path includes the worktree segment for the branch actually being
-worked, and — when in doubt — confirm with `git -C <path> rev-parse HEAD` that the resolved
-directory is at the commit you expect, not `main`.
-
-## When This Applies
-
-Run both steps in the root worktree after any of the following:
-
-1. Running `git worktree add` to create a new worktree.
-2. Using the `EnterWorktree` tool in the coding agent, which creates a worktree automatically.
-3. An AI agent with `isolation: "worktree"` spawning a new worktree for isolated work.
-4. A human `cd`-ing into an existing worktree to continue or resume work in a new session.
-5. Any other mechanism that creates or re-enters a worktree in this repository.
-
-The rule is **triggered by execution mode, not by intent**. Even "small" or "docs-only" worktree entries go through the two-step init. This step applies to both human developers and AI agents operating in this repository.
-
-## Step-by-Step Procedure
-
-1. Create or enter the worktree using your preferred method:
-
-   ```bash
-   git worktree add worktrees/my-feature-branch my-feature-branch
-   ```
-
-   This repo overrides the upstream coding-agent default worktree path — worktrees land at repo-root `worktrees/<name>/`, not under the platform binding directory. See [worktree-path.md](../../conventions/structure/worktree-path.md) for the convention and the `WorktreeCreate` hook that enforces it.
-
-2. Identify the root repository worktree path. This is the directory containing the canonical checkout — typically the parent of `worktrees/`.
-
-3. Run `npm install` in the root worktree:
-
-   ```bash
-   cd /path/to/root/open-sharia-enterprise
-   npm install
-   ```
-
-4. Run `npm run doctor -- --fix` in the root worktree:
-
-   ```bash
-   npm run doctor -- --fix
-   ```
-
-   This command is idempotent — when the toolchain is already healthy it is a no-op pass; when drifted it actively converges. To preview changes without applying them, use `npm run doctor -- --fix --dry-run`.
-
-5. Confirm both steps completed without errors before running any Nx commands in the new worktree.
-
-## Notes for AI Agents
-
-Agents that create or enter worktrees via `git worktree add`, the `EnterWorktree` tool, or an `isolation: "worktree"` configuration MUST run BOTH `npm install` AND `npm run doctor -- --fix` in the root repository worktree as immediate follow-up steps, in that order. Doing only one of the two steps is not sufficient and is treated as a rule violation.
-
-Re-run both steps whenever a worktree's dependencies or build output turn out to be missing mid-session. The [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md) makes that an expected occurrence — the worktree itself is intact, so the response is re-running this two-step init (plus any needed `nx build`), never re-provisioning the worktree or investigating a defect.
-
-The root worktree path is available from the environment context or can be confirmed with `git worktree list`. See the [Git Worktree Awareness](../agents/ai-agents.md#git-worktree-awareness) section of the AI Agents Convention for the full set of rules governing agent behavior in worktrees.
+## Contents
+
+- [Principles and Conventions Implemented](./worktree-setup/01-principles-and-conventions-implemented.md) — Why this practice exists.
+- [The Rule](./worktree-setup/02-the-rule.md) — The exact two-step command sequence, and the shared cargo cache it provisions.
+- [Independent Drift Layers and the `postinstall` Hook](./worktree-setup/03-independent-drift-layers-and-the-postinstall-hook.md) — Why both steps are independently required.
+- [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/04-dependency-isolation-language-breadth-and-idempotency.md) — Why every worktree entry needs the init.
+- [What Goes Wrong Without Both Steps](./worktree-setup/05-what-goes-wrong-and-nx-node-modules-dependency.md) — Build/test/lint/cache failure modes.
+- [Per-Project Dependency Restoration](./worktree-setup/06-per-project-dependency-restoration.md) — The Elixir/F# `mix deps.get` / `dotnet restore` gap.
+- [Sibling-Repo Relative Paths From Inside a Worktree](./worktree-setup/07-sibling-repo-relative-paths.md) — Correct path nesting in multi-repo plans.
+- [Absolute Source Paths in Delivery-Checklist Commands](./worktree-setup/08-absolute-source-paths-in-delivery-checklist-commands.md) — Worktree copy vs. stale primary-checkout path.
+- [When This Applies](./worktree-setup/09-when-this-applies.md) — The five triggering conditions.
+- [Step-by-Step Procedure](./worktree-setup/10-step-by-step-procedure.md) — The five numbered steps.
+- [Notes for AI Agents](./worktree-setup/11-notes-for-ai-agents.md) — The MUST-run-both-steps rule for agents.
 
 ## Related Documentation
 
-- [Worktree Path Convention](../../conventions/structure/worktree-path.md) - Repo-root `worktrees/<name>/` override and the WorktreeCreate hook that enforces it
-- [Reproducible Environments](./reproducible-environments.md) - Practices for consistent development environments, including Volta pinning and lockfile management
-- [Native-First Toolchain Management](./native-first-toolchain.md) - Architectural decision to use native package managers and `rhino-cli doctor` for toolchain management across 11 languages
-- [AI Agents Convention](../agents/ai-agents.md) - Git Worktree Awareness rules for agents operating across worktrees
-- [Trunk Based Development](./trunk-based-development.md) - Git workflow for this repository; the repo-wide default delivery mode is `worktree-to-pr` (a short-lived plan branch pushed to a draft PR against `main`), regardless of execution context. Direct push to `main` is available via the `worktree-to-origin-main` and `main-to-origin-main` modes when explicitly selected. See the [Default Push and Worktree Execution](./trunk-based-development.md#default-push-and-worktree-execution) section for the decision table on when each mode applies.
-- [Git Push Default Convention](./git-push-default.md) — The default integration target is a PR branch opened against `main` (`worktree-to-pr`); direct push to `origin main` is an explicit selection (`worktree-to-origin-main`, `main-to-origin-main`), never inferred. Plan delivery checklist steps for worktree creation, push, and removal MUST be tagged `[AI]` (see [Plans Organization Convention §Executor Tagging](../../conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)).
-- [Nx Targets](../infra/nx-targets.md) - Canonical Nx target names and caching rules that depend on a consistent dependency state
+- [Worktree Path Convention](../../conventions/structure/worktree-path.md) - Repo-root `worktrees/<name>/` override and the WorktreeCreate hook
+- [Reproducible Environments](../workflow/reproducible-environments.md) - Volta pinning and lockfile management
+- [Native-First Toolchain Management](../workflow/native-first-toolchain.md) - Native package managers and `rhino-cli doctor`
+- [AI Agents Convention](../agents/ai-agents.md) - Git Worktree Awareness rules for agents
+- [Trunk Based Development](../workflow/trunk-based-development/08-default-push-and-worktree-execution.md#default-push-and-worktree-execution) - The repo-wide default delivery mode is `worktree-to-pr`
+- [Git Push Default Convention](../workflow/git-push-default.md) - The PR-branch-as-default push target
+- [Nx Targets](../infra/nx-targets.md) - Canonical Nx target names and caching rules

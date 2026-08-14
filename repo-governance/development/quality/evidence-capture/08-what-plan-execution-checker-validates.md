@@ -1,0 +1,31 @@
+---
+title: "What plan-execution-checker Validates"
+description: "What the plan-execution-checker agent inspects in captured evidence."
+category: explanation
+subcategory: development
+tags:
+  - evidence
+  - testing
+  - screenshots
+  - plans
+  - verification
+  - locale
+  - manual-testing
+created: 2026-06-20
+when_to_use: "Use when you need to know what evidence the plan-execution-checker gate inspects."
+---
+
+# What plan-execution-checker Validates
+
+The [plan-execution-checker](../../../../.claude/agents/plan-execution-checker.md) validates evidence
+capture as part of Step 7 (Manual Behavioral Assertions). It checks:
+
+1. **Screenshots exist** — for each UI verification step, `evidence/` contains at least one
+   screenshot per locale per breakpoint tested.
+2. **Delivery.md references evidence** — implementation notes under ticked UI-verification
+   checkboxes contain `![...]` references or explicit `evidence/` file paths.
+3. **Locale coverage** — for multi-locale apps, evidence covers ALL supported locales.
+4. **curl evidence** — for API verification steps, implementation notes contain the command,
+   status code, and response body (inline or referenced).
+5. **No "verified manually" without evidence** — a bare "verified manually" note with no
+   screenshot and no curl response is a **HIGH** finding.

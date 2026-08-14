@@ -1,6 +1,7 @@
 ---
 title: "CI Workflows"
 description: Workflows for checking that repository CI setup follows its documented standards
+when_to_use: Use when routing to a workflow that validates or fixes CI/CD standards compliance.
 category: explanation
 subcategory: workflows
 tags: []
@@ -31,7 +32,7 @@ These workflows define **WHEN and HOW to validate CI/CD standards**, orchestrati
 
 ## Workflows
 
-- [CI Quality Gate](./ci-quality-gate.md) - Validate all projects conform to CI/CD standards defined in governance, then iteratively fix non-compliance until zero findings. Supports bounded iteration with configurable max-iterations
+- [ci-quality-gate](./ci-quality-gate.md) — Validates all projects conform to CI/CD standards and iteratively fixes non-compliance until zero findings are confirmed twice. Use after adding a new app, modifying CI/CD infrastructure, as a periodic compliance check, or before major releases.
 
 ## Related Documentation
 

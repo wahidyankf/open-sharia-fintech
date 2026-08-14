@@ -1,0 +1,20 @@
+---
+title: "Shape: Tester-Driven, Not Checker/Fixer"
+description: Explains why the API quality gate has no checker/fixer agent pair and instead runs a tester-driven test-fix-retest loop.
+when_to_use: Use when orchestrating the API quality gate, to confirm which agents to invoke and in what order.
+---
+
+# Shape: Tester-Driven, Not Checker/Fixer
+
+There is deliberately **no `api-checker` / `api-fixer` agent pair**, and this workflow must never be
+read as though there were. The loop is:
+
+1. [`api-exploratory-tester`](../../../../.claude/agents/api-exploratory-tester.md) drives the live API
+   and emits `AET-###` findings.
+2. The appropriate `swe-*-dev` agent — chosen by the implementing language of the service under
+   test (`swe-fsharp-dev` for `ose-be` / `organiclever-be`, `swe-typescript-dev`, `swe-rust-dev`,
+   and so on) — fixes each finding.
+3. The tester re-runs against the rebuilt/redeployed service.
+
+Repeat until the defect set is empty. Naming a non-existent `api-checker` or `api-fixer` agent is
+anti-pattern **AP-7** (citing an agent that does not exist).

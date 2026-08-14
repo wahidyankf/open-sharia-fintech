@@ -10,6 +10,7 @@ tags:
   - cleanup
   - parallelism
 created: 2026-07-20
+when_to_use: Use when a plan that created worktrees, branches, or build output is finishing and needs to tear them down.
 ---
 
 # Worktree and Artifact Cleanup Convention
@@ -23,9 +24,9 @@ executed carelessly, because every action it takes is a deletion. The whole conv
 that combination safe: delete thoroughly, delete only what is yours, and verify before each removal.
 
 **Cleanup is immediate, not deferred.** Remove a repo's worktree the moment this plan is done using
-it — when every delivery unit this plan places in that repo is confirmed merged (see the checks
-below) — right then, not batched with unrelated later steps and not left in place "in case it's
-needed again." Under the [Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+it — when every delivery unit this plan places in that repo is confirmed merged — right then, not
+batched with unrelated later steps and not left in place "in case it's needed again." Under the
+[Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
 a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
 repo's worktree is torn down as soon as that repo's own units land, independently of whether the
 plan's other repos are still in flight.
@@ -35,200 +36,22 @@ pre-removal checks pass, the AI executor removes the exact path recorded in the 
 This authority never extends to a repository root, a wildcard, a worktree absent from the plan's
 file-touch ledger, or any worktree created by another actor; those remain out of scope.
 
-## Principles Implemented/Respected
+## Contents
 
-- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Every
-  action this gate takes is a deletion, and deletions are irreversible. The convention requires
-  positively identifying ownership and idleness before each removal rather than sweeping broadly.
-
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: A
-  plan cleans up what it can positively account for having created — never what merely looks stale.
-  Shared caches other sessions depend on are out of scope by rule, not by judgement call.
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Cleanup is
-  a fixed plan-end gate with a short, ordered checklist rather than a heuristic sweep, so its blast
-  radius stays legible.
-
-## Conventions Implemented/Respected
-
-- **[No Destructive Git Operations Convention](./no-destructive-git-operations.md)**: The companion
-  convention forbids the blunt removals (recursive clean, force delete, hard reset) that a careless
-  cleanup would otherwise reach for; this gate prescribes the self-scoped, verified alternative.
-
-- **[Worktree Toolchain Initialization](./worktree-setup.md)**: The provisioning half of the same
-  worktree lifecycle. This convention is its teardown counterpart.
-
-- **[Worktree Path Convention](../../conventions/structure/worktree-path.md)**: Cleanup depends on
-  worktrees living at the conventional `worktrees/<name>/` path so ownership is determinable.
-
-## Why This Is a Gate
-
-On a shared machine, uncleaned artifacts are not a tidiness issue — they accumulate against a resource
-everyone is using.
-
-- **Disk.** Each worktree is a full checkout. A multi-phase plan is capped at **one worktree per
-  repository**, reused across every delivery unit that repo produces — several such plans in flight
-  still fill a disk that CI runners, builds, and every other agent share, which is exactly why the cap
-  exists (see [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)).
-- **The ref namespace.** Removing a worktree leaves its branch behind. A plan that cleans worktrees but
-  not refs still leaves stale local and remote branches on every repo it touched, and those
-  accumulate permanently.
-- **Stale state.** An idle worktree is indistinguishable, by path alone, from an active one. Every
-  worktree left behind makes the next actor's "is this safe to remove?" judgment harder.
-
-## The Three Artifact Classes
-
-A complete cleanup covers all three. Stopping after the first is the common failure.
-
-1. **Worktrees** — the working directories this plan created.
-2. **Branches** — local and remote, merged-only. See [Branch Cleanup](#branch-cleanup).
-3. **Build output** — `target/`, `dist/`, `.next/`, and build caches produced **inside this plan's own
-   worktrees**.
-
-## Hard Safety Rules
-
-These bound every action the gate takes.
-
-- **Self-created only.** Delete only what this plan created. Anything else requires positive evidence
-  it is idle — not merely the absence of evidence that it is busy.
-- **Verify not in use before deleting.** Check, then delete. When in doubt, leave it. An artifact left
-  behind costs disk; an artifact wrongly deleted costs someone else's work.
-- **Never delete a shared cache.** In particular, the **shared cargo `target/` directory** — the
-  symlinked shared build output introduced by the
-  [`rust-cargo-target-dir-sharing`](../../../plans/done/2026-07-19__rust-cargo-target-dir-sharing/)
-  plan — is depended on by concurrent builds in every other worktree. Removing it breaks them. The
-  same reasoning applies to any shared cache: if another session can be relying on it, it is out of
-  scope for a plan-scoped cleanup. This binds **agents**, and it is not contradicted by the ambient
-  sweeper described in the [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md),
-  which may remove the same shared cache on its own schedule. A cache you must not delete can still
-  disappear; that is the environment, not a rule violation by another actor.
-- **Cleanup is itself non-destructive to others.** The gate may not use any operation that a
-  concurrent actor could be harmed by. It removes; it never force-removes, rewrites, or prunes shared
-  state.
-
-## Mandatory Pre-Removal Checks
-
-Run all five before any `git worktree remove`. Each is grounded in an observed incident, not a
-hypothetical.
-
-**1. Test merge state with `gh pr list`, never with ancestry.**
-
-```bash
-gh pr list --head <branch> --state all --json number,state,mergedAt
-```
-
-PRs in these repos are **squash**-merged, which replays the branch as one new commit. The branch's own
-commits therefore never become ancestors of `main`, and `git merge-base --is-ancestor` reports
-NOT-MERGED for **every** merged branch. Observed live: four worktree branches all reported NOT-MERGED
-by ancestry while `gh` showed their PRs merged. Ancestry is not a conservative approximation here — it
-is wrong in the direction that blocks correct cleanup, and it would be wrong in the dangerous
-direction if anyone inverted it.
-
-**2. Read the worktree's dirty diff before removing it.**
-
-```bash
-git -C <worktree> status --porcelain
-```
-
-A merged PR proves the _branch_ landed, not that the _working tree_ is empty. Archival record-keeping
-in particular is written last — after the merge — and is easily left uncommitted. Observed live: a
-worktree held its plan's two terminal archival checkboxes, ticked with real commit SHAs and a merge
-timestamp, that existed **nowhere else**; every merge-state signal said "safe to delete". Recover such
-content first, or discard it explicitly with a stated reason. Never discard it silently.
-
-**3. Check for unpushed commits — work that exists nowhere but this machine.**
-
-```bash
-git -C <worktree> log origin/<branch>..<branch>
-```
-
-Any output is a commit that has never left this disk. Unlike checks 1 and 2, there is no remote copy
-to fall back on: if the worktree goes, so does the commit.
-
-**4. Always use non-force `git worktree remove`.**
-
-Never `rm -rf` a worktree — that leaves orphaned administrative state behind. The non-force command
-refuses on a dirty worktree, which is the backstop for when checks 1-3 were skipped or rushed.
-Preserving that backstop is the entire reason force is forbidden here.
-
-**5. Never remove a worktree this plan did not create** without positive evidence it is idle. On a
-shared machine, another session's live work is indistinguishable from stale state by path alone.
-Observed live: of 11 worktrees across three repos, one held five dirty files belonging to active work
-and was correctly left in place.
-
-## Branch Cleanup
-
-Removing a worktree leaves its branches behind. Under the 1-PR ↔ 1-branch mapping, a multi-phase plan
-accumulates one branch per **delivery unit** in a repo, even though it shares a single worktree across
-all of them — so a plan that cleans its (one) worktree but not refs still leaves stale local and
-remote branches on every repo it touched. Run this after removing a repo's worktree.
-
-**Delete only branches this plan created**, and only after the branch's PR is confirmed MERGED by the
-same `gh pr list --head <branch> --state all --json number,state,mergedAt` test used in check 1.
-Ancestry tests are useless here for the same squash-merge reason.
-
-**Local deletion uses `git branch -d`** — never `git branch -D`. The merged-check that `-d` retains is
-the point: it refuses on an unmerged branch, which is the intended backstop. If `-d` refuses on a
-branch whose PR reports MERGED, that is the **squash-merge shape, not lost work** — confirm the
-content landed with `git log origin/main..<branch>`, then delete with an explicit stated reason. Do
-not reflexively reach for `-D`; force-deletion is on the forbidden-operations list precisely because
-it silences the signal you would want in the case where the content genuinely had not landed.
-
-**Remote deletion uses `git push origin --delete <branch>`**, only after the PR is MERGED, and only
-for branches this plan pushed. **Never delete `main`, and never delete an environment branch.** Which
-branches those are is **repo-specific**: `ose-public` defines `prod-*` and `stag-*`; `ose-primer` and
-`ose-private` currently define none, so the rule is vacuously satisfied there. Confirm each repo's own
-set with `git branch -a` rather than assuming this pattern is universal — a plan that hardcodes one
-repo's environment-branch shape will eventually run against a repo that does not match it.
-
-**Jurisdiction note.** `git push origin --delete` is remote-ref deletion, not history-rewriting
-force-push. It sits deliberately **outside** the per-instance-approval gate that covers
-`--force` / `--force-with-lease` / hook bypass, and is instead safety-gated by **this convention's
-own** merged-check requirement above. This convention is the single authority for remote branch
-deletion; the local-side forbidden-operations table and the remote-side force-push convention both
-defer here.
-
-**Run `git worktree prune`** after removals so administrative worktree metadata does not accumulate.
-It touches only already-removed entries and is safe alongside other sessions.
-
-**Never `gc` or `prune` the object store** as part of cleanup. History maintenance is a serialization
-point on a shared machine, and carries a documented corruption risk when another process is writing
-concurrently. It stays out of the cleanup gate entirely.
-
-## Build-Artifact Cleanup
-
-Purge only the build output produced **inside this plan's own worktrees** — `target/`, `dist/`,
-`.next/`, and build caches — after verifying non-use.
-
-Explicitly **skip** the shared cargo `target/` and every other shared cache, and run **no** `git gc`
-or `git prune` on the object store. If build output is already gone when this gate runs, that is the
-ambient sweeper, not a missed step — record it as swept and move on rather than rebuilding output
-solely to delete it. History maintenance is a serialization point on a shared machine
-and stays out of the cleanup gate entirely.
+- [Principles and Conventions Implemented](./worktree-and-artifact-cleanup/01-principles-and-conventions-implemented.md) — Why this gate exists.
+- [Why This Is a Gate](./worktree-and-artifact-cleanup/02-why-this-is-a-gate.md) — Disk, ref namespace, and stale-state risk on a shared machine.
+- [The Three Artifact Classes](./worktree-and-artifact-cleanup/03-the-three-artifact-classes.md) — Worktrees, branches, build output.
+- [Hard Safety Rules](./worktree-and-artifact-cleanup/04-hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
+- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/05-mandatory-pre-removal-checks.md) — The five checks before any `git worktree remove`.
+- [Branch Cleanup](./worktree-and-artifact-cleanup/06-branch-cleanup.md) — Deleting merged local and remote branches safely.
+- [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/07-build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
 
 ## Related Documentation
 
-- [Worktree Toolchain Initialization](./worktree-setup.md) — the **setup** half of the same lifecycle.
-  That convention provisions a worktree and converges its toolchain; this one tears it down. A plan
-  touches both, at opposite ends.
-- [Temporary Files Convention](../infra/temporary-files.md) — the build-artifact and temporary-file
-  taxonomy this convention's third artifact class removes (`generated-reports/`, `local-temp/`, and
-  build output).
-- [No Destructive Git Operations Convention](./no-destructive-git-operations.md) — the forbidden-op
-  set that bounds what this gate may do. `git branch -D`, `rm -rf` of a worktree, forced worktree
-  removal, and object-store pruning are all forbidden there, which is why this convention prescribes
-  `-d`, non-force removal, and no `gc`.
-- [File-Touch Discipline](../practice/file-touch-discipline.md) — cleanup is the moment this matters
-  most, because it is the moment an agent deliberately removes things. A worktree whose PR has merged
-  can still hold uncommitted work that was never part of that PR; the ledger is what distinguishes
-  your artifacts from another actor's, and uncommitted work has no recovery path once deleted.
-- [Git Push Safety Convention](./git-push-safety.md) — the remote-side companion. Note the boundary
-  set out in the Jurisdiction note above: remote **branch deletion** is gated here by the merged-check,
-  not there by the force-push approval gate.
-- [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md) — the environment-side
-  counterpart. This gate governs what a **plan** deletes; that convention governs what the **host
-  machine** deletes on its own schedule, including the shared cargo `target/` this gate must leave
-  alone. Read together they answer "who removed this?" without either rule loosening.
-- [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) — the DAG model
-  in which cleanup is the **terminal node**, depending on every delivery node so it cannot remove an
-  artifact that in-flight work still needs.
+- [Worktree Toolchain Initialization](../workflow/worktree-setup.md) — the setup half of the same lifecycle.
+- [Temporary Files Convention](../infra/temporary-files.md) — the build-artifact and temporary-file taxonomy.
+- [No Destructive Git Operations Convention](../workflow/no-destructive-git-operations.md) — the forbidden-op set this gate stays within.
+- [File-Touch Discipline](../practice/file-touch-discipline.md) — distinguishes a plan's own artifacts from another actor's.
+- [Git Push Safety Convention](../workflow/git-push-safety.md) — the remote-side companion; branch deletion is gated here, not there.
+- [Build-Artifact Sweeper Convention](../infra/build-artifact-sweeper.md) — the environment-side counterpart that runs on its own schedule.
+- [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) — cleanup is the DAG's terminal node.

@@ -1,6 +1,7 @@
 ---
 title: "AyoKoding Web Workflows"
 description: Workflows for keeping AyoKoding learning content accurate, useful, and well structured
+when_to_use: Use when routing to a workflow that validates a specific AyoKoding tutorial type's quality.
 category: explanation
 subcategory: workflows
 tags: []
@@ -34,11 +35,11 @@ These workflows define **WHEN and HOW to validate ayokoding-web content**, orche
 
 ## Workflows
 
-- [AyoKoding Web By-Example Quality Gate](./ayokoding-web-swe-by-example-quality-gate.md) - Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status
-- [AyoKoding Web Annotated-Concept Quality Gate](./ayokoding-web-annotated-concept-quality-gate.md) - Validate Annotated-concept tutorial quality (45-60 worked examples, or 20-30 scenarios for the leadership no-code sub-mode) and apply fixes iteratively until EXCELLENT status
-- [AyoKoding Web Primer Quality Gate](./ayokoding-web-primer-quality-gate.md) - Validate Primer ("Just Enough X") tutorial quality (75-85 examples authored at By-Example pace, scope discipline) and apply fixes iteratively until EXCELLENT status
-- [AyoKoding Web General Quality Gate](./ayokoding-web-general-quality-gate.md) - Validate all ayokoding-web content quality (factual accuracy, links), apply fixes iteratively until ZERO findings
-- [AyoKoding Web In-the-Field Quality Gate](./ayokoding-web-in-the-field-quality-gate.md) - Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status
+- [ayokoding-web-swe-by-example-quality-gate](./ayokoding-web-swe-by-example-quality-gate.md) — Iterative Maker-Checker-Fixer quality gate for by-example tutorials, validating coverage, example count, annotation density, and the mandatory Examples-by-Level section. Use after creating or updating by-example tutorials, before publishing them, or periodically to confirm tutorial quality remains high.
+- [ayokoding-web-annotated-concept-quality-gate](./ayokoding-web-annotated-concept-quality-gate.md) — Iterative Maker-Checker-Fixer quality gate for Annotated-concept tutorials, validating worked-example count, annotation density, mode integrity, and diagram accessibility. Use after creating or updating Annotated-concept tutorials, before publishing them to ayokoding-web, or periodically to confirm existing tutorial quality.
+- [ayokoding-web-primer-quality-gate](./ayokoding-web-primer-quality-gate.md) — Iterative Maker-Checker-Fixer quality gate for Primer ("Just Enough X") tutorials, validating example count, annotation density, and scope discipline. Use after creating or updating a Primer tutorial, before publishing it, or when a primer's dependent topics change and its scope needs re-verification.
+- [ayokoding-web-general-quality-gate](./ayokoding-web-general-quality-gate.md) — Fully automated quality gate that validates ayokoding-web content quality, factual accuracy, and links in parallel, then applies fixes iteratively until zero findings. Use after creating or updating ayokoding-web content, before deploying to production, or periodically to confirm content quality and accuracy.
+- [ayokoding-web-in-the-field-quality-gate](./ayokoding-web-in-the-field-quality-gate.md) — Iterative Maker-Checker-Fixer quality gate for in-the-field production guides, validating guide count, standard-library-first ordering, annotation density, and production code quality. Use after creating or updating in-the-field production guides, before publishing them, or periodically to confirm production code quality.
 
 ## Related Documentation
 

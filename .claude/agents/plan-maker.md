@@ -68,10 +68,10 @@ write may occur until the root returns resolved answers.
 
 **Interaction ownership (HARD RULE)**: This specialist agent never owns user interaction. Return
 `## User Decisions Required` using the
-[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope),
+[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options/06-user-decisions-required-envelope.md#user-decisions-required-envelope),
 then stop before Step 2. Every `options` array MUST exhaustively list all substantive leaves. The
 root invokes `grill-me` through its native UI when available, then resumes or reinvokes this agent
-with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options.md#resolved-user-decisions-envelope).
+with the canonical [Resolved User Decisions Envelope](../../repo-governance/development/workflow/grilling-with-options/07-resolved-user-decisions-envelope.md#resolved-user-decisions-envelope).
 The root builds it from the original IDs after rendering and passes it verbatim; validate it before
 dependent work. A direct custom-agent or noninteractive caller receives the same envelope; never
 render a user prompt or infer an answer. The discovery pass is the only permitted work before that
@@ -191,7 +191,7 @@ check.
   this to give the plan a measured before-and-after of its own effect rather than a single
   hand-checked URL.
 - **Unavailable** → degrade explicitly per
-  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp.md#degraded-mode). Never
+  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp/04-identifier-hygiene-degraded-mode-and-when-to-check.md#degraded-mode). Never
   quietly weaken an acceptance criterion into something unfalsifiable.
 
 **The boundary is narrow and over-assuming it is the common failure.** No tool exists for billing,
@@ -223,7 +223,7 @@ step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embed
 tidy just that slice. Never bundle multiple scenarios into one cycle (long checklists are expected).
 Exceptions kept as one multi-scenario step: pure-core `**Gherkin (underpins) →**` data/calc tests, and
 the aggregate feature-consuming/`playwright-bdd` binders that consume the whole `.feature`. See
-[Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps)
+[Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development/09-gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps)
 
 **Execution markers** — prefix each checkbox (after `- [ ]`) with `[AI]` or `[HUMAN]`. `[AI]` is the
 default (unmarked = `[AI]`). Use `[AI]` as much as possible and `[HUMAN]` as little as possible: tag
@@ -319,7 +319,7 @@ and validate it before dependent work.
 **Multiple-options requirement (HARD RULE)**: Same as Step 1 — every validation question MUST
 present 2-4 concrete options plus the two standing options (free-form blank-state type and "chat
 about this"). Return only `## User Decisions Required` using the
-[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options.md#user-decisions-required-envelope).
+[canonical envelope schema](../../repo-governance/development/workflow/grilling-with-options/06-user-decisions-required-envelope.md#user-decisions-required-envelope).
 Never present a binary yes/no without offering design alternatives.
 
 Cover (each as a structured multiple-choice question):
@@ -517,7 +517,7 @@ exactly as the UI-design-funnel delivery section does above for UI-bearing plans
 - Acceptance criteria are testable and follow the **step-keyword cardinality HARD rule**:
   every `Scenario` uses exactly one primary `Given`, one `When`, and one `Then`; all extras
   chain with `And`/`But`. `Background` blocks and `Scenario Outline` `Examples` tables are
-  exempt. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
+  exempt. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
 - Scope is clearly defined
 - Constraints are documented
 
@@ -589,7 +589,7 @@ When plan content (any of `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `deli
   checkbox. Domain-specialized agents hallucinate less than generic orchestration. The annotation
   takes priority over plan-execution Agent Selection heuristics. Skip annotation for trivial
   one-line edits or shell commands. See
-  [Plan Anti-Hallucination Convention §Specialized-Agent Delegation](../../repo-governance/development/quality/plan-anti-hallucination.md#specialized-agent-delegation-hallucination-reduction)
+  [Plan Anti-Hallucination Convention §Specialized-Agent Delegation](../../repo-governance/development/quality/plan-anti-hallucination/18-specialized-agent-delegation-and-validation-rituals.md#specialized-agent-delegation-hallucination-reduction)
   for the annotation format and when to skip.
 
 #### PR Step Authoring Rule (per [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md))
@@ -664,7 +664,7 @@ Use the `docs-validating-factual-accuracy` Skill for systematic verification met
 **Delegate research to `web-researcher` for unfamiliar or fast-moving topics**: Per the
 [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md)
 and the LOWER plan-content threshold defined in
-[Plan Anti-Hallucination Convention §Web-Research Delegation](../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans),
+[Plan Anti-Hallucination Convention §Web-Research Delegation](../../repo-governance/development/quality/plan-anti-hallucination/13-refuse-on-uncertainty-rule-and-web-research-delegation.md#web-research-delegation-lower-threshold-for-plans),
 invoke the [`web-researcher`](./web-researcher.md) subagent for ANY external claim
 that is not already documented in the repo (`docs/`, `repo-governance/`, `apps/*/README.md`,
 `package.json`, `go.mod`, `Cargo.toml`, etc.) and that requires more than a single `WebFetch`
@@ -724,12 +724,12 @@ Forbidden: writing the claim without a label and hoping it is correct.
 
 Reject AP-1 through AP-10 at authoring time — `plan-checker` flags occurrences as HIGH. Full
 catalog in the `plan-creating-project-plans` skill and
-[Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../repo-governance/development/quality/plan-anti-hallucination.md#anti-pattern-catalog).
+[Plan Anti-Hallucination Convention §Anti-Pattern Catalog](../../repo-governance/development/quality/plan-anti-hallucination/14-anti-pattern-catalog-ap-1-through-ap-4.md#anti-pattern-catalog).
 
 ## Mandatory Worktree Specification (Top-Level Section)
 
 Every plan MUST declare its worktree path before the delivery checklist begins. This is a structural requirement enforced by both `plan-checker` (HIGH finding when missing) and the
-[plan-execution workflow Step 0 hard gate](../../repo-governance/workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate)
+[plan-execution workflow Step 0 hard gate](../../repo-governance/workflows/plan/plan-execution/14-enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate)
 (execution refuses to start if the section is absent; otherwise it enters the declared worktree by default — provisioning it from the latest `origin/main` when missing, syncing it with `origin/main` before implementing, and prompting the user to delete it after the plan is archived and pushed).
 
 **Where to write it**:

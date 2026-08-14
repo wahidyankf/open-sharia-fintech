@@ -20,7 +20,7 @@ when_to_use: Use when moving a plan from backlog/ to in-progress/, or from in-pr
 still sitting in `plans/backlog/` is never executed directly out of that folder; the promotion below
 is a mandatory precondition, not an optional courtesy, and it MUST land as a committed, pushed change
 on `origin main` before worktree provisioning or any implementation step begins. See
-[plan-execution → Execute Plan from Backlog](../../../workflows/plan/plan-execution.md#execute-plan-from-backlog).
+[plan-execution → Execute Plan from Backlog](../../../workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
 
 1. **Move folder** (on local `main`, before any worktree exists): Move plan folder from
    `backlog/[identifier]/` to `in-progress/[identifier]/` — a pure move; neither stage carries a

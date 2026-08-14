@@ -202,7 +202,7 @@ multi-page research, per the
 
 **Related Agents**:
 
-- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines.md#the-nine-reviewer-disciplines) - The full sibling roster and routing rules
+- [`pr-review-disciplines.md`'s nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md) - The full sibling roster and routing rules
 - `pr-review-logic-maker` - Owns domain-scenario gaps this agent routes away from itself
 - `pr-review-governance-maker` - Owns already-documented layering/structure violations this agent routes away from itself
 - `pr-review-synthesis-maker` - The coordinator this agent's raw findings feed once wired in (Phase 4 cutover); owns final architecture↔correctness re-categorization

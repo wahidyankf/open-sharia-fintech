@@ -1,0 +1,55 @@
+---
+title: "Tools, Automation, and References"
+description: "Enforcement tooling and related references."
+category: explanation
+subcategory: development
+tags:
+  - plans
+  - ai-agents
+  - factual-validation
+  - anti-hallucination
+  - web-research
+  - verification
+created: 2026-05-03
+when_to_use: "Use to locate the automated enforcement."
+---
+
+# Tools and Automation, and References
+
+## Tools and Automation
+
+- **`web-researcher`** — default research primitive for external claims.
+- **`plan-checker`** — Step 5f hallucination scan against this convention.
+- **`plan-fixer`** — re-verification before applying replacement content.
+- **`plan-execution-checker`** — post-execution claim verification.
+- **`plan-quality-gate`** — workflow gate that cannot pass until zero anti-pattern violations remain.
+- **`plan-execution`** — workflow Step 2 per-item verification before delegation.
+
+## References
+
+**Related Conventions:**
+
+- [Plans Organization Convention](../../../conventions/structure/plans.md) — what goes in a plan; this convention says how to verify what you write.
+- [Factual Validation Convention](../../../conventions/writing/factual-validation.md) — universal `[Verified]` / `[Outdated]` / `[Unverified]` system this convention extends.
+- [Web Research Delegation Convention](../../../conventions/writing/web-research-delegation.md) — universal delegation threshold this convention lowers for plan content.
+- [Manual Behavioral Verification Convention](.././manual-behavioral-verification.md) — runtime verification (Playwright MCP / curl); complementary to anti-hallucination at authoring time.
+- [Worktree Path Convention](../../conventions/structure/worktree-path.md) — worktree routing referenced by the Worktree Specification rule in plans.
+
+**Agents:**
+
+- [`plan-maker`](../../../../.claude/agents/plan-maker.md), [`plan-checker`](../../../../.claude/agents/plan-checker.md), [`plan-fixer`](../../../../.claude/agents/plan-fixer.md), [`plan-execution-checker`](../../../../.claude/agents/plan-execution-checker.md) — the four agents this convention governs.
+- [`web-researcher`](../../../../.claude/agents/web-researcher.md) — research primitive.
+
+**Workflows:**
+
+- [Plan Quality Gate](../../../workflows/plan/plan-quality-gate.md)
+- [Plan Execution](../../../workflows/plan/plan-execution.md)
+
+**Agent skills:**
+
+- [`plan-creating-project-plans`](../../../../.claude/skills/plan-creating-project-plans/SKILL.md) — authoring guide that consumes this convention.
+- [`docs-validating-factual-accuracy`](../../../../.claude/skills/docs-validating-factual-accuracy/SKILL.md) — universal factual-validation methodology.
+
+**Repository Architecture:**
+
+- [Repository Governance Architecture](../../../repository-governance-architecture.md) — six-layer hierarchy. This convention is Layer 3 (Development), governing Layer 4 agents and Layer 5 workflows that consume Layer 2 conventions (factual-validation, web-research-delegation).

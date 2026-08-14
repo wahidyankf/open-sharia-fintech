@@ -1,6 +1,8 @@
 ---
 name: ci-quality-gate
 title: "ci-quality-gate"
+description: Validates all projects conform to CI/CD standards and iteratively fixes non-compliance until zero findings are confirmed twice.
+when_to_use: Use after adding a new app, modifying CI/CD infrastructure, as a periodic compliance check, or before major releases.
 goal: Validate all projects conform to CI/CD standards and fix non-compliance iteratively
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -40,108 +42,12 @@ outputs:
 defined in `repo-governance/development/infra/ci-conventions.md`, then iteratively fix non-compliance
 until zero findings are achieved.
 
-**When to use**:
+## Contents
 
-- After adding a new app to the repository
-- After modifying CI/CD infrastructure (workflows, composite actions, Docker files)
-- As a periodic compliance check
-- Before major releases to ensure CI consistency
-
-## Execution Mode
-
-**Preferred Mode**: Agent Delegation — invoke `ci-checker` and `ci-fixer` via the Agent tool
-with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
-
-**Fallback Mode**: Manual Orchestration — execute workflow logic directly using
-Read/Write/Edit tools when Agent Delegation is unavailable.
-
-## Steps
-
-### 1. Initial Check (Sequential)
-
-Run `ci-checker` to validate all projects against CI standards.
-
-**Agent**: `ci-checker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: Audit report in `generated-reports/`
-
-**Success criteria**: Checker completes and generates audit report.
-
-**On failure**: Terminate workflow with status `fail`.
-
-### 2. Analyze Findings (Sequential)
-
-Count findings by criticality level.
-
-**Condition Check**: Count ALL findings in audit report.
-
-- If findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
-- If findings = 0: Initialize `consecutive_zero_count` to 1 (first zero),
-  proceed to step 4 for confirmation re-check (consecutive pass requirement)
-
-**Depends on**: Step 1 completion
-
-### 3. Apply Fixes (Sequential)
-
-Run `ci-fixer` to address findings from the latest audit report.
-
-**Agent**: `ci-fixer`
-
-- **Args**: `report: {step1.outputs.audit-report}, approved: all`
-- **Output**: Fixed files, updated configurations
-- **Condition**: Findings exist from step 2
-- **Depends on**: Step 2 completion
-
-**Success criteria**: Fixer successfully applies fixes without errors.
-
-**On failure**: Log errors, proceed to step 4 for verification.
-
-### 4. Re-check and Iterate (Sequential)
-
-Run `ci-checker` again to verify fixes and check for new issues.
-
-**Agent**: `ci-checker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: Verification audit report
-- **Depends on**: Step 3 completion
-
-**Logic**:
-
-- Count ALL findings in verification report
-- Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
-- If consecutive_zero_count >= 2: Proceed to step 5 (Success — double-zero confirmed)
-- If consecutive_zero_count < 2 AND findings = 0: Loop back to step 4 (confirmation check)
-- If findings > 0 AND iterations < max-iterations: Loop back to step 3
-- If findings > 0 AND iterations >= max-iterations: Proceed to step 5 (Partial)
-- **Escalation**: If findings count is not decreasing after iteration 5, log a warning: "Convergence not achieved — likely non-deterministic findings or scope expansion"
-
-### 5. Finalization (Sequential)
-
-Report final status.
-
-- **pass**: Zero findings confirmed on two consecutive validations
-- **partial**: Findings remain after max-iterations
-- **fail**: Technical errors during checking or fixing
-
-## Related Workflows
-
-- [Plan Execution](../../workflows/plan/plan-execution.md) -- Uses similar iterative check-fix pattern
-- [Plan Quality Gate](../../workflows/plan/plan-quality-gate.md) -- Analogous quality gate for plans
-
-## Principles Implemented/Respected
-
-- **Explicit Over Implicit**: All CI standards are documented in governance docs, not implicit conventions
-- **Automation Over Manual**: Automated checking and fixing reduces manual compliance burden
-- **Simplicity Over Complexity**: Simple iterative check-fix loop with bounded iterations
-
-## Conventions Implemented/Respected
-
-- **[CI/CD Conventions](../../development/infra/ci-conventions.md)**: The standards being validated
-- **[Workflow Identifier Convention](../meta/workflow-identifier.md)**: Follows standard workflow structure
-
-## Agents
-
-- [ci-checker](../../../.claude/agents/ci-checker.md) — validates all projects against CI/CD standards
-- [ci-fixer](../../../.claude/agents/ci-fixer.md) — applies validated CI/CD compliance fixes
+- [When to Use](./ci-quality-gate/01-when-to-use.md) — the four triggers.
+- [Execution Mode](./ci-quality-gate/02-execution-mode.md) — preferred/fallback execution.
+- [Steps](./ci-quality-gate/03-steps.md) — the five-step check-fix-recheck loop.
+- [Related Workflows](./ci-quality-gate/04-related-workflows.md) — other workflows with a similar pattern.
+- [Principles Implemented/Respected](./ci-quality-gate/05-principles-implemented-respected.md) — the principles this gate embodies.
+- [Conventions Implemented/Respected](./ci-quality-gate/06-conventions-implemented-respected.md) — the conventions this gate enforces.
+- [Agents](./ci-quality-gate/07-agents.md) — `ci-checker` and `ci-fixer`.

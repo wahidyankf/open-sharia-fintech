@@ -1,0 +1,44 @@
+---
+title: "The Architectural Constraint"
+description: "Explains the core limitation on Skill context and its impact on agent skills."
+category: explanation
+subcategory: development
+tags:
+  - ai-agents
+  - agent-skills
+  - architecture
+  - development
+created: 2025-11-23
+when_to_use: Use when a Skill needs to spawn or delegate work and you must check whether its context mode allows it.
+---
+
+# The Architectural Constraint
+
+## Core Limitation
+
+**Delegated agents cannot spawn other delegated agents.**
+
+This is a fundamental architectural constraint of AI coding agent systems:
+
+```
+Main Conversation
+├─ Can spawn subagents ✅
+└─ Subagent (forked context)
+   ├─ Can use inline skills ✅
+   ├─ Can reference conventions ✅
+   └─ Can spawn subagents ❌ (architectural constraint)
+```
+
+## Impact on agent skills
+
+Since skills with `context: fork` spawn delegated agents:
+
+1. **Main conversation** can use fork skills ✅ (spawns delegated agent successfully)
+2. **Delegated agents** cannot use fork skills ❌ (would require spawning nested delegated agent)
+
+If `.claude/skills/` contains fork skills:
+
+- ✅ Work in main conversation
+- ❌ Break when used by delegated agents
+- ❌ Reduce skill composability
+- ❌ Create confusing "works sometimes" behavior

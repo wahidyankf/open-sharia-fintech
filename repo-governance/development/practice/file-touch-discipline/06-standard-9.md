@@ -1,0 +1,54 @@
+---
+title: "File-Touch Discipline — Standard 9: Generated Mirrors"
+description: Generated harness mirrors (.opencode/, .cursor/, .amazonq/) belong on the ledger and must land in the same commit as their .claude/ source, never a follow-up sync commit
+category: explanation
+subcategory: development
+tags:
+  - git
+  - safety
+  - concurrency
+  - ai-agents
+  - compaction
+  - discipline
+created: 2026-08-01
+when_to_use: Use whenever you edit a file under .claude/, or any other file that has a generated mirror or derived artifact.
+---
+
+# Standard 9: Generated Mirrors
+
+## Standard 9 — Generated Mirrors Belong on the Ledger and in the Same Commit
+
+`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.cursor/`, and `.amazonq/`
+are generated from it mechanically. Editing one agent definition therefore modifies **four** files,
+three of which you never opened — and all four are yours.
+
+rhino-cli provides the generators, and this repository already automates them:
+
+| Command                                     | npm wrapper                           | What it does                                                    |
+| ------------------------------------------- | ------------------------------------- | --------------------------------------------------------------- |
+| `rhino-cli harness bindings generate`       | `npm run generate:bindings`           | Regenerates every mirror from `.claude/`                        |
+| `... generate --harness opencode`           | `npm run sync:agents`, `sync:skills`  | Regenerates one harness only                                    |
+| `... generate --harness opencode --dry-run` | `npm run sync:dry-run`                | Previews without writing                                        |
+| `rhino-cli harness sync validate`           | `npm run validate:sync`               | Fails on mirror drift, and on a stale `.opencode/skill*` mirror |
+| `rhino-cli harness claude validate`         | `npm run validate:claude`             | Validates the `.claude/` sources themselves                     |
+| `rhino-cli harness bindings validate`       | `npm run harness:bindings-validation` | Byte-parity guard against the emitter output                    |
+
+**Pre-commit Step 3 runs `harness bindings generate` and auto-stages the result**, so in the normal
+path the mirrors are committed for you. The obligations are therefore about the paths where that
+automation does _not_ protect you:
+
+1. **Put the mirrors on your ledger.** Auto-staged is not unaccounted-for. Editing
+   `.claude/agents/foo.md` puts three mirror paths in your commit; Standard 6's reconcile must
+   expect them.
+2. **Source and mirror land in the same commit — always.** A commit where they disagree is a broken
+   tree for whoever checks it out, and fails the byte-parity guard for unrelated reasons.
+3. **Never bypass the hook that generates them.** `--no-verify` skips Step 3, producing that broken
+   state — forbidden by the
+   [No Destructive Git Operations Convention](../../workflow/no-destructive-git-operations.md).
+4. **Verify rather than assume.** `npm run validate:sync` is the check — run it after any `.claude/`
+   edit not committed through the standard hook path.
+5. **Never hand-edit a mirror.** An edit to `.opencode/`, `.cursor/`, or `.amazonq/` is silently
+   overwritten by the next generate. Fix the `.claude/` source and regenerate.
+
+The same reasoning covers every other generated artifact — lockfiles, coverage manifests, emitted
+spec stubs. Record the generating command, and let its declared outputs ride in the same commit.

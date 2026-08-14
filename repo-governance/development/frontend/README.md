@@ -11,6 +11,7 @@ tags:
   - accessibility
   - styling
 created: 2026-03-28
+when_to_use: Use when building, styling, or testing a UI component in any frontend app in this monorepo.
 ---
 
 # Frontend Development
@@ -41,10 +42,10 @@ UI development conventions for the open-sharia-enterprise monorepo's frontend ap
 
 ## 📋 Contents
 
-- [Design Tokens Convention](./design-tokens.md) — Token categories, naming rules, per-app override pattern, and dark mode requirements
-- [Component Patterns Convention](./component-patterns.md) — CVA variants, Radix composition, `cn()` utility, and component state requirements
-- [Accessibility Convention](./accessibility.md) — WCAG AA compliance, focus management, reduced-motion, and form controls
-- [Styling Convention](./styling.md) — Tailwind v4 patterns, utility-first approach, class ordering, and responsive design
+- [Design Tokens Convention](./design-tokens.md) — Conventions for CSS design tokens across frontend apps, covering structural shared tokens, per-app brand overrides, dark mode requirements, and Tailwind v4 integration. Use when adding, naming, or overriding a CSS design token.
+- [Component Patterns Convention](./component-patterns.md) — Standards for building UI components with CVA variants, Radix primitives, and React patterns. Use when creating or reviewing any UI component in ayokoding-www or organiclever-app-web.
+- [Accessibility Convention](./accessibility.md) — WCAG AA requirements for UI components — focus management, ARIA attributes, reduced motion, form controls, and keyboard navigation. Use when building or reviewing any frontend UI component.
+- [Styling Convention](./styling.md) — CSS and Tailwind v4 styling patterns for frontend applications. Use when writing or reviewing CSS/Tailwind styling in any frontend app.
 
 ## 🔗 Related Documentation
 

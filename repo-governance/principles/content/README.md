@@ -5,6 +5,7 @@ category: explanation
 subcategory: principles
 tags: []
 created: 2026-05-12
+when_to_use: Use when deciding whether a content or documentation value belongs here, or looking up a specific content principle.
 ---
 
 # Content Principles
@@ -32,10 +33,10 @@ These principles define **WHY we value specific approaches to content creation**
 
 ## Principles Implemented/Respected
 
-- [Accessibility First](./accessibility-first.md) - Design for universal access from the start (WCAG compliance, color-blind friendly palettes, alt text, screen reader support)
-- [Documentation First](./documentation-first.md) - Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented
-- [No Time Estimates](./no-time-estimates.md) - People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints
-- [Progressive Disclosure](./progressive-disclosure.md) - Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed
+- [Accessibility First](./accessibility-first.md) — Design for universal access from the start - WCAG compliance, color-blind friendly palettes, screen reader support Use when deciding whether or how a design, document, or diagram meets the repository's accessibility requirements.
+- [Documentation First](./documentation-first.md) — Documentation is not optional - it is mandatory for knowledge transfer, maintainability, and democratization Use when deciding whether, what, and how something in this repository must be documented.
+- [No Time Estimates](./no-time-estimates.md) — People work and learn at vastly different speeds - focus on outcomes and deliverables, not arbitrary time constraints Use when deciding whether content should describe outcomes instead of a time-to-complete estimate.
+- [Progressive Disclosure](./progressive-disclosure.md) — Start simple and layer complexity gradually - beginners see simple patterns, experts access advanced features when needed Use when deciding how much complexity to expose at once in a document, tutorial, or interface.
 
 ## Related Documentation
 

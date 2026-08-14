@@ -33,6 +33,6 @@ Every plan MUST declare the worktree path in its content so the executor can ver
 claude --worktree <plan-identifier>
 ```
 
-Manual pre-provisioning is OPTIONAL: the [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate) enters the declared worktree by default — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not.
+Manual pre-provisioning is OPTIONAL: the [plan-execution workflow Step 0 gate](../../../workflows/plan/plan-execution/14-enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate) enters the declared worktree by default — navigating to it when it already exists, and auto-provisioning it from the latest `origin/main` when it does not.
 
 See [Worktree Specification — Executor Lifecycle and Example](./30-worktree-specification-continued.md) for how the executor enters, syncs, and cleans up the worktree, plus a worked `## Worktree` block.

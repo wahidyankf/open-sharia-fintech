@@ -380,7 +380,7 @@ After verifying manual assertions (Step 5c), verify that the plan was properly a
 
 ### 9. Verify Worktree Was Used (Step 5e — MANDATORY)
 
-After verifying archival (Step 5d), verify that execution actually happened inside the declared worktree per the [plan-execution Step 0 gate](../../repo-governance/workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate). The plan-execution workflow refuses to start without a worktree — it navigates to the declared worktree (provisioning it from the latest `origin/main` when missing) and syncs it with `origin/main` before implementing. This step independently confirms the gate held.
+After verifying archival (Step 5d), verify that execution actually happened inside the declared worktree per the [plan-execution Step 0 gate](../../repo-governance/workflows/plan/plan-execution/14-enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate). The plan-execution workflow refuses to start without a worktree — it navigates to the declared worktree (provisioning it from the latest `origin/main` when missing) and syncs it with `origin/main` before implementing. This step independently confirms the gate held.
 
 #### What to Validate
 
@@ -525,10 +525,10 @@ For every relative cross-link in plan files:
 #### How to Audit
 
 1. Read all plan files top-to-bottom.
-2. For each factual claim, run the recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination.md#repo-grounding-rule-hard).
+2. For each factual claim, run the recipe in [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../repo-governance/development/quality/plan-anti-hallucination/05-repo-grounding-rule-hard.md#repo-grounding-rule-hard).
 3. Compare results against the post-execution repo state.
 4. File findings per severity table below.
-5. For external behavior claims, delegate multi-page verification to `web-researcher` per the lower threshold in [Plan Anti-Hallucination Convention §Web-Research Delegation](../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
+5. For external behavior claims, delegate multi-page verification to `web-researcher` per the lower threshold in [Plan Anti-Hallucination Convention §Web-Research Delegation](../../repo-governance/development/quality/plan-anti-hallucination/13-refuse-on-uncertainty-rule-and-web-research-delegation.md#web-research-delegation-lower-threshold-for-plans).
 
 #### Finding Severity
 

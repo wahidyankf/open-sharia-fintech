@@ -1,6 +1,7 @@
 ---
 title: "Web Workflows"
 description: "Orchestrated workflows that test a live running website and turn the findings into a fix plan — combined spec-aware exploratory, spec-blind usability, and design-aware design-fidelity testing."
+when_to_use: Use when routing to a workflow that tests a live running site and turns findings into a fix plan.
 category: explanation
 subcategory: workflows
 tags: []
@@ -32,7 +33,7 @@ These workflows define **WHEN and HOW to test a running site and act on the resu
 
 ## Workflows
 
-- [Web UX Test-Fixing Planning](./web-ux-test-fixing-planning.md) - Run the three live-site testers — `web-exploratory-tester` (spec-aware correctness), `web-usability-tester` (spec-blind usability), and `web-design-tester` (design-aware fidelity) — against the same live URL(s) and goal **sequentially** — integrating each result set into the plan before the next runs — then solidify one plan whose findings section keeps the three sources clearly separated (EWT-### vs UWT-### vs DWT-###) and which carries `tech-docs.md` (root-cause + fix approach), a TDD-shaped `delivery.md`, and — when the plan is UI-bearing — an `assets/` folder of both-tier (lo-fi + hi-fi) UI mockups. Grills the user hard on every material decision. Produces a new plan in `plans/in-progress/` by default; can merge into an existing plan on request. Deliverable is the plan, not the fixes. This is the near-end three-tester round web-UI feature-change plans must run (User-Facing Delivery Hardening Rule 15).
+- [web-ux-test-fixing-planning](./web-ux-test-fixing-planning.md) — Run the three live-site UX-quality testers (exploratory, usability, design) sequentially against the same URL(s), then solidify one source-attributed fix plan with tech-docs.md and a TDD-shaped delivery.md. Use before hardening a user-facing feature, to get a combined correctness/usability/design-fidelity read on a running site, or to refresh an existing findings plan via plan-mode=merge.
 
 ## Related Documentation
 

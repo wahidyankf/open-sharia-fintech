@@ -1,6 +1,7 @@
 ---
 title: "API Workflows"
 description: Orchestrated processes for live REST and GraphQL API quality validation and remediation
+when_to_use: Use when routing to a workflow that exercises a running REST or GraphQL API against its contract and specs.
 category: explanation
 subcategory: workflows/api
 tags:
@@ -18,9 +19,7 @@ Use these workflows when an API needs to be checked as a real client experiences
 
 ## Available Workflows
 
-| Workflow                                  | Purpose                                                                                                  | Agents Used                         | Complexity |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------- | ---------- |
-| [API Quality Gate](./api-quality-gate.md) | Exercise a live REST/GraphQL API against its contract and specs, fix findings, re-test until none remain | api-exploratory-tester, `swe-*-dev` | Medium     |
+- [api-quality-gate](./api-quality-gate.md) — Exercises a running REST or GraphQL API against its contract and Gherkin specs, fixing every defect via a tester-driven loop until none remain. Use when a plan ships an API/backend surface needing contract, functional, and security validation against a live deployment.
 
 Unlike the checker/fixer gates elsewhere in this directory tree, the API gate is **tester-driven**:
 `api-exploratory-tester` emits `AET-###` findings against a live endpoint, and the `swe-*-dev` agent

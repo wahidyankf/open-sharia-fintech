@@ -1,6 +1,7 @@
 ---
 title: "Documentation Workflows"
 description: Workflows for checking that reader-facing documentation remains accurate and navigable
+when_to_use: Use when routing to a workflow that validates docs/ content quality or its style-guide separation.
 category: explanation
 subcategory: workflows
 tags: []
@@ -33,8 +34,8 @@ These workflows define **WHEN and HOW to validate documentation**, orchestrating
 
 ## Workflows
 
-- [Documentation Quality Gate](./docs-quality-gate.md) - Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings
-- [Documentation Software Engineering Separation Quality Gate](./docs-software-engineering-separation-quality-gate.md) - Validate software engineering documentation separation, apply fixes iteratively until ZERO findings
+- [docs-quality-gate](./docs-quality-gate.md) — Validates all docs/ content (factual accuracy, pedagogical structure, link validity) and applies fixes iteratively via Maker-Checker-Fixer. Use after creating/updating documentation, before releases, periodically, or after bulk restructuring.
+- [docs-software-engineering-separation-quality-gate](./docs-software-engineering-separation-quality-gate.md) — Validates separation between OSE Platform style guides and AyoKoding educational content, then fixes violations iteratively. Use after adding/updating prerequisite relationships or style-guide/AyoKoding content, or periodically for compliance.
 
 ## Related Documentation
 

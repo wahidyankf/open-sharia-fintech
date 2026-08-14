@@ -5,6 +5,7 @@ category: explanation
 subcategory: principles
 tags: []
 created: 2026-05-12
+when_to_use: Use when deciding whether a cross-cutting, domain-independent value belongs here, or looking up a specific general principle.
 ---
 
 # General Principles
@@ -32,9 +33,9 @@ These principles define **WHY we value fundamental approaches** that transcend s
 
 ## Principles Implemented/Respected
 
-- [Deliberate Problem-Solving](./deliberate-problem-solving.md) - Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
-- [Simplicity Over Complexity](./simplicity-over-complexity.md) - Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary
-- [Root Cause Orientation](./root-cause-orientation.md) - Find root causes and fix them properly - no temporary patches, minimal impact changes, senior engineer standards
+- [Deliberate Problem-Solving](./deliberate-problem-solving.md) — Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them Use when about to implement a solution and need to check whether assumptions, alternatives, or confusion have been surfaced first.
+- [Simplicity Over Complexity](./simplicity-over-complexity.md) — Favor minimum viable abstraction and avoid over-engineering - start simple, add complexity only when proven necessary Use when deciding how much abstraction, configuration, or structure a solution needs before writing it.
+- [Root Cause Orientation](./root-cause-orientation.md) — Find root causes and fix them properly - no temporary fixes, no laziness, senior engineer standards Use when diagnosing a bug or planning a fix and need to check whether the change addresses the actual cause with minimal, senior-engineer-approved scope.
 
 ## Related Documentation
 
