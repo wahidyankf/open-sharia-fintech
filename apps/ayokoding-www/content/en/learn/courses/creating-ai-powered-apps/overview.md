@@ -15,4 +15,4 @@ error analysis, and CI evaluation gates belong to
 [Evaluating AI Systems in Depth](/en/learn/courses/evaluating-ai-systems-in-depth/learning/overview)
 (`evaluating-ai-systems-in-depth`); this course forwards there instead of duplicating that material.
 
-Continue with the [learning examples](./learning/overview).
+Continue with the [learning examples](./learning/overview.md).

@@ -8,20 +8,20 @@ weight: 30
 Theme C is the source-defined retrieval level: Examples 23–34. Each entry has brief purpose, a compact
 pipeline diagram, annotated local artifact, takeaway, and production boundary.
 
-| Example                       | Brief / diagram                                       | Artifact                                                               | Key takeaway                                                  |
-| ----------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------- |
-| 23. Embed text                | `text → vector`                                       | [ex-23](learning/code/ex-23-embed-text/example.py)                     | Record vector dimension.                                      |
-| 24. Similarity search         | `query → nearest`                                     | [ex-24](learning/code/ex-24-similarity-search/example.py)              | Top hit must be relevant.                                     |
-| 25. Build vector store        | `docs → index`                                        | [ex-25](learning/code/ex-25-build-a-vector-store/example.py)           | Indexing precedes retrieval.                                  |
-| 26. Chunking contrast         | `sizes → recall`                                      | [ex-26](learning/code/ex-26-chunking-strategy-contrast/example.py)     | Chunking changes recall.                                      |
-| 27. Retrieve into context     | `top-k → prompt`                                      | [ex-27](learning/code/ex-27-retrieve-into-context/example.py)          | Add relevant evidence only.                                   |
-| 28. Rerank candidates         | `candidates → rank`                                   | [ex-28](learning/code/ex-28-rerank-candidates/example.py)              | Rank before inclusion.                                        |
-| 29. Relevance threshold       | `score → keep/drop`                                   | [ex-29](learning/code/ex-29-relevance-threshold/example.py)            | Exclude noise.                                                |
-| 30. Retrieval vs stuffing     | `RAG                                                  | full corpus`                                                           | [ex-30](learning/code/ex-30-retrieval-vs-stuffing/example.py) | Choose by corpus and task. |
-| 31. Citation retrieved source | `chunk → citation`                                    | [ex-31](learning/code/ex-31-citation-of-retrieved-source/example.py)   | Preserve provenance.                                          |
-| 32. Retrieval in loop         | `turn → retrieve → context`                           | [ex-32](learning/code/ex-32-retrieval-in-the-loop/example.py)          | Refresh relevant context per turn.                            |
-| 33. Stale index refresh       | `source change → reindex`                             | [ex-33](learning/code/ex-33-stale-index-refresh/example.py)            | Retrieval freshness is operational.                           |
-| 34. Retrieval architecture    | `chunk → embed → store → retrieve → rerank → context` | [ex-34](learning/code/ex-34-retrieval-architecture-diagram/example.py) | Make pipeline stages visible.                                 |
+| Example                       | Brief / diagram                                       | Artifact                                                      | Key takeaway                                         |
+| ----------------------------- | ----------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------- | -------------------------- |
+| 23. Embed text                | `text → vector`                                       | [ex-23](code/ex-23-embed-text/example.py)                     | Record vector dimension.                             |
+| 24. Similarity search         | `query → nearest`                                     | [ex-24](code/ex-24-similarity-search/example.py)              | Top hit must be relevant.                            |
+| 25. Build vector store        | `docs → index`                                        | [ex-25](code/ex-25-build-a-vector-store/example.py)           | Indexing precedes retrieval.                         |
+| 26. Chunking contrast         | `sizes → recall`                                      | [ex-26](code/ex-26-chunking-strategy-contrast/example.py)     | Chunking changes recall.                             |
+| 27. Retrieve into context     | `top-k → prompt`                                      | [ex-27](code/ex-27-retrieve-into-context/example.py)          | Add relevant evidence only.                          |
+| 28. Rerank candidates         | `candidates → rank`                                   | [ex-28](code/ex-28-rerank-candidates/example.py)              | Rank before inclusion.                               |
+| 29. Relevance threshold       | `score → keep/drop`                                   | [ex-29](code/ex-29-relevance-threshold/example.py)            | Exclude noise.                                       |
+| 30. Retrieval vs stuffing     | `RAG                                                  | full corpus`                                                  | [ex-30](code/ex-30-retrieval-vs-stuffing/example.py) | Choose by corpus and task. |
+| 31. Citation retrieved source | `chunk → citation`                                    | [ex-31](code/ex-31-citation-of-retrieved-source/example.py)   | Preserve provenance.                                 |
+| 32. Retrieval in loop         | `turn → retrieve → context`                           | [ex-32](code/ex-32-retrieval-in-the-loop/example.py)          | Refresh relevant context per turn.                   |
+| 33. Stale index refresh       | `source change → reindex`                             | [ex-33](code/ex-33-stale-index-refresh/example.py)            | Retrieval freshness is operational.                  |
+| 34. Retrieval architecture    | `chunk → embed → store → retrieve → rerank → context` | [ex-34](code/ex-34-retrieval-architecture-diagram/example.py) | Make pipeline stages visible.                        |
 
 ## Theme D · Memory and cache-aware assembly
 

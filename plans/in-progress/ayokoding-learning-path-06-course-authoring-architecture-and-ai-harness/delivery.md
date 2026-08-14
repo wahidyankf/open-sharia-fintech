@@ -746,9 +746,8 @@ pipeline concurrently through review, bounded by the cap.
 - [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
 - [x] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
 - [x] [AI] Zero manifest files touched.
-- [x] [AI] The Band-5 completion signal is recorded with all five fields complete and a resolvable
+- [x] [AI] The Band-5 completion signal is recorded with all five required fields complete.
 - [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
-      deployed.
 
 > **Pause Safety**: the entire harness cluster is live; all 15 Band-5 bodies exist; the three course
 > surgeries are applied by construction; the Band-5 completion signal is recorded and ready for the
@@ -759,21 +758,21 @@ pipeline concurrently through review, bounded by the cap.
 
 ## Phase 5: Section & Authored-Tree Verification
 
-- [ ] [AI] **Verify all 15 authored bodies are present** —
+- [x] [AI] **Verify all 15 authored bodies are present** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: this returned **15** at the Phase-0
       baseline.
-- [ ] [AI] **Verify every authored body declares prerequisites** —
+- [x] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0** (returns 15 at baseline).
-- [ ] [AI] **Verify every authored body has both tracks** —
+- [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] Run affected quality gates from the worktree:
+- [x] [AI] Run affected quality gates from the worktree:
       `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` — acceptance:
       exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation).
-- [ ] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+- [x] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
       `apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate` +
       `npm run lint:md`, plus the scoped link gate:
 
@@ -798,10 +797,10 @@ pipeline concurrently through review, bounded by the cap.
     And link, heading-hierarchy, and markdownlint validation report no errors across the 15 authored course bodies
   ```
 
-- [ ] [AI] **Verify zero manifest files were touched by this entire plan** —
+- [x] [AI] **Verify zero manifest files were touched by this entire plan** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Verify the Band-5 completion signal is complete** —
+- [x] [AI] **Verify the Band-5 completion signal is complete** —
       returns **0**.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
@@ -809,13 +808,12 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Phase 5 Gate
 
-- [ ] [AI] All three 15-body structural loops (presence, prerequisites, both tracks) return 0.
-- [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure
+- [x] [AI] All three 15-body structural loops (presence, prerequisites, both tracks) return 0.
+- [x] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
+- [x] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure
       among the 15 authored bodies.
-- [ ] [AI] Zero manifest files touched across the whole plan's history; the Band-5 signal is complete
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
-      deployed.
+- [x] [AI] Zero manifest files touched across the whole plan's history; the Band-5 signal is complete.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
 
 > **Pause Safety**: the authored library passes every automated gate. Safe to stop. To resume: re-run
 > the affected quality gates + build.

@@ -19,4 +19,4 @@ Deep evaluation design belongs to
 [`agent-permissions-and-sandboxing`](/en/learn/courses/agent-permissions-and-sandboxing/learning/overview), and
 [`agent-orchestration-subagents-and-observability`](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/overview).
 
-Continue with the [survey examples](./learning/overview).
+Continue with the [survey examples](./learning/overview.md).
