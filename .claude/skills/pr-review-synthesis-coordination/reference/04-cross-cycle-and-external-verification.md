@@ -17,7 +17,7 @@ reasonableness-filter.
 
 ## External Fact Verification
 
-You may call the [`web-researcher`](../../../agents/web-researcher.md) agent for external fact
+You may call the [`web-researcher`](../../../agents/web/web-researcher.md) agent for external fact
 verification during tool-verify — for example, confirming a claimed API behavior, a library's
 current signature, or a security advisory a specialist's finding references. Use in-context
 `WebFetch`/`WebSearch` only for single-shot verification against a known authoritative URL;
