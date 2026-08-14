@@ -34,9 +34,9 @@ per-course/cohort/stage worktrees nor per-phase branches. Remove it only after t
 
 > **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
 > single, plan-wide worktree before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > rules landed. Reviewed against both — already compliant, no change required.
 
 ## Delivery Mode: worktree-to-pr
@@ -213,7 +213,7 @@ and a string form silently short-circuits to a single false-passing iteration.
 
 - [ ] [AI] Author `"${SPEC}<course-id>.md"` for each of the 11 courses in `ACCT_P14`, following the
       REQUIRED + RECOMMENDED template from the
-      [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#copy-paste-course-template) —
+      [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template) —
       acceptance: `for c in "${ACCT_P14[@]}"; do test -f "${SPEC}$c.md" || echo "MISSING $c"; done | wc -l`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-general-maker`_
@@ -871,7 +871,7 @@ Apply the seven-step per-course convention to each course; each course is its ow
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in

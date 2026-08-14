@@ -186,7 +186,7 @@ Before any execution, verify for EVERY target repo:
 3. The planning-phase commits are on that repo's `origin main` (`git fetch origin && git log
 origin/main --oneline -5` shows the plan delivery commits).
 4. The plan declares its `## Worktree` section per
-   [Plans Organization Convention §Worktree Specification](../../conventions/structure/plans.md#worktree-specification).
+   [Plans Organization Convention §Worktree Specification](../../conventions/structure/plans/29-worktree-specification.md#worktree-specification).
 
 **If any check fails for any repo**: STOP. Surface the failing repo and check. Do not execute a
 subset silently — the invoker decides whether to fix and re-gate or abandon.
@@ -236,7 +236,7 @@ For each repo in the confirmed order, run [plan-execution](./plan-execution.md) 
 Every plan-execution rule applies unchanged, including:
 
 - **Per-repo Delivery Mode resolution**: each repo's plan resolves its own
-  [`## Delivery Mode`](../../conventions/structure/plans.md#delivery-mode) independently, via the
+  [`## Delivery Mode`](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) independently, via the
   standard three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) —
   distinct from this composite's own `mode` input, which governs only the planning-phase delivery
   of the plan **documents** (Step 1). A repo whose plan resolves to a `*-to-pr` delivery mode
@@ -300,7 +300,7 @@ reach the other two parity repos.
 **delivery boundary** rather than at every phase or batched at composite end, with partial work
 merged-but-dark behind a **feature flag**. The **worktree** is a coarser, per-repository unit: each
 repo's plan is capped at one worktree, reused across every delivery unit it lands in that repo — see
-[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 See [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
 
 **Shared-machine safety**: all three repos share one machine's disk and git object store, and two of
@@ -353,7 +353,7 @@ every repo.
 
 **Per-repo Delivery Mode note**: "archived, pushed" above means a different concrete outcome per
 repo depending on that repo's resolved
-[`## Delivery Mode`](../../conventions/structure/plans.md#delivery-mode) — a direct push of the
+[`## Delivery Mode`](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) — a direct push of the
 archival commit to `origin main` for the direct-push modes (`worktree-to-origin-main`,
 `main-to-origin-main`), or a green, fully-reviewed PR with the archival move committed inside it,
 awaiting the merge outside the AI done-boundary, for the `*-to-pr` modes
@@ -465,7 +465,7 @@ Plans and executes only the two listed repos; the pre-execution grill confirms w
   verification in the execution phase uses scheduled wake-ups, never tight-loop polling.
 - **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible markdown
   links with `.md` extensions throughout.
-- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**:
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)**:
   each repo's plan resolves its own delivery mode independently in the execution phase (Step 4),
   distinct from this composite's own planning-phase `mode` input (Step 1).
 

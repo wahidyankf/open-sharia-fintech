@@ -394,7 +394,7 @@ prioritization, fix approach, and any UI direction, then authors:
 **Conditional — UI-bearing gate**: if **any** finding's fix adds or changes a user-facing screen or
 component under `apps/`/`libs/`, the plan is **UI-bearing** and MUST carry an `assets/` folder with
 the both-tiers mockups required by the
-[UI Mockups in Plan Docs convention](../../conventions/formatting/diagrams.md#ui-mockups-in-plan-docs),
+[UI Mockups in Plan Docs convention](../../conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope),
 exactly as the originating
 [salary-savings-calculator plan](../../../plans/done/2026-06-19__ayokoding-www-salary-savings-calculator/assets)
 does:
@@ -520,7 +520,7 @@ Scenario: Systematic coverage matrices and recurrence are enforced
 - [plan-maker Agent](../../../.claude/agents/plan-maker.md) — Phase 4 solidification + tech-docs/delivery/UI-assets authoring.
 - [Plan Quality Gate workflow](../plan/plan-quality-gate.md) — Phase 4 nested gate.
 - [Plan Execution workflow](../plan/plan-execution.md) — runs the plan later, after human review.
-- [UI Mockups in Plan Docs](../../conventions/formatting/diagrams.md#ui-mockups-in-plan-docs) — the both-tiers `assets/` mockup rule a UI-bearing plan must honour.
+- [UI Mockups in Plan Docs](../../conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope) — the both-tiers `assets/` mockup rule a UI-bearing plan must honour.
 - [Feature Change Completeness](../../development/quality/feature-change-completeness.md) — the specs+Gherkin rule the delivery checklist must honour.
 - [Plans Organization Convention](../../conventions/structure/plans.md) — in-progress plans use the date-free `<identifier>/` folder form.
 
@@ -538,7 +538,7 @@ Scenario: Systematic coverage matrices and recurrence are enforced
 - **[Workflow Naming Convention](../../conventions/structure/workflow-naming.md)**: Basename `web-ux-test-fixing-planning` parses as scope=`web`, qualifier=`ux` (the umbrella for the three live-site UX-quality lenses — exploratory correctness, usability, and design), descriptor=`test-fixing`, type=`planning`.
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: The plan lands at `plans/in-progress/<identifier>/` with no date prefix.
 - **[Feature Change Completeness](../../development/quality/feature-change-completeness.md)**: The delivery checklist carries the specs+Gherkin coverage steps for the exploratory spec-gap proposals.
-- **[UI Mockups in Plan Docs](../../conventions/formatting/diagrams.md#ui-mockups-in-plan-docs)**: A UI-bearing plan carries an `assets/` folder with both-tier (lo-fi ASCII + hi-fi `.excalidraw.png`) mobile/tablet/desktop mockups, design-funnel alternatives, grounding rule, and token-only colors.
+- **[UI Mockups in Plan Docs](../../conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)**: A UI-bearing plan carries an `assets/` folder with both-tier (lo-fi ASCII + hi-fi `.excalidraw.png`) mobile/tablet/desktop mockups, design-funnel alternatives, grounding rule, and token-only colors.
 - **[Grilling-With-Options Convention](../../development/workflow/grilling-with-options.md)**: Every material decision is grilled via `AskUserQuestion` with multiple-choice options plus the standing blank-state and "chat about this" options.
 - **[Subagent Orchestration Convention](../../development/agents/subagent-orchestration.md)**: The three testers run sequentially (one at a time), well within the concurrency cap.
 - **[Linking Convention](../../conventions/formatting/linking.md)**: Cross-references use GitHub-compatible markdown links with `.md` extensions.

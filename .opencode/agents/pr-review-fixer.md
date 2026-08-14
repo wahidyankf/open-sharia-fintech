@@ -252,7 +252,7 @@ three-stage fixers.
 **Project Guidance**:
 
 - [AGENTS.md](../../AGENTS.md) - Primary guidance
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) - The four delivery modes; `*-to-pr` modes are this agent's applicability boundary
+- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) - The four delivery modes; `*-to-pr` modes are this agent's applicability boundary
 
 **Related Agents / Workflows**:
 
@@ -277,7 +277,7 @@ three-stage fixers.
 
 - [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) -
   The three-stage pattern this agent adapts into a two-role variant
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) -
+- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -
   Defines the four delivery modes and why `*-to-pr` modes require this review cycle
 - [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) -
   Direct-push default for the two `*-to-origin-main` modes, against which the `*-to-pr` modes (this

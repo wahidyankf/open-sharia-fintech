@@ -1,0 +1,40 @@
+---
+title: "Specs Directory Structure: Scope"
+description: What the specs/ directory structure convention covers versus what it explicitly delegates to sibling conventions
+when_to_use: Read this when you need to confirm whether a specs/ topic (Gherkin writing, C4 content, PM-readability) falls inside or outside this convention.
+category: explanation
+subcategory: conventions
+tags:
+  - conventions
+  - specs
+  - gherkin
+  - directory-structure
+  - organization
+  - c4-diagrams
+  - openapi
+  - c4
+created: 2026-04-02
+---
+
+# Scope
+
+## What This Convention Covers
+
+- The C4-aware five-folder tree for app spec areas
+- **Gherkin feature file placement** for apps (BE, FE/web, CLI) and libs, within the `behavior/` tree
+- **Domain subdirectory rules** for grouping related feature files
+- **C4 diagram placement** within `system-context/`, `containers/`, and `components/`
+- **DDD artifact placement** within `components/<surface>/ddd/`
+- **OpenAPI contract placement** within `containers/contracts/`
+- **README.md index files** at each navigational level
+- **Per-surface variants** (full-stack, web-only, CLI-only, multi-CLI)
+- **Migration path** from flat-root layouts to the C4-aware tree
+
+## What This Convention Does NOT Cover
+
+- **Gherkin writing standards** (covered by [Acceptance Criteria Convention](../../../development/infra/acceptance-criteria.md))
+- **C4 diagram content** (covered by C4 model documentation within each project)
+- **OpenAPI spec authoring** (covered by contract project documentation)
+- **Test implementation** (covered by [Three-Level Testing Standard](../../../development/quality/three-level-testing-standard.md))
+- **Content split decisions** (what belongs in app README vs specs/) — see [App README vs Specs Convention](../app-readme-vs-specs.md)
+- **PM-readability requirements** for spec files — see [App README vs Specs Convention](../app-readme-vs-specs.md)

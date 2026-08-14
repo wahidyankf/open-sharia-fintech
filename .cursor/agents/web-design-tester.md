@@ -192,7 +192,7 @@ Document and apply all five, each judged against the **running** page:
 
 1. **Committed plan-folder mockup assets** — the both-tier mockups the plan-doc UI-mockup convention
    requires (`./assets/ui-<screen>-…`), per
-   [UI Mockups in Plan Docs](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
+   [UI Mockups in Plan Docs](../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
    Compare the rendered page to these and report divergence as a `DWT-###` finding citing the mockup
    file.
 2. **Design tokens / theme (colours, spacing, typography) at RUNTIME** — the **runtime counterpart** to

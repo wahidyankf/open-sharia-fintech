@@ -28,7 +28,7 @@ C-family/OS/Rust half of the original Band 6 split described in [README.md](./RE
 > opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
 > **intermediate** phase confirms the work is committed to its delivery unit's branch with nothing
 > pushed for review yet — see
-> [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+> [Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 >
 > **Executor environment note — RTK / `grep -c` sanctioned-zero-assertion rule (inherited, condensed
 > from `ayokoding-learning-path-04-course-authoring`'s own delivery.md).** This repo routes `git` (and
@@ -66,9 +66,9 @@ per-course/cohort/stage worktrees nor per-phase branches. Remove it only after t
 
 > **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
 > single, plan-wide worktree before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > rules landed. Reviewed against both — already compliant, no change required.
 
 ## Delivery Mode: worktree-to-pr
@@ -615,7 +615,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in

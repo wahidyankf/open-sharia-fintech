@@ -129,7 +129,7 @@ Apply HIGH_CONFIDENCE fixes automatically, skip others, report summary.
 
 #### BRD/PRD Content-Placement Fixes
 
-When the audit reports misplaced content per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), apply the following moves (HIGH confidence — mechanical, unambiguous):
+When the audit reports misplaced content per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans/14-content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd), apply the following moves (HIGH confidence — mechanical, unambiguous):
 
 - **Business framing found in `prd.md`** (sign-off language, sponsors, stakeholders, KPIs, ceremony language) → **move to `brd.md`**, typically into the Business Impact or Affected Roles subsection. If sign-off / approval-gate language is present at all, **strip it** — this repo is single-maintainer with code-review as the only gate; sign-off ceremonies are forbidden by the convention.
 - **User stories or Gherkin scenarios found in `brd.md`** → **move to `prd.md`**, into User Stories or Acceptance Criteria section.
@@ -140,7 +140,7 @@ When the audit reports misplaced content per the [Content-Placement Rules](../..
 
 After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
 
-#### File-Impact Tree Repairs (per [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule))
+#### File-Impact Tree Repairs (per [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans/12-file-impact-analysis-format.md#file-impact-analysis-format-hard-rule))
 
 When plan-checker flags a missing or malformed file-impact tree, reconstruct the `## File-Impact
 Analysis` as a root-relative fenced `text` tree before editing supporting prose. Preserve every
@@ -153,7 +153,7 @@ This is HIGH-confidence only when the existing targets are repo-grounded and mec
 If the plan's intended footprint is genuinely ambiguous, preserve the finding as MEDIUM for author
 clarification rather than guessing a tree.
 
-#### PR Step / Delivery Mode Reconciliation (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
+#### PR Step / Delivery Mode Reconciliation (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode))
 
 When plan-checker flags a HIGH finding for a PR step under a direct-push Delivery Mode, resolve it
 by reconciling the mode and the step rather than reflexively deleting the step:
@@ -179,7 +179,7 @@ by reconciling the mode and the step rather than reflexively deleting the step:
   direct-push Delivery Mode does not loosen that boundary: a stray merge step under a direct-push
   mode is a separate finding to surface, not license to delete it here.
 
-#### Per-Repository Delivery Mode Restriction (per [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule))
+#### Per-Repository Delivery Mode Restriction (per [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule))
 
 When plan-checker flags its item 9 HIGH finding — a resolved `## Delivery Mode` of
 `worktree-to-origin-main` or `main-to-origin-main` in a repo where that mode has no executable path
@@ -201,7 +201,7 @@ finding class from PR Step / Delivery Mode Reconciliation above** and takes a di
 Verify after fixing by re-running `plan-checker`'s item 9 detection and confirming the resolved mode
 no longer resolves to a direct-push mode in a restricted repo.
 
-#### Phase 0 PR/Push Step Removal (per [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
+#### Phase 0 PR/Push Step Removal (per [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
 
 When plan-checker flags a PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or
 post-push CI-verification step **inside `## Phase 0`**, the fix is mode-independent — the declared
@@ -355,8 +355,8 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 - [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 - [Test-Driven Development Convention §TDD Shape for Delivery Checklists](../../repo-governance/development/workflow/test-driven-development.md#tdd-shape-for-delivery-checklists) - Required three-substep template (RED/GREEN/REFACTOR) for rewriting TDD-shape violations flagged by plan-checker
 - [Multi-Harness Binding Convention](../../repo-governance/conventions/structure/multi-harness-binding.md) - Rules applied during harness-neutrality scan fixes (Step 5g findings)
-- [Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule) - `[AI]`/`[HUMAN]` marker rules, legend, handoff/resume signal requirement (Step 5h fixes)
-- [Plans Organization Convention §Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule) - Phase gate scaffold, Pause Safety note, barrier rule (Step 5h fixes)
+- [Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule) - `[AI]`/`[HUMAN]` marker rules, legend, handoff/resume signal requirement (Step 5h fixes)
+- [Plans Organization Convention §Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule) - Phase gate scaffold, Pause Safety note, barrier rule (Step 5h fixes)
 - [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md) - Scaffold the missing final Knowledge Capture phase and `learnings.md` file when `plan-checker` flags silent absence
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve plan quality while avoiding false positives.
@@ -510,7 +510,7 @@ When plan-checker reports a missing funnel artefact (Step 5k findings) on a **UI
 design. Re-validate each finding before applying (confirm the plan is genuinely UI-bearing and the
 artefact is actually absent), and re-read the scaffolded section after editing. The artefacts and
 their shape are defined in the
-[UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
+[UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 ### Confidence Assessment for the UI-design-funnel
 
@@ -653,7 +653,7 @@ Disposition block above — a plan carries exactly one of the two):
 ```
 
 For a missing course file's REQUIRED skeleton, point the author at the copy-paste template in the
-[Learning-Plan `syllabus/` Folder Convention §Copy-Paste Course Template](../../repo-governance/conventions/structure/learning-plan-syllabus.md#copy-paste-course-template)
+[Learning-Plan `syllabus/` Folder Convention §Copy-Paste Course Template](../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template)
 rather than reproducing it inline — the template's REQUIRED sections are the source of truth and
 should not drift into a second copy inside this agent's own file.
 
@@ -758,7 +758,7 @@ claude --worktree <plan-identifier>
 When plan-checker reports a missing, invalid, or incomplete `## Delivery Mode` declaration
 (Step 5m findings), apply these fixes. This is a sibling scaffold to Worktree Specification Fixes
 above — see the
-[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the authoritative mode table and precedence rule.
 
 ### Confidence Assessment
@@ -832,7 +832,7 @@ a narrower check layered on top, never a substitute. Concretely:
   An unrecognized tag may carry human-actor semantics this agent must not silently strip —
   never assume it is safe to overwrite.
 - **Never retag, delete, or otherwise remove a `[HUMAN]`- or `[AI+HUMAN]`-tagged merge step, in any
-  Delivery Mode.** Per [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode),
+  Delivery Mode.** Per [Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode),
   the tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in"
   declaration to check for, so a merge step tagged `[HUMAN]` and a merge step that "explicitly
   declares" a `[HUMAN]` gate describe the identical input. This is not limited to `*-to-pr` mode: a
@@ -883,8 +883,8 @@ a merge step is a governance gate, not an under-specified action item, and its t
 ## Executor-Tagging and Phase-Gate Fixes (Step 5h Findings)
 
 When `plan-checker` reports executor-tag or phase-gate findings per
-[Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)
-and [§Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule),
+[Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)
+and [§Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule),
 apply these fixes.
 
 ### 1. Missing Executor Legend
@@ -1144,7 +1144,7 @@ Checklist), immediately before the Plan Archival section:
       required to finish this plan's own scope)
 - [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same area — fold in rather than creating a
-      new file (see [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      new file (see [Integrate Before You Add](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>`
       in `learnings.md`
 

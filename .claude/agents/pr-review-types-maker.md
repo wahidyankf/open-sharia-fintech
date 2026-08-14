@@ -233,7 +233,7 @@ in-context `WebFetch`/`WebSearch` only for single-shot verification against a kn
 **Project Guidance**:
 
 - [AGENTS.md](../../AGENTS.md) - Primary guidance
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
+- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
 
 **Related Agents**:
 

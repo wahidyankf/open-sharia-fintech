@@ -140,7 +140,7 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
   funnel artefact — ≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named
   selection, a rationale, the grounding/prior-art note; pure-refactor / no-UI / governance-only
   plans are exempt). The gate fails when a UI-bearing plan skips the funnel. Per the
-  [UI Mockups in Plan Docs convention](../../conventions/formatting/diagrams.md#ui-mockups-in-plan-docs)
+  [UI Mockups in Plan Docs convention](../../conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 - **Learning-Bearing Syllabus Completeness** (Step 5n — conditional: fires only on
   **learning-bearing** plans whose delivery checklist authors or restructures course, tutorial, or
   curriculum content; FLAGS at HIGH any missing syllabus artefact — the required
@@ -303,7 +303,7 @@ Report final status and summary.
 
 This workflow's `pass` status certifies the plan **document** is complete and technically accurate
 before execution starts — it does not by itself certify the plan's **delivery** is done. Every plan
-resolves to one of four [Delivery Modes](../../conventions/structure/plans.md#delivery-mode) via
+resolves to one of four [Delivery Modes](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) via
 the three-tier precedence (invocation argument > plan field > `worktree-to-pr` default). For a plan
 executing under a `*-to-pr` mode (`worktree-to-pr` or `main-to-pr`), full "done" for the plan's
 actual delivery additionally requires satisfying the
@@ -427,7 +427,7 @@ Result: SUCCESS (4 iterations)
 
 The plan-checker validates:
 
-- **Completeness**: All five canonical documents present in multi-file plans — `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`. Required sections populated in each file per the [Content-Placement Rules](../../conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd). Single-file exception is allowed when the plan is trivially small (≤1000 lines) and a single `README.md` covers the nine mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, **Worktree**, Delivery Checklist, Quality Gates, Verification.
+- **Completeness**: All five canonical documents present in multi-file plans — `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`. Required sections populated in each file per the [Content-Placement Rules](../../conventions/structure/plans/14-content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd). Single-file exception is allowed when the plan is trivially small (≤1000 lines) and a single `README.md` covers the nine mandatory sections: Context, Scope, Business Rationale (condensed BRD), Product Requirements (condensed PRD), Technical Approach, **Worktree**, Delivery Checklist, Quality Gates, Verification.
 - **Technical Accuracy**: Commands, versions, tool names, API signatures verified via repo `Grep` first (free, fast, accurate); external claims verified via `web-researcher` per the lower plan-content delegation threshold
 - **Anti-Hallucination Scan**: Every non-trivial factual claim carries an inline confidence label
   (`[Repo-grounded]` / `[Web-cited]` / `[Judgment call]` / `[Unverified]`); zero violations of
@@ -444,8 +444,8 @@ The plan-checker validates:
   [governance-vendor-independence.md](../../conventions/structure/governance-vendor-independence.md).
   Reports CRITICAL if a plan skips this check when in scope. Skip entirely when plan touches only
   application code and tests.
-- **Worktree Specification**: Plan contains a `## Worktree` section declaring the worktree path (`worktrees/<plan-identifier>/`) and provisioning command. See [Plans Organization Convention §Worktree Specification](../../conventions/structure/plans.md#worktree-specification).
-- **Execution-Grade Clarity**: Every delivery checkbox names explicit file path(s), verbatim shell command(s), and a concrete acceptance criterion. See [Plans Organization Convention §Execution-Grade Clarity](../../conventions/structure/plans.md#execution-grade-clarity-hard-rule).
+- **Worktree Specification**: Plan contains a `## Worktree` section declaring the worktree path (`worktrees/<plan-identifier>/`) and provisioning command. See [Plans Organization Convention §Worktree Specification](../../conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+- **Execution-Grade Clarity**: Every delivery checkbox names explicit file path(s), verbatim shell command(s), and a concrete acceptance criterion. See [Plans Organization Convention §Execution-Grade Clarity](../../conventions/structure/plans/16-execution-grade-clarity.md#execution-grade-clarity-hard-rule).
 - **Implementation Readiness**: Plans are actionable and executable
 - **Codebase Alignment**: References to existing files, patterns, and conventions
 - **Clarity**: Clear problem statements, well-defined scope, unambiguous requirements
@@ -538,4 +538,4 @@ This workflow ensures plan quality and implementation readiness through iterativ
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: Workflow validates the five-document structure and worktree section per the convention
 - **[Plan Anti-Hallucination Convention](../../development/quality/plan-anti-hallucination.md)**: plan-checker's Step 5f enforces this convention's recipes, confidence labels, and Anti-Pattern Catalog
 - **[Multi-Harness Binding Convention](../../conventions/structure/multi-harness-binding.md)**: plan-checker's Step 5g (harness-neutrality scan) enforces this convention when the plan touches agents, skills, rules, or `repo-governance/` paths
-- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**: for plans resolving to a `*-to-pr` delivery mode, this workflow's `pass` status is a pre-execution gate, not a substitute for the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md)'s done-definition that gates the eventual PR before the merge
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)**: for plans resolving to a `*-to-pr` delivery mode, this workflow's `pass` status is a pre-execution gate, not a substitute for the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md)'s done-definition that gates the eventual PR before the merge

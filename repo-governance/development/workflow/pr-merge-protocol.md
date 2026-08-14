@@ -118,14 +118,14 @@ This protocol applies whenever a pull request exists as part of the development 
 This protocol does **not** apply to:
 
 - Direct commits under `worktree-to-origin-main` or `main-to-origin-main` (no PR exists to merge).
-- **A plan's Phase 0** (Environment Setup and Baseline) under any delivery mode -- it opens no PR, so there is nothing here to merge. The earliest phase that may open a PR, and therefore the earliest phase this protocol can govern, is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
-- **A plan's intermediate phases** — those inside a delivery unit but not its **delivery boundary**. They open no PR, so this protocol has nothing to govern until the unit's boundary phase opens one. See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+- **A plan's Phase 0** (Environment Setup and Baseline) under any delivery mode -- it opens no PR, so there is nothing here to merge. The earliest phase that may open a PR, and therefore the earliest phase this protocol can govern, is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+- **A plan's intermediate phases** — those inside a delivery unit but not its **delivery boundary**. They open no PR, so this protocol has nothing to govern until the unit's boundary phase opens one. See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 - Environment branch deployments managed by CI (e.g., `prod-ayokoding-www`), which are governed by their own documented CI workflows.
 
 ## The `worktree-to-pr` Terminal Step
 
 Under the repo-wide `worktree-to-pr` default (see the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) and
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) and
 the [Trunk Based Development Convention](./trunk-based-development.md#default-delivery-mode-worktree-to-pr)),
 the AI's work on a plan branch does not end at "all commits pushed." The terminal step, run by `[AI]`,
 is:
@@ -322,11 +322,11 @@ This rule applies to:
 ## Related Documentation
 
 - [Git Push Safety Convention](./git-push-safety.md) -- Per-instance approval for destructive git operations; gated by a prompt because their safety is not mechanically checkable, unlike a PR merge's
-- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) -- Establishes `[AI]` merge as the default and `[HUMAN]` as the explicit per-plan opt-in this protocol implements
+- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -- Establishes `[AI]` merge as the default and `[HUMAN]` as the explicit per-plan opt-in this protocol implements
 - [Code Quality Convention](../quality/code.md) -- Quality gates enforced by git hooks
 - [Trunk Based Development Convention](./trunk-based-development.md) -- The `worktree-to-pr` default delivery mode and how it relates to TBD
 - [Worktree Toolchain Initialization](./worktree-setup.md) -- Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree
 - [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names for quality gates
 - [Git Push Default Convention](./git-push-default.md) -- Governs the default `worktree-to-pr` push target and the explicit direct-push modes; this convention governs what happens once a PR exists
-- [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) -- The four-mode vocabulary and three-tier precedence that determines when this protocol applies
+- [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -- The four-mode vocabulary and three-tier precedence that determines when this protocol applies
 - `repo-governance/workflows/pr/pr-review-quality-gate.md` -- The review/fix cycle that runs before a `worktree-to-pr` PR meets the done-definition described above

@@ -1,6 +1,7 @@
 ---
 title: "Formatting Conventions"
 description: Practical Markdown formatting rules that keep repository documentation clear and accessible
+when_to_use: Use when you need the right formatting convention (diagrams, colors, emoji, math notation, code fences, timestamps) for a specific markdown element you are adding or reviewing.
 category: explanation
 subcategory: conventions
 tags: []
@@ -33,21 +34,21 @@ These conventions define **HOW to format markdown content** including indentatio
 
 ## Conventions
 
-- [Color Accessibility](./color-accessibility.md) - MASTER REFERENCE for all color decisions. Verified accessible color palette supporting all color blindness types
-- [Diagrams and Schemas](./diagrams.md) - Standards for Mermaid diagrams (primary) and ASCII art. Includes an explicit Format Selection Rule with decision table: folder/file trees MUST use ASCII art (`├──`, `└──`, `│`); flow charts, sequence diagrams, state machines, architecture diagrams, dependency-direction, user-flow, ER/class, and C4 model diagrams MUST use Mermaid. Also contains the **UI Mockups in Plan Docs** section: both-tiers rule (low-fi ASCII + hi-fi `.excalidraw.png` or plain `.png`), design funnel (diverge → narrow → select → justify), rendering-support matrix, and ruled-out table — governing draft UI wireframes in UI-bearing plans; the **Placement HARD RULE** requires the full funnel record (all four stages, embedded mockup links) to reside in `prd.md` specifically
-- [Emoji Usage](./emoji.md) - Semantic emoji usage to enhance document scannability and engagement
-- [Indentation](./indentation.md) - Standard markdown indentation using 2 spaces per indentation level
-- [Linking Convention](./linking.md) - Standards for linking between documentation files using GitHub-compatible markdown
-- [Mathematical Notation](./mathematical-notation.md) - Standards for LaTeX notation for mathematical equations and formulas
-- [Nested Code Fences](./nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure
-- [Timestamp Format](./timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
+- [Color Accessibility](./color-accessibility.md) — Comprehensive standards for using color-blind friendly colors across all repository contexts (Mermaid diagrams, emoji categorization, CSS/styling) with verified accessible palette and WCAG compliance requirements. Use when choosing, reviewing, or implementing any color in this repository — diagrams, emoji indicators, agent categorization, or future CSS/styling.
+- [Diagram and Schema Convention](./diagrams.md) — Standards for using Mermaid diagrams and ASCII art in open-sharia-enterprise markdown files. Includes color-blind accessibility requirements. Use when adding, reviewing, or fixing any diagram, ASCII art, or plan-doc UI mockup in this repository.
+- [Emoji Usage Convention](./emoji.md) — Standards for semantic emoji usage to enhance document scannability and engagement with accessible colored emojis. Use when deciding whether, where, or which emoji to use in repository documentation.
+- [Indentation Convention](./indentation.md) — Standard markdown indentation for all files in the repository. Use when indenting bullets, YAML frontmatter, or code blocks in any markdown file.
+- [Documentation Linking Convention](./linking.md) — Standards for linking between documentation files in open-sharia-enterprise. Use when adding or reviewing a link between documentation files in this repository.
+- [Mathematical Notation Convention](./mathematical-notation.md) — Standards for using LaTeX notation for mathematical equations and formulas in open-sharia-enterprise documentation. Use when writing a mathematical equation or formula in any markdown file in this repository.
+- [Nested Code Fence Convention](./nested-code-fences.md) — Standards for properly nesting code fences when documenting markdown structure within markdown content. Use when a markdown example itself needs to show a fenced code block, and the outer/inner fence depth must be chosen correctly.
+- [Timestamp Format Convention](./timestamp.md) — Standard timestamp format using UTC+7 (Indonesian WIB Time). Use when writing, generating, or validating any timestamp in this repository.
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
-- [Accessibility First Principle](../../principles/content/accessibility-first.md) - Why accessibility matters
-- [Writing Conventions](../writing/README.md) - Content quality and writing standards
-- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
+- [Conventions Index](../README.md) — All documentation conventions
+- [Accessibility First Principle](../../principles/content/accessibility-first.md) — Why accessibility matters
+- [Writing Conventions](../writing/README.md) — Content quality and writing standards
+- [Repository Architecture](../../repository-governance-architecture.md) — Six-layer governance model
 
 ## Principles Implemented/Respected
 

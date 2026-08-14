@@ -27,6 +27,13 @@ pub struct Finding {
 const FORBIDDEN_CONVENTION_SUFFIX: &str =
     "repo-governance/conventions/structure/governance-vendor-independence.md";
 
+/// The convention-definition file's split-directory children (per the Split
+/// Pattern, `governance-vendor-independence.md`'s own child files) are exempt
+/// for the same reason as the parent: they document forbidden vendor terms by
+/// naming them as examples.
+const FORBIDDEN_CONVENTION_DIR_SUFFIX: &str =
+    "repo-governance/conventions/structure/governance-vendor-independence/";
+
 /// A compiled forbidden-term entry.
 struct ForbiddenTerm {
     /// Compiled regex that matches the term in prose.
@@ -241,7 +248,9 @@ pub fn walk(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec<Finding>, Error
             continue;
         }
         let p_slash = p.to_string_lossy().replace('\\', "/");
-        if p_slash.ends_with(FORBIDDEN_CONVENTION_SUFFIX) {
+        if p_slash.ends_with(FORBIDDEN_CONVENTION_SUFFIX)
+            || p_slash.contains(FORBIDDEN_CONVENTION_DIR_SUFFIX)
+        {
             continue;
         }
         findings.extend(scan_file(fs, &p)?);
@@ -539,6 +548,16 @@ mod tests {
         let p = tmp.path().join(FORBIDDEN_CONVENTION_SUFFIX);
         fs::create_dir_all(p.parent().unwrap()).unwrap();
         fs::write(&p, "Claude Code\n").unwrap();
+        let findings = walk(&RealFs, tmp.path()).unwrap();
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn skip_convention_definition_split_children() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join(FORBIDDEN_CONVENTION_DIR_SUFFIX);
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("01-purpose-and-scope.md"), "Claude Code\n").unwrap();
         let findings = walk(&RealFs, tmp.path()).unwrap();
         assert!(findings.is_empty());
     }

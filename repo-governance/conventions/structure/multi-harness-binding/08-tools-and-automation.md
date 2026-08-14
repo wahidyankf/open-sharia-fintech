@@ -1,0 +1,48 @@
+---
+title: "Multi-Harness Binding: Tools and Automation"
+description: The rhino-cli subcommands and npm scripts that generate and validate platform bindings, and the file-touch-discipline rule for committing generated mirrors alongside their source.
+when_to_use: Read this when you need the exact command to generate or validate binding artifacts, or when deciding which commit a regenerated mirror file belongs in.
+category: explanation
+subcategory: conventions
+tags:
+  - conventions
+  - governance
+  - platform-bindings
+  - agents
+  - compatibility
+created: 2026-05-24
+---
+
+# Multi-Harness Binding: Tools and Automation
+
+The commands that implement the [Multi-Harness Binding Convention](../multi-harness-binding.md), and
+the commit-discipline rule for their output.
+
+## Tools and Automation
+
+- **`rhino-cli harness bindings generate`** — generator subcommand; emits all platform-binding
+  artifacts (generated agent mirrors and Tier-2 bridge files) from the primary binding source
+  in a single invocation (AD4). Invoked by the `generate:bindings` npm script.
+- **`generate:bindings`** npm script — harness-neutral name for the single binding-generation
+  operation (AD8). Runs `rhino-cli harness bindings generate`; re-run whenever binding sources change.
+- **`rhino-cli harness bindings validate`** — deterministic subcommand (AD7); re-derives each
+  generated binding in memory, asserts byte-equality, asserts catalog completeness. Exits non-zero on
+  any mismatch.
+- **`harness:bindings-validation`** npm script — wraps `rhino-cli harness bindings validate`; invoked
+  from the pre-push hook when binding surfaces change (AD8).
+- **`repo-harness-compatibility-checker`** / **`repo-harness-compatibility-fixer`** agents — run on
+  demand or on a schedule; use web research to detect external upstream convention drift (distinct
+  from the deterministic parity guard above).
+
+**Generated bindings ship in their source's commit.** Editing one primary-binding source file
+mechanically rewrites its mirror in every secondary binding directory, so a single logical change
+spans several files — most of which the author never opened. Those mirrors are still the author's
+changes: they belong on the touched-file ledger
+([File-Touch Discipline](../../../development/practice/file-touch-discipline.md)) and in the **same
+commit** as the source that produced them.
+
+Splitting them into a follow-up "sync" commit publishes an intermediate tree in which a source and
+its generated mirror disagree — a state that fails the byte-equality guard above for anyone who
+checks out that revision, for reasons unrelated to their own work. The pre-commit hook regenerates
+and auto-stages the mirrors precisely so this happens by default; bypassing the hook, or staging
+narrowly and reconciling afterwards, defeats it.

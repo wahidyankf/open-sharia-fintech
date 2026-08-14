@@ -36,7 +36,7 @@ see [README §Successor plans](./README.md#successor-plans).
 > (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
 > **intermediate** phase instead confirms the work is committed to its delivery unit's branch with
 > nothing pushed for review yet — see [Plans Organization Convention §PRs Open at Delivery
-> Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+> Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 > A phase is not complete until every gate check is green.
 >
 > **Executor environment note — RTK-wrapped commands emit an empty-output marker, not true
@@ -457,7 +457,7 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
       command return ≥1 and the phase gate fails.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
     The manifest diff returned `0` paths.
-      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Count = 0.
+    **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Count = 0.
 
 ### Phase 0 Gate
 
@@ -487,7 +487,7 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
       Falsifiable both ways: pushing this branch makes the first return **1**; opening a PR for it
       makes the second return **1** — either fails the gate. The `evidence/` baseline and slug
       register written here ride the **Phase 1** PR
-      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
       **Date**: 2026-07-26. **Status**: Done. Both commands returned **0** — branch not pushed, no
       PR open.
 
@@ -1268,7 +1268,7 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 - [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-04-course-authoring/ plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: the complete archived plan folder,
     including `evidence/`. The plan moved from `in-progress/` to its completion-date folder.
-      using today's **completion** date, not the creation date (the `evidence/` subfolder moves with it).
+    using today's **completion** date, not the creation date (the `evidence/` subfolder moves with it).
 - [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
 - [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
 - [x] [AI] Update any other READMEs that reference this plan (`plans/README.md`,

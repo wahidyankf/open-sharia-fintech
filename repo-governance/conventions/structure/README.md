@@ -1,6 +1,7 @@
 ---
 title: "Structure Conventions"
 description: Documentation organization frameworks, file naming, and project planning structure
+when_to_use: Use when deciding where a document belongs, how to name it, or how a plan record moves through its lifecycle.
 category: explanation
 tags:
   - index
@@ -14,66 +15,31 @@ created: 2026-01-30
 
 Use these conventions to decide where a document belongs, how to name it, and how planning records move through their lifecycle. They answer the practical question: **"How should this repository stay navigable as it grows?"**
 
-## Purpose
-
-This directory contains standards for how documentation is organized, named, and structured across the repository. These conventions establish the foundational frameworks that govern documentation architecture.
-
 ## Documents
 
-- [Agent Naming Convention](./agent-naming.md) - Single exception-free filename rule for agent files in `.claude/agents/` and `.opencode/agents/`. Defines scope vocabulary, role vocabulary (maker, checker, fixer, dev, deployer, manager), and the audit command enforced by `repo-rules-checker`
-- [App README vs Specs Convention](./app-readme-vs-specs.md) - Defines what content lives in app/infra READMEs vs `specs/` (Category A dev-runtime vs Category B behavior/architecture), the C4-aware five-folder spec tree shape, the PM-readability contract for spec files, and BDD/DDD/Contracts adoption expectations by surface profile
-- [Governance Vendor-Independence Convention](./governance-vendor-independence.md) - Requires all `repo-governance/` prose to be vendor-neutral. Defines forbidden vendor terms, `binding-example` fence allowlist, vocabulary map (vendor → neutral replacements), platform-binding directory pattern, and migration guidance.
-- [Multi-Harness Binding Convention](./multi-harness-binding.md) - Keeps one canonical root instruction surface while supporting many coding-agent harnesses. Defines the two-tier binding model (native readers vs. bridge-required), the no-shadowing rule, mechanical generation, and the deterministic pre-push parity guard.
-- [Diataxis Framework](./diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation). Foundational framework for all documentation structure
-- [Deterministic vs AI Validation Split](./deterministic-vs-ai-validation-split.md) - Defines which governance validation categories run as deterministic preflight (mechanical predicates, milliseconds, cached) vs AI checker (semantic judgement) and the JSON envelope contract between the two layers. **Agents**: repo-rules-checker
-- [File Naming Convention](./file-naming.md) - Kebab-case filename rules for docs/, repo-governance/, and plans/ directories
-- [Governance Word-Budget Convention](./governance-word-budget.md) - Per-surface word thresholds for auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness-specific surfaces). Enforced by `rhino-cli governance word-budget validate` at pre-push, pre-commit, CI, and as `repo-governance audit` category 4. Sole sanctioned remediation: progressive disclosure.
-- [Governance Word-Budget Remediation](./governance-word-budget-remediation.md) - Enforcement-point detail, the progressive-disclosure fix, and forbidden anti-fixes split out of the Governance Word-Budget Convention to respect its own word ceiling.
-- [Learning-Plan `syllabus/` Folder Convention](./learning-plan-syllabus.md) - Defines the learning-bearing plan trigger, the required `syllabus/courses/` + `syllabus/paths/` folder layout, the measured section-tiering derivation (REQUIRED/RECOMMENDED/OPTIONAL), the copy-paste course template, the owning plan's `## Corpus Disposition` values (`archive-with-plan` default, `promote-to:<path>`), and the single-custodian custody rule (including the consumer plan's `## Corpus Custody` / `custodied-by:<plan-id>` echo) for learning-path plans
-- [Per-Directory Licensing](./licensing.md) - Standards for the per-directory licensing strategy using MIT for all code in this repository
-- [Plans Organization](./plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas/, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers
-- [Post-Mortem Convention](./post-mortems.md) - Standards for blameless incident post-mortems: location (`docs/explanation/post-mortems/`), `YYYY-MM-DD-<system>-<short-failure>.md` naming, mandatory sections, the authoritative Sev-1..Sev-4 severity scale, action-item tracking, and `doc_status` lifecycle. Software-incident framing (CI/CD, Vercel outages, dependency-bump and parity-guard regressions)
-- [Programming Language Documentation Separation](./programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational content (ayokoding-www). Defines scope boundaries, prerequisite requirements, cross-referencing patterns, and DRY principle application
-- [Specs Directory Structure](./specs-directory-structure.md) - Canonical C4-aware five-folder directory structure for `specs/apps/<app-family>/` — `product/`, `system-context/`, `containers/`, `components/`, `behavior/`. Defines per-surface variants (full-stack, web-only, CLI-only, multi-CLI), Gherkin domain subdirectory rules, migration path from flat-root layouts, and deterministic validation via `rhino-cli specs` commands. Cross-links to [App README vs Specs Convention](./app-readme-vs-specs.md) as the combined source of truth.
-- [No Manual Date Metadata Convention](./no-date-metadata.md) - Non-website markdown files must not contain manual date metadata: no `updated:` frontmatter, no `**Last Updated**` footer blocks, no inline body date annotations. Git history is authoritative.
-- [No Last Updated Convention](./no-last-updated.md) - Superseded stub — redirects to No Manual Date Metadata Convention
-- [Workflow Naming Convention](./workflow-naming.md) - Single exception-free filename rule for workflow files under `repo-governance/workflows/` (except `meta/` reference docs). Defines scope vocabulary, type vocabulary (quality-gate, execution, setup), and the audit command enforced by `repo-rules-checker` and `rhino-cli repo-governance workflows naming validate`
-- [Worktree Path Convention](./worktree-path.md) - Defines the worktree directory structure, naming convention, and gitignore requirements for `claude --worktree` routing in this repository
-
-## Key Concepts
-
-### Diataxis Categories
-
-| Category    | Purpose              | User Need            |
-| ----------- | -------------------- | -------------------- |
-| Tutorials   | Learning-oriented    | "Help me learn"      |
-| How-To      | Problem-solving      | "Help me do X"       |
-| Reference   | Information-oriented | "Give me the facts"  |
-| Explanation | Understanding        | "Help me understand" |
-
-### File Naming Pattern
-
-Files use kebab-case names describing their content (e.g., `getting-started.md`, `configure-api.md`). Category is conveyed by directory location, not filename prefixes. `README.md` is used for directory index files.
-
-### Plans Lifecycle
-
-```
-ideas/ → backlog/ → in-progress/ → done/
-```
+- [Agent Naming Convention](./agent-naming.md) — Single rule for agent filename structure across `.claude/agents` and `.opencode/agent`. Use when naming or renaming an agent definition file.
+- [App README vs Specs Convention](./app-readme-vs-specs.md) — Defines what content lives in app/infra READMEs vs specs/, the C4-aware five-folder spec tree shape, and the PM-readability contract for specs/. Use when deciding whether content belongs in an app README or in its specs/ tree, or when shaping a specs/apps/ tree.
+- [Deterministic vs AI Validation Split Convention](./deterministic-vs-ai-validation-split.md) — Defines which governance validation layer (deterministic preflight vs AI checker) owns which category, and the contract between them. Use when deciding whether a governance validation rule belongs in the deterministic preflight or the AI checker.
+- [Diátaxis Framework](./diataxis-framework.md) — Understanding the Diátaxis documentation framework used in open-sharia-enterprise. Use when deciding where new documentation belongs or organizing content by Diátaxis category.
+- [File Naming Convention](./file-naming.md) — Standard markdown + GitHub-compatible kebab-case naming for all files. Use when naming a new file under docs/, repo-governance/, or a similar repository location.
+- [Governance Vendor-Independence Convention](./governance-vendor-independence.md) — Governance prose must be vendor-neutral; vendor-specific bindings belong in platform-binding directories, not in repo-governance/. Use when writing or reviewing repo-governance/, AGENTS.md, or CLAUDE.md prose and checking it stays vendor-neutral.
+- [Governance Word-Budget Convention](./governance-word-budget.md) — Per-surface word thresholds for auto-loaded instruction files, enforced by rhino-cli and git hooks. Use when a governance or instruction file may be approaching or over its word-count threshold.
+- [Governance Word-Budget Remediation](./governance-word-budget-remediation.md) — Enforcement-point detail, the progressive-disclosure fix, and forbidden anti-fixes for the word-budget gate. Use when a file fails the word-budget gate and you need the remediation steps.
+- [Learning-Plan `syllabus/` Folder Convention](./learning-plan-syllabus.md) — Defines the learning-bearing plan trigger, required syllabus/ folder layout, section tiering, course template, corpus disposition, and custody rule. Read this before authoring or restructuring course content inside a plan's syllabus/ folder, or when consuming another plan's syllabus corpus.
+- [Per-Directory Licensing Convention](./licensing.md) — Standards for the per-directory licensing strategy using MIT for all code in this repository. Read this when you need the licensing rule set — placing a LICENSE file, checking copyright notice format, or auditing compliance.
+- [Multi-Harness Binding Convention](./multi-harness-binding.md) — Rules governing how this repository stays compatible with many AI coding-agent harnesses while keeping AGENTS.md as the single canonical instruction surface. Read this before adding, changing, or auditing any file that wires a coding-agent harness to the repository.
+- [No Manual Date Metadata Convention](./no-date-metadata.md) — Non-website markdown files must not contain manual date metadata of any kind; git history is the single source of truth. Read this before adding, reviewing, or removing any date field in a non-website markdown file.
+- [No Last Updated Convention](./no-last-updated.md) — Superseded stub — redirects to No Manual Date Metadata Convention. Read this only if you were linked here directly.
+- [Plans Organization Convention](./plans.md) — Standards for organizing project planning documents in plans/ folder. Use when deciding where a plan document belongs, how to name/structure it, or how it moves through the lifecycle.
+- [Post-Mortem Convention](./post-mortems.md) — Standards for blameless incident post-mortems — location, naming, mandatory sections, severity scale, and action-item tracking. Read this when you need to write, name, or review a blameless incident post-mortem.
+- [Programming Language Documentation Separation Convention](./programming-language-docs-separation.md) — Establishes the relationship between docs/explanation/ style guides and ayokoding-www educational content. Read this when deciding whether new programming-language content belongs in a style guide or in ayokoding-www.
+- [Specs Directory Structure Convention](./specs-directory-structure.md) — Canonical C4-aware five-folder directory structure for specs/ — Gherkin feature files, C4 diagrams, DDD artifacts, and OpenAPI contracts. Read this when placing a spec artifact or scaffolding specs/ for a new app or library.
+- [Workflow Naming Convention](./workflow-naming.md) — Single rule for workflow filename structure under repo-governance/workflows. Read this when naming a new workflow file, or validating an existing one.
+- [Worktree Path Convention](./worktree-path.md) — Defines the worktree directory structure, naming convention, and gitignore requirements for claude --worktree routing. Read this when creating, naming, or cleaning up a worktree, or configuring the WorktreeCreate hook.
 
 ## Related Documentation
 
-- [Writing Conventions](../writing/README.md) - Content quality standards
-- [Formatting Conventions](../formatting/README.md) - Markdown syntax and visual elements
-- [Tutorials Conventions](../tutorials/README.md) - Tutorial creation standards
-- [Repository Governance Architecture](../../repository-governance-architecture.md) - Six-layer governance model
-
-## Principles Implemented/Respected
-
-This set of conventions implements/respects the following core principles:
-
-- **[Documentation First](../../principles/content/documentation-first.md)**: The Diataxis Framework establishes a systematic four-category documentation structure, making documentation a primary deliverable rather than an afterthought. Plans Organization convention ensures planning work is documented in structured, discoverable locations.
-
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Plans naming patterns (stage-aware: `identifier/` in backlog/in-progress, `YYYY-MM-DD__identifier/` in done) make lifecycle stage explicit in folder names. File Naming Convention uses descriptive kebab-case names so a filename clearly communicates the content without abbreviation lookups.
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: The four Diataxis categories provide a complete, minimal taxonomy that covers all documentation types without overlap or excessive granularity. File naming uses a single simple kebab-case rule with no prefix encoding to memorize.
+- [Writing Conventions](../writing/README.md) — Content quality standards
+- [Formatting Conventions](../formatting/README.md) — Markdown syntax and visual elements
+- [Tutorials Conventions](../tutorials/README.md) — Tutorial creation standards
+- [Repository Governance Architecture](../../repository-governance-architecture.md) — Six-layer governance model

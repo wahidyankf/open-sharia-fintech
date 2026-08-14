@@ -78,7 +78,7 @@ inside a disposable git worktree, pushed to a PR, driven to a green and fully-re
 merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` is not a generally available alternative in this repo: `main` is branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins) -- see [Direct-Push Modes Remain Available Where the Topology Supports Them](#direct-push-modes-remain-available-where-the-topology-supports-them) below for the one surviving exception (`ose-private` infrastructure-as-code plans). See
 [Default Push and Worktree Execution](#default-push-and-worktree-execution) below for the mechanics of
 all four delivery modes, and the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) for
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) for
 the canonical four-mode vocabulary and the three-tier precedence that resolves which mode is active.
 
 ### Why We Use TBD
@@ -118,7 +118,7 @@ TBD addresses common problems with long-lived feature branches:
 > `ose-primer`, `main` is branch-protected against direct pushes — including for admins — so
 > **neither direct-push mode has an executable path in those two repositories at all**. In
 > `ose-private`, both remain available only for infrastructure-as-code plans. See
-> [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > for the full rule. The PASS example immediately below is therefore **not executable in this repo
 > (`ose-public`)** — it is retained as illustrative TBD vocabulary and remains genuinely runnable only
 > for `ose-private` infrastructure-as-code plans.
@@ -343,7 +343,7 @@ Each commit is small, tested, and doesn't break `main`.
 
 This section clarifies the default delivery mode and how git worktrees relate to it. The default is
 consistent across all execution contexts and is defined once, canonically, in the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode):
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode):
 four modes (`worktree-to-pr` **(default)**, `worktree-to-origin-main`, `main-to-origin-main`,
 `main-to-pr`), each fixing a work location, an integration target, and a merge authority, resolved by
 a three-tier precedence (invocation argument > plan field > default). This document does not redefine
@@ -377,7 +377,7 @@ changes, and work executed inside a git worktree -- the default is the same rega
 Setup and Baseline -- dependency install, toolchain convergence, a recorded baseline, preexisting-failure
 resolution. It produces no reviewable change, so it pushes no branch and opens no PR under **any** of
 the four delivery modes; its evidence artifacts ride the Phase 1 PR instead. See
-[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ```bash
 # Default workflow -- worktree-to-pr (applies in worktrees, which is now the norm)
@@ -428,7 +428,7 @@ equivalent state-changing infra work needing the primary checkout's real secrets
 only when the change is small, well-understood, and does not warrant a review pass. See the
 [Git Push Default Convention](./git-push-default.md) for the full push mechanics of these two modes,
 including the linear-history and rebase requirements, and
-[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule.
 
 **A fourth mode, `main-to-pr`,** uses the primary checkout (no worktree) but still routes through a PR
@@ -439,7 +439,7 @@ push (to the PR branch or to `origin main`, depending on mode), open/flip the PR
 -- MUST be tagged `[AI]`, never `[HUMAN]`, in plan delivery checklists. Under `*-to-pr` modes the
 merge itself is `[AI]` by default too; a `[HUMAN]` merge gate applies only where a plan's own step
 says so explicitly. See
-[Plans Organization Convention §Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)
+[Plans Organization Convention §Executor Tagging](../../conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)
 and the [Git Push Default Convention §Examples](./git-push-default.md#examples) for the FAIL/PASS
 examples.
 
@@ -471,12 +471,12 @@ The active delivery mode is resolved deterministically, never inferred from exec
 - **Tier 2**: a `## Delivery Mode` field declared in the plan's own docs.
 - **Tier 3 (default)**: `worktree-to-pr`.
 
-See the [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+See the [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the full algorithm and the [plan-execution workflow](../../workflows/plan/plan-execution.md) for
 how each mode changes Step 0 (worktree entry), the push target at each phase gate, and Step 8
 (finalization and merge hand-off). Under a `*-to-pr` mode the PR itself opens only at a **delivery
 boundary**, not at every phase — see
-[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 Note: this does **not** affect environment branches (`prod-ayokoding-www`, `prod-ose-www`, `stag-organiclever-app-web`, `stag-organiclever-be`). Those follow their own documented deployment workflows. The OrganicLever app staging branches (`stag-organiclever-app-web`, `stag-organiclever-be`) are CI-automated by `organiclever-app-test-local-deploy-stag.yml`. Production promotion for the OrganicLever app is **deferred** to a separate plan — no production-CD workflow exists yet.
 
@@ -582,14 +582,14 @@ When creating project plans in `plans/` folder:
 - PASS: **Default assumption**: `worktree-to-pr` (repo-wide default) -- a short-lived plan branch in a
   disposable worktree, pushed to a draft PR, merged -- `[AI]` by default -- after the done-definition is met.
 - PASS: **Declare the mode explicitly** using a `## Delivery Mode` field only when overriding the
-  default (see the [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+  default (see the [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
   for the field syntax and the three-tier precedence).
 - **If a direct-push mode is chosen** (`worktree-to-origin-main`, `main-to-origin-main`): document why
   in the plan (e.g., "single-line config fix, no review warranted") -- and confirm the mode is
   actually permitted under the per-repository branch-protection restriction: neither direct-push mode
   has an executable path in `ose-public` or `ose-primer`; both direct-push modes remain available
   only for `ose-private` infrastructure-as-code plans. See
-  [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
+  [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **Example plan delivery.md (default mode, no field needed)**:
 
@@ -621,7 +621,7 @@ Specify a non-default `## Delivery Mode` field in a plan if:
   **Also subject to the branch-protection axis, independent of the trivial-change rationale**:
   neither direct-push mode has an executable path in `ose-public` or `ose-primer`; both direct-push
   modes remain available only for `ose-private` infrastructure-as-code plans. See
-  [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
+  [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 - **External integration**: Working with a third party that requires a specific branch/PR shape.
 - **Compliance**: A regulatory requirement changes the review process beyond the standard PR-review
   cycle.
@@ -641,7 +641,7 @@ repo's own `plan-checker` gate on sight, because neither mode has an executable 
 resource tag and needs the primary checkout's local secrets/state access. The change is trivial and
 well-understood; a full PR-review cycle is unnecessary overhead. Not executable in `ose-public` or
 `ose-primer` -- see
-[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 ```
 
 ## TBD Benefits for This Project

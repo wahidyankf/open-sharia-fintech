@@ -1,0 +1,63 @@
+---
+title: "Enforcement, and Exceptions and Escape Hatches"
+description: How the vendor-audit scanner is run and what it respects, plus the explicit list of situations that never constitute a violation.
+when_to_use: Use when running the vendor-independence audit manually, or checking whether a specific case is an explicitly permitted exception.
+category: explanation
+subcategory: conventions
+tags:
+  - conventions
+  - governance
+  - vendor-independence
+  - agents
+  - platform-bindings
+created: 2026-05-02
+---
+
+# Enforcement, and Exceptions and Escape Hatches
+
+## Enforcement
+
+Enforcement is automated via `rhino-cli repo-governance vendor validate`.
+
+### Running the audit manually
+
+```bash
+# Audit the repo-governance/ directory (default)
+apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
+
+# Or via Nx (cached)
+npx nx run rhino-cli:governance:vendor-audit-validation
+```
+
+Exit code 0 means clean; exit code 1 means violations found. Each finding prints:
+
+```
+<file>:<line>  <forbidden-term>  →  "<suggested-replacement>"
+```
+
+### Pre-push integration
+
+The pre-push hook automatically runs `governance:vendor-audit-validation` when any `repo-governance/**/*.md`
+file changes. No manual invocation needed on pushes.
+
+### Scope of the scanner
+
+The scanner respects all exemption mechanisms described in the "Allowlist Mechanism" section above:
+code fences, `binding-example` fences, "Platform Binding Examples" heading sections, inline code
+spans, link URL portions, HTML comments, and YAML frontmatter. The convention file itself
+(`governance-vendor-independence.md`) is also permanently allowlisted.
+
+The `repo-rules-checker` agent continues to detect violations during its full audit sweep as a
+complementary signal.
+
+## Exceptions and Escape Hatches
+
+The following are explicitly permitted and never constitute a violation:
+
+1. **Inside `binding-example` fences**: any content, including vendor names and paths.
+2. **Under "Platform Binding Examples" headings**: any content until the next same-level heading.
+3. **The convention file itself** (`governance-vendor-independence.md`): this file uses vendor terms in examples to illustrate the rule. The audit tooling allowlists this file.
+4. **`docs/reference/platform-bindings.md`**: catalog file; explicitly out of scope.
+5. **The single-line `@AGENTS.md` import in `CLAUDE.md`**: treated as an inline binding directive (not a forbidden vendor term). Other appearances of vendor terms inside CLAUDE.md must use the standard allowlist mechanisms.
+6. **Plans files** (`plans/`): explicitly out of scope.
+7. **Citation context**: when citing an external source whose name happens to be a vendor term (e.g., "the AAIF specification donated by Anthropic in December 2025"), the citation is allowed. The pattern must be clearly attributive, not a product mention.

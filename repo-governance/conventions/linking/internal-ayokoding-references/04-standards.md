@@ -1,0 +1,159 @@
+---
+title: "Standards"
+description: The core rule, pattern recognition, path-calculation method, common path examples, language selection, and link-text guidelines for AyoKoding relative-path linking.
+when_to_use: Use when writing or reviewing a link from docs/ to apps/ayokoding-www/ and you need the exact relative-path rule and examples.
+category: explanation
+subcategory: conventions
+tags:
+  - linking
+  - cross-reference
+  - relative-paths
+  - portability
+  - ayokoding-www
+created: 2026-02-07
+---
+
+# Standards
+
+## Core Rule: Use Relative Paths for Repository-Internal References
+
+When documentation in `docs/` references educational content in `apps/ayokoding-www/`, use **relative file paths** within the repository, not public web URLs.
+
+**Rationale:**
+
+1. **Works during local development** - No web server or domain required
+2. **Environment independence** - Same link works in dev, test, CI/CD, production
+3. **Offline capability** - Developers can work without internet access
+4. **Domain portability** - Links remain valid if domain changes
+5. **Explicit relationship** - Path shows repository structure clearly
+
+## Pattern Recognition
+
+### ❌ WRONG: Public Web URL
+
+```markdown
+[Java Explanation](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/)
+```
+
+**Problems:**
+
+- Breaks during offline development
+- Fails if domain changes or is unavailable
+- Creates external dependency on DNS and web server
+- Obscures that content is in same repository
+
+### ✅ CORRECT: Relative Repository Path
+
+```markdown
+[Java Explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/)
+```
+
+**Benefits:**
+
+- Works in all environments (local, CI/CD, offline)
+- No external dependencies
+- Portable across domain changes
+- Explicit repository relationship
+
+## Path Calculation Method
+
+To calculate the correct relative path from `docs/` to `apps/ayokoding-www/`:
+
+1. **Count your depth in docs/** - How many directories deep is your current file?
+2. **Navigate to repository root** - Use that many `../` to reach the root
+3. **Navigate down to target** - `apps/ayokoding-www/content/[lang]/[path]/`
+
+**Formula:** `[../]×depth + apps/ayokoding-www/content/[lang]/[path]/`
+
+## Common Path Examples
+
+### From docs/explanation/software-engineering/programming-languages/java/
+
+**Depth:** 5 levels deep (`docs` → `explanation` → `software-engineering` → `programming-languages` → `java`)
+
+**Target:** `apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/`
+
+**Path:**
+
+```markdown
+../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/
+```
+
+**Breakdown:**
+
+```
+Start:  docs/explanation/software-engineering/programming-languages/java/README.md
+../     docs/explanation/software-engineering/programming-languages/  (up 1)
+../     docs/explanation/software-engineering/                        (up 2)
+../     docs/explanation/                                             (up 3)
+../     docs/                                                          (up 4)
+../     [repository root]                                              (up 5)
+apps/ayokoding-www/                                                    (down 1)
+content/en/learn/software-engineering/programming-languages/java/     (down to target)
+```
+
+### From docs/explanation/software-engineering/platform-web/tools/jvm-spring/
+
+**Depth:** 6 levels deep
+
+**Target:** `apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/`
+
+**Path:**
+
+```markdown
+../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/
+```
+
+### From docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/
+
+**Depth:** 6 levels deep
+
+**Target:** `apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring-boot/`
+
+**Path:**
+
+```markdown
+../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring-boot/
+```
+
+## Language Selection
+
+AyoKoding content is bilingual (English and Indonesian). When linking from `docs/` (English-only), use the **English path** (`/en/`):
+
+**Pattern:**
+
+```markdown
+apps/ayokoding-www/content/en/learn/[topic-path]/
+```
+
+**Not:**
+
+```markdown
+apps/ayokoding-www/content/id/learn/[topic-path]/ ← Indonesian version
+```
+
+**Rationale:** Documentation in `docs/` is written in English, so references should point to English educational content for consistency.
+
+## Link Text Guidelines
+
+Use **descriptive, context-appropriate link text** that follows [Content Quality Principles](../../writing/quality.md):
+
+**Good examples:**
+
+```markdown
+[Java programming language explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/)
+
+[Spring Framework fundamentals](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/)
+
+[Complete Spring Boot tutorial series](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring-boot/)
+```
+
+**Avoid:**
+
+```markdown
+[here](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/) ← Vague
+
+[Click this link](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/) ← Non-descriptive
+
+[ayokoding-www](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring-boot/) ← Technical, not semantic
+```

@@ -1,6 +1,7 @@
 ---
 title: "Environment File Access Convention"
 description: AI agents must not directly read, write, or edit exactly .env.prod or .env.stag; every other real .env* file is agent-readable. Full policy in secrets-and-env-standards.md.
+when_to_use: Use when an AI agent needs to know whether it may directly open a specific .env* file.
 category: explanation
 subcategory: conventions
 tags:
@@ -14,7 +15,7 @@ created: 2026-05-24
 # Environment File Access Convention
 
 > **Stub.** The full `guard-env-file-access` policy lives in
-> [`secrets-and-env-standards.md` § 9](./secrets-and-env-standards.md#9-guard-env-file-access-policy).
+> [`secrets-and-env-standards.md` § 9](./secrets-and-env-standards/16-guard-env-file-access-policy.md).
 
 **Summary**: AI agents must not directly read, write, or edit **`.env.prod`** or **`.env.stag`** —
 the two restricted-secrets tiers. Every other real `.env*` file (`.env`, `.env.local`, `.env.test`,
@@ -26,6 +27,6 @@ Exceptions: project scripts under `apps/`, `libs/`, and `scripts/`.
 app's published content tree — `apps/<app>/content/**` — is curriculum material and is exempt.
 Dotfile `.env*` names stay denied even under `content/`, and a `<word>.env` outside a content tree
 stays denied. Each repo maintains its own list of excluded content trees; see
-[§9 Content-fixture exclusion](./secrets-and-env-standards.md#content-fixture-exclusion).
+[§9 Content-fixture exclusion](./secrets-and-env-standards/18-content-fixture-exclusion.md).
 
 See: [`secrets-and-env-standards.md`](./secrets-and-env-standards.md)

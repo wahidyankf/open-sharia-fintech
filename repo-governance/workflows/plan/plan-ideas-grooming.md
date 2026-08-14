@@ -75,7 +75,7 @@ with every rename's inbound/outbound links rewritten by the same mechanism reloc
   wearing a recurring name. A maintainer or an agent acting on their behalf invokes it explicitly
   against the `repos` it should sweep; it never self-triggers.
 - Do **not** use it to file a brand-new idea (write the two-pager directly per the
-  [Ideas Folder convention](../../conventions/structure/plans.md#ideas-folder-two-pagers)), and do
+  [Ideas Folder convention](../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)), and do
   not use it to promote a single ripe idea into a full plan (that is
   [`plan-idea-promotion-planning`](./plan-idea-promotion-planning.md)).
 
@@ -109,7 +109,7 @@ orchestrator-run steps.
 Every git delivery under this workflow's `worktree-to-pr` default — unconditional, no override —
 runs the full PR-Review Maker→Fixer Cycle in the processed repo before the change lands, per
 [Plans Organization Convention §Per-Repository Delivery Mode
-Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule):
+Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
 `main` is branch-protected against direct pushes in `ose-public` and `ose-primer`, so the historical
 `plans/**`-only **plan-docs-only carve-out**
 ([`plan-planning`](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos))
@@ -128,7 +128,7 @@ For each repo named in the `repos` input, list every `plans/ideas/*.md` file —
 `README.md` and excluding any file already sitting inside a `q1-…`–`q4-…` quadrant subfolder from
 a prior run — and read each file's title, one-line summary, provenance blockquote, and all seven
 body sections defined by the
-[Two-Pager Template](../../conventions/structure/plans.md#two-pager-template). This inventory is
+[Two-Pager Template](../../conventions/structure/plans/04-two-pager-template.md#two-pager-template). This inventory is
 the working set every later step operates against; nothing outside `plans/ideas/**` in any of the
 `repos` is read or touched.
 
@@ -194,7 +194,7 @@ never silently dropped from either repo as a side effect of an interrupted run.
 ### 6. Two-pager reshape
 
 Bring every surviving, merged, or relocated file into exact conformance with the
-[Two-Pager Template](../../conventions/structure/plans.md#two-pager-template)'s eight sections:
+[Two-Pager Template](../../conventions/structure/plans/04-two-pager-template.md#two-pager-template)'s eight sections:
 title + one-line summary, Problem/context, Why now, Prior art, Proposed direction, Rough scope &
 non-goals, Risks & open questions, and What success looks like. A file with an extra or missing
 section, or a missing provenance blockquote in its first ten lines, is reshaped to match — content
@@ -282,7 +282,7 @@ repo's own `plans/ideas/README.md` at the end of every run.
 
 ## Related Documentation
 
-- [Ideas Folder (Two-Pagers) convention](../../conventions/structure/plans.md#ideas-folder-two-pagers) —
+- [Ideas Folder (Two-Pagers) convention](../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) —
   the two-pager template, file layout, and promotion procedure this workflow reshapes every surviving
   idea against.
 - [Workflow Naming Convention](../../conventions/structure/workflow-naming.md) — defines the
@@ -290,7 +290,7 @@ repo's own `plans/ideas/README.md` at the end of every run.
 - [Plan-docs-only carve-out](./plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos) — the
   retired convention that once justified a `main-to-origin-main` default for this workflow, since
   every path it touches sits under `plans/**`; superseded by [Per-Repository Delivery Mode
-  Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
+  Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
   which is why this workflow's default is now `worktree-to-pr`.
 - [File Naming Convention](../../conventions/structure/file-naming.md) — the kebab-case rule Step 9's
   rename criteria checks every filename against.

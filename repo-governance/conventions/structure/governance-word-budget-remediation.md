@@ -1,6 +1,7 @@
 ---
 title: "Governance Word-Budget Remediation"
 description: Enforcement-point detail, the progressive-disclosure fix, and forbidden anti-fixes for the word-budget gate
+when_to_use: Use when a file fails the word-budget gate and you need the remediation steps.
 category: explanation
 subcategory: conventions
 tags:

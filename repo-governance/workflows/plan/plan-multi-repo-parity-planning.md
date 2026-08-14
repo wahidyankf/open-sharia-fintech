@@ -125,7 +125,7 @@ its **own PR** — a strict **one branch → one PR → one delivery unit** mapp
 that unit's **delivery boundary** rather than at every phase or batched at the end. The **worktree**
 is a coarser, per-repository unit: each repo's plan is capped at one worktree, reused across every
 delivery unit it lands in that repo — see
-[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 Partial work reaches `main` merged-but-dark behind a
 **feature flag**; a phase lands unflagged only when it ships no user-reachable behaviour change and
 the step names that exemption. See
@@ -223,7 +223,7 @@ decision before proceeding.
 
 The three modes above govern how THIS workflow delivers the **plan documents** it authors — a
 planning-phase concern. They are distinct from the
-[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 field (`worktree-to-pr`, `worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr`) that each
 authored plan separately declares for its own **future execution** by
 [plan-execution](./plan-execution.md) — an execution-phase concern layered on top of whichever mode
@@ -464,7 +464,7 @@ Provide a self-contained handoff prompt per repo covering:
 7. Delivery mode (from `mode` input) — this governs how the **plan document** itself is delivered
    (see [Modes](#modes) above), distinct from the plan's own `## Delivery Mode` declaration below
 8. **Instruction for `plan-maker`** to declare this repo's own
-   [`## Delivery Mode`](../../conventions/structure/plans.md#delivery-mode) field in the authored
+   [`## Delivery Mode`](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) field in the authored
    plan — the four-mode vocabulary (`worktree-to-pr` default, `worktree-to-origin-main`,
    `main-to-origin-main`, `main-to-pr`) governing that plan's own future execution, resolved
    independently per repo through the standard three-tier precedence (invocation argument > plan
@@ -472,7 +472,7 @@ Provide a self-contained handoff prompt per repo covering:
    repos. For a bare-repo target (bareness is per-invocation — verify with `git worktree list`,
    never assume from a fixed repo list), the two `main-to-*` values are
    unavailable — see
-   [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+   [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
    for the authoritative restriction, which governs this field independently of the restriction
    [Modes](#modes) above places on this workflow's own 3-value vocabulary. A repo whose plan
    resolves to a `*-to-pr` mode additionally runs the
@@ -751,7 +751,7 @@ select `worktree-to-pr`. The PRs remain in draft until the invoker promotes them
 - **[Web Research Delegation Convention](../../conventions/writing/web-research-delegation.md)**:
   External research delegated to `web-researcher` in Step 4 when the research-needed flag
   is set.
-- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**:
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)**:
   each per-repo plan authored in Step 6 declares its own `## Delivery Mode` field, resolved
   independently per repo via the three-tier precedence; divergence across repos is recorded as a
   deviation-matrix row like any other per-repo difference — distinct from this workflow's own
