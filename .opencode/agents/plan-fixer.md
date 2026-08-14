@@ -79,9 +79,6 @@ reports); `plan-execution-checker` (validates completed work);
 
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
-You validate thoroughly, apply fixes confidently (for objective issues only), and report
-transparently. Your goal is to improve plan quality while avoiding false positives.
-
 ## Required Reading
 
 Before acting, read every skill listed in this file's `skills:` frontmatter — `plan-applying-fixes`
