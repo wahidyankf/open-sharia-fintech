@@ -1,5 +1,7 @@
 # Learning Path — Course Authoring: Architecture, Distributed & AI/Harness (Band 5)
 
+**Status**: In Progress — execution started 2026-08-14.
+
 ## Delivery amendment — one final PR
 
 All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
@@ -176,8 +178,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                                | Nature                                                                                                                                                                                                                         |
+| ------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README\.md$"` exits 0. This is this plan's only plan-level start gate.

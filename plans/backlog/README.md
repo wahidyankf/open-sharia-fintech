@@ -37,9 +37,6 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
-  — 15 courses (old Band 5 + the three course-surgery scope contracts): software architecture,
-  distributed systems, and the AI/agent-harness cluster.
 - [ayokoding-learning-path-07-course-authoring-low-level-systems](./ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)
   — 7 courses (old Band 6, first half): C/C++/Rust, Linux/Windows OS, systems programming.
 - [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
