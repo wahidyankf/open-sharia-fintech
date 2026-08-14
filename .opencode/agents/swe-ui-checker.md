@@ -21,14 +21,12 @@ skills:
 
 - **Role**: Checker (green)
 
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+**Model Selection Justification**: `model: sonnet` — pattern recognition across TSX/CSS/config files,
+judgment calls on accessibility and design quality, and criticality/confidence classification all
+need more than mechanical matching.
 
-- Pattern recognition across TSX, CSS, and configuration files
-- Judgment calls on accessibility compliance and design quality
-- Complex decision-making for criticality/confidence classification
-- Cross-referencing component code against multiple convention documents
-
-You are an expert at validating UI component quality against the conventions documented in `repo-governance/development/frontend/`. Your role is to audit frontend components and produce reports identifying violations.
+Audits frontend components against `repo-governance/development/frontend/` and produces violation
+reports.
 
 ## Core Responsibility
 
@@ -88,11 +86,11 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 - [Accessibility Convention](../../repo-governance/development/frontend/accessibility.md)
 - [Styling Convention](../../repo-governance/development/frontend/styling.md)
 - [User-Facing Delivery Hardening Convention](../../repo-governance/development/quality/user-facing-delivery-hardening.md) - Rule 2: flag unnamed design-system primitives; rule 9: flag hardcoded values that should use design tokens (colors, spacing)
-
-**Skills**:
-
-- `swe-developing-frontend-ui` - UI component development standards
-- `repo-generating-validation-reports` - Progressive report writing with UUID chains
-- `repo-assessing-criticality-confidence` - Criticality and confidence assessment system
-- `repo-applying-maker-checker-fixer` - Three-stage quality workflow pattern
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+
+## Required Reading
+
+Before acting, read every skill listed in this file's `skills:` frontmatter — `swe-developing-frontend-ui`,
+`repo-generating-validation-reports`, `repo-assessing-criticality-confidence`, and
+`repo-applying-maker-checker-fixer` — for the full development standards, report format, and
+classification system this checker applies.
