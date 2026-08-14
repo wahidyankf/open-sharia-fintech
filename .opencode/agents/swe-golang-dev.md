@@ -38,10 +38,9 @@ tests, benchmarks, and example tests via `go test`; >=95% line coverage via `rhi
 validate`; input validation and no hardcoded secrets.
 
 **Linting Discipline** (golangci-lint): `errorlint` (errors.Is/errors.As, `%w`), `gochecksumtype`
-(sealed-interface exhaustiveness via `//sumtype:decl`), `iotamixing` (no mixed const blocks), `godot`
-
-- `revive exported` (doc comment style). Full rules, canonical examples, and the sealed-interface
-  form are in `swe-programming-golang` — not restated here.
+(sealed-interface exhaustiveness via `//sumtype:decl`), `iotamixing` (no mixed const blocks), and
+`godot`/`revive exported` (doc comment style). Full rules, canonical examples, and the
+sealed-interface form are in `swe-programming-golang` — not restated here.
 
 ## Coding Standards
 
