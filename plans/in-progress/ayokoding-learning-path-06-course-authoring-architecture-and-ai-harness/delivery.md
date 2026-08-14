@@ -371,7 +371,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > property. See
 > [README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else).
 
-- [ ] [AI] **State the four-path blast radius (DD-28 binding rule)** — reproduce verbatim from
+- [x] [AI] **State the four-path blast radius (DD-28 binding rule)** — reproduce verbatim from
       [tech-docs.md §The four-path blast radius](./tech-docs.md#the-four-path-blast-radius-dd-28s-binding-rule-stated-for-this-plans-own-three-surgeries):
       the evals extraction touches `evaluating-ai-systems-in-depth` (already authored) plus the three
       donor courses (Phases 3–4) and the `fundamentally-strong`/`immediately-effective` SE manifests
@@ -380,7 +380,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
       manifest carrying those IDs — acceptance: the blast radius is written into this checklist
       before any of the three surgeries is considered "applied". **Naming a manifest is not editing
       one.**
-- [ ] [AI] **Lock the evals forward-link contract** — record, for Phase 3's authoring of
+
+  _Implementation notes (2026-08-14): Confirmed the checklist and `tech-docs.md` state the evals,
+  D9, and D11 blast radii, including their downstream manifest consumers, without editing a manifest._
+
+- [x] [AI] **Lock the evals forward-link contract** — record, for Phase 3's authoring of
       `creating-ai-powered-apps` and `agentic-ai`, and Phase 4's authoring of
       `agent-orchestration-subagents-and-observability`, that each course's evals-adjacent material
       MUST forward-link to `evaluating-ai-systems-in-depth` rather than re-teaching it (DD-11
@@ -389,7 +393,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `grep -F -q 'evaluating-ai-systems-in-depth' "apps/ayokoding-www/content/en/learn/courses/creating-ai-powered-apps/overview.md"`
       exits **2** today (the course does not exist yet — `grep` exits 2 on a missing path) and must
       exit **0** once Phase 3 lands it.
-- [ ] [AI] **Lock the D9 naming/citation contract** — record, for Phase 4's authoring of
+
+  _Implementation notes (2026-08-14): Verified explicit forward-link acceptance criteria for all
+  three donor courses in Phases 3–4; the missing-course baseline correctly exits 2 until authoring._
+
+- [x] [AI] **Lock the D9 naming/citation contract** — record, for Phase 4's authoring of
       `agent-context-and-memory`, that it MUST include a context-engineering naming/lineage line
       citing Lütke (2025-06-19), Karpathy (2025-06-25), Willison (2025-06-27), and Anthropic's
       Effective Context Engineering methodology; and for the harness cluster (Phase 4), that it MUST
@@ -399,24 +407,49 @@ No phase may create an additional worktree or branch. The final phase is the onl
       "OpenAI" attribution stays `[Unverified]` (see
       [tech-docs.md](./tech-docs.md#dd-29--context-and-harness-engineering-name-and-cite-in-existing-courses-do-not-add-or-rename-any-course-d9))
       and is omitted from authoring.
-- [ ] [AI] **Lock the D11 concept-addition contract** — record, for Phase 4's authoring, the four
+
+  _Implementation notes (2026-08-14): Confirmed the Phase 4 criteria require the named verified
+  lineage sources and explicitly exclude the still-unverified OpenAI attribution; no course rename is
+  authorized._
+
+- [x] [AI] **Lock the D11 concept-addition contract** — record, for Phase 4's authoring, the four
       concept-level additions: cache-aware prefix ordering → `agent-context-and-memory`;
       tool-count degradation **and** tool-result token efficiency → `agent-tools-and-mcp`;
       train-vs-production permission asymmetry → `agent-permissions-and-sandboxing` — acceptance:
       each concept appears as an explicit acceptance criterion on the relevant Phase 4 item below.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+
+  _Implementation notes (2026-08-14): Confirmed each D11 concept maps to one named Phase 4 course and
+  has an explicit authoring acceptance criterion._
+
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
+  _Implementation notes (2026-08-14): The manifest subtree diff count remains 0._
+
 ### Phase 1 Gate
 
-- [ ] [AI] Four-path blast radius stated for all three surgeries; forward-link, citation, and
+- [x] [AI] Four-path blast radius stated for all three surgeries; forward-link, citation, and
       concept-addition contracts locked as explicit Phase 3 / Phase 4 acceptance criteria.
-- [ ] [AI] "Harness engineering" is cited, not adopted as structure — no course renamed; the
+
+  _Implementation notes (2026-08-14): Contract text is present in both the Phase 1 lock and the
+  relevant Phase 3/4 authoring items._
+
+- [x] [AI] "Harness engineering" is cited, not adopted as structure — no course renamed; the
       unverified OpenAI attribution is excluded.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** — the contract-lock edits are committed on the persistent
+
+  _Implementation notes (2026-08-14): The contract preserves the contested-term posture and excludes
+  the unverified attribution._
+
+- [x] [AI] Zero manifest files touched.
+
+  _Implementation notes (2026-08-14): The manifest-subtree diff count against `origin/main` is 0._
+
+- [x] [AI] **No PR opens for this phase** — the contract-lock edits are committed on the persistent
       final-delivery branch and ride only the terminal Phase 9 archival PR.
+
+  _Implementation notes (2026-08-14): The final-delivery branch has no remote head and no Plan 06
+  delivery PR; the Phase 1 contract lock remains local and committed only on that branch._
 
 > **Pause Safety**: the evals/D9/D11 contracts are locked and will be enforced when Phases 3 and 4
 > author their target courses; no app content changed. Safe to stop. To resume: re-read this phase's
