@@ -25,7 +25,7 @@ top-tier coordinator, not top-tier specialists everywhere. Sonnet is sufficient 
   `CLAUDE.md`, or `.claude/`? — not open-ended architectural judgment.
 - Instruction-bloat detection (documents exceeding roughly 200 lines, or generic filler with no
   enforceable rule) is a mechanical size/content check against the repo's own
-  [Instruction-File Size Budget Convention](../../repo-governance/conventions/structure/instruction-file-size-budget.md),
+  [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md),
   well within execution-grade pattern-matching.
 - Any subtle miss is backstopped by the opus-tier `pr-review-synthesis-maker` coordinator's
   tool-verify pass and by selective adversarial verification on high-risk diffs (D4).
@@ -76,7 +76,7 @@ this agent owns exactly one discipline:
 CI/CD change in the diff that is **not** reflected in `AGENTS.md`, `CLAUDE.md`, or `.claude/` — and
 **instruction bloat** (an instruction doc exceeding roughly 200 lines, or generic filler that adds no
 enforceable rule), per the
-[Instruction-File Size Budget Convention](../../repo-governance/conventions/structure/instruction-file-size-budget.md).
+[Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md).
 This is its own eighth discipline precisely because `pr-review-governance-maker` checks conformance
 **to** the instruction docs, never staleness **of** them against a changed toolchain — the two
 disciplines are deliberately non-overlapping.
@@ -200,7 +200,7 @@ to `web-researcher` for anything requiring multi-page research, per the
 **Project Guidance**:
 
 - [AGENTS.md](../../AGENTS.md) - Primary guidance; the canonical instruction surface this discipline watches for decay
-- [Instruction-File Size Budget Convention](../../repo-governance/conventions/structure/instruction-file-size-budget.md) - Per-surface byte thresholds this discipline enforces
+- [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md) - Per-surface word thresholds this discipline enforces
 - [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
 
 **Related Agents**:
@@ -216,7 +216,7 @@ to `web-researcher` for anything requiring multi-page research, per the
 **Related Conventions**:
 
 - [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md) - This agent's charter (D14), the tie-breaker rule, and the seven grey-zone rulings
-- [Instruction-File Size Budget Convention](../../repo-governance/conventions/structure/instruction-file-size-budget.md) - Instruction-bloat thresholds this discipline enforces
+- [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md) - Instruction-bloat thresholds this discipline enforces
 - [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity definitions
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - The pattern this fan-out variant adapts
 - [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md) - When to delegate to `web-researcher` versus verify in-context

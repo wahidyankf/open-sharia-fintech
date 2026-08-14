@@ -1,9 +1,16 @@
-//! `harness instruction-size validate` (cross-domain moved from `convention` domain in §2a-names) — checks instruction files against
-//! their byte budgets defined in the `instruction-size:` section of `repo-config.yml`.
+//! `rhino-cli governance word-budget validate` — checks instruction files
+//! against their word budgets defined in the `governance-word-budget:`
+//! section of `repo-config.yml`.
+//!
+//! Merged command file (`tech-docs.md` §1.4 "Command file merge note"):
+//! absorbs `commands/convention_validate_instruction_size.rs`'s
+//! implementation (schema, `run_for_root`, formatters) and
+//! `commands/harness_validate_instruction_size.rs`'s CLI-arg-parsing entry
+//! point — the delegation indirection between the two is removed.
 //!
 //! Reads the per-surface and resolved-tree budgets, globs for each surface
-//! file, classifies sizes, and returns exit code 1 when any file exceeds its
-//! fail threshold.
+//! file, classifies word counts, and returns exit code 1 when any file
+//! exceeds its fail threshold.
 
 use std::fmt::Write as _;
 use std::path::Path;
@@ -12,7 +19,7 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 use serde::Serialize;
 
-use crate::application::repo_governance::instruction_size::{
+use crate::application::governance::word_budget::{
     BudgetConfig, Finding, Severity, check_instruction_sizes, check_resolved_tree,
     merged_budget_config, severity_label,
 };
@@ -21,11 +28,11 @@ use crate::infrastructure::fs::real::RealFs;
 use crate::internal::git;
 
 /// JSON output schema identifier for this command.
-pub const SCHEMA: &str = "rhino-cli/instruction-size/v1";
+pub const SCHEMA: &str = "rhino-cli/governance-word-budget/v1";
 
-/// CLI arguments for `harness instruction-size validate` (cross-domain moved from `convention` domain in §2a-names) (none required).
+/// CLI arguments for `governance word-budget validate` (none required).
 #[derive(Args, Debug)]
-pub struct InstructionSizeArgs;
+pub struct ValidateWordBudgetArgs;
 
 // ---------------------------------------------------------------------------
 // JSON serialization types
@@ -36,13 +43,13 @@ pub struct InstructionSizeArgs;
 struct FindingPayload<'a> {
     /// Repo-relative path of the instruction file (or `"resolved-tree"`).
     path: &'a str,
-    /// Measured size in bytes.
+    /// Measured size in words.
     size: u64,
-    /// Target budget in bytes.
+    /// Target budget in words.
     target: u64,
-    /// Warning threshold in bytes.
+    /// Warning threshold in words.
     warn: u64,
-    /// Fail threshold in bytes.
+    /// Fail threshold in words.
     fail: u64,
     /// Severity label: `"ok"`, `"warn"`, or `"fail"`.
     severity: &'a str,
@@ -50,7 +57,7 @@ struct FindingPayload<'a> {
     message: &'a str,
 }
 
-/// JSON envelope wrapping the instruction-size audit result.
+/// JSON envelope wrapping the word-budget audit result.
 #[derive(Serialize)]
 struct Envelope<'a> {
     /// Output schema identifier.
@@ -67,17 +74,16 @@ struct Envelope<'a> {
 // Public command entry-point
 // ---------------------------------------------------------------------------
 
-/// Run the `harness instruction-size validate` (cross-domain moved from `convention` domain in §2a-names) command.
+/// Run the `governance word-budget validate` command.
 ///
-/// Discovers the git repository root, loads the budget configuration from
-/// the `instruction-size:` section of `repo-config.yml`, and checks all surfaces.
+/// Discovers the git repository root and delegates to [`run_for_root`].
 ///
 /// # Errors
 ///
 /// Returns an error when the git root cannot be found, the budget config
 /// cannot be loaded, or any instruction file exceeds its fail budget.
 pub fn run(
-    _args: &InstructionSizeArgs,
+    _args: &ValidateWordBudgetArgs,
     output_format: OutputFormat,
 ) -> std::result::Result<(), Error> {
     let repo_root =
@@ -85,19 +91,16 @@ pub fn run(
     run_for_root(&repo_root, output_format)
 }
 
-/// Core logic for `harness instruction-size validate` (cross-domain moved from `convention` domain in §2a-names), exposed for testing.
+/// Core logic for `governance word-budget validate`, exposed for testing.
 ///
-/// Merges two surface sources (see [`merged_budget_config`]):
-/// - `repo-config.yml` `instruction-size:` section (explicit per-surface budgets, optional).
-/// - `repo-config.yml` `harness:` `instruction:` lists (registry-derived surfaces, optional).
-///
-/// Registry surfaces not covered by an `instruction-size:` glob receive default budget thresholds.
-/// When neither source is available, the command skips gracefully.
+/// Reads the `governance-word-budget:` section of `repo-config.yml` (see
+/// [`merged_budget_config`]). When the section is absent, the command skips
+/// gracefully.
 ///
 /// # Errors
 ///
-/// Returns an error when the budget config cannot be loaded or any instruction
-/// file exceeds its fail budget.
+/// Returns an error when the budget config cannot be loaded or any
+/// instruction file exceeds its fail budget.
 pub fn run_for_root(
     repo_root: &Path,
     output_format: OutputFormat,
@@ -105,8 +108,7 @@ pub fn run_for_root(
     let Some(merged_config) = merged_budget_config(repo_root) else {
         if output_format == OutputFormat::Text {
             println!(
-                "INSTRUCTION SIZE: SKIPPED (no instruction-size: section in repo-config.yml \
-                 and no harness instruction surfaces in repo-config.yml)"
+                "WORD BUDGET: SKIPPED (no governance-word-budget: section in repo-config.yml)"
             );
         }
         return Ok(());
@@ -131,7 +133,7 @@ pub fn run_for_root(
             .filter(|f| f.severity == Severity::Fail)
             .count();
         return Err(anyhow!(
-            "instruction-size audit failed: {fail_count} Fail finding(s); apply progressive disclosure \
+            "word-budget audit failed: {fail_count} Fail finding(s); apply progressive disclosure \
              — see repo-governance/principles/content/progressive-disclosure.md"
         ));
     }
@@ -142,13 +144,13 @@ pub fn run_for_root(
 // Formatters (pure functions — testable without I/O)
 // ---------------------------------------------------------------------------
 
-/// Format instruction-size findings as human-readable text.
+/// Format word-budget findings as human-readable text.
 fn format_text(findings: &[Finding]) -> String {
     if findings.is_empty() {
-        return "INSTRUCTION SIZE: PASSED — all surfaces within budget\n".to_string();
+        return "WORD BUDGET: PASSED — all surfaces within budget\n".to_string();
     }
     let mut sb = String::new();
-    let _ = writeln!(sb, "INSTRUCTION SIZE: {} finding(s)", findings.len());
+    let _ = writeln!(sb, "WORD BUDGET: {} finding(s)", findings.len());
     for f in findings {
         let label = match f.severity {
             Severity::Ok => "PASS",
@@ -160,7 +162,7 @@ fn format_text(findings: &[Finding]) -> String {
     sb
 }
 
-/// Serialize instruction-size findings as a JSON envelope string.
+/// Serialize word-budget findings as a JSON envelope string.
 ///
 /// # Errors
 ///
@@ -191,10 +193,10 @@ fn format_json(findings: &[Finding], _config: &BudgetConfig) -> std::result::Res
     Ok(s)
 }
 
-/// Format instruction-size findings as a Markdown table.
+/// Format word-budget findings as a Markdown table.
 fn format_markdown(findings: &[Finding]) -> String {
     let mut sb = String::new();
-    sb.push_str("## Instruction Size Audit\n\n");
+    sb.push_str("## Word Budget Audit\n\n");
     if findings.is_empty() {
         sb.push_str("**PASSED**: all surfaces within budget\n");
         return sb;
@@ -209,7 +211,7 @@ fn format_markdown(findings: &[Finding]) -> String {
         },
         findings.len()
     );
-    sb.push_str("| Path | Size (bytes) | Severity | Message |\n");
+    sb.push_str("| Path | Size (words) | Severity | Message |\n");
     sb.push_str("| --- | --- | --- | --- |\n");
     for f in findings {
         let sev = severity_label(&f.severity);
@@ -230,12 +232,12 @@ fn format_markdown(findings: &[Finding]) -> String {
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
-    use crate::application::repo_governance::instruction_size as is;
+    use crate::application::governance::word_budget as wb;
     use std::fs;
     use tempfile::TempDir;
 
-    fn write_agents_md(dir: &Path, bytes: usize) {
-        fs::write(dir.join("AGENTS.md"), "x".repeat(bytes)).unwrap();
+    fn n_words(n: usize) -> String {
+        vec!["w"; n].join(" ")
     }
 
     fn write_budget_yaml(dir: &Path) {
@@ -243,17 +245,17 @@ mod tests {
             "harness: []\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
-            "instruction-size:\n",
+            "governance-word-budget:\n",
             "  surfaces:\n",
             "    - glob: \"AGENTS.md\"\n",
-            "      target: 24000\n",
-            "      warn: 27000\n",
-            "      fail: 30000\n",
+            "      target: 400\n",
+            "      warn: 500\n",
+            "      fail: 500\n",
             "  resolved_tree:\n",
             "    root: \"CLAUDE.md\"\n",
-            "    target: 30000\n",
-            "    warn: 34000\n",
-            "    fail: 38000\n",
+            "    target: 1200\n",
+            "    warn: 1500\n",
+            "    fail: 1500\n",
         );
         fs::write(dir.join("repo-config.yml"), yaml).unwrap();
     }
@@ -268,7 +270,7 @@ mod tests {
     fn run_returns_ok_when_within_budget() {
         let tmp = TempDir::new().unwrap();
         write_budget_yaml(tmp.path());
-        write_agents_md(tmp.path(), 10_000);
+        fs::write(tmp.path().join("AGENTS.md"), n_words(200)).unwrap();
         write_small_claude(tmp.path());
         let result = run_for_root(tmp.path(), OutputFormat::Text);
         assert!(result.is_ok(), "within-budget should pass: {result:?}");
@@ -278,16 +280,16 @@ mod tests {
     fn run_returns_err_when_agents_md_exceeds_fail() {
         let tmp = TempDir::new().unwrap();
         write_budget_yaml(tmp.path());
-        write_agents_md(tmp.path(), 31_000);
+        fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         write_small_claude(tmp.path());
         let result = run_for_root(tmp.path(), OutputFormat::Text);
         assert!(result.is_err(), "fail-budget exceeded should return Err");
     }
 
     #[test]
-    fn run_returns_ok_when_no_instruction_size_section() {
+    fn run_returns_ok_when_no_word_budget_section() {
         let tmp = TempDir::new().unwrap();
-        // No instruction-size: section in repo-config.yml — should skip gracefully
+        // No governance-word-budget: section in repo-config.yml — should skip gracefully
         let result = run_for_root(tmp.path(), OutputFormat::Text);
         assert!(result.is_ok());
     }
@@ -304,10 +306,10 @@ mod tests {
     fn format_text_shows_fail_findings() {
         let finding = Finding {
             path: "AGENTS.md".to_string(),
-            size: 31_000,
-            target: 24_000,
-            warn: 27_000,
-            fail: 30_000,
+            size: 600,
+            target: 400,
+            warn: 500,
+            fail: 500,
             severity: Severity::Fail,
             message: "AGENTS.md is too large; apply progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md".to_string(),
         };
@@ -322,11 +324,11 @@ mod tests {
     fn format_json_passed() {
         let config = BudgetConfig {
             surfaces: vec![],
-            resolved_tree: is::ResolvedTree {
+            resolved_tree: wb::ResolvedTree {
                 root: "CLAUDE.md".to_string(),
-                target: 30_000,
-                warn: 34_000,
-                fail: 38_000,
+                target: 1_200,
+                warn: 1_500,
+                fail: 1_500,
             },
         };
         let s = format_json(&[], &config).unwrap();
@@ -340,20 +342,20 @@ mod tests {
     fn format_json_failed_contains_finding() {
         let finding = Finding {
             path: "AGENTS.md".to_string(),
-            size: 31_000,
-            target: 24_000,
-            warn: 27_000,
-            fail: 30_000,
+            size: 600,
+            target: 400,
+            warn: 500,
+            fail: 500,
             severity: Severity::Fail,
             message: "too large; apply progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md".to_string(),
         };
         let config = BudgetConfig {
             surfaces: vec![],
-            resolved_tree: is::ResolvedTree {
+            resolved_tree: wb::ResolvedTree {
                 root: "CLAUDE.md".to_string(),
-                target: 30_000,
-                warn: 34_000,
-                fail: 38_000,
+                target: 1_200,
+                warn: 1_500,
+                fail: 1_500,
             },
         };
         let s = format_json(&[finding], &config).unwrap();
@@ -369,7 +371,7 @@ mod tests {
     #[test]
     fn format_markdown_passed() {
         let s = format_markdown(&[]);
-        assert!(s.contains("## Instruction Size Audit"));
+        assert!(s.contains("## Word Budget Audit"));
         assert!(s.contains("PASSED"));
     }
 
@@ -377,10 +379,10 @@ mod tests {
     fn format_markdown_with_findings() {
         let finding = Finding {
             path: "AGENTS.md".to_string(),
-            size: 31_000,
-            target: 24_000,
-            warn: 27_000,
-            fail: 30_000,
+            size: 600,
+            target: 400,
+            warn: 500,
+            fail: 500,
             severity: Severity::Fail,
             message: "too large; apply progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md".to_string(),
         };
@@ -396,7 +398,7 @@ mod tests {
     fn fail_message_in_run_contains_progressive_disclosure() {
         let tmp = TempDir::new().unwrap();
         write_budget_yaml(tmp.path());
-        write_agents_md(tmp.path(), 31_000);
+        fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         write_small_claude(tmp.path());
         let err = run_for_root(tmp.path(), OutputFormat::Text).unwrap_err();
         let msg = err.to_string();
@@ -410,58 +412,35 @@ mod tests {
         );
     }
 
-    #[test]
-    fn harness_registry_instruction_surface_is_budgeted() {
-        let tmp = TempDir::new().unwrap();
-        let repo_config = concat!(
-            "harness:\n",
-            "  - { name: cursor, tier: native, shadow: .cursor/rules,",
-            " instruction: [.cursor/rules] }\n",
-            "coverage:\n  projects: []\n",
-            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
-        );
-        fs::write(tmp.path().join("repo-config.yml"), repo_config).unwrap();
-        fs::create_dir_all(tmp.path().join(".cursor")).unwrap();
-        // Oversized .cursor/rules — must be flagged via registry surface list
-        fs::write(tmp.path().join(".cursor/rules"), "x".repeat(50_000)).unwrap();
-        // No instruction-size-budget.yaml — surfaces come from harness registry
-        let result = run_for_root(tmp.path(), OutputFormat::Text);
-        assert!(
-            result.is_err(),
-            "registry-driven instruction-size must flag oversized .cursor/rules"
-        );
-    }
-
-    // ── instruction-size: section in repo-config.yml (RED → GREEN) ───────────
+    // ── governance-word-budget: section in repo-config.yml ───────────
 
     #[test]
-    fn run_reads_instruction_size_section_from_repo_config_yml() {
+    fn run_reads_word_budget_section_from_repo_config_yml() {
         let tmp = TempDir::new().unwrap();
         let repo_cfg = concat!(
             "harness: []\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
-            "instruction-size:\n",
+            "governance-word-budget:\n",
             "  surfaces:\n",
             "    - glob: \"AGENTS.md\"\n",
-            "      target: 24000\n",
-            "      warn: 27000\n",
-            "      fail: 30000\n",
+            "      target: 400\n",
+            "      warn: 500\n",
+            "      fail: 500\n",
             "  resolved_tree:\n",
             "    root: \"CLAUDE.md\"\n",
-            "    target: 30000\n",
-            "    warn: 34000\n",
-            "    fail: 38000\n",
+            "    target: 1200\n",
+            "    warn: 1500\n",
+            "    fail: 1500\n",
         );
         fs::write(tmp.path().join("repo-config.yml"), repo_cfg).unwrap();
-        // NO standalone instruction-size-budget.yaml
-        // AGENTS.md exceeds fail=30000 threshold
-        fs::write(tmp.path().join("AGENTS.md"), "x".repeat(31_000)).unwrap();
+        // AGENTS.md exceeds fail=500 words
+        fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         fs::write(tmp.path().join("CLAUDE.md"), "small\n").unwrap();
         let result = run_for_root(tmp.path(), OutputFormat::Text);
         assert!(
             result.is_err(),
-            "should read instruction-size: from repo-config.yml and flag oversized AGENTS.md"
+            "should read governance-word-budget: from repo-config.yml and flag oversized AGENTS.md"
         );
     }
 }

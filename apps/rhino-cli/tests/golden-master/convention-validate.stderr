@@ -1,6 +1,0 @@
-error: 'rhino-cli convention validate' requires a subcommand but one was not provided
-  [subcommands: emoji, license, agents-md-size, instruction-size, help]
-
-Usage: rhino-cli convention validate [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

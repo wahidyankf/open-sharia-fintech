@@ -7,6 +7,7 @@
 use std::collections::BTreeMap;
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use super::port::{DirEntry, Fs};
 
@@ -17,10 +18,21 @@ use super::port::{DirEntry, Fs};
 /// file's path is treated as an existing directory. Empty directories (no
 /// descendant files) cannot be represented — validators under test must not
 /// depend on directory existence alone.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct MockFs {
-    /// Absolute path to UTF-8 file content.
-    files: BTreeMap<PathBuf, String>,
+    /// Absolute path to UTF-8 file content. `Mutex`-wrapped (not `RefCell`)
+    /// so [`Fs::write_string`] can mutate through a shared `&self` reference
+    /// while `MockFs` still satisfies `Fs: Send + Sync` — `RefCell` is never
+    /// `Sync`.
+    files: Mutex<BTreeMap<PathBuf, String>>,
+}
+
+impl Clone for MockFs {
+    fn clone(&self) -> Self {
+        Self {
+            files: Mutex::new(self.files.lock().expect("mock fs lock poisoned").clone()),
+        }
+    }
 }
 
 /// Builds a "not found" `io::Error` for a missing path, matching the error
@@ -41,22 +53,39 @@ impl MockFs {
 
     /// Adds (or overwrites) a file at `path` with `content`, returning `self`
     /// for chaining.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the internal lock is poisoned (only possible if an earlier
+    /// call already panicked while holding it).
     #[must_use]
-    pub fn with_file(mut self, path: impl Into<PathBuf>, content: impl Into<String>) -> Self {
-        self.files.insert(path.into(), content.into());
+    pub fn with_file(self, path: impl Into<PathBuf>, content: impl Into<String>) -> Self {
+        self.files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .insert(path.into(), content.into());
         self
     }
 
     /// Returns `true` when `dir` is a strict ancestor directory of at least
     /// one stored file.
     fn has_descendant(&self, dir: &Path) -> bool {
-        self.files.keys().any(|p| p != dir && p.starts_with(dir))
+        self.files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .keys()
+            .any(|p| p != dir && p.starts_with(dir))
     }
 }
 
 impl Fs for MockFs {
     fn read_to_string(&self, path: &Path) -> Result<String> {
-        self.files.get(path).cloned().ok_or_else(|| not_found(path))
+        self.files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .get(path)
+            .cloned()
+            .ok_or_else(|| not_found(path))
     }
 
     fn read_lines(&self, path: &Path) -> Result<Vec<Result<String>>> {
@@ -66,17 +95,28 @@ impl Fs for MockFs {
 
     fn file_size(&self, path: &Path) -> Result<u64> {
         self.files
+            .lock()
+            .expect("mock fs lock poisoned")
             .get(path)
             .map(|c| c.len() as u64)
             .ok_or_else(|| not_found(path))
     }
 
     fn exists(&self, path: &Path) -> bool {
-        self.files.contains_key(path) || self.has_descendant(path)
+        self.files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .contains_key(path)
+            || self.has_descendant(path)
     }
 
     fn is_dir(&self, path: &Path) -> bool {
-        !self.files.contains_key(path) && self.has_descendant(path)
+        !self
+            .files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .contains_key(path)
+            && self.has_descendant(path)
     }
 
     fn read_dir(&self, path: &Path) -> Result<Vec<DirEntry>> {
@@ -84,7 +124,7 @@ impl Fs for MockFs {
             return Err(not_found(path));
         }
         let mut seen: BTreeMap<String, bool> = BTreeMap::new();
-        for p in self.files.keys() {
+        for p in self.files.lock().expect("mock fs lock poisoned").keys() {
             let Ok(rel) = p.strip_prefix(path) else {
                 continue;
             };
@@ -106,6 +146,8 @@ impl Fs for MockFs {
     fn walk_files(&self, root: &Path, skip_dirs: &[&str]) -> Vec<PathBuf> {
         let mut out: Vec<PathBuf> = self
             .files
+            .lock()
+            .expect("mock fs lock poisoned")
             .keys()
             .filter(|p| p.starts_with(root))
             .filter(|p| {
@@ -118,6 +160,14 @@ impl Fs for MockFs {
             .collect();
         out.sort();
         out
+    }
+
+    fn write_string(&self, path: &Path, content: &str) -> Result<()> {
+        self.files
+            .lock()
+            .expect("mock fs lock poisoned")
+            .insert(path.to_path_buf(), content.to_string());
+        Ok(())
     }
 }
 
@@ -179,6 +229,26 @@ mod tests {
         assert!(!entries[0].is_dir);
         assert_eq!(entries[1].name, "docs");
         assert!(entries[1].is_dir);
+    }
+
+    #[test]
+    fn write_string_makes_content_readable_and_existent() {
+        let fs = MockFs::new();
+        fs.write_string(Path::new("/repo/docs/new.md"), "hello")
+            .unwrap();
+        assert_eq!(
+            fs.read_to_string(Path::new("/repo/docs/new.md")).unwrap(),
+            "hello"
+        );
+        assert!(fs.exists(Path::new("/repo/docs")));
+        assert!(fs.is_dir(Path::new("/repo/docs")));
+    }
+
+    #[test]
+    fn write_string_overwrites_existing_content() {
+        let fs = MockFs::new().with_file("/repo/a.md", "old");
+        fs.write_string(Path::new("/repo/a.md"), "new").unwrap();
+        assert_eq!(fs.read_to_string(Path::new("/repo/a.md")).unwrap(), "new");
     }
 
     #[test]

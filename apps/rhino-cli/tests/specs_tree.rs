@@ -29,14 +29,20 @@
 //!   `feature` paths are byte-identical to the absolute, glob-resolved paths
 //!   the real command computes at runtime.
 //! - `harness-bindings.feature` / `harness-registry-driven.feature`: harness
-//!   binding/naming/instruction-size/duplication validators. `harness bindings
+//!   binding/naming/duplication validators. `harness bindings
 //!   validate`'s core (`application::agents::bindings::validate_bindings`) is
 //!   driven in-process against the real repository's `repo-config.yml` (its
 //!   own `#[cfg(test)]` module already proves the exact "all 11 harnesses"
-//!   claim this feature makes); naming/instruction-size/duplication are driven
+//!   claim this feature makes); naming/duplication are driven
 //!   as subprocesses against a synthetic repo-config.yml with renamed
 //!   (non-`.claude`/`.opencode`) tier directories, to prove they are
-//!   registry-driven rather than hard-coded.
+//!   registry-driven rather than hard-coded. This scenario used to cover a
+//!   third validator, `harness instruction-size validate`, alongside
+//!   naming/duplication — the `optimize-governance-md` plan's Phase 1b
+//!   renamed that command to `governance word-budget validate` and moved its
+//!   surface list to a dedicated `governance-word-budget:` config key,
+//!   unrelated to the `harness:` tier registry this scenario exercises, so
+//!   it was dropped from this scenario rather than renamed in place.
 //! - `validate-adoption.feature` / `validate-tree.feature`: `specs
 //!   validate-adoption` / `specs validate-tree` no longer exist as CLI verbs —
 //!   `cli.rs`'s own test suite documents both were merged into `specs
@@ -185,7 +191,6 @@ struct SpecsTreeWorld {
     // --- harness-registry-driven.feature (subprocess, synthetic repo-config.yml) ---
     hrd_work: Option<TempDir>,
     hrd_naming_output: Option<Output>,
-    hrd_instr_output: Option<Output>,
     hrd_dup_output: Option<Output>,
 
     // --- worktree-agnostic.feature (in-process) ---
@@ -229,7 +234,6 @@ impl SpecsTreeWorld {
             hb_result: None,
             hrd_work: None,
             hrd_naming_output: None,
-            hrd_instr_output: None,
             hrd_dup_output: None,
             wt_main: None,
             wt_worktree_dir: None,
@@ -996,7 +1000,7 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
 }
 
 #[then(
-    "the native tier (Copilot, Windsurf, Junie, Antigravity, Pi, Aider) is validated by the no-shadowing rule plus the AGENTS.md instruction-size budget"
+    "the native tier (Copilot, Windsurf, Junie, Antigravity, Pi, Aider) is validated by the no-shadowing rule plus the AGENTS.md word budget"
 )]
 fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
     let native: Vec<&HarnessEntry> = w.hb_harness.iter().filter(|h| h.tier == "native").collect();
@@ -1021,7 +1025,7 @@ fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
         }
     }
 
-    // AGENTS.md instruction-size budget: every native entry reads AGENTS.md.
+    // AGENTS.md word budget: every native entry reads AGENTS.md.
     for h in &native {
         assert!(
             h.instruction.iter().any(|i| i == "AGENTS.md"),
@@ -1079,8 +1083,8 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     run_git(root, &["init", "-q"]);
 
-    // Custom (non-`.claude`/`.opencode`) tier directories — proves the naming/duplication/
-    // instruction-size validators derive target sets from the registry, not hard-coded paths.
+    // Custom (non-`.claude`/`.opencode`) tier directories — proves the naming/duplication
+    // validators derive target sets from the registry, not hard-coded paths.
     let config = concat!(
         "harness:\n",
         "  - { name: claude-code-like, tier: source, agent-dir: .custom-src/agents,",
@@ -1140,10 +1144,8 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     w.hrd_work = Some(tmp);
 }
 
-#[when(
-    "harness naming validate, harness instruction-size validate, and harness duplication validate run"
-)]
-fn when_hrd_run_all_three(w: &mut SpecsTreeWorld) {
+#[when("harness naming validate and harness duplication validate run")]
+fn when_hrd_run_both(w: &mut SpecsTreeWorld) {
     let root = w
         .hrd_work
         .as_ref()
@@ -1151,10 +1153,6 @@ fn when_hrd_run_all_three(w: &mut SpecsTreeWorld) {
         .path()
         .to_path_buf();
     w.hrd_naming_output = Some(run_rhino(&root, &["harness", "naming", "validate"]));
-    w.hrd_instr_output = Some(run_rhino(
-        &root,
-        &["harness", "instruction-size", "validate"],
-    ));
     w.hrd_dup_output = Some(run_rhino(&root, &["harness", "duplication", "validate"]));
 }
 
@@ -1175,11 +1173,6 @@ fn then_hrd_registry_driven(w: &mut SpecsTreeWorld) {
         dup_text.contains(".custom-src") || dup_text.contains("foo-maker"),
         "got: {dup_text}"
     );
-
-    let instr = w.hrd_instr_output.as_ref().expect("instruction-size ran");
-    let instr_text = combined_output(instr);
-    assert!(!instr.status.success(), "instr output: {instr_text}");
-    assert!(instr_text.contains(".custom-native"), "got: {instr_text}");
 }
 
 #[then("harness naming validate checks the Amazon Q agent dir and the N-way mirror")]
@@ -1192,11 +1185,10 @@ fn then_hrd_naming_checks_amazonq(w: &mut SpecsTreeWorld) {
 #[then("a config-only addition of a new agent-bearing tier is covered with no source edit")]
 fn then_hrd_config_only(w: &mut SpecsTreeWorld) {
     // The Given step wrote only `repo-config.yml` plus fixture data files under the synthetic
-    // temp root -- no `.rs` source under the crate was touched. All three registry-driven
+    // temp root -- no `.rs` source under the crate was touched. Both registry-driven
     // validators still detected their respective custom-tier violations (asserted above),
     // proving the config-only addition is covered end to end.
     assert!(!w.hrd_naming_output.as_ref().expect("ran").status.success());
-    assert!(!w.hrd_instr_output.as_ref().expect("ran").status.success());
     assert!(!w.hrd_dup_output.as_ref().expect("ran").status.success());
 }
 

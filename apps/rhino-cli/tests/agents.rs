@@ -896,23 +896,18 @@ fn then_no_catalog_row_required_for_absent_dirs(w: &mut AgentsWorld) {
 /// them) and, unless `single_surface` is set, `.github/copilot-instructions.md`
 /// too, plus a `resolved_tree` rooted at `CLAUDE.md` matching the real
 /// convention doc's thresholds
-/// (`repo-governance/conventions/structure/instruction-file-size-budget.md`).
-/// Shared by every `harness instruction-size validate` scenario in this file
-/// (the standalone `instruction-size-budget.yaml` file the Gherkin prose
+/// (`repo-governance/conventions/structure/governance-word-budget.md`).
+/// Shared by every `governance word-budget validate` scenario in this file
+/// (the standalone `governance-word-budget.yaml` file the Gherkin prose
 /// still names was folded into this `repo-config.yml` section — see
 /// `application/repo_config/mod.rs`).
-fn write_instruction_size_config_scoped(
-    w: &AgentsWorld,
-    target: u64,
-    fail: u64,
-    single_surface: bool,
-) {
+fn write_word_budget_config_scoped(w: &AgentsWorld, target: u64, fail: u64, single_surface: bool) {
     let warn = target + fail.saturating_sub(target) / 2;
     let mut yaml = format!(
         "harness: []\n\
          coverage:\n  projects: []\n\
          specs:\n  ddd-areas: []\n  domain-areas: []\n\
-         instruction-size:\n\
+         governance-word-budget:\n\
          \x20 surfaces:\n\
          \x20   - glob: \"AGENTS.md\"\n\
          \x20     target: {target}\n\
@@ -922,26 +917,31 @@ fn write_instruction_size_config_scoped(
     if !single_surface {
         yaml.push_str(
             "\x20   - glob: \".github/copilot-instructions.md\"\n\
-             \x20     target: 6000\n\
-             \x20     warn: 8000\n\
-             \x20     fail: 10000\n",
+             \x20     target: 400\n\
+             \x20     warn: 450\n\
+             \x20     fail: 500\n",
         );
     }
     yaml.push_str(
         "\x20 resolved_tree:\n\
          \x20   root: \"CLAUDE.md\"\n\
-         \x20   target: 30000\n\
-         \x20   warn: 34000\n\
-         \x20   fail: 38000\n",
+         \x20   target: 1200\n\
+         \x20   warn: 1350\n\
+         \x20   fail: 1500\n",
     );
     w.write("repo-config.yml", &yaml);
 }
 
-/// Convenience wrapper for [`write_instruction_size_config_scoped`] covering
+/// Convenience wrapper for [`write_word_budget_config_scoped`] covering
 /// both `AGENTS.md` and `.github/copilot-instructions.md` — the shape every
-/// scenario except the "legacy alias" (single-surface) one needs.
-fn write_instruction_size_config(w: &AgentsWorld, target: u64, fail: u64) {
-    write_instruction_size_config_scoped(w, target, fail, false);
+/// scenario except the "legacy registry-merge alias" (single-surface) one needs.
+fn write_word_budget_config(w: &AgentsWorld, target: u64, fail: u64) {
+    write_word_budget_config_scoped(w, target, fail, false);
+}
+
+/// Builds a whitespace-delimited fixture of exactly `n` words.
+fn n_words(n: usize) -> String {
+    vec!["w"; n].join(" ")
 }
 
 /// Root of the real monorepo containing this crate (two levels up from
@@ -958,21 +958,21 @@ fn real_repo_root() -> PathBuf {
 }
 
 // ===========================================================================
-// AGENTS.md Size Audit (repo-governance-agents-md-size.feature)
-// harness instruction-size validate, scoped to a 30KB target / 40KB fail
-// ceiling matching this feature's own scenario titles.
+// AGENTS.md word-budget audit (repo-governance-agents-md-size.feature)
+// governance word-budget validate, scoped to a 400-word target / 500-word
+// fail ceiling matching this feature's own scenario titles.
 // ===========================================================================
 
-#[given(regex = r"^a repository containing an AGENTS\.md file of (\d+) bytes$")]
-fn given_agents_md_file_of_n_bytes(w: &mut AgentsWorld, n: String) {
-    write_instruction_size_config(w, 30_000, 40_000);
-    let n: usize = n.parse().expect("byte count");
-    w.write("AGENTS.md", &"x".repeat(n));
+#[given(regex = r"^a repository containing an AGENTS\.md file of (\d+) words$")]
+fn given_agents_md_file_of_n_words(w: &mut AgentsWorld, n: String) {
+    write_word_budget_config(w, 400, 500);
+    let n: usize = n.parse().expect("word count");
+    w.write("AGENTS.md", &n_words(n));
 }
 
-#[when("the developer runs harness instruction-size validate")]
-fn when_instruction_size_validate(w: &mut AgentsWorld) {
-    w.exec(&["harness", "instruction-size", "validate"]);
+#[when("the developer runs governance word-budget validate")]
+fn when_word_budget_validate(w: &mut AgentsWorld) {
+    w.exec(&["governance", "word-budget", "validate"]);
 }
 
 #[then("the output reports the AGENTS.md size as within target")]
@@ -982,7 +982,7 @@ fn then_reports_within_target(w: &mut AgentsWorld) {
     // `check_instruction_sizes`'s doc comment); the observable signal is the
     // generic "all surfaces within budget" pass banner.
     let out = w.stdout();
-    assert!(out.contains("INSTRUCTION SIZE: PASSED"), "got: {out}");
+    assert!(out.contains("WORD BUDGET: PASSED"), "got: {out}");
 }
 
 #[then("the output identifies AGENTS.md as over the target size")]
@@ -1000,25 +1000,25 @@ fn then_identifies_over_hard_limit(w: &mut AgentsWorld) {
 }
 
 // ===========================================================================
-// Instruction-file size budget (repo-governance-instruction-size.feature)
+// Governance word-budget gate (repo-governance-instruction-size.feature)
 // ===========================================================================
 
 #[given(
-    "a committed \"instruction-size-budget.yaml\" mapping instruction-file globs to target, warn, and fail byte thresholds"
+    "a committed \"governance-word-budget.yaml\" mapping instruction-file globs to target, warn, and fail word thresholds"
 )]
-fn given_instruction_size_budget_committed(w: &mut AgentsWorld) {
-    write_instruction_size_config(w, 24_000, 30_000);
+fn given_word_budget_committed(w: &mut AgentsWorld) {
+    write_word_budget_config(w, 400, 500);
 }
 
-#[given(regex = r#"^"AGENTS\.md" is (\d+) bytes$"#)]
-fn given_agents_md_is_n_bytes(w: &mut AgentsWorld, n: String) {
-    let n: usize = n.parse().expect("byte count");
-    w.write("AGENTS.md", &"x".repeat(n));
+#[given(regex = r#"^"AGENTS\.md" is (\d+) words$"#)]
+fn given_agents_md_is_n_words(w: &mut AgentsWorld, n: String) {
+    let n: usize = n.parse().expect("word count");
+    w.write("AGENTS.md", &n_words(n));
 }
 
 #[given(regex = r"^its target is (\d+) and its fail ceiling is (\d+)$")]
 fn given_target_and_fail_ceiling(w: &mut AgentsWorld, target: String, fail: String) {
-    write_instruction_size_config(
+    write_word_budget_config(
         w,
         target.parse().expect("target"),
         fail.parse().expect("fail"),
@@ -1028,29 +1028,29 @@ fn given_target_and_fail_ceiling(w: &mut AgentsWorld, target: String, fail: Stri
 #[given(regex = r"^its fail ceiling is (\d+)$")]
 fn given_fail_ceiling(w: &mut AgentsWorld, fail: String) {
     // No explicit target in this scenario — reuse the Background's default.
-    write_instruction_size_config(w, 24_000, fail.parse().expect("fail"));
+    write_word_budget_config(w, 400, fail.parse().expect("fail"));
 }
 
 #[given(r#"no file exists at ".github/copilot-instructions.md""#)]
 fn given_no_copilot_instructions_file(_w: &mut AgentsWorld) {
-    // Intentionally a no-op: `write_instruction_size_config` already
-    // configures this glob as a surface, but the file itself is never
-    // written — the glob simply matches nothing.
+    // Intentionally a no-op: `write_word_budget_config` already configures
+    // this glob as a surface, but the file itself is never written — the
+    // glob simply matches nothing.
 }
 
 #[given(r#""CLAUDE.md" imports "AGENTS.md" via "@AGENTS.md""#)]
 fn given_claude_md_imports_agents_md(w: &mut AgentsWorld) {
-    // AGENTS.md stays within its own 24000-byte surface target (Ok, silently
+    // AGENTS.md stays within its own 400-word surface target (Ok, silently
     // excluded from surface-level findings) so only the resolved-tree
     // finding is expected to fire in this scenario.
-    w.write("AGENTS.md", &"x".repeat(20_000));
-    w.write("CLAUDE.md", &format!("@AGENTS.md\n{}", "y".repeat(20_000)));
+    w.write("AGENTS.md", &n_words(390));
+    w.write("CLAUDE.md", &format!("@AGENTS.md\n{}", n_words(1600)));
 }
 
-#[given("the sum of \"CLAUDE.md\" plus the imported files exceeds the 38000-byte tree ceiling")]
+#[given("the sum of \"CLAUDE.md\" plus the imported files exceeds the 1500-word tree ceiling")]
 fn given_sum_exceeds_tree_ceiling(_w: &mut AgentsWorld) {
-    // No-op: the prior step already sized CLAUDE.md (~20KB) + AGENTS.md
-    // (~20KB) to ~40KB, over the Background's 38000-byte resolved-tree fail
+    // No-op: the prior step already sized CLAUDE.md (~1600 words) + AGENTS.md
+    // (~390 words) well over the Background's 1500-word resolved-tree fail
     // ceiling.
 }
 
@@ -1060,7 +1060,7 @@ fn then_file_reported_with_severity(w: &mut AgentsWorld, severity: String) {
     match severity.as_str() {
         // Ok findings are excluded from output by design — see
         // `then_reports_within_target` above for the same reasoning.
-        "ok" => assert!(out.contains("INSTRUCTION SIZE: PASSED"), "got: {out}"),
+        "ok" => assert!(out.contains("WORD BUDGET: PASSED"), "got: {out}"),
         "warn" => {
             assert!(out.contains("[WARN]"), "got: {out}");
             assert!(out.contains("AGENTS.md"), "got: {out}");
@@ -1085,38 +1085,19 @@ fn then_resolved_tree_finding_fail(w: &mut AgentsWorld) {
     assert!(out.contains("[FAIL] resolved-tree"), "got: {out}");
 }
 
-#[when("the developer runs convention agents-md-size")]
-fn when_convention_agents_md_size_legacy_alias(w: &mut AgentsWorld) {
-    // `convention agents-md-size` no longer exists as a standalone CLI leaf
-    // (see cli.rs: "agents-md-size removed (superseded); instruction-size
-    // moved to harness domain"). Its behavior lives on as a special case of
-    // `harness instruction-size validate` scoped to just the AGENTS.md
-    // surface — `single_surface: true` configures ONLY that one surface (the
-    // shared two-surface `write_instruction_size_config` also declares
-    // `.github/copilot-instructions.md`) to prove the scoping: an oversized
-    // `.github/copilot-instructions.md` is present but never declared as a
-    // surface, so it must never appear in the output.
-    write_instruction_size_config_scoped(w, 24_000, 30_000, true);
-    w.write("AGENTS.md", &"x".repeat(31_000));
-    w.write(".github/copilot-instructions.md", &"z".repeat(50_000));
+#[when("the developer runs harness instruction-size validate")]
+fn when_legacy_instruction_size_command(w: &mut AgentsWorld) {
     w.exec(&["harness", "instruction-size", "validate"]);
 }
 
-#[then(r#"only "AGENTS.md" is measured"#)]
-fn then_only_agents_md_measured(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("AGENTS.md"), "got: {out}");
-    assert!(!out.contains("copilot-instructions"), "got: {out}");
-}
-
-#[then("the command behaves as a scoped instruction-size run")]
-fn then_behaves_as_scoped_instruction_size_run(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("INSTRUCTION SIZE"), "got: {out}");
+#[then("the output reports an unknown subcommand")]
+fn then_reports_unknown_subcommand(w: &mut AgentsWorld) {
+    let out = w.combined_output();
+    assert!(out.contains("unrecognized subcommand"), "got: {out}");
 }
 
 // ===========================================================================
-// Governance of the instruction-file size-budget rule
+// Governance of the word-budget rule
 // (repo-governance-instruction-size-governance.feature) — asserts facts
 // about the real repository tree this crate lives in, not the synthetic
 // fixture. See `real_repo_root()`.
@@ -1166,7 +1147,7 @@ fn then_reports_qualitative_bloat(w: &mut AgentsWorld) {
     );
 }
 
-#[then(r#"it annotates that the byte ceiling is enforced by the deterministic "instruction-size" gate"#)]
+#[then(r#"it annotates that the word ceiling is enforced by the deterministic "governance-word-budget" gate"#)]
 fn then_annotates_deterministic_ceiling(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
     assert!(
@@ -1174,7 +1155,7 @@ fn then_annotates_deterministic_ceiling(w: &mut AgentsWorld) {
         "got: {content}"
     );
     assert!(
-        content.contains("harness instruction-size validate"),
+        content.contains("governance word-budget validate"),
         "got: {content}"
     );
 }
@@ -1187,12 +1168,12 @@ fn when_i_read(w: &mut AgentsWorld, path: String) {
         });
 }
 
-#[then(r#""instruction-size" is named among the Step 0.5 categories"#)]
-fn then_instruction_size_named_in_step_0_5(w: &mut AgentsWorld) {
+#[then(r#""governance-word-budget" is named among the Step 0.5 categories"#)]
+fn then_word_budget_named_in_step_0_5(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
     let found = content
         .lines()
-        .any(|line| line.contains("Step 0.5") && line.contains("instruction-size"));
+        .any(|line| line.contains("Step 0.5") && line.contains("governance-word-budget"));
     assert!(found, "got: {content}");
 }
 
@@ -1200,7 +1181,7 @@ fn then_instruction_size_named_in_step_0_5(w: &mut AgentsWorld) {
 fn given_repo_within_budgets(_w: &mut AgentsWorld) {
     // No-op: a fresh fixture workspace has no instruction files at all, which
     // is trivially "within budget" — no `repo-config.yml` means
-    // `merged_budget_config` returns `None` and the instruction-size category
+    // `merged_budget_config` returns `None` and the word-budget category
     // reports zero findings regardless of the other categories.
 }
 
@@ -1216,21 +1197,23 @@ fn then_envelope_schema(w: &mut AgentsWorld) {
     assert_eq!(json["schema"], "rhino-cli/repo-governance-audit/v1");
 }
 
-#[then(r#""result.categories" contains a category named "instruction-size""#)]
-fn then_result_categories_contains_instruction_size(w: &mut AgentsWorld) {
+#[then(r#""result.categories" contains a category named "governance-word-budget""#)]
+fn then_result_categories_contains_word_budget(w: &mut AgentsWorld) {
     let out = w.stdout();
     let json: Value = serde_json::from_str(&out).expect("valid json");
     let categories = json["result"]["categories"]
         .as_array()
         .expect("categories array");
     assert!(
-        categories.iter().any(|c| c["name"] == "instruction-size"),
+        categories
+            .iter()
+            .any(|c| c["name"] == "governance-word-budget"),
         "got: {categories:?}"
     );
 }
 
-#[given(r#"a preflight JSON contains an "instruction-size" category with findings"#)]
-fn given_preflight_json_has_instruction_size_findings(_w: &mut AgentsWorld) {
+#[given(r#"a preflight JSON contains a "governance-word-budget" category with findings"#)]
+fn given_preflight_json_has_word_budget_findings(_w: &mut AgentsWorld) {
     // No-op: this asserts static Step 0.5 processing-rule prose in
     // repo-rules-checker.md (read by the `When "repo-rules-checker" runs
     // Step 0.5` step below), not runnable CLI behavior.
@@ -1243,12 +1226,15 @@ fn when_repo_rules_checker_runs_step_0_5(w: &mut AgentsWorld) {
             .expect("read repo-rules-checker.md");
 }
 
-#[then(r#"it populates the deterministic skip set with "instruction-size""#)]
+#[then(r#"it populates the deterministic skip set with "governance-word-budget""#)]
 fn then_populates_deterministic_skip_set(w: &mut AgentsWorld) {
     let content = &w.lookup_file_content;
-    assert!(content.contains("`instruction-size`"), "got: {content}");
     assert!(
-        content.contains("Step 6 byte-count portion"),
+        content.contains("`governance-word-budget`"),
+        "got: {content}"
+    );
+    assert!(
+        content.contains("Step 6 word-count portion"),
         "got: {content}"
     );
 }
@@ -1262,31 +1248,27 @@ fn then_embeds_preflight_findings_verbatim(w: &mut AgentsWorld) {
     );
 }
 
-#[then("it does not re-derive byte counts in Step 6")]
-fn then_does_not_rederive_byte_counts(w: &mut AgentsWorld) {
+#[then("it does not re-derive word counts in Step 6")]
+fn then_does_not_rederive_word_counts(w: &mut AgentsWorld) {
     assert!(
         w.lookup_file_content
-            .contains("DO NOT re-derive byte counts"),
+            .contains("DO NOT re-derive word counts"),
         "got: {}",
         w.lookup_file_content
     );
 }
 
 // ===========================================================================
-// Pre-push enforcement of the instruction-file size budget
-// (repo-governance-instruction-size-pre-push.feature) — the pre-push gate
-// itself lives in `.husky/pre-push` (a shell script), so these scenarios
-// mirror its literal trigger regex (verified below against the real hook
-// content) and drive the exact command it invokes
-// (`harness instruction-size validate`, wired as the
-// `rhino-cli:instruction-size:validation` Nx target) rather than executing
-// the whole hook end-to-end (which also runs the full `test:quick` suite —
-// wildly disproportionate for a single conditional-dispatch scenario).
+// Pre-push enforcement of the word-budget gate
+// (repo-governance-instruction-size-pre-push.feature) — dark-launched as of
+// Phase 1 (not yet registered in `gates:`); these scenarios describe the
+// Phase-9 armed end state, so `matches_word_budget_trigger` mirrors the
+// trigger the OLD `instruction-size` gate used (the shape Phase 9 will reuse
+// when it registers `governance-word-budget`), not a live `.husky/pre-push`
+// assertion — there is nothing live to assert against yet.
 // ===========================================================================
 
-/// Mirrors the instruction-size trigger regex in `.husky/pre-push` verbatim:
-/// `^(AGENTS\.md$|CLAUDE\.md$|repo-config\.yml$|\.amazonq/rules/|\.windsurf/rules/|\.cursor/rules/|\.junie/guidelines\.md$|\.github/copilot-instructions\.md$|CONVENTIONS\.md$)`.
-fn matches_instruction_size_trigger(path: &str) -> bool {
+fn matches_word_budget_trigger(path: &str) -> bool {
     path == "AGENTS.md"
         || path == "CLAUDE.md"
         || path == "repo-config.yml"
@@ -1310,14 +1292,14 @@ fn given_push_range_modifies_unrelated_file(w: &mut AgentsWorld) {
 
 #[given(r#""AGENTS.md" exceeds its fail ceiling"#)]
 fn given_agents_md_exceeds_fail_ceiling(w: &mut AgentsWorld) {
-    write_instruction_size_config(w, 24_000, 30_000);
-    w.write("AGENTS.md", &"x".repeat(31_000));
+    write_word_budget_config(w, 400, 500);
+    w.write("AGENTS.md", &n_words(600));
 }
 
 #[given(r#""AGENTS.md" is within its fail ceiling"#)]
 fn given_agents_md_within_fail_ceiling(w: &mut AgentsWorld) {
-    write_instruction_size_config(w, 24_000, 30_000);
-    w.write("AGENTS.md", &"x".repeat(10_000));
+    write_word_budget_config(w, 400, 500);
+    w.write("AGENTS.md", &n_words(200));
 }
 
 #[when("the pre-push hook runs")]
@@ -1325,48 +1307,30 @@ fn when_pre_push_hook_runs(w: &mut AgentsWorld) {
     let triggered = w
         .push_range_files
         .iter()
-        .any(|f| matches_instruction_size_trigger(f));
+        .any(|f| matches_word_budget_trigger(f));
     w.hook_invoked = triggered;
     if triggered {
-        w.exec(&["harness", "instruction-size", "validate"]);
+        w.exec(&["governance", "word-budget", "validate"]);
     } else {
         w.output = None;
     }
 }
 
-#[then("the instruction-size gate runs")]
-fn then_instruction_size_target_runs(w: &mut AgentsWorld) {
+#[then("the word-budget gate runs")]
+fn then_word_budget_target_runs(w: &mut AgentsWorld) {
     assert!(
         w.hook_invoked,
-        "expected the instruction-size gate to trigger for this push range"
+        "expected the word-budget gate to trigger for this push range"
     );
     assert!(
         w.output.is_some(),
-        "expected `harness instruction-size validate` to have executed"
+        "expected `governance word-budget validate` to have executed"
     );
-    // Golden guard against the registry drifting from the trigger this
-    // scenario mirrors. `.husky/pre-push` is a generated one-line registry
-    // shim (`gate run --surface=pre-push`) — the real command and trigger
-    // list live in `repo-config.yml`'s `instruction-size` gate entry, not in
-    // hook-file prose.
-    let registry =
-        std::fs::read_to_string(real_repo_root().join("repo-config.yml")).expect("read registry");
-    let instruction_size_entry = registry
-        .split("\n  - id: ")
-        .find(|entry| entry.starts_with("instruction-size\n"))
-        .expect("repo-config.yml must declare the instruction-size gate");
-    assert!(
-        instruction_size_entry.contains("command: harness instruction-size validate"),
-        "instruction-size gate entry: {instruction_size_entry}"
-    );
-    assert!(
-        instruction_size_entry.contains("pre-push:"),
-        "instruction-size gate entry: {instruction_size_entry}"
-    );
-    assert!(
-        instruction_size_entry.contains("- AGENTS.md"),
-        "instruction-size gate entry: {instruction_size_entry}"
-    );
+    // Phase 9 arms `governance-word-budget` in the `gates:` registry with
+    // this same trigger set (mirroring the removed `instruction-size`
+    // entry's `pre-push: { scope: path-gated, trigger: [...] }` shape) — not
+    // yet true at Phase 1, so there is no live registry entry to assert
+    // against here (see module doc comment above).
 }
 
 #[then("the push is aborted with a non-zero exit")]
@@ -1374,14 +1338,14 @@ fn then_push_aborted(w: &mut AgentsWorld) {
     assert_ne!(w.exit_code(), 0, "stdout: {}", w.stdout());
 }
 
-#[then("the instruction-size validation target is not invoked")]
-fn then_instruction_size_target_not_invoked(w: &mut AgentsWorld) {
+#[then("the word-budget validation target is not invoked")]
+fn then_word_budget_target_not_invoked(w: &mut AgentsWorld) {
     assert!(!w.hook_invoked);
     assert!(w.output.is_none());
 }
 
-#[then("the instruction-size validation target runs and exits 0")]
-fn then_instruction_size_target_runs_exit_0(w: &mut AgentsWorld) {
+#[then("the word-budget validation target runs and exits 0")]
+fn then_word_budget_target_runs_exit_0(w: &mut AgentsWorld) {
     assert!(w.hook_invoked);
     assert_eq!(w.exit_code(), 0, "stdout: {}", w.stdout());
 }
@@ -1429,6 +1393,14 @@ fn then_exit_ok(w: &mut AgentsWorld) {
 #[then("the command exits with a failure code")]
 fn then_exit_fail(w: &mut AgentsWorld) {
     assert_eq!(w.exit_code(), 1, "stdout: {}", w.stdout());
+}
+
+/// Distinct from [`then_exit_fail`] (app-level validation failure, exit 1):
+/// clap's own "unrecognized subcommand" parse error exits 2, not 1 — the
+/// removed `harness instruction-size validate` alias hits this path.
+#[then("the command exits with a usage error")]
+fn then_exit_usage_error(w: &mut AgentsWorld) {
+    assert_eq!(w.exit_code(), 2, "stdout: {}", w.stdout());
 }
 
 #[tokio::main]

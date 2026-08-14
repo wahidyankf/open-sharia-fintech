@@ -9,8 +9,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::commands::{
-    harness_validate_bindings, harness_validate_claude, harness_validate_duplication,
-    harness_validate_instruction_size, harness_validate_naming, harness_validate_sync,
+    governance_validate_word_budget, harness_validate_bindings, harness_validate_claude,
+    harness_validate_duplication, harness_validate_naming, harness_validate_sync,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -24,7 +24,7 @@ const MEMBERS: &[&str] = &[
     "validate-claude",
     "validate-sync",
     "validate-bindings",
-    "validate-instruction-size",
+    "validate-word-budget",
 ];
 
 /// CLI arguments for `harness audit`.
@@ -108,8 +108,8 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
             },
             output_format,
         ),
-        "validate-instruction-size" => harness_validate_instruction_size::run(
-            &harness_validate_instruction_size::ValidateInstructionSizeArgs {},
+        "validate-word-budget" => governance_validate_word_budget::run(
+            &governance_validate_word_budget::ValidateWordBudgetArgs {},
             output_format,
         ),
         _ => Err(anyhow!("unknown harness validator: {name}")),
@@ -133,7 +133,7 @@ mod tests {
         assert!(MEMBERS.contains(&"validate-claude"));
         assert!(MEMBERS.contains(&"validate-sync"));
         assert!(MEMBERS.contains(&"validate-bindings"));
-        assert!(MEMBERS.contains(&"validate-instruction-size"));
+        assert!(MEMBERS.contains(&"validate-word-budget"));
     }
 
     #[test]

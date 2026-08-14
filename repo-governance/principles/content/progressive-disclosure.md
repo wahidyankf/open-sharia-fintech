@@ -239,11 +239,13 @@ What to avoid (for advanced users).
 - PASS: "Advanced Patterns" for experts
 - PASS: Each level optional
 
-### Instruction-File Size Budget
+### Governance Word Budget
 
 **Context**: Governance instruction files (`AGENTS.md`, `CLAUDE.md`, harness-specific surfaces)
-auto-loaded by coding-agent harnesses. Harnesses impose hard byte limits; content past the limit
-is silently truncated or ignored.
+auto-loaded by coding-agent harnesses. Harnesses impose hard limits, measured in words (a raw
+whole-file `split_whitespace()` count — see the
+[Governance Word-Budget Convention](../../conventions/structure/governance-word-budget.md));
+content past the limit is silently truncated or ignored.
 
 **Progressive Structure**:
 
@@ -280,7 +282,7 @@ FAIL: **Delete the rule** — agent behaviour becomes undefined for the deleted 
 FAIL: **Dense compression** — strips line breaks, degrades readability.
 FAIL: **Split into another auto-loaded file** — moves bytes, does not reduce resolved-tree total.
 
-**See**: [Instruction-File Size Budget Convention](../../conventions/structure/instruction-file-size-budget.md)
+**See**: [Governance Word-Budget Convention](../../conventions/structure/governance-word-budget.md)
 
 ## Anti-Patterns
 
@@ -502,9 +504,9 @@ docs/explanation/infrastructure/security/security-basics.md
 - [Diátaxis Framework](../../conventions/structure/diataxis-framework.md) - Four documentation types
 - [File Naming Convention](../../conventions/structure/file-naming.md) - Kebab-case naming rules for documentation files
 - [Tutorial Convention](../../conventions/tutorials/general.md) - Progressive tutorial structure
-- [Instruction-File Size Budget Convention](../../conventions/structure/instruction-file-size-budget.md) -
+- [Governance Word-Budget Convention](../../conventions/structure/governance-word-budget.md) -
   Progressive disclosure is the sole sanctioned remediation when an auto-loaded instruction file
-  exceeds its byte budget; the "Instruction-File Size Budget" example in the "How It Applies"
+  exceeds its word budget; the "Governance Word Budget" example in the "How It Applies"
   section above demonstrates this pattern
 
 ## References

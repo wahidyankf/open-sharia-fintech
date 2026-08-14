@@ -16,11 +16,11 @@ use regex::Regex;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 
-use super::instruction_size::{self, Severity as InstructionSeverity};
 use super::layer_coherence::audit_layer_coherence;
 use super::traceability_audit::audit_traceability;
 use super::vendor_audit::walk_governance_scope as audit_vendor_walk;
 use crate::application::fs::port::Fs;
+use crate::application::governance::word_budget::{self, Severity as WordBudgetSeverity};
 use crate::infrastructure::fs::real::RealFs;
 
 /// JSON schema identifier embedded in every [`AuditEnvelope`].
@@ -38,7 +38,7 @@ pub fn audit_category_order() -> &'static [&'static str] {
         "layer-coherence",
         "traceability-audit",
         "vendor-audit",
-        "instruction-size",
+        "governance-word-budget",
     ]
 }
 
@@ -50,7 +50,7 @@ fn audit_category_command(name: &str) -> &'static str {
         "layer-coherence" => "repo-governance validate layer-coherence",
         "traceability-audit" => "repo-governance validate traceability",
         "vendor-audit" => "repo-governance validate vendor",
-        "instruction-size" => "harness instruction-size validate",
+        "governance-word-budget" => "governance word-budget validate",
         _ => "",
     }
 }
@@ -247,31 +247,31 @@ fn run_category(
                 })
                 .collect())
         }
-        "instruction-size" => Ok(audit_instruction_size(&opts.repo_root)),
+        "governance-word-budget" => Ok(audit_word_budget(&opts.repo_root)),
         _ => Err(anyhow::anyhow!("unknown category {name}")),
     }
 }
 
-/// Checks all instruction-file size surfaces (per `repo-config.yml`'s
-/// `instruction-size:` section and harness registry) and returns only the
-/// hard-`Fail` findings as [`AuditFinding`]s. `Warn`-severity findings are
-/// advisory (matching `harness instruction-size validate`'s own exit-code
-/// gating) and never block this preflight category.
+/// Checks all instruction-file word surfaces (per `repo-config.yml`'s
+/// `governance-word-budget:` section) and returns only the hard-`Fail`
+/// findings as [`AuditFinding`]s. `Warn`-severity findings are advisory
+/// (matching `governance word-budget validate`'s own exit-code gating) and
+/// never block this preflight category.
 ///
-/// Returns an empty vector when neither an `instruction-size:` section nor
-/// any harness registry `instruction:` surfaces are configured.
-fn audit_instruction_size(repo_root: &Path) -> Vec<AuditFinding> {
-    let Some(config) = instruction_size::merged_budget_config(repo_root) else {
+/// Returns an empty vector when no `governance-word-budget:` section is
+/// configured.
+fn audit_word_budget(repo_root: &Path) -> Vec<AuditFinding> {
+    let Some(config) = word_budget::merged_budget_config(repo_root) else {
         return Vec::new();
     };
-    let mut findings = instruction_size::check_instruction_sizes(&RealFs, repo_root, &config);
-    if let Some(tree_finding) = instruction_size::check_resolved_tree(&RealFs, repo_root, &config) {
+    let mut findings = word_budget::check_instruction_sizes(&RealFs, repo_root, &config);
+    if let Some(tree_finding) = word_budget::check_resolved_tree(&RealFs, repo_root, &config) {
         findings.push(tree_finding);
     }
     findings
         .into_iter()
-        .filter(|f| f.severity == InstructionSeverity::Fail)
-        .map(|f| new_audit_finding("instruction-size", &f.path, 0, &f.message))
+        .filter(|f| f.severity == WordBudgetSeverity::Fail)
+        .map(|f| new_audit_finding("governance-word-budget", &f.path, 0, &f.message))
         .collect()
 }
 
@@ -704,8 +704,8 @@ mod tests {
             "repo-governance validate vendor"
         );
         assert_eq!(
-            audit_category_command("instruction-size"),
-            "harness instruction-size validate"
+            audit_category_command("governance-word-budget"),
+            "governance word-budget validate"
         );
         assert_eq!(audit_category_command("unknown"), "");
     }
@@ -717,7 +717,7 @@ mod tests {
         assert_eq!(o[0], "layer-coherence");
         assert_eq!(o[1], "traceability-audit");
         assert_eq!(o[2], "vendor-audit");
-        assert_eq!(o[3], "instruction-size");
+        assert_eq!(o[3], "governance-word-budget");
     }
 
     #[test]
@@ -810,58 +810,58 @@ mod tests {
         assert_eq!(s, "unknown");
     }
 
-    // ---- instruction-size category ----
+    // ---- governance-word-budget category ----
 
     #[test]
-    fn run_audit_includes_instruction_size_category_with_no_findings_by_default() {
+    fn run_audit_includes_word_budget_category_with_no_findings_by_default() {
         let _cwd = CwdLock::acquire();
         let dir = tempfile::tempdir().unwrap();
         let opts = AuditOptions {
             repo_root: dir.path().to_path_buf(),
-            include_only: vec!["instruction-size".to_string()],
+            include_only: vec!["governance-word-budget".to_string()],
             now: Some("2026-05-23T00:00:00Z".to_string()),
             ..Default::default()
         };
         let env = run_audit(&RealFs, &opts).unwrap();
         assert_eq!(env.result.categories.len(), 1, "got: {env:?}");
-        assert_eq!(env.result.categories[0].name, "instruction-size");
+        assert_eq!(env.result.categories[0].name, "governance-word-budget");
         assert!(
             env.result.categories[0].passed,
-            "no repo-config.yml instruction-size: section — must not fail: {env:?}"
+            "no repo-config.yml governance-word-budget: section — must not fail: {env:?}"
         );
     }
 
     #[test]
-    fn run_audit_instruction_size_reports_fail_finding_for_oversized_surface() {
+    fn run_audit_word_budget_reports_fail_finding_for_oversized_surface() {
         let _cwd = CwdLock::acquire();
         let dir = tempfile::tempdir().unwrap();
         let repo_cfg = concat!(
             "harness: []\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
-            "instruction-size:\n",
+            "governance-word-budget:\n",
             "  surfaces:\n",
             "    - glob: \"AGENTS.md\"\n",
-            "      target: 24000\n",
-            "      warn: 27000\n",
-            "      fail: 30000\n",
+            "      target: 400\n",
+            "      warn: 500\n",
+            "      fail: 500\n",
             "  resolved_tree:\n",
             "    root: \"CLAUDE.md\"\n",
-            "    target: 30000\n",
-            "    warn: 34000\n",
-            "    fail: 38000\n",
+            "    target: 1200\n",
+            "    warn: 1500\n",
+            "    fail: 1500\n",
         );
         std::fs::write(dir.path().join("repo-config.yml"), repo_cfg).unwrap();
-        std::fs::write(dir.path().join("AGENTS.md"), "x".repeat(31_000)).unwrap();
+        std::fs::write(dir.path().join("AGENTS.md"), vec!["w"; 600].join(" ")).unwrap();
         let opts = AuditOptions {
             repo_root: dir.path().to_path_buf(),
-            include_only: vec!["instruction-size".to_string()],
+            include_only: vec!["governance-word-budget".to_string()],
             now: Some("2026-05-23T00:00:00Z".to_string()),
             ..Default::default()
         };
         let env = run_audit(&RealFs, &opts).unwrap();
         let category = &env.result.categories[0];
-        assert_eq!(category.name, "instruction-size");
+        assert_eq!(category.name, "governance-word-budget");
         assert!(!category.passed, "got: {env:?}");
         assert!(
             category.findings.iter().any(|f| f.file == "AGENTS.md"),
@@ -870,31 +870,31 @@ mod tests {
     }
 
     #[test]
-    fn run_audit_instruction_size_ignores_warn_only_findings() {
+    fn run_audit_word_budget_ignores_warn_only_findings() {
         let _cwd = CwdLock::acquire();
         let dir = tempfile::tempdir().unwrap();
         let repo_cfg = concat!(
             "harness: []\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
-            "instruction-size:\n",
+            "governance-word-budget:\n",
             "  surfaces:\n",
             "    - glob: \"AGENTS.md\"\n",
-            "      target: 24000\n",
-            "      warn: 27000\n",
-            "      fail: 30000\n",
+            "      target: 400\n",
+            "      warn: 500\n",
+            "      fail: 500\n",
             "  resolved_tree:\n",
             "    root: \"CLAUDE.md\"\n",
-            "    target: 30000\n",
-            "    warn: 34000\n",
-            "    fail: 38000\n",
+            "    target: 1200\n",
+            "    warn: 1500\n",
+            "    fail: 1500\n",
         );
         std::fs::write(dir.path().join("repo-config.yml"), repo_cfg).unwrap();
-        // 28000 is over target (24000) but under fail (30000) — Warn only.
-        std::fs::write(dir.path().join("AGENTS.md"), "x".repeat(28_000)).unwrap();
+        // 450 words is over target (400) but under fail (500) — Warn only.
+        std::fs::write(dir.path().join("AGENTS.md"), vec!["w"; 450].join(" ")).unwrap();
         let opts = AuditOptions {
             repo_root: dir.path().to_path_buf(),
-            include_only: vec!["instruction-size".to_string()],
+            include_only: vec!["governance-word-budget".to_string()],
             now: Some("2026-05-23T00:00:00Z".to_string()),
             ..Default::default()
         };
@@ -902,7 +902,8 @@ mod tests {
         let category = &env.result.categories[0];
         assert!(
             category.passed,
-            "Warn-severity findings must not fail the instruction-size preflight category: {env:?}"
+            "Warn-severity findings must not fail the governance-word-budget preflight \
+             category: {env:?}"
         );
     }
 

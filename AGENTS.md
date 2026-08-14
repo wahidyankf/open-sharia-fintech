@@ -74,9 +74,9 @@ Linters: shellcheck (`--severity=warning`), hadolint (`--failure-threshold warni
 F# strict (`TreatWarningsAsErrors` + G-Research.FSharp.Analyzers + `dotnet tool run fantomas --check`).
 All installed by `npm run doctor -- --fix`.
 
-**Instruction-file size budget** (`nx run rhino-cli:instruction-size:validation`): per-surface byte
-thresholds on auto-loaded instruction files; sole remediation is progressive disclosure.
-See [Instruction-File Size Budget Convention](./repo-governance/conventions/structure/instruction-file-size-budget.md).
+**Instruction-file word budget** (`nx run rhino-cli:governance-word-budget:validation`): per-surface
+word thresholds on auto-loaded instruction files; sole remediation is progressive disclosure.
+See [Governance Word-Budget Convention](./repo-governance/conventions/structure/governance-word-budget.md).
 
 **See**: [cross-language-lint-strictness.md](./repo-governance/development/quality/cross-language-lint-strictness.md)
 

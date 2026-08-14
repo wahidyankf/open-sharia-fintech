@@ -1,6 +1,0 @@
-error: 'rhino-cli harness validate' requires a subcommand but one was not provided
-  [subcommands: naming, duplication, claude, sync, bindings, instruction-size, help]
-
-Usage: rhino-cli harness validate [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

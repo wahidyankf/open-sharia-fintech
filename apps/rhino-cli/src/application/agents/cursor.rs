@@ -6,7 +6,7 @@
 use std::collections::HashMap;
 use std::fmt::Write as FmtWrite;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::OnceLock;
 
 use serde_norway::Value;
@@ -319,9 +319,17 @@ pub use super::converter::ConvertAllResult;
 
 /// Convert every mirrorable `.md` agent in `.claude/agents/` to `.cursor/agents/`.
 ///
+/// Sources may be ungrouped (`.claude/agents/<file>.md`) or grouped one level
+/// deep (`.claude/agents/<group>/<file>.md`); either way the mirror is always
+/// emitted flat at `.cursor/agents/<name>.md`, where `<name>` is the source's
+/// `name` frontmatter field (FR-3.18) — Cursor's subdirectory support is
+/// unconfirmed, so flattening is required just as it is for `OpenCode`.
+///
 /// # Errors
 ///
-/// Returns an error if the `.claude/agents/` directory cannot be read.
+/// Returns an error if the `.claude/agents/` directory cannot be read, if a
+/// discovered file's `name` frontmatter cannot be read, or if two sources
+/// collide on the same `name`.
 pub fn convert_all_cursor_agents(
     repo_root: &Path,
     dry_run: bool,
@@ -329,28 +337,18 @@ pub fn convert_all_cursor_agents(
     let claude_dir = repo_root.join(".claude").join("agents");
     let cursor_dir = repo_root.join(CURSOR_AGENT_DIR);
 
-    let entries = fs::read_dir(&claude_dir)
-        .map_err(|e| format!("failed to read .claude/agents directory: {e}"))?;
-
-    let mut paths: Vec<(PathBuf, String)> = Vec::new();
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if !is_mirrorable_agent_filename(&name, entry.file_type().is_ok_and(|t| t.is_dir())) {
-            continue;
-        }
-        paths.push((entry.path(), name));
-    }
-    paths.sort_by(|a, b| a.1.cmp(&b.1));
+    let sources = super::converter::discover_agent_sources(&claude_dir)?;
 
     let mut result = ConvertAllResult::default();
-    for (input, name) in paths {
-        let output = cursor_dir.join(&name);
+    for (input, name) in sources {
+        let filename = format!("{name}.md");
+        let output = cursor_dir.join(&filename);
         if let Ok(w) = convert_cursor_agent(&input, &output, dry_run) {
             result.converted += 1;
             result.warnings.extend(w);
         } else {
             result.failed += 1;
-            result.failed_files.push(name);
+            result.failed_files.push(filename);
         }
     }
 
@@ -361,6 +359,14 @@ pub fn convert_all_cursor_agents(
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
+    use tempfile::tempdir;
+
+    fn write(path: &Path, content: &str) {
+        if let Some(p) = path.parent() {
+            std::fs::create_dir_all(p).unwrap();
+        }
+        std::fs::write(path, content).unwrap();
+    }
 
     #[test]
     fn cursor_model_maps_opus() {
@@ -424,5 +430,90 @@ mod tests {
         assert!(text.ends_with(std::str::from_utf8(body).unwrap()));
         assert!(text.contains("name: fixture"));
         assert!(text.contains(&format!("model: {CURSOR_MODEL_ID}")));
+    }
+
+    #[test]
+    fn convert_all_cursor_agents_ungrouped_source_unchanged() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("a.md"),
+            "---\nname: a\ndescription: a\ntools: Read\nmodel: sonnet\n---\nBody A\n",
+        );
+        write(
+            &claude.join("b.md"),
+            "---\nname: b\ndescription: b\ntools: Write\nmodel: sonnet\n---\nBody B\n",
+        );
+        write(&claude.join("README.md"), "skip me\n");
+        let r = convert_all_cursor_agents(dir.path(), false).unwrap();
+        assert_eq!(r.converted, 2);
+        assert_eq!(r.failed, 0);
+        assert!(dir.path().join(".cursor/agents/a.md").exists());
+        assert!(dir.path().join(".cursor/agents/b.md").exists());
+        assert!(!dir.path().join(".cursor/agents/README.md").exists());
+    }
+
+    #[test]
+    fn convert_all_cursor_agents_flattens_grouped_source() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nBody\n",
+        );
+        let r = convert_all_cursor_agents(dir.path(), false).unwrap();
+        assert_eq!(r.converted, 1);
+        assert_eq!(r.failed, 0);
+        assert!(
+            dir.path().join(".cursor/agents/docs-checker.md").exists(),
+            "grouped source must mirror to a flat .cursor/agents/<name>.md path"
+        );
+        assert!(
+            !dir.path().join(".cursor/agents/checkers").exists(),
+            "the mirror must not reproduce the source's group subdirectory"
+        );
+        let content =
+            std::fs::read_to_string(dir.path().join(".cursor/agents/docs-checker.md")).unwrap();
+        assert!(content.contains("name: docs-checker"));
+    }
+
+    #[test]
+    fn convert_all_cursor_agents_name_collision_across_groups_is_hard_error() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("group-a/dup.md"),
+            "---\nname: dup\ndescription: a\ntools: Read\nmodel: sonnet\n---\nBody A\n",
+        );
+        write(
+            &claude.join("group-b/other.md"),
+            "---\nname: dup\ndescription: b\ntools: Read\nmodel: sonnet\n---\nBody B\n",
+        );
+        let r = convert_all_cursor_agents(dir.path(), false);
+        let err =
+            r.expect_err("two sources sharing a name must be a hard error, not a silent overwrite");
+        assert!(
+            err.contains("dup"),
+            "collision error should name the colliding 'name' value: {err}"
+        );
+    }
+
+    #[test]
+    fn convert_all_cursor_agents_name_collision_grouped_and_ungrouped_is_hard_error() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("dup.md"),
+            "---\nname: dup\ndescription: ungrouped\ntools: Read\nmodel: sonnet\n---\nBody A\n",
+        );
+        write(
+            &claude.join("group/other.md"),
+            "---\nname: dup\ndescription: grouped\ntools: Read\nmodel: sonnet\n---\nBody B\n",
+        );
+        let r = convert_all_cursor_agents(dir.path(), false);
+        assert!(
+            r.is_err(),
+            "an ungrouped source colliding with a grouped source's name must also be a hard error"
+        );
     }
 }

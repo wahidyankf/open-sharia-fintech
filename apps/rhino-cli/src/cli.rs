@@ -5,15 +5,16 @@ use clap::{Parser, Subcommand};
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
     env_init, env_restore, env_staged_guard, env_validate, gate, git, governance_audit,
-    governance_layer_coherence, governance_traceability_audit, governance_vendor_audit,
+    governance_generate_readme_index, governance_layer_coherence, governance_traceability_audit,
+    governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_instruction_size, harness_validate_naming,
-    harness_validate_sync, lang_java_validate_null_safety, md_audit, md_validate_frontmatter,
+    harness_validate_duplication, harness_validate_naming, harness_validate_sync,
+    lang_java_validate_null_safety, md_audit, md_validate_frontmatter,
     md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
-    md_validate_mermaid, md_validate_naming, md_validate_readme_index, parity,
-    repo_config_validate, specs_audit, specs_clean_java_imports, specs_coverage,
-    specs_e2e_coverage, specs_gherkin_cardinality, specs_scaffold_dart, specs_structure_validate,
-    specs_validate_counts, test_coverage_validate, workflows_validate_naming,
+    md_validate_mermaid, md_validate_naming, parity, repo_config_validate, specs_audit,
+    specs_clean_java_imports, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
+    specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
+    workflows_validate_naming,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -90,6 +91,9 @@ pub enum Commands {
     /// Harness (agent binding) validators and generators.
     #[command(name = "harness", subcommand)]
     Harness(HarnessCommands),
+    /// Cross-cutting governance gates (word budget, README index/completeness).
+    #[command(name = "governance", subcommand)]
+    Governance(GovernanceCommands),
     /// Spec tree validators and contract codegen helpers.
     #[command(name = "specs", subcommand)]
     Specs(SpecsCommands),
@@ -307,9 +311,6 @@ pub enum MdCommands {
     /// Audit markdown files for forbidden manual date metadata.
     #[command(name = "frontmatter-dates", subcommand)]
     FrontmatterDates(MdFrontmatterDatesCommands),
-    /// Audit directory README.md indexes against sibling markdown files.
-    #[command(name = "readme-index", subcommand)]
-    ReadmeIndex(MdReadmeIndexCommands),
     /// Run all md validators in sequence and aggregate findings.
     #[command(name = "audit")]
     Audit(md_audit::AuditArgs),
@@ -363,12 +364,41 @@ pub enum MdFrontmatterDatesCommands {
     Validate(md_validate_frontmatter_dates::FrontmatterAuditArgs),
 }
 
-/// `md readme-index` subcommands.
+// ---------------------------------------------------------------------------
+// governance (verb-last: governance {noun} validate)
+// Word budget (instruction-file word budget, cross-domain moved from harness
+// in this plan) and README index/completeness (cross-domain moved from md).
+// ---------------------------------------------------------------------------
+
+/// Governance gate subcommands.
 #[derive(Subcommand, Debug)]
-pub enum MdReadmeIndexCommands {
+pub enum GovernanceCommands {
+    /// Check per-surface and resolved-tree word budgets for instruction files.
+    #[command(name = "word-budget", subcommand)]
+    WordBudget(GovernanceWordBudgetCommands),
+    /// Audit directory README.md indexes against sibling markdown files.
+    #[command(name = "readme-index", subcommand)]
+    ReadmeIndex(GovernanceReadmeIndexCommands),
+}
+
+/// `governance word-budget` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GovernanceWordBudgetCommands {
+    /// Check per-surface and resolved-tree word budgets for instruction files.
+    #[command(name = "validate")]
+    Validate(governance_validate_word_budget::ValidateWordBudgetArgs),
+}
+
+/// `governance readme-index` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum GovernanceReadmeIndexCommands {
     /// Audit directory README.md indexes against sibling markdown files.
     #[command(name = "validate")]
-    Validate(md_validate_readme_index::ReadmeIndexAuditArgs),
+    Validate(governance_validate_readme_index::ReadmeIndexAuditArgs),
+    /// Write conforming README.md (or split-directory sibling `<name>.md`)
+    /// indexes for every covered directory that needs one (FR-3.12).
+    #[command(name = "generate")]
+    Generate(governance_generate_readme_index::ReadmeIndexGenerateArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -431,9 +461,6 @@ pub enum HarnessCommands {
     /// Validate binding artifacts and generate platform bindings.
     #[command(name = "bindings", subcommand)]
     Bindings(HarnessBindingsCommands),
-    /// Check instruction-file sizes against budgets from the harness registry.
-    #[command(name = "instruction-size", subcommand)]
-    InstructionSize(HarnessInstructionSizeCommands),
     /// Run all harness validators in sequence and aggregate findings.
     #[command(name = "audit")]
     Audit(harness_audit::AuditArgs),
@@ -481,14 +508,6 @@ pub enum HarnessBindingsCommands {
     /// Use --harness opencode or --harness amazonq to regenerate one binding only.
     #[command(name = "generate")]
     Generate(harness_generate_bindings::GenerateBindingsArgs),
-}
-
-/// `harness instruction-size` subcommands.
-#[derive(Subcommand, Debug)]
-pub enum HarnessInstructionSizeCommands {
-    /// Check per-surface and resolved-tree byte budgets for instruction files.
-    #[command(name = "validate")]
-    Validate(harness_validate_instruction_size::ValidateInstructionSizeArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -683,6 +702,7 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Md(mc) => dispatch_md(mc, output_format, verbose, quiet),
         Commands::Convention(cc) => dispatch_convention(cc, output_format),
         Commands::Harness(hc) => dispatch_harness(hc, output_format),
+        Commands::Governance(gc) => dispatch_governance(gc, output_format),
         Commands::Specs(sc) => dispatch_specs(sc, output_format),
         Commands::Lang(lc) => dispatch_lang(lc, output_format),
         Commands::RepoConfig(rc) => match rc {
@@ -801,12 +821,33 @@ fn dispatch_md(
                 md_validate_frontmatter_dates::run(args, output_format)
             }
         },
-        MdCommands::ReadmeIndex(ric) => match ric {
-            MdReadmeIndexCommands::Validate(args) => {
-                md_validate_readme_index::run(args, output_format)
+        MdCommands::Audit(args) => md_audit::run(args, output_format),
+    }
+}
+
+/// Route a [`GovernanceCommands`] variant to its handler.
+///
+/// # Errors
+///
+/// Propagates any error returned by the selected governance subcommand.
+fn dispatch_governance(
+    gc: &GovernanceCommands,
+    output_format: OutputFormat,
+) -> std::result::Result<(), anyhow::Error> {
+    match gc {
+        GovernanceCommands::WordBudget(wc) => match wc {
+            GovernanceWordBudgetCommands::Validate(args) => {
+                governance_validate_word_budget::run(args, output_format)
             }
         },
-        MdCommands::Audit(args) => md_audit::run(args, output_format),
+        GovernanceCommands::ReadmeIndex(ric) => match ric {
+            GovernanceReadmeIndexCommands::Validate(args) => {
+                governance_validate_readme_index::run(args, output_format)
+            }
+            GovernanceReadmeIndexCommands::Generate(args) => {
+                governance_generate_readme_index::run(args, output_format)
+            }
+        },
     }
 }
 
@@ -868,11 +909,6 @@ fn dispatch_harness(
             }
             HarnessBindingsCommands::Generate(args) => {
                 harness_generate_bindings::run(args, output_format)
-            }
-        },
-        HarnessCommands::InstructionSize(ic) => match ic {
-            HarnessInstructionSizeCommands::Validate(args) => {
-                harness_validate_instruction_size::run(args, output_format)
             }
         },
         HarnessCommands::Audit(args) => harness_audit::run(args, output_format),
@@ -1244,12 +1280,74 @@ mod cli_uniform_grammar_tests {
     }
 
     #[test]
-    fn verb_last_harness_instruction_size_validate_parses() {
-        let result = Cli::try_parse_from(["rhino-cli", "harness", "instruction-size", "validate"]);
+    fn verb_last_governance_word_budget_validate_parses() {
+        let result = Cli::try_parse_from(["rhino-cli", "governance", "word-budget", "validate"]);
         assert!(
             result.is_ok(),
-            "harness instruction-size validate must parse after cross-domain move: {:?}",
+            "governance word-budget validate must parse after cross-domain move: {:?}",
             result.err()
+        );
+    }
+
+    #[test]
+    fn old_harness_instruction_size_validate_no_longer_parses() {
+        let result = Cli::try_parse_from(["rhino-cli", "harness", "instruction-size", "validate"]);
+        assert!(
+            result.is_err(),
+            "harness instruction-size validate must no longer parse after the cross-domain \
+             move to governance word-budget validate"
+        );
+    }
+
+    #[test]
+    fn verb_last_governance_readme_index_validate_parses() {
+        let result = Cli::try_parse_from(["rhino-cli", "governance", "readme-index", "validate"]);
+        assert!(
+            result.is_ok(),
+            "governance readme-index validate must parse after cross-domain move: {:?}",
+            result.err()
+        );
+    }
+
+    #[test]
+    fn governance_readme_index_generate_parses() {
+        // FR-3.12: `governance readme-index generate` is a new subcommand
+        // alongside `validate`, following the same `harness bindings
+        // generate`/`validate` pairing pattern.
+        let result = Cli::try_parse_from(["rhino-cli", "governance", "readme-index", "generate"]);
+        assert!(
+            result.is_ok(),
+            "governance readme-index generate must parse: {:?}",
+            result.err()
+        );
+    }
+
+    #[test]
+    fn governance_readme_index_generate_accepts_paths_and_exclude_flags() {
+        let result = Cli::try_parse_from([
+            "rhino-cli",
+            "governance",
+            "readme-index",
+            "generate",
+            "--paths",
+            "repo-governance/",
+            "--exclude",
+            "plans/",
+        ]);
+        assert!(
+            result.is_ok(),
+            "governance readme-index generate must accept --paths/--exclude: {:?}",
+            result.err()
+        );
+    }
+
+    #[test]
+    fn old_md_readme_index_validate_no_longer_parses() {
+        let result = Cli::try_parse_from(["rhino-cli", "md", "readme-index", "validate"]);
+        assert!(
+            result.is_err(),
+            "md readme-index validate must no longer parse after the cross-domain move to \
+             governance readme-index validate"
         );
     }
 
@@ -1312,7 +1410,18 @@ mod cli_uniform_grammar_tests {
             Cli::try_parse_from(["rhino-cli", "convention", "validate", "instruction-size"]);
         assert!(
             result.is_err(),
-            "convention validate instruction-size must no longer parse (cross-domain moved to harness)"
+            "convention validate instruction-size must no longer parse (cross-domain moved to \
+             governance word-budget validate)"
+        );
+    }
+
+    #[test]
+    fn verb_middle_harness_validate_instruction_size_no_longer_parses() {
+        let result = Cli::try_parse_from(["rhino-cli", "harness", "validate", "instruction-size"]);
+        assert!(
+            result.is_err(),
+            "harness validate instruction-size must no longer parse (cross-domain moved to \
+             governance word-budget validate)"
         );
     }
 

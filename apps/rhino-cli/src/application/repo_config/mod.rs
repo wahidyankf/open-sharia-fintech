@@ -14,7 +14,7 @@ use serde::Deserialize;
 
 use crate::application::env::injection::Manifest as EnvInjectionManifest;
 use crate::application::env::validate::Contract as EnvContract;
-use crate::application::repo_governance::instruction_size::BudgetConfig;
+use crate::application::governance::word_budget::BudgetConfig;
 
 /// A project entry in the `coverage.projects` list.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -385,9 +385,9 @@ pub struct RepoConfig {
     /// Spec-tree structure configuration for `specs:structure-validation`.
     #[serde(default)]
     pub specs: SpecsConfig,
-    /// Per-surface instruction-file size budgets (was `instruction-size-budget.yaml`).
-    #[serde(rename = "instruction-size", default)]
-    pub instruction_size: Option<BudgetConfig>,
+    /// Per-surface instruction-file word budgets (was `instruction-size:`).
+    #[serde(rename = "governance-word-budget", default)]
+    pub governance_word_budget: Option<BudgetConfig>,
     /// Surface registry for `env validate` (code↔config drift detection).
     #[serde(rename = "env-contract", default)]
     pub env_contract: Option<EnvContract>,

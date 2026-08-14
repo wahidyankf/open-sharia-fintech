@@ -14,7 +14,10 @@ Features in this domain:
 > `harness` command groups respectively — they moved to
 > [`../md/`](../md/README.md), [`../convention/`](../convention/README.md), and
 > [`../harness/`](../harness/README.md) during the Phase 1 rename/split step of the
-> `enforce-identical-rhino-cli-gherkin` plan.
+> `enforce-identical-rhino-cli-gherkin` plan. The README-index audit later moved again, from
+> `../md/` to [`../governance/`](../governance/README.md), and the instruction-size audit was
+> renamed to the word-budget audit (still under `../harness/`) — both during the
+> `optimize-governance-md` plan's Phase 1b.
 
 See [Specs Directory Structure Convention](../../../../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.

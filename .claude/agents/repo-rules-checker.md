@@ -226,9 +226,9 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ### Instruction-Surface Size — Delegated
 
-Byte budgets for `AGENTS.md`, `CLAUDE.md`, and every other auto-loaded instruction surface are owned
-by **Step 6**, which defers to the `instruction-size:` section of `repo-config.yml` and the
-deterministic `rhino-cli harness instruction-size validate` gate. Never restate thresholds here — a
+Word budgets for `AGENTS.md`, `CLAUDE.md`, and every other auto-loaded instruction surface are owned
+by **Step 6**, which defers to the `governance-word-budget:` section of `repo-config.yml` and the
+deterministic `rhino-cli governance word-budget validate` gate. Never restate thresholds here — a
 second copy drifts from the config and produces contradictory verdicts on the same file.
 
 ## Reference
@@ -259,12 +259,12 @@ See `repo-generating-validation-reports` Skill for UUID chain, timestamp, progre
 3. **Extract findings**: parse `result.categories[]` (each carries `name`, `command`, `passed`, `findings[]`) and `result.skipped_false_positives[]`.
 4. **Populate the deterministic skip set** for this run. The `repo-governance audit` orchestrator emits exactly **four** categories; each tells which validation step (or sub-step) is already covered by rhino-cli and MUST NOT be re-evaluated by the AI checker:
 
-   | Preflight category   | Step covered (skip)                                                    |
-   | -------------------- | ---------------------------------------------------------------------- |
-   | `layer-coherence`    | Step 7 layer-coherence portion                                         |
-   | `traceability-audit` | Step 7 traceability portion (Vision/Principles/Conventions)            |
-   | `vendor-audit`       | Step 7 vendor-neutrality portion (governance prose terminology)        |
-   | `instruction-size`   | Step 6 byte-count portion (DO NOT re-derive sizes; defer to preflight) |
+   | Preflight category       | Step covered (skip)                                                    |
+   | ------------------------ | ---------------------------------------------------------------------- |
+   | `layer-coherence`        | Step 7 layer-coherence portion                                         |
+   | `traceability-audit`     | Step 7 traceability portion (Vision/Principles/Conventions)            |
+   | `vendor-audit`           | Step 7 vendor-neutrality portion (governance prose terminology)        |
+   | `governance-word-budget` | Step 6 word-count portion (DO NOT re-derive sizes; defer to preflight) |
 
    **Not in this envelope**: the other deterministic validators — file naming, frontmatter shape, emoji codepoints, heading hierarchy, README index integrity, license presence, and agent/skill verbatim duplication — are NOT part of `repo-governance audit`. They run under the sibling `rhino-cli md`, `convention`, and `harness` subcommands, enforced by the pre-commit and markdown CI gates. Do not look for them in this JSON envelope; the "deterministic-gate annotation" notes in Steps 1, 2, 3, 6, and 8 below say which dedicated gate owns each, so the AI checker can defer to it rather than AI-re-deriving mechanical checks.
 
@@ -666,15 +666,15 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - Suggest new Skill or extension
    - Write findings progressively
 
-### Step 6: Instruction-File Size Budget
+### Step 6: Governance Word Budget
 
-**Deterministic-gate annotation**: Byte counts for all auto-loaded instruction surfaces are enforced by the deterministic `rhino-cli harness instruction-size validate` gate (wired at pre-push, CI, and as `instruction-size` in the `repo-governance audit` preflight). If `instruction-size` is present in the Step 0.5 preflight JSON, its findings are already embedded verbatim in the `## Deterministic Findings` section — DO NOT re-derive byte counts. Judge only qualitative concerns the mechanical gate cannot measure:
+**Deterministic-gate annotation**: Word counts for all auto-loaded instruction surfaces are enforced by the deterministic `rhino-cli governance word-budget validate` gate (wired at pre-push, CI, and as `governance-word-budget` in the `repo-governance audit` preflight, once armed). If `governance-word-budget` is present in the Step 0.5 preflight JSON, its findings are already embedded verbatim in the `## Deterministic Findings` section — DO NOT re-derive word counts. Judge only qualitative concerns the mechanical gate cannot measure:
 
-1. **If `instruction-size` preflight is available**: Skip byte counting entirely. Read the preflight findings section and check only for qualitative bloat: sections that are verbose when a one-line summary + `See` link would suffice, duplicate content already reachable via a link, or structure anti-patterns (all-at-once complexity, no progressive layers).
-2. **If preflight is absent** (fallback): Read all monitored surfaces (`AGENTS.md`, `CLAUDE.md`, and harness-specific surfaces listed in the `instruction-size:` section of `repo-config.yml`). Count bytes. Classify against the thresholds in the `instruction-size:` section of `repo-config.yml`. Emit a finding for any surface exceeding the `fail` ceiling. For surfaces in the `warn` zone, emit a lower-severity advisory.
+1. **If `governance-word-budget` preflight is available**: Skip word counting entirely. Read the preflight findings section and check only for qualitative bloat: sections that are verbose when a one-line summary + `See` link would suffice, duplicate content already reachable via a link, or structure anti-patterns (all-at-once complexity, no progressive layers).
+2. **If preflight is absent** (fallback): Read all monitored surfaces (`AGENTS.md`, `CLAUDE.md`, and harness-specific surfaces listed in the `governance-word-budget:` section of `repo-config.yml`). Count words. Classify against the thresholds in the `governance-word-budget:` section of `repo-config.yml`. Emit a finding for any surface exceeding the `fail` ceiling. For surfaces in the `warn` zone, emit a lower-severity advisory.
 3. **Remediation guidance**: When flagging a size violation, the ONLY sanctioned fix is progressive disclosure — replace inline-expanded content with a one-line summary and a `See` link. Document this in the finding. Forbidden anti-fixes (delete rules, dense compression, split into another auto-loaded file) MUST be called out if observed.
 
-See [Instruction-File Size Budget Convention](../../repo-governance/conventions/structure/instruction-file-size-budget.md).
+See [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md).
 
 ### Step 7: Rules Governance Validation
 

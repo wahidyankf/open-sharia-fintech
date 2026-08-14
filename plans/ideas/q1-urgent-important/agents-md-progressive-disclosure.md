@@ -35,7 +35,7 @@ until progressive disclosure runs. The ceiling is no longer a hypothetical futur
 
 - **Instruction-File Size Budget Convention** — the gate that fails `AGENTS.md` over threshold and
   names progressive disclosure as the sole sanctioned remediation.
-  [budget convention](../../../repo-governance/conventions/structure/instruction-file-size-budget.md)
+  [budget convention](../../../repo-governance/conventions/structure/governance-word-budget.md)
 - **Progressive Disclosure principle** — the repo principle this refactor applies to the
   most-loaded instruction surface.
   [principle](../../../repo-governance/principles/content/progressive-disclosure.md)

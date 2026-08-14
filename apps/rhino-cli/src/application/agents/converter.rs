@@ -15,6 +15,7 @@ use std::sync::OnceLock;
 
 use serde_norway::Value;
 
+use super::cursor::is_mirrorable_agent_filename;
 use super::field_policy::{FieldAction, FieldPolicy};
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
 
@@ -399,40 +400,141 @@ pub struct ConvertAllResult {
     pub warnings: Vec<ConversionWarning>,
 }
 
-/// Convert every `.md` agent in `.claude/agents/` to `OpenCode` format under `.opencode/agents/`.
+/// Read only the `name` frontmatter field from an agent file, without
+/// performing a full field-policy conversion.
 ///
 /// # Errors
 ///
-/// Returns an error if the `.claude/agents/` directory cannot be read.
+/// Returns an error if the file cannot be read, if its frontmatter cannot be
+/// extracted or parsed as YAML, or if the frontmatter has no scalar `name` key.
+pub fn read_agent_name(path: &Path) -> Result<String, String> {
+    let content =
+        fs::read(path).map_err(|e| format!("failed to read file {}: {e}", path.display()))?;
+    let (frontmatter, _body) = extract_frontmatter(&content)
+        .map_err(|e| format!("failed to extract frontmatter from {}: {e}", path.display()))?;
+
+    let frontmatter_str = String::from_utf8_lossy(&frontmatter).into_owned();
+    let value: Value = serde_norway::from_str(&frontmatter_str).map_err(|e| {
+        format!(
+            "failed to parse YAML frontmatter in {}: {e}",
+            path.display()
+        )
+    })?;
+
+    let Value::Mapping(mapping) = value else {
+        return Err(format!(
+            "frontmatter is not a mapping in {}",
+            path.display()
+        ));
+    };
+
+    for (k, v) in mapping {
+        if k.as_str() == Some("name")
+            && let Some(s) = v.as_str()
+        {
+            return Ok(s.to_string());
+        }
+    }
+
+    Err(format!(
+        "agent file {} has no scalar 'name' frontmatter field",
+        path.display()
+    ))
+}
+
+/// Discover mirrorable `.md` agent files under `.claude/agents/`, walking
+/// files directly in the directory (ungrouped) plus one level of subdirectory
+/// ("group") nesting — `.claude/agents/<group>/<file>.md`. Groups are not
+/// expected to nest further, so only one level of recursion is performed.
+///
+/// Returns `(source_path, name)` pairs sorted by `name`, where `name` is read
+/// from each file's `name` frontmatter field — never derived from the source
+/// filename or path, because a grouped source must still flatten to a single
+/// mirror filename (FR-3.18).
+///
+/// # Errors
+///
+/// Returns an error if `.claude/agents/` cannot be read, if any discovered
+/// file's `name` frontmatter cannot be read, or if two distinct source files
+/// resolve to the same `name` — a mirror-path collision that would make the
+/// generated `.opencode/`/`.cursor/` mirror non-deterministic.
+pub fn discover_agent_sources(claude_dir: &Path) -> Result<Vec<(PathBuf, String)>, String> {
+    let mut files: Vec<PathBuf> = Vec::new();
+
+    let entries = fs::read_dir(claude_dir)
+        .map_err(|e| format!("failed to read {} directory: {e}", claude_dir.display()))?;
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let is_dir = entry.file_type().is_ok_and(|t| t.is_dir());
+        if is_dir {
+            // One level of group nesting only: `.claude/agents/<group>/<file>.md`.
+            // Groups are not expected to nest further, so a group's own
+            // subdirectories (if any) are not walked.
+            let Ok(group_entries) = fs::read_dir(&path) else {
+                continue;
+            };
+            for group_entry in group_entries.flatten() {
+                let group_name = group_entry.file_name().to_string_lossy().into_owned();
+                let group_is_dir = group_entry.file_type().is_ok_and(|t| t.is_dir());
+                if is_mirrorable_agent_filename(&group_name, group_is_dir) {
+                    files.push(group_entry.path());
+                }
+            }
+            continue;
+        }
+        if is_mirrorable_agent_filename(&name, is_dir) {
+            files.push(path);
+        }
+    }
+
+    let mut seen: HashMap<String, PathBuf> = HashMap::new();
+    let mut named: Vec<(PathBuf, String)> = Vec::with_capacity(files.len());
+    for path in files {
+        let name = read_agent_name(&path)?;
+        if let Some(existing) = seen.get(&name) {
+            return Err(format!(
+                "agent name collision: '{name}' is used by both {} and {} — flat mirror filenames must be unique",
+                existing.display(),
+                path.display()
+            ));
+        }
+        seen.insert(name.clone(), path.clone());
+        named.push((path, name));
+    }
+    named.sort_by(|a, b| a.1.cmp(&b.1));
+
+    Ok(named)
+}
+
+/// Convert every `.md` agent in `.claude/agents/` to `OpenCode` format under `.opencode/agents/`.
+///
+/// Sources may be ungrouped (`.claude/agents/<file>.md`) or grouped one level
+/// deep (`.claude/agents/<group>/<file>.md`); either way the mirror is always
+/// emitted flat at `.opencode/agents/<name>.md`, where `<name>` is the
+/// source's `name` frontmatter field (FR-3.18).
+///
+/// # Errors
+///
+/// Returns an error if the `.claude/agents/` directory cannot be read, if a
+/// discovered file's `name` frontmatter cannot be read, or if two sources
+/// collide on the same `name`.
 pub fn convert_all_agents(repo_root: &Path, dry_run: bool) -> Result<ConvertAllResult, String> {
     let claude_dir = repo_root.join(".claude").join("agents");
     let opencode_dir = repo_root.join(OPENCODE_AGENT_DIR);
 
-    let entries = fs::read_dir(&claude_dir)
-        .map_err(|e| format!("failed to read .claude/agents directory: {e}"))?;
-
-    let mut paths: Vec<(PathBuf, String)> = Vec::new();
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if entry.file_type().is_ok_and(|t| t.is_dir()) {
-            continue;
-        }
-        if !name.ends_with(".md") || name == "README.md" {
-            continue;
-        }
-        paths.push((entry.path(), name));
-    }
-    paths.sort_by(|a, b| a.1.cmp(&b.1));
+    let sources = discover_agent_sources(&claude_dir)?;
 
     let mut result = ConvertAllResult::default();
-    for (input, name) in paths {
-        let output = opencode_dir.join(&name);
+    for (input, name) in sources {
+        let filename = format!("{name}.md");
+        let output = opencode_dir.join(&filename);
         if let Ok(w) = convert_agent(&input, &output, dry_run) {
             result.converted += 1;
             result.warnings.extend(w);
         } else {
             result.failed += 1;
-            result.failed_files.push(name);
+            result.failed_files.push(filename);
         }
     }
 
@@ -563,6 +665,67 @@ mod tests {
         assert!(dir.path().join(".opencode/agents/a.md").exists());
         assert!(dir.path().join(".opencode/agents/b.md").exists());
         assert!(!dir.path().join(".opencode/agents/README.md").exists());
+    }
+
+    #[test]
+    fn convert_all_agents_flattens_grouped_source() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nBody\n",
+        );
+        let r = convert_all_agents(dir.path(), false).unwrap();
+        assert_eq!(r.converted, 1);
+        assert_eq!(r.failed, 0);
+        assert!(
+            dir.path().join(".opencode/agents/docs-checker.md").exists(),
+            "grouped source must mirror to a flat .opencode/agents/<name>.md path"
+        );
+        assert!(
+            !dir.path().join(".opencode/agents/checkers").exists(),
+            "the mirror must not reproduce the source's group subdirectory"
+        );
+    }
+
+    #[test]
+    fn convert_all_agents_name_collision_across_groups_is_hard_error() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("group-a/dup.md"),
+            "---\nname: dup\ndescription: a\ntools: Read\nmodel: sonnet\n---\nBody A\n",
+        );
+        write(
+            &claude.join("group-b/other.md"),
+            "---\nname: dup\ndescription: b\ntools: Read\nmodel: sonnet\n---\nBody B\n",
+        );
+        let r = convert_all_agents(dir.path(), false);
+        let err =
+            r.expect_err("two sources sharing a name must be a hard error, not a silent overwrite");
+        assert!(
+            err.contains("dup"),
+            "collision error should name the colliding 'name' value: {err}"
+        );
+    }
+
+    #[test]
+    fn convert_all_agents_name_collision_grouped_and_ungrouped_is_hard_error() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("dup.md"),
+            "---\nname: dup\ndescription: ungrouped\ntools: Read\nmodel: sonnet\n---\nBody A\n",
+        );
+        write(
+            &claude.join("group/other.md"),
+            "---\nname: dup\ndescription: grouped\ntools: Read\nmodel: sonnet\n---\nBody B\n",
+        );
+        let r = convert_all_agents(dir.path(), false);
+        assert!(
+            r.is_err(),
+            "an ungrouped source colliding with a grouped source's name must also be a hard error"
+        );
     }
 
     #[test]
