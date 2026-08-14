@@ -14,9 +14,18 @@ Auto-loads for `pdf-to-md-maker`, `pdf-to-md-checker`, and `pdf-to-md-fixer`.
 
 ## Reference Modules
 
-- [reference/01-checking-fidelity.md](./reference/01-checking-fidelity.md) — the checker's
-  seven-dimension validation workflow, `crane check-*` commands, criticality table, and audit
-  report format.
+- [01-checking-fidelity-criticality-and-format.md](./reference/01-checking-fidelity-criticality-and-format.md)
+  and [02-checking-fidelity-workflow.md](./reference/02-checking-fidelity-workflow.md) — the
+  checker's seven-dimension validation workflow, `crane check-*` commands, criticality table, and
+  audit report format.
+- [03-making-conversions-detect-and-extract.md](./reference/03-making-conversions-detect-and-extract.md)
+  and [04-making-conversions-assemble-and-write.md](./reference/04-making-conversions-assemble-and-write.md) —
+  the maker's PDF-type detection, text/OCR extraction, chunk-to-Markdown conversion, assembly, and
+  output steps.
+- [05-fixing-conversions-confidence-and-priority.md](./reference/05-fixing-conversions-confidence-and-priority.md)
+  and [06-fixing-conversions-operations-and-report.md](./reference/06-fixing-conversions-operations-and-report.md) —
+  the fixer's confidence assessment, priority order, per-finding fix operations, and fix report
+  format.
 
 ## Tools Usage
 

@@ -11,17 +11,28 @@ implementation matches what was promised, and that every execution-time gate act
 
 ## Reference Modules
 
-- `reference/01-scope-and-workflow.md` — Validation Scope (Requirements Coverage, Technical
-  Documentation Alignment, Delivery Checklist Completion, Code Quality, Integration Validation),
-  Workflow Overview (Steps 0-7).
-- `reference/02-operational-readiness-and-manual-assertions.md` — Step 5b (Operational Readiness
-  Execution) and Step 5c (Manual Behavioral Assertions) verification.
-- `reference/03-archival-and-worktree-verification.md` — Step 5d (Plan Archival and README Updates)
-  and Step 5e (Worktree Usage) verification.
-- `reference/04-phase-gate-and-anti-hallucination.md` — Step 5f-gates (Phase Gate and Execution
-  Marker) and Step 5f (Anti-Hallucination) post-execution verification.
-- `reference/05-knowledge-capture-and-delivery-mode.md` — Step 5h (Knowledge Capture Routing,
-  blocking gate) and Step 5i (Delivery Mode and PR-Review Cycle) verification.
+- `reference/01-validation-scope.md` — Validation Scope (Requirements Coverage, Technical
+  Documentation Alignment, Delivery Checklist Completion, Code Quality, Integration Validation).
+- `reference/02-workflow-overview.md` — Workflow Overview (Steps 0-7).
+- `reference/03-operational-readiness-execution.md` — Step 5b (Operational Readiness Execution)
+  verification.
+- `reference/04-manual-assertions-ui-api-e2e-locale.md` and
+  `reference/05-manual-assertions-evidence-and-retests.md` — Step 5c (Manual Behavioral Assertions)
+  verification: UI/API/end-to-end/locale checks, evidence capture, and Rule-15/Rule-16 retests.
+- `reference/06-plan-archival.md` — Step 5d (Plan Archival and README Updates) verification.
+- `reference/07-worktree-verification-declaration-and-history.md` and
+  `reference/08-worktree-verification-freshness-cleanup-and-cap.md` — Step 5e (Worktree Usage)
+  verification.
+- `reference/09-phase-gate-and-execution-marker.md` — Step 5f-gates (Phase Gate and Execution
+  Marker) post-execution verification.
+- `reference/10-anti-hallucination-verification.md` — Step 5f (Anti-Hallucination) post-execution
+  verification.
+- `reference/11-knowledge-capture-terminal-states.md` and
+  `reference/12-knowledge-capture-audit-and-severity.md` — Step 5h (Knowledge Capture Routing,
+  blocking gate) verification.
+- `reference/13-delivery-mode-pr-review-cycle.md` and
+  `reference/14-delivery-mode-phase0-and-boundaries.md` — Step 5i (Delivery Mode and PR-Review
+  Cycle) verification.
 
 ## Core Principles
 

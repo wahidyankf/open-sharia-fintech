@@ -31,78 +31,26 @@ backlog plan (that is `plan-idea-promotion-planning`).
 
 ## Inputs
 
-| Input           | Required | Default          | Notes                                                                                                                                                                                                                                                                                                    |
-| --------------- | -------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `repos`         | yes      | none             | Comma-separated repo paths. **Supply every repo in one run** — Steps 3 and 4 are inherently cross-repo.                                                                                                                                                                                                  |
-| `dry-run`       | no       | `false`          | Compute and log every decision without writing.                                                                                                                                                                                                                                                          |
-| `delivery-mode` | no       | `worktree-to-pr` | Fixed at `worktree-to-pr` — unconditional, no override. This Skill's write scope is confined to `plans/ideas/**` (see Hard scope boundary below), which is never an infrastructure-as-code change, so the `ose-private` infrastructure-as-code carve-out can never apply to an invocation of this Skill. |
+| Input           | Required | Default          | Notes                                                                                |
+| --------------- | -------- | ---------------- | ------------------------------------------------------------------------------------ |
+| `repos`         | yes      | none             | Comma-separated repo paths. Supply every repo in one run — Steps 3-4 are cross-repo. |
+| `dry-run`       | no       | `false`          | Compute and log every decision without writing.                                      |
+| `delivery-mode` | no       | `worktree-to-pr` | Fixed, no override — write scope below is never infra-as-code.                       |
 
 ## Hard scope boundary
 
-Write scope is strictly `plans/ideas/**`, plus Step 9's explicitly sanctioned rewriting of inbound
-links that live elsewhere. **Never** create, move, or write under `plans/backlog/` or
-`plans/in-progress/`, and never promote an idea to a plan — even one that looks obviously ready. If
-a step's output would require writing outside that scope, log it as a follow-up in the grooming log
-instead.
+Write scope is strictly `plans/ideas/**`, plus Step 9's sanctioned rewriting of inbound links
+elsewhere. **Never** create, move, or write under `plans/backlog/` or `plans/in-progress/`, and
+never promote an idea to a plan. If a step needs to write outside that scope, log it as a follow-up
+in the grooming log instead.
 
 ## Procedure
 
-Run the workflow's ten steps in order. The ordering constraints that actually matter:
+See [Procedure](./reference/procedure.md) for the workflow's ten ordered steps (inventory, within/cross-repo dedup, residency rules R1-R3, fail-safe relocation, reshape, provenance, classify, link rewrite, recurrence-trigger stamp).
 
-1. **Inventory** every repo before deciding anything.
-2. **Within-repo dedup** first, then **cross-repo dedup** — and resolve **residency before merging**,
-   so a merge lands in the correct repo rather than wherever the pair was compared.
-3. **Residency**, three rules, first match wins:
-   - **R1** the idea needs a real secret, credential, or live infra-state value to be actionable →
-     the infra-private repo, and no other.
-   - **R2** it names a file, app, or concern that **provably** exists in exactly one repo → that repo
-     only. Verify with `Glob` / `test -f` against each tree; **never** infer this from the brief's prose.
-   - **R3** otherwise → the generalizable cross-cutting-governance default repo.
-     Log the matched rule for **every** surviving idea, including "already correctly resident".
-4. **Relocation** is fail-safe-toward-duplication: write the final file at the destination, commit
-   and push, **verify it on the destination's `origin/main`**, and only then delete the source. If
-   verification fails, stop before the delete and log the duplication in both repos' logs.
-5. **Reshape** every survivor to the eight-section two-pager template, preserving content.
-6. **Provenance**: append `Relocated from …` / `Renamed from …` to the file's **existing** blockquote,
-   never overwriting it. Record every action in the repo's own `## Grooming Log`.
-7. **Classify** with both rubrics — urgency from _Why now_ only; importance from the full content.
-8. **Link rewrite** covers move, rename, and move-plus-rename as one mechanism: fix the moved file's
-   own links, then grep the repo for inbound links to the old path. Cross-repo references become
-   absolute `https://github.com/<org>/<repo>/blob/main/…` URLs.
-9. Append `> Last groomed: YYYY-MM-DD` so the recurrence trigger stays armed.
+## Traps and Termination Audit
 
-## Traps this Skill exists to prevent
-
-- **A same-filename pair across repos is not automatically a duplicate.** Diff it. A copy
-  re-derived against its own repo's measured state is an independent **R2** idea; merging it
-  destroys real findings. When two such ideas keep one shared filename, Step 9's rename criterion
-  applies to **every** member of that class, not just the first one noticed.
-- **The urgency rubric misfires on negations.** A _Why now_ opening with "Not now" / "Not yet" /
-  "Not urgent" is an authoritative author signal and must win over keyword matching.
-- **Index hooks must be harvested per repo.** Keying a one-line hook by slug across repos makes one
-  repo's index describe another repo's variant of the idea.
-- **Commit the deletions.** Because relocation sources are deleted only after the destination push
-  is verified, the destination repo needs a **second** commit for its own post-verification deletes.
-- A **pre-push link gate may be scoped** to changed files, so a clean gate does not prove the repo
-  has no broken links. Establish the baseline against a clean `HEAD` worktree before attributing any
-  breakage to the sweep.
-
-## Termination audit (do not skip)
-
-The workflow's frontmatter states a `termination` condition. Verify it mechanically, clause by
-clause, rather than inferring completion from green gates — a run can pass every repo gate and still
-violate it:
-
-1. No slug resides in two or more repos.
-2. Every surviving idea sits in a `q1`–`q4` folder in its resident repo; nothing left flat but `README.md`.
-3. Every filename is kebab-case and its terms are echoed by its own content.
-4. Every relocated and renamed file carries its provenance line. Scan the **whole leading
-   blockquote** — a long demotion note pushes the appended line past any fixed line window.
-5. No broken link points into `plans/ideas/` in any repo.
-6. Each touched repo's `plans/ideas/README.md` carries one `## Grooming Log` and a `Last groomed` line.
-
-Report the audit result; if any clause fails, fix it and re-run the audit before declaring the run
-complete.
+See [Traps and Termination Audit](./reference/traps-and-termination-audit.md) for the five traps this Skill exists to prevent and the six-clause termination audit to run before declaring a grooming run complete.
 
 ## Related
 

@@ -37,7 +37,7 @@ human judgment.
 
 **Command Syntax**:
 
-- Re-validate using checker's documented verification from audit
+- Re-validate using checker's documented verification
 - Extract checker's source URL and conclusion
 - Verify command components match checker's findings
 - **HIGH**: Command verified against official docs (objective error)
@@ -46,7 +46,7 @@ human judgment.
 
 **Version Numbers**:
 
-- Re-validate using checker's registry findings from audit
+- Re-validate using checker's registry findings
 - Extract checker's latest version and all versions
 - Compare claimed vs actual per checker's verification
 - **HIGH**: Version verifiably wrong (objective error)
@@ -55,7 +55,7 @@ human judgment.
 
 **Feature Existence**:
 
-- Re-validate using checker's documentation verification from audit
+- Re-validate using checker's documentation verification
 - Extract checker's doc URL and conclusion
 - Review checker's documented results
 - **HIGH**: Feature doesn't exist in official docs (objective error)
@@ -65,7 +65,7 @@ human judgment.
 ### Code Example Re-Validation
 
 - Extract API calls and methods from code snippet
-- Read checker's API documentation verification from audit
+- Read checker's API documentation verification
 - Compare code usage with checker's documented findings
 - **HIGH**: API method doesn't exist per checker's verification
 - **MEDIUM**: API deprecated but still functional (judgment call)

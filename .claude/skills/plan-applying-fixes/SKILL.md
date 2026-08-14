@@ -11,30 +11,44 @@ confidence framework governing when a fix auto-applies versus escalates.
 
 ## Read First
 
-`reference/01-merge-step-guard-and-confidence.md` — the merge-step structural guard MUST be read
-before any other reference module. It states what it protects (a merge step's human gate) rather than
-enumerating tags/verbs/modes, because two prior enumeration-style guards were each defeated by an
-axis nobody had named. Every other reference module's recipes are subordinate to this guard.
+`reference/01-merge-step-guard.md` — the merge-step structural guard MUST be read before any other
+reference module. It states what it protects (a merge step's human gate) rather than enumerating
+tags/verbs/modes, because two prior enumeration-style guards were each defeated by an axis nobody had
+named. Every other reference module's recipes are subordinate to this guard.
 
 ## Reference Modules
 
-- `reference/01-merge-step-guard-and-confidence.md` — the merge-step guard (read first), confidence
-  assessment, web-research delegation, mode-parameter handling, grilling interaction contract,
-  validation strategy.
-- `reference/02-content-placement-and-mode-fixes.md` — BRD/PRD content-placement fixes, file-impact
-  tree repairs, PR-step/delivery-mode reconciliation, per-repository restriction fixes, Phase 0
-  PR/push removal, PR-steps-outside-boundary relocation.
-- `reference/03-report-generation-and-confidence-examples.md` — fix-report generation, changed-files
+- `reference/01-merge-step-guard.md` — the merge-step guard (read first).
+- `reference/02-confidence-assessment-and-agent-mechanics.md` — confidence assessment, web-research
+  delegation, mode-parameter handling, grilling interaction contract, validation strategy.
+- `reference/03-content-placement-and-file-impact-fixes.md` — BRD/PRD content-placement fixes,
+  file-impact tree repairs.
+- `reference/04-delivery-mode-reconciliation-fixes.md` — PR-step/delivery-mode reconciliation,
+  per-repository restriction fixes.
+- `reference/05-delivery-boundary-step-placement-fixes.md` — Phase 0 PR/push removal,
+  PR-steps-outside-boundary relocation.
+- `reference/06-report-generation-and-confidence-examples.md` — fix-report generation, changed-files
   capture, FALSE_POSITIVE persistence, self-verification, confidence-level domain examples, factual
   accuracy fixes.
-- `reference/04-operational-manual-assertion-fixes.md` — operational readiness fixes (5 items),
-  manual behavioral assertion fixes (3 items).
-- `reference/05-ui-funnel-syllabus-diagram-fixes.md` — UI-design-funnel scaffolding, learning-bearing
-  syllabus scaffolding, diagram format fixes (ASCII→Mermaid, under-diagrammed plans).
-- `reference/06-worktree-delivery-mode-clarity-fixes.md` — worktree specification fixes, delivery
-  mode fixes (including the merge-tag mismatch recipe), execution-grade clarity fixes.
-- `reference/07-executor-tag-hallucination-knowledge-fixes.md` — executor-tagging/phase-gate fixes,
-  anti-hallucination fixes (AP-1 through AP-10), Knowledge Capture phase scaffolding.
+- `reference/07-operational-readiness-fixes.md` — operational readiness fixes (5 items).
+- `reference/08-manual-behavioral-assertion-fixes.md` — manual behavioral assertion fixes (3 items).
+- `reference/09-ui-design-funnel-scaffolding-fixes.md` — UI-design-funnel scaffolding.
+- `reference/10-learning-bearing-syllabus-scaffolding-fixes.md` — learning-bearing syllabus
+  scaffolding.
+- `reference/11-diagram-format-fixes.md` — diagram format fixes (ASCII→Mermaid, under-diagrammed
+  plans).
+- `reference/12-worktree-and-delivery-mode-scaffolding-fixes.md` — worktree specification fixes,
+  delivery mode fixes.
+- `reference/13-pr-review-cycle-and-merge-tag-fixes.md` — PR-Review Maker→Fixer Cycle scaffolding,
+  the merge-tag mismatch recipe.
+- `reference/14-execution-grade-clarity-fixes.md` — execution-grade clarity fixes (HARD RULE).
+- `reference/15-executor-tagging-and-phase-gate-fixes-part1.md` and
+  `reference/16-executor-tagging-and-phase-gate-fixes-part2.md` — executor-tagging/phase-gate fixes.
+- `reference/17-anti-hallucination-fixes-part1.md` and
+  `reference/18-anti-hallucination-fixes-part2.md` — anti-hallucination fixes (AP-1 through AP-10).
+- `reference/19-knowledge-capture-phase-scaffolding-fixes-part1.md` and
+  `reference/20-knowledge-capture-phase-scaffolding-fixes-part2.md` — Knowledge Capture phase
+  scaffolding.
 
 ## Core Principles
 

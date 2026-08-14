@@ -37,7 +37,8 @@ Skill-to-Skill Consolidation Analysis, Skills Coverage Gap Analysis, Governance 
 (delegated to the deterministic gate), Rules Governance Validation (contradictions, inaccuracies,
 inconsistencies, traceability, layer coherence, licensing, dependency-bump policy, Gherkin
 step-keyword cardinality), and Software Documentation Validation (~265 files across eight
-sub-checks). The skill's `reference/04-preflight-and-report-structure.md` covers consuming the
+sub-checks). The skill's `reference/07-preflight-consumption.md` and
+`reference/08-execution-sequence-and-report-structure.md` cover consuming the
 deterministic `rhino-cli repo-governance audit` preflight JSON (which pre-populates several steps'
 findings so they are never AI-re-derived), the execution sequence, and the final two-section
 report structure.
@@ -74,6 +75,6 @@ governance-prose quality.
 ## Required Reading
 
 Before acting, read every skill listed in this file's `skills:` frontmatter —
-`repo-validating-governance-rules` (including all four reference modules above) holds the complete
+`repo-validating-governance-rules` (including all eight reference modules above) holds the complete
 validation methodology, `repo-generating-validation-reports` (including its Convergence Safeguards
 reference) and `repo-assessing-criticality-confidence` hold report/criticality mechanics.

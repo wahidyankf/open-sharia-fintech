@@ -11,24 +11,32 @@ against established usability science, without reading specs, source, or mockups
 
 ## Reference Modules
 
-- `reference/01-inputs-discipline-relationships.md` — why this agent exists, invocation inputs, the
-  Spec-Blind Discipline (hard rule), relationship to `web-exploratory-tester`/`web-design-tester`/
-  `swe-ui-checker`, the Non-Destructive Constraint.
-- `reference/02-heuristic-evaluation-and-walkthrough.md` — Nielsen's 10 heuristics, the
+- `reference/01-why-this-agent-exists-and-inputs.md` — why this agent exists, invocation inputs.
+- `reference/02-spec-blind-discipline.md` — the Spec-Blind Discipline (hard rule).
+- `reference/03-relationships-and-nondestructive-constraint.md` — relationship to
+  `web-exploratory-tester`/`web-design-tester`/`swe-ui-checker`, the Non-Destructive Constraint.
+- `reference/04-heuristic-evaluation-and-walkthrough.md` — Nielsen's 10 heuristics, the
   cognitive-walkthrough four questions, first-click/information-scent analysis, the naive-user
   stance.
-- `reference/03-usability-dimensions-checklist.md` — the full dimensions checklist (predictability,
-  consistency, information scent, edge states, error prevention, cognitive load, affordance, etc.).
-- `reference/04-mandatory-probes-url-responsive.md` — the four Mandatory Systematic Probes
+- `reference/05-usability-dimensions-checklist-part1.md` and
+  `reference/06-usability-dimensions-checklist-part2.md` — the full dimensions checklist
+  (predictability, consistency, information scent, edge states, error prevention, cognitive load,
+  affordance, etc.).
+- `reference/07-mandatory-probes-a-b-c.md` and
+  `reference/08-mandatory-probe-d-and-url-naturalness.md` — the four Mandatory Systematic Probes
   (conditional-control discoverability, jargon scan, cross-view redundancy, unit/currency
-  consistency), URL Naturalness, Responsive Usability.
-- `reference/05-browser-driving-and-spec-suggestions.md` — how to drive the browser
-  (WebFetch/curl/Playwright), and how to propose `spec-suggestions.md` entries without breaking the
-  spec-blind stance.
-- `reference/06-finding-anatomy-and-severity.md` — the full `UWT-###` finding anatomy and the
+  consistency) and URL Naturalness.
+- `reference/09-responsive-usability.md` — Responsive Usability at mobile/tablet/desktop.
+- `reference/10-browser-driving.md` — how to drive the browser (WebFetch/curl/Playwright).
+- `reference/11-suggesting-new-behaviour-for-specs.md` — how to propose `spec-suggestions.md`
+  entries without breaking the spec-blind stance.
+- `reference/12-finding-anatomy-and-severity.md` — the full `UWT-###` finding anatomy and the
   Nielsen 0-4 severity scale.
-- `reference/07-output-modes-and-procedure.md` — the three output modes (`plan`/`delivery`/
-  `local-temp`), the 11-step procedure summary, quality guidelines, and constraints.
+- `reference/13-output-modes-overview.md` and `reference/14-output-mode-plan-and-delivery.md` — the
+  output-mode selection table and the `plan`/`delivery` modes' document sets.
+- `reference/15-output-mode-localtemp-procedure-and-quality.md` — the `local-temp` mode, the
+  11-step procedure summary, and quality guidelines.
+- `reference/16-constraints.md` — hard constraints.
 
 ## Core Principles
 

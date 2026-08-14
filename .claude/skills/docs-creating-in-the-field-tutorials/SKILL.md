@@ -19,163 +19,15 @@ This Skill provides comprehensive guidance for creating **in-the-field tutorials
 
 ## Core Concepts
 
-### What is In-the-Field?
-
-**In-the-field tutorials** are production implementation guides that achieve production readiness through 20-40 guides covering real-world scenarios with standard library→framework progression.
-
-**NOT a replacement for**:
-
-- By-example (which provides 95% language coverage through code-first examples)
-- By-concept (which provides narrative explanations of fundamentals)
-- Quick Start (which is 5-30% coverage touchpoints)
-
-**Target Audience**:
-
-- **Developers with foundation**: Completed by-example and/or by-concept
-- **Ready for production**: Need to apply concepts in real systems
-- **Framework selection**: Want informed decisions about tools
-- **Enterprise patterns**: Need industry-standard practices
-
-### Standard Library First Principle
-
-**CRITICAL**: In-the-field tutorials MUST teach standard library/built-in approaches first, THEN introduce production frameworks with clear rationale.
-
-**Progression pattern**:
-
-1. **Show standard library approach** - Demonstrate built-in capabilities with full code
-2. **Identify limitations** - Explain why standard approach insufficient for production
-3. **Introduce framework** - Show how framework addresses limitations
-4. **Compare trade-offs** - Discuss complexity, learning curve, maintenance
-
-**Example progression** (Testing):
-
-```markdown
-## Testing in Production
-
-### Standard Library: assert Keyword
-
-Java provides `assert` keyword for runtime assertions...
-
-[Code example with annotations]
-
-**Limitations for production**:
-
-- No test organization (all tests in main method)
-- No reporting (just exceptions or silence)
-- Manual execution (no test runner)
-
-### Production Framework: JUnit 5
-
-JUnit 5 provides test organization, reporting, automation...
-
-[Code example with annotations]
-
-**Trade-offs**:
-
-- External dependency (2MB) vs organized tests
-- Learning curve vs powerful features
-- Justification: Worth it for production systems
-
-### When to Use Each:
-
-- assert: Simple scripts, internal tools
-- JUnit: Production code, CI/CD, team projects
-```
+See [Core Concepts](./reference/core-concepts.md) for what in-the-field tutorials are (and are not a replacement for), the target audience, and the standard-library-first principle with a worked progression example.
 
 ## Guide Structure
 
-Every in-the-field guide follows this structure:
-
-### Part 1: Why It Matters (2-3 paragraphs)
-
-Establish production relevance and motivation.
-
-### Part 2: Standard Library First (MANDATORY)
-
-- Complete, runnable standard library example
-- Annotation density: 1.0-2.25 per code line
-- Explanation of how standard approach works
-- **Limitations section**: Why insufficient for production
-
-### Part 3: Production Framework Introduction
-
-- Installation/setup steps (Maven/Gradle dependency)
-- Production-grade code with error handling
-- Configuration and best practices
-- Integration testing example
-- Comparison with standard library approach
-
-### Part 4: Mermaid Diagram (when appropriate)
-
-- Architecture patterns
-- Data flow diagrams
-- **Progression diagrams**: Standard library → Framework → Production
-- Use accessible color palette
-
-### Part 5: Production Patterns and Best Practices
-
-- Design patterns specific to topic
-- Error handling strategies
-- Security considerations
-- Performance implications
-- Common pitfalls to avoid
-
-### Part 6: Trade-offs and When to Use
-
-- Complexity vs capability trade-off
-- Learning curve considerations
-- Maintenance implications
-- Performance impact
-- When simpler approaches suffice
+See [Guide Structure](./reference/guide-structure.md) for the six-part structure every in-the-field guide follows (why it matters, standard library first, framework introduction, diagrams, production patterns, trade-offs).
 
 ## Annotation Density Standards
 
-### The 1.0-2.25 Rule
-
-**Same as by-example**: Target 1.0-2.25 comment lines per code line PER CODE BLOCK
-
-**Measurement**: Each code block is measured independently
-
-**Annotations focus on**:
-
-- Framework behavior (what framework does)
-- Configuration impact (how settings affect behavior)
-- Integration points (where components connect)
-- Security implications (why this approach is secure)
-- Performance characteristics (resource usage, bottlenecks)
-
-**Example** (JUnit code):
-
-```java
-@Test
-void transfer_shouldMoveMoneyBetweenAccounts() {
-    // => @Test marks method for JUnit discovery
-    // => Test runner executes this method
-    // => Package-private visibility sufficient
-
-    Account source = new Account("A", Money.of(100));
-    // => source starts with 100 units
-    // => Creates source account for test
-
-    Account target = new Account("B", Money.of(50));
-    // => target starts with 50 units
-    // => Creates target account for test
-
-    transferService.transfer(source, target, Money.of(30));
-    // => Transfers 30 from source to target
-    // => Invokes method under test
-
-    assertEquals(Money.of(70), source.balance());
-    // => Verifies source reduced by 30
-    // => assertEquals throws AssertionFailedError if false
-
-    assertEquals(Money.of(80), target.balance());
-    // => Verifies target increased by 30
-    // => Test passes if both assertions succeed
-}
-```
-
-**Density**: 6 code lines, 12 annotation lines = 2.0 density (within 1.0-2.25 target)
+See [Annotation Density Standards](./reference/annotation-density.md) for the 1.0-2.25 rule, what annotations should focus on, and a worked JUnit example.
 
 ## Production Code Quality Standards
 
@@ -190,51 +42,9 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
 - **Configuration**: Externalized configuration, no hardcoded values
 - **Testing**: Integration tests demonstrating framework usage
 
-## Guide Count: 20-40 Production Guides
+## Guide Count and Diagram Standards
 
-**Target range**: 20-40 guides per language or framework
-
-**Rationale**:
-
-- 20-40 guides covers major production patterns without overwhelming
-- Each guide addresses a specific production scenario with depth
-- Fewer guides than by-example (20-40 vs 75-85) because guides cover broader topics
-- Range allows flexibility based on ecosystem maturity
-
-**Topic categories**:
-
-- Foundation: Build tools, linting, logging (3-5 guides)
-- Quality: TDD, BDD, static analysis (2-4 guides)
-- Core Concepts: Design principles, patterns (3-5 guides)
-- Security: Authentication, authorization (2-4 guides)
-- Data: SQL, NoSQL, caching (3-5 guides)
-- Integration: APIs, messaging (3-5 guides)
-- Advanced: Reactive, concurrency (3-5 guides)
-- Deployment: Docker, Kubernetes, CI/CD (2-4 guides)
-
-## Diagram Standards
-
-### Diagram Frequency Target
-
-**Guideline**: 10-20 diagrams total (25-50% of 20-40 guides)
-
-**When to include diagrams**:
-
-- Architecture patterns (microservices, event-driven, layered)
-- Deployment topologies (Docker, Kubernetes, cloud)
-- Data flow across systems (API → service → database)
-- State machines (TDD Red-Green-Refactor, workflow states)
-- **Progression patterns**: Standard library → Framework → Production
-- Security flows (authentication, authorization, token validation)
-- CI/CD pipeline flows
-
-**Accessible color palette** (MANDATORY):
-
-- Blue: #0173B2
-- Orange: #DE8F05
-- Teal: #029E73
-- Purple: #CC78BC
-- Brown: #CA9161
+See [Guide Count and Diagram Standards](./reference/guide-count-and-diagrams.md) for the 20-40 guide target range with topic categories, and the 10-20 diagram frequency target with the mandatory accessible color palette.
 
 ## Common Mistakes
 
@@ -261,6 +71,11 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
 **Wrong**: Only show framework approach
 
 **Right**: Compare standard library vs framework with when to use each
+
+## Checker Validation Checklist
+
+See [Checking In-the-Field Format](./reference/01-checking-in-the-field-format.md) for the
+`apps-ayokoding-www-in-the-field-checker` validation checklist and step-by-step validation order.
 
 ## References
 

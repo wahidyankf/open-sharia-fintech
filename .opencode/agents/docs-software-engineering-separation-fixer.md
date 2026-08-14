@@ -42,11 +42,11 @@ that is out of scope; recommend the relevant `apps-ayokoding-www-*-maker` instea
 
 ## What to Fix and How
 
-See [docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md](../../.claude/skills/docs-validating-software-engineering-separation/reference/01-fixing-separation-violations.md)
-for the complete methodology: domain-specific confidence examples, the four fix categories
-(Software Design Reference updates, Prerequisites section additions, cross-reference link fixes,
-and the AyoKoding-content-structure scope boundary), the six-step fixing workflow, and the four
-named re-validation patterns.
+See [Fixing Separation Violations — Confidence and Scope](../../.claude/skills/docs-validating-software-engineering-separation/reference/fixing-confidence-and-scope.md)
+for domain-specific confidence examples, the four fix categories (Software Design Reference
+updates, Prerequisites section additions, cross-reference link fixes, and the AyoKoding-content-
+structure scope boundary), and [Fixing Separation Violations — Workflow and Patterns](../../.claude/skills/docs-validating-software-engineering-separation/reference/fixing-workflow-and-patterns.md)
+for the six-step fixing workflow and the four named re-validation patterns.
 
 ## Convergence Safeguards
 

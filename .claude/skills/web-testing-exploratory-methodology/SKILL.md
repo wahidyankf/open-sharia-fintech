@@ -12,24 +12,28 @@ truth.
 
 ## Reference Modules
 
-- `reference/01-inputs-relationships-nondestructive.md` — why this agent exists, invocation inputs,
-  relationship to `web-usability-tester`/`web-design-tester`/`swe-ui-checker`, the Non-Destructive
-  Constraint.
-- `reference/02-session-based-methodology.md` — charter framing (Hendrickson template), testing
+- `reference/01-why-this-agent-exists-and-inputs.md` — why this agent exists, invocation inputs.
+- `reference/02-relationships-and-nondestructive-constraint.md` — relationship to
+  `web-usability-tester`/`web-design-tester`/`swe-ui-checker`, the Non-Destructive Constraint.
+- `reference/03-session-based-methodology.md` — charter framing (Hendrickson template), testing
   tours (Whittaker taxonomy), SFDIPOT coverage, CRUSSPIC STMPL quality criteria.
-- `reference/03-test-dimensions-checklist.md` — the full dimensions checklist (functional flows,
-  edge cases, behavioural consistency, forms, navigation, URL/IA, responsive, accessibility,
+- `reference/04-test-dimensions-checklist-part1.md` and
+  `reference/05-test-dimensions-checklist-part2.md` — the full dimensions checklist (functional
+  flows, edge cases, behavioural consistency, forms, navigation, URL/IA, responsive, accessibility,
   performance, cross-browser, safe security surface).
-- `reference/04-mandatory-sweeps.md` — the three Mandatory Systematic Sweeps (shared-control ×
-  surface matrix, per-control URL/state round-trip, declared-invariant conformance) and the
-  self-completeness check.
-- `reference/05-browser-driving-and-specs-ground-truth.md` — how to drive the browser
-  (WebFetch/curl/Playwright/Lighthouse), comparing live behaviour against `specs/**`, and
-  spec-gap detection.
-- `reference/06-defect-anatomy-and-severity.md` — the full `EWT-###` defect anatomy and the
+- `reference/06-mandatory-sweeps-part1.md` and `reference/07-mandatory-sweeps-part2.md` — the three
+  Mandatory Systematic Sweeps (shared-control × surface matrix, per-control URL/state round-trip,
+  declared-invariant conformance) and the self-completeness check.
+- `reference/08-browser-driving.md` — how to drive the browser (WebFetch/curl/Playwright/Lighthouse).
+- `reference/09-specs-ground-truth-and-spec-gaps.md` — comparing live behaviour against `specs/**`
+  and spec-gap detection.
+- `reference/10-defect-anatomy-and-severity.md` — the full `EWT-###` defect anatomy and the
   severity/priority scales.
-- `reference/07-output-modes-and-procedure.md` — the three output modes (`plan`/`delivery`/
-  `local-temp`), the 10-step procedure summary, quality guidelines, and constraints.
+- `reference/11-output-modes-overview.md` and `reference/12-output-mode-plan.md` — the output-mode
+  selection table and the default `plan` mode's document set.
+- `reference/13-output-modes-delivery-localtemp-and-procedure.md` — the `delivery` and `local-temp`
+  modes, and the 10-step procedure summary.
+- `reference/14-quality-guidelines-and-constraints.md` — quality guidelines and hard constraints.
 
 ## Core Principles
 
