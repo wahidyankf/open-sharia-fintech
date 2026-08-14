@@ -12,248 +12,272 @@ that make browser automation reliable. Run every snippet with `python3 code/cdp_
 
 _ex-26 · exercises co-20, co-03_
 
-**Brief explanation**: A thin client should preserve the raw command/event semantics it simplifies.
-**Code**: `python3 code/cdp_simulation.py raw-cdp-vs-client`
-**Expected observation**: both modeled paths return the same contract result.
-**Key takeaway**: wrappers change ergonomics, not the underlying asynchronous reality.
-**Why it matters**: protocol literacy makes wrapper failures diagnosable.
+**Brief explanation**: A browser can host several targets; each tab must retain independent state while
+sharing the browser process responsibly.
+**Code**: `python3 code/ex-26-multiple-tabs/example.py`
+**Expected observation**: the two fixture targets retain different titles.
+**Key takeaway**: scope state and sessions to a target, then manage capacity above them.
+**Why it matters**: cross-target state leaks make concurrent browser work corrupt and nondeterministic.
 
 ### Example 27: Bound a Navigation Timeout
 
 _ex-27 · exercises co-06, co-09_
 
-**Brief explanation**: Lifecycle ordering reveals which condition actually precedes a step.
-**Code**: `python3 code/cdp_simulation.py lifecycle-events`
-**Expected observation**: one deterministic event-stream scenario completes.
-**Key takeaway**: record the event sequence before choosing a wait.
-**Why it matters**: readiness has no universal event.
+**Brief explanation**: A navigation needs a deadline so a stuck page becomes a recoverable outcome
+rather than a permanently occupied browser target.
+**Code**: `python3 code/ex-27-navigation-timeout/example.py`
+**Expected observation**: the fixture navigation completes within its `asyncio` deadline.
+**Key takeaway**: pair every awaited browser operation with an explicit timeout.
+**Why it matters**: one hung navigation can otherwise starve a shared page pool.
 
 ### Example 28: Retry a Flaky Step
 
 _ex-28 · exercises co-09, co-11_
 
-**Brief explanation**: A selector wait is a bounded predicate, not an unbounded polling loop.
-**Code**: `python3 code/cdp_simulation.py wait-for-selector`
-**Expected observation**: safe JSON confirms modeled readiness.
-**Key takeaway**: use a deadline and report the selector on timeout.
-**Why it matters**: diagnostic errors turn flakes into repairable failures.
+**Brief explanation**: Retry only a transient, safe fixture operation with a finite attempt budget.
+**Code**: `python3 code/ex-28-retry-flaky-step/example.py`
+**Expected observation**: the local read-like step succeeds on its second bounded attempt.
+**Key takeaway**: retries need an operation-specific policy and a recorded limit.
+**Why it matters**: blind retries can multiply side effects or hide persistent failures.
 
 ### Example 29: Scroll and Lazy Load
 
 _ex-29 · exercises co-12, co-08_
 
-**Brief explanation**: A form flow needs field-value and post-submit assertions.
-**Code**: `python3 code/cdp_simulation.py fill-and-submit-form`
-**Expected observation**: the local flow succeeds without a live account.
-**Key takeaway**: assert business-visible state on both sides of the submit.
-**Why it matters**: a click can be accepted while validation blocks progress.
+**Brief explanation**: A scroll action is useful only when it produces the lazy content required by the
+next extraction step.
+**Code**: `python3 code/ex-29-scroll-and-lazy-load/example.py`
+**Expected observation**: `lazy-item` becomes visible in the local fixture after the modeled scroll.
+**Key takeaway**: assert the content change, not just the dispatched scroll input.
+**Why it matters**: viewport movement alone does not prove that lazy loading succeeded.
 
 ### Example 30: Extract Structured Data
 
 _ex-30 · exercises co-14_
 
-**Brief explanation**: Network events expose a page's request graph and timing.
-**Code**: `python3 code/cdp_simulation.py network-request-log`
-**Expected observation**: a modeled request observation is correlated.
-**Key takeaway**: log minimal metadata, not sensitive bodies by default.
-**Why it matters**: network traces can contain tokens and personal data.
+**Brief explanation**: Extract selected DOM rows into a named structured shape before application logic
+consumes them.
+**Code**: `python3 code/ex-30-extract-structured-data/example.py`
+**Expected observation**: the fixture rows become dictionaries with `name` and `role` fields.
+**Key takeaway**: validate structure at the page boundary rather than passing positional text onward.
+**Why it matters**: markup changes otherwise become silent data-quality regressions.
 
 ### Example 31: Capture a Full-Page Screenshot
 
 _ex-31 · exercises co-14_
 
-**Brief explanation**: Capture only an authorized fixture response with an explicit size limit.
-**Code**: `python3 code/cdp_simulation.py capture-response-body`
-**Expected observation**: no live body is retrieved.
-**Key takeaway**: body capture needs a redaction and retention policy.
-**Why it matters**: unrestricted capture turns observability into data exfiltration.
+**Brief explanation**: Full-page screenshots need explicit rendered dimensions so a visual artifact has
+reproducible context.
+**Code**: `python3 code/ex-31-full-page-screenshot/example.py`
+**Expected observation**: the fixture image is taller than the viewport and carries PNG bytes.
+**Key takeaway**: record viewport and page dimensions with every full-page artifact.
+**Why it matters**: visual diffs are not meaningful when rendering conditions are implicit.
 
 ### Example 32: Emulate a Device
 
 _ex-32 · exercises co-15_
 
-**Brief explanation**: Interception changes the page's behavior and must be narrowly scoped.
-**Code**: `python3 code/cdp_simulation.py block-a-request`
-**Expected observation**: the fixture rule is modeled as a controlled decision.
-**Key takeaway**: block exact authorized patterns, then log why.
-**Why it matters**: broad blocking can hide production defects.
+**Brief explanation**: Device emulation pins the width, height, and mobile behavior a responsive test
+claims to cover.
+**Code**: `python3 code/ex-32-emulate-device/example.py`
+**Expected observation**: the 390px fixture profile renders the compact layout.
+**Key takeaway**: put the device profile in the test contract, not in undocumented machine defaults.
+**Why it matters**: responsive failures often depend on an omitted viewport condition.
 
 ### Example 33: Modify Request Headers
 
 _ex-33 · exercises co-15_
 
-**Brief explanation**: A mock replaces one dependency with a deterministic fixture.
-**Code**: `python3 code/cdp_simulation.py mock-a-response`
-**Expected observation**: a local canned response scenario returns safely.
-**Key takeaway**: test the UI contract, not a third-party system.
-**Why it matters**: deterministic mocks make visual and flow tests repeatable.
+**Brief explanation**: Header mutation is an interception capability that must be restricted to known,
+non-secret fixture headers.
+**Code**: `python3 code/ex-33-intercept-and-modify-headers/example.py`
+**Expected observation**: the fixture request contains `x-fixture-mode: test`.
+**Key takeaway**: allowlist mutated header names and never echo sensitive values in logs.
+**Why it matters**: a header can change identity, authorization, caching, or routing behavior.
 
 ### Example 34: Respect Robots and Rate Limits
 
 _ex-34 · exercises co-16_
 
-**Brief explanation**: Session setup belongs to a disposable fixture context.
-**Code**: `python3 code/cdp_simulation.py set-a-cookie`
-**Expected observation**: no credential is created or persisted.
-**Key takeaway**: use synthetic, least-privilege fixture sessions.
-**Why it matters**: production credentials should never enter course code or logs.
+**Brief explanation**: Responsible extraction checks robots policy and a rate budget before it processes a
+fixture path.
+**Code**: `python3 code/ex-34-respect-robots/example.py`
+**Expected observation**: the permitted local path has one remaining request token.
+**Key takeaway**: technical access is not permission; origin policy and rate limits come first.
+**Why it matters**: respectful automation protects people, services, and the reliability of the tool.
 
 ### Example 35: Concurrent Page Pool
 
 _ex-35 · exercises co-07, co-19_
 
-**Brief explanation**: Targets have independent state but share browser resources.
-**Code**: `python3 code/cdp_simulation.py multiple-tabs`
-**Expected observation**: one modeled multi-target result.
-**Key takeaway**: keep session state per target and capacity at the pool.
-**Why it matters**: shared mutable page state creates cross-task corruption.
+**Brief explanation**: A bounded pool drives several page tasks concurrently without allowing resource
+ownership to exceed its configured capacity.
+**Code**: `python3 code/ex-35-concurrent-page-pool/example.py`
+**Expected observation**: three local jobs observe a maximum of two active page slots.
+**Key takeaway**: pool scarce browser targets with a semaphore and assert the observed cap.
+**Why it matters**: unbounded tab creation turns traffic spikes into browser memory exhaustion.
 
 ### Example 36: Reuse a Browser Across Tasks
 
 _ex-36 · exercises co-18_
 
-**Brief explanation**: A deadline turns an unbounded navigation into a recoverable failure.
-**Code**: `python3 code/cdp_simulation.py navigation-timeout`
-**Expected observation**: the simulated operation is bounded.
-**Key takeaway**: every browser operation needs an owner and timeout.
-**Why it matters**: one stuck tab can otherwise starve the whole pool.
+**Brief explanation**: Browser startup is expensive, so independent tasks should borrow one pool-owned
+browser instead of launching a new process for every request.
+**Code**: `python3 code/ex-36-reuse-browser-across-tasks/example.py`
+**Expected observation**: two tasks share `browser-1` while the launch count remains one.
+**Key takeaway**: reuse the browser process while keeping target state isolated per task.
+**Why it matters**: per-task browser launches waste time, memory, and OS resources.
 
 ### Example 37: Authenticated Session Reuse
 
 _ex-37 · exercises co-18_
 
-**Brief explanation**: Retry transient, idempotent work with a finite budget and recorded cause.
-**Code**: `python3 code/cdp_simulation.py retry-flaky-step`
-**Expected observation**: retry policy is modeled without contacting a server.
-**Key takeaway**: do not retry authorization failures or unsafe input actions.
-**Why it matters**: blind retries can multiply side effects.
+**Brief explanation**: A synthetic session can be reused across authorized fixture pages without exposing
+a real login flow or credential.
+**Code**: `python3 code/ex-37-authenticated-session-reuse/example.py`
+**Expected observation**: both pages use the same fixture session and login count stays one.
+**Key takeaway**: persist only least-privilege test session state inside a disposable context.
+**Why it matters**: repeated logins are slow, flaky, and unsafe when they involve real accounts.
 
 ### Example 38: Network Throttling
 
 _ex-38 · exercises co-12, co-09_
 
-**Brief explanation**: Scroll changes state; wait for the new content signal before extracting.
-**Code**: `python3 code/cdp_simulation.py scroll-and-lazy-load`
-**Expected observation**: a local lazy-load scenario completes.
-**Key takeaway**: tie an interaction to the observable state it should create.
-**Why it matters**: scroll position alone proves nothing about loaded content.
+**Brief explanation**: A network profile makes latency and bandwidth constraints explicit before the
+automation observes a slower fixture response.
+**Code**: `python3 code/ex-38-network-throttling/example.py`
+**Expected observation**: the modeled transfer duration exceeds its profile latency.
+**Key takeaway**: test slow-network behavior with a stated profile, not ambient machine conditions.
+**Why it matters**: a flow that works locally can fail when a user has constrained connectivity.
 
 ### Example 39: Capture a HAR-like Trace
 
 _ex-39 · exercises co-10, co-11_
 
-**Brief explanation**: Convert selected DOM rows into a small typed data shape at the page boundary.
-**Code**: `python3 code/cdp_simulation.py extract-structured-data`
-**Expected observation**: an authorized simulated extraction result.
-**Key takeaway**: validate structure before handing data to application logic.
-**Why it matters**: markup changes otherwise become silent data-quality errors.
+**Brief explanation**: A HAR-like trace captures request timing and status for diagnosis while omitting
+unbounded response bodies.
+**Code**: `python3 code/ex-39-capture-har/example.py`
+**Expected observation**: one local page-load entry has status `200` and a bounded duration.
+**Key takeaway**: collect the smallest trace that proves the network behavior under test.
+**Why it matters**: full network capture can retain sensitive data without improving a diagnosis.
 
 ### Example 40: Inject JavaScript Instrumentation
 
 _ex-40 · exercises co-13_
 
-**Brief explanation**: Full-page capture requires documented dimensions and artifact limits.
-**Code**: `python3 code/cdp_simulation.py full-page-screenshot`
-**Expected observation**: a deterministic artifact scenario.
-**Key takeaway**: record viewport and page dimensions with visual artifacts.
-**Why it matters**: visual diffs are meaningless without rendering context.
+**Brief explanation**: Document-start instrumentation registers before page scripts so later observations
+can explain what the fixture executed.
+**Code**: `python3 code/ex-40-js-injection-instrumentation/example.py`
+**Expected observation**: instrumentation registration precedes the modeled page script.
+**Key takeaway**: setup order is part of the instrumentation contract.
+**Why it matters**: late instrumentation misses the very page behavior it is meant to observe.
 
 ### Example 41: Build a Robust Scraper
 
 _ex-41 · exercises co-04, co-12_
 
-**Brief explanation**: Device emulation controls the rendering conditions a test claims to cover.
-**Code**: `python3 code/cdp_simulation.py emulate-device`
-**Expected observation**: one stable modeled device profile.
-**Key takeaway**: make emulation part of the test name and trace.
-**Why it matters**: responsive bugs often depend on an omitted condition.
+**Brief explanation**: A robust scraper combines origin authorization, bounded retry, and structured
+fixture extraction rather than assuming a single page response will work.
+**Code**: `python3 code/ex-41-robust-scraper/example.py`
+**Expected observation**: the authorized fixture yields one item on its second bounded attempt.
+**Key takeaway**: compose waits, retries, and policy checks around a narrow extraction goal.
+**Why it matters**: real-world pages fail transiently and must not trigger unbounded or unauthorized work.
 
 ### Example 42: Run a Screenshot Diff Test
 
 _ex-42 · exercises co-15, co-14_
 
-**Brief explanation**: Header changes are privileged request mutation, not ordinary logging.
-**Code**: `python3 code/cdp_simulation.py intercept-and-modify-headers`
-**Expected observation**: a local policy decision only.
-**Key takeaway**: allowlist header names and never log secrets.
-**Why it matters**: header interception can change identity and authorization.
+**Brief explanation**: A visual regression test compares normalized fixture artifacts and reports a
+meaningful difference when their bytes change.
+**Code**: `python3 code/ex-42-screenshot-diff-test/example.py`
+**Expected observation**: the blue baseline and orange candidate produce a detected regression.
+**Key takeaway**: compare a defined visual artifact, not an unspecified browser screenshot.
+**Why it matters**: deterministic visual checks catch rendering changes that DOM assertions can miss.
 
 ### Example 43: Drive a Single-Page Application
 
 _ex-43 · exercises co-21_
 
-**Brief explanation**: Automation is responsible even when a technical route exists.
-**Code**: `python3 code/cdp_simulation.py respect-robots`
-**Expected observation**: the fixture limiter models throttling.
-**Key takeaway**: permission, terms, and a rate budget precede extraction.
-**Why it matters**: responsible automation protects people and services.
+**Brief explanation**: A client-rendered application becomes ready when its route and rendered state
+change, not merely after the initial document load.
+**Code**: `python3 code/ex-43-drive-a-spa/example.py`
+**Expected observation**: the fixture route changes to `/report` and heading becomes `Report`.
+**Key takeaway**: wait for the post-interaction SPA state your next step requires.
+**Why it matters**: client-side navigation is asynchronous even when the original page stays open.
 
 ### Example 44: Recover from a Crashed Target
 
 _ex-44 · exercises co-16_
 
-**Brief explanation**: Test isolation means clearing cookies and storage after every fixture run.
-**Code**: `python3 code/cdp_simulation.py clear-storage-between-tests`
-**Expected observation**: modeled storage cleanup succeeds.
-**Key takeaway**: start and finish each test from a known state.
-**Why it matters**: leaked storage causes order-dependent tests.
+**Brief explanation**: Target loss is an ordinary browser failure; recovery needs a new attachment before
+the task resumes.
+**Code**: `python3 code/ex-44-error-recovery-flow/example.py`
+**Expected observation**: an unavailable target is replaced by the live `target-new` fixture.
+**Key takeaway**: reattach explicitly and discard stale target/session identifiers.
+**Why it matters**: continuing with a crashed target turns a recoverable error into a stuck workflow.
 
 ### Example 45: Expose Browser Control as an HTTP Service
 
 _ex-45 · exercises co-08, co-14_
 
-**Brief explanation**: Navigation may produce multiple network hops before its final page.
-**Code**: `python3 code/cdp_simulation.py detect-redirect-chain`
-**Expected observation**: a safe chain model is returned.
-**Key takeaway**: assert the final authorized origin as well as status.
-**Why it matters**: redirects can cross a trust boundary.
+**Brief explanation**: A browser-control service should expose narrow, typed operations and return plain
+data rather than handing a browser object to callers.
+**Code**: `python3 code/ex-45-expose-as-http-service/example.py`
+**Expected observation**: the authorized fixture navigation returns status `200` and a title.
+**Key takeaway**: keep browser ownership behind the service boundary.
+**Why it matters**: a narrow API makes authorization, capacity, and audit policy enforceable.
 
 ### Example 46: Run a Pooled Service Under Load
 
 _ex-46 · exercises co-10, co-18_
 
-**Brief explanation**: Evaluation errors are protocol data that need a typed failure path.
-**Code**: `python3 code/cdp_simulation.py handle-javascript-exception`
-**Expected observation**: the modeled failure stays correlated to its command.
-**Key takeaway**: surface exception details without exposing page secrets.
-**Why it matters**: swallowing evaluation failures creates false passes.
+**Brief explanation**: A service under concurrent demand must hold clients to its page-pool capacity
+instead of creating targets without a limit.
+**Code**: `python3 code/ex-46-pooled-service-under-load/example.py`
+**Expected observation**: three fixture clients observe a peak service concurrency of two.
+**Key takeaway**: enforce resource limits at the shared service boundary.
+**Why it matters**: an unbounded client surge can exhaust the browser before any request completes.
 
 ### Example 47: Compare Raw CDP with Playwright
 
 _ex-47 · exercises co-18_
 
-**Brief explanation**: Cancellation must release the target and discard stale responses safely.
-**Code**: `python3 code/cdp_simulation.py cancel-in-flight-command`
-**Expected observation**: a cancellable local coroutine result.
-**Key takeaway**: cancellation is normal control flow, not an ignored exception.
-**Why it matters**: callers and pools need prompt resource reclamation.
+**Brief explanation**: Raw CDP and a high-level wrapper can be compared through the user-visible result
+they promise rather than through identical internals.
+**Code**: `python3 code/ex-47-compare-with-playwright/example.py`
+**Expected observation**: both local forms return `Fixture title`.
+**Key takeaway**: use a wrapper when its contract meets the need, while retaining protocol awareness.
+**Why it matters**: abstraction removes boilerplate but not browser lifecycle and readiness failures.
 
 ### Example 48: Recognize Headless Detection Signals
 
 _ex-48 · exercises co-05, co-18_
 
-**Brief explanation**: Measure every boundary crossing with a monotonic clock.
-**Code**: `python3 code/cdp_simulation.py record-command-duration`
-**Expected observation**: a deterministic trace-shaped response.
-**Key takeaway**: timeout and latency are separate signals.
-**Why it matters**: p95 latency reveals contention before total failure.
+**Brief explanation**: A page can expose a headless signal; recognizing it is legitimate, but evading it
+is outside this course's responsible-automation boundary.
+**Code**: `python3 code/ex-48-headless-detection-awareness/example.py`
+**Expected observation**: the fixture reports that a WebDriver signal was observed.
+**Key takeaway**: record detection signals transparently; do not add stealth behavior.
+**Why it matters**: automation must respect site policy and avoid deceptive browser manipulation.
 
 ### Example 49: Build a Resilient Fleet Slice
 
 _ex-49 · exercises co-09, co-14_
 
-**Brief explanation**: Network idle is a policy with a precise definition, not a magical browser state.
-**Code**: `python3 code/cdp_simulation.py assert-network-idle-policy`
-**Expected observation**: one modeled policy check.
-**Key takeaway**: document which requests count and the quiet window.
-**Why it matters**: long-polling pages may never reach generic network idle.
+**Brief explanation**: A small browser fleet needs health checks and replacement before a failed worker
+is allowed to hold future tasks.
+**Code**: `python3 code/ex-49-resilient-fleet-slice/example.py`
+**Expected observation**: the unhealthy fixture worker is replaced by the healthy worker.
+**Key takeaway**: make health, reclamation, and assignment distinct fleet responsibilities.
+**Why it matters**: a stuck worker quietly reduces throughput until every caller queues behind it.
 
 ### Example 50: Capstone Browser Service
 
 _ex-50 · exercises co-21, co-22_
 
-**Brief explanation**: A service must validate a caller's requested origin before it opens a target.
-**Code**: `python3 code/cdp_simulation.py validate-authorized-fixture-origin`
-**Expected observation**: only `example.test`-shaped work is modeled.
-**Key takeaway**: authorization is a service policy, not a caller promise.
-**Why it matters**: this is the boundary that makes tool exposure safer.
+**Brief explanation**: The capstone combines an authorized navigation request, a bounded service result,
+and a screenshot artifact without handing browser ownership to the caller.
+**Code**: `python3 code/ex-50-capstone-browser-service/example.py`
+**Expected observation**: the fixture checkout returns status `200`, title `Checkout`, and PNG bytes.
+**Key takeaway**: reliable browser automation is a service contract with policy, capacity, and evidence.
+**Why it matters**: this is the reusable shape behind a safe browser-automation tool boundary.

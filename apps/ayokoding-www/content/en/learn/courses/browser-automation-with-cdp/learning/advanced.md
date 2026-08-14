@@ -12,79 +12,84 @@ command uses the annotated, standard-library-only local simulator: `python3 code
 
 _ex-51 · exercises co-07, co-16_
 
-**Brief explanation**: An isolated context prevents one fixture's storage from influencing another.
-**Code**: `python3 code/cdp_simulation.py isolated-browser-context`
-**Expected observation**: a safe, deterministic context scenario.
-**Key takeaway**: isolate state before parallelizing tests.
-**Why it matters**: shared state creates order-dependent failures.
+**Brief explanation**: An isolated context owns its own storage, so one fixture session cannot influence
+another concurrently running test.
+**Code**: `python3 code/ex-51-isolated-browser-context/example.py`
+**Expected observation**: changing the first context leaves the second context cookie unchanged.
+**Key takeaway**: isolate state before parallelizing browser work.
+**Why it matters**: shared storage creates order-dependent tests and accidental session leakage.
 
 ### Example 52: Dispose a Target on Completion
 
 _ex-52 · exercises co-07, co-19_
 
-**Brief explanation**: Target ownership ends in cleanup even after a successful task.
-**Code**: `python3 code/cdp_simulation.py dispose-target`
-**Expected observation**: the local task completes without retained state.
-**Key takeaway**: acquisition and disposal are one operation boundary.
-**Why it matters**: leaked targets exhaust browser capacity.
+**Brief explanation**: Target ownership ends with explicit disposal even when the task itself succeeds.
+**Code**: `python3 code/ex-52-dispose-target/example.py`
+**Expected observation**: the fixture target transitions from allocated to disposed.
+**Key takeaway**: acquisition and cleanup are one operation boundary.
+**Why it matters**: leaked targets eventually exhaust the finite browser pool.
 
 ### Example 53: Bound Queue Admission
 
 _ex-53 · exercises co-19_
 
-**Brief explanation**: A queue must reject or wait deterministically when its capacity is full.
-**Code**: `python3 code/cdp_simulation.py bound-queue-admission`
-**Expected observation**: a safe admission decision.
-**Key takeaway**: capacity is a product and reliability decision.
-**Why it matters**: unbounded queues turn overload into memory exhaustion.
+**Brief explanation**: Admission is a visible queue policy: work is rejected or waits when capacity has
+already been consumed.
+**Code**: `python3 code/ex-53-bound-queue-admission/example.py`
+**Expected observation**: a full one-slot fixture queue does not admit another job.
+**Key takeaway**: capacity is an explicit product and reliability decision.
+**Why it matters**: unbounded queues turn transient overload into memory exhaustion.
 
 ### Example 54: Propagate a Correlation ID
 
 _ex-54 · exercises co-05, co-22_
 
-**Brief explanation**: One correlation id connects caller, CDP command, artifact, and failure record.
-**Code**: `python3 code/cdp_simulation.py propagate-correlation-id`
-**Expected observation**: deterministic trace-shaped JSON.
-**Key takeaway**: make every browser action explainable after the fact.
-**Why it matters**: concurrent automation is otherwise impossible to debug.
+**Brief explanation**: One correlation id links caller intent, the CDP command, service result, and an
+eventual audit record.
+**Code**: `python3 code/ex-54-correlation-id/example.py`
+**Expected observation**: the local result retains the request's `run-42` identifier.
+**Key takeaway**: carry one trace id through every browser-service boundary.
+**Why it matters**: concurrent automation is otherwise difficult to diagnose after the fact.
 
 ### Example 55: Redact a Network Trace
 
 _ex-55 · exercises co-14, co-21_
 
-**Brief explanation**: Observability data needs a redaction policy before it is retained.
-**Code**: `python3 code/cdp_simulation.py redact-network-trace`
-**Expected observation**: a modeled safe trace.
-**Key takeaway**: log metadata by default and bodies only by authorization.
-**Why it matters**: traces can contain secrets.
+**Brief explanation**: A network trace must redact sensitive values before it is retained or displayed.
+**Code**: `python3 code/ex-55-redact-network-trace/example.py`
+**Expected observation**: the fixture authorization value becomes `[REDACTED]`.
+**Key takeaway**: retain metadata by default and redact data that could authorize access.
+**Why it matters**: trace output can otherwise expose secrets to logs and support systems.
 
 ### Example 56: Enforce a Screenshot Budget
 
 _ex-56 · exercises co-13, co-19_
 
-**Brief explanation**: Artifact capture needs byte and count budgets.
-**Code**: `python3 code/cdp_simulation.py screenshot-budget`
-**Expected observation**: a bounded local capture decision.
-**Key takeaway**: store only artifacts that answer a test question.
-**Why it matters**: uncontrolled captures create cost and privacy risk.
+**Brief explanation**: Screenshot retention needs both a count and byte budget before artifacts are kept.
+**Code**: `python3 code/ex-56-screenshot-budget/example.py`
+**Expected observation**: two small fixture screenshots fit inside both configured limits.
+**Key takeaway**: store only artifacts that answer a stated test question.
+**Why it matters**: uncontrolled capture creates storage cost and privacy risk.
 
 ### Example 57: Retry Only Idempotent Navigation
 
 _ex-57 · exercises co-08, co-18_
 
-**Brief explanation**: Replaying a safe read differs from replaying an input submission.
-**Code**: `python3 code/cdp_simulation.py retry-idempotent-navigation`
-**Expected observation**: the policy remains local and deterministic.
-**Key takeaway**: retry policy is operation-specific.
-**Why it matters**: a duplicate form submission can cause real harm.
+**Brief explanation**: Replaying a safe navigation differs from replaying an input submission that could
+produce a duplicate side effect.
+**Code**: `python3 code/ex-57-retry-idempotent-navigation/example.py`
+**Expected observation**: the fixture retry policy accepts the idempotent navigation operation.
+**Key takeaway**: retry policy is specific to the operation's semantics.
+**Why it matters**: duplicate form submissions can cause real harm.
 
 ### Example 58: Classify a Protocol Error
 
 _ex-58 · exercises co-05, co-18_
 
-**Brief explanation**: Distinguish command rejection, target loss, timeout, and transport failure.
-**Code**: `python3 code/cdp_simulation.py classify-protocol-error`
-**Expected observation**: a typed modeled error.
+**Brief explanation**: A command rejection, target loss, timeout, and transport failure each need a
+distinct recovery decision.
+**Code**: `python3 code/ex-58-classify-protocol-error/example.py`
+**Expected observation**: a fixture `target-lost` error maps to `reattach`.
 **Key takeaway**: error class determines recovery action.
 **Why it matters**: generic exceptions hide actionable failure information.
 
@@ -92,29 +97,30 @@ _ex-58 · exercises co-05, co-18_
 
 _ex-59 · exercises co-07, co-19_
 
-**Brief explanation**: Health checks prove a target can accept work before assignment.
-**Code**: `python3 code/cdp_simulation.py check-target-health`
-**Expected observation**: a deterministic healthy result.
+**Brief explanation**: A target health check proves it can accept work before the pool assigns a job.
+**Code**: `python3 code/ex-59-check-target-health/example.py`
+**Expected observation**: the responsive fixture target is admitted for assignment.
 **Key takeaway**: do not hand a queued job to a known-bad target.
-**Why it matters**: fast failure protects pool throughput.
+**Why it matters**: fast failure protects the pool's throughput.
 
 ### Example 60: Reclaim a Stuck Task
 
 _ex-60 · exercises co-18, co-19_
 
-**Brief explanation**: Timeouts must be paired with pool reclamation.
-**Code**: `python3 code/cdp_simulation.py reclaim-stuck-task`
-**Expected observation**: local completion under a deadline.
-**Key takeaway**: timeout without cleanup only hides a leak.
+**Brief explanation**: A timeout must release its page-pool slot so the next caller can make progress.
+**Code**: `python3 code/ex-60-reclaim-stuck-task/example.py`
+**Expected observation**: the timed-out fixture task sets `slot_released` to true.
+**Key takeaway**: timeout without cleanup only hides a resource leak.
 **Why it matters**: one stuck task otherwise reduces capacity permanently.
 
 ### Example 61: Separate Control and Data Planes
 
 _ex-61 · exercises co-03, co-22_
 
-**Brief explanation**: Caller authorization and orchestration should not be mixed with page payloads.
-**Code**: `python3 code/cdp_simulation.py separate-control-data-planes`
-**Expected observation**: safe structured output.
+**Brief explanation**: Authorization and timeout policy belong to a control plane; title and other page
+observations belong to a separate data plane.
+**Code**: `python3 code/ex-61-control-data-planes/example.py`
+**Expected observation**: the authorized fixture control data remains separate from the page title.
 **Key takeaway**: small contracts keep high-authority control actions auditable.
 **Why it matters**: mixing boundaries increases accidental privilege.
 
@@ -122,9 +128,10 @@ _ex-61 · exercises co-03, co-22_
 
 _ex-62 · exercises co-22_
 
-**Brief explanation**: Service inputs should validate URLs, timeout bounds, and artifact options.
-**Code**: `python3 code/cdp_simulation.py validate-operation-schema`
-**Expected observation**: a local valid/invalid decision.
+**Brief explanation**: Service input validation checks supported operations, allowed origins, and a positive
+timeout before any target is allocated.
+**Code**: `python3 code/ex-62-validate-operation-schema/example.py`
+**Expected observation**: the authorized fixture navigate request passes the local schema.
 **Key takeaway**: validation is part of the browser-service contract.
 **Why it matters**: callers should receive a useful failure before browser allocation.
 
@@ -132,9 +139,10 @@ _ex-62 · exercises co-22_
 
 _ex-63 · exercises co-21, co-22_
 
-**Brief explanation**: Rate budgets apply per authorized origin, not globally by accident.
-**Code**: `python3 code/cdp_simulation.py per-origin-rate-limit`
-**Expected observation**: the fixture limit is enforced.
+**Brief explanation**: Rate budgets apply per authorized origin, so one fixture origin cannot consume a
+hidden global allowance intended for another.
+**Code**: `python3 code/ex-63-per-origin-rate-limit/example.py`
+**Expected observation**: the first fixture request consumes its single origin token.
 **Key takeaway**: rate limiting is both etiquette and resilience.
 **Why it matters**: one caller must not starve every other fixture.
 
@@ -142,9 +150,10 @@ _ex-63 · exercises co-21, co-22_
 
 _ex-64 · exercises co-13_
 
-**Brief explanation**: A visual result needs normalized viewport and deterministic comparison inputs.
-**Code**: `python3 code/cdp_simulation.py stable-visual-fingerprint`
-**Expected observation**: a modeled stable fingerprint.
+**Brief explanation**: A stable visual fingerprint is computed from normalized local rendering inputs,
+including a fixed viewport and fixture content.
+**Code**: `python3 code/ex-64-stable-visual-fingerprint/example.py`
+**Expected observation**: a reproducible 64-character SHA-256 fingerprint is produced.
 **Key takeaway**: diff a defined artifact, not arbitrary pixels.
 **Why it matters**: visual tests otherwise fail on unrelated environmental changes.
 
@@ -152,9 +161,10 @@ _ex-64 · exercises co-13_
 
 _ex-65 · exercises co-14_
 
-**Brief explanation**: A HAR-like summary can preserve timings without retaining all bodies.
-**Code**: `python3 code/cdp_simulation.py har-summary`
-**Expected observation**: local trace metadata only.
+**Brief explanation**: A HAR summary preserves fixture request count and slowest timing without retaining
+full response bodies.
+**Code**: `python3 code/ex-65-har-summary/example.py`
+**Expected observation**: two entries produce a maximum duration of ten milliseconds.
 **Key takeaway**: retain the minimum evidence required for diagnosis.
 **Why it matters**: data minimization makes trace collection safer.
 
@@ -162,9 +172,10 @@ _ex-65 · exercises co-14_
 
 _ex-66 · exercises co-15, co-21_
 
-**Brief explanation**: Every intercept rule needs an allowlisted action and a documented reason.
-**Code**: `python3 code/cdp_simulation.py interception-policy`
-**Expected observation**: a simulated policy verdict.
+**Brief explanation**: An interception rule authorizes one named action for one exact fixture resource
+pattern before it changes traffic.
+**Code**: `python3 code/ex-66-interception-policy/example.py`
+**Expected observation**: the local banner-image request is blocked by the explicit policy.
 **Key takeaway**: interception is policy enforcement, not a convenience hook.
 **Why it matters**: modifying traffic can change user-visible behavior.
 
@@ -172,9 +183,9 @@ _ex-66 · exercises co-15, co-21_
 
 _ex-67 · exercises co-20_
 
-**Brief explanation**: Compare a wrapper's guarantee with the CDP command it ultimately uses.
-**Code**: `python3 code/cdp_simulation.py compare-wrapper-contract`
-**Expected observation**: both modeled paths expose their assumptions.
+**Brief explanation**: Compare a wrapper guarantee with the CDP result value the caller actually needs.
+**Code**: `python3 code/ex-67-wrapper-contract/example.py`
+**Expected observation**: both local representations preserve `Fixture title`.
 **Key takeaway**: choose abstraction by required guarantees.
 **Why it matters**: wrappers remove boilerplate but not browser failure modes.
 
@@ -182,9 +193,10 @@ _ex-67 · exercises co-20_
 
 _ex-68 · exercises co-21, co-22_
 
-**Brief explanation**: A browser service should constrain where its browser can navigate.
-**Code**: `python3 code/cdp_simulation.py enforce-egress-allowlist`
-**Expected observation**: only fixture work is accepted.
+**Brief explanation**: A browser service constrains navigation to its owned egress allowlist before it
+opens a target.
+**Code**: `python3 code/ex-68-egress-allowlist/example.py`
+**Expected observation**: only the `fixture.test` origin is admitted.
 **Key takeaway**: treat browser egress as a capability to govern.
 **Why it matters**: tools must not become arbitrary browsing proxies.
 
@@ -192,9 +204,10 @@ _ex-68 · exercises co-21, co-22_
 
 _ex-69 · exercises co-13, co-19_
 
-**Brief explanation**: Screenshot rendering competes for the same bounded browser resources.
-**Code**: `python3 code/cdp_simulation.py limit-concurrent-screenshots`
-**Expected observation**: an explicit capacity model.
+**Brief explanation**: Screenshot rendering is a scarce resource with its own cap, even when other page
+operations can run concurrently.
+**Code**: `python3 code/ex-69-limit-concurrent-screenshots/example.py`
+**Expected observation**: two fixture captures observe a maximum concurrency of one.
 **Key takeaway**: pool by scarce resource, not by endpoint name.
 **Why it matters**: resource-aware limits prevent noisy-neighbor failures.
 
@@ -202,9 +215,10 @@ _ex-69 · exercises co-13, co-19_
 
 _ex-70 · exercises co-05, co-18_
 
-**Brief explanation**: A failure transcript should preserve command, event, timing, and redacted error.
-**Code**: `python3 code/cdp_simulation.py test-failure-transcript`
-**Expected observation**: deterministic failure evidence.
+**Brief explanation**: A failure transcript preserves a correlation id, command method, and error category
+while excluding unnecessary sensitive fields.
+**Code**: `python3 code/ex-70-failure-transcript/example.py`
+**Expected observation**: the local timeout transcript contains exactly its approved evidence fields.
 **Key takeaway**: test failure behavior as deliberately as success behavior.
 **Why it matters**: recovery code is production code.
 
@@ -212,29 +226,31 @@ _ex-70 · exercises co-05, co-18_
 
 _ex-71 · exercises co-02, co-07, co-18_
 
-**Brief explanation**: A restart invalidates sessions and requires explicit reattachment.
-**Code**: `python3 code/cdp_simulation.py handle-browser-restart`
-**Expected observation**: a modeled reattachment path.
-**Key takeaway**: stale session identifiers are invalid after target loss.
-**Why it matters**: transparent retries can otherwise talk to the wrong lifecycle.
+**Brief explanation**: A browser restart invalidates attached sessions, so recovery creates a new session
+instead of continuing with a stale identifier.
+**Code**: `python3 code/ex-71-browser-restart/example.py`
+**Expected observation**: the invalid old session is replaced by a valid `new-session` fixture.
+**Key takeaway**: stale session identifiers are invalid after a browser lifecycle change.
+**Why it matters**: transparent retries can otherwise address the wrong target lifecycle.
 
 ### Example 72: Measure Pool Saturation
 
 _ex-72 · exercises co-19_
 
-**Brief explanation**: Queue depth, active targets, and wait time reveal saturation.
-**Code**: `python3 code/cdp_simulation.py measure-pool-saturation`
-**Expected observation**: a local metrics result.
-**Key takeaway**: capacity changes should be evidence-driven.
+**Brief explanation**: Pool saturation is visible when every target is active and work is still queued.
+**Code**: `python3 code/ex-72-pool-saturation/example.py`
+**Expected observation**: the fixture reports two active slots at capacity and three queued jobs.
+**Key takeaway**: capacity changes should be evidence-driven by active and queued work.
 **Why it matters**: throughput alone hides unsafe queueing delays.
 
 ### Example 73: Design a Least-Privilege Tool
 
 _ex-73 · exercises co-21, co-22_
 
-**Brief explanation**: Expose separate navigate, evaluate, and screenshot operations with narrow inputs.
-**Code**: `python3 code/cdp_simulation.py least-privilege-tool`
-**Expected observation**: a constrained local operation model.
+**Brief explanation**: A least-privilege browser tool exposes one narrow fixture navigation operation,
+not arbitrary page execution.
+**Code**: `python3 code/ex-73-least-privilege-tool/example.py`
+**Expected observation**: the local contract admits only `navigate_fixture` on `fixture.test`.
 **Key takeaway**: smaller tool contracts lower blast radius.
 **Why it matters**: a generic execute operation is hard to approve safely.
 
@@ -242,9 +258,10 @@ _ex-73 · exercises co-21, co-22_
 
 _ex-74 · exercises co-21, co-22_
 
-**Brief explanation**: Audit records should state authorization, target, action, outcome, and correlation id.
-**Code**: `python3 code/cdp_simulation.py audit-service-request`
-**Expected observation**: safe structured JSON.
+**Brief explanation**: An audit record names authorization, target, action, outcome, and correlation id
+without storing cookies or page contents.
+**Code**: `python3 code/ex-74-audit-service-request/example.py`
+**Expected observation**: the fixture produces a complete, secret-free structured audit record.
 **Key takeaway**: audit evidence must be useful without retaining secrets.
 **Why it matters**: high-authority automation requires accountable operation.
 
@@ -252,8 +269,9 @@ _ex-74 · exercises co-21, co-22_
 
 _ex-75 · exercises co-01 through co-22_
 
-**Brief explanation**: Assemble validation, capacity, timeout, interception, and artifacts into one local flow.
-**Code**: `python3 code/cdp_simulation.py verify-complete-local-service-flow`
-**Expected observation**: a correlated, safe completion result.
+**Brief explanation**: The final service flow admits an authorized URL, acquires bounded capacity, and
+returns a title plus screenshot artifact without exposing a browser handle.
+**Code**: `python3 code/ex-75-complete-local-service-flow/example.py`
+**Expected observation**: the fixture report produces `Fixture report` and PNG bytes.
 **Key takeaway**: reliable automation is a set of explicit boundaries, not a sequence of clicks.
 **Why it matters**: this is the transferable design behind an illustrative browser-fleet service.

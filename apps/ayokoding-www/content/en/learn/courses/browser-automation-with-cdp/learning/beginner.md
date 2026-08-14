@@ -173,88 +173,100 @@ _ex-16 · exercises co-17_
 
 _ex-17 · exercises co-02, co-05_
 
-**Brief explanation**: Version metadata identifies the browser/protocol pair an adapter supports.
-**Code**: `python3 code/cdp_simulation.py inspect-version-endpoint`
-**Expected observation**: a stable local protocol result.
-**Key takeaway**: record versions with failures.
-**Why it matters**: CDP domains evolve with Chrome.
+**Brief explanation**: Raw CDP makes the command envelope explicit; a thin client should preserve the
+same method-and-parameter contract while hiding serialization details.
+**Code**: `python3 code/ex-17-raw-cdp-vs-client/example.py`
+**Expected observation**: the raw `Page.navigate` command and thin-client tuple describe the same URL.
+**Key takeaway**: choose a wrapper for ergonomics, but keep the underlying CDP contract legible.
+**Why it matters**: when a wrapper fails, protocol literacy reveals whether the defect is in its
+translation or in the browser interaction itself.
 
 ### Example 18: Log Lifecycle Events
 
 _ex-18 · exercises co-03, co-05_
 
-**Brief explanation**: One envelope makes command construction testable without transport I/O.
-**Code**: `python3 code/cdp_simulation.py create-command-envelope`
-**Expected observation**: JSON with id, method, and parameters.
-**Key takeaway**: serialize at the transport edge.
-**Why it matters**: pure command construction is easy to unit-test.
+**Brief explanation**: Lifecycle events provide evidence for readiness: DOM content is available before
+the later full-load event in this local fixture.
+**Code**: `python3 code/ex-18-lifecycle-events/example.py`
+**Expected observation**: `Page.domContentEventFired` appears before `Page.loadEventFired`.
+**Key takeaway**: select the weakest event that proves the next step is safe to run.
+**Why it matters**: a full-load wait can be slower or never finish when unrelated page resources remain
+active.
 
 ### Example 19: Wait for a Selector
 
 _ex-19 · exercises co-05, co-06_
 
-**Brief explanation**: Events and replies may arrive in either order.
-**Code**: `python3 code/cdp_simulation.py correlate-out-of-order-response`
-**Expected observation**: the id invariant still holds.
-**Key takeaway**: keep pending futures keyed by command id.
-**Why it matters**: arrival-order assumptions fail under concurrent work.
+**Brief explanation**: Selector presence is a concrete, event-driven readiness condition; it replaces a
+fixed sleep with an observable DOM predicate.
+**Code**: `python3 code/ex-19-wait-for-selector/example.py`
+**Expected observation**: the fixture advances from an empty snapshot to one containing `#ready`.
+**Key takeaway**: make the selector and deadline part of the automation contract.
+**Why it matters**: a timing guess either flakes on slow runs or wastes time on fast ones.
 
 ### Example 20: Fill and Submit a Form
 
 _ex-20 · exercises co-07_
 
-**Brief explanation**: A browser can host many pages, workers, and other targets.
-**Code**: `python3 code/cdp_simulation.py list-targets`
-**Expected observation**: a local target-discovery result.
-**Key takeaway**: select target type and ownership deliberately.
-**Why it matters**: attaching to the wrong target can automate the wrong page.
+**Brief explanation**: A form flow is complete only when the typed field produces the expected
+post-submit state, not when an input event has merely been dispatched.
+**Code**: `python3 code/ex-20-fill-and-submit-form/example.py`
+**Expected observation**: the local email fixture is present and the form becomes submitted.
+**Key takeaway**: assert the visible state before and after a user action.
+**Why it matters**: focus, validation, and client-side handlers can accept a click without advancing the
+workflow.
 
 ### Example 21: Log Network Requests
 
 _ex-21 · exercises co-07_
 
-**Brief explanation**: A session scopes commands to one target attachment.
-**Code**: `python3 code/cdp_simulation.py attach-session`
-**Expected observation**: one safe attachment scenario.
-**Key takeaway**: retain and dispose the session explicitly.
-**Why it matters**: leaked sessions confuse event routing and resource cleanup.
+**Brief explanation**: Network observation records the minimum metadata needed to explain a page load
+without retaining live response bodies or credentials.
+**Code**: `python3 code/ex-21-network-request-log/example.py`
+**Expected observation**: the local trace contains one `GET` request with status `200`.
+**Key takeaway**: log method, status, and authorized URL metadata before considering body capture.
+**Why it matters**: raw network traces can unintentionally retain personal data and tokens.
 
 ### Example 22: Capture a Response Body
 
 _ex-22 · exercises co-06, co-09_
 
-**Brief explanation**: `DOMContentLoaded` can be the right signal before querying static document content.
-**Code**: `python3 code/cdp_simulation.py observe-dom-content-loaded`
-**Expected observation**: event-shaped completion without timing guesses.
-**Key takeaway**: choose the weakest readiness event that proves your precondition.
-**Why it matters**: waiting for full load can waste time or hang on unrelated assets.
+**Brief explanation**: Response-body capture needs a named fixture, byte limit, and retention policy;
+unbounded capture is not ordinary request logging.
+**Code**: `python3 code/ex-22-capture-response-body/example.py`
+**Expected observation**: the synthetic JSON body stays within the configured 64-byte limit.
+**Key takeaway**: capture only authorized, bounded data and validate its size before decoding.
+**Why it matters**: response bodies can be large or sensitive even when their request metadata is safe.
 
 ### Example 23: Block a Request
 
 _ex-23 · exercises co-04, co-12_
 
-**Brief explanation**: Emulation changes the rendering contract before a page is loaded.
-**Code**: `python3 code/cdp_simulation.py set-viewport`
-**Expected observation**: a deterministic emulation scenario.
-**Key takeaway**: pin viewport, scale, and user agent in visual tests.
-**Why it matters**: an unspecified viewport makes screenshots incomparable.
+**Brief explanation**: Request interception is a privileged action, so this fixture blocks one exact
+image path instead of broadly changing page traffic.
+**Code**: `python3 code/ex-23-block-a-request/example.py`
+**Expected observation**: only the local `/ads/banner.png` fixture matches the blocking rule.
+**Key takeaway**: make interception rules narrow, authorized, and observable.
+**Why it matters**: broad blocking can conceal application defects or unexpectedly change behavior.
 
 ### Example 24: Mock a Response
 
 _ex-24 · exercises co-21_
 
-**Brief explanation**: Authorization belongs before navigation and before resource allocation.
-**Code**: `python3 code/cdp_simulation.py build-allowlist`
-**Expected observation**: only a fixture origin is accepted by the model.
-**Key takeaway**: deny unknown origins by default.
-**Why it matters**: a browser service has more reach than a normal HTTP client.
+**Brief explanation**: A mocked response replaces one authorized dependency with a deterministic local
+contract so the page behavior can be asserted without an external service.
+**Code**: `python3 code/ex-24-mock-a-response/example.py`
+**Expected observation**: the fixture endpoint returns a `200` response containing `hello`.
+**Key takeaway**: mock the narrow dependency contract that the test actually needs.
+**Why it matters**: deterministic fixtures keep a UI test from inheriting a third party's outages.
 
 ### Example 25: Set a Cookie
 
 _ex-25 · exercises co-05, co-06_
 
-**Brief explanation**: A trace ties command ids, methods, durations, and errors together.
-**Code**: `python3 code/cdp_simulation.py emit-structured-trace`
-**Expected observation**: deterministic JSON suitable for a test assertion.
-**Key takeaway**: observability begins at the protocol boundary.
-**Why it matters**: a screenshot alone cannot explain a failed automation step.
+**Brief explanation**: A synthetic fixture cookie establishes local session state before navigation,
+without using a real credential or persisting it beyond the test context.
+**Code**: `python3 code/ex-25-set-a-cookie/example.py`
+**Expected observation**: the session cookie can be read at the `fixture.test` origin.
+**Key takeaway**: isolate and redact fixture session state; never place production cookies in examples.
+**Why it matters**: browser cookies can confer account access and must be treated as sensitive data.
