@@ -119,7 +119,7 @@ Concerns that warrant their own diagram when present:
 
 Prefer multiple focused diagrams over one overloaded diagram. Trivial/linear plans (single-file config bumps, renames, doc fixes) may skip diagrams — this is the "where appropriate" escape hatch.
 
-**Authoritative rule**: [repo-governance/conventions/structure/plans.md §Diagrams in Plans](../../../repo-governance/conventions/structure/plans.md#diagrams-in-plans)
+**Authoritative rule**: [repo-governance/conventions/structure/plans.md §Diagrams in Plans](../../../repo-governance/conventions/structure/plans/40-diagrams-required.md#diagrams-in-plans)
 
 **Palette and accessibility**: use the `docs-creating-accessible-diagrams` skill for the verified WCAG-compliant hex codes and color-blind-friendly palette.
 
@@ -131,14 +131,14 @@ exactly as with the specs/Gherkin binding.
 
 Every UI-bearing plan MUST document its draft UI through the **UI-design-funnel**
 (diverge → narrow → select → justify), authored per the
-[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
+[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 **PLACEMENT HARD RULE**: ALL funnel artefacts MUST be placed in the plan's **`prd.md`** — not in
 `README.md`, `brd.md`, `tech-docs.md`, or any separate file. Binary mockup image assets live
 under the plan's `assets/` folder and are referenced from `prd.md` via `![]()` image embeds.
 A UI-bearing plan whose `prd.md` does NOT contain the funnel record (all four stages plus embedded
 mockup links) fails the plan quality gate. See
-[UI Mockups in Plan Docs — Placement](../../../repo-governance/conventions/formatting/diagrams.md#placement--the-ui-lives-in-prdmd-hard-rule).
+[UI Mockups in Plan Docs — Placement](../../../repo-governance/conventions/formatting/diagrams/47-ui-mockups-placement-hard-rule-requirements.md#placement--the-ui-lives-in-prdmd-hard-rule-requirements-and-enforcement).
 
 The funnel produces four kinds of artefact, all visible in the plan (`prd.md` + the plan's
 `assets/`); no alternative is silently discarded:
@@ -227,7 +227,7 @@ plans/in-progress/complex-feature/
 └── delivery.md               # Phased checklist (one checkbox = one action)
 ```
 
-**Content-placement split** (authoritative — see [Content-Placement Rules](../../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd)):
+**Content-placement split** (authoritative — see [Content-Placement Rules](../../../repo-governance/conventions/structure/plans/14-content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd)):
 
 - **`brd.md`** — WHY: business goal, impact, affected roles, business-level success metrics, business-scope Non-Goals, business risks. Solo-maintainer repo — no sign-off / sponsor / stakeholder ceremony language.
 - **`prd.md`** — WHAT: product overview, personas, user stories, Gherkin acceptance criteria, product scope (in + out), product risks.
@@ -236,7 +236,7 @@ plans/in-progress/complex-feature/
   `[E]`/`[N]`/`[D]`/`[G]` markers as the primary scope view. Add `### More Detail` directly below it
   only for non-obvious mechanics, ordering, discovery criteria, or archival follow-up; it never
   replaces the tree or contains delivery checkboxes. See [Plans Organization Convention §File-Impact
-  Analysis Format](../../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
+  Analysis Format](../../../repo-governance/conventions/structure/plans/12-file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
 - **`delivery.md`** — DO: sequential `- [ ]` checklist organized by phase; one concrete action per checkbox. Opens with the `[AI]`/`[HUMAN]` executor legend; each phase ends with a `### Phase N Gate` (must-pass verification) followed by a Pause Safety note.
 
 **Benefits**: narrow PR diff per concern (business PRs touch brd.md only; product PRs touch prd.md only), sharper agent validation (plan-checker asserts placement per file), industry-norm alignment (BRD + PRD are recognized doc types).
@@ -265,7 +265,7 @@ If the plan grows past 1000 lines or authoring feels crowded, promote to the fiv
 
 ## Worktree Specification (Mandatory — Applies to ALL Plans)
 
-Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent. When the section is present, the executor enters the declared worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — per the [Worktree Cap HARD RULE](../../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) — is capped at **one worktree per repository per plan**, reused across every delivery unit landed there. Cleanup is immediate, not deferred: the worktree is removed the moment this plan is done using that repo, not batched with unrelated later steps.
+Every plan MUST declare its worktree path before the delivery checklist begins. This is enforced by `plan-checker` (HIGH finding when missing) and the [plan-execution workflow Step 0 hard gate](../../../repo-governance/workflows/plan/plan-execution.md) — execution refuses to start if the section is absent. When the section is present, the executor enters the declared worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — per the [Worktree Cap HARD RULE](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) — is capped at **one worktree per repository per plan**, reused across every delivery unit landed there. Cleanup is immediate, not deferred: the worktree is removed the moment this plan is done using that repo, not batched with unrelated later steps.
 
 **Where to declare**:
 
@@ -292,7 +292,7 @@ claude --worktree <plan-identifier>
 
 The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and — capped at one per repository per plan and reused across every delivery unit landed there — is removed immediately once the plan is done using this repo, not deferred to archival.
 
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
 ````
 
 **This applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions.
@@ -301,7 +301,7 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 
 Every plan resolves to exactly one **delivery mode** before execution begins, declared alongside the `## Worktree` / `## Worktree Specification` section above. Delivery mode is a sibling concern to the worktree declaration: the worktree fixes the **work location**; delivery mode additionally fixes the **integration target** and **merge authority**.
 
-**The four modes** (full table and precedence algorithm: [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)):
+**The four modes** (full table and precedence algorithm: [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)):
 
 - **`worktree-to-pr`** — **the default** when no mode is otherwise specified. Work in `worktrees/<plan-identifier>/`, draft PR opened against `main`, `[AI]` merges once the hardened preconditions hold (a `[HUMAN]` merge gate applies only where the plan's own step says so).
 - **`worktree-to-origin-main`** — work in the worktree, direct push to `origin main`, `[AI]` pushes directly.
@@ -313,7 +313,7 @@ freely selectable in every repo. `main` is branch-protected (including for admin
 and `ose-primer`, so neither direct-push mode has an executable path there — `worktree-to-pr` is
 **mandatory**, not merely the safest default. Only `ose-private` retains a
 narrow surviving exception, and only for a genuinely infrastructure-as-code plan. See [Plans
-Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repo table and enforcement detail.
 
 `worktree-to-pr` is mandatory in `ose-public` and `ose-primer` — it is the safest choice everywhere
@@ -380,7 +380,7 @@ Plans are executed by **execution-grade (sonnet-tier)** agents, not planning-gra
 - [ ] Run `npx nx affected -t lint` — exits 0 with no errors reported.
 ```
 
-See [Plans Organization Convention §Execution-Grade Clarity](../../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule) for the authoritative rule.
+See [Plans Organization Convention §Execution-Grade Clarity](../../../repo-governance/conventions/structure/plans/16-execution-grade-clarity.md#execution-grade-clarity-hard-rule) for the authoritative rule.
 
 ## Executor Tagging — [AI] vs [HUMAN] (HARD RULE)
 
@@ -431,7 +431,7 @@ Every phase MUST be a **natural pause point** that ends with a **clear gate**. A
 
 Phase 0 (Environment Setup and Baseline) already follows this shape — its gate is the recorded clean baseline. A gate MAY be a `[HUMAN]` approval, making the boundary an explicit hand-off point.
 
-See [Plans Organization Convention §Executor Tagging](../../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule) and [§Phases as Natural Pauses With Clear Gates](../../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule) for the authoritative rules.
+See [Plans Organization Convention §Executor Tagging](../../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule) and [§Phases as Natural Pauses With Clear Gates](../../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule) for the authoritative rules.
 
 ## Pre-Write Verification (Anti-Hallucination — HARD)
 
@@ -585,7 +585,7 @@ And their session is created with correct permissions
 
 **Format**: A two-pager idea brief — one `plans/ideas/<slug>.md` per idea, ~8 short sections
 (problem, why-now, prior art, direction sketch, scope & non-goals, risks & open questions, success/promotion),
-≤ ~2 pages. Not a full plan. See the [Ideas Folder (Two-Pagers) convention](../../../repo-governance/conventions/structure/plans.md#ideas-folder-two-pagers).
+≤ ~2 pages. Not a full plan. See the [Ideas Folder (Two-Pagers) convention](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers).
 Scan `plans/ideas/` first and fold into an existing brief rather than duplicating.
 
 **Example**: `plans/ideas/rules-consolidation.md` — a brief pitching Skills-naming fixes, References
@@ -912,7 +912,7 @@ Plan Archival):
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning
       into that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md`
       when the scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers)).
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers)).
 - [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR. The sole
       carve-out is a bug/lint/test failure that blocks THIS plan's own scope — that is fixed inline

@@ -123,7 +123,7 @@ two PRs from one branch, and never drive one PR from two branches.
 
 The **worktree** is not part of this 1:1 mapping. A plan provisions **at most one worktree per
 repository**, reused — branch-switched — across every delivery unit it produces in that repo; see
-[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 Never provision a second worktree for a repo the plan already has one open in — switch branches
 inside the existing one instead.
 
@@ -133,7 +133,7 @@ what maps to a PR: a plan opens a PR at its natural delivery points, which may b
 end or several times through the plan. Phases inside a unit that are not its boundary still pass
 their own `### Phase N Gate`, but open no PR and merge nothing. The boundary test, the required
 `### Delivery Boundaries` declaration table, and the anti-batching counterweight are stated in
-[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 Genuinely dependent phases stay a single delivery unit. The DAG governs, not the phase numbering:
 phases that merely appear in sequence are not thereby dependent, and splitting **independent** work
@@ -147,7 +147,7 @@ no branch, runs no review cycle, and merges nothing — under **every** delivery
 `worktree-to-pr` included. Author it as a local, gate-terminated phase whose evidence artifacts ride
 the Phase 1 PR. A Phase 0 that genuinely produces reviewable changes is mis-scoped: move that work
 into Phase 1. See
-[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ### Merge at Delivery Boundaries — Not Every Phase, and Not One Batch
 
@@ -164,7 +164,7 @@ holding **independent, already-open** PRs — never the decision to review a dep
 complete thought.
 
 The **merge actor** follows the inverted default in
-[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode):
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode):
 `[AI]` merges once the hardened preconditions hold, and `[HUMAN]` applies **only** where a plan's
 own step states that gate explicitly.
 
@@ -274,7 +274,7 @@ branch-protected against direct pushes in both repos (including for admins), so 
 both repositories a plan-docs-only change uses `worktree-to-pr` like any other change, since there is
 no direct-push path left to carve out of. It survives, narrowed, in
 `ose-private` only as the infrastructure-as-code carve-out — see
-[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the current binding rule. The historical description below is kept for context.
 
 A change touching **only** `plans/**`, with no `apps/` or `libs/` code, previously could push direct
@@ -285,7 +285,7 @@ It is stated here in its own right and is **not** derived from DD-11 of any indi
 disclaims being a general precedent.
 
 **Reconciling with the `main-to-origin-main` content restriction**: [Plans Organization Convention —
-Delivery Mode](../../conventions/structure/plans.md#delivery-mode) restricts `main-to-origin-main` to
+Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) restricts `main-to-origin-main` to
 an `.md`-only change set or explicit user go-ahead. Plan-folder pushes are `.md`-only in the ordinary
 case, so this carve-out is that condition's plan-authoring-time instance — no separate justification
 is needed. When a plan-docs-only push carries a **non-markdown** evidence artifact (a CSV baseline, a
@@ -372,7 +372,7 @@ Resolve ALL of the following:
 7. **Push target**: Confirm where the finished plan should be pushed (default: `origin main`).
    Record — used verbatim in Step 7 without re-asking.
 8. **PR vs. direct push — Delivery Mode**: Confirm which of the four
-   [Delivery Mode](../../conventions/structure/plans.md#delivery-mode) options — `worktree-to-pr`
+   [Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) options — `worktree-to-pr`
    (default), `worktree-to-origin-main`, `main-to-origin-main`, or `main-to-pr` — governs this
    plan's own future execution. Record the answer so Step 4 instructs `plan-maker` to declare it
    explicitly in the plan's `## Delivery Mode` field; an unmarked field falls through to the
@@ -473,7 +473,7 @@ Delegate via the Agent tool. Provide a self-contained handoff prompt containing 
 8. **File-impact instruction**: make `tech-docs.md`'s `## File-Impact Analysis` a root-relative,
    annotated file tree using `[E]`/`[N]`/`[D]`/`[G]` markers. It is the primary scope view; add
    `### More Detail` directly below it only for non-obvious mechanics, ordering, discovery criteria,
-   or archival follow-up. Follow [Plans Organization Convention §File-Impact Analysis Format](../../conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
+   or archival follow-up. Follow [Plans Organization Convention §File-Impact Analysis Format](../../conventions/structure/plans/12-file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
 
 `plan-maker` emits the final Knowledge Capture phase in `delivery.md` plus a `learnings.md`
 scaffold in the plan folder as part of every generated plan, per the
@@ -514,12 +514,12 @@ Read the created plan files and verify structural completeness before the qualit
 6. Verify delivery checklist starts with **Phase 0: Environment Setup and Baseline**, and that
    Phase 0 contains **no** PR-creation, PR-review-cycle, push, or merge step — the earliest phase
    that may open a PR is Phase 1
-   ([§Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
+   ([§Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
 7. Verify the `## Parallelization Model` carries a `### Delivery Boundaries` table mapping **every**
    change-producing phase to a delivery unit, that the last change-producing phase is a boundary,
    and that PR-creation, review-cycle, and merge steps appear **only** in boundary phases — a PR per
    phase is a defect
-   ([§PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
+   ([§PRs Open at Delivery Boundaries](../../conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
 9. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
 10. Verify `tech-docs.md` has a `## File-Impact Analysis` whose primary view is one root-relative,
@@ -627,7 +627,7 @@ resolution.
 - [web-researcher Agent](../../../.claude/agents/web-researcher.md) — Step 2
 - [repo-setup-manager Agent](../../../.claude/agents/repo-setup-manager.md) — Phase 0 of plans
   created by this workflow
-- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) —
+- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) —
   the four-mode vocabulary and three-tier precedence confirmed in Step 1 item 8
 - [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — the review loop that runs
   during execution when the plan's confirmed delivery mode is `worktree-to-pr` or `main-to-pr`

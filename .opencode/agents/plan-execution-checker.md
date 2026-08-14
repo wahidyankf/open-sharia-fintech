@@ -189,8 +189,8 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 **Related Conventions:**
 
-- [Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule) - `[AI]`/`[HUMAN]` marker rules, legend, handoff/resume signal requirement (validated in Step 5f-gates)
-- [Plans Organization Convention §Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule) - Phase gate barrier rule, Pause Safety requirement (validated in Step 5f-gates)
+- [Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule) - `[AI]`/`[HUMAN]` marker rules, legend, handoff/resume signal requirement (validated in Step 5f-gates)
+- [Plans Organization Convention §Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule) - Phase gate barrier rule, Pause Safety requirement (validated in Step 5f-gates)
 - [User-Facing Delivery Hardening Convention](../../repo-governance/development/quality/user-facing-delivery-hardening.md) - Verify that the production visual sign-off (rule 1), the deploy-config smoke test (rule 11), and — on web-UI plans — the near-end three-tester retest round ran (rule 15) with every rule-15 EWT/UWT/DWT defect checkbox in `delivery.md` fixed (ticked) before archival — deferral of a defect finding requires explicit user permission and is allowed only when the fix is genuinely impossible; an unfixed defect checkbox at archival time is a HIGH finding; flag their absence as HIGH on UI-bearing plans; SG-### proposals and USS-### suggestions may be triaged or deferred
 - [Manual Behavioral Verification Convention](../../repo-governance/development/quality/manual-behavioral-verification.md) - Verify Playwright/curl manual assertions were performed and documented (Step 7)
 - [Evidence Capture Convention](../../repo-governance/development/quality/evidence-capture.md) - Verify each ticked manual-verification step carries committed evidence (screenshots in the plan's `evidence/` subfolder referenced from `delivery.md`, inline curl output) and that multi-locale apps were verified across ALL locales; flag bare "verified manually", missing screenshots, and single-locale-only coverage as HIGH (Step 7 items 4 + 5)
@@ -410,7 +410,7 @@ After verifying archival (Step 5d), verify that execution actually happened insi
    - Worktree still present with NO recorded prompt/decline: **MEDIUM** finding (cleanup step skipped — worktrees accumulate).
    - Worktree deleted with NO recorded user confirmation: **HIGH** finding (deletion without explicit user approval violates the prompted-cleanup rule).
 
-6. **Worktree cap held during execution (enforces [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))**
+6. **Worktree cap held during execution (enforces [Worktree Cap](../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))**
    - This check runs against the single repository `plan-execution-checker` is invoked in. Inspect
      execution evidence for this repo — implementation-notes/execution-log lines recording
      `git worktree add`, or (when still on disk) `git worktree list --porcelain` combined with
@@ -441,8 +441,8 @@ After verifying archival (Step 5d), verify that execution actually happened insi
 ### 10. Phase Gate and Execution Marker Post-Execution Validation (Step 5f-gates — MANDATORY)
 
 After verifying worktree usage (Step 5e), validate that execution respected the phase gate barrier rule and surfaced every `[HUMAN]` step. These conventions are defined at
-[Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)
-and [§Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
+[Plans Organization Convention §Execution Markers](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)
+and [§Phase Gates and Natural Pauses](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 
 #### What to Validate
 
@@ -594,7 +594,7 @@ confirmed satisfied.
    until either a phase or an explicit "none" record exists.
 6. **No duplicate two-pager created in `plans/ideas/`** — for any entry routed to `plans/ideas/`,
    confirm the routing note evidences the overlap scan required by
-   [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers):
+   [Integrate Before You Add](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers):
    either it names the pre-existing brief the learning was folded into, or it states the scan of
    `plans/ideas/README.md` found no overlapping brief before a new file was created. A new
    `plans/ideas/<slug>.md` created in this plan's diff without that evidence, or one that
@@ -628,7 +628,7 @@ confirmed satisfied.
 ### 13. Delivery Mode and PR-Review Cycle Verification (Step 5i — MANDATORY)
 
 After the Knowledge Capture blocking gate (Step 5h), verify that execution actually matched the
-plan's resolved [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode).
+plan's resolved [Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
 For `*-to-pr` modes this replaces the plain-`main` assumption baked into Step 5d (Archival) and
 Step 5e (Worktree) above: archival lands **inside the delivering PR**, and completion does not
 require the PR to be merged.
@@ -673,7 +673,7 @@ require the PR to be merged.
    scopes it to Phase 0, and no PR whose diff contains only baseline evidence artifacts. A PR that
    was actually opened for Phase 0: **HIGH**. Also confirm the plan's Phase 0 checklist has no
    ticked PR/push/merge checkbox — a ticked one is the same finding with on-disk evidence. See
-   [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+   [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 5. **PRs match the declared delivery boundaries** — a PR opens at a **delivery boundary**, not at
    every phase. Read the plan's `### Delivery Boundaries` table, then enumerate the PRs actually
    opened (`gh pr list --search "<plan-identifier>" --state all --json number,title,headRefName`).
@@ -683,7 +683,7 @@ require the PR to be merged.
    exceed the count of declared boundaries. If the plan predates this rule and carries no table,
    record that as a grandfathering note rather than a finding, and check only that no work was left
    unmerged. See
-   [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+   [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 #### Finding Severity
 

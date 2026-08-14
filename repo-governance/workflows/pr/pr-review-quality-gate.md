@@ -487,7 +487,7 @@ flowchart LR
 The PR merge sits **outside** this workflow's done-boundary: this workflow establishes that the PR is
 green and route-complete. By default `[AI]` merges immediately once the applicable done-items and the
 five hardened merge preconditions hold — see
-[Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
+[Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
 
 **Three-repo nuance**: when this workflow runs against a plan whose plan folder lives in a different
 repo than the one carrying the PR (for example, a `plans/` folder that exists only in `ose-public`),
@@ -525,17 +525,17 @@ Baseline — it opens no PR, so there is no PR for the fan-out to review, no thr
 `pr-review-fixer` to resolve, and no CI run for the per-cycle gate. The earliest phase this workflow
 can run against is **Phase 1**. Dispatching the specialist fan-out against a Phase 0 is a defect, not
 a thoroughness choice: it spends a full N-cycle loop reviewing a diff that does not exist. See
-[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 Nor does it run once per phase. This workflow binds to a **PR**, and a PR opens at a **delivery
 boundary** — the phase after which the accumulated work is independently shippable. Phases inside a
 delivery unit that are not its boundary open no PR and therefore run no review cycle; the cycle runs
 once, at the boundary, against the unit's complete diff. That is deliberate: reviewing scaffolding
 the next phase rewrites spends a full loop on work whose intent is not yet visible. See
-[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 See
-[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the full four-mode table, and
 [plan-execution.md Step 8](../plan/plan-execution.md#8-finalization-and-archival-sequential) for how
 this workflow is wired into plan finalization.
@@ -623,9 +623,9 @@ Track across executions:
 - **[Diagram and Schema Convention](../../conventions/formatting/diagrams.md)**: diagrams use
   `sequenceDiagram` and `flowchart LR`, the color-blind-friendly palette, and a documented
   color-scheme comment.
-- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**:
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)**:
   this workflow implements the `*-to-pr` modes' review-cycle and done-definition requirements defined
   by that convention.
-- **[Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)**:
+- **[Executor Tagging](../../conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)**:
   the merge actor is explicit — `[AI]` by default, `[HUMAN]` only where a plan says so — so the
   AI/human executor boundary stays legible rather than assumed.

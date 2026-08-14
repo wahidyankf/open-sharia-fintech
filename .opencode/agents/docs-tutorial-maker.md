@@ -300,7 +300,7 @@ return db.users.create({ username, hash });
 - Discuss design decisions, alternatives, and implications
 - Reference related examples or documentation
 
-See [Tutorial Naming Convention - By Example Requirements](../../repo-governance/conventions/tutorials/naming.md#by-example) for complete annotation standards.
+See [Tutorial Naming Convention - By Example Requirements](../../repo-governance/conventions/tutorials/naming/11-by-example-overview.md#by-example-overview-and-structure) for complete annotation standards.
 
 ## File Naming
 

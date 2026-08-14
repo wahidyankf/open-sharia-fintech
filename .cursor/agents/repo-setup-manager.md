@@ -24,7 +24,7 @@ Execute the following steps in order. Each step must pass before proceeding to t
 > recorded path constant) stays on the plan branch and lands in the first PR the plan opens. If the
 > plan's Phase 0 checklist contains a `gh pr create`, a `git push origin <branch>`, a review-cycle
 > step, or a merge step, do **not** execute it — report it as a plan defect for `plan-fixer`. See
-> [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+> [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ### Step 1: Install Dependencies
 

@@ -198,7 +198,7 @@ to `web-researcher` for anything requiring multi-page research, per the
 
 - [AGENTS.md](../../AGENTS.md) - Primary guidance; the canonical instruction surface this discipline watches for decay
 - [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md) - Per-surface word thresholds this discipline enforces
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
+- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
 
 **Related Agents**:
 

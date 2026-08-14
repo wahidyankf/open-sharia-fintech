@@ -190,7 +190,7 @@ multi-page research, per the
 
 - [AGENTS.md](../../AGENTS.md) - Primary guidance
 - [Secrets and Env Standards](../../repo-governance/conventions/security/secrets-and-env-standards.md) - The no-secrets iron rule this discipline enforces at review time
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
+- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) - The delivery-mode vocabulary this agent's applicability depends on
 
 **Related Agents**:
 

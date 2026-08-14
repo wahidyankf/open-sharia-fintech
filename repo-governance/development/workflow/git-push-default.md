@@ -26,7 +26,7 @@ content restriction on top of that — valid only for an `.md`-only change set o
 go-ahead (Standard 2). This applies to all contexts: general work, plan creation, plan checking, plan
 fixing, and plan execution. The canonical four-mode vocabulary and the three-tier precedence that
 resolves which mode is active live in the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode);
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode);
 this convention governs the push mechanics for each mode.
 
 ## Principles Implemented/Respected
@@ -91,7 +91,7 @@ This practice implements/respects the following conventions:
 - PR merge approval, the PR-Review Maker→Fixer Cycle, and the done-definition once a PR is opened:
   governed by the [PR Merge Protocol Convention](./pr-merge-protocol.md).
 - The full four-mode vocabulary and the precedence algorithm itself: defined once, canonically, in the
-  [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
+  [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
 
 ## Standards
 
@@ -125,7 +125,7 @@ all: no `git push origin <plan-id>`, no `gh pr create`, no review cycle, no merg
 begins at **Phase 1**, which is the earliest phase that may open a PR; any evidence file Phase 0 wrote
 rides that first PR. This is not a mode override — it holds under every one of the four delivery
 modes. See
-[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ### Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted
 
@@ -137,7 +137,7 @@ direct-push mode has an executable path in those two repositories, full stop**.
 In `ose-private`, both direct-push modes remain available only for infrastructure-as-code plans
 (Terraform, Ansible, and equivalent state-changing infra work needing the primary checkout's real
 secrets and local state). Every other plan, in all three repositories, uses `worktree-to-pr`. See
-[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule)
+[Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule — this is the current binding constraint, and it applies before the
 selection-signal and content-restriction tests below.
 
@@ -175,7 +175,7 @@ only when **one** of two conditions also holds:
 2. the user has given **explicit, standing go-ahead** for that specific change.
 
 Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the canonical statement of this restriction and its relationship to the
 [Plan-Docs-Only Carve-Out](../../workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos).
 
@@ -327,7 +327,7 @@ User prompt: "Plan a feature for Z." (default `worktree-to-pr` mode applies; no 
 All three are plain git-mechanical steps an agent performs directly. Under `worktree-to-pr`, every
 step — including the final PR merge — is `[AI]` by default; a `[HUMAN]` merge gate applies only
 where a plan's own step says so explicitly. These are mis-tags per
-[Plans Organization Convention §Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
+[Plans Organization Convention §Executor Tagging](../../conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
 `plan-checker` flags them; `plan-fixer` retags them `[AI]`.
 
 ### PASS: Correct plan-maker behavior — git-mechanical steps and the merge both tagged `[AI]`
@@ -396,6 +396,6 @@ same commit as the plan work.
   applies to pushes on both PR branches and `origin main`.
 - [Proactive Preexisting Error Resolution](../practice/proactive-preexisting-error-resolution.md) —
   Practice governing proactive fixes of discovered violations.
-- [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) —
+- [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) —
   The canonical four-mode vocabulary, the `## Delivery Mode` field syntax, and the three-tier
   precedence algorithm this convention's push mechanics implement.

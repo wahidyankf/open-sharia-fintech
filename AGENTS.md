@@ -123,9 +123,9 @@ repo share its worktree, sequentially. Merges need **all five hardened precondit
 folding independent nodes to cut PR count stays forbidden. **Phase 0 opens none** — earliest is Phase 1.
 
 **See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
-[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
-[§Worktree Cap](./repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
-[§Per-Repository Delivery Mode Restrictions](./repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule),
+[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode),
+[§Worktree Cap](./repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+[§Per-Repository Delivery Mode Restrictions](./repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
 ### Integration Diff Review
@@ -349,7 +349,7 @@ role. Do not maintain a second roster here. Names follow `<domain>-<role>`:
 - **PR Review Cycle** — every open PR is behavior-classified; nine discipline
   `pr-review-*-maker` specialists fan out to `pr-review-synthesis-maker` (coordinator, sole poster
   of record) to `pr-review-fixer` only for eligible executable behavior. See
-  [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
+  [Delivery Mode](./repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode),
   [PR Review Quality Gate](./repo-governance/workflows/pr/pr-review-quality-gate.md),
   [PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md).
 - **Testing** — `web-{exploratory,usability,design}-tester` (spec-aware / spec-blind / design-aware)

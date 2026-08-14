@@ -45,7 +45,7 @@ Validate project plans against standards defined in [Plans Organization Conventi
 
 ### 2. Requirements Validation (BRD + PRD)
 
-Per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd), business and product concerns live in separate files. Flag misplacement as distinct findings — content in the wrong file is a structural violation, not a stylistic issue.
+Per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans/14-content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd), business and product concerns live in separate files. Flag misplacement as distinct findings — content in the wrong file is a structural violation, not a stylistic issue.
 
 **In `brd.md` (business perspective)**:
 
@@ -92,7 +92,7 @@ Per the [Content-Placement Rules](../../repo-governance/conventions/structure/pl
   missing action markers, an unbounded/vague target, or prose as the primary view as **HIGH**. A
   `### More Detail` section is optional, but when present must immediately follow the tree and only
   explain mechanics, ordering, discovery criteria, or archival follow-up; it cannot replace the tree
-  or contain delivery checkboxes. See [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
+  or contain delivery checkboxes. See [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans/12-file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
 
 #### Diagram Format Check
 
@@ -114,14 +114,14 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **TDD-shaped steps**: Any checklist item that ships code MUST have a corresponding test-first step (Red→Green→Refactor structure). Flag as **HIGH** any code delivery item that does not include a failing-test step before the implementation step. See [Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md) for required TDD step shapes.
 - **TDD phase separation (HARD RULE)**: RED, GREEN, and REFACTOR must each be their own `- [ ]` checkbox. A single checkbox that combines multiple phases (e.g., `- [ ] Write test, implement, and refactor feature X`) is a HARD RULE violation. Flag as **HIGH**. See [TDD Shape for Delivery Checklists](../../repo-governance/development/workflow/test-driven-development.md#tdd-shape-for-delivery-checklists).
 - **Non-code step format**: Steps that do NOT ship code (doc edits, config changes, file creation, governance updates) must use the direct action + acceptance criterion format (`[Action verb] [file] — acceptance: [outcome]`) instead of RED/GREEN/REFACTOR. Flag misapplied TDD shape on non-code steps as **MEDIUM**.
-- **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
+- **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans/16-execution-grade-clarity.md#execution-grade-clarity-hard-rule).
 - **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[AI+HUMAN]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
 - **Phase gate & natural pause (HARD RULE)**: every phase ends with a `### Phase N Gate` (must-pass checklist + Pause Safety note) and reaches a safe-to-stop state. Flag a phase missing its gate as **HIGH**; a non-pause phase that should be merged as **MEDIUM**. Validated in detail by Step 5i (rule 15).
-- **Phase 0 opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline — it carries no PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step, under **any** Delivery Mode; the earliest phase that may open a PR is **Phase 1**. Flag any such step inside Phase 0, and any unscoped Per-Phase Integration Protocol block, as **HIGH**. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 7). See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
-- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a plan opens a PR at each **delivery boundary** — the phase after which the accumulated work is independently shippable — not once per phase. The contiguous phases ending at a boundary form a **delivery unit**, and the unit maps to one branch, one PR — the **worktree** stays a coarser, per-repository unit, capped at one per repo per plan and reused across every delivery unit landed there (see [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)). Flag as **HIGH** a PR-creation, PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does **not** name as a boundary; a change-producing phase absent from the `### Delivery Boundaries` table; or a final change-producing phase that is not a boundary. Flag as **MEDIUM** a missing `### Delivery Boundaries` table on a non-trivial plan, and a single end-of-plan boundary on a plan whose `## Parallelization Model` declares independent parallel nodes. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 8). See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+- **Phase 0 opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline — it carries no PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step, under **any** Delivery Mode; the earliest phase that may open a PR is **Phase 1**. Flag any such step inside Phase 0, and any unscoped Per-Phase Integration Protocol block, as **HIGH**. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 7). See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a plan opens a PR at each **delivery boundary** — the phase after which the accumulated work is independently shippable — not once per phase. The contiguous phases ending at a boundary form a **delivery unit**, and the unit maps to one branch, one PR — the **worktree** stays a coarser, per-repository unit, capped at one per repo per plan and reused across every delivery unit landed there (see [Worktree Cap](../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)). Flag as **HIGH** a PR-creation, PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does **not** name as a boundary; a change-producing phase absent from the `### Delivery Boundaries` table; or a final change-producing phase that is not a boundary. Flag as **MEDIUM** a missing `### Delivery Boundaries` table on a non-trivial plan, and a single end-of-plan boundary on a plan whose `## Parallelization Model` declares independent parallel nodes. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 8). See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 - **Specs & Gherkin delivery (per Two Paths)**: a plan that creates, modifies, or deletes observable behavior in `apps/`, `libs/`, or `specs/` MUST include delivery steps that add/update the companion `specs/` Gherkin `.feature` files and run `specs:coverage`. Validated in detail by Step 5j (rule 16). See [Feature Change Completeness Convention §Two Paths](../../repo-governance/development/quality/feature-change-completeness.md).
 - **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior-implementing RED→GREEN→REFACTOR cycle MUST target **exactly one** Gherkin scenario — the RED step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embeds that scenario's complete `Given/When/Then` inline as a fenced ` ```gherkin ` block, verbatim-equal to the companion `.feature`. Flag as **HIGH**: a behavior RED step whose `binds` tag lists **more than one** scenario (must be split one-cycle-per-scenario), a behavior step missing its Gherkin tag, or a step whose inline `Given/When/Then` is absent or not verbatim-equal to the `.feature`. Two exceptions keep a multi-scenario `;`-list tag and are NOT split: pure-core (`**Gherkin (underpins) →**`) data/calc unit tests, and aggregate BDD binders (a feature-consuming unit test or `playwright-bdd` step-def file consuming the whole `.feature` for `specs:coverage`/E2E). Pure refactors, no-behavior-change bumps, and docs/governance-only steps are exempt. See [Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
-- **UI-design-funnel completeness (UI-bearing plans)**: a plan that adds/changes user-facing screens or components under `apps/` or `libs/` MUST carry the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale, a grounding/prior-art note, and a **responsive** strategy across mobile/tablet/desktop). Validated in detail by Step 5k (rule 17). Pure-refactor / no-UI / governance-only plans are exempt. See [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
+- **UI-design-funnel completeness (UI-bearing plans)**: a plan that adds/changes user-facing screens or components under `apps/` or `libs/` MUST carry the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale, a grounding/prior-art note, and a **responsive** strategy across mobile/tablet/desktop). Validated in detail by Step 5k (rule 17). Pure-refactor / no-UI / governance-only plans are exempt. See [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 - **Manual-assertion locale + evidence completeness (UI/API plans)**: a plan touching web UI or API MUST carry manual-assertion steps that (a) cover ALL supported locales for a multi-locale app and (b) capture committed evidence (screenshots to the plan's `evidence/` subfolder, curl responses inlined in `delivery.md`). Validated in detail by Step 5c (items 4 + 5). Single-locale-only verification on a multi-locale app, or a manual-assertion section with no evidence-capture step, is **HIGH**. See [Evidence Capture Convention](../../repo-governance/development/quality/evidence-capture.md).
 - **Rule-15 three-tester retest (web-UI feature-change plans)**: a web-UI **feature-change** plan MUST carry a near-end "Rule-15 three-tester retest" step running the [`web-ux-test-fixing-planning`](../../repo-governance/workflows/web/web-ux-test-fixing-planning.md) triad (`web-exploratory-tester` + `web-usability-tester` + `web-design-tester`) against the running target across ALL supported locales, with each `EWT-###`/`UWT-###`/`DWT-###` defect finding folded into `delivery.md` as an unchecked checkbox that MUST be fixed (ticked) before archival — deferral of an EWT/UWT/DWT defect finding requires explicit user permission and is allowed only when the fix is genuinely impossible. (`SG-###` spec-gap proposals and `USS-###` spec-suggestions are proposals, not defects, and may be triaged or deferred.) An unfixed EWT/UWT/DWT defect checkbox at archival time is a **HIGH** finding. A missing step, or single-locale-only scope, on a web-UI feature-change plan is **HIGH**. CLI/text output and pure governance/agent-definition plans are exempt. See [User-Facing Delivery Hardening](../../repo-governance/development/quality/user-facing-delivery-hardening.md) Rule 15.
 - **Rule-16 API exploratory retest (API feature-change plans)**: an API **feature-change** plan (REST or GraphQL endpoints in a backend or tRPC app) MUST carry a near-end "Rule-16 API exploratory retest" step running `api-exploratory-tester` (`output-mode: delivery`, the plan's `plan-path`) against the running endpoint(s) with the contract (OpenAPI 3.x / GraphQL SDL) as ground truth, with each `AET-###` defect finding folded into `delivery.md` as an unchecked checkbox that MUST be fixed (ticked) before archival — deferral of an AET defect finding requires explicit user permission and is allowed only when the fix is genuinely impossible. (`SG-###` spec-gap proposals are proposals, not defects, and may be triaged or deferred.) An unfixed `AET-###` defect checkbox at archival time is a **HIGH** finding. A missing step on an API feature-change plan is **HIGH**. The API tester never drives a browser, so this is independent of Rule 15 — a plan changing both a web UI and its API carries both retest steps. Frontend-only, CLI/text output, and pure governance/agent-definition plans are exempt. See [User-Facing Delivery Hardening](../../repo-governance/development/quality/user-facing-delivery-hardening.md) Rule 16.
@@ -129,7 +129,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 
 #### PR Step Authorization Check
 
-Authoritative source: [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode).
+Authoritative source: [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
 
 A PR creation step (`- [ ] Create PR`, `- [ ] Open PR`, or equivalent) is **expected and correct**
 when the plan's resolved Delivery Mode is `worktree-to-pr` (the default) or `main-to-pr` — no
@@ -146,7 +146,7 @@ Delivery Mode (declared or defaulted) is the only authorizing signal, per Step 5
 
 **Phase 0 Never Opens a PR — mode-independent (HIGH)**
 
-Authoritative source: [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+Authoritative source: [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 Flag as **HIGH**, **regardless of the plan's resolved Delivery Mode**, any of the following appearing
 inside `## Phase 0` (its steps, its sub-bullets, or its `### Phase 0 Gate`):
@@ -550,10 +550,10 @@ After validating manual assertions (Step 5c), verify the plan declares a worktre
    - Missing or wrong command: **MEDIUM** finding.
 
 4. **Cross-reference**
-   - The section SHOULD link to [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification).
+   - The section SHOULD link to [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md) and/or [Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
    - Missing cross-reference: **LOW** finding.
 
-5. **Worktree cap — at most one worktree path per repository (enforces [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))**
+5. **Worktree cap — at most one worktree path per repository (enforces [Worktree Cap](../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule))**
    - This check runs against the single repository `plan-checker` is invoked in (confirm with
      `git remote get-url origin` or `repo-config.yml`'s declared repo name) — a plan's `delivery.md`
      for this repo is scoped to that one repo, so every worktree path it names is implicitly a
@@ -725,7 +725,7 @@ Reports CRITICAL if a plan skips this check when in scope.
 
 ### 14. Executor-Tag Validation (Step 5h — MANDATORY HARD RULE)
 
-Enforces [Plans Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
+Enforces [Plans Convention §Executor Tagging](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
 Every plan's delivery checklist marks who executes each step so an execution agent never attempts a
 physically impossible action.
 
@@ -743,7 +743,7 @@ physically impossible action.
    agent then consumes is not a single blended tag — split it into its own `[HUMAN]` checkbox (supply the
    value) followed by a separate `[AI]` checkbox (consume it); flag a merged single-checkbox attempt at
    this shape as **MEDIUM** (imprecise granularity) rather than inventing a fourth tag. `[HUMAN → AI]` is
-   not this repo's vocabulary — see [Plans Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule),
+   not this repo's vocabulary — see [Plans Convention §Executor Tagging](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule),
    which defines exactly three tags.
 4. **Tagging is orthogonal to suggested-executor** — do NOT conflate `[AI]`/`[HUMAN]` with
    `_Suggested executor: <agent>_`; both may appear on one step. Confusing the two is **MEDIUM**.
@@ -775,7 +775,7 @@ the same step under both rules.
 
 ### 15. Phase-Gate & Natural-Pause Validation (Step 5i — MANDATORY HARD RULE)
 
-Enforces [Plans Convention §Phased Delivery: Natural Pauses and Phase Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
+Enforces [Plans Convention §Phased Delivery: Natural Pauses and Phase Gates](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 Every phase must end at a natural pause and close with an explicit gate.
 
 #### What to Validate
@@ -795,7 +795,7 @@ Every phase must end at a natural pause and close with an explicit gate.
 
 #### Grandfathering — In-Progress Plans Predating the Convention
 
-Per [Plans Organization Convention §Applicability](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule), the Execution-Marker and Phase-Gate HARD RULES apply to **net-new plans at authoring time**. Plans already under `plans/in-progress/` when the convention landed are **grandfathered**: do NOT raise HIGH findings against them solely for missing `[AI]`/`[HUMAN]` markers or missing `### Phase N Gate` / Pause Safety notes. Flag those omissions only on phases being **newly added or edited** in the plan under review. A net-new plan (one being authored now) receives no grace and is held to the full rules above. When skipping a grandfathered plan for these two rules, note it as a below-threshold informational item, not a HIGH finding.
+Per [Plans Organization Convention §Applicability](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule), the Execution-Marker and Phase-Gate HARD RULES apply to **net-new plans at authoring time**. Plans already under `plans/in-progress/` when the convention landed are **grandfathered**: do NOT raise HIGH findings against them solely for missing `[AI]`/`[HUMAN]` markers or missing `### Phase N Gate` / Pause Safety notes. Flag those omissions only on phases being **newly added or edited** in the plan under review. A net-new plan (one being authored now) receives no grace and is held to the full rules above. When skipping a grandfathered plan for these two rules, note it as a below-threshold informational item, not a HIGH finding.
 
 #### Finding Severity
 
@@ -839,7 +839,7 @@ behavioural defects, or a DOM/computed-style/content test for visual/copy defect
 
 ### 17. UI-Design-Funnel Completeness (Step 5k — MANDATORY)
 
-Enforces the [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs)
+Enforces the [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 for the plan path. This is the **UI-design-funnel completeness** check — the sibling of the
 specs/Gherkin Step 5j: just as a behavior-changing plan must carry companion Gherkin, a **UI-bearing**
 plan must carry the design funnel. A plan is UI-bearing when it adds, changes, or replaces
@@ -856,7 +856,7 @@ user-facing screens or components under any `apps/**` or `libs/**` path (e.g. `l
    violation. Binary mockup image assets live under the plan's `assets/` folder and are referenced
    from `prd.md`. `prd.md` missing the funnel entirely, or the funnel present only in a different
    plan file: **HIGH**. See
-   [UI Mockups in Plan Docs — Placement](../../repo-governance/conventions/formatting/diagrams.md#placement--the-ui-lives-in-prdmd-hard-rule).
+   [UI Mockups in Plan Docs — Placement](../../repo-governance/conventions/formatting/diagrams/47-ui-mockups-placement-hard-rule-requirements.md#placement--the-ui-lives-in-prdmd-hard-rule-requirements-and-enforcement).
 3. **Both tiers per screen** — Each UI-bearing screen MUST have a low-fidelity ASCII/Unicode
    wireframe in a fenced code block AND a high-fidelity `.excalidraw.png` (or approved plain `.png`
    screenshot) referenced via `![](./…)` in `prd.md`, in separate labelled subsections. Missing a
@@ -929,7 +929,7 @@ safety gates (secret/sensitivity, repo-relevance) — before the plan may be arc
    state that any entry routed there is checked against `plans/ideas/README.md` and the existing
    two-pagers FIRST, folding into a brief that already covers the same area instead of creating a
    new one, per
-   [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers).
+   [Integrate Before You Add](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers).
    A phase present but silent on this rule: **MEDIUM**.
 7. **Exemption** — pure-docs and trivial plans (a one-line rename, a single broken-link fix) MAY
    skip an elaborate Knowledge Capture phase; the explicit "none" escape (or an equally explicit
@@ -947,7 +947,7 @@ safety gates (secret/sensitivity, repo-relevance) — before the plan may be arc
 ### 19. Delivery Mode Validation (Step 5m — MANDATORY)
 
 Enforces the
-[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode):
+[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode):
 every plan resolves to exactly one of the four delivery modes (`worktree-to-pr` **(default)**,
 `worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr`) before execution begins. This is a
 sibling check to Step 5d (Worktree Specification) — a worktree is a work location, while delivery
@@ -974,7 +974,7 @@ mode additionally fixes the integration target and merge authority.
 4. **Merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step defaults to
    `[AI]`, the actor once the hardened preconditions hold. A `[HUMAN]` tag on that step IS the
    plan's opt-in into human merge judgment, per
-   [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) — the tag
+   [Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) — the tag
    itself is the complete, sufficient declaration; there is no separate opt-in field or prose
    declaration to look for. A `[HUMAN]`-tagged merge step under a `*-to-pr` mode is therefore
    **NEVER** a defect on that basis and MUST NOT be flagged or retagged. The only defect on the
@@ -1004,7 +1004,7 @@ mode additionally fixes the integration target and merge authority.
    `### Delivery Boundaries` table declares. Also confirm every change-producing phase appears in
    exactly one table row and that the last change-producing phase is a boundary.
 9. **Per-repository delivery mode restriction (enforces [Per-Repository Delivery Mode
-   Restrictions](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule))**
+   Restrictions](../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule))**
    — determine the repository `plan-checker` is invoked in (`git remote get-url origin` or
    `repo-config.yml`'s declared repo name); the resolved `## Delivery Mode` value (declared field, or
    the tier-3 `worktree-to-pr` default when absent) is then checked against that repo:

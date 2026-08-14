@@ -56,9 +56,9 @@ outputs:
 
 # Plan Idea Promotion Planning Workflow
 
-**Purpose**: Turn one ripe two-pager in [`plans/ideas/`](../../conventions/structure/plans.md#ideas-folder-two-pagers)
+**Purpose**: Turn one ripe two-pager in [`plans/ideas/`](../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
 into a full five-document backlog plan, operationalizing the four-step
-[Promoting a Two-Pager to a Full Plan](../../conventions/structure/plans.md#promoting-a-two-pager-to-a-full-plan)
+[Promoting a Two-Pager to a Full Plan](../../conventions/structure/plans/06-promoting-ideas-and-worked-examples.md#promoting-a-two-pager-to-a-full-plan)
 procedure end to end. It gates the brief for completeness, runs the deep `web-researcher` prior-art
 study that the capture phase deliberately deferred, hands the enriched brief to
 [`plan-planning`](./plan-planning.md) with `target-stage=backlog`, and retires the two-pager so the
@@ -142,7 +142,7 @@ brief.
 ### 2. Deep Prior-Art Study (Parallel, delegated)
 
 Run the deep prior-art survey the capture phase deferred (per the
-[Prior art discipline](../../conventions/structure/plans.md#ideas-folder-two-pagers): "the deep
+[Prior art discipline](../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers): "the deep
 `web-researcher` prior-art study is deferred to promotion"). The two-pager's own _Prior art_ section
 is the lightweight starting point; now the full plan can afford real research.
 
@@ -268,8 +268,8 @@ Scenario: The user declines at the promotion checkpoint
 
 ## Related Documents
 
-- [Plans Organization Convention → Promoting a Two-Pager to a Full Plan](../../conventions/structure/plans.md#promoting-a-two-pager-to-a-full-plan) — the four-step procedure this workflow operationalizes.
-- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../conventions/structure/plans.md#ideas-folder-two-pagers) — the two-pager format and the deferred deep prior-art rule.
+- [Plans Organization Convention → Promoting a Two-Pager to a Full Plan](../../conventions/structure/plans/06-promoting-ideas-and-worked-examples.md#promoting-a-two-pager-to-a-full-plan) — the four-step procedure this workflow operationalizes.
+- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) — the two-pager format and the deferred deep prior-art rule.
 - [plan-planning workflow](./plan-planning.md) — invoked in Phase 4 with `target-stage=backlog`.
 - [plan-execution workflow](./plan-execution.md) — runs the plan later, after promotion to `in-progress/`.
 - [web-researcher Agent](../../../.claude/agents/web-researcher.md) — Phase 2 deep prior-art survey.

@@ -18,11 +18,11 @@ AI agents and automation must never execute `git push --force`, `git push --forc
 `git push --no-verify` without obtaining explicit, fresh user approval every single time. Prior
 approval for one instance does not carry forward to any subsequent invocation. The sole standing
 exception is a confirmed secret-exposure incident handled end-to-end under
-[the secret history-remediation procedure](../../conventions/security/secrets-and-env-standards.md#secret-exposure-history-remediation): there, a lease-protected force-push is required to remove
+[the secret history-remediation procedure](../../conventions/security/secrets-and-env-standards/03-secret-exposure-history-remediation.md#secret-exposure-history-remediation): there, a lease-protected force-push is required to remove
 contaminated reachable history rather than a convenience rewrite.
 
 These rules apply identically regardless of the active delivery mode (see the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)):
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)):
 a force-push or hook-bypass on a `worktree-to-pr` plan branch requires the same explicit, per-instance
 approval as one on `origin main` under `worktree-to-origin-main` or `main-to-origin-main`. The
 integration target changes what the approval prompt describes (a PR branch tip vs. the `main` tip); it

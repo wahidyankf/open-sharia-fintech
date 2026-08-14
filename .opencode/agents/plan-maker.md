@@ -140,7 +140,7 @@ git mv plans/backlog/project-identifier plans/in-progress/project-identifier
 
 ### Step 4: Write Requirements (BRD + PRD)
 
-Document intent and specification in two separate files, per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans.md#content-placement-rules-brdmd-vs-prdmd):
+Document intent and specification in two separate files, per the [Content-Placement Rules](../../repo-governance/conventions/structure/plans/14-content-placement-rules.md#content-placement-rules-brdmd-vs-prdmd):
 
 **`brd.md` — Business Requirements Document** (WHY this exists):
 
@@ -177,7 +177,7 @@ source of first failing tests. Document which test level (unit/integration/E2E) 
 acceptance criterion.
 
 **File-Impact Analysis (HARD RULE)**: Write `tech-docs.md`'s `## File-Impact Analysis` as the
-primary annotated file tree defined by the [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
+primary annotated file tree defined by the [Plans Organization Convention](../../repo-governance/conventions/structure/plans/12-file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
 The tree is rooted at `.`, marks every target `[E]`, `[N]`, `[D]`, or `[G]`, and carries the
 scan-first scope. Add `### More Detail` immediately below it only for non-obvious mechanics,
 ordering, discovery criteria, or archival follow-up; do not substitute prose bullets for the tree
@@ -254,16 +254,16 @@ to plans being written fresh, never as a normalization of one already on disk. R
 it is out of scope for any re-authoring pass. Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
 or `- [ ] [AI] Commit and push to origin <pr-branch>` (`*-to-pr` modes). See the
 [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) and
-[Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
+[Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
 
 **Phase gates and natural pauses (HARD RULE)** — every phase (including Phase 0) MUST end with a
 `### Phase N Gate` containing must-pass, independently verifiable checks (each with its `[AI]`/`[HUMAN]`
 marker), followed by a **Pause Safety** blockquote stating the safe-to-stop state and the single
 command/sequence to resume. A phase is not complete until its gate is green; do not author phases that
 bleed unrelated work across a boundary with no safe stop point. See
-[Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)
+[Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule)
 and
-[§Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
+[§Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 
 ### Step 7: Add Delivery Mode
 
@@ -294,7 +294,7 @@ infrastructure-as-code plan targeting `ose-private` may declare a direct-push mo
 to `worktree-to-pr` (or
 `main-to-pr`) instead, since `plan-checker` item 9 will HIGH-flag the restricted mode on the very
 next check pass. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions
-(HARD RULE)](../../repo-governance/conventions/structure/plans.md#per-repository-delivery-mode-restrictions-hard-rule).
+(HARD RULE)](../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **For `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`)**: the delivery checklist MUST emit the
 **PR-Review Maker→Fixer Cycle** steps (see
@@ -310,7 +310,7 @@ identical either way.
 **For `*-to-origin-main` modes**: no PR-review cycle applies; the final push is `[AI]` and the plan
 completes once CI is green on `main`.
 
-See [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode)
+See [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the authoritative mode table, precedence rule, and declaration syntax, and
 [Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md)
 for the underlying git-workflow details.
@@ -394,7 +394,7 @@ state the exemption explicitly in `tech-docs.md`.
 This mirrors the **Specs & Gherkin completeness (both paths)** binding: just as app/lib code never
 lands without companion Gherkin, a UI-bearing plan never passes quality gates without its design
 funnel. The funnel is authored per the
-[UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
+[UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 ### Required Funnel Artefacts (require all on a UI-bearing plan)
 
@@ -404,7 +404,7 @@ Binary mockup image assets (`.excalidraw.png` or plain `.png`) live under the pl
 folder and are embedded in `prd.md` via `![]()` image links. A UI-bearing plan whose `prd.md`
 does NOT contain the complete funnel record (all four stages plus embedded mockup links) fails the
 plan quality gate — `plan-checker` Step 5k flags each missing or misplaced element as HIGH.
-See [UI Mockups in Plan Docs — Placement](../../repo-governance/conventions/formatting/diagrams.md#placement--the-ui-lives-in-prdmd-hard-rule).
+See [UI Mockups in Plan Docs — Placement](../../repo-governance/conventions/formatting/diagrams/47-ui-mockups-placement-hard-rule-requirements.md#placement--the-ui-lives-in-prdmd-hard-rule-requirements-and-enforcement).
 
 For each UI-bearing screen, the plan (`prd.md` + the plan's `assets/`) MUST carry, in separate
 labelled subsections, with no alternative silently discarded:
@@ -573,7 +573,7 @@ When plan content (any of `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `deli
   "implement X" / "set up Y" / "configure Z" wording is FORBIDDEN. Plans are executed by
   execution-grade (sonnet-tier) agents — authoring-grade hand-waving makes execution ambiguous.
   See
-  [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule)
+  [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans/16-execution-grade-clarity.md#execution-grade-clarity-hard-rule)
   for the rule, examples, and the bad/good pair. `plan-checker` flags violations as HIGH findings;
   `plan-fixer` rewrites offending items with maximum detail.
 - **Execution markers (`[AI]`/`[HUMAN]`)**: every checkbox carries an executor marker; `[AI]` is
@@ -582,14 +582,14 @@ When plan content (any of `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `deli
   `[AI]` path before resorting to `[HUMAN]`. Plans using `[HUMAN]` carry a legend; every `[HUMAN]`
   step states the action and the observable resume signal. `plan-checker` flags mis-marked steps
   and missing handoff signals as HIGH. See
-  [Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
+  [Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule).
 - **Phase gates and natural pauses (HARD RULE)**: every phase ends in a natural pause and closes
   with a `### Phase N Gate` (must-pass, independently verifiable checks, each marked `[AI]`/
   `[HUMAN]`) plus a **Pause Safety** note (safe-to-stop state + resume command). A phase is not
   complete until its gate is green; execution never starts phase N+1 while phase N's gate is
   failing. `plan-checker` flags a missing gate, missing Pause Safety note, non-verifiable gate
   items, or a non-cohesive phase as HIGH. See
-  [Plans Organization Convention §Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
+  [Plans Organization Convention §Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 - **Suggested executor annotation**: when a delivery checkbox names a domain that maps cleanly
   to a specialized agent (a specific language file extension, a specific app context, a content
   domain, a governance concern), add a `_Suggested executor: <agent-name>_` annotation under the
@@ -617,15 +617,15 @@ The error to avoid is no longer "an unsolicited PR step" but **a PR step that di
 
 The earliest phase that may carry any of those is **Phase 1**. Phase 0 ends at its own gate — the recorded clean baseline — and hands directly to Phase 1. Any evidence file Phase 0 writes (`evidence/phase-0-snapshot.txt`, a slug register, a recorded path constant) is carried by the **first** PR the plan opens, which is the Phase 1 PR; say so explicitly in the Phase 1 steps rather than giving Phase 0 a PR to carry them.
 
-If the work you are about to put in Phase 0 genuinely produces reviewable changes, the Phase 0 is **mis-scoped** — move that work into Phase 1 and leave Phase 0 as setup and baseline only. Never resolve it by giving Phase 0 a PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+If the work you are about to put in Phase 0 genuinely produces reviewable changes, the Phase 0 is **mis-scoped** — move that work into Phase 1 and leave Phase 0 as setup and baseline only. Never resolve it by giving Phase 0 a PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 When a plan uses a **Per-Phase Integration Protocol** block (branch → commit → push → draft PR → review cycle → merge, listed once and referenced by every phase gate), state in that block that it applies to **Phase 1 onward**, that Phase 0 is excluded, and that its PR-opening, review-cycle, and merge steps fire **only at a delivery boundary** — an intermediate phase runs the branch-and-commit part and stops there. Prefer titling such a block **Delivery-Boundary Integration Protocol**, since it no longer runs once per phase.
 
 #### Delivery Boundaries Authoring Rule (HARD RULE)
 
-**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one branch and one PR. The **worktree** stays a coarser, per-repository unit: capped at one per repo per plan and reused — branch-switched — across every delivery unit landed there, per [Worktree Cap](../../repo-governance/conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one branch and one PR. The **worktree** stays a coarser, per-repository unit: capped at one per repo per plan and reused — branch-switched — across every delivery unit landed there, per [Worktree Cap](../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
-Decide boundaries at authoring time using the four-part boundary test (coherent / green standalone / defensible on `main` / reviewable whole) in [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), then:
+Decide boundaries at authoring time using the four-part boundary test (coherent / green standalone / defensible on `main` / reviewable whole) in [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), then:
 
 - **Emit a `### Delivery Boundaries` table** inside the plan's `## Parallelization Model`, with one row per delivery unit, mapping **every** change-producing phase to a unit, its worktree/branch, and the phase at which its PR opens. A change-producing phase absent from the table has no declared route to `main` and is a defect.
 - **Make the last change-producing phase a boundary**, always — otherwise the plan's final work never merges.
@@ -752,7 +752,7 @@ Worktree Specification section of `.claude/skills/plan-creating-project-plans/SK
 section is the single source of truth for the exact wording; do not paraphrase it.
 
 **This applies to ALL plans regardless of size** — pure-docs, single-file, and trivial plans included. No exceptions. See
-[Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans.md#worktree-specification)
+[Plans Organization Convention §Worktree Specification](../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification)
 and
 [Worktree Path Convention](../../repo-governance/conventions/structure/worktree-path.md).
 
@@ -891,7 +891,7 @@ pushes nothing):
 ```
 
 **6. Phase Gate Template** (every phase MUST end with one — see
-[Plans Convention §Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule)).
+[Plans Convention §Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule)).
 A phase MUST end at a **natural pause** (clean, safe-to-stop-indefinitely git state) and close with an
 explicit gate. If two adjacent phases cannot each stand alone as a safe stop, MERGE them — never invent
 a pause that is not real:
@@ -970,7 +970,7 @@ gates:
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning
       into that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md`
       when the scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../repo-governance/conventions/structure/plans.md#integrate-before-you-add-no-duplicate-two-pagers))
+      [Integrate Before You Add](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing
 - [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:

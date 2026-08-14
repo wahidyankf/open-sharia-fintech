@@ -278,10 +278,10 @@ Two complementary cleanup mechanisms apply:
 
 **Hard iron rule**: Real secret values never enter git. `.env.example` (committed template) contains
 placeholders only. See:
-[`secrets-and-env-standards.md` § 1](../../conventions/security/secrets-and-env-standards.md#1-hard-iron-rule--no-secrets-in-committed-files).
+[`secrets-and-env-standards.md` § 1](../../conventions/security/secrets-and-env-standards/02-hard-iron-rule-no-secrets-in-committed-files.md#hard-iron-rule--no-secrets-in-committed-files).
 
 **Backup and restore**: Use `rhino-cli env backup / restore`. See:
-[`secrets-and-env-standards.md` § 6](../../conventions/security/secrets-and-env-standards.md#6-rhino-cli-env-toolchain).
+[`secrets-and-env-standards.md` § 6](../../conventions/security/secrets-and-env-standards/08-rhino-cli-env-toolchain.md#rhino-cli-env-toolchain).
 
 ## Containerization for Complex Environments
 

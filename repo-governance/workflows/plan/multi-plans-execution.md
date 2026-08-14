@@ -136,7 +136,7 @@ rules win for that plan's internal work; this document governs only cross-plan s
   opened and merged as that unit's **delivery boundary** completes — not at every phase, and not
   batched at the end of the run. The **worktree** is capped at one per repository per plan and reused
   across every node landing in that repo, per
-  [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+  [Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 ## Steps
 
