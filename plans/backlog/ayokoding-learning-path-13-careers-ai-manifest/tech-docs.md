@@ -40,7 +40,7 @@ audit, and the manifest's growth as the AI/harness cluster lands.
 | Schema / core / integrity                                                | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                        |
 | Rendering / route wiring                                                 | `ayokoding-learning-path-03-navigation-ui`               | consumes                        |
 | Course bodies (6 AI-engineer-role courses, 9 AI/harness-cluster courses) | `ayokoding-learning-path-04`, `-06`, `-11`               | consumes (band signals)         |
-| `apps/ayokoding-www` rendering-mode fix                                  | `vercel-function-cost-reduction`                         | consumes (hard precondition)    |
+| `apps/ayokoding-www` rendering-mode fix                                  | `vercel-function-cost-reduction`                         | consumes (repository-baseline check)    |
 | **The `ai-engineer` manifest + landing + hub card**                      | **this plan**                                            | **produces**                    |
 | The 3 `software-engineer`-role manifests                                 | `ayokoding-learning-path-12-careers-se-manifests`        | sibling — coupled, not consumed |
 | `skills/` manifests + landings + corpus                                  | the accounting/ERP split plans                           | sibling — out of scope          |
@@ -48,7 +48,7 @@ audit, and the manifest's growth as the AI/harness cluster lands.
 ## The manifest ownership invariant (scoped to this plan's one file)
 
 **This plan owns exactly**
-`apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml`,
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.json`,
 plus every step that creates, appends to, reorders, or re-verifies it. The sibling plan owns its three
 software-engineer-role files under the identical invariant. This plan's mechanical checks never assume
 the sibling's three files exist or do not exist — this plan's own gates are scoped to its one file only.
@@ -57,7 +57,7 @@ the sibling's three files exist or do not exist — this plan's own gates are sc
 
 | Path                                                         | Kind    | Note                                                                                                         |
 | ------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------ |
-| `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`  | data    | created Phase 1, grown Phase 2                                                                               |
+| `<MANIFESTS>careers/immediately-effective/ai-engineer.json`  | data    | created Phase 1, grown Phase 2                                                                               |
 | `<MANIFESTS>careers/careers-ai-manifest.unit.test.ts`        | test    | asserts this plan's one manifest's shape, integrity, and growth state — **not shared** with the sibling plan |
 | `<PATHS>careers/immediately-effective/ai-engineer/_index.md` | content | thin landing anchor, prose/SEO only                                                                          |
 | `<PATHS>_index.md`                                           | content | this plan's **one-card** slice only — file owned by `ayokoding-learning-path-01-url-restructure`             |
@@ -87,24 +87,25 @@ Full routing table, including the sibling plan's six contributing source plans, 
 The `PathManifest` shape, its zod schema, and the integrity gates are authored and owned by
 `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml
-pathId: careers/immediately-effective/ai-engineer
-title: "AI Engineer"
-description: "From-scratch AI-engineering track: build AI systems, not drive them."
-courseOrder:
-  - just-enough-python
-  - software-testing
-  - cicd-and-release-engineering
-  - backend-at-scale
-  - containers-and-orchestration
-  - computer-architecture
-  - site-reliability-engineering
-  - data-engineering
-  - data-structures-and-algorithms-essentials
-  - software-product-engineering
-  - frontend-essentials
-  # … then the six new AI-engineer-role courses, then the nine-course AI/harness cluster, at full growth …
+```json
+{
+  "pathId": "careers/immediately-effective/ai-engineer",
+  "title": "AI Engineer",
+  "description": "From-scratch AI-engineering track: build AI systems, not drive them.",
+  "courseOrder": [
+    "just-enough-python",
+    "software-testing",
+    "cicd-and-release-engineering",
+    "backend-at-scale",
+    "containers-and-orchestration",
+    "computer-architecture",
+    "site-reliability-engineering",
+    "data-engineering",
+    "data-structures-and-algorithms-essentials",
+    "software-product-engineering",
+    "frontend-essentials"
+  ]
+}
 ```
 
 ### Manifest integrity invariants
@@ -124,7 +125,7 @@ Re-run at every phase gate in this plan, scoped to this plan's own one manifest:
 %% How this plan's one manifest reaches a rendered page. Node SHAPE encodes owning plan:
 %% rectangle = this plan, stadium = navigation-ui, hexagon = schema-and-prerequisite-dag.
 flowchart LR
-    YAML["1 manifest<br/>THIS PLAN"]:::mine
+    JSON["1 manifest<br/>THIS PLAN"]:::mine
     LANDING["1 landing anchor<br/>THIS PLAN"]:::mine
     HUB["paths/_index.md<br/>1-card slice<br/>THIS PLAN populates"]:::mine
 
@@ -138,7 +139,7 @@ flowchart LR
 
     BUNDLES(["courses/&lt;id&gt;/<br/>bundles"]):::upstream
 
-    YAML --> REPO
+    JSON --> REPO
     REPO --> SCHEMA
     REPO --> INTEG
     INTEG --> BUNDLES
@@ -203,7 +204,7 @@ recorded in the plan this split replaces, unchanged in substance by this split.
   `agent-orchestration-subagents-and-observability`, `capstone-build-your-own-coding-agent`) is
   **included** in `courseOrder`, never linked.
 - **DD-34 · Category segment adopted** — every `careers/` path id carries a leading `careers/`
-  segment; this manifest's file moved to `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`.
+  segment; this manifest's file moved to `<MANIFESTS>careers/immediately-effective/ai-engineer.json`.
 - **DD-35 · This path renamed and re-scoped: from-scratch, prerequisites included, not linked** —
   supersedes DD-24 for this path, amends DD-33 in starting composition only. The corrected syllabus
   mirror names 11 existing SWE-fundamentals courses moving from "linked" to "included":
@@ -265,7 +266,7 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 .
 ├── apps/ayokoding-www/src/features/course-paths/manifests/careers/
 │   ├── careers-ai-manifest.unit.test.ts [N] — created Phase 1, extended Phase 2
-│   └── immediately-effective/ai-engineer.yaml [N] — created Phase 1, grown Phase 2
+│   └── immediately-effective/ai-engineer.json [N] — created Phase 1, grown Phase 2
 ├── apps/ayokoding-www/content/en/learn/paths/
 │   ├── _index.md [E] — populate this plan's 1-card slice (file created by plan 01)
 │   └── careers/immediately-effective/ai-engineer/_index.md [N]
@@ -286,7 +287,7 @@ This plan owns exactly one manifest file. The single `[E]` row, `paths/_index.md
 SE-manifests plan appends its three, so the two append disjoint slices to the same file and merge
 cleanly.
 
-`ai-engineer.yaml` is created in Phase 1 at its six-course smoke-test spine and **grown** in Phase 2
+`ai-engineer.json` is created in Phase 1 at its six-course smoke-test spine and **grown** in Phase 2
 once the upstream AI-cluster band-completion signals land. It appears once in the tree because the
 tree records intent per path, not per commit.
 
@@ -295,7 +296,7 @@ No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs ove
 | Path                                                                     | Change                                | Phase |
 | ------------------------------------------------------------------------ | ------------------------------------- | ----- |
 | `<MANIFESTS>careers/careers-ai-manifest.unit.test.ts`                    | created (Phase 1), extended (Phase 2) | 1-2   |
-| `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`              | created (Phase 1), grown (Phase 2)    | 1-2   |
+| `<MANIFESTS>careers/immediately-effective/ai-engineer.json`              | created (Phase 1), grown (Phase 2)    | 1-2   |
 | `<PATHS>careers/immediately-effective/ai-engineer/_index.md`             | created                               | 1     |
 | `<PATHS>_index.md`                                                       | edited (this plan's 1-card slice)     | 1     |
 | `<SPECS>path-composition.feature`                                        | created (1), extended (2)             | 1-2   |
@@ -306,10 +307,10 @@ No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs ove
 
 | Level                    | What it covers here                                                                                                                                                                                                      | Command                                                               |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| Unit                     | this plan's 1 manifest loads + zod-validates; integrity; prerequisite-consistency; growth check                                                                                                                          | `npx nx run ayokoding-www:test:unit`                                  |
-| Specs (Gherkin coverage) | 2 of this plan's 4 `prd.md` scenarios bind step definitions; 1 is documentation-verified (Phase 1.3); 1 (build/validate green) is covered by Phase 3's aggregate verification sweep without a dedicated scenario binding | `npx nx run ayokoding-www:specs:behavior:coverage`                    |
-| E2E                      | path-walk from this plan's one landing; `?path=` persistence; breadcrumb; prerequisite display                                                                                                                           | `npx nx run ayokoding-www-fe-e2e:test:e2e`                            |
-| Build                    | this plan's one manifest resolves against currently-landed course bundles                                                                                                                                                | `npx nx run ayokoding-www:build`                                      |
+| Unit                     | this plan's 1 manifest loads + zod-validates; integrity; prerequisite-consistency; growth check                                                                                                                          | `npm exec nx run ayokoding-www:test:unit`                                  |
+| Specs (Gherkin coverage) | 2 of this plan's 4 `prd.md` scenarios bind step definitions; 1 is documentation-verified (Phase 1.3); 1 (build/validate green) is covered by Phase 3's aggregate verification sweep without a dedicated scenario binding | `npm exec nx run ayokoding-www:specs:behavior:coverage`                    |
+| E2E                      | path-walk from this plan's one landing; `?path=` persistence; breadcrumb; prerequisite display                                                                                                                           | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                            |
+| Build                    | this plan's one manifest resolves against currently-landed course bundles                                                                                                                                                | `npm exec nx run ayokoding-www:build`                                      |
 | Manual                   | 1 landing + this plan's hub-card slice at 375/768/1280px, `en`, committed evidence                                                                                                                                       | Playwright MCP (Phase 4)                                              |
 | Live-site triad          | Rule-15 EWT/UWT/DWT retest before archival, scoped to this plan's surfaces                                                                                                                                               | `web-exploratory-tester`, `web-usability-tester`, `web-design-tester` |
 
@@ -320,11 +321,9 @@ new data shape, so there is no new cross-manifest invariant to assert (unlike th
 growth, which introduced a genuinely new invariant). The before/after entry-count-delta check is the
 falsifiable safety property in both directions.
 
-## Dependencies
+## Execution dependency
 
-- **Upstream plans** — see [README §Depends-on](./README.md#depends-on).
-- **Runtime / build** — no net-new npm dependency.
-- **Tooling** — `rhino-cli` for `md links validate` and `md heading-hierarchy validate`.
+This plan has one direct execution prerequisite: `ayokoding-learning-path-12-careers-se-manifests`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 

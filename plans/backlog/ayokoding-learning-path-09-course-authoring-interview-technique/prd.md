@@ -41,7 +41,7 @@ grep-checkable assertions on the authored bodies, not by application tests.
   any of the other 4 course URLs without a path context and must get a coherent standalone view (with
   prerequisites surfaced) plus an obvious way to enter a path.
 - **Maintainer (content strategist / content author / reviewer)** — authors the 5 bodies via the
-  ayokoding maker agents and reviews them through the PR-Review Maker→Fixer Cycle.
+  ayokoding maker agents and reviews them through the secret scan, local quality checks, and PR quality-gate verification.
 
 ## User Stories
 
@@ -109,8 +109,8 @@ Scenario: The coding-agent capstone assembles the four interview courses into a 
 Scenario: The band-completion signal names exactly the two manifests this band feeds
 Given all 5 Band-9 bodies are authored on this plan's final-delivery branch
   When the band-completion signal is recorded in delivery.md
-  Then GROW_MANIFESTS names exactly careers/interview-ready/software-engineer.yaml and careers/fundamentally-strong/software-engineer.yaml
-  And it does not name careers/immediately-effective/software-engineer.yaml
+  Then GROW_MANIFESTS names exactly careers/interview-ready/software-engineer.json and careers/fundamentally-strong/software-engineer.json
+  And it does not name careers/immediately-effective/software-engineer.json
 ```
 
 ```gherkin
@@ -218,7 +218,7 @@ artefact; web-verified.
 
 - Authoring all 5 course bodies listed above, each as a full page bundle (`_index.md`, `overview.md`,
   `learning/`, `drilling/`) under `apps/ayokoding-www/content/en/learn/courses/<course-id>/`.
-- Adding one `<COURSES>_index.md` list entry per landed course ID.
+- Running `npm exec nx run ayokoding-www:generate-indexes` after course additions, then `npm exec nx run ayokoding-www:validate-indexes`.
 - Adding one Course Library Catalog row per landed course ID (see
   [tech-docs.md §Course Library Catalog (Band 9 rows)](./tech-docs.md#course-library-catalog-band-9-rows)).
 - Recording the one band-completion signal for Band 9.
@@ -228,7 +228,7 @@ artefact; web-verified.
 **Out of scope** (see [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals) for the
 business framing of each):
 
-- Any manifest `.yaml` edit.
+- Any manifest `.json` edit.
 - An Indonesian (`id`) mirror of these 5 courses.
 - Re-deciding any of the 5 courses' concept coverage, prerequisite chain, or register.
 - Any edit to `ayokoding-learning-path-04-course-authoring`'s own files.

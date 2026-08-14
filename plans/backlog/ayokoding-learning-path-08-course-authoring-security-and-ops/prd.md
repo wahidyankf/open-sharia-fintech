@@ -227,7 +227,7 @@ register** (none is a refresh-register interview course; none is primer scope).
 - **The UI design funnel** — this plan is not UI-bearing.
 - **The rule-15 three-tester retest** — exemption recorded with reasons in
   [README §Rule-15](./README.md#rule-15-three-tester-retest--exemption-recorded).
-- **Fixing `apps/ayokoding-www`'s Vercel function-cost problem.** Consumed as a hard precondition, not
+- **Fixing `apps/ayokoding-www`'s Vercel function-cost problem.** Consumed as a repository-baseline check, not
   authored here.
 
 ## Product-Level Risks

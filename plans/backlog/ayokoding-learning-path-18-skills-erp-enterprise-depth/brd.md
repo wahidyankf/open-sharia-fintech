@@ -11,7 +11,7 @@ teaching installation, vendor selection, or system construction.
 
 ## Business Context
 
-This is the second of a two-plan split of the retired `ayokoding-learning-path-07-skills-erp` design.
+This is the second of a two-plan split of the retired the superseded ERP-programme draft design.
 `ayokoding-learning-path-17-skills-erp-foundations` (Stage A, no accounting precondition) already
 ships independently; this plan carries the two remaining authoring stages that genuinely wait on the
 accounting programme, which was itself split into three new plans
@@ -23,9 +23,9 @@ accounting programme, which was itself split into three new plans
   `sharia-erp` its terminal 30, matching the full domain-depth promise the retired source plan made.
 - **The accounting-gate re-pointing removes a stale dependency.** The retired source plan's
   `ACCT_GATE_B`/`ACCT_GATE_C` checks named the single, now-superseded
-  `ayokoding-learning-path-06-skills-accounting`; this plan re-points them to the correct two of the
+  the superseded accounting-programme draft; this plan re-points them to the correct two of the
   three new accounting-split plans (15 for `ACCT_GATE_B`, 16 for `ACCT_GATE_C`), each transitively
-  covering its own predecessor, so no redundant `blockedBy` edge is declared.
+  covering its own predecessor, so no redundant historical source context edge is declared.
 - **Cross-domain reinforcement**: this plan's 15 courses declare 7 direct edges into the
   accounting-split corpus and 7 edges into the existing software-engineering library
   (`security-essentials`, `data-engineering`, `analytics-and-experimentation`,
@@ -46,7 +46,7 @@ accounting programme, which was itself split into three new plans
   Gherkin feature file, and its step-definition file) to grow them further.
 - **`ayokoding-learning-path-15-skills-accounting-enterprise-reporting`** and
   **`ayokoding-learning-path-16-skills-accounting-sharia-extension`** — the two accounting-split plans
-  this plan's Stage B and Stage C respectively `blockedBy` gate on.
+  this plan's Stage B and Stage C respectively historical source context gate on.
 - **`ayokoding-learning-path-03-navigation-ui`** — supplies every rendered component this plan's
   content appears on; this plan supplies content specifications only.
 
@@ -55,7 +55,7 @@ accounting programme, which was itself split into three new plans
 - **Any Stage A course content or Stage A syllabus file.** Those 15 courses and syllabi belong entirely
   to `ayokoding-learning-path-17-skills-erp-foundations`, which this plan only reads by relative link.
 - **Any accounting content.** The full accounting corpus, its manifests, and its landings belong to
-  the three accounting-split plans; this plan only consumes them via the two staged `blockedBy` gates.
+  the three accounting-split plans; this plan only consumes them via the two staged historical source context gates.
 - **Any UI component, route, or design asset.**
 - **Any structural `_index.md` under `paths/`.**
 - **Building, installing, configuring, or standing up an ERP system of any kind (A6).**

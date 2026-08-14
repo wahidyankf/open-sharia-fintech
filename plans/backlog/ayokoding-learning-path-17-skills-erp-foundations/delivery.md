@@ -15,7 +15,7 @@ Three standing constraints govern every step below.
 > **Cross-plan source of truth**: this plan's 15-course slice — ids, formats, prerequisite edges, ramp
 > order — is settled in
 > [tech-docs.md §The ERP catalog (this plan's 15-course slice)](./tech-docs.md#the-erp-catalog-this-plans-15-course-slice),
-> transcribed from the retired `ayokoding-learning-path-07-skills-erp` design. Transcribe it; do not
+> transcribed from the retired the superseded ERP-programme draft design. Transcribe it; do not
 > re-derive it. The syllabus module/topic content is authored fresh at Phase 1 from domain reasoning,
 > per `A12`.
 >
@@ -34,9 +34,9 @@ Three standing constraints govern every step below.
 This 15-course plan is one inseparable delivery unit: every Phase 1–8 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 8 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 8 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
 a PR.
 
@@ -46,6 +46,8 @@ worktree; no per-course, stage, phase, or closeout worktree is created.
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-17-skills-erp-foundations/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-17-skills-erp-foundations` (or `git worktree add -b worktree/ayokoding-learning-path-17-skills-erp-foundations worktrees/ayokoding-learning-path-17-skills-erp-foundations origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 Final-delivery branch: `ayokoding-learning-path-17-skills-erp-foundations/final-delivery`
 
@@ -68,38 +70,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 8 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 8 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 8 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
 
-## Depends-on and start preconditions
+## Content-only delivery safeguards
 
-- **`blockedBy` (hard, must be merged before Phase 0 completes)**:
-  `ayokoding-learning-path-01-url-restructure`, `ayokoding-learning-path-02-schema-and-prerequisite-dag`,
-  `ayokoding-learning-path-03-navigation-ui`, **`vercel-function-cost-reduction`**, and
-  **`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`** — see
-  [tech-docs.md §The vercel-function-cost-reduction precondition](./tech-docs.md#the-vercel-function-cost-reduction-precondition)
-  and [tech-docs.md §The prerequisite graph](./tech-docs.md#the-prerequisite-graph--this-plans-edges-only).
-  Plan 06 is the hard precondition because it is the plan that authors and publishes
-  `domain-driven-design` (course 4's prerequisite) and `event-driven-architecture` (course 23's
-  prerequisite) — both are still pending in plan 06's own backlog `delivery.md`, not yet merged to
-  `origin/main`, as of this plan's authoring. `sql-essentials`, `networking-essentials`,
-  `backend-essentials`, and `api-design` are already published and carry no such dependency.
-- **No `blockedBy` on any accounting plan.** Per DD-4, Stage A carries zero accounting precondition.
-- **No `blockedBy` on any careers/course-authoring plan other than plan 06** (see above).
-- Start precondition: all five hard-blocking plans merged to `origin/main`. Verify each
-  **independently**:
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-  ```bash
-  for n in ayokoding-learning-path-01-url-restructure ayokoding-learning-path-02-schema-and-prerequisite-dag \
-           ayokoding-learning-path-03-navigation-ui vercel-function-cost-reduction \
-           ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness; do
-    git log origin/main --oneline | grep -q "$n" || echo "NOT MERGED: $n"
-  done
-  ```
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
-  Acceptance: **empty output**.
+## Depends-on
+
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-16-skills-accounting-sharia-extension` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-16-skills-accounting-sharia-extension/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -137,8 +127,8 @@ echo "PLANDIR=$PLANDIR"
 COURSES="apps/ayokoding-www/content/en/learn/courses/"
 PATHS="apps/ayokoding-www/content/en/learn/paths/"
 MANIFESTS="apps/ayokoding-www/src/features/course-paths/manifests/"
-CONVMAN="${MANIFESTS}skills/conventional-erp.yaml"
-SHARMAN="${MANIFESTS}skills/sharia-erp.yaml"
+CONVMAN="${MANIFESTS}skills/conventional-erp.json"
+SHARMAN="${MANIFESTS}skills/sharia-erp.json"
 MTEST_CE="${MANIFESTS}skills/conventional-erp-manifest.unit.test.ts"
 MTEST_SE="${MANIFESTS}skills/sharia-erp-manifest.unit.test.ts"
 CONVLANDING="${PATHS}skills/conventional-erp/_index.md"
@@ -172,19 +162,19 @@ ERP_STAGE_BC_FORWARD=(
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-17-skills-erp-foundations/ plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-17-skills-erp-foundations/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-17-skills-erp-foundations/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] All five hard-blocking plans merged to `origin/main` — run the loop in
-      [§Depends-on](#depends-on-and-start-preconditions); acceptance: empty output.
+- [ ] [AI] Direct predecessor archival check passed; repository baseline facts checked — run the loop in
+      [§Depends-on](#depends-on); acceptance: empty output.
 - [ ] [AI] Install dependencies: `npm install`.
 - [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
 - [ ] [AI] Verify dev server starts: `nx dev ayokoding-www`.
-- [ ] [AI] Verify existing tests pass before making changes: `nx run ayokoding-www:test:quick`.
+- [ ] [AI] Verify existing tests pass before making changes: `npm exec nx run ayokoding-www:test:quick`.
 - [ ] [AI] **Cardinality guard**:
       `[ "${#ERP_STAGE_A[@]}" -eq 15 ] && echo GUARD-OK || echo GUARD-FAIL` — acceptance: `GUARD-OK`.
 - [ ] [AI] Verify no id in `ERP_STAGE_A` already exists under `<COURSES>`:
@@ -194,16 +184,16 @@ ERP_STAGE_BC_FORWARD=(
       `for a in "${ERP_STAGE_A[@]}"; do for b in "${ERP_STAGE_A[@]}" "${ERP_STAGE_BC_FORWARD[@]}"; do [ "$a" != "$b" ] && case "$b" in *"$a"*) echo "SUBSTRING: $a ⊂ $b";; esac; done; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`. **Control probe**: append a known-colliding id to a scratch copy and
       re-run — it must print `FAIL`.
-- [ ] [AI] `vercel-function-cost-reduction` merge check (mechanism-level, DD-6):
+- [ ] [AI] rendering repository-baseline check (DD-6):
       `git log origin/main --oneline | grep -q "vercel-function-cost-reduction" && echo PASS || echo FAIL`
       — acceptance: `PASS`.
 
 ### Phase 0 Gate
 
-- [ ] [AI] All checks above pass; `nx run ayokoding-www:test:quick` is green on a clean tree.
+- [ ] [AI] All checks above pass; `npm exec nx run ayokoding-www:test:quick` is green on a clean tree.
 
 > **Pause Safety**: no plan file yet modified. Safe to stop. To resume: re-run
-> `nx run ayokoding-www:test:quick`.
+> `npm exec nx run ayokoding-www:test:quick`.
 
 ## Phase 1: Syllabus Authoring and Verification
 
@@ -372,7 +362,7 @@ tagged per the pure-core `(underpins)` exemption to the one-scenario-per-cycle r
 
 ```gherkin
 Scenario: conventional-erp manifest validates against the PathManifest schema at 15 ids
-  Given the file "manifests/skills/conventional-erp.yaml"
+  Given the file "manifests/skills/conventional-erp.json"
   When the manifest is loaded and validated
   Then it parses against the PathManifest zod schema
   And its pathId equals "skills/conventional-erp"
@@ -380,7 +370,7 @@ Scenario: conventional-erp manifest validates against the PathManifest schema at
   And its courseOrder contains exactly 15 unique course ids
 
 Scenario: sharia-erp manifest validates against the PathManifest schema at 15 ids
-  Given the file "manifests/skills/sharia-erp.yaml"
+  Given the file "manifests/skills/sharia-erp.json"
   When the manifest is loaded and validated
   Then it parses against the PathManifest zod schema
   And its pathId equals "skills/sharia-erp"
@@ -392,7 +382,7 @@ Scenario: sharia-erp manifest validates against the PathManifest schema at 15 id
       asserting its own manifest parses against the `PathManifest` zod schema, has the correct
       `pathId`, `arc: immediately-effective`, and `courseOrder` containing exactly the 15
       `ERP_STAGE_A` ids in order — run
-      `nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` and verify
+      `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` and verify
       both **fail** (files do not exist yet).
 - [ ] [AI] **GREEN** — Create `<CONVMAN>` and `<SHARMAN>` (identical at this stage — 15 ids,
       transcribed from `syllabus/paths/manifest-skills-conventional-erp.md`) — run the same command
@@ -408,9 +398,8 @@ Scenario: sharia-erp manifest validates against the PathManifest schema at 15 id
       [tech-docs.md §Landing content requirements](./tech-docs.md#landing-content-requirements-what-plan-03-cannot-infer--this-plans-boundary-only)
       (the Dangerous 1 boundary table, the L-2 runway justification, and — for `<SHARLANDING>` — the
       DD-10 identical-to-conventional-erp statement) — author **content only**, no new component.
-- [ ] [AI] Populate two cards each in `<PATHS>_index.md` and `<PATHS>skills/_index.md` (four
-      insertions total) — edit only, these files already exist (A3).
-- [ ] [AI] Populate 15 rows in `<COURSES>_index.md` — edit only, file already exists (A3).
+- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; generated path hubs list both landings (A3).
+- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually edit `<COURSES>_index.md` (A3).
 
 ### 2.4 — TDD: Stage A path-walk coverage
 
@@ -428,22 +417,22 @@ Scenario: Stage A landings render and both manifests validate at 15 courses
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`
       _(new file)_ carrying the scenario above, plus failing step definitions at
       `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` _(new file, pairing 1:1)_ —
-      command: `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new spec **fails**.
+      command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new spec **fails**.
 - [ ] [AI] **GREEN** — implement the step bindings against the already-published `<CONVLANDING>` /
       `<SHARLANDING>` and `<CONVMAN>` / `<SHARMAN>` (from §2.2/§2.3) — command:
-      `nx run ayokoding-www:specs:behavior:coverage && nx run ayokoding-www-fe-e2e:test:e2e` —
+      `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0, and `specs:behavior:coverage` reports 100% for the new feature file.
 - [ ] [AI] **REFACTOR** — extract a reusable "assert a Dangerous-N boundary on a path landing" helper
       step definition, parameterized on path id and boundary number, so the successor plan's own
       Dangerous 2/3/4 scenarios extend it without duplicating step bindings — command:
-      `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0, scenario count unchanged.
+      `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0, scenario count unchanged.
 
 ### Phase 2 Gate
 
-- [ ] [AI] `nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
-- [ ] [AI] `nx run ayokoding-www-fe-e2e:test:e2e` green for the new feature file (**not**
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
+- [ ] [AI] `npm exec nx run ayokoding-www-fe-e2e:test:e2e` green for the new feature file (**not**
       `ayokoding-www:test:e2e`, a no-op echo stub).
-- [ ] [AI] `nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
+- [ ] [AI] `npm exec nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
 - [ ] [AI] `for id in "${ERP_STAGE_A[@]}"; do test -d "${COURSES}${id}" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS` prints `PASS`.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 8.
@@ -474,8 +463,8 @@ Scenario: Stage A landings render and both manifests validate at 15 courses
   **Control probe**: `mkdir -p "${COURSES}sharia-erp/erp-foundations-and-history"` in a scratch
   checkout and re-run — it must print `EXPECTED-1-GOT-2`. Remove it afterwards.
 
-- [ ] [AI] `nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
-- [ ] [AI] `nx run ayokoding-www:test:unit` **and** `nx run ayokoding-www-fe-e2e:test:e2e` both green
+- [ ] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` **and** `npm exec nx run ayokoding-www-fe-e2e:test:e2e` both green
       for this plan's 15-course corpus.
 
 ### Phase 3 Gate
@@ -484,7 +473,7 @@ Scenario: Stage A landings render and both manifests validate at 15 courses
       branch; no PR is opened or merged before Phase 8.
 
 > **Pause Safety**: this plan's corpus is integrity-verified. Safe to stop. To resume: re-run
-> `nx run ayokoding-www:specs:behavior:coverage`.
+> `npm exec nx run ayokoding-www:specs:behavior:coverage`.
 
 ## Phase 4: Section and App Verification (Licensing and Trademark)
 
@@ -558,14 +547,14 @@ for why this content tree is English-only by established repo convention.
 
 ## Phase 6: Full-Corpus (Stage A) Integration Verification
 
-- [ ] [AI] `nx run ayokoding-www:build` succeeds with both manifests and all 15 course bundles
+- [ ] [AI] `npm exec nx run ayokoding-www:build` succeeds with both manifests and all 15 course bundles
       present.
-- [ ] [AI] `nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
+- [ ] [AI] `npm exec nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
 - [ ] [AI] End-to-end path-walk: navigate `/en/learn/paths/skills/conventional-erp`, step through
       prev/next across all 15 courses via Playwright MCP, verify no broken link and no console error;
       repeat for `/en/learn/paths/skills/sharia-erp`.
 - [ ] [AI] Re-confirm the `vercel-function-cost-reduction` mechanism-level signal from
-      [tech-docs.md](./tech-docs.md#the-vercel-function-cost-reduction-precondition): both new routes'
+      [tech-docs.md](./tech-docs.md#repository-baseline): both new routes'
       `.next/server/app` output contains a prerendered `.html` file, not a dynamic-only entry.
 - [ ] [AI] **Capture evidence.** Write to `${PLANDIR}evidence/`:
   - `browser_take_screenshot` of each path landing at three breakpoints, named
@@ -627,7 +616,7 @@ for why this content tree is English-only by established repo convention.
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] **Custody hand-off check first** — determine whether

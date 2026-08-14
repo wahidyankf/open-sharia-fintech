@@ -22,7 +22,7 @@ and **win on conflict**.
 | R2  | `pathId` is **variable-depth by design** — `careers/<arc>/<role>` is 3 segments, `skills/<subject>` is 2; nothing may key on segment count.                                              |
 | R4  | Ownership split: the `careers/`-manifest plans are `careers/`-only; the `skills/` category is separate.                                                                                  |
 | R9  | Every plan declares its **UI-gate and API-gate posture explicitly**; a plan bearing neither surface is _not_ thereby exempt and must state why.                                          |
-| A2  | The skills category splits across separate accounting and ERP plans, the latter `blockedBy` the former.                                                                                  |
+| A2  | The skills category splits across separate accounting and ERP plans, the latter historical source context the former.                                                                                  |
 | A8  | **Strict clean-room licensing, programme-wide** — binds every plan in the programme; nothing copyrighted is reproduced, and every concept is restated in original words with a citation. |
 | A10 | The skills category carries **four** paths — two accounting, two ERP; each Sharia path covers the basics too, and `A11` governs how.                                                     |
 | A11 | Shared courses are **referenced by both manifests, authored once** — a Sharia path's `courseOrder` interleaves shared and Sharia-specific ids rather than duplicating files.             |
@@ -40,7 +40,7 @@ endorsement or affiliation.
 ## Overview
 
 This plan delivers the **software-engineer-role slice of the `careers/` composition layer**: three
-`PathManifest` YAML data files, their thin content landing anchors, this plan's slice of the paths-hub
+`PathManifest` JSON manifest data files, their thin content landing anchors, this plan's slice of the paths-hub
 card population, the per-path smoothness audits, every manifest growth as backfill content lands, and
 — at this plan's own final phase — the four-manifest completeness check that spans the whole `careers/`
 category.
@@ -51,7 +51,7 @@ category.
 | Schema / core / integrity                               | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                        |
 | Rendering / route wiring                                | `ayokoding-learning-path-03-navigation-ui`               | consumes                        |
 | Course bodies                                           | seven course-authoring successor plans (`04`-`11`)       | consumes (band signals)         |
-| `apps/ayokoding-www` rendering-mode fix                 | `vercel-function-cost-reduction`                         | consumes (hard precondition)    |
+| `apps/ayokoding-www` rendering-mode fix                 | `vercel-function-cost-reduction`                         | consumes (repository-baseline check)    |
 | **Three `software-engineer`-role manifests + landings** | **this plan**                                            | **produces**                    |
 | The `ai-engineer` manifest + landing + hub card         | `ayokoding-learning-path-13-careers-ai-manifest`         | sibling — coupled, not consumed |
 | `skills/` manifests + landings + corpus                 | the accounting/ERP split plans                           | sibling — out of scope          |
@@ -59,16 +59,16 @@ category.
 ## The manifest ownership invariant (scoped to this plan's three files)
 
 **This plan owns exactly**
-`apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml`,
-`.../careers/immediately-effective/software-engineer.yaml`, and
-`.../careers/fundamentally-strong/software-engineer.yaml`, plus every step that creates, appends to,
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json`,
+`.../careers/immediately-effective/software-engineer.json`, and
+`.../careers/fundamentally-strong/software-engineer.json`, plus every step that creates, appends to,
 reorders, or re-verifies one of them. The sibling plan owns exactly
-`.../careers/immediately-effective/ai-engineer.yaml` under the identical invariant. Neither plan's
+`.../careers/immediately-effective/ai-engineer.json` under the identical invariant. Neither plan's
 mechanical checks ever assume the other's file exists or does not exist, except at this plan's own
 final phase (Phase 8), which explicitly checks for the sibling manifest's presence as its start
 condition.
 
-**Variable depth (R2).** `<MANIFESTS>careers/<arc>/<role>.yaml` is 3 path segments deep. Every glob and
+**Variable depth (R2).** `<MANIFESTS>careers/<arc>/<role>.json` is 3 path segments deep. Every glob and
 `find` below walks `<MANIFESTS>careers/` scoped to this plan's three specific file paths — never a
 directory-wide count that would also match the sibling plan's file — so a concurrent edit from the
 sibling plan can never change this plan's own gate results.
@@ -77,9 +77,9 @@ sibling plan can never change this plan's own gate results.
 
 | Path                                                               | Kind    | Note                                                                                                                                                                            |
 | ------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<MANIFESTS>careers/interview-ready/software-engineer.yaml`        | data    | created Phase 1, grown Phase 4                                                                                                                                                  |
-| `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`  | data    | created Phase 2, grown Phase 4                                                                                                                                                  |
-| `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`   | data    | created Phase 3, grown Phase 4                                                                                                                                                  |
+| `<MANIFESTS>careers/interview-ready/software-engineer.json`        | data    | created Phase 1, grown Phase 4                                                                                                                                                  |
+| `<MANIFESTS>careers/immediately-effective/software-engineer.json`  | data    | created Phase 2, grown Phase 4                                                                                                                                                  |
+| `<MANIFESTS>careers/fundamentally-strong/software-engineer.json`   | data    | created Phase 3, grown Phase 4                                                                                                                                                  |
 | `<MANIFESTS>careers/careers-se-manifests.unit.test.ts`             | test    | asserts this plan's three manifests' shape, integrity, and growth state — **not shared** with the sibling plan, which owns its own `careers-ai-manifest.unit.test.ts`           |
 | `<PATHS>careers/interview-ready/software-engineer/_index.md`       | content | thin landing anchor, prose/SEO only                                                                                                                                             |
 | `<PATHS>careers/immediately-effective/software-engineer/_index.md` | content | thin landing anchor, prose/SEO only                                                                                                                                             |
@@ -89,7 +89,7 @@ sibling plan can never change this plan's own gate results.
 ### What this plan never touches
 
 - Any file under `apps/ayokoding-www/content/en/learn/courses/` — read only.
-- `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` or its landing/hub card — the sibling
+- `<MANIFESTS>careers/immediately-effective/ai-engineer.json` or its landing/hub card — the sibling
   plan's own file.
 - Any file under `<MANIFESTS>skills/` — the accounting/ERP split's own subtree.
 - Any file under `<FEAT>core/` or `<FEAT>shell/` — consumed, never modified.
@@ -132,21 +132,22 @@ in this plan's checklist is written against them.
 
 A **path** is a manifest: a **path ID**, a display **title**, a **description**, and an ordered
 **`courseOrder`** list of course IDs, stored under `apps/ayokoding-www/src/features/course-paths/manifests/`,
-globbed as `manifests/**/*.yaml`. This data file is the **single machine-consumed source of truth** —
+globbed as `manifests/**/*.json`. This data file is the **single machine-consumed source of truth** —
 never `courseOrder` frontmatter on a content `_index.md`.
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
-pathId: careers/interview-ready/software-engineer
-title: "Interview-Ready Software Engineer"
-description: "Interview-first track for an experienced engineer re-entering the market."
-courseOrder:
-  - just-enough-nvim
-  - just-enough-lua
-  - extending-neovim
-  - just-enough-python
-  - capstone-forge-ready
-  # … ordered course IDs, prerequisite-consistent …
+```json
+{
+  "pathId": "careers/interview-ready/software-engineer",
+  "title": "Interview-Ready Software Engineer",
+  "description": "Interview-first track for an experienced engineer re-entering the market.",
+  "courseOrder": [
+    "just-enough-nvim",
+    "just-enough-lua",
+    "extending-neovim",
+    "just-enough-python",
+    "capstone-forge-ready"
+  ]
+}
 ```
 
 ### Manifest integrity invariants
@@ -169,7 +170,7 @@ fourth at Phase 8 only:
 %% How this plan's three manifests reach a rendered page. Node SHAPE encodes owning plan:
 %% rectangle = this plan, stadium = navigation-ui, hexagon = schema-and-prerequisite-dag.
 flowchart LR
-    YAML["3 manifests<br/>THIS PLAN"]:::mine
+    JSON["3 manifests<br/>THIS PLAN"]:::mine
     LANDING["3 landing anchors<br/>THIS PLAN"]:::mine
     HUB["paths/_index.md<br/>3-card slice<br/>THIS PLAN populates"]:::mine
 
@@ -183,7 +184,7 @@ flowchart LR
 
     BUNDLES(["courses/&lt;id&gt;/<br/>bundles"]):::upstream
 
-    YAML --> REPO
+    JSON --> REPO
     REPO --> SCHEMA
     REPO --> INTEG
     INTEG --> BUNDLES
@@ -260,7 +261,7 @@ plus three new decisions this split introduces.
   **`fundamentally-strong/software-engineer`** (this plan's Phase 3) → backfill. This plan's Phase 1 is
   DD-27's second step; Phases 2 and 3 are its fourth and fifth steps. The sibling plan's whole run
   occupies DD-27's third step, concurrently with this plan's later phases — see
-  [README §The plan-12 / plan-13 coupling](./README.md#the-plan-12--plan-13-coupling-non-circular-by-construction).
+  [README §The plan-12 / plan-13 coupling](./README.md#execution-handoff-to-plan-13).
 
 ### DD-40 · The four-manifest predecessor plan is split 3+1, not 2+2 (new, 2026-08-01)
 
@@ -307,25 +308,12 @@ gate.
 
 ### DD-42 · The plan-12 / plan-13 coupling is a sequential, two-edge dependency, not a cycle (new, 2026-08-01)
 
-**Decision.** `ayokoding-learning-path-13-careers-ai-manifest` starts independently; this plan's
-**Phase 8** (the
-four-manifest cross-check) is `blockedBy` the sibling plan's **whole-plan merge** (a normal, whole-plan
-dependency). These are two distinct edges terminating at two distinct nodes inside this plan — Phase 1
+**Decision.** `ayokoding-learning-path-13-careers-ai-manifest` is the successor of this plan and begins after this plan's whole-plan merge. These are two distinct edges terminating at two distinct nodes inside this plan — Phase 1
 (first) and Phase 8 (last) — so the coupling is sequential, never cyclic.
 
-**Rationale.** The residual four-manifest check ("a shared course names every path that includes it")
-cannot resolve inside either plan alone, since it needs all four manifests live. Per DD-27's build
-order, this plan's fundamentally-strong phase is the last **manifest-authoring** step in the whole
-`careers/` category, and this plan's own growth phase (Phase 4) runs across the longest span of the
-seven course-authoring successor plans' signals — so this plan finishes the whole four-path product
-last. Placing the four-manifest check as this plan's own final phase, gated on the sibling's full
-merge, is therefore the only placement that does not require either plan to reach into the other's
-folder to close a check.
+**Rationale.** The sequential chain makes ownership unambiguous: this plan verifies its three manifests, and plan 13 verifies all four after plan 12 is archived.
 
-**Non-circularity, stated precisely.** Plan 13 has no dependency on Plan 12; Plan 12 alone waits for
-Plan 13's terminal archival PR before Phase 8. A cycle would require Plan 13 to (directly or
-transitively) block Plan 12's Phase 1; it does not. See the sequence diagram in
-[README](./README.md#the-plan-12--plan-13-coupling-non-circular-by-construction) for the visual proof.
+**Execution order, stated precisely.** Plan 12 follows plan 11; plan 13 follows plan 12. Plan 12 never waits for plan 13, and plan 13 owns any four-manifest verification after its predecessor is archived.
 
 ## UI-gate and API-gate posture (R9)
 
@@ -367,9 +355,9 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 │   ├── README.md [E] — fix stale ownership refs to retired plan names
 │   └── careers/
 │       ├── careers-se-manifests.unit.test.ts [N] — created Phase 1, extended 2-4
-│       ├── interview-ready/software-engineer.yaml [N] — Phase 1, grown Phase 4
-│       ├── immediately-effective/software-engineer.yaml [N] — Phase 2, grown Phase 4
-│       └── fundamentally-strong/software-engineer.yaml [N] — Phase 3, grown Phase 4
+│       ├── interview-ready/software-engineer.json [N] — Phase 1, grown Phase 4
+│       ├── immediately-effective/software-engineer.json [N] — Phase 2, grown Phase 4
+│       └── fundamentally-strong/software-engineer.json [N] — Phase 3, grown Phase 4
 ├── apps/ayokoding-www/content/en/learn/paths/
 │   ├── _index.md [E] — populate this plan's 3-card slice (file created by plan 01)
 │   ├── careers/interview-ready/software-engineer/_index.md [N]
@@ -387,13 +375,9 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 
 ### More Detail
 
-Every path above is `[N]` except three `[E]` edits, and each of those three is a **populate-only**
-edit of a file another plan created: `manifests/README.md` and `paths/_index.md` (plan 01), which this
-plan appends its own slice to rather than rewriting. The sibling AI-manifest plan populates the fourth
-hub card independently, so the two plans append disjoint slices to the same `_index.md` — a mergeable
-diff, not a write conflict.
+The leaf landing narrative is hand-authored. `paths/_index.md` is generated from those landings, so this plan does not append cards manually: after manifest and landing changes run `npm exec nx run ayokoding-www:generate-indexes`, then `npm exec nx run ayokoding-www:validate-indexes`.
 
-The three `.yaml` manifests are created in Phases 1-3 and then **grown** in Phase 4 as the upstream
+The three `.json` manifests are created in Phases 1-3 and then **grown** in Phase 4 as the upstream
 band-completion signals arrive; the same file therefore appears once in the tree even though it is
 written across two phases, because the tree records intent per path, not per commit.
 
@@ -402,14 +386,14 @@ No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs ove
 | Path                                                                      | Change                                                  | Phase   |
 | ------------------------------------------------------------------------- | ------------------------------------------------------- | ------- |
 | `<MANIFESTS>careers/careers-se-manifests.unit.test.ts`                    | created (Phase 1), extended (2, 3, 4)                   | 1-4     |
-| `<MANIFESTS>careers/interview-ready/software-engineer.yaml`               | created                                                 | 1       |
+| `<MANIFESTS>careers/interview-ready/software-engineer.json`               | created                                                 | 1       |
 | `<PATHS>careers/interview-ready/software-engineer/_index.md`              | created                                                 | 1       |
-| `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`         | created                                                 | 2       |
+| `<MANIFESTS>careers/immediately-effective/software-engineer.json`         | created                                                 | 2       |
 | `<PATHS>careers/immediately-effective/software-engineer/_index.md`        | created                                                 | 2       |
-| `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`          | created                                                 | 3       |
+| `<MANIFESTS>careers/fundamentally-strong/software-engineer.json`          | created                                                 | 3       |
 | `<PATHS>careers/fundamentally-strong/software-engineer/_index.md`         | created                                                 | 3       |
 | `<PATHS>_index.md`                                                        | edited (this plan's 3-card slice; once per phase)       | 1, 2, 3 |
-| This plan's three manifest `.yaml` files                                  | edited (growth)                                         | 4       |
+| This plan's three manifest `.json` files                                  | edited (growth)                                         | 4       |
 | `<SPECS>path-composition.feature`                                         | created (1), extended (2, 3, 4, 8)                      | 1-4, 8  |
 | `apps/ayokoding-www-fe-e2e/src/steps/path-composition.steps.ts`           | created (1), extended (2, 3, 4, 8)                      | 1-4, 8  |
 | `plans/backlog/ayokoding-learning-path-12-careers-se-manifests/evidence/` | created (0), extended (4, 6)                            | 0, 4, 6 |
@@ -423,10 +407,10 @@ populating the fourth card independently).
 
 | Level                    | What it covers here                                                                                                                                         | Command                                                               |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Unit                     | this plan's 3 manifests load + zod-validate; integrity; prerequisite-consistency; no-forked-body; growth checks                                             | `npx nx run ayokoding-www:test:unit`                                  |
-| Specs (Gherkin coverage) | this plan's 6 `prd.md` scenarios bind a step definition (the scoped-build-green scenario is documentation-verified, no step binding, by design)             | `npx nx run ayokoding-www:specs:behavior:coverage`                    |
-| E2E                      | path-walk from each of this plan's 3 landings; `?path=` persistence; breadcrumb; prerequisite display                                                       | `npx nx run ayokoding-www-fe-e2e:test:e2e`                            |
-| Build                    | this plan's 3 manifests resolve against the currently-landed non-AI course bundles; at Phase 8, all 4 manifests resolve against the full 127-course catalog | `npx nx run ayokoding-www:build`                                      |
+| Unit                     | this plan's 3 manifests load + zod-validate; integrity; prerequisite-consistency; no-forked-body; growth checks                                             | `npm exec nx run ayokoding-www:test:unit`                                  |
+| Specs (Gherkin coverage) | this plan's 6 `prd.md` scenarios bind a step definition (the scoped-build-green scenario is documentation-verified, no step binding, by design)             | `npm exec nx run ayokoding-www:specs:behavior:coverage`                    |
+| E2E                      | path-walk from each of this plan's 3 landings; `?path=` persistence; breadcrumb; prerequisite display                                                       | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                            |
+| Build                    | this plan's 3 manifests resolve against the currently-landed non-AI course bundles; at Phase 8, all 4 manifests resolve against the full 127-course catalog | `npm exec nx run ayokoding-www:build`                                      |
 | Manual                   | 3 landings + this plan's hub-card slice at 375/768/1280px, `en`, committed evidence                                                                         | Playwright MCP (Phase 6)                                              |
 | Live-site triad          | Rule-15 EWT/UWT/DWT retest before archival, scoped to this plan's surfaces                                                                                  | `web-exploratory-tester`, `web-usability-tester`, `web-design-tester` |
 
@@ -437,12 +421,9 @@ absent in the third) that no existing assertion covers — identical reasoning t
 own Phase 5.2. Phase 8's four-manifest check also carries a real RED, since it is a new invariant this
 plan's own prior phases could not assert (it needs the sibling manifest to exist).
 
-## Dependencies
+## Execution dependency
 
-- **Upstream plans** — see [README §Depends-on](./README.md#depends-on).
-- **Runtime / build** — no net-new npm dependency.
-- **Tooling** — `rhino-cli` for `md links validate` and `md heading-hierarchy validate`, invoked as raw
-  `cargo run`, matching the pre-push hook's own form.
+This plan has one direct execution prerequisite: `ayokoding-learning-path-11-course-authoring-capstones`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 

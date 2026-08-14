@@ -11,7 +11,7 @@ from the open-source projects and standards bodies the domain touches.
 ## Business Context
 
 `ayokoding.com`'s `skills/` category currently ships zero ERP content. This plan is the first of a
-two-plan split of the retired `ayokoding-learning-path-07-skills-erp` design: it authors Stage A (15
+two-plan split of the retired the superseded ERP-programme draft design: it authors Stage A (15
 of 30 courses) and publishes both `skills/conventional-erp` and `skills/sharia-erp` at 15 ids each.
 The successor plan,
 [`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/brd.md),
@@ -27,7 +27,7 @@ accounting gates.
 - **Unblocks the successor plan's Stage B authoring immediately** — because this plan authors course
   17 (`erp-bom-and-routing-architecture`) despite its late content-stage position, three Stage B
   courses in the successor plan can start authoring the moment this plan merges, with no idle wait.
-- **Zero accounting coupling** — this plan carries no `blockedBy` edge to any accounting plan, so it
+- **Zero accounting coupling** — this plan carries no historical source context edge to any accounting plan, so it
   proceeds fully concurrently with the accounting programme's own three-plan split
   (`ayokoding-learning-path-14/15/16-skills-accounting-*`).
 - **Cross-domain reinforcement**: this plan's 15 courses declare prerequisite edges into 6
@@ -35,7 +35,7 @@ accounting gates.
   `api-design` (already published), plus `domain-driven-design` and `event-driven-architecture` (not
   yet published; both are pending authoring targets of
   `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`,
-  which this plan therefore adds as a hard `blockedBy` precondition — see
+  which this plan therefore adds as a repository baseline context precondition — see
   [tech-docs.md §The prerequisite graph](./tech-docs.md#the-prerequisite-graph--this-plans-edges-only))
   — giving those courses a new downstream audience.
 
@@ -44,15 +44,15 @@ accounting gates.
 - **Content authors** (AI agents in the maker-checker-fixer pipeline) — author 15 course bodies and
   15 syllabus files against the already-settled 30-course catalog and prerequisite graph.
 - **Site readers** pursuing early ERP domain literacy — see [prd.md](./prd.md#personas).
-- **`ayokoding-learning-path-18-skills-erp-enterprise-depth`** — the direct successor; `blockedBy` this
+- **`ayokoding-learning-path-18-skills-erp-enterprise-depth`** — the direct successor; historical source context this
   plan for its own Phase 0 start precondition, and a **consumer** (never an editor) of this plan's
   syllabus corpus for the cross-plan prerequisite edges it must cite by id (course 13→6,7; 14→6;
   18→17; 21→12,17; 24→3; 26→3; 29→10,11).
 - **`ayokoding-learning-path-03-navigation-ui`** — supplies every rendered component this plan's
   content appears on; this plan supplies content specifications only.
-- **`vercel-function-cost-reduction`** — the new hard dependency; its static-rendering fix must be
-  live before this plan's two new landing pages ship, so the new pages inherit the fixed rendering
-  posture rather than reintroducing the dynamic-rendering regression that plan closes.
+- **`vercel-function-cost-reduction`** — historical repository context for the rendering posture.
+  This plan records current rendered-route behavior; it does not make that historical plan an
+  additional start or delivery gate.
 
 ## Business-Scope Non-Goals
 
@@ -77,7 +77,7 @@ accounting gates.
 | ------------------------------------------------------------------------------------------------------------------------- | ---------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A course reproduces a copyrighted standard's text, a proprietary system's schema, or copyleft code                        | Medium     | High   | Eleven safe-authoring rules (A8); `apps-ayokoding-www-facts-checker` per-course review; Phase 4 grep-checkable acceptance clauses                  |
 | A vendor name appears in a course title, path segment, or product name (trademark exposure)                               | Low        | Medium | Nominative-use rule; Phase 4 grep clause scanning every id for vendor-name substrings                                                              |
-| The two new static landing pages reintroduce the dynamic-rendering regression `vercel-function-cost-reduction` just fixed | Low        | High   | Hard `blockedBy` on that plan plus a build-time prerender check at this plan's own Phase 0 and Phase 6 gates                                       |
+| The two new static landing pages reintroduce the dynamic-rendering regression `vercel-function-cost-reduction` just fixed | Low        | High   | a repository-baseline check plus a build-time prerender check at this plan's own Phase 0 and Phase 6 gates                                       |
 | The successor plan cannot cite this plan's syllabus corpus correctly (custody drift)                                      | Low        | Medium | This plan's `syllabus/README.md` names itself `**Custodian**`; the successor plan echoes `custodied-by:` under its own `## Corpus Custody` heading |
 | A syllabus's vague module title makes the corpus unverifiable                                                             | Low        | Low    | Module-title specificity rule enforced at authoring time; Phase 1.2a confirmation pass surfaces vagueness                                          |
 

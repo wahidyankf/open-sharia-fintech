@@ -6,7 +6,7 @@ authoritative reading order for the path; a course page under `?path=skills/conv
 it for prev/next + breadcrumb.
 
 The **machine-consumed source of truth** is the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-erp.yaml` (created by
+`apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-erp.json` (created by
 plan 17 at 15 ids, grown to this terminal 27-id state by this plan). Path landing served at
 `/en/learn/paths/skills/conventional-erp`.
 

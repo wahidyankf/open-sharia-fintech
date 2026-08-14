@@ -6,7 +6,7 @@ The **ordered manifest** for the sharia-ERP skills path, at this plan's own Stag
 the 3 Sharia-exclusive courses in its own Stage C.
 
 The **machine-consumed source of truth** is the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.yaml`. Path landing served
+`apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.json`. Path landing served
 at `/en/learn/paths/skills/sharia-erp`.
 
 ## Composition (15 courses at this checkpoint — 30 terminal, grown by the successor plan)

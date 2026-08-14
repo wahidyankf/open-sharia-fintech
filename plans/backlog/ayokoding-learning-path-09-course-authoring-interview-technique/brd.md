@@ -25,7 +25,7 @@ be content-complete without its own namesake band. Landing Band 9 closes the def
   (or the `fundamentally-strong` manifest, which also carries this band) is blocked on content that
   does not yet exist.
 - **Expected benefit**: once this plan's PR merges, the two manifests this band feeds
-  (`careers/interview-ready/software-engineer.yaml` and `careers/fundamentally-strong/software-engineer.yaml`)
+  (`careers/interview-ready/software-engineer.json` and `careers/fundamentally-strong/software-engineer.json`)
   can grow to include the interview-technique band, unblocking
   `ayokoding-learning-path-12-careers-se-manifests`'s own work on those two manifests.
 - **Scope discipline preserved**: authoring these 5 bodies in their own plan — rather than folding them
@@ -41,7 +41,7 @@ wears, or agents the maintainer delegates to:
 - **Content author** (delegated to `apps-ayokoding-www-by-example-maker` and
   `apps-ayokoding-www-annotated-concept-maker`) — authors the 5 bodies from their settled
   `syllabus/courses/<course-id>.md` specs.
-- **Content reviewer** (delegated to the PR-Review Maker→Fixer Cycle's discipline specialists) —
+- **Content reviewer** (delegated to the content-quality verification specialists) —
   reviews the authored content for governance conformance, documentation quality, and business-logic
   correctness (interview-rubric accuracy, prerequisite-chain correctness).
 - **Deployer** (delegated to `apps-ayokoding-www-deployer`) — pushes the merged content to
@@ -54,8 +54,8 @@ wears, or agents the maintainer delegates to:
 
 1. **Observable fact**: `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews capstone-interview-loop; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .` returns `0` after this plan's PR merges (returns `5` before). This is the plan's own terminal assertion — see [delivery.md](./delivery.md) Phase 6.
 2. **Observable fact**: one band-completion signal, naming exactly two manifests
-   (`careers/interview-ready/software-engineer.yaml`,
-   `careers/fundamentally-strong/software-engineer.yaml`), is recorded in this plan's `delivery.md`
+   (`careers/interview-ready/software-engineer.json`,
+   `careers/fundamentally-strong/software-engineer.json`), is recorded in this plan's `delivery.md`
    in this plan's terminal archival PR — verifiable after that PR merges.
 3. **Judgment call**: closing this deferral removes the one remaining content gap blocking the
    `interview-ready` path's own manifest from reaching content-completeness. No baseline cycle-time
@@ -64,7 +64,7 @@ wears, or agents the maintainer delegates to:
 
 ## Business-Scope Non-Goals
 
-- **No manifest growth.** This plan records a band-completion signal; it never edits a `.yaml`
+- **No manifest growth.** This plan records a band-completion signal; it never edits a `.json`
   manifest itself. That is `ayokoding-learning-path-12-careers-se-manifests`'s work (for the two named
   manifests) — see the [manifest ownership invariant](./README.md#the-manifest-ownership-invariant--this-band-is-the-special-case).
 - **No Indonesian (`id`) mirror.** Per the parent plan's own Business-Scope Non-Goals, this plan's
@@ -83,8 +83,8 @@ wears, or agents the maintainer delegates to:
 | Risk                                                                                                                                                                                | Mitigation                                                                                                                                                                                                                                                                 |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A band-completion signal names the wrong manifest count (three instead of two), causing the downstream manifest plan to wrongly grow `immediately-effective/software-engineer`      | The signal's `GROW_MANIFESTS` field is written verbatim from the parent plan's own binding contract (quoted in [README.md](./README.md#the-manifest-ownership-invariant--this-band-is-the-special-case)), and Phase 1's gate asserts exactly two manifest paths, not three |
-| This plan starts before `vercel-function-cost-reduction`'s Phase 1–4 fixes land, adding 5 more dynamically-rendered (uncached) pages to a site already over its Vercel usage budget | Phase 0's hard precondition gate checks for that plan's concrete Phase 1–4 file-level changes before any authoring begins — see [tech-docs.md §The `vercel-function-cost-reduction` precondition](./tech-docs.md#the-vercel-function-cost-reduction-precondition)          |
+| The current rendering state regresses while these five pages are authored | Phase 0 records the current file-level rendering baseline; it is repository context, not an additional plan-start gate. |
 | This plan starts before the parent plan's own Phase 0 baseline (toolchain, upstream verification) is established, or before its `<COURSES>` namespace exists                        | Phase 0 re-verifies the same upstream chain (plans 01 and 02 merged) directly, rather than trusting an unverified claim about the parent plan's state                                                                                                                      |
 | A course body is authored in the wrong register (first-learn instead of refresh), teaching concepts from zero to an audience that already has them                                  | Each course's authoring step carries a grep-checkable acceptance clause (the "assumes ... professional experience" phrase in `overview.md`), inherited verbatim from the parent plan's own Phase 11                                                                        |
 | Licensing exposure — a worked example or diagram copied from an interview-prep book, blog, or paid course                                                                           | The programme-wide `A8` licensing posture (describe, cite, link; never reproduce) applies here exactly as it did in the parent plan — see [tech-docs.md §Programme decisions consumed](./tech-docs.md#programme-decisions-consumed)                                        |
-| The manifest ownership invariant is accidentally violated — a course-authoring step touches a `.yaml` manifest                                                                      | Every phase's gate includes a zero-assertion `git diff --name-only ... -- 'apps/ayokoding-www/src/features/course-paths/manifests/' \| grep -c .` check, inherited from the parent plan's own pattern                                                                      |
+| The manifest ownership invariant is accidentally violated — a course-authoring step touches a `.json` manifest                                                                      | Every phase's gate includes a zero-assertion `git diff --name-only ... -- 'apps/ayokoding-www/src/features/course-paths/manifests/' \| grep -c .` check, inherited from the parent plan's own pattern                                                                      |

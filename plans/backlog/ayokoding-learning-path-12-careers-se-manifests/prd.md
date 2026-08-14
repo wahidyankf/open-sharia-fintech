@@ -5,7 +5,7 @@
 Three **path manifests** compose the shared course library into three readable
 `software-engineer`-role journeys. A manifest is an ordered, prerequisite-consistent list of course
 IDs — a **path ID**, a display **title**, a **description**, and a `courseOrder` — stored as a
-standalone YAML data file under `apps/ayokoding-www/src/features/course-paths/manifests/careers/`,
+standalone JSON manifest data file under `apps/ayokoding-www/src/features/course-paths/manifests/careers/`,
 nested to mirror each slash path ID. Each manifest gets a thin content **landing anchor** (prose/SEO
 only, no `courseOrder`) at `/en/learn/paths/<path-id>`, and a card in the paths hub's `careers/` group
 (hub layout owned by `ayokoding-learning-path-03-navigation-ui`).
@@ -20,7 +20,7 @@ All three converge on the same software-engineering deep mastery; only the **ent
 - **`careers/fundamentally-strong/software-engineer`** — CS foundations / theory first → deeper.
 
 **This product surface is composition only.** No course body is authored here; no rendering component
-is built here. What ships is: three YAML manifests, three landing anchors, three hub cards, the
+is built here. What ships is: three JSON manifests, three landing anchors, three hub cards, the
 integrity and smoothness verification that keeps them honest, the growth that closes each
 smoke-test-scoped manifest as backfill lands, and — at this plan's own final phase, once the sibling
 AI-manifest plan has fully merged — the four-manifest completeness check spanning all of `careers/`.
@@ -79,7 +79,7 @@ Scenario: The interview-ready MVP proves the architecture and unblocks the sibli
   Given the careers/interview-ready/software-engineer MVP (an architecture smoke test over already-live topics 1-33) is delivered end-to-end
   When its delivery unit is merged to origin/main
   Then the interview-ready MVP's landing page, manifest, and path-aware nav are verified on final-delivery
-  And Plan 13 remains independent until this plan's Phase 8 consumes Plan 13's final merged delivery
+  And Plan 13 begins after this plan's final PR merges and owns later cross-manifest verification
 ```
 
 ```gherkin
@@ -134,7 +134,7 @@ Scenario: This plan's software-engineer manifest layer builds and validates gree
 
 ### In scope
 
-- Three `PathManifest` YAML data files under
+- Three `PathManifest` JSON manifest data files under
   `apps/ayokoding-www/src/features/course-paths/manifests/careers/`.
 - Three thin landing anchors under
   `apps/ayokoding-www/content/en/learn/paths/careers/<arc>/software-engineer/_index.md`.

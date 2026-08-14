@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 9, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 9, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 This plan authors **Band 5 — Architecture, distributed & AI/harness** of the shared course library:
@@ -62,7 +62,7 @@ so this plan lands **8 of 9** AI-cluster bodies, and the capstone plan lands the
 > [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
 > and [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
 > (the successor manifest-growth plans; see [Depends-on](#depends-on) below). A step in this plan
-> that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary violation**,
+> that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary violation**,
 > not a convenience.
 
 When this band lands, this plan records a **band-completion signal** in its own
@@ -112,7 +112,7 @@ flowchart LR
     BODY["courses/&lt;course-id&gt;/<br/>page bundle<br/>WRITTEN HERE (15)"]:::owned
     CAT["tech-docs Course Library<br/>Catalog rows<br/>WRITTEN HERE"]:::owned
     SIG["Band-completion signal<br/>in this plan's delivery.md<br/>WRITTEN HERE"]:::owned
-    MAN{{"manifests/**/*.yaml<br/>NEVER WRITTEN HERE"}}:::forbidden
+    MAN{{"manifests/**/*.json<br/>NEVER WRITTEN HERE"}}:::forbidden
 
     SPEC -->|"authored from"| BODY
     BODY -->|"recorded in"| CAT
@@ -147,10 +147,10 @@ Band 8, in `ayokoding-learning-path-11-course-authoring-capstones`) that grows t
 manifest in addition to the three software-engineer-role manifests, per the parent plan's own
 README: "this band lands eight of the nine courses that manifest walks (DD-33)":
 
-- `<MANIFESTS>careers/interview-ready/software-engineer.yaml`
-- `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`
-- `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
-- `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`
+- `<MANIFESTS>careers/interview-ready/software-engineer.json`
+- `<MANIFESTS>careers/immediately-effective/software-engineer.json`
+- `<MANIFESTS>careers/fundamentally-strong/software-engineer.json`
+- `<MANIFESTS>careers/immediately-effective/ai-engineer.json`
 
 A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving
 plan(s) must reject it rather than guess.
@@ -169,62 +169,18 @@ this ordering.
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 9, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 9, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Direction       | Plan (full folder name)                                                                  | Nature                                                                                                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`                                             | hard, transitive — populated flat `courses/` namespace + `courses/_index.md` (inherited from the parent plan)                                                                                                                                       |
-| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                 | hard, transitive — `syllabus/courses/` specs + the `prerequisites` frontmatter contract                                                                                                                                                             |
-| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`                                            | hard, satisfied — its Phase 0 baseline and Phase 1 (the six net-new AI-engineering courses) merged to `origin/main` before the 2026-08-02 archival; `creating-ai-powered-apps` (course 8) and `agentic-ai` (course 9) here build on that foundation |
-| **blockedBy**   | `vercel-function-cost-reduction`                                                         | hard — see [§`vercel-function-cost-reduction` precondition](#vercel-function-cost-reduction-precondition) below                                                                                                                                     |
-| **blocks**      | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                     | hard — its `build-your-own-raft` course declares `distributed-systems` (course 5 here) as a prerequisite                                                                                                                                            |
-| **blocks**      | `ayokoding-learning-path-11-course-authoring-capstones`                                  | hard — its `capstone-build-your-own-coding-agent` assembles this plan's five-course harness cluster (courses 11–15)                                                                                                                                 |
-| **blocks**      | `ayokoding-learning-path-12-careers-se-manifests`                                        | hard — needs this band's completion signal to grow the three software-engineer-role manifests                                                                                                                                                       |
-| **blocks**      | `ayokoding-learning-path-13-careers-ai-manifest`                                         | hard — needs 8 of its 9-course AI-cluster walk from this band                                                                                                                                                                                       |
-| _(independent)_ | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`, `07`, `08`, `09` | none — sibling band-authoring splits of the same parent plan; each writes only its own band's course subtree, no shared file, per the parent plan's own "mutually content-independent" statement about Bands 1–4, 6, 7                              |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Start precondition (checkable — all four `blockedBy` rows must hold):**
-
-1. PR for `ayokoding-learning-path-01-url-restructure` is merged to `origin/main`.
-2. PR for `ayokoding-learning-path-02-schema-and-prerequisite-dag` is merged to `origin/main`.
-3. `ayokoding-learning-path-04-course-authoring`'s Phase 0 baseline and Phase 1 (the six net-new AI
-   courses) are merged to `origin/main` — checkable via
-   `for s in evaluating-ai-output-essentials statistics-for-evaluation evaluating-ai-systems-in-depth product-patterns-for-probabilistic-systems inference-serving-and-model-deployment fine-tuning-and-adaptation; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
-   returning **0**.
-4. `vercel-function-cost-reduction`'s Phases 1–4 changes are merged to `origin/main` — see next
-   section for the concrete checkable signal.
-
-### `vercel-function-cost-reduction` precondition
-
-This plan authors new content pages into `apps/ayokoding-www` — the same app
-`vercel-function-cost-reduction` is actively restructuring for static generation. Per that plan's own
-[README](../../done/2026-08-02__vercel-function-cost-reduction/README.md), its Phase 1 deletes
-`apps/ayokoding-www/src/app/layout.tsx` (promoting the locale layout to root) and its Phase 2 removes
-the `searchParams` read from the content catch-all page — both touch the exact route tree this plan's
-15 new course pages render into. Authoring against the pre-fix dynamic-rendering shape risks the new
-pages inheriting the same all-dynamic cost problem the moment the fix lands underneath them, or the
-fix landing after and needing to re-verify against 15 more pages than it planned for. **Assumed
-complete by this plan's execution start, per explicit instruction; not yet true as of this plan's
-authoring date** — `apps/ayokoding-www/src/app/layout.tsx` still exists and a `searchParams` read is
-still present as of authoring. Phase 0's checkable gate below re-verifies the real state and blocks
-authoring if the dependency has not actually landed by then. The concrete checkable signal from its
-actual Phase 1–4 changes:
-
-```bash
-test ! -f apps/ayokoding-www/src/app/layout.tsx \
-  && grep -rn "await searchParams" apps/ayokoding-www/src/app --exclude-dir=node_modules | grep -c .
-```
-
-Acceptance: the `test` exits 0 (root layout deleted, Phase 1 GREEN) and the `grep -c .` returns **0**
-(no remaining server-side `searchParams` read, Phase 2 GREEN). A production build additionally
-confirms the fix at scale: `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json`
-returns **≥ 2000** (was 4 pre-fix) after `nx build ayokoding-www`.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 

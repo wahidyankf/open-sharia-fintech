@@ -31,9 +31,9 @@ Three standing constraints govern every step below.
 This 15-course plan is one inseparable delivery unit: every Phase 1–9 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 9 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 9 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
 a PR.
 
@@ -43,6 +43,8 @@ only worktree; no per-course, stage, phase, or closeout worktree is created.
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-18-skills-erp-enterprise-depth` (or `git worktree add -b worktree/ayokoding-learning-path-18-skills-erp-enterprise-depth worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 Final-delivery branch: `ayokoding-learning-path-18-skills-erp-enterprise-depth/final-delivery`
 
@@ -65,38 +67,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 9 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 9 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 9 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
 
-## Depends-on and start preconditions
+## Content-only delivery safeguards
 
-- **`blockedBy` (hard, must be merged before Phase 0 completes)**:
-  `ayokoding-learning-path-17-skills-erp-foundations` (this plan's manifests, landings, and 15
-  Stage-A course bodies must exist on `origin/main`).
-- **`blockedBy` (hard, transitive via plan 17 — re-verified independently)**:
-  `ayokoding-learning-path-01-url-restructure`, `ayokoding-learning-path-02-schema-and-prerequisite-dag`,
-  `ayokoding-learning-path-03-navigation-ui`, `vercel-function-cost-reduction`.
-- **`blockedBy` (hard, staged)**: `ayokoding-learning-path-15-skills-accounting-enterprise-reporting`
-  before Stage B authoring (Phase 2, checked at Phase 2's own gate check, not at Phase 0);
-  `ayokoding-learning-path-16-skills-accounting-sharia-extension` before Stage C authoring (Phase 3,
-  checked at Phase 3's own gate check). Neither blocks Phase 0 or Phase 1 (syllabus authoring is
-  domain-reasoning-based and needs no accounting course to exist yet), mirroring the retired source
-  plan's own pattern of gating only the authoring phase, not Phase 0.
-- Start precondition: all four hard-blocking plans (17, 01, 02, 03) plus `vercel-function-cost-reduction`
-  merged to `origin/main`. Verify each **independently**:
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-  ```bash
-  for n in ayokoding-learning-path-17-skills-erp-foundations ayokoding-learning-path-01-url-restructure \
-           ayokoding-learning-path-02-schema-and-prerequisite-dag ayokoding-learning-path-03-navigation-ui \
-           vercel-function-cost-reduction; do
-    git log origin/main --oneline | grep -q "$n" || echo "NOT MERGED: $n"
-  done
-  ```
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
-  Acceptance: **empty output**. Plan 15 and plan 16 are deliberately **not** in this loop — their
-  gating is per-stage (Phase 2 and Phase 3 respectively), not a Phase 0 start precondition.
+## Depends-on
+
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-17-skills-erp-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-17-skills-erp-foundations/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -143,8 +133,8 @@ fi
 COURSES="apps/ayokoding-www/content/en/learn/courses/"
 PATHS="apps/ayokoding-www/content/en/learn/paths/"
 MANIFESTS="apps/ayokoding-www/src/features/course-paths/manifests/"
-CONVMAN="${MANIFESTS}skills/conventional-erp.yaml"
-SHARMAN="${MANIFESTS}skills/sharia-erp.yaml"
+CONVMAN="${MANIFESTS}skills/conventional-erp.json"
+SHARMAN="${MANIFESTS}skills/sharia-erp.json"
 MTEST_CE="${MANIFESTS}skills/conventional-erp-manifest.unit.test.ts"
 MTEST_SE="${MANIFESTS}skills/sharia-erp-manifest.unit.test.ts"
 CONVLANDING="${PATHS}skills/conventional-erp/_index.md"
@@ -162,7 +152,7 @@ ERP_STAGE_A=(
   erp-bom-and-routing-architecture erp-extension-and-customization erp-integration-patterns
 )
 
-# This plan's 12 Stage B ids, gated on ACCT_GATE_B
+# This plan's 12 Stage B ids, checked against ACCT_GATE_B course ids
 ERP_STAGE_B=(
   record-to-report-systems inventory-and-warehouse-management erp-inventory-costing-methods
   erp-inventory-integrity-and-concurrency production-planning-and-mrp demand-and-supply-planning
@@ -171,7 +161,7 @@ ERP_STAGE_B=(
   multi-company-and-multi-currency-erp erp-security-and-controls erp-analytics-and-reporting
 )
 
-# This plan's 3 Stage C ids, sharia-erp only, gated on ACCT_GATE_C
+# This plan's 3 Stage C ids, sharia-erp only, checked against ACCT_GATE_C course ids
 ERP_STAGE_C=(
   sharia-compliant-erp-design islamic-contract-based-transaction-flows
   zakat-and-sharia-compliance-modules
@@ -180,7 +170,7 @@ ERP_STAGE_C=(
 ERP_THIS_PLAN=("${ERP_STAGE_B[@]}" "${ERP_STAGE_C[@]}")
 ERP_ALL=("${ERP_STAGE_A[@]}" "${ERP_THIS_PLAN[@]}")
 
-# Accounting gates — course ids unchanged from the retired source plan; only the blockedBy plan
+# Accounting gates — course ids unchanged from the retired source plan; only the historical repository context plan
 # target is re-pointed (see tech-docs.md §Accounting-split gates, re-pointed).
 ACCT_GATE_B=(
   financial-statements-and-close-cycle inventory-and-cogs-accounting
@@ -190,8 +180,6 @@ ACCT_GATE_B=(
 ACCT_GATE_C=(
   islamic-contract-modeling-for-systems sharia-accounting-and-aaoifi-standards
 )
-ACCT_GATE_B_BLOCKING_PLAN="ayokoding-learning-path-15-skills-accounting-enterprise-reporting"
-ACCT_GATE_C_BLOCKING_PLAN="ayokoding-learning-path-16-skills-accounting-sharia-extension"
 ```
 
 ## Phase 0: Environment Setup
@@ -199,24 +187,23 @@ ACCT_GATE_C_BLOCKING_PLAN="ayokoding-learning-path-16-skills-accounting-sharia-e
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/ plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] All hard-blocking plans (17, 01, 02, 03, `vercel-function-cost-reduction`) merged to
-      `origin/main` — run the loop in [§Depends-on](#depends-on-and-start-preconditions); acceptance:
+- [ ] [AI] Plan 17 is archived on `origin/main` per [§Depends-on](#depends-on); repository baseline checks are informational — acceptance:
       empty output.
 - [ ] [AI] Install dependencies: `npm install`.
 - [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
 - [ ] [AI] Verify dev server starts: `nx dev ayokoding-www`.
-- [ ] [AI] Verify existing tests pass: `nx run ayokoding-www:test:quick`.
+- [ ] [AI] Verify existing tests pass: `npm exec nx run ayokoding-www:test:quick`.
 - [ ] [AI] **Cardinality guard**:
       `[ "${#ERP_THIS_PLAN[@]}" -eq 15 ] && [ "${#ERP_ALL[@]}" -eq 30 ] && [ "${#ACCT_GATE_B[@]}" -eq 5 ] && [ "${#ACCT_GATE_C[@]}" -eq 2 ] && echo GUARD-OK || echo GUARD-FAIL`
       — acceptance: `GUARD-OK`.
-- [ ] [AI] Verify plan 17's 15 ids actually exist under `<COURSES>` on `origin/main` (the blockedBy
+- [ ] [AI] Verify plan 17's 15 ids actually exist under `<COURSES>` on `origin/main` (the historical repository context
       check above confirms the plan merged; this confirms its content landed):
       `for id in "${ERP_STAGE_A[@]}"; do test -d "${COURSES}${id}" || echo "MISSING-FROM-PLAN-17: $id"; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`.
@@ -235,10 +222,10 @@ ACCT_GATE_C_BLOCKING_PLAN="ayokoding-learning-path-16-skills-accounting-sharia-e
 
 ### Phase 0 Gate
 
-- [ ] [AI] All checks above pass; `nx run ayokoding-www:test:quick` is green on a clean tree.
+- [ ] [AI] All checks above pass; `npm exec nx run ayokoding-www:test:quick` is green on a clean tree.
 
 > **Pause Safety**: no plan file yet modified. Safe to stop. To resume: re-run
-> `nx run ayokoding-www:test:quick`.
+> `npm exec nx run ayokoding-www:test:quick`.
 
 ## Phase 1: Syllabus Authoring and Verification
 
@@ -322,16 +309,12 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 ## Phase 2: Stage B — Conventional Enterprise Depth
 
-12 courses, gated on `ACCT_GATE_B` resolving on `origin/main`. `conventional-erp` reaches its terminal
+12 courses, with the required accounting course ids verified on `origin/main`. `conventional-erp` reaches its terminal
 27-id state at the end of this phase.
 
 ### 2.0 — Gate check
 
-- [ ] [AI] Confirm `ACCT_GATE_B_BLOCKING_PLAN` merged:
-      `git log origin/main --oneline | grep -q "$ACCT_GATE_B_BLOCKING_PLAN" && echo MERGED || echo NOT-MERGED`
-      — if `NOT-MERGED`, poll every 2 minutes rather than tight-looping; do not begin 2.1 until
-      `MERGED`.
-- [ ] [AI] Mechanical id-level gate check (independent of plan 15's own delivery tracking):
+- [ ] [AI] Mechanical id-level availability check:
       `for id in "${ACCT_GATE_B[@]}"; do git fetch origin main -q; git show "origin/main:${COURSES}${id}/_index.md" >/dev/null 2>&1 || echo "WAITING: $id"; done | grep -q . && echo WAIT || echo READY` —
       if `WAIT`, poll every 2 minutes; do not begin 2.1 until `READY`.
 
@@ -392,7 +375,7 @@ Scenario: the shared 27 courses are identical bodies referenced from both manife
       shared ids (plan 17's 15 plus this plan's 12, at the insertion positions in
       [tech-docs.md §courseOrder arrays](./tech-docs.md#courseorder-arrays-at-each-growth-boundary)),
       with every already-published id's relative order unchanged — run
-      `nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` and verify
+      `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` and verify
       both **fail**.
 - [ ] [AI] **GREEN** — Grow `<CONVMAN>` and `<SHARMAN>` to 27 ids each — run the same command and
       verify both **pass**.
@@ -412,7 +395,7 @@ Scenario: the shared 27 courses are identical bodies referenced from both manife
       (course 16) and, for `<CONVLANDING>`, the terminal Dangerous 3 boundary (course 27, "ENDS
       HERE") — acceptance: `grep -q 'Dangerous 2' "${CONVLANDING}" && grep -q 'Dangerous 2' "${SHARLANDING}" && grep -qF 'ENDS HERE' "${CONVLANDING}" && echo PASS`
       prints `PASS`.
-- [ ] [AI] Populate 12 more rows in `<COURSES>_index.md` (27 total, cumulative with plan 17's 15) —
+- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (27 generated entries cumulative with plan 17's 15) —
       acceptance:
       `for id in "${ERP_STAGE_A[@]}" "${ERP_STAGE_B[@]}"; do grep -qF "(/en/learn/courses/${id})" "${COURSES}_index.md" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS`
       prints `PASS`, confirming all 27 cumulative ids have a catalog entry.
@@ -436,20 +419,20 @@ Scenario: conventional-erp landing renders with its full terminal course count
       (created by plan 17, extended here), then extend
       `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` (created by plan 17) to assert
       the Dangerous 2 boundary on both landings and the terminal Dangerous 3 / "ENDS HERE" statement
-      on `<CONVLANDING>` — command: `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
+      on `<CONVLANDING>` — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
       scenario is picked up and its assertions **fail**.
 - [ ] [AI] **GREEN** — implement the step bindings against the grown landing content (from §2.4) —
-      command: `nx run ayokoding-www:specs:behavior:coverage && nx run ayokoding-www-fe-e2e:test:e2e`
+      command: `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: both exit 0.
 - [ ] [AI] **REFACTOR** — parameterize the helper on expected boundary count so §3.5 extends it
-      without duplicating assertions — command: `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance:
+      without duplicating assertions — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance:
       exits 0, scenario count unchanged.
 
 ### Phase 2 Gate
 
-- [ ] [AI] `nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
-- [ ] [AI] `nx run ayokoding-www-fe-e2e:test:e2e` green for the extended feature file.
-- [ ] [AI] `nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
+- [ ] [AI] `npm exec nx run ayokoding-www-fe-e2e:test:e2e` green for the extended feature file.
+- [ ] [AI] `npm exec nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
 - [ ] [AI] `<CONVMAN>` has exactly 27 `courseOrder` entries; `<SHARMAN>` has exactly 27 (Stage C not
       yet grown) — `grep -cE '^  - ' "${CONVMAN}"` prints `27`.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
@@ -460,13 +443,10 @@ Scenario: conventional-erp landing renders with its full terminal course count
 
 ## Phase 3: Stage C — Sharia-Compliant Design
 
-3 courses, `sharia-erp` only, gated on `ACCT_GATE_C` resolving on `origin/main`.
+3 courses, `sharia-erp` only, with the required accounting course ids verified on `origin/main`.
 
 ### 3.0 — Gate check
 
-- [ ] [AI] Confirm `ACCT_GATE_C_BLOCKING_PLAN` merged:
-      `git log origin/main --oneline | grep -q "$ACCT_GATE_C_BLOCKING_PLAN" && echo MERGED || echo NOT-MERGED`
-      — poll every 2 minutes if `NOT-MERGED`.
 - [ ] [AI] Mechanical id-level gate check:
       `for id in "${ACCT_GATE_C[@]}"; do git fetch origin main -q; git show "origin/main:${COURSES}${id}/_index.md" >/dev/null 2>&1 || echo "WAITING: $id"; done | grep -q . && echo WAIT || echo READY` —
       poll every 2 minutes if `WAIT`.
@@ -519,7 +499,7 @@ marker into the course body verbatim:
 
 ```gherkin
 Scenario: sharia-erp manifest validates against the PathManifest schema at its terminal 30 ids
-  Given the file "manifests/skills/sharia-erp.yaml"
+  Given the file "manifests/skills/sharia-erp.json"
   When the manifest is loaded and validated
   Then it parses against the PathManifest zod schema
   And its pathId equals "skills/sharia-erp"
@@ -533,11 +513,11 @@ Scenario: sharia-erp manifest validates against the PathManifest schema at its t
       all 30 ids at the positions in
       [tech-docs.md §courseOrder arrays](./tech-docs.md#courseorder-arrays-at-each-growth-boundary),
       and confirm `<MTEST_CE>`'s existing assertions are untouched — run
-      `nx run ayokoding-www:test:unit -- sharia-erp-manifest` and verify it **fails**. Assert the
+      `npm exec nx run ayokoding-www:test:unit -- sharia-erp-manifest` and verify it **fails**. Assert the
       terminal id explicitly, not just the set.
 - [ ] [AI] **GREEN** — Grow `<SHARMAN>` to 30 ids — run the same command and verify it **passes**.
 - [ ] [AI] **REFACTOR** — Re-run integrity checks on `<SHARMAN>` only; verify zero violations. Confirm
-      `nx run ayokoding-www:test:unit -- conventional-erp-manifest` is still green and unmodified.
+      `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest` is still green and unmodified.
 
 ### 3.3 — Deferral-check assertion (both directions)
 
@@ -551,7 +531,7 @@ Scenario: sharia-erp manifest validates against the PathManifest schema at its t
       the basics" statement (DD-9 in this plan's tech-docs.md) — acceptance:
       `grep -qF 'ENDS HERE' "${SHARLANDING}" && grep -qF 'covers all the basics' "${SHARLANDING}" && echo PASS`
       prints `PASS`.
-- [ ] [AI] Populate the final 3 rows in `<COURSES>_index.md` (30 total, cumulative across both
+- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (30 generated entries cumulative across both
       manifests) — acceptance:
       `for id in "${ERP_STAGE_C[@]}"; do grep -qF "(/en/learn/courses/${id})" "${COURSES}_index.md" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS`
       prints `PASS`, confirming all 3 Stage C ids have a catalog entry.
@@ -575,14 +555,14 @@ states it covers the basics` scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`,
       then extend `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` to assert the
       Dangerous 4 boundary and the terminal "ENDS HERE" / "covers all the basics" statement on
-      `<SHARLANDING>` **only** — command: `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
+      `<SHARLANDING>` **only** — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
       scenario is picked up and its assertion **fails**.
 - [ ] [AI] **GREEN** — implement the step bindings against the grown `<SHARLANDING>` content (from
       §3.4) — command:
-      `nx run ayokoding-www:specs:behavior:coverage && nx run ayokoding-www-fe-e2e:test:e2e` —
+      `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0.
 - [ ] [AI] **REFACTOR** — consolidate the four boundary assertions (Dangerous 1-4) into a single
-      table-driven helper — command: `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0,
+      table-driven helper — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0,
       scenario count unchanged; this is the final growth of `skills-erp-paths.steps.ts`.
 
 ### Phase 3 Gate
@@ -617,8 +597,8 @@ states it covers the basics` scenario above to
   `mkdir -p "${COURSES}sharia-erp/erp-foundations-and-history"` in a scratch checkout and re-run — it
   must print `EXPECTED-1-GOT-2`. Remove it afterwards.
 
-- [ ] [AI] `nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
-- [ ] [AI] `nx run ayokoding-www:test:unit` **and** `nx run ayokoding-www-fe-e2e:test:e2e` both green
+- [ ] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` **and** `npm exec nx run ayokoding-www-fe-e2e:test:e2e` both green
       for the full 30-course corpus.
 
 ### Phase 4 Gate
@@ -627,7 +607,7 @@ states it covers the basics` scenario above to
       nothing opens or merges before Phase 9.
 
 > **Pause Safety**: the full corpus is integrity-verified. Safe to stop. To resume: re-run
-> `nx run ayokoding-www:specs:behavior:coverage`.
+> `npm exec nx run ayokoding-www:specs:behavior:coverage`.
 
 ## Phase 5: Section and App Verification (Licensing and Trademark)
 
@@ -708,9 +688,9 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ## Phase 7: Full-Corpus Integration Verification
 
-- [ ] [AI] `nx run ayokoding-www:build` succeeds with both manifests at their terminal state (27/30)
+- [ ] [AI] `npm exec nx run ayokoding-www:build` succeeds with both manifests at their terminal state (27/30)
       and all 30 course bundles present (across plans 17 and 18).
-- [ ] [AI] `nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
+- [ ] [AI] `npm exec nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
 - [ ] [AI] End-to-end path-walk: navigate `/en/learn/paths/skills/conventional-erp`, step through
       prev/next across all 27 courses via Playwright MCP, verify no broken link and no console error;
       repeat for `/en/learn/paths/skills/sharia-erp` across all 30.
@@ -773,7 +753,7 @@ redundant with plan 17's own Stage A retest (DD-8).
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-18-skills-erp-enterprise-depth`.

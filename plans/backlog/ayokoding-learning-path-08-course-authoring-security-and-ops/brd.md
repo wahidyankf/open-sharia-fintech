@@ -51,7 +51,7 @@ and `cicd-and-release-engineering`, authored natively in plan 04's own current B
 `ayokoding-learning-path-01-url-restructure`; and `system-design`, authored by
 `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`. Carving it into its own plan
 lets it be delivered, reviewed, and archived on its own schedule, independently of whichever other
-plans in the split family are still open — while plan 04's own hard `blockedBy` on this plan's
+plans in the split family are still open — while plan 04's own repository baseline context on this plan's
 completion ensures Band 7 is authored exactly once.
 
 ## Why the bodies must be authored, not generated ad hoc
@@ -97,7 +97,7 @@ at their root, exactly as it did for plan 04.
   DL-9/DD-12 reconciliation.
 - Landing eleven new always-served content pages onto a site whose function-duration billing is already
   overrun (see `vercel-function-cost-reduction`) would make an existing cost problem worse rather than
-  better — hence that plan's hard `blockedBy` status here.
+  better — hence that plan's repository baseline context status here.
 
 **Expected benefits** (qualitative reasoning; no fabricated metrics):
 
@@ -165,7 +165,7 @@ Each metric below is an **observable check**, not a projected number.
   merged PRs touches zero paths under `<MANIFESTS>`.
 - **The band emitted one complete signal** (observable): the single five-field band-completion signal
   names all three `software-engineer` manifests by full path and carries a resolvable merge commit SHA.
-- **No regressions** (observable): `nx run ayokoding-www:build` renders green; markdownlint, link
+- **No regressions** (observable): `npm exec nx run ayokoding-www:build` renders green; markdownlint, link
   validation, and heading-hierarchy validation pass across the authored tree.
 
 ## Business-Scope Non-Goals
@@ -187,8 +187,8 @@ Each metric below is an **observable check**, not a projected number.
 - **Enumerating speculative course variants.** A distinct-pedagogy variant is authored on demand only,
   never pre-enumerated (DD-8, plan 04's decision, inherited).
 - **Fixing `apps/ayokoding-www`'s Vercel function-cost problem itself.** That is
-  `vercel-function-cost-reduction`'s own scope; this plan only waits on its completion as a hard
-  precondition.
+  `vercel-function-cost-reduction`'s own historical scope; this plan verifies the current rendering
+  state as repository context, not as an execution gate.
 
 ## Business Risks and Mitigations
 
@@ -198,7 +198,7 @@ Each metric below is an **observable check**, not a projected number.
 | Band 7 is authored twice — once here, once if plan 04's own trim did not land cleanly.                                                                                                                       | Phase 0 checks that none of the eleven Band-7 slugs already exists under `<COURSES>` before authoring begins, exactly mirroring plan 04's own 29-new-slug collision check.                                                                                        |
 | A step in this plan mutates a manifest, making the split unschedulable.                                                                                                                                      | The manifest ownership invariant is stated in `README.md`, `tech-docs.md`, and `delivery.md`; the handoff is a five-field band-completion signal; a phase gate asserts the plan's diff touches zero paths under `<MANIFESTS>`.                                    |
 | `defensive-security` and `detection-engineering-and-siem-operations` overlap, reopening the reconciliation plan 04 already closed.                                                                           | Both are authored in the same prerequisite-oriented phase on the persistent final-delivery branch; the prerequisite declaration and the duplicate-lesson-title check are explicit per-course acceptance criteria, not a downstream discovery.                     |
-| Landing eleven more always-dynamic content pages compounds the ayokoding-www function-duration cost overrun `vercel-function-cost-reduction` is fixing.                                                      | `vercel-function-cost-reduction` is a hard `blockedBy` precondition, checked concretely in Phase 0 against that plan's actual Phase 1 (`app/layout.tsx` deletion) and Phase 3 (`middleware.ts` deletion) changes — not merely assumed merged.                     |
+| Landing eleven more always-dynamic content pages compounds the ayokoding-www function-duration cost overrun `vercel-function-cost-reduction` is fixing.                                                      | `vercel-function-cost-reduction` is a repository baseline context precondition, checked concretely in Phase 0 against that plan's actual Phase 1 (`app/layout.tsx` deletion) and Phase 3 (`middleware.ts` deletion) changes — not merely assumed merged.                     |
 | Invented prerequisite edges break the DAG, surfacing far downstream with no traceable cause.                                                                                                                 | Each body's `prerequisites` are transcribed from its spec's declared chain, never re-derived.                                                                                                                                                                     |
 | Volatile security-tooling / SIEM-platform facts (Wazuh, Sigma, ELK/OpenSearch specifics) are written into the stable spine and age the curriculum badly.                                                     | Volatile facts sit only in dated accuracy-note sidebars, enforced per-course by the accuracy pre-verify step and re-checked by `apps-ayokoding-www-facts-checker`.                                                                                                |
 | `offensive-security`'s worked examples are read as endorsement of unauthorized real-world exploitation.                                                                                                      | The body must restate its lab-local, authorized-scope-only rules of engagement, checked by a grep-checkable acceptance clause per course.                                                                                                                         |

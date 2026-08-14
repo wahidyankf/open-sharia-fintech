@@ -5,8 +5,8 @@
 One **path manifest** composes a from-scratch AI-engineering journey: an ordered,
 prerequisite-consistent `courseOrder` list — a **path ID**
 (`careers/immediately-effective/ai-engineer`), a display **title**, a **description** — stored as a
-standalone YAML data file under
-`apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml`.
+standalone JSON manifest data file under
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.json`.
 It gets a thin content **landing anchor** (prose/SEO only, no `courseOrder`) at
 `/en/learn/paths/careers/immediately-effective/ai-engineer`, and a card in the paths hub's `careers/`
 group (hub layout owned by `ayokoding-learning-path-03-navigation-ui`).
@@ -18,7 +18,7 @@ It **walks** (includes, never links) the nine-course AI/harness cluster directly
 **building** AI systems, not driving them.
 
 **This product surface is composition only.** No course body is authored here; no rendering component
-is built here. What ships is: one YAML manifest, one landing anchor, one hub card, the integrity and
+is built here. What ships is: one JSON manifest, one landing anchor, one hub card, the integrity and
 smoothness verification that keeps it honest, and the growth that closes its smoke-test-scoped
 composition as the AI/harness cluster lands.
 
@@ -67,11 +67,11 @@ Each scenario uses exactly one primary `Given`, one `When`, and one `Then`; ever
 action, or outcome chains with `And`.
 
 ```gherkin
-Scenario: This plan starts independently and unblocks the sibling's final cross-check
-  Given Plan 12 has not delivered any manifest
+Scenario: This plan follows its predecessor and completes the AI-manifest validation
+  Given Plan 12's three manifests are merged to origin/main
   When this plan's Phase 0 checks its start precondition
-  Then this plan's Phase 1 authoring may begin without a Plan 12 merge
-  And Plan 12 waits for this plan's terminal archival PR before its own Phase 8 cross-check
+  Then this plan's Phase 1 authoring begins after the Plan 12 merge
+  And this plan performs the successor cross-manifest check after its own delivery
 ```
 
 ```gherkin
@@ -102,8 +102,8 @@ Scenario: This plan's AI-engineer manifest layer builds and validates green
 
 ### In scope
 
-- One `PathManifest` YAML data file at
-  `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`.
+- One `PathManifest` JSON manifest data file at
+  `<MANIFESTS>careers/immediately-effective/ai-engineer.json`.
 - One thin landing anchor at `<PATHS>careers/immediately-effective/ai-engineer/_index.md`.
 - This plan's one-card slice of the paths-hub population.
 - Manifest integrity and prerequisite-consistency verification at every phase gate.

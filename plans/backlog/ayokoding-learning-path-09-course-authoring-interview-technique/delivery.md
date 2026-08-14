@@ -44,9 +44,9 @@ This checklist authors **5 course bodies** into `apps/ayokoding-www/content/en/l
 This 5-course plan is one inseparable delivery unit: every Phase 1–6 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 6 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 6 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
 cohort or delivery-boundary PR reference below.
 
@@ -56,6 +56,8 @@ this plan's only worktree; no per-course, cohort, phase, or closeout worktree is
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-09-course-authoring-interview-technique` (or `git worktree add -b worktree/ayokoding-learning-path-09-course-authoring-interview-technique worktrees/ayokoding-learning-path-09-course-authoring-interview-technique origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 This path is the one and only worktree for the entire plan. Provision it once from current
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
@@ -76,24 +78,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 6 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 6 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 6 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
+
+## Content-only delivery safeguards
+
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
+
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
-| Relation        | Plan (full folder name)                                   | Nature                                                                                                                                                                   |
-| --------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`              | Hard, transitive. Populated flat `<COURSES>` bucket + `<COURSES>_index.md`.                                                                                              |
-| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`  | Hard, transitive. `syllabus/courses/<id>.md` specs for the 5 Band-9 IDs + the `prerequisites` frontmatter contract.                                                      |
-| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`             | Hard, baseline — Phase 0 baseline + populated `<COURSES>` bucket, **not** full 90-body completion (see [tech-docs.md](./tech-docs.md#baseline-precondition-on-plan-04)). |
-| **blockedBy**   | `vercel-function-cost-reduction`                          | Hard, new — Phases 1–4 fix `apps/ayokoding-www` prerendering (see [tech-docs.md](./tech-docs.md#the-vercel-function-cost-reduction-precondition)).                       |
-| **blocks**      | `ayokoding-learning-path-12-careers-se-manifests`         | For the `interview-ready` and `fundamentally-strong` manifests' growth **only**.                                                                                         |
-| **independent** | `ayokoding-learning-path-05` … `08`, `10` (band siblings) | Mutually content-independent — no shared file, no shared course ID.                                                                                                      |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-08-course-authoring-security-and-ops` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Start precondition (hard gate, checked in Phase 0)**: all four blocking plans/conditions above hold.
-This plan does not start on a promise.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-08-course-authoring-security-and-ops/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -104,7 +108,7 @@ subagents capped per the orchestration convention). The main thread self-promote
 - **Phase 1 (5 Band-9 courses)** — the four interview-technique courses are content-independent
   (each writes only its own `<COURSES><id>/` subtree) and may author/check concurrently, bounded by
   the cap. `capstone-interview-loop` has a hard ordering constraint: it declares all four as
-  prerequisites, so it is authored **after** the four (or in the same review cycle, once all four
+  prerequisites, so it is authored **after** the four (or in the same once all four
   bundles exist on the shared branch).
 - **Phases 2–6 (finalization)** are serial — each consumes the prior phase's output.
 
@@ -142,7 +146,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique/ plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
@@ -153,7 +157,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Verify blocking plan #1 merged** — the `<COURSES>` bucket exists and holds at least the 37
+- [ ] [AI] **Verify repository baseline** — the `<COURSES>` bucket exists and holds at least the 37
       re-homed bundles — command (single line):
       `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md && git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | awk -F/ 'NF==8' | grep -c .`
       — acceptance: both `test` commands exit 0 and the count returns **at least 37**. Depth-filter
@@ -163,7 +167,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `learning/_index.md` at deeper path levels. Falsifiable both ways: before the URL-restructure
       plan merges, the leading `test -d` exits non-zero and the `&&` chain short-circuits with no
       number printed at all; a count below 37 means the re-home is incomplete.
-- [ ] [AI] **Verify blocking plan #2 merged** — the cross-plan syllabus layer is on `origin/main` and
+- [ ] [AI] **Verify repository baseline** — the cross-plan syllabus layer is on `origin/main` and
       holds the 5 Band-9 spec files — command (single line):
       `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: (a) prints **exactly one** path (pipe to `grep -c .`, read **1**); its directory is
@@ -173,7 +177,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `SYLLABUS_ROOT=<path>`. **Do not write this as a `test -d plans/done/*__…/syllabus/courses`
       glob** — this harness runs zsh, where an unmatched glob is a fatal error, not a literal; `git
 ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `*`.
-- [ ] [AI] **Verify blocking plan #3 baseline — the parent plan's own Phase 0 established** — command
+- [ ] [AI] **Verify repository baseline — the parent plan's own Phase 0 established** — command
       (single line):
       `git log --oneline -1 -- plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md | grep -c .`
       — acceptance: returns **1** (the parent plan's `delivery.md` has at least one commit on
@@ -181,7 +185,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       not a full-completion check — see [tech-docs.md §Baseline
       precondition](./tech-docs.md#baseline-precondition-on-plan-04) for why this plan does not require
       all of the parent plan's other 85 non-Band-9 bodies merged first.
-- [ ] [AI] **Verify blocking plan #4 — the `vercel-function-cost-reduction` Phase 1–4 fix landed** —
+- [ ] [AI] **Verify repository baseline — the `vercel-function-cost-reduction` Phase 1–4 fix landed** —
       three checks, all required (single line each):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx && echo OK1`;
       `test -f "apps/ayokoding-www/src/app/[locale]/layout.tsx" && echo OK2`;
@@ -189,10 +193,10 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       — acceptance: all three print their `OK<n>` marker. Falsifiable both ways: before that plan's
       Phase 1 merges, `apps/ayokoding-www/src/app/layout.tsx` still exists and `OK1` is not printed;
       reintroducing the file after the fix breaks the check again. See [tech-docs.md §The
-      vercel-function-cost-reduction precondition](./tech-docs.md#the-vercel-function-cost-reduction-precondition)
+      vercel-function-cost-reduction precondition](./tech-docs.md#repository-baseline)
       for the full three-phase signal table this check is grounded in.
-- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
-      `npx nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
+- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Confirm all 5 Band-9 slugs are absent (no collision)** under `<COURSES>`:
 
@@ -233,7 +237,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 - [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+  apps/rhino-cli/scripts/rhino-bin.sh md links validate \
     --quiet \
     --exclude plans/done \
     --exclude apps/ayokoding-www/content \
@@ -308,7 +312,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
    [tech-docs.md §TDD exemption](./tech-docs.md#tdd-exemption-this-plan-ships-no-application-code).)_
 6. [AI] **Apply content fixers** — resolve every CRITICAL/HIGH/MEDIUM finding via the matching fixer —
    acceptance: every finding addressed.
-7. [AI] **Re-verify** — re-run checkers + `npx nx run ayokoding-www:build` + `npm run lint:md` —
+7. [AI] **Re-verify** — re-run checkers + `npm exec nx run ayokoding-www:build` + `npm run lint:md` —
    acceptance: zero CRITICAL/HIGH/MEDIUM remain; build + lint exit 0.
 8. [AI] **Confirm no manifest file changed in this course's own diff**:
    `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
@@ -415,7 +419,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] **Add the 5 catalog rows to `<COURSES>_index.md`** — one new list entry per landed course
+- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually edit `<COURSES>_index.md`
       ID, in the order authored above — acceptance:
       `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews capstone-interview-loop; do grep -F -q "$s" "<COURSES>_index.md" || echo "MISSING $s"; done | grep -c .`
       returns **0**.
@@ -435,8 +439,8 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
     behavioral-and-leadership-interviews
     capstone-interview-loop
   GROW_MANIFESTS:
-    <MANIFESTS>careers/interview-ready/software-engineer.yaml
-    <MANIFESTS>careers/fundamentally-strong/software-engineer.yaml
+    <MANIFESTS>careers/interview-ready/software-engineer.json
+    <MANIFESTS>careers/fundamentally-strong/software-engineer.json
   ```
 
   — acceptance: the block names **exactly two** `GROW_MANIFESTS` paths, never three; the receiving
@@ -449,8 +453,8 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
   Scenario: The band-completion signal names exactly the two manifests this band feeds
     Given all 5 Band-9 bodies are authored on this plan's final-delivery branch
     When the band-completion signal is recorded in delivery.md
-    Then GROW_MANIFESTS names exactly careers/interview-ready/software-engineer.yaml and careers/fundamentally-strong/software-engineer.yaml
-    And it does not name careers/immediately-effective/software-engineer.yaml
+    Then GROW_MANIFESTS names exactly careers/interview-ready/software-engineer.json and careers/fundamentally-strong/software-engineer.json
+    And it does not name careers/immediately-effective/software-engineer.json
   ```
 
 ### Phase 1 Gate
@@ -498,7 +502,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       applies only to re-homed shipped topics 1–33, none of which this plan authors. No conditional
       sweep step is needed here.
 - [ ] [AI] Run the full authored-tree build and lint sweep:
-      `npx nx run ayokoding-www:build`, `npm run lint:md`, and the link-validation command from
+      `npm exec nx run ayokoding-www:build`, `npm run lint:md`, and the link-validation command from
       [tech-docs.md §Cross-plan syllabus/ reference rule](./tech-docs.md#cross-plan-syllabus-reference-rule-binding)
       — acceptance: all three exit 0 / print no matching line.
 
@@ -541,7 +545,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 > [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals)) — so there is no `id` page to
 > navigate to or verify; this is a recorded content-scope deferral, not an incomplete locale sweep.
 
-- [ ] [AI] Start the dev server: `npx nx dev ayokoding-www`.
+- [ ] [AI] Start the dev server: `npm exec nx dev ayokoding-www`.
 - [ ] [AI] For each of the 5 authored course pages, at each of 3 breakpoints (375 / 768 / 1280 px),
       navigate to `/en/learn/courses/<course-id>` via `browser_navigate` + `browser_resize`.
 - [ ] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang="en"]`, the prerequisites list
@@ -626,11 +630,11 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items above are ticked.
-- [ ] [AI] Verify ALL quality gates pass (local + CI): `npx nx affected -t typecheck lint test:quick
+- [ ] [AI] Verify ALL quality gates pass (local + CI): `npm exec nx affected -t typecheck lint test:quick
 test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failures, including
       preexisting ones (Root Cause Orientation).
 - [ ] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (15 screenshots +
@@ -652,8 +656,7 @@ test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failu
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update any other README that references this plan by its `backlog/` path.
 - [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-09-course-authoring-interview-technique to done`.
-- [ ] [AI] **Open the terminal archival PR** from `final-delivery`, carrying the archival commit above; run the 3-cycle PR-Review
-      Maker→Fixer Cycle, and `[AI]` merge once all quality gates are green.
+- [ ] [AI] **Open the terminal archival PR** from `final-delivery`, carrying the archival commit above; run the secret scan, local quality checks, and PR quality-gate verification, and `[AI]` merge once all quality gates are green.
 - [ ] [AI] Prompt the user before removing the worktree
       (`worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`) — confirm nothing
       is uncommitted or unpushed first.
@@ -670,8 +673,7 @@ test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failu
       on the `final-delivery` branch — verify with
       `git log --oneline -1 -- plans/done/*ayokoding-learning-path-09-course-authoring-interview-technique/README.md | grep -c .`
       returning **1**.
-- [ ] [AI] The terminal archival PR carrying that archival commit is opened, the 3-cycle PR-Review Maker→Fixer
-      Cycle is complete, all quality gates are green, and the PR is `[AI]`-merged — confirmed by
+- [ ] [AI] The terminal archival PR carrying that archival commit is opened, the secret scan, local quality checks, and PR quality-gate verification is complete, all quality gates are green, and the PR is `[AI]`-merged — confirmed by
       `gh pr list --state merged --head final-delivery --json number --jq 'length'`
       returning **1**.
 
