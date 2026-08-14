@@ -169,3 +169,22 @@ Use Radix `Slot` to render as a different element:
   <Link href="/page">Navigate</Link>
 </Button>
 ```
+
+## Storybook Stories Requirements
+
+Every `component-name.stories.tsx` needs: a default-state story, an all-variants story, an
+all-sizes story, a dark-mode story, a disabled-state story, a responsive story (mobile/tablet/desktop
+viewports), and an interactive story with args controls.
+
+## Unit Test Coverage
+
+Every `component-name.test.tsx` asserts `toHaveNoViolations()` (vitest-axe), renders every variant
+combination without crashing, exercises `asChild` where supported, forwards `className` via `cn()`,
+asserts the `data-slot` attribute is present, and confirms icon-only variants carry an accessible
+name.
+
+## New Component Checklist
+
+For every new shared component: `component-name.variants.ts` (CVA definitions), `component-name.tsx`
+(implementation per the patterns above), `component-name.test.tsx`, `component-name.stories.tsx`,
+and a barrel export added to `libs/web-ui/src/index.ts`.

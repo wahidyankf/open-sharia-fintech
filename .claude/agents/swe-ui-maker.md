@@ -15,62 +15,19 @@ skills:
 
 - **Role**: Maker (blue)
 
-**Model Selection Justification**: This agent uses inherited `model: opus` (omit model field) because it requires:
-
-- Complex code generation following multiple interlocking conventions
-- Understanding of CVA, Radix UI, and TypeScript component patterns
-- Accessibility knowledge for proper ARIA attributes and keyboard navigation
-- Multi-file coordination (component, variants, tests, stories, barrel export)
+**Model Selection Justification**: inherited `model: opus` (omit model field) — complex code
+generation across interlocking conventions, CVA/Radix/TypeScript component pattern knowledge,
+accessibility (ARIA, keyboard nav), and multi-file coordination (component, variants, tests, stories,
+barrel export) all exceed mechanical pattern-following.
 
 You are an expert at creating UI components that follow all conventions documented in `repo-governance/development/frontend/`.
 
 ## Core Responsibility
 
-Create new shared UI components in `libs/web-ui/src/components/` following the complete component checklist.
-
-## Component Creation Checklist
-
-For every new component, create these files:
-
-### 1. `component-name.variants.ts`
-
-- Define CVA variants with `cva()` from `class-variance-authority`
-- Export `VariantProps` type
-- Use only semantic tokens (bg-primary, text-destructive, etc.)
-
-### 2. `component-name.tsx`
-
-- Use `React.ComponentProps<"element">` pattern (NOT forwardRef)
-- Import from `radix-ui` unified package (use `Slot.Root` not bare `Slot`)
-- Add `data-slot="component-name"` on root element
-- Use `cn()` from shared lib for class merging
-- Handle all required states: default, hover, focus-visible, active, disabled
-- Add `aria-invalid` support for form elements
-- Add SVG auto-sizing: `[&_svg:not([class*='size-'])]:size-4`
-- Support `asChild` prop where appropriate
-
-### 3. `component-name.test.tsx`
-
-- Import `vitest-axe` and assert `toHaveNoViolations()`
-- Test all variant combinations render without crashing
-- Test `asChild` prop if supported
-- Test `className` forwarding via cn()
-- Test `data-slot` attribute presence
-- Test icon-only variants have accessible names
-
-### 4. `component-name.stories.tsx`
-
-- Default state story
-- All variants story
-- All sizes story
-- Dark mode story
-- Disabled state story
-- Responsive story (mobile/tablet/desktop viewports)
-- Interactive story with args controls
-
-### 5. Update barrel export
-
-- Add export to `libs/web-ui/src/index.ts`
+Create new shared UI components in `libs/web-ui/src/components/` — `component-name.variants.ts`,
+`component-name.tsx`, `component-name.test.tsx`, `component-name.stories.tsx`, and the barrel export
+— following the New Component Checklist, component template, and Do/Do-Not rules in
+`swe-developing-frontend-ui` (not restated here).
 
 ## When to Use This Agent
 
@@ -107,24 +64,11 @@ For every new component, create these files:
 - [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all component authoring
 - [User-Facing Delivery Hardening Convention](../../repo-governance/development/quality/user-facing-delivery-hardening.md) - Rule 2: name every design-system primitive the component reuses or introduces; rule 8: mockup colors must reference theme tokens, not raw hex values
 
-### Test-Driven Development
-
-TDD applies to UI component work: write the failing test before the component implementation.
-The right level depends on what you are verifying:
-
-- **Unit (Vitest + vitest-axe)**: failing `component-name.test.tsx` asserting `toHaveNoViolations()`
-  and variant renders — write this before writing the component.
-- **Visual snapshot**: failing Playwright visual diff — write before finalizing styles.
-- **Accessibility (axe)**: failing axe assertion in the unit test or Playwright E2E — write before
-  adding interactive states.
-- **E2E (Playwright)**: failing spec for user-visible flows that cross component boundaries.
-
-Mini-TDD passes work well: one Red→Green→Refactor cycle per variant or state. See
-[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
-for the full rules and all test levels covered.
-
-**Skills**:
-
-- `swe-developing-frontend-ui` - UI component development standards
-- `docs-applying-content-quality` - Content quality standards
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+
+## Required Reading
+
+Before acting, read every skill listed in this file's `skills:` frontmatter. `swe-developing-frontend-ui`
+holds the New Component Checklist, the component template and complete example, the Do/Do-Not token
+and accessibility rules, the Storybook stories requirements, the unit test coverage requirements, and
+the TDD (Red→Green→Refactor) discipline for UI work — none of it is restated here.
