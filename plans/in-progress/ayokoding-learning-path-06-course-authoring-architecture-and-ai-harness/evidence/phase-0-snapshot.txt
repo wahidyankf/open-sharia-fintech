@@ -1,0 +1,4 @@
+SYLLABUS_ROOT=plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus
+AYOKODING_WWW_BUILD=pass
+AYOKODING_WWW_UNIT=pass
+AUTHORED_BODY_ABSENT_COUNT=15
