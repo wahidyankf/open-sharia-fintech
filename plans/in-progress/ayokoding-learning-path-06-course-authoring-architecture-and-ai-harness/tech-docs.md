@@ -23,8 +23,8 @@ manifest-growth plans.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-> and [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md),
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> and [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md),
 > the successor manifest-growth plans. A step here that creates, appends to, reorders, or re-verifies
 > a `.json` manifest is a **boundary violation**, not a convenience.
 
@@ -564,11 +564,11 @@ writing it is a boundary violation, a distinction the tree alone cannot carry.
 
 **Existing files modified per cohort** (this plan edits these; it never creates them):
 
-| File                                                                                               | Change                                                                   |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| File                                                                                               | Change                                                                                            |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `apps/ayokoding-www/content/en/learn/courses/_index.md`                                            | regenerated from course directories; verify with `npm exec nx run ayokoding-www:validate-indexes` |
-| `tech-docs.md` (this file) — [§Course Library Catalog](#course-library-catalog-this-plans-15-rows) | already lists all 15 rows; no further append needed once this plan lands |
-| `delivery.md` (this plan's own file)                                                               | the five-field Band-5 completion signal, appended once all 15 land       |
+| `tech-docs.md` (this file) — [§Course Library Catalog](#course-library-catalog-this-plans-15-rows) | already lists all 15 rows; no further append needed once this plan lands                          |
+| `delivery.md` (this plan's own file)                                                               | the five-field Band-5 completion signal, appended once all 15 land                                |
 
 **Never touched, by construction** (verified by a zero-diff gate check at every phase):
 
@@ -599,17 +599,17 @@ this plan may never grow a manifest itself.
 
 ## Testing / Verification Strategy
 
-| Level                     | What it verifies                                                                         | Mechanism                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary                | matching `apps-ayokoding-www-*-checker`                                |
-| Per-course fact checks    | version-pinned / market / pre-1.0-stack facts; volatile facts confined to dated sidebars | `apps-ayokoding-www-facts-checker`                                     |
-| Per-course link checks    | intra-course and cross-course links resolve                                              | `apps-ayokoding-www-link-checker`                                      |
-| Contract assertions       | forward-link / citation / concept-addition contracts stated in the body                  | grep-checkable acceptance clauses on the authoring steps               |
-| Structural                | bundle anatomy present; `prerequisites` declared                                         | `test -d` / `test -f` + frontmatter grep                               |
+| Level                     | What it verifies                                                                         | Mechanism                                                                   |
+| ------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary                | matching `apps-ayokoding-www-*-checker`                                     |
+| Per-course fact checks    | version-pinned / market / pre-1.0-stack facts; volatile facts confined to dated sidebars | `apps-ayokoding-www-facts-checker`                                          |
+| Per-course link checks    | intra-course and cross-course links resolve                                              | `apps-ayokoding-www-link-checker`                                           |
+| Contract assertions       | forward-link / citation / concept-addition contracts stated in the body                  | grep-checkable acceptance clauses on the authoring steps                    |
+| Structural                | bundle anatomy present; `prerequisites` declared                                         | `test -d` / `test -f` + frontmatter grep                                    |
 | Section build             | the authored tree renders                                                                | `npm exec nx run ayokoding-www:build`                                       |
-| Markdown quality          | markdownlint, link validation, heading hierarchy                                         | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
+| Markdown quality          | markdownlint, link validation, heading hierarchy                                         | `npm run lint:md` + the two `rhino-cli md` subcommands                      |
 | Regression                | no existing project's gates broke                                                        | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
-| Manual behavioural        | a sample of authored course pages renders correctly at three breakpoints in `en`         | Playwright MCP + committed `evidence/` screenshots                     |
+| Manual behavioural        | a sample of authored course pages renders correctly at three breakpoints in `en`         | Playwright MCP + committed `evidence/` screenshots                          |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts. There is no
 application code here to test.

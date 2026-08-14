@@ -1,5 +1,7 @@
 # Learning Path — Course Authoring: Architecture, Distributed & AI/Harness (Band 5)
 
+**Status**: In Progress — execution started 2026-08-14.
+
 ## Delivery amendment — one final PR
 
 All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
@@ -52,15 +54,15 @@ DD-35-governed composition. Courses 8 and 9 (`creating-ai-powered-apps`, `agenti
 two AI-cluster courses this plan lands. The ninth AI-cluster course,
 `capstone-build-your-own-coding-agent`, assembles courses 11–15 into a working coding-agent CLI and
 lives in the sibling plan
-[`ayokoding-learning-path-11-course-authoring-capstones`](../ayokoding-learning-path-11-course-authoring-capstones/README.md) —
+[`ayokoding-learning-path-11-course-authoring-capstones`](../../backlog/ayokoding-learning-path-11-course-authoring-capstones/README.md) —
 so this plan lands **8 of 9** AI-cluster bodies, and the capstone plan lands the 9th.
 
 ## The manifest ownership invariant (binding — read before anything else)
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-> and [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> and [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
 > (the successor manifest-growth plans; see [Depends-on](#depends-on) below). A step in this plan
 > that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary violation**,
 > not a convenience.
@@ -176,8 +178,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                                | Nature                                                                                                                                                                                                                         |
+| ------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -237,9 +239,9 @@ Manual behavioural verification via Playwright MCP is **still mandatory and perf
   [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [SE-manifests plan](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-  · [AI-manifest plan](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
-  · [capstones plan](../ayokoding-learning-path-11-course-authoring-capstones/README.md)
+  · [SE-manifests plan](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [AI-manifest plan](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+  · [capstones plan](../../backlog/ayokoding-learning-path-11-course-authoring-capstones/README.md)
 
 ## Provenance
 

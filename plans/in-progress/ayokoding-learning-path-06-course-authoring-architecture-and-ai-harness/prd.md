@@ -10,8 +10,8 @@ track.
 A **course** is the unit of reading. A **path** is an ordered manifest of course IDs. This plan owns
 the former and never the latter. Every `careers/` path manifest that composes these 15 bodies is
 owned by the successor manifest-growth plans
-([`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md),
-[`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)).
+([`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md),
+[`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)).
 
 The library body is **content**, exempt from `specs:coverage`; the navigation feature that renders it
 is app code owned by
