@@ -42,7 +42,8 @@ Pattern: `ayokoding-web-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 ## Validation Scope
 
-See [docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md](../../skills/docs-creating-by-example-tutorials/reference/02-checking-by-example-format.md)
+See [Checking By-Example Format — Count, Density, Structure, Self-Containment](../../skills/docs-creating-by-example-tutorials/reference/checking-density-structure-containment.md)
+and [Checking By-Example Format — Grouping, Compliance, Diagrams, Examples-by-Level](../../skills/docs-creating-by-example-tutorials/reference/checking-grouping-compliance-and-diagrams.md)
 for the complete checklist and step-by-step validation order: example count (75-85), annotation
 density (1.0-2.25 ratio per example — formula direction and counting rules there are CRITICAL to
 get right), five-part structure, self-containment, grouping, ayokoding-web compliance, diagram
