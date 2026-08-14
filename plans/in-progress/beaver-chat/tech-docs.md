@@ -59,6 +59,158 @@ that native CLI session. Otherwise, it starts a provider session with a normaliz
 of stored user/assistant messages plus an explicit truncation marker if needed. This preserves
 mixed-provider continuity without pretending provider session IDs are interoperable.
 
+### Proposed SQLite Schema
+
+[Judgment call] `002-chat.sql` is the authoritative migration. Identifiers are application-generated
+opaque text IDs (not an exposed provider identifier); all timestamps are UTC RFC 3339 text. The host
+enables `PRAGMA foreign_keys = ON` for every SQLite connection, because SQLite does not enforce
+foreign keys otherwise.
+
+```mermaid
+%% Color palette: Blue #0173B2, Orange #DE8F05, Purple #CC78BC
+%% Entity names, cardinality marks, and PK/FK labels convey meaning without color.
+erDiagram
+  chat_threads ||--o{ chat_messages : contains
+  chat_threads ||--o{ chat_provider_sessions : tracks
+
+  chat_threads {
+    TEXT id PK
+    TEXT title
+    INTEGER revision
+    TEXT updated_at_utc
+  }
+
+  chat_messages {
+    TEXT id PK
+    TEXT thread_id FK
+    TEXT turn_id
+    INTEGER ordinal
+    TEXT lifecycle
+  }
+
+  chat_provider_sessions {
+    TEXT thread_id PK, FK
+    TEXT provider PK
+    INTEGER transcript_revision
+  }
+```
+
+#### `chat_threads`
+
+| Column           | SQLite type | Constraint / index                  | Purpose                                                       |
+| ---------------- | ----------- | ----------------------------------- | ------------------------------------------------------------- |
+| `id`             | `TEXT`      | Primary key                         | Opaque shared-thread identifier.                              |
+| `title`          | `TEXT`      | Required; default empty string      | User-visible thread title.                                    |
+| `revision`       | `INTEGER`   | Required; non-negative; default `0` | Transcript version used to decide safe native-session resume. |
+| `created_at_utc` | `TEXT`      | Required                            | UTC RFC 3339 creation timestamp.                              |
+| `updated_at_utc` | `TEXT`      | Required; descending index          | UTC RFC 3339 timestamp used to order the thread rail.         |
+
+#### `chat_messages`
+
+| Column                | SQLite type | Constraint / index                                                                                                       | Purpose                                                                                        |
+| --------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `id`                  | `TEXT`      | Primary key                                                                                                              | Opaque message identifier.                                                                     |
+| `thread_id`           | `TEXT`      | Required foreign key to `chat_threads`; cascade delete; part of unique `(thread_id, ordinal)` and thread/ordinal index   | Owning shared thread.                                                                          |
+| `turn_id`             | `TEXT`      | Required                                                                                                                 | Correlates the user message, assistant message, and SSE event sequence for one submitted turn. |
+| `ordinal`             | `INTEGER`   | Required, non-negative; unique within its thread                                                                         | Stable transcript order.                                                                       |
+| `author`              | `TEXT`      | Required; `user` or `assistant`                                                                                          | Speaker identity.                                                                              |
+| `provider`            | `TEXT`      | Nullable; `codex` or `opencode` when present                                                                             | Provider used for an assistant reply; `NULL` for a user message.                               |
+| `model_id`            | `TEXT`      | Nullable                                                                                                                 | Selected provider model; `NULL` for a user message or Codex default without a reported ID.     |
+| `markdown_body`       | `TEXT`      | Required; default empty string                                                                                           | Persisted text/Markdown, including safe partial assistant output.                              |
+| `lifecycle`           | `TEXT`      | Required; `pending`, `streaming`, `completed`, `failed`, or `cancelled`; contributes to active-turn partial unique index | Current message/turn state.                                                                    |
+| `failure_kind`        | `TEXT`      | Nullable; closed safe failure classification                                                                             | Safe display reason: `unavailable`, `unauthenticated`, `exited`, or `cancelled`.               |
+| `last_event_sequence` | `INTEGER`   | Required, non-negative; default `0`                                                                                      | Last persisted normalized stream sequence.                                                     |
+| `created_at_utc`      | `TEXT`      | Required                                                                                                                 | UTC RFC 3339 creation timestamp.                                                               |
+| `updated_at_utc`      | `TEXT`      | Required                                                                                                                 | UTC RFC 3339 latest-change timestamp.                                                          |
+
+The partial unique index on `thread_id` permits only one `assistant` row whose lifecycle is
+`pending` or `streaming` in a thread. It is durable race protection for the one-active-turn rule.
+
+#### `chat_provider_sessions`
+
+| Column                | SQLite type | Constraint / index                                                                    | Purpose                                                     |
+| --------------------- | ----------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `thread_id`           | `TEXT`      | Required foreign key to `chat_threads`; cascade delete; part of composite primary key | Owning shared thread.                                       |
+| `provider`            | `TEXT`      | Required; `codex` or `opencode`; part of composite primary key                        | Provider whose latest session is recorded.                  |
+| `native_session_id`   | `TEXT`      | Required; never returned, logged, or included in evidence                             | Provider-native session handle used only for safe resume.   |
+| `transcript_revision` | `INTEGER`   | Required; non-negative                                                                | Thread revision represented by the provider-native session. |
+| `selected_model_id`   | `TEXT`      | Nullable                                                                              | Model used when that provider session was started.          |
+| `updated_at_utc`      | `TEXT`      | Required                                                                              | UTC RFC 3339 last-session-update timestamp.                 |
+
+The same migration is available as [002-chat.sql](./002-chat.sql) directly in this plan folder.
+Phase 1 copies it to `apps/beavernest-be/src/BeaverNestBe/Migrations/002-chat.sql` only after the
+RED migration/integration tests prove any required correction; it never edits `001-initialize.sql`.
+
+```sql
+CREATE TABLE chat_threads (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL DEFAULT '',
+  revision INTEGER NOT NULL DEFAULT 0 CHECK (revision >= 0),
+  created_at_utc TEXT NOT NULL,
+  updated_at_utc TEXT NOT NULL
+);
+
+CREATE TABLE chat_messages (
+  id TEXT PRIMARY KEY,
+  thread_id TEXT NOT NULL REFERENCES chat_threads (id) ON DELETE CASCADE,
+  turn_id TEXT NOT NULL,
+  ordinal INTEGER NOT NULL CHECK (ordinal >= 0),
+  author TEXT NOT NULL CHECK (author IN ('user', 'assistant')),
+  provider TEXT CHECK (provider IN ('codex', 'opencode')),
+  model_id TEXT,
+  markdown_body TEXT NOT NULL DEFAULT '',
+  lifecycle TEXT NOT NULL CHECK (
+    lifecycle IN (
+      'pending',
+      'streaming',
+      'completed',
+      'failed',
+      'cancelled'
+    )
+  ),
+  failure_kind TEXT CHECK (
+    failure_kind IS NULL
+    OR failure_kind IN (
+      'unavailable',
+      'unauthenticated',
+      'exited',
+      'cancelled'
+    )
+  ),
+  last_event_sequence INTEGER NOT NULL DEFAULT 0 CHECK (last_event_sequence >= 0),
+  created_at_utc TEXT NOT NULL,
+  updated_at_utc TEXT NOT NULL,
+  UNIQUE (thread_id, ordinal)
+);
+
+CREATE TABLE chat_provider_sessions (
+  thread_id TEXT NOT NULL REFERENCES chat_threads (id) ON DELETE CASCADE,
+  provider TEXT NOT NULL CHECK (provider IN ('codex', 'opencode')),
+  native_session_id TEXT NOT NULL,
+  transcript_revision INTEGER NOT NULL CHECK (transcript_revision >= 0),
+  selected_model_id TEXT,
+  updated_at_utc TEXT NOT NULL,
+  PRIMARY KEY (thread_id, provider)
+);
+
+CREATE INDEX chat_messages_thread_ordinal_idx ON chat_messages (thread_id, ordinal);
+
+CREATE INDEX chat_threads_updated_idx ON chat_threads (updated_at_utc DESC);
+
+CREATE UNIQUE INDEX chat_messages_one_active_turn_idx ON chat_messages (thread_id)
+WHERE
+  author = 'assistant'
+  AND lifecycle IN ('pending', 'streaming');
+```
+
+The application increments `chat_threads.revision` in the same transaction that creates a turn or
+settles its assistant message. The partial unique index is durable race protection for the product
+rule of one active turn per thread; the in-memory cancellation registry remains responsible for the
+actual managed process. A user message has `provider`, `model_id`, and `failure_kind` as `NULL`, and
+uses `completed` lifecycle immediately. An assistant message records the selected provider/model
+and moves from `pending` through `streaming` to a terminal lifecycle. `native_session_id` is never
+returned by the API, written to evidence, or logged.
+
 ## Provider Adapters
 
 | Provider | Direct invocation shape                                                                           | Model behavior                                                     | Session behavior                                                                     |
