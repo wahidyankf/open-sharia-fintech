@@ -144,26 +144,52 @@ fn agents_validate_naming(repo_root: &str) -> std::result::Result<Vec<Violation>
 }
 
 /// Return sorted paths of agent `.md` files in `dir`, excluding special files.
+///
+/// Walks one level of group subdirectory nesting the same way
+/// `discover_agent_sources` does, so a grouped source tier
+/// (`.claude/agents/<group>/<file>.md`) is not silently read as empty.
 fn list_agent_files(dir: &Path) -> Vec<String> {
     let Ok(entries) = fs::read_dir(dir) else {
         return Vec::new();
     };
     let mut files = Vec::new();
     for entry in entries.flatten() {
-        if entry.file_type().is_ok_and(|t| t.is_dir()) {
+        let is_dir = entry.file_type().is_ok_and(|t| t.is_dir());
+        if is_dir {
+            let Ok(group_entries) = fs::read_dir(entry.path()) else {
+                continue;
+            };
+            for group_entry in group_entries.flatten() {
+                if group_entry.file_type().is_ok_and(|t| t.is_dir()) {
+                    continue;
+                }
+                push_agent_file(
+                    &mut files,
+                    &group_entry.file_name().to_string_lossy(),
+                    &group_entry.path(),
+                );
+            }
             continue;
         }
-        let name = entry.file_name().to_string_lossy().to_string();
-        if name == "README.md" || name == "ci-monitor-subagent.md" {
-            continue;
-        }
-        if !name.ends_with(".md") {
-            continue;
-        }
-        files.push(entry.path().to_string_lossy().to_string());
+        push_agent_file(
+            &mut files,
+            &entry.file_name().to_string_lossy(),
+            &entry.path(),
+        );
     }
     files.sort();
     files
+}
+
+/// Push `path` onto `files` unless `name` is a special/non-agent filename.
+fn push_agent_file(files: &mut Vec<String>, name: &str, path: &Path) {
+    if name == "README.md" || name == "ci-monitor-subagent.md" {
+        return;
+    }
+    if !name.ends_with(".md") {
+        return;
+    }
+    files.push(path.to_string_lossy().to_string());
 }
 
 #[cfg(test)]
