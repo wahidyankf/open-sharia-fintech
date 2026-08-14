@@ -40,7 +40,7 @@ have changed since the audit was generated.
 
 ## Fix Workflow
 
-See [docs-converting-pdf-to-markdown/reference/03-fixing-conversions.md](../skills/docs-converting-pdf-to-markdown/reference/03-fixing-conversions.md)
+See [docs-converting-pdf-to-markdown/reference/03-fixing-conversions.md](../../skills/docs-converting-pdf-to-markdown/reference/03-fixing-conversions.md)
 for the complete confidence assessment (including the confidence-downgrade conditions), the P0-P4
 priority execution order, the per-finding-type fix operations (missing section, incorrect text,
 heading level, content nesting, missing table, invalid Mermaid, missing figure placeholder, missing
@@ -60,9 +60,9 @@ re-validation, and the fix report format.
 
 - `repo-assessing-criticality-confidence` Skill — priority matrix (P0-P4)
 - `repo-applying-maker-checker-fixer` Skill — fixer role and confidence levels
-- [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
+- [pdf-to-md-quality-gate workflow](../../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
 - **Related Agents**: `pdf-to-md-maker.md`, `pdf-to-md-checker.md`
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

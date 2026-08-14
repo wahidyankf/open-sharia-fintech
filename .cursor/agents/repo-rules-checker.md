@@ -48,15 +48,15 @@ governance-prose quality.
 **Conventions**: all conventions in `repo-governance/conventions/`; all practices in
 `repo-governance/development/`.
 
-**Related Documentation**: [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
-(agent-Skill separation patterns), [Temporary Files Convention](../../repo-governance/development/infra/temporary-files.md)
-(report generation standards), [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md),
-[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
+**Related Documentation**: [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
+(agent-Skill separation patterns), [Temporary Files Convention](../../../repo-governance/development/infra/temporary-files.md)
+(report generation standards), [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md),
+[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
 
 **Related Agents**: `repo-rules-fixer` (fixes issues this checker finds), `repo-rules-maker`
 (creates repository rules and conventions).
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

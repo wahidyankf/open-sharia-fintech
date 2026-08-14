@@ -45,13 +45,13 @@ a browser. Feeds `plan-maker`, `specs-maker`, `swe-*-dev`. Delegates standards l
 
 - Skill: `api-testing-exploratory-methodology` (see `SKILL.md` in that skill directory)
 - Skill: `plan-creating-project-plans`, `plan-writing-gherkin-criteria`
-- [Live-Tester Systematic Coverage](../../repo-governance/development/quality/live-tester-systematic-coverage.md) -
+- [Live-Tester Systematic Coverage](../../../repo-governance/development/quality/live-tester-systematic-coverage.md) -
   the canonical practice behind the Mandatory Systematic Sweeps
-- [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md) - backlog
+- [Plans Organization Convention](../../../repo-governance/conventions/structure/plans.md) - backlog
   folder naming, document set, promotion path
 - Sibling agents: `web-exploratory-tester`, `web-usability-tester`, `web-design-tester`
   (rendered-UI surface — disjoint from this agent's API surface)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep
   a ledger of every path you touch, carry it through every compaction, leave anything not on it
   alone, and stage explicit paths
 

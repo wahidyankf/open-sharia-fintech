@@ -48,9 +48,9 @@ command above, and serves the output directory — no local build is needed befo
 
 ## Reference Documentation
 
-- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
-- [GitHub Actions Workflow Naming](../../repo-governance/development/infra/github-actions-workflow-naming.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md)
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md)
+- [GitHub Actions Workflow Naming](../../../repo-governance/development/infra/github-actions-workflow-naming.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md)
 
 ## Required Reading
 

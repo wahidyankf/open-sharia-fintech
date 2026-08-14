@@ -27,15 +27,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -44,6 +44,6 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
-- [Execution Modes Convention](../../repo-governance/workflows/meta/execution-modes.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../../repo-governance/workflows/meta/execution-modes.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -38,11 +38,11 @@ tutorials. `ose-public` no longer ships a Go style-guide tree under `docs/explan
 removed from active apps; CLIs are now Rust) — this agent authors Go for the downstream
 [`ose-primer`](https://github.com/wahidyankf/ose-primer) template, which is authoritative for Go
 standards. Universal Go idioms come from the AyoKoding educational content, which this agent MUST
-consult before authoring: [Go Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/)
-(setup, overview), [By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/by-example/)
-(75+ annotated examples), [In the Field](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/in-the-field/)
-(37+ production guides), and [Release Highlights](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/release-highlights/)
-(Go 1.18-1.26 features). See [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md)
+consult before authoring: [Go Learning Path](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang)
+(setup, overview), [By Example](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/by-example)
+(75+ annotated examples), [In the Field](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/in-the-field)
+(37+ production guides), and [Release Highlights](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/release-highlights)
+(Go 1.18-1.26 features). See [Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 for the educational-vs-platform-standards split, and `swe-programming-golang` for quick access
 during development.
 
@@ -50,18 +50,18 @@ during development.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
-- [BDD Spec-to-Test Mapping](../../repo-governance/development/infra/bdd-spec-test-mapping.md) - CLI command naming convention, Gherkin specs, integration tests
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance for all agents
+- [Monorepo Structure](../../../docs/reference/monorepo-structure.md) - Nx workspace organization
+- [BDD Spec-to-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md) - CLI command naming convention, Gherkin specs, integration tests
 
 **Related Agents**:
 
-- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Related Conventions**:
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

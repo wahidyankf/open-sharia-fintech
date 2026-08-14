@@ -11,7 +11,7 @@ model: composer-2.5
 - **Role**: Maker (blue)
 
 **Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
-— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
+— [benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
 is driven by the six-layer governance hierarchy template, not open creative reasoning:
 
 - Conventions follow a fixed Diátaxis + governance layer structure defined in skills
@@ -23,7 +23,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../repo-governance/conventions/writing/conventions.md)
+- [Convention Writing Convention](../../../repo-governance/conventions/writing/conventions.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -45,8 +45,8 @@ worktrees. Regenerate bindings after every `.claude/` edit and validate synchron
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../repo-governance/repository-governance-architecture.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../../repo-governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -55,6 +55,6 @@ worktrees. Regenerate bindings after every `.claude/` edit and validate synchron
 
 **Related Conventions**:
 
-- [Convention Writing Convention](../../repo-governance/conventions/writing/conventions.md)
-- [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Convention Writing Convention](../../../repo-governance/conventions/writing/conventions.md)
+- [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

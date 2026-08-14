@@ -28,16 +28,16 @@ Pattern: `ayokoding-web-annotated-concept__{uuid-chain}__{YYYY-MM-DD--HH-MM}__au
 
 **CRITICAL - Read these first**:
 
-- [Tutorial Convention](../../repo-governance/conventions/tutorials/general.md) - Base tutorial
+- [Tutorial Convention](../../../repo-governance/conventions/tutorials/general.md) - Base tutorial
   standards this format extends
-- [Color Accessibility Convention](../../repo-governance/conventions/formatting/color-accessibility.md) -
+- [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md) -
   WCAG-compliant palette requirements
 
 ## Validation Scope
 
 **Step 0 (before all else)**: detect standard mode (code-bearing) vs. no-code sub-mode
 (leadership/governance) from the topic's format designation — every subsequent check branches on
-this. See [docs-creating-annotated-concept-tutorials/reference/01-format-requirements.md](../skills/docs-creating-annotated-concept-tutorials/reference/01-format-requirements.md)
+this. See [docs-creating-annotated-concept-tutorials/reference/01-format-requirements.md](../../skills/docs-creating-annotated-concept-tutorials/reference/01-format-requirements.md)
 for the complete checklist: worked-example/scenario count (45-60 / 20-30 floors), annotation
 density (1.0-2.25 ratio, standard mode only), structure, self-containment, mode integrity (this
 format's CRITICAL check — zero code in no-code sub-mode), grouping, and diagram accessibility. The
@@ -71,7 +71,7 @@ applies to code-bearing examples. Worked-example/scenario counts are floors, not
 shortfalls, never flag exceeding the band. Mode integrity (zero code in the no-code sub-mode) is a
 CRITICAL check.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

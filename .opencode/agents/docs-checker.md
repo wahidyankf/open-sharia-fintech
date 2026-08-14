@@ -35,7 +35,7 @@ technical details against authoritative sources.
 
 ## Core Responsibility
 
-Validate factual accuracy and content consistency of `docs/` per the [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md):
+Validate factual accuracy and content consistency of `docs/` per the [Factual Validation Convention](../../../repo-governance/conventions/writing/factual-validation.md):
 verify technical details (commands, versions, APIs) via web research, detect cross-document
 contradictions, validate code example correctness, check external references, flag outdated
 content, and ensure terminology consistency.
@@ -45,19 +45,19 @@ content, and ensure terminology consistency.
 1. **Factual accuracy** — `docs-validating-factual-accuracy` Skill (source prioritization,
    [Verified]/[Unverified]/[Error]/[Outdated] classification). For multi-page research (2+
    `WebSearch` or 3+ `WebFetch` calls per claim), delegate to `web-researcher` per the
-   [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
+   [Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md).
 2. **Content quality** — `docs-applying-content-quality` Skill (active voice, heading hierarchy,
    accessibility, code-block language tags, no time estimates).
 3. **Diagram accessibility** — `docs-creating-accessible-diagrams` Skill (color-blind-safe
    palette, shape differentiation, WCAG AA contrast).
-4. **Formatting conventions** — [Mathematical Notation](../../repo-governance/conventions/formatting/mathematical-notation.md)
-   (single `$` inline, `$$` display, `\begin{aligned}` for KaTeX), [Indentation](../../repo-governance/conventions/formatting/indentation.md)
+4. **Formatting conventions** — [Mathematical Notation](../../../repo-governance/conventions/formatting/mathematical-notation.md)
+   (single `$` inline, `$$` display, `\begin{aligned}` for KaTeX), [Indentation](../../../repo-governance/conventions/formatting/indentation.md)
    (single-H1 markdown structure, code-block indent width per language, Go tabs excepted),
-   [Linking](../../repo-governance/conventions/formatting/linking.md) (first mention links,
+   [Linking](../../../repo-governance/conventions/formatting/linking.md) (first mention links,
    subsequent mentions use inline code; CRITICAL if the first mention lacks a link), and
-   [Nested Code Fences](../../repo-governance/conventions/formatting/nested-code-fences.md)
+   [Nested Code Fences](../../../repo-governance/conventions/formatting/nested-code-fences.md)
    (4-backtick outer / 3-backtick inner).
-5. **Documentation completeness** — per [Documentation First](../../repo-governance/principles/content/documentation-first.md):
+5. **Documentation completeness** — per [Documentation First](../../../repo-governance/principles/content/documentation-first.md):
    every `apps/`/`libs/` directory has a substantive (non-placeholder) README (HIGH if missing).
 
 ## Convergence Safeguards
@@ -80,13 +80,13 @@ block automated access (403 → fall back to WebSearch).
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
-[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md).
+**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
+[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md).
 
 **Related Agents**: `docs-link-checker` (links), `repo-rules-checker` (conventions), `docs-maker`
 (creation/editing), `docs-fixer` (applies fixes).
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

@@ -32,7 +32,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -43,8 +43,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -53,6 +53,6 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
-- [Execution Modes Convention](../../repo-governance/workflows/meta/execution-modes.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../../repo-governance/workflows/meta/execution-modes.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

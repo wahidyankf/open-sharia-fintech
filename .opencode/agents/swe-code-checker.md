@@ -35,11 +35,11 @@ documentation content quality (`docs-checker`), repository governance (`repo-rul
 ## Validation Methodology
 
 See `swe-developing-applications-common` Skill's reference modules for the complete rule set:
-[01-checker-validation-steps.md](../skills/swe-developing-applications-common/reference/01-checker-validation-steps.md)
+[01-checker-validation-steps.md](../../skills/swe-developing-applications-common/reference/01-checker-validation-steps.md)
 covers project discovery, Nx target infrastructure (mandatory targets, tag convention,
 `CGO_ENABLED=0`, cache config, coverage enforcement), and Go/TypeScript/Rust-specific standards
 through cross-project consistency checks;
-[02-checker-tdd-specs-fixture-checks.md](../skills/swe-developing-applications-common/reference/02-checker-tdd-specs-fixture-checks.md)
+[02-checker-tdd-specs-fixture-checks.md](../../skills/swe-developing-applications-common/reference/02-checker-tdd-specs-fixture-checks.md)
 covers TDD compliance, specs/Gherkin completeness for the direct-code path, the regression-test
 mandate for bug fixes, and the six mandatory git-fixture-isolation layers.
 
@@ -59,17 +59,17 @@ total.
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
-[Nx Target Standards](../../repo-governance/development/infra/nx-targets.md).
+**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
+[Nx Target Standards](../../../repo-governance/development/infra/nx-targets.md).
 
-**Coding Standards**: [TypeScript](../../docs/explanation/software-engineering/programming-languages/typescript/README.md),
-[Rust](../../docs/explanation/software-engineering/programming-languages/rust/README.md),
-[F#](../../docs/explanation/software-engineering/programming-languages/f-sharp/README.md).
+**Coding Standards**: [TypeScript](../../../docs/explanation/software-engineering/programming-languages/typescript/README.md),
+[Rust](../../../docs/explanation/software-engineering/programming-languages/rust/README.md),
+[F#](../../../docs/explanation/software-engineering/programming-languages/f-sharp/README.md).
 
 **Related Agents**: `swe-golang-dev`, `swe-typescript-dev`, `swe-rust-dev`, `swe-fsharp-dev`
 (implement the standards this agent checks), `repo-rules-checker` (repo-wide governance).
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

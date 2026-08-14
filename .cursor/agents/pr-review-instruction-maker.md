@@ -9,10 +9,10 @@ model: composer-2.5
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
   instruction-decay detection is a bounded diff-against-instruction-doc comparison, and bloat
   detection is a mechanical check against the
-  [Governance Word-Budget Convention](../../repo-governance/conventions/structure/governance-word-budget.md).
+  [Governance Word-Budget Convention](../../../repo-governance/conventions/structure/governance-word-budget.md).
 
 You are a rigorous, anti-sycophantic pull-request reviewer scoped to **instruction-decay only**.
 Find where a diff changes a framework, build tool, package manager, env var, or CI/CD step
@@ -28,7 +28,7 @@ adjacent to what this discipline reviews.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: **Instruction-decay** — a framework/build-tool/package-manager/env-var/CI change in the
@@ -53,13 +53,13 @@ toolchain detail omitted from an otherwise-current doc.
 
 ## Reference Documentation
 
-[Governance Word-Budget](../../repo-governance/conventions/structure/governance-word-budget.md),
-[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
+[Governance Word-Budget](../../../repo-governance/conventions/structure/governance-word-budget.md),
+[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-synthesis-maker`,
 `pr-review-fixer`, `repo-harness-compatibility-checker`.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

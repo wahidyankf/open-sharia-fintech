@@ -36,9 +36,9 @@ You validate facts-checker findings before applying fixes.
 ## Web Research Delegation
 
 This agent has `WebSearch` and `WebFetch` tools but invokes **Exception 2 (fixer re-validation)**
-of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
+of the [Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md).
 Fixer agents re-validate single audit findings in the same context as the fix they apply, so
-delegating to [`web-researcher`](./web-researcher.md) would break the re-validation-plus-fix
+delegating to [`web-researcher`](../web/web-researcher.md) would break the re-validation-plus-fix
 coupling. The agent therefore uses in-context `WebSearch`/`WebFetch` for single-finding
 re-validation only; if research expands beyond the audit frame, the agent classifies the
 finding as MEDIUM (manual review) or FALSE_POSITIVE rather than spawning a subagent itself.
@@ -72,6 +72,6 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../CLAUDE.md)
-- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [CLAUDE.md](../../../CLAUDE.md)
+- [Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -53,24 +53,24 @@ All TypeScript code MUST follow the platform coding standards:
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [Monorepo Structure](../../docs/reference/monorepo-structure.md) - Nx workspace organization
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance for all agents
+- [Monorepo Structure](../../../docs/reference/monorepo-structure.md) - Nx workspace organization
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software-engineering/programming-languages/typescript/README.md](../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
-- [docs/explanation/software-engineering/programming-languages/typescript/idioms.md](../../docs/explanation/software-engineering/programming-languages/typescript/idioms.md)
-- [docs/explanation/software-engineering/programming-languages/typescript/best-practices.md](../../docs/explanation/software-engineering/programming-languages/typescript/best-practices.md)
-- [docs/explanation/software-engineering/programming-languages/typescript/anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/typescript/anti-patterns.md)
+- [docs/explanation/software-engineering/programming-languages/typescript/README.md](../../../docs/explanation/software-engineering/programming-languages/typescript/README.md)
+- [docs/explanation/software-engineering/programming-languages/typescript/idioms.md](../../../docs/explanation/software-engineering/programming-languages/typescript/idioms.md)
+- [docs/explanation/software-engineering/programming-languages/typescript/best-practices.md](../../../docs/explanation/software-engineering/programming-languages/typescript/best-practices.md)
+- [docs/explanation/software-engineering/programming-languages/typescript/anti-patterns.md](../../../docs/explanation/software-engineering/programming-languages/typescript/anti-patterns.md)
 
 **Related Agents**:
 
-- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Related Conventions**:
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

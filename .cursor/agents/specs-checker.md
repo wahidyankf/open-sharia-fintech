@@ -56,14 +56,14 @@ accessible color palette).
 
 ## Reference Documentation
 
-**Project Guidance**: [AGENTS.md](../../AGENTS.md), [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md),
-[App README vs Specs Convention](../../repo-governance/conventions/structure/app-readme-vs-specs.md),
-[Specs Directory Structure Convention](../../repo-governance/conventions/structure/specs-directory-structure.md),
-[Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md).
+**Project Guidance**: [AGENTS.md](../../../AGENTS.md), [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md),
+[App README vs Specs Convention](../../../repo-governance/conventions/structure/app-readme-vs-specs.md),
+[Specs Directory Structure Convention](../../../repo-governance/conventions/structure/specs-directory-structure.md),
+[Specs Validation Workflow](../../../repo-governance/workflows/specs/specs-quality-gate.md).
 
 **Related Agents**: `specs-fixer`, `specs-maker`.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

@@ -40,11 +40,11 @@ You are an expert Rust software engineer specializing in building production-qua
 ## Coding Standards
 
 **CRITICAL**: This agent enforces **OSE Platform-specific style guides** (`docs/explanation/software-engineering/programming-languages/rust/`),
-not the [AyoKoding](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)
-educational tutorials — complete the AyoKoding [Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)
-and [By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/by-example/)
+not the [AyoKoding](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust)
+educational tutorials — complete the AyoKoding [Learning Path](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust)
+and [By Example](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/by-example)
 first for universal Rust idioms, then apply the OSE-specific standards below. See
-[Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md)
+[Programming Language Documentation Separation](../../../repo-governance/conventions/structure/programming-language-docs-separation.md)
 for the split rationale.
 
 All docs live under `docs/explanation/software-engineering/programming-languages/rust/` —
@@ -61,17 +61,17 @@ apply when relevant: `security-standards.md`, `concurrency-standards.md` (owners
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [docs/explanation/software-engineering/programming-languages/rust/README.md](../../docs/explanation/software-engineering/programming-languages/rust/README.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [docs/explanation/software-engineering/programming-languages/rust/README.md](../../../docs/explanation/software-engineering/programming-languages/rust/README.md)
 
 **Related Agents**:
 
-- [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
+- [plan-execution workflow](../../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
 **Related Conventions**:
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

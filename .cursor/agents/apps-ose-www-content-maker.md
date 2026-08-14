@@ -21,7 +21,7 @@ Create landing page content for ose-web (Next.js 16 with tRPC, English-only).
 
 ## Reference
 
-- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
 - Skills: `apps-ose-www-developing-content` (PaperMod patterns, date structure), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -32,8 +32,8 @@ Create landing page content for ose-web (Next.js 16 with tRPC, English-only).
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -42,6 +42,6 @@ Create landing page content for ose-web (Next.js 16 with tRPC, English-only).
 
 **Related Conventions**:
 
-- [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
-- [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [ose-web Convention](../../../repo-governance/conventions/structure/plans.md)
+- [Content Quality Principles](../../../repo-governance/conventions/writing/quality.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

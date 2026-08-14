@@ -40,8 +40,8 @@ stopgap plus mandatory pre-push gate re-run.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../AGENTS.md) - Primary guidance
-- [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -
+- [AGENTS.md](../../../AGENTS.md) - Primary guidance
+- [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -
   The four delivery modes; `*-to-pr` modes are this agent's applicability boundary
 
 **Related Agents / Workflows**:
@@ -51,20 +51,20 @@ stopgap plus mandatory pre-push gate re-run.
 - `pr-review-scout-maker` - Pipeline stage 0; classifies risk tier and specialist set
 - The nine `pr-review-*-maker` discipline specialists - Raw findings this agent resolves, via
   `pr-review-synthesis-maker`'s consolidation
-- [PR-Review Maker→Fixer Cycle workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md) -
+- [PR-Review Maker→Fixer Cycle workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md) -
   Orchestrates the strictly sequential N-cycle loop this agent participates in
 - `web-researcher` - Delegate target for external fact verification while triaging a finding
 - `plan-fixer`, `ci-fixer` - Sibling fixer agents in the standard three-stage pattern
 
 **Related Conventions**:
 
-- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) -
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md) -
   The three-stage pattern this agent adapts into a two-role variant
-- [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) -
+- [Git Push Default Convention](../../../repo-governance/development/workflow/git-push-default.md) -
   Direct-push default for `*-to-origin-main` modes, against which `*-to-pr` modes are the
   deliberate exception
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

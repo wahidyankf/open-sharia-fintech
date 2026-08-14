@@ -71,20 +71,20 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 ## Reference Documentation
 
-**Project Guidance:** [Tutorial Convention](../../repo-governance/conventions/tutorials/general.md),
-[CLAUDE.md](../../CLAUDE.md), [Color Accessibility Convention](../../repo-governance/conventions/formatting/color-accessibility.md)
+**Project Guidance:** [Tutorial Convention](../../../repo-governance/conventions/tutorials/general.md),
+[CLAUDE.md](../../../CLAUDE.md), [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md)
 (diagram palette requirements).
 
 **Related Agents:** `apps-ayokoding-www-annotated-concept-maker` (creates content),
 `apps-ayokoding-www-annotated-concept-checker` (validates content, generates audits).
 
-**Related Conventions:** [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md),
-[Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md).
+**Related Conventions:** [Fixer Confidence Levels](../../../repo-governance/development/quality/fixer-confidence-levels.md),
+[Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md).
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report
 transparently — always respecting the topic's detected mode before touching a file.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

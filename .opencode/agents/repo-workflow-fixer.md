@@ -61,8 +61,8 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -71,6 +71,6 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
-- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [Workflow Pattern Convention](../../../repo-governance/workflows/meta/workflow-identifier.md)
+- [Fixer Confidence Levels](../../../repo-governance/development/quality/fixer-confidence-levels.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

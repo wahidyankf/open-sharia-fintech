@@ -52,8 +52,8 @@ Create new shared UI components in `libs/web-ui/src/components/` — `component-
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
-- [Frontend Development Documentation](../../repo-governance/development/frontend/README.md) - Frontend governance overview
+- [CLAUDE.md](../../../CLAUDE.md) - Primary project guidance
+- [Frontend Development Documentation](../../../repo-governance/development/frontend/README.md) - Frontend governance overview
 
 **Related Agents**:
 
@@ -62,14 +62,14 @@ Create new shared UI components in `libs/web-ui/src/components/` — `component-
 
 **Related Conventions**:
 
-- [Design Tokens Convention](../../repo-governance/development/frontend/design-tokens.md)
-- [Component Patterns Convention](../../repo-governance/development/frontend/component-patterns.md)
-- [Accessibility Convention](../../repo-governance/development/frontend/accessibility.md)
-- [Styling Convention](../../repo-governance/development/frontend/styling.md)
-- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all component authoring
-- [User-Facing Delivery Hardening Convention](../../repo-governance/development/quality/user-facing-delivery-hardening.md) - Rule 2: name every design-system primitive the component reuses or introduces; rule 8: mockup colors must reference theme tokens, not raw hex values
+- [Design Tokens Convention](../../../repo-governance/development/frontend/design-tokens.md)
+- [Component Patterns Convention](../../../repo-governance/development/frontend/component-patterns.md)
+- [Accessibility Convention](../../../repo-governance/development/frontend/accessibility.md)
+- [Styling Convention](../../../repo-governance/development/frontend/styling.md)
+- [Test-Driven Development](../../../repo-governance/development/workflow/test-driven-development.md) - Required for all component authoring
+- [User-Facing Delivery Hardening Convention](../../../repo-governance/development/quality/user-facing-delivery-hardening.md) - Rule 2: name every design-system primitive the component reuses or introduces; rule 8: mockup colors must reference theme tokens, not raw hex values
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

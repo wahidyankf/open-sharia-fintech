@@ -18,7 +18,7 @@ skills:
 ## Agent Metadata
 
 - **Role**: Maker (blue). **Model**: `sonnet` per maintainer D5 (see
-  [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md)) —
+  [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)) —
   nine sonnet specialists plus an opus coordinator beats an all-opus fan-out on cost; this
   discipline's judgment is bounded/scoped, and the coordinator's tool-verify pass backstops
   misses.
@@ -34,7 +34,7 @@ behavior.
 
 ## Discipline Charter
 
-Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
+Per [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline.
 
 **Owns**: New tradeoffs, module boundaries, reversibility, blast radius, quality-attribute
@@ -67,13 +67,13 @@ style preference with no measurable consequence.
 
 ## Reference Documentation
 
-[Nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
-[PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
-[Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related
+[Nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md),
+[Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related
 agents: `pr-review-logic-maker`, `pr-review-governance-maker`, `pr-review-synthesis-maker`,
 `pr-review-fixer`, `web-researcher`.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

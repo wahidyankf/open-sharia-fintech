@@ -11,7 +11,7 @@ model: composer-2.5
 - **Role**: Implementor (purple)
 
 **Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
-[benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — deterministic
+[benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — deterministic
 workflow dispatch and monitoring, no complex reasoning or content generation.
 
 ## Target Parameters
@@ -44,8 +44,8 @@ development builds.
 
 **Related Conventions**:
 
-- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md)
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md)
 
 ## Required Reading
 

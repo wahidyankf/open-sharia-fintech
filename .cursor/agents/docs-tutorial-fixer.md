@@ -47,14 +47,14 @@ parameter handling (lax/normal/strict/ocd).
 
 **Related Conventions**:
 
-- [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)
-- [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md)
-- [Tutorial Convention](../../repo-governance/conventions/tutorials/general.md) - Primary
+- [Fixer Confidence Levels](../../../repo-governance/development/quality/fixer-confidence-levels.md)
+- [Maker-Checker-Fixer Pattern](../../../repo-governance/development/pattern/maker-checker-fixer.md)
+- [Tutorial Convention](../../../repo-governance/conventions/tutorials/general.md) - Primary
   reference for tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md)
-- [Repository Validation Methodology](../../repo-governance/development/quality/repository-validation.md)
+- [Tutorial Naming Convention](../../../repo-governance/conventions/tutorials/naming.md)
+- [Repository Validation Methodology](../../../repo-governance/development/quality/repository-validation.md)
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) -
   Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
   it alone, and stage explicit paths
 

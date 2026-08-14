@@ -27,7 +27,7 @@ skills:
 - **Role**: Checker (green)
 
 **Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
-[benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — link validation
+[benchmark reference](../../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — link validation
 is purely mechanical HTTP status/cache checking, a deterministic URL lookup loop with no rule-based
 reasoning or content analysis. See `model-selection.md` §Link Checkers as Haiku.
 
@@ -38,10 +38,10 @@ comes from `repo-assessing-criticality-confidence`.
 ## Web Research Delegation
 
 This agent has `WebFetch` and `WebSearch` tools but invokes **Exception 3 (link-reachability
-checkers)** of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
+checkers)** of the [Web Research Delegation Convention](../../../repo-governance/conventions/writing/web-research-delegation.md).
 Its domain is URL reachability — HTTP status codes, redirect chains — not content research. It
 invokes `WebFetch` directly against the URL under test; delegating a reachability probe to
-[`web-researcher`](./web-researcher.md) would add latency without improving the signal. If
+[`web-researcher`](../web/web-researcher.md) would add latency without improving the signal. If
 content-level research is required (for example, to rewrite a broken reference), that work is
 escalated to the ayokoding-web maker or checker family, which delegates to `web-researcher`
 per the default rule.
@@ -67,8 +67,8 @@ disagreements, and the 3-5 iteration convergence target.
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../CLAUDE.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [CLAUDE.md](../../../CLAUDE.md)
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
 
 ## Required Reading
 

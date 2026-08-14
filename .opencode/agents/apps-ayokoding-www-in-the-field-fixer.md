@@ -85,8 +85,8 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 **Project Guidance:**
 
-- [In-the-Field Tutorial Convention](../../repo-governance/conventions/tutorials/in-the-field.md) - Standards for fix validation
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [In-the-Field Tutorial Convention](../../../repo-governance/conventions/tutorials/in-the-field.md) - Standards for fix validation
+- [CLAUDE.md](../../../CLAUDE.md) - Primary guidance
 
 **Related Agents:**
 
@@ -95,9 +95,9 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../../repo-governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../../repo-governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
