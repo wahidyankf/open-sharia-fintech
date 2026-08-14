@@ -24,6 +24,8 @@ platform, the Nx workspace, and the engineering systems that support an early pr
   related specifications.
 - [Nx Configuration](./nx-configuration.md) — understand workspace configuration, task caching, and
   build-system settings.
+- [Web Sites](./web-sites.md) — find every deployable app's domain, dev port, and production deploy
+  branch.
 
 ## Build and verify with confidence
 
