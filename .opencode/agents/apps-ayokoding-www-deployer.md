@@ -7,6 +7,7 @@ permission:
 color: secondary
 skills:
   - repo-practicing-trunk-based-development
+  - apps-deploying-vercel-branches
 ---
 
 # Deployer for ayokoding-web
@@ -15,138 +16,29 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
-— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because it
-performs straightforward deployment tasks:
+**Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
+[benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — deterministic
+git operations and status checks, no complex reasoning or content generation.
 
-- Sequential git operations (checkout, status check, force push)
-- Simple status checks (branch existence, uncommitted changes)
-- Deterministic deployment workflow
-- No build required (Vercel handles builds automatically)
-- No complex reasoning or content generation required
+## Target Parameters
 
-Deploy ayokoding-web to production by force pushing main branch to prod-ayokoding-www.
+- **Pattern**: Direct force-push (skill reference `01`)
+- **Production branch**: `prod-ayokoding-www`
+- **Vercel project slug**: `ayokoding-www` (team `wahidyan-kresna-fridayokas-projects`)
+- **Build system**: Vercel (Next.js), no local build
 
 ## Core Responsibility
 
-Deploy ayokoding-web to production environment:
-
-1. **Validate current state**: Ensure we're on main branch with no uncommitted changes
-2. **Force push to production**: Push main branch to prod-ayokoding-www
-3. **Trigger Vercel build**: Vercel automatically detects changes and builds
-
-**Build Process**: Vercel listens to prod-ayokoding-www branch and automatically builds the Next.js site on push. No local build needed.
-
-## Deployment Workflow
-
-### Step 1: Validate Current Branch
-
-```bash
-# Ensure we're on main branch
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-  echo "❌ Must be on main branch. Currently on: $CURRENT_BRANCH"
-  exit 1
-fi
-```
-
-### Step 2: Check for Uncommitted Changes
-
-```bash
-# Ensure working directory is clean
-if [ -n "$(git status --porcelain)" ]; then
-  echo "❌ Uncommitted changes detected. Commit or stash changes first."
-  git status --short
-  exit 1
-fi
-```
-
-### Step 3: Force Push to Production
-
-```bash
-# Force push main to prod-ayokoding-www
-git push origin main:prod-ayokoding-www --force
-
-echo "✅ Deployed successfully!"
-echo "Vercel will automatically build from prod-ayokoding-www branch"
-```
-
-## Vercel Integration
-
-**Production Branch**: `prod-ayokoding-www`
-**Build Trigger**: Automatic on push
-**Build System**: Vercel (Next.js)
-**No Local Build**: Vercel handles all build operations
-
-**Trunk-Based Development**: Per `repo-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).
-
-## Post-Deploy Verification (Vercel MCP)
-
-A successful push is **not** evidence of a successful deploy. Vercel builds asynchronously, so a
-push that lands and a build that fails look identical from the shell. The `Deployed successfully`
-message in the push step confirms only that the branch moved — it says nothing about the build.
-Verify before reporting success.
-
-1. Confirm a deployment exists for project `ayokoding-www` (team `wahidyan-kresna-fridayokas-projects`) whose commit SHA matches the SHA
-   just pushed. A stale newest-deployment means the build has not been picked up yet.
-2. Follow its state until it leaves `BUILDING`, then report the terminal state:
-   - `READY` — the deploy succeeded. Report the deployment URL and the aliases it serves.
-   - `ERROR` — fetch the build logs, surface the failing step, and report **failure**.
-   - `CANCELED` — report it; usually a superseding deploy raced this one.
-3. Address the project by **slug, never by an opaque `prj_*`/`team_*` identifier**, in every message
-   and committed artifact.
-
-**If the Vercel MCP is unavailable**, say so explicitly, then fall back to the deploy branch's CI run
-and an HTTP request against the live URL. Never report a successful deployment on the strength of the
-push alone — that is the specific failure this section exists to prevent.
-
-See [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
-
-## Safety Checks
-
-**Pre-deployment Validation**:
-
-- ✅ Currently on main branch
-- ✅ No uncommitted changes
-- ✅ Latest changes from remote
-
-**Why Force Push**: Safe because prod-ayokoding-www is deployment-only. We always want exact copy of main.
-
-## Common Issues
-
-### Issue 1: Not on Main Branch
-
-```bash
-# Error: Currently on feature-branch
-# Solution: Switch to main first
-git checkout main
-```
-
-### Issue 2: Uncommitted Changes
-
-```bash
-# Error: Modified files detected
-# Solution: Commit or stash changes
-git add -A && git commit -m "commit message"
-# OR
-git stash
-```
-
-### Issue 3: Behind Remote
-
-```bash
-# Warning: Local main behind origin/main
-# Solution: Pull latest changes
-git pull origin main
-```
+Deploy ayokoding-web to production by force-pushing `main` to `prod-ayokoding-www`, then verify the
+resulting Vercel build via the Vercel MCP protocol.
 
 ## When to Use This Agent
 
 **Use when**:
 
 - Deploying immediately outside the scheduled workflow window
-- Want to trigger Vercel rebuild on-demand
-- Need to rollback production (force push older commit)
+- Want to trigger a Vercel rebuild on-demand
+- Need to rollback production (force-push an older commit)
 
 **Do NOT use for**:
 
@@ -156,16 +48,16 @@ git pull origin main
 
 ## Reference Documentation
 
-**Project Guidance**:
-
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
-
-**Related Agents**:
-
-- `apps-ayokoding-www-general-checker` - Validates content before deployment
+**Related Agents**: `apps-ayokoding-www-general-checker` — validates content before deployment.
 
 **Related Conventions**:
 
 - [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md)
+
+## Required Reading
+
+Before acting, read every file in
+`.claude/skills/apps-deploying-vercel-branches/reference/` — specifically `01-direct-force-push-workflow.md`
+and `04-post-deploy-verification-vercel-mcp.md`. They hold the exact validate/push/verify commands
+and troubleshooting steps; this file states only what is specific to ayokoding-web.
