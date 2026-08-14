@@ -24,8 +24,8 @@ Standards for creating, structuring, and managing AI agents in the platform bind
 - [Conventions](./ai-agents/04-conventions-implemented-respected.md) — sibling conventions.
 - [Required Frontmatter](./ai-agents/05-agent-file-structure-required-frontmatter.md) — six fields.
 - [Optional Frontmatter](./ai-agents/06-agent-file-structure-optional-frontmatter-fields.md) — optional fields.
-- [Skills References](./ai-agents/07-agent-file-structure-skills-references.md) — skills field format.
-- [Skills References (Continued)](./ai-agents/08-agent-file-structure-skills-references-continued.md) — DRY rule.
+- [Agent skills References](./ai-agents/07-agent-file-structure-skills-references.md) — skills field format.
+- [Agent skills References (Continued)](./ai-agents/08-agent-file-structure-skills-references-continued.md) — DRY rule.
 - [Document Structure](./ai-agents/09-agent-file-structure-document-structure.md) — body layout.
 
 ## Naming and Tool Access
@@ -90,7 +90,7 @@ Standards for creating, structuring, and managing AI agents in the platform bind
 
 ## Agent-Skill Separation in Practice
 
-- [When to Use Skills](./ai-agents/52-agent-skill-separation-when-and-what-belongs.md) — decision.
+- [When to Use agent skills](./ai-agents/52-agent-skill-separation-when-and-what-belongs.md) — decision.
 - [Separation Examples](./ai-agents/53-agent-skill-separation-examples-and-decision-tree.md) — examples.
 - [Benefits and Metrics](./ai-agents/54-agent-skill-separation-benefits-implementation-measurement-vigilance.md) — metrics.
 - [Related Documentation](./ai-agents/55-related-documentation.md) — reading.

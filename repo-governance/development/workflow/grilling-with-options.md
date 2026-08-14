@@ -38,7 +38,7 @@ the required format, mechanism, and scope for all such interactions.
 - [Examples](./grilling-with-options/12-examples.md) — PASS and FAIL grilling questions.
 - [Validation](./grilling-with-options/13-validation.md) — The valid/invalid checklist.
 - [Special Considerations and Tools and Automation](./grilling-with-options/14-special-considerations-and-tools-and-automation.md) — Grilling inside plan-maker; enforcement tools.
-- [Platform Binding Examples — Claude Code and OpenCode](./grilling-with-options/15-platform-binding-examples-claude-code-and-opencode.md) — `AskUserQuestion` and `question` bindings.
+- [Platform Binding Examples — Primary and Secondary Harnesses](./grilling-with-options/15-platform-binding-examples-claude-code-and-opencode.md) — `AskUserQuestion` and `question` bindings.
 - [Platform Binding Examples — Codex and All Other Harnesses](./grilling-with-options/16-platform-binding-examples-codex-and-all-other-harnesses.md) — `request_user_input` and the markdown fallback.
 
 ## Related Documentation
