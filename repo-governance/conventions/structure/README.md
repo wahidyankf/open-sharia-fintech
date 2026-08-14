@@ -17,7 +17,7 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 
 ## Documents
 
-- [Agent Naming Convention](./agent-naming.md) — Single rule for agent filename structure across .claude/agents and .opencode/agent. Use when naming or renaming an agent definition file.
+- [Agent Naming Convention](./agent-naming.md) — Single rule for agent filename structure across `.claude/agents` and `.opencode/agent`. Use when naming or renaming an agent definition file.
 - [App README vs Specs Convention](./app-readme-vs-specs.md) — Defines what content lives in app/infra READMEs vs specs/, the C4-aware five-folder spec tree shape, and the PM-readability contract for specs/. Use when deciding whether content belongs in an app README or in its specs/ tree, or when shaping a specs/apps/ tree.
 - [Deterministic vs AI Validation Split Convention](./deterministic-vs-ai-validation-split.md) — Defines which governance validation layer (deterministic preflight vs AI checker) owns which category, and the contract between them. Use when deciding whether a governance validation rule belongs in the deterministic preflight or the AI checker.
 - [Diátaxis Framework](./diataxis-framework.md) — Understanding the Diátaxis documentation framework used in open-sharia-enterprise. Use when deciding where new documentation belongs or organizing content by Diátaxis category.
