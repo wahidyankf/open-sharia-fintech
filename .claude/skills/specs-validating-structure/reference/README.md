@@ -4,8 +4,9 @@ title: "Reference"
 
 # Reference
 
-- [01 Validation Categories 1 4](./01-validation-categories-1-4.md)
-- [02 Validation Categories 5 9](./02-validation-categories-5-9.md)
-- [03 Drift Detection And Reporting](./03-drift-detection-and-reporting.md)
-- [04 Fixer Disposition](./04-fixer-disposition.md)
-- [05 Fixer Execution And Safety](./05-fixer-execution-and-safety.md)
+- [01 Validation Categories 1 4](./01-validation-categories-1-4.md) — validation categories 1-4: structural completeness, inventory, format, and cross-folder
+- [02 Validation Categories 5 9](./02-validation-categories-5-9.md) — validation categories 5-9: C4 diagrams, cross-references, alignment, tree shape, and adoption
+- [03 Drift Detection And Reporting](./03-drift-detection-and-reporting.md) — drift detection, execution pattern, and report format
+- [04 Fixer Disposition](./04-fixer-disposition.md) — fixer mechanics mapping each checker category to a fix disposition
+- [05 Fixer Execution And Safety](./05-fixer-execution-and-safety.md) — fixer execution pattern, report format, and safety rules
+  </content>

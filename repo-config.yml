@@ -1039,3 +1039,87 @@ gates:
           - docs/reference/platform-bindings.md
           - repo-governance/
       ci: { scope: other }
+
+  # Armed at Phase 9 of plans/in-progress/optimize-governance-md, dark-launched at Phase 1
+  # (config-only, see governance-word-budget: above). No pre-commit surface (FR-1.14): a
+  # whole-tree scan on every commit buys no additional coverage over pre-push/ci.
+  #
+  # args.exclude: the **/README.md surface (declared in governance-word-budget: above)
+  # has no scoping relationship to the other covered-surface globs — it matches every
+  # README.md in the repo. These prefixes keep it from reaching trees FR-1.3 never
+  # declared as covered surfaces (plans/, docs/, specs/), a local, gitignored Flutter
+  # SDK version-manager cache (.fvm/, .fvm-cache/) that only exists on disk for
+  # developers who run `fvm` locally, and the Nx-vendored `.opencode/skills/`+
+  # `.opencode/commands/monitor-ci.md` content added wholesale by commit 4239f3d79
+  # ("Nx-generated AI agent configs") — it has no `.claude/` source of truth and isn't
+  # hand-authored agent context this repo's governance system produces. Not a per-file
+  # waiver on an in-scope surface (FR-1.5 still forbids that); see
+  # word_budget::check_instruction_sizes's doc comment.
+  - id: governance-word-budget
+    type: check
+    command: governance word-budget validate
+    kind: rhino-cli
+    ci-group: governance
+    args:
+      exclude:
+        - plans/
+        - docs/
+        - specs/
+        - .fvm/
+        - .fvm-cache/
+        - .opencode/skills/link-workspace-packages/
+        - .opencode/skills/monitor-ci/
+        - .opencode/skills/nx-generate/
+        - .opencode/skills/nx-import/
+        - .opencode/skills/nx-plugins/
+        - .opencode/skills/nx-run-tasks/
+        - .opencode/skills/nx-workspace/
+        - .opencode/commands/monitor-ci.md
+    surfaces:
+      pre-push: &word-budget-triggers
+        scope: path-gated
+        trigger:
+          - repo-governance/
+          - .claude/
+          - .cursor/
+          - .codex/
+          - .opencode/
+          - .pi/
+          - .amazonq/
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+      ci: *word-budget-triggers
+
+  # New gate id (FR-3.20) — shares the governance readme-index binary with
+  # governance-readme-index above via --paths/--fail-kinds (FR-5.8). Scoped to just the
+  # trees Phases 1-8 of plans/in-progress/optimize-governance-md actually brought to
+  # compliance — repo-governance/, .claude/, .codex/, .pi/ — narrower than FR-1.11's
+  # originally-declared 6-entry list (which also named docs/, specs/): those two trees
+  # were never remediated by any phase of this plan and carry ~880 pre-existing
+  # missing/unannotated findings; a follow-up plan tracks bringing them to the same bar.
+  # governance-readme-index's own orphan/ghost enforcement (FR-3.19) is untouched.
+  - id: governance-readme-completeness
+    type: check
+    command: governance readme-index validate
+    kind: rhino-cli
+    ci-group: governance
+    args:
+      paths:
+        - repo-governance/
+        - .claude/
+        - .codex/
+        - .pi/
+      fail-kinds:
+        - missing
+        - unannotated
+    surfaces:
+      pre-push: &readme-completeness-triggers
+        scope: path-gated
+        trigger:
+          - repo-governance/
+          - .claude/
+          - .codex/
+          - .pi/
+          - repo-config.yml
+      ci: *readme-completeness-triggers

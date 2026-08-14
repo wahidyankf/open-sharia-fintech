@@ -264,7 +264,7 @@ fn audit_word_budget(repo_root: &Path) -> Vec<AuditFinding> {
     let Some(config) = word_budget::merged_budget_config(repo_root) else {
         return Vec::new();
     };
-    let mut findings = word_budget::check_instruction_sizes(&RealFs, repo_root, &config);
+    let mut findings = word_budget::check_instruction_sizes(&RealFs, repo_root, &config, &[]);
     if let Some(tree_finding) = word_budget::check_resolved_tree(&RealFs, repo_root, &config) {
         findings.push(tree_finding);
     }

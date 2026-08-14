@@ -303,24 +303,21 @@ fn validate_governance_schema(path: &str, fm: &serde_norway::Value) -> Vec<DocsF
         ));
     }
     if !has_non_empty_string(fm, "description") {
-        findings.push(DocsFrontmatterFinding {
-            file: path.to_string(),
-            severity: SEVERITY_WARN.to_string(),
-            kind: KIND_MISSING_DESCRIPTION.to_string(),
-            message: "recommended field \"description\" is missing or empty".to_string(),
-        });
+        findings.push(mk_fail(
+            path,
+            KIND_MISSING_DESCRIPTION,
+            "recommended field \"description\" is missing or empty",
+        ));
     }
-    // FR-4.1 (dark-launched — see `tech-docs.md` §5 "Dark-launch sequencing"):
-    // `when_to_use` is required (FAIL-severity) once armed at Phase 9/16.
-    // Phase 1 registers the check at the same WARN construction `description`
-    // already uses, so it is discoverable and tested without failing CI.
+    // FR-4 armed at Phase 9 (ose-public) / Phase 16 (ose-private): `when_to_use` is
+    // now FAIL-severity, per plans/in-progress/optimize-governance-md `tech-docs.md`
+    // §5 "Dark-launch sequencing" — was WARN-severity from Phase 1 through Phase 8.
     if !has_non_empty_string(fm, "when_to_use") {
-        findings.push(DocsFrontmatterFinding {
-            file: path.to_string(),
-            severity: SEVERITY_WARN.to_string(),
-            kind: KIND_MISSING_WHEN_TO_USE.to_string(),
-            message: "recommended field \"when_to_use\" is missing or empty".to_string(),
-        });
+        findings.push(mk_fail(
+            path,
+            KIND_MISSING_WHEN_TO_USE,
+            "recommended field \"when_to_use\" is missing or empty",
+        ));
     }
     findings
 }
@@ -474,10 +471,10 @@ mod tests {
         assert!(findings.iter().any(|f| f.kind == KIND_WRONG_CATEGORY_VALUE));
     }
 
-    /// Verifies that a governance file with no `title` gets a fail and a missing
-    /// `description` gets a warn.
+    /// Verifies that a governance file with no `title` or `description` gets a fail
+    /// for each — FR-4 armed at Phase 9/16.
     #[test]
-    fn governance_title_required_description_warned() {
+    fn governance_title_and_description_both_fail() {
         let tmp = TempDir::new().unwrap();
         write(
             &tmp.path().join("repo-governance/conventions/foo.md"),
@@ -487,12 +484,11 @@ mod tests {
             validate_docs_frontmatter(&[tmp.path().to_string_lossy().to_string()]).unwrap();
         let kinds: Vec<&str> = findings.iter().map(|f| f.kind.as_str()).collect();
         assert!(kinds.contains(&KIND_MISSING_TITLE));
-        // description missing → warn only
         let desc = findings
             .iter()
             .find(|f| f.kind == KIND_MISSING_DESCRIPTION)
             .unwrap();
-        assert_eq!(desc.severity, SEVERITY_WARN);
+        assert_eq!(desc.severity, SEVERITY_FAIL);
     }
 
     /// Verifies that a governance file with all recommended fields passes.
@@ -553,20 +549,18 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 9 (armed) — plans/in-progress/optimize-governance-md
     //
-    // FR-4.1 "Dark-launch sequencing": Phase 1 adds `KIND_MISSING_WHEN_TO_USE`
-    // at WARN severity (register, don't arm) — the FAIL-severity end-state is
-    // Phase 9/16, not this phase. `KIND_MISSING_WHEN_TO_USE` does not exist
-    // yet, so this fails to compile until Phase 1b adds it.
+    // FR-4: `KIND_MISSING_WHEN_TO_USE` was WARN-severity (dark-launched) from
+    // Phase 1 through Phase 8; Phase 9 (ose-public) / Phase 16 (ose-private)
+    // arms it to FAIL-severity, matching `description`'s existing severity.
     // -----------------------------------------------------------------------
 
     /// Verifies that a governance file with no `when_to_use` frontmatter
-    /// produces a WARN-severity `KIND_MISSING_WHEN_TO_USE` finding — the
-    /// dark-launched, not-yet-armed Phase 1 behavior (FAIL-severity arming is
-    /// deferred to Phase 9/16, see prd.md FR-4 "Dark-launch sequencing").
+    /// produces a FAIL-severity `KIND_MISSING_WHEN_TO_USE` finding — FR-4
+    /// armed (see prd.md FR-4 "Dark-launch sequencing").
     #[test]
-    fn governance_missing_when_to_use_warns_dark_launched() {
+    fn governance_missing_when_to_use_fails() {
         let tmp = TempDir::new().unwrap();
         write(
             &tmp.path().join("repo-governance/conventions/foo.md"),
@@ -578,13 +572,12 @@ mod tests {
             .iter()
             .find(|f| f.kind == KIND_MISSING_WHEN_TO_USE)
             .expect(
-                "FR-4.1 Phase 1: a governance file with no when_to_use must produce a \
+                "FR-4 armed: a governance file with no when_to_use must produce a \
                  KIND_MISSING_WHEN_TO_USE finding",
             );
         assert_eq!(
-            finding.severity, SEVERITY_WARN,
-            "FR-4's Phase 1 dark-launch: missing when_to_use is WARN-severity, not FAIL, until \
-             Phase 9/16 arms it"
+            finding.severity, SEVERITY_FAIL,
+            "FR-4 armed at Phase 9/16: missing when_to_use is FAIL-severity"
         );
     }
 }

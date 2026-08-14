@@ -30,9 +30,17 @@ use crate::internal::git;
 /// JSON output schema identifier for this command.
 pub const SCHEMA: &str = "rhino-cli/governance-word-budget/v1";
 
-/// CLI arguments for `governance word-budget validate` (none required).
+/// CLI arguments for `governance word-budget validate`.
 #[derive(Args, Debug)]
-pub struct ValidateWordBudgetArgs;
+pub struct ValidateWordBudgetArgs {
+    /// Repository-relative path prefix to exclude from scanning (repeatable).
+    /// Keeps the catch-all `**/README.md` surface from reaching trees the
+    /// `governance-word-budget:` surfaces list was never meant to cover
+    /// (e.g. `plans/`, `docs/`, `specs/`, a local `.fvm/` cache) — not a
+    /// per-file waiver on an in-scope surface (FR-1.5 still forbids that).
+    #[arg(long = "exclude")]
+    pub exclude: Vec<String>,
+}
 
 // ---------------------------------------------------------------------------
 // JSON serialization types
@@ -83,12 +91,12 @@ struct Envelope<'a> {
 /// Returns an error when the git root cannot be found, the budget config
 /// cannot be loaded, or any instruction file exceeds its fail budget.
 pub fn run(
-    _args: &ValidateWordBudgetArgs,
+    args: &ValidateWordBudgetArgs,
     output_format: OutputFormat,
 ) -> std::result::Result<(), Error> {
     let repo_root =
         git::root::find_root().map_err(|e| anyhow!("failed to find git repository root: {e}"))?;
-    run_for_root(&repo_root, output_format)
+    run_for_root(&repo_root, output_format, &args.exclude)
 }
 
 /// Core logic for `governance word-budget validate`, exposed for testing.
@@ -104,6 +112,7 @@ pub fn run(
 pub fn run_for_root(
     repo_root: &Path,
     output_format: OutputFormat,
+    excludes: &[String],
 ) -> std::result::Result<(), Error> {
     let Some(merged_config) = merged_budget_config(repo_root) else {
         if output_format == OutputFormat::Text {
@@ -114,7 +123,7 @@ pub fn run_for_root(
         return Ok(());
     };
 
-    let mut findings = check_instruction_sizes(&RealFs, repo_root, &merged_config);
+    let mut findings = check_instruction_sizes(&RealFs, repo_root, &merged_config, excludes);
     if let Some(tree_finding) = check_resolved_tree(&RealFs, repo_root, &merged_config) {
         findings.push(tree_finding);
     }
@@ -272,7 +281,7 @@ mod tests {
         write_budget_yaml(tmp.path());
         fs::write(tmp.path().join("AGENTS.md"), n_words(200)).unwrap();
         write_small_claude(tmp.path());
-        let result = run_for_root(tmp.path(), OutputFormat::Text);
+        let result = run_for_root(tmp.path(), OutputFormat::Text, &[]);
         assert!(result.is_ok(), "within-budget should pass: {result:?}");
     }
 
@@ -282,7 +291,7 @@ mod tests {
         write_budget_yaml(tmp.path());
         fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         write_small_claude(tmp.path());
-        let result = run_for_root(tmp.path(), OutputFormat::Text);
+        let result = run_for_root(tmp.path(), OutputFormat::Text, &[]);
         assert!(result.is_err(), "fail-budget exceeded should return Err");
     }
 
@@ -290,7 +299,7 @@ mod tests {
     fn run_returns_ok_when_no_word_budget_section() {
         let tmp = TempDir::new().unwrap();
         // No governance-word-budget: section in repo-config.yml — should skip gracefully
-        let result = run_for_root(tmp.path(), OutputFormat::Text);
+        let result = run_for_root(tmp.path(), OutputFormat::Text, &[]);
         assert!(result.is_ok());
     }
 
@@ -400,7 +409,7 @@ mod tests {
         write_budget_yaml(tmp.path());
         fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         write_small_claude(tmp.path());
-        let err = run_for_root(tmp.path(), OutputFormat::Text).unwrap_err();
+        let err = run_for_root(tmp.path(), OutputFormat::Text, &[]).unwrap_err();
         let msg = err.to_string();
         assert!(
             msg.contains("progressive disclosure"),
@@ -437,7 +446,7 @@ mod tests {
         // AGENTS.md exceeds fail=500 words
         fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         fs::write(tmp.path().join("CLAUDE.md"), "small\n").unwrap();
-        let result = run_for_root(tmp.path(), OutputFormat::Text);
+        let result = run_for_root(tmp.path(), OutputFormat::Text, &[]);
         assert!(
             result.is_err(),
             "should read governance-word-budget: from repo-config.yml and flag oversized AGENTS.md"
