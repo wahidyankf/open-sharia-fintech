@@ -9,7 +9,7 @@ weight: 1
 
 - **Prior topics**: [Software Architecture](../software-architecture/overview.md) and
   [Backend Essentials](../backend-essentials/learning/overview.md).
-- **Tools and environment**: Python 3.12 or later, a terminal, and an editor with a Python type
+- **Tools and environment**: Python 3.x, a terminal, and an editor with a Python type
   checker. The examples use the standard library and a local in-process broker fake; no broker
   account, cloud service, or credentials are required.
 - **Assumed knowledge**: a synchronous request/response call, a message queue, and why a handler

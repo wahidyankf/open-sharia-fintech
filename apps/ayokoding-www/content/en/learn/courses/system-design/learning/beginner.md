@@ -79,11 +79,11 @@ is the first constraint. The multiplier remains an assumption to validate with p
 
 **Context**: A shortener writes 10 million 500-byte rows per day with 20% annual growth.
 
-`10,000,000 × 500 ≈ 5 GB/day; 5 GB × 365 × 5 × 1.2 ≈ 11 TB before replicas.`
+`10,000,000 × 500 ≈ 5 GB/day; 5 GB × 365 × (1 + 1.2 + 1.2² + 1.2³ + 1.2⁴) ≈ 13.6 TB before replicas.`
 
 **Key takeaway**: Multiply record size, arrival rate, retention, and growth before choosing storage.
 
-**Why It Matters**: Eleven terabytes changes backup, index, and replication planning. A result is
+**Why It Matters**: Thirteen-point-six terabytes changes backup, index, and replication planning. A result is
 useful precisely because it is approximate and can be recomputed when a premise changes. (co-03)
 
 ### Worked Example 6: Estimate bandwidth
@@ -217,11 +217,11 @@ with a good schema is often the least risky design until its observed limits say
 
 **Context**: A capacity number should change a decision or be removed.
 
-| Estimate            | Decision it informs          | Signal to revisit         |
-| ------------------- | ---------------------------- | ------------------------- |
-| 1,160 peak QPS      | cache capacity and LB target | peak exceeds 1,000 QPS    |
-| 11 TB in five years | archive/object-store plan    | retained row size changes |
-| 200 ms p99          | timeout budget               | p99 burn-rate alert       |
+| Estimate              | Decision it informs          | Signal to revisit         |
+| --------------------- | ---------------------------- | ------------------------- |
+| 1,160 peak QPS        | cache capacity and LB target | peak exceeds 1,000 QPS    |
+| 13.6 TB in five years | archive/object-store plan    | retained row size changes |
+| 200 ms p99            | timeout budget               | p99 burn-rate alert       |
 
 **Key takeaway**: An estimate is a falsifiable planning assumption.
 

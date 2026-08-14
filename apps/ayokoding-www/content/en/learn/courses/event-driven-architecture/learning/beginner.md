@@ -268,7 +268,8 @@ operational decision.
 
 ### Example 17: Event Payload Schema
 
-Every event needs a version so consumers can interpret its fields. This is `co-32`.
+Every published, evolving event contract needs an explicit compatibility or versioning strategy so
+consumers can interpret its fields. This is `co-32`.
 
 ```python
 event = {"version": 1, "name": "OrderPlaced"}  # => version travels with the schema instance
@@ -276,11 +277,11 @@ assert event["version"] == 1  # => consumer can select a compatible reader
 print(event["version"])  # => Output: 1
 ```
 
-**Key takeaway**: Version the contract, not just the producer deployment.
+**Key takeaway**: Make contract compatibility explicit, whether it travels in an envelope, subject, or registry.
 
-**Why it matters**: Producers and consumers deploy independently. Carrying an explicit schema version
-makes compatibility decisions testable and lets a reader upcast historical events rather than treating
-old data as an unparseable accident.
+**Why it matters**: Producers and consumers deploy independently. An explicit compatibility strategy
+makes decisions testable and lets a reader upcast historical events rather than treating old data as
+an unparseable accident.
 
 ### Example 18: Event Immutability
 

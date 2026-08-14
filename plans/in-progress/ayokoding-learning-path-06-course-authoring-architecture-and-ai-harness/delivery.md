@@ -495,41 +495,78 @@ No phase may create an additional worktree or branch. The final phase is the onl
 Each course below applies the NEW-course authoring convention. Bodies are content-independent and
 pipeline concurrently through review, bounded by the cap.
 
-- [ ] [AI] `software-architecture` (Annotated-concept · Python; prereq `backend-essentials`,
+- [x] [AI] `software-architecture` (Annotated-concept · Python; prereq `backend-essentials`,
       `object-oriented-design-and-patterns`) — convention complete; checkers clean.
+
+  _Implementation notes (2026-08-14): 52 syllabus-aligned worked examples, 20 runnable artifacts,
+  capstone, drilling, scoped links, and per-artifact annotation density (1.00) are verified._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `domain-driven-design` (By Example · Python; prereq `object-oriented-design-and-patterns`,
+
+- [x] [AI] `domain-driven-design` (By Example · Python; prereq `object-oriented-design-and-patterns`,
       `software-architecture`) — convention complete; checkers clean.
+
+  _Implementation notes (2026-08-14): 80 runnable examples, capstone assertions, scoped links, and
+  80/80 per-artifact annotation density (1.00) are verified._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `system-design` (Annotated-concept · Python; prereq `backend-at-scale`,
+
+- [x] [AI] `system-design` (Annotated-concept · Python; prereq `backend-at-scale`,
       `networking-essentials`) — convention complete; checkers clean; overview states its scope
       boundary against `system-design-interview` (depth vs. interview-rubric split, per the parent
       plan's own catalog note).
+
+  _Implementation notes (2026-08-14): 53 syllabus-aligned worked examples, 27 runnable artifacts,
+  scope boundary, drilling, and 25/25 per-artifact annotation density (1.00) are verified._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `event-driven-architecture` (By Example · Python; prereq `software-architecture`,
+
+- [x] [AI] `event-driven-architecture` (By Example · Python; prereq `software-architecture`,
       `backend-essentials`) — convention complete; checkers clean.
+
+  _Implementation notes (2026-08-14): 80 examples, runnable broker and capstone tests, scoped links,
+  and the factual-delta corrections are verified._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `distributed-systems` (By Example · Python; prereq `networking-essentials`,
+
+- [x] [AI] `distributed-systems` (By Example · Python; prereq `networking-essentials`,
       `concurrency-and-parallelism`) — convention complete; checkers clean. **Downstream note**: this
       course is a hard prerequisite of `build-your-own-raft` in
       `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` — no additional acceptance
       clause here beyond the standard convention, but its landing unblocks that plan.
+
+  _Implementation notes (2026-08-14): 85 examples and 85 independent standard-library artifacts,
+  capstone, scoped links, 85-entry example index, per-artifact density (1.07–1.20), and the corrected
+  TrueTime model are verified._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
 ### Phase 2 Gate
 
-- [ ] [AI] All 5 Cohort-1 bodies exist:
+- [x] [AI] All 5 Cohort-1 bodies exist:
       `for s in software-architecture domain-driven-design system-design event-driven-architecture distributed-systems; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added to `tech-docs.md`; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
-      complete; CI green; PR `[AI]`-merged; deployed.
 
-> **Pause Safety**: architecture fundamentals are live; the three course-surgery contracts are locked
-> in the merged history. Safe to stop. To resume: re-run the 5-course structural loop and re-verify
-> the contract text is present in `delivery.md` on `origin/main`.
+  _Implementation notes (2026-08-14): The structural loop returned 0._
+
+- [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
+
+  _Implementation notes (2026-08-14): Scoped content, runnable-artifact, density, Markdown, and link
+  checks are clean; the factual-delta audit corrected four findings. `npm exec nx run ayokoding-www:build`
+  and `npm run lint:md` exit 0._
+
+- [x] [AI] Catalog rows added to `tech-docs.md`; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
+
+  _Implementation notes (2026-08-14): Existing catalog rows match the settled T42–T46 scope; the
+  generator added the five public collection cards and `validate-indexes` exits 0._
+
+- [x] [AI] Zero manifest files touched.
+
+  _Implementation notes (2026-08-14): Manifest-subtree diff count against `origin/main` remains 0._
+
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
+
+  _Implementation notes (2026-08-14): Phase artifacts are committed locally on the persistent
+  final-delivery branch; no Plan 06 delivery PR, merge, deployment, or `FINAL_PR` exists._
+
+> **Pause Safety**: architecture fundamentals are authored and committed on the persistent
+> final-delivery branch; the three course-surgery contracts remain locked in this plan. Safe to stop.
+> To resume: re-run the 5-course structural loop and re-verify the contract text in `delivery.md`.
 
 ---
 

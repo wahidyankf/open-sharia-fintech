@@ -415,13 +415,16 @@ protected write path must compare the token atomically with the resource's recor
 
 ### Example 79: Wait out clock uncertainty
 
-**Context**: A bounded-time system can wait until its uncertainty interval cannot overlap an earlier commit.
+**Context**: A bounded-time system waits until its lower time bound is later than the assigned commit timestamp.
 
 ```python
-now, uncertainty, prior_commit = 100, 5, 103
-# => The clock reports an interval rather than pretending an instant is exact.
-safe_to_ack = now + uncertainty > prior_commit
-# => Waiting until the upper bound passes preserves the intended external order in this model.
+earliest, assigned_commit = 100, 103
+# => `earliest` models TrueTime's lower bound rather than an exact physical instant.
+while earliest <= assigned_commit:
+    earliest += 1
+# => Commit-wait delays acknowledgement until the lower bound has passed the assigned timestamp.
+safe_to_ack = earliest > assigned_commit
+# => The acknowledgement can now preserve the modeled external ordering claim.
 assert safe_to_ack
 ```
 
