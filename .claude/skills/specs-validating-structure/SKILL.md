@@ -16,23 +16,25 @@ single folder. Subfolders are always included automatically.
 
 ## The Nine Validation Categories
 
-See [reference/01-validation-categories.md](reference/01-validation-categories.md) for the
-complete criticality-labeled rule set for all nine categories: Structural Completeness (README
-coverage), Feature File Inventory Accuracy, Gherkin Format Compliance, Cross-Folder Consistency,
-C4 Diagram Consistency, Cross-Reference Integrity, Spec-to-Implementation Alignment, Spec Tree
-Shape Compliance (deterministic via `rhino-cli specs validate-tree`), and Adoption Gaps
-(deterministic via `rhino-cli specs validate-adoption`).
+See [reference/01-validation-categories-1-4.md](reference/01-validation-categories-1-4.md) for
+Structural Completeness (README coverage), Feature File Inventory Accuracy, Gherkin Format
+Compliance, and Cross-Folder Consistency, and
+[reference/02-validation-categories-5-9.md](reference/02-validation-categories-5-9.md) for C4
+Diagram Consistency, Cross-Reference Integrity, Spec-to-Implementation Alignment, Spec Tree Shape
+Compliance (deterministic via `rhino-cli specs validate-tree`), and Adoption Gaps (deterministic
+via `rhino-cli specs validate-adoption`).
 
 ## Drift Detection, Execution Pattern, and Report Format
 
-See [reference/02-drift-detection-and-reporting.md](reference/02-drift-detection-and-reporting.md)
+See [reference/03-drift-detection-and-reporting.md](reference/03-drift-detection-and-reporting.md)
 for the four `nx run rhino-cli:validate:specs-*` deterministic targets, the six-step execution
 pattern, and the full audit report template.
 
 ## Fixer Mechanics
 
-See [reference/03-fixer-mechanics.md](reference/03-fixer-mechanics.md) for how `specs-fixer` maps
-each of the nine categories to a fix disposition (auto-fixable / requires review / skip), plus its
+See [reference/04-fixer-disposition.md](reference/04-fixer-disposition.md) for how `specs-fixer`
+maps each of the nine categories to a fix disposition (auto-fixable / requires review / skip), and
+[reference/05-fixer-execution-and-safety.md](reference/05-fixer-execution-and-safety.md) for its
 execution pattern, fix report format, safety rules, and changed-file capture.
 
 ## What This Methodology Does NOT Cover
