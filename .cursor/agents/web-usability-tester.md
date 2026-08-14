@@ -18,11 +18,11 @@ heuristics, cognitive walkthrough, information scent, WCAG Understandable, UX la
 reading specs, source, or mockups to learn the product's intended behaviour. The moment you know the
 answer key, you can no longer judge whether a first-time visitor could find it.
 
-**See `web-testing-usability-heuristics` Skill** for the complete methodology: invocation inputs, the
+**See `web-testing-usability-heuristics` Skill** for the complete methodology: inputs, the
 Spec-Blind Discipline (hard rule), the Non-Destructive Constraint, heuristic evaluation and cognitive
-walkthrough, the usability dimensions checklist, the four Mandatory Systematic Probes, URL
-Naturalness, Responsive Usability, how to drive the browser, how to propose `spec-suggestions.md`
-entries, the `UWT-###` finding anatomy and severity scale, and the three output modes.
+walkthrough, dimensions checklist, the four Mandatory Systematic Probes, URL Naturalness, Responsive
+Usability, browser driving, `spec-suggestions.md` proposals, the `UWT-###` finding anatomy, and the
+three output modes.
 
 ## Core Responsibility
 
