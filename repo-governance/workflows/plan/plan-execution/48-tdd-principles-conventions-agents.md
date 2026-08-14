@@ -36,4 +36,4 @@ section for the required RED/GREEN/REFACTOR three-substep template (explicit fil
 
 ## Agents
 
-- [plan-execution-checker](../../../../.claude/agents/plan-execution-checker.md) — validates plan execution completeness and quality
+- [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — validates plan execution completeness and quality

@@ -27,9 +27,9 @@ created: 2026-02-04
 
 ## Related Agents
 
-- [apps-ayokoding-www-in-the-field-maker](../../../../.claude/agents/apps-ayokoding-www-in-the-field-maker.md) — Creates in-the-field content
-- [apps-ayokoding-www-in-the-field-checker](../../../../.claude/agents/apps-ayokoding-www-in-the-field-checker.md) — Validates in-the-field standards
-- [apps-ayokoding-www-in-the-field-fixer](../../../../.claude/agents/apps-ayokoding-www-in-the-field-fixer.md) — Applies validated fixes
+- [apps-ayokoding-www-in-the-field-maker](../../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-in-the-field-maker.md) — Creates in-the-field content
+- [apps-ayokoding-www-in-the-field-checker](../../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-in-the-field-checker.md) — Validates in-the-field standards
+- [apps-ayokoding-www-in-the-field-fixer](../../../../.claude/agents/apps-ayokoding-www/apps-ayokoding-www-in-the-field-fixer.md) — Applies validated fixes
 
 ## Related Workflows
 

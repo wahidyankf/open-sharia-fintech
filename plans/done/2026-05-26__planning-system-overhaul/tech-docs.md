@@ -673,9 +673,9 @@ resolution.
 - [Plans Organization Convention](../../conventions/structure/plans.md)
 - [Governance Vendor-Independence Convention](../../conventions/structure/governance-vendor-independence.md)
 - [grill-me Skill](../../../.claude/skills/grill-me/SKILL.md) — Steps 1 and 3
-- [plan-maker Agent](../../../.claude/agents/plan-maker.md) — Step 4
-- [web-researcher Agent](../../../.claude/agents/web-researcher.md) — Step 2
-- [repo-setup-manager Agent](../../../.claude/agents/repo-setup-manager.md) — Phase 0 of plans
+- [plan-maker Agent](../../../.claude/agents/plan/plan-maker.md) — Step 4
+- [web-researcher Agent](../../../.claude/agents/web/web-researcher.md) — Step 2
+- [repo-setup-manager Agent](../../../.claude/agents/repo/repo-setup-manager.md) — Phase 0 of plans
   created by this workflow
 ````
 

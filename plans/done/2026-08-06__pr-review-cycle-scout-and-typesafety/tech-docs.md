@@ -183,7 +183,7 @@ Thresholds and tier semantics are **unchanged** from the pre-plan D12 — only t
   monitoring data, with one hard condition: the filter **must be re-derived fresh every cycle** from
   that cycle's own current diff, never cached from a prior cycle, since the fixer's own pushed commits
   between cycles can change the diff's file-type composition. Implemented as a `full`-tier-only
-  addendum to D12 (see [`pr-review-scout-maker.md`](../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)):
+  addendum to D12 (see [`pr-review-scout-maker.md`](../../../.claude/agents/pr-review/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)):
   only `pr-review-types-maker` and `pr-review-integrity-maker` are ever skipped, and only when their
   own declared artifact class is verifiably absent from the current cycle's diff; the other seven
   specialists are never skipped by file type, since their charters — as this very cycle proved — reason

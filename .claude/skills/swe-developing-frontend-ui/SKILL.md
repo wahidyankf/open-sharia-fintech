@@ -18,39 +18,14 @@ This skill provides repo-specific guidance for building UI components in the ope
 
 Consult these reference docs for detailed guidance on specific topics:
 
-- [Design Tokens Reference](./reference/design-tokens.md) — Token names, formats, mapping to Tailwind utilities
-- [Component Patterns Reference](./reference/component-patterns.md) — CVA templates, Radix composition, complete component examples
+- [Design Tokens Reference](./reference/design-tokens.md) — Token architecture, current values, Tailwind mapping
+- [Design Tokens — Spacing and Format Reference](./reference/design-tokens-spacing-and-format.md) — Spacing scale, token format differences across apps
+- [Component Patterns Reference](./reference/component-patterns.md) — Standard template, complete Button example
+- [Component Patterns — Key Patterns and Testing](./reference/component-patterns-key-patterns-and-testing.md) — CVA/Radix key patterns, Storybook, unit tests, checklist
 - [Anti-Patterns Catalog](./reference/anti-patterns.md) — 13 repo-specific anti-patterns with before/after examples
 - [Accessibility Reference](./reference/accessibility.md) — Per-component ARIA checklists, keyboard navigation
 - [Brand Context Reference](./reference/brand-context.md) — Per-app audience, personality, palette guidance
-
-## Quick Reference: Top Rules
-
-### Do
-
-1. **Use semantic tokens** — `bg-primary`, `text-muted-foreground`, `border-border` (not hardcoded colors)
-2. **Use `React.ComponentProps<"element">`** — not `React.forwardRef`
-3. **Use `radix-ui` unified package** — not `@radix-ui/react-slot` individual packages; use `Slot.Root` from unified
-4. **Add `data-slot="component-name"`** on every component root element
-5. **Use `focus-visible:`** — not `focus:` (keyboard-only focus rings)
-6. **Use `cn()` from shared lib** — `clsx` + `tailwind-merge` for class composition
-7. **Define variants with CVA** — export from `.variants.ts` for reuse
-8. **Every visual token needs a `.dark` counterpart** — verify contrast in both modes
-9. **Mobile-first responsive** — start with base styles, add `md:`, `lg:` prefixes
-10. **Minimum hit targets** — 24px desktop, 44px mobile
-
-### Do Not
-
-1. **No hardcoded hex/rgb/hsl** in className or style props — use design tokens
-2. **No `!important`** — use `@layer` specificity or Tailwind modifiers
-3. **No `@apply` outside `@layer base`** — defeats utility-first purpose
-4. **No inline `style={{}}` in production** — use Tailwind utilities
-5. **No `focus:` without `visible`** — always `focus-visible:` for keyboard users
-6. **No color-only status indicators** — include text labels and/or shapes
-7. **No `transition-all`** — specify explicit properties: `transition-colors`, `transition-opacity`
-8. **No bounce/elastic easing** — use `ease-out` or custom `cubic-bezier`
-9. **No nested Card inside Card** — use spacing/dividers for visual hierarchy
-10. **No font via CSS `font-family`** — use `next/font` for optimization
+- [Top Rules Reference](./reference/top-rules.md) — Quick-reference Do/Do-Not checklist
 
 ## Test-Driven Development for UI
 

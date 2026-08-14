@@ -201,4 +201,4 @@ same rule, not a special case invented for this plan.
 - [delivery.md](./delivery.md) — phased execution checklist
 - [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
 - [PR Reviewer-Discipline Convention](../../../repo-governance/development/quality/pr-review-disciplines.md)
-- [pr-review-synthesis-maker.md](../../../.claude/agents/pr-review-synthesis-maker.md)
+- [pr-review-synthesis-maker.md](../../../.claude/agents/pr-review/pr-review-synthesis-maker.md)

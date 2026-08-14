@@ -378,7 +378,7 @@ fn given_named_color(w: &mut CursorWorld) {
 
 #[given("a Claude agent whose frontmatter declares a name")]
 fn given_named_agent(w: &mut CursorWorld) {
-    w.agent_stem = "named-agent".to_string();
+    w.agent_stem = "custom-name".to_string();
     w.write_claude_agent(
         "named-agent",
         "name: custom-name\ndescription: \"Quoted: value\"\ntools: Read\nmodel: sonnet\ncolor: blue\n",
@@ -402,7 +402,9 @@ fn then_no_color(w: &mut CursorWorld) {
 fn then_color_warning(w: &mut CursorWorld) {
     use rhino_cli::application::agents::cursor::convert_cursor_agent;
     let input = w.root().join(format!(".claude/agents/{}.md", w.agent_stem));
-    let warnings = convert_cursor_agent(&input, &w.cursor_agent_path(), true).expect("convert");
+    let claude_dir = w.root().join(".claude/agents");
+    let warnings =
+        convert_cursor_agent(&input, &w.cursor_agent_path(), &claude_dir, true).expect("convert");
     assert!(
         warnings.iter().any(|warning| {
             warning.field == "color" && warning.reason.contains("no cursor equivalent")

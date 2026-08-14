@@ -35,7 +35,7 @@ from comment text — accreting workaround dependence that a later fix then has 
   [pr-review-quality-gate](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
 - **pr-review-synthesis-maker agent** — the coordinator that posts the consolidated review and
   structurally cannot post `REQUEST_CHANGES` today; would be rewired to the new identity.
-  [pr-review-synthesis-maker](../../../.claude/agents/pr-review-synthesis-maker.md)
+  [pr-review-synthesis-maker](../../../.claude/agents/pr-review/pr-review-synthesis-maker.md)
 - **Git Identity Guardrail** — the repo rule scoping this to `gh`/API posting identity, distinct
   from commit-push identity. [AGENTS.md](../../../AGENTS.md)
 

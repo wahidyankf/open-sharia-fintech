@@ -114,6 +114,9 @@ case StatusA:
 }
 ```
 
+**Const-Block Hygiene**: `iotamixing` forbids mixing `iota` constants with literal constants in the
+same `const` block — split them into separate blocks.
+
 **Doc Comments** — `godot` + `revive exported` + `revive package-comments` enforce:
 
 ```go

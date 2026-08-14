@@ -47,12 +47,12 @@ when_to_use: Use when auditing this workflow's governance alignment or looking u
 
 ## Agents
 
-- [plan-maker](../../../../.claude/agents/plan-maker.md) — authors each repo's plan (planning phase)
-- [plan-checker](../../../../.claude/agents/plan-checker.md) /
-  [plan-fixer](../../../../.claude/agents/plan-fixer.md) — quality gate per plan (planning phase)
-- [web-researcher](../../../../.claude/agents/web-researcher.md) — conditional research
+- [plan-maker](../../../../.claude/agents/plan/plan-maker.md) — authors each repo's plan (planning phase)
+- [plan-checker](../../../../.claude/agents/plan/plan-checker.md) /
+  [plan-fixer](../../../../.claude/agents/plan/plan-fixer.md) — quality gate per plan (planning phase)
+- [web-researcher](../../../../.claude/agents/web/web-researcher.md) — conditional research
   (planning phase)
-- [plan-execution-checker](../../../../.claude/agents/plan-execution-checker.md) — independent
+- [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — independent
   validation per repo (execution phase)
-- [repo-setup-manager](../../../../.claude/agents/repo-setup-manager.md) — Phase 0 environment setup
+- [repo-setup-manager](../../../../.claude/agents/repo/repo-setup-manager.md) — Phase 0 environment setup
   and baseline per repo (execution phase)

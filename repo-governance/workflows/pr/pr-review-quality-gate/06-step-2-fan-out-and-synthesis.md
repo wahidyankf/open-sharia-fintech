@@ -42,4 +42,4 @@ when_to_use: "Use when checking how the fan-out is dispatched, what the coordina
   specialists would have raised, then runs the same four coordination functions and posts the same
   single consolidated review. This is the sole condition under which the coordinator originates a
   finding no specialist raised (see the carve-out in
-  [`pr-review-synthesis-maker.md`](../../../../.claude/agents/pr-review-synthesis-maker.md)).
+  [`pr-review-synthesis-maker.md`](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md)).

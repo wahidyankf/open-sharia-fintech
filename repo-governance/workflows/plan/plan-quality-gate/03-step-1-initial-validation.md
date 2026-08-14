@@ -50,7 +50,7 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 
 For external claims that are not already documented in the repo and require more than a
 single-shot URL fetch, `plan-checker` delegates research to
-[`web-researcher`](../../../../.claude/agents/web-researcher.md) per the lower plan-content
+[`web-researcher`](../../../../.claude/agents/web/web-researcher.md) per the lower plan-content
 threshold (any non-grep'd external claim → delegate). See
 [Plan Anti-Hallucination Convention §Web-Research Delegation](../../../development/quality/plan-anti-hallucination/13-refuse-on-uncertainty-rule-and-web-research-delegation.md#web-research-delegation-lower-threshold-for-plans).
 

@@ -7,5 +7,5 @@ when_to_use: "Use when looking for which agent, if any, is involved in or follow
 # Agents
 
 This workflow uses manual orchestration (developer-guided). The
-[repo-rules-checker](../../../../.claude/agents/repo-rules-checker.md) validates governance
+[repo-rules-checker](../../../../.claude/agents/repo/repo-rules-checker.md) validates governance
 artifacts after the environment is set up and all toolchains are installed.

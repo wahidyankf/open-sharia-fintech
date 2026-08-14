@@ -6,133 +6,50 @@ model: composer-2.5
 
 # repo-setup-manager
 
-## Purpose
-
-Standardize Phase 0 across all plan executions: install dependencies, converge the polyglot
-toolchain, establish a test baseline, and resolve ALL preexisting failures — before any plan
-phase work begins. Ensures every plan starts from a clean, known-good state.
-
 ## Phase 0 Sequence
 
-Execute the following steps in order. Each step must pass before proceeding to the next.
+Execute the steps below in order; each must pass before the next. Ensures every plan starts from
+a clean, known-good state.
 
-> **This sequence has no push and no PR step, and never will (HARD RULE).** Phase 0 is local setup
-> and baseline only — it produces nothing reviewable, so it opens no pull request, pushes no branch
-> to `origin`, runs no PR-Review Maker→Fixer Cycle, merges nothing, and triggers no CI run. This
-> holds under **every** Delivery Mode, the default `worktree-to-pr` included. The earliest phase
-> that may open a PR is **Phase 1**; any evidence file this sequence writes (a baseline snapshot, a
-> recorded path constant) stays on the plan branch and lands in the first PR the plan opens. If the
-> plan's Phase 0 checklist contains a `gh pr create`, a `git push origin <branch>`, a review-cycle
-> step, or a merge step, do **not** execute it — report it as a plan defect for `plan-fixer`. See
+> **No push, no PR step, ever (HARD RULE).** Phase 0 is local setup/baseline only — nothing
+> reviewable, under every Delivery Mode. Phase 1 is the earliest PR; evidence this sequence writes
+> stays on the plan branch for that first PR. A Phase 0 checklist containing a push/PR/merge step
+> is a plan defect — report it for `plan-fixer`, do not execute it. See
 > [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-### Step 1: Install Dependencies
+**Step 1 — Install Dependencies**: `npm install`. Acceptance: exits 0, `node_modules/` synced.
 
-```bash
-npm install
-```
+**Step 2 — Converge Polyglot Toolchain**: `npm run doctor -- --fix`. Acceptance: exits 0, no
+unresolved drift — if drift remains, report which tools couldn't auto-fix and stop.
 
-**Acceptance**: exits 0, `node_modules/` synchronized.
+**Step 3 — Baseline Test Run**: run the full suite for projects in scope (`nx affected` for a
+subset, `nx run-many -t test:unit` for a full baseline). Record exact pass/fail/skip counts and
+known preexisting failures as user-visible output — this is the acceptance.
 
-### Step 2: Converge Polyglot Toolchain
+**Step 4 — Resolve Preexisting Failures**: for each Step 3 failure, find root cause, classify —
+**in-scope**: fix before Phase 1; **out-of-scope**: document as "known, out-of-scope," don't fix
+(avoids scope creep). Re-run after any fix, update the record. Acceptance: no in-scope failures
+remain, out-of-scope ones documented. Unresolvable in-scope failure: stop signal, halt.
 
-```bash
-npm run doctor -- --fix
-```
+**Step 5 — Vercel MCP Probe (Conditional)**: skip entirely unless the plan touches a
+Vercel-deployed surface — decide via `git ls-files | grep 'vercel\.json$'` plus deploy-branch/
+deployment-agent checks, never a remembered list. When it applies, resolve whether a Vercel MCP
+server is connected **and authenticated**, reconcile against the plan's assumption (agree: record
+and proceed; disagree: report which `[AI]` steps downgrade, don't proceed as written), and capture
+any deployment baseline now, before a later Phase 0 step can disable its source. **See
+[Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md)** for
+the full probe procedure, outcome table, capability boundary, and degraded mode. Acceptance:
+"not applicable" or a recorded probe outcome reconciled against `[AI]`/`[HUMAN]` tags.
 
-**Acceptance**: exits 0 with no unresolved drift. If drift remains after `--fix`, report the
-specific tools that could not be auto-fixed and stop — do NOT proceed until drift is cleared.
+## Principles and Related Documentation
 
-### Step 3: Baseline Test Run
+[Root Cause Orientation](../../repo-governance/principles/general/root-cause-orientation.md),
+[Reproducible Environments](../../repo-governance/development/workflow/reproducible-environments.md),
+[Deliberate Problem-Solving](../../repo-governance/principles/general/deliberate-problem-solving.md).
+[Worktree Setup](../../repo-governance/development/workflow/worktree-setup.md) — toolchain init
+after `git worktree add`. [Plan Execution Workflow](../../repo-governance/workflows/plan/plan-execution.md).
+[plan-maker Agent](plan-maker.md) — delivery template includes Phase 0.
 
-Run the full test suite for all projects in scope for the current plan. Use `nx affected` if the
-plan affects a subset of projects; use `nx run-many -t test:unit` for a full baseline.
-
-Record the exact pass/fail/skip counts:
-
-```
-Baseline (YYYY-MM-DD HH:MM):
-  Projects in scope: [list]
-  Passed: N
-  Failed: N
-  Skipped: N
-  Known preexisting failures: [list test IDs or 'none']
-```
-
-**Acceptance**: Baseline recorded and emitted as user-visible output.
-
-### Step 4: Resolve Preexisting Failures
-
-For each failure found in Step 3:
-
-1. Investigate root cause
-2. Determine if the failure is:
-   - **Pre-existing and in-scope** (related to the plan's work area): fix it before Phase 1
-   - **Pre-existing and out-of-scope**: document it in the baseline record as "known, out-of-scope"
-     and do NOT fix (to avoid unintended scope creep)
-3. Re-run failing tests after any fix to confirm resolution
-4. Update baseline record
-
-**Acceptance**: No in-scope preexisting failures remain. All out-of-scope failures are documented.
-
-**On persistent failure**: If an in-scope preexisting failure cannot be resolved within Phase 0,
-emit a clear stop signal: the plan cannot proceed until the failure is resolved. Surface the
-failure details and halt.
-
-### Step 5: Vercel MCP Probe (Conditional)
-
-**Skip entirely unless the plan touches a Vercel-deployed surface.** Decide mechanically, never from
-a remembered project list:
-
-```bash
-git ls-files | grep 'vercel\.json$'
-```
-
-Empty output, and no `prod-*`/`stag-*` deploy branch or deployment agent among the plan's targets,
-means this repository has no Vercel-deployed surface — skip this step and say so.
-
-When it does apply, resolve whether a Vercel MCP server is connected **and authenticated**. A server
-that connects but exposes only authentication tools is unauthenticated, therefore unavailable;
-authenticating it is interactive and belongs to a human, so report it rather than attempting it.
-
-Then reconcile against what the plan assumed:
-
-- **Probe agrees with the plan** — record the confirmation and proceed.
-- **Probe disagrees** — do NOT proceed as written. Report which `[AI]` steps must downgrade per
-  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp/04-identifier-hygiene-degraded-mode-and-when-to-check.md#degraded-mode). Silently
-  skipping a verification step the plan can no longer perform is the failure this step prevents.
-
-**Capture ordering matters**: if the plan's Phase 0 also takes a deployment baseline for later
-comparison, take it **now**, before any Phase 0 platform-settings step runs. Some measurements cannot
-be taken retroactively once a setting in the same phase disables their source.
-
-**Do not over-assume the boundary.** Available: deployments, build logs, runtime errors, runtime log
-counts grouped by source/route/status. Not available, and therefore `[HUMAN]` no matter what the
-probe says: billing and usage figures, Spend Management, Observability settings, firewall rulesets,
-the compute-model setting, and domain configuration.
-
-**Acceptance**: either "not applicable — no Vercel-deployed surface" or a recorded probe outcome that
-the plan's `[AI]`/`[HUMAN]` tags are reconciled against.
-
-See [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
-
-## Principles Implemented/Respected
-
-- **[Root Cause Orientation](../../repo-governance/principles/general/root-cause-orientation.md)**:
-  Resolve preexisting failures at root cause, not by marking them as "known and ignored"
-- **[Reproducible Environments](../../repo-governance/development/workflow/reproducible-environments.md)**:
-  `npm install` and `doctor --fix` establish a reproducible starting state
-- **[Deliberate Problem-Solving](../../repo-governance/principles/general/deliberate-problem-solving.md)**:
-  Understand the baseline before writing new code
-
-## Related Documentation
-
-- [Worktree Setup](../../repo-governance/development/workflow/worktree-setup.md) — toolchain init
-  after `git worktree add`
-- [Plan Execution Workflow](../../repo-governance/workflows/plan/plan-execution.md) — Phase 0 is
-  the first phase of every plan
-- [plan-maker Agent](./plan-maker.md) — delivery template includes Phase 0
-- [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md) — the
-  Step 5 probe, its capability boundary, and degraded mode
-
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) -
+  Keep a ledger of every path you touch, carry it through every compaction, leave anything not on
+  it alone, and stage explicit paths

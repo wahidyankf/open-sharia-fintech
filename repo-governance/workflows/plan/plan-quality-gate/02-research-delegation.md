@@ -7,7 +7,7 @@ when_to_use: Use when checking whether a single technical claim in a plan audit 
 # Research Delegation
 
 The `plan-checker` agent delegates multi-page web research to the
-[`web-researcher`](../../../../.claude/agents/web-researcher.md) delegated agent when verifying a single
+[`web-researcher`](../../../../.claude/agents/web/web-researcher.md) delegated agent when verifying a single
 technical claim requires more than one or two searches, or more than two fetches. This keeps the
 plan audit context lean — `plan-checker` receives a cited, synthesised summary and translates it
 into dual-labelled findings, rather than burning its own context on multi-page research. Checkers

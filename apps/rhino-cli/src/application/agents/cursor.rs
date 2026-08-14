@@ -116,16 +116,25 @@ fn agent_name_from_path(p: &Path) -> String {
 }
 
 /// Render a Claude agent file as Cursor-format bytes without writing to disk.
+/// `claude_dir`/`mirror_dir` are used to rebase relative links in the body
+/// exactly as `convert_cursor_agent` would (see `rebase_agent_links`).
 ///
 /// # Errors
 ///
 /// Returns an error string if the file cannot be read or parsed.
-pub fn render_cursor_agent_bytes(input_path: &Path) -> Result<Vec<u8>, String> {
-    let (output, _warnings) = convert_cursor_agent_inner(input_path, None, true)?;
+pub fn render_cursor_agent_bytes(
+    input_path: &Path,
+    claude_dir: &Path,
+    mirror_dir: &Path,
+) -> Result<Vec<u8>, String> {
+    let (output, _warnings) =
+        convert_cursor_agent_inner(input_path, None, claude_dir, mirror_dir, true)?;
     Ok(output)
 }
 
-/// Convert a single Claude agent file to Cursor format.
+/// Convert a single Claude agent file to Cursor format. `claude_dir` is
+/// `.claude/agents/`'s path, used to rebase relative links in the body when
+/// `input_path` sits under a group subdirectory that the mirror flattens away.
 ///
 /// # Errors
 ///
@@ -133,9 +142,17 @@ pub fn render_cursor_agent_bytes(input_path: &Path) -> Result<Vec<u8>, String> {
 pub fn convert_cursor_agent(
     input_path: &Path,
     output_path: &Path,
+    claude_dir: &Path,
     dry_run: bool,
 ) -> Result<Vec<ConversionWarning>, String> {
-    let (_output, warnings) = convert_cursor_agent_inner(input_path, Some(output_path), dry_run)?;
+    let mirror_dir = output_path.parent().unwrap_or(output_path);
+    let (_output, warnings) = convert_cursor_agent_inner(
+        input_path,
+        Some(output_path),
+        claude_dir,
+        mirror_dir,
+        dry_run,
+    )?;
     Ok(warnings)
 }
 
@@ -145,6 +162,8 @@ pub fn convert_cursor_agent(
 fn convert_cursor_agent_inner(
     input_path: &Path,
     output_path: Option<&Path>,
+    claude_dir: &Path,
+    mirror_dir: &Path,
     dry_run: bool,
 ) -> Result<(Vec<u8>, Vec<ConversionWarning>), String> {
     let content = fs::read(input_path).map_err(|e| format!("failed to read file: {e}"))?;
@@ -194,7 +213,9 @@ fn convert_cursor_agent_inner(
         }
     }
 
-    let output = encode_cursor_agent(&out, &body);
+    let rebased_body =
+        super::converter::rebase_agent_links(&body, input_path, claude_dir, mirror_dir);
+    let output = encode_cursor_agent(&out, &rebased_body);
 
     if let Some(path) = output_path {
         if !dry_run {
@@ -343,7 +364,7 @@ pub fn convert_all_cursor_agents(
     for (input, name) in sources {
         let filename = format!("{name}.md");
         let output = cursor_dir.join(&filename);
-        if let Ok(w) = convert_cursor_agent(&input, &output, dry_run) {
+        if let Ok(w) = convert_cursor_agent(&input, &output, &claude_dir, dry_run) {
             result.converted += 1;
             result.warnings.extend(w);
         } else {
@@ -475,6 +496,27 @@ mod tests {
         let content =
             std::fs::read_to_string(dir.path().join(".cursor/agents/docs-checker.md")).unwrap();
         assert!(content.contains("name: docs-checker"));
+    }
+
+    #[test]
+    fn convert_all_cursor_agents_rebases_cross_group_agent_link_to_bare_filename() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nSee [docs-fixer](../fixers/docs-fixer.md).\n",
+        );
+        write(
+            &claude.join("fixers/docs-fixer.md"),
+            "---\nname: docs-fixer\ndescription: fixes docs\ntools: Read\nmodel: sonnet\n---\nBody\n",
+        );
+        convert_all_cursor_agents(dir.path(), false).unwrap();
+        let content =
+            std::fs::read_to_string(dir.path().join(".cursor/agents/docs-checker.md")).unwrap();
+        assert!(
+            content.contains("(docs-fixer.md)"),
+            "a cross-group agent-to-agent link must become a bare same-directory link in the flat mirror: {content}"
+        );
     }
 
     #[test]

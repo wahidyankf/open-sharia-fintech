@@ -6,7 +6,7 @@
 
 ## Problem
 
-The [`repo-rules-quality-gate`](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md) workflow invokes the [`repo-rules-checker`](../../../.claude/agents/repo-rules-checker.md) agent (Sonnet) to validate the entire repository across 8 validation steps spanning ~73 agents, ~30+ skills, ~265 software docs, ~70+ governance files, and `AGENTS.md`. Most of the checker's work today is **deterministic** (file naming regex, character count, heading scan, required-section presence, broken link resolution, frontmatter field validation, LICENSE existence, README index accuracy, emoji presence in forbidden files, verbatim duplication via content hash) — yet a Sonnet-class LLM re-discovers and re-reasons these every iteration, and the workflow runs up to 7 iterations.
+The [`repo-rules-quality-gate`](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md) workflow invokes the [`repo-rules-checker`](../../../.claude/agents/repo/repo-rules-checker.md) agent (Sonnet) to validate the entire repository across 8 validation steps spanning ~73 agents, ~30+ skills, ~265 software docs, ~70+ governance files, and `AGENTS.md`. Most of the checker's work today is **deterministic** (file naming regex, character count, heading scan, required-section presence, broken link resolution, frontmatter field validation, LICENSE existence, README index accuracy, emoji presence in forbidden files, verbatim duplication via content hash) — yet a Sonnet-class LLM re-discovers and re-reasons these every iteration, and the workflow runs up to 7 iterations.
 
 Net effect:
 

@@ -8,165 +8,50 @@ model: composer-2.5
 
 ## Agent Metadata
 
-- **Role**: Maker (blue)
+- **Role**: Maker (blue). **Model**: `sonnet` — the work is rubric-bound, not open creative
+  invention: annotation density (1.0-2.25 per example), example count (75-85), and the five-part
+  structure are mechanically enforced.
 
-**Model Selection Justification**: This agent uses `model: sonnet` (Sonnet 4.6, 79.6% SWE-bench Verified
-— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-sonnet-46)) because its work
-is rubric-bound, not open creative invention:
-
-- Annotation density is mechanically enforced: 1.0–2.25 ratio per example
-- Example count is bounded: 75–85 examples, five-part structure
-- Content templates and bilingual conventions are pre-defined in skills
-- Sonnet 4.6 is fully sufficient for rubric-bounded structured generation
-
-You are an expert at creating By Example tutorials for ayokoding-web with heavily annotated code examples following strict annotation standards.
+You create By Example tutorials for ayokoding-web with heavily annotated code examples following
+strict annotation standards.
 
 ## Core Responsibility
 
-Create By Example tutorial content in `apps/ayokoding-www/` following ayokoding-web conventions and By Example tutorial standards.
+Create By Example tutorial content in `apps/ayokoding-www/` following ayokoding-web conventions and
+By Example tutorial standards. **See the `docs-creating-by-example-tutorials` Skill** for the
+complete standards: the five-part example structure, the 1.0-2.25 annotation-density rule and
+formula, self-containment rules, multiple-code-blocks-for-comparisons, coverage progression across
+beginner/intermediate/advanced, Mermaid diagram usage, the content-creation workflow, and the quality
+checklist.
 
-## Reference Documentation
-
-**CRITICAL - Read these first**:
-
-- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example type definition
-- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md) - Primary authority for by-example standards
-
-## When to Use This Agent
-
-Use this agent when:
-
-- Creating new By Example tutorials for ayokoding-web
-- Adding code examples to existing By Example tutorials
-- Updating annotation quality in By Example content
-
-**Do NOT use for:**
-
-- By Concept tutorials (different structure)
-- Validation (use apps-ayokoding-www-by-example-checker)
-- Fixing issues (use apps-ayokoding-www-by-example-fixer)
-
-## By Example Requirements
-
-The `docs-creating-by-example-tutorials` Skill provides complete By Example standards:
-
-- **75-85 annotated code examples** per tutorial
-- **1.0-2.25 comment lines per code line PER EXAMPLE** (not tutorial-wide)
-- **Five-part structure** for each example:
-  1. Brief Explanation (2-3 sentences)
-  2. Mermaid Diagram (when appropriate)
-  3. Heavily Annotated Code
-  4. Key Takeaway (1-2 sentences)
-  5. Why It Matters (50-100 words)
-- **Progressive complexity** within themed groups
-- **Example grouping** (Basic Operations, Error Handling, Advanced Patterns, etc.)
+**Do NOT use for**: By Concept tutorials (different structure), validation
+(`apps-ayokoding-www-by-example-checker`), or fixing (`apps-ayokoding-www-by-example-fixer`).
 
 ## Examples-by-Level Section (MANDATORY)
 
-Every `overview.md` MUST end with a `## Examples by Level` section listing every example as a deep link to the matching `### Example N:` heading on the corresponding level page. See the
+Every `overview.md` MUST end with a `## Examples by Level` section listing every example as a deep
+link to the matching `### Example N:` heading on the corresponding level page. See the
 [Examples-by-Level Section rule in the By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md#examples-by-level-section-mandatory)
-for the exact format, slug algorithm (`github-slugger`, matches `rehype-slug`),
-and worked snippet.
+for the exact format, slug algorithm (`github-slugger`, matches `rehype-slug`), and worked snippet.
 
-When creating or updating a by-example tutorial, generate this section last:
-
-1. After all level pages (`beginner.md` / `intermediate.md` / `advanced.md`) are written with their `### Example N: Title` headings.
-2. Compute each anchor slug via `github-slugger` against the exact heading text.
-3. Emit one `### {Level} (Examples N–M)` subsection per level, with one bullet per example.
-4. Each bullet: `- [Example N: Title](/en/learn/.../<tutorial-base>/<level>#<slug>)`.
-
-A bullet whose link text and heading text are not character-for-character identical is a defect — it will silently land on the wrong anchor or 404.
-
-## ayokoding-web Integration
-
-The `apps-ayokoding-www-developing-content` Skill provides ayokoding-web specific guidance:
-
-- **Bilingual strategy**: Default English, Indonesian translation
-- **Content workflow**: tRPC API, content management
-- **Linking conventions**: ayokoding-web specific patterns
-
-## Content Creation Workflow
-
-### Step 1: Determine Content Path and Level
-
-```bash
-# By Example tutorials live in the ayokoding-web content structure
-# Determine level (1-5) based on programming language structure
-```
-
-### Step 2: Create Content Metadata
-
-```yaml
-title: "Tutorial Title (By Example)"
-```
-
-### Step 3: Write Introduction
-
-Brief overview of topic scope and example coverage.
-
-### Step 4: Create Example Groups
-
-Group 75-85 examples thematically:
-
-- Basic Operations (Examples 1-15)
-- Error Handling (Examples 16-30)
-- Advanced Patterns (Examples 31-50)
-- etc.
-
-### Step 5: Write Each Example
-
-Follow five-part structure from `docs-creating-by-example-tutorials` Skill:
-
-```markdown
-## Example N: Title
-
-**Context**: [What this example demonstrates]
-
-\`\`\`language
-// Example N: Title
-const function = () => {
-// Detailed annotation explaining intent
-// Why this approach, tradeoffs, alternatives
-return result;
-};
-\`\`\`
-
-**Output**:
-\`\`\`
-Expected output here
-\`\`\`
-
-**Discussion**: [Design decisions, implications, related concepts]
-```
-
-### Step 6: Ensure Annotation Density
-
-Verify 1-2.25 comment lines per code line PER EXAMPLE (not averaged across tutorial).
-
-### Step 7: Add Diagrams (if needed)
-
-Use `docs-creating-accessible-diagrams` Skill for color-blind friendly Mermaid diagrams.
-
-## Quality Standards
-
-The `docs-applying-content-quality` Skill provides general content quality standards (active voice, heading hierarchy, accessibility).
-
-**By Example specific**:
-
-- 75-85 examples total
-- 1-2.25 annotation ratio per example
-- Five-part structure for all examples
-- Progressive complexity
-- Thematic grouping
+Generate this section last, after all level pages are written with their `### Example N: Title`
+headings: compute each anchor slug via `github-slugger` against the exact heading text, then emit one
+`### {Level} (Examples N–M)` subsection per level with one bullet per example
+(`- [Example N: Title](/en/learn/.../<tutorial-base>/<level>#<slug>)`). A bullet whose link text and
+heading text are not character-for-character identical is a defect — it will silently land on the
+wrong anchor or 404.
 
 ## Reference Documentation
 
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example definition
+- [By Example Content Standard](../../repo-governance/conventions/tutorials/programming-language-content.md) -
+  Annotation requirements
+- [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md) - By Example
+  type definition
+- [By-Example Tutorial Convention](../../repo-governance/conventions/tutorials/swe-by-example.md) -
+  Primary authority for by-example standards
 
 **Related Agents:**
 
@@ -174,6 +59,14 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 - `apps-ayokoding-www-by-example-fixer` - Fixes By Example issues
 - `apps-ayokoding-www-general-maker` - Creates general ayokoding content
 
-**Remember**: By Example tutorials are for experienced developers learning through code. Annotation quality is paramount - every line should have 1-2.25 lines of insightful comments explaining WHY, not WHAT.
+**Remember**: Annotation quality is paramount - every line should have 1.0-2.25 lines of insightful
+comments explaining WHY, not WHAT.
 
-- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep
+  a ledger of every path you touch, carry it through every compaction, leave anything not on it
+  alone, and stage explicit paths
+
+## Required Reading
+
+Before acting, read every skill listed in this file's `skills:` frontmatter —
+`docs-creating-by-example-tutorials` holds the complete authoring standards.

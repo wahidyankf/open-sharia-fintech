@@ -25,7 +25,7 @@ far more than a single reviewer without a matching gain in review quality.
 ### Risk-tier fan-out (D12)
 
 The primary cost lever is **diff-size tiering**, not model choice. Risk-tier classification is
-performed by [`pr-review-scout-maker`](../../../../.claude/agents/pr-review-scout-maker.md), not by
+performed by [`pr-review-scout-maker`](../../../../.claude/agents/pr-review/pr-review-scout-maker.md), not by
 `pr-review-synthesis-maker` directly — the scout classifies each PR into one of three tiers by line
 count, file count, and whether it touches a security-sensitive path, and the specialist set fans out
 accordingly:
@@ -48,5 +48,5 @@ the tier decision is auditable.
 files in the diff) — the only two disciplines whose own charter is gated on a specific artifact class
 rather than being applicable to any changed content. The other seven specialists are never skipped by
 file type; see
-[`pr-review-scout-maker.md`'s own filter definition](../../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12)
+[`pr-review-scout-maker.md`'s own filter definition](../../../../.claude/skills/pr-review-scout-classification/reference/01-risk-tier-and-specialist-selection.md#risk-tier-classification--specialist-set-selection-d12)
 for the full rule and its fresh-per-cycle re-evaluation requirement.

@@ -3,7 +3,7 @@
 
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::time::Instant;
 
 use serde_norway::Value;
@@ -59,7 +59,7 @@ fn validate_cursor_agent_count(repo_root: &Path) -> ValidationCheck {
     let claude_dir = repo_root.join(".claude").join("agents");
     let cursor_dir = repo_root.join(CURSOR_AGENT_DIR);
 
-    let claude_count = count_markdown_files(&claude_dir);
+    let claude_count = count_claude_agent_sources(&claude_dir);
     let cursor_count = count_markdown_files(&cursor_dir);
 
     if cursor_count >= claude_count {
@@ -85,8 +85,10 @@ fn validate_cursor_equivalence(repo_root: &Path) -> Vec<ValidationCheck> {
     let claude_dir = repo_root.join(".claude").join("agents");
     let cursor_dir = repo_root.join(CURSOR_AGENT_DIR);
 
-    let entries = match fs::read_dir(&claude_dir) {
-        Ok(e) => e,
+    // Walks one level of group subdirectory nesting (FR-3.18) — a plain
+    // `fs::read_dir` would silently see zero grouped agents.
+    let files = match super::converter::discover_agent_sources(&claude_dir) {
+        Ok(v) => v,
         Err(e) => {
             checks.push(ValidationCheck::failed_msg(
                 "Cursor Agent Equivalence",
@@ -96,21 +98,11 @@ fn validate_cursor_equivalence(repo_root: &Path) -> Vec<ValidationCheck> {
         }
     };
 
-    let mut files: Vec<(PathBuf, String)> = Vec::new();
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if !is_mirrorable_agent_filename(&name, entry.file_type().is_ok_and(|t| t.is_dir())) {
-            continue;
-        }
-        files.push((entry.path(), name));
-    }
-    files.sort_by(|a, b| a.1.cmp(&b.1));
-
     for (claude_path, name) in files {
-        let cursor_path = cursor_dir.join(&name);
+        let cursor_path = cursor_dir.join(format!("{name}.md"));
         let check_name = format!("Cursor Agent: {name}");
 
-        let expected = match render_cursor_agent_bytes(&claude_path) {
+        let expected = match render_cursor_agent_bytes(&claude_path, &claude_dir, &cursor_dir) {
             Ok(v) => v,
             Err(e) => {
                 checks.push(ValidationCheck::failed_msg(
@@ -169,13 +161,22 @@ fn validate_cursor_orphans(repo_root: &Path) -> Vec<ValidationCheck> {
         return checks;
     };
 
+    // Grouped sources (FR-3.18) mean a mirror's counterpart may live one
+    // `<group>/` level under `claude_dir`, not directly at `claude_dir/<name>`
+    // — check membership in the discovered source names instead of a direct
+    // path join.
+    let claude_names: std::collections::HashSet<String> =
+        super::converter::discover_agent_sources(&claude_dir)
+            .map(|sources| sources.into_iter().map(|(_, name)| name).collect())
+            .unwrap_or_default();
+
     for entry in entries.flatten() {
         let name = entry.file_name().to_string_lossy().into_owned();
         if !is_mirrorable_agent_filename(&name, entry.file_type().is_ok_and(|t| t.is_dir())) {
             continue;
         }
-        let claude_path = claude_dir.join(&name);
-        if !claude_path.exists() {
+        let stem = name.strip_suffix(".md").unwrap_or(&name);
+        if !claude_names.contains(stem) {
             checks.push(ValidationCheck::failed(
                 format!("Cursor Orphan: {name}"),
                 "no unsourced Cursor mirror files",
@@ -220,7 +221,7 @@ fn validate_agent_count(repo_root: &Path) -> ValidationCheck {
     let claude_dir = repo_root.join(".claude").join("agents");
     let opencode_dir = repo_root.join(OPENCODE_AGENT_DIR);
 
-    let claude_count = count_markdown_files(&claude_dir);
+    let claude_count = count_claude_agent_sources(&claude_dir);
     let opencode_count = count_markdown_files(&opencode_dir);
 
     if opencode_count >= claude_count {
@@ -265,8 +266,10 @@ fn validate_agent_equivalence(repo_root: &Path) -> Vec<ValidationCheck> {
     let claude_dir = repo_root.join(".claude").join("agents");
     let opencode_dir = repo_root.join(OPENCODE_AGENT_DIR);
 
-    let entries = match fs::read_dir(&claude_dir) {
-        Ok(e) => e,
+    // Walks one level of group subdirectory nesting (FR-3.18) — a plain
+    // `fs::read_dir` would silently see zero grouped agents.
+    let files = match super::converter::discover_agent_sources(&claude_dir) {
+        Ok(v) => v,
         Err(e) => {
             checks.push(ValidationCheck::failed_msg(
                 "Agent Equivalence",
@@ -276,29 +279,31 @@ fn validate_agent_equivalence(repo_root: &Path) -> Vec<ValidationCheck> {
         }
     };
 
-    let mut files: Vec<(PathBuf, String)> = Vec::new();
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if entry.file_type().is_ok_and(|t| t.is_dir()) {
-            continue;
-        }
-        if !name.ends_with(".md") || name == "README.md" {
-            continue;
-        }
-        files.push((entry.path(), name));
-    }
-    files.sort_by(|a, b| a.1.cmp(&b.1));
-
     for (claude_path, name) in files {
-        let opencode_path = opencode_dir.join(&name);
-        checks.push(validate_agent_file(&name, &claude_path, &opencode_path));
+        let opencode_path = opencode_dir.join(format!("{name}.md"));
+        checks.push(validate_agent_file(
+            &name,
+            &claude_path,
+            &opencode_path,
+            &claude_dir,
+            &opencode_dir,
+        ));
     }
 
     checks
 }
 
 /// Read and parse both copies of `name` then delegate to `validate_agent_yaml`.
-fn validate_agent_file(name: &str, claude_path: &Path, opencode_path: &Path) -> ValidationCheck {
+/// `claude_dir`/`mirror_dir` rebase the Claude body's relative links before
+/// comparison, matching what the generator itself would emit for a grouped
+/// source (see `rebase_agent_links`).
+fn validate_agent_file(
+    name: &str,
+    claude_path: &Path,
+    opencode_path: &Path,
+    claude_dir: &Path,
+    mirror_dir: &Path,
+) -> ValidationCheck {
     let check_name = format!("Agent: {name}");
 
     let claude_content = match fs::read(claude_path) {
@@ -361,11 +366,14 @@ fn validate_agent_file(name: &str, claude_path: &Path, opencode_path: &Path) -> 
         }
     };
 
+    let expected_body =
+        super::converter::rebase_agent_links(&claude_body, claude_path, claude_dir, mirror_dir);
+
     validate_agent_yaml(
         &check_name,
         &claude_yaml,
         &opencode_yaml,
-        &claude_body,
+        &expected_body,
         &opencode_body,
     )
 }
@@ -554,6 +562,13 @@ fn count_markdown_files(dir: &Path) -> usize {
     count
 }
 
+/// Count agent sources under `.claude/agents/`, walking one level of group
+/// subdirectory nesting the same way `discover_agent_sources` does — a plain
+/// `fs::read_dir` would undercount to zero once agents are grouped (FR-3.18).
+fn count_claude_agent_sources(claude_dir: &Path) -> usize {
+    super::converter::discover_agent_sources(claude_dir).map_or(0, |sources| sources.len())
+}
+
 /// Return true if two permission maps are identical (same keys and values).
 fn permission_match(a: &BTreeMap<String, String>, b: &BTreeMap<String, String>) -> bool {
     a == b
@@ -651,6 +666,26 @@ mod tests {
         let checks = validate_agent_equivalence(dir.path());
         assert!(!checks.is_empty());
         assert!(checks.iter().all(|c| c.status == "passed"), "{checks:#?}");
+    }
+
+    #[test]
+    fn validate_agent_equivalence_passes_for_grouped_source_with_rebased_link() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(
+            &root.join(".claude/agents/checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: desc\ntools: Read\nmodel: sonnet\n---\nSee [conventions](../../../repo-governance/conventions/README.md).\n",
+        );
+        write(
+            &root.join(".opencode/agents/docs-checker.md"),
+            "---\ndescription: desc\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\nSee [conventions](../../repo-governance/conventions/README.md).\n",
+        );
+        let checks = validate_agent_equivalence(root);
+        assert!(!checks.is_empty());
+        assert!(
+            checks.iter().all(|c| c.status == "passed"),
+            "the expected body must be rebased exactly like the generator's own output before comparison: {checks:#?}"
+        );
     }
 
     #[test]

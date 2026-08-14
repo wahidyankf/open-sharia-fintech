@@ -10,9 +10,10 @@
 use std::collections::{BTreeMap, HashMap};
 use std::fmt::Write as FmtWrite;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
+use regex::Regex;
 use serde_norway::Value;
 
 use super::cursor::is_mirrorable_agent_filename;
@@ -141,8 +142,108 @@ fn agent_name_from_path(p: &Path) -> String {
     base.strip_suffix(".md").unwrap_or(&base).to_string()
 }
 
+/// Lazily-compiled regex matching Markdown link targets `](...)`.
+fn agent_link_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new(r"\]\(([^)]*)\)").expect("valid hardcoded regex"))
+}
+
+/// Lexically normalize `..`/`.` components without touching the filesystem.
+fn normalize_lexical(path: &Path) -> PathBuf {
+    let mut out = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::ParentDir => {
+                out.pop();
+            }
+            Component::CurDir => {}
+            other => out.push(other.as_os_str()),
+        }
+    }
+    out
+}
+
+/// Compute `target`'s path relative to `base_dir`, given both are already
+/// lexically normalized and share a common root.
+fn relative_from(target: &Path, base_dir: &Path) -> PathBuf {
+    let target_components: Vec<_> = target.components().collect();
+    let base_components: Vec<_> = base_dir.components().collect();
+    let mut common = 0;
+    while common < target_components.len()
+        && common < base_components.len()
+        && target_components[common] == base_components[common]
+    {
+        common += 1;
+    }
+    let mut result = PathBuf::new();
+    for _ in common..base_components.len() {
+        result.push("..");
+    }
+    for component in &target_components[common..] {
+        result.push(component.as_os_str());
+    }
+    result
+}
+
+/// Rebase every relative Markdown link in `body` so it still resolves once a
+/// source file at `input_path` (which may sit one `<group>/` level under
+/// `claude_dir`, per FR-3.18 grouping) is emitted flat under `mirror_dir`.
+///
+/// A link that resolves to another file inside `claude_dir` becomes a bare
+/// same-directory link, matching the mirror's own flattening (every mirrored
+/// agent lands as a sibling regardless of its source group). Every other
+/// relative link is re-relativized from `mirror_dir`, since the source
+/// file's effective depth may have changed. Absolute paths (`/...`), URLs,
+/// and anchor-only links pass through unchanged.
+pub(crate) fn rebase_agent_links(
+    body: &[u8],
+    input_path: &Path,
+    claude_dir: &Path,
+    mirror_dir: &Path,
+) -> Vec<u8> {
+    let Ok(text) = std::str::from_utf8(body) else {
+        return body.to_vec();
+    };
+    let input_dir = input_path.parent().unwrap_or(input_path);
+
+    let rebased = agent_link_re().replace_all(text, |caps: &regex::Captures<'_>| {
+        let link = &caps[1];
+        if link.is_empty()
+            || link.starts_with("http://")
+            || link.starts_with("https://")
+            || link.starts_with('#')
+            || link.starts_with('/')
+        {
+            return format!("]({link})");
+        }
+        let (path_part, anchor) = link
+            .split_once('#')
+            .map_or((link, None), |(p, a)| (p, Some(a)));
+        if path_part.is_empty() {
+            return format!("]({link})");
+        }
+        let resolved = normalize_lexical(&input_dir.join(path_part));
+        let new_path = match resolved.strip_prefix(claude_dir) {
+            Ok(rel) if rel.file_name().is_some() => {
+                PathBuf::from(rel.file_name().expect("checked by guard above"))
+            }
+            _ => relative_from(&resolved, mirror_dir),
+        };
+        let mut out = new_path.to_string_lossy().replace('\\', "/");
+        if let Some(a) = anchor {
+            out.push('#');
+            out.push_str(a);
+        }
+        format!("]({out})")
+    });
+
+    rebased.into_owned().into_bytes()
+}
+
 /// Convert a single Claude agent file to `OpenCode` format. Returns conversion
-/// warnings; writes to `output_path` unless `dry_run` is true.
+/// warnings; writes to `output_path` unless `dry_run` is true. `claude_dir` is
+/// `.claude/agents/`'s path, used to rebase relative links in the body when
+/// `input_path` sits under a group subdirectory that the mirror flattens away.
 ///
 /// # Errors
 ///
@@ -151,6 +252,7 @@ fn agent_name_from_path(p: &Path) -> String {
 pub fn convert_agent(
     input_path: &Path,
     output_path: &Path,
+    claude_dir: &Path,
     dry_run: bool,
 ) -> Result<Vec<ConversionWarning>, String> {
     let content = fs::read(input_path).map_err(|e| format!("failed to read file: {e}"))?;
@@ -197,12 +299,14 @@ pub fn convert_agent(
     }
 
     let new_frontmatter = encode_opencode_agent(&out);
+    let mirror_dir = output_path.parent().unwrap_or(output_path);
+    let rebased_body = rebase_agent_links(&body, input_path, claude_dir, mirror_dir);
 
     let mut output = Vec::new();
     output.extend_from_slice(b"---\n");
     output.extend_from_slice(new_frontmatter.as_bytes());
     output.extend_from_slice(b"---\n");
-    output.extend_from_slice(&body);
+    output.extend_from_slice(&rebased_body);
 
     if !dry_run {
         if let Some(parent) = output_path.parent() {
@@ -529,7 +633,7 @@ pub fn convert_all_agents(repo_root: &Path, dry_run: bool) -> Result<ConvertAllR
     for (input, name) in sources {
         let filename = format!("{name}.md");
         let output = opencode_dir.join(&filename);
-        if let Ok(w) = convert_agent(&input, &output, dry_run) {
+        if let Ok(w) = convert_agent(&input, &output, &claude_dir, dry_run) {
             result.converted += 1;
             result.warnings.extend(w);
         } else {
@@ -588,7 +692,7 @@ mod tests {
             &input,
             "---\nname: foo\ndescription: desc\ntools: Read, Write\nmodel: sonnet\ncolor: blue\nskills:\n  - my-skill\n---\nBody text\n",
         );
-        let warnings = convert_agent(&input, &output, false).unwrap();
+        let warnings = convert_agent(&input, &output, dir.path(), false).unwrap();
         assert!(warnings.is_empty());
         let content = std::fs::read_to_string(&output).unwrap();
         assert!(content.starts_with("---\n"));
@@ -611,7 +715,7 @@ mod tests {
             &input,
             "---\nname: foo\ndescription: desc\ntools: Read\nmodel: sonnet\n---\nBody\n",
         );
-        convert_agent(&input, &output, true).unwrap();
+        convert_agent(&input, &output, dir.path(), true).unwrap();
         assert!(!output.exists());
     }
 
@@ -624,7 +728,7 @@ mod tests {
             &input,
             "---\nname: foo\ndescription: d\ntools: Read\nmodel: sonnet\nmcpServers:\n  one: two\n---\nBody\n",
         );
-        let warnings = convert_agent(&input, &output, true).unwrap();
+        let warnings = convert_agent(&input, &output, dir.path(), true).unwrap();
         assert!(warnings.iter().any(|w| w.field == "mcpServers"));
     }
 
@@ -637,7 +741,7 @@ mod tests {
             &input,
             "---\nname: foo\ndescription: d\ntools: Read\nmodel: sonnet\nbogus: yes\n---\nBody\n",
         );
-        let warnings = convert_agent(&input, &output, true).unwrap();
+        let warnings = convert_agent(&input, &output, dir.path(), true).unwrap();
         assert!(
             warnings
                 .iter()
@@ -685,6 +789,61 @@ mod tests {
         assert!(
             !dir.path().join(".opencode/agents/checkers").exists(),
             "the mirror must not reproduce the source's group subdirectory"
+        );
+    }
+
+    #[test]
+    fn convert_all_agents_rebases_external_link_for_grouped_source() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nSee [conventions](../../../repo-governance/conventions/README.md).\n",
+        );
+        convert_all_agents(dir.path(), false).unwrap();
+        let content =
+            std::fs::read_to_string(dir.path().join(".opencode/agents/docs-checker.md")).unwrap();
+        assert!(
+            content.contains("(../../repo-governance/conventions/README.md)"),
+            "an external link from a grouped source must lose exactly one '../' level to match the flat mirror's shallower depth: {content}"
+        );
+    }
+
+    #[test]
+    fn convert_all_agents_rebases_cross_group_agent_link_to_bare_filename() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("checkers/docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nSee [docs-fixer](../fixers/docs-fixer.md).\n",
+        );
+        write(
+            &claude.join("fixers/docs-fixer.md"),
+            "---\nname: docs-fixer\ndescription: fixes docs\ntools: Read\nmodel: sonnet\n---\nBody\n",
+        );
+        convert_all_agents(dir.path(), false).unwrap();
+        let content =
+            std::fs::read_to_string(dir.path().join(".opencode/agents/docs-checker.md")).unwrap();
+        assert!(
+            content.contains("(docs-fixer.md)"),
+            "a cross-group agent-to-agent link must become a bare same-directory link in the flat mirror: {content}"
+        );
+    }
+
+    #[test]
+    fn convert_all_agents_ungrouped_source_link_is_unchanged() {
+        let dir = tempdir().unwrap();
+        let claude = dir.path().join(".claude/agents");
+        write(
+            &claude.join("docs-checker.md"),
+            "---\nname: docs-checker\ndescription: checks docs\ntools: Read\nmodel: sonnet\n---\nSee [conventions](../../repo-governance/conventions/README.md).\n",
+        );
+        convert_all_agents(dir.path(), false).unwrap();
+        let content =
+            std::fs::read_to_string(dir.path().join(".opencode/agents/docs-checker.md")).unwrap();
+        assert!(
+            content.contains("(../../repo-governance/conventions/README.md)"),
+            "an ungrouped source's links must be unaffected (mirror depth unchanged): {content}"
         );
     }
 

@@ -10,33 +10,14 @@ model: composer-2.5
 
 - **Role**: Checker (green)
 
-### UUID Chain Generation
+**Model Selection Justification**: `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified —
+[benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) — link validation
+is purely mechanical HTTP status/cache checking, a deterministic URL lookup loop with no rule-based
+reasoning or content analysis. See `model-selection.md` §Link Checkers as Haiku.
 
-**See `repo-generating-validation-reports` Skill** for:
-
-- 6-character UUID generation using Bash
-- Scope-based UUID chain logic (parent-child relationships)
-- UTC+7 timestamp format
-- Progressive report writing patterns
-
-### Criticality Assessment
-
-**See `repo-assessing-criticality-confidence` Skill** for complete classification system:
-
-- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)
-- Decision tree for consistent assessment
-- Priority matrix (Criticality × Confidence → P0-P4)
-- Domain-specific examples
-
-**Model Selection Justification**: This agent uses `model: haiku` (Haiku 4.5, 73.3% SWE-bench Verified
-— [benchmark reference](../../docs/reference/ai-model-benchmarks.md#claude-haiku-45)) because link
-validation is purely mechanical — HTTP status code checking with cache management. No rule-based
-reasoning or content analysis is required; the entire procedure is a deterministic URL lookup loop.
-See `model-selection.md` §Link Checkers as Haiku for the authoritative classification.
-
-You validate links in ayokoding-web content.
-
-**Criticality Categorization**: See `repo-assessing-criticality-confidence` Skill.
+You validate links in ayokoding-web content. UUID chain generation and progressive report writing
+come from `repo-generating-validation-reports`; the four-level criticality classification system
+comes from `repo-assessing-criticality-confidence`.
 
 ## Web Research Delegation
 
@@ -44,63 +25,36 @@ This agent has `WebFetch` and `WebSearch` tools but invokes **Exception 3 (link-
 checkers)** of the [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md).
 Its domain is URL reachability — HTTP status codes, redirect chains — not content research. It
 invokes `WebFetch` directly against the URL under test; delegating a reachability probe to
-[`web-researcher`](./web-researcher.md) would add latency without improving the signal. If
+[`web-researcher`](web-researcher.md) would add latency without improving the signal. If
 content-level research is required (for example, to rewrite a broken reference), that work is
 escalated to the ayokoding-web maker or checker family, which delegates to `web-researcher`
 per the default rule.
 
 ## Temporary Report Files
 
-Pattern: `ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
-
-The `repo-generating-validation-reports` Skill provides generation logic.
+Pattern: `ayokoding-web-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` — generation logic in
+`repo-generating-validation-reports`.
 
 ## Validation Scope
 
-The `docs-validating-links` Skill provides complete link validation methodology.
-
-The `apps-ayokoding-www-developing-content` Skill provides ayokoding-web specifics:
-
-- Content path structure
-- Bilingual path structure
-- Link validation
-
-## Convergence Safeguards
-
-See `repo-applying-maker-checker-fixer` Skill for:
-
-- **Known False Positive Skip List**: Load and check `generated-reports/.known-false-positives.md` before every validation step
-- **Scoped Re-validation**: When UUID chain is multi-part, validate only changed files from fix report
-- **Escalation**: After 2+ disagreements on same finding, mark as `[ESCALATED — manual review required]`
-- **Convergence Target**: Stabilize in 3-5 iterations; warn if not converged after 7
-
-## Validation Process
+`docs-validating-links` provides the link validation methodology;
+`apps-ayokoding-www-developing-content` provides ayokoding-web specifics (content path structure,
+bilingual path structure).
 
 ## Workflow Overview
 
-**See `repo-applying-maker-checker-fixer` Skill**.
-
-1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
-2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
-3. **Final Step: Finalize Report**: Update status, add summary
-
-**Domain-Specific Validation** (ayokoding-web links): The detailed workflow below implements link validation and link accessibility validation.
-
-### Step 0: Initialize Report
-
-Use `repo-generating-validation-reports` Skill.
-
-### Step 1-N: Validate Links
-
-Use `docs-validating-links` Skill for external and internal link validation.
-
-**Write findings progressively** to report.
-
-### Final: Finalize Report
-
-Update status, add summary.
+Per `repo-applying-maker-checker-fixer`: initialize the report (UUID + progressive writing), run
+`docs-validating-links` methodology against external and internal links while writing findings
+progressively, then finalize status and summary. The same skill also governs convergence — known
+false-positive skip list, scoped re-validation on multi-part UUID chains, escalation after 2+
+disagreements, and the 3-5 iteration convergence target.
 
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+
+## Required Reading
+
+Before acting, read every skill listed in this file's `skills:` frontmatter for the full link-validation
+methodology, UUID/report-format mechanics, and criticality classification this checker applies.

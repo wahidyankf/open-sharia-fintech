@@ -23,9 +23,9 @@ CLI (architecture, command surface, Nx target names), and the governing docs —
 - [CI Monitoring](../../../repo-governance/development/workflow/ci-monitoring.md)
 - [Test-Driven Development Convention](../../../repo-governance/development/workflow/test-driven-development.md)
 - [Repo Rules Quality Gate workflow](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md)
-- `ci-checker` agent: [.claude/agents/ci-checker.md](../../../.claude/agents/ci-checker.md)
-- `ci-fixer` agent: [.claude/agents/ci-fixer.md](../../../.claude/agents/ci-fixer.md)
-- `repo-rules-maker` agent: [.claude/agents/repo-rules-maker.md](../../../.claude/agents/repo-rules-maker.md)
+- `ci-checker` agent: [.claude/agents/ci-checker.md](../../../.claude/agents/general/ci-checker.md)
+- `ci-fixer` agent: [.claude/agents/ci-fixer.md](../../../.claude/agents/general/ci-fixer.md)
+- `repo-rules-maker` agent: [.claude/agents/repo-rules-maker.md](../../../.claude/agents/repo/repo-rules-maker.md)
 
 ## Converged Toolchain Target (shared across the three-repo sibling set)
 

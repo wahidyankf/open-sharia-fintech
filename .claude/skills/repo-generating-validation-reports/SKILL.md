@@ -301,6 +301,12 @@ REPORT_HEADER
 ❌ **Generic scope**: Don't use same scope for all agents
 ✅ **Specific scope**: Use agent-family or language-specific scope
 
+## Convergence Safeguards
+
+Checker agents re-running across maker-checker-fixer iterations MUST apply the known-false-positive
+skip list, scoped re-validation, cached-verification, escalation, and convergence-target rules in
+[reference/01-convergence-safeguards.md](./reference/01-convergence-safeguards.md).
+
 ## Integration with Other Skills
 
 Works alongside:
