@@ -167,7 +167,7 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
 - [ ] [AI] Confirm the worktree is provisioned and current:
       `git worktree list | grep -F "ayokoding-learning-path-16-skills-accounting-sharia-extension"` exits 0.
 - [ ] [AI] Install dependencies: `npm install`.

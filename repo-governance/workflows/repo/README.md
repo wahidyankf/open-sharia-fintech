@@ -1,6 +1,7 @@
 ---
 title: "Repository Workflows"
 description: "Orchestrated repository-level governance workflows — rules consistency, harness compatibility (parity + external drift), ose-primer content synchronization, and dependency bump planning."
+when_to_use: Use when routing to a workflow that validates repository-level rules, harness compatibility, or dependency posture.
 category: explanation
 subcategory: workflows
 tags: []
@@ -32,9 +33,9 @@ These workflows define **WHEN and HOW to validate and synchronize repository art
 
 ## Workflows
 
-- [Repository Rules Validation](./repo-rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
-- [Harness Compatibility Quality Gate](./repo-harness-compatibility-quality-gate.md) - Validates five deterministic cross-vendor parity invariants (Phase 0) then verifies the platform-binding catalog and committed binding files still match each supported harness's current upstream conventions (Phase 1); fixes drift iteratively to double-zero.
-- [Dependency Bump Planning](./repo-dependency-bump-planning.md) - Surveys every dependency manifest across the whole monorepo (`apps/`, `libs/`, workspace-root pins, `.opencode/`, `infra/` containers, and the CI toolchain pins under `.github/`), classifies each candidate bump per the Dependency Bump Stability & Safety Policy (three-path tree + Rule 5a/5b), and produces a validated **backlog** plan (via `plan-planning` with `target-stage=backlog`) that will perform the bumps. Deliverable is the plan, not the dependency edits.
+- [repo-rules-quality-gate](./repo-rules-quality-gate.md) — Orchestrated quality gate that runs repo-rules-checker iteratively until zero findings, then applies fixes and re-validates. Use after changing conventions/principles/development practices, before major releases, periodically for repo health, or after adding/modifying agents.
+- [repo-harness-compatibility-quality-gate](./repo-harness-compatibility-quality-gate.md) — Validates internal cross-vendor parity and external harness-conformance drift, then fixes iteratively until zero findings. Use after modifying agents, governance prose, or binding-sync logic; after a harness breaking change; or as a scheduled hygiene audit.
+- [repo-dependency-bump-planning](./repo-dependency-bump-planning.md) — Surveys monorepo dependency manifests, classifies bumps per the Dependency Bump Policy, and produces a validated backlog plan — never edits a manifest itself. Use for a dependency-hygiene sweep, a pre-release bump snapshot, or an LTS-line upgrade.
 
 ## Related Documentation
 

@@ -1,0 +1,69 @@
+---
+title: "Phase 11: Repository Bootstrap (Sequential)"
+description: "Phase 11: clone the repo, run npm install (which installs git hooks), restore or initialize .env files, then run npm run doctor to verify every tool."
+when_to_use: "Use when bootstrapping the repository itself after language toolchains are installed."
+---
+
+# Phase 11: Repository Bootstrap (Sequential)
+
+**Depends on**: Phases 1-3 (minimum), Phases 4-10 (for full scope)
+
+## 11.1 Clone the repository
+
+```bash
+git clone https://github.com/wahidyankf/ose-public.git
+cd open-sharia-enterprise
+```
+
+**Condition**: Skip if already cloned.
+
+## 11.2 Install npm dependencies
+
+```bash
+npm install
+```
+
+This also triggers Husky to install git hooks (pre-commit, commit-msg, pre-push).
+
+**Success criteria**: `npm install` exits 0. `.husky/pre-commit`, `.husky/commit-msg`,
+`.husky/pre-push` exist.
+
+## 11.3 Restore environment files
+
+`.env` files are gitignored but required by many apps. If you have a previous backup
+(from `rhino-cli env backup`), restore them now:
+
+```bash
+# Restore .env files from default backup location (~/ose-public-env-backup)
+apps/rhino-cli/scripts/rhino-bin.sh env restore --force
+
+# Include uncommitted config files (AI tool settings, Docker overrides, direnv, etc.)
+apps/rhino-cli/scripts/rhino-bin.sh env restore --force --include-config
+```
+
+**Condition**: Skip if this is a brand-new setup with no previous backup. Instead, use
+`env init` to bootstrap `.env` files from `.env.example` templates:
+
+```bash
+apps/rhino-cli/scripts/rhino-bin.sh env init
+```
+
+This creates `.env` files from all `.env.example` templates in `infra/dev/`. Use `--force`
+to overwrite existing files.
+
+**Success criteria**: Restored files appear in their original app directories (e.g.,
+`apps/ayokoding-www/.env.local`, `apps/organiclever-be/.env`).
+
+**On failure**: If no backup exists, copy `.env.example` to `.env` in each app you plan to
+work on and fill in the required values.
+
+## 11.4 Run doctor to verify all tools
+
+```bash
+npm run doctor
+```
+
+**Success criteria**: All tools show `ok` status. No `missing` entries.
+
+**On failure**: Review doctor output. Each missing tool maps to one of the phases above.
+Install the missing tool and re-run doctor.

@@ -1,6 +1,7 @@
 ---
 title: "Specs Workflows"
 description: Workflows for checking that specifications remain coherent, complete, and actionable
+when_to_use: Use when routing to a workflow that validates specs/ structural completeness, accuracy, or cross-spec coherence.
 category: explanation
 subcategory: workflows
 tags: []
@@ -33,7 +34,7 @@ These workflows define **WHEN and HOW to validate specifications**, orchestratin
 
 ## Workflows
 
-- [Specs Validation](./specs-quality-gate.md) - Validate explicitly listed specs/ folders for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness. Supports four strictness modes (lax, normal, strict, ocd)
+- [specs-quality-gate](./specs-quality-gate.md) — Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings. Use after creating or restructuring spec areas, before major spec refactors, after bulk feature-file changes, or after adding a new app/library to the monorepo.
 
 ## Related Documentation
 

@@ -35,7 +35,7 @@ provider case references only.
 4. **Replace remote state.** Verify the rewritten objects contain neither the secret nor its exposed
    file/path representation, force-push affected refs with `--force-with-lease`, and delete
    contaminated remote branches and tags. The exception in
-   [Git Push Safety](../../../development/workflow/git-push-safety.md#secret-exposure-history-remediation-exception)
+   [Git Push Safety](../../../development/workflow/git-push-safety/03-rule.md#secret-exposure-history-remediation-exception)
    authorizes only these necessary lease-protected pushes; never use `--no-verify`.
 5. **Replace the PR and complete external cleanup.** Close the contaminated PR, open a replacement PR
    from clean history, and run its normal required checks. Request provider-side purge of cached PR

@@ -8,6 +8,7 @@ tags:
   - purpose
   - beavernest
 created: 2026-07-31
+when_to_use: Use when orienting to why BeaverNest exists as a product, or checking how it relates to the wider Open Sharia Enterprise ecosystem vision.
 ---
 
 # BeaverNest Vision

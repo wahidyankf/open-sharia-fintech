@@ -1,0 +1,65 @@
+---
+title: "Examples"
+description: Worked pass/fail examples of the PR merge protocol - correct precondition-gated merges, premature merges, and a user-authorized gate bypass.
+category: explanation
+subcategory: development
+tags:
+  - pull-request
+  - merge
+  - quality-gates
+  - workflow
+  - merge-preconditions
+created: 2026-04-04
+when_to_use: Use as a reference when unsure whether a specific merge decision matches or violates this protocol.
+---
+
+# Examples
+
+## PASS: Correct agent behavior -- preconditions hold, `[AI]` merges
+
+```
+Agent: All five merge preconditions hold for PR #42:
+
+  (a) review route:   eligible, clean at cycle 2 of 7
+  (b) C/H/M:          0 / 0 / 0 outstanding
+  (c) branch vs main: up to date
+  (d) quality gates:  all green
+  (e) tester gates:   run, findings resolved
+
+Merging PR #42.
+```
+
+## FAIL: Incorrect agent behavior -- merging before the preconditions hold
+
+```
+Agent: I created PR #42 and CI is green. Merging now.
+[merges before the eligible route reaches a clean cycle -- precondition (a) unmet]
+```
+
+## FAIL: Incorrect agent behavior -- merging with failing gates
+
+```
+Agent: PR #42 has a failing lint check, but the rest passed.
+       Merging anyway to save time.
+[merges despite failing gate -- precondition (d) unmet]
+```
+
+## FAIL: Incorrect agent behavior -- carrying a bypass forward
+
+```
+User: [earlier] Merge PR #42 anyway despite specs:coverage.
+Agent: [later, different PR] Reusing that bypass to merge PR #43.
+```
+
+## PASS: User explicitly bypasses a gate
+
+```
+Agent: PR #42 has all gates passing except specs:coverage, which
+       failed because the new endpoint's Gherkin scenario is still
+       being drafted in a follow-up task.
+
+User: Merge it anyway, I will add the Gherkin scenario in the next commit.
+
+Agent: Understood. Merging PR #42 with your explicit approval to
+       bypass the specs:coverage gate for this instance.
+```

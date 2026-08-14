@@ -1,0 +1,41 @@
+---
+title: "Trustworthy Measurement — Rule 1: Prove the Command Ran"
+description: A timing harness reports elapsed time whether or not the measured command executed - assert exit code and output, not just duration, and watch for shell builtin-transform traps
+category: explanation
+subcategory: development
+tags:
+  - measurement
+  - benchmarking
+  - false-zero
+  - critical-path
+created: 2026-08-09
+when_to_use: Use before trusting any timing number from a benchmark harness or shell loop.
+---
+
+# Rule 1: Prove the Command Ran
+
+## 1. Prove the command ran before trusting its timing
+
+A timing harness reports elapsed time whether or not the thing being timed executed. Assert the
+**exit code and output** of the measured command, not just its duration.
+
+The failure is silent and reads as success. A `zsh` loop of the form
+
+```bash
+for c in "md links validate" "md mermaid validate"; do "$BIN" $c; done
+```
+
+does **not** word-split `$c` under `zsh` — the whole string arrives as one argument, every
+invocation exits immediately with `unrecognized subcommand`, and the harness reports ~3 ms per
+command. That is not a fast run; it is no run at all.
+
+This is the same family as the other builtin-transform traps recorded in this repo — `grep -L`
+exiting 0 on files-without-match, `ls` being `eza`-aliased and emitting OSC-8 hyperlinks into
+`xargs`, RTK rewriting `git diff` output. In each, a shell builtin quietly transforms the thing
+being measured and a false zero reads as a pass.
+
+**Do**: measure under `bash` with an explicit array or a `case`; loop N times and divide; assert
+`$?` is 0 and the output is non-empty before recording any duration.
+
+**Do not**: use `python3` (or any interpreter with a ~700 ms cold start) for timestamps around a
+sub-second command — the instrumentation swamps the subject.

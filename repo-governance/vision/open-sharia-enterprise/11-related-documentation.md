@@ -1,0 +1,20 @@
+---
+title: "Related Documentation (Open Sharia Enterprise Vision)"
+description: Links from the ecosystem vision to the principles, conventions, development, agent, and workflow layers it inspires
+category: explanation
+subcategory: vision
+tags:
+  - vision
+  - purpose
+  - islamic-enterprise
+created: 2025-12-24
+when_to_use: Use when navigating from the ecosystem vision to the layers it governs.
+---
+
+# Related Documentation
+
+- [Core Principles](../../principles/README.md) - How our principles serve this vision
+- [Conventions](../../conventions/README.md) - Documentation standards supporting the vision
+- [Development](../../development/README.md) - Development practices aligned with the vision
+- [AI Agents](../../../.claude/agents/README.md) - How automation serves our mission
+- [Workflows](../../workflows/README.md) - Processes supporting our goals

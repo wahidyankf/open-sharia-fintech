@@ -1,0 +1,87 @@
+---
+title: "Continuous Integration and Small, Incremental Changes"
+description: What runs on every push, the pre-push checklist, and how to break work into small, independently reviewable commits.
+category: explanation
+subcategory: development
+tags:
+  - trunk-based-development
+  - git
+  - workflow
+  - development
+  - continuous-integration
+created: 2025-11-26
+when_to_use: Use before pushing, to run the pre-push checklist, or when planning how to break a feature into small commits.
+---
+
+# Continuous Integration and Small, Incremental Changes
+
+## Continuous Integration
+
+**Every push triggers CI/CD** — on the PR under `*-to-pr` modes, and on `main` for direct pushes and after any merge:
+
+1. **Automated tests** run on every push
+2. **Build verification** ensures code compiles
+3. **Linting and formatting** checks pass
+4. **Deployment to staging** (optional, project-specific)
+
+**CI failure is a high priority**:
+
+- FAIL: **Never commit code that breaks CI**
+- **If CI fails**, fix immediately (highest priority)
+- **Broken `main` blocks everyone** - fix or revert
+
+**Pre-push checklist**:
+
+- [ ] All tests pass locally (`npm test`)
+- [ ] Linting passes (`npm run lint`)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Feature flags hide incomplete work
+- [ ] Commit message follows [Conventional Commits](../commit-messages.md)
+
+## Small, Incremental Changes
+
+**TBD requires breaking work into small chunks**:
+
+PASS: **Good incremental changes**:
+
+- Add a utility function (commit 1)
+- Add tests for the function (commit 2)
+- Use function in one component (commit 3)
+- Extend function for new use case (commit 4)
+
+FAIL: **Bad large changes**:
+
+- Rewrite entire authentication system in one commit
+- Implement 5 features together in one PR
+- Refactor + add features in same commit
+
+**Benefits of small changes**:
+
+- **Faster reviews**: Reviewing 50 lines vs 5000 lines
+- **Easier to revert**: If something breaks, revert is surgical
+- **Clearer history**: Each commit has single, clear purpose
+- **Reduced conflicts**: Less time diverged = fewer conflicts
+- **Earlier feedback**: Team sees your work immediately
+
+**How to break down work**:
+
+1. **Identify smallest deliverable**: What's the tiniest useful piece?
+2. **Commit that piece**: push it to the delivery target for the declared mode (the PR branch by default)
+3. **Repeat**: Build on top of previous work
+4. **Use feature flags**: Hide incomplete full features
+
+**Example - "Add user login" broken down**:
+
+```
+Commit 1: feat(auth): add User model with email field
+Commit 2: feat(auth): add password hashing utility
+Commit 3: feat(auth): add login endpoint (feature flag OFF)
+Commit 4: feat(auth): add login UI component (feature flag OFF)
+Commit 5: feat(auth): connect UI to endpoint (feature flag OFF)
+Commit 6: test(auth): add integration tests for login
+Commit 7: feat(auth): enable login feature flag in staging
+Commit 8: feat(auth): enable login feature flag in production
+Commit 9: refactor(auth): remove old login code and feature flag
+```
+
+Each commit is small, tested, and doesn't break `main`.

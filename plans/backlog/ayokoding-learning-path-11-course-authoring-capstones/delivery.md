@@ -146,7 +146,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
 - [ ] [AI] **Verify `ayokoding-learning-path-01-url-restructure` and `ayokoding-learning-path-02-schema-and-prerequisite-dag`
       are both archived to `done/`** — command:
       `git ls-files -- 'plans/done/*ayokoding-learning-path-01-url-restructure/README.md' 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md' | grep -c .`

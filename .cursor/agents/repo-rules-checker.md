@@ -72,7 +72,7 @@ list` and is verified by `gate validate`; flag embedded gate inventories and ret
    `Background` blocks and `Scenario Outline` `Examples` tables are exempt. `plans/done/` is exempt
    (immutable archive). Tracked `.feature` files belong to the deterministic
    `gherkin-keyword-cardinality` linter, not this step. Flag violations as **HIGH**. Step 7
-   sub-check 9 is the authoritative statement of this scope. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
+   sub-check 9 is the authoritative statement of this scope. See [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
 
 **Detection Methods**:
 
@@ -749,7 +749,7 @@ See [Governance Word-Budget Convention](../../repo-governance/conventions/struct
 
    **Scope note**: For plans in `plans/done/`, flag only CRITICAL and HIGH violations (historical accuracy). For plans in `plans/in-progress/` or `plans/backlog/`, flag all severity levels (actionable before execution).
 
-9. **Gherkin Keyword Cardinality (markdown fences)** (see [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule)):
+9. **Gherkin Keyword Cardinality (markdown fences)** (see [Acceptance Criteria Convention §Step-Keyword Cardinality](../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule)):
    - Scope: ` ```gherkin ` fences in `repo-governance/`, `docs/`, `.claude/skills/`, and active plans (`plans/in-progress/`, `plans/backlog/`); `plans/done/` is exempt (immutable archive). Tracked `.feature` files are covered by the deterministic `gherkin-keyword-cardinality` linter, NOT this step.
    - For each fence, group lines by `Scenario` and count primary `Given`/`When`/`Then` keyword lines (a primary keyword starts the trimmed line; `And`/`But`/`*` never count; `Background` blocks and `Scenario Outline` `Examples` tables are exempt).
    - Flag any scenario with more than one primary keyword of the same type — UNLESS the fence carries an explicit deliberate-example label (e.g. a `# NON-CONFORMING EXAMPLE — deliberate…` comment inside the fence), which exempts it.

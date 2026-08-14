@@ -1,0 +1,35 @@
+---
+title: "Tag Convention — Four-Dimension Scheme"
+description: Defines the four required project.json tag dimensions (type, platform, language, domain) and the special-case rules for Rust libs and tooling projects.
+category: explanation
+subcategory: development
+tags:
+  - nx
+  - targets
+  - project-json
+  - build
+  - scripts
+created: 2026-02-23
+when_to_use: Use when tagging a new project's project.json for the first time.
+---
+
+# Tag Convention — Four-Dimension Scheme
+
+Tags are the standard mechanism for attaching structured metadata to projects in `project.json`. Nx uses tags for boundary enforcement (`@nx/enforce-module-boundaries`), graph filtering (`nx graph --focus`), and `nx affected` scoping. Consistent tags across the workspace allow tooling to query by project kind, framework, language, or product domain without parsing project names.
+
+## Four-Dimension Scheme
+
+Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
+
+| Dimension | Prefix      | Allowed Values                                                             | Required                       | Purpose                                                       |
+| --------- | ----------- | -------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                                        | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `cli`, `nextjs`, `axum`, `playwright`                                      | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `ts`, `rust`, `dotnet`                                                     | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `crane`, `ose`, `organiclever`, `wahidyankf`, `tooling`, `ui` | Always                         | Business or product domain                                    |
+
+## Special Rules
+
+**Rust libs omit `platform:`**: A Rust library has no framework or runtime boundary — only a primary language. Declare `type:lib` and `lang:rust`; omit `platform:`.
+
+**Use `domain:tooling` for general-purpose utilities**: Projects that are not tied to a specific product domain (e.g., `rhino-cli`) use `domain:tooling`. Use a product domain tag only when the project belongs exclusively to that product.

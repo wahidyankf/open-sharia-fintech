@@ -164,7 +164,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
 - [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`

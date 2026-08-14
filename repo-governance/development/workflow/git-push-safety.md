@@ -1,6 +1,6 @@
 ---
 title: "Git Push Safety Convention"
-description: Practice requiring explicit user approval for every use of git push --force, --force-with-lease, or --no-verify, with no exceptions for AI agents or automation
+description: Requires explicit user approval for every git push --force, --force-with-lease, or --no-verify — no exceptions for AI agents or automation.
 category: explanation
 subcategory: development
 tags:
@@ -10,6 +10,7 @@ tags:
   - automation
   - human-approval
 created: 2026-03-30
+when_to_use: Use before git push --force, --force-with-lease, or --no-verify, or when auditing for a branch-protection bypass.
 ---
 
 # Git Push Safety Convention
@@ -28,223 +29,24 @@ approval as one on `origin main` under `worktree-to-origin-main` or `main-to-ori
 integration target changes what the approval prompt describes (a PR branch tip vs. the `main` tip); it
 does not change whether approval is required.
 
-## Principles Implemented/Respected
-
-This practice respects the following core principles:
-
-- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Force-push and hook-bypass operations alter remote history or skip quality gates. The consequences cannot be undone without coordination — they are exactly the kind of irreversible decision that demands human judgment before execution, not autonomous action by a machine.
-
-- **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: The need to force-push or bypass hooks is almost always a symptom of a deeper problem (diverged history, a failing check, a missing rebase). This convention redirects attention to the root cause rather than normalizing the shortcut as an acceptable routine action.
-
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Implicit permission — "the user approved a force-push earlier, so subsequent ones are also approved" — is the silent assumption this convention forbids. Each instance requires a fresh, visible confirmation so the risk is never hidden.
-
-## Conventions Implemented/Respected
-
-This practice implements/respects the following conventions:
-
-- **[Code Quality Convention](../quality/code.md)**: The pre-push hook runs `typecheck`, `lint`, and `test:quick` as mandatory quality gates. Using `--no-verify` bypasses these gates and must not be treated as a routine shortcut by agents or automation.
-
-- **[Commit Message Convention](./commit-messages.md)**: Conventional Commits format and the commit-msg hook work together to keep history accurate. Force-pushing rewrites that history; only the user can decide when that trade-off is justified.
-
-## Covered Operations
-
-The following operations require explicit, per-instance user approval:
-
-| Operation                       | Why it is destructive or safety-bypassing                                                                                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `git push --force`              | Overwrites the remote branch tip, permanently discarding any remote commits not present locally. Teammates lose pushed work without warning.                                                     |
-| `git push --force-with-lease`   | Safer than `--force` but still rewrites history. The lease check can silently succeed when a teammate's push arrived before the lease was refreshed, making it unreliable as a safety guarantee. |
-| `git push --no-verify`          | Skips all git hooks on the push side, bypassing `typecheck`, `lint`, and `test:quick` quality gates. Broken code can reach the remote and block CI.                                              |
-| Any combination of the above    | The risks compound; combined flags require the same explicit approval.                                                                                                                           |
-| Aliased or scripted equivalents | Any shell alias, npm script, Makefile target, or CI step that invokes the above flags is subject to the same rule. The mechanism does not change the requirement.                                |
-
-## Rule
-
-**AI agents and automation MUST NOT execute any of the covered operations autonomously**, except the
-lease-protected remote rewrites required by a confirmed secret-exposure incident. `--no-verify` is
-never part of that exception.
-
-For every invocation — without exception — the agent must:
-
-1. Stop before executing the command.
-2. Describe to the user exactly what the command is, why it is being considered, and what data or history may be affected.
-3. Wait for the user to provide explicit confirmation to proceed.
-4. Execute the command only after that confirmation is received.
-
-**Prior approval does not carry forward.** If the user approved a `git push --force` five minutes ago, that approval covers only that one execution. The next invocation starts from zero and requires a fresh confirmation.
-
-### Secret-exposure history-remediation exception
-
-When a secret is suspected or confirmed in committed history, do not use the normal approval flow to
-leave the exposure reachable. Follow the authoritative secret procedure, which requires all of the
-following before any rewrite:
-
-1. Contain and rotate the credential through its provider without reading, copying, or recording its
-   value in a plan, terminal transcript, PR comment, commit, or issue.
-2. Inventory every reachable affected ref: the branch and PR head, `main` or any other target branch,
-   tags, release branches, and all repository-owned mirrors or sibling refs that contain the exposed
-   commit. Preserve sanitized commit/ref evidence only.
-3. Coordinate the rewrite from an isolated incident worktree, protect non-contaminated concurrent
-   work, and rewrite each affected reachable ref with the approved secret-removal tool.
-4. Verify the replacement history contains no exposed path or value, force-push each rewritten ref
-   with `--force-with-lease`, delete contaminated remote branches/tags, and close the contaminated PR.
-5. Open a replacement PR from clean history, re-run its required checks, and request provider-side
-   cache/fork/PR-diff purge support where available. Record the limits: external clones, forks, and
-   third-party caches cannot be erased by this repository.
-
-This exception permits only the minimum `--force-with-lease` operations necessary for remediation;
-it does not permit `--force`, `--no-verify`, unrelated branch cleanup, or a merge before the clean
-replacement PR is verified.
-
-## Rationale
-
-### Why force-push is destructive
-
-`git push --force` replaces the remote branch tip with the local commit. Any commits that existed on the remote but not locally are discarded. Because git history is shared, this affects every teammate who has already pulled those commits. Recovering discarded commits requires them to use `git reflog` on their own machines — a manual, error-prone process that can result in permanent data loss if it is not performed quickly.
-
-`git push --force-with-lease` adds a lease check against the last-fetched remote tip. This reduces — but does not eliminate — the risk. The lease can silently succeed if the local fetch timestamp is stale or if a teammate pushed between the fetch and the push. From the perspective of safe automation, it remains a history-rewriting operation.
-
-### Why --no-verify is a safety bypass
-
-The pre-push hook exists specifically to prevent broken code from reaching the remote. It runs `typecheck`, `lint`, and `test:quick` for affected projects. Bypassing it with `--no-verify` removes the last automated barrier before CI. If broken code reaches the remote, CI fails for every contributor working from that branch, and reverting the push requires either a fix commit or another force-push. The problem compounds.
-
-### Why no carryover approval
-
-The state of a repository changes between operations. A force-push approved at 09:00 was approved in the context of what existed at 09:00. At 09:15 a teammate may have pushed new commits. Reusing the 09:00 approval at 09:15 would bypass the user's opportunity to reconsider in light of that change.
-
-### Legitimate use cases
-
-Force-push and hook-bypass operations are not always wrong. Common legitimate situations include:
-
-- Cleaning up a local branch before merging (amending commits, squashing, rebasing) when the branch has no other contributors — including a `worktree-to-pr` plan branch mid-review, where a `--force-with-lease` push after a rebase is common once review feedback lands.
-- Emergency hotfix where the pre-push hook is malfunctioning and the hook problem is being tracked separately.
-- CI automation that explicitly documents the force-push in workflow files and is reviewed as part of code review (for example, the `prod-ayokoding-www` deployment workflow — see [Trunk Based Development Convention](./trunk-based-development.md)).
-
-In every case, the decision requires human judgment about the specific context. An agent cannot reliably determine whether a force-push is safe without that context.
-
-## What Agents Must Do
-
-### Before proposing the operation
-
-Before even surfacing the question to the user, the agent should investigate whether the underlying problem can be solved without a destructive operation:
-
-- **For force-push**: Is there a non-rewriting alternative? Can the commits be reapplied cleanly with `git rebase` without rewriting shared history?
-- **For --no-verify**: Is the pre-push hook failure a real code quality problem or a hook infrastructure issue? If it is a real problem, fix the code rather than bypass the gate.
-
-### The approval prompt
-
-When no safe alternative exists, the agent presents a clear, complete description of the operation:
-
-```
-I need your explicit approval before running:
-
-  git push --force origin main
-
-What this will do: replace the remote 'main' tip with local commit abc1234.
-Remote commits not present locally: def5678 (pushed 12 minutes ago by the CI bot).
-Those commits will be unreachable from 'main' after this push.
-
-Do you want to proceed? (yes/no)
-```
-
-The prompt must include:
-
-- The exact command as it will be run.
-- What remote branch and commits will be affected.
-- Any commits that exist on the remote but not locally (if determinable).
-- An explicit yes/no question.
-
-### After approval
-
-Execute the command exactly as described. Do not modify the flags or target. If any parameter changes after approval is granted, stop and re-seek approval.
-
-## Examples
-
-### PASS: Correct agent behavior
-
-```
-Agent: I need your explicit approval before running:
-
-  git push --force-with-lease origin feature/auth
-
-Reason: the local branch was rebased onto main to resolve a conflict.
-Remote tip: abc1234. Local tip after rebase: def5678.
-The rebase replaces 3 commits with 3 rewritten equivalents.
-
-Do you want to proceed?
-
-User: yes
-
-Agent: Running git push --force-with-lease origin feature/auth...
-```
-
-### FAIL: Incorrect agent behavior — executing without approval
-
-```
-Agent: Rebasing is complete. Pushing with --force-with-lease.
-[runs git push --force-with-lease without asking]
-```
-
-### FAIL: Incorrect agent behavior — reusing prior approval
-
-```
-User: [earlier] Yes, go ahead with the force-push.
-Agent: [30 minutes later, different situation] Reusing your earlier approval
-       to run git push --force again.
-```
-
-### FAIL: Incorrect agent behavior — treating --no-verify as routine
-
-```
-Agent: The pre-push hook is taking too long. Running with --no-verify
-       to skip it and save time.
-[runs git push --no-verify without asking]
-```
-
-## Scope
-
-This rule applies to:
-
-- All AI agents defined in `.claude/agents/` and `.opencode/agents/`.
-- All automation scripts, npm scripts, Makefile targets, and shell helpers in the repository.
-- CI workflow steps, unless the workflow file is reviewed through the normal pull-request process and the force-push is explicitly documented in the workflow file itself.
-- Every delivery mode's push target: PR branches under `worktree-to-pr`/`main-to-pr`, and `origin main` under `worktree-to-origin-main`/`main-to-origin-main`.
-
-It does not apply to:
-
-- Normal `git push` without destructive flags to a ref the agent has no reason to believe is
-  protected — agents may run these autonomously, subject to the Post-Push Bypass Detection
-  obligation below.
-- `git commit --no-verify` — that is covered separately in the [Code Quality Convention](../quality/code.md) under "Bypassing Hooks".
-
-## Post-Push Bypass Detection
-
-A ruleset bypass cannot be pre-approved the way `--force` can: whether a given push will trigger one
-depends on server-side branch-protection rules and the pusher's bypass privileges, neither of which
-the agent can see in advance. The obligation is therefore post-hoc, not preventive.
-
-After every push, the agent MUST read the push output. If it contains bypass language — for example
-`Bypassed rule violations`, `bypassed branch protection`, or an equivalent GitHub ruleset-bypass
-notice — the push is not routine, even though no destructive flag was used:
-
-1. Stop treating the push as autonomous-and-done. Do not proceed to the next step as if the pushed
-   state passed its required checks.
-2. Report to the user, verbatim from the output, which required check or rule was bypassed.
-3. Record a written reason in the plan (or the session, if no plan exists) for why the underlying
-   check did not run or was not satisfied — the same standard [No Destructive Git
-   Operations](./no-destructive-git-operations.md#no-corner-cutting--root-cause-orientation-is-binding)
-   already requires for skipping a declared quality gate (see its "skipping a declared quality gate"
-   item). A bypassed required status check is exactly that case, discovered after the fact instead of
-   before it.
-4. Never treat "the push succeeded" as evidence the bypassed check would have passed.
+## Contents
+
+- [Principles and Conventions Implemented](./git-push-safety/01-principles-and-conventions-implemented.md) — Why this rule exists.
+- [Covered Operations](./git-push-safety/02-covered-operations.md) — The operations requiring per-instance approval.
+- [Rule](./git-push-safety/03-rule.md) — The core approval procedure and the secret-exposure exception.
+- [Rationale](./git-push-safety/04-rationale.md) — Why each operation is destructive and when it is legitimate.
+- [What Agents Must Do](./git-push-safety/05-what-agents-must-do.md) — Investigate, prompt, then execute.
+- [Examples](./git-push-safety/06-examples.md) — PASS and FAIL agent transcripts.
+- [Scope](./git-push-safety/07-scope.md) — What is and is not covered.
+- [Post-Push Bypass Detection](./git-push-safety/08-post-push-bypass-detection.md) — The post-hoc check for a bypassed branch-protection rule.
 
 ## Related Documentation
 
-- [No Destructive Git Operations Convention](./no-destructive-git-operations.md) — the written-reason
-  standard that Post-Push Bypass Detection's step 3 applies to a discovered ruleset bypass.
-- [Code Quality Convention](../quality/code.md) — Git hooks (Husky, lint-staged, pre-push) that `--no-verify` bypasses.
-- [Trunk Based Development Convention](./trunk-based-development.md) — Git workflow and the specific environment branches (`prod-ayokoding-www`, etc.) where CI-managed force-push is explicitly documented.
-- [Commit Message Convention](./commit-messages.md) — Conventional Commits format enforced by the commit-msg hook.
-- [Reproducible Environments Convention](./reproducible-environments.md) — Why deterministic, consistent operations matter across the team.
-- [Git Push Default Convention](./git-push-default.md) — The default integration target (a PR branch under `worktree-to-pr`) and the explicit direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`) that this convention complements for destructive operations.
-- [No Destructive Git Operations Convention](./no-destructive-git-operations.md) — The local-side companion. This convention governs destructive operations against the **remote** (force-push, hook bypass); that one governs destructive operations against the **local** shared machine (hard reset, recursive clean, force branch deletion, object-store pruning, forced worktree removal), plus the explicit-path staging and no-corner-cutting rules.
+- [No Destructive Git Operations Convention](../workflow/no-destructive-git-operations.md) — The
+  local-side companion covering hard reset, recursive clean, and forced worktree removal.
+- [Code Quality Convention](../quality/code.md) — Git hooks that `--no-verify` bypasses.
+- [Trunk Based Development Convention](../workflow/trunk-based-development.md) — CI-managed
+  force-push in environment branches.
+- [Commit Message Convention](../workflow/commit-messages.md) — Conventional Commits enforced by the commit-msg hook.
+- [Reproducible Environments Convention](../workflow/reproducible-environments.md) — Deterministic operations across the team.
+- [Git Push Default Convention](../workflow/git-push-default.md) — The default integration target this convention complements.

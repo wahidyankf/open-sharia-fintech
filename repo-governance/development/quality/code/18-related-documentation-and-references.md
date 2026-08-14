@@ -1,0 +1,35 @@
+---
+title: "Related Documentation and References"
+description: "Related conventions and external references."
+category: explanation
+subcategory: development
+tags:
+  - development
+  - code-quality
+  - prettier
+  - husky
+  - lint-staged
+  - git-hooks
+  - automation
+created: 2026-05-12
+when_to_use: "Use for a related convention or reference."
+---
+
+# Related Documentation and References
+
+## Related Documentation
+
+- [Commit Message Convention](../../workflow/commit-messages.md) - Detailed commit message rules
+- [No Machine-Specific Information in Commits](.././no-machine-specific-commits.md) - Practice prohibiting machine-specific paths and credentials from committed code
+- [Trunk Based Development](../../workflow/trunk-based-development.md) - Git workflow and branching strategy
+- [Git Push Safety Convention](../../workflow/git-push-safety.md) - Requires explicit per-instance user approval before any agent or automation runs `git push --force`, `--force-with-lease`, or `--no-verify`
+- [Nx Target Standards](../infra/nx-targets.md) - Canonical target names, `test:quick` composition rules, and caching configuration that the pre-push hook depends on
+- [Rust Unsafe Code Policy](../../../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md#unsafe-code-policy) - MUST clause: all OSE application Rust crates MUST use `#![forbid(unsafe_code)]` in every crate root (`lib.rs` and `main.rs`)
+- [Three-Level Testing Standard](.././three-level-testing-standard.md) - Mandatory unit/integration/E2E testing architecture for all projects; defines what `test:unit`, `test:integration`, and `test:e2e` must do at each level
+
+## References
+
+- [Prettier Documentation](https://prettier.io/docs/en/)
+- [Husky Documentation](https://typicode.github.io/husky/)
+- [lint-staged Documentation](https://github.com/lint-staged/lint-staged)
+- [Conventional Commits](https://www.conventionalcommits.org/)

@@ -30,7 +30,7 @@ available wherever a plan finds it easier.
   plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
   infrastructure state (Terraform state and similar) that exist only in the primary checkout — never
   in a worktree provisioned fresh from `origin/main` — per the
-  [secret- and state-dependent infra operations rule](../../../workflows/plan/plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
+  [secret- and state-dependent infra operations rule](../../../workflows/plan/plan-execution/14-enter-worktree-preconditions-and-work-branch.md#0-enter-the-designated-worktree-sequential-hard-gate).
   This is narrower than the general `.md`-only / explicit-go-ahead content restriction above: the
   carve-out is granted for the **infrastructure secrets/state reason specifically**, not for any
   `.md`-only plan-docs change or ad-hoc go-ahead. A non-IaC, plan-docs-only change in `ose-private`

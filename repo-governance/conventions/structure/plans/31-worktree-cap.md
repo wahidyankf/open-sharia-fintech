@@ -23,11 +23,11 @@ for the same repo within one plan is a defect. A plan touching **N** repositorie
 This caps a genuinely scarce shared resource: each worktree is a full checkout plus a converged
 polyglot toolchain (`npm install && npm run doctor -- --fix`), and on the same-machine assumption
 (other agents, engineers, and CI runners sharing this disk concurrently — see the
-[Agent Workflow Orchestration Convention](../../../development/agents/agent-workflow-orchestration.md#parallelism-budget))
+[Agent Workflow Orchestration Convention](../../../development/agents/agent-workflow-orchestration/06-operating-budgets-parallelism-budget.md))
 that setup cost is worth paying once per repo, not once per delivery unit.
 
 **What stays one-per-delivery-unit**: the **branch** and the **PR** — unchanged from
-[One Branch, One PR, One Delivery Unit](../../../workflows/plan/plan-planning.md#one-branch-one-pr-one-delivery-unit-hard-rule).
+[One Branch, One PR, One Delivery Unit](../../../workflows/plan/plan-planning/03-planning-granularity-and-one-branch-rule.md#one-branch-one-pr-one-delivery-unit-hard-rule).
 Only the **worktree** moves from a per-delivery-unit unit to a per-repository one.
 
 **Sequencing consequence**: because only one worktree exists per repo, delivery units that share a

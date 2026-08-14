@@ -328,7 +328,7 @@ maintain a live task list, marking in-progress/completed and adding discovered t
   contention. Response: keep the active goal, wait patiently (same 2-min cadence), check `gh run list
 --status=queued --status=in_progress` across repos or [github.com/wahidyankf](https://github.com/wahidyankf)
   before debugging code; never cancel the goal solely for contention. If no contention is found and the run is still stuck, rebase onto latest
-  `origin/main` and push to retrigger. See [Runner Contention section](./repo-governance/development/workflow/ci-monitoring.md#runner-contention-across-the-ose-repos-read-first)
+  `origin/main` and push to retrigger. See [Runner Contention section](./repo-governance/development/workflow/ci-monitoring/02-runner-contention-across-the-ose-repos.md#runner-contention-across-the-ose-repos-read-first)
 
 ## AI Agents
 

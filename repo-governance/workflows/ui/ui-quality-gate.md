@@ -1,6 +1,8 @@
 ---
 name: ui-quality-gate
 title: "ui-quality-gate"
+description: Validates UI component quality against frontend conventions and applies fixes iteratively until zero findings are confirmed twice.
+when_to_use: Use when auditing or fixing UI components for token compliance, accessibility, dark mode, and responsive design.
 goal: Validate UI component quality against frontend conventions, apply fixes iteratively until zero findings achieved
 termination: "Zero findings on two consecutive validations (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
@@ -47,108 +49,10 @@ outputs:
 
 **Purpose**: Validate UI component quality (token compliance, accessibility, component patterns, dark mode, responsive design), then apply fixes iteratively until all issues are resolved.
 
-## Execution Mode
+## Contents
 
-**Preferred Mode**: Agent Delegation — invoke `swe-ui-checker` and `swe-ui-fixer` via the Agent tool with `subagent_type` (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
-
-**Fallback Mode**: Manual Orchestration — execute workflow logic directly using Read/Write/Edit tools when Agent Delegation is unavailable.
-
-**How to Execute**:
-
-```
-User: "Run UI quality gate workflow for libs/web-ui/"
-User: "Run UI quality gate for apps/organiclever-app-web/src/components/ui/"
-```
-
-## Steps
-
-### Step 1: Initial Validation
-
-**Agent**: `swe-ui-checker`
-
-**Action**: Run full validation against all seven check dimensions (token compliance, accessibility, color contrast, component patterns, dark mode, responsive, anti-patterns).
-
-**Output**: Audit report in `generated-reports/swe-ui__{uuid}__{timestamp}__audit.md`
-
-### Step 2: Check for Findings
-
-**Action**: Count all findings from Step 1 report.
-
-**Routing**:
-
-- Zero findings → Go to Step 5 (Confirmation Check)
-- Findings exist → Go to Step 3
-
-### Step 3: Apply Fixes
-
-**Agent**: `swe-ui-fixer`
-
-**Action**: Process audit report, re-validate each finding, apply fixes where confidence is HIGH.
-
-**Rules**:
-
-- Re-read each file before fixing (may have changed)
-- Skip FALSE_POSITIVE findings
-- Skip MEDIUM confidence findings (flag for manual review)
-- Apply fixes in priority order: P0 first, then P1, P2, P3, P4
-
-### Step 4: Re-validate
-
-**Agent**: `swe-ui-checker`
-
-**Action**: Re-run validation scoped to files changed by Step 3.
-
-**Routing**:
-
-- Zero findings → Go to Step 5 (Confirmation Check)
-- Findings remain → Check iteration count
-  - Below max-iterations → Go to Step 3
-  - At max-iterations → Go to Step 6 (Finalization) with status "partial"
-
-### Step 5: Confirmation Check
-
-**Action**: Run one more validation to confirm zero findings (double-zero confirmation).
-
-**Routing**:
-
-- Still zero → Go to Step 6 with status "pass"
-- Findings appeared → Go to Step 3
-
-### Step 6: Finalization
-
-**Action**: Report final status.
-
-| Status  | Meaning                                           |
-| ------- | ------------------------------------------------- |
-| pass    | Zero findings confirmed on two consecutive checks |
-| partial | Some findings remain after max-iterations         |
-| fail    | Critical errors that could not be resolved        |
-
-## Safety Features
-
-- **Max iterations**: Default 7, prevents infinite loops
-- **Escalation**: Warning at iteration 5 — suggests manual review
-- **Convergence monitoring**: If finding count increases between iterations, pause and flag
-- **False-positive persistence**: Findings marked FALSE_POSITIVE are tracked and skipped in subsequent iterations
-
-## Example Usage
-
-```
-User: "Run UI quality gate for libs/web-ui/ in strict mode"
-
-AI: Invoking swe-ui-checker for libs/web-ui/...
-    Found 12 findings (3 HIGH, 5 MEDIUM, 4 LOW)
-    Invoking swe-ui-fixer with audit report...
-    Fixed 10 findings, 2 remaining (1 MEDIUM confidence, 1 FALSE_POSITIVE)
-    Re-validating...
-    Found 0 findings
-    Confirmation check: 0 findings
-    Status: PASS (2 iterations)
-```
-
-## Related Documentation
-
-- [swe-ui-checker](../../../.claude/agents/swe-ui-checker.md) — Validation agent
-- [swe-ui-fixer](../../../.claude/agents/swe-ui-fixer.md) — Fix application agent
-- [swe-ui-maker](../../../.claude/agents/swe-ui-maker.md) — Component creation agent
-- [Frontend Conventions](../../development/frontend/README.md) — Standards enforced by this workflow
+- [Execution Mode](./ui-quality-gate/01-execution-mode.md) — preferred/fallback execution, how to invoke.
+- [Steps](./ui-quality-gate/02-steps.md) — the six-step check-fix-recheck loop.
+- [Safety Features](./ui-quality-gate/03-safety-features.md) — the four loop safeguards.
+- [Example Usage](./ui-quality-gate/04-example-usage.md) — a worked end-to-end transcript.
+- [Related Documentation](./ui-quality-gate/05-related-documentation.md) — the checker/fixer/maker agents, frontend conventions.

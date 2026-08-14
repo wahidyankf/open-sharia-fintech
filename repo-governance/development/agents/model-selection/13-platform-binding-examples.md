@@ -1,0 +1,62 @@
+---
+title: "Platform Binding Examples"
+description: "Covers the Claude Code and Cursor model-ID mapping tables, tier collapse, and why glm-5.2 is the OpenCode default."
+category: explanation
+subcategory: development
+tags:
+  - ai-agents
+  - model-selection
+  - development
+  - standards
+created: 2025-11-23
+when_to_use: Use when translating a model tier to a concrete model ID for a specific harness.
+---
+
+# Platform Binding Examples
+
+Agents in the primary binding directory are auto-synced to the secondary binding directory by rhino-cli
+(`npm run generate:bindings`). The sync translates primary binding model aliases to
+secondary binding model IDs.
+
+## Model ID Mapping
+
+| Primary binding                                  | Secondary binding         | Capability notes                                                                   |
+| ------------------------------------------------ | ------------------------- | ---------------------------------------------------------------------------------- |
+| `model: opus` (thinking-grade)                   | `zai-coding-plan/glm-5.2` | Zhipu GLM via GLM Coding Plan primary provider; all tiers map to the same model ID |
+| omit (execution-grade inherit) / `model: sonnet` | `zai-coding-plan/glm-5.2` | Same model as thinking-grade (intentional full-tier collapse)                      |
+| `model: haiku` (fast)                            | `zai-coding-plan/glm-5.2` | Fast tier also collapses onto glm-5.2 via the primary provider                     |
+
+## Tier Collapse
+
+The primary binding has three tiers (planning-grade/thinking > execution-grade > fast). The secondary
+binding's `convert_model()` maps all three tiers to `zai-coding-plan/glm-5.2` via the GLM Coding Plan
+primary provider. The `opencode-go` provider remains configured in `.opencode/opencode.json` for
+`/models` roster access but is not used in agent tier mapping.
+
+Tier assignments govern behavior in primary binding sessions (the primary runtime, where `opus`
+genuinely resolves to a stronger model than `sonnet`). The secondary binding collapses every tier
+onto the same GLM Coding Plan model.
+
+## Why glm-5.2 as the Default
+
+`zai-coding-plan/glm-5.2` is the GLM Coding Plan primary provider model for all agent tiers.
+The `opencode-go` provider remains available for `/models` roster access. If the primary provider
+or model changes, update `convert_model()` in `apps/rhino-cli/src/application/agents/converter.rs`
+and re-run `npm run generate:bindings`.
+
+## Model ID Mapping (Claude Code → Cursor)
+
+| Primary binding                                  | Cursor binding | Capability notes                                                    |
+| ------------------------------------------------ | -------------- | ------------------------------------------------------------------- |
+| `model: opus` (thinking-grade)                   | `composer-2.5` | Full tier collapse — thinking collapses onto execution              |
+| omit (execution-grade inherit) / `model: sonnet` | `composer-2.5` | Same pin as thinking-grade (intentional full-tier collapse)         |
+| `model: haiku` (fast)                            | `composer-2.5` | Fast tier also collapses — avoids the 6× `composer-2.5-fast` toggle |
+
+**Prohibition**: `rhino-cli` must never emit `composer-2.5-fast` into `.cursor/agents/`. That slug
+is the priced-fast inference toggle this binding exists to avoid.
+
+## Cursor Full-Tier Collapse
+
+Every non-fast Claude alias resolves to `composer-2.5`. Unlike OpenCode (where fast maps to a
+lighter model), Cursor's fast toggle is a latency/price choice on identical weights — so haiku-grade
+agents trade hypothetical input-cost savings for deterministic first-party pinning off the fast tier.

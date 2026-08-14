@@ -1,6 +1,7 @@
 ---
 title: "UI Workflows"
 description: Orchestrated processes for UI component quality validation and remediation
+when_to_use: Use when routing to a workflow that audits or fixes UI component quality.
 category: explanation
 subcategory: workflows/ui
 tags:
@@ -17,9 +18,7 @@ Use these workflows when a UI component needs a repeatable quality pass. They co
 
 ## Available Workflows
 
-| Workflow                                | Purpose                                                                       | Agents Used                  | Complexity |
-| --------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------- | ---------- |
-| [UI Quality Gate](./ui-quality-gate.md) | Validate UI component quality and apply fixes iteratively until ZERO findings | swe-ui-checker, swe-ui-fixer | Medium     |
+- [ui-quality-gate](./ui-quality-gate.md) — Validates UI component quality against frontend conventions and applies fixes iteratively until zero findings are confirmed twice. Use when auditing or fixing UI components for token compliance, accessibility, dark mode, and responsive design.
 
 ## Related Documentation
 

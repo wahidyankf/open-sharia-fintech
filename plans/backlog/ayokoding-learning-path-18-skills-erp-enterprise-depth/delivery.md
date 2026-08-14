@@ -205,7 +205,7 @@ ACCT_GATE_C_BLOCKING_PLAN="ayokoding-learning-path-16-skills-accounting-sharia-e
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
 - [ ] [AI] All hard-blocking plans (17, 01, 02, 03, `vercel-function-cost-reduction`) merged to
       `origin/main` — run the loop in [§Depends-on](#depends-on-and-start-preconditions); acceptance:
       empty output.

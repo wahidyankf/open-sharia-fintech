@@ -1,6 +1,7 @@
 ---
 title: "Content Workflows"
 description: Workflows for creating, converting, and validating content in various formats
+when_to_use: Use when routing to a workflow that converts a source document to Markdown or validates conversion fidelity.
 category: explanation
 subcategory: workflows
 tags:
@@ -20,9 +21,7 @@ what changed.
 
 ## Workflows in This Family
 
-| Workflow                                            | Purpose                                                                                                           | Agents                                              | Complexity |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ---------- |
-| [pdf-to-md-quality-gate](pdf-to-md-quality-gate.md) | Convert PDF → verbatim Markdown, then validate fidelity iteratively until ZERO findings on two consecutive checks | pdf-to-md-maker, pdf-to-md-checker, pdf-to-md-fixer | Medium     |
+- [pdf-to-md-quality-gate](pdf-to-md-quality-gate.md) — Converts a PDF to verbatim Markdown and validates fidelity via Maker-Checker-Fixer until convergence. Use when converting a PDF to Markdown, or revalidating an existing PDF-derived Markdown file.
 
 ## When to Use These Workflows
 

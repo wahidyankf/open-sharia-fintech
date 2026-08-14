@@ -9,6 +9,7 @@ tags:
   - false-zero
   - critical-path
 created: 2026-08-09
+when_to_use: Use before any benchmark timing, CI metric, or measured number is used to justify a decision, a plan's remedy, or an acceptance-clause threshold.
 ---
 
 # Trustworthy Measurement
@@ -29,71 +30,10 @@ number is allowed to justify anything.
 - **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)** — a metric moving
   is not a cause; the component on the critical path is.
 
-## The Rules
+## Contents
 
-### 1. Prove the command ran before trusting its timing
-
-A timing harness reports elapsed time whether or not the thing being timed executed. Assert the
-**exit code and output** of the measured command, not just its duration.
-
-The failure is silent and reads as success. A `zsh` loop of the form
-
-```bash
-for c in "md links validate" "md mermaid validate"; do "$BIN" $c; done
-```
-
-does **not** word-split `$c` under `zsh` — the whole string arrives as one argument, every
-invocation exits immediately with `unrecognized subcommand`, and the harness reports ~3 ms per
-command. That is not a fast run; it is no run at all.
-
-This is the same family as the other builtin-transform traps recorded in this repo — `grep -L`
-exiting 0 on files-without-match, `ls` being `eza`-aliased and emitting OSC-8 hyperlinks into
-`xargs`, RTK rewriting `git diff` output. In each, a shell builtin quietly transforms the thing
-being measured and a false zero reads as a pass.
-
-**Do**: measure under `bash` with an explicit array or a `case`; loop N times and divide; assert
-`$?` is 0 and the output is non-empty before recording any duration.
-
-**Do not**: use `python3` (or any interpreter with a ~700 ms cold start) for timestamps around a
-sub-second command — the instrumentation swamps the subject.
-
-### 2. Measure the integrated path, not an isolated invocation
-
-A per-invocation benchmark does not predict its saving inside a batched or child-process execution
-model. Measure the path that actually runs in production before hard-gating a phase on the number.
-
-Worked example: `prettier` and `markdownlint-cli2` were benchmarked as standalone
-`npx --no -- <tool>` invocations (622 ms / 441 ms), yielding a projected ~250 ms per-tool saving and
-a `≤ 900 ms` acceptance clause. The real pre-commit path never paid that cost: the registry's
-commands were always bare, and the outer batch runner spawns `npx --no -- lint-staged` **once** for
-the whole batch, with both tools running as its children on a `node_modules/.bin`-inclusive `PATH`.
-The `npx` tax the benchmark measured was never being paid twice. Actual measured saving: −138 ms
-(−5.4 %), against a projection of ~500 ms — roughly 4× overstated.
-
-**The tell**: the benchmark and the production path differ in _how the process is spawned_. Whenever
-that is true, the isolated number is an upper bound at best.
-
-### 3. Establish the critical path before prescribing a wall-clock remedy
-
-Wall-clock in a fan-out DAG is a **max**, not a sum. It is completely insensitive to everything off
-the critical path, so any wall-clock remedy must first prove the component it changes is _on_ it.
-
-Worked example: a CI wall-clock p50 regression (974.5 s → 1,219 s) triggered a pre-authored remedy —
-"re-balance group composition." The per-job timeline showed the critical path was the TypeScript
-quality gate at 1,033 s, a job the topology change never touched, which had taken 1,030 s and
-1,018 s on the same branch _before_ the change. All gate groups finished ~13 minutes clear of the
-critical path. Re-balancing them could not have moved wall-clock by one second.
-
-The corollary: **sum-type and max-type metrics do not move together.** Runner-seconds (a sum) fell
-47.6 % in the very runs where wall-clock (a max) rose. A plan that treats both as symptoms of one
-cause will mis-diagnose whichever it reads second.
-
-### 4. A remedy written before anyone saw a timeline is a hypothesis
-
-Plans routinely pair a metric with a prescribed fix at authoring time. That pairing is a guess about
-which component will hold the number. Record it as a guess: when the gate fires, re-derive the
-component from the actual timeline before applying the prescribed remedy, and if they disagree, the
-timeline wins and the plan's remedy gets corrected in place rather than executed.
+- [Rule 1 — Prove the Command Ran](./trustworthy-measurement/01-rule-1-prove-the-command-ran.md) — the false-zero timing-harness trap and how to guard against it.
+- [Rules 2-4](./trustworthy-measurement/02-rules-2-to-4.md) — measure the integrated path, establish the critical path, and treat a pre-authored remedy as a hypothesis.
 
 ## Scope
 
@@ -104,9 +44,9 @@ in a plan, a gate, or a PR, it is in scope.
 
 ## Related Documentation
 
-- [Acceptance clauses must be falsifiable](../quality/plan-anti-hallucination.md#absence-and-completeness-claims-hard) — a target that
+- [Acceptance clauses must be falsifiable](../quality/plan-anti-hallucination/06-absence-and-completeness-claims-zero-result-search-evidence-part-1.md) — a target that
   cannot fail is not a target; these rules are how you keep it from failing for the wrong reason.
-- [Mechanize Cross-File Invariants](./mechanize-cross-file-invariants.md) — the same instinct
+- [Mechanize Cross-File Invariants](../practice/mechanize-cross-file-invariants.md) — the same instinct
   applied to rules rather than numbers.
 - [CI Monitoring](../workflow/ci-monitoring.md) — where CI figures come from and how to read a run.
 - [Evidence Capture](../quality/evidence-capture.md) — where a recorded measurement belongs.

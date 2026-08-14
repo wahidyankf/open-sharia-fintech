@@ -96,7 +96,7 @@ For every new component, create these files:
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
-- [Frontend Development Documentation](../../repo-governance/development/README.md#frontend-development-documentation) - Frontend governance overview
+- [Frontend Development Documentation](../../repo-governance/development/frontend/README.md) - Frontend governance overview
 
 **Related Agents**:
 

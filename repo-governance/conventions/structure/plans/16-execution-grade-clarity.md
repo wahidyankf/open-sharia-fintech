@@ -30,7 +30,7 @@ Plans are executed by execution-grade (sonnet-tier) agents, not planning-grade a
   feature-consuming / `playwright-bdd` binders are the only steps that keep a multi-scenario
   title list. `plan-checker` flags a multi-scenario behavior RED, or absent/non-verbatim inline
   Gherkin, as a **HIGH** finding. See
-  [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
+  [Gherkin-Tagged Delivery Steps](../../../development/workflow/test-driven-development/09-gherkin-tagged-delivery-steps.md#gherkin-tagged-delivery-steps).
 
 **HARD RULE**: `plan-checker` flags violations of this rule as HIGH severity. `plan-fixer` rewrites offending items with maximum detail.
 

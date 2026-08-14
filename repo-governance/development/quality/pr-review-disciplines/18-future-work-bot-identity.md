@@ -1,0 +1,36 @@
+---
+title: "Future Work: Bot Identity Gap"
+description: "The bot-identity and REQUEST_CHANGES gap, not yet resolved."
+category: explanation
+subcategory: development
+tags:
+  - pr-review
+  - governance
+  - agents
+  - quality-gates
+  - boundary-rules
+created: 2026-07-23
+when_to_use: "Use when investigating the bot-identity review gap."
+---
+
+# Future Work: Bot Identity and the REQUEST_CHANGES Gap
+
+## Future Work
+
+The discipline split, the cost- and noise-control mechanics, and the post-cutover monitoring plan
+above describe the pipeline as it stands today. Three items remain deliberately outside this
+convention's own scope — each depends on a decision, an infrastructure fact, or ongoing measurement
+that belongs in its own document rather than being folded into this convention's normative rules.
+
+### Bot Identity and the `REQUEST_CHANGES` Gap
+
+Only `pr-review-synthesis-maker` posts to the PR — through the GitHub Reviews API, as the sole poster
+of record; the nine specialists never post, they hand their raw findings to the coordinator. The
+coordinator authenticates as the PR author's own identity, and GitHub rejects a `REQUEST_CHANGES`
+review submitted against one's own pull request. Every blocking review — including one carrying a
+CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
+consumer that gates on STATE alone reads a blocked PR as unblocked while a CRITICAL finding sits open
+on it. This convention does not own closing that gap: provisioning a scope-minimal GitHub App or
+CI-scoped bot identity and rewiring the coordinator to authenticate as it is tracked in the
+[PR-review bot identity idea](../../../../plans/ideas/q2-not-urgent-important/pr-review-bot-identity.md), which owns the
+AI-attribution and formal `REQUEST_CHANGES` question until an org-level identity becomes available.

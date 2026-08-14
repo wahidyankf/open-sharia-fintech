@@ -76,7 +76,7 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
-- [Frontend Development Documentation](../../repo-governance/development/README.md#frontend-development-documentation) - Frontend governance overview
+- [Frontend Development Documentation](../../repo-governance/development/frontend/README.md) - Frontend governance overview
 
 **Related Agents**:
 

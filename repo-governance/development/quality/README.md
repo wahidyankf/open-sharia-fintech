@@ -5,82 +5,53 @@ category: explanation
 subcategory: development
 tags: []
 created: 2026-05-12
+when_to_use: Use to decide what evidence, test, or validation a change needs before it can be trusted.
 ---
 
 # Quality Development
 
-Use this section to decide what evidence a change needs before it can be trusted. It connects local checks, tests, and captured results to the quality of the product readers and users experience.
-
-## Purpose
-
-These standards define **HOW to maintain and validate quality**, covering automated code quality tools, repository validation methodologies, criticality and confidence level systems, and content preservation principles.
+Use this section to decide what evidence a change needs before it can be trusted. It connects
+local checks, tests, and captured results to the quality of the product readers and users
+experience.
 
 ## Scope
 
-**✅ Belongs Here:**
+**Belongs here:** code quality automation, validation methodologies, criticality/confidence
+level systems, content preservation, quality gate standards.
 
-- Code quality automation (Prettier, Husky)
-- Validation methodologies and patterns
-- Criticality and confidence level systems
-- Content preservation principles
-- Quality gate standards
-
-**❌ Does NOT Belong:**
-
-- Why quality matters (that's a principle)
-- Specific validation implementations (that's agents/)
-- Content writing standards (that's conventions/)
+**Does not belong:** why quality matters (a principle), specific validation implementations
+(agents/), content writing standards (conventions/).
 
 ## Documents
 
-- [Code Quality Convention](./code.md) - Automated code quality tools and git hooks (Prettier, Husky, lint-staged) for consistent formatting and commit validation
-- [Markdown Quality Convention](./markdown.md) - Standards for markdown linting and formatting using markdownlint-cli2 and Prettier for consistent markdown quality
-- [Cross-Language Lint Strictness](./cross-language-lint-strictness.md) - The uniform warning-and-above strictness threshold across shell (shellcheck), Dockerfiles (hadolint), GitHub Actions (actionlint), and F# (TreatWarningsAsErrors + G-Research analyzers + fantomas), enforced in both CI and local hooks
-- [Three-Level Testing Standard](./three-level-testing-standard.md) - Mandatory three-level testing architecture (unit/integration/E2E) for all projects: unit (all mocks + Gherkin specs for demo-be), integration (real PostgreSQL, no HTTP for demo-be; in-process mocking for others), E2E (full stack + Gherkin specs via Playwright)
-- [Content Preservation Convention](./content-preservation.md) - Principles and processes for preserving knowledge when condensing files and extracting duplications
-- [Criticality Levels Convention](./criticality-levels.md) - Universal criticality level system for categorizing validation findings (CRITICAL/HIGH/MEDIUM/LOW)
-- [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes (HIGH/MEDIUM/FALSE_POSITIVE)
-- [Repository Validation Methodology Convention](./repository-validation.md) - Standard validation methods and patterns for repository consistency checking
-- [No Machine-Specific Information in Commits](./no-machine-specific-commits.md) - Practice prohibiting absolute local paths, usernames, IP addresses, and environment-specific configuration from committed code
-- [Specs-Application Sync Convention](./specs-application-sync.md) - Bidirectional synchronization requirement between specs/ and application code in apps/ and libs/: C4 diagrams, Gherkin feature files, and specs READMEs must reflect actual architecture and behavior
-- [Manual Behavioral Verification Convention](./manual-behavioral-verification.md) - Practice requiring manual verification of UI features and API endpoints using Playwright MCP tools and curl after implementing changes
-- [Evidence Capture Convention](./evidence-capture.md) - Standards for capturing and organizing testing evidence (screenshots, curl outputs, console logs) in the plan's committed `evidence/` subfolder and inline in `delivery.md`
-- [Feature Change Completeness Convention](./feature-change-completeness.md) - Practice requiring all related specs, contracts, tests, and documentation to be updated as part of any feature change
-- [CI Blocker Resolution Convention](./ci-blocker-resolution.md) - Practice mandating that preexisting CI blockers are investigated at the root cause and fixed properly, never bypassed
-- [Plan Anti-Hallucination Convention](./plan-anti-hallucination.md) - Mandatory pre-write verification rituals, repo-grounding rule, refuse-on-uncertainty, confidence labels, anti-pattern catalog (AP-1 through AP-10), and specialized-executor annotation for AI agents authoring plan content
-- [User-Facing Delivery Hardening Convention](./user-facing-delivery-hardening.md) - Fifteen durable rules for planning, executing, verifying, and archiving user-facing feature work so design-parity and behavioral defects cannot ship past green gates (visual-parity gate before archival, name the design-system primitive, per-breakpoint responsive deliverables, value-bearing tests, mockup-colors-as-theme-tokens, deploy-config-is-code, checkbox lockstep, spec-aware exploratory retest before archival)
-- [Regression Test Mandate](./regression-test-mandate.md) - Blocking rule requiring every bug fix to land with a reproducing test in the same commit/PR; the bug-driven dual of Feature Change Completeness, covering all defect types (behavioral, visual, content, API)
-- [Live-Tester Systematic Coverage](./live-tester-systematic-coverage.md) - Six forcing-functions (shared-control matrix, URL round-trip, declared-invariant conformance, styling consistency audit, usability probes, recurrence critic) that convert sampling into enumeration for the three live-site tester agents and the web-ux-test-fixing-planning workflow
-- [Git Fixture Isolation Convention](./git-fixture-isolation.md) - Defense-in-depth mandate (six mandatory layers: capped discovery, explicit `GIT_DIR`, blanked identity/config, pre-write escape guard, exit-status checking, throwaway-clone-only diagnosis) for any test fixture that shells out to `git` to build throwaway repositories, so a fixture can never mutate the real repository
-- [Knowledge Capture Convention](./knowledge-capture.md) - Standards for the transient `learnings.md` running log accrued during plan execution, the open-ended principle-based triage matrix (including the code-routing downstream rule and destination-aware inline/backlog timing), the two mandatory safety gates (secret/sensitivity and repo-relevance), the mandatory + explicit "none" escape, and the anti-theater guardrails that keep the practice from becoming under- or over-capture theater
-- [PR Reviewer-Discipline Convention](./pr-review-disciplines.md) - Defines the nine PR-review specialist disciplines — including Type-soundness — and their owned/routed-to scope, the boundary tie-breaker rule (documented rule → governance, new tradeoff → architecture, domain-intent → correctness), seven grey-zone rulings, and the Cloudflare-derived cost- and noise-control mechanics (risk-tier fan-out, shared-context extraction, per-specialist `SUPPRESS` blocks, instruction-decay coverage) governing the specialist-plus-coordinator PR review pipeline
-
-## Companion Documents
-
-- [Anti-Patterns](./anti-patterns.md) - Common quality mistakes to avoid (with examples and corrections)
-- [Best Practices](./best-practices.md) - Recommended quality patterns and techniques
+- [Code Quality Convention](./code.md) — Automated code quality tools (Prettier, Husky, lint-staged, Commitlint) and git hooks. Use when configuring, debugging, or bypassing a code-quality git hook or formatter.
+- [Markdown Quality Standards](./markdown.md) — Automated markdown linting and formatting standards using Prettier and markdownlint-cli2. Use when checking markdown linting/formatting config, fixing a violation, or troubleshooting a gate.
+- [Cross-Language Lint Strictness](./cross-language-lint-strictness.md) — Uniform warning-and-above lint threshold across every language and artifact type. Use when adding, changing, or auditing a lint gate.
+- [Three-Level Testing Standard](./three-level-testing-standard.md) — Defines the three-level testing standard (unit, integration, E2E) for all projects. Use when scoping, writing, or reviewing a unit, integration, or E2E test.
+- [Content Preservation Convention](./content-preservation.md) — Principles and processes for preserving knowledge when condensing files. Use when condensing a file or extracting duplicated content.
+- [Criticality Levels Convention](./criticality-levels.md) — Universal criticality level system for categorizing validation findings. Use when a checker or fixer agent needs to classify a finding.
+- [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) — Universal confidence level system for fixer agents to assess and apply fixes. Use when a fixer agent needs to assess confidence before applying a fix.
+- [Repository Validation Methodology Convention](./repository-validation.md) — Standard validation methods and patterns for repository consistency checking. Use when writing or debugging a repository-wide validation check.
+- [No Machine-Specific Information in Commits](./no-machine-specific-commits.md) — Prohibits absolute local paths, usernames, IPs, and environment-specific config in committed code. Use when writing or fixing a commit with a machine-specific value.
+- [Specs-Application Sync Convention](./specs-application-sync.md) — Bidirectional sync requirement between specs/ and application code in apps/ and libs/. Use when a code change might require a matching specs/ update, or vice versa.
+- [Manual Behavioral Verification Convention](./manual-behavioral-verification.md) — Requires manual verification of UI features and API endpoints via Playwright MCP and curl. Use after implementing a UI or API change, before declaring it done.
+- [Evidence Capture Convention](./evidence-capture.md) — Standards for capturing testing evidence (screenshots, curl output, logs) in plan folders and delivery.md. Use when capturing, naming, or referencing testing evidence.
+- [Feature Change Completeness Convention](./feature-change-completeness.md) — Requires related specs, contracts, tests, and docs to update with any feature change. Use when landing a feature change and deciding what else it must update.
+- [CI Blocker Resolution Convention](./ci-blocker-resolution.md) — Preexisting CI blockers are investigated at the root cause and fixed, never bypassed. Use when a CI check fails and you need to resolve it without bypassing the gate.
+- [Plan Anti-Hallucination Convention](./plan-anti-hallucination.md) — Pre-write verification, repo-grounding, refuse-on-uncertainty, and confidence-labeling for plan content. Use when an AI agent authors or checks a plan claim.
+- [User-Facing Delivery Hardening Convention](./user-facing-delivery-hardening.md) — Sixteen rules so design-parity and behavioral defects cannot ship past green gates. Use when planning, executing, or archiving a user-facing feature plan.
+- [Regression Test Mandate](./regression-test-mandate.md) — Every bug fix must land with a reproducing test in the same commit/PR. Use when landing a bug fix and deciding what test it must include.
+- [Live-Tester Systematic Coverage](./live-tester-systematic-coverage.md) — Enumerate-not-sample forcing-functions for the live-site testers and web-ux-test-fixing-planning. Use when a live-site tester needs to enumerate coverage instead of sampling it.
+- [Git Fixture Isolation Convention](./git-fixture-isolation.md) — Defense-in-depth mandate for any test/fixture that shells out to git to build throwaway repos. Use when writing or reviewing such a fixture.
+- [Knowledge Capture Convention](./knowledge-capture.md) — Standards for capturing generalizable learnings during plan execution and routing them safely. Use when a plan surfaces a generalizable learning to capture or route.
+- [PR Reviewer-Discipline Convention](./pr-review-disciplines.md) — Defines the nine PR-review specialist disciplines and the boundary tie-breaker rule. Use when a PR-review specialist needs its owned scope, or a finding needs disposition.
+- [Anti-Patterns in Quality Development](./anti-patterns.md) — Catalog of eleven common quality-development anti-patterns. Use when reviewing a change for a common quality anti-pattern.
+- [Best Practices for Quality Development](./best-practices.md) — Catalog of ten actionable best practices for code quality and validation. Use when looking for a proven practice to apply.
 
 ## Related Documentation
 
-- [Development Index](../README.md) - All development practices
-- [Nx Target Standards](../infra/nx-targets.md) - How `test:unit`, `test:integration`, and `test:e2e` map to Nx targets and their caching rules
-- [BDD Spec-to-Test Mapping Convention](../infra/bdd-spec-test-mapping.md) - Gherkin spec consumption at each test level
-- [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) - Why automated quality matters
-- [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Quality workflow pattern
-- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
-
-## Principles Implemented/Respected
-
-This set of development practices implements/respects the following core principles:
-
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Code quality automation uses git hooks (Husky, Prettier, lint-staged) to enforce standards automatically before commits.
-
-- **[Documentation First](../../principles/content/documentation-first.md)**: Content preservation conventions ensure knowledge is preserved during file condensation and restructuring, treating documentation as essential.
-
-## Conventions Implemented/Respected
-
-This set of development practices respects the following conventions:
-
-- **[Content Quality Principles](../../conventions/writing/quality.md)**: Quality validation standards align with documentation quality requirements for active voice, accessibility, and proper structure.
-
-- **[Timestamp Format](../../conventions/formatting/timestamp.md)**: Quality reports and validation artifacts use standard UTC+7 timestamps for consistency and traceability.
+- [Development Index](../README.md) — All development practices.
+- [Nx Target Standards](../infra/nx-targets.md) — How test:unit/integration/e2e map to Nx targets.
+- [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) — Why automated quality matters.
+- [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) — Quality workflow pattern.
+- [Repository Architecture](../../repository-governance-architecture.md) — Six-layer governance model.

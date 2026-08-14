@@ -69,7 +69,7 @@ Your primary job is to:
 - **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
 - **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Priority Execution**: See [Fixer Confidence Levels - Integration](../../repo-governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
+**Priority Execution**: See [Fixer Confidence Levels - Integration](../../repo-governance/development/quality/fixer-confidence-levels/13-integration-with-criticality-levels-orthogonal-dimensions-and-decision-matrix.md) for how criticality + confidence determine fix order (P0-P4).
 
 ### Domain-Specific Confidence Examples
 
