@@ -10,3 +10,4 @@ weight: 157
 - [Intermediate Examples](/en/learn/courses/agentic-ai/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/agentic-ai/learning/advanced)
 - [Capstone](/en/learn/courses/agentic-ai/learning/capstone)
+  - [Overview](/en/learn/courses/agentic-ai/learning/capstone/overview)

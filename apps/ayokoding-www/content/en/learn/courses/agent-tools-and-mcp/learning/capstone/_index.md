@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/learn/courses/agent-tools-and-mcp/learning/capstone/overview)
+- [Capstone: Local Tool and MCP Boundary](/en/learn/courses/agent-tools-and-mcp/learning/capstone/overview)

@@ -10,3 +10,4 @@ weight: 159
 - [Intermediate Examples](/en/learn/courses/agent-tools-and-mcp/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/agent-tools-and-mcp/learning/advanced)
 - [Capstone](/en/learn/courses/agent-tools-and-mcp/learning/capstone)
+  - [Capstone: Local Tool and MCP Boundary](/en/learn/courses/agent-tools-and-mcp/learning/capstone/overview)

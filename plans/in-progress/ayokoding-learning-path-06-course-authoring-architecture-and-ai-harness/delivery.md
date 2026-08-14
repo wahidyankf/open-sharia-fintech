@@ -618,16 +618,16 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Phase 3 Gate
 
-- [ ] [AI] All 5 Cohort-2 bodies exist:
+- [x] [AI] All 5 Cohort-2 bodies exist:
       `for s in build-your-own-web-framework build-your-own-reactive-ui creating-ai-powered-apps agentic-ai browser-automation-with-cdp; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] Evals forward-link contract verified applied for both `creating-ai-powered-apps` and
+- [x] [AI] Evals forward-link contract verified applied for both `creating-ai-powered-apps` and
       `agentic-ai`; `agentic-ai`'s five-forward-link loop returns 0; no `agentic-ai` lesson implements
       a cluster primitive at build-your-own depth (DD-11 scope-guard held).
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
+- [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
+- [x] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
       deployed.
 
 > **Pause Safety**: the two AI on-ramp courses and the CDP course are live; the evals forward-link
@@ -734,20 +734,20 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Phase 4 Gate
 
-- [ ] [AI] All 5 Cohort-3 bodies exist:
+- [x] [AI] All 5 Cohort-3 bodies exist:
       `for s in the-agent-loop agent-tools-and-mcp agent-context-and-memory agent-permissions-and-sandboxing agent-orchestration-subagents-and-observability; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] All three Phase-1 contracts verified applied: the D9 citation loops return 0 for
+- [x] [AI] All three Phase-1 contracts verified applied: the D9 citation loops return 0 for
       `the-agent-loop`, `agent-tools-and-mcp`, and `agent-context-and-memory`; the D11 concept checks
       return 0 for `agent-tools-and-mcp`, `agent-context-and-memory`, and
       `agent-permissions-and-sandboxing`; the evals forward-link check returns 0 for
       `agent-orchestration-subagents-and-observability` (closing all three donor courses across
       Phases 3–4).
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] The Band-5 completion signal is recorded with all five fields complete and a resolvable
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
+- [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
+- [x] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] The Band-5 completion signal is recorded with all five fields complete and a resolvable
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
       deployed.
 
 > **Pause Safety**: the entire harness cluster is live; all 15 Band-5 bodies exist; the three course

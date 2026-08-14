@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/capstone/overview)
+- [Capstone: Observable Orchestrated Agent](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/capstone/overview)

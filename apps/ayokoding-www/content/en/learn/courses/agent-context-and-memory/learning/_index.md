@@ -6,4 +6,8 @@ weight: 159
 ---
 
 - [Overview](/en/learn/courses/agent-context-and-memory/learning/overview)
+- [Context Budget Examples](/en/learn/courses/agent-context-and-memory/learning/beginner)
+- [Compaction and Summarization](/en/learn/courses/agent-context-and-memory/learning/intermediate)
+- [Retrieval-Augmented Context](/en/learn/courses/agent-context-and-memory/learning/advanced)
 - [Capstone](/en/learn/courses/agent-context-and-memory/learning/capstone)
+  - [Overview](/en/learn/courses/agent-context-and-memory/learning/capstone/overview)

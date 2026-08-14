@@ -10,3 +10,4 @@ weight: 158
 - [Intermediate Examples](/en/learn/courses/the-agent-loop/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/the-agent-loop/learning/advanced)
 - [Capstone](/en/learn/courses/the-agent-loop/learning/capstone)
+  - [Overview](/en/learn/courses/the-agent-loop/learning/capstone/overview)

@@ -11,3 +11,4 @@ weight: 162
 - [Extensibility: Hooks, Skills, and TUI](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/extensibility-hooks-skills-and-tui)
 - [Observability and Eval Integration](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/observability-and-eval-integration)
 - [Capstone](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/capstone)
+  - [Capstone: Observable Orchestrated Agent](/en/learn/courses/agent-orchestration-subagents-and-observability/learning/capstone/overview)

@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/learn/courses/browser-automation-with-cdp/learning/capstone/overview)
+- [Capstone: Local CDP Automation Service](/en/learn/courses/browser-automation-with-cdp/learning/capstone/overview)

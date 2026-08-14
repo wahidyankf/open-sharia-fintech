@@ -10,3 +10,4 @@ weight: 156
 - [Intermediate Examples](/en/learn/courses/creating-ai-powered-apps/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/creating-ai-powered-apps/learning/advanced)
 - [Capstone](/en/learn/courses/creating-ai-powered-apps/learning/capstone)
+  - [Overview](/en/learn/courses/creating-ai-powered-apps/learning/capstone/overview)

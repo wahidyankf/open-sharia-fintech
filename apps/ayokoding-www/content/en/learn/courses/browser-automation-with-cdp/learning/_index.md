@@ -10,4 +10,4 @@ weight: 112
 - [Intermediate Examples](/en/learn/courses/browser-automation-with-cdp/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/browser-automation-with-cdp/learning/advanced)
 - [Capstone](/en/learn/courses/browser-automation-with-cdp/learning/capstone)
-  - [Overview](/en/learn/courses/browser-automation-with-cdp/learning/capstone/overview)
+  - [Capstone: Local CDP Automation Service](/en/learn/courses/browser-automation-with-cdp/learning/capstone/overview)
