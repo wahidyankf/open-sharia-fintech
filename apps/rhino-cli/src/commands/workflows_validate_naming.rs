@@ -72,7 +72,10 @@ fn workflows_validate_naming(repo_root: &str) -> std::result::Result<Vec<Violati
     Ok(violations)
 }
 
-/// Return sorted paths of workflow `.md` files in `root`, excluding `meta/` subdirs and `README.md`.
+/// Return sorted paths of workflow `.md` files in `root`, excluding `meta/`
+/// subdirs, `README.md`, and Split Pattern child directories (a directory
+/// whose name matches a sibling `<name>.md` workflow file — its `NN-*.md`
+/// children are relocated body content, not independently-named workflows).
 fn list_workflow_files(root: &Path) -> Vec<String> {
     if !root.exists() {
         return Vec::new();
@@ -82,6 +85,11 @@ fn list_workflow_files(root: &Path) -> Vec<String> {
         if e.file_type().is_dir() && e.path() != root {
             let name = e.file_name().to_string_lossy().to_string();
             if name == "meta" {
+                return false;
+            }
+            if let Some(parent) = e.path().parent()
+                && parent.join(format!("{name}.md")).is_file()
+            {
                 return false;
             }
         }
@@ -156,6 +164,19 @@ mod tests {
         std::fs::write(root.join("foo-bar.md"), "---\nname: foo-bar\n---\n").unwrap();
         let result = workflows_validate_naming(&tmp.path().to_string_lossy()).unwrap();
         assert!(result.iter().any(|v| v.kind == "type-suffix"));
+    }
+
+    #[test]
+    fn list_workflow_files_skips_split_pattern_children() {
+        let tmp = TempDir::new().unwrap();
+        let root = tmp.path().join("repo-governance/workflows/plan");
+        let split_dir = root.join("plan-execution");
+        std::fs::create_dir_all(&split_dir).unwrap();
+        std::fs::write(root.join("plan-execution.md"), "x").unwrap();
+        std::fs::write(split_dir.join("01-steps.md"), "x").unwrap();
+        let files = list_workflow_files(&root);
+        assert_eq!(files.len(), 1);
+        assert!(files[0].ends_with("plan-execution.md"));
     }
 
     #[test]
