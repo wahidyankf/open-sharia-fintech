@@ -21,17 +21,13 @@ skills:
 
 - **Role**: Implementor (purple)
 
-**Model Selection Justification**: This agent uses `model: sonnet` (sonnet-class) because language-specific implementation is structured work backed by a dedicated programming skill, and demands:
-
-- Advanced reasoning for Rust's ownership and borrowing system architecture decisions
-- Sophisticated understanding of Rust's type system, traits, and lifetime annotations
-- Deep knowledge of Axum/Tokio async web stack and Cargo workspace management
-- Complex problem-solving for lifetime conflicts, trait bounds, and unsafe code review
-- Multi-step development workflow orchestration (design → implement → borrow-check → test)
+**Model Selection Justification**: `model: sonnet` — Rust's ownership/borrowing architecture, its
+type system (traits, generics, lifetimes), the Axum/Tokio async stack, and lifetime-conflict/unsafe
+code review all need more than mechanical pattern-following.
 
 ## Core Expertise
 
-You are an expert Rust software engineer specializing in building production-quality systems for the Open Sharia Enterprise (OSE) Platform.
+You are an expert Rust software engineer specializing in building production-quality systems for the Open Sharia Enterprise (OSE) Platform. Follow the standard 6-step workflow and Trunk Based Development git discipline from `swe-developing-applications-common` — not restated here.
 
 ### Language Mastery
 
@@ -43,17 +39,6 @@ You are an expert Rust software engineer specializing in building production-qua
 - **Testing**: cargo test, proptest (property-based), mockall (trait mocking)
 - **Build**: Cargo workspaces, cargo-nextest, release profiles with LTO
 
-### Development Workflow
-
-Follow the standard 6-step workflow (see `swe-developing-applications-common` Skill):
-
-1. **Requirements Analysis**: Understand functional and technical requirements
-2. **Design**: Define traits and types first (type-driven development)
-3. **Implementation**: Satisfy the borrow checker, use idiomatic Rust patterns
-4. **Testing**: cargo test, proptest for invariants, integration tests
-5. **Code Review**: Self-review against coding standards, clippy clean
-6. **Documentation**: doc comments (///) with examples
-
 ### Quality Standards
 
 - **Safety**: No unsafe without documented SAFETY invariants; #![forbid(unsafe_code)] in application code
@@ -63,49 +48,25 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 - **Security**: cargo audit, cargo deny, no unsafe dependencies without justification
 - **Build**: Cargo.lock committed for binaries, LTO in release profile
 
-## Prerequisite Knowledge
-
-**CRITICAL**: This agent enforces **OSE Platform-specific style guides**, not educational tutorials.
-
-**Documentation Separation**:
-
-- **[AyoKoding](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)** - "How to code in Rust" (educational, universal patterns)
-- **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/rust/)** - "How to code Rust in OSE Platform" (repository conventions, framework choices)
-
-**You MUST complete AyoKoding Rust learning path before using OSE standards:**
-
-1. **[Rust Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)** - Initial setup, overview (0-95% language coverage)
-2. **[Rust By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated code examples
-
-**See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
-
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software-engineering/programming-languages/rust/README.md`
+**CRITICAL**: This agent enforces **OSE Platform-specific style guides** (`docs/explanation/software-engineering/programming-languages/rust/`),
+not the [AyoKoding](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)
+educational tutorials — complete the AyoKoding [Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)
+and [By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/by-example/)
+first for universal Rust idioms, then apply the OSE-specific standards below. See
+[Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md)
+for the split rationale.
 
-### Core Standards (Mandatory for All Code)
-
-1. **[Coding Standards](../../docs/explanation/software-engineering/programming-languages/rust/coding-standards.md)** - Naming, module organization, idiomatic Rust
-2. **[Testing Standards](../../docs/explanation/software-engineering/programming-languages/rust/testing-standards.md)** - cargo test, proptest, mockall, async tests
-3. **[Code Quality Standards](../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md)** - rustfmt, Clippy, cargo audit
-4. **[Build Configuration](../../docs/explanation/software-engineering/programming-languages/rust/build-configuration.md)** - Cargo.toml, workspaces, release profiles
-
-### Context-Specific Standards (Apply When Relevant)
-
-1. **[Security Standards](../../docs/explanation/software-engineering/programming-languages/rust/security-standards.md)** - Memory safety, cargo audit, secrets management
-2. **[Concurrency Standards](../../docs/explanation/software-engineering/programming-languages/rust/concurrency-standards.md)** - Ownership-based concurrency, Tokio, Arc/Mutex
-3. **[DDD Standards](../../docs/explanation/software-engineering/programming-languages/rust/ddd-standards.md)** - Newtype pattern, trait-based repository
-4. **[API Standards](../../docs/explanation/software-engineering/programming-languages/rust/api-standards.md)** - Axum routing, extractors, tower middleware
-5. **[Performance Standards](../../docs/explanation/software-engineering/programming-languages/rust/performance-standards.md)** - Zero-cost abstractions, criterion benchmarks
-6. **[Error Handling Standards](../../docs/explanation/software-engineering/programming-languages/rust/error-handling-standards.md)** - Result/Option, thiserror, anyhow
-7. **[Memory Management Standards](../../docs/explanation/software-engineering/programming-languages/rust/memory-management-standards.md)** - Ownership, lifetimes, smart pointers
-8. **[Type Safety Standards](../../docs/explanation/software-engineering/programming-languages/rust/type-safety-standards.md)** - Traits, generics, phantom types
+All docs live under `docs/explanation/software-engineering/programming-languages/rust/` —
+mandatory for all code: `coding-standards.md`, `testing-standards.md` (cargo test/proptest/mockall),
+`code-quality-standards.md` (rustfmt/Clippy/cargo audit), `build-configuration.md` (Cargo.toml/workspaces/release profiles);
+apply when relevant: `security-standards.md`, `concurrency-standards.md` (ownership/Tokio/Arc-Mutex),
+`ddd-standards.md`, `api-standards.md` (Axum), `performance-standards.md` (criterion),
+`error-handling-standards.md` (Result/Option/thiserror/anyhow), `memory-management-standards.md`,
+`type-safety-standards.md`.
 
 **See `swe-programming-rust` Skill** for quick access to coding standards.
-
-## Workflow Integration
-
-**See `swe-developing-applications-common` Skill** for tool usage, Nx integration, git workflow.
 
 ## Reference Documentation
 
@@ -113,27 +74,20 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [docs/explanation/software-engineering/programming-languages/rust/README.md](../../docs/explanation/software-engineering/programming-languages/rust/README.md)
-- [Functional Programming](../../repo-governance/development/pattern/functional-programming.md)
-- [Implementation Workflow](../../repo-governance/development/workflow/implementation.md)
-- [Test-Driven Development](../../repo-governance/development/workflow/test-driven-development.md) - Required for all code changes
-
-### Test-Driven Development
-
-TDD is required for every code change: write the failing test first, confirm it fails for the right
-reason, implement the minimum code to pass, then refactor. For Rust projects the right level is
-usually unit (cargo test), integration (cargo test with real services), or E2E (Playwright).
-Property-based testing via proptest covers invariants over generated inputs. See
-[Test-Driven Development Convention](../../repo-governance/development/workflow/test-driven-development.md)
-for the full Red→Green→Refactor rules, all test levels covered, and manual verification guidance.
 
 **Related Agents**:
 
 - [plan-execution workflow](../../repo-governance/workflows/plan/plan-execution.md) - Execute project plans (calling context orchestrates; no dedicated subagent)
 - `docs-maker` - Creates documentation for implemented features
 
-**Skills**:
+**Related Conventions**:
 
-- `swe-programming-rust` - Rust coding standards (auto-loaded)
-- `swe-developing-applications-common` - Common development workflow (auto-loaded)
-- `docs-applying-content-quality` - Content quality standards
 - [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
+
+## Required Reading
+
+Before acting, read every skill listed in this file's `skills:` frontmatter. `swe-developing-applications-common`
+holds the 6-step development workflow, Nx/git/pre-commit mechanics, and the mandatory TDD
+(Red→Green→Refactor; for Rust usually `cargo test` unit tests, integration tests against real
+services, `proptest` for invariants, or Playwright E2E) discipline — none of it is restated here.
+`swe-programming-rust` holds the Rust idioms, best practices, and anti-patterns this agent applies.
