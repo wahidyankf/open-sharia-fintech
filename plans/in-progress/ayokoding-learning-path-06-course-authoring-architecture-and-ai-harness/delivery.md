@@ -575,13 +575,13 @@ pipeline concurrently through review, bounded by the cap.
 > **Ordering constraint**: `agentic-ai` declares `creating-ai-powered-apps` a prerequisite, so
 > `creating-ai-powered-apps` is authored before (or in the same delivery sequence as) `agentic-ai`.
 
-- [ ] [AI] `build-your-own-web-framework` (By Example · Python; prereq `backend-essentials`,
+- [x] [AI] `build-your-own-web-framework` (By Example · Python; prereq `backend-essentials`,
       `networking-essentials`) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-reactive-ui` (By Example · TypeScript; prereq `advanced-frontend`) —
+- [x] [AI] `build-your-own-reactive-ui` (By Example · TypeScript; prereq `advanced-frontend`) —
       convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `creating-ai-powered-apps` (By Example · Python; use-an-LLM scope; prereq
+- [x] [AI] `creating-ai-powered-apps` (By Example · Python; use-an-LLM scope; prereq
       `backend-essentials`, `api-design`) — convention complete; checkers clean; **Phase 1 evals
       forward-link contract applied**:
       `grep -F -q 'evaluating-ai-systems-in-depth' "apps/ayokoding-www/content/en/learn/courses/creating-ai-powered-apps/overview.md"`
@@ -589,7 +589,7 @@ pipeline concurrently through review, bounded by the cap.
       Falsifiable both ways: exits 2 before this step (missing path) and exits 1 if the forward-link
       is later removed.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agentic-ai` (By Example · Python; survey + forward-links, no build-your-own depth; prereq
+- [x] [AI] `agentic-ai` (By Example · Python; survey + forward-links, no build-your-own depth; prereq
       `creating-ai-powered-apps`) — convention complete; checkers clean; **Phase 1 evals
       forward-link contract applied**:
       `grep -F -q 'evaluating-ai-systems-in-depth' "apps/ayokoding-www/content/en/learn/courses/agentic-ai/overview.md"`
@@ -611,7 +611,7 @@ pipeline concurrently through review, bounded by the cap.
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `browser-automation-with-cdp` (By Example · Python/CDP; prereq `just-enough-python`,
+- [x] [AI] `browser-automation-with-cdp` (By Example · Python/CDP; prereq `just-enough-python`,
       `networking-essentials`) — convention complete; checkers clean; `remotebrowser` named only as
       an illustrative pickup, never a required dependency.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
@@ -628,7 +628,6 @@ pipeline concurrently through review, bounded by the cap.
 - [x] [AI] Catalog rows added; generated `<COURSES>_index.md` is verified by `npm exec nx run ayokoding-www:validate-indexes`.
 - [x] [AI] Zero manifest files touched.
 - [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 9.
-      deployed.
 
 > **Pause Safety**: the two AI on-ramp courses and the CDP course are live; the evals forward-link
 > contract holds for both donor courses authored so far. Safe to stop. To resume: re-run the 5-course
@@ -643,14 +642,14 @@ pipeline concurrently through review, bounded by the cap.
 > phase applies the three contracts Phase 1 locked** (evals forward-link, D9 naming/citation, D11
 > concept additions), by construction.
 
-- [ ] [AI] `the-agent-loop` (By Example · Python; prereq `agentic-ai`) — convention complete;
+- [x] [AI] `the-agent-loop` (By Example · Python; prereq `agentic-ai`) — convention complete;
       checkers clean; **Phase 1 D9 citation contract applied**: a harness-engineering naming/lineage
       line is present citing Anthropic (2025-11-26) and Böckeler/Thoughtworks (2026-02-17),
       presenting the containment dispute as unresolved — no rename. Acceptance:
       `for w in "harness engineering" "2025-11-26" "2026-02-17"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/the-agent-loop/overview.md" || echo "MISSING $w"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-tools-and-mcp` (By Example · Python; prereq `the-agent-loop`) — convention
+- [x] [AI] `agent-tools-and-mcp` (By Example · Python; prereq `the-agent-loop`) — convention
       complete; checkers clean; **Phase 1 D9 + D11 contracts applied**: the harness-engineering
       citation line is present, and concept coverage includes **tool-count degradation** (Berkeley
       Function-Calling Leaderboard + the GeoEngine 46-vs-19-tool evidence) **and** **tool-result
@@ -658,7 +657,7 @@ pipeline concurrently through review, bounded by the cap.
       `for w in "harness engineering" "tool-count" "token efficiency"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/agent-tools-and-mcp/overview.md" || echo "MISSING $w"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-context-and-memory` (Annotated-concept · Python; prereq `the-agent-loop`) —
+- [x] [AI] `agent-context-and-memory` (Annotated-concept · Python; prereq `the-agent-loop`) —
       convention complete; checkers clean; **Phase 1 D9 + D11 contracts applied**: a
       context-engineering naming/lineage line is present citing Lütke (2025-06-19), Karpathy
       (2025-06-25), Willison (2025-06-27), and Anthropic's Effective Context Engineering methodology;
@@ -667,14 +666,14 @@ pipeline concurrently through review, bounded by the cap.
       `for w in "context engineering" "2025-06-19" "2025-06-25" "2025-06-27" "prefix"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/agent-context-and-memory/overview.md" || echo "MISSING $w"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `agent-permissions-and-sandboxing` (By Example · Python; prereq `the-agent-loop`) —
+- [x] [AI] `agent-permissions-and-sandboxing` (By Example · Python; prereq `the-agent-loop`) —
       convention complete; checkers clean; **Phase 1 D11 contract applied**: concept coverage
       includes the **train-vs-production permission asymmetry**, framed as a risk distinction, not a
       capability distinction. Acceptance:
       `grep -F -q -i "permission asymmetry" "apps/ayokoding-www/content/en/learn/courses/agent-permissions-and-sandboxing/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-orchestration-subagents-and-observability` (Annotated-concept · Python; prereq
+- [x] [AI] `agent-orchestration-subagents-and-observability` (Annotated-concept · Python; prereq
       `agent-tools-and-mcp`, `agent-context-and-memory`) — convention complete; checkers clean;
       **Phase 1 evals forward-link contract applied**:
       `grep -F -q 'evaluating-ai-systems-in-depth' "apps/ayokoding-www/content/en/learn/courses/agent-orchestration-subagents-and-observability/overview.md"`
@@ -695,7 +694,7 @@ pipeline concurrently through review, bounded by the cap.
 
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 
-- [ ] [AI] **Record the Band-5 completion signal.** `GROW_MANIFESTS` for this band = the three
+- [x] [AI] **Record the Band-5 completion signal.** `GROW_MANIFESTS` for this band = the three
       software-engineer-role manifests **plus**
       `<MANIFESTS>careers/immediately-effective/ai-engineer.json` (this band lands 8 of the 9
       courses that manifest walks — the 9th, `capstone-build-your-own-coding-agent`, lands in
