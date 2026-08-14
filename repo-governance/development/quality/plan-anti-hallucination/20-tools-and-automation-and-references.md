@@ -37,8 +37,8 @@ when_to_use: "Use to locate the automated enforcement."
 
 **Agents:**
 
-- [`plan-maker`](../../../../.claude/agents/plan-maker.md), [`plan-checker`](../../../../.claude/agents/plan-checker.md), [`plan-fixer`](../../../../.claude/agents/plan-fixer.md), [`plan-execution-checker`](../../../../.claude/agents/plan-execution-checker.md) — the four agents this convention governs.
-- [`web-researcher`](../../../../.claude/agents/web-researcher.md) — research primitive.
+- [`plan-maker`](../../../../.claude/agents/plan/plan-maker.md), [`plan-checker`](../../../../.claude/agents/plan/plan-checker.md), [`plan-fixer`](../../../../.claude/agents/plan/plan-fixer.md), [`plan-execution-checker`](../../../../.claude/agents/plan/plan-execution-checker.md) — the four agents this convention governs.
+- [`web-researcher`](../../../../.claude/agents/web/web-researcher.md) — research primitive.
 
 **Workflows:**
 

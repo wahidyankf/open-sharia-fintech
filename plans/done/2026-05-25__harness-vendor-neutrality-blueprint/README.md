@@ -453,5 +453,5 @@ After this plan lands, the blueprint is maintained by:
 - [Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md)
 - [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)
 - [Harness Compatibility Quality Gate](../../../repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md)
-- [repo-harness-compatibility-checker](../../../.claude/agents/repo-harness-compatibility-checker.md)
-- [repo-harness-compatibility-fixer](../../../.claude/agents/repo-harness-compatibility-fixer.md)
+- [repo-harness-compatibility-checker](../../../.claude/agents/repo/repo-harness-compatibility-checker.md)
+- [repo-harness-compatibility-fixer](../../../.claude/agents/repo/repo-harness-compatibility-fixer.md)

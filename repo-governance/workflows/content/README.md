@@ -32,9 +32,9 @@ what changed.
 
 ## Agents Used
 
-- **[pdf-to-md-maker](../../../.claude/agents/pdf-to-md-maker.md)** — Converts PDF to verbatim Markdown (text-based and image-only via OCR)
-- **[pdf-to-md-checker](../../../.claude/agents/pdf-to-md-checker.md)** — Validates Markdown fidelity against source PDF
-- **[pdf-to-md-fixer](../../../.claude/agents/pdf-to-md-fixer.md)** — Applies validated fixes from checker audit
+- **[pdf-to-md-maker](../../../.claude/agents/pdf-to-md/pdf-to-md-maker.md)** — Converts PDF to verbatim Markdown (text-based and image-only via OCR)
+- **[pdf-to-md-checker](../../../.claude/agents/pdf-to-md/pdf-to-md-checker.md)** — Validates Markdown fidelity against source PDF
+- **[pdf-to-md-fixer](../../../.claude/agents/pdf-to-md/pdf-to-md-fixer.md)** — Applies validated fixes from checker audit
 
 ## Default Behavior
 

@@ -42,5 +42,5 @@ Scenario: The user declines at the promotion checkpoint
 - [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) — the two-pager format and the deferred deep prior-art rule.
 - [plan-planning workflow](../plan-planning.md) — invoked in Phase 4 with `target-stage=backlog`.
 - [plan-execution workflow](../plan-execution.md) — runs the plan later, after promotion to `in-progress/`.
-- [web-researcher Agent](../../../../.claude/agents/web-researcher.md) — Phase 2 deep prior-art survey.
+- [web-researcher Agent](../../../../.claude/agents/web/web-researcher.md) — Phase 2 deep prior-art survey.
 - [Knowledge Capture Convention](../../../development/quality/knowledge-capture.md) — routes future-work learnings into `plans/ideas/` as two-pagers this workflow later promotes.

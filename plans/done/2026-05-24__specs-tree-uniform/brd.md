@@ -8,7 +8,7 @@ so that:
 
 1. The four `rhino-cli specs validate-*` Nx targets succeed across the full repo without per-app
    exemptions or `--apps` scoping workarounds. [Repo-grounded — verified in
-   [specs-checker.md §Drift Detection](../../../.claude/agents/specs-checker.md), lines 213–229]
+   [specs-checker.md §Drift Detection](../../../.claude/agents/specs/specs-checker.md), lines 213–229]
 2. The root `specs/README.md` is accurate for new contributors and PMs landing on GitHub —
    no documented layout contradicts the on-disk tree.
 3. Specs-aware automation (`rhino-cli ddd bc/ul`, `spec-coverage`, pre-push validators)

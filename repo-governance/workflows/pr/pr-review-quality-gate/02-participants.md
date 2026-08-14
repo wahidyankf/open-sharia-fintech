@@ -17,8 +17,8 @@ specialist's full charter, owned scope, and routing rules.
 the empty set — no specialist fans out. `pr-review-synthesis-maker` does not sit idle in this
 branch; it performs one consolidated generalist pass itself in place of the fan-out and originates
 findings directly, the single explicit carve-out to its otherwise-transform-only charter (see
-[`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review-synthesis-maker.md) and
-[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/agents/pr-review-scout-maker.md#trivial-tier-handoff-dd-7)).
+[`pr-review-synthesis-maker.md`'s Charter](../../../../.claude/agents/pr-review/pr-review-synthesis-maker.md) and
+[`pr-review-scout-maker.md`'s Trivial-Tier Handoff](../../../../.claude/skills/pr-review-scout-classification/reference/03-untrusted-input-and-output-contract.md#trivial-tier-handoff-dd-7)).
 
 - **`pr-review-scout-maker`** — pipeline stage 0, runs once at the start of each cycle before the
   specialist fan-out. Owns risk-tier classification and specialist-set selection (D12) and
@@ -30,7 +30,7 @@ findings directly, the single explicit carve-out to its otherwise-transform-only
   `pr-review-types-maker` and `pr-review-integrity-maker` from a given cycle when their own declared
   artifact class (typed-language files; test/CI-workflow files, respectively) is verifiably absent
   from that cycle's current diff — see
-  [`pr-review-scout-maker.md`'s Content-Type Applicability Filter](../../../../.claude/agents/pr-review-scout-maker.md#risk-tier-classification--specialist-set-selection-d12).
+  [`pr-review-scout-maker.md`'s Content-Type Applicability Filter](../../../../.claude/skills/pr-review-scout-classification/reference/01-risk-tier-and-specialist-selection.md#risk-tier-classification--specialist-set-selection-d12).
   Each fanned-out specialist reads the full PR context (diff + originating plan/issue) and emits raw,
   discipline-scoped findings; none posts to GitHub directly — every specialist's findings feed
   `pr-review-synthesis-maker`. Defined at `.claude/agents/pr-review-<discipline>-maker.md`:

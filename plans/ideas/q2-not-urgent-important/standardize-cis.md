@@ -25,7 +25,7 @@ drift accumulates on top of a mostly-standardized baseline.
   the bulk of CI drift; this idea audits only its residual. [toolchain-parity](../../done/2026-06-13__standardize-repo-toolchain-parity/README.md)
 - **lint-safety-parity plan (done)** — companion parity work also folded into the standardized baseline.
   [lint-safety-parity](../../done/2026-06-12__lint-safety-parity/README.md)
-- **ci-checker** — the CI-standards validator agent that performs the residual audit. [ci-checker agent](../../../.claude/agents/ci-checker.md)
+- **ci-checker** — the CI-standards validator agent that performs the residual audit. [ci-checker agent](../../../.claude/agents/general/ci-checker.md)
 
 ## Proposed direction (sketch)
 

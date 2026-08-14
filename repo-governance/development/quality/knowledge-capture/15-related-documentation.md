@@ -30,9 +30,9 @@ when_to_use: "Use for a related plan or safety-gate convention."
   the secret/sensitivity gate inherits.
 - [Plan Execution Workflow](../../../workflows/plan/plan-execution.md) — Step 2 running-log capture and
   the Step 8 Knowledge Capture phase before archival.
-- [plan-maker](../../../../.claude/agents/plan-maker.md) — emits the Knowledge Capture phase and
+- [plan-maker](../../../../.claude/agents/plan/plan-maker.md) — emits the Knowledge Capture phase and
   `learnings.md` scaffold into new plans.
-- [plan-checker](../../../../.claude/agents/plan-checker.md) — flags silent absence of the phase.
-- [plan-execution-checker](../../../../.claude/agents/plan-execution-checker.md) — blocks archival
+- [plan-checker](../../../../.claude/agents/plan/plan-checker.md) — flags silent absence of the phase.
+- [plan-execution-checker](../../../../.claude/agents/plan/plan-execution-checker.md) — blocks archival
   until routing and both safety gates are complete.
-- [plan-fixer](../../../../.claude/agents/plan-fixer.md) — scaffolds a missing phase.
+- [plan-fixer](../../../../.claude/agents/plan/plan-fixer.md) — scaffolds a missing phase.

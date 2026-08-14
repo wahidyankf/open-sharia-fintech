@@ -110,5 +110,5 @@ but it has three gaps:
 - [apps/rhino-cli/src/application/repo_governance/agents_md_size.rs](../../../apps/rhino-cli/src/application/repo_governance/agents_md_size.rs) — the existing single-file gate being generalized
 - [.husky/pre-push](../../../.husky/pre-push) — the changed-path-gated hook this plan extends
 - [repo-rules-quality-gate workflow](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md) — Step 6 / preflight integration
-- [.claude/agents/repo-rules-checker.md](../../../.claude/agents/repo-rules-checker.md) — Step 6 "AGENTS.md Size Check" being extended
+- [.claude/agents/repo-rules-checker.md](../../../.claude/agents/repo/repo-rules-checker.md) — Step 6 "AGENTS.md Size Check" being extended
 - [repo-governance/development/infra/nx-targets.md](../../../repo-governance/development/infra/nx-targets.md) — canonical Nx target names
