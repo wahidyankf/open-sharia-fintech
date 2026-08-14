@@ -9,8 +9,8 @@ concept additions) as its own Phase 1, so the courses that target them apply the
 construction rather than as a retrofit.
 
 > **This plan never edits a manifest file.** Every file under `<MANIFESTS>` belongs to
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-> and [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md),
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> and [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md),
 > the successor manifest-growth plans. This plan's only outbound artefact is the **Band-5 completion
 > signal** prepared during authoring and delivered with the terminal archival PR. See
 > [README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else)
