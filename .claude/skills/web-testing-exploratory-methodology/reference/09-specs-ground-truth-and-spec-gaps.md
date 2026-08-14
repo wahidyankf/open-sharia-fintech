@@ -1,41 +1,10 @@
-# How to Drive the Browser, and Specs as Ground Truth & Spec-Gap Detection
-
-## How to Drive the Browser
-
-Before browser-facing verification, discover the real-browser integrations installed on the machine
-and confirm which are healthy and callable in the current harness. Prefer Chrome/Chromium through
-Chrome DevTools MCP or Playwright MCP; if neither is available, use an equivalent installed
-browser-driving tool. Record the selected tool, any fallback, browser/version when available, and
-capability gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl
-inspection are useful baselines, but do not count as live-browser verification when a working browser
-integration exists.
-
-1. **Baseline (always available)** — `WebFetch` the target(s) for rendered HTML, meta, and link
-   discovery; `Bash curl -sS -D - -o /dev/null` for headers/redirects/TLS/status; `curl` each
-   discovered link for status codes; fetch `robots.txt`/`sitemap.xml`.
-2. **Interactive / visual / responsive (when the goal needs it)** — write a Playwright script to
-   `local-temp/` and run it via `npx playwright` to navigate, click, fill, resize to each breakpoint,
-   capture screenshots (compare to mockups), read console errors, and capture network failures.
-   Iterate the navigate/screenshot pass over EVERY supported locale × EVERY breakpoint. Save
-   screenshots that a finding cites to the backlog plan's `evidence/` subfolder (named
-   `phase-N-<description>-<locale>-<breakpoint>px.png` per the
-   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-temp/` — they become committed proof a developer can inspect. Run
-   `npx lighthouse <url> --output=json` for Core Web Vitals where available (save reports to
-   `evidence/`). Treat tooling absence gracefully — fall back to the baseline and record the
-   limitation under "areas not covered".
-3. **Ground-truth comparison** — `Read`/`Glob`/`Grep` the plan `assets/`, `specs/**`, source, and
-   i18n files to decide whether observed behaviour is a defect (diverges from intent) or expected.
-4. **Value correctness** — for any computed output, independently recompute or cross-check against
-   the spec; assert the _value_, not just its presence (Rule 5/12 of User-Facing Delivery Hardening).
-
-## Specs as Ground Truth & Spec-Gap Detection
+# Specs as Ground Truth & Spec-Gap Detection
 
 The repo's `specs/**` tree is the executable record of intended behaviour (`specs/apps/**` for apps,
 `specs/libs/**` for libraries). Treat it as a first-class ground truth alongside the design mockups —
 and treat the live site as evidence about what the specs _should_ say.
 
-### Compare live behaviour against existing specs
+## Compare live behaviour against existing specs
 
 1. **Locate the relevant features** — `Glob`/`Grep` `specs/apps/<target>/**` (and `specs/libs/**`
    when the target consumes a shared lib) for `.feature` files whose scenarios map to the URL(s) and
@@ -51,7 +20,7 @@ and treat the live site as evidence about what the specs _should_ say.
 3. **Cite the spec, not an assumption** — when a Gherkin scenario exists, the finding's "expected"
    MUST quote it; the spec outranks the agent's guess about correct behaviour.
 
-### Detect behaviours that should be added to the specs
+## Detect behaviours that should be added to the specs
 
 While touring the URL(s) / location, the agent continually observes behaviours that the existing
 `specs/**` do **not** describe. Each is a candidate **spec gap** — a scenario the specs ought to
