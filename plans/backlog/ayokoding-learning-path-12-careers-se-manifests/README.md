@@ -2,11 +2,7 @@
 
 ## Delivery amendment — one final PR and Plan 13 handoff
 
-This plan uses one branch and its sole PR in Phase 10, after verification and Knowledge Capture; the
-archival move, review cycle, CI, merge, and deploy are all in that final delivery. The former
-intermediate Plan 12→13 merge handoff is removed. Plan 13 may deliver its independent manifest
-first, then Plan 12 consumes that merged state for its four-manifest check before its final PR.
-Earlier per-manifest or delivery-boundary PR wording is superseded.
+This plan uses one branch and its sole PR in Phase 10, after verification and Knowledge Capture; the archival move, secret scan, local quality checks, PR quality gate, merge, and deploy are all in that final delivery. Plan 13 begins only after this plan merges, and carries its own later cross-manifest verification. Earlier per-manifest or delivery-boundary PR wording is superseded.
 
 > **Successor plan.** This plan and its sibling
 > [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
@@ -36,7 +32,7 @@ Three manifests ship here, in the DD-27 build order:
 
 1. `careers/interview-ready/software-engineer` — the architecture smoke test, published over
    already-live re-homed content. **Ships first** — its delivery unit merging is what unblocks the
-   sibling AI-manifest plan's own start (see [§The plan-12 / plan-13 coupling](#the-plan-12--plan-13-coupling-non-circular-by-construction)
+   sibling AI-manifest plan's own start (see [§The plan-12 / plan-13 coupling](#execution-handoff-to-plan-13)
    below).
 2. `careers/immediately-effective/software-engineer` — the build-app-first arc.
 3. `careers/fundamentally-strong/software-engineer` — the university-style theory-first arc.
@@ -67,53 +63,20 @@ is not part of any of the three checks above. So the split is **3 + 1**: this pl
 software-engineer manifests and every 3-way cross-manifest check; the sibling plan owns the
 AI-engineer manifest alone. **One check spans all four manifests** — see below.
 
-## The plan-12 / plan-13 coupling (non-circular by construction)
+## Execution handoff to plan 13
 
-One cross-manifest check — "a shared course names every path that includes it" — spans **all four**
-`careers/` manifests, so it cannot live entirely in either plan. It belongs in whichever plan finishes
-**last**. Per DD-27's locked build order (interview-ready ships first → the AI-engineer path is
-authoring priority #1 → immediately-effective/software-engineer → fundamentally-strong/software-engineer),
-this plan's fundamentally-strong phase is the last **manifest-authoring** phase to ship, and this
-plan's growth phase runs longest — so this plan finishes the whole four-manifest product last. **The
-four-manifest check therefore lives in this plan, as its own final phase**, run only after **both**
-this plan's own three manifests **and** the sibling AI-manifest plan are fully merged.
-
-Plan 13 starts independently because the manifest file subtrees are disjoint. It merges its sole
-final PR first. This plan's Phase 8 is then `blockedBy` that whole merged Plan 13 delivery, allowing
-the all-four-manifest check to run before this plan's own sole final PR. There is no partial
-intermediate-PR handoff and therefore no cycle.
-
-```mermaid
-%% The plan-12 / plan-13 coupling, shown as a sequence to make the non-circularity explicit.
-%% Time flows top to bottom. Every arrow points forward in time — there is no arrow pointing backward.
-sequenceDiagram
-    autonumber
-    participant P12 as Plan 12 (this plan)<br/>3 SE manifests
-    participant P13 as Plan 13 (sibling)<br/>1 AI manifest
-
-    Note over P13: Phases 0-6 — author, grow, verify, retest
-    P13->>P13: Phase 7 — archive, sole PR, merge
-    P13-->>P12: merged AI-engineer manifest unblocks Phase 8
-    Note over P12: Phases 1-7 — author and verify three SE manifests
-    P12->>P12: Phase 8 — four-manifest cross-check
-    P12->>P12: Phases 9-10 — Knowledge Capture, archive, sole PR, merge
-```
-
-**Accessibility note.** The diagram is a `sequenceDiagram`, whose reading order (top to bottom, arrows
-always pointing down or to a later point in time) is itself the accessibility device — there is no
-color-coding to substitute for reading order, and no arrow in this diagram points upward, which is the
-structural proof of non-circularity a reader can verify by inspection.
+This plan completes and archives its three software-engineer manifests before plan 13 begins. Plan 13 is the only successor and owns the AI-engineer manifest plus any later four-manifest verification. This plan never waits for plan 13.
 
 ## The manifest ownership invariant (now scoped per plan, within the `careers/` category)
 
 _Binding — and the reason this plan and its sibling exist as separate units from course-authoring._
 
 **This plan owns every file under `apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/`,
-`.../careers/immediately-effective/software-engineer.yaml`, and
-`.../careers/fundamentally-strong/software-engineer.yaml`, plus every step that creates, appends to,
+`.../careers/immediately-effective/software-engineer.json`, and
+`.../careers/fundamentally-strong/software-engineer.json`, plus every step that creates, appends to,
 reorders, or re-verifies one of those three manifests.**
 `ayokoding-learning-path-13-careers-ai-manifest` owns exactly
-`.../careers/immediately-effective/ai-engineer.yaml` under the identical invariant, scoped to its own
+`.../careers/immediately-effective/ai-engineer.json` under the identical invariant, scoped to its own
 one manifest. Neither plan touches the other's manifest file. The seven course-authoring successor
 plans (Plan 04's completed retained scope and the seven `05`-`11` successors, per the mapping in
 [tech-docs §Growth signal routing](./tech-docs.md#growth-signal-routing-from-the-seven-course-authoring-successor-plans))
@@ -136,7 +99,7 @@ performs the growth for its own three manifests as each signal arrives.
 
 **In scope**
 
-- Three `careers/`-`software-engineer`-role `PathManifest` YAML data files under
+- Three `careers/`-`software-engineer`-role `PathManifest` JSON manifest data files under
   `apps/ayokoding-www/src/features/course-paths/manifests/careers/`.
 - Three thin content landing anchors under
   `apps/ayokoding-www/content/en/learn/paths/careers/<arc>/software-engineer/_index.md` (prose/SEO
@@ -152,7 +115,7 @@ performs the growth for its own three manifests as each signal arrives.
 - All growth of these three manifests as the seven course-authoring successor plans land their bands.
 - The **four-manifest** "a shared course names every path" check and the terminal 127-course catalog
   assertion — both run at this plan's own final phase, since this plan is the last of the two to
-  finish (see [§The plan-12 / plan-13 coupling](#the-plan-12--plan-13-coupling-non-circular-by-construction)).
+  finish (see [§The plan-12 / plan-13 coupling](#execution-handoff-to-plan-13)).
 
 **Out of scope**
 
@@ -256,7 +219,7 @@ flowchart TD
     S1 -->|"gate: 3 manifests, 3 hub cards"| S2
     S2 -->|"gate: full 3-manifest arcs"| S3
     S3 -->|"gate: automated + Rule-15 green"| S4
-    S4 -->|"gate: plan 13 fully merged, 4-manifest check green"| S5
+    S4 -->|"gate: 3-manifest verification green"| S5
 
     classDef setup fill:#56B4E9,stroke:#000000,color:#000000
     classDef manifest fill:#0173B2,stroke:#000000,color:#FFFFFF
@@ -276,7 +239,7 @@ Inside Stage B the three manifest phases are **strictly serial**, in DD-27's loc
 | 5     | —                                                 | all automated sweeps green; ownership boundary intact                                          |
 | 6     | —                                                 | 9 screenshots committed (3 landings + hub slice); zero open defects                            |
 | 7     | —                                                 | CI green on `main`; production serving this plan's 3 paths                                     |
-| 8     | —                                                 | plan 13 fully merged; all four manifests live; four-manifest check green; 127-catalog resolves |
+| 8     | —                                                 | three-manifest verification green; plan 13 may begin after this final PR merges |
 | 9     | —                                                 | every `learnings.md` entry terminal                                                            |
 | 10    | —                                                 | archived                                                                                       |
 
@@ -286,52 +249,11 @@ phases to delivery units, branches, and PRs.
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                                                                                                                                         | Relationship                                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                                                                                                                      | hard — merged to `origin/main` first (done)                                                                                        |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                                                                                                                                    | transitive, via the navigation plan (done)                                                                                         |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                        | transitive, via the navigation plan (done)                                                                                         |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)                                                                                                             | hard, satisfied — Plan 04's Bands 1,2 and Phase 1 merged before its 2026-08-02 archival, so Phase 4.1 may process their signal     |
-| `blockedBy` | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) | hard — terminal delivery PR #133; process the Band 3+4 signal only after merge verification                                        |
-| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                                                                       | hard for growth — old Band 5 (this plan's SE-manifest slice only; the AI-manifest slice is plan 13's)                              |
-| `blockedBy` | `ayokoding-learning-path-07-course-authoring-low-level-systems`                                                                                                                 | hard for growth — old Band 6 (half)                                                                                                |
-| `blockedBy` | `ayokoding-learning-path-08-course-authoring-security-and-ops`                                                                                                                  | hard for growth — old Band 7                                                                                                       |
-| `blockedBy` | `ayokoding-learning-path-09-course-authoring-interview-technique`                                                                                                               | hard for growth — old Band 9 (two-of-three growth into this plan's manifests)                                                      |
-| `blockedBy` | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                            | hard for growth — old Band 6 (other half)                                                                                          |
-| `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                                                                                                                         | hard for growth — old Band 8 (this plan's SE-manifest slice; also grows plan 13's AI manifest independently)                       |
-| `blockedBy` | `vercel-function-cost-reduction`                                                                                                                                                | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                       |
-| `blockedBy` | `ayokoding-learning-path-13-careers-ai-manifest` (**whole-plan**)                                                                                                               | Phase 8's four-manifest cross-check begins only after Plan 13's sole final PR merges; Plan 13 has no start dependency on this plan |
-| _(no edge)_ | `ayokoding-learning-path-14`/`-15`/`-16` (the `skills/`-accounting split)                                                                                                       | **disjoint category subtree** — `careers/` vs `skills/`; no shared file. Confirmed explicitly, not merely absent from this table.  |
-| _(no edge)_ | `ayokoding-learning-path-17`/`-18` (the `skills/`-ERP split)                                                                                                                    | **disjoint category subtree** — same confirmation as above.                                                                        |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-11-course-authoring-capstones` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-### Vercel cost-reduction dependency (hard, both plans)
-
-[`plans/done/2026-08-02__vercel-function-cost-reduction/`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
-fixes `apps/ayokoding-www`'s root layout (removes the `await headers()` call that opts every route
-into dynamic rendering) and its content route (`?path=` reading moves client-side), then deletes the
-now-purposeless middleware and converts static-eligible routes. **Treated here as already merged/done,
-per explicit direction** — this plan's landing pages and hub cards land in the same app whose
-layout and middleware that plan changes, so authoring against a pre-fix tree would mean every page
-this plan adds inherits the dynamic-rendering cost the other plan is actively removing, and a
-mid-flight merge of that plan underneath this one would silently change every route's rendering mode
-without this plan's own gates re-verifying it.
-
-**Concrete checkable signal**:
-`gh pr list --search "vercel-function-cost-reduction" --state merged --json number --jq 'length'`
-returns a value ≥ 1 (its `ayokoding-www` delivery unit, Phases 1-4, specifically). Falsifiable both
-ways: returns `0` while that plan's `ayokoding-www` unit is still open.
-
-### Disjoint-subtree confirmation
-
-`careers/` and `skills/` are separate first-URL-segments under
-`apps/ayokoding-www/src/features/course-paths/manifests/` and separate first-URL-segments under
-`apps/ayokoding-www/content/en/learn/paths/`. The only file the two category subtrees share is the
-paths-hub's `<PATHS>_index.md`, and even there each plan's edits are additive to a **different**
-category group inside a category-grouped layout (never the same sub-group). Neither this plan nor its
-sibling reads, writes, or asserts anything about a `skills/*.yaml` manifest or a `skills/` landing.
-This is stated explicitly here, rather than left as a silent absence from the table above, because a
-shared top-level file (`<PATHS>_index.md`) is exactly the kind of surface a future reader might
-mistake for a hidden coupling.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-11-course-authoring-capstones/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Recorded judgment calls
 
@@ -358,9 +280,8 @@ falsifiable check that makes the correction auditable rather than asserted.
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 10, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 10, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 

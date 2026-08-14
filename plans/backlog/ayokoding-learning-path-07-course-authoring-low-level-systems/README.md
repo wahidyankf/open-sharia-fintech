@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 7 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 7, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 Author **seven course bodies** — the C-family / native-OS / Rust half of the shared course
@@ -52,7 +52,7 @@ never touches any file the sibling plan or `ayokoding-learning-path-04-course-au
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
 > [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md).
-> A step in this plan that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a
+> A step in this plan that creates, appends to, reorders, or re-verifies a `.json` manifest is a
 > **boundary violation**, not a convenience. This invariant is inherited verbatim from
 > `ayokoding-learning-path-04-course-authoring` — it binds every course-authoring split plan in this
 > programme, not only the original one.
@@ -118,7 +118,7 @@ flowchart LR
     BODY["courses/&lt;course-id&gt;/<br/>page bundle (7 IDs)<br/>WRITTEN HERE"]:::owned
     CAT["tech-docs Course Library<br/>Catalog rows (7)<br/>WRITTEN HERE"]:::owned
     SIG["Band-completion signal<br/>in this plan's delivery.md<br/>WRITTEN HERE"]:::owned
-    MAN{{"manifests/**/*.yaml<br/>NEVER WRITTEN HERE"}}:::forbidden
+    MAN{{"manifests/**/*.json<br/>NEVER WRITTEN HERE"}}:::forbidden
 
     SPEC -->|"authored from"| BODY
     BODY -->|"recorded in"| CAT
@@ -156,9 +156,9 @@ own half's signal, so the two partial signals read as a matched pair to the down
 originally numbered 6 in that plan, and none of these 7 courses feeds the fourth,
 `ai-engineer`-role, path):
 
-- `<MANIFESTS>careers/interview-ready/software-engineer.yaml`
-- `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`
-- `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
+- `<MANIFESTS>careers/interview-ready/software-engineer.json`
+- `<MANIFESTS>careers/immediately-effective/software-engineer.json`
+- `<MANIFESTS>careers/fundamentally-strong/software-engineer.json`
 
 A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving plan
 must reject it rather than guess — same rule as the source plan.
@@ -166,23 +166,18 @@ must reject it rather than guess — same rule as the source plan.
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Direction     | Plan (full folder name)                                                                                                                                                                                                                           | Nature                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy** | `ayokoding-learning-path-01-url-restructure`                                                                                                                                                                                                      | **Transitive hard** — via `04`'s own hard `blockedBy`; not independently re-verified here (see Phase 0).                                                |
-| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                                                                                          | **Transitive hard** — via `04`'s own hard `blockedBy`; not independently re-verified here (see Phase 0).                                                |
-| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                                                                                     | **Hard, satisfied baseline** — merged and archived with Band 6 trimmed out of its own scope (no duplicate-authoring race).                              |
-| **blockedBy** | `vercel-function-cost-reduction`                                                                                                                                                                                                                  | **Hard, new** — treated as merged/done; see [Phase 0](./delivery.md) for the concrete checkable signal.                                                 |
-| **blocks**    | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                                                                                              | **None** — see the dependency-edge investigation above; runs fully in parallel.                                                                         |
-| **blocks**    | `ayokoding-learning-path-12-careers-se-manifests`                                                                                                                                                                                                 | Hard — 7 authored bodies + this band's completion signal; that plan's three `software-engineer` manifests must not grow until this band's signal lands. |
-| _(sibling)_   | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`, `-06-course-authoring-architecture-and-ai-harness`, `-08-course-authoring-security-and-ops`, `-09-course-authoring-interview-technique`, `-11-course-authoring-capstones` | **Independent — verified, zero real edges** (see below). Further splits of `04`'s remaining bands, authored concurrently by other agents.               |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Verified independence from the other course-authoring split plans
 
@@ -210,11 +205,11 @@ merged). Checked against every prerequisite cell in
 [tech-docs.md §Course Library Catalog](./tech-docs.md#course-library-catalog): `just-enough-c` (—),
 `just-enough-cpp` (`just-enough-c`), `linux-os` (`just-enough-c`, `just-enough-bash`), `windows-os`
 (`just-enough-c`), `system-programming` (`just-enough-c`, `linux-os`), `just-enough-rust` (—),
-`modern-system-programming` (`just-enough-rust`). This plan therefore carries **no hard `blockedBy`
+`modern-system-programming` (`just-enough-rust`). This plan therefore carries **no repository baseline context
 edge to any of the five further-split sibling plans** — only to the completed `04` baseline and
 `vercel-function-cost-reduction` (new), stated above.
 
-**Why `vercel-function-cost-reduction` is a hard dependency for a content plan.** This plan adds 7
+**Why `vercel-function-cost-reduction` is a historical reference for a content plan.** This plan adds 7
 new content pages under `apps/ayokoding-www`. Until that plan's Cause-A/Cause-B fixes land, **every**
 page on the site — including any page this plan authors — renders dynamically (a serverless function
 invocation per view, zero CDN caching), compounding the exact cost problem that plan exists to fix.
@@ -297,7 +292,7 @@ An Indonesian mirror is explicitly deferred (recorded decision, not an omission)
   [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
   (downstream consumer)
   · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
-  (hard dependency)
+  (historical reference)
 
 ## Provenance
 

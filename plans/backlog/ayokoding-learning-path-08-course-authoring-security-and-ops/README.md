@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 7, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 Author the **eleven course bodies** of Band 7 — "Security, ops, quality & delivery" — of the shared
@@ -47,7 +47,7 @@ plan-sizing rule as-is** — no further merging or splitting is needed within th
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
 > [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md). A step
-> in this plan that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary
+> in this plan that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience. This is the identical invariant plan 04 carries, reproduced here
 > because this plan is now the one authoring Band 7's bodies.
 
@@ -64,7 +64,7 @@ flowchart LR
     BODY["courses/&lt;course-id&gt;/<br/>page bundle (11 bodies)<br/>WRITTEN HERE"]:::owned
     CAT["tech-docs Course Library<br/>Catalog rows (11)<br/>WRITTEN HERE"]:::owned
     SIG["Band-completion signal<br/>in this plan's delivery.md<br/>WRITTEN HERE"]:::owned
-    MAN{{"manifests/**/*.yaml<br/>NEVER WRITTEN HERE"}}:::forbidden
+    MAN{{"manifests/**/*.json<br/>NEVER WRITTEN HERE"}}:::forbidden
 
     SPEC -->|"authored from"| BODY
     BODY -->|"recorded in"| CAT
@@ -91,7 +91,7 @@ flowchart LR
     P04(["course-authoring (plan 04)<br/>Band 1 + Band 2 +<br/>Phase 1 AI (21 bodies)"]):::upstream
     THIS(["THIS PLAN<br/>Band 7 only (11 bodies)"]):::this
     P12{{"manifests (plan 12)<br/>composes all bands' IDs"}}:::downstream
-    VFR["vercel-function-cost-reduction<br/>(hard, new dependency)"]:::upstream
+    VFR["rendering baseline<br/>repository context"]:::upstream
 
     P04 -->|"carves out Band 7;<br/>merged/archived first"| THIS
     VFR -->|"static-rendering fix must land<br/>before more content pages ship"| THIS
@@ -125,11 +125,11 @@ plan 04's own routing notes (Band 9 grows two manifests; Bands 5 and 8 grow four
 including Band 7, defaults to three. **Band 7 grows exactly the three `software-engineer`-role
 manifests**:
 
-- `<MANIFESTS>careers/interview-ready/software-engineer.yaml`
-- `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`
-- `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
+- `<MANIFESTS>careers/interview-ready/software-engineer.json`
+- `<MANIFESTS>careers/immediately-effective/software-engineer.json`
+- `<MANIFESTS>careers/fundamentally-strong/software-engineer.json`
 
-The fourth manifest, `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`, is **not** grown by
+The fourth manifest, `<MANIFESTS>careers/immediately-effective/ai-engineer.json`, is **not** grown by
 this band — it grows only for Bands 5 and 8 (the AI/harness cluster and the capstones that assemble
 it), neither of which is this plan's scope.
 
@@ -141,48 +141,18 @@ only after its sole terminal archival PR merges; `LANDED_COURSE_IDS` lists all e
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Direction     | Plan (full folder name)                                                                                                                                                         | Nature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy** | `ayokoding-learning-path-01-url-restructure`                                                                                                                                    | **transitive hard** — via plan 04's own hard dependency; not independently re-verified here beyond plan 04's completion (see Phase 0)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                        | **transitive hard** — via plan 04's own hard dependency; the `syllabus/courses/` specs this plan authors from are consumed the same way                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                   | **hard, satisfied baseline** — Plan 04 merged and archived with this band carved out; Band 7 must not be authored twice                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **blockedBy** | `vercel-function-cost-reduction`                                                                                                                                                | **hard, new** — see [§Why the cost-reduction dependency is hard](#why-the-cost-reduction-dependency-is-hard) below                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| _(sibling)_   | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) | none — same programme, independent band scope, no shared file                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| _(sibling)_   | [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)               | none — same programme, independent band scope, no shared file                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| _(sibling)_   | [`ayokoding-learning-path-07-course-authoring-low-level-systems`](../ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)                                   | none — same programme, independent band scope, no shared file                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| _(sibling)_   | [`ayokoding-learning-path-09-course-authoring-interview-technique`](../ayokoding-learning-path-09-course-authoring-interview-technique/README.md)                               | none — same programme, independent band scope, no shared file                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **blocks**    | [`ayokoding-learning-path-11-course-authoring-capstones`](../ayokoding-learning-path-11-course-authoring-capstones/README.md)                                                   | hard — its capstones `capstone-secure-service`, `capstone-build-your-own-pentest-engine`, `capstone-real-world-delivery`, `capstone-concurrency-and-systems`, and `capstone-lead-at-altitude` need this band's security/ops bodies as prerequisites. **Correction (2026-08-01)**: this row originally also named `capstone-data-pipeline`, following plan 04's general "Band 7 → Band 8" ordering-rationale note; `ayokoding-learning-path-11-course-authoring-capstones`'s own per-capstone dependency audit (direct read of `syllabus/courses/defensive-security.md` lines 368-395, the embedded `capstone-data-pipeline` spec) found its "Integrates topics" list names only SQL/Advanced-SQL/Backend-at-Scale/Data-Engineering/AI-Powered-Apps — no Band-7 topic — so `capstone-data-pipeline` is corrected out of this row and `capstone-real-world-delivery` + `capstone-concurrency-and-systems` (both confirmed by the same audit to need this band's `defensive-security`/`site-reliability-engineering`) are corrected in |
-| **blocks**    | [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)                                                               | hard — the three `software-engineer` manifests' `courseOrder` entries for these 11 IDs resolve only after this plan lands; consumes the band-completion signal                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-07-course-authoring-low-level-systems` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-### Why the cost-reduction dependency is hard
-
-[`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md) found
-that `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages — every page view executes a
-serverless function, none is CDN-cached — and that this is 65% of a metered-usage overrun that would
-otherwise push the site's invoice above the flat $20/month Pro subscription. Landing eleven more
-content pages **before** that fix ships would add eleven more always-dynamic, always-billed routes to
-an already-overrun bill; landing them **after** the fix means they are served statically from day one,
-at zero incremental function-invocation cost. This plan's business risk table
-([brd.md](./brd.md#business-risks-and-mitigations)) restates this concretely.
-
-**Concrete checkable signal** (from that plan's actual Phase 1 and Phase 3 changes, not a promise):
-
-- Phase 1 (Cause A — the root layout's `await headers()` call) promotes
-  `apps/ayokoding-www/src/app/[locale]/layout.tsx` to the app's root layout and **deletes**
-  `apps/ayokoding-www/src/app/layout.tsx` entirely.
-- Phase 3 (middleware elimination) **deletes** `apps/ayokoding-www/src/middleware.ts`.
-
-Both are used as this plan's Phase 0 precondition check (see [delivery.md](./delivery.md#phase-0-environment-setup--baseline)):
-`test ! -f apps/ayokoding-www/src/app/layout.tsx` and
-`test ! -f apps/ayokoding-www/src/middleware.ts` both exiting 0.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-07-course-authoring-low-level-systems/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Rule-15 three-tester retest — exemption recorded
 
@@ -233,7 +203,7 @@ forbidden.
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-12-careers-se-manifests` (downstream)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-  · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
+  · [`vercel-function-cost-reduction` (historical reference)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
 

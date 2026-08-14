@@ -6,7 +6,7 @@ Turn the shared **software-engineering** course library into **three usable `car
 authoring, publishing, growing, and verifying the three ordered `software-engineer`-role path
 manifests. (The fourth `careers/` product, `careers/immediately-effective/ai-engineer`, is the sibling
 plan `ayokoding-learning-path-13-careers-ai-manifest`'s own deliverable — out of this plan's scope,
-coupled to it only as described in [README §The plan-12 / plan-13 coupling](./README.md#the-plan-12--plan-13-coupling-non-circular-by-construction).)
+coupled to it only as described in [README §The plan-12 / plan-13 coupling](./README.md#execution-handoff-to-plan-13).)
 The library is the investment; the manifests are what convert that single investment into
 audience-fit reading arcs:
 
@@ -22,7 +22,7 @@ All three converge on the **same** software-engineering endpoint — only the **
 **journey ordering**, and the **teaching emphasis** differ.
 
 **This plan ships no course body and no rendering component.** It ships the composition layer: three
-YAML manifests, three thin landing anchors, this plan's slice of the paths-hub card population, the
+JSON manifests, three thin landing anchors, this plan's slice of the paths-hub card population, the
 smoothness audits, and every growth of these three manifests as backfill content lands.
 
 ## Why this plan is its own deliverable, split out from a four-manifest predecessor
@@ -82,7 +82,7 @@ model avoids that entirely:
 Solo-maintainer repo — no sign-off ceremony. The maintainer wears:
 
 - **Content strategist** — owns each path's arc, its curation (what is omitted), and its framing.
-- **Frontend engineer** — authors the YAML data files the `course-paths` feature loads and validates at
+- **Frontend engineer** — authors the JSON manifest data files the `course-paths` feature loads and validates at
   build time.
 - **Content author** (via `apps-ayokoding-www-general-maker`) — writes the three thin landing anchors
   and this plan's slice of the hub card copy.
@@ -116,12 +116,10 @@ Every metric below is an **observable check**, not a projected number.
   DD-41).
 - **This plan's own catalog contribution resolves** (observable): every non-AI course body this plan's
   three manifests reference resolves under `apps/ayokoding-www/content/en/learn/courses/`.
-- **The four-manifest, 127-course catalog resolves at this plan's final phase** (observable, needs the
-  sibling plan fully merged): all four `careers/` manifests validate against the complete 127-course
-  catalog, and the "a shared course names every path" affordance lists all four.
+- **Plan 13 owns the later four-manifest verification after this plan is archived.
 - **Progression smoothness verified per path** (observable): each manifest passes its own smoothness
   audit before archival.
-- **No regressions** (observable): `npx nx run ayokoding-www:build`, the affected test tiers,
+- **No regressions** (observable): `npm exec nx run ayokoding-www:build`, the affected test tiers,
   `specs:behavior:coverage`, heading-hierarchy, markdownlint, and link validation all pass.
 
 ## Business-Scope Non-Goals
@@ -137,9 +135,9 @@ Every metric below is an **observable check**, not a projected number.
   `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 - **Any URL, redirect, or IA change.** Owned by `ayokoding-learning-path-01-url-restructure`.
 - **The `apps/ayokoding-www` root-layout/middleware rendering-mode work.** Owned by
-  `vercel-function-cost-reduction`, treated here as a hard, already-merged precondition.
+  `vercel-function-cost-reduction`, treated as a repository-baseline fact.
 - **The `skills/` category's four manifests.** Owned end-to-end by the accounting/ERP split plans —
-  disjoint category subtree, no shared file (see [README](./README.md#disjoint-subtree-confirmation)).
+  disjoint category subtree, no shared file (see [README](./README.md#depends-on)).
 - **Adding an Indonesian mirror of the path content** — deferred; `id/belajar/` has zero courses and
   zero paths.
 - **Path-level progress persistence, accounts, or bookmarking.**
@@ -158,6 +156,5 @@ Every metric below is an **observable check**, not a projected number.
 | Duplication creeps in — a path forks a body for its framing.                                          | Framing is limited to an optional intro/outro callout (DL-5); the no-forked-body check runs at every manifest gate.                                                                                                                                                         |
 | A course-authoring successor plan edits a manifest, or this plan edits a body — the boundary erodes.  | The ownership invariant is stated in both this plan's and every course-authoring successor plan's own docs; this plan's Phase 5 gate greps its own manifest paths' git history scope.                                                                                       |
 | The plan-12 / plan-13 coupling is misread as circular.                                                | The coupling is documented explicitly, with a sequence diagram, in both plans' READMEs, and the two edges are stated as distinct nodes (Phase 1 vs. the final phase) rather than a single bidirectional edge.                                                               |
-| The four-manifest check runs before the sibling plan has actually merged, producing a false pass.     | Phase 8's start condition is a literal `gh pr list --search "ayokoding-learning-path-13-careers-ai-manifest" --state merged` check, falsifiable both ways, not an assumption from reading the delivery checklist alone.                                                     |
 | The seven course-authoring successor plans' growth signals arrive out of the order this plan expects. | Phase 4's sub-phases are each gated on their own named source plan's merge, not on calendar order; a signal that arrives early is processed early, and the final arc-confirmation step re-verifies the complete composition regardless of arrival order.                    |
 | Cross-plan `syllabus/` links break when the schema plan has already archived.                         | This plan's own pre-archival link-validation gate is scoped to its own folder and re-run at Phase 8.                                                                                                                                                                        |

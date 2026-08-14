@@ -6,7 +6,7 @@ add-on assuming the conventional path — a reader entering it cold gets full gr
 `courseOrder` **includes** all 27 shared ids ahead of the Sharia-exclusive 3 (A10/A11).
 
 The **machine-consumed source of truth** is the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.yaml` (created by plan 17
+`apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.json` (created by plan 17
 at 15 ids, grown to 27 by this plan's Stage B alongside `<CONVMAN>`, then to this terminal 30-id state
 by this plan's own Stage C). Path landing served at `/en/learn/paths/skills/sharia-erp`.
 

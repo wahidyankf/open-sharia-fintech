@@ -6,8 +6,8 @@
 ## Product Overview
 
 Courses #12–#19 of the twenty-four-course catalog. This plan **grows both existing manifests**
-(created by plan 14) from **11 to 19 entries**. `conventional-accounting.yaml` reaches its
-**terminal** size here and never grows again; `sharia-accounting.yaml` also reaches 19, continuing
+(created by plan 14) from **11 to 19 entries**. `conventional-accounting.json` reaches its
+**terminal** size here and never grows again; `sharia-accounting.json` also reaches 19, continuing
 in plan 16. Both landings (created by plan 14) are **updated**, not created, here —
 `conventional-accounting`'s landing states path completeness for the first time.
 
@@ -25,7 +25,7 @@ What ships in this plan:
 
 What does not ship: courses #1–#11 (plan 14) or #20–#24 (plan 16), any `_index.md` under `paths/`,
 any ERP content, any component, any schema, any edit to an existing library course, any building
-exercise (A6), and `sharia-accounting.yaml` growing past 19 entries.
+exercise (A6), and `sharia-accounting.json` growing past 19 entries.
 
 ## The silent-failure constraint (continued)
 
@@ -60,7 +60,7 @@ plan's own Stage-2 signal).
 - As a **builder of Sharia-compliant systems continuing from plan 14**, I want the same eight
   courses `conventional-accounting` gets, so that when I continue into plan 16's Sharia-specific
   content later I have the full conventional grounding first.
-- As a **maintainer**, I want `conventional-accounting.yaml` to stop growing the moment it reaches
+- As a **maintainer**, I want `conventional-accounting.json` to stop growing the moment it reaches
   19 entries, and for that stoppage to be mechanically verifiable, not merely documented.
 - As an **ERP-path reader** (via `ayokoding-learning-path-18-skills-erp-enterprise-depth`),
   I want this plan's completion to unblock ERP's Stage-B-equivalent capability concretely, so that
@@ -82,7 +82,7 @@ Scenario: Conventional-accounting reaches its terminal, complete state at course
   Given both manifests have grown to include the full nineteen-course shared spine
   When a reader reaches the end of the conventional-accounting courseOrder
   Then the path landing states the path is complete
-  And no further course is ever appended to conventional-accounting.yaml at any later phase or plan
+  And no further course is ever appended to conventional-accounting.json at any later phase or plan
   But the sharia-accounting manifest's courseOrder is left ready to continue past entry nineteen
 ```
 
@@ -177,7 +177,7 @@ Scenario: Conventional-accounting passes its full live-site retest
 
 ### In scope
 
-- Growth of two existing `PathManifest` YAML data files (created by plan 14) from 11 to 19 entries.
+- Growth of two existing `PathManifest` JSON manifest data files (created by plan 14) from 11 to 19 entries.
 - Extension of each manifest's existing co-located unit test.
 - Extension of the shared Gherkin feature file's step definitions to the full 19-course walk.
 - Content updates to both existing path landing bundles — `conventional-accounting`'s landing states
@@ -193,7 +193,7 @@ Scenario: Conventional-accounting passes its full live-site retest
 ### Out of scope
 
 - **Courses #1–#11 and #20–#24.**
-- **Growing `sharia-accounting.yaml` past 19 entries.**
+- **Growing `sharia-accounting.json` past 19 entries.**
 - **Every `_index.md` under `paths/`.**
 - **All ERP content.**
 - **Any rendering component, route wiring, or design asset.**
@@ -220,7 +220,7 @@ existing two landing screens, plus growth of two existing manifest data files.
 
 - **A course teaches something plausible and wrong** (especially multi-currency and consolidation).
   Mitigated by the mandatory silent-failure section and the fact-checker on every body.
-- **`conventional-accounting.yaml` is silently extended past 19**, eroding the "the whole path is
+- **`conventional-accounting.json` is silently extended past 19**, eroding the "the whole path is
   done at #19" promise. Mitigated by a falsifiable `git diff --quiet` clause at every later phase
   gate, including plan 16's own gates.
 - **Licensing exposure (A8)**, especially XBRL taxonomy version drift. Mitigated by the eleven
@@ -232,7 +232,7 @@ existing two landing screens, plus growth of two existing manifest data files.
 - **Prerequisite drift.**
 - **Scope collision with courses #20+.**
 - **Scope collision with the library.**
-- **Cross-plan file collision with plan 16's own future growth of `sharia-accounting.yaml`.**
+- **Cross-plan file collision with plan 16's own future growth of `sharia-accounting.json`.**
 - **Either landing reads as a syllabus.**
 - **The Rule-15 retest for `conventional-accounting` surfaces defects that block this plan's own
   archival** — mitigated by treating every EWT/UWT/DWT defect finding as mandatory-fix, per

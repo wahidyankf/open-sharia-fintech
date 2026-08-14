@@ -8,7 +8,7 @@ breadcrumb.
 
 This file is the **human-readable mirror** of the manifest. The **machine-consumed source of truth**
 is the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-erp.yaml`. The manifest
+`apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-erp.json`. The manifest
 also carries an explicit `arc: immediately-effective` field (R8). Path landing served at
 `/en/learn/paths/skills/conventional-erp`.
 

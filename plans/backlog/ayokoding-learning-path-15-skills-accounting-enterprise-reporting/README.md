@@ -3,14 +3,14 @@
 ## Delivery amendment — one final PR
 
 All 8 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 7, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the second of a three-plan sequential chain** that replaces the retired
-> `ayokoding-learning-path-06-skills-accounting/` design with three smaller plans:
+> the superseded accounting-programme draft/`design with three smaller plans:
 > **`ayokoding-learning-path-14-skills-accounting-foundations` (courses #1–#11) → this plan
 > (courses #12–#19) → `ayokoding-learning-path-16-skills-accounting-sharia-extension` (courses
-> #20–#24)**. This plan is hard `blockedBy` plan 14 and hard-blocks plan 16. It shares the retired
+> #20–#24)**. This plan is repository baseline context plan 14 and hard-blocks plan 16. It shares the retired
 > plan's business/product context — personas, the silent-failure constraint (DD-609), the
 > licensing posture (A8) — verbatim with its two siblings; the A10/A11 two-path rationale is stated
 > once, in plan 14, and referenced here. See
@@ -20,7 +20,7 @@ This plan owns the **enterprise-reporting-and-architecture** half of the shared 
 spine: courses #12 through #19 — multi-currency translation, consolidation, IFRS-vs-GAAP
 reporting, audit and controls, payroll and tax, treasury, XBRL reporting, and the terminal
 general-ledger-system-architecture course. **This plan grows both manifests from 11 to 19 entries,
-and `conventional-accounting.yaml` reaches its terminal, frozen size here** — course #19 is the
+and `conventional-accounting.json` reaches its terminal, frozen size here** — course #19 is the
 Dangerous-2 boundary, and it is the point at which `conventional-accounting` becomes a genuinely
 complete, standalone-shippable path. It creates **no `_index.md`** under `paths/` (plan 01's, per
 A3) and authors **no course outside #12–#19** — courses #1–#11 are plan 14's, courses #20–#24 are
@@ -30,7 +30,7 @@ plan 16's.
 
 | Prior artefact                                                                                      | Relationship to this plan                                                                                                                                                                                         |
 | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/backlog/ayokoding-learning-path-06-skills-accounting/` [Repo-grounded]                       | **The direct predecessor this three-plan chain splits from.** Its Stage-2 course range (#4–#19 in its own numbering) is split across plan 14 (courses #4–#11) and this plan (courses #12–#19).                    |
+| the superseded accounting-programme draft (reproduced and owned locally)                       | **The direct predecessor this three-plan chain splits from.** Its Stage-2 course range (#4–#19 in its own numbering) is split across plan 14 (courses #4–#11) and this plan (courses #12–#19).                    |
 | `ayokoding-learning-path-14-skills-accounting-foundations` [Planned — this plan's hard predecessor] | **Supplies the eleven already-merged shared courses** (#1–#11) and both manifests at their 11-entry starting state. This plan's own courses cite four of those eleven as prerequisites (#2, #3, #5, #6, #7, #11). |
 | The 121-course software-engineering library                                                         | **No course duplicates it.** One linked cross-domain prerequisite lands inside this plan's own range (`backend-essentials`, for course #19) — the second and last such edge in the whole 24-course catalog.       |
 
@@ -48,7 +48,7 @@ architecture-not-construction course (A6) that replaces the retired single-path 
 
 **This is where `conventional-accounting` terminates.** At the end of this plan, that manifest
 holds exactly 19 entries and **never grows again** — any later touch to
-`conventional-accounting.yaml` (by plan 16 or any future plan) is itself a defect, verified
+`conventional-accounting.json` (by plan 16 or any future plan) is itself a defect, verified
 mechanically via `git diff --quiet` at every later gate.
 
 ## No building — architecture, not construction (A6)
@@ -99,7 +99,7 @@ all eight of #12–#19 — carries the mandatory "what still balances while bein
 - **The `careers/` manifests.**
 - **An Indonesian mirror.**
 - **Any building exercise, capstone, or scaffolded codebase (A6).**
-- **Growing `sharia-accounting.yaml` past 19 entries** — that is plan 16's work.
+- **Growing `sharia-accounting.json` past 19 entries** — that is plan 16's work.
 
 ## Syllabus layer (own slice)
 
@@ -129,9 +129,9 @@ flowchart LR
     P16(["16 sharia-extension<br/>courses 20-24"]):::down
     P18(["18 skills ERP<br/>enterprise depth"]):::down
 
-    P14 -->|"blockedBy: 14 merged"| P15
+    P14 -->|"historical repository context: 14 merged"| P15
     PV -->|"landings ship on same app"| P15
-    P15 -->|"blockedBy: 15 merged"| P16
+    P15 -->|"historical repository context: 15 merged"| P16
     P15 -.->|"Stage-2 (Dangerous-2) signal:<br/>Stage-B-equivalent capability"| P18
 
     classDef up fill:#0173B2,stroke:#000000,color:#FFFFFF
@@ -165,9 +165,8 @@ this plan's end** — a complete, shippable competence in its own right, not a t
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
@@ -188,15 +187,11 @@ maintainer judges to be the wrong trade-off for a path this plan explicitly decl
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                         | Strength                                                                                                                                                                            |
-| ----------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `blockedBy` | `ayokoding-learning-path-14-skills-accounting-foundations`      | **hard** — supplies the 11 already-merged shared courses and both manifests at their 11-entry state                                                                                 |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                    | **hard** — the `courses/` namespace, `paths/skills/_index.md`                                                                                                                       |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`        | **hard** — `PathManifest` schema, integrity functions                                                                                                                               |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                      | **hard** — a manifest with no renderer is invisible                                                                                                                                 |
-| `blockedBy` | `vercel-function-cost-reduction`                                | **hard** — this plan ships more traffic-bearing pages on the same app                                                                                                               |
-| `blocks`    | `ayokoding-learning-path-16-skills-accounting-sharia-extension` | **hard** — plan 16 cannot grow `sharia-accounting.yaml` past 19 or author course #20 until this plan merges                                                                         |
-| `blocks`    | `ayokoding-learning-path-18-skills-erp-enterprise-depth`        | **soft overall, hard at the Stage-B-equivalent capability** — see [tech-docs.md §Stage-signal contract](./tech-docs.md#stage-signal-contract-the-plan-18-handoff-stage-granularity) |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-14-skills-accounting-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-14-skills-accounting-foundations/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Navigation
 

@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 6, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 6, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 Author **Band 9 — Interview-technique courses**: the 5 course bodies
@@ -74,7 +74,7 @@ orange, `#CA9161` tan) with black borders and WCAG-AA-contrasting text, per the
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by a downstream manifest-growth
 > plan (see [Depends-on](#depends-on)). A step in this plan that creates, appends to, reorders, or
-> re-verifies a `.yaml` manifest is a **boundary violation**, not a convenience.
+> re-verifies a `.json` manifest is a **boundary violation**, not a convenience.
 
 Band 9 is the one band in the whole split whose manifest growth is **not** the usual three-manifest
 pattern. Quoted **verbatim** from the parent plan's own binding record
@@ -82,14 +82,14 @@ pattern. Quoted **verbatim** from the parent plan's own binding record
 contract](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)),
 so this plan does not risk generalizing the exception back into the rule it is an exception to:
 
-> - **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
->   `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` **only** — the
+> - **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.json` and
+>   `<MANIFESTS>careers/fundamentally-strong/software-engineer.json` **only** — the
 >   `careers/immediately-effective/software-engineer` path omits the interview-technique band from its
 >   `courseOrder` by design
 
 **Read literally, twice, before authoring anything:**
 
-- **Two manifests grow, not three.** `careers/immediately-effective/software-engineer.yaml` is
+- **Two manifests grow, not three.** `careers/immediately-effective/software-engineer.json` is
   deliberately **excluded** — that path's reader reaches the interview-technique courses (if at all)
   via their canonical course pages, never via that path's own `courseOrder`. This is a design decision
   the source plan made, not an oversight this plan corrects.
@@ -111,7 +111,7 @@ the same five fields the parent plan's contract defines, verbatim, in a fenced `
 | `BAND`              | `Band 9 — Interview-technique courses`                                                                                                                                  |
 | `PLAN`              | `ayokoding-learning-path-09-course-authoring-interview-technique`                                                                                                       |
 | `LANDED_COURSE_IDS` | the 5 course IDs, one per line, in this plan's own listing order (see below)                                                                                            |
-| `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` — **exactly these two, never a third** |
+| `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.json` and `<MANIFESTS>careers/fundamentally-strong/software-engineer.json` — **exactly these two, never a third** |
 | Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges                                                                         |
 
 A signal that names three manifests is incomplete and the receiving plan must reject it rather than
@@ -131,31 +131,18 @@ Full per-course concept/example counts, prerequisites, and format detail: see
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 6, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 6, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Direction     | Plan (full folder name)                                                                                                                                                                                             | Nature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy** | `ayokoding-learning-path-01-url-restructure`                                                                                                                                                                        | hard, transitive — populated flat `courses/` namespace + `courses/_index.md`; this plan needs the bucket to exist even though it does not itself re-home anything                                                                                                                                                                                                                                                                                                                                 |
-| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                                                            | hard, transitive — `syllabus/courses/<course-id>.md` specs for all 5 Band-9 IDs + the `prerequisites` frontmatter contract                                                                                                                                                                                                                                                                                                                                                                        |
-| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                                                       | hard, satisfied baseline — Plan 04's Phase 0 baseline (toolchain converged, both Wave-1 plans verified merged) and already-populated `<COURSES>` namespace merged in its completed 21-course closeout; Bands are mutually independent (see [tech-docs.md §Baseline precondition](./tech-docs.md#baseline-precondition-on-plan-04))                                                                                                                                                                |
-| **blockedBy** | `vercel-function-cost-reduction`                                                                                                                                                                                    | hard, new — Phases 1–4 of that plan fix `apps/ayokoding-www`'s prerendering so 5 new content pages land static rather than compounding the per-page function-invocation cost problem; see [tech-docs.md §The `vercel-function-cost-reduction` precondition](./tech-docs.md#the-vercel-function-cost-reduction-precondition)                                                                                                                                                                       |
-| _(sibling)_   | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`                                                                                                                                              | none — Bands 3+4 (14 bodies); mutually content-independent, per plan04's own "Bands 1–4, 6, 7, and 9 are mutually independent" ordering rationale                                                                                                                                                                                                                                                                                                                                                 |
-| _(sibling)_   | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                                                                                                           | none — Band 5 (15 bodies, incl. the AI/harness cluster); mutually content-independent                                                                                                                                                                                                                                                                                                                                                                                                             |
-| _(sibling)_   | `ayokoding-learning-path-07-course-authoring-low-level-systems`                                                                                                                                                     | none — Band 6, native/low-level half (7 bodies); mutually content-independent                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| _(sibling)_   | `ayokoding-learning-path-08-course-authoring-security-and-ops`                                                                                                                                                      | none — Band 7 (11 bodies); mutually content-independent                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| _(sibling)_   | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                                                                | none — Band 6, JVM/advanced-language half (9 bodies); mutually content-independent                                                                                                                                                                                                                                                                                                                                                                                                                |
-| _(sibling)_   | `ayokoding-learning-path-14-skills-accounting-foundations`, `-15-skills-accounting-enterprise-reporting`, `-16-skills-accounting-sharia-extension`, `-17-skills-erp-foundations`, `-18-skills-erp-enterprise-depth` | none — different track (`skills/` paths, not `careers/`); mutually content-independent; different course corpora. These five plans are the successors of the former `06-skills-accounting`/`07-skills-erp` plans, which were split before this plan's authoring                                                                                                                                                                                                                                   |
-| **blocks**    | [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)                                                                                                   | hard, but **only for two of that path's manifests** — the `interview-ready` and `fundamentally-strong` `software-engineer` manifests' growth. The `immediately-effective/software-engineer` manifest is **not** grown by this signal — see [the manifest ownership section above](#the-manifest-ownership-invariant--this-band-is-the-special-case). This plan is the successor (SE-manifest half) of the former single `05-manifests` plan, which was split in two before this plan's authoring. |
-| _(no edge)_   | `ayokoding-learning-path-13-careers-ai-manifest`                                                                                                                                                                    | explicitly **no dependency** — the AI-engineer path never references any interview-technique course; stated here so a reader does not infer a missing edge. This plan is the successor (AI-manifest half) of the former single `05-manifests` plan                                                                                                                                                                                                                                                |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-08-course-authoring-security-and-ops` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Independent of siblings 05–08**: this plan's 5 course bodies are mutually content-independent of
-every other band-split sibling plan's corpus — no shared file, no shared course ID.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-08-course-authoring-security-and-ops/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Not UI-bearing (Rule-15 exemption, reused reasoning)
 

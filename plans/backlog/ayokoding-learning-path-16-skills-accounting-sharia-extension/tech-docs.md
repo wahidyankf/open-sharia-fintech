@@ -10,7 +10,7 @@ folder on archival. See
 ## Provenance of this split
 
 This plan is the **third and final** of the three-plan chain replacing the retired
-`plans/backlog/ayokoding-learning-path-06-skills-accounting/` plan — see
+the superseded accounting-programme draft (reproduced and owned locally) plan — see
 `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md §Provenance of this split`
 for the full phase-to-plan mapping. This plan corresponds to the retired plan's own **Phase 4**
 (the Sharia-doctrinal verification debt: OI-1, OI-2, OI-3) and **Phase 5** (Stage 3, courses
@@ -28,27 +28,27 @@ This plan delivers the **final slice** of the twenty-four-course, two-manifest c
 courses #20–#24 — the Sharia standards landscape (AAOIFI, PSAK Syariah, MFRS-plus-BNM), Islamic
 contract modelling, Zakah computation, Sukuk accounting, and the terminal
 `sharia-ledger-system-architecture` course. All five courses are **Sharia-specific** — none is
-shared — so only `sharia-accounting.yaml` grows here; `conventional-accounting.yaml` stays exactly
+shared — so only `sharia-accounting.json` grows here; `conventional-accounting.json` stays exactly
 as plan 15 left it.
 
 It touches **no application code**. Its artefacts are markdown page bundles under
-`apps/ayokoding-www/content/`, growth of **one** existing YAML data file (created by plan 14, grown
+`apps/ayokoding-www/content/`, growth of **one** existing JSON manifest data file (created by plan 14, grown
 by plan 15), and five markdown spec files inside this plan's own folder.
 
 ## The manifest ownership invariant across the sequential chain (this plan's role)
 
-This plan **extends, never replaces**, `sharia-accounting.yaml` and its co-located unit test, and
-**never touches** `conventional-accounting.yaml` or its test:
+This plan **extends, never replaces**, `sharia-accounting.json` and its co-located unit test, and
+**never touches** `conventional-accounting.json` or its test:
 
-| Plan           | Touches `conventional-accounting.yaml` / `sharia-accounting.yaml` | State at plan's end                                                                                         |
+| Plan           | Touches `conventional-accounting.json` / `sharia-accounting.json` | State at plan's end                                                                                         |
 | -------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | 14             | Created both files, grew both 0 → 3 → 11                          | Both hold 11 identical IDs                                                                                  |
-| 15             | Grew both further, 11 → 19                                        | `conventional-accounting.yaml` reached its **terminal** 19; `sharia-accounting.yaml` also at 19             |
-| 16 (this plan) | **Grows `sharia-accounting.yaml` only, 19 → 24**                  | `sharia-accounting.yaml` at its **terminal** 24; `conventional-accounting.yaml` **untouched since plan 15** |
+| 15             | Grew both further, 11 → 19                                        | `conventional-accounting.json` reached its **terminal** 19; `sharia-accounting.json` also at 19             |
+| 16 (this plan) | **Grows `sharia-accounting.json` only, 19 → 24**                  | `sharia-accounting.json` at its **terminal** 24; `conventional-accounting.json` **untouched since plan 15** |
 
 **This is safe because the chain is strictly sequential** — this plan does not start authoring
 until plan 15's course bodies, manifest growth, and landing updates are merged to `origin/main`
-(hard `blockedBy`, checked mechanically at this plan's own Phase 0). There is never a window where
+(repository baseline context, checked mechanically at this plan's own Phase 0). There is never a window where
 two plans in this chain edit the same manifest file concurrently, and **no later plan exists in
 this chain to touch either manifest again** — this plan's own end is the corpus's own end.
 
@@ -59,10 +59,10 @@ created by plan 14 and updated by plan 15; this plan **updates only `sharia-acco
 ## Two manifests, shared courses (A10 + A11) — restated, and where they diverge for the first time
 
 **A11 is the schema's existing rule.** All five of this plan's courses are authored **once**, under
-`<COURSES>`, and referenced by **`sharia-accounting.yaml` only** — none is added to
-`conventional-accounting.yaml`. This is the point in the chain where the two manifests' `courseOrder`
-arrays **stop being identical**: `conventional-accounting.yaml` freezes at 19 (plan 15's terminus);
-`sharia-accounting.yaml` grows five entries further, to 24. Full rationale for the two-manifest,
+`<COURSES>`, and referenced by **`sharia-accounting.json` only** — none is added to
+`conventional-accounting.json`. This is the point in the chain where the two manifests' `courseOrder`
+arrays **stop being identical**: `conventional-accounting.json` freezes at 19 (plan 15's terminus);
+`sharia-accounting.json` grows five entries further, to 24. Full rationale for the two-manifest,
 shared-course design:
 `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md §Two manifests, shared courses`.
 
@@ -89,7 +89,7 @@ Full definitions, including the shell block that re-derives `<PLANDIR>` by lifec
 ## The five-course catalog slice (courses #20–#24)
 
 All five courses in this plan's range are **Sharia-specific** — authored once, referenced by
-`sharia-accounting.yaml` only. None carries a linked `(SWE)` cross-domain prerequisite of its own;
+`sharia-accounting.json` only. None carries a linked `(SWE)` cross-domain prerequisite of its own;
 course #24 inherits `backend-essentials`'s grounding through its own prerequisite on plan 15's
 course #19 (already resolved, in `<COURSES>`, at this plan's Phase 0).
 
@@ -133,7 +133,7 @@ flowchart LR
 **Accessibility note.** Ownership of each growth step is carried by node **shape** and by explicit
 text in every label, never by colour alone.
 
-| Step                         | `conventional-accounting.yaml` length           | `sharia-accounting.yaml` length | Owning plan |
+| Step                         | `conventional-accounting.json` length           | `sharia-accounting.json` length | Owning plan |
 | ---------------------------- | ----------------------------------------------- | ------------------------------- | ----------- |
 | Before this plan (inherited) | 19 (terminal, from plan 15)                     | 19                              | 15          |
 | After this plan's Phase 3    | **19 (unchanged, verified `git diff --quiet`)** | **24 (CORPUS TERMINAL)**        | 16          |
@@ -144,10 +144,10 @@ gate**:
 1. `pathId` is the FULL slash string, unchanged from plan 14.
 2. `arc` remains `immediately-effective`.
 3. Every `courseOrder` entry remains a plain course-ID string.
-4. `sharia-accounting.yaml`'s `courseOrder` never contains `sql-essentials` or `backend-essentials`.
-5. `sharia-accounting.yaml`'s `courseOrder` is exactly **24** entries at this plan's end, and never
+4. `sharia-accounting.json`'s `courseOrder` never contains `sql-essentials` or `backend-essentials`.
+5. `sharia-accounting.json`'s `courseOrder` is exactly **24** entries at this plan's end, and never
    grows again.
-6. **`conventional-accounting.yaml` is byte-for-byte unchanged since plan 15's own merge** — the
+6. **`conventional-accounting.json` is byte-for-byte unchanged since plan 15's own merge** — the
    single falsifiable boundary this plan's entire risk profile hinges on:
    `git diff --quiet -- "$MANIFEST_CA"` exits 0, explicitly asserted at the Phase 3 and Phase 4
    gates (the phases that touch or verify the manifests); the invariant continues to hold
@@ -325,48 +325,43 @@ earlier plans**: `sql-essentials` (plan 14, course #2) and `backend-essentials` 
 
 ## Manifest format (state at this plan's end)
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.yaml
-# TERMINAL since plan 15. This plan does not open this file for editing.
-# (Reproduced here only to show the frozen state this plan's own Phase 3 gate verifies unchanged.)
-pathId: skills/conventional-accounting
-arc: immediately-effective
-courseOrder:
-  # … the same 19 entries plan 15 left it with — 11 from plan 14 plus 8 from plan 15 …
-```
+The conventional-accounting manifest is not opened or rewritten in this phase. Its JSON from plan
+15 remains immutable; Phase 3 verifies `jq '.courseOrder | length == 19'` against the existing
+manifest rather than presenting a partial replacement document.
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-accounting.yaml
-# CORPUS TERMINAL state — 24 entries, reached at the end of this plan.
-pathId: skills/sharia-accounting
-arc: immediately-effective
-title: "Sharia-Compliant Accounting for Systems Builders"
-description: "Every basic and enterprise capability the conventional path teaches, plus murabaha, ijara, mudaraba, musharaka, zakah and sukuk modelled correctly."
-courseOrder:
-  - accounting-foundations # plan 14
-  - chart-of-accounts-and-data-modeling # plan 14
-  - financial-statements-and-close-cycle # plan 14
-  - journal-entries-and-posting-mechanics # plan 14
-  - accrual-accounting-and-revenue-recognition # plan 14
-  - accounts-payable-and-procure-to-pay # plan 14
-  - accounts-receivable-and-order-to-cash # plan 14
-  - managerial-and-cost-accounting # plan 14
-  - fixed-assets-and-depreciation # plan 14
-  - inventory-and-cogs-accounting # plan 14
-  - lease-and-intangible-asset-accounting # plan 14
-  - multi-currency-accounting-and-fx-translation # plan 15
-  - consolidation-and-multi-entity-accounting # plan 15
-  - financial-reporting-standards-ifrs-vs-gaap # plan 15
-  - audit-controls-and-compliance # plan 15
-  - payroll-and-tax-accounting-essentials # plan 15
-  - treasury-and-cash-management # plan 15
-  - financial-reporting-and-xbrl # plan 15
-  - general-ledger-system-architecture # plan 15
-  - sharia-accounting-and-aaoifi-standards # this plan
-  - islamic-contract-modeling-for-systems # this plan
-  - zakah-computation-and-reporting-for-systems # this plan
-  - sukuk-and-islamic-capital-markets-accounting # this plan
-  - sharia-ledger-system-architecture # this plan — TERMINAL entry, CORPUS TERMINAL
+```json
+{
+  "pathId": "skills/sharia-accounting",
+  "arc": "immediately-effective",
+  "title": "Sharia-Compliant Accounting for Systems Builders",
+  "description": "Every basic and enterprise capability the conventional path teaches, plus murabaha, ijara, mudaraba, musharaka, zakah and sukuk modelled correctly.",
+  "courseOrder": [
+    "accounting-foundations",
+    "chart-of-accounts-and-data-modeling",
+    "financial-statements-and-close-cycle",
+    "journal-entries-and-posting-mechanics",
+    "accrual-accounting-and-revenue-recognition",
+    "accounts-payable-and-procure-to-pay",
+    "accounts-receivable-and-order-to-cash",
+    "managerial-and-cost-accounting",
+    "fixed-assets-and-depreciation",
+    "inventory-and-cogs-accounting",
+    "lease-and-intangible-asset-accounting",
+    "multi-currency-accounting-and-fx-translation",
+    "consolidation-and-multi-entity-accounting",
+    "financial-reporting-standards-ifrs-vs-gaap",
+    "audit-controls-and-compliance",
+    "payroll-and-tax-accounting-essentials",
+    "treasury-and-cash-management",
+    "financial-reporting-and-xbrl",
+    "general-ledger-system-architecture",
+    "sharia-accounting-and-aaoifi-standards",
+    "islamic-contract-modeling-for-systems",
+    "zakah-computation-and-reporting-for-systems",
+    "sukuk-and-islamic-capital-markets-accounting",
+    "sharia-ledger-system-architecture"
+  ]
+}
 ```
 
 ## Stage-signal contract (the plan-18 handoff, Sharia-stage granularity)
@@ -389,7 +384,7 @@ sequenceDiagram
     P16->>P16: Resolve OI-1 through OI-4 (Phase 2), before any course is authored
     P16->>P16: Author every body in this plan's range from its syllabus spec
     P16->>P16: Run content checkers, apply fixers, re-verify
-    P16->>P16: Grow sharia-accounting.yaml to 24, record the five-field stage signal on final-delivery
+    P16->>P16: Grow sharia-accounting.json to 24, record the five-field stage signal on final-delivery
     P16->>Main: Archive, then push final-delivery and open the sole PR for review and AI merge
     Note over P16,P18: The record lives in this plan's delivery.md only - plan 18 never reads that file
     P18->>Main: At its own gate, independently test -d every course ID its own Sharia-specific stage needs
@@ -435,8 +430,8 @@ above).
 
 - **DD-1601 · This plan is the third and final of a three-plan sequential chain.** Full mapping:
   [§Provenance of this split](#provenance-of-this-split).
-- **DD-1602 · This plan extends, never replaces, `sharia-accounting.yaml` and its test; it never
-  opens `conventional-accounting.yaml` or its test.** Continues DD-1502 from plan 15, narrowed to
+- **DD-1602 · This plan extends, never replaces, `sharia-accounting.json` and its test; it never
+  opens `conventional-accounting.json` or its test.** Continues DD-1502 from plan 15, narrowed to
   one file only.
 - **DD-1603 · The 5 syllabus specs in this plan's range live in this plan's own folder**, not plan
   14's, plan 15's, or plan 02's. Continues DD-1503/DD-1404.
@@ -446,7 +441,7 @@ above).
   is nothing left to link.
 - **DD-1605 · This plan emits the SECOND and FINAL cross-plan stage signal in this chain (Stage 3)**, unblocking plan 18's Sharia-specific capability. See
   [§Stage-signal contract](#stage-signal-contract-the-plan-18-handoff-sharia-stage-granularity).
-- **DD-1606 · `sharia-accounting.yaml` becomes CORPUS TERMINAL after this plan** — the whole
+- **DD-1606 · `sharia-accounting.json` becomes CORPUS TERMINAL after this plan** — the whole
   24-course, two-manifest corpus is complete once this plan archives. No future plan in this chain
   exists to grow it further.
 - **DD-1607 · This plan runs its own full Rule-15 retest, for `sharia-accounting` only** —
@@ -474,9 +469,9 @@ already covered `conventional-accounting`).
 
 ### API gate — **NOT exempt** (unchanged reasoning)
 
-Manifest integrity is behaviour, exercised through `sharia-accounting.yaml`'s zod validation,
+Manifest integrity is behaviour, exercised through `sharia-accounting.json`'s zod validation,
 `checkManifestIntegrity`, and `checkPrerequisiteConsistency`, plus a `git diff --quiet` freeze
-assertion on `conventional-accounting.yaml`.
+assertion on `conventional-accounting.json`.
 
 **Rule-16 API exploratory retest — not applicable.**
 
@@ -484,7 +479,7 @@ assertion on `conventional-accounting.yaml`.
 
 ### Specs and Gherkin (app-code)
 
-This plan's app/lib-code footprint: growth of one existing YAML data file, extension of one
+This plan's app/lib-code footprint: growth of one existing JSON manifest data file, extension of one
 existing co-located unit test, and extension of one existing step-definition file. No new
 TypeScript test file is created.
 
@@ -506,7 +501,7 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 ├── apps/ayokoding-www/content/en/learn/paths/skills/
 │   └── sharia-accounting/_index.md [E] — grown; file created by plan 14
 ├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
-│   ├── sharia-accounting.yaml [E] — grown 19 -> 24; created by plan 14
+│   ├── sharia-accounting.json [E] — grown 19 -> 24; created by plan 14
 │   └── sharia-accounting-manifest.unit.test.ts [E] — extended to the terminal 24-id state
 ├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
 │   └── <the accounting feature file> [E] — extended; created by plan 14
@@ -525,7 +520,7 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 `syllabus/paths/README.md`, per the
 [Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus/05-required-folder-layout.md#required-folder-layout).
 
-**`conventional-accounting.yaml` is deliberately absent from this tree.** This is the first plan in the
+**`conventional-accounting.json` is deliberately absent from this tree.** This is the first plan in the
 14 → 15 → 16 chain where the two manifests diverge: the five Sharia-extension courses grow
 `sharia-accounting` only. A step here that touched the conventional manifest would be a boundary
 violation, not a convenience — its absence from the tree is the assertion.
@@ -551,7 +546,7 @@ No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its 
 
 **Never touched**: any `_index.md` under `<PATHS>`; `<LANDING_CA>_index.md`; `<MANIFEST_CA>`;
 `<MTEST_CA>`; any existing library course; `manifests/careers/**`;
-`manifests/skills/conventional-erp.yaml` and `manifests/skills/sharia-erp.yaml`; any file inside
+`manifests/skills/conventional-erp.json` and `manifests/skills/sharia-erp.json`; any file inside
 plan 02's, plan 14's, or plan 15's own `syllabus/`; any component, schema, or resolver.
 
 **No new package dependency.**
@@ -560,45 +555,26 @@ plan 02's, plan 14's, or plan 15's own `syllabus/`; any component, schema, or re
 
 | Level                        | What it verifies                                                                                                     | Mechanism                                                                                    |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Manifest unit (TDD)          | `sharia-accounting.yaml` loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (24)  | `npx nx run ayokoding-www:test:unit`                                                         |
-| Path-walk e2e                | `sharia-accounting`'s `pathId` resolves across all 24 courses; `conventional-accounting`'s 19-course walk unaffected | `npx nx run ayokoding-www-fe-e2e:test:e2e`                                                   |
+| Manifest unit (TDD)          | `sharia-accounting.json` loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (24)  | `npm exec nx run ayokoding-www:test:unit`                                                         |
+| Path-walk e2e                | `sharia-accounting`'s `pathId` resolves across all 24 courses; `conventional-accounting`'s 19-course walk unaffected | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                                                   |
 | Composition assertions       | No linked prerequisite absent-from-courseOrder check needed (no new linked edge); shared-19 unaffected               | Grep-checkable clauses                                                                       |
 | Per-course content checks    | Concept coverage, register, format, worked-example volume, scope boundary                                            | `apps-ayokoding-www-by-example-checker` / `-annotated-concept-checker`                       |
 | Silent-failure assertion     | Every course #20–#24 carries its section                                                                             | Grep-checkable clause on each authoring step                                                 |
 | Verification-debt resolution | OI-1/OI-3 residuals recorded; OI-2 remains OPEN; OI-4 remains ROUTED                                                 | Reading audit against [§Open verification items](#open-verification-items-oi-1-through-oi-4) |
 | Licensing audit              | No verbatim standards text, no proprietary CoA structure, no copyleft code pasted, strictest (four-body) posture     | Reading audit against Phase 1's licensing-sensitive-sources list (Phase 4)                   |
-| Terminal-freeze assertion    | `conventional-accounting.yaml` unchanged since plan 15's own merge                                                   | `git diff --quiet -- "$MANIFEST_CA"`                                                         |
+| Terminal-freeze assertion    | `conventional-accounting.json` unchanged since plan 15's own merge                                                   | `git diff --quiet -- "$MANIFEST_CA"`                                                         |
 | Structural                   | Bundle anatomy present; `prerequisites` declared                                                                     | `test -d` / `test -f` plus frontmatter grep                                                  |
-| Section build                | The authored tree renders                                                                                            | `npx nx run ayokoding-www:build`                                                             |
+| Section build                | The authored tree renders                                                                                            | `npm exec nx run ayokoding-www:build`                                                             |
 | Markdown quality             | markdownlint, link validation, heading hierarchy                                                                     | `npm run lint:md` plus the two `rhino-cli md` subcommands                                    |
-| Regression                   | No existing project's gates broke                                                                                    | `npx nx affected -t typecheck lint test:quick specs:behavior:coverage`                       |
+| Regression                   | No existing project's gates broke                                                                                    | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage`                       |
 | Manual behavioural           | `sharia-accounting`'s landing and sample courses render at three breakpoints in `en`                                 | Playwright MCP plus committed `evidence/` screenshots                                        |
 | Live-site retest             | Rule-15 EWT/UWT/DWT against the running `sharia-accounting` landing and full 24-course walk                          | The three live-site testers                                                                  |
 
 **Locale scope**: `en` only.
 
-## Dependencies
+## Execution dependency
 
-| Dependency                                                                 | Kind       | Note                                                                                                                                        |
-| -------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` merged | hard, plan | Supplies the complete 19-course shared spine, `sharia-accounting.yaml` at its 19-entry state, and the frozen `conventional-accounting.yaml` |
-| `ayokoding-learning-path-01-url-restructure` merged                        | hard, plan | `<COURSES>` namespace, `<PATHS>skills/_index.md`                                                                                            |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged            | hard, plan | `PathManifest` zod, integrity functions                                                                                                     |
-| `ayokoding-learning-path-03-navigation-ui` merged                          | hard, plan | `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring                                                              |
-| `vercel-function-cost-reduction` merged                                    | hard, plan | This plan ships one more traffic-bearing page update on the same app                                                                        |
-| `apps-ayokoding-www-by-example-maker` + checker + fixer                    | agent      | 3 of this plan's 5 bodies                                                                                                                   |
-| `apps-ayokoding-www-annotated-concept-maker` + checker + fixer             | agent      | The 2 Annotated-concept bodies (#20, #23)                                                                                                   |
-| `apps-ayokoding-www-general-maker` / `-general-checker`                    | agent      | Landing prose update and syllabus prose                                                                                                     |
-| `apps-ayokoding-www-facts-checker`                                         | agent      | Every standard number, jurisdiction, and doctrinal-framing claim, including the OI-2 boundary                                               |
-| `apps-ayokoding-www-link-checker`                                          | agent      | Intra-course, cross-course, and outbound prerequisite links                                                                                 |
-| `web-researcher`                                                           | agent      | Per-course accuracy pre-verify, the OI-1/OI-2/OI-3 residual re-check, and the post-authoring syllabus module-verification pass              |
-| `apps-ayokoding-www-deployer`                                              | agent      | Post-merge deploy to `prod-ayokoding-www`                                                                                                   |
-| `web-exploratory-tester`, `web-usability-tester`, `web-design-tester`      | agent      | The full Rule-15 retest for `sharia-accounting`                                                                                             |
-| `repo-setup-manager`                                                       | agent      | Phase 0                                                                                                                                     |
-| `nx run ayokoding-www:build` / `:test:unit` / `:specs:behavior:coverage`   | Nx target  | [Repo-grounded — all three present in `apps/ayokoding-www/project.json`]                                                                    |
-| `nx run ayokoding-www-fe-e2e:test:e2e`                                     | Nx target  | The real e2e project                                                                                                                        |
-| `rhino-cli md links validate` / `md heading-hierarchy validate`            | CLI        | Run as raw `cargo run`, never as Nx targets                                                                                                 |
-| `npm run lint:md`                                                          | npm script | markdownlint over the authored tree                                                                                                         |
+This plan has one direct execution prerequisite: `ayokoding-learning-path-15-skills-accounting-enterprise-reporting`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 
@@ -606,10 +582,10 @@ Every artefact is **additive**. Because this plan's own five courses have **zero
 into software engineering**, removing them cannot break any library course.
 
 - **Per course**: `git rm -r <COURSES><course-id>/`, remove its row from `<COURSES>_index.md`, and
-  remove its ID from `sharia-accounting.yaml`.
-- **Whole plan**: revert every merge in reverse order, shrink `sharia-accounting.yaml` back to 19
+  remove its ID from `sharia-accounting.json`.
+- **Whole plan**: revert every merge in reverse order, shrink `sharia-accounting.json` back to 19
   entries (plan 15's state), and revert `sharia-accounting`'s landing to its plan-15 content.
-  `conventional-accounting.yaml` and its landing are never touched, so nothing there needs
+  `conventional-accounting.json` and its landing are never touched, so nothing there needs
   reverting.
 - **The one-way door**: once `ayokoding-learning-path-18-skills-erp-enterprise-depth`
   has authored a course against this plan's Stage-3 signal, deleting the corresponding accounting

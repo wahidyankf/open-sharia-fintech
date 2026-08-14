@@ -30,11 +30,11 @@ own corpus, the successor plan's inbound links are rewritten to this plan's new
 This plan delivers **Stage A of both `skills/` ERP paths**: 15 of the eventual 30 courses, and the
 **fresh publication** of both `skills/conventional-erp` and `skills/sharia-erp` at 15 course ids each.
 It is the first half of a two-plan split of the retired single-plan design
-`ayokoding-learning-path-07-skills-erp`. The second half,
-`ayokoding-learning-path-18-skills-erp-enterprise-depth` (`blockedBy` this plan), grows both manifests
+the superseded ERP-programme draft. The second half,
+`ayokoding-learning-path-18-skills-erp-enterprise-depth` (historical source context this plan), grows both manifests
 to their terminal 27/30-id state across Stage B and Stage C.
 
-It touches **no application code** beyond two new YAML data files and their co-located unit tests.
+It touches **no application code** beyond two new JSON manifest data files and their co-located unit tests.
 Every component, resolver, schema, and route it depends on is built by plans 01–03 and consumed here.
 
 | Layer                                                                                             | Owner                                                    | This plan's relationship            |
@@ -42,47 +42,14 @@ Every component, resolver, schema, and route it depends on is built by plans 01�
 | `courses/` + `paths/` content homes, structural `_index.md` files                                 | `ayokoding-learning-path-01-url-restructure`             | consumes                            |
 | `PathManifest` zod schema, pure `course-paths` core, integrity gates                              | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                            |
 | `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets | `ayokoding-learning-path-03-navigation-ui`               | consumes                            |
-| Static-rendering fix for `apps/ayokoding-www` (root layout, `?path=` client-side reads)           | `vercel-function-cost-reduction`                         | consumes (hard, see below)          |
+| Static-rendering fix for `apps/ayokoding-www` (root layout, `?path=` client-side reads)           | `vercel-function-cost-reduction`                         | consumes (repository baseline; see below)          |
 | The accounting corpus, its manifests, its landings                                                | `ayokoding-learning-path-14/15/16-skills-accounting-*`   | no relationship — zero edge         |
 | **The 15 Stage-A ERP courses, both manifests at 15 ids, both landings through Dangerous 1**       | **this plan**                                            | **authors**                         |
 | Stage B/C course bodies, manifest growth past 15 ids, landing content past Dangerous 1            | `ayokoding-learning-path-18-skills-erp-enterprise-depth` | **not this plan — successor's job** |
 
-## The vercel-function-cost-reduction precondition
+## Repository baseline
 
-This plan's `blockedBy` set gains a new hard entry not present in the retired source plan:
-`vercel-function-cost-reduction` (currently `plans/done/2026-08-02__vercel-function-cost-reduction/`,
-read in full 2026-08-01). That plan fixes `apps/ayokoding-www` prerendering **zero** of its ~2,068
-content pages — every page view currently executes a serverless function because the root layout
-calls `await headers()` and the `[...slug]` catch-all reads `?path=` server-side, both of which force
-dynamic rendering app-wide. Its fix promotes the locale layout to root and moves `?path=` reads
-client-side, restoring static prerendering.
-
-**Why this plan hard-depends on it**: this plan ships **two brand-new content routes** in the same
-app (`/en/learn/paths/skills/conventional-erp` and `/en/learn/paths/skills/sharia-erp`), each served
-by the same `[...slug]` catch-all the cost-reduction plan is fixing. Authoring against the
-**pre-fix** dynamic-rendering posture would ship two more pages into the exact regression that plan
-closes, undoing part of its savings the moment this plan deploys. Authoring against the **post-fix**
-static posture, by contrast, means these two new pages are static from day one and Stage A's
-Dangerous 1 checkpoint costs nothing beyond the fixed baseline.
-
-**Concrete checkable signal** (verified at this plan's own Phase 0 and re-verified at Phase 6):
-
-```bash
-git log origin/main --oneline | grep -q "vercel-function-cost-reduction" \
-  || echo "NOT MERGED: vercel-function-cost-reduction"
-# Post-Phase-6 (both landings authored): confirm the two new routes are prerendered, not dynamic —
-# a non-zero prerender-manifest entry for each new path is the mechanism-level proof, not just a
-# merge-log grep.
-find apps/ayokoding-www/.next/server/app -path "*skills/conventional-erp*" -name "*.html" | grep -q . \
-  && echo "conventional-erp: PRERENDERED" || echo "conventional-erp: STILL DYNAMIC"
-find apps/ayokoding-www/.next/server/app -path "*skills/sharia-erp*" -name "*.html" | grep -q . \
-  && echo "sharia-erp: PRERENDERED" || echo "sharia-erp: STILL DYNAMIC"
-```
-
-Per the plan's own explicit-instruction framing, `vercel-function-cost-reduction` is treated as
-already merged/done for planning purposes — the checks above are the mechanical re-confirmation this
-plan's Phase 0/Phase 6 gates run regardless, per this repo's general practice of never trusting a
-plan's completion status without a live check.
+Repository structure, route behavior, schemas, and already-published course data are verified against current `origin/main` during Phase 0. They are implementation context, not plan prerequisites: this plan's only direct execution prerequisite is `ayokoding-learning-path-16-skills-accounting-sharia-extension`.
 
 ## Path constants
 
@@ -93,8 +60,8 @@ plan's completion status without a live check.
 - `<SHARLANDING>` = `<PATHS>skills/sharia-erp/_index.md` — **this plan creates it fresh**
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
 - `<MANIFESTS>` = `<FEAT>manifests/`
-- `<CONVMAN>` = `<MANIFESTS>skills/conventional-erp.yaml` — **this plan creates it fresh, at 15 ids**
-- `<SHARMAN>` = `<MANIFESTS>skills/sharia-erp.yaml` — **this plan creates it fresh, at 15 ids**
+- `<CONVMAN>` = `<MANIFESTS>skills/conventional-erp.json` — **this plan creates it fresh, at 15 ids**
+- `<SHARMAN>` = `<MANIFESTS>skills/sharia-erp.json` — **this plan creates it fresh, at 15 ids**
 - `<MTEST_CE>` = `<MANIFESTS>skills/conventional-erp-manifest.unit.test.ts` — **this plan creates it**
 - `<MTEST_SE>` = `<MANIFESTS>skills/sharia-erp-manifest.unit.test.ts` — **this plan creates it**
 - `<SYL>` = `plans/backlog/ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/` — this
@@ -140,7 +107,7 @@ plan series, not an unaddressed gap.
 
 ### What this plan never touches
 
-- Any file under `<MANIFESTS>careers/` or `<MANIFESTS>skills/*accounting*.yaml`.
+- Any file under `<MANIFESTS>careers/` or `<MANIFESTS>skills/*accounting*.json`.
 - Any accounting course bundle, syllabus spec, or landing.
 - Any Stage B/C course body, syllabus, or manifest entry past position 15.
 - Any structural `_index.md` — created by plan 01 (A3). This plan edits populated cards into two of
@@ -152,14 +119,14 @@ plan series, not an unaddressed gap.
 
 The retired source plan's manifest-ownership invariant ("each plan owns its own data file(s) plus
 their co-located unit test, never a sibling's") governed **cross-plan** boundaries — this plan and
-its successor are not siblings in that sense; they are a **sequential `blockedBy` pair splitting one
+its successor are not siblings in that sense; they are a **sequential historical source context pair splitting one
 formerly-single plan's own internal Stage A→B→C growth cycle** across two plan folders instead of one.
 The retired plan grew `<CONVMAN>`/`<SHARMAN>` from 15→27 (Stage B) and 27→30 (Stage C) entirely within
 itself; this split moves that same growth into a second plan rather than introducing a new kind of
 cross-plan edit. Concretely: **this plan authors `<CONVMAN>`, `<SHARMAN>`, `<MTEST_CE>`, `<MTEST_SE>`,
 `<CONVLANDING>`, `<SHARLANDING>`, the Gherkin feature file, and its step-definition file as new files;
 the successor plan is explicitly authorized to edit (grow) every one of them** — this is a growth-edit
-performed by the plan the `blockedBy` edge exists precisely to sequence, not an ownership violation.
+performed by the plan the historical source context edge exists precisely to sequence, not an ownership violation.
 No third plan may edit any of these eight files.
 
 ## The ERP catalog (this plan's 15-course slice)
@@ -205,14 +172,14 @@ declares 6 edges into the software-engineering library (`domain-driven-design`, 
 edges into any accounting corpus. No software-engineering course declares any of this plan's ids as a
 prerequisite — this slice is downstream-only, exactly as the full catalog is.
 
-**Two of these six are not yet published — this is a hard `blockedBy`, not an assumption.**
+**Two of these six are not yet published — this is a repository baseline context, not an assumption.**
 `sql-essentials`, `networking-essentials`, `backend-essentials`, and `api-design` already exist under
 `apps/ayokoding-www/content/en/learn/courses/`. `domain-driven-design` (course 4's prerequisite) and
 `event-driven-architecture` (course 23's prerequisite) do **not** — both are pending authoring targets
 listed in `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`'s own backlog
 `delivery.md`, not yet merged to `origin/main`. This plan's
-[§Depends-on](./delivery.md#depends-on-and-start-preconditions) therefore adds
-`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` as a fifth hard `blockedBy`
+[§Depends-on](./delivery.md#depends-on) therefore adds
+`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` as a fifth repository baseline context
 precondition — Phase 0 does not complete, and course 4/23 authoring does not start, until that plan
 merges and both ids exist on disk. `checkPrerequisiteConsistency` (see
 `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`) would otherwise fail
@@ -243,7 +210,7 @@ never by colour alone, per the
 
 ## Why split at the Stage A/B boundary
 
-The retired source plan's own DD-4 already established that the accounting `blockedBy` edge is "soft
+The retired source plan's own DD-4 already established that the accounting historical source context edge is "soft
 overall and hard at two of the three stage gates" — Stage A carries **zero** accounting precondition
 while Stage B and Stage C each wait on a named accounting boundary. That asymmetry is exactly the
 seam this split follows: Stage A's 15 courses are fully self-contained and independently deployable
@@ -267,33 +234,29 @@ delivers.
 
 ### Shape (both manifests share this shape at this checkpoint; only the ids differ from their eventual terminal state)
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-erp.yaml
-pathId: skills/conventional-erp
-arc: immediately-effective
-title: Enterprise Resource Planning (Conventional)
-description: >-
-  Learn the architecture and cross-cutting spine of a conventional ERP — deep enough to found an
-  implementation, never asked to build one. This release covers Stage A (Foundations &
-  Architecture); enterprise-depth content follows in a later release.
-courseOrder:
-  - erp-foundations-and-history
-  - erp-conceptual-data-model
-  # ... 15 ids in ramp order, terminal for THIS plan
+```json
+{
+  "pathId": "skills/conventional-erp",
+  "arc": "immediately-effective",
+  "title": "Enterprise Resource Planning (Conventional)",
+  "description": "Learn the architecture and cross-cutting spine of a conventional ERP — deep enough to found an implementation, never asked to build one. This release covers Stage A (Foundations & Architecture); enterprise-depth content follows in a later release.",
+  "courseOrder": [
+    "erp-foundations-and-history",
+    "erp-conceptual-data-model"
+  ]
+}
 ```
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.yaml
-pathId: skills/sharia-erp
-arc: immediately-effective
-title: Enterprise Resource Planning (Sharia-Compliant)
-description: >-
-  The same conventional-ERP grounding, plus jurisdiction-plural Sharia-compliant design in a later
-  release. This release covers Stage A (Foundations & Architecture) — identical to
-  conventional-erp's own Stage A release.
-courseOrder:
-  - erp-foundations-and-history
-  # ... the same 15 ids, identical to <CONVMAN> at this checkpoint
+```json
+{
+  "pathId": "skills/sharia-erp",
+  "arc": "immediately-effective",
+  "title": "Enterprise Resource Planning (Sharia-Compliant)",
+  "description": "The same conventional-ERP grounding, plus jurisdiction-plural Sharia-compliant design in a later release. This release covers Stage A (Foundations & Architecture) — identical to conventional-erp's own Stage A release.",
+  "courseOrder": [
+    "erp-foundations-and-history"
+  ]
+}
 ```
 
 Four invariants specific to these manifests (inherited, schema-owner-ruled, binding on this plan):
@@ -453,7 +416,7 @@ redundant — each verifies a distinct, independently-shipped state of the same 
 ## Design Decisions
 
 - **DD-1 · This plan owns Stage A of both ERP paths; the successor plan owns Stage B+C.** Splits the
-  retired `ayokoding-learning-path-07-skills-erp`'s single-plan design at the one boundary where both
+  retired the superseded ERP-programme draft's single-plan design at the one boundary where both
   halves are independently deployable (Stage A has no accounting precondition; Stage B/C both do). See
   [§Why split at the Stage A/B boundary](#why-split-at-the-stage-ab-boundary). **Decided.**
 - **DD-2 · The 15 Stage-A syllabus specs live in this plan's own `syllabus/courses/`, not the
@@ -466,13 +429,13 @@ redundant — each verifies a distinct, independently-shipped state of the same 
   table, "Stage A start — no gate". This plan therefore runs fully concurrently with the
   accounting-split plans (`14`/`15`/`16`) and with every careers/course-authoring plan **except
   `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`**, which is a new hard
-  `blockedBy` precondition — see
+  historical source context precondition — see
   [§The prerequisite graph](#the-prerequisite-graph--this-plans-edges-only). **Decided.**
 - **DD-5 · Stage A publication is a genuine deployable milestone, never a placeholder.** Both
   manifests are schema-valid, e2e-tested, and deployed at 15 ids; both landings render a real,
   honestly-scoped ramp through Dangerous 1. This is what justifies this plan's own Rule-15 retest (see
   above) rather than deferring entirely to the successor plan. **Decided.**
-- **DD-6 · `vercel-function-cost-reduction` is a new hard `blockedBy` precondition.** This plan ships
+- **DD-6 · `vercel-function-cost-reduction` is a new repository baseline context precondition.** This plan ships
   two brand-new content routes in the same app that plan is fixing; authoring against the post-fix
   static-rendering posture avoids reintroducing the exact regression that plan closes. **Decided.**
 - **DD-7 · Both manifests record `arc: immediately-effective` even though the URL omits it.**
@@ -480,7 +443,7 @@ redundant — each verifies a distinct, independently-shipped state of the same 
 - **DD-8 · The manifest-ownership invariant is satisfied by explicit successor-plan edit
   authorization, not violated by it.** The eight files this plan authors that the successor plan later
   grows (`<CONVMAN>`, `<SHARMAN>`, `<MTEST_CE>`, `<MTEST_SE>`, `<CONVLANDING>`, `<SHARLANDING>`, the
-  feature file, the step-definition file) are a sequential `blockedBy`-ordered growth, not a
+  feature file, the step-definition file) are a sequential historical source context-ordered growth, not a
   same-time cross-plan collision. See [§Manifest ownership across the two-plan split](#manifest-ownership-across-the-two-plan-split).
   **Decided.**
 - **DD-9 · Corpus custody is single-owner, per the Learning-Plan Syllabus Convention.** This plan is
@@ -515,8 +478,8 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 │   ├── skills/conventional-erp/_index.md [N] — landing through Dangerous 1
 │   └── skills/sharia-erp/_index.md [N] — landing through Dangerous 1
 ├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
-│   ├── conventional-erp.yaml [N] — published at 15 ids; plan 18 grows it
-│   ├── sharia-erp.yaml [N] — published at 15 ids; plan 18 grows it
+│   ├── conventional-erp.json [N] — published at 15 ids; plan 18 grows it
+│   ├── sharia-erp.json [N] — published at 15 ids; plan 18 grows it
 │   ├── conventional-erp-manifest.unit.test.ts [N] — asserts 15 ids
 │   └── sharia-erp-manifest.unit.test.ts [N] — asserts 15 ids
 ├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/

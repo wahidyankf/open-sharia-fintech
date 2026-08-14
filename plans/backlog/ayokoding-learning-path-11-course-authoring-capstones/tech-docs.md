@@ -10,7 +10,7 @@ needed change to that corpus is routed to plan 02's own `delivery.md` as a chang
 ## Overview
 
 This plan produces **content artefacts only**: 8 page bundles under
-`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no YAML data
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no JSON manifest data
 file, no route, no component, and no redirect rule. Its "architecture" is therefore an **authoring
 architecture**, inherited from plan 04 and every sibling split plan unchanged: where each body's
 authoritative spec lives, what shape the produced bundle takes, and how a landed band is handed to the
@@ -38,7 +38,7 @@ the ids genuinely load-bearing for capstone authoring are restated here:
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
 > `ayokoding-learning-path-12-careers-se-manifests` (three software-engineer-role manifests) and
 > `ayokoding-learning-path-13-careers-ai-manifest` (the `ai-engineer` manifest). A step here that
-> creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary violation**, not a
+> creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary violation**, not a
 > convenience — the identical invariant plan 04 established and every sibling split plan carries
 > unchanged.
 
@@ -51,8 +51,8 @@ the ids genuinely load-bearing for capstone authoring are restated here:
 | Add a course's row to the Course Library Catalog in this file       | **Yes**                                                          |
 | List a course in `<COURSES>_index.md`                               | **Yes**                                                          |
 | Record the one band-completion signal in this plan's `delivery.md`  | **Yes**                                                          |
-| Read a `.yaml` manifest to check what a path expects                | **Yes** (read-only)                                              |
-| Append a course ID to any `<MANIFESTS>**/*.yaml`                    | **No**                                                           |
+| Read a `.json` manifest to check what a path expects                | **Yes** (read-only)                                              |
+| Append a course ID to any `<MANIFESTS>**/*.json`                    | **No**                                                           |
 | Re-order any `courseOrder`                                          | **No**                                                           |
 | Re-run manifest integrity / prerequisite-consistency as a gate here | **No** — the manifest-growth plans re-verify their own artefacts |
 | Edit any other course-authoring successor plan's folder             | **No** — flag discrepancies, never patch another plan's files    |
@@ -130,8 +130,8 @@ courses that appear inside a Band-5-themed catalog section (e.g. `software-engin
 - **plan 09** (`interview-technique`, Band 9) — **no confirmed edge**. Verified absent: none of the
   eight capstones cites `coding-interview`, `take-home-and-live-coding`, `system-design-interview`,
   `behavioral-and-leadership-interviews`, or `capstone-interview-loop`.
-- **`vercel-function-cost-reduction`** — hard, new; see [README.md §Why the cost-reduction dependency
-  is hard](./README.md#why-the-cost-reduction-dependency-is-hard).
+- **`vercel-function-cost-reduction`** — repository baseline; see [README.md §Why the cost-reduction dependency
+  is hard](./README.md#depends-on).
 
 ### Two cross-plan documentation discrepancies — found, and now reconciled upstream
 
@@ -228,7 +228,7 @@ sibling split plans authored in the same swarm event; decisions are instead name
   one happened to land first) — the ordering itself is a deliberate authorial choice, not a spec
   requirement for both. See
   [README.md §Exact scope](./README.md#exact-scope-8-courses-in-two-cohorts) for the full rationale.
-- **`vercel-function-cost-reduction` treated as a hard plan-level precondition, not a per-course one.**
+- **`vercel-function-cost-reduction` treated as a repository-baseline verification, not a per-course one.**
   Every one of the eight capstones renders into the same `apps/ayokoding-www` route tree that plan is
   restructuring; gating the whole plan (rather than only the capstones that happen to touch a
   particular route) avoids a scenario where some of the eight pages ship statically and others ship
@@ -263,7 +263,7 @@ exempted with its own stated reasons in
 
 This plan never edits a manifest file — forbidden outright by
 [§The manifest ownership invariant](#the-manifest-ownership-invariant-binding) — and ships no code, no
-YAML, no route. The `prerequisites` frontmatter this plan writes into each of the 8 `_index.md` files
+JSON manifest data, no route. The `prerequisites` frontmatter this plan writes into each of the 8 `_index.md` files
 is inert until a downstream manifest-growth plan reads it. This plan's own structural check verifies
 only that the field is present and well-formed, never that it resolves against a manifest.
 
@@ -306,7 +306,7 @@ binds app/lib code changes to companion `specs/` Gherkin. This plan changes no a
 adds content under `apps/ayokoding-www/content/`, classified content-exempt from `specs:coverage`, per
 plan 04's own precedent. The Gherkin scenarios in [`prd.md`](./prd.md#acceptance-criteria-gherkin) are
 content-level acceptance criteria bound to delivery steps, not to `specs:behavior:coverage`. This plan
-still runs `npx nx affected -t specs:behavior:coverage` in its verification phase to prove no
+still runs `npm exec nx affected -t specs:behavior:coverage` in its verification phase to prove no
 regression.
 
 ### TDD exemption (this plan ships no application code)
@@ -354,7 +354,7 @@ construction: the exact member list is written to `evidence/authored-body-slugs.
 and every later assertion reads that register rather than globbing the directory — so a slug that
 drifted into the tree from a sibling band plan can never be silently adopted as this plan's work.
 
-`apps/ayokoding-www/content/en/learn/courses/_index.md` is the one shared file this plan edits outside
+`apps/ayokoding-www/content/en/learn/courses/_index.md` is generated from course directories; this plan does not edit it manually outside
 its own plan folder. It is **appended to**, never rewritten, so a concurrent sibling band plan adding
 its own rows produces a mergeable diff rather than a conflict.
 
@@ -380,7 +380,7 @@ verified absent at this plan's authoring time):
 
 | File                                                    | Change                                                                         |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `apps/ayokoding-www/content/en/learn/courses/_index.md` | one new list entry per landed capstone, appended per cohort                    |
+| `apps/ayokoding-www/content/en/learn/courses/_index.md` | regenerated from course directories; verify with `npm exec nx run ayokoding-www:validate-indexes` |
 | `tech-docs.md` (this file) — §Course Library Catalog    | already carries all 8 rows                                                     |
 | `delivery.md` (this plan's own file)                    | the single five-field band-completion signal appended at the close of Cohort B |
 
@@ -395,26 +395,9 @@ verified absent at this plan's authoring time):
 
 **No package-manifest changes.**
 
-## Dependencies
+## Execution dependency
 
-| Dependency                                                                                | Kind       | Note                                                                                                                                                                                              |
-| ----------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ayokoding-learning-path-04-course-authoring` merged (baseline + Band 1/2)                | hard, plan | see confirmed dependency map above                                                                                                                                                                |
-| `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` terminal PR #133   | hard, plan | Verify its merge state before capstone authoring; then use `csp-style-concurrency`, `actor-model-concurrency`                                                                                     |
-| `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` merged (Band 5) | hard, plan | harness cluster + `agentic-ai`, `browser-automation-with-cdp`, `system-design`, `event-driven-architecture`, `creating-ai-powered-apps`                                                           |
-| `ayokoding-learning-path-08-course-authoring-security-and-ops` merged (Band 7)            | hard, plan | `offensive-security`, `defensive-security`, `detection-engineering-and-siem-operations`, `vulnerability-management-and-assessment`, `it-and-application-security`, `site-reliability-engineering` |
-| `vercel-function-cost-reduction` merged (Phases 1-4)                                      | hard, plan | see README §Why the cost-reduction dependency is hard                                                                                                                                             |
-| `apps-ayokoding-www-by-example-maker` and its checker                                     | agent      | the code-heavy capstone bodies                                                                                                                                                                    |
-| `apps-ayokoding-www-annotated-concept-maker` and its checker                              | agent      | `capstone-lead-at-altitude`'s leadership-artefact sections                                                                                                                                        |
-| `apps-ayokoding-www-facts-checker`                                                        | agent      | version-pinned / benchmark-claim verification (the harness/pentest capstones cite METR/Scale-AI benchmarks)                                                                                       |
-| `apps-ayokoding-www-link-checker`                                                         | agent      | intra-course and cross-course link integrity                                                                                                                                                      |
-| `web-researcher`                                                                          | agent      | the per-course accuracy pre-verify step                                                                                                                                                           |
-| `apps-ayokoding-www-deployer`                                                             | agent      | post-merge deploy to `prod-ayokoding-www`                                                                                                                                                         |
-| `nx run ayokoding-www:build`                                                              | Nx target  | renders the authored tree                                                                                                                                                                         |
-| `rhino-cli md links validate` / `md heading-hierarchy validate`                           | CLI        | raw `cargo run`, not Nx targets                                                                                                                                                                   |
-| `npm run lint:md`                                                                         | npm script | markdownlint over the authored tree                                                                                                                                                               |
-
-**No new package dependency.**
+This plan has one direct execution prerequisite: `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 
@@ -441,9 +424,9 @@ manifest itself.
 | Per-course link checks    | intra-course and cross-course links resolve, including to the 4+ upstream plans' courses                                | `apps-ayokoding-www-link-checker`                                      |
 | Contract assertions       | authorization/scope hard-rule stated (pentest capstone); intra-band prerequisite declared (`capstone-lead-at-altitude`) | grep-checkable acceptance clauses                                      |
 | Structural                | bundle anatomy present; `prerequisites` declared                                                                        | `test -d` / `test -f` + frontmatter grep                               |
-| Section build             | the authored tree renders                                                                                               | `npx nx run ayokoding-www:build`                                       |
+| Section build             | the authored tree renders                                                                                               | `npm exec nx run ayokoding-www:build`                                       |
 | Markdown quality          | markdownlint, link validation, heading hierarchy                                                                        | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
-| Regression                | no existing project's gates broke                                                                                       | `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` |
+| Regression                | no existing project's gates broke                                                                                       | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
 | Manual behavioural        | a sample of the 8 pages renders correctly at three breakpoints in `en`                                                  | Playwright MCP + committed `evidence/` screenshots                     |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts — no

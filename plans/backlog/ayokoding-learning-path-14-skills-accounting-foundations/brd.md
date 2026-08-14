@@ -1,7 +1,7 @@
 # Business Requirements — Skills Paths: Accounting Foundations & Transactional Cycles
 
 > **Programme decisions** — the `R*`/`A*` decisions cited below are restated verbatim from the
-> retired `ayokoding-learning-path-06-skills-accounting/tech-docs.md` and are now owned locally by
+> retired the superseded accounting-programme draft/tech-docs.md` and are now owned locally by
 > this plan; see [tech-docs.md §Programme decisions](./tech-docs.md#programme-decisions).
 
 ## Business Goal
@@ -38,13 +38,13 @@ Three business consequences follow, all load-bearing:
 
 ## Why this plan is first in a three-plan chain (not the original single plan)
 
-The retired `ayokoding-learning-path-06-skills-accounting` authored all 24 courses and both
+The retired the superseded accounting-programme draft authored all 24 courses and both
 manifests' full growth in one plan. **This plan (14), together with sibling plans 15 and 16,
-replaces that single plan with a strict sequential chain** — 14 → 15 → 16, each `blockedBy` its
+replaces that single plan with a strict sequential chain** — 14 → 15 → 16, each historical source context its
 predecessor — so that:
 
 - **Each plan is independently reviewable and mergeable at a materially smaller scope** (11 courses
-  here, versus 24 in the original design), reducing the size of any single PR-review cycle and the
+  here, versus 24 in the original design), reducing the size of any single PR verification scope and the
   blast radius of a single plan's rollback.
 - **The manifest-growth staging is explicit and falsifiable at each boundary**, rather than one plan
   asserting three internal stage boundaries that a reader has to trust are each genuinely gated.
@@ -118,7 +118,7 @@ Solo-maintainer repo — no sign-off ceremony. The maintainer wears:
   doctrinal claims, so this plan's verification debt is materially lighter than plans 15/16's).
 - **Licensing steward** — owns the clean-room posture (A8) for this plan's eleven courses.
 - **Content author** — authors 11 syllabus specs and 11 course bodies via the ayokoding maker agents.
-- **Frontend engineer** — creates and initially grows two YAML manifests the `course-paths` feature
+- **Frontend engineer** — creates and initially grows two JSON manifests the `course-paths` feature
   loads and validates at build time.
 - **Content reviewer** — validates the bodies and both landings via the ayokoding checkers.
 
@@ -133,7 +133,7 @@ range are By Example format), its matching checker and fixer, `apps-ayokoding-ww
 Every metric is an **observable check**, falsifiable in both directions.
 
 - **Two skills manifests created and grown to eleven entries** (observable):
-  `manifests/skills/conventional-accounting.yaml` and `manifests/skills/sharia-accounting.yaml` each
+  `manifests/skills/conventional-accounting.json` and `manifests/skills/sharia-accounting.json` each
   hold exactly the same 11 IDs, in order. Before Phase 2 neither file exists; after Phase 2 both hold
   3; after Phase 3, both hold 11.
 - **Eleven course bundles resolve** (observable): each of the 11 course IDs resolves to a directory
@@ -147,7 +147,7 @@ Every metric is an **observable check**, falsifiable in both directions.
   courses #1–#3 do not (Stage 1 is pre-Dangerous-1, matching the retired plan's own rule).
 - **No prerequisite is walked that should be linked** (observable): neither manifest's
   `courseOrder` contains `sql-essentials`.
-- **`vercel-function-cost-reduction` is merged before this plan's baseline is recorded** (observable):
+- **the current rendering baseline is recorded** (observable):
   `git log origin/main --oneline | grep -q "vercel-function-cost-reduction"` returns non-empty.
 - **No regressions** (observable): `ayokoding-www:build`, the affected test tiers,
   `specs:behavior:coverage`, heading-hierarchy, markdownlint, and link validation all pass.
@@ -174,7 +174,7 @@ Every metric is an **observable check**, falsifiable in both directions.
 | **A course reproduces licensed standards text or a proprietary chart-of-accounts structure (A8).**                             | The eleven safe-authoring rules bind every course; every chart of accounts is originally authored; a reading audit runs at the Phase 5 gate.                                                                                           |
 | **Either manifest is silently grown past 11 entries, stealing plan 15's work.**                                                | The Phase 3 gate asserts both manifests hold exactly 11 entries; the Phase 5/7 sweeps re-assert it.                                                                                                                                    |
 | **Plan 15 starts before this plan's course bodies and manifests are actually on `origin/main`.**                               | Plan 15's own Phase 0 precondition checks `git log origin/main --oneline                                                                                                                                                               | grep -q "ayokoding-learning-path-14"` before any authoring begins — the same per-plan grep-loop pattern the retired plan used for 01/02/03. |
-| **This plan's landings ship on an app that is still expensive per-request**, compounding the Vercel cost problem.              | Hard `blockedBy` on `vercel-function-cost-reduction`, checked at Phase 0.                                                                                                                                                              |
+| **This plan's landings ship on an app whose rendering state has changed.** | Record the current rendering baseline at Phase 0 as implementation context; it is not an additional plan prerequisite. |
 | **Scope creep into courses #12+.**                                                                                             | Each course's overview states its scope boundary; the Phase 3 gate asserts exactly 11 course directories exist, never more.                                                                                                            |
 | **The linked prerequisite (`sql-essentials`) gets walked.**                                                                    | Both manifests are asserted to never contain `sql-essentials`; the corresponding course's frontmatter is asserted to declare it.                                                                                                       |
 | **This plan's Rule-15 retest, scoped to 11 courses, misses a defect that only manifests once either manifest grows to 19/24.** | Plans 15 and 16 each run their own follow-up Rule-15 retest scoped to their own incremental delta; see [README.md §Rule-15 disposition](./README.md#rule-15-disposition-for-this-plan--scoped-retest-against-the-eleven-course-slice). |

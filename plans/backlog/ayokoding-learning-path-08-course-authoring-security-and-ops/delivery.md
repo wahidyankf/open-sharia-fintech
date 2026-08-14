@@ -28,7 +28,7 @@ library, carved out of `ayokoding-learning-path-04-course-authoring`'s own deliv
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
 > `> **Pause Safety**:` note (safe-to-stop state + resume command). A gate in a phase named as a
 > delivery boundary in the [`### Delivery Boundaries`](#delivery-boundaries) table additionally covers
-> **integration** (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www`
+> **integration** (draft PR opened, secret scan, local quality checks, and PR quality-gate verification, CI green, `[AI]` merge, `ayokoding-www`
 > deployed); a gate in an **intermediate** phase instead confirms the work is committed with nothing
 > pushed for review yet — see [Plans Organization Convention §PRs Open at Delivery
 > Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
@@ -46,9 +46,9 @@ library, carved out of `ayokoding-learning-path-04-course-authoring`'s own deliv
 This 11-course plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
 cohort or delivery-boundary PR reference below.
 
@@ -58,6 +58,8 @@ plan's only worktree; no per-course, cohort, phase, or closeout worktree is crea
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-08-course-authoring-security-and-ops/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-08-course-authoring-security-and-ops` (or `git worktree add -b worktree/ayokoding-learning-path-08-course-authoring-security-and-ops worktrees/ayokoding-learning-path-08-course-authoring-security-and-ops origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 This path is the one and only worktree for the entire plan. Provision it once from current
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
@@ -78,30 +80,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 7 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
+
+## Content-only delivery safeguards
+
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
+
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
-| Relation                               | Plan (full folder name)                                                   | Nature                                                                                                                                                                                                                                                                                                     |
-| -------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy**                          | `ayokoding-learning-path-04-course-authoring`                             | **Hard, baseline.** Carves this band out; must be merged/archived so Band 7 is not authored twice.                                                                                                                                                                                                         |
-| **blockedBy**                          | `vercel-function-cost-reduction`                                          | **Hard, new.** `app/layout.tsx` deleted and `middleware.ts` deleted — see Phase 0's concrete checks.                                                                                                                                                                                                       |
-| **transitive**                         | `ayokoding-learning-path-01-url-restructure`                              | Already a hard precondition of plan 04; not independently re-verified beyond plan 04's own completion.                                                                                                                                                                                                     |
-| **transitive**                         | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | Already a hard precondition of plan 04; the `syllabus/courses/` specs this plan reads are the same corpus.                                                                                                                                                                                                 |
-| **blocks**                             | `ayokoding-learning-path-12-careers-se-manifests`                         | The three `software-engineer` manifests' `courseOrder` entries for these 11 IDs resolve only after this plan lands.                                                                                                                                                                                        |
-| **blocks**                             | `ayokoding-learning-path-11-course-authoring-capstones`                   | Its security/ops-dependent capstones need this band's bodies as prerequisites.                                                                                                                                                                                                                             |
-| **independent**                        | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`    | Same programme, independent band scope, no shared file.                                                                                                                                                                                                                                                    |
-| **blockedBy (targeted, course-level)** | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | `site-reliability-engineering` cites `system-design` (authored by plan 06) as a hard prerequisite — gated at that specific course step, not at Phase 0, since the other 10 bodies in this band have no such dependency. See the `test -d` gate immediately before the `site-reliability-engineering` step. |
-| **independent**                        | `ayokoding-learning-path-07-course-authoring-low-level-systems`           | Same programme, independent band scope, no shared file.                                                                                                                                                                                                                                                    |
-| **independent**                        | `ayokoding-learning-path-09-course-authoring-interview-technique`         | Same programme, independent band scope, no shared file.                                                                                                                                                                                                                                                    |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-07-course-authoring-low-level-systems` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Start precondition (hard gate, checked in Phase 0)**: `ayokoding-learning-path-04-course-authoring`
-is **merged/archived to `origin/main`**, `vercel-function-cost-reduction` is **merged to
-`origin/main`**, and none of this band's eleven slugs already exists under `<COURSES>`. This plan does
-not start on a promise.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-07-course-authoring-low-level-systems/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -150,7 +148,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-08-course-authoring-security-and-ops/ plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-08-course-authoring-security-and-ops/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
@@ -161,7 +159,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Verify blocking plan #1 (`ayokoding-learning-path-04-course-authoring`) is merged/archived**
+- [ ] [AI] **Verify repository baseline: course-authoring catalog is present**
       — resolve its actual location rather than assuming a folder name, since it was still `in-progress`
       at authoring time — command (single line):
       `git ls-files -- 'plans/done/*ayokoding-learning-path-04-course-authoring/README.md'`
@@ -188,9 +186,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
   `mkdir -p apps/ayokoding-www/content/en/learn/courses/it-governance-grc` makes the loop print
   `EXISTS it-governance-grc`, proving the check fires.
 
-- [ ] [AI] **Verify blocking plan #2 (`vercel-function-cost-reduction`) is merged** — two checks, both
+- [ ] [AI] **Verify the rendering repository baseline** — two checks, both
       required, matching the concrete signal recorded in
-      [README §Why the cost-reduction dependency is hard](./README.md#why-the-cost-reduction-dependency-is-hard):
+      [README §Why the cost-reduction dependency is hard](./README.md#depends-on):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx` (Phase 1's Cause-A fix promoted the locale
       layout and deleted the root one) and `test ! -f apps/ayokoding-www/src/middleware.ts` (Phase 3's
       middleware elimination) — acceptance: both exit 0. Falsifiable both ways: today, before that plan
@@ -200,8 +198,8 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `git ls-files -- 'plans/done/*vercel-function-cost-reduction/README.md'` — acceptance: prints
       exactly one path (`grep -c .` reads **1**). Record it to `evidence/phase-0-snapshot.txt` as
       `VFR_ROOT=<path>`.
-- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
-      `npx nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
+- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Create the authored-body slug register** — write this band's eleven slugs, one per line,
       to `evidence/authored-body-slugs.txt`:
@@ -238,7 +236,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       including the `<PLAN04>` and `<VFR>` references just resolved above:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+  apps/rhino-cli/scripts/rhino-bin.sh md links validate \
     --quiet \
     --exclude plans/done \
     --exclude apps/ayokoding-www/content \
@@ -260,7 +258,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > All checks below must pass before starting Phase 1.
 
 - [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] Both blocking plans verified merged: plan 04's archived `README.md` resolves to exactly one
+- [ ] [AI] Direct predecessor and repository baseline verified: plan 04's archived `README.md` resolves to exactly one
       path (`PLAN04_ROOT` recorded); `vercel-function-cost-reduction`'s two concrete file-absence
       checks both exit 0 and its archived `README.md` resolves to exactly one path (`VFR_ROOT`
       recorded).
@@ -309,7 +307,7 @@ alone):
    `drilling/overview.md`) — acceptance: findings recorded.
 6. [AI] **Apply content fixers** — resolve every CRITICAL/HIGH/MEDIUM finding via the matching fixer —
    acceptance: every finding addressed.
-7. [AI] **Re-verify** — re-run checkers + `npx nx run ayokoding-www:build` + `npm run lint:md` —
+7. [AI] **Re-verify** — re-run checkers + `npm exec nx run ayokoding-www:build` + `npm run lint:md` —
    acceptance: zero CRITICAL/HIGH/MEDIUM remain; build + lint exit 0.
 8. [AI] **Confirm no manifest file changed in this course's own diff**:
    `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
@@ -499,9 +497,9 @@ LANDED_COURSE_IDS:
   site-reliability-engineering
   analytics-and-experimentation
 GROW_MANIFESTS:
-  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
-  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
-  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
 ```
 
 > **Pause Safety**: all eleven Band-7 bodies are live at canonical URLs; the single band-completion
@@ -524,7 +522,7 @@ GROW_MANIFESTS:
       — acceptance: returns **0**.
 - [ ] [AI] **Supersession sweep (Q-A-conditional)** — read the Q-A ruling already recorded in
       `ayokoding-learning-path-01-url-restructure`'s archived `tech-docs.md` (resolved by the time this
-      plan starts, since plan 04's own hard `blockedBy` already required it). If ruled A (staging pen)
+      plan starts, since plan 04's own repository baseline context already required it). If ruled A (staging pen)
       or a hybrid covering the overlapping subjects: for every course in
       `evidence/authored-body-slugs.txt` whose subject overlaps a remaining
       `apps/ayokoding-www/content/en/learn/legacy/` page, append a `Superseded by:` line to that
@@ -535,16 +533,16 @@ GROW_MANIFESTS:
       `overview.md`; record `Q-A ruled B — no supersession sweep performed` in `learnings.md` —
       acceptance: `grep -lF 'Superseded by:' <COURSES>*/overview.md | wc -l` returns **0**.
 - [ ] [AI] Run affected quality gates from the worktree:
-      `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` — acceptance:
+      `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` — acceptance:
       exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation), committing
       preexisting fixes separately.
-- [ ] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
+- [ ] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
 - [ ] [AI] Run link + heading-hierarchy + markdown validation:
-      `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` +
+      `apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate` +
       `npm run lint:md`, plus the scoped link gate:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+  apps/rhino-cli/scripts/rhino-bin.sh md links validate \
     --quiet \
     --exclude plans/done \
     --exclude apps/ose-www/content 2>&1 | grep -F "learn/courses/"
@@ -605,7 +603,7 @@ GROW_MANIFESTS:
 - [ ] [AI] Confirm `en` is the content locale for these bodies — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/it-and-application-security && test ! -d apps/ayokoding-www/content/id/learn/courses/it-and-application-security`
       — acceptance: exits 0.
-- [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
+- [ ] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
 - [ ] [AI] **Sample-verify authored course pages** — for **all eleven** authored courses, at breakpoints
       375 / 768 / 1280 px, via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`,
       `browser_resize`, then `browser_snapshot` — acceptance: each page renders its overview, learning
@@ -647,8 +645,8 @@ GROW_MANIFESTS:
 ## Phase 5: Pre-archival Quality & CI Preparation
 
 - [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
-      `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
-      `npx nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 7 opens the terminal PR.
+      `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
+      `npm exec nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 7 opens the terminal PR.
 - [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
       worktree, branch, or PR is required.
 
@@ -710,7 +708,7 @@ GROW_MANIFESTS:
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
@@ -732,7 +730,7 @@ GROW_MANIFESTS:
       link gate:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+  apps/rhino-cli/scripts/rhino-bin.sh md links validate \
     --quiet \
     --exclude plans/done \
     --exclude apps/ayokoding-www/content \
@@ -764,7 +762,7 @@ GROW_MANIFESTS:
 - [ ] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/`; all
       READMEs updated; archival committed.
-- [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
+- [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
@@ -785,10 +783,10 @@ GROW_MANIFESTS:
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [ ] [AI] `npm exec nx affected -t lint` exits 0.
+- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
 - [ ] [AI] `npm run lint:md` exits 0.
 - [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).

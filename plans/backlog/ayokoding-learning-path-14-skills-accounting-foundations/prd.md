@@ -6,8 +6,8 @@
 ## Product Overview
 
 Courses #1–#11 of a twenty-four-course catalog, split across three sequential plans (14 → 15 → 16).
-This plan **creates** both manifests — `manifests/skills/conventional-accounting.yaml` and
-`manifests/skills/sharia-accounting.yaml` — and grows each to **eleven** entries. It **creates**
+This plan **creates** both manifests — `manifests/skills/conventional-accounting.json` and
+`manifests/skills/sharia-accounting.json` — and grows each to **eleven** entries. It **creates**
 both path landings — `/en/learn/paths/skills/conventional-accounting` and
 `/en/learn/paths/skills/sharia-accounting` — with content stating the arc promise and the
 Dangerous-1 boundary.
@@ -245,7 +245,7 @@ Scenario: This plan's authored slice builds and validates green
 
 ### In scope
 
-- Two `PathManifest` YAML data files, **created by this plan**, each grown to 11 entries.
+- Two `PathManifest` JSON manifest data files, **created by this plan**, each grown to 11 entries.
 - Each manifest's own co-located unit test.
 - One shared Gherkin feature file (Scenario Outline, two Examples rows) and its step-definition file.
 - Two path landing bundles, **created by this plan**. **No `courseOrder` in either landing.**

@@ -4,7 +4,7 @@
 
 Per-course module/topic breakdowns for this plan's 15-course slice (Stage B's 12 + Stage C's 3) of the
 30-course ERP corpus. Mirrors the folder convention plan 17 and the retired
-`ayokoding-learning-path-07-skills-erp` design established (`syllabus/courses/` + `syllabus/paths/`).
+the superseded ERP-programme draft design established (`syllabus/courses/` + `syllabus/paths/`).
 
 **This plan is a read-only consumer of plan 17's own 15-file Stage-A corpus** — see
 [`../ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md`](../../ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md)

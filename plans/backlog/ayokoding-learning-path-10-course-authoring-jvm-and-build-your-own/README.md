@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 9 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 7, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 Author **9 course bodies** — the JVM/advanced-language half of the original Band 6 — into
@@ -38,7 +38,7 @@ split plan carries, **no manifest**.
 > the successor to the retired `ayokoding-learning-path-05-manifests`, which composes `courseOrder`
 > entries from every course-authoring plan's landed bodies, this one included, into the three
 > `software-engineer`-role `careers/` manifests. A step in this plan that creates, appends to,
-> reorders, or re-verifies a `.yaml` manifest is a **boundary violation**, not a
+> reorders, or re-verifies a `.json` manifest is a **boundary violation**, not a
 > convenience — see
 > [`ayokoding-learning-path-04-course-authoring/README.md`'s own statement of this invariant](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#the-manifest-ownership-invariant-binding--read-before-anything-else),
 > which this plan inherits verbatim.
@@ -74,97 +74,15 @@ real gap this plan had missed (`enterprise-java-and-the-jvm`'s undeclared `softw
 prerequisite — see [tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog) and
 the `06` row below).
 
-## Cross-plan dependency picture
+## Depends-on
 
-This plan carries the **most inbound edges of any of the new Band-6-split sibling plans** — it is
-blocked by four other course-authoring-family plans plus one infrastructure plan, and it blocks the
-downstream careers-manifests plan.
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-09-course-authoring-interview-technique` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-Split into two diagrams (upstream inbound edges, then downstream/sibling edges) so neither exceeds
-the accessible-diagram width guideline — `THIS` is the shared anchor node in both.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-09-course-authoring-interview-technique/README\.md` exits 0. This is this plan's only plan-level start gate.
 
-```mermaid
-%% Upstream half of the dependency picture for this plan (ayokoding-learning-path-10): the four
-%% blocking edges that must be merged before Phase 0 completes.
-%% Node SHAPE encodes plan state: rectangle = done/merged, stadium = in-progress, hexagon = backlog.
-%% THIS plan carries a doubled/thick border. Edge LABEL states what artefact or fact crosses the edge.
-flowchart TD
-    P01["01 · url-restructure<br/>DONE"]:::done
-    P02["02 · schema-and-<br/>prerequisite-dag<br/>DONE"]:::done
-    P04(["04 · course-authoring<br/>DONE (21-course baseline)"]):::done
-    VCR(["vercel-function-cost-<br/>reduction<br/>DONE"]):::done
-    THIS(["THIS PLAN · 10 ·<br/>course-authoring-jvm-and-<br/>build-your-own"]):::this
-
-    P01 -->|"populated flat courses/<br/>namespace + redirects"| THIS
-    P02 -->|"syllabus/courses specs +<br/>prerequisites contract"| THIS
-    P04 -->|"Band 1 body already merged:<br/>database-internals-and-<br/>storage-engines (satisfied)"| THIS
-    VCR -->|"prerendering restored — do not<br/>compound the cost defect with<br/>9 more dynamic pages"| THIS
-
-    classDef done fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef this fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-```
-
-```mermaid
-%% Downstream half: the two sibling blocking edges into THIS, plus the two edges THIS emits.
-%% Node SHAPE encodes plan state: rectangle = archived terminal delivery, hexagon = backlog/not-yet-authored. THIS carries a doubled border.
-flowchart TD
-    P05["05 · course-authoring-<br/>platform-and-concurrency<br/>ARCHIVED · terminal PR #133"]:::delivery
-    P06{{"06 · course-authoring-<br/>architecture-and-ai-harness<br/>BACKLOG (sibling, concurrent)"}}:::backlog
-    THIS(["THIS PLAN · 10 ·<br/>course-authoring-jvm-and-<br/>build-your-own"]):::this
-    P07{{"07 · course-authoring-<br/>low-level-systems<br/>BACKLOG (sibling, no edge)"}}:::backlog
-    P12{{"12 · careers-se-manifests<br/>BACKLOG (downstream)"}}:::backlog
-
-    P05 -->|"Band 4 body: just-enough-go<br/>(gated on terminal PR #133 merge)"| THIS
-    P06 -->|"Band 5 bodies: distributed-systems<br/>(build-your-own-raft prereq),<br/>software-architecture<br/>(enterprise-java-and-the-jvm prereq)"| THIS
-    THIS -.->|"same wave, no shared file"| P07
-    THIS -->|"9 authored bodies +<br/>band-completion signal"| P12
-
-    classDef backlog fill:#DE8F05,stroke:#000000,color:#000000
-    classDef delivery fill:#CC78BC,stroke:#000000,color:#000000
-    classDef this fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-```
-
-**Accessibility note.** Plan state is carried by node **shape** (rectangle = done, stadium =
-in-progress, hexagon = backlog) and by the literal state word in every label, never by fill colour
-alone. This plan's node carries an explicit `THIS PLAN` label and a thicker border. The sibling edge to
-plan 07 uses a **dotted** line (no artefact crosses it) versus the **solid** lines that carry a named
-artefact, per the
-[Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md).
-
-### What each edge is, precisely
-
-| Edge                                    | Nature                                                | What crosses it                                                                                                                                                                                                                           | Verification                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| --------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `01` → this                             | hard `blockedBy` (transitive)                         | populated flat `courses/` namespace + `courses/_index.md`                                                                                                                                                                                 | `[Repo-grounded]` — identical precondition `ayokoding-learning-path-04-course-authoring` already states and this plan inherits, since it authors into the same namespace.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `02` → this                             | hard `blockedBy` (transitive)                         | `syllabus/courses/<course-id>.md` specs for all 9 courses + the `prerequisites` frontmatter contract                                                                                                                                      | `[Repo-grounded]` — all 9 spec files confirmed present under `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/` (verified by direct file read; see [tech-docs.md](./tech-docs.md#course-library-catalog)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `04` → this                             | hard `blockedBy`, **already satisfied**               | `build-your-own-database`'s prerequisite body `database-internals-and-storage-engines` (Band 1 of the original single plan04)                                                                                                             | `[Repo-grounded]` — confirmed directly via `test -d apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines` (exits 0) and plan04's own Course Library Catalog, which lists `database-internals-and-storage-engines` as a Band 1 (`T(36)`) authored body inside plan04's own already-merged scope. This is a real edge, satisfied by plan04's own progress rather than by a separate plan.                                                                                                                                                                                                                                                                                                                                                |
-| `05` → this                             | hard `blockedBy`, **gated on terminal PR #133 merge** | `just-enough-go` (Band 4 — Concurrency languages), `build-your-own-raft`'s declared prerequisite                                                                                                                                          | `[Repo-grounded]` — [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) records `just-enough-go` (`T(64)`, Primer, Go, prerequisites `—`) in terminal PR #133. This dependency becomes satisfied only after that PR's GitHub state is merged.                                                                                                                                                                                                                                                                                                                                                                                            |
-| `06` → this                             | hard `blockedBy`, **not yet satisfied**               | `distributed-systems` (Band 5 — Architecture, distributed & AI/harness), `build-your-own-raft`'s other declared prerequisite; **and** `software-architecture` (also Band 5), `enterprise-java-and-the-jvm`'s second declared prerequisite | `[Repo-grounded]` — confirmed via direct read of `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/tech-docs.md:430,434`, which lists `software-architecture` (`T(42)`, Annotated-concept, Python) and `distributed-systems` (`T(46)`, By Example, Python) as this plan's own Band 5 rows. **This second prerequisite (`software-architecture`) was previously undeclared and ungated** — see [tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog) and [delivery.md's Phase 1 hard gate](./delivery.md#phase-1-cohort-1--5-bodies-java-lisp-f-type-systems), which now checks its existence immediately before `enterprise-java-and-the-jvm`'s own sub-phase, mirroring the existing `build-your-own-raft` pattern. |
-| `vercel-function-cost-reduction` → this | hard `blockedBy`, **new**                             | prerendering restored on `ayokoding-www` (Phases 1–2 of that plan)                                                                                                                                                                        | `[Repo-grounded]` — that plan's own README states the root cause (`apps/ayokoding-www` prerenders 0 of ~2,068 pages) and names `apps/ayokoding-www/src/app/[locale]/layout.tsx` becoming the root layout and the middleware's deletion as its Phase 1–3 fixes. See [Vercel Cost-Reduction Precondition](#vercel-cost-reduction-precondition) below.                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| this ⇢ `07`                             | sibling, **no dependency edge**                       | none — verified: no course this plan authors lists any of `07`'s 7 courses (`just-enough-c`, `just-enough-cpp`, `linux-os`, `windows-os`, `system-programming`, `just-enough-rust`, `modern-system-programming`) as a prerequisite        | `[Repo-grounded]` — cross-checked every one of this plan's 9 catalog rows against `07`'s 7 course IDs; zero matches. See [tech-docs.md §Independence from plan 07](./tech-docs.md#independence-from-plan-07-verified).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| this → `12`                             | hard `blocks`                                         | 9 authored bodies + the partial band-completion signal (this plan's half of Band 6)                                                                                                                                                       | Mirrors `ayokoding-learning-path-04-course-authoring`'s existing `blocks` edge to the manifest/careers plans; `12-careers-se-manifests` needs every course-authoring split plan's signal before composing the software-engineer manifests' final `courseOrder`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-
-### What I could NOT confirm
-
-- **Whether `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` and
-  `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` exist on disk** — **now
-  resolved**: plan 05 is archived under `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`
-  with terminal delivery record PR #133, whose GitHub merge state determines its satisfaction; plan 06 remains in `plans/backlog/`; both have been read directly (see the `05`/`06` rows in
-  [the edge table above](#what-each-edge-is-precisely) and
-  [tech-docs.md's Dependency verification record](./tech-docs.md#dependency-verification-record))
-  `[Repo-grounded — confirmed via directory listing and direct file read]`. An earlier version of this
-  plan treated their existence as an unconfirmed presumption; reading them directly surfaced a real,
-  previously-missed gap (`enterprise-java-and-the-jvm`'s undeclared `software-architecture`
-  prerequisite, owned by plan `06`). This plan's Phase 0 precondition checks and the Phase 1/Phase 2
-  hard gates (see [delivery.md](./delivery.md)) still verify each body's **merge state**, not merely
-  the sibling plan folder's existence, before `enterprise-java-and-the-jvm`'s and
-  `build-your-own-raft`'s own sub-phases begin.
-- **Any concept-level cross-reference from `build-your-own-git`, `build-your-own-database`, or
-  `build-your-own-raft` back to plan 07's low-level courses** — the catalog table's `prerequisites`
-  column is the only DAG-edge source of truth this plan can check without reading plan 07's own
-  (not-yet-authored) spec or delivery content; no such edge is declared there. If plan 07 later
-  discovers a genuine content dependency in the opposite direction (its courses needing one of this
-  plan's 9), that is plan 07's own dependency to declare, not this plan's.
+Course-level citations, already-published course bodies, and repository baseline checks inform implementation but do not create additional plan execution prerequisites.
 
 ## Band-completion signal (partial Band 6)
 
@@ -179,45 +97,24 @@ defines:
 | `BAND`              | `Band 6 (JVM/advanced-language/build-your-own half) — ayokoding-learning-path-10`                                                                                                                                                                                                                                                                                       |
 | `PLAN`              | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                                                                                                                                                                                                                    |
 | `LANDED_COURSE_IDS` | all 9 course IDs this plan authors, one per line, in this plan's own cohort order                                                                                                                                                                                                                                                                                       |
-| `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.yaml`, `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`, `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` — **exactly these three**, per this plan's commissioning instructions ("Band 6 routes to exactly these three") and consistent with plan04's own Bands-1–8 routing rule |
+| `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.json`, `<MANIFESTS>careers/immediately-effective/software-engineer.json`, `<MANIFESTS>careers/fundamentally-strong/software-engineer.json` — **exactly these three**, per this plan's commissioning instructions ("Band 6 routes to exactly these three") and consistent with plan04's own Bands-1–8 routing rule |
 | Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges                                                                                                                                                                                                                                                                         |
 
 The manifest plan (`ayokoding-learning-path-12-careers-se-manifests`) needs **both** this plan's signal
 and plan 07's signal before Band 6's `courseOrder` entries are complete across all 16 courses — but each signal
 is independently actionable only after its owning plan's terminal archival PR merges, since the two
 halves share no prerequisite edge (see
-[the independence check above](#what-i-could-not-confirm)).
+[the independence check above](#depends-on)).
 
-## Vercel Cost-Reduction Precondition
+## Repository baseline
 
-Per this plan's commissioning instructions, `vercel-function-cost-reduction` is treated as a hard
-`blockedBy` precondition, **to be satisfied before this plan's authoring PRs deploy**, even though it
-is currently `in-progress` rather than merged `[Repo-grounded — confirmed via directory listing:
-plans/done/2026-08-02__vercel-function-cost-reduction/]`. The reasoning, read from that plan's own
-`README.md` and `tech-docs.md` `[Repo-grounded]`:
-
-- Root cause: `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages
-  (`.next/prerender-manifest.json` shows `dynamicRoutes: 0`, `routes` length **4**) — every page view
-  executes a serverless function, at **65% of the site's ~$57/month gross Vercel spend**.
-- Fixes land in that plan's Phases 1–3: promoting `apps/ayokoding-www/src/app/[locale]/layout.tsx` to
-  the root layout (deleting `app/layout.tsx`), moving `?path=` reading client-side, and deleting the
-  now-purposeless middleware.
-- **Concrete checkable signal** this plan's Phase 0 uses:
-  `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` reads **4** today and must
-  read a number **≥ 2000** (close to the full ~2,068-page content tree) before this plan's sole PR
-  deploy 9 more pages into the same, currently-uncached, cost-generating pattern.
-- **Why this matters for this plan specifically**: every delivery boundary in this plan's
-  `worktree-to-pr` mode triggers a production deploy to `prod-ayokoding-www`
-  ([Delivery Mode](#delivery-mode-worktree-to-pr) below). Deploying 9 more always-dynamic pages before
-  the cost-reduction plan lands would compound the exact defect that plan exists to fix, not merely
-  fail to help it.
+Repository structure, route behavior, schemas, and already-published course data are verified against current `origin/main` during Phase 0. They are implementation context, not plan prerequisites: this plan's only direct execution prerequisite is `ayokoding-learning-path-09-course-authoring-interview-technique`.
 
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 

@@ -2,7 +2,7 @@
 
 > **Programme decisions** — the `R*`/`A*` decisions cited below are restated verbatim from
 > `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md`, itself restated from the
-> retired `ayokoding-learning-path-06-skills-accounting`; see
+> retired the superseded accounting-programme draft; see
 > [tech-docs.md §Programme decisions](./tech-docs.md#programme-decisions).
 
 ## Business Goal
@@ -88,10 +88,10 @@ checkers and fixers, `apps-ayokoding-www-general-maker`, `apps-ayokoding-www-fac
 
 ## Business-Level Success Metrics
 
-- **`sharia-accounting.yaml` grown from 19 to 24 entries** (observable): the file holds exactly 24
+- **`sharia-accounting.json` grown from 19 to 24 entries** (observable): the file holds exactly 24
   IDs, the last five of which are this plan's own courses.
-- **`conventional-accounting.yaml` is provably untouched by this plan** (observable):
-  `git diff --quiet -- conventional-accounting.yaml` exits 0, measured from plan 15's own merge
+- **`conventional-accounting.json` is provably untouched by this plan** (observable):
+  `git diff --quiet -- conventional-accounting.json` exits 0, measured from plan 15's own merge
   point to this plan's own end.
 - **Five course bundles resolve** (observable): each of courses #20–#24 resolves to a directory
   under `content/en/learn/courses/`.
@@ -114,7 +114,7 @@ checkers and fixers, `apps-ayokoding-www-general-maker`, `apps-ayokoding-www-fac
 ## Business-Scope Non-Goals
 
 - **Courses #1–#19.**
-- **Any edit to `conventional-accounting.yaml`, its landing, or its unit test.**
+- **Any edit to `conventional-accounting.json`, its landing, or its unit test.**
 - **Any ERP content.**
 - **Any structural `_index.md` under `paths/`.**
 - **Accountancy certification coverage, tax jurisdiction depth, corporate finance.**
@@ -131,9 +131,9 @@ checkers and fixers, `apps-ayokoding-www-general-maker`, `apps-ayokoding-www-fac
 | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **AAOIFI is presented as "the" Sharia accounting standard.**                                                         | Three jurisdictional models are a stated content invariant across every Sharia-specific course, re-asserted at the Phase 4 gate.                                                                                                                                |
 | **An `[Unverified]` research claim (especially OI-2's riba doctrine) is restated as fact.**                          | This plan's own Phase 2 gates the entire Sharia stage; OI-2's `OPEN` status is verified, not assumed, at every later gate; `apps-ayokoding-www-facts-checker` runs on every body.                                                                               |
-| **`conventional-accounting.yaml` is accidentally touched by this plan's own manifest-growth work.**                  | The Phase 3 and Phase 4 gates (the phases that touch or verify the manifests) explicitly assert `git diff --quiet -- conventional-accounting.yaml`, a falsifiable clause specific to this plan's own risk profile; no later phase touches either manifest file. |
+| **`conventional-accounting.json` is accidentally touched by this plan's own manifest-growth work.**                  | The Phase 3 and Phase 4 gates (the phases that touch or verify the manifests) explicitly assert `git diff --quiet -- conventional-accounting.json`, a falsifiable clause specific to this plan's own risk profile; no later phase touches either manifest file. |
 | **Licensing exposure (A8)** — IAI's strictest-of-four posture and AAOIFI's closed-by-default posture.                | The eleven safe-authoring rules bind every course; every chart of accounts is originally authored; a Phase 4 reading audit runs specifically against this plan's five courses.                                                                                  |
 | **A course teaches a plausible, silently wrong model** (murabaha-as-interest is the headline risk).                  | Every course carries the mandatory silent-failure section; course #21 explicitly contrasts murabaha against a conventional amortising loan.                                                                                                                     |
 | **Deferring `conventional-accounting`'s own retest earlier (to plan 15) leaves this plan's retest scope ambiguous.** | Scoped explicitly: this plan's retest covers `sharia-accounting` only, and that scoping is stated in README.md, not silent.                                                                                                                                     |
 | **Scope collision with the library or with plans 14/15's own course ranges.**                                        | Each course's overview states its scope boundary; the Phase 3 gate asserts exactly 5 new course directories exist, never more.                                                                                                                                  |
-| **Cross-plan file collision** — this plan editing a file plan 14 or plan 15 already owns.                            | Ownership is scoped to exactly one manifest data file (`sharia-accounting.yaml`) plus its test; `conventional-accounting.yaml` and its test are read-only to this plan.                                                                                         |
+| **Cross-plan file collision** — this plan editing a file plan 14 or plan 15 already owns.                            | Ownership is scoped to exactly one manifest data file (`sharia-accounting.json`) plus its test; `conventional-accounting.json` and its test are read-only to this plan.                                                                                         |

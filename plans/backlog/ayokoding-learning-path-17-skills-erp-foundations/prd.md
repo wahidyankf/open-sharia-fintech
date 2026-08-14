@@ -65,7 +65,7 @@ Feature: Skills ERP paths — Stage A publication and Dangerous 1 boundary
     And the Dangerous-1 boundary appears correctly on both landings
 
   Scenario: conventional-erp manifest validates against the PathManifest schema at 15 ids
-    Given the file "manifests/skills/conventional-erp.yaml"
+    Given the file "manifests/skills/conventional-erp.json"
     When the manifest is loaded and validated
     Then it parses against the PathManifest zod schema
     And its pathId equals "skills/conventional-erp"
@@ -73,7 +73,7 @@ Feature: Skills ERP paths — Stage A publication and Dangerous 1 boundary
     And its courseOrder contains exactly 15 unique course ids
 
   Scenario: sharia-erp manifest validates against the PathManifest schema at 15 ids
-    Given the file "manifests/skills/sharia-erp.yaml"
+    Given the file "manifests/skills/sharia-erp.json"
     When the manifest is loaded and validated
     Then it parses against the PathManifest zod schema
     And its pathId equals "skills/sharia-erp"

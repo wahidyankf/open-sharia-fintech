@@ -12,7 +12,7 @@ teaches **building** AI systems (models, agents, evals, inference serving), not 
 (`agentic-coding` stays a separate, unrelated axis).
 
 **This plan ships no course body and no rendering component.** It ships the composition layer: one
-YAML manifest, one thin landing anchor, this plan's one-card slice of the paths-hub population, the
+JSON manifest, one thin landing anchor, this plan's one-card slice of the paths-hub population, the
 from-scratch smoothness audit, and the manifest's growth from its smoke-test-scoped starting
 composition to its full, prerequisite-consistent walk of the AI/harness cluster.
 
@@ -70,7 +70,7 @@ maintainably [Judgment call]. The manifest model avoids that:
 Solo-maintainer repo — no sign-off ceremony. The maintainer wears:
 
 - **Content strategist** — owns this path's from-scratch arc and its curation.
-- **Frontend engineer** — authors the one YAML data file.
+- **Frontend engineer** — authors the one JSON manifest data file.
 - **Content author** (via `apps-ayokoding-www-general-maker`) — writes the one landing anchor and this
   plan's one-card hub slice.
 - **Content reviewer** (via `apps-ayokoding-www-link-checker` and the facts checker).
@@ -99,7 +99,7 @@ Every metric below is an **observable check**, not a projected number.
   fabricated fixed total.
 - **Progression smoothness verified** (observable): the from-scratch smoothness audit passes before
   archival.
-- **No regressions** (observable): `npx nx run ayokoding-www:build`, the affected test tiers,
+- **No regressions** (observable): `npm exec nx run ayokoding-www:build`, the affected test tiers,
   `specs:behavior:coverage`, heading-hierarchy, markdownlint, and link validation all pass.
 
 ## Business-Scope Non-Goals
@@ -117,7 +117,7 @@ Every metric below is an **observable check**, not a projected number.
   `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 - **Any URL, redirect, or IA change.** Owned by `ayokoding-learning-path-01-url-restructure`.
 - **The `apps/ayokoding-www` root-layout/middleware rendering-mode work.** Owned by
-  `vercel-function-cost-reduction`, treated here as a hard, already-merged precondition.
+  `vercel-function-cost-reduction`, treated as a repository-baseline fact.
 - **The `skills/` category's four manifests.** Disjoint category subtree, no shared file.
 - **Adding an Indonesian mirror of the path content** — deferred; `id/belajar/` has zero courses and
   zero paths.

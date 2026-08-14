@@ -13,9 +13,9 @@
 This 8-course plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
 a PR.
 
@@ -25,6 +25,8 @@ this plan's only worktree; no per-course, stage, phase, or closeout worktree is 
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-15-skills-accounting-enterprise-reporting` (or `git worktree add -b worktree/ayokoding-learning-path-15-skills-accounting-enterprise-reporting worktrees/ayokoding-learning-path-15-skills-accounting-enterprise-reporting origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 Final-delivery branch: `ayokoding-learning-path-15-skills-accounting-enterprise-reporting/final-delivery`
 
@@ -47,40 +49,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 7 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
 
-## Depends-on and start preconditions
+## Content-only delivery safeguards
 
-- **`blockedBy`**: `ayokoding-learning-path-14-skills-accounting-foundations`,
-  `ayokoding-learning-path-01-url-restructure`, `ayokoding-learning-path-02-schema-and-prerequisite-dag`,
-  `ayokoding-learning-path-03-navigation-ui`, and `vercel-function-cost-reduction` — **all five
-  hard**.
-- **`blocks`**: `ayokoding-learning-path-16-skills-accounting-sharia-extension` (hard) and
-  `ayokoding-learning-path-18-skills-erp-enterprise-depth` (soft overall,
-  hard at the Stage-B-equivalent capability — see this plan's own Stage-2 signal below).
-- Start precondition: **all five** blocking plans merged to `origin/main`. Verify each
-  independently:
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-  ```bash
-  for n in "ayokoding-learning-path-14-skills-accounting-foundations" \
-           "ayokoding-learning-path-01-url-restructure" \
-           "ayokoding-learning-path-02-schema-and-prerequisite-dag" \
-           "ayokoding-learning-path-03-navigation-ui" \
-           "vercel-function-cost-reduction"; do
-    git log origin/main --oneline | grep -q "$n" || echo "NOT MERGED: $n"
-  done
-  ```
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
-  Acceptance: **empty output**.
+## Depends-on
 
-- [ ] [AI] Confirm plan 14's own merged state carries the expected inherited manifests: both
-      `MANIFEST_CA` and `MANIFEST_SA` (defined below) exist and hold exactly 11 entries before this
-      plan's own Phase 2 begins:
-      `[ "$(grep -cE '^  - ' apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.yaml)" -eq 11 ] && echo INHERITED-OK || echo INHERITED-MISMATCH`
-      prints `INHERITED-OK`.
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-14-skills-accounting-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-14-skills-accounting-foundations/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -114,8 +102,8 @@ echo "PLANDIR=$PLANDIR"
 - `COURSES="apps/ayokoding-www/content/en/learn/courses/"`
 - `LANDING_CA="apps/ayokoding-www/content/en/learn/paths/skills/conventional-accounting/"`
 - `LANDING_SA="apps/ayokoding-www/content/en/learn/paths/skills/sharia-accounting/"`
-- `MANIFEST_CA="apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.yaml"`
-- `MANIFEST_SA="apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-accounting.yaml"`
+- `MANIFEST_CA="apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.json"`
+- `MANIFEST_SA="apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-accounting.json"`
 - `MTEST_CA="apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting-manifest.unit.test.ts"`
 - `MTEST_SA="apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-accounting-manifest.unit.test.ts"`
 - `SPEC="${PLANDIR}syllabus/courses/"`
@@ -153,7 +141,7 @@ ACCT_SILENT_P15=("${ACCT_P15[@]}")                 # 8 — this plan's own silen
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/ plans/in-progress/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
@@ -165,12 +153,12 @@ ACCT_SILENT_P15=("${ACCT_P15[@]}")                 # 8 — this plan's own silen
 - [ ] [AI] Install dependencies: `npm install`.
 - [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
 - [ ] [AI] Verify dev server starts: `nx dev ayokoding-www`.
-- [ ] [AI] Verify existing tests pass before making changes: `nx run ayokoding-www:test:quick`.
+- [ ] [AI] Verify existing tests pass before making changes: `npm exec nx run ayokoding-www:test:quick`.
 
 ### Baseline (must all be true before any content is authored)
 
-- [ ] [AI] All **five** blocking plans merged — run the loop in
-      [§Depends-on](#depends-on-and-start-preconditions); acceptance: empty output.
+- [ ] [AI] Direct predecessor archival check passed; repository baseline facts checked — run the loop in
+      [§Depends-on](#depends-on); acceptance: empty output.
 - [ ] [AI] Both manifests exist and hold exactly 11 entries, inherited from plan 14 — acceptance:
       `[ "$(grep -cE '^  - ' "$MANIFEST_CA")" -eq 11 ] && [ "$(grep -cE '^  - ' "$MANIFEST_SA")" -eq 11 ] && echo BASELINE-OK || echo BASELINE-FAIL`
       prints `BASELINE-OK`.
@@ -186,11 +174,11 @@ ACCT_SILENT_P15=("${ACCT_P15[@]}")                 # 8 — this plan's own silen
 > All checks below must pass before starting Phase 1.
 
 - [ ] [AI] `npm run doctor -- --fix` exits 0.
-- [ ] [AI] `nx run ayokoding-www:test:quick` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:test:quick` exits 0.
 - [ ] [AI] Every Baseline check above holds.
 
 > **Pause Safety**: plan 14's authored slice is confirmed present and correct; this plan's own
-> content does not exist yet. Safe to stop. To resume: re-run `nx run ayokoding-www:test:quick` and
+> content does not exist yet. Safe to stop. To resume: re-run `npm exec nx run ayokoding-www:test:quick` and
 > confirm 0 exit before starting Phase 1.
 
 ---
@@ -369,7 +357,7 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**.
 
 - [ ] [AI] **RED** — extend `$MTEST_CA` and `$MTEST_SA` with failing assertions that each
       `courseOrder` grows from length 11 to length 19, appending `ACCT_P15` in order, still passing
-      both integrity checks — command: `nx run ayokoding-www:test:unit` — acceptance: both new
+      both integrity checks — command: `npm exec nx run ayokoding-www:test:unit` — acceptance: both new
       assertions fail (length still 11).
 
   **Gherkin (binds) →** "Conventional-accounting reaches its terminal, complete state at course
@@ -380,16 +368,16 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**.
     Given both manifests have grown to include the full nineteen-course shared spine
     When a reader reaches the end of the conventional-accounting courseOrder
     Then the path landing states the path is complete
-    And no further course is ever appended to conventional-accounting.yaml at any later phase or plan
+    And no further course is ever appended to conventional-accounting.json at any later phase or plan
     But the sharia-accounting manifest's courseOrder is left ready to continue past entry nineteen
   ```
 
 - [ ] [AI] **GREEN** — grow `$MANIFEST_CA` and `$MANIFEST_SA` to 19 entries each (both hold exactly
       `ACCT_SHARED` in order, still byte-identical to each other) — command:
-      `nx run ayokoding-www:test:unit` — acceptance: exits 0; both files have exactly 19
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: exits 0; both files have exactly 19
       `courseOrder` entries; `diff <(grep -E '^  - ' "$MANIFEST_CA") <(grep -E '^  - ' "$MANIFEST_SA")`
       returns empty.
-- [ ] [AI] **REFACTOR** — command: `nx run ayokoding-www:test:unit && nx run ayokoding-www:lint` —
+- [ ] [AI] **REFACTOR** — command: `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www:lint` —
       acceptance: both exit 0.
 
 - [ ] [AI] **Shared-course non-duplication check (A11), full 19-course sweep** —
@@ -404,7 +392,7 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**.
 - [ ] [AI] Update `"${LANDING_SA}_index.md"` to state the Dangerous-2 boundary, continuing to
       promise the not-yet-authored Sharia stage — acceptance:
       `grep -F -q 'Dangerous 2' "${LANDING_SA}_index.md"` exits 0.
-- [ ] [AI] **Freeze check** — record, in this file, that `conventional-accounting.yaml` will
+- [ ] [AI] **Freeze check** — record, in this file, that `conventional-accounting.json` will
       receive no further `courseOrder` growth after this point; the only future touches to
       `$MANIFEST_CA` (by plan 16 or any later plan) are re-verification sweeps, never a content
       change.
@@ -432,13 +420,13 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**.
 - [ ] [AI] **RED** — extend the count-parameterized "walk a skills path" step (inherited from plan
       14's own REFACTOR step) in `apps/ayokoding-www-fe-e2e/src/steps/skills-path-composition.steps.ts`
       so both `pathId`s walk all **19** published courses via prev/next — command:
-      `nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new 19-course assertion **fails** for
+      `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new 19-course assertion **fails** for
       both Examples rows (only 11 courses were walked before this phase).
 - [ ] [AI] **GREEN** — implement against both grown manifests — command:
-      `nx run ayokoding-www:specs:behavior:coverage && nx run ayokoding-www-fe-e2e:test:e2e` —
+      `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0.
 - [ ] [AI] **REFACTOR** — parameterize the walk on expected course count so plan 16 extends it to
-      24 without duplicating the helper — command: `nx run ayokoding-www-fe-e2e:test:e2e` —
+      24 without duplicating the helper — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: exits 0, scenario count unchanged.
 
 ### 2.5 · Full-corpus silent-failure check
@@ -488,12 +476,12 @@ plan's persistent final-delivery branch. The terminal archival PR is the only me
       manifests.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 7.
-- [ ] [AI] `nx run ayokoding-www:build` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:build` exits 0.
 
 > **Pause Safety**: `conventional-accounting` is a genuinely complete, shippable 19-course path,
 > **walked end to end by §2.4's e2e**; `sharia-accounting` is at the same 19-course state, one
 > stage short of its own completion. Safe to stop indefinitely at this exact point. To resume:
-> re-run `nx run ayokoding-www:test:unit` and confirm 0 exit before starting Phase 3.
+> re-run `npm exec nx run ayokoding-www:test:unit` and confirm 0 exit before starting Phase 3.
 
 ---
 
@@ -504,7 +492,7 @@ plan's persistent final-delivery branch. The terminal archival PR is the only me
 
 ### 3.1 · Manifest integrity, both manifests
 
-- [ ] [AI] `nx run ayokoding-www:test:unit` (both `$MTEST_CA` and `$MTEST_SA`) exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` (both `$MTEST_CA` and `$MTEST_SA`) exits 0.
 - [ ] [AI] `checkManifestIntegrity` and `checkPrerequisiteConsistency` pass for both manifests as a
       standalone sweep, assertion count matching 19 for both.
 
@@ -514,7 +502,7 @@ plan's persistent final-delivery branch. The terminal archival PR is the only me
       `gh pr list --search "ayokoding-learning-path-15-skills-accounting-enterprise-reporting" --state merged --json number,files` and
       confirm every touched path under `apps/ayokoding-www/src/features/course-paths/manifests/` is
       one of the two files this plan extends — acceptance: no path under `manifests/careers/`,
-      `manifests/skills/conventional-erp.yaml`, or `manifests/skills/sharia-erp.yaml` appears; no
+      `manifests/skills/conventional-erp.json`, or `manifests/skills/sharia-erp.json` appears; no
       `_index.md` under `paths/` appears.
 
 ### 3.3 · Shared-course non-duplication, final sweep
@@ -544,7 +532,7 @@ plan's persistent final-delivery branch. The terminal archival PR is the only me
 
 ### 3.5 · Terminal-freeze assertion
 
-- [ ] [AI] **`conventional-accounting.yaml` is unchanged since this plan's own Phase 2 merge** —
+- [ ] [AI] **`conventional-accounting.json` is unchanged since this plan's own Phase 2 merge** —
       `git diff --quiet -- "$MANIFEST_CA"` exits 0.
 
 ### 3.6 · Scope-boundary sweep and no-unverified-claim sweep
@@ -568,12 +556,12 @@ plan's persistent final-delivery branch. The terminal archival PR is the only me
 > All checks below must pass before starting Phase 4.
 
 - [ ] [AI] 3.1 through 3.6 all clean, zero unresolved findings.
-- [ ] [AI] `nx run ayokoding-www:build` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:build` exits 0.
 - [ ] [AI] `npm run lint:md` exits 0 across the whole plan folder and the whole
       `apps/ayokoding-www` content touched.
 
 > **Pause Safety**: the corpus is verified, licensing-clean, and scope-consistent; the terminal
-> freeze on `conventional-accounting.yaml` holds. Safe to stop. To resume: re-run 3.1's `test:unit`
+> freeze on `conventional-accounting.json` holds. Safe to stop. To resume: re-run 3.1's `test:unit`
 > and 3.5's freeze check before starting Phase 4.
 
 ---
@@ -652,8 +640,8 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ### Local Quality Gates (Before archival)
 
-- [ ] [AI] `nx affected -t typecheck,build,test:quick,lint` exits 0.
-- [ ] [AI] `nx run ayokoding-www:specs:behavior:coverage` exits 0.
+- [ ] [AI] `npm exec nx affected -t typecheck,build,test:quick,lint` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` exits 0.
 - [ ] [AI] `npm run lint:md` exits 0.
 
 > **Important**: fix ALL failures found during these gates, not just those caused by this plan's own
@@ -733,7 +721,7 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-15-skills-accounting-enterprise-reporting plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-15-skills-accounting-enterprise-reporting`

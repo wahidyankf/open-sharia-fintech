@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 8 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 7, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
 
 Author **Band 8 — Remaining capstones**: the **8 course bodies**
@@ -30,7 +30,7 @@ plan 04 did: no schema, no route, no component, no redirect — and, most import
 > pentest engine, a secured service, a data pipeline, a deployed-as-code system, two concurrency
 > builds, and a whole-journey leadership synthesis. That is precisely why this plan carries **the
 > most inbound cross-plan dependency edges of any course-authoring successor plan**: capstones cannot
-> be authored ahead of the material they assemble. See [§Position in the split](#position-in-the-split)
+> be authored ahead of the material they assemble. See [§Position in the execution sequence](#position-in-the-execution-sequence)
 > below for the full fan-in.
 >
 > **Cross-plan source of truth** — the authoritative per-course specs live in
@@ -96,7 +96,7 @@ slice by listing order, is the only grouping that is actually load-bearing rathe
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by a downstream manifest-growth
 > plan (`ayokoding-learning-path-12-careers-se-manifests` and
 > `ayokoding-learning-path-13-careers-ai-manifest` — see [Depends-on](#depends-on) below). A step in
-> this plan that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary
+> this plan that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience. This is the identical invariant plan 04 carries, reproduced here
 > because this plan is now the one authoring Band 8's bodies.
 
@@ -105,64 +105,9 @@ When Band 8 lands, this plan records **one band-completion signal** in its own
 signal is the entire handoff contract; see
 [Band-completion signal contract](#band-completion-signal-contract) below.
 
-## Position in the split
+## Position in the execution sequence
 
-```mermaid
-%% This plan's position relative to every plan it depends on and every plan that depends on it.
-%% Node SHAPE encodes role: rectangle = upstream plan this depends on, hexagon (doubled border) =
-%% THIS plan, parallelogram = downstream consumer. This diagram exists specifically to make the
-%% fan-in explicit: THIS plan has more inbound edges than any other course-authoring successor plan,
-%% because capstones synthesize other bands' content by design.
-flowchart LR
-    subgraph UP["Upstream — every blockedBy edge (7 plans)"]
-        P1["01 · url-restructure<br/>(done)"]:::done
-        P2["02 · schema-and-<br/>prerequisite-dag (done)"]:::done
-        P4["04 · course-authoring<br/>(baseline + Band 1/2)"]:::upstream
-        P5["05 · platform-and-<br/>concurrency (Band 4)<br/>terminal PR #133"]:::upstream
-        P6["06 · architecture-and-<br/>ai-harness (Band 5)"]:::upstream
-        P8["08 · security-and-ops<br/>(Band 7)"]:::upstream
-        VFR["vercel-function-<br/>cost-reduction"]:::upstream
-    end
-
-    THIS{{"THIS PLAN · 11 ·<br/>course-authoring-capstones<br/>8 bodies (Band 8)"}}:::this
-
-    subgraph DOWN["Downstream — every blocks edge (2 plans)"]
-        P12["12 · careers-se-<br/>manifests (future)"]:::downstream
-        P13["13 · careers-ai-<br/>manifest (future)"]:::downstream
-    end
-
-    P1 -->|"capstone-solid-core,<br/>security-essentials, etc.<br/>(re-homed, already merged)"| THIS
-    P2 -->|"syllabus/courses specs +<br/>prerequisites contract"| THIS
-    P4 -->|"containers-and-orchestration,<br/>cloud-and-iac, cicd-and-release-<br/>engineering, data-engineering"| THIS
-    P5 -->|"csp-style-concurrency,<br/>actor-model-concurrency"| THIS
-    P6 -->|"harness cluster (5 courses) +<br/>system-design, event-driven-<br/>architecture, creating-ai-powered-apps"| THIS
-    P8 -->|"offensive-security, defensive-<br/>security, detection-engineering,<br/>vuln-mgmt, site-reliability-eng"| THIS
-    VFR -->|"static-rendering fix must land<br/>before 8 more content pages ship"| THIS
-    THIS -->|"band-completion signal:<br/>grow 3 SE-role manifests"| P12
-    THIS -->|"band-completion signal:<br/>9th of 9 AI-cluster course IDs"| P13
-
-    classDef done fill:#029E73,stroke:#000000,color:#FFFFFF
-    classDef upstream fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef this fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:4px
-    classDef downstream fill:#CC78BC,stroke:#000000,color:#000000
-```
-
-**Accessibility note.** Role is carried by node **shape** (rectangle = upstream, hexagon
-double-bordered = this plan, parallelogram-style grouping via subgraph = downstream) and by the
-literal `THIS PLAN` label text and the two named subgraph containers (`Upstream` / `Downstream`),
-never by fill colour alone. Fills use the repo's verified color-blind-friendly palette (`#029E73`
-teal for already-done plans, `#0173B2` blue for in-progress/backlog upstream plans, `#DE8F05` orange
-for this plan, `#CC78BC` purple for downstream) with black borders and WCAG-AA-contrasting text, per
-the [Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md).
-Every edge carries an explicit label naming the actual artefact handed off — never a bare arrow — so
-the fan-in is legible without colour.
-
-**This plan runs last among the course-authoring successor plans.** It depends on more siblings
-(four: 04, 05, 06, 08) than any other successor plan depends on, plus the cross-cutting
-`vercel-function-cost-reduction` plan — so by construction it cannot start until all four have
-landed. See [tech-docs.md §Confirmed per-capstone dependency map](./tech-docs.md#confirmed-per-capstone-dependency-map)
-for the full per-course breakdown, and [delivery.md Phase 0](./delivery.md#phase-0-environment-setup--baseline)
-for the checkable precondition against each.
+This plan follows `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`; plan 12 is its sole successor. Course and manifest ownership references are implementation context, not extra execution prerequisites.
 
 ## Manifest-ownership boundary
 
@@ -175,7 +120,7 @@ flowchart LR
     BODY["courses/&lt;course-id&gt;/<br/>page bundle (8 bodies)<br/>WRITTEN HERE"]:::owned
     CAT["tech-docs Course Library<br/>Catalog rows (8)<br/>WRITTEN HERE"]:::owned
     SIG["Band-completion signal<br/>in this plan's delivery.md<br/>WRITTEN HERE"]:::owned
-    MAN{{"manifests/**/*.yaml<br/>NEVER WRITTEN HERE"}}:::forbidden
+    MAN{{"manifests/**/*.json<br/>NEVER WRITTEN HERE"}}:::forbidden
 
     SPEC -->|"authored from"| BODY
     BODY -->|"recorded in"| CAT
@@ -226,10 +171,10 @@ capstone-concurrency-and-systems
 capstone-real-world-delivery
 capstone-lead-at-altitude
 GROW_MANIFESTS:
-apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
-apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
-apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml
+apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.json
 ```
 
 A signal that names manifests loosely or splits into partial signals per cohort is incomplete and the
@@ -241,60 +186,18 @@ archival PR merges.
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Direction     | Plan (full folder name)                                                                                                                                                                                  | Nature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy** | `ayokoding-learning-path-01-url-restructure`                                                                                                                                                             | **transitive hard** — populated flat `courses/` namespace + the specific re-homed prerequisite bodies this band's capstones cite directly (`capstone-solid-core`, `security-essentials`, `just-enough-typescript`, `sql-essentials`, `advanced-sql-and-query-performance`, `software-engineering-practices`, `software-product-engineering`, `engineering-management`) — **already done and already on disk**, verified by direct `test -d` at this plan's authoring time (`backend-essentials` was removed from this list — the dependency re-audit found no Band-8 capstone actually cites it; see tech-docs) |
-| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                                                 | **transitive hard** — the `syllabus/courses/` specs this plan authors from, and the `prerequisites` frontmatter contract                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                                            | **hard, satisfied baseline + Band 1/2 content** — Plan 04 merged and archived after carving out Band 8; `data-engineering`, `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`, `async-python-and-fastapi-services`, and `backend-at-scale` are merged                                                                                                                                                                                                                                                                                                                             |
-| **blockedBy** | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)                          | **hard, gated on terminal PR #133 merge** — `capstone-concurrency-and-systems` and `capstone-concurrency-showdown` both declare `csp-style-concurrency` and `actor-model-concurrency` as direct prerequisites (confirmed — see tech-docs)                                                                                                                                                                                                                                                                                                                                                                       |
-| **blockedBy** | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                                                                                                | **hard, Band 5** — the entire harness cluster (`capstone-build-your-own-coding-agent`), plus `agentic-ai`, `browser-automation-with-cdp`, `system-design`, `event-driven-architecture`, `creating-ai-powered-apps`, `software-architecture`, `domain-driven-design` — cited by four capstones in total, including the harness-cluster capstone (confirmed — see tech-docs; the latter two are **confirmed absent on disk** as of this plan's authoring time)                                                                                                                                                    |
-| **blockedBy** | `ayokoding-learning-path-08-course-authoring-security-and-ops`                                                                                                                                           | **hard, Band 7** — `offensive-security`, `defensive-security`, `detection-engineering-and-siem-operations`, `vulnerability-management-and-assessment`, `it-and-application-security`, `site-reliability-engineering` across five capstones (confirmed — see tech-docs)                                                                                                                                                                                                                                                                                                                                          |
-| **blockedBy** | `vercel-function-cost-reduction`                                                                                                                                                                         | **hard, new** — see [§Why the cost-reduction dependency is hard](#why-the-cost-reduction-dependency-is-hard) below                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| _(sibling)_   | `ayokoding-learning-path-07-course-authoring-low-level-systems`, `ayokoding-learning-path-09-course-authoring-interview-technique`, `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` | **none, confirmed absent** — verified against all eight capstones' actual prerequisite lists: none cites any Band 6a/6b (C/C++/Rust/JVM/Lisp/F#/compilers/build-your-own-git-database-raft) or Band 9 (interview-technique) course                                                                                                                                                                                                                                                                                                                                                                              |
-| **blocks**    | `ayokoding-learning-path-12-careers-se-manifests` (future plan)                                                                                                                                          | hard — needs this band's completion signal to grow the three `software-engineer`-role manifests                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| **blocks**    | `ayokoding-learning-path-13-careers-ai-manifest` (future plan)                                                                                                                                           | hard — needs the 9th of 9 AI-cluster course IDs (`capstone-build-your-own-coding-agent`) from this band                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Relation      | Plan (full folder name)                                              | Nature                                                                                                                                                                                                                         |
+| ------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **blockedBy** | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Full per-capstone confirmed/unconfirmed dependency breakdown, with syllabus-spec citations, is in
-[tech-docs.md §Confirmed per-capstone dependency map](./tech-docs.md#confirmed-per-capstone-dependency-map).**
-That section also records two cross-plan documentation discrepancies found during verification (one
-in `ayokoding-learning-path-05-...`'s own README, one in
-`ayokoding-learning-path-08-...`'s own README) — flagged for reconciliation rather than silently
-propagated.
-
-### Why the cost-reduction dependency is hard
-
-[`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md) found
-that `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages — every page view executes
-a serverless function, none is CDN-cached — driving 65% of a metered-usage overrun that would
-otherwise push the site's invoice above the flat $20/month Pro subscription. Landing eight more
-content pages **before** that fix ships adds eight more always-dynamic, always-billed routes to an
-already-overrun bill; landing them **after** the fix means they are served statically from day one,
-at zero incremental function-invocation cost. Treated as **already merged/done** per explicit
-instruction; the concrete checkable signal from that plan's actual Phase 1–4 changes (same form
-sibling plans 05/06/08 already independently adopted for this identical cross-cutting dependency):
-
-```bash
-test ! -f apps/ayokoding-www/src/app/layout.tsx \
-  && test ! -f apps/ayokoding-www/src/middleware.ts \
-  && grep -rn "await searchParams" apps/ayokoding-www/src/app --exclude-dir=node_modules | grep -c .
-```
-
-Acceptance: both `test` commands exit 0 (Phase 1's root-layout promotion and Phase 3's middleware
-deletion both landed) and the `grep -c .` returns **0** (Phase 2's `searchParams` client-side move
-landed, no remaining server-side read). A production build additionally confirms the fix at scale:
-`jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` returns **≥ 2000** (was 4
-pre-fix) after `nx build ayokoding-www`. [Repo-grounded — verified at this plan's authoring time:
-`apps/ayokoding-www/src/middleware.ts` exists and `apps/ayokoding-www/src/app/layout.tsx` exists and
-calls `await headers()` — both `test ! -f` checks currently fail, confirming the fix has not yet
-landed, consistent with that plan's own `in-progress` status.]
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Rule-15 three-tester retest — exemption recorded
 
@@ -347,9 +250,9 @@ is forbidden.
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
-  · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
+  · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../../in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
-  · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
+  · [`vercel-function-cost-reduction` (historical reference)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
 
