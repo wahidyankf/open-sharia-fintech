@@ -12,12 +12,11 @@ software design/coding-standards reference.
 ## 8.1 Governance Principle Alignment
 
 Read each doc's frontmatter `principles:` field; check topic-appropriate citations (security docs
-→ explicit-over-implicit + automation-over-manual; architecture docs → simplicity-over-complexity
-
-- explicit-over-implicit; development-practice docs → automation-over-manual; testing docs →
-  automation-over-manual + reproducibility). **CRITICAL**: broken principle reference (file doesn't
-  exist). **HIGH**: missing a critical principle. **MEDIUM**: missing a recommended principle.
-  **LOW**: enhancement suggestion only.
+need explicit-over-implicit and automation-over-manual; architecture docs need
+simplicity-over-complexity and explicit-over-implicit; development-practice docs need
+automation-over-manual; testing docs need automation-over-manual and reproducibility).
+**CRITICAL**: broken principle reference (file doesn't exist). **HIGH**: missing a critical
+principle. **MEDIUM**: missing a recommended principle. **LOW**: enhancement suggestion only.
 
 ## 8.2 Cross-Reference Completeness
 
