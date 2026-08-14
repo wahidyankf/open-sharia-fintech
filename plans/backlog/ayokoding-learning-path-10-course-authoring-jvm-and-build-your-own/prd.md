@@ -170,7 +170,7 @@ Scenario: No manifest file is ever touched by this plan's diff
 Scenario: The 9 authored course bodies build and validate green
   Given all 9 course bodies in this plan's catalog are authored and merged to origin/main
   When ayokoding-www's build and content checkers run against the merged tree
-  Then npx nx run ayokoding-www:build exits 0
+  Then npm exec nx run ayokoding-www:build exits 0
   And every one of the 9 bodies passes its matching content checker with zero CRITICAL/HIGH/MEDIUM findings
 ```
 
@@ -198,8 +198,8 @@ Scenario: The 9 authored course bodies build and validate green
   Non-Goals.
 - Resolving the `-05-`/`-06-` folder-prefix naming collision — observed and reported, not fixed here.
 - Any change to `apps/ayokoding-www`'s rendering, caching, or Vercel-cost-reduction code — that is
-  `vercel-function-cost-reduction`'s own scope; this plan only gates its own deploys on that plan's
-  merge state.
+  `vercel-function-cost-reduction`'s own historical scope; this plan only records the current
+  rendering state as repository context.
 
 ## Product-Level Risks
 

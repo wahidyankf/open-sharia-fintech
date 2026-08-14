@@ -24,7 +24,7 @@ This plan completes both `skills/` ERP paths: it grows `<CONVMAN>` and `<SHARMAN
 `conventional-erp`, 30 for `sharia-erp`), authoring the 15 remaining courses (Stage B's 12,
 Stage C's 3) and updating both landings through every remaining Dangerous-N boundary.
 
-It touches **no application code** beyond editing the two YAML data files plan 17 created plus their
+It touches **no application code** beyond editing the two JSON manifest data files plan 17 created plus their
 co-located unit tests. Every component, resolver, schema, and route it depends on is built by plans
 01–03 and consumed here; every accounting course it links is built by the accounting-split programme.
 
@@ -33,11 +33,8 @@ co-located unit tests. Every component, resolver, schema, and route it depends o
 | `courses/` + `paths/` content homes, structural `_index.md` files                                     | `ayokoding-learning-path-01-url-restructure`                        | consumes                                                                                              |
 | `PathManifest` zod schema, pure `course-paths` core, integrity gates                                  | `ayokoding-learning-path-02-schema-and-prerequisite-dag`            | consumes                                                                                              |
 | `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets     | `ayokoding-learning-path-03-navigation-ui`                          | consumes                                                                                              |
-| Static-rendering fix for `apps/ayokoding-www`                                                         | `vercel-function-cost-reduction`                                    | consumes (transitively via plan 17; re-verified independently)                                        |
 | 15 Stage-A course bodies, both manifests at 15 ids, both landings through Dangerous 1                 | `ayokoding-learning-path-17-skills-erp-foundations`                 | **grows** (not authors fresh — see [§Manifest ownership](#manifest-ownership-inherited-from-plan-17)) |
-| Accounting courses `#1-11` (foundations)                                                              | `ayokoding-learning-path-14-skills-accounting-foundations`          | consumes (transitively, via plan 15)                                                                  |
-| Accounting courses `#12-19`, `conventional-accounting` terminal                                       | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | consumes (hard gate, `ACCT_GATE_B`)                                                                   |
-| Accounting courses `#20-24`, `sharia-accounting` terminal                                             | `ayokoding-learning-path-16-skills-accounting-sharia-extension`     | consumes (hard gate, `ACCT_GATE_C`)                                                                   |
+| Accounting course ids used in ERP course frontmatter | existing `origin/main` course bundles | verify the specific ids before authoring; this is artifact context, not a plan dependency |
 | **The 15 Stage-B/C ERP courses, both manifests grown to terminal, both landings through Dangerous 4** | **this plan**                                                       | **authors**                                                                                           |
 
 ## Manifest ownership (inherited from plan 17)
@@ -47,15 +44,15 @@ Per plan 17's own `tech-docs.md` §Manifest ownership across the two-plan split,
 `<MTEST_CE>`, `<MTEST_SE>`, `<CONVLANDING>`, `<SHARLANDING>`, the Gherkin feature file
 (`skills-erp-paths.feature`), and its step-definition file
 (`apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts`). This is a sequential growth-edit the
-`blockedBy` edge between the two plans exists precisely to sequence, not a violation of the
+historical source context edge between the two plans exists precisely to sequence, not a violation of the
 one-custodian-per-file norm — it mirrors exactly how the retired single-plan design grew the same
 files across its own internal Stage A→B→C, now split across two plan folders instead of one. **No
 third plan may edit any of these eight files.**
 
 ## Cross-plan prerequisite edges into plan 17
 
-Stated by specific course id rather than a blanket "Stage A must exist" — the blanket `blockedBy` on
-plan 17 (see [delivery.md §Depends-on](./delivery.md#depends-on-and-start-preconditions)) already
+Stated by specific course id rather than a blanket "Stage A must exist" — the blanket historical source context on
+plan 17 (see [delivery.md §Depends-on](./delivery.md#depends-on)) already
 guarantees all 15 Stage-A ids exist on `origin/main`; this table is the audit-readable record of
 **which** ids each of this plan's courses actually cites in its own frontmatter `prerequisites`:
 
@@ -107,11 +104,11 @@ and are listed in the full catalog table below rather than in this cross-plan ta
   full 27/30-id orderings, extending plan 17's own 15-id mirrors.
 - `<SPECS>skills-erp-paths.feature` and its step-definition file — **grown**, not created; extended
   with the Dangerous 2/3/4 scenarios.
-- 15 more rows in `<COURSES>_index.md` (30 total) — **populate only**.
+- Run `npm exec nx run ayokoding-www:generate-indexes` after the 15 bundles land, then `npm exec nx run ayokoding-www:validate-indexes`.
 
 ### What this plan never touches
 
-- Any file under `<MANIFESTS>careers/` or `<MANIFESTS>skills/*accounting*.yaml`.
+- Any file under `<MANIFESTS>careers/` or `<MANIFESTS>skills/*accounting*.json`.
 - Any accounting course bundle, syllabus spec, or landing.
 - Any Stage-A course body or syllabus file (plan 17's exclusive scope) — this plan only reads plan
   17's syllabus corpus by relative link.
@@ -158,28 +155,24 @@ Phase 0.
 
 ## Accounting-split gates, re-pointed
 
-The retired source plan's `ACCT_GATE_B`/`ACCT_GATE_C` arrays are course-id-identical; only the
-`blockedBy` **plan target** changes, because the accounting programme was split into three new plans
-by a sibling agent working concurrently with this split.
+The retired source plan's `ACCT_GATE_B`/`ACCT_GATE_C` arrays remain course-id-identical. They are
+repository artifact checks, not execution dependencies on the accounting plans that first authored
+the course bundles.
 
-| Gate          | Course ids (unchanged)                                                                                                                                                                         | Owning accounting-split plan(s)                                                                                                                                                                                         | This plan's `blockedBy` target                                                                                                                                                                                                              |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ACCT_GATE_B` | `financial-statements-and-close-cycle`, `inventory-and-cogs-accounting`, `payroll-and-tax-accounting-essentials`, `consolidation-and-multi-entity-accounting`, `audit-controls-and-compliance` | First two = accounting `#3`, `#10` → `ayokoding-learning-path-14-skills-accounting-foundations`. Remaining three = accounting `#16`, `#13`, `#15` → `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | **`ayokoding-learning-path-15-skills-accounting-enterprise-reporting`, fully merged** — plan 15 is itself `blockedBy` plan 14, so its completion transitively guarantees plan 14's courses exist too; naming both plans would be redundant. |
-| `ACCT_GATE_C` | `islamic-contract-modeling-for-systems`, `sharia-accounting-and-aaoifi-standards`                                                                                                              | Accounting `#21`, `#20` → `ayokoding-learning-path-16-skills-accounting-sharia-extension`                                                                                                                               | **`ayokoding-learning-path-16-skills-accounting-sharia-extension`, fully merged** — plan 16 is itself `blockedBy` plan 15, so this plan's own internal phase order (Stage B → Stage C) is naturally sequential and non-circular.            |
+| Gate          | Course ids (unchanged)                                                                                                                                                                         | Verification |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `ACCT_GATE_B` | `financial-statements-and-close-cycle`, `inventory-and-cogs-accounting`, `payroll-and-tax-accounting-essentials`, `consolidation-and-multi-entity-accounting`, `audit-controls-and-compliance` | Verify the listed course bundles on `origin/main`; no plan merge is an additional gate. |
+| `ACCT_GATE_C` | `islamic-contract-modeling-for-systems`, `sharia-accounting-and-aaoifi-standards` | Verify the listed course bundles on `origin/main`; no plan merge is an additional gate. |
 
-**Caveat, carried forward verbatim from the retired source plan and re-pointed to the new plan
-names**: if the accounting-split plans (14/15/16) rename or restructure any of these seven ids before
-this plan executes, the `ACCT_GATE_*` arrays in [delivery.md](./delivery.md) must be updated to match
-before Stage B/C authoring starts. The mechanical `test -d` gate design fails **safely** if this
+**Caveat:** if repository content renames or restructures any of these seven ids before this plan
+executes, the `ACCT_GATE_*` arrays in [delivery.md](./delivery.md) must be updated to match before
+Stage B/C authoring starts. The mechanical `test -d` check fails **safely** if this
 happens — a renamed id simply never resolves and the affected stage waits indefinitely rather than
 authoring against a wrong assumption — but the wait would be for the wrong reason until the id list is
 corrected.
 
 **Confirmed: this plan's own internal phase order is naturally sequential and non-circular.** Stage B
-(`blockedBy` plan 15) authors first; Stage C (`blockedBy` plan 16, which is itself `blockedBy` plan 15)
-authors second. By the time Stage C's gate check runs, plan 15 has already resolved (it is a
-precondition of plan 16 too), so Stage C's gate check only needs to confirm plan 16 specifically —
-plan 15's resolution is not re-checked redundantly at Stage C.
+Stage B and Stage C verify their listed course bundles before authoring; those artifact checks do not add plan dependencies.
 
 ## courseOrder arrays at each growth boundary
 
@@ -320,21 +313,16 @@ intra-topic" rename are all inherited unchanged. See
 ## Design Decisions
 
 - **DD-1 · This plan owns Stage B + Stage C of both ERP paths; plan 17 owns Stage A.** Splits the
-  retired `ayokoding-learning-path-07-skills-erp`'s single-plan design at the boundary where Stage A
+  retired the superseded ERP-programme draft's single-plan design at the boundary where Stage A
   is accounting-free and independently deployable while Stage B/C both wait on the accounting
   programme. **Decided.**
 - **DD-2 · The 15 Stage-B/C syllabus specs live in this plan's own `syllabus/courses/`.** This plan
   is a read-only consumer of plan 17's own 15-file corpus, never an editor. **Decided.**
 - **DD-3 · Manifest ownership is a sequential growth-edit, inherited from plan 17's own DD-8, not a
   new cross-plan mechanism.** This plan edits the eight files plan 17 authored fresh, authorized
-  explicitly by the `blockedBy` edge between the two plans. **Decided.**
-- **DD-4 · The `ACCT_GATE_B`/`ACCT_GATE_C` course-id arrays are unchanged; only the `blockedBy` plan
-  target is re-pointed** to plans 15 and 16 respectively, each chosen because it transitively covers
-  its own predecessor. See [§Accounting-split gates, re-pointed](#accounting-split-gates-re-pointed).
-  **Decided.**
-- **DD-5 · Stage B and Stage C are each their own delivery boundary**, gated independently
-  (`blockedBy` plan 15, then plan 16) so a rename in either accounting-split plan blocks only the
-  affected stage, never both. **Decided.**
+  explicitly by the historical source context edge between the two plans. **Decided.**
+- **DD-4 · The `ACCT_GATE_B`/`ACCT_GATE_C` arrays remain course-id checks.** They verify repository artifacts only and do not add execution prerequisites. **Decided.**
+- **DD-5 · Stage B and Stage C retain separate authoring checkpoints.** Each checks the course ids it cites on `origin/main`; only the plan-level chain gates execution. **Decided.**
 - **DD-6 · `<CONVMAN>` is verified unchanged once Stage C grows only `<SHARMAN>`.** Deferral-check
   assertion mirrors the retired source plan's own §4.2 REFACTOR step. **Decided.**
 - **DD-7 · The Sharia-specific licensing addendum is a first-class addition, not a duplicate of plan
@@ -365,8 +353,8 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 │   ├── conventional-erp/_index.md [E] — grown through Dangerous 2/3/4; created by plan 17
 │   └── sharia-erp/_index.md [E] — grown; created by plan 17
 ├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
-│   ├── conventional-erp.yaml [E] — grown 15 -> 27; created by plan 17
-│   ├── sharia-erp.yaml [E] — grown 15 -> 27 -> 30; created by plan 17
+│   ├── conventional-erp.json [E] — grown 15 -> 27; created by plan 17
+│   ├── sharia-erp.json [E] — grown 15 -> 27 -> 30; created by plan 17
 │   ├── conventional-erp-manifest.unit.test.ts [E] — terminal 27-id assertion
 │   └── sharia-erp-manifest.unit.test.ts [E] — terminal 30-id assertion
 ├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
@@ -392,7 +380,7 @@ authored.** This plan's only cross-plan file edits are those eight files, an exp
 sequential growth across the Stage A/B boundary — plan 17 archives before this plan starts, so it is
 never a same-time collision. The 15 new course bundles are this plan's only `[N]` content rows.
 
-**`conventional-erp.yaml` stops at 27 while `sharia-erp.yaml` reaches 30.** The three Stage C courses
+**`conventional-erp.json` stops at 27 while `sharia-erp.json` reaches 30.** The three Stage C courses
 grow the Sharia manifest only; a step that pushed the conventional manifest past 27 would be a
 boundary violation. The divergence is stated in the tree rather than left to be inferred.
 

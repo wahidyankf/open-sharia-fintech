@@ -10,7 +10,7 @@ needed change to that corpus is routed to its own `delivery.md` as a change requ
 ## Overview
 
 This plan produces **content artefacts only**: 7 page bundles under
-`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no YAML data
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no JSON manifest data
 file, no route, no component, and no redirect rule. It is one of **two plans splitting a single
 band** (the original Band 6, "Low-level systems, JVM & languages, internals builds", 16 courses) that
 was too large for one plan under the 5–15-course-per-plan rule. Its "architecture" is therefore an
@@ -39,7 +39,7 @@ table (`R9`, `A6`, `A8`, `A9`, `A12`) lives in that plan's
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
 > [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md).
-> A step here that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary
+> A step here that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience.
 
 The rationale for why this is an ownership rule rather than a scheduling problem is worked through in
@@ -55,8 +55,8 @@ plan's own copy of the invariant is the **table** below, which is what an execut
 | Add a course's row to this file's Course Library Catalog            | **Yes**                                                                                |
 | List a course in `<COURSES>_index.md`                               | **Yes**                                                                                |
 | Record the band-completion signal in this plan's `delivery.md`      | **Yes** (exactly one signal)                                                           |
-| Read a `.yaml` manifest to check what a path expects                | **Yes** (read-only)                                                                    |
-| Append a course ID to any `<MANIFESTS>**/*.yaml`                    | **No**                                                                                 |
+| Read a `.json` manifest to check what a path expects                | **Yes** (read-only)                                                                    |
+| Append a course ID to any `<MANIFESTS>**/*.json`                    | **No**                                                                                 |
 | Re-order any `courseOrder`                                          | **No**                                                                                 |
 | Re-run manifest integrity / prerequisite-consistency as a gate here | **No** — the manifest plan re-verifies its own artefacts                               |
 | Author any of the sibling plan's 9 course IDs                       | **No** — owned by `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` |
@@ -122,7 +122,7 @@ the 7 courses:
 5. **Run content checkers** — the matching maker's checker (`primer` or `by-example`),
    `apps-ayokoding-www-facts-checker`, and `apps-ayokoding-www-link-checker`.
 6. **Apply content fixers** — resolve every CRITICAL/HIGH/MEDIUM finding.
-7. **Re-verify** — re-run checkers + `npx nx run ayokoding-www:build` + `npm run lint:md`.
+7. **Re-verify** — re-run checkers + `npm exec nx run ayokoding-www:build` + `npm run lint:md`.
 
 Plus the same two closing per-course checks every course in this programme runs on the persistent
 final-delivery branch before the terminal PR opens:
@@ -223,7 +223,7 @@ This plan's 7 courses already sit under the repo's 5–15-course-per-plan sizing
 > [README §Verified independence from the other course-authoring split plans](./README.md#verified-independence-from-the-other-course-authoring-split-plans)
 > for that broader result: **zero** of this plan's 7 courses' prerequisites references anything
 > outside this plan's own 7 IDs plus the already-shipped `just-enough-bash`, so none of those five
-> plans is a `blockedBy` edge for this plan either (unlike the sibling `10`, whose
+> plans is a historical source context edge for this plan either (unlike the sibling `10`, whose
 > `build-your-own-raft` genuinely needs bodies from two of them).
 
 **Question**: does `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`'s scope (9
@@ -344,7 +344,7 @@ behavioural verification via Playwright MCP is mandatory and performed (`deliver
 
 ### API gate — **exempt**
 
-This plan never edits a manifest and ships no code, YAML, or route. Its one structured-data output —
+This plan never edits a manifest and ships no code, JSON manifest data, or route. Its one structured-data output —
 the `prerequisites` frontmatter in each `_index.md` — is inert until
 `ayokoding-learning-path-12-careers-se-manifests` reads it; this plan's own structural check verifies only
 presence and well-formedness, never resolution. **Rule-16 API exploratory retest — not applicable**:
@@ -411,7 +411,7 @@ construction: the exact member list is written to `evidence/authored-body-slugs.
 and every later assertion reads that register rather than globbing the directory — so a slug that
 drifted into the tree from a sibling band plan can never be silently adopted as this plan's work.
 
-`apps/ayokoding-www/content/en/learn/courses/_index.md` is the one shared file this plan edits outside
+`apps/ayokoding-www/content/en/learn/courses/_index.md` is generated from course directories; this plan does not edit it manually outside
 its own plan folder. It is **appended to**, never rewritten, so a concurrent sibling band plan adding
 its own rows produces a mergeable diff rather than a conflict.
 
@@ -448,23 +448,9 @@ asserted):
 
 **No package-manifest changes.**
 
-## Dependencies
+## Execution dependency
 
-| Dependency                                                            | Kind       | Note                                                                        |
-| --------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------- |
-| `ayokoding-learning-path-04-course-authoring` merged (Band 6 trimmed) | hard, plan | populated `courses/` namespace; syllabus root; no duplicate-authoring race  |
-| `vercel-function-cost-reduction` merged                               | hard, plan | site no longer renders every page dynamically before this plan adds 7 more  |
-| `apps-ayokoding-www-primer-maker` and its checker                     | agent      | `just-enough-c`, `just-enough-cpp`, `just-enough-rust`                      |
-| `apps-ayokoding-www-by-example-maker` and its checker                 | agent      | `linux-os`, `windows-os`, `system-programming`, `modern-system-programming` |
-| `apps-ayokoding-www-facts-checker`                                    | agent      | version-pinned / market fact verification                                   |
-| `apps-ayokoding-www-link-checker`                                     | agent      | intra-course and cross-course link integrity                                |
-| `web-researcher`                                                      | agent      | the per-course accuracy pre-verify (`V`) step                               |
-| `apps-ayokoding-www-deployer`                                         | agent      | post-merge deploy to `prod-ayokoding-www`                                   |
-| `nx run ayokoding-www:build`                                          | Nx target  | renders the authored tree                                                   |
-| `rhino-cli md links validate` / `md heading-hierarchy validate`       | CLI        | run as raw `cargo run`, not Nx targets                                      |
-| `npm run lint:md`                                                     | npm script | markdownlint over the authored tree                                         |
-
-**No new package dependency.**
+This plan has one direct execution prerequisite: `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 
@@ -489,9 +475,9 @@ manifest itself.
 | Per-course link checks    | intra-course and cross-course links resolve                                            | `apps-ayokoding-www-link-checker`                                      |
 | Contract assertions       | counterpart / scope-boundary statements are present in the body                        | grep-checkable acceptance clauses on the authoring steps               |
 | Structural                | bundle anatomy present; `prerequisites` declared                                       | `test -d` / `test -f` + frontmatter grep                               |
-| Section build             | the authored tree renders                                                              | `npx nx run ayokoding-www:build`                                       |
+| Section build             | the authored tree renders                                                              | `npm exec nx run ayokoding-www:build`                                       |
 | Markdown quality          | markdownlint, link validation, heading hierarchy                                       | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
-| Regression                | no existing project's gates broke                                                      | `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` |
+| Regression                | no existing project's gates broke                                                      | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
 | Manual behavioural        | a sample of the 7 authored course pages renders correctly at three breakpoints in `en` | Playwright MCP + committed `evidence/` screenshots                     |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts — there is no

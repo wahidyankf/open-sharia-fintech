@@ -3,14 +3,14 @@
 ## Delivery amendment — one final PR
 
 All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 8, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the third and final of a three-plan sequential chain** that replaces the retired
-> `ayokoding-learning-path-06-skills-accounting/` design with three smaller plans:
+> the superseded accounting-programme draft/` design with three smaller plans:
 > `ayokoding-learning-path-14-skills-accounting-foundations` (courses #1–#11) →
 > `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` (courses #12–#19) → **this
-> plan (courses #20–#24)**. This plan is hard `blockedBy` plan 15. It shares the retired plan's
+> plan (courses #20–#24)**. This plan is repository baseline context plan 15. It shares the retired plan's
 > business/product context — personas, the silent-failure constraint (DD-609), the licensing
 > posture (A8) — verbatim with its two predecessors; the A10/A11 two-path rationale is stated once,
 > in plan 14, and referenced here. See
@@ -20,8 +20,8 @@ This plan owns the **five Sharia-specific courses** that exist only in `sharia-a
 in `conventional-accounting`: `sharia-accounting-and-aaoifi-standards`,
 `islamic-contract-modeling-for-systems`, `zakah-computation-and-reporting-for-systems`,
 `sukuk-and-islamic-capital-markets-accounting`, and `sharia-ledger-system-architecture`. **This
-plan grows `sharia-accounting.yaml` alone, from 19 to 24 entries — its terminal size —
-and never touches `conventional-accounting.yaml`, which stays frozen at plan 15's own 19-entry
+plan grows `sharia-accounting.json` alone, from 19 to 24 entries — its terminal size —
+and never touches `conventional-accounting.json`, which stays frozen at plan 15's own 19-entry
 terminus.** It creates **no `_index.md`** under `paths/` (plan 01's, per A3) and authors **no**
 course outside #20–#24.
 
@@ -29,8 +29,8 @@ course outside #20–#24.
 
 | Prior artefact                                                                                               | Relationship to this plan                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `plans/backlog/ayokoding-learning-path-06-skills-accounting/` [Repo-grounded]                                | **The direct predecessor this three-plan chain splits from.** Its Stage 3 (courses #20–#24 in its own numbering, Sharia-only) maps unchanged onto this plan's own course range — the split does not renumber the Sharia stage. |
-| `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` [Planned — this plan's hard predecessor] | Supplies the complete, 19-course shared spine and `sharia-accounting.yaml` at its 19-entry state. Two of this plan's five courses (#20, #23) cite plan 15's own courses (#14, #12) as prerequisites.                           |
+| the superseded accounting-programme draft (reproduced and owned locally)                                | **The direct predecessor this three-plan chain splits from.** Its Stage 3 (courses #20–#24 in its own numbering, Sharia-only) maps unchanged onto this plan's own course range — the split does not renumber the Sharia stage. |
+| `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` [Planned — this plan's hard predecessor] | Supplies the complete, 19-course shared spine and `sharia-accounting.json` at its 19-entry state. Two of this plan's five courses (#20, #23) cite plan 15's own courses (#14, #12) as prerequisites.                           |
 | `ayokoding-learning-path-14-skills-accounting-foundations` [Planned]                                         | Course #20 also cites plan 14's own course #5 as a prerequisite; course #21 cites plan 14's course #2.                                                                                                                         |
 
 ## The Dangerous-3 boundary and the corpus's terminal state
@@ -38,7 +38,7 @@ course outside #20–#24.
 This plan's own course #24 (`sharia-ledger-system-architecture`) is the retired plan's own
 Dangerous-3 boundary, unchanged by the split — the point at which `sharia-accounting` reaches full
 competence across both the conventional spine and the Sharia-specific extension. **This is the
-corpus's own terminal state**: `sharia-accounting.yaml` reaches 24 entries here and never grows
+corpus's own terminal state**: `sharia-accounting.json` reaches 24 entries here and never grows
 again in any future plan.
 
 ## Why the Sharia stage sits at the end (restated, background)
@@ -71,8 +71,8 @@ continuing the requirement plan 14 established and plan 15 continued. Full state
 - Content updates to the `sharia-accounting` landing — states the Dangerous-3 boundary and full
   24-course completeness for the first time. `conventional-accounting`'s landing is **not touched**
   by this plan.
-- **Growing `sharia-accounting.yaml` alone** from 19 to 24 entries, plus extending its existing
-  co-located unit test. `conventional-accounting.yaml` and its test are **never touched**.
+- **Growing `sharia-accounting.json` alone** from 19 to 24 entries, plus extending its existing
+  co-located unit test. `conventional-accounting.json` and its test are **never touched**.
 - Extending the shared Gherkin feature file's step definitions to walk the full 24-course
   `sharia-accounting` path (the `conventional-accounting` walk stays at 19, verified unaffected).
 - **Five syllabus specs** under this plan's own `syllabus/courses/` folder, courses #20–#24.
@@ -94,7 +94,7 @@ continuing the requirement plan 14 established and plan 15 continued. Full state
 - **Any `_index.md` under `paths/`** — plan 01's (A3).
 - **Any ERP content** — plan 18's.
 - **Courses #1–#19** — plans 14 and 15.
-- **Any edit to `conventional-accounting.yaml` or its landing or its unit test** — verified via
+- **Any edit to `conventional-accounting.json` or its landing or its unit test** — verified via
   `git diff --quiet` at every gate.
 - **Re-authoring any existing library course.**
 - **The `PathManifest` schema, the `course-paths` core modules, and every rendering component.**
@@ -131,7 +131,7 @@ flowchart LR
     P16{{"16 sharia-extension<br/>THIS PLAN<br/>courses 20-24"}}:::mine
     P18(["18 skills ERP<br/>enterprise depth"]):::down
 
-    P15 -->|"blockedBy: 15 merged"| P16
+    P15 -->|"historical repository context: 15 merged"| P16
     PV -->|"landings ship on same app"| P16
     P16 -.->|"Stage-3 (Dangerous-3) signal:<br/>Sharia-specific ERP capability"| P18
 
@@ -165,9 +165,8 @@ plan's end.**
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
@@ -185,14 +184,11 @@ tested in its finished state.** See
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                             | Strength                                                                                                                                                                             |
-| ----------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `blockedBy` | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | **hard** — supplies the complete 19-course shared spine and `sharia-accounting.yaml` at its 19-entry state                                                                           |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                        | **hard** — the `courses/` namespace, `paths/skills/_index.md`                                                                                                                        |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`            | **hard** — `PathManifest` schema, integrity functions                                                                                                                                |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                          | **hard** — a manifest with no renderer is invisible                                                                                                                                  |
-| `blockedBy` | `vercel-function-cost-reduction`                                    | **hard** — this plan ships one more traffic-bearing page update on the same app                                                                                                      |
-| `blocks`    | `ayokoding-learning-path-18-skills-erp-enterprise-depth`            | **soft overall, hard at the Sharia-stage capability** — see [tech-docs.md §Stage-signal contract](./tech-docs.md#stage-signal-contract-the-plan-18-handoff-sharia-stage-granularity) |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Navigation
 

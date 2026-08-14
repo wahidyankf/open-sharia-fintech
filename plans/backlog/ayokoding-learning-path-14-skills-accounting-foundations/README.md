@@ -3,13 +3,13 @@
 ## Delivery amendment — one final PR
 
 All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 8, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the first of a three-plan sequential chain** that replaces the retired
-> `ayokoding-learning-path-06-skills-accounting/` design (24 courses, 2 manifests, 1 monolithic
+> the superseded accounting-programme draft/` design (24 courses, 2 manifests, 1 monolithic
 > plan) with three smaller plans, each owning a contiguous course range and chained by hard
-> `blockedBy` edges: **14 (this plan, courses #1–#11) → 15 (courses #12–#19) → 16 (courses
+> historical source context edges: **14 (this plan, courses #1–#11) → 15 (courses #12–#19) → 16 (courses
 > #20–#24)**. The split preserves the source plan's business/product context — personas, the
 > silent-failure constraint (DD-609), the licensing posture (A8) — verbatim across all three; see
 > [tech-docs.md §Provenance of this split](./tech-docs.md#provenance-of-this-split) for the mapping
@@ -27,7 +27,7 @@ assets). It creates **no `_index.md`** under `paths/` (plan 01 owns every struct
 
 | Prior artefact                                                                      | Relationship to this plan                                                                                                                                                                                                                                                                                                                                                                |
 | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plans/backlog/ayokoding-learning-path-06-skills-accounting/` [Repo-grounded]       | **The direct predecessor this plan splits from.** Its 24-course catalog, two-manifest mechanics, licensing posture, personas, and silent-failure constraint are the baseline this plan and its two siblings restate for a narrower course range. The retired plan is not deleted by this plan — the person requesting this split removes it after verifying all three new folders exist. |
+| the superseded accounting-programme draft (reproduced and owned locally)       | **The direct predecessor this plan splits from.** Its 24-course catalog, two-manifest mechanics, licensing posture, personas, and silent-failure constraint are the baseline this plan and its two siblings restate for a narrower course range. The retired plan is not deleted by this plan — the person requesting this split removes it after verifying all three new folders exist. |
 | `apps/ayokoding-www/content/en/learn/legacy/business/accounting.md` [Repo-grounded] | Course #1 mines its running example and narrative sequencing (DD-626), unchanged mechanism from the retired plan's own citation of this file.                                                                                                                                                                                                                                            |
 | The 120-course software-engineering library                                         | **No course duplicates it.** One linked cross-domain prerequisite lands inside this plan's own range (`sql-essentials`, for course #2); the second (`backend-essentials`, for course #19) lands in plan 15's range.                                                                                                                                                                      |
 | `ayokoding-learning-path-05-manifests`                                              | Structural analogue only, not a content source — unchanged reasoning from the retired plan.                                                                                                                                                                                                                                                                                              |
@@ -47,8 +47,8 @@ all the basics** — a reader entering `sharia-accounting` cold gets the full gr
 uniqueness is scoped **per manifest**, not globally, and every manifest references course bodies
 **by ID**, never by copy. The nineteen conventional courses are authored **once**, under
 `<COURSES>`, and referenced by both manifests; the five Sharia-specific courses exist only in
-`sharia-accounting.yaml`. **This plan (14) never duplicates a course to serve two paths** — full
-reasoning, the two manifests' exact YAML shape, and the citation trail into plan 02's tech-docs:
+`sharia-accounting.json`. **This plan (14) never duplicates a course to serve two paths** — full
+reasoning, the two manifests' exact JSON shape, and the citation trail into plan 02's tech-docs:
 [tech-docs.md §Two manifests, shared courses](./tech-docs.md#two-manifests-shared-courses-a10--a11).
 
 This A10/A11 rationale is stated **once**, here in plan 14, as background context. Plans 15 and 16
@@ -90,8 +90,8 @@ pre-Dangerous-1. The full statement, with its consequences for personas and acce
   before this plan runs) and states the Dangerous-1 boundary plus (on the Sharia landing) the
   path-choice affordance. Visual design is owned by `ayokoding-learning-path-03-navigation-ui`.
 - **Two manifest data files, created for the first time** —
-  `apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.yaml` and
-  `…/manifests/skills/sharia-accounting.yaml` — plus each manifest's own co-located unit test. Both
+  `apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.json` and
+  `…/manifests/skills/sharia-accounting.json` — plus each manifest's own co-located unit test. Both
   manifests are grown, within this plan, from 0 → 3 entries (Stage 1) → 11 entries (this plan's own
   second sub-phase). **Neither manifest reaches its full terminal size in this plan** — see
   [tech-docs.md §Staged manifest growth across the three-plan chain](./tech-docs.md#staged-manifest-growth-across-the-three-plan-chain).
@@ -164,8 +164,8 @@ flowchart TD
     P2 -->|"2-segment pathId support"| P14
     P3 -->|"landing + card + repository"| P14
     PV -->|"landings ship on same app; cost gate must be settled first"| P14
-    P14 -->|"blockedBy: 14 merged"| P15
-    P15 -->|"blockedBy: 15 merged"| P16
+    P14 -->|"historical repository context: 14 merged"| P15
+    P15 -->|"historical repository context: 15 merged"| P16
     P15 -.->|"Stage-B-equivalent capability signal"| P18
     P16 -.->|"Sharia-stage capability signal"| P18
 
@@ -225,9 +225,8 @@ so neither landing states path completeness here (that claim is plan 15's, for
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
@@ -252,34 +251,11 @@ the mandatory Playwright MCP manual verification, both run in this plan's
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                             | Strength                                                                                                                                                                        |
-| ----------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                        | **hard** — the `courses/` namespace, `paths/skills/_index.md`, and the linked `sql-essentials`                                                                                  |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`            | **hard** — `PathManifest` schema with `arc` + variable-depth `pathId` support, x2 manifests                                                                                     |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                          | **hard** — a manifest with no renderer is invisible                                                                                                                             |
-| `blockedBy` | `vercel-function-cost-reduction`                                    | **hard** — this plan ships landing pages in the same `ayokoding-www` app; see below                                                                                             |
-| `blocks`    | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | **hard** — plan 15 cannot grow either manifest past 11 entries or author course #12 until this plan's course bodies, manifests, and landings are merged                         |
-| _(none)_    | `ayokoding-learning-path-04-course-authoring`                       | **no edge** — verified: the one linked prerequisite is plan 01's re-homed bundle                                                                                                |
-| _(none)_    | `ayokoding-learning-path-12-careers-se-manifests`                   | **no edge** — disjoint manifest subtrees                                                                                                                                        |
-| _(none)_    | `ayokoding-learning-path-13-careers-ai-manifest`                    | **no edge** — disjoint manifest subtrees                                                                                                                                        |
-| _(none)_    | `ayokoding-learning-path-18-skills-erp-enterprise-depth`            | **no edge** — this plan emits no ERP-facing stage signal; see [tech-docs.md §Stage-signal contract](./tech-docs.md#stage-signal-contract-the-plan-18-handoff-stage-granularity) |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-13-careers-ai-manifest` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-### The `vercel-function-cost-reduction` hard dependency
-
-`plans/done/2026-08-02__vercel-function-cost-reduction/` [Repo-grounded — read in full at authoring
-time] cuts `ayokoding-www`'s gross Vercel infrastructure spend from ~$57/month to under the $20/month
-Pro-plan usage credit by fixing two rendering-dynamism causes in the app's root layout and its
-`[...slug]` content page, which today force **every single content-page view to execute a
-serverless function with zero CDN caching**. This plan adds two brand-new, permanently-live pages
-(`paths/skills/conventional-accounting/_index.md`, `paths/skills/sharia-accounting/_index.md`) plus
-eleven new course-page bundles to that same app — **more traffic-bearing pages compound the exact
-cost problem that plan is fixing**, so this plan is treated as **hard-`blockedBy`** it, with a
-concrete checkable signal: `git log origin/main --oneline | grep -q "vercel-function-cost-reduction"`
-must return non-empty before Phase 0's baseline is recorded (see
-[delivery.md §Depends-on and start preconditions](./delivery.md#depends-on-and-start-preconditions)).
-Treated as **already merged/done** per the explicit instruction accompanying this plan's authoring —
-this plan does not re-verify the cost-reduction plan's own acceptance criteria, only that its merge
-commit is present on `origin/main`.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-13-careers-ai-manifest/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Navigation
 

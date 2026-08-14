@@ -51,7 +51,7 @@ and direct file read]`. Reading `06` directly surfaced the previously-missed
 `software-architecture` edge. This plan also inherits a new, non-content dependency:
 `vercel-function-cost-reduction`, because every delivery boundary in this plan's `worktree-to-pr` mode
 deploys to production, and deploying before that plan's prerendering fix lands would compound the
-exact cost defect it exists to resolve. Six hard `blockedBy` **plans** in total (`01`, `02`, `04`,
+exact cost defect it exists to resolve. Six repository baseline context **plans** in total (`01`, `02`, `04`,
 `05`, `06`, plus `vercel-function-cost-reduction`) — more than any other sibling plan in this further
 split is known to carry `[Judgment call]` (this plan cannot read the other new sibling plans' own
 dependency counts, since they are being authored concurrently; the claim is scoped to what this plan

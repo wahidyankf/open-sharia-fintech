@@ -28,7 +28,7 @@ This checklist authors **9 course bodies** into
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
 > `> **Pause Safety**:` note. A gate in a phase named as a delivery boundary in the
 > [`### Delivery Boundaries`](#delivery-boundaries) table additionally covers **integration** (draft
-> PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
+> PR opened, secret scan, local quality checks, and PR quality-gate verification, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
 > **intermediate** phase confirms the work is committed to its delivery unit's branch with nothing
 > pushed for review yet.
 >
@@ -46,9 +46,9 @@ This checklist authors **9 course bodies** into
 This 9-course plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
 worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
 committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
-review cycle, merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
+merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
-`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+`plans/done/`, then runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review
 transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
 cohort or delivery-boundary PR reference below.
 
@@ -58,6 +58,8 @@ this plan's only worktree; no per-course, cohort, phase, or closeout worktree is
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` (or `git worktree add -b worktree/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own worktrees/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 This path is the one and only worktree for the entire plan. Provision it once from current
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
@@ -78,31 +80,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 7 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
+
+## Content-only delivery safeguards
+
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
+
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
-| Relation        | Plan (full folder name)                                                                                                                                                         | Nature                                                                                                                                                                                                                                                                                                                      |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`                                                                                                                                    | **Hard, transitive.** Populates the flat `courses/` bucket + `courses/_index.md` this plan authors into.                                                                                                                                                                                                                    |
-| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                        | **Hard, transitive.** Owns `syllabus/` (all 9 authoring source specs) and the `prerequisites` contract.                                                                                                                                                                                                                     |
-| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`                                                                                                                                   | **Hard, already satisfied for the Band-1 edge.** `build-your-own-database`'s prerequisite `database-internals-and-storage-engines` is confirmed present on `origin/main` (see Phase 0).                                                                                                                                     |
-| **blockedBy**   | [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md) | **Hard, gated on terminal PR #133 merge.** `build-your-own-raft`'s prerequisite `just-enough-go` (Band 4) becomes available when that PR is merged.                                                                                                                                                                         |
-| **blockedBy**   | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                                                                       | **Hard, not yet satisfied.** Two bodies live here: `build-your-own-raft`'s prerequisite `distributed-systems` (Band 5), and `enterprise-java-and-the-jvm`'s prerequisite `software-architecture` (also Band 5 — previously undeclared; see [tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog)). |
-| **blockedBy**   | `vercel-function-cost-reduction`                                                                                                                                                | **Hard, new.** Every delivery boundary here deploys to production; deploying before that plan's prerendering fix compounds its cost defect.                                                                                                                                                                                 |
-| **blocks**      | `ayokoding-learning-path-12-careers-se-manifests`                                                                                                                               | Needs this plan's 9 bodies + partial band-completion signal to grow the three software-engineer manifests' Band-6 entries, per this plan's commissioning instructions.                                                                                                                                                      |
-| **independent** | `ayokoding-learning-path-07-course-authoring-low-level-systems`                                                                                                                 | Same wave, sibling half of Band 6. Verified zero shared prerequisite edge in either direction (see tech-docs.md).                                                                                                                                                                                                           |
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-09-course-authoring-interview-technique` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
-**Start precondition (hard gate, checked in Phase 0)**: `01` and `02` are merged to `origin/main`; the
-Band-1 body for `build-your-own-database` exists; the Vercel cost-reduction fix's route-count signal
-is tracked (not necessarily satisfied yet — re-checked at each boundary's deploy step). `06`'s
-`software-architecture` body is re-checked immediately before `enterprise-java-and-the-jvm`'s own
-sub-phase in Phase 1; `05`'s `just-enough-go` and `06`'s `distributed-systems` bodies are re-checked
-immediately before `build-your-own-raft`'s own sub-phase in Phase 2 — none of the three is checked
-merely at plan start.
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-09-course-authoring-interview-technique/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -113,7 +110,7 @@ course-authoring plan.
 - **Phase 1 (Cohort 1, 5 bodies)** — content-independent bodies that pipeline concurrently through
   review, bounded by the cap. One internal ordering constraint: `enterprise-java-and-the-jvm` declares
   `just-enough-java` a prerequisite — both are inside this same cohort, so ordering is a convenience
-  (author `just-enough-java` first, or in the same review cycle), not a cross-cohort blocker.
+  (author `just-enough-java` first, or in the same delivery sequence), not a cross-cohort blocker.
   `enterprise-java-and-the-jvm`'s other prerequisite, `software-architecture`, is external (plan `06`,
   not yet on disk) and is hard-gated immediately before this course's own sub-phase (see Phase 1's
   hard gate below) rather than assumed satisfied. `type-systems` does **not** declare
@@ -158,7 +155,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/ plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
@@ -169,12 +166,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
       — acceptance: exits 0, `node_modules/` synchronized.
 - [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] **Verify blocking plan `01` merged** — the `<COURSES>` bucket exists and holds its
+- [ ] [AI] **Verify repository baseline: course bucket** — the `<COURSES>` bucket exists and holds its
       `_index.md` — command:
       `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md`
       — acceptance: both exit 0. Falsifiable both ways: before the URL-restructure plan merges, the
       first `test -d` exits non-zero.
-- [ ] [AI] **Verify blocking plan `02` merged and locate the syllabus root** — command:
+- [ ] [AI] **Verify repository baseline: locate the syllabus root** — command:
       `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: prints **exactly one** path (pipe to `grep -c .`, read `1`); record it to
       `evidence/phase-0-snapshot.txt` as `SYLLABUS_ROOT=<path>`.
@@ -192,13 +189,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
       — record the output to `evidence/phase-0-snapshot.txt`. No acceptance gate here — this is a
       baseline snapshot, not a blocker, since `enterprise-java-and-the-jvm` and `build-your-own-raft`
       are each hard-gated immediately before their own sub-phase (see Phase 1 and Phase 2 respectively).
-- [ ] [AI] **Record the Vercel cost-reduction precondition's current signal** — command:
-      `test -f apps/ayokoding-www/.next/prerender-manifest.json && jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json || echo "no build artifact yet — run npx nx run ayokoding-www:build first"`
+- [ ] [AI] **Record the current rendering baseline signal** — command:
+      `test -f apps/ayokoding-www/.next/prerender-manifest.json && jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json || echo "no build artifact yet — run npm exec nx run ayokoding-www:build first"`
       — record the printed value to `evidence/phase-0-snapshot.txt`. This is re-checked (not merely
       recorded) immediately before every delivery-boundary deploy step (see Delivery-Boundary
       Integration Protocol step 5 above).
-- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
-      `npx nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
+- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Confirm all 9 slugs are absent (no collision)** — command:
       `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -e "apps/ayokoding-www/content/en/learn/courses/$s" && echo "EXISTS $s"; done | grep -c .`
@@ -233,7 +230,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+  apps/rhino-cli/scripts/rhino-bin.sh md links validate \
     --quiet \
     --exclude plans/done \
     --exclude apps/ayokoding-www/content \
@@ -349,9 +346,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [ ] [AI] `npm exec nx affected -t lint` exits 0.
+- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
 - [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change in this cohort's diff); stated here explicitly rather than by silent omission.
@@ -378,7 +375,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `just-enough-fsharp`).
 - [ ] [AI] `software-architecture`'s hard gate (immediately before `enterprise-java-and-the-jvm`'s own
       sub-phase) passed with a zero-exit `test -d`, confirming no dangling prerequisite edge shipped.
-- [ ] [AI] Checkers clean across all 5; `npx nx run ayokoding-www:build` and `npm run lint:md` exit 0;
+- [ ] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0;
       the Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
 - [ ] [AI] Zero manifest files touched.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
@@ -508,9 +505,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
   build-your-own-database
   build-your-own-raft
   GROW_MANIFESTS:
-  <MANIFESTS>careers/interview-ready/software-engineer.yaml
-  <MANIFESTS>careers/immediately-effective/software-engineer.yaml
-  <MANIFESTS>careers/fundamentally-strong/software-engineer.yaml
+  <MANIFESTS>careers/interview-ready/software-engineer.json
+  <MANIFESTS>careers/immediately-effective/software-engineer.json
+  <MANIFESTS>careers/fundamentally-strong/software-engineer.json
   ```
 
   — acceptance: all five fields present, `LANDED_COURSE_IDS` names exactly the 9 slugs in
@@ -519,9 +516,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [ ] [AI] `npm exec nx affected -t lint` exits 0.
+- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
 - [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change in this cohort's diff); stated here explicitly rather than by silent omission.
@@ -570,7 +567,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       CRITICAL/HIGH/MEDIUM findings remain across all 9.
 - [ ] [AI] Re-run the cross-plan link gate (same command as Phase 0) — acceptance: `grep` finds no
       matching line naming this plan's folder.
-- [ ] [AI] `npx nx run ayokoding-www:build` and `npm run lint:md` — acceptance: both exit 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` — acceptance: both exit 0.
 - [ ] [AI] Re-run the independence-from-plan-07 check from tech-docs.md — command:
       `for s in just-enough-c just-enough-cpp linux-os windows-os system-programming just-enough-rust modern-system-programming; do grep -rl "$s" apps/ayokoding-www/content/en/learn/courses/{just-enough-java,enterprise-java-and-the-jvm,lisp,just-enough-fsharp,type-systems,compilers-parsers-and-transpilers,build-your-own-git,build-your-own-database,build-your-own-raft}/_index.md 2>/dev/null; done | grep -c .`
       — acceptance: returns **0** (none of this plan's 9 `_index.md` files declares a plan-07 course
@@ -668,7 +665,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify all delivery checklist items above are ticked.
@@ -683,17 +680,17 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
       those plans exist on disk).
-- [ ] [AI] Push `final-delivery`, open the one terminal archival draft PR, run the 3-cycle PR-Review,
-      `[AI]`-merge, and deploy (contingent on the Vercel cost-reduction precondition).
+- [ ] [AI] Push `final-delivery`, open the one terminal archival draft PR, run the secret scan, local quality checks, and PR quality-gate verification,
+      `[AI]`-merge, and deploy (after rendering-baseline verification).
 - [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own to done`.
 - [ ] [AI] Prompt the user before removing this plan's worktree; remove it only on explicit
       confirmation, and only once nothing is uncommitted or unpushed.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [ ] [AI] `npm exec nx affected -t lint` exits 0.
+- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
 - [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring plan, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change across this plan's closeout diff); stated here explicitly rather than by silent omission.

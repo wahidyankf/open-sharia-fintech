@@ -237,5 +237,5 @@ target codebase used as a worked-example illustration is illustrative, never the
   documents plus a phase-gate check that the plan's diff touches zero `<MANIFESTS>` paths.
 - **A vague band-completion signal.** Mitigated by the five-field signal contract, with an explicit
   rejection rule for incomplete signals.
-- **Proceeding before `vercel-function-cost-reduction` merges.** Mitigated by a hard Phase 0 gate on
+- **Proceeding without verifying the current rendering baseline.** Mitigated by a hard Phase 0 gate on
   that plan's concrete file-based signal.

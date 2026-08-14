@@ -10,7 +10,7 @@ folder on archival. See
 ## Provenance of this split
 
 This plan is the **second** of the three-plan chain replacing the retired
-`plans/backlog/ayokoding-learning-path-06-skills-accounting/` plan — see
+the superseded accounting-programme draft (reproduced and owned locally) plan — see
 `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md §Provenance of this split`
 for the full phase-to-plan mapping. This plan corresponds to the **second half** of the retired
 plan's own Phase 3 (Stage 2, courses #4–#19 in the retired plan's numbering): specifically the
@@ -28,10 +28,10 @@ courses #12–#19 — multi-currency translation, consolidation, IFRS-vs-GAAP re
 controls, payroll and tax, treasury and cash management, XBRL reporting, and the terminal
 `general-ledger-system-architecture` course. All eight courses are **shared-spine** courses — none
 is Sharia-specific — so both manifests hold the identical 19-ID `courseOrder` at this plan's end,
-and `conventional-accounting.yaml` reaches its **terminal** state here.
+and `conventional-accounting.json` reaches its **terminal** state here.
 
 It touches **no application code**. Its artefacts are markdown page bundles under
-`apps/ayokoding-www/content/`, growth of two existing YAML data files (created by plan 14), and
+`apps/ayokoding-www/content/`, growth of two existing JSON manifest data files (created by plan 14), and
 eight markdown spec files inside this plan's own folder.
 
 ## The manifest ownership invariant across the sequential chain (this plan's role)
@@ -39,15 +39,15 @@ eight markdown spec files inside this plan's own folder.
 This plan **extends, never replaces**, the two manifest data files and their co-located unit tests
 created by plan 14:
 
-| Plan           | Touches `conventional-accounting.yaml` / `sharia-accounting.yaml` | State at plan's end                                                                                         |
+| Plan           | Touches `conventional-accounting.json` / `sharia-accounting.json` | State at plan's end                                                                                         |
 | -------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | 14             | Created both files, grew both 0 → 3 → 11                          | Both hold 11 identical IDs                                                                                  |
-| 15 (this plan) | **Grows both further, 11 → 19**                                   | `conventional-accounting.yaml` reaches its **terminal** 19; `sharia-accounting.yaml` also at 19, continuing |
-| 16             | Grows `sharia-accounting.yaml` only, 19 → 24                      | `sharia-accounting.yaml` at its terminal 24; `conventional-accounting.yaml` **untouched** since this plan   |
+| 15 (this plan) | **Grows both further, 11 → 19**                                   | `conventional-accounting.json` reaches its **terminal** 19; `sharia-accounting.json` also at 19, continuing |
+| 16             | Grows `sharia-accounting.json` only, 19 → 24                      | `sharia-accounting.json` at its terminal 24; `conventional-accounting.json` **untouched** since this plan   |
 
 **This is safe because the chain is strictly sequential** — this plan does not start authoring
 until plan 14's course bodies, manifests, and landings are merged to `origin/main` (hard
-`blockedBy`, checked mechanically at this plan's own Phase 0), and plan 16 does not start until this
+historical source context, checked mechanically at this plan's own Phase 0), and plan 16 does not start until this
 plan's own merge. There is never a window where two plans in this chain edit the same manifest file
 concurrently.
 
@@ -57,10 +57,10 @@ created by plan 14; this plan only **updates** their content.
 ## Two manifests, shared courses (A10 + A11) — restated
 
 **A11 is the schema's existing rule.** All eight of this plan's courses are authored **once**,
-under `<COURSES>`, and referenced by both manifests. `conventional-accounting.yaml`'s and
-`sharia-accounting.yaml`'s `courseOrder`s remain **byte-identical** at this plan's end — 19 entries,
+under `<COURSES>`, and referenced by both manifests. `conventional-accounting.json`'s and
+`sharia-accounting.json`'s `courseOrder`s remain **byte-identical** at this plan's end — 19 entries,
 same order. This is the **last** point at which the two manifests are identical: plan 16 diverges
-`sharia-accounting.yaml` by five entries while `conventional-accounting.yaml` stays frozen. Full
+`sharia-accounting.json` by five entries while `conventional-accounting.json` stays frozen. Full
 rationale for the two-manifest, shared-course design: `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md
 §Two manifests, shared courses`.
 
@@ -123,7 +123,7 @@ flowchart LR
     classDef mine fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
-| Step                         | `conventional-accounting.yaml` length       | `sharia-accounting.yaml` length | Owning plan |
+| Step                         | `conventional-accounting.json` length       | `sharia-accounting.json` length | Owning plan |
 | ---------------------------- | ------------------------------------------- | ------------------------------- | ----------- |
 | Before this plan (inherited) | 11                                          | 11                              | 14          |
 | After this plan's Phase 2    | **19 (terminal — frozen forever)**          | **19**                          | 15          |
@@ -136,7 +136,7 @@ flowchart LR
 3. Every `courseOrder` entry remains a plain course-ID string.
 4. Neither manifest's `courseOrder` contains `backend-essentials`.
 5. Both manifests' `courseOrder`s are **byte-identical**, 19 entries.
-6. **`conventional-accounting.yaml` never grows again after this plan** — the falsifiable boundary
+6. **`conventional-accounting.json` never grows again after this plan** — the falsifiable boundary
    plan 16 (and any later plan) must respect via `git diff --quiet`.
 
 ## Syllabus layer — custody and shape (this plan's own slice)
@@ -247,36 +247,37 @@ display, and linked from both landings.
 
 ## Manifest format (state at this plan's end)
 
-```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/skills/conventional-accounting.yaml
-# TERMINAL state — 19 entries. This file never grows past this point in any later plan.
-pathId: skills/conventional-accounting
-arc: immediately-effective
-title: "Conventional Accounting for Systems Builders"
-description: "Build a ledger that balances, then learn the mistakes that still balance — the complete conventional path."
-courseOrder:
-  - accounting-foundations # plan 14
-  - chart-of-accounts-and-data-modeling # plan 14
-  - financial-statements-and-close-cycle # plan 14
-  - journal-entries-and-posting-mechanics # plan 14
-  - accrual-accounting-and-revenue-recognition # plan 14
-  - accounts-payable-and-procure-to-pay # plan 14
-  - accounts-receivable-and-order-to-cash # plan 14
-  - managerial-and-cost-accounting # plan 14
-  - fixed-assets-and-depreciation # plan 14
-  - inventory-and-cogs-accounting # plan 14
-  - lease-and-intangible-asset-accounting # plan 14
-  - multi-currency-accounting-and-fx-translation # this plan
-  - consolidation-and-multi-entity-accounting # this plan
-  - financial-reporting-standards-ifrs-vs-gaap # this plan
-  - audit-controls-and-compliance # this plan
-  - payroll-and-tax-accounting-essentials # this plan
-  - treasury-and-cash-management # this plan
-  - financial-reporting-and-xbrl # this plan
-  - general-ledger-system-architecture # this plan — TERMINAL entry
+```json
+{
+  "pathId": "skills/conventional-accounting",
+  "arc": "immediately-effective",
+  "title": "Conventional Accounting for Systems Builders",
+  "description": "Build a ledger that balances, then learn the mistakes that still balance — the complete conventional path.",
+  "courseOrder": [
+    "accounting-foundations",
+    "chart-of-accounts-and-data-modeling",
+    "financial-statements-and-close-cycle",
+    "journal-entries-and-posting-mechanics",
+    "accrual-accounting-and-revenue-recognition",
+    "accounts-payable-and-procure-to-pay",
+    "accounts-receivable-and-order-to-cash",
+    "managerial-and-cost-accounting",
+    "fixed-assets-and-depreciation",
+    "inventory-and-cogs-accounting",
+    "lease-and-intangible-asset-accounting",
+    "multi-currency-accounting-and-fx-translation",
+    "consolidation-and-multi-entity-accounting",
+    "financial-reporting-standards-ifrs-vs-gaap",
+    "audit-controls-and-compliance",
+    "payroll-and-tax-accounting-essentials",
+    "treasury-and-cash-management",
+    "financial-reporting-and-xbrl",
+    "general-ledger-system-architecture"
+  ]
+}
 ```
 
-`sharia-accounting.yaml` at this plan's end holds the **identical** 19 entries, in the same order,
+`sharia-accounting.json` at this plan's end holds the **identical** 19 entries, in the same order,
 and continues past this point only in plan 16.
 
 ## Stage-signal contract (the plan-18 handoff, stage granularity)
@@ -360,7 +361,7 @@ reproduced a third time here; this plan cites the same ids with the same meaning
   unblocking plan 18's Stage-B-equivalent capability. See
   [§Stage-signal contract](#stage-signal-contract-the-plan-18-handoff-stage-granularity) for the
   full numbering-continuity reasoning.
-- **DD-1506 · `conventional-accounting.yaml` becomes TERMINAL after this plan** — any later touch,
+- **DD-1506 · `conventional-accounting.json` becomes TERMINAL after this plan** — any later touch,
   by plan 16 or any future plan, is a defect, verified via `git diff --quiet` at every later gate.
 - **DD-1507 · This plan runs its own full Rule-15 retest, for `conventional-accounting` only** — a
   deliberate exception to the "retest once, at the end of the chain" default, justified by
@@ -391,7 +392,7 @@ Manifest integrity is behaviour, exercised through both manifests' zod validatio
 
 ### Specs and Gherkin (app-code)
 
-This plan's app/lib-code footprint: growth of two existing YAML data files, extension of two
+This plan's app/lib-code footprint: growth of two existing JSON manifest data files, extension of two
 existing co-located unit tests, and extension of one existing step-definition file. No new
 TypeScript test file is created.
 
@@ -414,8 +415,8 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 │   ├── conventional-accounting/_index.md [E] — grown; file created by plan 14
 │   └── sharia-accounting/_index.md [E] — grown; file created by plan 14
 ├── apps/ayokoding-www/src/features/course-paths/manifests/skills/
-│   ├── conventional-accounting.yaml [E] — grown 11 -> 19; created by plan 14
-│   ├── sharia-accounting.yaml [E] — grown 11 -> 19; created by plan 14
+│   ├── conventional-accounting.json [E] — grown 11 -> 19; created by plan 14
+│   ├── sharia-accounting.json [E] — grown 11 -> 19; created by plan 14
 │   ├── conventional-accounting-manifest.unit.test.ts [E] — extended
 │   └── sharia-accounting-manifest.unit.test.ts [E] — extended
 ├── specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/
@@ -460,7 +461,7 @@ No `[D]` or `[G]` rows: this plan deletes nothing, and no emitter runs over its 
 | `evidence/`                                             | _New_       | Screenshot evidence from Phase 4's manual verification and Rule-15 retest |
 
 **Never touched**: any `_index.md` under `<PATHS>`; any existing library course; `manifests/careers/**`;
-`manifests/skills/conventional-erp.yaml` and `manifests/skills/sharia-erp.yaml`; any file inside
+`manifests/skills/conventional-erp.json` and `manifests/skills/sharia-erp.json`; any file inside
 plan 02's, plan 14's, or plan 16's (once it exists) own `syllabus/`; any component, schema, or
 resolver.
 
@@ -470,44 +471,25 @@ resolver.
 
 | Level                     | What it verifies                                                                                            | Mechanism                                                                  |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Manifest unit (TDD, ×2)   | Loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (19), per manifest    | `npx nx run ayokoding-www:test:unit`                                       |
-| Path-walk e2e (×2)        | Both 2-segment `pathId`s resolve across all 19 courses; `?path=` persists                                   | `npx nx run ayokoding-www-fe-e2e:test:e2e`                                 |
+| Manifest unit (TDD, ×2)   | Loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (19), per manifest    | `npm exec nx run ayokoding-www:test:unit`                                       |
+| Path-walk e2e (×2)        | Both 2-segment `pathId`s resolve across all 19 courses; `?path=` persists                                   | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                                 |
 | Composition assertions    | Linked prerequisite absent from both `courseOrder`s **and** present in frontmatter; shared-19 byte-identity | Grep-checkable clauses                                                     |
 | Per-course content checks | Concept coverage, register, format, worked-example volume, scope boundary                                   | `apps-ayokoding-www-by-example-checker` / `-annotated-concept-checker`     |
 | Silent-failure assertion  | Every course #12–#19 carries its section                                                                    | Grep-checkable clause on each authoring step                               |
 | Licensing audit           | No verbatim standards text, no proprietary CoA structure, no copyleft code pasted                           | Reading audit against Phase 1's licensing-sensitive-sources list (Phase 3) |
-| Terminal-freeze assertion | `conventional-accounting.yaml` unchanged after this plan's own merge point                                  | `git diff --quiet -- "$MANIFEST_CA"`                                       |
+| Terminal-freeze assertion | `conventional-accounting.json` unchanged after this plan's own merge point                                  | `git diff --quiet -- "$MANIFEST_CA"`                                       |
 | Structural                | Bundle anatomy present; `prerequisites` declared                                                            | `test -d` / `test -f` plus frontmatter grep                                |
-| Section build             | The authored tree renders                                                                                   | `npx nx run ayokoding-www:build`                                           |
+| Section build             | The authored tree renders                                                                                   | `npm exec nx run ayokoding-www:build`                                           |
 | Markdown quality          | markdownlint, link validation, heading hierarchy                                                            | `npm run lint:md` plus the two `rhino-cli md` subcommands                  |
-| Regression                | No existing project's gates broke                                                                           | `npx nx affected -t typecheck lint test:quick specs:behavior:coverage`     |
+| Regression                | No existing project's gates broke                                                                           | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage`     |
 | Manual behavioural        | Both landings and sample courses render at three breakpoints in `en`                                        | Playwright MCP plus committed `evidence/` screenshots                      |
 | Live-site retest          | Rule-15 EWT/UWT/DWT against the running `conventional-accounting` landing and full 19-course walk           | The three live-site testers                                                |
 
 **Locale scope**: `en` only.
 
-## Dependencies
+## Execution dependency
 
-| Dependency                                                               | Kind       | Note                                                                                     |
-| ------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------- |
-| `ayokoding-learning-path-14-skills-accounting-foundations` merged        | hard, plan | Supplies the 11 already-merged shared courses and both manifests at their 11-entry state |
-| `ayokoding-learning-path-01-url-restructure` merged                      | hard, plan | `<COURSES>` namespace, `<PATHS>skills/_index.md`                                         |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged          | hard, plan | `PathManifest` zod, integrity functions                                                  |
-| `ayokoding-learning-path-03-navigation-ui` merged                        | hard, plan | `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring           |
-| `vercel-function-cost-reduction` merged                                  | hard, plan | This plan ships more traffic-bearing pages on the same app                               |
-| `apps-ayokoding-www-by-example-maker` + checker + fixer                  | agent      | 5 of this plan's 8 bodies                                                                |
-| `apps-ayokoding-www-annotated-concept-maker` + checker + fixer           | agent      | The 3 Annotated-concept bodies (#14, #15, #18)                                           |
-| `apps-ayokoding-www-general-maker` / `-general-checker`                  | agent      | Landing prose (both) and syllabus prose                                                  |
-| `apps-ayokoding-www-facts-checker`                                       | agent      | Every standard number and jurisdiction claim                                             |
-| `apps-ayokoding-www-link-checker`                                        | agent      | Intra-course, cross-course, and outbound prerequisite links, both paths                  |
-| `web-researcher`                                                         | agent      | Per-course accuracy pre-verify and the post-authoring syllabus module-verification pass  |
-| `apps-ayokoding-www-deployer`                                            | agent      | Post-merge deploy to `prod-ayokoding-www`                                                |
-| `web-exploratory-tester`, `web-usability-tester`, `web-design-tester`    | agent      | The full Rule-15 retest for `conventional-accounting`                                    |
-| `repo-setup-manager`                                                     | agent      | Phase 0                                                                                  |
-| `nx run ayokoding-www:build` / `:test:unit` / `:specs:behavior:coverage` | Nx target  | [Repo-grounded — all three present in `apps/ayokoding-www/project.json`]                 |
-| `nx run ayokoding-www-fe-e2e:test:e2e`                                   | Nx target  | The real e2e project                                                                     |
-| `rhino-cli md links validate` / `md heading-hierarchy validate`          | CLI        | Run as raw `cargo run`, never as Nx targets                                              |
-| `npm run lint:md`                                                        | npm script | markdownlint over the authored tree                                                      |
+This plan has one direct execution prerequisite: `ayokoding-learning-path-14-skills-accounting-foundations`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 
@@ -519,7 +501,7 @@ into software engineering**, removing them cannot break any library course.
 - **Whole plan, before plan 16 starts**: revert every merge in reverse order and shrink both
   manifests back to 11 entries (plan 14's terminal state).
 - **Whole plan, after plan 16 has started**: **not safely revertible in isolation** — plan 16's own
-  `sharia-accounting.yaml` growth references this plan's shared courses by ID. Coordinate any
+  `sharia-accounting.json` growth references this plan's shared courses by ID. Coordinate any
   rollback with plan 16 before applying it.
 - **The one-way door**: once `ayokoding-learning-path-18-skills-erp-enterprise-depth`
   has authored a course against this plan's Stage-2 signal, deleting the corresponding accounting

@@ -13,7 +13,7 @@ This plan is a **consumer**, not the owner, of that corpus — exactly as the pa
 ## Overview
 
 This plan produces **content artefacts only**: 5 page bundles under
-`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no YAML data
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no JSON manifest data
 file, no route, no component, and no redirect rule. It is a narrow, single-band slice of the authoring
 architecture the parent plan established; this document restates only what a reader needs to execute
 this plan's own delivery checklist, and cross-links the parent plan for everything not restated.
@@ -42,7 +42,7 @@ and `advanced-algorithms`.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by a downstream manifest-growth
-> plan. A step here that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a
+> plan. A step here that creates, appends to, reorders, or re-verifies a `.json` manifest is a
 > **boundary violation**, not a convenience.
 
 ### What the invariant permits and forbids, concretely
@@ -54,8 +54,8 @@ and `advanced-algorithms`.
 | Add a course's row to the Course Library Catalog in this file             | **Yes**                                                              |
 | List a course in `<COURSES>_index.md`                                     | **Yes**                                                              |
 | Record the one band-completion signal in this plan's `delivery.md`        | **Yes**                                                              |
-| Read a `.yaml` manifest to check what a path expects                      | **Yes** (read-only)                                                  |
-| Append a course ID to any `<MANIFESTS>**/*.yaml`                          | **No**                                                               |
+| Read a `.json` manifest to check what a path expects                      | **Yes** (read-only)                                                  |
+| Append a course ID to any `<MANIFESTS>**/*.json`                          | **No**                                                               |
 | Re-order any `courseOrder`                                                | **No**                                                               |
 | Re-run manifest integrity / prerequisite-consistency as a gate here       | **No** — the downstream manifest plan re-verifies its own artefacts  |
 | Assert any catalog total beyond this plan's own 5                         | **No** — this plan asserts its own **5**, never the 127-course total |
@@ -72,9 +72,9 @@ this section exists so a reader of this plan alone never generalizes the excepti
 %% Edge presence/absence IS the data — no edge from THIS to the excluded manifest is the whole point.
 flowchart LR
     THIS(["Band 9 lands<br/>(this plan)"]):::band
-    M1["careers/interview-ready/<br/>software-engineer.yaml"]:::grows
-    M2["careers/fundamentally-strong/<br/>software-engineer.yaml"]:::grows
-    M3{{"careers/immediately-effective/<br/>software-engineer.yaml<br/>EXCLUDED BY DESIGN"}}:::excluded
+    M1["careers/interview-ready/<br/>software-engineer.json"]:::grows
+    M2["careers/fundamentally-strong/<br/>software-engineer.json"]:::grows
+    M3{{"careers/immediately-effective/<br/>software-engineer.json<br/>EXCLUDED BY DESIGN"}}:::excluded
 
     THIS -->|"GROW_MANIFESTS names this"| M1
     THIS -->|"GROW_MANIFESTS names this"| M2
@@ -93,10 +93,10 @@ palette per the
 
 | Manifest                                               | Grows from this band's signal? | Why                                                                                                                              |
 | ------------------------------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `careers/interview-ready/software-engineer.yaml`       | **Yes**                        | This band is that path's own namesake content — its entire reason for existing                                                   |
-| `careers/fundamentally-strong/software-engineer.yaml`  | **Yes**                        | Carries this band as an optional deepening tail, per the courses' own `syllabus/` "In which paths" sections                      |
-| `careers/immediately-effective/software-engineer.yaml` | **No — excluded by design**    | That path's reader reaches these 5 courses (if at all) via their canonical course pages, never via that path's own `courseOrder` |
-| `careers/immediately-effective/ai-engineer.yaml`       | **No — no dependency at all**  | The AI-engineer path never references any interview-technique course in any capacity                                             |
+| `careers/interview-ready/software-engineer.json`       | **Yes**                        | This band is that path's own namesake content — its entire reason for existing                                                   |
+| `careers/fundamentally-strong/software-engineer.json`  | **Yes**                        | Carries this band as an optional deepening tail, per the courses' own `syllabus/` "In which paths" sections                      |
+| `careers/immediately-effective/software-engineer.json` | **No — excluded by design**    | That path's reader reaches these 5 courses (if at all) via their canonical course pages, never via that path's own `courseOrder` |
+| `careers/immediately-effective/ai-engineer.json`       | **No — no dependency at all**  | The AI-engineer path never references any interview-technique course in any capacity                                             |
 
 Contrast with every other band's default 3-of-3 growth (Bands 1–4, 6, 7 grow all three
 `software-engineer` manifests; Bands 5 and 8 additionally grow the AI-engineer manifest) — Band 9 is
@@ -105,13 +105,13 @@ in scope for this band under any circumstance.
 
 ## Baseline precondition on plan 04
 
-This plan's hard `blockedBy` on `ayokoding-learning-path-04-course-authoring` is a **baseline**
+This plan's repository baseline context on `ayokoding-learning-path-04-course-authoring` is a **baseline**
 dependency, not a full-completion one. Concretely, this plan's Phase 0 needs:
 
 1. **The parent plan's own Phase 0 baseline established** — toolchain converged
    (`npm run doctor -- --fix` clean), and its own upstream plans (`01-url-restructure`,
    `02-schema-and-prerequisite-dag`) verified merged to `origin/main`.
-2. **The `<COURSES>` bucket populated** — `apps/ayokoding-www/content/en/learn/courses/_index.md`
+2. **The `<COURSES>` bucket regenerated** — `apps/ayokoding-www/content/en/learn/courses/_index.md`
    exists, and the namespace holds at minimum the 37 re-homed bundles the URL-restructure plan created.
 
 **It does NOT need**: the parent plan's other 85 non-Band-9 bodies (AI courses + Bands 1–8) merged.
@@ -128,9 +128,9 @@ far (the six AI-engineering courses plus Bands 1 and 2), with Bands 3–9 now ca
 `07-course-authoring-low-level-systems`, `08-course-authoring-security-and-ops`,
 `09-course-authoring-interview-technique` — this plan, `10-course-authoring-jvm-and-build-your-own`).
 
-## The `vercel-function-cost-reduction` precondition
+## The the rendering repository baseline
 
-This is a **new** hard `blockedBy` this plan carries that the parent plan's own dependency list never
+This is a **new** repository baseline context this plan carries that the parent plan's own dependency list never
 had, because it did not exist when the parent plan was authored.
 
 **Why authoring 5 more content pages is gated on a cost-reduction plan.**
@@ -261,7 +261,7 @@ scoped by `cd`-ing into a folder. Use the repo-wide form with excludes, filtered
 paths:
 
 ```bash
-cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+apps/rhino-cli/scripts/rhino-bin.sh md links validate \
   --quiet \
   --exclude plans/done \
   --exclude apps/ayokoding-www/content \
@@ -363,7 +363,7 @@ construction: the exact member list is written to `evidence/authored-body-slugs.
 and every later assertion reads that register rather than globbing the directory — so a slug that
 drifted into the tree from a sibling band plan can never be silently adopted as this plan's work.
 
-`apps/ayokoding-www/content/en/learn/courses/_index.md` is the one shared file this plan edits outside
+`apps/ayokoding-www/content/en/learn/courses/_index.md` is generated from course directories; this plan does not edit it manually outside
 its own plan folder. It is **appended to**, never rewritten, so a concurrent sibling band plan adding
 its own rows produces a mergeable diff rather than a conflict.
 
@@ -389,7 +389,7 @@ directories confirmed above):
 **Never touched, by construction** (verified by a zero-diff gate check at every phase):
 
 - `apps/ayokoding-www/src/features/course-paths/` (`<FEAT>`) — no application code
-- `apps/ayokoding-www/src/features/course-paths/manifests/` (`<MANIFESTS>`) — every `.yaml` manifest is
+- `apps/ayokoding-www/src/features/course-paths/manifests/` (`<MANIFESTS>`) — every `.json` manifest is
   read-only from this plan
 - `apps/ayokoding-www/content/en/learn/paths/` (`<PATHS>`) and
   `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (`<SE_OLD>`) —
@@ -402,19 +402,9 @@ directories confirmed above):
 **No package-manifest changes**: this plan adds no entry to `package.json`, `go.mod`, `Cargo.toml`, or
 any other dependency manifest.
 
-## Dependencies
+## Execution dependency
 
-| Dependency                                                                 | Kind       | Note                                                                                                                                     |
-| -------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `ayokoding-learning-path-01-url-restructure` merged                        | hard, plan | populated flat `courses/` namespace + `courses/_index.md`                                                                                |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged            | hard, plan | `syllabus/courses/<id>.md` specs for the 5 Band-9 IDs + the `prerequisites` contract                                                     |
-| `ayokoding-learning-path-04-course-authoring` Phase 0 baseline established | hard, plan | toolchain converged + upstream verified + `<COURSES>` bucket populated (see [§Baseline precondition](#baseline-precondition-on-plan-04)) |
-| `vercel-function-cost-reduction` Phases 1–4 merged                         | hard, plan | prerendering fix landed — see [§The vercel-function-cost-reduction precondition](#the-vercel-function-cost-reduction-precondition)       |
-| `apps-ayokoding-www-by-example-maker` and its checker/fixer                | agent      | `coding-interview`, `take-home-and-live-coding`, `capstone-interview-loop`                                                               |
-| `apps-ayokoding-www-annotated-concept-maker` and its checker/fixer         | agent      | `system-design-interview`, `behavioral-and-leadership-interviews`                                                                        |
-| `apps-ayokoding-www-facts-checker`/`-fixer`                                | agent      | factual accuracy of all 5 bodies                                                                                                         |
-| `apps-ayokoding-www-link-checker`/`-fixer`                                 | agent      | internal/external link correctness                                                                                                       |
-| `apps-ayokoding-www-deployer`                                              | agent      | deploys `ayokoding-www` to `prod-ayokoding-www` after merge                                                                              |
+This plan has one direct execution prerequisite: `ayokoding-learning-path-08-course-authoring-security-and-ops`, fully merged and archived on `origin/main`. Course-level source citations and repository facts are implementation context, not extra plan dependencies.
 
 ## Rollback
 

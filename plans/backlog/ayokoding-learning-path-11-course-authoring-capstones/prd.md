@@ -32,13 +32,13 @@ plan's artefacts — not external stakeholder roles.
 - **The manifest-growth agent** (the executor behind `ayokoding-learning-path-12-careers-se-manifests`
   and `ayokoding-learning-path-13-careers-ai-manifest`). Consumes this plan's band-completion signal
   as a machine-readable handoff: it needs `LANDED_COURSE_IDS` to resolve under `<COURSES>` and
-  `GROW_MANIFESTS` to name exactly which `.yaml` files to grow — nothing looser is actionable.
+  `GROW_MANIFESTS` to name exactly which `.json` files to grow — nothing looser is actionable.
   Cares that this plan never touches a manifest file itself.
 - **The course-authoring executor** (`apps-ayokoding-www-by-example-maker`,
   `apps-ayokoding-www-annotated-concept-maker`, their checkers/fixers, `web-researcher`). Cares that
   each capstone's own spec file is read in full before authoring, that the fixed page-bundle anatomy
   is followed exactly, and that every content checker returns zero CRITICAL/HIGH/MEDIUM before merge.
-- **The maintainer**, reviewing the PR-Review Maker→Fixer Cycle's findings and the merge outcome.
+- **The maintainer**, reviewing the content-quality findings and the merge outcome.
 
 ## User Stories
 
@@ -114,7 +114,7 @@ course in the band-completion signal"
 Scenario: capstone-build-your-own-coding-agent is recorded as the ninth AI-cluster course in the band-completion signal
   Given capstone-build-your-own-coding-agent assembles the five-course harness cluster authored by ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness
   When this band's completion signal is recorded in delivery.md
-  Then GROW_MANIFESTS names apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml in addition to the three software-engineer-role manifests
+  Then GROW_MANIFESTS names apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.json in addition to the three software-engineer-role manifests
 ```
 
 **Scenario (binds) →** "This plan never edits a manifest file"
@@ -126,13 +126,13 @@ Scenario: This plan never edits a manifest file
   Then the filtered diff is empty
 ```
 
-**Scenario (binds) →** "The vercel-function-cost-reduction precondition gates this plan's start"
+**Scenario (binds) →** "The rendering repository baseline is recorded"
 
 ```gherkin
-Scenario: The vercel-function-cost-reduction precondition gates this plan's start
+Scenario: The rendering repository baseline is recorded
   Given the concrete checkable signal from vercel-function-cost-reduction's Phase 1-4 changes
   When Phase 0 evaluates apps/ayokoding-www/src/app/layout.tsx, apps/ayokoding-www/src/middleware.ts, and any remaining server-side searchParams read
-  Then Phase 1 does not begin until the root layout is promoted, the middleware is deleted, and no server-side searchParams read remains
+  Then the observed rendering state is recorded as implementation context and does not add a plan-start gate
 ```
 
 **Scenario (binds) →** "The eight-capstone catalog builds green"
@@ -140,7 +140,7 @@ Scenario: The vercel-function-cost-reduction precondition gates this plan's star
 ```gherkin
 Scenario: The eight-capstone catalog builds green
   Given all eight capstone bundles are authored and merged to origin/main
-  When "npx nx run ayokoding-www:build" is run
+  When "npm exec nx run ayokoding-www:build" is run
   Then the build exits 0 and every one of the eight capstone slugs renders a page
 ```
 

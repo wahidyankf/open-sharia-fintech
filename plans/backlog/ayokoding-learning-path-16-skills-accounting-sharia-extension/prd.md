@@ -6,14 +6,14 @@
 ## Product Overview
 
 Courses #20–#24 of the twenty-four-course catalog — the five Sharia-specific courses. This plan
-grows **`sharia-accounting.yaml` alone** (created by plan 14, grown by plan 15) from **19 to 24
-entries**, its terminal size. `conventional-accounting.yaml` is **never touched** by this plan. The
+grows **`sharia-accounting.json` alone** (created by plan 14, grown by plan 15) from **19 to 24
+entries**, its terminal size. `conventional-accounting.json` is **never touched** by this plan. The
 `sharia-accounting` landing (created by plan 14, updated by plan 15) is **updated** here to state
 full completeness at 24 courses.
 
 What ships in this plan:
 
-- **`sharia-accounting.yaml` grown to 24** — the last five entries are Sharia-specific, exclusive
+- **`sharia-accounting.json` grown to 24** — the last five entries are Sharia-specific, exclusive
   to this manifest.
 - **`sharia-accounting`'s landing content, updated** — states the Dangerous-3 boundary and full
   path completeness.
@@ -22,7 +22,7 @@ What ships in this plan:
 - **Resolution of the carried verification debt** (OI-1 through OI-4).
 - **The full Rule-15 retest**, for `sharia-accounting` only.
 
-What does not ship: courses #1–#19 (plans 14, 15), any edit to `conventional-accounting.yaml` or
+What does not ship: courses #1–#19 (plans 14, 15), any edit to `conventional-accounting.json` or
 its landing, any `_index.md` under `paths/`, any ERP content, any component, any schema, any edit
 to an existing library course, any building exercise (A6).
 
@@ -61,7 +61,7 @@ first time at this plan's end.
   `sharia-ledger-system-architecture` to teach me how to architect (never build) a Sharia-compliant
   ledger, closing my competence at the same depth `conventional-accounting`'s own architecture
   course closes conventional competence.
-- As a **maintainer**, I want `sharia-accounting.yaml` to be the only manifest this plan ever
+- As a **maintainer**, I want `sharia-accounting.json` to be the only manifest this plan ever
   touches, so that `conventional-accounting`'s own terminal state (established in plan 15) is
   provably preserved.
 - As the **maintainer**, I want no unverified standard number or doctrinal claim (especially the
@@ -81,11 +81,11 @@ Nine scenarios. Each uses **exactly one** primary `Given`, one `When`, and one `
 
 ```gherkin
 Scenario: Sharia-accounting reaches its terminal, complete state at course twenty-four
-  Given sharia-accounting.yaml has grown to include all twenty-four courses
+  Given sharia-accounting.json has grown to include all twenty-four courses
   When a reader reaches the end of the sharia-accounting courseOrder
   Then the path landing states the path is complete
-  And no further course is ever appended to sharia-accounting.yaml at any later phase or plan
-  And conventional-accounting.yaml remains exactly as it was at the end of plan 15
+  And no further course is ever appended to sharia-accounting.json at any later phase or plan
+  And conventional-accounting.json remains exactly as it was at the end of plan 15
 ```
 
 ```gherkin
@@ -148,11 +148,11 @@ Scenario: No standard's text or proprietary structure is reproduced
 
 ```gherkin
 Scenario: This plan's authored slice builds and validates green
-  Given sharia-accounting.yaml holds twenty-four entries and all five of this plan's course bodies are authored
+  Given sharia-accounting.json holds twenty-four entries and all five of this plan's course bodies are authored
   When the app build, the affected test tiers, and the link and heading validators run
   Then the build and every affected tier succeed
   And manifest integrity and prerequisite consistency report zero violations
-  And conventional-accounting.yaml is provably unchanged since plan 15's own merge
+  And conventional-accounting.json is provably unchanged since plan 15's own merge
 ```
 
 ```gherkin
@@ -167,9 +167,9 @@ Scenario: Sharia-accounting passes its full live-site retest
 
 ### In scope
 
-- Growth of one existing `PathManifest` YAML data file (`sharia-accounting.yaml`) from 19 to 24
+- Growth of one existing `PathManifest` JSON manifest data file (`sharia-accounting.json`) from 19 to 24
   entries.
-- Extension of `sharia-accounting.yaml`'s existing co-located unit test.
+- Extension of `sharia-accounting.json`'s existing co-located unit test.
 - Extension of the shared Gherkin feature file's step definitions to the full 24-course
   `sharia-accounting` walk.
 - Content update to the existing `sharia-accounting` landing bundle.
@@ -185,7 +185,7 @@ Scenario: Sharia-accounting passes its full live-site retest
 ### Out of scope
 
 - **Courses #1–#19.**
-- **Any edit to `conventional-accounting.yaml`, its landing, or its unit test.**
+- **Any edit to `conventional-accounting.json`, its landing, or its unit test.**
 - **Every `_index.md` under `paths/`.**
 - **All ERP content.**
 - **Any rendering component, route wiring, or design asset.**
@@ -215,7 +215,7 @@ existing `sharia-accounting` landing screen, plus growth of one existing manifes
   Mitigated by the mandatory silent-failure section and the explicit contrast scenarios above.
 - **An `[Unverified]` research claim (especially OI-2) is restated as fact.** Mitigated by this
   plan's own Phase 2 gate, checked again at every later gate.
-- **`conventional-accounting.yaml` is accidentally touched.** Mitigated by a falsifiable
+- **`conventional-accounting.json` is accidentally touched.** Mitigated by a falsifiable
   `git diff --quiet` clause at every phase gate from Phase 3 onward.
 - **Licensing exposure (A8)**, at its strictest posture (IAI, AAOIFI). Mitigated by the eleven
   safe-authoring rules and a dedicated Phase 4 reading audit.

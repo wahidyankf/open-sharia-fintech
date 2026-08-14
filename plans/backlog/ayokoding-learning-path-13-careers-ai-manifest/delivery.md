@@ -13,7 +13,7 @@
 > Do not copy; do not author from any other source.
 >
 > **The manifest ownership invariant (binding)**: this plan owns exactly
-> `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` and every step that mutates or
+> `<MANIFESTS>careers/immediately-effective/ai-engineer.json` and every step that mutates or
 > re-verifies it. The sibling plan `ayokoding-learning-path-12-careers-se-manifests` owns exactly its
 > three software-engineer-role files. Neither plan edits the other's manifest.
 
@@ -21,12 +21,11 @@
 
 This single-manifest plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
 worktree, one branch, and exactly one draft PR**. Work may still be authored, checked, and committed
-in dependency order, but no intermediate phase may push, open a PR, run the PR review cycle, merge,
+in dependency order, but no intermediate phase may push, open a PR, start an external merge,
 deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all manifest work,
 verification, and Knowledge Capture are green; it includes the archival move to `plans/done/`, then
-runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review transition, and the normal
-`[AI]` merge/deploy protocol. Plan 12 is not a start prerequisite: this plan delivers first, then
-Plan 12 consumes its merged state for its four-manifest validation before its own final PR. This
+runs the secret scan, local quality checks, and PR quality-gate verification, CI verification, ready-for-review transition, and the normal
+`[AI]` merge/deploy protocol. Plan 12 is this plan's sole direct start prerequisite. After Plan 12 is merged, this plan delivers the AI-engineer manifest and performs any cross-manifest validation that needs both completed deliveries. This
 contract supersedes every older delivery-boundary PR reference below.
 
 The `worktrees/ayokoding-learning-path-13-careers-ai-manifest/` path below is this plan's only
@@ -35,6 +34,8 @@ worktree; no per-manifest, phase, or closeout worktree is created.
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-13-careers-ai-manifest/`
+
+Provision this path exactly once with `claude --worktree ayokoding-learning-path-13-careers-ai-manifest` (or `git worktree add -b worktree/ayokoding-learning-path-13-careers-ai-manifest worktrees/ayokoding-learning-path-13-careers-ai-manifest origin/main` when provisioning manually). Both forms designate the same one worktree; never create a second path for a phase, course, or closeout.
 
 This path is the one and only worktree for the entire plan. Provision it once from current
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
@@ -55,25 +56,26 @@ schedule-only, and must not be monitored or gated on.
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
 `final-delivery` branch in the declared worktree. Phases before 7 must not push, open
-a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
-commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
-PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+a PR, start an external merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the secret scan, local quality checks, and PR quality-gate verification plus local and CI gates, marks it ready, merges under the hardened
 preconditions, and deploys once.
 
-## Depends-on and start preconditions
+## Content-only delivery safeguards
 
-| Direction   | Plan                                                                                                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui` (done)                                                                                                                                          |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure` (done, transitive)                                                                                                                            |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag` (done, transitive)                                                                                                                |
-| `blockedBy` | `vercel-function-cost-reduction` (`ayokoding-www` unit merged)                                                                                                                             |
-| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests` — Plan 13 starts independently; the reverse whole-plan edge is consumed by Plan 12 Phase 8 after this plan's sole PR merges              |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` Phase 1 (6 AI courses) — needed for Phase 1's GREEN step                                                                                     |
-| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, `ayokoding-learning-path-11-course-authoring-capstones` — needed for Phase 2's growth                           |
-| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests`, **whole-plan** — this plan has no dependency on the sibling's whole-plan completion; that edge belongs to the sibling's own final phase |
+This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-See [README §Depends-on](./README.md#depends-on) for the full table.
+- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+
+## Depends-on
+
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-12-careers-se-manifests` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-12-careers-se-manifests/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Parallelization Model
 
@@ -85,8 +87,7 @@ See [README §Depends-on](./README.md#depends-on) for the full table.
   processed independently as it lands.
 - **Phases 3 → 7 are serial.**
 - **This plan's own phases have DAG width 1** — every phase mutates or re-verifies the same one data
-  file. This plan starts independently, delivers its one final PR first, and then unblocks Plan 12's
-  Phase 8 four-manifest validation.
+  file. This plan begins after plan 12's merged delivery and performs its own cross-manifest validation after both deliveries exist.
 
 ### Delivery Boundaries
 
@@ -135,7 +136,7 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-13-careers-ai-manifest/ plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
-      `plans/in-progress/README.md`, commit, and push directly to `origin main` — acceptance:
+      `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
       `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest/README.md | grep -c .`
       returns **1** and the same query against `plans/backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md` returns **0**.
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
@@ -147,13 +148,11 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] **Precondition 1** — confirm navigation-ui is merged:
       `gh pr list --search "ayokoding-learning-path-03-navigation-ui" --state merged --json number --jq 'length'`
       — acceptance: returns a value ≥ 1.
-- [ ] [AI] **Precondition 2** — confirm the `vercel-function-cost-reduction` `ayokoding-www` unit is
-      merged:
-      `gh pr list --search "vercel-function-cost-reduction" --state merged --json number --jq 'length'`
-      — acceptance: returns a value ≥ 1.
-- [ ] [AI] Confirm Plan 12's three-manifest files remain absent at this plan's start — command:
-      `test ! -e <MANIFESTS>careers/interview-ready/software-engineer.yaml` — acceptance: exits 0;
-      Plan 13 starts independently and does not wait for any Plan 12 PR.
+- [ ] [AI] **Repository baseline** — verify the current manifest repository and rendered-route
+      behavior directly; this records implementation context and is not an additional plan gate.
+- [ ] [AI] Confirm Plan 12's three-manifest files are present at this plan's start — command:
+      `test ! -e <MANIFESTS>careers/interview-ready/software-engineer.json` — acceptance: exits 0;
+      Plan 13 begins only after Plan 12's final PR merges.
 - [ ] [AI] **Precondition 4** — confirm the six net-new AI-engineer-role courses (or at least enough of
       them for Phase 1's GREEN step) exist:
       `gh pr list --search "ayokoding-learning-path-04-course-authoring" --state merged --json number --jq 'length'`
@@ -169,11 +168,11 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
       transcribes only the subset that resolves and records the rest as a documented gap, closed later
       by the six-source-plan growth this plan's sibling processes for the general library (this
       manifest's own Phase 2 growth covers only the 9-course harness cluster, not these 11).
-- [ ] [AI] Establish baselines: `npx nx run ayokoding-www:build`, `:test:unit`,
+- [ ] [AI] Establish baselines: `npm exec nx run ayokoding-www:build`, `:test:unit`,
       `ayokoding-www-fe-e2e:test:e2e` — acceptance: all exit 0; record pass counts in
       `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Manifest baseline snapshot** —
-      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — acceptance: exits non-zero
+      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.json` — acceptance: exits non-zero
       (the file does not exist yet); recorded in `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Hub baseline snapshot** —
       `grep -cF '/en/learn/paths/careers/immediately-effective/ai-engineer' <PATHS>_index.md` —
@@ -201,7 +200,7 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 
 > _Suggested executor: `apps-ayokoding-www-general-maker` + `web-researcher`._
 >
-> **Authoring priority #1** (DD-27). This plan starts independently of the sibling plan. This
+> **Authoring priority #1** (DD-27). This plan begins only after plan 12's merged delivery. This
 > manifest is **from-scratch** (DD-35): its SWE-fundamentals prerequisites are **included** at the head
 > of `courseOrder`, not linked out. Per DD-33 (still holding in scope) `courseOrder` also **walks**,
 > never links, the existing nine-course AI/harness cluster — deliberately deferred here to
@@ -210,13 +209,13 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 ### 1.1 · TDD cycle — publish the manifest data file
 
 - [ ] [AI] **RED** — create `<MANIFESTS>careers/careers-ai-manifest.unit.test.ts` _(new file)_ with a
-      failing assertion that `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` loads,
+      failing assertion that `<MANIFESTS>careers/immediately-effective/ai-engineer.json` loads,
       zod-validates, and contains the 11 named SWE-fundamentals course IDs **at the head of**
-      `courseOrder` — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails because the
+      `courseOrder` — command: `npm exec nx run ayokoding-www:test:unit` — acceptance: fails because the
       manifest file does not exist. Also create `<SPECS>path-composition.feature` _(new file)_ with the
       scenario below, and a matching failing step in
       `apps/ayokoding-www-fe-e2e/src/steps/path-composition.steps.ts` _(new file)_ — command:
-      `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: fails.
+      `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: fails.
 
   **Gherkin (binds) →** "The AI-engineer path includes its software-engineering prerequisites instead
   of linking them"
@@ -229,7 +228,7 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
     And that reader can start at courseOrder[0] and finish the whole path from this one manifest, with no external prerequisite link required
   ```
 
-- [ ] [AI] **GREEN** — author `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` _(new file)_
+- [ ] [AI] **GREEN** — author `<MANIFESTS>careers/immediately-effective/ai-engineer.json` _(new file)_
       with `pathId: careers/immediately-effective/ai-engineer`, a `title`, a `description`, and
       `courseOrder` whose **head** is the prerequisite-consistent ordering of the 11 named
       SWE-fundamentals courses — transcribed verbatim (never re-derived) from
@@ -237,16 +236,16 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
       Stage 0 — **followed by** the six net-new AI-engineer-role courses in order (light eval gate →
       statistics for evals → deep evals → product patterns for probabilistic systems → inference
       serving and model deployment → fine-tuning and adaptation) — command:
-      `npx nx run ayokoding-www:test:unit` — acceptance: exits 0, AND all 11 SWE-fundamentals IDs are
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: exits 0, AND all 11 SWE-fundamentals IDs are
       present —
-      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.json | sort -u | wc -l`
       returns **11 or more**, AND all six AI-engineer-role IDs are present —
-      `grep -oE 'evaluating-ai-output-essentials|statistics-for-evaluation|evaluating-ai-systems-in-depth|product-patterns-for-probabilistic-systems|inference-serving-and-model-deployment|fine-tuning-and-adaptation' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'evaluating-ai-output-essentials|statistics-for-evaluation|evaluating-ai-systems-in-depth|product-patterns-for-probabilistic-systems|inference-serving-and-model-deployment|fine-tuning-and-adaptation' <MANIFESTS>careers/immediately-effective/ai-engineer.json | sort -u | wc -l`
       returns **6**, AND `checkPrerequisiteConsistency` passes over the combined order (the automated
       topological check, not a manual grep, is authoritative for inter-course ordering).
 - [ ] [AI] **REFACTOR** — record inline in the YAML, as a comment, that the nine AI/harness-cluster IDs
       are deliberately absent pending Phase 2 growth, naming the phase — command:
-      `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both exit 0
+      `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www:lint` — acceptance: both exit 0
       and the presence checks above still hold.
 
 ### 1.2 · The landing anchor (content — maker/checker/fixer)
@@ -274,27 +273,25 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] Verify path-aware nav end-to-end: routing resolves, the manifest loads,
       `?path=careers/immediately-effective/ai-engineer` context propagates, prev/next walks the order,
       breadcrumb shows the path, course pages show prerequisites — command:
-      `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: passes in `en`.
+      `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: passes in `en`.
 - [ ] [AI] **Record the independent-start assertion (documentation-verified, not harness-executable).**
-      Confirm by reading this checklist that this plan's Phase 1 does not wait for any Plan 12 delivery,
-      and that Plan 12 waits for this plan's terminal archival PR only before its own Phase 8
-      four-manifest cross-check — acceptance: this ordering is stated here in writing. This is a
+      Confirm by reading this checklist that this plan's Phase 1 begins after Plan 12's merged delivery,
+      and that this plan follows plan 12's merged delivery before its successor validation — acceptance: this ordering is stated here in writing. This is a
       build-order claim about the programme's own delivery sequence across two plan folders; no test
       harness can execute it.
       **This scenario intentionally does not land in `<SPECS>path-composition.feature`** — it has no
       step binding and never will one.
 
-  **Gherkin (documentation-verified) →** "This plan starts independently and unblocks the sibling's
-  final cross-check" — a deliberate third tag form: neither `(binds)` nor
+  **Gherkin (documentation-verified) →** "This plan follows its predecessor and completes successor validation" — a deliberate third tag form: neither `(binds)` nor
   `(underpins)` fits, since this scenario will never have a step definition and is not a pure-core unit
   test either.
 
   ```gherkin
-  Scenario: This plan starts independently and unblocks the sibling's final cross-check
-    Given Plan 12 has not delivered any manifest
+  Scenario: This plan follows its predecessor and completes the AI-manifest validation
+    Given Plan 12's three manifests are merged to origin/main
     When this plan's Phase 0 checks its start preconditions
-    Then this plan's Phase 1 authoring may begin without a Plan 12 merge
-    And Plan 12 waits for this plan's terminal archival PR before its own Phase 8 cross-check
+    Then this plan's Phase 1 authoring begins after the Plan 12 merge
+    And this plan performs the successor cross-manifest check after its own delivery
   ```
 
 - [ ] [AI] **Progression smoothness audit (from-scratch-first)** — walk the manifest order and confirm
@@ -304,11 +301,11 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 
 ### Phase 1 Gate
 
-- [ ] [AI] `find <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | wc -l` returns **1**.
+- [ ] [AI] `find <MANIFESTS>careers/immediately-effective/ai-engineer.json | wc -l` returns **1**.
 - [ ] [AI] The six-AI-member check returns **6**; the SWE-fundamentals-presence check returns **11 or
       more**.
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0.
-- [ ] [AI] `npx nx run ayokoding-www:build` + `:specs:behavior:coverage` +
+- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:build` + `:specs:behavior:coverage` +
       `ayokoding-www-fe-e2e:test:e2e` exit 0.
 - [ ] [AI] The hub-card href check returns **1**; the persona-language leak check returns **0**.
 - [ ] [AI] The independent-start assertion is recorded in writing, with its non-executability stated.
@@ -318,7 +315,7 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 > **Pause Safety**: the AI-engineer path is verified end-to-end on `final-delivery` over its smoke-test-scoped
 > starting composition — the included SWE-fundamentals prerequisites plus whichever AI-engineer-role
 > courses exist by this point. DD-27's authoring priority #1 is delivered. Safe to stop indefinitely. To
-> resume: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
+> resume: `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www-fe-e2e:test:e2e`.
 
 ---
 
@@ -330,34 +327,34 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 ### 2.1 · Growth from `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` (8 of 9 cluster courses)
 
 - [ ] [AI] Record the manifest's entry count immediately before this step —
-      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — save to
+      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.json` — save to
       `evidence/phase-2-pre-growth-count.txt` (the falsifiable "before" half of this phase's
       before/after check).
 - [ ] [AI] On that plan's signal landing, insert the eight cluster course IDs it authored (per its own
       `GROW_MANIFESTS` field, naming this manifest by full path) into
-      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` at their correct topological
-      positions — command: `npx nx run ayokoding-www:test:unit` — acceptance: exits 0, AND those eight
+      `<MANIFESTS>careers/immediately-effective/ai-engineer.json` at their correct topological
+      positions — command: `npm exec nx run ayokoding-www:test:unit` — acceptance: exits 0, AND those eight
       IDs are present.
 
 ### 2.2 · Growth from `ayokoding-learning-path-11-course-authoring-capstones` (9th/final cluster course)
 
 - [ ] [AI] On that plan's signal landing, insert `capstone-build-your-own-coding-agent` at its correct
       topological position (after all eight prerequisite cluster courses) — command:
-      `npx nx run ayokoding-www:test:unit` — acceptance: exits 0, AND all nine cluster IDs are now
+      `npm exec nx run ayokoding-www:test:unit` — acceptance: exits 0, AND all nine cluster IDs are now
       present —
-      `grep -oE 'creating-ai-powered-apps|agentic-ai|browser-automation-with-cdp|the-agent-loop|agent-tools-and-mcp|agent-context-and-memory|agent-permissions-and-sandboxing|agent-orchestration-subagents-and-observability|capstone-build-your-own-coding-agent' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'creating-ai-powered-apps|agentic-ai|browser-automation-with-cdp|the-agent-loop|agent-tools-and-mcp|agent-context-and-memory|agent-permissions-and-sandboxing|agent-orchestration-subagents-and-observability|capstone-build-your-own-coding-agent' <MANIFESTS>careers/immediately-effective/ai-engineer.json | sort -u | wc -l`
       returns **9**, AND the entry count grew by **exactly 9** over the recorded pre-growth count —
-      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` minus the
+      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.json` minus the
       value in `evidence/phase-2-pre-growth-count.txt` equals **9**.
 - [ ] [AI] Confirm the SWE-fundamentals **inclusion** survived the growth — command:
-      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.json | sort -u | wc -l`
       — acceptance: still returns **11 or more**.
 
 ### 2.3 · TDD cycle — the full harness-cluster walk is asserted, not merely present
 
 - [ ] [AI] **RED** — extend the test file with a persisted assertion that all nine cluster IDs are
       present in `courseOrder` **and** appear strictly after every SWE-fundamentals ID and every
-      AI-engineer-role ID — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails before
+      AI-engineer-role ID — command: `npm exec nx run ayokoding-www:test:unit` — acceptance: fails before
       this assertion is implemented (it is new, not a re-check of 2.1/2.2's ad hoc greps).
 
   **Gherkin (binds) →** "The AI-engineer manifest walks the full nine-course AI/harness cluster after
@@ -371,11 +368,11 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
     And the manifest's entry count has grown by exactly nine over its recorded pre-growth count
   ```
 
-- [ ] [AI] **GREEN** — implement the persisted assertion — command: `npx nx run ayokoding-www:test:unit`
+- [ ] [AI] **GREEN** — implement the persisted assertion — command: `npm exec nx run ayokoding-www:test:unit`
       — acceptance: exits 0.
 - [ ] [AI] **REFACTOR** — fold the assertion into the same table-driven shape the SWE-fundamentals and
       AI-engineer-role checks use — command:
-      `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both exit 0.
+      `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www:lint` — acceptance: both exit 0.
 
 ### Phase 2 Gate
 
@@ -383,14 +380,14 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] The nine-cluster-ID check returns **9**; the entry-count delta equals **9**.
 - [ ] [AI] The SWE-fundamentals inclusion check still returns **11 or more**.
 - [ ] [AI] The persisted walk-order assertion (2.3) passes.
-- [ ] [AI] `npx nx run ayokoding-www:build` + `:test:unit` + `ayokoding-www-fe-e2e:test:e2e` exit 0.
+- [ ] [AI] `npm exec nx run ayokoding-www:build` + `:test:unit` + `ayokoding-www-fe-e2e:test:e2e` exit 0.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: this plan's manifest is at its **full** composition — the included SWE-fundamentals
 > set, the six AI-engineer-role courses, and the full nine-course AI/harness cluster walk. No manifest
 > truncation remains. Safe to stop indefinitely. To resume:
-> `npx nx run ayokoding-www:build && npx nx run ayokoding-www:test:unit`.
+> `npm exec nx run ayokoding-www:build && npm exec nx run ayokoding-www:test:unit`.
 
 ---
 
@@ -402,24 +399,24 @@ green" ([prd.md](./prd.md#acceptance-criteria-gherkin)) — this scenario has no
 affected test tiers, and the manifest-integrity + prerequisite-consistency sweep below, all four run
 together every time this phase's gate is checked.
 
-- [ ] [AI] Run affected quality gates: `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
+- [ ] [AI] Run affected quality gates: `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
       — acceptance: exits 0. Fix ALL failures, including preexisting ones.
-- [ ] [AI] Run e2e: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0.
-- [ ] [AI] Build: `npx nx run ayokoding-www:build` — acceptance: exits 0.
+- [ ] [AI] Run e2e: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0.
+- [ ] [AI] Build: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
 - [ ] [AI] Link + heading + markdown validation:
-      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` +
+      `apps/rhino-cli/scripts/rhino-bin.sh md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` +
       `... md heading-hierarchy validate` + `npm run lint:md` — acceptance: the link validator prints
       `All links valid! No broken links found.`; the other two exit 0.
 - [ ] [AI] **Manifest-integrity + prerequisite-consistency sweep** for this plan's one manifest —
-      command: `npx nx run ayokoding-www:test:unit` — acceptance: zero violations.
+      command: `npm exec nx run ayokoding-www:test:unit` — acceptance: zero violations.
 - [ ] [AI] **From-scratch smoothness re-check** — acceptance: passes; regressions fixed in place.
 - [ ] [AI] **Ownership boundary check (scoped to this plan's one file)** —
-      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — acceptance: exits 0. A
+      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.json` — acceptance: exits 0. A
       presence check on this plan's own one file, not a directory-wide count — a directory-wide count
       would be affected by how many of the sibling plan's three manifests have landed, which this
       plan's own gate must not depend on.
 - [ ] [AI] **Scoped cross-plan link check** —
-      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content 2>&1 | grep -F "ayokoding-learning-path-13-careers-ai-manifest"`
+      `apps/rhino-cli/scripts/rhino-bin.sh md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content 2>&1 | grep -F "ayokoding-learning-path-13-careers-ai-manifest"`
       — acceptance: no matching line (exit 1).
 
 ### Phase 3 Gate
@@ -445,7 +442,7 @@ together every time this phase's gate is checked.
 
 - [ ] [AI] Confirm `en` is the only content locale — command:
       `test -d <PATHS> && test ! -d apps/ayokoding-www/content/id/belajar/paths` — acceptance: exits 0.
-- [ ] [AI] Start the dev server: `npx nx dev ayokoding-www`.
+- [ ] [AI] Start the dev server: `npm exec nx dev ayokoding-www`.
 - [ ] [AI] For `en` × breakpoints (375/768/1280px), via Playwright MCP: open the paths hub, confirm this
       plan's one card renders correctly inside the category-grouped `careers/` group, then this plan's
       one landing, walking 2-3 courses via prev/next confirming `?path=` persists — acceptance: all
@@ -484,8 +481,8 @@ together every time this phase's gate is checked.
 
 ## Phase 5: Pre-PR readiness verification
 
-- [ ] [AI] Run `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`,
-      `npx nx run ayokoding-www-fe-e2e:test:e2e`, and `npx nx run ayokoding-www:build` on
+- [ ] [AI] Run `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`,
+      `npm exec nx run ayokoding-www-fe-e2e:test:e2e`, and `npm exec nx run ayokoding-www:build` on
       `final-delivery` — acceptance: all exit 0. Do not push or open a PR in this phase.
 
 ### Phase 5 Gate
@@ -535,7 +532,7 @@ together every time this phase's gate is checked.
 ### Sole PR integration (binding)
 
 - [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
@@ -547,9 +544,9 @@ together every time this phase's gate is checked.
       127-catalog check, which is the sibling plan's own final-phase responsibility)** — verify this
       plan's one manifest is published at full composition, its landing is live, and its hub card is
       present:
-      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` returns 0, AND
+      `test -f <MANIFESTS>careers/immediately-effective/ai-engineer.json` returns 0, AND
       `grep -cF '/en/learn/paths/careers/immediately-effective/ai-engineer' <PATHS>_index.md` returns
-      **1**, AND `npx nx run ayokoding-www:test:unit` exits 0 — acceptance: all three hold.
+      **1**, AND `npm exec nx run ayokoding-www:test:unit` exits 0 — acceptance: all three hold.
 - [ ] [AI] **Scoped cross-plan link check** — re-run Phase 3's filtered link validation and confirm it
       still finds no line naming this plan's folder.
 - [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-13-careers-ai-manifest plans/done/YYYY-MM-DD__ayokoding-learning-path-13-careers-ai-manifest`.
@@ -565,7 +562,7 @@ together every time this phase's gate is checked.
       `build` exit 0.
 - [ ] [AI] The filtered link check finds no line naming this plan's folder.
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-13-careers-ai-manifest`.
-- [ ] [AI] Draft PR opened for Phases 5-7; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
+- [ ] [AI] Draft PR opened for Phases 5-7; secret scan, local quality checks, and PR quality-gate verification complete; CI green; PR `[AI]`-merged;
       deployed (no-op).
 
 > **Pause Safety**: this plan is archived and its final PR `[AI]`-merged to `main`. Terminal state for
@@ -581,7 +578,7 @@ together every time this phase's gate is checked.
 
 ## Local Quality Gates (before every push)
 
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` exits 0.
-- [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 for any phase touching the manifest or
+- [ ] [AI] `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` exits 0.
+- [ ] [AI] `npm exec nx run ayokoding-www-fe-e2e:test:e2e` exits 0 for any phase touching the manifest or
       landing.
 - [ ] [AI] Fix ALL failures, including preexisting ones (Root Cause Orientation).

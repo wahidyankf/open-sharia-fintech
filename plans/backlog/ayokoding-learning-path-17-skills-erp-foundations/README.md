@@ -3,7 +3,7 @@
 ## Delivery amendment — one final PR
 
 All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
-Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+Phase 8, after verification and Knowledge Capture, and carries the archival move, CI,
 merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 ## Overview
@@ -12,9 +12,9 @@ Authors **Stage A — Foundations & Architecture**: 15 of the 30-course ERP corp
 `17`, `22`, `23`), and **publishes both** `skills/` ERP path manifests —
 **`skills/conventional-erp`** and **`skills/sharia-erp`** — at **15 course ids each**. This is the
 first of a two-plan split of the retired single-plan design
-`ayokoding-learning-path-07-skills-erp`; the second half,
+the superseded ERP-programme draft; the second half,
 [`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
-(`blockedBy` this plan), grows both manifests to their terminal 27/30-id state across Stage B and
+(historical source context this plan), grows both manifests to their terminal 27/30-id state across Stage B and
 Stage C.
 
 **This 15-course publication is a real, deployable checkpoint, not a placeholder.** Both manifests
@@ -42,7 +42,7 @@ flowchart LR
 
 ## Why this plan exists (the split)
 
-The source plan `ayokoding-learning-path-07-skills-erp` authored the full 30-course corpus and grew
+The source plan the superseded ERP-programme draft authored the full 30-course corpus and grew
 both manifests across three authoring stages in one plan. Splitting it in two lets Stage A — which
 carries **zero** accounting precondition and is independently deployable — proceed and ship on its
 own schedule, instead of holding its already-complete, already-shippable 15-course state hostage to
@@ -92,25 +92,13 @@ for the full per-project licence table and the eleven safe-authoring rules (gene
 plan does not touch Sharia-specific standards bodies such as AAOIFI or PSAK directly — that material
 belongs to the successor plan's Stage C sub-phase).
 
-## Dependencies
+## Depends-on
 
-- **`blockedBy` (hard)**: `ayokoding-learning-path-01-url-restructure`,
-  `ayokoding-learning-path-02-schema-and-prerequisite-dag`,
-  `ayokoding-learning-path-03-navigation-ui` — unchanged from the retired source plan.
-- **`blockedBy` (hard, new)**: `vercel-function-cost-reduction` — see
-  [tech-docs.md §The vercel-function-cost-reduction precondition](./tech-docs.md#the-vercel-function-cost-reduction-precondition).
-- **`blockedBy` (hard, new)**: `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`
-  — that plan is the one authoring and publishing two of this plan's software-engineering prerequisite
-  courses (`domain-driven-design`, `event-driven-architecture`); both are still pending, not yet
-  merged. See
-  [tech-docs.md §The prerequisite graph](./tech-docs.md#the-prerequisite-graph--this-plans-edges-only).
-- **No edge to any accounting plan.** Per the retired source plan's own stage-granularity table,
-  "Stage A start — no gate — Stage A never depended on this" — this plan **is** Stage A, so it
-  carries zero accounting precondition and runs fully concurrently with every accounting plan
-  (`ayokoding-learning-path-14-skills-accounting-foundations`,
-  `-15-skills-accounting-enterprise-reporting`, `-16-skills-accounting-sharia-extension`).
-- **No edge to any other careers/course-authoring plan** (`05` through `13` and beyond, besides the
-  new `04` edge above) — confirmed, matching the retired source plan's own "no edge" finding.
+| Relation | Plan (full folder name) | Nature |
+| -------- | ----------------------- | ------ |
+| **blockedBy** | `ayokoding-learning-path-16-skills-accounting-sharia-extension` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-16-skills-accounting-sharia-extension/README\.md$"` exits 0. This is this plan's only plan-level start gate.
 
 ## Course count and stage structure (this plan's slice)
 
@@ -139,9 +127,8 @@ reasoning.
 ## Delivery Mode: worktree-to-pr
 
 This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
-All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
-review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
-any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
 marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
 No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
@@ -158,5 +145,5 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 ## Successor plan
 
 [`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
-— Stage B (12 courses) + Stage C (3 courses, `sharia-erp` only), `blockedBy` this plan, grows both
+— Stage B (12 courses) + Stage C (3 courses, `sharia-erp` only), historical source context this plan, grows both
 manifests to their terminal 27/30-id state.

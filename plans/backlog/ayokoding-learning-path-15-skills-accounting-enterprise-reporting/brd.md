@@ -2,7 +2,7 @@
 
 > **Programme decisions** — the `R*`/`A*` decisions cited below are restated verbatim from
 > `ayokoding-learning-path-14-skills-accounting-foundations/tech-docs.md`, itself restated from the
-> retired `ayokoding-learning-path-06-skills-accounting`; see
+> retired the superseded accounting-programme draft; see
 > [tech-docs.md §Programme decisions](./tech-docs.md#programme-decisions).
 
 ## Business Goal
@@ -99,9 +99,9 @@ their matching checkers and fixers, `apps-ayokoding-www-general-maker` (landing 
 
 ## Business-Level Success Metrics
 
-- **Both manifests grown from 11 to 19 entries** (observable): `conventional-accounting.yaml` and
-  `sharia-accounting.yaml` each hold exactly 19 IDs, byte-identical, at this plan's end.
-- **`conventional-accounting.yaml` is done growing, verified not merely asserted** (observable): any
+- **Both manifests grown from 11 to 19 entries** (observable): `conventional-accounting.json` and
+  `sharia-accounting.json` each hold exactly 19 IDs, byte-identical, at this plan's end.
+- **`conventional-accounting.json` is done growing, verified not merely asserted** (observable): any
   later plan's edit to that file is caught by `git diff --quiet` against this plan's own merge
   point.
 - **Eight course bundles resolve** (observable): each of courses #12–#19 resolves to a directory
@@ -122,7 +122,7 @@ their matching checkers and fixers, `apps-ayokoding-www-general-maker` (landing 
 ## Business-Scope Non-Goals
 
 - **Courses #1–#11 and #20–#24.**
-- **Growing `sharia-accounting.yaml` past 19 entries.**
+- **Growing `sharia-accounting.json` past 19 entries.**
 - **Any ERP content.**
 - **Any structural `_index.md` under `paths/`.**
 - **Re-authoring `backend-essentials`.**
@@ -137,7 +137,7 @@ their matching checkers and fixers, `apps-ayokoding-www-general-maker` (landing 
 | Risk                                                                                                                            | Mitigation                                                                                                                                            |
 | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **A course teaches a plausible, silently wrong model** (multi-currency, consolidation, and audit are especially prone to this). | Every course carries the mandatory silent-failure section, grep-verifiable at its authoring step; the fact-checker runs on every body.                |
-| **`conventional-accounting.yaml` keeps growing past 19**, silently becoming a fork of the Sharia manifest.                      | The Phase 2 gate asserts exactly 19 entries; every later phase re-asserts `git diff --quiet` against this plan's own merge point.                     |
+| **`conventional-accounting.json` keeps growing past 19**, silently becoming a fork of the Sharia manifest.                      | The Phase 2 gate asserts exactly 19 entries; every later phase re-asserts `git diff --quiet` against this plan's own merge point.                     |
 | **The Stage-2 signal is course-number-keyed and goes stale the moment plan 18 renumbers.**                                      | The signal names an ERP capability (Stage-B-equivalent), never an ERP course number — same mechanism the retired plan used, re-pointed to plan 18.    |
 | **Deferring `sharia-accounting`'s retest to plan 16 leaves this plan's own retest incomplete-feeling.**                         | Scoped explicitly: this plan's retest covers `conventional-accounting` only, and that scoping is stated, not silent.                                  |
 | **Licensing exposure (A8)**, especially XBRL taxonomy version drift and IFRS-vs-GAAP standard citations.                        | The eleven safe-authoring rules bind every course; a Phase 3 reading audit checks volatile facts carry a dated accuracy-note sidebar.                 |

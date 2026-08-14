@@ -64,7 +64,7 @@ Feature: Skills ERP paths — Stage B/C growth to terminal state
     And no second copy of the course file exists on disk
 
   Scenario: conventional-erp manifest validates against the PathManifest schema at its terminal 27 ids
-    Given the file "manifests/skills/conventional-erp.yaml"
+    Given the file "manifests/skills/conventional-erp.json"
     When the manifest is loaded and validated
     Then it parses against the PathManifest zod schema
     And its pathId equals "skills/conventional-erp"
@@ -72,7 +72,7 @@ Feature: Skills ERP paths — Stage B/C growth to terminal state
     And its courseOrder contains exactly 27 unique course ids
 
   Scenario: sharia-erp manifest validates against the PathManifest schema at its terminal 30 ids
-    Given the file "manifests/skills/sharia-erp.yaml"
+    Given the file "manifests/skills/sharia-erp.json"
     When the manifest is loaded and validated
     Then it parses against the PathManifest zod schema
     And its pathId equals "skills/sharia-erp"

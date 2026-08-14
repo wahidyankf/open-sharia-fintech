@@ -3,7 +3,7 @@
 **Custodian**: ayokoding-learning-path-17-skills-erp-foundations
 
 Per-course module/topic breakdowns for this plan's 15-course Stage-A slice of the 30-course ERP
-corpus. Mirrors the folder convention the retired `ayokoding-learning-path-07-skills-erp` design
+corpus. Mirrors the folder convention the retired the superseded ERP-programme draft design
 established (`syllabus/courses/` + `syllabus/paths/`), scoped to this plan's own 15 courses.
 
 Authored independently from domain reasoning **first, with no external curriculum open** — per
