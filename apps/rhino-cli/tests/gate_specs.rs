@@ -325,6 +325,10 @@ impl GateWorld {
     }
 
     fn run_ci_changed_base_gate(&mut self) {
+        self.run_ci_changed_base_gate_for("ci-markdown");
+    }
+
+    fn run_ci_changed_base_gate_for(&mut self, only: &str) {
         let base = self
             .ci_changed_base
             .as_deref()
@@ -335,7 +339,8 @@ impl GateWorld {
             .expect("CI arguments capture must be configured");
         let mut command = self.fixture_rhino_command();
         command
-            .args(["gate", "run", "--surface=ci", "--only=ci-markdown"])
+            .args(["gate", "run", "--surface=ci"])
+            .arg(format!("--only={only}"))
             .env("GATE_CHANGED_BASE", base)
             .env("GATE_CI_ARGUMENTS", arguments);
         if let Some(path) = &self.path {
@@ -459,6 +464,89 @@ fn given_ci_changed_base(w: &mut GateWorld) {
     w.commit("test: changed file");
     w.prepend_bin_to_path("bin");
     w.ci_arguments = Some(arguments);
+}
+
+#[given("a changed-path set contains a deleted file alongside a modified file")]
+fn given_changed_paths_include_deletion(w: &mut GateWorld) {
+    use std::os::unix::fs::PermissionsExt;
+
+    let bin = w.root().join("bin");
+    let arguments = w.root().join("captured-affected-arguments.txt");
+    std::fs::create_dir_all(&bin).expect("create affected-file-type fixture bin directory");
+    w.write("kept.rs", "fn kept() {}\n");
+    w.write("deleted.rs", "fn deleted() {}\n");
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "capture-affected-rs",
+            "check",
+            "capture",
+            "external",
+            "      ci: { scope: affected-file-type, glob: '*.rs' }\n",
+        )),
+    );
+    let capture = bin.join("capture");
+    std::fs::write(
+        &capture,
+        "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$GATE_CI_ARGUMENTS\"\n",
+    )
+    .expect("write affected-file-type capture stub");
+    std::fs::set_permissions(&capture, std::fs::Permissions::from_mode(0o755))
+        .expect("make affected-file-type capture stub executable");
+    w.init_git();
+    w.stage(&["repo-config.yml", "kept.rs", "deleted.rs"]);
+    w.commit("test: baseline");
+    let base = w
+        .fixture_git_command()
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .expect("read affected-file-type fixture baseline");
+    assert!(base.status.success(), "git rev-parse HEAD must succeed");
+    w.ci_changed_base = Some(
+        String::from_utf8(base.stdout)
+            .expect("affected-file-type fixture base must be UTF-8")
+            .trim()
+            .to_owned(),
+    );
+    w.write("kept.rs", "fn kept() { /* changed */ }\n");
+    std::fs::remove_file(w.root().join("deleted.rs")).expect("delete fixture file");
+    w.stage(&["kept.rs", "deleted.rs"]);
+    w.commit("test: delete one .rs file, modify another");
+    w.prepend_bin_to_path("bin");
+    w.ci_arguments = Some(arguments);
+}
+
+#[given("a path-gated gate's trigger directory contains only a deleted file")]
+fn given_path_gated_trigger_only_deleted(w: &mut GateWorld) {
+    w.write(".claude/agents/example.md", "an agent\n");
+    w.write(
+        "repo-config.yml",
+        &config(&gate(
+            "path-gated-check",
+            "check",
+            "touch was-run.txt",
+            "external",
+            concat!(
+                "      pre-push:\n",
+                "        scope: path-gated\n",
+                "        trigger:\n",
+                "          - .claude/\n",
+            ),
+        )),
+    );
+    w.init_git();
+    w.stage(&["repo-config.yml", ".claude/agents/example.md"]);
+    w.commit("test: baseline");
+    let branch = w
+        .fixture_git_command()
+        .args(["branch", "origin/main"])
+        .output()
+        .expect("create origin/main stand-in branch");
+    assert!(branch.status.success(), "git branch origin/main failed");
+    std::fs::remove_file(w.root().join(".claude/agents/example.md"))
+        .expect("delete the triggering agent file");
+    w.stage(&[".claude/agents/example.md"]);
+    w.commit("test: delete the triggering agent file");
 }
 
 #[given("a check declares pre-commit but no ci surface or carve-out")]
@@ -856,6 +944,16 @@ fn when_ci_changed_base_gate_runs(w: &mut GateWorld) {
     w.run_ci_changed_base_gate();
 }
 
+#[when("an affected-file-type gate resolves its candidate files")]
+fn when_affected_file_type_gate_resolves_candidates(w: &mut GateWorld) {
+    w.run_ci_changed_base_gate_for("capture-affected-rs");
+}
+
+#[when("the path-gated gate evaluates its trigger")]
+fn when_path_gated_gate_evaluates_trigger(w: &mut GateWorld) {
+    w.run_gate("pre-push", Some("path-gated-check"));
+}
+
 #[then("it fails and names the Gate Composition Rule, gate, and ci surface")]
 fn then_composition_rule_fails(w: &mut GateWorld) {
     assert!(!w.is_success());
@@ -880,6 +978,46 @@ fn then_ci_changed_base_gate_receives_changed_file(w: &mut GateWorld) {
         std::fs::read_to_string(arguments).unwrap_or_default(),
         "changed.md\n",
         "the supplied CI event base must provide the committed changed path"
+    );
+}
+
+#[then("the deleted file is excluded because it no longer exists on disk")]
+fn then_deleted_file_excluded(w: &mut GateWorld) {
+    assert!(
+        w.is_success(),
+        "affected-file-type gate failed: {}",
+        w.output
+    );
+    let arguments = w
+        .ci_arguments
+        .as_ref()
+        .expect("CI arguments capture must be configured");
+    let argv = std::fs::read_to_string(arguments).unwrap_or_default();
+    assert!(
+        !argv.contains("deleted.rs"),
+        "a deleted file must never be passed to a gate command: {argv:?}"
+    );
+}
+
+#[then("the modified file is still passed to the gate command")]
+fn then_modified_file_still_passed(w: &mut GateWorld) {
+    let arguments = w
+        .ci_arguments
+        .as_ref()
+        .expect("CI arguments capture must be configured");
+    let argv = std::fs::read_to_string(arguments).unwrap_or_default();
+    assert!(
+        argv.contains("kept.rs"),
+        "the modified file must still be an affected-file-type candidate: {argv:?}"
+    );
+}
+
+#[then("the gate still runs because trigger matching is unaffected by on-disk existence")]
+fn then_path_gated_gate_still_runs(w: &mut GateWorld) {
+    assert!(w.is_success(), "path-gated gate failed: {}", w.output);
+    assert!(
+        w.root().join("was-run.txt").exists(),
+        "a path-gated gate must still run when its only trigger-path change is a deletion"
     );
 }
 
