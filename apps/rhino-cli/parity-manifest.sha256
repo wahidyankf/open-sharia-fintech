@@ -3,7 +3,7 @@
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 02fb66ecb55d480cae7a27c92a5828afae9bd36458fe6c85c62b87247c37a6c9  apps/rhino-cli/project.json
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
-37ef69e273a6d672a3dab9d91cc923a8555b17b66e056a6d55ce79e839db3e3b  apps/rhino-cli/src/application/agents/bindings.rs
+066407817f5a688cd428cbc2c9ec82e7b2176ca710afec05f18d7de311b1ecad  apps/rhino-cli/src/application/agents/bindings.rs
 07dd2ceb069411b1d60ca01701aa4d2e49d421dd0826b399f34c1f9e9316524e  apps/rhino-cli/src/application/agents/claude_validator.rs
 87c44bc1288a31ce797521b0209b6606767980176d9be43f0e818112aa9408ad  apps/rhino-cli/src/application/agents/converter.rs
 babe93c44097678bb431e60e323514de1ca8095bb56feea669e9b0ce3c32cbab  apps/rhino-cli/src/application/agents/cursor.rs
