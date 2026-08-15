@@ -27,7 +27,7 @@ own natural theme/stage boundaries. **Waves 1-2 have left this backlog**:
 [`04-course-authoring`](../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 are done; 04 delivered its 21-course retained scope (a documented exception to the 5-15 rule — real
 execution history, not new backlog scoping). The remaining plans execute as one linear chain:
-`05 → 06 → 07 → 08 → 09 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18`. Each backlog plan has
+`05 → 06 → 07 → 09 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18`. Each backlog plan has
 exactly one direct prerequisite: its immediate predecessor. Each uses one full-slug worktree and one
 content-only PR; local secret inspection, the pre-push gate, and the PR quality gate are required,
 while a PR-review cycle is not.
@@ -37,8 +37,6 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
-  — 11 courses (old Band 7): security, SRE, platform engineering, governance.
 - [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
   — 5 courses (old Band 9): coding/system-design/behavioral interview prep + the interview capstone.
 - [ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)

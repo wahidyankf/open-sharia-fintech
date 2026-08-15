@@ -1,0 +1,4 @@
+{
+  "include": ["learning/code", "learning/capstone/code"],
+  "typeCheckingMode": "basic"
+}

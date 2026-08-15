@@ -251,7 +251,7 @@ is forbidden.
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../../done/2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
-  · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
+  · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../../done/2026-08-15__ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
   · [`vercel-function-cost-reduction` (historical reference)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance

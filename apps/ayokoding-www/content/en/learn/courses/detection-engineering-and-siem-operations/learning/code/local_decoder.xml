@@ -1,0 +1,9 @@
+<!-- Original local teaching decoder. Review with the Wazuh version deployed in an owned lab. -->
+<decoder name="course-lab-auth">
+  <!-- => The invented marker narrows this decoder to the course's synthetic log shape. -->
+  <prematch>^LABAUTH</prematch>
+  <!-- => Captures user, documentation address, and action from original lab text. -->
+  <regex type="pcre2">user=(\w+) src=(\d+\.\d+\.\d+\.\d+) action=(\w+)</regex>
+  <!-- => The field order is the contract exercised by detection_lab.py. -->
+  <order>user,srcip,action</order>
+</decoder>

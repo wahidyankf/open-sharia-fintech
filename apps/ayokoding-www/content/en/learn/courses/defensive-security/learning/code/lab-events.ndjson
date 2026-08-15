@@ -1,0 +1,7 @@
+{"timestamp":"2026-08-15T08:00:00Z","source_ip":"198.51.100.7","event_type":"auth_failure","outcome":"rejected","user":"learner"}
+{"timestamp":"2026-08-15T08:01:00Z","source_ip":"192.0.2.44","event_type":"auth_failure","outcome":"rejected","user":"training-admin"}
+{"timestamp":"2026-08-15T08:02:00Z","source_ip":"192.0.2.44","event_type":"auth_failure","outcome":"rejected","user":"training-admin"}
+{"timestamp":"2026-08-15T08:03:00Z","source_ip":"192.0.2.44","event_type":"auth_failure","outcome":"rejected","user":"training-admin"}
+{"timestamp":"2026-08-15T08:04:00Z","source_ip":"192.0.2.44","event_type":"web_request","outcome":"parser_rejected","user":"anonymous"}
+
+

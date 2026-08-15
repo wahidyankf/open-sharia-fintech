@@ -23,9 +23,8 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety.
-
-Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
-work begins.
+  Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
+  work begins.
 
 ## Instructions
 
