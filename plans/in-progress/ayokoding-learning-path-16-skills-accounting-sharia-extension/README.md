@@ -7,9 +7,7 @@ Phase 8, after verification and Knowledge Capture, and carries the archival move
 merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the third and final of a three-plan sequential chain** that replaces the retired
-> the superseded accounting-programme draft/` design with three smaller plans:
-> `ayokoding-learning-path-14-skills-accounting-foundations` (courses #1–#11) →
-> `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` (courses #12–#19) → **this
+> the superseded accounting-programme draft/`design with three smaller plans:`ayokoding-learning-path-14-skills-accounting-foundations`(courses #1–#11) →`ayokoding-learning-path-15-skills-accounting-enterprise-reporting` (courses #12–#19) → **this
 > plan (courses #20–#24)**. This plan is repository baseline context plan 15. It shares the retired plan's
 > business/product context — personas, the silent-failure constraint (DD-609), the licensing
 > posture (A8) — verbatim with its two predecessors; the A10/A11 two-path rationale is stated once,
@@ -29,7 +27,7 @@ course outside #20–#24.
 
 | Prior artefact                                                                                               | Relationship to this plan                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| the superseded accounting-programme draft (reproduced and owned locally)                                | **The direct predecessor this three-plan chain splits from.** Its Stage 3 (courses #20–#24 in its own numbering, Sharia-only) maps unchanged onto this plan's own course range — the split does not renumber the Sharia stage. |
+| the superseded accounting-programme draft (reproduced and owned locally)                                     | **The direct predecessor this three-plan chain splits from.** Its Stage 3 (courses #20–#24 in its own numbering, Sharia-only) maps unchanged onto this plan's own course range — the split does not renumber the Sharia stage. |
 | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` [Planned — this plan's hard predecessor] | Supplies the complete, 19-course shared spine and `sharia-accounting.json` at its 19-entry state. Two of this plan's five courses (#20, #23) cite plan 15's own courses (#14, #12) as prerequisites.                           |
 | `ayokoding-learning-path-14-skills-accounting-foundations` [Planned]                                         | Course #20 also cites plan 14's own course #5 as a prerequisite; course #21 cites plan 14's course #2.                                                                                                                         |
 
@@ -184,8 +182,8 @@ tested in its finished state.** See
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                             | Nature                                                                                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README\.md$"` exits 0. This is this plan's only plan-level start gate.
