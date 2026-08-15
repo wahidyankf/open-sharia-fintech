@@ -413,7 +413,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `build-your-own-git` (By Example · Python) — convention complete; checkers clean; declares
+- [x] [AI] `build-your-own-git` (By Example · Python) — convention complete; checkers clean; declares
       `just-enough-python` and the already-shipped `version-control-and-git` as prerequisites —
       acceptance:
       `for p in just-enough-python version-control-and-git; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-git/_index.md" || echo "MISSING $p"; done | grep -c .`
