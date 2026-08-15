@@ -27,7 +27,7 @@ own natural theme/stage boundaries. **Waves 1-2 have left this backlog**:
 [`04-course-authoring`](../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 are done; 04 delivered its 21-course retained scope (a documented exception to the 5-15 rule — real
 execution history, not new backlog scoping). The remaining plans execute as one linear chain:
-`05 → 06 → 07 → 08 → 09 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18`. Each backlog plan has
+`05 → 06 → 07 → 09 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18`. Each backlog plan has
 exactly one direct prerequisite: its immediate predecessor. Each uses one full-slug worktree and one
 content-only PR; local secret inspection, the pre-push gate, and the PR quality gate are required,
 while a PR-review cycle is not.
@@ -37,47 +37,15 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-07-course-authoring-low-level-systems](./ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)
-  — 7 courses (old Band 6, first half): C/C++/Rust, Linux/Windows OS, systems programming.
-- [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
-  — 11 courses (old Band 7): security, SRE, platform engineering, governance.
-- [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
-  — 5 courses (old Band 9): coding/system-design/behavioral interview prep + the interview capstone.
-- [ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
-  — 9 courses (old Band 6, second half; follows plan 09): JVM languages, type systems, compilers,
-  and the build-your-own-{git,database,raft} cluster.
-- [ayokoding-learning-path-11-course-authoring-capstones](./ayokoding-learning-path-11-course-authoring-capstones/README.md)
-  — 8 courses (old Band 8; follows plan 10): the
-  remaining cross-band synthesis capstones.
-
 **Careers manifests** (splits old `05-manifests`; Plan 04's retained baseline is complete):
-
-- [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
-  — the three `software-engineer`-role manifests (`interview-ready`, `immediately-effective`,
-  `fundamentally-strong`) — grouped together because the no-forked-body and Band-9 checks bind
-  across exactly these three.
-- [ayokoding-learning-path-13-careers-ai-manifest](./ayokoding-learning-path-13-careers-ai-manifest/README.md)
-  — the `immediately-effective/ai-engineer` manifest alone, following plan 12.
 
 **Skills — accounting** (splits old `06-skills-accounting`'s 24 courses; strict sequential chain):
 
-- [ayokoding-learning-path-14-skills-accounting-foundations](./ayokoding-learning-path-14-skills-accounting-foundations/README.md)
-  — 11 courses (#1-11): foundations through the transactional/cost-accounting cycle.
-- [ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md)
-  — 8 courses (#12-19, follows plan 14): reporting, consolidation, architecture —
-  `conventional-accounting` terminates here.
-- [ayokoding-learning-path-16-skills-accounting-sharia-extension](./ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md)
-  — 5 courses (#20-24, follows plan 15): the Sharia-specific extension — `sharia-accounting`
-  terminates here.
+— 8 courses (#12-19, follows plan 14): reporting, consolidation, architecture —
+`conventional-accounting` terminates here.
 
-**Skills — ERP** (splits old `07-skills-erp`'s 30 courses):
-
-- [ayokoding-learning-path-17-skills-erp-foundations](./ayokoding-learning-path-17-skills-erp-foundations/README.md)
-  — 15 courses (Stage A): both `conventional-erp` and `sharia-erp` publish here — a genuine,
-  deployable checkpoint.
-- [ayokoding-learning-path-18-skills-erp-enterprise-depth](./ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
-  — 15 courses (Stage B + C merged, follows plan 17): conventional enterprise depth, then the
-  Sharia-compliant design stage.
+— 5 courses (#20-24, follows plan 15): the Sharia-specific extension — `sharia-accounting`
+terminates here.
 
 **Cross-repo governance follow-ups** (filed directly, not promoted from a two-pager — each closes a
 deferral explicitly recorded in an already-`done/` plan's own README):

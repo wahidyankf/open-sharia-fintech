@@ -1495,7 +1495,7 @@ trigger list for `ose-public`'s).
 ### 16b-2. Prove the gating both ways
 
 - [ ] `[AI]` Repeat the 5-case trigger matrix from Phase 9's §9b-2, adjusted for `ose-private`'s
-      surfaces, and record every run in `evidence/phase-16-trigger-matrix.txt`
+      surfaces, and record every run in `evidence/phase-16b-2-trigger-matrix.txt`
 
 ### 16c. Parity and PR
 
@@ -1515,7 +1515,7 @@ trigger list for `ose-public`'s).
 - `ose-private` census: **0 files over 500 words**
 - `governance-readme-index` reports **zero** `orphan`/`ghost` failures;
   `governance-readme-completeness` reports **zero** `missing`/`unannotated` failures
-- The 5-case trigger matrix in `evidence/phase-16-trigger-matrix.txt` matches expectations
+- The 5-case trigger matrix in `evidence/phase-16b-2-trigger-matrix.txt` matches expectations
 - `parity manifest validate` exits 0
 - PR16 merged
 

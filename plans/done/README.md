@@ -19,6 +19,61 @@ Archived plans and completed project planning documents.
   repos; `ose-primer` parity filed as a follow-up at
   `plans/backlog/sync-primer-governance-parity/`.
 
+- [2026-08-16: ayokoding-learning-path-18-skills-erp-enterprise-depth](./2026-08-16__ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md) —
+  Added fifteen enterprise-depth and Sharia-compliant ERP courses, completed the conventional and
+  Sharia ERP manifests at 27 and 30 courses, and published terminal path landings. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-16: ayokoding-learning-path-17-skills-erp-foundations](./2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/README.md) —
+  Added fifteen Stage-A ERP foundations and two matching deployable fifteen-course ERP paths. Delivery
+  Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-16: ayokoding-learning-path-16-skills-accounting-sharia-extension](./2026-08-16__ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md) —
+  Added five Sharia accounting courses, grew only the Sharia accounting manifest to its terminal
+  twenty-four courses, and completed the accounting corpus. Delivery Mode: `worktree-to-pr`; terminal
+  delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./2026-08-15__ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md) —
+  Added eight enterprise-reporting and accounting-architecture courses, grew both shared accounting
+  manifests to nineteen courses, and completed the conventional-accounting path. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-14-skills-accounting-foundations](./2026-08-15__ayokoding-learning-path-14-skills-accounting-foundations/README.md) —
+  Added eleven accounting foundation and transactional-cycle courses, both shared accounting manifests,
+  path landings, and manifest-composition coverage. Delivery Mode: `worktree-to-pr`; terminal delivery
+  is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-13-careers-ai-manifest](./2026-08-15__ayokoding-learning-path-13-careers-ai-manifest/README.md) —
+  Added the `careers/immediately-effective/ai-engineer` manifest, landing anchor, generated hub entry,
+  and prerequisite-order regression coverage. Delivery Mode: `worktree-to-pr`; terminal delivery is
+  recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-12-careers-se-manifests](./2026-08-15__ayokoding-learning-path-12-careers-se-manifests/README.md) —
+  Added the three `software-engineer`-role careers manifests, their landing anchors, generated hub entries,
+  and prerequisite-order regression coverage. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded
+  by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-11-course-authoring-capstones](./2026-08-15__ayokoding-learning-path-11-course-authoring-capstones/README.md) —
+  Authored and Playwright-verified eight Band-8 synthesis capstone course bodies. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./2026-08-15__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md) —
+  Authored and Playwright-verified nine JVM, advanced-language, compiler, and build-your-own internals
+  course bodies. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole
+  archival PR.
+
+- [2026-08-15: ayokoding-learning-path-09-course-authoring-interview-technique](./2026-08-15__ayokoding-learning-path-09-course-authoring-interview-technique/README.md) —
+  Authored and Playwright-verified five English interview-technique course bodies and their capstone.
+  Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-08-course-authoring-security-and-ops](./2026-08-15__ayokoding-learning-path-08-course-authoring-security-and-ops/README.md) —
+  Authored and live-verified eleven English security, operations, and delivery course bodies.
+  Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
+- [2026-08-15: ayokoding-learning-path-07-course-authoring-low-level-systems](./2026-08-15__ayokoding-learning-path-07-course-authoring-low-level-systems/README.md) —
+  Authored and live-verified seven English low-level systems course bodies. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
 - [2026-08-15: ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md) —
   Authored and live-verified 15 English course bodies for architecture, distributed systems, and the
   AI/agent-harness cluster. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this

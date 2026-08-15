@@ -1,0 +1,8 @@
+#cloud-config
+# => Sets only a demonstrative hostname; a real guest name belongs in an owner-approved variable.
+hostname: replace-with-lab-hostname
+# => Disables password SSH so the owner supplies an authorized public key outside version control.
+ssh_pwauth: false
+# => Requests the guest agent installed by the image contract; it contains no endpoint or secret.
+packages:
+  - qemu-guest-agent

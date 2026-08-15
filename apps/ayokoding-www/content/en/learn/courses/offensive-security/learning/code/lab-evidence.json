@@ -1,0 +1,19 @@
+{
+  "authorization": "I OWN THIS LAB",
+  "target": "localhost",
+  "services": [{ "port": 3000, "protocol": "tcp", "service": "fictional-training-app", "version": "1.0-lab" }],
+  "findings": [
+    {
+      "id": "LAB-001",
+      "class": "broken-access-control",
+      "evidence": "synthetic owner mismatch in a recorded local response",
+      "remediation": "enforce subject, action, and object authorization on the server"
+    },
+    {
+      "id": "LAB-002",
+      "class": "injection-boundary",
+      "evidence": "synthetic query-construction marker",
+      "remediation": "use parameter binding and regression tests"
+    }
+  ]
+}

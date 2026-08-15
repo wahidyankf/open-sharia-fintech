@@ -1,0 +1,206 @@
+# Learning Path — Course Authoring: Interview-Technique Courses (Band 9)
+
+## Delivery amendment — one final PR
+
+All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 6, after verification and Knowledge Capture, and carries the archival move, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
+Author **Band 9 — Interview-technique courses**: the 5 course bodies
+`coding-interview`, `take-home-and-live-coding`, `system-design-interview`,
+`behavioral-and-leadership-interviews`, and `capstone-interview-loop`, landing under
+`apps/ayokoding-www/content/en/learn/courses/`.
+
+This plan owns **exactly one band** — the smallest of the nine authoring bands the shared course
+library split into. Band 9 is also the original **"deferred" cluster**: DD-27
+(see [tech-docs.md §Design Decisions Consumed](./tech-docs.md#design-decisions-consumed)) deliberately
+kept the four interview courses and their capstone **out of** the `interview-ready` MVP gate, so that
+authoring the fourth (AI-engineer) path's courses — the programme's stated priority #1 — was never
+blocked waiting on interview-technique content. Band 9 was always going to land; DD-27 only ever
+decided **when**, not **whether**.
+
+> **Why a standalone plan instead of a phase inside `ayokoding-learning-path-04-course-authoring`.**
+> Band 9 was originally Phase 11 of
+> [`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md).
+> **[Repo-grounded, 2026-08-01]** That plan has authored **21 of its 90 bodies** so far — the six
+> net-new AI-engineering courses plus Bands 1 and 2 (5 + 10 = 15), verified by
+> `git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | awk -F/ 'NF==8' | wc -l`
+> returning **58** total course directories against the **37** re-homed bundles the URL-restructure
+> plan populated (58 − 37 = 21 net-new). The remaining bands — 3, 4, 5, 6, 7, and 9 — are being carved
+> into standalone sibling plans so each can proceed, review, and merge on its own schedule, independent
+> of whatever cadence the parent plan (or any sibling) settles into; this plan is the Band-9 slice of
+> that carve-out. This is a **content transfer, not a re-authoring**: the band's scope, course IDs,
+> specs, and acceptance criteria are unchanged from the parent plan's own Phase 11 — only the plan
+> boundary moved. The parent plan's own `tech-docs.md` and `delivery.md` are being trimmed of this
+> band's content in a concurrent, separate edit; this plan does not touch that folder.
+
+## Position relative to the course-authoring split
+
+```mermaid
+%% This plan's position relative to the five-way course-library split and its own carve-out.
+%% Node SHAPE encodes kind: rectangle = a course-authoring plan, hexagon = a manifest-composing plan.
+%% The doubled border on THIS marks the plan this folder describes.
+%% Colors are the repo's verified color-blind-friendly palette and are redundant with shape.
+flowchart LR
+    P1["01 · url-restructure"]:::done
+    P2["02 · schema-and-<br/>prerequisite-dag"]:::done
+    P4["04 · course-authoring<br/>(completed 21-course baseline;<br/>remaining bands carved out)"]:::done
+    THIS(["09 · course-authoring<br/>interview-technique<br/>THIS PLAN — Band 9, 5 bodies"]):::this
+    P12{{"12 · careers-se-manifests<br/>(interview-ready +<br/>fundamentally-strong)"}}:::future
+
+    P1 -->|"populated flat courses/ namespace"| P4
+    P2 -->|"syllabus/courses specs"| P4
+    P1 -->|"populated flat courses/ namespace"| THIS
+    P2 -->|"syllabus/courses specs"| THIS
+    P4 -->|"baseline: Phase 0 (toolchain +<br/>upstream) + populated courses/"| THIS
+    THIS -->|"5 authored bodies<br/>band-completion signal (2 manifests)"| P12
+
+    classDef done fill:#029E73,stroke:#000000,color:#FFFFFF
+    classDef this fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:4px
+    classDef future fill:#CA9161,stroke:#000000,color:#000000,stroke-dasharray: 6 4
+```
+
+**Accessibility note.** Plan role is carried by node **shape** (rectangle = authoring plan, hexagon =
+manifest-composing plan) and by explicit label text, never by fill colour alone. This plan is marked by
+a **thicker border** and the literal text `THIS PLAN` in its label. `12 · careers-se-manifests` carries
+a **dashed border** to flag its backlog (not-yet-started) status — the plan folder exists (see
+[Depends-on](#depends-on) below) but has not begun execution — distinct from the done/in-progress
+solid nodes. Fills use the verified accessible palette (`#029E73` teal, `#DE8F05`
+orange, `#CA9161` tan) with black borders and WCAG-AA-contrasting text, per the
+[Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md).
+
+## The manifest ownership invariant — THIS BAND IS THE SPECIAL CASE
+
+> **This plan never edits a manifest file.** Every file under
+> `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by a downstream manifest-growth
+> plan (see [Depends-on](#depends-on)). A step in this plan that creates, appends to, reorders, or
+> re-verifies a `.json` manifest is a **boundary violation**, not a convenience.
+
+Band 9 is the one band in the whole split whose manifest growth is **not** the usual three-manifest
+pattern. Quoted **verbatim** from the parent plan's own binding record
+([`ayokoding-learning-path-04-course-authoring/README.md` §Band-completion signal
+contract](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)),
+so this plan does not risk generalizing the exception back into the rule it is an exception to:
+
+> - **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.json` and
+>   `<MANIFESTS>careers/fundamentally-strong/software-engineer.json` **only** — the
+>   `careers/immediately-effective/software-engineer` path omits the interview-technique band from its
+>   `courseOrder` by design
+
+**Read literally, twice, before authoring anything:**
+
+- **Two manifests grow, not three.** `careers/immediately-effective/software-engineer.json` is
+  deliberately **excluded** — that path's reader reaches the interview-technique courses (if at all)
+  via their canonical course pages, never via that path's own `courseOrder`. This is a design decision
+  the source plan made, not an oversight this plan corrects.
+- **This asymmetry is downstream's problem to get right, not this plan's to fix.** This plan's only
+  obligation is to **name the two manifests correctly** in its band-completion signal (see below). It
+  never touches any manifest itself.
+
+See [tech-docs.md §The two-of-three manifest asymmetry](./tech-docs.md#the-two-of-three-manifest-asymmetry-band-9s-special-case)
+for the full permit/forbid table and a worked diagram distinguishing this band from the eight-band
+default.
+
+## Band-completion signal contract
+
+This plan records **one** band-completion signal in its own [`delivery.md`](./delivery.md), carrying
+the same five fields the parent plan's contract defines, verbatim, in a fenced `text` block:
+
+| Field               | Content                                                                                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BAND`              | `Band 9 — Interview-technique courses`                                                                                                                                  |
+| `PLAN`              | `ayokoding-learning-path-09-course-authoring-interview-technique`                                                                                                       |
+| `LANDED_COURSE_IDS` | the 5 course IDs, one per line, in this plan's own listing order (see below)                                                                                            |
+| `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.json` and `<MANIFESTS>careers/fundamentally-strong/software-engineer.json` — **exactly these two, never a third** |
+| Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges                                                                         |
+
+A signal that names three manifests is incomplete and the receiving plan must reject it rather than
+guess. It becomes actionable only after this plan's terminal archival PR merges.
+
+## Exact course list, in landing order
+
+1. `coding-interview` — By Example, Python (patterns language-agnostic)
+2. `take-home-and-live-coding` — By Example, Python
+3. `system-design-interview` — Annotated-concept, no code (forward-links `system-design`)
+4. `behavioral-and-leadership-interviews` — Annotated-concept, no code
+5. `capstone-interview-loop` — Interview milestone, Python + prose (integrates courses 1–4)
+
+Full per-course concept/example counts, prerequisites, and format detail: see
+[tech-docs.md §Course Library Catalog (Band 9 rows)](./tech-docs.md#course-library-catalog-band-9-rows).
+
+## Delivery Mode: worktree-to-pr
+
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR, merge, or deployment. In Phase 6, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the secret scan, local quality checks, and PR quality-gate verification and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
+
+## Depends-on
+
+| Relation      | Plan (full folder name)                                        | Nature                                                                                                                                                                                                                         |
+| ------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **blockedBy** | `ayokoding-learning-path-08-course-authoring-security-and-ops` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
+
+**Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-08-course-authoring-security-and-ops/README\.md$"` exits 0. This is this plan's only plan-level start gate.
+
+## Not UI-bearing (Rule-15 exemption, reused reasoning)
+
+Reusing the parent plan's own [Rule-15 exemption
+reasoning](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#rule-15-three-tester-retest--exemption-recorded)
+verbatim in substance, scoped to this plan's 5 bodies:
+
+1. **This plan ships no screen and no component.** Every artefact is a markdown page bundle under
+   `apps/ayokoding-www/content/en/learn/courses/`. The screens that render those pages are owned by
+   `ayokoding-learning-path-03-navigation-ui` (already merged and archived to
+   `plans/done/2026-07-25__ayokoding-learning-path-03-navigation-ui/`), which carried the mandatory
+   retest for that surface.
+2. **This plan's output is already covered by dedicated content checkers.** Every authored body passes
+   `apps-ayokoding-www-{by-example,annotated-concept}-checker`, `apps-ayokoding-www-facts-checker`, and
+   `apps-ayokoding-www-link-checker` — content-domain checkers strictly stronger, for prose
+   correctness, than a generalist live-site UX triad.
+3. **The retest would test the navigation plan's surface, not this plan's.** Pointing the triad at a
+   course page exercises `PathRail`/`PathLanding` rendering, producing findings this plan cannot act
+   on.
+
+**This is an exemption, not an omission.** Manual behavioural verification via Playwright MCP is
+**still mandatory and performed** (see [delivery.md](./delivery.md) Phase 3) — the 5 authored course
+pages are opened at all three breakpoints in the `en` content locale, with committed screenshot
+evidence. Only the three-tester triad is waived.
+
+## Locale scope
+
+`en`-only, per the parent plan's own Business-Scope Non-Goals — an Indonesian mirror of these 5
+courses is explicitly **deferred**, a recorded decision rather than an omission. Every manual
+verification step in this plan exercises `en` only and states the deferral inline.
+
+## Navigation
+
+- [Business Requirements (brd.md)](./brd.md) — WHY these 5 bodies exist, who they serve, the business
+  risks of authoring them, and what "done" means in business terms.
+- [Product Requirements (prd.md)](./prd.md) — personas, user stories, the Gherkin acceptance criteria
+  this plan owns, the 5 course specifications, and product scope.
+- [Technical Docs (tech-docs.md)](./tech-docs.md) — the authoring architecture (consumed from the
+  parent plan), the two-of-three manifest asymmetry, the Course Library Catalog rows for these 5
+  courses, and the two hard cross-plan preconditions.
+- [Delivery Checklist (delivery.md)](./delivery.md) — the phased, executable checklist: Phase 0 setup
+  → Phase 1 authoring → verification, manual test, CI readiness, knowledge capture, terminal archival PR.
+- [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
+- **Cross-plan**:
+  [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
+  ·
+  [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
+  · [SE-manifest plan (12, successor to 05-manifests)](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
+
+## Provenance
+
+This plan's scope, course IDs, specs, and acceptance criteria are transferred verbatim from
+`ayokoding-learning-path-04-course-authoring`'s own Phase 11 (Band 9). Nothing about the band's content
+was re-decided in the transfer — only the plan boundary moved, so authoring effort on the split's other
+85 bodies (90 total minus this plan's 5), whether it stays with the parent plan or moves to one of the
+other band-split sibling plans, can proceed independently of this band's own review/merge cadence. The
+parent plan's `README.md`, `tech-docs.md`, and `delivery.md` were trimmed during the completed Plan 04
+closeout to remove Band 9 from its scope. This plan does not read or write any file under that folder
+as part of its own delivery checklist — the citations above are read-only cross-references, consistent
+with the manifest ownership invariant's spirit of "read to understand, never to copy."

@@ -1,0 +1,10 @@
+# Phase 0 snapshot
+
+- Plan 10 archive exists on `origin/main`.
+- Plans 01 and 02 archive count: 2.
+- Required upstream course directories missing: 0.
+- PR 136 state: MERGED.
+- Candidate capstone slug collisions: 0.
+- Rendering baseline: `layout.tsx` and `middleware.ts` are absent.
+- Authored-body baseline: 8 absent course directories.
+- `npm install` and `npm run doctor -- --fix` completed successfully.

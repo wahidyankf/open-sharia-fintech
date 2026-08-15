@@ -1,0 +1,2 @@
+# Keep annotated teaching lines intact when this scoped course material is formatted.
+line-length = 120

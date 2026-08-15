@@ -1,0 +1,7 @@
+// ex-24 · property-override
+// Original isolated enterprise-Java learning artifact; integration behavior is exercised in the capstone.
+public final class Example24 {
+    public static void main(String[] args) {
+        System.out.println("ex-24: property-override");
+    }
+}

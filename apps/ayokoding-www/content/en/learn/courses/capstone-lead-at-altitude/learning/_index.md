@@ -1,0 +1,9 @@
+---
+title: "Learning"
+date: 2026-08-15T00:00:00+07:00
+draft: false
+weight: 2
+---
+
+- [Leadership Synthesis](/en/learn/courses/capstone-lead-at-altitude/learning/capstone)
+  - [Operate and Decide](/en/learn/courses/capstone-lead-at-altitude/learning/capstone/overview)

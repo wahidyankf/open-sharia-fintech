@@ -1,0 +1,9 @@
+<!-- Illustrative local collection shape. Do not apply without an owned-lab collection review. -->
+<ossec_config>
+  <localfile>
+    <!-- => The path is illustrative only; this course never creates or reads it. -->
+    <location>/var/log/course-lab-auth.log</location>
+    <!-- => Syslog typing is an example configuration surface, not an installation instruction. -->
+    <log_format>syslog</log_format>
+  </localfile>
+</ossec_config>

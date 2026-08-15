@@ -11,3 +11,7 @@ weight: 90
   - [Immediately-Effective](/en/learn/paths/careers/immediately-effective)
   - [Fundamentally Strong](/en/learn/paths/careers/fundamentally-strong)
 - [Skills](/en/learn/paths/skills)
+  - [Conventional Accounting](/en/learn/paths/skills/conventional-accounting)
+  - [Sharia Accounting](/en/learn/paths/skills/sharia-accounting)
+  - [Conventional ERP](/en/learn/paths/skills/conventional-erp)
+  - [Sharia ERP](/en/learn/paths/skills/sharia-erp)

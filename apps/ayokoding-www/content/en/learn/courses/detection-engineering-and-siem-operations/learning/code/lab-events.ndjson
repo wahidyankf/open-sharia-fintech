@@ -1,0 +1,6 @@
+{"timestamp":"2026-08-15T09:00:00Z","raw":"LABAUTH user=lee src=192.0.2.44 action=failure","label":"benign"}
+{"timestamp":"2026-08-15T09:01:00Z","raw":"LABAUTH user=sam src=198.51.100.17 action=failure","label":"review"}
+{"timestamp":"2026-08-15T09:01:30Z","raw":"LABAUTH user=sam src=198.51.100.17 action=failure","label":"review"}
+{"timestamp":"2026-08-15T09:02:00Z","raw":"LABAUTH user=sam src=198.51.100.17 action=failure","label":"review"}
+{"timestamp":"2026-08-15T09:02:15Z","raw":"LABAUTH user=sam src=198.51.100.17 action=success","label":"review"}
+{"timestamp":"2026-08-15T09:03:00Z","raw":"LABAUTH user=lee src=192.0.2.44 action=success","label":"benign"}

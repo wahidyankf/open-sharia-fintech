@@ -1,0 +1,16 @@
+<!-- Original local teaching rules. They are not a production ruleset or vendor content. -->
+<group name="course_lab_auth,">
+  <!-- => Base rule presents one invented failed action for analyst review. -->
+  <rule id="100500" level="5">
+    <field name="action">failure</field>
+    <description>Course lab: fictional authentication failure</description>
+    <mitre><id>T1110</id></mitre>
+  </rule>
+  <!-- => Correlation requires three matching teaching events in one bounded window. -->
+  <rule id="100501" level="9" frequency="3" timeframe="120">
+    <if_matched_sid>100500</if_matched_sid>
+    <same_srcip />
+    <description>Course lab: repeated fictional authentication failure requires review</description>
+    <mitre><id>T1110</id></mitre>
+  </rule>
+</group>

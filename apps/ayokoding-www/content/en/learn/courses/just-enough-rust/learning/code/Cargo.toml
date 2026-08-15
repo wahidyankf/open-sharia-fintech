@@ -1,0 +1,317 @@
+[package]
+name = "just-enough-rust-examples"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "ex-01"
+path = "src/bin/ex-01.rs"
+
+[[bin]]
+name = "ex-02"
+path = "src/bin/ex-02.rs"
+
+[[bin]]
+name = "ex-03"
+path = "src/bin/ex-03.rs"
+
+[[bin]]
+name = "ex-04"
+path = "src/bin/ex-04.rs"
+
+[[bin]]
+name = "ex-05"
+path = "src/bin/ex-05.rs"
+
+[[bin]]
+name = "ex-06"
+path = "src/bin/ex-06.rs"
+
+[[bin]]
+name = "ex-07"
+path = "src/bin/ex-07.rs"
+
+[[bin]]
+name = "ex-08"
+path = "src/bin/ex-08.rs"
+
+[[bin]]
+name = "ex-09"
+path = "src/bin/ex-09.rs"
+
+[[bin]]
+name = "ex-10"
+path = "src/bin/ex-10.rs"
+
+[[bin]]
+name = "ex-11"
+path = "src/bin/ex-11.rs"
+
+[[bin]]
+name = "ex-12"
+path = "src/bin/ex-12.rs"
+
+[[bin]]
+name = "ex-13"
+path = "src/bin/ex-13.rs"
+
+[[bin]]
+name = "ex-14"
+path = "src/bin/ex-14.rs"
+
+[[bin]]
+name = "ex-15"
+path = "src/bin/ex-15.rs"
+
+[[bin]]
+name = "ex-16"
+path = "src/bin/ex-16.rs"
+
+[[bin]]
+name = "ex-17"
+path = "src/bin/ex-17.rs"
+
+[[bin]]
+name = "ex-18"
+path = "src/bin/ex-18.rs"
+
+[[bin]]
+name = "ex-19"
+path = "src/bin/ex-19.rs"
+
+[[bin]]
+name = "ex-20"
+path = "src/bin/ex-20.rs"
+
+[[bin]]
+name = "ex-21"
+path = "src/bin/ex-21.rs"
+
+[[bin]]
+name = "ex-22"
+path = "src/bin/ex-22.rs"
+
+[[bin]]
+name = "ex-23"
+path = "src/bin/ex-23.rs"
+
+[[bin]]
+name = "ex-24"
+path = "src/bin/ex-24.rs"
+
+[[bin]]
+name = "ex-25"
+path = "src/bin/ex-25.rs"
+
+[[bin]]
+name = "ex-26"
+path = "src/bin/ex-26.rs"
+
+[[bin]]
+name = "ex-27"
+path = "src/bin/ex-27.rs"
+
+[[bin]]
+name = "ex-28"
+path = "src/bin/ex-28.rs"
+
+[[bin]]
+name = "ex-29"
+path = "src/bin/ex-29.rs"
+
+[[bin]]
+name = "ex-30"
+path = "src/bin/ex-30.rs"
+
+[[bin]]
+name = "ex-31"
+path = "src/bin/ex-31.rs"
+
+[[bin]]
+name = "ex-32"
+path = "src/bin/ex-32.rs"
+
+[[bin]]
+name = "ex-33"
+path = "src/bin/ex-33.rs"
+
+[[bin]]
+name = "ex-34"
+path = "src/bin/ex-34.rs"
+
+[[bin]]
+name = "ex-35"
+path = "src/bin/ex-35.rs"
+
+[[bin]]
+name = "ex-36"
+path = "src/bin/ex-36.rs"
+
+[[bin]]
+name = "ex-37"
+path = "src/bin/ex-37.rs"
+
+[[bin]]
+name = "ex-38"
+path = "src/bin/ex-38.rs"
+
+[[bin]]
+name = "ex-39"
+path = "src/bin/ex-39.rs"
+
+[[bin]]
+name = "ex-40"
+path = "src/bin/ex-40.rs"
+
+[[bin]]
+name = "ex-41"
+path = "src/bin/ex-41.rs"
+
+[[bin]]
+name = "ex-42"
+path = "src/bin/ex-42.rs"
+
+[[bin]]
+name = "ex-43"
+path = "src/bin/ex-43.rs"
+
+[[bin]]
+name = "ex-44"
+path = "src/bin/ex-44.rs"
+
+[[bin]]
+name = "ex-45"
+path = "src/bin/ex-45.rs"
+
+[[bin]]
+name = "ex-46"
+path = "src/bin/ex-46.rs"
+
+[[bin]]
+name = "ex-47"
+path = "src/bin/ex-47.rs"
+
+[[bin]]
+name = "ex-48"
+path = "src/bin/ex-48.rs"
+
+[[bin]]
+name = "ex-49"
+path = "src/bin/ex-49.rs"
+
+[[bin]]
+name = "ex-50"
+path = "src/bin/ex-50.rs"
+
+[[bin]]
+name = "ex-51"
+path = "src/bin/ex-51.rs"
+
+[[bin]]
+name = "ex-52"
+path = "src/bin/ex-52.rs"
+
+[[bin]]
+name = "ex-53"
+path = "src/bin/ex-53.rs"
+
+[[bin]]
+name = "ex-54"
+path = "src/bin/ex-54.rs"
+
+[[bin]]
+name = "ex-55"
+path = "src/bin/ex-55.rs"
+
+[[bin]]
+name = "ex-56"
+path = "src/bin/ex-56.rs"
+
+[[bin]]
+name = "ex-57"
+path = "src/bin/ex-57.rs"
+
+[[bin]]
+name = "ex-58"
+path = "src/bin/ex-58.rs"
+
+[[bin]]
+name = "ex-59"
+path = "src/bin/ex-59.rs"
+
+[[bin]]
+name = "ex-60"
+path = "src/bin/ex-60.rs"
+
+[[bin]]
+name = "ex-61"
+path = "src/bin/ex-61.rs"
+
+[[bin]]
+name = "ex-62"
+path = "src/bin/ex-62.rs"
+
+[[bin]]
+name = "ex-63"
+path = "src/bin/ex-63.rs"
+
+[[bin]]
+name = "ex-64"
+path = "src/bin/ex-64.rs"
+
+[[bin]]
+name = "ex-65"
+path = "src/bin/ex-65.rs"
+
+[[bin]]
+name = "ex-66"
+path = "src/bin/ex-66.rs"
+
+[[bin]]
+name = "ex-67"
+path = "src/bin/ex-67.rs"
+
+[[bin]]
+name = "ex-68"
+path = "src/bin/ex-68.rs"
+
+[[bin]]
+name = "ex-69"
+path = "src/bin/ex-69.rs"
+
+[[bin]]
+name = "ex-70"
+path = "src/bin/ex-70.rs"
+
+[[bin]]
+name = "ex-71"
+path = "src/bin/ex-71.rs"
+
+[[bin]]
+name = "ex-72"
+path = "src/bin/ex-72.rs"
+
+[[bin]]
+name = "ex-73"
+path = "src/bin/ex-73.rs"
+
+[[bin]]
+name = "ex-74"
+path = "src/bin/ex-74.rs"
+
+[[bin]]
+name = "ex-75"
+path = "src/bin/ex-75.rs"
+
+[[bin]]
+name = "ex-76"
+path = "src/bin/ex-76.rs"
+
+[[bin]]
+name = "ex-77"
+path = "src/bin/ex-77.rs"
+
+[[bin]]
+name = "ex-78"
+path = "src/bin/ex-78.rs"

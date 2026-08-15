@@ -1,0 +1,9 @@
+Phase 0 baseline — 2026-08-15
+
+PLAN04_ROOT=plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md
+VFR_ROOT=plans/done/2026-08-02__vercel-function-cost-reduction/README.md
+ROOT_LAYOUT_ABSENT=pass
+ROOT_MIDDLEWARE_ABSENT=pass
+AYOKODING_BUILD=pass
+AYOKODING_UNIT_TEST=pass
+AUTHORED_BODY_ABSENT_COUNT=11
