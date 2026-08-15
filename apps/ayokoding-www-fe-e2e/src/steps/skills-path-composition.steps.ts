@@ -28,6 +28,14 @@ const expectedCourseOrder = [
   "general-ledger-system-architecture",
 ] as const;
 
+const shariaExtension = [
+  "sharia-accounting-and-aaoifi-standards",
+  "islamic-contract-modeling-for-systems",
+  "zakah-computation-and-reporting-for-systems",
+  "sukuk-and-islamic-capital-markets-accounting",
+  "sharia-ledger-system-architecture",
+] as const;
+
 type AccountingWorld = { pathId: string; courseOrder: string[] };
 let activeAccountingWorld: AccountingWorld | undefined;
 
@@ -46,8 +54,12 @@ When("its ordered course context is inspected", async () => {
   expect(activeAccountingWorld).toBeDefined();
 });
 
-Then("it contains exactly 19 course IDs in the shared accounting order", async () => {
-  expect(activeAccountingWorld?.courseOrder).toEqual(expectedCourseOrder);
+Then("it contains its published accounting order", async () => {
+  expect(activeAccountingWorld?.courseOrder).toEqual(
+    activeAccountingWorld?.pathId === "skills/sharia-accounting"
+      ? [...expectedCourseOrder, ...shariaExtension]
+      : expectedCourseOrder,
+  );
 });
 
 Then("every course context is represented by one course directory", async () => {

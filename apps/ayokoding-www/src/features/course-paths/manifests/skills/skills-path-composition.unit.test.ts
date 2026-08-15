@@ -33,6 +33,14 @@ const expectedCourseOrder = [
   "general-ledger-system-architecture",
 ];
 
+const shariaExtension = [
+  "sharia-accounting-and-aaoifi-standards",
+  "islamic-contract-modeling-for-systems",
+  "zakah-computation-and-reporting-for-systems",
+  "sukuk-and-islamic-capital-markets-accounting",
+  "sharia-ledger-system-architecture",
+];
+
 describeFeature(feature, ({ ScenarioOutline }) => {
   ScenarioOutline(
     "A two-segment skills path ID resolves to its full shared accounting slice",
@@ -55,8 +63,10 @@ describeFeature(feature, ({ ScenarioOutline }) => {
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-composition.feature:A two-segment skills path ID resolves to its full shared accounting slice
-      Then("it contains exactly 19 course IDs in the shared accounting order", () => {
-        expect(manifest.courseOrder).toEqual(expectedCourseOrder);
+      Then("it contains its published accounting order", () => {
+        expect(manifest.courseOrder).toEqual(
+          pathId === "skills/sharia-accounting" ? [...expectedCourseOrder, ...shariaExtension] : expectedCourseOrder,
+        );
       });
 
       And("every course context is represented by one course directory", () => {
