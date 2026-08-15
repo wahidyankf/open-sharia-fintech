@@ -452,7 +452,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `for p in database-internals-and-storage-engines sql-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-database/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] **Hard gate — re-confirm `build-your-own-raft`'s two external prerequisite bodies are
+- [x] [AI] **Hard gate — re-confirm `build-your-own-raft`'s two external prerequisite bodies are
       present** (immediately before its own sub-phase; STOP and surface to the user if either is
       absent, rather than authoring a dangling prerequisite edge) — command:
 
@@ -477,7 +477,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
     And the check blocks authoring until both directories are present
   ```
 
-- [ ] [AI] `build-your-own-raft` (By Example · Go) — convention complete; checkers clean; declares
+- [x] [AI] `build-your-own-raft` (By Example · Go) — convention complete; checkers clean; declares
       `just-enough-go` and `distributed-systems` as prerequisites — acceptance:
       `for p in just-enough-go distributed-systems; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-raft/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
