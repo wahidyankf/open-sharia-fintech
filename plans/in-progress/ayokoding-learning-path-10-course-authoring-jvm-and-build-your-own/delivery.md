@@ -282,14 +282,14 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `grep -F -q 'object-oriented-programming-essentials' "apps/ayokoding-www/content/en/learn/courses/just-enough-java/_index.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] **Hard gate — re-confirm `enterprise-java-and-the-jvm`'s external prerequisite body
+- [x] [AI] **Hard gate — re-confirm `enterprise-java-and-the-jvm`'s external prerequisite body
       `software-architecture` is present** (immediately before its own sub-phase; STOP and surface to
       the user if absent, rather than authoring a dangling prerequisite edge, mirroring the
       `build-your-own-raft` gate in Phase 2) — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/software-architecture`
       — acceptance: exits 0. If it returns non-zero, this checklist item is **not** ticked and
       execution pauses here until plan `06` merges the missing body.
-- [ ] [AI] `enterprise-java-and-the-jvm` (By Example · Java) — convention complete; checkers clean;
+- [x] [AI] `enterprise-java-and-the-jvm` (By Example · Java) — convention complete; checkers clean;
       declares `just-enough-java` and `software-architecture` as its prerequisites — acceptance:
       `for p in just-enough-java software-architecture; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/enterprise-java-and-the-jvm/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
