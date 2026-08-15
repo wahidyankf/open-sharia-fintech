@@ -2,8 +2,8 @@
 
 ## Context
 
-[`optimize-governance-md`](../../in-progress/optimize-governance-md/README.md) (closing out as this
-plan is filed, archiving to `plans/done/`) introduced a 500-word ceiling on governance Markdown
+[`optimize-governance-md`](../../done/2026-08-15__optimize-governance-md/README.md) introduced a
+500-word ceiling on governance Markdown
 across `ose-public` **and** `ose-private`: two new rhino-cli gates
 (`governance-word-budget`, `governance-readme-completeness`), a rename-in-place of the
 already-live `md-readme-index` gate to `governance-readme-index`, and the `md-frontmatter` gate's
