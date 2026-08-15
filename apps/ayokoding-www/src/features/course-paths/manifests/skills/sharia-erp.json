@@ -2,7 +2,7 @@
   "pathId": "skills/sharia-erp",
   "arc": "immediately-effective",
   "title": "Sharia ERP",
-  "description": "A deployable Stage-A foundation before Sharia-specific ERP extension.",
+  "description": "A complete Sharia ERP path with shared enterprise depth and configurable jurisdictional design.",
   "courseOrder": [
     "erp-foundations-and-history",
     "erp-conceptual-data-model",
@@ -16,8 +16,23 @@
     "procure-to-pay-systems",
     "order-to-cash-systems",
     "erp-procurement-and-fulfillment-exceptions",
+    "record-to-report-systems",
+    "inventory-and-warehouse-management",
+    "erp-inventory-costing-methods",
+    "erp-inventory-integrity-and-concurrency",
     "erp-bom-and-routing-architecture",
+    "production-planning-and-mrp",
+    "demand-and-supply-planning",
+    "erp-availability-and-reservations",
+    "quality-management-and-inspection",
     "erp-extension-and-customization",
-    "erp-integration-patterns"
+    "erp-integration-patterns",
+    "human-capital-management-and-hire-to-retire",
+    "multi-company-and-multi-currency-erp",
+    "erp-security-and-controls",
+    "erp-analytics-and-reporting",
+    "sharia-compliant-erp-design",
+    "islamic-contract-based-transaction-flows",
+    "zakat-and-sharia-compliance-modules"
   ]
 }

@@ -1,9 +1,9 @@
 ---
 title: "Sharia ERP"
-description: "A deployable Stage-A foundation before Sharia-specific ERP extension."
+description: "A complete Sharia ERP path with shared enterprise depth and configurable jurisdictional design."
 date: 2026-08-16T00:00:00+07:00
 draft: false
 weight: 22
 ---
 
-This immediately-effective Stage-A path publishes the shared fifteen-course ERP foundation through **Dangerous 1**. It does not yet include the Sharia-specific contract, Zakah, Sukuk, and architecture extensions that the successor plan owns.
+This complete path reaches **Dangerous 4** at its terminal course. It includes all twenty-seven shared conventional-ERP courses before three Sharia-exclusive courses, so it provides full grounding to a reader entering it cold rather than assuming the conventional path as an add-on.
