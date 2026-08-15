@@ -38,7 +38,7 @@ table (`R9`, `A6`, `A8`, `A9`, `A12`) lives in that plan's
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md).
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md).
 > A step here that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience.
 
@@ -468,17 +468,17 @@ manifest itself.
 
 ## Testing / Verification Strategy
 
-| Level                     | What it verifies                                                                       | Mechanism                                                              |
-| ------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary              | matching `apps-ayokoding-www-{primer,by-example}-checker`              |
-| Per-course fact checks    | version-pinned facts; volatile facts confined to dated sidebars where applicable       | `apps-ayokoding-www-facts-checker`                                     |
-| Per-course link checks    | intra-course and cross-course links resolve                                            | `apps-ayokoding-www-link-checker`                                      |
-| Contract assertions       | counterpart / scope-boundary statements are present in the body                        | grep-checkable acceptance clauses on the authoring steps               |
-| Structural                | bundle anatomy present; `prerequisites` declared                                       | `test -d` / `test -f` + frontmatter grep                               |
+| Level                     | What it verifies                                                                       | Mechanism                                                                   |
+| ------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary              | matching `apps-ayokoding-www-{primer,by-example}-checker`                   |
+| Per-course fact checks    | version-pinned facts; volatile facts confined to dated sidebars where applicable       | `apps-ayokoding-www-facts-checker`                                          |
+| Per-course link checks    | intra-course and cross-course links resolve                                            | `apps-ayokoding-www-link-checker`                                           |
+| Contract assertions       | counterpart / scope-boundary statements are present in the body                        | grep-checkable acceptance clauses on the authoring steps                    |
+| Structural                | bundle anatomy present; `prerequisites` declared                                       | `test -d` / `test -f` + frontmatter grep                                    |
 | Section build             | the authored tree renders                                                              | `npm exec nx run ayokoding-www:build`                                       |
-| Markdown quality          | markdownlint, link validation, heading hierarchy                                       | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
+| Markdown quality          | markdownlint, link validation, heading hierarchy                                       | `npm run lint:md` + the two `rhino-cli md` subcommands                      |
 | Regression                | no existing project's gates broke                                                      | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
-| Manual behavioural        | a sample of the 7 authored course pages renders correctly at three breakpoints in `en` | Playwright MCP + committed `evidence/` screenshots                     |
+| Manual behavioural        | a sample of the 7 authored course pages renders correctly at three breakpoints in `en` | Playwright MCP + committed `evidence/` screenshots                          |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts — there is no
 application code here to test, identical reasoning to every plan in this programme.

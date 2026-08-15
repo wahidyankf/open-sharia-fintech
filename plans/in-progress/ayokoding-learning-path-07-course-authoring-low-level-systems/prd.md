@@ -10,7 +10,7 @@ track. It is one half of a two-way split of
 (`just-enough-java`, `enterprise-java-and-the-jvm`, `lisp`, `just-enough-fsharp`, `type-systems`,
 `compilers-parsers-and-transpilers`, `build-your-own-git`, `build-your-own-database`,
 `build-your-own-raft`) is authored by
-[`ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`](../ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
+[`ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`](../../backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
 (sibling, not created here).
 
 A **course** is the unit of reading. A **path** is an ordered manifest of course IDs. This plan owns

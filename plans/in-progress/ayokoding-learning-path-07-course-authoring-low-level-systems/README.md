@@ -51,7 +51,7 @@ never touches any file the sibling plan or `ayokoding-learning-path-04-course-au
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md).
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md).
 > A step in this plan that creates, appends to, reorders, or re-verifies a `.json` manifest is a
 > **boundary violation**, not a convenience. This invariant is inherited verbatim from
 > `ayokoding-learning-path-04-course-authoring` — it binds every course-authoring split plan in this
@@ -173,8 +173,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                                   | Nature                                                                                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -289,7 +289,7 @@ An Indonesian mirror is explicitly deferred (recorded decision, not an omission)
   [`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   (source band + trimmed baseline)
   ·
-  [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+  [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   (downstream consumer)
   · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
   (historical reference)

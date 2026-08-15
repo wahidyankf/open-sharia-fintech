@@ -37,8 +37,6 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-07-course-authoring-low-level-systems](./ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)
-  — 7 courses (old Band 6, first half): C/C++/Rust, Linux/Windows OS, systems programming.
 - [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
   — 11 courses (old Band 7): security, SRE, platform engineering, governance.
 - [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
