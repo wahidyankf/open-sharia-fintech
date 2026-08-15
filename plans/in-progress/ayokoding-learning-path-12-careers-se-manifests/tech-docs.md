@@ -22,7 +22,7 @@ and **win on conflict**.
 | R2  | `pathId` is **variable-depth by design** — `careers/<arc>/<role>` is 3 segments, `skills/<subject>` is 2; nothing may key on segment count.                                              |
 | R4  | Ownership split: the `careers/`-manifest plans are `careers/`-only; the `skills/` category is separate.                                                                                  |
 | R9  | Every plan declares its **UI-gate and API-gate posture explicitly**; a plan bearing neither surface is _not_ thereby exempt and must state why.                                          |
-| A2  | The skills category splits across separate accounting and ERP plans, the latter historical source context the former.                                                                                  |
+| A2  | The skills category splits across separate accounting and ERP plans, the latter historical source context the former.                                                                    |
 | A8  | **Strict clean-room licensing, programme-wide** — binds every plan in the programme; nothing copyrighted is reproduced, and every concept is restated in original words with a citation. |
 | A10 | The skills category carries **four** paths — two accounting, two ERP; each Sharia path covers the basics too, and `A11` governs how.                                                     |
 | A11 | Shared courses are **referenced by both manifests, authored once** — a Sharia path's `courseOrder` interleaves shared and Sharia-specific ids rather than duplicating files.             |
@@ -45,16 +45,16 @@ card population, the per-path smoothness audits, every manifest growth as backfi
 — at this plan's own final phase — the four-manifest completeness check that spans the whole `careers/`
 category.
 
-| Layer                                                   | Owner                                                    | This plan's relationship        |
-| ------------------------------------------------------- | -------------------------------------------------------- | ------------------------------- |
-| URL / IA                                                | `ayokoding-learning-path-01-url-restructure`             | consumes                        |
-| Schema / core / integrity                               | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                        |
-| Rendering / route wiring                                | `ayokoding-learning-path-03-navigation-ui`               | consumes                        |
-| Course bodies                                           | seven course-authoring successor plans (`04`-`11`)       | consumes (band signals)         |
-| `apps/ayokoding-www` rendering-mode fix                 | `vercel-function-cost-reduction`                         | consumes (repository-baseline check)    |
-| **Three `software-engineer`-role manifests + landings** | **this plan**                                            | **produces**                    |
-| The `ai-engineer` manifest + landing + hub card         | `ayokoding-learning-path-13-careers-ai-manifest`         | sibling — coupled, not consumed |
-| `skills/` manifests + landings + corpus                 | the accounting/ERP split plans                           | sibling — out of scope          |
+| Layer                                                   | Owner                                                    | This plan's relationship             |
+| ------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------ |
+| URL / IA                                                | `ayokoding-learning-path-01-url-restructure`             | consumes                             |
+| Schema / core / integrity                               | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                             |
+| Rendering / route wiring                                | `ayokoding-learning-path-03-navigation-ui`               | consumes                             |
+| Course bodies                                           | seven course-authoring successor plans (`04`-`11`)       | consumes (band signals)              |
+| `apps/ayokoding-www` rendering-mode fix                 | `vercel-function-cost-reduction`                         | consumes (repository-baseline check) |
+| **Three `software-engineer`-role manifests + landings** | **this plan**                                            | **produces**                         |
+| The `ai-engineer` manifest + landing + hub card         | `ayokoding-learning-path-13-careers-ai-manifest`         | sibling — coupled, not consumed      |
+| `skills/` manifests + landings + corpus                 | the accounting/ERP split plans                           | sibling — out of scope               |
 
 ## The manifest ownership invariant (scoped to this plan's three files)
 
@@ -407,10 +407,10 @@ populating the fourth card independently).
 
 | Level                    | What it covers here                                                                                                                                         | Command                                                               |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Unit                     | this plan's 3 manifests load + zod-validate; integrity; prerequisite-consistency; no-forked-body; growth checks                                             | `npm exec nx run ayokoding-www:test:unit`                                  |
-| Specs (Gherkin coverage) | this plan's 6 `prd.md` scenarios bind a step definition (the scoped-build-green scenario is documentation-verified, no step binding, by design)             | `npm exec nx run ayokoding-www:specs:behavior:coverage`                    |
-| E2E                      | path-walk from each of this plan's 3 landings; `?path=` persistence; breadcrumb; prerequisite display                                                       | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                            |
-| Build                    | this plan's 3 manifests resolve against the currently-landed non-AI course bundles; at Phase 8, all 4 manifests resolve against the full 127-course catalog | `npm exec nx run ayokoding-www:build`                                      |
+| Unit                     | this plan's 3 manifests load + zod-validate; integrity; prerequisite-consistency; no-forked-body; growth checks                                             | `npm exec nx run ayokoding-www:test:unit`                             |
+| Specs (Gherkin coverage) | this plan's 6 `prd.md` scenarios bind a step definition (the scoped-build-green scenario is documentation-verified, no step binding, by design)             | `npm exec nx run ayokoding-www:specs:behavior:coverage`               |
+| E2E                      | path-walk from each of this plan's 3 landings; `?path=` persistence; breadcrumb; prerequisite display                                                       | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                       |
+| Build                    | this plan's 3 manifests resolve against the currently-landed non-AI course bundles; at Phase 8, all 4 manifests resolve against the full 127-course catalog | `npm exec nx run ayokoding-www:build`                                 |
 | Manual                   | 3 landings + this plan's hub-card slice at 375/768/1280px, `en`, committed evidence                                                                         | Playwright MCP (Phase 6)                                              |
 | Live-site triad          | Rule-15 EWT/UWT/DWT retest before archival, scoped to this plan's surfaces                                                                                  | `web-exploratory-tester`, `web-usability-tester`, `web-design-tester` |
 

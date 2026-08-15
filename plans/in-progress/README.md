@@ -11,6 +11,8 @@ execution checklist.
 
 ## Active Plans
 
+- [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
+  — Authors the three `software-engineer`-role careers manifests.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.

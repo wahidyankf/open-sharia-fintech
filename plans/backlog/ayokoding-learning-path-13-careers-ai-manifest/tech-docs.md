@@ -34,16 +34,16 @@ This plan delivers **one manifest**: `careers/immediately-effective/ai-engineer`
 landing anchor, this plan's one-card slice of the paths-hub population, the from-scratch smoothness
 audit, and the manifest's growth as the AI/harness cluster lands.
 
-| Layer                                                                    | Owner                                                    | This plan's relationship        |
-| ------------------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------- |
-| URL / IA                                                                 | `ayokoding-learning-path-01-url-restructure`             | consumes                        |
-| Schema / core / integrity                                                | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                        |
-| Rendering / route wiring                                                 | `ayokoding-learning-path-03-navigation-ui`               | consumes                        |
-| Course bodies (6 AI-engineer-role courses, 9 AI/harness-cluster courses) | `ayokoding-learning-path-04`, `-06`, `-11`               | consumes (band signals)         |
-| `apps/ayokoding-www` rendering-mode fix                                  | `vercel-function-cost-reduction`                         | consumes (repository-baseline check)    |
-| **The `ai-engineer` manifest + landing + hub card**                      | **this plan**                                            | **produces**                    |
-| The 3 `software-engineer`-role manifests                                 | `ayokoding-learning-path-12-careers-se-manifests`        | sibling — coupled, not consumed |
-| `skills/` manifests + landings + corpus                                  | the accounting/ERP split plans                           | sibling — out of scope          |
+| Layer                                                                    | Owner                                                    | This plan's relationship             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------ |
+| URL / IA                                                                 | `ayokoding-learning-path-01-url-restructure`             | consumes                             |
+| Schema / core / integrity                                                | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                             |
+| Rendering / route wiring                                                 | `ayokoding-learning-path-03-navigation-ui`               | consumes                             |
+| Course bodies (6 AI-engineer-role courses, 9 AI/harness-cluster courses) | `ayokoding-learning-path-04`, `-06`, `-11`               | consumes (band signals)              |
+| `apps/ayokoding-www` rendering-mode fix                                  | `vercel-function-cost-reduction`                         | consumes (repository-baseline check) |
+| **The `ai-engineer` manifest + landing + hub card**                      | **this plan**                                            | **produces**                         |
+| The 3 `software-engineer`-role manifests                                 | `ayokoding-learning-path-12-careers-se-manifests`        | sibling — coupled, not consumed      |
+| `skills/` manifests + landings + corpus                                  | the accounting/ERP split plans                           | sibling — out of scope               |
 
 ## The manifest ownership invariant (scoped to this plan's one file)
 
@@ -80,7 +80,7 @@ the sibling's three files exist or do not exist — this plan's own gates are sc
 | `ayokoding-learning-path-11-course-authoring-capstones` (old Band 8)                   | **yes — the 9th/final AI/harness-cluster course (Phase 2 growth)**       |
 
 Full routing table, including the sibling plan's six contributing source plans, is in
-[the sibling plan's tech-docs §Growth signal routing](../ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#growth-signal-routing-from-the-seven-course-authoring-successor-plans).
+[the sibling plan's tech-docs §Growth signal routing](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#growth-signal-routing-from-the-seven-course-authoring-successor-plans).
 
 ## Manifest format (inherited contract)
 
@@ -220,13 +220,13 @@ recorded in the plan this split replaces, unchanged in substance by this split.
 
 Full text of every decision above is reproduced verbatim, with its complete amendment chain, in the
 plan this split replaces and in
-[the sibling plan's tech-docs §Design Decisions](../ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#design-decisions)
+[the sibling plan's tech-docs §Design Decisions](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#design-decisions)
 where it is cited for cross-referencing purposes. This plan does not introduce any new numbered design
 decision of its own — the two new decisions this split adds (DD-40, the 3+1 split shape; DD-42, the
 non-circular coupling) are owned and recorded by the sibling plan, as the canonical owner for
 citation purposes, since they describe the shape of the split as a whole rather than this plan's one
 manifest specifically. This plan's own contribution is DD-41's **application** — see
-[the sibling plan's DD-41](../ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#design-decisions)
+[the sibling plan's DD-41](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#design-decisions)
 for the Band-9 two-of-three correction, which does not apply to this plan's manifest at all (Band 9 is
 scoped to the three software-engineer manifests only; this manifest is never a candidate for that
 growth).
@@ -307,10 +307,10 @@ No `[D]` or `[G]` rows exist: this plan deletes nothing, and no emitter runs ove
 
 | Level                    | What it covers here                                                                                                                                                                                                      | Command                                                               |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| Unit                     | this plan's 1 manifest loads + zod-validates; integrity; prerequisite-consistency; growth check                                                                                                                          | `npm exec nx run ayokoding-www:test:unit`                                  |
-| Specs (Gherkin coverage) | 2 of this plan's 4 `prd.md` scenarios bind step definitions; 1 is documentation-verified (Phase 1.3); 1 (build/validate green) is covered by Phase 3's aggregate verification sweep without a dedicated scenario binding | `npm exec nx run ayokoding-www:specs:behavior:coverage`                    |
-| E2E                      | path-walk from this plan's one landing; `?path=` persistence; breadcrumb; prerequisite display                                                                                                                           | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                            |
-| Build                    | this plan's one manifest resolves against currently-landed course bundles                                                                                                                                                | `npm exec nx run ayokoding-www:build`                                      |
+| Unit                     | this plan's 1 manifest loads + zod-validates; integrity; prerequisite-consistency; growth check                                                                                                                          | `npm exec nx run ayokoding-www:test:unit`                             |
+| Specs (Gherkin coverage) | 2 of this plan's 4 `prd.md` scenarios bind step definitions; 1 is documentation-verified (Phase 1.3); 1 (build/validate green) is covered by Phase 3's aggregate verification sweep without a dedicated scenario binding | `npm exec nx run ayokoding-www:specs:behavior:coverage`               |
+| E2E                      | path-walk from this plan's one landing; `?path=` persistence; breadcrumb; prerequisite display                                                                                                                           | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                       |
+| Build                    | this plan's one manifest resolves against currently-landed course bundles                                                                                                                                                | `npm exec nx run ayokoding-www:build`                                 |
 | Manual                   | 1 landing + this plan's hub-card slice at 375/768/1280px, `en`, committed evidence                                                                                                                                       | Playwright MCP (Phase 4)                                              |
 | Live-site triad          | Rule-15 EWT/UWT/DWT retest before archival, scoped to this plan's surfaces                                                                                                                                               | `web-exploratory-tester`, `web-usability-tester`, `web-design-tester` |
 

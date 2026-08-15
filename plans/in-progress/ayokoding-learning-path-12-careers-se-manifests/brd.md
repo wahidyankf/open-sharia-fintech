@@ -116,7 +116,7 @@ Every metric below is an **observable check**, not a projected number.
   DD-41).
 - **This plan's own catalog contribution resolves** (observable): every non-AI course body this plan's
   three manifests reference resolves under `apps/ayokoding-www/content/en/learn/courses/`.
-- **Plan 13 owns the later four-manifest verification after this plan is archived.
+- \*\*Plan 13 owns the later four-manifest verification after this plan is archived.
 - **Progression smoothness verified per path** (observable): each manifest passes its own smoothness
   audit before archival.
 - **No regressions** (observable): `npm exec nx run ayokoding-www:build`, the affected test tiers,
