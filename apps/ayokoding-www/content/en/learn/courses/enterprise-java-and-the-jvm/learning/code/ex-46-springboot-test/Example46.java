@@ -5,4 +5,3 @@ public final class Example46 {
         System.out.println("ex-46: springboot-test");
     }
 }
-

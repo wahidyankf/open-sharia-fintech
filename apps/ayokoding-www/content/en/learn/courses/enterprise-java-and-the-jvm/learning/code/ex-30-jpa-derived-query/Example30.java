@@ -5,4 +5,3 @@ public final class Example30 {
         System.out.println("ex-30: jpa-derived-query");
     }
 }
-

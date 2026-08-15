@@ -5,4 +5,3 @@ public final class Example07 {
         System.out.println("ex-07: configuration-bean");
     }
 }
-

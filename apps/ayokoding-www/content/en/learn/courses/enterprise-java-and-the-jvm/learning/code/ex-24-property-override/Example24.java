@@ -5,4 +5,3 @@ public final class Example24 {
         System.out.println("ex-24: property-override");
     }
 }
-

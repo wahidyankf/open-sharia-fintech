@@ -5,4 +5,3 @@ public final class Example47 {
         System.out.println("ex-47: web-mvc-test");
     }
 }
-

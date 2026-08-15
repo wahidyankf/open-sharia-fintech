@@ -15,4 +15,3 @@ class ItemService {
         return repository.findById(id).orElseThrow(() -> new ItemNotFound(id));
     }
 }
-

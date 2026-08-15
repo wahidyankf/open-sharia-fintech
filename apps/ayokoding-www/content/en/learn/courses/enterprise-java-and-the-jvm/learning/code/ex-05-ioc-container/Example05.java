@@ -5,4 +5,3 @@ public final class Example05 {
         System.out.println("ex-05: ioc-container");
     }
 }
-

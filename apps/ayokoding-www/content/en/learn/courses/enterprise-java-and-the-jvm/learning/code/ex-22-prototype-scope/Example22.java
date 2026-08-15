@@ -5,4 +5,3 @@ public final class Example22 {
         System.out.println("ex-22: prototype-scope");
     }
 }
-

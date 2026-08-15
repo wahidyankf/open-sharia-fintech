@@ -5,4 +5,3 @@ public final class Example60 {
         System.out.println("ex-60: heap-under-load");
     }
 }
-

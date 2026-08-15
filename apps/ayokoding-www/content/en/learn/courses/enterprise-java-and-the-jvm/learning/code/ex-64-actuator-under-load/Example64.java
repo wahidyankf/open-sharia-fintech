@@ -5,4 +5,3 @@ public final class Example64 {
         System.out.println("ex-64: actuator-under-load");
     }
 }
-

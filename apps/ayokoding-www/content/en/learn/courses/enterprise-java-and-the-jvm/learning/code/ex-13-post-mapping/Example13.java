@@ -5,4 +5,3 @@ public final class Example13 {
         System.out.println("ex-13: post-mapping");
     }
 }
-

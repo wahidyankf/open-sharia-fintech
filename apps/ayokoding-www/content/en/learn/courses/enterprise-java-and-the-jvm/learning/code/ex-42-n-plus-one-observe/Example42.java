@@ -5,4 +5,3 @@ public final class Example42 {
         System.out.println("ex-42: n-plus-one-observe");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example76 {
         System.out.println("ex-76: full-spring-slice");
     }
 }
-

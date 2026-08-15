@@ -5,4 +5,3 @@ public final class Example50 {
         System.out.println("ex-50: mock-return-stub");
     }
 }
-

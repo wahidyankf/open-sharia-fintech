@@ -5,4 +5,3 @@ public final class Example32 {
         System.out.println("ex-32: read-via-curl");
     }
 }
-

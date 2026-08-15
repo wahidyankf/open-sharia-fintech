@@ -5,4 +5,3 @@ public final class Example40 {
         System.out.println("ex-40: transaction-commit");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example59 {
         System.out.println("ex-59: gc-throughput-vs-pause");
     }
 }
-

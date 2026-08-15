@@ -5,4 +5,3 @@ public final class Example09 {
         System.out.println("ex-09: application-yml");
     }
 }
-

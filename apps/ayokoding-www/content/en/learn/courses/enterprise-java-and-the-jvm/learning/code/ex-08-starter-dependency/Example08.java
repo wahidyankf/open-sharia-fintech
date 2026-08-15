@@ -5,4 +5,3 @@ public final class Example08 {
         System.out.println("ex-08: starter-dependency");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example75 {
         System.out.println("ex-75: jit-gc-observed");
     }
 }
-

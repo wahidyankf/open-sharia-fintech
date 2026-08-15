@@ -5,4 +5,3 @@ public final class Example66 {
         System.out.println("ex-66: lazy-vs-eager-fetch");
     }
 }
-

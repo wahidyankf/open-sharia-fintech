@@ -14,4 +14,3 @@ class ApiErrors {
 class ItemNotFound extends RuntimeException {
     ItemNotFound(long id) { super("item " + id + " was not found"); }
 }
-

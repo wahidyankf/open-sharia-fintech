@@ -5,4 +5,3 @@ public final class Example15 {
         System.out.println("ex-15: json-response");
     }
 }
-

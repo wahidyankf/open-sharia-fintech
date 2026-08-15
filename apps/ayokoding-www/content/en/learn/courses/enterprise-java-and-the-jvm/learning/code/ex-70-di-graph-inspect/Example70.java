@@ -5,4 +5,3 @@ public final class Example70 {
         System.out.println("ex-70: di-graph-inspect");
     }
 }
-

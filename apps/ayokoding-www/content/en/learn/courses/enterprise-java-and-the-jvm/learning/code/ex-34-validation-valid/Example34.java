@@ -5,4 +5,3 @@ public final class Example34 {
         System.out.println("ex-34: validation-valid");
     }
 }
-

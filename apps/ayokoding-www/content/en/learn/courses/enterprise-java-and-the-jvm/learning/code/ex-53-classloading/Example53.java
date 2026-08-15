@@ -5,4 +5,3 @@ public final class Example53 {
         System.out.println("ex-53: classloading");
     }
 }
-

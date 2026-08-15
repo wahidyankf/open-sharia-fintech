@@ -5,4 +5,3 @@ public final class Example21 {
         System.out.println("ex-21: run-jar");
     }
 }
-

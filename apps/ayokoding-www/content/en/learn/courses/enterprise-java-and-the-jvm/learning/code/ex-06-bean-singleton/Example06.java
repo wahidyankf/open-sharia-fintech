@@ -5,4 +5,3 @@ public final class Example06 {
         System.out.println("ex-06: bean-singleton");
     }
 }
-

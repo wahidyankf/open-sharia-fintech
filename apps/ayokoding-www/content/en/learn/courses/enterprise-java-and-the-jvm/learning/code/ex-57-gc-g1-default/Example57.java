@@ -5,4 +5,3 @@ public final class Example57 {
         System.out.println("ex-57: gc-g1-default");
     }
 }
-

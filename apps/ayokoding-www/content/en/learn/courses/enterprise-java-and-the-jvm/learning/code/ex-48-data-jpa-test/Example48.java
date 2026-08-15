@@ -5,4 +5,3 @@ public final class Example48 {
         System.out.println("ex-48: data-jpa-test");
     }
 }
-

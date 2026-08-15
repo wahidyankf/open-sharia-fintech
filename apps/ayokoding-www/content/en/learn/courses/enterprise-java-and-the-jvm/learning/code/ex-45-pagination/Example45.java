@@ -5,4 +5,3 @@ public final class Example45 {
         System.out.println("ex-45: pagination");
     }
 }
-

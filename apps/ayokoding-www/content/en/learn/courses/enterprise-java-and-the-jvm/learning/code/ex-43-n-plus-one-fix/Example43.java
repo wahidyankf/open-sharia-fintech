@@ -5,4 +5,3 @@ public final class Example43 {
         System.out.println("ex-43: n-plus-one-fix");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example29 {
         System.out.println("ex-29: jpa-repository-crud");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example23 {
         System.out.println("ex-23: qualifier");
     }
 }
-

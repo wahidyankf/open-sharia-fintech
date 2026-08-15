@@ -5,4 +5,3 @@ public final class Example52 {
         System.out.println("ex-52: integration-persist-test");
     }
 }
-

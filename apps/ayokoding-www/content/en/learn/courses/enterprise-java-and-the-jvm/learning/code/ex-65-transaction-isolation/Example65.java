@@ -5,4 +5,3 @@ public final class Example65 {
         System.out.println("ex-65: transaction-isolation");
     }
 }
-

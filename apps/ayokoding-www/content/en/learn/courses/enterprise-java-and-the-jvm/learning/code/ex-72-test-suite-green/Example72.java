@@ -5,4 +5,3 @@ public final class Example72 {
         System.out.println("ex-72: test-suite-green");
     }
 }
-

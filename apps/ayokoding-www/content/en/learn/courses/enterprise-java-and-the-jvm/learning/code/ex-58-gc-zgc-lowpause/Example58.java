@@ -5,4 +5,3 @@ public final class Example58 {
         System.out.println("ex-58: gc-zgc-lowpause");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example39 {
         System.out.println("ex-39: not-found-404");
     }
 }
-

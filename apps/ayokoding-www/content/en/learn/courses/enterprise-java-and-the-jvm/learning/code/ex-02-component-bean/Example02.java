@@ -5,4 +5,3 @@ public final class Example02 {
         System.out.println("ex-02: component-bean");
     }
 }
-

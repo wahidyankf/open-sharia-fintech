@@ -5,4 +5,3 @@ public final class Example38 {
         System.out.println("ex-38: exception-handler");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example28 {
         System.out.println("ex-28: jpa-entity");
     }
 }
-

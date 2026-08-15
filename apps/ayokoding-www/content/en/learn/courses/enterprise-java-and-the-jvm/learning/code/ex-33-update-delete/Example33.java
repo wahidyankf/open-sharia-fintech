@@ -5,4 +5,3 @@ public final class Example33 {
         System.out.println("ex-33: update-delete");
     }
 }
-

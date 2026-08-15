@@ -5,4 +5,3 @@ public final class Example25 {
         System.out.println("ex-25: component-scan");
     }
 }
-

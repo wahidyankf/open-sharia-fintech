@@ -5,4 +5,3 @@ public final class Example56 {
         System.out.println("ex-56: gc-generational");
     }
 }
-

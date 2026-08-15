@@ -5,4 +5,3 @@ public final class Example35 {
         System.out.println("ex-35: validation-invalid");
     }
 }
-

@@ -20,4 +20,3 @@ class ItemServiceTest {
         assertThrows(ItemNotFound.class, () -> service.get(999999L));
     }
 }
-

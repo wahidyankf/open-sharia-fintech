@@ -5,4 +5,3 @@ public final class Example78 {
         System.out.println("ex-78: capstone-spring-service");
     }
 }
-

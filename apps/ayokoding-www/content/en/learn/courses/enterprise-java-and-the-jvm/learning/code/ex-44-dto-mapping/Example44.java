@@ -5,4 +5,3 @@ public final class Example44 {
         System.out.println("ex-44: dto-mapping");
     }
 }
-

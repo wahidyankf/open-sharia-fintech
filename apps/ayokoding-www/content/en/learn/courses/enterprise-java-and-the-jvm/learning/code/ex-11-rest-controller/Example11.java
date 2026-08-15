@@ -5,4 +5,3 @@ public final class Example11 {
         System.out.println("ex-11: rest-controller");
     }
 }
-

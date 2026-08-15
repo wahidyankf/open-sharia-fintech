@@ -5,4 +5,3 @@ public final class Example51 {
         System.out.println("ex-51: mockmvc-request");
     }
 }
-

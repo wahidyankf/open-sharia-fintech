@@ -5,4 +5,3 @@ public final class Example36 {
         System.out.println("ex-36: constraint-annotations");
     }
 }
-

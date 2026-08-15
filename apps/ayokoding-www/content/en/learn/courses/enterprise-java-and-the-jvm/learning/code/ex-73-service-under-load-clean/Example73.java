@@ -5,4 +5,3 @@ public final class Example73 {
         System.out.println("ex-73: service-under-load-clean");
     }
 }
-

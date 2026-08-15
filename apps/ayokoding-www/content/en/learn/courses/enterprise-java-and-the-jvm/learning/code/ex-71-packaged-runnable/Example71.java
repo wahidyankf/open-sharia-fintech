@@ -5,4 +5,3 @@ public final class Example71 {
         System.out.println("ex-71: packaged-runnable");
     }
 }
-

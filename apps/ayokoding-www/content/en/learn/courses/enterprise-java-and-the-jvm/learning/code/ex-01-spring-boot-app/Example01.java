@@ -5,4 +5,3 @@ public final class Example01 {
         System.out.println("ex-01: spring-boot-app");
     }
 }
-

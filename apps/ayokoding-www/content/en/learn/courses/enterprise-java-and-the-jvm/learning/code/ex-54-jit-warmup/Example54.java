@@ -5,4 +5,3 @@ public final class Example54 {
         System.out.println("ex-54: jit-warmup");
     }
 }
-

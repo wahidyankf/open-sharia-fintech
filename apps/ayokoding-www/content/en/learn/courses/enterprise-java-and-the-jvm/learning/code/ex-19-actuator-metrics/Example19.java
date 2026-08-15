@@ -5,4 +5,3 @@ public final class Example19 {
         System.out.println("ex-19: actuator-metrics");
     }
 }
-

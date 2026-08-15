@@ -5,4 +5,3 @@ public final class Example61 {
         System.out.println("ex-61: gc-log-reading");
     }
 }
-

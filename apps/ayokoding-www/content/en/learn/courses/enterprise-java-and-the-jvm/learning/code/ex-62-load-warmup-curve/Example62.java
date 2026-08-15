@@ -5,4 +5,3 @@ public final class Example62 {
         System.out.println("ex-62: load-warmup-curve");
     }
 }
-

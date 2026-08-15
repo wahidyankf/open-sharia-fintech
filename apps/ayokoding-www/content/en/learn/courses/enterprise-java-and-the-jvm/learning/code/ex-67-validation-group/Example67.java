@@ -5,4 +5,3 @@ public final class Example67 {
         System.out.println("ex-67: validation-group");
     }
 }
-

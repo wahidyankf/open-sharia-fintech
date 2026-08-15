@@ -32,4 +32,3 @@ class ItemController {
     record CreateItem(@NotBlank String name) {}
     record ItemResponse(Long id, String name) {}
 }
-

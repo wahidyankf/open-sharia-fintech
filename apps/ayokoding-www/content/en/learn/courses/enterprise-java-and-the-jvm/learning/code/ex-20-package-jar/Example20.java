@@ -5,4 +5,3 @@ public final class Example20 {
         System.out.println("ex-20: package-jar");
     }
 }
-

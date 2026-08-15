@@ -5,4 +5,3 @@ public final class Example41 {
         System.out.println("ex-41: transaction-rollback");
     }
 }
-

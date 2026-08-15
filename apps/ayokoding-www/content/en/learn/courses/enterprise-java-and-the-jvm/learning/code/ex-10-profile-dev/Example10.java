@@ -5,4 +5,3 @@ public final class Example10 {
         System.out.println("ex-10: profile-dev");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example16 {
         System.out.println("ex-16: json-request");
     }
 }
-

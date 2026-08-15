@@ -5,4 +5,3 @@ public final class Example26 {
         System.out.println("ex-26: injected-list");
     }
 }
-

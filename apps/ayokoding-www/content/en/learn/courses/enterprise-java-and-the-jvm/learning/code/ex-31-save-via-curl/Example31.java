@@ -5,4 +5,3 @@ public final class Example31 {
         System.out.println("ex-31: save-via-curl");
     }
 }
-

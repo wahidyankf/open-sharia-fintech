@@ -5,4 +5,3 @@ public final class Example77 {
         System.out.println("ex-77: integration-runtime-observed");
     }
 }
-

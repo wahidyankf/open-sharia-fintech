@@ -5,4 +5,3 @@ public final class Example04 {
         System.out.println("ex-04: service-annotation");
     }
 }
-

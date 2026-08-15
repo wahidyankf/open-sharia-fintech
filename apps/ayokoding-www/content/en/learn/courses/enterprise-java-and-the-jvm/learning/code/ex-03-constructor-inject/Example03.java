@@ -5,4 +5,3 @@ public final class Example03 {
         System.out.println("ex-03: constructor-inject");
     }
 }
-

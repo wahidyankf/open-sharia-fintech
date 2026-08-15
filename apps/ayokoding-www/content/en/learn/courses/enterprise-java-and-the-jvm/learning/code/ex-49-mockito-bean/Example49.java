@@ -5,4 +5,3 @@ public final class Example49 {
         System.out.println("ex-49: mockito-bean");
     }
 }
-

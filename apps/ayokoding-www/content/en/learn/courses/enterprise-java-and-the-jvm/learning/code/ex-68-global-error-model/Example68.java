@@ -5,4 +5,3 @@ public final class Example68 {
         System.out.println("ex-68: global-error-model");
     }
 }
-

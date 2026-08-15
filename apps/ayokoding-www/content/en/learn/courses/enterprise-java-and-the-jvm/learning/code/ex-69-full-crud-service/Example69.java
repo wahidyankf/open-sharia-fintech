@@ -5,4 +5,3 @@ public final class Example69 {
         System.out.println("ex-69: full-crud-service");
     }
 }
-

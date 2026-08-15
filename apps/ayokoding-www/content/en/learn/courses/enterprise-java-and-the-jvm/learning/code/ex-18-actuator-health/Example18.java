@@ -5,4 +5,3 @@ public final class Example18 {
         System.out.println("ex-18: actuator-health");
     }
 }
-

@@ -5,4 +5,3 @@ public final class Example12 {
         System.out.println("ex-12: get-mapping");
     }
 }
-
