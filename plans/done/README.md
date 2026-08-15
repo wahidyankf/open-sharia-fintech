@@ -9,6 +9,10 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-16: ayokoding-learning-path-17-skills-erp-foundations](./2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/README.md) —
+  Added fifteen Stage-A ERP foundations and two matching deployable fifteen-course ERP paths. Delivery
+  Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
 - [2026-08-16: ayokoding-learning-path-16-skills-accounting-sharia-extension](./2026-08-16__ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md) —
   Added five Sharia accounting courses, grew only the Sharia accounting manifest to its terminal
   twenty-four courses, and completed the accounting corpus. Delivery Mode: `worktree-to-pr`; terminal
