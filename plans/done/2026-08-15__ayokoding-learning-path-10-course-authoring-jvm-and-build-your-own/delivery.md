@@ -88,10 +88,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -349,10 +349,10 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [x] [AI] `npm exec nx affected -t typecheck` exits 0.
 - [x] [AI] `npm exec nx affected -t lint` exits 0.
 - [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+- [x] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change in this cohort's diff); stated here explicitly rather than by silent omission.
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
       (Root Cause Orientation) — committing any preexisting fixes separately from this cohort's own
       thematic commits.
 
@@ -375,10 +375,10 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `just-enough-fsharp`).
 - [x] [AI] `software-architecture`'s hard gate (immediately before `enterprise-java-and-the-jvm`'s own
       sub-phase) passed with a zero-exit `test -d`, confirming no dangling prerequisite edge shipped.
-- [ ] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0;
+- [x] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0;
       the Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
 - [x] [AI] Zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: the JVM/Lisp/functional-typing quintet is committed on `final-delivery`; every internal prerequisite pair
@@ -482,13 +482,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `for p in just-enough-go distributed-systems; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-raft/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
+- [x] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Licensing self-check (programme A8)** on all 4 bodies' worked-example code:
+- [x] [AI] **Licensing self-check (programme A8)** on all 4 bodies' worked-example code:
       `for s in compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do grep -rln 'stackoverflow\.com\|reddit\.com' "apps/ayokoding-www/content/en/learn/courses/$s/learning/code/" 2>/dev/null; done | grep -c .`
       — acceptance: prints `0`.
-- [ ] [AI] **Record the partial band-completion signal** — append to this file, in a fenced `text`
+- [x] [AI] **Record the partial band-completion signal** — append to this file, in a fenced `text`
       block:
 
   ```text
@@ -516,13 +516,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change in this cohort's diff); stated here explicitly rather than by silent omission.
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
       (Root Cause Orientation) — committing any preexisting fixes separately from this cohort's own
       thematic commits.
 
@@ -534,19 +534,19 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] All 4 Cohort-2 bodies exist:
+- [x] [AI] All 4 Cohort-2 bodies exist:
       `for s in compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0**.
-- [ ] [AI] All 4 bodies' declared prerequisites verified present (per each item's own acceptance
+- [x] [AI] All 4 bodies' declared prerequisites verified present (per each item's own acceptance
       clause above).
-- [ ] [AI] Checkers clean across all 4; build + `lint:md` exit 0; the Local Quality Gates section
+- [x] [AI] Checkers clean across all 4; build + `lint:md` exit 0; the Local Quality Gates section
       above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Partial band-completion signal recorded with its four content fields complete; it becomes
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] Partial band-completion signal recorded with its four content fields complete; it becomes
       actionable only after the Phase 7 terminal archival PR merges.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
-- [ ] [AI] **Confirm all 9 course bodies now exist** (both cohorts combined):
+- [x] [AI] **Confirm all 9 course bodies now exist** (both cohorts combined):
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       returns **0**.
 
@@ -561,23 +561,23 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > Intermediate phase — folds into the Phase 7 terminal archival PR (see Delivery Boundaries table).
 
-- [ ] [AI] Re-run every content checker across all 9 bodies (`apps-ayokoding-www-primer-checker` for
+- [x] [AI] Re-run every content checker across all 9 bodies (`apps-ayokoding-www-primer-checker` for
       the 2 Primers, `apps-ayokoding-www-by-example-checker` for the 7 By-Example bodies,
       `apps-ayokoding-www-facts-checker`, `apps-ayokoding-www-link-checker`) — acceptance: zero
       CRITICAL/HIGH/MEDIUM findings remain across all 9.
-- [ ] [AI] Re-run the cross-plan link gate (same command as Phase 0) — acceptance: `grep` finds no
+- [x] [AI] Re-run the cross-plan link gate (same command as Phase 0) — acceptance: `grep` finds no
       matching line naming this plan's folder.
-- [ ] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` — acceptance: both exit 0.
-- [ ] [AI] Re-run the independence-from-plan-07 check from tech-docs.md — command:
+- [x] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` — acceptance: both exit 0.
+- [x] [AI] Re-run the independence-from-plan-07 check from tech-docs.md — command:
       `for s in just-enough-c just-enough-cpp linux-os windows-os system-programming just-enough-rust modern-system-programming; do grep -rl "$s" apps/ayokoding-www/content/en/learn/courses/{just-enough-java,enterprise-java-and-the-jvm,lisp,just-enough-fsharp,type-systems,compilers-parsers-and-transpilers,build-your-own-git,build-your-own-database,build-your-own-raft}/_index.md 2>/dev/null; done | grep -c .`
       — acceptance: returns **0** (none of this plan's 9 `_index.md` files declares a plan-07 course
       as a prerequisite).
 
 ### Phase 3 Gate
 
-- [ ] [AI] All checkers clean; build + lint green; cross-plan link gate green; independence check
+- [x] [AI] All checkers clean; build + lint green; cross-plan link gate green; independence check
       returns 0.
-- [ ] [AI] Nothing pushed for review yet at this intermediate phase (commits remain on
+- [x] [AI] Nothing pushed for review yet at this intermediate phase (commits remain on
       `final-delivery`).
 
 > **Pause Safety**: all 9 bodies pass every content-correctness check with zero outstanding findings.
@@ -591,18 +591,18 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > A sample of this plan's 9 authored pages is still opened and screenshotted manually, `en` locale only
 > (this plan's content is `en`-only by design; the `id` deferral is stated, not silently skipped).
 
-- [ ] [AI] Start dev server: `nx dev ayokoding-www`.
-- [ ] [AI] For a representative sample — `just-enough-java` (Primer), `build-your-own-database`
+- [x] [AI] Start dev server: `nx dev ayokoding-www`.
+- [x] [AI] For a representative sample — `just-enough-java` (Primer), `build-your-own-database`
       (By Example, Band-1-dependent), and `build-your-own-raft` (By Example, cross-plan-dependent) —
       navigate to `/en/learn/courses/<course-id>` at 375px, 768px, and 1280px via `browser_navigate` +
       `browser_resize`.
-- [ ] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang]` is `en`, prerequisites render, no
+- [x] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang]` is `en`, prerequisites render, no
       untranslated strings.
-- [ ] [AI] Check for JS errors via `browser_console_messages` — zero errors per page per breakpoint.
-- [ ] [AI] Capture one screenshot per page per breakpoint via `browser_take_screenshot`, saved to
+- [x] [AI] Check for JS errors via `browser_console_messages` — zero errors per page per breakpoint.
+- [x] [AI] Capture one screenshot per page per breakpoint via `browser_take_screenshot`, saved to
       `evidence/phase-4-<course-id>-en-<breakpoint>px.png` (9 screenshots total: 3 courses × 3
       breakpoints).
-- [ ] [AI] Document each screenshot inline: `![alt](./evidence/phase-4-<course-id>-en-<breakpoint>px.png)`.
+- [x] [AI] Document each screenshot inline: `![alt](./evidence/phase-4-<course-id>-en-<breakpoint>px.png)`.
 
 ### Phase 4 Gate
 
@@ -631,14 +631,14 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ## Phase 6: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the secret/sensitivity gate to every surviving entry.
-- [ ] [AI] Apply the repo-relevance gate to every surviving entry.
-- [ ] [AI] Route each surviving entry to exactly one durable home (a small non-code edit lands inline;
+- [x] [AI] Apply the secret/sensitivity gate to every surviving entry.
+- [x] [AI] Apply the repo-relevance gate to every surviving entry.
+- [x] [AI] Route each surviving entry to exactly one durable home (a small non-code edit lands inline;
       larger non-code work or any code-homed learning files a `plans/backlog/` follow-up plan).
-- [ ] [AI] Record the terminal state of every entry directly in `learnings.md`.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] Record the terminal state of every entry directly in `learnings.md`.
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
@@ -650,9 +650,9 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Phase 6 Gate
 
-- [ ] [AI] Every `learnings.md` entry reached a terminal state or the explicit "none" escape is
+- [x] [AI] Every `learnings.md` entry reached a terminal state or the explicit "none" escape is
       present.
-- [ ] [AI] No code-homed learning landed inline — every code-routed learning has a corresponding
+- [x] [AI] No code-homed learning landed inline — every code-routed learning has a corresponding
       `plans/backlog/` folder.
 
 > **Pause Safety**: all learnings are triaged or explicitly discarded. Safe to stop. To resume:
@@ -664,37 +664,37 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify all delivery checklist items above are ticked.
-- [ ] [AI] Verify all quality gates pass (local + CI).
-- [ ] [AI] Verify all manual assertions pass with committed evidence in `evidence/`.
-- [ ] [AI] Verify the `en`-only locale scope was exercised and the `id` deferral stated, not silently
+- [x] [AI] Verify all delivery checklist items above are ticked.
+- [x] [AI] Verify all quality gates pass (local + CI).
+- [x] [AI] Verify all manual assertions pass with committed evidence in `evidence/`.
+- [x] [AI] Verify the `en`-only locale scope was exercised and the `id` deferral stated, not silently
       skipped.
-- [ ] [AI] Move plan folder from `plans/backlog/` to `plans/done/` via
+- [x] [AI] Move plan folder from `plans/backlog/` to `plans/done/` via
       `git mv plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own plans/done/<completion-date>__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`
       (the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
-- [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
-- [ ] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
+- [x] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
+- [x] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
+- [x] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
       those plans exist on disk).
-- [ ] [AI] Push `final-delivery`, open the one terminal archival draft PR, run the secret scan, local quality checks, and PR quality-gate verification,
+- [x] [AI] Push `final-delivery`, open the one terminal archival draft PR, run the secret scan, local quality checks, and PR quality-gate verification,
       `[AI]`-merge, and deploy (after rendering-baseline verification).
-- [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own to done`.
-- [ ] [AI] Prompt the user before removing this plan's worktree; remove it only on explicit
+- [x] [AI] Commit: `chore(plans): move ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own to done`.
+- [x] [AI] Prompt the user before removing this plan's worktree; remove it only on explicit
       confirmation, and only once nothing is uncommitted or unpushed.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring plan, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change across this plan's closeout diff); stated here explicitly rather than by silent omission.
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
       (Root Cause Orientation) — committing any preexisting fixes separately from this closeout's own
       thematic commits.
 
@@ -704,11 +704,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Phase 7 Gate
 
-- [ ] [AI] Plan folder confirmed under `plans/done/`; both `README.md` indexes updated; closeout PR
+- [x] [AI] Plan folder confirmed under `plans/done/`; both `README.md` indexes updated; closeout PR
       merged to `origin/main`.
-- [ ] [AI] `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < plans/done/*ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/evidence/authored-body-slugs.txt | grep -c .`
+- [x] [AI] `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < plans/done/*ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/evidence/authored-body-slugs.txt | grep -c .`
       returns **0** — all 9 authored bodies confirmed present on `origin/main` at archival.
-- [ ] [AI] The Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all
+- [x] [AI] The Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all
       passed before this closeout PR merged.
 
 > **Pause Safety**: the plan is archived, all 9 bodies are live on `origin/main`, and the manifest plan

@@ -88,10 +88,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -893,9 +893,9 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 - [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
       _Implementation note (2026-08-15): draft PR #201 is the sole PR; the scoped diff secret scan and
       pre-push gate passed, and pr-quality-gate run 31877551044 succeeded._
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
+- [x] [AI] Verify ALL delivery checklist items are ticked.
 - [x] [AI] Verify the Knowledge Capture phase is complete.
 - [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
       _Implementation note (2026-08-15): local pre-push passed and PR run 31877551044 succeeded._
@@ -948,7 +948,7 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 - [x] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/`; all
       READMEs updated; archival committed.
-- [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
+- [x] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
@@ -958,23 +958,23 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
       course bundle per commit is the natural unit here).
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) — e.g.
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) — e.g.
       `feat(ayokoding-www): add it-governance-grc course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
       plans may be authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.

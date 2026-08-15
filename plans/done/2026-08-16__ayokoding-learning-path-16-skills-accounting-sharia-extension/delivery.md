@@ -57,10 +57,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -143,7 +143,7 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
 
 ### Environment Setup
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-16-skills-accounting-sharia-extension/ plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -153,28 +153,28 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Confirm the worktree is provisioned and current:
+- [x] [AI] Confirm the worktree is provisioned and current:
       `git worktree list | grep -F "ayokoding-learning-path-16-skills-accounting-sharia-extension"` exits 0.
-- [ ] [AI] Install dependencies: `npm install`.
-- [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
-- [ ] [AI] Verify dev server starts: `nx dev ayokoding-www`.
-- [ ] [AI] Verify existing tests pass before making changes: `npm exec nx run ayokoding-www:test:quick`.
+- [x] [AI] Install dependencies: `npm install`.
+- [x] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
+- [x] [AI] Verify dev server starts: `nx dev ayokoding-www`.
+- [x] [AI] Verify existing tests pass before making changes: `npm exec nx run ayokoding-www:test:quick`.
 
 ### Baseline (must all be true before any content is authored)
 
-- [ ] [AI] Direct predecessor archival check passed; repository baseline facts checked — run the loop in
+- [x] [AI] Direct predecessor archival check passed; repository baseline facts checked — run the loop in
       [§Depends-on](#depends-on); acceptance: empty output.
-- [ ] [AI] Both manifests exist; `MANIFEST_CA` holds exactly 19 entries (its terminal state) and
+- [x] [AI] Both manifests exist; `MANIFEST_CA` holds exactly 19 entries (its terminal state) and
       `MANIFEST_SA` holds exactly 19 entries (its starting state for this plan) — acceptance:
       `[ "$(grep -cE '^  - ' "$MANIFEST_CA")" -eq 19 ] && [ "$(grep -cE '^  - ' "$MANIFEST_SA")" -eq 19 ] && echo BASELINE-OK || echo BASELINE-FAIL`
       prints `BASELINE-OK`.
-- [ ] [AI] No course in `ACCT_P16` exists yet:
+- [x] [AI] No course in `ACCT_P16` exists yet:
       `for c in "${ACCT_P16[@]}"; do test -d "${COURSES}$c" && echo "FOUND $c"; done | wc -l` returns
       **0** — acceptance: returns 0 today, returns 5 after Phase 3.
-- [ ] [AI] `sharia-accounting`'s landing exists (inherited) but does not yet state full path
+- [x] [AI] `sharia-accounting`'s landing exists (inherited) but does not yet state full path
       completeness: `grep -F -q 'the path is complete' "${LANDING_SA}_index.md" && echo PREMATURE || echo OK`
       prints `OK`.
-- [ ] [AI] Record `MANIFEST_CA`'s current checksum for the terminal-freeze assertion used at every
+- [x] [AI] Record `MANIFEST_CA`'s current checksum for the terminal-freeze assertion used at every
       later gate: `git rev-parse HEAD:"$MANIFEST_CA" > /tmp/manifest-ca-baseline.sha` — acceptance:
       file written, non-empty.
 
@@ -182,9 +182,9 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm run doctor -- --fix` exits 0.
-- [ ] [AI] `npm exec nx run ayokoding-www:test:quick` exits 0.
-- [ ] [AI] Every Baseline check above holds.
+- [x] [AI] `npm run doctor -- --fix` exits 0.
+- [x] [AI] `npm exec nx run ayokoding-www:test:quick` exits 0.
+- [x] [AI] Every Baseline check above holds.
 
 > **Pause Safety**: plan 15's authored slice is confirmed present and correct, and
 > `conventional-accounting.json`'s baseline checksum is recorded; this plan's own content does not
@@ -201,9 +201,9 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
 
 ### 1.1 · Create the spec folders
 
-- [ ] [AI] Create `"${SPEC}"` and `"${SPECPATHS}"` _(new directories)_ — acceptance: both
+- [x] [AI] Create `"${SPEC}"` and `"${SPECPATHS}"` _(new directories)_ — acceptance: both
       `test -d` exit 0.
-- [ ] [AI] Create `"${SPEC}README.md"`, `"${SPECPATHS}README.md"`, and
+- [x] [AI] Create `"${SPEC}README.md"`, `"${SPECPATHS}README.md"`, and
       `"${PLANDIR}syllabus/README.md"` _(new files)_ with the
       `**Custodian**: ayokoding-learning-path-16-skills-accounting-sharia-extension` line —
       acceptance: `grep -q '\*\*Custodian\*\*: ayokoding-learning-path-16-skills-accounting-sharia-extension' "${PLANDIR}syllabus/README.md"`
@@ -211,28 +211,28 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
 
 ### 1.2 · Author all five syllabi
 
-- [ ] [AI] Author `"${SPEC}<course-id>.md"` for each of the 5 courses in `ACCT_P16` — acceptance:
+- [x] [AI] Author `"${SPEC}<course-id>.md"` for each of the 5 courses in `ACCT_P16` — acceptance:
       `for c in "${ACCT_P16[@]}"; do test -f "${SPEC}$c.md" || echo "MISSING $c"; done | wc -l`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-general-maker`_
-- [ ] [AI] Confirm every syllabus has no `## Capstone spec` section (A6) and does have
+- [x] [AI] Confirm every syllabus has no `## Capstone spec` section (A6) and does have
       `## Applied synthesis (no build — A6)` — acceptance: both checks return **0** violations.
-- [ ] [AI] Confirm all 5 courses in `ACCT_SILENT_P16` carry a worked silent-failure example:
+- [x] [AI] Confirm all 5 courses in `ACCT_SILENT_P16` carry a worked silent-failure example:
       `for c in "${ACCT_SILENT_P16[@]}"; do grep -q 'silent-failure' "${SPEC}$c.md" || echo "MISSING $c"; done | wc -l`
       returns **0**.
-- [ ] [AI] Confirm course #20's syllabus states the OI-2 doctrinal boundary explicitly (the
+- [x] [AI] Confirm course #20's syllabus states the OI-2 doctrinal boundary explicitly (the
       practical consequence, never the unsettled derivation):
       `grep -F -q 'OI-2' "${SPEC}sharia-accounting-and-aaoifi-standards.md"` exits 0.
 
 ### 1.3 · Coverage pass (A12 step 2)
 
-- [ ] [AI] For each course, dispatch `web-researcher` with the coverage-only question, never a
+- [x] [AI] For each course, dispatch `web-researcher` with the coverage-only question, never a
       curriculum-matching question — acceptance: each syllabus's `## In which paths` section is
       unchanged by the coverage pass.
 
 ### 1.4 · Licensing-sensitive-sources recording
 
-- [ ] [AI] For each of the 5 syllabi, record which standard numbers it cites (AAOIFI FAS numbers,
+- [x] [AI] For each of the 5 syllabi, record which standard numbers it cites (AAOIFI FAS numbers,
       PSAK series, MFRS/Bank Negara references) and any reference implementation, in
       `## Accuracy notes` — acceptance:
       `for c in "${ACCT_P16[@]}"; do grep -q '^## Accuracy notes' "${SPEC}$c.md" || echo "MISSING $c"; done | wc -l`
@@ -242,15 +242,15 @@ ACCT_SILENT_P16=("${ACCT_P16[@]}")                     # 5 — this plan's own s
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] All 5 syllabus files exist, each with `## Applied synthesis (no build — A6)` and no
+- [x] [AI] All 5 syllabus files exist, each with `## Applied synthesis (no build — A6)` and no
       `## Capstone spec`.
-- [ ] [AI] All 5 syllabi carry a worked silent-failure example.
-- [ ] [AI] Every syllabus has a non-empty `## Accuracy notes` licensing-sensitive-sources record.
-- [ ] [AI] **Concept floor holds (≥ 8)** —
+- [x] [AI] All 5 syllabi carry a worked silent-failure example.
+- [x] [AI] Every syllabus has a non-empty `## Accuracy notes` licensing-sensitive-sources record.
+- [x] [AI] **Concept floor holds (≥ 8)** —
       `for c in "${ACCT_P16[@]}"; do n=$(grep -c '^- \*\*co-[0-9]' "${SPEC}$c.md"); [ "$n" -ge 8 ] || echo "UNDER-FLOOR $c = $n"; done | wc -l`
       returns **0**.
-- [ ] [AI] `npm run lint:md` exits 0 on the new `syllabus/` tree.
-- [ ] [AI] **Every prerequisite edge is transcribed and resolves**, including edges reaching back
+- [x] [AI] `npm run lint:md` exits 0 on the new `syllabus/` tree.
+- [x] [AI] **Every prerequisite edge is transcribed and resolves**, including edges reaching back
       into plans 14's and 15's already-merged courses:
 
 ```bash
@@ -289,29 +289,29 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**. Unli
 
 ### 2.1 · Re-confirm each item's current status
 
-- [ ] [AI] Re-run a `web-researcher` check against OI-1's named primary source (IAI's published
+- [x] [AI] Re-run a `web-researcher` check against OI-1's named primary source (IAI's published
       PSAK Syariah standard list) — acceptance: the `RESOLVED` status and its stated residual (the
       unconfirmed PPSAK ratification date) either hold unchanged or are updated with a dated new
       finding, never silently dropped.
-- [ ] [AI] Re-run a `web-researcher` check against OI-2's status — acceptance: OI-2's status line
+- [x] [AI] Re-run a `web-researcher` check against OI-2's status — acceptance: OI-2's status line
       is confirmed to still read exactly `OI-2: OPEN`; if a primary AAOIFI Shari'ah Standard or IFSB
       publication is newly found, record it as a **new**, separately dated finding — **do not**
       promote OI-2 to `RESOLVED` on secondary-source or inferential grounds.
-- [ ] [AI] Re-run a `web-researcher` check against OI-3's named primary source (AAOIFI's
+- [x] [AI] Re-run a `web-researcher` check against OI-3's named primary source (AAOIFI's
       adoption-by-country index) — acceptance: the `RESOLVED` status and its stated governance-
       mechanics residual either hold unchanged or are updated with a dated new finding.
-- [ ] [AI] Confirm OI-4's `ROUTED` status against plan 02's own dated ruling — acceptance: read
+- [x] [AI] Confirm OI-4's `ROUTED` status against plan 02's own dated ruling — acceptance: read
       plan 02's archived `tech-docs.md` ruling text directly (dated 2026-07-21), and record
       confirmation in this checklist.
 
 ### 2.2 · Update the registry
 
-- [ ] [AI] Update the status-line block in
+- [x] [AI] Update the status-line block in
       [tech-docs.md §Open verification items](./tech-docs.md#open-verification-items-oi-1-through-oi-4)
       in place — never delete a resolved line, rewrite its status — acceptance:
       `grep -c '^OI-1: ' "${PLANDIR}tech-docs.md"` returns **1**, and the same for `OI-2`, `OI-3`,
       `OI-4`.
-- [ ] [AI] **OI-2 falsifiable check** — `grep -F -q 'OI-2: OPEN' "${PLANDIR}tech-docs.md"` exits 0
+- [x] [AI] **OI-2 falsifiable check** — `grep -F -q 'OI-2: OPEN' "${PLANDIR}tech-docs.md"` exits 0
       **and** `grep -F -q 'OI-2: RESOLVED' "${PLANDIR}tech-docs.md"` exits 1 — both directions
       checked, so a silent promotion to `RESOLVED` cannot pass unnoticed.
 
@@ -319,10 +319,10 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**. Unli
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] OI-1's and OI-3's `RESOLVED` status lines (with their stated residuals) are present.
-- [ ] [AI] OI-2's status line reads exactly `OI-2: OPEN`.
-- [ ] [AI] OI-4's `ROUTED` status is confirmed against plan 02's ruling.
-- [ ] [AI] No course body exists yet in `ACCT_P16` — this phase precedes authoring.
+- [x] [AI] OI-1's and OI-3's `RESOLVED` status lines (with their stated residuals) are present.
+- [x] [AI] OI-2's status line reads exactly `OI-2: OPEN`.
+- [x] [AI] OI-4's `ROUTED` status is confirmed against plan 02's ruling.
+- [x] [AI] No course body exists yet in `ACCT_P16` — this phase precedes authoring.
 
   **Gherkin (binds) →** "The verification-debt registry stays honest about the riba doctrinal
   basis" (checks the registry status line itself, not authored content — see the distinct,
@@ -359,7 +359,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.1 · Author the five Stage-3 bodies
 
-- [ ] [AI] Course #20 `sharia-accounting-and-aaoifi-standards` (Annotated-concept; prerequisites:
+- [x] [AI] Course #20 `sharia-accounting-and-aaoifi-standards` (Annotated-concept; prerequisites:
       plan 14's #5, plan 15's #14) — presents AAOIFI, PSAK Syariah, and MFRS-plus-BNM as three
       coexisting models; states OI-2's practical consequence without asserting its unsettled
       derivation — acceptance: 7 steps complete (per plan 14's own §2.1 convention, adapted for
@@ -369,7 +369,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
       exits 0 **and**
       `grep -F -q 'MFRS' "${COURSES}sharia-accounting-and-aaoifi-standards/overview.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Course #21 `islamic-contract-modeling-for-systems` (By Example; prerequisites: this
+- [x] [AI] Course #21 `islamic-contract-modeling-for-systems` (By Example; prerequisites: this
       plan's #20, plan 14's #2) — models murabaha as a trade, contrasted explicitly against a
       conventional amortising loan — acceptance: 7 steps complete; silent-failure section present;
       `grep -F -q 'murabaha' "${COURSES}islamic-contract-modeling-for-systems/overview.md"` exits 0
@@ -377,7 +377,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
       `grep -F -q 'amortising loan' "${COURSES}islamic-contract-modeling-for-systems/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Course #22 `zakah-computation-and-reporting-for-systems` (By Example; prerequisite: this
+- [x] [AI] Course #22 `zakah-computation-and-reporting-for-systems` (By Example; prerequisite: this
       plan's #21) — Zakah as its own obligation under AAOIFI FAS 9, distinct from income tax —
       acceptance: 7 steps complete; silent-failure section present;
       `grep -F -q 'FAS 9' "${COURSES}zakah-computation-and-reporting-for-systems/overview.md"`
@@ -385,13 +385,13 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
       `grep -F -q 'not income tax' "${COURSES}zakah-computation-and-reporting-for-systems/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Course #23 `sukuk-and-islamic-capital-markets-accounting` (Annotated-concept;
+- [x] [AI] Course #23 `sukuk-and-islamic-capital-markets-accounting` (Annotated-concept;
       prerequisites: this plan's #21, plan 15's #12) — Sukuk accounting under AAOIFI FAS 32-34,
       distinct from conventional bond accounting — acceptance: 7 steps complete; silent-failure
       section present; `grep -F -q 'FAS 3' "${COURSES}sukuk-and-islamic-capital-markets-accounting/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Course #24 `sharia-ledger-system-architecture` (By Example; prerequisites: this plan's
+- [x] [AI] Course #24 `sharia-ledger-system-architecture` (By Example; prerequisites: this plan's
       #21, plan 15's #19) — the corpus's terminal, architecture-closing course; replaces the
       retired plan's deleted `capstone-sharia-compliant-ledger` capstone (A6); no separate linked
       SWE prerequisite of its own — inherits `backend-essentials`'s grounding through its own
@@ -400,10 +400,10 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
       `test -d "${COURSES}sharia-ledger-system-architecture/learning/capstone" && echo VIOLATION || echo OK`
       prints `OK`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] **Stage-3 body check** —
+- [x] [AI] **Stage-3 body check** —
       `for c in "${ACCT_P16[@]}"; do test -d "${COURSES}$c" || echo "MISSING $c"; done | wc -l`
       returns **0**.
-- [ ] [AI] Append all five catalog rows to `"${COURSES}_index.md"` — acceptance:
+- [x] [AI] Append all five catalog rows to `"${COURSES}_index.md"` — acceptance:
       `for c in "${ACCT_P16[@]}"; do grep -F -q "$c" "${COURSES}_index.md" || echo "MISSING $c"; done | wc -l`
       returns **0**.
 
@@ -443,7 +443,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.2 · TDD cycle — grow `sharia-accounting.json` ONLY, to twenty-four
 
-- [ ] [AI] **RED** — extend `$MTEST_SA` with failing assertions that `courseOrder` grows from
+- [x] [AI] **RED** — extend `$MTEST_SA` with failing assertions that `courseOrder` grows from
       length 19 to length 24, appending `ACCT_P16` in order, still passing both integrity checks —
       command: `npm exec nx run ayokoding-www:test:unit` — acceptance: the new assertion **fails** (length
       still 19). **`$MTEST_CA` receives no new assertion in this phase.**
@@ -460,27 +460,27 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
     And conventional-accounting.json remains exactly as it was at the end of plan 15
   ```
 
-- [ ] [AI] **GREEN** — grow `$MANIFEST_SA` to 24 entries (holds exactly `ACCT_SA_FULL` in order) —
+- [x] [AI] **GREEN** — grow `$MANIFEST_SA` to 24 entries (holds exactly `ACCT_SA_FULL` in order) —
       command: `npm exec nx run ayokoding-www:test:unit` — acceptance: exits 0; the file has exactly 24
       `courseOrder` entries.
-- [ ] [AI] **REFACTOR** — command: `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www:lint` —
+- [x] [AI] **REFACTOR** — command: `npm exec nx run ayokoding-www:test:unit && npm exec nx run ayokoding-www:lint` —
       acceptance: exits 0.
-- [ ] [AI] **`conventional-accounting.json` untouched check, immediately after GREEN** —
+- [x] [AI] **`conventional-accounting.json` untouched check, immediately after GREEN** —
       `git diff --quiet -- "$MANIFEST_CA"` exits 0 — falsifiable both ways: this check would fail
       if the growth step above had (incorrectly) touched the file, and must continue to pass at
       every later gate.
-- [ ] [AI] **Shared-course non-duplication check (A11), full 24-course sweep** —
+- [x] [AI] **Shared-course non-duplication check (A11), full 24-course sweep** —
       `for c in "${ACCT_SA_FULL[@]}"; do n=$(find "${COURSES}$c" -maxdepth 0 -type d | wc -l); [ "$n" -eq 1 ] || echo "DUPLICATE-OR-MISSING $c"; done | wc -l`
       returns **0**.
 
 ### 3.3 · `sharia-accounting` reaches its terminal state — the corpus's own final milestone
 
-- [ ] [AI] Update `"${LANDING_SA}_index.md"` to state the path is **complete** at twenty-four
+- [x] [AI] Update `"${LANDING_SA}_index.md"` to state the path is **complete** at twenty-four
       courses (no further growth is coming) — acceptance:
       `grep -F -q 'complete' "${LANDING_SA}_index.md"` exits 0.
-- [ ] [AI] **`conventional-accounting`'s landing is NOT touched** —
+- [x] [AI] **`conventional-accounting`'s landing is NOT touched** —
       `git diff --quiet -- "${LANDING_CA}_index.md"` exits 0.
-- [ ] [AI] Run `apps-ayokoding-www-link-checker` and `apps-ayokoding-www-general-checker` over the
+- [x] [AI] Run `apps-ayokoding-www-link-checker` and `apps-ayokoding-www-general-checker` over the
       updated `sharia-accounting` landing — apply fixers — acceptance: zero
       CRITICAL/HIGH/MEDIUM remain.
 
@@ -497,22 +497,22 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.4 · TDD cycle — extend the `sharia-accounting` path-walk to twenty-four courses
 
-- [ ] [AI] **RED** — extend the count-parameterized "walk a skills path" step (inherited from plan
+- [x] [AI] **RED** — extend the count-parameterized "walk a skills path" step (inherited from plan
       15's own REFACTOR step) in `apps/ayokoding-www-fe-e2e/src/steps/skills-path-composition.steps.ts`
       so `sharia-accounting`'s `pathId` walks all **24** published courses via prev/next — command:
       `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
       24-course assertion **fails** for `sharia-accounting` (only 19 courses were walked before this
       phase); `conventional-accounting`'s own 19-course walk assertion is **untouched** and
       continues to pass.
-- [ ] [AI] **GREEN** — implement against the grown manifest — command:
+- [x] [AI] **GREEN** — implement against the grown manifest — command:
       `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0.
-- [ ] [AI] **REFACTOR** — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0,
+- [x] [AI] **REFACTOR** — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0,
       scenario count unchanged for `conventional-accounting`'s own row.
 
 ### 3.5 · Full-corpus silent-failure check
 
-- [ ] [AI] `for c in "${ACCT_SILENT_P16[@]}"; do grep -q 'silent-failure\|What still balances while being wrong' "${COURSES}$c/overview.md" || echo "MISSING $c"; done | wc -l`
+- [x] [AI] `for c in "${ACCT_SILENT_P16[@]}"; do grep -q 'silent-failure\|What still balances while being wrong' "${COURSES}$c/overview.md" || echo "MISSING $c"; done | wc -l`
       returns **0**.
 
   **Gherkin (binds) →** "Every course from twenty through twenty-four names what still balances
@@ -528,7 +528,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.6 · No standard's text or proprietary structure is reproduced (this plan's own check)
 
-- [ ] [AI] Read all five course bodies against the eleven safe-authoring rules
+- [x] [AI] Read all five course bodies against the eleven safe-authoring rules
       (see [tech-docs §Licensing](./tech-docs.md#licensing-and-ip-compliance-a8--the-full-four-body-posture-applying-in-full-for-the-first-time)) —
       acceptance: zero violations; every chart of accounts is confirmed originally authored, not
       transcribed from any textbook or reference implementation.
@@ -545,7 +545,7 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.7 · Stage-3 signal
 
-- [ ] [AI] **Record the Stage-3 signal**, exact literal shape from
+- [x] [AI] **Record the Stage-3 signal**, exact literal shape from
       [tech-docs §Stage-signal contract](./tech-docs.md#stage-signal-contract-the-plan-18-handoff-sharia-stage-granularity),
       each field anchored at column 0, outside any table/bullet/blockquote:
 
@@ -562,18 +562,18 @@ FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-exten
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] All 5 Stage-3 course bodies exist, checkers green, every one carries a silent-failure
+- [x] [AI] All 5 Stage-3 course bodies exist, checkers green, every one carries a silent-failure
       section.
-- [ ] [AI] `sharia-accounting.json` grown to 24, passes `test:unit`.
-- [ ] [AI] **`conventional-accounting.json` byte-for-byte unchanged since plan 15's own merge** —
+- [x] [AI] `sharia-accounting.json` grown to 24, passes `test:unit`.
+- [x] [AI] **`conventional-accounting.json` byte-for-byte unchanged since plan 15's own merge** —
       `git diff --quiet -- "$MANIFEST_CA"` exits 0.
-- [ ] [AI] `sharia-accounting` landing states full path completeness; `conventional-accounting`'s
+- [x] [AI] `sharia-accounting` landing states full path completeness; `conventional-accounting`'s
       landing is untouched.
-- [ ] [AI] `sharia-accounting`'s path-walk e2e walks all 24 courses; `conventional-accounting`'s own
+- [x] [AI] `sharia-accounting`'s path-walk e2e walks all 24 courses; `conventional-accounting`'s own
       19-course walk assertion is unaffected.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 8.
-- [ ] [AI] `npm exec nx run ayokoding-www:build` exits 0.
+- [x] [AI] `npm exec nx run ayokoding-www:build` exits 0.
 
 > **Pause Safety**: `sharia-accounting` is a genuinely complete, shippable 24-course path, **walked
 > end to end by §3.4's e2e**, and the whole 24-course corpus is authored. `conventional-accounting`
@@ -589,13 +589,13 @@ FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-exten
 
 ### 4.1 · Manifest integrity
 
-- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` (both `$MTEST_CA` and `$MTEST_SA`) exits 0.
-- [ ] [AI] `checkManifestIntegrity` and `checkPrerequisiteConsistency` pass for `sharia-accounting`
+- [x] [AI] `npm exec nx run ayokoding-www:test:unit` (both `$MTEST_CA` and `$MTEST_SA`) exits 0.
+- [x] [AI] `checkManifestIntegrity` and `checkPrerequisiteConsistency` pass for `sharia-accounting`
       as a standalone sweep, assertion count matching 24.
 
 ### 4.2 · Ownership footprint check
 
-- [ ] [AI] Authorship-scoped commit-footprint check:
+- [x] [AI] Authorship-scoped commit-footprint check:
       `gh pr list --search "ayokoding-learning-path-16-skills-accounting-sharia-extension" --state merged --json number,files` and
       confirm every touched path under `apps/ayokoding-www/src/features/course-paths/manifests/` is
       `sharia-accounting.json` or its test — acceptance: `conventional-accounting.json` and its test
@@ -606,30 +606,30 @@ FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-exten
 
 ### 4.3 · Shared-course non-duplication, final sweep
 
-- [ ] [AI] `for c in "${ACCT_SA_FULL[@]}"; do n=$(find "${COURSES}$c" -maxdepth 0 -type d | wc -l); [ "$n" -eq 1 ] || echo "DUPLICATE-OR-MISSING $c"; done | wc -l`
+- [x] [AI] `for c in "${ACCT_SA_FULL[@]}"; do n=$(find "${COURSES}$c" -maxdepth 0 -type d | wc -l); [ "$n" -eq 1 ] || echo "DUPLICATE-OR-MISSING $c"; done | wc -l`
       returns **0** (all 24 checked).
 
 ### 4.4 · Licensing reading audit (A8) — the strictest posture in the corpus
 
-- [ ] [AI] For every file in `"${SPEC}"` (5 syllabi) **and** every `overview.md` under
+- [x] [AI] For every file in `"${SPEC}"` (5 syllabi) **and** every `overview.md` under
       `"${COURSES}"` for `ACCT_P16` (5 course bodies) — 10 files total — read against the eleven
       safe-authoring rules, at the full four-body posture (IFRS Foundation, FASB, AAOIFI, IAI) —
       acceptance: zero violations found; any finding is fixed before this gate closes.
-- [ ] [AI] **Every citation resolves to a full URL** — same recipe as plan 14's own §4.4, scoped to
+- [x] [AI] **Every citation resolves to a full URL** — same recipe as plan 14's own §4.4, scoped to
       this plan's own `"${SPEC}"`. Acceptance: empty output.
 
 ### 4.5 · Terminal-freeze assertion (repeat, final)
 
-- [ ] [AI] **`conventional-accounting.json` is unchanged since plan 15's own merge, re-confirmed** —
+- [x] [AI] **`conventional-accounting.json` is unchanged since plan 15's own merge, re-confirmed** —
       `git diff --quiet -- "$MANIFEST_CA"` exits 0.
-- [ ] [AI] **`sharia-accounting.json` never grows past 24 from here** — recorded as this plan's own
+- [x] [AI] **`sharia-accounting.json` never grows past 24 from here** — recorded as this plan's own
       terminal-length assertion:
       `[ "$(grep -cE '^  - ' "$MANIFEST_SA")" -eq 24 ] && echo TERMINAL-OK || echo TERMINAL-FAIL`
       prints `TERMINAL-OK`.
 
 ### 4.6 · Scope-boundary sweep and no-unverified-claim sweep
 
-- [ ] [AI] `apps-ayokoding-www-facts-checker` run over all 5 course bodies and all 5 syllabi —
+- [x] [AI] `apps-ayokoding-www-facts-checker` run over all 5 course bodies and all 5 syllabi —
       acceptance: zero unmarked claims; OI-2's boundary is confirmed respected (no course states the
       riba doctrinal derivation as settled fact).
 
@@ -649,9 +649,9 @@ FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-exten
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] 4.1 through 4.6 all clean, zero unresolved findings.
-- [ ] [AI] `npm exec nx run ayokoding-www:build` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0 across the whole plan folder and the whole
+- [x] [AI] 4.1 through 4.6 all clean, zero unresolved findings.
+- [x] [AI] `npm exec nx run ayokoding-www:build` exits 0.
+- [x] [AI] `npm run lint:md` exits 0 across the whole plan folder and the whole
       `apps/ayokoding-www` content touched.
 
 > **Pause Safety**: the corpus is verified, licensing-clean, and scope-consistent; the terminal
@@ -670,33 +670,33 @@ FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-exten
 
 ### Manual UI Verification (Playwright MCP) — three breakpoints
 
-- [ ] [AI] Start dev server: `nx dev ayokoding-www`.
-- [ ] [AI] For EACH breakpoint (375 / 768 / 1280 px): navigate to
+- [x] [AI] Start dev server: `nx dev ayokoding-www`.
+- [x] [AI] For EACH breakpoint (375 / 768 / 1280 px): navigate to
       `/en/learn/paths/skills/sharia-accounting` via `browser_navigate` + `browser_resize`.
-- [ ] [AI] Inspect DOM via `browser_snapshot` at every breakpoint — verify the arc promise, the full
+- [x] [AI] Inspect DOM via `browser_snapshot` at every breakpoint — verify the arc promise, the full
       path-completeness statement, and the rendered 24-course list all appear.
-- [ ] [AI] Confirm `/en/learn/paths/skills/conventional-accounting` still renders its own unchanged
+- [x] [AI] Confirm `/en/learn/paths/skills/conventional-accounting` still renders its own unchanged
       19-course completeness state at one breakpoint (spot check, not a full re-verification).
-- [ ] [AI] Walk `sharia-accounting` end to end via prev/next controls (`browser_click`) — verify
+- [x] [AI] Walk `sharia-accounting` end to end via prev/next controls (`browser_click`) — verify
       breadcrumb and `?path=` persistence at every step across all 24 courses.
-- [ ] [AI] Check for JS errors via `browser_console_messages` on the `sharia-accounting` landing and
+- [x] [AI] Check for JS errors via `browser_console_messages` on the `sharia-accounting` landing and
       a sample of walked courses, at every breakpoint — zero errors.
-- [ ] [AI] Take one screenshot per breakpoint via `browser_take_screenshot`, saved to
+- [x] [AI] Take one screenshot per breakpoint via `browser_take_screenshot`, saved to
       `evidence/phase-5-sharia-accounting-en-<breakpoint>px.png` — commit as evidence.
-- [ ] [AI] Document verification results in this checklist, referencing each committed screenshot.
+- [x] [AI] Document verification results in this checklist, referencing each committed screenshot.
 
 ### Rule-15 three-tester retest (`sharia-accounting` only)
 
 All three run in `delivery` mode so their findings land in this checklist. **Fold every finding in
 as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UWT-###` / `DWT-###`.
 
-- [ ] [AI] Dispatch `web-exploratory-tester` against `sharia-accounting`'s landing and full
+- [x] [AI] Dispatch `web-exploratory-tester` against `sharia-accounting`'s landing and full
       24-course walk — record every finding as an `EWT-###` checkbox.
-- [ ] [AI] Dispatch `web-usability-tester` against `sharia-accounting`'s landing — record every
+- [x] [AI] Dispatch `web-usability-tester` against `sharia-accounting`'s landing — record every
       finding as a `UWT-###` checkbox.
-- [ ] [AI] Dispatch `web-design-tester` against `sharia-accounting`'s landing — record every finding
+- [x] [AI] Dispatch `web-design-tester` against `sharia-accounting`'s landing — record every finding
       as a `DWT-###` checkbox.
-- [ ] [AI] **Resolve every defect finding from the triad, at all severities.** A MEDIUM or LOW may
+- [x] [AI] **Resolve every defect finding from the triad, at all severities.** A MEDIUM or LOW may
       be deferred **only** with explicit recorded permission naming the finding id and the reason.
       Re-run the affected tester(s) after fixing and confirm the finding no longer reproduces.
 
@@ -714,9 +714,9 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `sharia-accounting` landing walked end to end with zero JS console errors.
-- [ ] [AI] Screenshot evidence committed, all three breakpoints.
-- [ ] [AI] Rule-15 triad complete for `sharia-accounting`; every `EWT-###`/`UWT-###`/`DWT-###`
+- [x] [AI] `sharia-accounting` landing walked end to end with zero JS console errors.
+- [x] [AI] Screenshot evidence committed, all three breakpoints.
+- [x] [AI] Rule-15 triad complete for `sharia-accounting`; every `EWT-###`/`UWT-###`/`DWT-###`
       finding folded in as a checkbox and **resolved at every severity**, or explicitly deferred
       with a recorded permission naming the finding id and reason.
 
@@ -732,25 +732,25 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ### Local Quality Gates (Before archival)
 
-- [ ] [AI] `npm exec nx affected -t typecheck,build,test:quick,lint` exits 0.
-- [ ] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
+- [x] [AI] `npm exec nx affected -t typecheck,build,test:quick,lint` exits 0.
+- [x] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
 
 > **Important**: fix ALL failures found during these gates, not just those caused by this plan's own
 > changes.
 
 ### Commit Guidelines
 
-- [ ] [AI] Commit changes thematically. Follow Conventional Commits format. Split different
+- [x] [AI] Commit changes thematically. Follow Conventional Commits format. Split different
       domains/concerns into separate commits. Do NOT bundle unrelated fixes into a single commit.
 
 ### Pre-archival readiness
 
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch; acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch; acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 8.
-- [ ] [AI] Reconcile the persistent branch non-destructively with current `origin/main`, then re-run
+- [x] [AI] Reconcile the persistent branch non-destructively with current `origin/main`, then re-run
       every local quality gate; acceptance: all gates are green.
-- [ ] [AI] Preserve Phase 5's local UI evidence. Open no PR until Phase 8 has committed the archival
+- [x] [AI] Preserve Phase 5's local UI evidence. Open no PR until Phase 8 has committed the archival
       move and index updates.
 
   **Gherkin (binds) →** "This plan's authored slice builds and validates green"
@@ -766,15 +766,15 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ### Stage-3 signal, final confirmation
 
-- [ ] [AI] `grep -c '^STAGE: 3$' "${PLANDIR}delivery.md"` returns **1**, and the signal is committed
+- [x] [AI] `grep -c '^STAGE: 3$' "${PLANDIR}delivery.md"` returns **1**, and the signal is committed
       on the persistent final-delivery branch.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Stage-3 signal is present and committed on the persistent final-delivery branch.
-- [ ] [AI] All local quality gates and Phase 5 evidence are green; no PR exists before Phase 8.
+- [x] [AI] Stage-3 signal is present and committed on the persistent final-delivery branch.
+- [x] [AI] All local quality gates and Phase 5 evidence are green; no PR exists before Phase 8.
 
 > **Pause Safety**: this plan's authored corpus is verified and committed on the persistent
 > final-delivery branch. Safe to stop. To resume: re-run the local quality gates before Phase 7.
@@ -785,24 +785,24 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 > _Triage every surviving `learnings.md` entry before archival._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
       would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the secret/sensitivity gate and the repo-relevance gate.
-- [ ] [AI] Route each surviving learning to exactly one durable home; code-homed learnings are
+- [x] [AI] Apply the secret/sensitivity gate and the repo-relevance gate.
+- [x] [AI] Route each surviving learning to exactly one durable home; code-homed learnings are
       filed as a separate `plans/backlog/<slug>/` plan, never landed inline.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>`.
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>`.
 
 ### Phase 7 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal, or the explicit "none" escape is recorded.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Every `learnings.md` entry is terminal, or the explicit "none" escape is recorded.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
 
 > **Pause Safety**: `learnings.md` is fully triaged. Safe to stop. To resume: re-read
 > `learnings.md` and confirm every entry is terminal.
@@ -813,38 +813,38 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-16-skills-accounting-sharia-extension`
+- [x] [AI] `git mv plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-16-skills-accounting-sharia-extension`
       (always from `plans/in-progress/` — Phase 0's promotion step is a mandatory precondition).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove this
+- [x] [AI] Update `plans/in-progress/README.md` — remove this
       plan's entry.
-- [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
-- [ ] [AI] Update `ayokoding-learning-path-18-skills-erp-enterprise-depth`'s
+- [x] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
+- [x] [AI] Update `ayokoding-learning-path-18-skills-erp-enterprise-depth`'s
       own docs (if it exists at this point) to note this plan's merge and Stage-3 signal are now on
       `origin/main` — this is the **final** handoff of the three-plan accounting chain.
-- [ ] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR —
+- [x] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR —
       `git commit -m "chore(plans): archive ayokoding-learning-path-16-skills-accounting-sharia-extension"`.
-- [ ] [AI] **Push the archival commit** — `git push origin HEAD` — acceptance: exits 0 and
+- [x] [AI] **Push the archival commit** — `git push origin HEAD` — acceptance: exits 0 and
       `git status -sb | grep -c 'ahead'` returns **0**.
-- [ ] [AI] **Monitor CI on the new head** — poll every 2 minutes. Acceptance: `status` is
+- [x] [AI] **Monitor CI on the new head** — poll every 2 minutes. Acceptance: `status` is
       `completed` **and** `conclusion` is `success` for the run whose head SHA equals
       `git rev-parse HEAD`.
-- [ ] [AI] Re-confirm all five PR Merge Protocol preconditions still hold, then perform the `[AI]`
+- [x] [AI] Re-confirm all five PR Merge Protocol preconditions still hold, then perform the `[AI]`
       merge. This is the terminal step of the plan, **and of the whole three-plan accounting
       chain**.
 
 ### Phase 8 Gate
 
-- [ ] [AI] `test -d plans/done/*__ayokoding-learning-path-16-skills-accounting-sharia-extension` exits 0.
-- [ ] [AI] `test -d plans/backlog/ayokoding-learning-path-16-skills-accounting-sharia-extension`
+- [x] [AI] `test -d plans/done/*__ayokoding-learning-path-16-skills-accounting-sharia-extension` exits 0.
+- [x] [AI] `test -d plans/backlog/ayokoding-learning-path-16-skills-accounting-sharia-extension`
       and `test -d plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension`
       both exit 1.
-- [ ] [AI] The archival commit is an ancestor of the merged PR head — verify with
+- [x] [AI] The archival commit is an ancestor of the merged PR head — verify with
       `gh pr list --head "$(git rev-parse --abbrev-ref HEAD)" --state merged --json number,mergeCommit`.
-- [ ] [AI] **Whole-chain completion check** — all three of plans 14, 15, and 16 have a merged entry
+- [x] [AI] **Whole-chain completion check** — all three of plans 14, 15, and 16 have a merged entry
       under `plans/done/`, and `sharia-accounting.json` holds 24 entries while
       `conventional-accounting.json` holds 19, both on `origin/main`.
 

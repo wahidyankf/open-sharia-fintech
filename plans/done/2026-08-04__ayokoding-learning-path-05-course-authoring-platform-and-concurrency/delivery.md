@@ -991,13 +991,13 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
       the same day (no linked PR/issue) and restored by
       [PR #136](https://github.com/wahidyankf/ose-public/pull/136) — see README.md's amended
       "Terminal delivery chain" note for the full chain and the downstream-verification implication.
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle plus every local and CI gate for PR #133.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle plus every local and CI gate for PR #133.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
+- [x] [AI] Verify ALL delivery checklist items are ticked.
 - [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape present; both safety gates applied to every surviving entry).
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
 - [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
@@ -1062,7 +1062,7 @@ build`, and `Scope boundary`; it is independent of the protected port-3101 proce
 - [x] [AI] Plan folder is under
       `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`;
       all READMEs updated; archival committed.
-- [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
+- [x] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Terminal delivery chain (amended):** [PR #133](https://github.com/wahidyankf/ose-public/pull/133)

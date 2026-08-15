@@ -89,10 +89,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -495,20 +495,20 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
 
 ## Phase 3: Section & Authored-Tree Verification
 
-- [ ] [AI] **Verify all 7 authored bodies are present** —
+- [x] [AI] **Verify all 7 authored bodies are present** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0** (returned 7 at the Phase-0 baseline).
-- [ ] [AI] **Verify every authored body declares prerequisites** —
+- [x] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**.
-- [ ] [AI] **Verify every authored body has both tracks** —
+- [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**.
-- [ ] [AI] Run affected quality gates: `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
+- [x] [AI] Run affected quality gates: `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
       — acceptance: exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation),
       committing preexisting fixes separately.
-- [ ] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+- [x] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate
@@ -532,7 +532,7 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
     And link, heading-hierarchy, and markdownlint validation report no errors across the authored course bodies
   ```
 
-- [ ] [AI] **Confirm zero manifest files touched across this plan's entire history** —
+- [x] [AI] **Confirm zero manifest files touched across this plan's entire history** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
 
 ### Phase 3 Gate
@@ -671,24 +671,24 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`.
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4
+- [x] [AI] Verify ALL delivery checklist items are ticked.
+- [x] [AI] Verify the Knowledge Capture phase is complete.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`.
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4
       — acceptance: `grep -F -q 'rule-15' learnings.md` exits 0.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **7** — this plan asserts
       **7**, not the sibling plan's 9 nor the original band's 16.
-- [ ] [AI] **Verify the ownership invariant held across this plan's entire history** —
+- [x] [AI] **Verify the ownership invariant held across this plan's entire history** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** on the persistent final-delivery branch.
-- [ ] [AI] **Re-run the cross-plan link gate**:
+- [x] [AI] **Re-run the cross-plan link gate**:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -700,28 +700,28 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] Move:
+- [x] [AI] Move:
       `git mv plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/ plans/done/YYYY-MM-DD__ayokoding-learning-path-07-course-authoring-low-level-systems/`
       using today's **completion** date. The source is always `plans/in-progress/` — Phase 0's
       promotion step is a mandatory precondition, so the plan never sits in `plans/backlog/` at
       archival time.
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Notify `ayokoding-learning-path-12-careers-se-manifests` that this band's signal is on
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+- [x] [AI] Notify `ayokoding-learning-path-12-careers-se-manifests` that this band's signal is on
       `origin/main` (that plan's own Phase 0 preconditions read this plan's `delivery.md`) —
       acceptance: no dangling reference in that plan's `Depends-on` table.
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-07-course-authoring-low-level-systems to done`.
 
 ### Phase 7 Gate
 
-- [ ] [AI] All 7 authored bodies present; the slug register holds 7 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The cross-plan link gate is green.
-- [ ] [AI] Plan folder is under
+- [x] [AI] All 7 authored bodies present; the slug register holds 7 unique lines.
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The cross-plan link gate is green.
+- [x] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-07-course-authoring-low-level-systems/`; all
       READMEs updated; archival committed.
-- [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
+- [x] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
@@ -731,22 +731,22 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — one course bundle per commit is the natural unit here.
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
+- [x] [AI] Commit changes thematically — one course bundle per commit is the natural unit here.
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
       e.g. `feat(ayokoding-www): add just-enough-cpp course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; the
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; the
       sibling split plan and other work may be authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 ### Note: plan location at archival time
