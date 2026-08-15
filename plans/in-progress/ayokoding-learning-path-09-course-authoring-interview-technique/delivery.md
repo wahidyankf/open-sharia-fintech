@@ -559,25 +559,47 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 > [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals)) — so there is no `id` page to
 > navigate to or verify; this is a recorded content-scope deferral, not an incomplete locale sweep.
 
-- [ ] [AI] Start the dev server: `npm exec nx dev ayokoding-www`.
-- [ ] [AI] For each of the 5 authored course pages, at each of 3 breakpoints (375 / 768 / 1280 px),
+- [x] [AI] Start the dev server: `npm exec nx dev ayokoding-www`.
+- [x] [AI] For each of the 5 authored course pages, at each of 3 breakpoints (375 / 768 / 1280 px),
       navigate to `/en/learn/courses/<course-id>` via `browser_navigate` + `browser_resize`.
-- [ ] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang="en"]`, the prerequisites list
+- [x] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang="en"]`, the prerequisites list
       renders, and no untranslated or placeholder string appears.
-- [ ] [AI] Check for JS errors via `browser_console_messages` — must be zero errors per page.
-- [ ] [AI] Capture one screenshot per course per breakpoint via `browser_take_screenshot`, saved to
+- [x] [AI] Check for JS errors via `browser_console_messages` — must be zero errors per page.
+- [x] [AI] Capture one screenshot per course per breakpoint via `browser_take_screenshot`, saved to
       `evidence/phase-3-<course-id>-en-<breakpoint>px.png` (15 screenshots: 5 courses × 3 breakpoints).
-- [ ] [AI] Document evidence in this checklist: reference each screenshot
+- [x] [AI] Document evidence in this checklist: reference each screenshot
       (`![alt](./evidence/phase-3-<course-id>-en-<breakpoint>px.png)`).
-- [ ] [AI] **Locale deferral stated inline** — an `id` (Indonesian) walk-through of these 5 courses is
+- [x] [AI] **Locale deferral stated inline** — an `id` (Indonesian) walk-through of these 5 courses is
       not performed; the `id` mirror is explicitly deferred per [brd.md §Business-Scope
       Non-Goals](./brd.md#business-scope-non-goals), not a silent omission.
 
+Playwright MCP ran against the green production build from this worktree. The required `nx dev` process
+was started but stalled while compiling its first route; `next start` on the same local build served each
+route for direct rendered-page checks. Every capture returned HTTP 200, `html[lang="en"]`, no placeholder
+text, and zero console errors. `behavioral-and-leadership-interviews` correctly has no rendered list items
+because its settled prerequisite array is empty.
+
+![Coding Interview, 375 px](./evidence/phase-3-coding-interview-en-375px.png)
+![Coding Interview, 768 px](./evidence/phase-3-coding-interview-en-768px.png)
+![Coding Interview, 1280 px](./evidence/phase-3-coding-interview-en-1280px.png)
+![Take-Home and Live Coding, 375 px](./evidence/phase-3-take-home-and-live-coding-en-375px.png)
+![Take-Home and Live Coding, 768 px](./evidence/phase-3-take-home-and-live-coding-en-768px.png)
+![Take-Home and Live Coding, 1280 px](./evidence/phase-3-take-home-and-live-coding-en-1280px.png)
+![System-Design Interview, 375 px](./evidence/phase-3-system-design-interview-en-375px.png)
+![System-Design Interview, 768 px](./evidence/phase-3-system-design-interview-en-768px.png)
+![System-Design Interview, 1280 px](./evidence/phase-3-system-design-interview-en-1280px.png)
+![Behavioral and Leadership Interviews, 375 px](./evidence/phase-3-behavioral-and-leadership-interviews-en-375px.png)
+![Behavioral and Leadership Interviews, 768 px](./evidence/phase-3-behavioral-and-leadership-interviews-en-768px.png)
+![Behavioral and Leadership Interviews, 1280 px](./evidence/phase-3-behavioral-and-leadership-interviews-en-1280px.png)
+![Capstone Interview Loop, 375 px](./evidence/phase-3-capstone-interview-loop-en-375px.png)
+![Capstone Interview Loop, 768 px](./evidence/phase-3-capstone-interview-loop-en-768px.png)
+![Capstone Interview Loop, 1280 px](./evidence/phase-3-capstone-interview-loop-en-1280px.png)
+
 ### Phase 3 Gate
 
-- [ ] [AI] 15 screenshots committed under `evidence/`, one per course per breakpoint, `en` locale.
-- [ ] [AI] Zero JS console errors across all 5 pages at all 3 breakpoints.
-- [ ] [AI] Work committed to the persistent `final-delivery` branch; nothing pushed for review yet.
+- [x] [AI] 15 screenshots committed under `evidence/`, one per course per breakpoint, `en` locale.
+- [x] [AI] Zero JS console errors across all 5 pages at all 3 breakpoints.
+- [x] [AI] Work committed to the persistent `final-delivery` branch; nothing pushed for review yet.
 
 > **Pause Safety**: manual verification evidence is committed locally. Safe to stop. To resume:
 > re-open the dev server and re-capture any missing screenshot.
