@@ -11,8 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
-  — Authors five interview-technique course bodies and their interview-loop capstone.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.

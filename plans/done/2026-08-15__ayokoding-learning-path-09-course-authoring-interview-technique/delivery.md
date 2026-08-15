@@ -665,7 +665,7 @@ because its settled prerequisite array is empty.
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
 - [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
@@ -673,25 +673,25 @@ because its settled prerequisite array is empty.
 - [ ] [AI] Verify ALL quality gates pass (local + CI): `npm exec nx affected -t typecheck lint test:quick
 test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failures, including
       preexisting ones (Root Cause Orientation).
-- [ ] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (15 screenshots +
+- [x] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (15 screenshots +
       the Phase 0/2 snapshot text files).
-- [ ] [AI] Verify the `en` locale was exercised at all 3 breakpoints across all 5 authored pages (the
+- [x] [AI] Verify the `en` locale was exercised at all 3 breakpoints across all 5 authored pages (the
       `id` mirror is a recorded deferral, not a gap).
-- [ ] [AI] **Rule-15 not applicable** — no EWT/UWT/DWT findings exist to resolve; the triad was waived
+- [x] [AI] **Rule-15 not applicable** — no EWT/UWT/DWT findings exist to resolve; the triad was waived
       per [README.md §Not UI-bearing](./README.md#not-ui-bearing-rule-15-exemption-reused-reasoning).
-- [ ] [AI] **Rule-16 not applicable** — no API surface exists for this plan.
-- [ ] [AI] **Verify the plan's own terminal assertion** — the 5 authored-body baseline reads **0**
+- [x] [AI] **Rule-16 not applicable** — no API surface exists for this plan.
+- [x] [AI] **Verify the plan's own terminal assertion** — the 5 authored-body baseline reads **0**
       ABSENT: `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       returns **0** (returned 5 at the Phase-0 baseline).
-- [ ] [AI] **Archive the plan folder — on the persistent `final-delivery` branch, before opening the PR**, so
+- [x] [AI] **Archive the plan folder — on the persistent `final-delivery` branch, before opening the PR**, so
       the archival commit lands inside the same reviewed PR rather than as an unreviewed post-merge
       commit. Move this plan folder from `plans/backlog/` to `plans/done/` via
       `git mv plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique plans/done/YYYY-MM-DD__ayokoding-learning-path-09-course-authoring-interview-technique`
       (substitute the actual completion date; the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
-- [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
-- [ ] [AI] Update any other README that references this plan by its `backlog/` path.
-- [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-09-course-authoring-interview-technique to done`.
+- [x] [AI] Update `plans/in-progress/README.md` — remove this plan's entry.
+- [x] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
+- [x] [AI] Update any other README that references this plan by its `backlog/` path.
+- [x] [AI] Commit: `chore(plans): move ayokoding-learning-path-09-course-authoring-interview-technique to done`.
 - [ ] [AI] **Open the terminal archival PR** from `final-delivery`, carrying the archival commit above; run the secret scan, local quality checks, and PR quality-gate verification, and `[AI]` merge once all quality gates are green.
 - [ ] [AI] Prompt the user before removing the worktree
       (`worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`) — confirm nothing
