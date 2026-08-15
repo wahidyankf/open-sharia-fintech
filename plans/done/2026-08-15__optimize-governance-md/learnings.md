@@ -75,8 +75,32 @@ produces confidently-wrong acceptance criteria.
 
 ## Execution-Phase Learnings
 
-_Populated during Phases 0-16._
+_None surfaced during Phases 0-16 beyond the planning-phase entries above._
+
+## Triage (Phase 17a)
+
+Both safety gates (secret/sensitivity, repo-relevance) pass trivially for all five entries below:
+none contain a secret/credential/hostname, and all describe `ose-public`-appropriate
+governance/tooling facts (no infra-private content). No entry routed to `plans/ideas/`, so the
+fold-into-existing-brief step is a no-op this plan.
+
+- **Harness agent-directory recursion differs per harness** — litmus PASS (a future `.claude/agents/`
+  reorg would want this). Routed inline, small doc edit: added a "Why the generator flattens"
+  paragraph to `docs/reference/platform-bindings.md` (Optional thin pointers section).
+- **`parity manifest validate` is repo-local, not cross-repo** — litmus PASS. Routed inline, small
+  doc edit: added a paragraph to `docs/reference/related-repositories.md` (Shared boundaries
+  section) clarifying the local-only validation scope and the silent-drift risk.
+- **`path-gated` was never exercised on the `ci` surface** — litmus PASS. Routed inline, small doc
+  edit: added a comment above the `# path-gated governance checks` block in `repo-config.yml`
+  documenting the isolated-fixture trigger-matrix method any future `ci`-surface `path-gated` gate
+  must be proven with.
+- **`merged_budget_config` merges harness-registry globs, undocumented anywhere else** — already
+  routed at capture time to `prd.md` FR-1.15, which carries the decision record. No further doc
+  change; discarded from further triage as already terminal.
+- **Governance-schema `description` was WARN-severity, not FAIL** — already routed at capture time
+  to `prd.md` FR-4.2/FR-4.8, which carry the decision record. No further doc change; discarded from
+  further triage as already terminal.
 
 ## Discarded
 
-_Observations considered and deliberately not promoted, with the reason._
+_None — all five entries reached a terminal routed state above; none failed the litmus test._

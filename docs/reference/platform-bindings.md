@@ -183,6 +183,14 @@ is amended for the agent surface only — `.cursor/agents/` is generated from `.
 not an instruction-surface thin pointer. The instruction surface (rules, `AGENTS.md` read) is unchanged;
 no `.cursor/rules/*.mdc` files are shipped by default.
 
+**Why the generator flattens `.claude/agents/` mirrors:** Claude Code scans `.claude/agents/`
+recursively and derives agent identity from the `name` frontmatter key, not the path
+([docs](https://code.claude.com/docs/en/sub-agents)). OpenCode does **not** — its maintainers closed
+the subdirectory feature request as _not planned_
+([opencode#6635](https://github.com/anomalyco/opencode/issues/6635)). Any future reorganization of
+`.claude/agents/` into subfolders is safe only because `rhino-cli harness bindings generate` flattens
+every generated mirror; a mirror consumer that assumed the source shape would break silently.
+
 ## Translation Artifacts
 
 Mechanical translations that platform bindings apply when generating output from upstream sources.

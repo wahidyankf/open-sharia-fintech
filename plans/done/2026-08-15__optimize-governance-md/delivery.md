@@ -950,9 +950,9 @@ Each phase performs the same four operations on its subtree (`<subtree>` = the p
       across two children in `tutorials/in-the-field/` lost its opening/closing fence twice
       (JPA entity/service pair, JDBC database-example pair) — repaired by closing the fence at
       each cut and adding a "Continued in/from" cross-link. `npx nx run
-  rhino-cli:governance-word-budget:validation` reports 0 `[FAIL]` findings under
+rhino-cli:governance-word-budget:validation` reports 0 `[FAIL]` findings under
       `repo-governance/conventions/` (verified via direct `rhino-cli governance word-budget
-  validate` grepped to the subtree — the Nx target's own exit code reflects the whole
+validate` grepped to the subtree — the Nx target's own exit code reflects the whole
       repo-wide scan, which still fails on out-of-scope Phase 3-5 subtrees as expected).
 - [x] `[AI]` **Frontmatter**: add `when_to_use` to every file in `<subtree>`, including new
       children; backfill `description` where missing. Acceptance:
@@ -960,8 +960,8 @@ Each phase performs the same four operations on its subtree (`<subtree>` = the p
       **Date**: 2026-08-14. **Status**: Done for Phase 2. Every parent and child file under
       `repo-governance/conventions/` carries `when_to_use` and `description` frontmatter (parents
       backfilled where missing; children inherit/derive from their split source). `rhino-cli md
-  frontmatter validate repo-governance/conventions/` → `DOCS FRONTMATTER VALIDATION PASSED: no
-  findings`, exit 0.
+frontmatter validate repo-governance/conventions/` → `DOCS FRONTMATTER VALIDATION PASSED: no
+findings`, exit 0.
 - [x] `[AI]` **Index**: create or update every `README.md` in `<subtree>` with annotated entries
       derived from target frontmatter; split directories are indexed by their parent. Acceptance:
       `npx nx run rhino-cli:governance-readme-index:validation` reports 0 `orphan`/`ghost`
@@ -1365,6 +1365,19 @@ rhino-cli:specs:behavior:coverage`
 > stop before Phases 11–15's content splitting begins. To resume: re-run
 > `rhino-cli parity manifest validate` and confirm the boundary diff against `ose-public` is
 > still empty.
+>
+> **Discovered gap (2026-08-15, PR10 CI)**: the byte-for-byte copy also imports `ose-public`'s
+> already-Phase-9-armed `frontmatter.rs::validate_governance_schema` FAIL-severity logic for
+> `md-frontmatter` — there is no WARN/FAIL toggle in the Rust source, only in whether
+> `repo-config.yml` registers a `ci` surface for it. `ose-private`'s pre-existing `repo-config.yml`
+> already had `ci: { scope: all-file-type }` registered for `md-frontmatter` (unrelated to this
+> plan), so the copy silently turned a full-tree FAIL scan on 5 phases ahead of schedule and broke
+> PR10's CI on pre-existing repo-wide debt Phases 11–15 haven't cleared yet. Fix applied in PR10:
+> `repo-config.yml`'s `md-frontmatter` entry drops its `ci` surface (dark-launched, matching the
+> `governance-word-budget` pattern), to be re-added once Phases 11–15 land. **Phase 16b's "apply
+> the identical severity flip" instruction is now moot** — the Rust source is already flipped;
+> Phase 16b's actual remaining action is only to re-add `ci: { scope: all-file-type }` to
+> `repo-config.yml`'s `md-frontmatter` entry.
 
 ---
 
@@ -1465,10 +1478,16 @@ trigger list for `ose-public`'s).
 - [ ] `[AI]` **Arm FR-4** in `ose-private` (register-then-arm for the already-active
       `md-frontmatter` gate): run `rhino-cli md frontmatter validate` against
       `repo-governance/**/*.md` and confirm zero files are missing `when_to_use` or
-      `description` — true only once Phases 11–13 have merged. Then apply the identical
-      `frontmatter.rs::validate_governance_schema` severity flip from Phase 9b's GREEN step —
-      the rhino-cli boundary is byte-identical across repos, so this is the same code change
-      copied, not reimplemented
+      `description` — true only once Phases 11–15 have merged. **Correction (2026-08-15, see
+      Phase 10's "Discovered gap" note)**: the Rust-source severity flip is NOT this step's
+      action — PR10 discovered the byte-for-byte-copied `frontmatter.rs` already carries
+      `ose-public`'s Phase-9 FAIL-severity logic (no WARN toggle exists in the Rust source, only
+      in whether `repo-config.yml` registers a `ci` surface). PR10 dropped `md-frontmatter`'s
+      `ci: { scope: all-file-type }` surface entry in `ose-private`'s `repo-config.yml` to avoid
+      breaking CI on pre-existing debt ahead of schedule. This step's actual action is: **re-add**
+      `ci: { scope: all-file-type }` to `repo-config.yml`'s `md-frontmatter` entry once the zero-gap
+      confirmation above passes — do not look for a `frontmatter.rs` change to make, there isn't
+      one
 - [ ] `[AI]` Remove the fixture
 - [ ] **Command**: `apps/rhino-cli/scripts/rhino-bin.sh gate validate`
 - [ ] **Acceptance**: exit 0
@@ -1476,7 +1495,7 @@ trigger list for `ose-public`'s).
 ### 16b-2. Prove the gating both ways
 
 - [ ] `[AI]` Repeat the 5-case trigger matrix from Phase 9's §9b-2, adjusted for `ose-private`'s
-      surfaces, and record every run in `evidence/phase-16-trigger-matrix.txt`
+      surfaces, and record every run in `evidence/phase-16b-2-trigger-matrix.txt`
 
 ### 16c. Parity and PR
 
@@ -1496,7 +1515,7 @@ trigger list for `ose-public`'s).
 - `ose-private` census: **0 files over 500 words**
 - `governance-readme-index` reports **zero** `orphan`/`ghost` failures;
   `governance-readme-completeness` reports **zero** `missing`/`unannotated` failures
-- The 5-case trigger matrix in `evidence/phase-16-trigger-matrix.txt` matches expectations
+- The 5-case trigger matrix in `evidence/phase-16b-2-trigger-matrix.txt` matches expectations
 - `parity manifest validate` exits 0
 - PR16 merged
 
@@ -1509,28 +1528,30 @@ trigger list for `ose-public`'s).
 
 ### 17a. Knowledge capture
 
-- [ ] `[AI]` Apply the litmus test to every `learnings.md` entry — keep only if a durable
+- [x] `[AI]` Apply the litmus test to every `learnings.md` entry — keep only if a durable
       surface would catch this automatically next time; discard the rest with a one-line reason
-- [ ] `[AI]` Apply the **secret/sensitivity gate** — sanitize any secret, credential, token, or
+- [x] `[AI]` Apply the **secret/sensitivity gate** — sanitize any secret, credential, token, or
       private hostname to a `<placeholder>` token, or discard if unsanitizable
-- [ ] `[AI]` Apply the **repo-relevance gate** — infra-private content stays in `ose-private`
+- [x] `[AI]` Apply the **repo-relevance gate** — infra-private content stays in `ose-private`
       only and is NEVER cross-routed into `ose-public`/`ose-primer`
-- [ ] `[AI]` Route each surviving learning to exactly one durable home per the open-ended routing
+- [x] `[AI]` Route each surviving learning to exactly one durable home per the open-ended routing
       matrix; code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan, NEVER landed inline (the only carve-out is a genuine blocker
       required to finish this plan's own scope)
-- [ ] `[AI]` For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the
+- [x] `[AI]` For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the
       existing two-pagers FIRST for a brief already covering the same area — fold in rather than
       creating a new file
-- [ ] `[AI]` Record the terminal state of every entry (routed inline / filed as backlog at
+- [x] `[AI]` Record the terminal state of every entry (routed inline / filed as backlog at
       `<path>` / discarded with reason) directly in `learnings.md`, or record the explicit
       `No generalizable learnings — <reason>` escape if none surfaced
 
 ### 17b. Follow-up and archival
 
-- [ ] `[AI]` File a follow-up backlog plan for `ose-primer`: rhino-cli boundary sync **and**
-      `repo-governance/` content parity. This plan does not close until that plan exists.
-- [ ] `[AI]` Record the final census for both repos in `evidence/`
+- [x] `[AI]` File a follow-up backlog plan for `ose-primer`: rhino-cli boundary sync **and**
+      `repo-governance/` content parity. This plan does not close until that plan exists. —
+      filed at `plans/backlog/sync-primer-governance-parity/`
+- [x] `[AI]` Record the final census for both repos in `evidence/` — see
+      `evidence/phase-17-final-census.txt`
 - [ ] `[AI]` `git mv` this plan folder to `plans/done/YYYY-MM-DD__optimize-governance-md/`
 - [ ] `[AI]` Update `plans/in-progress/README.md` and `plans/done/README.md`
 

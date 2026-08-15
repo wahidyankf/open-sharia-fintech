@@ -966,6 +966,13 @@ gates:
       ci: { scope: other }
 
   # --------------------------------------------- path-gated governance checks
+  # `path-gated` scoping is surface-agnostic — `changed_paths()` computes changed paths for
+  # BOTH `pre-push` and `ci` (via merge-base with origin/main). A gate declared `path-gated` on
+  # `ci` is only proven correct by actually exercising it: stage/commit a triggering file in an
+  # isolated no-origin git fixture and confirm "Running gate <id>" appears (see
+  # optimize-governance-md's Phase 9b-2/16b-2 trigger-matrix evidence for the method). A
+  # never-exercised `ci`-surface `path-gated` declaration reads as green while silently never
+  # firing.
   - id: harness-naming
     type: check
     command: harness naming validate
