@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/enterprise-java-and-the-jvm/learning/overview)
-- [Spring foundations](/en/learn/courses/enterprise-java-and-the-jvm/learning/beginner)
-- [Persistence and tests](/en/learn/courses/enterprise-java-and-the-jvm/learning/intermediate)
-- [JVM operations](/en/learn/courses/enterprise-java-and-the-jvm/learning/advanced)
+- [Learning Overview](/en/learn/courses/enterprise-java-and-the-jvm/learning/overview)
+- [Spring Foundations](/en/learn/courses/enterprise-java-and-the-jvm/learning/beginner)
+- [Persistence and Tests](/en/learn/courses/enterprise-java-and-the-jvm/learning/intermediate)
+- [JVM Operations](/en/learn/courses/enterprise-java-and-the-jvm/learning/advanced)
 - [Capstone](/en/learn/courses/enterprise-java-and-the-jvm/learning/capstone)
-  - [Overview](/en/learn/courses/enterprise-java-and-the-jvm/learning/capstone/overview)
+  - [Capstone: Catalog Service](/en/learn/courses/enterprise-java-and-the-jvm/learning/capstone/overview)

@@ -5,4 +5,4 @@ draft: false
 weight: 211
 ---
 
-- [Overview](/en/learn/courses/enterprise-java-and-the-jvm/drilling/overview)
+- [Drilling Overview](/en/learn/courses/enterprise-java-and-the-jvm/drilling/overview)

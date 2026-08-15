@@ -5,4 +5,4 @@ draft: false
 weight: 211
 ---
 
-- [Overview](/en/learn/courses/lisp/drilling/overview)
+- [Drilling Overview](/en/learn/courses/lisp/drilling/overview)

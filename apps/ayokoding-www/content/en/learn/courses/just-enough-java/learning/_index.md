@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/just-enough-java/learning/overview)
+- [Learning Overview](/en/learn/courses/just-enough-java/learning/overview)
 - [Beginner Examples](/en/learn/courses/just-enough-java/learning/beginner)
 - [Intermediate Examples](/en/learn/courses/just-enough-java/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/just-enough-java/learning/advanced)
 - [Capstone](/en/learn/courses/just-enough-java/learning/capstone)
-  - [Overview](/en/learn/courses/just-enough-java/learning/capstone/overview)
+  - [Capstone: Task Board Report](/en/learn/courses/just-enough-java/learning/capstone/overview)

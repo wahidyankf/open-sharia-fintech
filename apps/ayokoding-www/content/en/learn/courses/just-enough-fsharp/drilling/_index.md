@@ -5,4 +5,4 @@ draft: false
 weight: 211
 ---
 
-- [Overview](/en/learn/courses/just-enough-fsharp/drilling/overview)
+- [Drilling Overview](/en/learn/courses/just-enough-fsharp/drilling/overview)

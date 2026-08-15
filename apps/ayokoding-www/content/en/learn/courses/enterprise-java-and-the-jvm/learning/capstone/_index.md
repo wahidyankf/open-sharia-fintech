@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/enterprise-java-and-the-jvm/learning/capstone/overview)
+- [Capstone: Catalog Service](/en/learn/courses/enterprise-java-and-the-jvm/learning/capstone/overview)

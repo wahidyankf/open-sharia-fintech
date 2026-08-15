@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/type-systems/learning/capstone/overview)
+- [Capstone: Verified Email](/en/learn/courses/type-systems/learning/capstone/overview)

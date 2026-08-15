@@ -337,18 +337,18 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
+- [x] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Licensing self-check (programme A8)** on all 5 bodies' worked-example code:
+- [x] [AI] **Licensing self-check (programme A8)** on all 5 bodies' worked-example code:
       `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems; do grep -rln 'stackoverflow\.com\|reddit\.com' "apps/ayokoding-www/content/en/learn/courses/$s/learning/code/" 2>/dev/null; done | grep -c .`
       — acceptance: prints `0`.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
 - [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
       content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
       change in this cohort's diff); stated here explicitly rather than by silent omission.
@@ -364,20 +364,20 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] All 5 Cohort-1 bodies exist:
+- [x] [AI] All 5 Cohort-1 bodies exist:
       `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0**.
-- [ ] [AI] `just-enough-java` declares `object-oriented-programming-essentials`; `enterprise-java-and-the-jvm`
+- [x] [AI] `just-enough-java` declares `object-oriented-programming-essentials`; `enterprise-java-and-the-jvm`
       declares both `just-enough-java` and `software-architecture`; `lisp` declares both
       `functional-programming` and `programming-paradigms`; `just-enough-fsharp` declares both
       `functional-programming` and `object-oriented-programming-essentials`; `type-systems` declares
       `functional-programming`, `programming-paradigms`, and `just-enough-typescript` (not
       `just-enough-fsharp`).
-- [ ] [AI] `software-architecture`'s hard gate (immediately before `enterprise-java-and-the-jvm`'s own
+- [x] [AI] `software-architecture`'s hard gate (immediately before `enterprise-java-and-the-jvm`'s own
       sub-phase) passed with a zero-exit `test -d`, confirming no dangling prerequisite edge shipped.
 - [ ] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0;
       the Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
-- [ ] [AI] Zero manifest files touched.
+- [x] [AI] Zero manifest files touched.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
 

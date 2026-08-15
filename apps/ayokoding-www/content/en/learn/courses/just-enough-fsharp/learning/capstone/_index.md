@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/just-enough-fsharp/learning/capstone/overview)
+- [Capstone: Expression Evaluator](/en/learn/courses/just-enough-fsharp/learning/capstone/overview)

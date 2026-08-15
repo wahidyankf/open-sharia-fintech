@@ -8,10 +8,10 @@ prerequisites: ["functional-programming", "programming-paradigms"]
 
 - [Overview](/en/learn/courses/lisp/overview)
 - [Learning](/en/learn/courses/lisp/learning)
-  - [Overview](/en/learn/courses/lisp/learning/overview)
-  - [Scheme foundations](/en/learn/courses/lisp/learning/beginner)
+  - [Learning Overview](/en/learn/courses/lisp/learning/overview)
+  - [Scheme Foundations](/en/learn/courses/lisp/learning/beginner)
   - [Macros and Clojure](/en/learn/courses/lisp/learning/intermediate)
   - [Metaprogramming](/en/learn/courses/lisp/learning/advanced)
   - [Capstone](/en/learn/courses/lisp/learning/capstone)
 - [Drilling](/en/learn/courses/lisp/drilling)
-  - [Overview](/en/learn/courses/lisp/drilling/overview)
+  - [Drilling Overview](/en/learn/courses/lisp/drilling/overview)

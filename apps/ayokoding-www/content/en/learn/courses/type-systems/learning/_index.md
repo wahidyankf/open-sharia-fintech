@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/type-systems/learning/overview)
-- [ADTs and inference](/en/learn/courses/type-systems/learning/beginner)
-- [Modules and typeclasses](/en/learn/courses/type-systems/learning/intermediate)
-- [Laws and safe domains](/en/learn/courses/type-systems/learning/advanced)
+- [Learning Overview](/en/learn/courses/type-systems/learning/overview)
+- [ADTs and Inference](/en/learn/courses/type-systems/learning/beginner)
+- [Modules and Typeclasses](/en/learn/courses/type-systems/learning/intermediate)
+- [Laws and Safe Domains](/en/learn/courses/type-systems/learning/advanced)
 - [Capstone](/en/learn/courses/type-systems/learning/capstone)
-  - [Overview](/en/learn/courses/type-systems/learning/capstone/overview)
+  - [Capstone: Verified Email](/en/learn/courses/type-systems/learning/capstone/overview)

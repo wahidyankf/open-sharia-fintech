@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/just-enough-fsharp/learning/overview)
+- [Learning Overview](/en/learn/courses/just-enough-fsharp/learning/overview)
 - [Beginner Examples](/en/learn/courses/just-enough-fsharp/learning/beginner)
 - [Intermediate Examples](/en/learn/courses/just-enough-fsharp/learning/intermediate)
 - [Advanced Examples](/en/learn/courses/just-enough-fsharp/learning/advanced)
 - [Capstone](/en/learn/courses/just-enough-fsharp/learning/capstone)
-  - [Overview](/en/learn/courses/just-enough-fsharp/learning/capstone/overview)
+  - [Capstone: Expression Evaluator](/en/learn/courses/just-enough-fsharp/learning/capstone/overview)

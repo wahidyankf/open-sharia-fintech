@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/just-enough-java/learning/capstone/overview)
+- [Capstone: Task Board Report](/en/learn/courses/just-enough-java/learning/capstone/overview)

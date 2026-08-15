@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/lisp/learning/overview)
-- [Scheme foundations](/en/learn/courses/lisp/learning/beginner)
+- [Learning Overview](/en/learn/courses/lisp/learning/overview)
+- [Scheme Foundations](/en/learn/courses/lisp/learning/beginner)
 - [Macros and Clojure](/en/learn/courses/lisp/learning/intermediate)
 - [Metaprogramming](/en/learn/courses/lisp/learning/advanced)
 - [Capstone](/en/learn/courses/lisp/learning/capstone)
-  - [Overview](/en/learn/courses/lisp/learning/capstone/overview)
+  - [Capstone: Hygienic Unless](/en/learn/courses/lisp/learning/capstone/overview)

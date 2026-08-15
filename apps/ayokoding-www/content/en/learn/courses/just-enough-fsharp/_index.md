@@ -8,10 +8,10 @@ prerequisites: ["functional-programming", "object-oriented-programming-essential
 
 - [Overview](/en/learn/courses/just-enough-fsharp/overview)
 - [Learning](/en/learn/courses/just-enough-fsharp/learning)
-  - [Overview](/en/learn/courses/just-enough-fsharp/learning/overview)
+  - [Learning Overview](/en/learn/courses/just-enough-fsharp/learning/overview)
   - [Beginner Examples](/en/learn/courses/just-enough-fsharp/learning/beginner)
   - [Intermediate Examples](/en/learn/courses/just-enough-fsharp/learning/intermediate)
   - [Advanced Examples](/en/learn/courses/just-enough-fsharp/learning/advanced)
   - [Capstone](/en/learn/courses/just-enough-fsharp/learning/capstone)
 - [Drilling](/en/learn/courses/just-enough-fsharp/drilling)
-  - [Overview](/en/learn/courses/just-enough-fsharp/drilling/overview)
+  - [Drilling Overview](/en/learn/courses/just-enough-fsharp/drilling/overview)
