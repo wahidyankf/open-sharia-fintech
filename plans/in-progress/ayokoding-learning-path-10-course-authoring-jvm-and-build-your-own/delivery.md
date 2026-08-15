@@ -152,7 +152,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > `distributed-systems`) sub-phases specifically, plus one infrastructure plan
 > (`vercel-function-cost-reduction`) gating every deploy.
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/ plans/in-progress/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -162,45 +162,45 @@ No phase may create an additional worktree or branch. The final phase is the onl
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] **Verify repository baseline: course bucket** — the `<COURSES>` bucket exists and holds its
+- [x] [AI] **Verify repository baseline: course bucket** — the `<COURSES>` bucket exists and holds its
       `_index.md` — command:
       `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md`
       — acceptance: both exit 0. Falsifiable both ways: before the URL-restructure plan merges, the
       first `test -d` exits non-zero.
-- [ ] [AI] **Verify repository baseline: locate the syllabus root** — command:
+- [x] [AI] **Verify repository baseline: locate the syllabus root** — command:
       `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: prints **exactly one** path (pipe to `grep -c .`, read `1`); record it to
       `evidence/phase-0-snapshot.txt` as `SYLLABUS_ROOT=<path>`.
-- [ ] [AI] **Verify all 9 syllabus spec files exist** — command:
+- [x] [AI] **Verify all 9 syllabus spec files exist** — command:
       `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -f "<SYLLABUS_ROOT>/$s.md" || echo "ABSENT $s"; done | grep -c .`
       — acceptance: reads **0**. Falsifiable both ways: renaming one spec file makes the count read 1.
-- [ ] [AI] **Verify plan `04`'s Band-1 prerequisite body is present** (the already-satisfied edge for
+- [x] [AI] **Verify plan `04`'s Band-1 prerequisite body is present** (the already-satisfied edge for
       `build-your-own-database`) — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines`
       — acceptance: exits 0. `[Repo-grounded — confirmed present at plan-authoring time]`.
-- [ ] [AI] **Record plan `05`/`06`'s not-yet-satisfied state** (informational at Phase 0; the hard gates
+- [x] [AI] **Record plan `05`/`06`'s not-yet-satisfied state** (informational at Phase 0; the hard gates
       are re-checked immediately before `enterprise-java-and-the-jvm`'s own sub-phase in Phase 1 and
       `build-your-own-raft`'s own sub-phase in Phase 2) — command:
       `for s in just-enough-go distributed-systems software-architecture; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" && echo "PRESENT $s" || echo "ABSENT $s"; done`
       — record the output to `evidence/phase-0-snapshot.txt`. No acceptance gate here — this is a
       baseline snapshot, not a blocker, since `enterprise-java-and-the-jvm` and `build-your-own-raft`
       are each hard-gated immediately before their own sub-phase (see Phase 1 and Phase 2 respectively).
-- [ ] [AI] **Record the current rendering baseline signal** — command:
+- [x] [AI] **Record the current rendering baseline signal** — command:
       `test -f apps/ayokoding-www/.next/prerender-manifest.json && jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json || echo "no build artifact yet — run npm exec nx run ayokoding-www:build first"`
       — record the printed value to `evidence/phase-0-snapshot.txt`. This is re-checked (not merely
       recorded) immediately before every delivery-boundary deploy step (see Delivery-Boundary
       Integration Protocol step 5 above).
-- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+- [x] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
       `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Confirm all 9 slugs are absent (no collision)** — command:
+- [x] [AI] **Confirm all 9 slugs are absent (no collision)** — command:
       `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -e "apps/ayokoding-www/content/en/learn/courses/$s" && echo "EXISTS $s"; done | grep -c .`
       — acceptance: reads **0**. Falsifiable both ways: `mkdir -p apps/ayokoding-www/content/en/learn/courses/lisp` makes the loop print `EXISTS lisp`.
-- [ ] [AI] **Create the authored-body slug register** — write the 9 slugs to
+- [x] [AI] **Create the authored-body slug register** — write the 9 slugs to
       `evidence/authored-body-slugs.txt`, one per line, in cohort order:
 
   ```bash
@@ -220,14 +220,14 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **9**, and
   `sort evidence/authored-body-slugs.txt | uniq -d | grep -c .` returns **0** (no duplicate).
 
-- [ ] [AI] **Record the authored-body baseline** —
+- [x] [AI] **Record the authored-body baseline** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **9** today (none authored yet), recorded in
       `evidence/phase-0-snapshot.txt`. Must return **0** at archival (Phase 7).
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present and first line is
       `# Learnings: ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`.
-- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
+- [x] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -239,7 +239,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** — command:
+- [x] [AI] **Confirm no manifest file changed in this phase** — command:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
@@ -247,18 +247,18 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] Plans `01` and `02` verified merged; all 9 syllabus spec files confirmed present;
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] Plans `01` and `02` verified merged; all 9 syllabus spec files confirmed present;
       `SYLLABUS_ROOT` recorded.
-- [ ] [AI] Plan `04`'s Band-1 body (`database-internals-and-storage-engines`) confirmed present.
-- [ ] [AI] Plan `05`/`06`'s current state recorded (informational; not a Phase-0 blocker).
-- [ ] [AI] Vercel cost-reduction route-count signal recorded.
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] All 9 slugs confirmed absent (zero `EXISTS` lines).
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 9 unique slugs; ABSENT-count baseline of 9 recorded.
-- [ ] [AI] Cross-plan link gate green.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] No PR opened, nothing pushed for this phase:
+- [x] [AI] Plan `04`'s Band-1 body (`database-internals-and-storage-engines`) confirmed present.
+- [x] [AI] Plan `05`/`06`'s current state recorded (informational; not a Phase-0 blocker).
+- [x] [AI] Vercel cost-reduction route-count signal recorded.
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+- [x] [AI] All 9 slugs confirmed absent (zero `EXISTS` lines).
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 9 unique slugs; ABSENT-count baseline of 9 recorded.
+- [x] [AI] Cross-plan link gate green.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] No PR opened, nothing pushed for this phase:
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
 
