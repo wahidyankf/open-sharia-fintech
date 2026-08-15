@@ -11,9 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
-  — Authors 15 English course bodies for architecture, distributed systems, and the AI/agent-harness
-  cluster.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
