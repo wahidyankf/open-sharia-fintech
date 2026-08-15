@@ -1,0 +1,239 @@
+[package]
+name = "modern-system-programming-examples"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "ex-01-move-basic"
+path = "ex-01-move-basic/main.rs"
+[[bin]]
+name = "ex-02-move-compile-error"
+path = "ex-02-move-compile-error/main.rs"
+[[bin]]
+name = "ex-03-borrow-shared"
+path = "ex-03-borrow-shared/main.rs"
+[[bin]]
+name = "ex-04-borrow-mut"
+path = "ex-04-borrow-mut/main.rs"
+[[bin]]
+name = "ex-05-borrow-conflict"
+path = "ex-05-borrow-conflict/main.rs"
+[[bin]]
+name = "ex-06-two-mut-borrows"
+path = "ex-06-two-mut-borrows/main.rs"
+[[bin]]
+name = "ex-07-borrow-checker-fix"
+path = "ex-07-borrow-checker-fix/main.rs"
+[[bin]]
+name = "ex-08-lifetime-elision"
+path = "ex-08-lifetime-elision/main.rs"
+[[bin]]
+name = "ex-09-lifetime-explicit"
+path = "ex-09-lifetime-explicit/main.rs"
+[[bin]]
+name = "ex-10-dangling-rejected"
+path = "ex-10-dangling-rejected/main.rs"
+[[bin]]
+name = "ex-11-drop-order"
+path = "ex-11-drop-order/main.rs"
+[[bin]]
+name = "ex-12-box-heap"
+path = "ex-12-box-heap/main.rs"
+[[bin]]
+name = "ex-13-box-recursive"
+path = "ex-13-box-recursive/main.rs"
+[[bin]]
+name = "ex-14-clone-vs-move"
+path = "ex-14-clone-vs-move/main.rs"
+[[bin]]
+name = "ex-15-ownership-in-fn"
+path = "ex-15-ownership-in-fn/main.rs"
+[[bin]]
+name = "ex-16-borrow-in-fn"
+path = "ex-16-borrow-in-fn/main.rs"
+[[bin]]
+name = "ex-17-return-owned"
+path = "ex-17-return-owned/main.rs"
+[[bin]]
+name = "ex-18-slice-borrow"
+path = "ex-18-slice-borrow/main.rs"
+[[bin]]
+name = "ex-19-string-vs-str"
+path = "ex-19-string-vs-str/main.rs"
+[[bin]]
+name = "ex-20-vec-ownership"
+path = "ex-20-vec-ownership/main.rs"
+[[bin]]
+name = "ex-21-iterator-map-loop"
+path = "ex-21-iterator-map-loop/main.rs"
+[[bin]]
+name = "ex-22-iterator-filter"
+path = "ex-22-iterator-filter/main.rs"
+[[bin]]
+name = "ex-23-iterator-sum"
+path = "ex-23-iterator-sum/main.rs"
+[[bin]]
+name = "ex-24-result-basic"
+path = "ex-24-result-basic/main.rs"
+[[bin]]
+name = "ex-25-question-mark"
+path = "ex-25-question-mark/main.rs"
+[[bin]]
+name = "ex-26-result-match"
+path = "ex-26-result-match/main.rs"
+[[bin]]
+name = "ex-27-thread-spawn"
+path = "ex-27-thread-spawn/main.rs"
+[[bin]]
+name = "ex-28-thread-move-closure"
+path = "ex-28-thread-move-closure/main.rs"
+[[bin]]
+name = "ex-29-channel-send-recv"
+path = "ex-29-channel-send-recv/main.rs"
+[[bin]]
+name = "ex-30-channel-multiple"
+path = "ex-30-channel-multiple/main.rs"
+[[bin]]
+name = "ex-31-worker-pipeline"
+path = "ex-31-worker-pipeline/main.rs"
+[[bin]]
+name = "ex-32-arc-shared"
+path = "ex-32-arc-shared/main.rs"
+[[bin]]
+name = "ex-33-arc-mutex"
+path = "ex-33-arc-mutex/main.rs"
+[[bin]]
+name = "ex-34-mutex-lock"
+path = "ex-34-mutex-lock/main.rs"
+[[bin]]
+name = "ex-35-data-race-rejected"
+path = "ex-35-data-race-rejected/main.rs"
+[[bin]]
+name = "ex-36-send-sync-bound"
+path = "ex-36-send-sync-bound/main.rs"
+[[bin]]
+name = "ex-37-rc-single-thread"
+path = "ex-37-rc-single-thread/main.rs"
+[[bin]]
+name = "ex-38-refcell-interior"
+path = "ex-38-refcell-interior/main.rs"
+[[bin]]
+name = "ex-39-rc-not-send"
+path = "ex-39-rc-not-send/main.rs"
+[[bin]]
+name = "ex-40-trait-bound-generic"
+path = "ex-40-trait-bound-generic/main.rs"
+[[bin]]
+name = "ex-41-trait-static-dispatch"
+path = "ex-41-trait-static-dispatch/main.rs"
+[[bin]]
+name = "ex-42-trait-object-dyn"
+path = "ex-42-trait-object-dyn/main.rs"
+[[bin]]
+name = "ex-43-iterator-chain-zero-cost"
+path = "ex-43-iterator-chain-zero-cost/main.rs"
+[[bin]]
+name = "ex-44-custom-error-enum"
+path = "ex-44-custom-error-enum/main.rs"
+[[bin]]
+name = "ex-45-thiserror-derive"
+path = "ex-45-thiserror-derive/main.rs"
+[[bin]]
+name = "ex-46-error-propagate-chain"
+path = "ex-46-error-propagate-chain/main.rs"
+[[bin]]
+name = "ex-47-anyhow-context"
+path = "ex-47-anyhow-context/main.rs"
+[[bin]]
+name = "ex-48-result-from-conversion"
+path = "ex-48-result-from-conversion/main.rs"
+[[bin]]
+name = "ex-49-scoped-threads"
+path = "ex-49-scoped-threads/main.rs"
+[[bin]]
+name = "ex-50-atomic-counter"
+path = "ex-50-atomic-counter/main.rs"
+[[bin]]
+name = "ex-51-channel-shutdown"
+path = "ex-51-channel-shutdown/main.rs"
+[[bin]]
+name = "ex-52-producer-consumer"
+path = "ex-52-producer-consumer/main.rs"
+[[bin]]
+name = "ex-53-unsafe-block"
+path = "ex-53-unsafe-block/main.rs"
+[[bin]]
+name = "ex-54-raw-pointer-cast"
+path = "ex-54-raw-pointer-cast/main.rs"
+[[bin]]
+name = "ex-55-unsafe-deref"
+path = "ex-55-unsafe-deref/main.rs"
+[[bin]]
+name = "ex-56-unsafe-wrapped-safe"
+path = "ex-56-unsafe-wrapped-safe/main.rs"
+[[bin]]
+name = "ex-57-env-set-var-unsafe"
+path = "ex-57-env-set-var-unsafe/main.rs"
+[[bin]]
+name = "ex-58-extern-c-declare"
+path = "ex-58-extern-c-declare/main.rs"
+[[bin]]
+name = "ex-59-ffi-call-libc"
+path = "ex-59-ffi-call-libc/main.rs"
+[[bin]]
+name = "ex-60-ffi-call-c-fn"
+path = "ex-60-ffi-call-c-fn/main.rs"
+[[bin]]
+name = "ex-61-ffi-pass-primitive"
+path = "ex-61-ffi-pass-primitive/main.rs"
+[[bin]]
+name = "ex-62-ffi-pass-pointer"
+path = "ex-62-ffi-pass-pointer/main.rs"
+[[bin]]
+name = "ex-63-ffi-expose-rust"
+path = "ex-63-ffi-expose-rust/main.rs"
+[[bin]]
+name = "ex-64-ffi-string-boundary"
+path = "ex-64-ffi-string-boundary/main.rs"
+[[bin]]
+name = "ex-65-ffi-ownership-free"
+path = "ex-65-ffi-ownership-free/main.rs"
+[[bin]]
+name = "ex-66-async-await-basic"
+path = "ex-66-async-await-basic/main.rs"
+[[bin]]
+name = "ex-67-tokio-runtime"
+path = "ex-67-tokio-runtime/main.rs"
+[[bin]]
+name = "ex-68-async-concurrent-tasks"
+path = "ex-68-async-concurrent-tasks/main.rs"
+[[bin]]
+name = "ex-69-async-channel"
+path = "ex-69-async-channel/main.rs"
+[[bin]]
+name = "ex-70-threads-vs-async"
+path = "ex-70-threads-vs-async/main.rs"
+[[bin]]
+name = "ex-71-zero-cost-verify"
+path = "ex-71-zero-cost-verify/main.rs"
+[[bin]]
+name = "ex-72-safe-wrapper-over-unsafe"
+path = "ex-72-safe-wrapper-over-unsafe/main.rs"
+[[bin]]
+name = "ex-73-concurrent-race-free-run"
+path = "ex-73-concurrent-race-free-run/main.rs"
+[[bin]]
+name = "ex-74-error-path-systems"
+path = "ex-74-error-path-systems/main.rs"
+[[bin]]
+name = "ex-75-cargo-test-suite"
+path = "ex-75-cargo-test-suite/main.rs"
+[[bin]]
+name = "ex-76-full-safety-slice"
+path = "ex-76-full-safety-slice/main.rs"
+[[bin]]
+name = "ex-77-integration-borrow-clean"
+path = "ex-77-integration-borrow-clean/main.rs"
+[[bin]]
+name = "ex-78-capstone-systems-tool"
+path = "ex-78-capstone-systems-tool/main.rs"

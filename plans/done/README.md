@@ -9,6 +9,10 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: ayokoding-learning-path-07-course-authoring-low-level-systems](./2026-08-15__ayokoding-learning-path-07-course-authoring-low-level-systems/README.md) —
+  Authored and live-verified seven English low-level systems course bodies. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
 - [2026-08-15: ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md) —
   Authored and live-verified 15 English course bodies for architecture, distributed systems, and the
   AI/agent-harness cluster. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this
