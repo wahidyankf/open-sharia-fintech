@@ -66,7 +66,8 @@ course-authoring siblings), not by two plans apiece. This plan does not rename a
 creates its own folder — but the collision is worth a human's attention before all these sibling plans
 are promoted to `in-progress/`. `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`
 is archived under `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`;
-`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` remains under `plans/backlog/`.
+`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` is archived under
+`plans/done/2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`.
 Both retain their full five-file plan structure (README/brd/prd/tech-docs/delivery)
 `[Repo-grounded — confirmed via directory listing]` — an earlier version of this note treated their
 existence as an unconfirmed presumption; both are now directly readable, and reading them surfaced a
@@ -76,8 +77,8 @@ the `06` row below).
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                           | Nature                                                                                                                                                                                                                         |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-09-course-authoring-interview-technique` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-09-course-authoring-interview-technique/README\.md` exits 0. This is this plan's only plan-level start gate.
