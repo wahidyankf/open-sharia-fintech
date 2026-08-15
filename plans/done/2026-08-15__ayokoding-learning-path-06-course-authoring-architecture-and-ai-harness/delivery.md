@@ -905,18 +905,18 @@ pipeline concurrently through review, bounded by the cap.
 
 ## Phase 7: Pre-archival Quality & CI Preparation
 
-- [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
+- [x] [AI] Run the full affected suite on the persistent final-delivery branch:
       `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
       `npm exec nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 9 opens the terminal PR.
-- [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
+- [x] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
       worktree, branch, or PR is required.
 
 ### Phase 7 Gate
 
-- [ ] [AI] Full affected suite + build green on the persistent final-delivery branch.
-- [ ] [AI] The Band-5 signal is prepared without a merge SHA; downstream notification waits for the
+- [x] [AI] Full affected suite + build green on the persistent final-delivery branch.
+- [x] [AI] The Band-5 signal is prepared without a merge SHA; downstream notification waits for the
       terminal PR merge.
-- [ ] [AI] **No PR opens for this phase** — it folds into the Phase 9 archival PR.
+- [x] [AI] **No PR opens for this phase** — it folds into the Phase 9 archival PR.
 
 > **Pause Safety**: the branch is ready for archival and terminal review. Safe to stop. To resume:
 > re-run the affected suite on the persistent final-delivery branch.
@@ -928,33 +928,33 @@ pipeline concurrently through review, bounded by the cap.
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry.
-- [ ] [AI] Apply the **repo-relevance gate**.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry.
+- [x] [AI] Apply the **repo-relevance gate**.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix; **code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan and NEVER landed inline**.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
 ### Phase 8 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate) — folds into the Phase 9 closeout PR.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate) — folds into the Phase 9 closeout PR.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
@@ -965,25 +965,25 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
 - [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify the Knowledge Capture phase is complete.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and Phase 6 —
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and Phase 6 —
       acceptance: `grep -F -q 'rule-15' learnings.md` exits 0.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt | grep -c .`
       returns **0**, and `wc -l < plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt` returns **15** — acceptance: both
       hold. **This plan asserts 15, not the full 127-course catalog.**
-- [ ] [AI] **Verify the ownership invariant held across the plan's entire history** —
+- [x] [AI] **Verify the ownership invariant held across the plan's entire history** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** — acceptance: no manifest file was touched on this branch.
-- [ ] [AI] **Verify every cross-plan reference still resolves**:
+- [x] [AI] **Verify every cross-plan reference still resolves**:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -995,13 +995,13 @@ pipeline concurrently through review, bounded by the cap.
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/ plans/done/YYYY-MM-DD__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/ plans/done/YYYY-MM-DD__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`
       using today's **completion** date (the `evidence/` subfolder moves with it). The source is
       always `plans/in-progress/` — Phase 0's promotion step is a mandatory precondition, so the plan
       never sits in `plans/backlog/` at archival time.
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan, and notify the four downstream sibling
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+- [x] [AI] Update any other READMEs that reference this plan, and notify the four downstream sibling
       plans whose `Depends-on` tables name this plan by folder path — acceptance: no sibling plan's
       link to this folder is left dangling.
 - [ ] [AI] Commit the archival:
@@ -1036,12 +1036,12 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npm exec nx affected -t typecheck` exits 0.
-- [ ] [AI] `npm exec nx affected -t lint` exits 0.
-- [ ] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npm exec nx affected -t typecheck` exits 0.
+- [x] [AI] `npm exec nx affected -t lint` exits 0.
+- [x] [AI] `npm exec nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npm exec nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 ### Note: plan location at archival time

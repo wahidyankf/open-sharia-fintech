@@ -9,6 +9,11 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md) —
+  Authored and live-verified 15 English course bodies for architecture, distributed systems, and the
+  AI/agent-harness cluster. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this
+  plan's sole archival PR.
+
 - [2026-08-13: beaver-flutter](./2026-08-13__beaver-flutter/README.md) — Replaced the BeaverNest
   Vite/React client with a responsive same-origin Flutter Web client, safe diagnostics, and a
   non-root combined runtime. Delivered by PRs #182 and #183.
