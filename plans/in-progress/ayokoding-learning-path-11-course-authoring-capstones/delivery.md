@@ -488,6 +488,27 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 
 ### Phase 2 Gate
 
+#### Recorded band-completion signal
+
+```text
+BAND: Band 8 — Remaining capstones
+PLAN: ayokoding-learning-path-11-course-authoring-capstones
+LANDED_COURSE_IDS:
+capstone-build-your-own-coding-agent
+capstone-build-your-own-pentest-engine
+capstone-secure-service
+capstone-data-pipeline
+capstone-concurrency-showdown
+capstone-concurrency-and-systems
+capstone-real-world-delivery
+capstone-lead-at-altitude
+GROW_MANIFESTS:
+apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
+apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.json
+```
+
 > All checks below must pass before starting Phase 3.
 
 - [ ] [AI] All three Cohort-B bodies pass their own 9-step convention with zero CRITICAL/HIGH/MEDIUM
