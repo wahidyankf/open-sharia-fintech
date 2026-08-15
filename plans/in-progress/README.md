@@ -11,9 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
-  — Authors nine JVM, advanced-language, and build-your-own internals course bodies.
-
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
