@@ -596,7 +596,7 @@ GROW_MANIFESTS:
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
-FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is merged
+FINAL_PR: #201 — sole terminal archival PR; downstream consumption is permitted only after it merges
 ```
 
 > **Pause Safety**: all eleven Band-7 bodies are live at canonical URLs; the single band-completion
@@ -895,7 +895,7 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [x] [AI] Verify the Knowledge Capture phase is complete.
-- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
 - [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
@@ -932,8 +932,9 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
       `ayokoding-learning-path-11-course-authoring-capstones` (once its folder exists), and
       `ayokoding-learning-path-12-careers-se-manifests` (once its folder exists) — acceptance: no
       sibling plan's link to this folder is left dangling.
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-08-course-authoring-security-and-ops to done`.
+      _Implementation note (2026-08-15): committed as `d6bfdd4fb` on the designated final-delivery branch._
 
 ### Phase 7 Gate
 

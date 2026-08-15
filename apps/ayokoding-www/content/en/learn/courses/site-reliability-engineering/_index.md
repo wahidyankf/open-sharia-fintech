@@ -3,7 +3,7 @@ title: "94 · Site Reliability Engineering"
 date: 2026-08-15T00:00:00+07:00
 draft: false
 weight: 1040
-prerequisites: ["containers-and-orchestration", "system-design"]
+prerequisites: ["backend-at-scale", "containers-and-orchestration", "system-design"]
 ---
 
 - [Overview](/en/learn/courses/site-reliability-engineering/overview)

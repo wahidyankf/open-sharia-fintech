@@ -252,32 +252,24 @@ these eleven bodies has no legacy home.
 Full per-course detail is the cross-plan
 [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
 
-| Course ID                                   | Origin | Format            | Primary language            | Prerequisites                                                  | One-line scope                                                                                                                  |
-| ------------------------------------------- | ------ | ----------------- | --------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `it-and-application-security`               | T(58)  | Annotated-concept | Python                      | `security-essentials`                                          | CIA, STRIDE, OWASP, crypto, identity                                                                                            |
-| `offensive-security`                        | T(59)  | By Example        | Python + shell              | `security-essentials`, `networking-essentials`                 | Recon, scanning, exploitation (lab-local)                                                                                       |
-| `defensive-security`                        | T(60)  | **By Example**    | Python + shell              | `security-essentials`, `networking-essentials`                 | **Hands-on** generalist blue-team: Sigma-on-ELK/OpenSearch + IR lifecycle + hardening (label fixed — NOT "concept", DL-9/DD-12) |
-| `detection-engineering-and-siem-operations` | N      | By Example        | XML/rules + config + Python | `defensive-security`                                           | **Wazuh-specific deep tier**: decoders, correlation rules, FP tuning, dashboards (specialist — DL-9/DD-12)                      |
-| `vulnerability-management-and-assessment`   | T(61)  | By Example        | Python                      | `security-essentials`                                          | Scanning, triage, remediation at scale, SBOM                                                                                    |
-| `it-governance-grc`                         | T(62)  | Annotated-concept | none                        | `it-and-application-security`                                  | Governance, risk, compliance, audit                                                                                             |
-| `bare-metal-virtualization`                 | T(52)  | By Example        | HCL/YAML/shell              | `containers-and-orchestration`                                 | Proxmox, hypervisors (full-depth sibling of `self-hosting-essentials`)                                                          |
-| `self-managed-kubernetes-and-gitops`        | T(53)  | By Example        | YAML/CLI                    | `containers-and-orchestration`, `cicd-and-release-engineering` | Self-owned prod K8s + GitOps                                                                                                    |
-| `platform-engineering-and-devex`            | T(93)  | Annotated-concept | none                        | `containers-and-orchestration`, `cicd-and-release-engineering` | Internal platforms, golden paths                                                                                                |
-| `site-reliability-engineering`              | T(94)  | Annotated-concept | Python                      | `containers-and-orchestration`, `system-design`                | SLOs, observability, IR                                                                                                         |
-| `analytics-and-experimentation`             | T(63)  | By Example        | Python                      | `sql-essentials`                                               | Metrics, A/B testing                                                                                                            |
+| Course ID                                   | Origin | Format            | Primary language            | Prerequisites (exact delivered frontmatter)                                             | One-line scope                                                                                                                  |
+| ------------------------------------------- | ------ | ----------------- | --------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `it-and-application-security`               | T(58)  | Annotated-concept | Python                      | `security-essentials`, `backend-at-scale`, `just-enough-python`                         | CIA, STRIDE, OWASP, crypto, identity                                                                                            |
+| `offensive-security`                        | T(59)  | By Example        | Python + shell              | `it-and-application-security`, `security-essentials`, `just-enough-bash`                | Recon, scanning, exploitation (lab-local)                                                                                       |
+| `defensive-security`                        | T(60)  | **By Example**    | Python + shell              | `offensive-security`, `it-and-application-security`, `just-enough-bash`                 | **Hands-on** generalist blue-team: Sigma-on-ELK/OpenSearch + IR lifecycle + hardening (label fixed — NOT "concept", DL-9/DD-12) |
+| `detection-engineering-and-siem-operations` | N      | By Example        | XML/rules + config + Python | `defensive-security`, `security-essentials`, `offensive-security`, `just-enough-python` | **Wazuh-specific deep tier**: decoders, correlation rules, FP tuning, dashboards (specialist — DL-9/DD-12)                      |
+| `vulnerability-management-and-assessment`   | T(61)  | By Example        | Python                      | `security-essentials`, `it-and-application-security`, `defensive-security`              | Scanning, triage, remediation at scale, SBOM                                                                                    |
+| `it-governance-grc`                         | T(62)  | Annotated-concept | none                        | `it-and-application-security`, `defensive-security`, `project-management`               | Governance, risk, compliance, audit                                                                                             |
+| `bare-metal-virtualization`                 | T(52)  | By Example        | HCL/YAML/shell              | `containers-and-orchestration`, `cloud-and-iac`, `networking-essentials`                | Proxmox, hypervisors (full-depth sibling of `self-hosting-essentials`)                                                          |
+| `self-managed-kubernetes-and-gitops`        | T(53)  | By Example        | YAML/CLI                    | `containers-and-orchestration`, `bare-metal-virtualization`, `distributed-systems`      | Self-owned prod K8s + GitOps                                                                                                    |
+| `platform-engineering-and-devex`            | T(93)  | Annotated-concept | none                        | `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`         | Internal platforms, golden paths                                                                                                |
+| `site-reliability-engineering`              | T(94)  | Annotated-concept | Python                      | `backend-at-scale`, `containers-and-orchestration`, `system-design`                     | SLOs, observability, IR                                                                                                         |
+| `analytics-and-experimentation`             | T(63)  | By Example        | Python                      | `sql-essentials`, `software-testing`                                                    | Metrics, A/B testing                                                                                                            |
 
-**Cross-band prerequisite note.** Six of these eleven bodies declare a prerequisite authored across
-three different owners: `containers-and-orchestration` and `cicd-and-release-engineering` are authored
-natively in plan 04's own current Band 2; `security-essentials`, `networking-essentials`, and
-`sql-essentials` are already re-homed by `ayokoding-learning-path-01-url-restructure`; and
-`system-design` is authored by
-`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`. Because plan 04 is a hard
-historical source context precondition (see [delivery.md Phase 0](./delivery.md#phase-0-environment-setup--baseline)),
-the two Band-2-authored IDs and the three re-homed IDs already resolve to a real bundle under
-`<COURSES>` by the time this plan starts authoring; `system-design` resolves once
-`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` lands — no unresolved-
-prerequisite tolerance is needed here (unlike plan 04's own Phase 1, whose six AI courses
-forward-reference courses not yet authored anywhere in the programme).
+**Cross-band prerequisite note.** Every ID in the exact frontmatter column resolves to an existing
+course bundle at delivery time. The security, systems, platform, data, and project-management
+foundations remain owned by their respective prior bands; this plan only consumes their stable IDs.
+No unresolved-prerequisite tolerance is used here.
 
 **Count check**: 10 transferred (T) + 1 net-new (N) = **11** total, the whole of Band 7.
 
@@ -386,11 +378,16 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 │       ├── overview.md [N] — purpose, prerequisites, register, scope boundary
 │       ├── learning/ [N] — `_index.md`, co-NN/ex-NN pages, `code/`, `capstone/`
 │       └── drilling/ [N] — `_index.md` + `overview.md` (fixed five-section order)
-├── plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/
-│   ├── tech-docs.md [E] — this file; the Course Library Catalog rows
-│   ├── delivery.md [E] — checkbox ticks + the five-field band-completion signal
-│   ├── learnings.md [E] — running log, drained by the Knowledge Capture phase
-│   └── evidence/ [N] — phase-0 snapshot, authored-body-slugs.txt, Playwright screenshots
+├── apps/ayokoding-www/content/en/learn/_index.md [E] — regenerate the English learning index
+├── plans/
+│   ├── backlog/README.md [E] — remove this plan's promoted entry
+│   ├── backlog/ayokoding-learning-path-11-course-authoring-capstones/README.md [E] — repoint its
+│   │   dependency link to the archived plan location
+│   ├── in-progress/README.md [E] — remove this plan after archival
+│   ├── done/README.md [E] — add the completed-plan index entry
+│   └── done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/ [N] — archive
+│       the plan with updated `README.md`, `tech-docs.md`, `delivery.md`, and `learnings.md`, plus
+│       the phase-0 register and Playwright MCP screenshot evidence under `evidence/`
 └── apps/ayokoding-www/src/features/course-paths/ — NOT TOUCHED (zero-diff gate every phase)
 ```
 
