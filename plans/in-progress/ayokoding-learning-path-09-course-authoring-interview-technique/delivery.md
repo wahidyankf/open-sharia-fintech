@@ -143,7 +143,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > landed. A body authored before any of these lands into the wrong place, from a spec that does not
 > yet exist, or onto a site that is still knowingly over-cost.
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-09-course-authoring-interview-technique/ plans/in-progress/ayokoding-learning-path-09-course-authoring-interview-technique/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -153,11 +153,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0,
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0,
       `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Verify repository baseline** — the `<COURSES>` bucket exists and holds at least the 37
+- [x] [AI] **Verify repository baseline** — the `<COURSES>` bucket exists and holds at least the 37
       re-homed bundles — command (single line):
       `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md && git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | awk -F/ 'NF==8' | grep -c .`
       — acceptance: both `test` commands exit 0 and the count returns **at least 37**. Depth-filter
@@ -167,7 +167,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `learning/_index.md` at deeper path levels. Falsifiable both ways: before the URL-restructure
       plan merges, the leading `test -d` exits non-zero and the `&&` chain short-circuits with no
       number printed at all; a count below 37 means the re-home is incomplete.
-- [ ] [AI] **Verify repository baseline** — the cross-plan syllabus layer is on `origin/main` and
+- [x] [AI] **Verify repository baseline** — the cross-plan syllabus layer is on `origin/main` and
       holds the 5 Band-9 spec files — command (single line):
       `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: (a) prints **exactly one** path (pipe to `grep -c .`, read **1**); its directory is
@@ -177,7 +177,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `SYLLABUS_ROOT=<path>`. **Do not write this as a `test -d plans/done/*__…/syllabus/courses`
       glob** — this harness runs zsh, where an unmatched glob is a fatal error, not a literal; `git
 ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `*`.
-- [ ] [AI] **Verify repository baseline — the parent plan's own Phase 0 established** — command
+- [x] [AI] **Verify repository baseline — the parent plan's own Phase 0 established** — command
       (single line):
       `git log --oneline -1 -- plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md | grep -c .`
       — acceptance: returns **1** (the parent plan's `delivery.md` has at least one commit on
@@ -185,7 +185,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       not a full-completion check — see [tech-docs.md §Baseline
       precondition](./tech-docs.md#baseline-precondition-on-plan-04) for why this plan does not require
       all of the parent plan's other 85 non-Band-9 bodies merged first.
-- [ ] [AI] **Verify repository baseline — the `vercel-function-cost-reduction` Phase 1–4 fix landed** —
+- [x] [AI] **Verify repository baseline — the `vercel-function-cost-reduction` Phase 1–4 fix landed** —
       three checks, all required (single line each):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx && echo OK1`;
       `test -f "apps/ayokoding-www/src/app/[locale]/layout.tsx" && echo OK2`;
@@ -195,10 +195,10 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       reintroducing the file after the fix breaks the check again. See [tech-docs.md §The
       vercel-function-cost-reduction precondition](./tech-docs.md#repository-baseline)
       for the full three-phase signal table this check is grounded in.
-- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+- [x] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
       `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Confirm all 5 Band-9 slugs are absent (no collision)** under `<COURSES>`:
+- [x] [AI] **Confirm all 5 Band-9 slugs are absent (no collision)** under `<COURSES>`:
 
   ```bash
   for s in coding-interview take-home-and-live-coding system-design-interview \
@@ -211,7 +211,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
   `mkdir -p apps/ayokoding-www/content/en/learn/courses/coding-interview` makes the loop print
   `EXISTS coding-interview`, proving the check fires.
 
-- [ ] [AI] **Create the authored-body slug register** — write the 5 slugs this plan authors, one per
+- [x] [AI] **Create the authored-body slug register** — write the 5 slugs this plan authors, one per
       line, to `evidence/authored-body-slugs.txt`:
 
   ```bash
@@ -227,14 +227,14 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
   — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **5**, and
   `sort evidence/authored-body-slugs.txt | uniq -d | wc -l` returns **0** (no duplicate slug).
 
-- [ ] [AI] **Record the authored-body baseline (the falsifiable-both-ways anchor for archival)** —
+- [x] [AI] **Record the authored-body baseline (the falsifiable-both-ways anchor for archival)** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **5** today (none authored yet), recorded in
       `evidence/phase-0-snapshot.txt`. The same command must return **0** at archival (Phase 6).
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present and the first line is
       `# Learnings: ayokoding-learning-path-09-course-authoring-interview-technique`.
-- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
+- [x] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -246,7 +246,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase opens **no** PR (the
+- [x] [AI] **Confirm no manifest file changed in this phase** — this phase opens **no** PR (the
       Delivery-Boundary Integration Protocol applies from Phase 1 onward), but the manifest-isolation
       assertion still holds:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
@@ -256,17 +256,17 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] All four blocking preconditions verified: `<COURSES>` bucket populated (≥ 37 bundles);
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] All four blocking preconditions verified: `<COURSES>` bucket populated (≥ 37 bundles);
       `<SYLLABUS_ROOT>` located with all 5 Band-9 specs present; the parent plan's own Phase 0 baseline
       committed; the `vercel-function-cost-reduction` three-check signal (`OK1`/`OK2`/`OK3`) all print.
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] All 5 Band-9 slugs confirmed absent (zero `EXISTS` lines).
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 5 unique slugs; the ABSENT-count baseline of 5 is
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+- [x] [AI] All 5 Band-9 slugs confirmed absent (zero `EXISTS` lines).
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 5 unique slugs; the ABSENT-count baseline of 5 is
       recorded in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Cross-plan link gate green (no line naming this plan's folder).
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed**:
+- [x] [AI] Cross-plan link gate green (no line naming this plan's folder).
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR was opened for this phase and nothing was pushed**:
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
 
