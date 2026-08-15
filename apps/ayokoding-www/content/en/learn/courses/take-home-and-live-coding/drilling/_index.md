@@ -1,0 +1,8 @@
+---
+title: "Drilling"
+date: 2026-08-15T00:00:00+07:00
+draft: false
+weight: 20
+---
+
+- [Drilling overview](/en/learn/courses/take-home-and-live-coding/drilling/overview)

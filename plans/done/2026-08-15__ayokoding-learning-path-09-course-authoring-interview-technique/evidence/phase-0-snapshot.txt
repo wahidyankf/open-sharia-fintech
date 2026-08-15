@@ -1,0 +1,9 @@
+PLAN08_ARCHIVE=plans/done/2026-08-15__ayokoding-learning-path-08-course-authoring-security-and-ops/README.md
+SYLLABUS_ROOT=plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses
+COURSE_BUNDLES=105
+PLAN04_BASELINE_COMMIT=002a17604
+VERCEL_COST_REDUCTION=OK1,OK2,OK3
+BASELINE_BUILD=pass
+BASELINE_UNIT=pass (3482 tests; 6 skipped)
+AUTHORED_BODY_BASELINE=5 absent
+MANIFEST_DIFF=0
