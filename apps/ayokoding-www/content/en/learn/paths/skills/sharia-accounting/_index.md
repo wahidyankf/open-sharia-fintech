@@ -6,6 +6,6 @@ draft: false
 weight: 20
 ---
 
-This immediately-effective path shares the accounting foundation needed to build a balancing ledger and produce three statements. **Dangerous 1** begins after this boundary: do not yet treat journal mechanics, recognition, procurement, receivables, cost allocation, assets, inventory, leases, or Sharia contracts as safely mastered.
+This immediately-effective path now completes its shared transactional and cost-accounting cycle through journal entries, recognition, procurement, receivables, cost allocation, assets, inventory, and leases. **Dangerous 1** remains: this is not the whole path, and specialized Sharia contract accounting is still ahead.
 
 Choose [conventional-accounting](/en/learn/paths/skills/conventional-accounting) when you need only the general accounting route. Stay here when you need the same foundation followed by the later Sharia-specific extension.

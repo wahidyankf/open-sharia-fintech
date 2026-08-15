@@ -6,6 +6,6 @@ draft: false
 weight: 10
 ---
 
-This immediately-effective path starts with a ledger that balances and ends this stage with the three core financial statements and a controlled close. **Dangerous 1** begins after this boundary: you can prepare a sound basic ledger, but you cannot yet safely judge journal mechanics, revenue recognition, procurement, receivables, cost allocation, long-lived assets, inventory, or leases.
+This immediately-effective path now completes its shared transactional and cost-accounting cycle through journal entries, recognition, procurement, receivables, cost allocation, long-lived assets, inventory, and leases. **Dangerous 1** remains: this is not the whole path, and the next boundary adds specialized accounting work.
 
-The path links to [SQL Essentials](/en/learn/courses/sql-essentials) where data modeling or querying is needed; it does not duplicate that course. Later Plan 14 stages extend this route through the full transactional and cost-accounting cycle.
+The path links to [SQL Essentials](/en/learn/courses/sql-essentials) where data modeling or querying is needed; it does not duplicate that course. Plan 15 continues this route beyond this eleven-course foundation.
