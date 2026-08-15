@@ -39,10 +39,6 @@ Plan 06 needs):
 
 **Careers manifests** (splits old `05-manifests`; Plan 04's retained baseline is complete):
 
-- [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
-  — the three `software-engineer`-role manifests (`interview-ready`, `immediately-effective`,
-  `fundamentally-strong`) — grouped together because the no-forked-body and Band-9 checks bind
-  across exactly these three.
 - [ayokoding-learning-path-13-careers-ai-manifest](./ayokoding-learning-path-13-careers-ai-manifest/README.md)
   — the `immediately-effective/ai-engineer` manifest alone, following plan 12.
 

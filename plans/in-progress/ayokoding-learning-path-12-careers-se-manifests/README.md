@@ -230,18 +230,18 @@ flowchart TD
 
 Inside Stage B the three manifest phases are **strictly serial**, in DD-27's locked order.
 
-| Phase | Manifest published                                | Closing gate                                                                                   |
-| ----- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 1     | `careers/interview-ready/software-engineer`       | architecture proven; 1 manifest, 1 hub card; unblocks plan 13                                  |
-| 2     | `careers/immediately-effective/software-engineer` | 2 manifests, 2 hub cards; arcs provably distinct                                               |
-| 3     | `careers/fundamentally-strong/software-engineer`  | 3 manifests, 3 hub cards; no forked body across the three                                      |
-| 4     | _(growth only)_                                   | full three-manifest arcs; this plan's own catalog contribution resolves                        |
-| 5     | —                                                 | all automated sweeps green; ownership boundary intact                                          |
-| 6     | —                                                 | 9 screenshots committed (3 landings + hub slice); zero open defects                            |
-| 7     | —                                                 | CI green on `main`; production serving this plan's 3 paths                                     |
+| Phase | Manifest published                                | Closing gate                                                                    |
+| ----- | ------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 1     | `careers/interview-ready/software-engineer`       | architecture proven; 1 manifest, 1 hub card; unblocks plan 13                   |
+| 2     | `careers/immediately-effective/software-engineer` | 2 manifests, 2 hub cards; arcs provably distinct                                |
+| 3     | `careers/fundamentally-strong/software-engineer`  | 3 manifests, 3 hub cards; no forked body across the three                       |
+| 4     | _(growth only)_                                   | full three-manifest arcs; this plan's own catalog contribution resolves         |
+| 5     | —                                                 | all automated sweeps green; ownership boundary intact                           |
+| 6     | —                                                 | 9 screenshots committed (3 landings + hub slice); zero open defects             |
+| 7     | —                                                 | CI green on `main`; production serving this plan's 3 paths                      |
 | 8     | —                                                 | three-manifest verification green; plan 13 may begin after this final PR merges |
-| 9     | —                                                 | every `learnings.md` entry terminal                                                            |
-| 10    | —                                                 | archived                                                                                       |
+| 9     | —                                                 | every `learnings.md` entry terminal                                             |
+| 10    | —                                                 | archived                                                                        |
 
 **Stage groupings above describe verification, not delivery boundaries.** See
 [delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries) for the authoritative mapping of
@@ -249,8 +249,8 @@ phases to delivery units, branches, and PRs.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                 | Nature                                                                                                                                                                                                                         |
+| ------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-11-course-authoring-capstones` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-11-course-authoring-capstones/README\.md$"` exits 0. This is this plan's only plan-level start gate.
