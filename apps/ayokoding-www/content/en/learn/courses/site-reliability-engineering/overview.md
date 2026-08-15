@@ -18,9 +18,9 @@ changes, or real customer data.
 
 ## Prerequisites
 
-- [Containers and Orchestration](/en/learn/courses/containers-and-orchestration) supplies the runtime
+- [Containers and Orchestration](/en/learn/courses/containers-and-orchestration.md.md) supplies the runtime
   context in which a service exposes health and telemetry.
-- [System Design](/en/learn/courses/system-design) is an explicit prerequisite: use its load,
+- [System Design](/en/learn/courses/system-design.md.md) is an explicit prerequisite: use its load,
   capacity, dependency, and failure-mode reasoning when choosing an SLI or interpreting saturation.
 
 ## The mental model

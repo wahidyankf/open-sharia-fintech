@@ -87,5 +87,5 @@ needs a pre-stated practical bar and guardrails.
 covariate can reduce variance only when it is measured before treatment; post-treatment adjustment
 can erase or manufacture the very effect being measured.
 
-← Previous: [Instrumentation and product measures](./instrumentation-and-product-measures) · Next:
-[Honest reads and safe delivery](./honest-reads-and-safe-delivery) →
+← Previous: [Instrumentation and product measures](./instrumentation-and-product-measures.md) · Next:
+[Honest reads and safe delivery](./honest-reads-and-safe-delivery.md) →

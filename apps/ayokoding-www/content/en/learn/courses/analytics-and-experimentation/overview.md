@@ -18,9 +18,9 @@ in-memory database. They are teaching mechanisms, not production analytics infra
 
 ## Prerequisites
 
-- [SQL Essentials](/en/learn/courses/sql-essentials) supplies aggregation, joins, and grouping over an
+- [SQL Essentials](/en/learn/courses/sql-essentials.md.md) supplies aggregation, joins, and grouping over an
   event table.
-- [Software Testing](/en/learn/courses/software-testing) supplies the controlled-comparison mindset:
+- [Software Testing](/en/learn/courses/software-testing.md.md) supplies the controlled-comparison mindset:
   state the claim and the pass bar before looking at the result.
 
 ## Scope boundary
@@ -31,7 +31,7 @@ evaluation result is trustworthy. This course teaches **classical product metric
 event instrumentation, funnels, retention, guardrails, randomized product delivery, and an honest
 ship/no-ship decision. Both courses use intervals and hypothesis tests; neither substitutes for the
 other. In particular, judge concordance belongs in
-[Statistics for Evaluation](/en/learn/courses/statistics-for-evaluation), not in this product
+[Statistics for Evaluation](/en/learn/courses/statistics-for-evaluation.md.md), not in this product
 experimentation course.
 
 ## The decision loop
@@ -87,4 +87,9 @@ it must use a coherent prior, loss, and stopping rule rather than translating a 
 into a posterior probability. Never put personal data, secrets, full URLs with query strings, or
 unbounded identifiers into analytics properties; use reviewed, minimal, purpose-bound schemas.
 
-Next: [Learning overview](./learning/overview) →
+Next: [Learning overview](./learning/overview.md) →
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy analytics material; the historical
+material remains available during the transition.

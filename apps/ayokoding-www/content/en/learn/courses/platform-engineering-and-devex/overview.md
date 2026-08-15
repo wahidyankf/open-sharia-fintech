@@ -17,11 +17,11 @@ software. There is no `code/` directory and no runnable artifact.
 
 ## Prerequisites
 
-- [Containers and Orchestration](/en/learn/courses/containers-and-orchestration) supplies a runtime
+- [Containers and Orchestration](/en/learn/courses/containers-and-orchestration.md.md) supplies a runtime
   substrate the platform can hide behind a simpler interface.
-- [Cloud and IaC](/en/learn/courses/cloud-and-iac) supplies the provisioned infrastructure a
+- [Cloud and IaC](/en/learn/courses/cloud-and-iac.md.md) supplies the provisioned infrastructure a
   self-service capability can safely expose.
-- [CI/CD and Release Engineering](/en/learn/courses/cicd-and-release-engineering) supplies the
+- [CI/CD and Release Engineering](/en/learn/courses/cicd-and-release-engineering.md.md) supplies the
   delivery practices a golden path can compose.
 
 ## The mental model

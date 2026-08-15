@@ -48,5 +48,5 @@ quality of evidence, and toil reduction protects capacity to improve the system.
 new production dependency; give it tests, ownership, and a fallback rather than treating it as a
 one-time cleanup.
 
-← Previous: [Objectives, budgets, and alerting](./objectives-budgets-and-alerting) · Next:
-[Capstone](./capstone/overview) →
+← Previous: [Objectives, budgets, and alerting](./objectives-budgets-and-alerting.md) · Next:
+[Capstone](./capstone/overview.md) →

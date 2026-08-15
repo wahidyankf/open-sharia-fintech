@@ -148,3 +148,8 @@ operating the Kubernetes control plane that consumes those VMs.
 - [Example 78: Keep Secrets out of State](/en/learn/courses/bare-metal-virtualization/learning/advanced#example-78-keep-secrets-out-of-state)
 - [Example 79: Locate the Substrate Layer](/en/learn/courses/bare-metal-virtualization/learning/advanced#example-79-locate-the-substrate-layer)
 - [Example 80: Assemble the Bare Metal Capstone](/en/learn/courses/bare-metal-virtualization/learning/advanced#example-80-assemble-the-bare-metal-capstone)
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy Proxmox virtualization material;
+the historical material remains available during the transition.

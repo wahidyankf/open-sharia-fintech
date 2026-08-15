@@ -248,4 +248,4 @@ current and target profile turns broad framework language into a short set of ow
 preserving the fact that risk management includes governance, response, and recovery as well as
 preventive technology.
 
-Next: [Compliance and controls scenarios](./compliance-and-controls).
+Next: [Compliance and controls scenarios](./compliance-and-controls.md).

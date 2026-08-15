@@ -54,5 +54,5 @@ evidence. That requires careful event semantics and correlation, not merely inst
 Avoid high-cardinality identifiers and sensitive payment or personal data in labels or logs; a
 correlation ID must be opaque and non-secret.
 
-← Previous: [Learning overview](./overview) · Next:
-[Objectives, budgets, and alerting](./objectives-budgets-and-alerting) →
+← Previous: [Learning overview](./overview.md) · Next:
+[Objectives, budgets, and alerting](./objectives-budgets-and-alerting.md) →

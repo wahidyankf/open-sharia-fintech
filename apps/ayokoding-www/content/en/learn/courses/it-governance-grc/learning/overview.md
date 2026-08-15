@@ -180,4 +180,4 @@ Privacy by design makes data minimization, purpose limitation, access boundaries
 choices early design constraints rather than a release checklist. **Verify**: a design can explain
 why each personal-data field is necessary and when it is deleted.
 
-Next: [Governance and risk scenarios](./governance-and-risk).
+Next: [Governance and risk scenarios](./governance-and-risk.md).

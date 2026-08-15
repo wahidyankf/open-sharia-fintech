@@ -26,11 +26,11 @@ decision.
 
 ## Build order
 
-1. Complete the [risk register](./risk-register). Every material risk needs a statement, inherent
+1. Complete the [risk register](./risk-register.md). Every material risk needs a statement, inherent
    score, treatment, owner, residual score, and review point.
-2. Complete the [control mapping](./control-mapping). Every control must trace to at least one risk,
+2. Complete the [control mapping](./control-mapping.md). Every control must trace to at least one risk,
    named NIST CSF outcome, owner, and evidence item; no control may be orphaned.
-3. Complete the [policy and evidence plan](./policy-and-evidence). The policy states intent, the
+3. Complete the [policy and evidence plan](./policy-and-evidence.md). The policy states intent, the
    standard and procedure operationalize it, and the evidence plan says how performance is tested.
 4. Review the three artifacts together. Confirm their owners, dates, and risk/control identifiers
    agree, then write the assurance decision named below.
@@ -51,5 +51,5 @@ A reviewer can follow any risk through its treatment, control, and evidence, the
 remaining exposure and the accountable decision maker without needing an oral explanation. That
 traceability is the capstone's definition of a coherent GRC artifact set.
 
-← Previous: [Assurance and resilience scenarios](../assurance-and-resilience) · Next:
-[Drilling](../../drilling/overview) →
+← Previous: [Assurance and resilience scenarios](../assurance-and-resilience.md) · Next:
+[Drilling](../../drilling/overview.md) →

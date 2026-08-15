@@ -39,3 +39,8 @@ choose preventive controls, and prove those controls fail closed in a small appl
   sequence into retrieval practice.
 
 Next: [Learning Overview](./learning/overview.md) →
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy information-security foundations;
+the historical material remains available during the transition.

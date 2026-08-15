@@ -58,3 +58,8 @@ baseline hardening, and it never presents a detection as authorization to probe 
   rules, correlation check, dashboard plan, and a false-positive decision record.
 
 Next: [Learning Overview](./learning/overview.md) →
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping SIEM and detection portions of legacy
+defensive-security material; the historical material remains available during the transition.

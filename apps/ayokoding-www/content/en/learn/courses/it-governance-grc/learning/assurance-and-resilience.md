@@ -252,4 +252,4 @@ completed controls but omits exceptions encourages leadership to believe risk ha
 roll-up preserves good evidence, honest gaps, and the specific decisions that turn security
 operations into accountable organizational assurance.
 
-Next: [Capstone](./capstone).
+Next: [Capstone](./capstone/overview.md).

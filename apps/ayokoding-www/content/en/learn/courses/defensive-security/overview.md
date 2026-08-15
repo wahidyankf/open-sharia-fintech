@@ -63,3 +63,8 @@ generalist lab for that deep SIEM-operations tier.
   inspect synthetic telemetry, validate two detections, conduct a tabletop, and record hardening follow-up.
 
 Next: [Learning Overview](./learning/overview.md) →
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy defensive-security material;
+the historical material remains available during the transition.

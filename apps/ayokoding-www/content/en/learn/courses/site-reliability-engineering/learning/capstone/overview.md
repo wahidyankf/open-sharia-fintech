@@ -20,7 +20,7 @@ operating decision, not a production monitoring deployment.
 2. Change only the synthetic fixtures if you want to explore another outcome. Keep every
    `RequestEvent` fully typed; do not add secrets, personal data, production endpoints, or live load.
 3. Explain the returned `PAGE` route in terms of user-visible errors and budget burn, not CPU alone.
-4. Review the [postmortem](./postmortem), then write a comparable artifact for the changed fixture.
+4. Review the [postmortem](./postmortem.md), then write a comparable artifact for the changed fixture.
    Preserve the time-ordered facts, system conditions, mitigation, and owned action items.
 
 ## Concepts exercised
@@ -50,5 +50,5 @@ can also say what would be needed before a real production deployment: reviewed 
 privacy and cardinality controls, service-specific windows, ownership, runbooks, and tested failure
 handling.
 
-← Previous: [Operations, learning, and capacity](../operations-learning-and-capacity) · Next:
-[Drilling](../../drilling/overview) →
+← Previous: [Operations, learning, and capacity](../operations-learning-and-capacity.md) · Next:
+[Drilling](../../drilling/overview.md) →

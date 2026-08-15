@@ -86,5 +86,5 @@ invalid randomization or a harmed guardrail. If traffic cannot support the plann
 performative A/B test; make a reversible judgment call, gather qualitative evidence, or change the
 question.
 
-← Previous: [Experiment design and analysis](./experiment-design-and-analysis) · Next:
-[Capstone](./capstone/overview) →
+← Previous: [Experiment design and analysis](./experiment-design-and-analysis.md) · Next:
+[Capstone](./capstone/overview.md) →

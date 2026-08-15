@@ -247,4 +247,4 @@ ticket number.
 available. An exception mechanism preserves that flexibility while preventing temporary exposure
 from becoming invisible technical debt that nobody is authorized to revisit.
 
-Next: [Assurance and resilience scenarios](./assurance-and-resilience).
+Next: [Assurance and resilience scenarios](./assurance-and-resilience.md).

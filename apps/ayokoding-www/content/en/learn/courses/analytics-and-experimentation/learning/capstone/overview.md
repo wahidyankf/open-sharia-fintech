@@ -23,7 +23,7 @@ not a deployment or a recommendation about a real product.
    signup cohort.
 4. Confirm the plan's sample size was calculated before the result; confirm SRM passes before reading
    the effect; then compare the interval against the practical lift and guardrail.
-5. Read [the decision memo](./decision-memo). Its numbers are deliberately reconciled to program
+5. Read [the decision memo](./decision-memo.md). Its numbers are deliberately reconciled to program
    output; revise both only by changing a fixture and rerunning the calculation.
 
 ## Concepts exercised
@@ -51,5 +51,5 @@ positive conversion result does not override a broken guardrail. Before using th
 system, add approved privacy controls, durable storage, a reviewed statistical package, ownership,
 and an appropriate sequential or fixed-horizon governance policy.
 
-← Previous: [Honest reads and safe delivery](../honest-reads-and-safe-delivery) · Next:
-[Drilling](../../drilling/overview) →
+← Previous: [Honest reads and safe delivery](../honest-reads-and-safe-delivery.md) · Next:
+[Drilling](../../drilling/overview.md) →

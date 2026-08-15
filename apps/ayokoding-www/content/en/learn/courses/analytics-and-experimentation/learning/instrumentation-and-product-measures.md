@@ -96,5 +96,5 @@ OEC makes the experiment's actual decision rule explicit. No single proxy can ca
 For a ratio, retain additive numerators and denominators so its uncertainty can be calculated rather
 than averaged away.
 
-← Previous: [Learning overview](./overview) · Next:
-[Experiment design and analysis](./experiment-design-and-analysis) →
+← Previous: [Learning overview](./overview.md) · Next:
+[Experiment design and analysis](./experiment-design-and-analysis.md) →

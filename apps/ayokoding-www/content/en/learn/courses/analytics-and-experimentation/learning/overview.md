@@ -29,5 +29,5 @@ computes; **verify** is the smallest falsifiable check; **concepts** provides a 
 register. Do the verification before accepting the interpretation. A statistically detectable
 number is not automatically a product decision, and an appealing product story is not evidence.
 
-← Previous: [Course overview](../overview) · Next:
-[Instrumentation and product measures](./instrumentation-and-product-measures) →
+← Previous: [Course overview](../overview.md) · Next:
+[Instrumentation and product measures](./instrumentation-and-product-measures.md) →

@@ -607,17 +607,20 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
 
 ## Phase 3: Section & Authored-Tree Verification
 
-- [ ] [AI] **Verify all 11 authored bodies are present** —
+- [x] [AI] **Verify all 11 authored bodies are present** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**. Falsifiable both ways: this returned **11** at the Phase-0 baseline,
       and removing any one bundle makes it return 1.
-- [ ] [AI] **Verify every authored body declares prerequisites** —
+      _Implementation note (2026-08-15): the authored-body presence loop returned 0._
+- [x] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0** (returns 11 at baseline).
-- [ ] [AI] **Verify every authored body has both tracks** —
+      _Implementation note (2026-08-15): the prerequisite-frontmatter loop returned 0._
+- [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**.
-- [ ] [AI] **Supersession sweep (Q-A-conditional)** — read the Q-A ruling already recorded in
+      _Implementation note (2026-08-15): the learning-and-drilling track loop returned 0._
+- [x] [AI] **Supersession sweep (Q-A-conditional)** — read the Q-A ruling already recorded in
       `ayokoding-learning-path-01-url-restructure`'s archived `tech-docs.md` (resolved by the time this
       plan starts, since plan 04's own repository baseline context already required it). If ruled A (staging pen)
       or a hybrid covering the overlapping subjects: for every course in
@@ -629,12 +632,19 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
       `wc -l < evidence/supersession-sweep-slugs.txt`. If ruled B (permanent archive): edit no
       `overview.md`; record `Q-A ruled B — no supersession sweep performed` in `learnings.md` —
       acceptance: `grep -lF 'Superseded by:' <COURSES>*/overview.md | wc -l` returns **0**.
-- [ ] [AI] Run affected quality gates from the worktree:
+      _Implementation note (2026-08-15): Q-A is ruled A (staging pen). Nine subject-overlap course
+      slugs are recorded in `evidence/supersession-sweep-slugs.txt`, and exactly nine corresponding
+      overviews carry a `Superseded by:` transition line._
+- [x] [AI] Run affected quality gates from the worktree:
       `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` — acceptance:
       exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation), committing
       preexisting fixes separately.
-- [ ] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+      _Implementation note (2026-08-15): the equivalent npm-24-safe form `npm exec nx -- affected -t
+    typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The literal form lets
+      npm consume `-t` and fails before Nx receives its required targets._
+- [x] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
+      _Implementation note (2026-08-15): build exited 0 after the supersession and local-link repairs._
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
       `apps/rhino-cli/scripts/rhino-bin.sh md heading-hierarchy validate` +
       `npm run lint:md`, plus the scoped link gate:
 
@@ -658,27 +668,38 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
     And link, heading-hierarchy, and markdownlint validation report no errors across them
   ```
 
-- [ ] [AI] **Verify zero manifest files were touched by this entire plan**:
+  _Implementation note (2026-08-15): heading hierarchy and Markdown lint exited 0. The link checker
+  initially identified 31 missing local Markdown targets in four new bundles; those links now use
+  resolvable `.md` targets, indexes were regenerated, and the final link validator reports no broken
+  links (including no plan-course path failure)._
+
+- [x] [AI] **Verify zero manifest files were touched by this entire plan**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Verify the band-completion signal is complete** — anchor the count on the field's
+      _Implementation note (2026-08-15): the committed history count and current worktree status for
+      the manifest subtree are both 0._
+- [x] [AI] **Verify the band-completion signal is complete** — anchor the count on the field's
       line-start form:
       **1** (this plan's own single band signal).
+      _Implementation note (2026-08-15): one five-field signal is present; `FINAL_PR` remains the
+      required pending placeholder until the sole terminal PR is merged._
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
 > (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
 
 ### Phase 3 Gate
 
-- [ ] [AI] All three 11-body structural loops (presence, prerequisites, both tracks) return 0.
-- [ ] [AI] Supersession sweep resolved one way or the other (never left unresolved).
-- [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure among
+- [x] [AI] All three 11-body structural loops (presence, prerequisites, both tracks) return 0.
+- [x] [AI] Supersession sweep resolved one way or the other (never left unresolved).
+- [x] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
+- [x] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure among
       this plan's own paths.
-- [ ] [AI] Zero manifest files touched across the whole plan's history; the single band signal is
+- [x] [AI] Zero manifest files touched across the whole plan's history; the single band signal is
       prepared without a merge SHA.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+      _Implementation note (2026-08-15): this verification commit remains local on `final-delivery`;
+      no PR, merge, deployment, or final PR identifier has been created._
 
 > **Pause Safety**: the authored library passes every automated gate. Safe to stop. To resume: re-run
 > the affected quality gates + build.

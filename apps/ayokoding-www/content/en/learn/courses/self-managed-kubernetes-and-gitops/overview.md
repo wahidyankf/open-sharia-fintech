@@ -146,3 +146,8 @@ concept mapping are preserved in the [course syllabus](../../../../../../../plan
 - [Example 80: RPO and RTO](/en/learn/courses/self-managed-kubernetes-and-gitops/learning/advanced#example-80-rpo-and-rto)
 - [Example 81: Restore Drill](/en/learn/courses/self-managed-kubernetes-and-gitops/learning/advanced#example-81-restore-drill)
 - [Example 82: Self-Managed Kubernetes Capstone](/en/learn/courses/self-managed-kubernetes-and-gitops/learning/advanced#example-82-self-managed-kubernetes-capstone)
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy Kubernetes and K3s material;
+the historical material remains available during the transition.

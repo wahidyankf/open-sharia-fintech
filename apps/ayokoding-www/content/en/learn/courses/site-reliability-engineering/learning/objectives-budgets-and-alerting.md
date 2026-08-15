@@ -54,5 +54,5 @@ missed incidents and noisy pages.
 **Why it matters:** alert fatigue is a reliability risk. A page asks a person to interrupt their
 life; the system must earn that interruption with clear user impact and a useful action.
 
-← Previous: [Telemetry and service signals](./telemetry-and-service-signals) · Next:
-[Operations, learning, and capacity](./operations-learning-and-capacity) →
+← Previous: [Telemetry and service signals](./telemetry-and-service-signals.md) · Next:
+[Operations, learning, and capacity](./operations-learning-and-capacity.md) →

@@ -17,7 +17,7 @@ to an auditable assurance roll-up for a small service.
 
 ## Prerequisites
 
-- **Prior topic**: [IT and Application Security](/en/learn/courses/it-and-application-security).
+- **Prior topic**: [IT and Application Security](/en/learn/courses/it-and-application-security.md.md).
   That course explains technical controls and security operations; this course explains how an
   organization assigns risk ownership, selects control outcomes, and turns operational evidence into
   assurance.
@@ -29,7 +29,7 @@ to an auditable assurance roll-up for a small service.
 ## Scope boundary
 
 This course governs and assures technical work; it does not replace
-[IT and Application Security](/en/learn/courses/it-and-application-security), which teaches the
+[IT and Application Security](/en/learn/courses/it-and-application-security.md.md), which teaches the
 engineering mechanisms themselves. It also does not prepare a reader to provide legal advice,
 certify an organization, or independently issue an audit opinion. Laws, contracts, and framework
 requirements apply differently by jurisdiction, customer, and system: involve qualified counsel,
@@ -83,3 +83,8 @@ No scenario asks you to run a command. Instead, every artifact has an observable
 has an owner and treatment; a control mapping traces in both directions; a RACI row has exactly one
 accountable person; evidence can be tied to a period and a control. Read the artifact and test that
 property. That is the appropriate no-code analogue to a test passing.
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy IT-GRC material; the historical
+material remains available during the transition.

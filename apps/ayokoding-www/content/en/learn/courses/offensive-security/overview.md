@@ -53,3 +53,8 @@ continues with detection, response, and hardening once a safe finding has been p
   evidence, and writes two remediation-oriented findings without sending network traffic.
 
 Next: [Learning Overview](./learning/overview.md) →
+
+## Legacy relation
+
+Superseded by: this canonical course replaces the overlapping legacy offensive-security material;
+the historical material remains available during the transition.

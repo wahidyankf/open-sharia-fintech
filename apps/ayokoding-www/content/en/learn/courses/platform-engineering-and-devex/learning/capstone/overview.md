@@ -28,11 +28,11 @@ and will not do, how an unusual need is handled, and how the team will learn whe
 
 ## Build order
 
-1. Complete the [golden-path brief](./golden-path). It must state customer, outcome, defaults,
+1. Complete the [golden-path brief](./golden-path.md). It must state customer, outcome, defaults,
    ownership record, proof of a better-than-DIY experience, and an explicit off-path route.
-2. Complete the [self-service contract](./self-service). It must turn one repeatable request into a
+2. Complete the [self-service contract](./self-service.md). It must turn one repeatable request into a
    ticket-free capability bounded by understandable guard-rails.
-3. Complete the [DevEx measurement policy](./devex-metrics). It must define service-context signals,
+3. Complete the [DevEx measurement policy](./devex-metrics.md). It must define service-context signals,
    feedback questions, a review cadence, and prohibited uses.
 4. Review all artifacts together. The catalog owner, customer, capability boundary, and measurement
    question must agree. If they do not, revise the product boundary rather than hiding the conflict.
@@ -55,5 +55,5 @@ legitimate exception route, and see how their feedback changes the platform. A p
 explain the outcome being improved without claiming that a template, dashboard, or portal alone is
 the product.
 
-← Previous: [Metrics and DevEx scenarios](../metrics-and-devex) · Next:
-[Drilling](../../drilling/overview) →
+← Previous: [Metrics and DevEx scenarios](../metrics-and-devex.md) · Next:
+[Drilling](../../drilling/overview.md) →
