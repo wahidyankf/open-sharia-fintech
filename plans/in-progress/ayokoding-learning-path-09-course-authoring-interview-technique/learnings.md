@@ -29,3 +29,7 @@ not here.
 - **Observation**: what was noticed (sanitized)
 - **Why it might generalize**: the litmus reasoning
 ```
+
+No generalizable learnings — the only findings were course-local Markdown defects caught by the
+existing pre-commit lint gate and a local development-server startup hang; neither establishes a
+new durable repository practice beyond the checks already required here.

@@ -608,13 +608,13 @@ because its settled prerequisite array is empty.
 
 ## Phase 4: Pre-PR CI Readiness Verification
 
-- [ ] [AI] Run the applicable local quality gates against the persistent `final-delivery` branch.
-- [ ] [AI] If any check fails, fix it on `final-delivery` before proceeding; do not push or open a PR.
+- [x] [AI] Run the applicable local quality gates against the persistent `final-delivery` branch.
+- [x] [AI] If any check fails, fix it on `final-delivery` before proceeding; do not push or open a PR.
 
 ### Phase 4 Gate
 
-- [ ] [AI] The applicable local quality gates on `final-delivery` are green.
-- [ ] [AI] No unresolved CI failure remains.
+- [x] [AI] The applicable local quality gates on `final-delivery` are green.
+- [x] [AI] No unresolved CI failure remains.
 
 > **Pause Safety**: this plan's local readiness checks are green on `final-delivery`. Safe to stop.
 > To resume: re-run the applicable local quality gates.
@@ -623,36 +623,36 @@ because its settled prerequisite array is empty.
 
 ## Phase 5: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to `<placeholder>`
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to `<placeholder>`
       tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — this repo is `ose-public`; a
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — this repo is `ose-public`; a
       public-governance learning may route to `repo-governance/` or `docs/` here, never to
       `ose-private`.
-- [ ] [AI] Route each surviving entry to exactly one durable home (`repo-governance/`, `docs/`, an
+- [x] [AI] Route each surviving entry to exactly one durable home (`repo-governance/`, `docs/`, an
       agent, a skill, or a `plans/backlog/` follow-up plan for larger non-code work).
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — never land it inline in this plan's own commits/PR. The sole
       carve-out is a bug/lint/test failure that blocks THIS plan's own scope, fixed inline as ordinary
       Root Cause Orientation work.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
+- [x] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
       discarded with reason) directly in `learnings.md`.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed / discarded)
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed / discarded)
       or the explicit "none" escape is present.
-- [ ] [AI] Verify no code-homed learning landed inline — every code-routed learning has a corresponding
+- [x] [AI] Verify no code-homed learning landed inline — every code-routed learning has a corresponding
       `plans/backlog/` folder.
 
 > **Pause Safety**: all learnings are triaged to durable homes or explicitly discarded; nothing is
