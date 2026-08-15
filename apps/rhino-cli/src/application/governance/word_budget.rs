@@ -188,6 +188,31 @@ pub fn merged_budget_config(repo_root: &Path) -> Option<BudgetConfig> {
     repo_config.governance_word_budget
 }
 
+/// Returns the `args.exclude` list registered against the `governance-word-budget`
+/// gate in `repo-config.yml`'s `gates:` registry, or an empty vector when no such
+/// gate is registered (e.g. before Phase 9 arms it, or in a standalone test
+/// config that omits `gates:` entirely).
+///
+/// This is the single source [`check_instruction_sizes`]'s `excludes` parameter
+/// should be seeded from at every call site — not only the `gate run`
+/// pre-push/CI path, which already sees this list because `fixed_arguments`
+/// materializes `args.exclude` into `--exclude` flags before invoking the
+/// command. The bare `governance word-budget validate` CLI entry point and the
+/// `repo-governance audit --include-category governance-word-budget` path both
+/// read `repo-config.yml` directly through this function instead of silently
+/// defaulting to no exclusions.
+#[must_use]
+pub fn registered_excludes(repo_root: &Path) -> Vec<String> {
+    let repo_config = crate::application::repo_config::load_or_default(repo_root);
+    repo_config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "governance-word-budget")
+        .and_then(|gate| gate.args.get("exclude"))
+        .cloned()
+        .unwrap_or_default()
+}
+
 // ---------------------------------------------------------------------------
 // classify
 // ---------------------------------------------------------------------------
@@ -282,10 +307,16 @@ fn resolved_tree_message(size: u64, rt: &ResolvedTree, severity: &Severity) -> S
 /// Returns one [`Finding`] per matched file that is not within budget (`Warn`
 /// or `Fail`). Globs that match no files produce no findings. `Ok`-severity
 /// files are not included in the result. `excludes` holds repo-relative path
-/// prefixes to skip entirely — not a per-file waiver on an in-scope surface
-/// (FR-1.5 still forbids that), but a way to keep a broad glob like
-/// `**/README.md` from reaching trees the `governance-word-budget:` surfaces
-/// list was never meant to cover (e.g. `plans/done/`, a local `.fvm/` cache).
+/// **prefixes**, matched with a plain `str::starts_with` — not globs, unlike
+/// the identically-named `--exclude` flag on `md links validate`/`md mermaid
+/// validate` (`readme_index.rs`'s `matches_any_glob`,
+/// `governance_audit.rs`'s `exclude_globs`). `.opencode/skills/` excludes
+/// everything under that directory; `.opencode/skills/*` matches nothing
+/// (there is no literal path starting with a `*` character). Not a per-file
+/// waiver on an in-scope surface (FR-1.5 still forbids that), but a way to
+/// keep a broad glob like `**/README.md` from reaching trees the
+/// `governance-word-budget:` surfaces list was never meant to cover (e.g.
+/// `plans/done/`, a local `.fvm/` cache).
 pub fn check_instruction_sizes(
     fs: &dyn Fs,
     repo_root: &Path,

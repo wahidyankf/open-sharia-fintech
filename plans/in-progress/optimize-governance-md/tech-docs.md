@@ -83,7 +83,8 @@ READMEs that already exist — and `unannotated` — FR-3.10/FR-3.11/FR-3.14's a
 requirement, which the current implementation does not check at all) plus a `generate`
 subcommand (FR-3.12; `md readme-index` has no generator today). `DEFAULT_PATHS` for the
 continuity-preserving gate stays at its current 4-entry list — see below for why the scope
-widening to FR-3.7's full 6-entry list is deferred, not immediate.
+widening to FR-3.7's scope (the new gate's own 4-entry `--paths`, narrowed from an originally
+wider 6-entry design at the Phase 9/16 arming step) is deferred, not immediate.
 
 **The rename must not disarm what is already enforced, and a new capability must not arm itself
 against a currently-noncompliant repo.** These are two separate risks, handled two separate ways:
@@ -102,8 +103,9 @@ against a currently-noncompliant repo.** These are two separate risks, handled t
    for reasons this plan's own Phases 2–8 exist to fix. Both therefore follow the **same
    register-then-arm dark-launch sequencing FR-4 already uses** for `when_to_use`/`description`
    (§5 below): registered but not enforced at Phase 1, via a **second**, separately-registered,
-   `path-gated` gate id, `governance-readme-completeness`, scoped to FR-3.7's full 6-entry
-   covered-tree list (the scope widening lives here, not in the continuity gate) — armed once
+   `path-gated` gate id, `governance-readme-completeness`, scoped to FR-3.7's covered-tree list
+   (the scope widening lives here, not in the continuity gate — narrowed to a 4-entry list at
+   the Phase 9/16 arming step; see `prd.md` FR-3.7) — armed once
    Phases 2–8 (`ose-public`) / 11–15 (`ose-private`) have populated the missing indexes and
    annotations. See `prd.md` FR-3.19/FR-3.20 and §4 below for the full design.
 
@@ -569,10 +571,10 @@ validate` command (gate id `md-readme-index`) — see §1.1 above for the full r
 decision record. It splits into two `repo-config.yml` registrations sharing one implementation
 (`application/governance/readme_index.rs`, `commands/governance_validate_readme_index.rs`):
 
-| Gate id                          | Finding kinds            | Scope                                                                             | Arming                                                                          |
-| -------------------------------- | ------------------------ | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `governance-readme-index`        | `orphan`, `ghost`        | `all-file-type`, current `DEFAULT_PATHS` (4 entries, unwidened)                   | Continuously armed — renamed in place at Phase 1, no gap                        |
-| `governance-readme-completeness` | `missing`, `unannotated` | `path-gated`, FR-1.11's 7-entry trigger list, FR-3.7's 6-entry covered-tree scope | Dark-launched Phase 1 → armed Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
+| Gate id                          | Finding kinds            | Scope                                                                                                                                               | Arming                                                                          |
+| -------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `governance-readme-index`        | `orphan`, `ghost`        | `all-file-type`, current `DEFAULT_PATHS` (4 entries, unwidened)                                                                                     | Continuously armed — renamed in place at Phase 1, no gap                        |
+| `governance-readme-completeness` | `missing`, `unannotated` | `path-gated`, FR-1.11's 5-entry trigger list, FR-3.7's 4-entry covered-tree scope (narrowed from an originally-wider 6-entry design at arming time) | Dark-launched Phase 1 → armed Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
 
 **The mechanism** [Repo-grounded — `apps/rhino-cli/src/application/repo_config/mod.rs::fixed_arguments`]:
 one binary, two `repo-config.yml` registrations, differentiated entirely by each entry's `args:`
@@ -582,7 +584,8 @@ block — the same pattern `md-mermaid` and `md-links` already use for `args: { 
 
 - **`--paths <path>`** overrides `DEFAULT_PATHS` for this invocation.
   `governance-readme-index` passes none, so it keeps scanning the original, unwidened 4-entry
-  list unchanged. `governance-readme-completeness` passes FR-3.7's widened 6-entry list.
+  list unchanged. `governance-readme-completeness` passes FR-3.7's scope (the narrowed 4-entry
+  list as of Phase 9/16 — see `prd.md` FR-3.7).
 - **`--fail-kinds <kind>`** restricts which discovered finding kinds contribute to the nonzero
   exit code; every kind is still discovered and printed regardless. `governance-readme-index`
   sets `orphan`/`ghost` only, so a `missing`/`unannotated` finding surfacing inside its unchanged

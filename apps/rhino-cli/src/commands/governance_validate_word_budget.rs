@@ -33,8 +33,12 @@ pub const SCHEMA: &str = "rhino-cli/governance-word-budget/v1";
 /// CLI arguments for `governance word-budget validate`.
 #[derive(Args, Debug)]
 pub struct ValidateWordBudgetArgs {
-    /// Repository-relative path prefix to exclude from scanning (repeatable).
-    /// Keeps the catch-all `**/README.md` surface from reaching trees the
+    /// Repository-relative path **prefix** to exclude from scanning
+    /// (repeatable), matched via `str::starts_with` — not a glob, unlike the
+    /// identically-named `--exclude` flag on `md links validate`/`md mermaid
+    /// validate`. `.opencode/skills/` excludes the whole tree;
+    /// `.opencode/skills/*` matches nothing. Keeps the catch-all
+    /// `**/README.md` surface from reaching trees the
     /// `governance-word-budget:` surfaces list was never meant to cover
     /// (e.g. `plans/`, `docs/`, `specs/`, a local `.fvm/` cache) — not a
     /// per-file waiver on an in-scope surface (FR-1.5 still forbids that).
@@ -96,7 +100,13 @@ pub fn run(
 ) -> std::result::Result<(), Error> {
     let repo_root =
         git::root::find_root().map_err(|e| anyhow!("failed to find git repository root: {e}"))?;
-    run_for_root(&repo_root, output_format, &args.exclude)
+    // Merge the gate-registration `args.exclude` list (see
+    // `registered_excludes`) with any explicit `--exclude` flags so the bare
+    // CLI command excludes the same trees the pre-push/CI surface does,
+    // without requiring the caller to repeat the registered list by hand.
+    let mut excludes = crate::application::governance::word_budget::registered_excludes(&repo_root);
+    excludes.extend(args.exclude.iter().cloned());
+    run_for_root(&repo_root, output_format, &excludes)
 }
 
 /// Core logic for `governance word-budget validate`, exposed for testing.

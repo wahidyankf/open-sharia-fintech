@@ -4,10 +4,28 @@ Phase 9a — RED: oversized fixture makes pre-push fail
 Part 1 — governance-word-budget catches a whole-tree oversized file
 ---------------------------------------------------------------------
 Method: isolated throwaway git fixture (not the real ose-public repo, no
-origin configured), same pattern as Phase 1's `phase-1-ci-path-gated.txt`
-proof, exercised via the real CLI binary
-(/Users/wkf/.cache/ose-cargo-target/ose-public/rhino-cli/gate/rhino-cli)
-end-to-end.
+origin configured), exercised via the real CLI binary
+(apps/rhino-cli/target/release/rhino-cli) end-to-end.
+
+Re-recorded 2026-08-15 under the six mandatory isolation layers required by
+[Git Fixture Isolation](../../../../repo-governance/development/quality/git-fixture-isolation.md)
+— the original transcript ran `git add`/`git init`-adjacent writes against
+the fixture with no `GIT_DIR`/`GIT_CEILING_DIRECTORIES`/`GIT_CONFIG_GLOBAL`/
+`GIT_CONFIG_SYSTEM` and no pre-write escape guard, which a PR review correctly
+flagged: the layers were absent, even though the post-run tree was clean and
+no escape occurred.
+
+Env-var isolation preamble (all `git`/`rhino-cli` invocations below):
+  GIT_DIR=<fixture>/.git
+  GIT_CEILING_DIRECTORIES=<fixture>
+  GIT_CONFIG_GLOBAL=/dev/null
+  GIT_CONFIG_SYSTEM=/dev/null
+(`GIT_WORK_TREE` deliberately unset — Standard 2's plain-write-sequence
+exception.) Escape guard (Standard 4) asserted `git rev-parse --show-toplevel`
+resolves to the fixture root, canonicalized, before `init`, both `config`
+writes, and `add` — no trip. Built, exercised, and destroyed from this
+session's scratchpad directory, never diagnosed in the primary checkout
+(Standard 6).
 
 Fixture `repo-config.yml` (minimal governance-word-budget: + the exact
 FR-1.10 `governance-word-budget` gate block):
@@ -86,11 +104,13 @@ and `description` findings from `SEVERITY_WARN` to `mk_fail()`, scoped to
 Cleanup
 -------
 Both fixtures removed after evidence was recorded — throwaway scratch git
-repo deleted entirely; the real-repo frontmatter fixture file deleted
+repo deleted entirely (verified via a post-removal directory-existence check
+on the re-recorded run); the real-repo frontmatter fixture file deleted
 (`git status --short` confirms a clean tree, aside from pre-existing
 unrelated foreign WIP in .vscode/settings.json and
 apps/beavernest-app-web-e2e/, left untouched).
 
 Acceptance: the pre-push surface exits 1 and names the fixture — MET.
 
-Date: 2026-08-15
+Date: 2026-08-15 (original); Part 1 re-recorded 2026-08-15 under full
+six-layer isolation per PR review.
