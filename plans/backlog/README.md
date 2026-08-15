@@ -37,10 +37,6 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-11-course-authoring-capstones](./ayokoding-learning-path-11-course-authoring-capstones/README.md)
-  — 8 courses (old Band 8; follows plan 10): the
-  remaining cross-band synthesis capstones.
-
 **Careers manifests** (splits old `05-manifests`; Plan 04's retained baseline is complete):
 
 - [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
