@@ -34,7 +34,7 @@ split plan carries, **no manifest**.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md) —
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md) —
 > the successor to the retired `ayokoding-learning-path-05-manifests`, which composes `courseOrder`
 > entries from every course-authoring plan's landed bodies, this one included, into the three
 > `software-engineer`-role `careers/` manifests. A step in this plan that creates, appends to,
@@ -52,9 +52,9 @@ When this plan's 9 bodies land, it records a **band-completion signal** (see
 
 **Updated — the manifest plan named `ayokoding-learning-path-05-manifests` no longer exists.** It was
 retired and split into
-[`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+[`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
 (the three `software-engineer`-role manifests this plan's courses feed) and
-[`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
+[`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
 (the one `ai-engineer` manifest, which does not consume this plan's Band-6 courses), mirroring
 `ayokoding-learning-path-04-course-authoring/README.md`'s own corrected naming note. The `-05-`/`-06-`
 prefix numerals were freed by that retirement and are now occupied by an unrelated, second numbering
@@ -201,7 +201,7 @@ and states the deferral inline.
   [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
   [course-authoring baseline plan (04)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
-  · [manifest plan (12-careers-se-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [manifest plan (12-careers-se-manifests)](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [vercel-function-cost-reduction](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
