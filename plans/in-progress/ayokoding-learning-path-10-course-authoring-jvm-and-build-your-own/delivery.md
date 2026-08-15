@@ -606,8 +606,8 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Phase 4 Gate
 
-- [ ] [AI] All 9 screenshots committed under `evidence/`.
-- [ ] [AI] Zero console errors recorded across all sampled pages/breakpoints.
+- [x] [AI] All 9 screenshots committed under `evidence/`.
+- [x] [AI] Zero console errors recorded across all sampled pages/breakpoints.
 
 > **Pause Safety**: manual verification evidence is committed; nothing pushed for review yet at this
 > intermediate phase. Safe to stop. To resume: re-open the dev server and re-capture any missing
@@ -617,12 +617,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ## Phase 5: Pre-PR CI Readiness Check
 
-- [ ] [AI] Run the full applicable quality suite against `final-delivery`; acceptance: all commands
+- [x] [AI] Run the full applicable quality suite against `final-delivery`; acceptance: all commands
       exit 0. Do not push or open a PR in this phase.
 
 ### Phase 5 Gate
 
-- [ ] [AI] The full applicable quality suite is green on `final-delivery`.
+- [x] [AI] The full applicable quality suite is green on `final-delivery`.
 
 > **Pause Safety**: both cohorts are verified on `final-delivery`. Safe to stop. To resume: re-run
 > the local quality suite.
@@ -645,7 +645,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If execution surfaced no generalizable learning, record the explicit escape
+- [x] [AI] If execution surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead.
 
 ### Phase 6 Gate
