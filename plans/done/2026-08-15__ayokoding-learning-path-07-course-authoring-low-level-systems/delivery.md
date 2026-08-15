@@ -467,7 +467,7 @@ grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
-  FINAL_PR: #200 — merged status pending
+  FINAL_PR: #200 — terminal archival PR; delivered when this branch reaches origin/main
   ```
 
   — acceptance: all seven `LANDED_COURSE_IDS` resolve to a directory under `<COURSES>`; all three
