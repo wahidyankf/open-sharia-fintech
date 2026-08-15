@@ -640,7 +640,7 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
       exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation), committing
       preexisting fixes separately.
       _Implementation note (2026-08-15): the equivalent npm-24-safe form `npm exec nx -- affected -t
-    typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The literal form lets
+  typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The literal form lets
       npm consume `-t` and fails before Nx receives its required targets._
 - [x] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
       _Implementation note (2026-08-15): build exited 0 after the supersession and local-link repairs._
@@ -718,42 +718,100 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
 > narrow** — the Playwright manual behavioural verification below is mandatory and performed, with
 > committed evidence.
 
-- [ ] [AI] Confirm `en` is the content locale for these bodies — command:
+- [x] [AI] Confirm `en` is the content locale for these bodies — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/it-and-application-security && test ! -d apps/ayokoding-www/content/id/learn/courses/it-and-application-security`
       — acceptance: exits 0.
-- [ ] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify authored course pages** — for **all eleven** authored courses, at breakpoints
+      _Implementation note (2026-08-15): the `en`-only locale assertion exited 0._
+- [x] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
+      _Implementation note (2026-08-15): the required production preview (`npm exec nx -- start
+    ayokoding-www`) served the already-green build on port 3101; `next dev` itself accepted the port
+      but did not finish loading a route, so it was stopped and not treated as verification evidence._
+- [x] [AI] **Sample-verify authored course pages** — for **all eleven** authored courses, at breakpoints
       375 / 768 / 1280 px, via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`,
       `browser_resize`, then `browser_snapshot` — acceptance: each page renders its overview, learning
       track, and drilling track; `html[lang]` is `en`; `browser_console_messages` reports **zero**
       errors per page per breakpoint.
-- [ ] [AI] **Verify prerequisite rendering** — on `detection-engineering-and-siem-operations`, which
+      _Implementation note (2026-08-15): Playwright MCP verified all eleven overview pages at 375, 768,
+      and 1280 px: each returned HTTP 200, had `html[lang]=en`, rendered Overview/Learning/Drilling,
+      and emitted zero console errors._
+- [x] [AI] **Verify prerequisite rendering** — on `detection-engineering-and-siem-operations`, which
       declares `defensive-security`, confirm the prerequisite is displayed and its link resolves to
       `defensive-security`'s canonical page — acceptance: the link target returns 200.
-- [ ] [AI] **Verify a drilling track renders** — open one authored `drilling/overview.md` page and
+      _Implementation note (2026-08-15): the displayed Defensive Security prerequisite linked to
+      `/en/learn/courses/defensive-security`; both source and target returned 200._
+- [x] [AI] **Verify a drilling track renders** — open one authored `drilling/overview.md` page and
       confirm all five fixed sections are present in the rendered output.
-- [ ] [AI] Capture one screenshot per course per breakpoint to
+      _Implementation note (2026-08-15): the IT and Application Security drilling page returned 200 and
+      rendered Recall Q&A, Calculation practice, Scenario judgment, Design exercise, and Automaticity
+      checklist._
+- [x] [AI] Capture one screenshot per course per breakpoint to
       `evidence/phase-4-<course-id>-en-<breakpoint>px.png` — acceptance:
       `git ls-files -- 'evidence/phase-4-*-en-*px.png' | grep -c .` returns **33** (11 courses × 3
       breakpoints).
-- [ ] [AI] Document the evidence in this checklist: reference each screenshot
+      _Implementation note (2026-08-15): Playwright MCP wrote all 33 PNG files; the staged evidence
+      count is 33._
+- [x] [AI] Document the evidence in this checklist: reference each screenshot
       (`![alt](./evidence/...)`) and note the console/network status per course.
-- [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
+      _Implementation note (2026-08-15): every listed evidence capture returned HTTP 200 and zero
+      console errors at its named breakpoint._
+
+  ![IT and Application Security 375px](./evidence/phase-4-it-and-application-security-en-375px.png)
+  ![IT and Application Security 768px](./evidence/phase-4-it-and-application-security-en-768px.png)
+  ![IT and Application Security 1280px](./evidence/phase-4-it-and-application-security-en-1280px.png)
+  ![Offensive Security 375px](./evidence/phase-4-offensive-security-en-375px.png)
+  ![Offensive Security 768px](./evidence/phase-4-offensive-security-en-768px.png)
+  ![Offensive Security 1280px](./evidence/phase-4-offensive-security-en-1280px.png)
+  ![Defensive Security 375px](./evidence/phase-4-defensive-security-en-375px.png)
+  ![Defensive Security 768px](./evidence/phase-4-defensive-security-en-768px.png)
+  ![Defensive Security 1280px](./evidence/phase-4-defensive-security-en-1280px.png)
+  ![Detection Engineering 375px](./evidence/phase-4-detection-engineering-and-siem-operations-en-375px.png)
+  ![Detection Engineering 768px](./evidence/phase-4-detection-engineering-and-siem-operations-en-768px.png)
+  ![Detection Engineering 1280px](./evidence/phase-4-detection-engineering-and-siem-operations-en-1280px.png)
+  ![Vulnerability Management 375px](./evidence/phase-4-vulnerability-management-and-assessment-en-375px.png)
+  ![Vulnerability Management 768px](./evidence/phase-4-vulnerability-management-and-assessment-en-768px.png)
+  ![Vulnerability Management 1280px](./evidence/phase-4-vulnerability-management-and-assessment-en-1280px.png)
+  ![IT Governance GRC 375px](./evidence/phase-4-it-governance-grc-en-375px.png)
+  ![IT Governance GRC 768px](./evidence/phase-4-it-governance-grc-en-768px.png)
+  ![IT Governance GRC 1280px](./evidence/phase-4-it-governance-grc-en-1280px.png)
+  ![Bare-Metal Virtualization 375px](./evidence/phase-4-bare-metal-virtualization-en-375px.png)
+  ![Bare-Metal Virtualization 768px](./evidence/phase-4-bare-metal-virtualization-en-768px.png)
+  ![Bare-Metal Virtualization 1280px](./evidence/phase-4-bare-metal-virtualization-en-1280px.png)
+  ![Self-Managed Kubernetes 375px](./evidence/phase-4-self-managed-kubernetes-and-gitops-en-375px.png)
+  ![Self-Managed Kubernetes 768px](./evidence/phase-4-self-managed-kubernetes-and-gitops-en-768px.png)
+  ![Self-Managed Kubernetes 1280px](./evidence/phase-4-self-managed-kubernetes-and-gitops-en-1280px.png)
+  ![Platform Engineering 375px](./evidence/phase-4-platform-engineering-and-devex-en-375px.png)
+  ![Platform Engineering 768px](./evidence/phase-4-platform-engineering-and-devex-en-768px.png)
+  ![Platform Engineering 1280px](./evidence/phase-4-platform-engineering-and-devex-en-1280px.png)
+  ![Site Reliability Engineering 375px](./evidence/phase-4-site-reliability-engineering-en-375px.png)
+  ![Site Reliability Engineering 768px](./evidence/phase-4-site-reliability-engineering-en-768px.png)
+  ![Site Reliability Engineering 1280px](./evidence/phase-4-site-reliability-engineering-en-1280px.png)
+  ![Analytics and Experimentation 375px](./evidence/phase-4-analytics-and-experimentation-en-375px.png)
+  ![Analytics and Experimentation 768px](./evidence/phase-4-analytics-and-experimentation-en-768px.png)
+  ![Analytics and Experimentation 1280px](./evidence/phase-4-analytics-and-experimentation-en-1280px.png)
+
+- [x] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad.
-- [ ] [AI] **Confirm no manifest file changed in this phase**:
+      _Implementation note (2026-08-15): recorded with all three reasons and the
+      `ayokoding-learning-path-03-navigation-ui` ownership pointer._
+- [x] [AI] **Confirm no manifest file changed in this phase**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
+      _Implementation note (2026-08-15): staged/current manifest scope is 0._
 
 ### Phase 4 Gate
 
-- [ ] [AI] All eleven courses verified across three breakpoints in `en`; zero console errors;
+- [x] [AI] All eleven courses verified across three breakpoints in `en`; zero console errors;
       prerequisite display and drilling-track rendering confirmed.
-- [ ] [AI] 33 screenshots present under `evidence/` and referenced in this checklist.
-- [ ] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate): the evidence commits are on the shared
+      _Implementation note (2026-08-15): Playwright MCP verified the complete 33-page viewport matrix;
+      prerequisite and drilling-specific assertions returned 200 with zero console errors._
+- [x] [AI] 33 screenshots present under `evidence/` and referenced in this checklist.
+- [x] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate): the evidence commits are on the shared
       worktree, this phase's own gate above is green, and nothing is pushed for review yet — the
       closeout PR for Phases 4–7 opens at Phase 7.
+      _Implementation note (2026-08-15): evidence remains local on `final-delivery`; no PR or push has
+      occurred._
 
 > **Pause Safety**: the authored library is verified live and defect-clean in `en`. Safe to stop. To
 > resume: restart the dev server and re-open one sampled course.
