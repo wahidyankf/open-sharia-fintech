@@ -93,7 +93,7 @@ This plan produces content only and has exactly one final PR. It has no review-c
 - [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
 - [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
 - [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -966,10 +966,10 @@ pipeline concurrently through review, bounded by the cap.
 ### Sole PR integration (binding)
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
+- [x] [AI] Verify ALL delivery checklist items are ticked.
 - [x] [AI] Verify the Knowledge Capture phase is complete.
 - [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
@@ -1016,7 +1016,7 @@ pipeline concurrently through review, bounded by the cap.
 - [x] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`;
       all READMEs updated; archival committed.
-- [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
+- [x] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
       CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
