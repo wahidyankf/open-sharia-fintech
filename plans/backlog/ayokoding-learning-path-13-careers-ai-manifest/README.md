@@ -8,12 +8,12 @@ for an intermediate Plan 12 merge: its manifest ownership is disjoint, and Plan 
 plan only after this final PR merges. Earlier delivery-boundary wording is superseded.
 
 > **Successor plan.** This plan and its sibling
-> [`ayokoding-learning-path-12-careers-se-manifests`](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../done/2026-08-15__ayokoding-learning-path-12-careers-se-manifests/README.md)
 > together replace the single prior plan that authored, published, grew, and verified all four
 > `careers/` path manifests. The sibling owns the three `software-engineer`-role manifests
 > (`interview-ready`, `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`).
 > **This plan owns exactly one manifest**: `careers/immediately-effective/ai-engineer`. See
-> [the sibling's README §Why 3 + 1, not 2 + 2](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/README.md#why-3--1-not-2--2)
+> [the sibling's README §Why 3 + 1, not 2 + 2](../../done/2026-08-15__ayokoding-learning-path-12-careers-se-manifests/README.md#why-3--1-not-2--2)
 > for why the split is not symmetric.
 >
 > **Programme decisions** — this plan cites the shared `R*`/`A*` decision ids `R2`, `R4`, `R9`, `A8`;
@@ -227,7 +227,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
   manifest), and the growth-signal routing.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
-- [Sibling plan — `ayokoding-learning-path-12-careers-se-manifests`](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/README.md)
+- [Sibling plan — `ayokoding-learning-path-12-careers-se-manifests`](../../done/2026-08-15__ayokoding-learning-path-12-careers-se-manifests/README.md)
   — the three `software-engineer`-role manifests, coupled to this plan as described above.
 - [Syllabus (cross-plan, read-only)](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) —
   this plan's manifest mirror is
