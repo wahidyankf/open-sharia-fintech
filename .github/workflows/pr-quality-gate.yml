@@ -289,6 +289,12 @@ jobs:
         with:
           channel: stable
           flutter-version-file: .fvmrc
+      # format-verify-ruff invokes a bare binary for changed Python files. Ruff
+      # is not yet a rhino doctor-managed tool, so this scoped install keeps the
+      # formatting group provisioned without adding Python setup to other jobs.
+      - name: Install Ruff
+        if: matrix.group.group == 'formatting-verify'
+        run: pipx install ruff==0.15.9
       - uses: actions/download-artifact@v4
         with:
           name: rhino-cli-gate-binary
