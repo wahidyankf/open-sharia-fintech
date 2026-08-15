@@ -12,7 +12,7 @@ by this plan's own Stage C). Path landing served at `/en/learn/paths/skills/shar
 
 ## Composition (30 courses, terminal — no further growth)
 
-Positions 1-15 are [plan 17's own corpus](../../../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md);
+Positions 1-15 are [plan 17's own corpus](../../../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md);
 positions 16-27 are this plan's own 12 Stage-B courses (identical to `<CONVMAN>`'s own positions
 16-27); positions 28-30 are this plan's own 3 Stage-C, Sharia-exclusive courses.
 

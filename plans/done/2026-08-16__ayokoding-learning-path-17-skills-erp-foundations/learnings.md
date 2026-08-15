@@ -3,6 +3,8 @@
 
 # Learnings: ayokoding-learning-path-17-skills-erp-foundations
 
+No generalizable learnings — the Stage-A ERP delivery followed the established content-path and manifest pattern without a durable process change.
+
 Append one entry per generalizable learning, in this shape:
 
 ```markdown

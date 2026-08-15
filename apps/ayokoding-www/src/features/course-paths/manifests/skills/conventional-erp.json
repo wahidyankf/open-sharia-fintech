@@ -1,0 +1,23 @@
+{
+  "pathId": "skills/conventional-erp",
+  "arc": "immediately-effective",
+  "title": "Conventional ERP",
+  "description": "A deployable Stage-A foundation for accountable enterprise systems.",
+  "courseOrder": [
+    "erp-foundations-and-history",
+    "erp-conceptual-data-model",
+    "erp-module-map-and-architecture",
+    "erp-document-lifecycle-and-state-machines",
+    "erp-posting-rules-and-account-determination",
+    "erp-subledger-to-gl-architecture",
+    "erp-fiscal-calendar-and-period-close",
+    "erp-numbering-sequences-and-uom-conversion",
+    "erp-audit-trail-and-change-tracking",
+    "procure-to-pay-systems",
+    "order-to-cash-systems",
+    "erp-procurement-and-fulfillment-exceptions",
+    "erp-bom-and-routing-architecture",
+    "erp-extension-and-customization",
+    "erp-integration-patterns"
+  ]
+}

@@ -13,3 +13,5 @@ weight: 90
 - [Skills](/en/learn/paths/skills)
   - [Conventional Accounting](/en/learn/paths/skills/conventional-accounting)
   - [Sharia Accounting](/en/learn/paths/skills/sharia-accounting)
+  - [Conventional ERP](/en/learn/paths/skills/conventional-erp)
+  - [Sharia ERP](/en/learn/paths/skills/sharia-erp)

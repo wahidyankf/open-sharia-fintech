@@ -11,9 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-17-skills-erp-foundations](./ayokoding-learning-path-17-skills-erp-foundations/README.md)
-  — 15 courses (Stage A): both ERP paths publish a deployable foundation checkpoint.
-
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
