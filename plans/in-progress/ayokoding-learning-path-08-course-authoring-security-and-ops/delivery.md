@@ -463,7 +463,9 @@ alone):
       aggregate build and Markdown lint both exited 0._
 - [x] [AI] Catalog rows confirmed present; zero manifest files touched.
       _Implementation note (2026-08-15): all rows/index entries resolve and the manifest-path diff is 0._
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+      _Implementation note (2026-08-15): committed Cohort A as `ed84d04` on `final-delivery`; no
+      branch has been pushed and no PR exists._
 
 > **Pause Safety**: the security-core cluster is live; `detection-engineering-and-siem-operations` and
 > `defensive-security` cross-reference each other correctly. Safe to stop. To resume: re-run the
@@ -473,9 +475,12 @@ alone):
 
 ## Phase 2: Cohort B — Governance, ops & analytics (6 bodies)
 
-- [ ] [AI] `it-governance-grc` (Annotated-concept · no code) — convention complete; checkers clean.
+- [x] [AI] `it-governance-grc` (Annotated-concept · no code) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `bare-metal-virtualization` (By Example · HCL/YAML/shell) — convention complete; checkers
+    _Implementation note (2026-08-15): authored the 14-file no-code bundle with 27 concepts, 30
+    structured decision scenarios, primary-source citations, capstone artifacts, and five-section
+    drilling. Structural/link, licensing/manifest, Markdown/heading, and build validation passed._
+- [x] [AI] `bare-metal-virtualization` (By Example · HCL/YAML/shell) — convention complete; checkers
       clean; its `overview.md` states the two-altitude boundary against `self-hosting-essentials`
       (plan 04's DD-14) — acceptance:
       `grep -F -q 'self-hosting-essentials' "apps/ayokoding-www/content/en/learn/courses/bare-metal-virtualization/overview.md"`
@@ -492,23 +497,37 @@ alone):
   ```
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+    _Implementation note (2026-08-15): authored the 17-file bundle with 80 syllabus-mapped examples,
+    30 accessible diagrams, safe local HCL/YAML/shell artifacts, and five-section drilling. The required
+    self-hosting-essentials boundary, scoped safety/licensing, Markdown/formatters, and build passed._
 
-- [ ] [AI] `self-managed-kubernetes-and-gitops` (By Example · YAML/CLI) — convention complete; checkers
+- [x] [AI] `self-managed-kubernetes-and-gitops` (By Example · YAML/CLI) — convention complete; checkers
       clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `platform-engineering-and-devex` (Annotated-concept · no code) — convention complete;
+    _Implementation note (2026-08-15): authored the 11-file bundle with 82 continuous YAML/CLI
+    examples, 82 overview anchors, source citations, capstone, and five-section drilling. Scoped
+    structural/link, safety, Markdown/Prettier, and designated-branch build validation passed._
+- [x] [AI] `platform-engineering-and-devex` (Annotated-concept · no code) — convention complete;
       checkers clean.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] **Gate**: `system-design` exists before authoring the next course — acceptance:
+    _Implementation note (2026-08-15): authored the 14-file no-code bundle with all 20 concepts,
+    26 structured decision scenarios, primary-source citations, capstone artifacts, and five-section
+    drilling. Frontmatter, links, Markdown/Prettier, and no-code constraints passed scoped checks._
+- [x] [AI] **Gate**: `system-design` exists before authoring the next course — acceptance:
       `test -d "apps/ayokoding-www/content/en/learn/courses/system-design"` exits 0; if it does not,
       **STOP** — `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` (the plan
       that authors `system-design`) has not yet merged, and `site-reliability-engineering` cannot
       declare a resolvable prerequisite. Surface this and wait rather than authoring with a dangling
       reference.
-- [ ] [AI] `site-reliability-engineering` (Annotated-concept · Python) — convention complete; checkers
+      _Implementation note (2026-08-15): `test -d apps/ayokoding-www/content/en/learn/courses/system-design`
+      exited 0 in the designated worktree; the prerequisite resolves before SRE authoring._
+- [x] [AI] `site-reliability-engineering` (Annotated-concept · Python) — convention complete; checkers
       clean.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `analytics-and-experimentation` (By Example · Python) — convention complete; checkers clean;
+    _Implementation note (2026-08-15): authored the 15-file bundle with 30 concepts, 52 mapped
+    scenarios, source citations, capstone/postmortem, drilling, and a safe fully typed offline Python
+    SRE loop. Python, pyright/Ruff, structural/link, Markdown/Prettier, and scoped diff checks passed._
+- [x] [AI] `analytics-and-experimentation` (By Example · Python) — convention complete; checkers clean;
       its `overview.md` states the boundary against `statistics-for-evaluation` (plan 04's DD-26) —
       acceptance:
       `grep -F -q 'statistics-for-evaluation' "apps/ayokoding-www/content/en/learn/courses/analytics-and-experimentation/overview.md"`
@@ -525,6 +544,10 @@ alone):
   ```
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+    _Implementation note (2026-08-15): authored the 15-file bundle with 26 concepts, 78 examples,
+    an explicit statistics-for-evaluation boundary, citations, five-section drilling, reconciled
+    decision memo, and a safe typed offline Python capstone. Ruff/Pyright, structural/link, and
+    Markdown checks passed._
 
 - [ ] [AI] Apply the per-cohort closing steps (catalog rows confirmed, zero-manifest check), **plus**
       record the single band-completion signal below — `GROW_MANIFESTS` = the three
@@ -532,16 +555,27 @@ alone):
 
 ### Phase 2 Gate
 
-- [ ] [AI] All 6 Cohort-B bodies exist:
+- [x] [AI] All 6 Cohort-B bodies exist:
       `for s in it-governance-grc bare-metal-virtualization self-managed-kubernetes-and-gitops platform-engineering-and-devex site-reliability-engineering analytics-and-experimentation; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 6 before this phase).
-- [ ] [AI] Both two-altitude/scope boundaries stated (`bare-metal-virtualization` ↔
+      _Implementation note (2026-08-15): the six-body absence loop returned 0._
+- [x] [AI] Both two-altitude/scope boundaries stated (`bare-metal-virtualization` ↔
       `self-hosting-essentials`; `analytics-and-experimentation` ↔ `statistics-for-evaluation`).
-- [ ] [AI] Checkers clean across all 6; build + `lint:md` exit 0.
-- [ ] [AI] All 11 course rows present in the catalog; `<COURSES>_index.md` lists all 11; zero manifest
+      _Implementation note (2026-08-15): both exact overview boundary greps exited 0._
+- [x] [AI] Checkers clean across all 6; build + `lint:md` exit 0.
+      _Implementation note (2026-08-15): each scoped checker pass was recorded above; the shared
+      `npm exec nx run ayokoding-www:build` and `npm run lint:md` both exited 0._
+- [x] [AI] All 11 course rows present in the catalog; `<COURSES>_index.md` lists all 11; zero manifest
       files touched across the whole plan.
-- [ ] [AI] The single band-completion signal is recorded below with all five fields.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+      _Implementation note (2026-08-15): all eleven IDs are present in the generated course index;
+      catalog rows are listed in tech-docs; the manifest-path history diff count is 0._
+- [x] [AI] The single band-completion signal is recorded below with all five fields.
+      _Implementation note (2026-08-15): `BAND`, `PLAN`, all eleven `LANDED_COURSE_IDS`, the three
+      `GROW_MANIFESTS`, and a Phase-7-pending `FINAL_PR` field are present. The PR field is deliberately
+      not populated before the sole terminal PR exists and merges._
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+      _Implementation note (2026-08-15): the Cohort-B commit is created on `final-delivery` only;
+      nothing has been pushed, no PR exists, and `FINAL_PR` remains pending until Phase 7._
 
 ```text
 BAND: Band 7 — Security, ops, quality & delivery
@@ -562,6 +596,7 @@ GROW_MANIFESTS:
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
+FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is merged
 ```
 
 > **Pause Safety**: all eleven Band-7 bodies are live at canonical URLs; the single band-completion
