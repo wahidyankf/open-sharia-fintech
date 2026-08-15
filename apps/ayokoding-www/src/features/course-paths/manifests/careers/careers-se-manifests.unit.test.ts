@@ -45,9 +45,9 @@ describe("careers software-engineer manifests", () => {
   });
 
   it("keeps Band 9 in exactly the interview-ready and fundamentals-first routes", () => {
-    expect(manifests[0]?.courseOrder).toEqual(expect.arrayContaining(bandNine));
-    expect(manifests[1]?.courseOrder).toEqual(expect.not.arrayContaining(bandNine));
-    expect(manifests[2]?.courseOrder).toEqual(expect.arrayContaining(bandNine));
+    expect(manifests[0]?.courseOrder).toEqual(expect.arrayContaining([...bandNine]));
+    expect(manifests[1]?.courseOrder).toEqual(expect.not.arrayContaining([...bandNine]));
+    expect(manifests[2]?.courseOrder).toEqual(expect.arrayContaining([...bandNine]));
   });
 
   it("preserves the distinct shipping-first and fundamentals-first entry points", () => {
