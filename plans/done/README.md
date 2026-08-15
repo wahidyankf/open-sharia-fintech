@@ -9,6 +9,16 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: optimize-governance-md](./2026-08-15__optimize-governance-md/README.md) — Capped
+  every governance Markdown file at 500 words (900 for README.md) across `ose-public` and
+  `ose-private`, enforced via two new rhino-cli gates (`governance word-budget validate`,
+  `governance readme-index validate`) armed on `pre-push` and `ci`. Split every oversized file
+  under `repo-governance/`, `.claude/agents/`, `.claude/skills/`, and root instruction files into
+  progressive-disclosure children with annotated README indexes; flipped `md-frontmatter`'s
+  `description` field from WARN to FAIL for governance docs. Delivered by PR1-PR17 across both
+  repos; `ose-primer` parity filed as a follow-up at
+  `plans/backlog/sync-primer-governance-parity/`.
+
 - [2026-08-15: ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./2026-08-15__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md) —
   Authored and live-verified 15 English course bodies for architecture, distributed systems, and the
   AI/agent-harness cluster. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this

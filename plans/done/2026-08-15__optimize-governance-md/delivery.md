@@ -1528,28 +1528,30 @@ trigger list for `ose-public`'s).
 
 ### 17a. Knowledge capture
 
-- [ ] `[AI]` Apply the litmus test to every `learnings.md` entry — keep only if a durable
+- [x] `[AI]` Apply the litmus test to every `learnings.md` entry — keep only if a durable
       surface would catch this automatically next time; discard the rest with a one-line reason
-- [ ] `[AI]` Apply the **secret/sensitivity gate** — sanitize any secret, credential, token, or
+- [x] `[AI]` Apply the **secret/sensitivity gate** — sanitize any secret, credential, token, or
       private hostname to a `<placeholder>` token, or discard if unsanitizable
-- [ ] `[AI]` Apply the **repo-relevance gate** — infra-private content stays in `ose-private`
+- [x] `[AI]` Apply the **repo-relevance gate** — infra-private content stays in `ose-private`
       only and is NEVER cross-routed into `ose-public`/`ose-primer`
-- [ ] `[AI]` Route each surviving learning to exactly one durable home per the open-ended routing
+- [x] `[AI]` Route each surviving learning to exactly one durable home per the open-ended routing
       matrix; code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan, NEVER landed inline (the only carve-out is a genuine blocker
       required to finish this plan's own scope)
-- [ ] `[AI]` For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the
+- [x] `[AI]` For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the
       existing two-pagers FIRST for a brief already covering the same area — fold in rather than
       creating a new file
-- [ ] `[AI]` Record the terminal state of every entry (routed inline / filed as backlog at
+- [x] `[AI]` Record the terminal state of every entry (routed inline / filed as backlog at
       `<path>` / discarded with reason) directly in `learnings.md`, or record the explicit
       `No generalizable learnings — <reason>` escape if none surfaced
 
 ### 17b. Follow-up and archival
 
-- [ ] `[AI]` File a follow-up backlog plan for `ose-primer`: rhino-cli boundary sync **and**
-      `repo-governance/` content parity. This plan does not close until that plan exists.
-- [ ] `[AI]` Record the final census for both repos in `evidence/`
+- [x] `[AI]` File a follow-up backlog plan for `ose-primer`: rhino-cli boundary sync **and**
+      `repo-governance/` content parity. This plan does not close until that plan exists. —
+      filed at `plans/backlog/sync-primer-governance-parity/`
+- [x] `[AI]` Record the final census for both repos in `evidence/` — see
+      `evidence/phase-17-final-census.txt`
 - [ ] `[AI]` `git mv` this plan folder to `plans/done/YYYY-MM-DD__optimize-governance-md/`
 - [ ] `[AI]` Update `plans/in-progress/README.md` and `plans/done/README.md`
 

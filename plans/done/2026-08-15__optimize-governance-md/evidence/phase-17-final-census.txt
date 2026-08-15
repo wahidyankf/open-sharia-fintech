@@ -1,0 +1,36 @@
+Phase 17b — final census, both repos (2026-08-15)
+
+Authoritative gate results (rhino-cli governance word-budget validate / readme-index validate /
+gate validate) — these are the Phase 17 Gate acceptance criteria, not the raw ad-hoc wc-based
+census from tech-docs.md §7 (that script pre-dates the README.md 900-word carve-out and the
+Nx-vendored .opencode/skills+.opencode/commands excludes, so it over-counts compliant files and is
+retained only as a rough baseline-comparison tool, not a pass/fail signal).
+
+=== ose-public ===
+$ rhino-cli governance word-budget validate
+exit=0, FAIL count=0 (WARN-only findings remain — over the 400/700-word *target*, under the
+500/900-word *fail* threshold; WARN is advisory, not blocking)
+
+$ rhino-cli governance readme-index validate repo-governance/ .claude/ .codex/ --fail-kinds missing,unannotated
+README INDEX AUDIT PASSED: no orphan or ghost references found
+
+$ rhino-cli gate validate
+exit=0
+
+=== ose-private ===
+$ rhino-cli governance word-budget validate
+exit=0, FAIL count=0 (WARN-only findings remain, same as ose-public)
+
+$ rhino-cli governance readme-index validate repo-governance/ .claude/ .codex/ --fail-kinds missing,unannotated
+README INDEX AUDIT PASSED: no orphan or ghost references found
+
+$ rhino-cli gate validate
+exit=0
+
+=== Result ===
+Both repos: 0 word-budget FAIL findings, 0 README-index findings, gate validate exits 0 — Phase 17
+Gate's word-budget/readme-index/gate-validate acceptance criteria satisfied for both repos.
+
+ose-primer is explicitly out of scope for this plan (see learnings.md Phase 17a triage and
+plans/backlog/sync-primer-governance-parity/ — the filed follow-up plan required before this plan
+closes).

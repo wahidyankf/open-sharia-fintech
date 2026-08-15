@@ -14,11 +14,6 @@ execution checklist.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
-- [optimize-governance-md](./optimize-governance-md/README.md) — Caps every governance Markdown
-  file at 500 words, replaces the byte budget with a word budget, requires annotated `README.md`
-  sibling indexes, and adds `when_to_use` frontmatter — across `ose-public` and `ose-private`.
-  545 files over the ceiling; remediation is progressive disclosure, enforced by rhino-cli at
-  pre-push and in the PR quality gate.
 - [repository-onboarding-readme-refresh](./repository-onboarding-readme-refresh/README.md) — Refreshes
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and

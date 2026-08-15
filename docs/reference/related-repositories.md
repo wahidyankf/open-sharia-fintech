@@ -42,6 +42,13 @@ The `apps/rhino-cli` source must stay byte-identical across `ose-public`, `ose-p
 `ose-private` — the same three-repository family this page describes. See the
 [SDLC gate standard](./sdlc-gate-standard.md#rhino-cli-byte-identity-boundary) for the policy.
 
+`parity manifest validate` compares a repo's own committed manifest against that same repo's
+tracked boundary only — it never fetches or compares against a sibling repo. Rolling a `rhino-cli`
+change out to one repo while deferring it in another therefore produces **silent drift**, not a red
+gate in either repo; each repo's manifest stays internally consistent even while the three diverge
+from each other. Verify parity across the family by diffing the boundary directly, not by trusting
+a green `parity manifest validate` in any single repo.
+
 ## Sync cadence across repos
 
 Content parity and the `rhino-cli` byte-identity boundary above answer **what** stays identical;
