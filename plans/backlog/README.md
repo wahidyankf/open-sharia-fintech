@@ -41,9 +41,9 @@ Plan 06 needs):
 
 **Skills — accounting** (splits old `06-skills-accounting`'s 24 courses; strict sequential chain):
 
-- [ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md)
-  — 8 courses (#12-19, follows plan 14): reporting, consolidation, architecture —
-  `conventional-accounting` terminates here.
+— 8 courses (#12-19, follows plan 14): reporting, consolidation, architecture —
+`conventional-accounting` terminates here.
+
 - [ayokoding-learning-path-16-skills-accounting-sharia-extension](./ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md)
   — 5 courses (#20-24, follows plan 15): the Sharia-specific extension — `sharia-accounting`
   terminates here.
