@@ -8,7 +8,7 @@ This checklist authors **9 course bodies** into
 `ayokoding-learning-path-04-course-authoring`'s Band 6.
 
 > **This plan never edits a manifest file.** Every file under `<MANIFESTS>` belongs to
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
 > (successor to the retired `ayokoding-learning-path-05-manifests`). This
 > plan's only outbound artefact is the **partial band-completion signal** recorded at the end of
 > Phase 2. See [README.md §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else)
@@ -95,8 +95,8 @@ This plan produces content only and has exactly one final PR. It has no review-c
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                           | Nature                                                                                                                                                                                                                         |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-09-course-authoring-interview-technique` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-09-course-authoring-interview-technique/README\.md$"` exits 0. This is this plan's only plan-level start gate.
