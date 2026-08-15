@@ -378,11 +378,11 @@ verified absent at this plan's authoring time):
 
 **Existing files modified** (this plan edits these; it never creates them):
 
-| File                                                    | Change                                                                         |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| File                                                    | Change                                                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `apps/ayokoding-www/content/en/learn/courses/_index.md` | regenerated from course directories; verify with `npm exec nx run ayokoding-www:validate-indexes` |
-| `tech-docs.md` (this file) — §Course Library Catalog    | already carries all 8 rows                                                     |
-| `delivery.md` (this plan's own file)                    | the single five-field band-completion signal appended at the close of Cohort B |
+| `tech-docs.md` (this file) — §Course Library Catalog    | already carries all 8 rows                                                                        |
+| `delivery.md` (this plan's own file)                    | the single five-field band-completion signal appended at the close of Cohort B                    |
 
 **Never touched, by construction**:
 
@@ -417,17 +417,17 @@ manifest itself.
 
 ## Testing / Verification Strategy
 
-| Level                     | What it verifies                                                                                                        | Mechanism                                                              |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Per-course content checks | concept-assembly coverage, register, worked-example structure, scope boundary against assembled courses                 | matching `apps-ayokoding-www-*-checker`                                |
-| Per-course fact checks    | version-pinned / benchmark claims (METR/Scale-AI citations, dependency versions) confined to dated sidebars             | `apps-ayokoding-www-facts-checker`                                     |
-| Per-course link checks    | intra-course and cross-course links resolve, including to the 4+ upstream plans' courses                                | `apps-ayokoding-www-link-checker`                                      |
-| Contract assertions       | authorization/scope hard-rule stated (pentest capstone); intra-band prerequisite declared (`capstone-lead-at-altitude`) | grep-checkable acceptance clauses                                      |
-| Structural                | bundle anatomy present; `prerequisites` declared                                                                        | `test -d` / `test -f` + frontmatter grep                               |
+| Level                     | What it verifies                                                                                                        | Mechanism                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Per-course content checks | concept-assembly coverage, register, worked-example structure, scope boundary against assembled courses                 | matching `apps-ayokoding-www-*-checker`                                     |
+| Per-course fact checks    | version-pinned / benchmark claims (METR/Scale-AI citations, dependency versions) confined to dated sidebars             | `apps-ayokoding-www-facts-checker`                                          |
+| Per-course link checks    | intra-course and cross-course links resolve, including to the 4+ upstream plans' courses                                | `apps-ayokoding-www-link-checker`                                           |
+| Contract assertions       | authorization/scope hard-rule stated (pentest capstone); intra-band prerequisite declared (`capstone-lead-at-altitude`) | grep-checkable acceptance clauses                                           |
+| Structural                | bundle anatomy present; `prerequisites` declared                                                                        | `test -d` / `test -f` + frontmatter grep                                    |
 | Section build             | the authored tree renders                                                                                               | `npm exec nx run ayokoding-www:build`                                       |
-| Markdown quality          | markdownlint, link validation, heading hierarchy                                                                        | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
+| Markdown quality          | markdownlint, link validation, heading hierarchy                                                                        | `npm run lint:md` + the two `rhino-cli md` subcommands                      |
 | Regression                | no existing project's gates broke                                                                                       | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
-| Manual behavioural        | a sample of the 8 pages renders correctly at three breakpoints in `en`                                                  | Playwright MCP + committed `evidence/` screenshots                     |
+| Manual behavioural        | a sample of the 8 pages renders correctly at three breakpoints in `en`                                                  | Playwright MCP + committed `evidence/` screenshots                          |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts — no
 application code exists here to test, identical to every sibling course-authoring plan's own
