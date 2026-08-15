@@ -138,8 +138,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                        | Nature                                                                                                                                                                                                                         |
+| ------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-08-course-authoring-security-and-ops` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-08-course-authoring-security-and-ops/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -190,7 +190,7 @@ verification step in this plan exercises `en` only and states the deferral inlin
   [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [SE-manifest plan (12, successor to 05-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [SE-manifest plan (12, successor to 05-manifests)](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance

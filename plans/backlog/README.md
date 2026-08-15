@@ -37,8 +37,6 @@ contracts; Plan 04's retained baseline and [Plan 05](../done/2026-08-04__ayokodi
 are complete. Plan 05's archived folder on `origin/main` is the sole direct-predecessor proof that
 Plan 06 needs):
 
-- [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
-  — 5 courses (old Band 9): coding/system-design/behavioral interview prep + the interview capstone.
 - [ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
   — 9 courses (old Band 6, second half; follows plan 09): JVM languages, type systems, compilers,
   and the build-your-own-{git,database,raft} cluster.
