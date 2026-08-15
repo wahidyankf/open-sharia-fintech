@@ -9,6 +9,11 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./2026-08-15__ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md) —
+  Added eight enterprise-reporting and accounting-architecture courses, grew both shared accounting
+  manifests to nineteen courses, and completed the conventional-accounting path. Delivery Mode:
+  `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
+
 - [2026-08-15: ayokoding-learning-path-14-skills-accounting-foundations](./2026-08-15__ayokoding-learning-path-14-skills-accounting-foundations/README.md) —
   Added eleven accounting foundation and transactional-cycle courses, both shared accounting manifests,
   path landings, and manifest-composition coverage. Delivery Mode: `worktree-to-pr`; terminal delivery
