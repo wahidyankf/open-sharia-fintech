@@ -890,12 +890,15 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 ### Sole PR integration (binding)
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+      _Implementation note (2026-08-15): draft PR #201 is the sole PR; the scoped diff secret scan and
+      pre-push gate passed, and pr-quality-gate run 31877551044 succeeded._
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [x] [AI] Verify the Knowledge Capture phase is complete.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+      _Implementation note (2026-08-15): local pre-push passed and PR run 31877551044 succeeded._
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
 - [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
@@ -938,11 +941,11 @@ ayokoding-www`) served the already-green build on port 3101; `next dev` itself a
 
 ### Phase 7 Gate
 
-- [ ] [AI] All 11 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
+- [x] [AI] All 11 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
       11); the slug register holds 11 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The cross-plan link gate is green after any upstream archival.
-- [ ] [AI] Plan folder is under
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The cross-plan link gate is green after any upstream archival.
+- [x] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/`; all
       READMEs updated; archival committed.
 - [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
