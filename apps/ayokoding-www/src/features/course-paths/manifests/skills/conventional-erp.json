@@ -2,7 +2,7 @@
   "pathId": "skills/conventional-erp",
   "arc": "immediately-effective",
   "title": "Conventional ERP",
-  "description": "A deployable Stage-A foundation for accountable enterprise systems.",
+  "description": "A complete conventional-ERP path for accountable enterprise systems.",
   "courseOrder": [
     "erp-foundations-and-history",
     "erp-conceptual-data-model",
@@ -16,8 +16,20 @@
     "procure-to-pay-systems",
     "order-to-cash-systems",
     "erp-procurement-and-fulfillment-exceptions",
+    "record-to-report-systems",
+    "inventory-and-warehouse-management",
+    "erp-inventory-costing-methods",
+    "erp-inventory-integrity-and-concurrency",
     "erp-bom-and-routing-architecture",
+    "production-planning-and-mrp",
+    "demand-and-supply-planning",
+    "erp-availability-and-reservations",
+    "quality-management-and-inspection",
     "erp-extension-and-customization",
-    "erp-integration-patterns"
+    "erp-integration-patterns",
+    "human-capital-management-and-hire-to-retire",
+    "multi-company-and-multi-currency-erp",
+    "erp-security-and-controls",
+    "erp-analytics-and-reporting"
   ]
 }

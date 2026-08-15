@@ -20,7 +20,7 @@ const prerequisites = Object.fromEntries(
       | undefined) ?? [],
   ]),
 );
-const expected = [
+const sharedExpected = [
   "erp-foundations-and-history",
   "erp-conceptual-data-model",
   "erp-module-map-and-architecture",
@@ -33,21 +33,39 @@ const expected = [
   "procure-to-pay-systems",
   "order-to-cash-systems",
   "erp-procurement-and-fulfillment-exceptions",
+  "record-to-report-systems",
+  "inventory-and-warehouse-management",
+  "erp-inventory-costing-methods",
+  "erp-inventory-integrity-and-concurrency",
   "erp-bom-and-routing-architecture",
+  "production-planning-and-mrp",
+  "demand-and-supply-planning",
+  "erp-availability-and-reservations",
+  "quality-management-and-inspection",
   "erp-extension-and-customization",
   "erp-integration-patterns",
+  "human-capital-management-and-hire-to-retire",
+  "multi-company-and-multi-currency-erp",
+  "erp-security-and-controls",
+  "erp-analytics-and-reporting",
+];
+const shariaExpected = [
+  ...sharedExpected,
+  "sharia-compliant-erp-design",
+  "islamic-contract-based-transaction-flows",
+  "zakat-and-sharia-compliance-modules",
 ];
 
-describe("Stage-A ERP manifests", () => {
+describe("terminal ERP manifests", () => {
   for (const name of ["conventional-erp", "sharia-erp"]) {
-    it(`${name} publishes the identical ordered fifteen-course foundation`, () => {
+    it(`${name} publishes its ordered terminal course set`, () => {
       const manifest = PathManifestSchema.parse(
         JSON.parse(
           fs.readFileSync(path.join(appRoot, "src/features/course-paths/manifests/skills", `${name}.json`), "utf8"),
         ),
       );
       expect(manifest.pathId).toBe(`skills/${name}`);
-      expect(manifest.courseOrder).toEqual(expected);
+      expect(manifest.courseOrder).toEqual(name === "conventional-erp" ? sharedExpected : shariaExpected);
       expect(checkManifestIntegrity(manifest, courseIds)).toEqual({ unresolvedIds: [], duplicateIds: [] });
       expect(checkPrerequisiteConsistency(manifest, prerequisites, courseIds).violations).toEqual([]);
     });
