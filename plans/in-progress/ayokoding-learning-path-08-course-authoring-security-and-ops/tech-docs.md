@@ -31,7 +31,7 @@ bind only this programme's plans.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md). A step
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md). A step
 > here that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience — the identical invariant plan 04 carries.
 
@@ -425,7 +425,7 @@ the 37 pre-existing re-homed bundles):
 
 | File                                                                            | Change                                                                                               |
 | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `apps/ayokoding-www/content/en/learn/courses/_index.md` (`<COURSES>_index.md`)  | regenerated from course directories; verify with `npm exec nx run ayokoding-www:validate-indexes` |
+| `apps/ayokoding-www/content/en/learn/courses/_index.md` (`<COURSES>_index.md`)  | regenerated from course directories; verify with `npm exec nx run ayokoding-www:validate-indexes`    |
 | `tech-docs.md` (this file) — [§Course Library Catalog](#course-library-catalog) | catalog rows already listed above (all 11 landed in one pass since this plan authors only this band) |
 | `delivery.md` (this plan's own file)                                            | the five-field band-completion signal appended once, at the close of Phase 2                         |
 
@@ -462,17 +462,17 @@ this plan may never grow a manifest itself.
 
 ## Testing / Verification Strategy
 
-| Level                     | What it verifies                                                                              | Mechanism                                                              |
-| ------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary                     | matching `apps-ayokoding-www-*-checker`                                |
-| Per-course fact checks    | version-pinned / SIEM-platform / security-tooling facts; volatile facts confined to sidebars  | `apps-ayokoding-www-facts-checker`                                     |
-| Per-course link checks    | intra-course and cross-course links resolve                                                   | `apps-ayokoding-www-link-checker`                                      |
-| Contract assertions       | DL-9/DD-12 distinctness, both two-altitude boundaries, offensive-security rules of engagement | grep-checkable acceptance clauses on the authoring steps               |
-| Structural                | bundle anatomy present; `prerequisites` declared                                              | `test -d` / `test -f` + frontmatter grep                               |
+| Level                     | What it verifies                                                                              | Mechanism                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Per-course content checks | concept coverage, register, format, worked-example volume, scope boundary                     | matching `apps-ayokoding-www-*-checker`                                     |
+| Per-course fact checks    | version-pinned / SIEM-platform / security-tooling facts; volatile facts confined to sidebars  | `apps-ayokoding-www-facts-checker`                                          |
+| Per-course link checks    | intra-course and cross-course links resolve                                                   | `apps-ayokoding-www-link-checker`                                           |
+| Contract assertions       | DL-9/DD-12 distinctness, both two-altitude boundaries, offensive-security rules of engagement | grep-checkable acceptance clauses on the authoring steps                    |
+| Structural                | bundle anatomy present; `prerequisites` declared                                              | `test -d` / `test -f` + frontmatter grep                                    |
 | Section build             | the authored tree renders                                                                     | `npm exec nx run ayokoding-www:build`                                       |
-| Markdown quality          | markdownlint, link validation, heading hierarchy                                              | `npm run lint:md` + the two `rhino-cli md` subcommands                 |
+| Markdown quality          | markdownlint, link validation, heading hierarchy                                              | `npm run lint:md` + the two `rhino-cli md` subcommands                      |
 | Regression                | no existing project's gates broke                                                             | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
-| Manual behavioural        | a sample of authored course pages renders correctly at three breakpoints in `en`              | Playwright MCP + committed `evidence/` screenshots                     |
+| Manual behavioural        | a sample of authored course pages renders correctly at three breakpoints in `en`              | Playwright MCP + committed `evidence/` screenshots                          |
 
 **Deliberately absent**: unit, integration, and e2e tests for this plan's own artefacts. There is no
 application code here to test. `ayokoding-www:test:e2e` and `ayokoding-www:test:integration` are no-op

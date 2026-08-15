@@ -1,0 +1,21 @@
+{
+  "title": "Course lab detection review",
+  "scope": "Original synthetic training data only; planning document, not an import export.",
+  "panels": [
+    {
+      "question": "Which local rule levels need review?",
+      "metric": "count",
+      "field": "rule.level"
+    },
+    {
+      "question": "Did tuning reduce labeled benign prompts while retaining the sequence test?",
+      "metric": "false_positive_ratio_and_retained_signal",
+      "field": "rule.id"
+    },
+    {
+      "question": "Which teaching technique has a tested rule?",
+      "metric": "tested_rule_count",
+      "field": "rule.mitre.id"
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Learning Path — Course Authoring: Security, Ops & Delivery (Band 7)
 
+## Status
+
+In progress.
+
 ## Delivery amendment — one final PR
 
 All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
@@ -46,7 +50,7 @@ plan-sizing rule as-is** — no further merging or splitting is needed within th
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md). A step
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md). A step
 > in this plan that creates, appends to, reorders, or re-verifies a `.json` manifest is a **boundary
 > violation**, not a convenience. This is the identical invariant plan 04 carries, reproduced here
 > because this plan is now the one authoring Band 7's bodies.
@@ -148,8 +152,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                         | Nature                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-07-course-authoring-low-level-systems` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-07-course-authoring-low-level-systems/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -202,7 +206,7 @@ forbidden.
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
-  · [`ayokoding-learning-path-12-careers-se-manifests` (downstream)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [`ayokoding-learning-path-12-careers-se-manifests` (downstream)](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [`vercel-function-cost-reduction` (historical reference)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance

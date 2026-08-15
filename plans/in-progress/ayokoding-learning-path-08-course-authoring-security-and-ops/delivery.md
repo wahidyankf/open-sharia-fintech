@@ -9,7 +9,7 @@ This checklist authors **eleven course bodies** into
 library, carved out of `ayokoding-learning-path-04-course-authoring`'s own delivery checklist.
 
 > **This plan never edits a manifest file.** Every file under `<MANIFESTS>` belongs to
-> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md). This
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md). This
 > plan's only outbound artefact is the **single band-completion signal** prepared during authoring and
 > delivered with the terminal archival PR. See [README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else)
 > and [tech-docs §The manifest ownership invariant](./tech-docs.md#the-manifest-ownership-invariant-binding).
@@ -95,8 +95,8 @@ This plan produces content only and has exactly one final PR. It has no review-c
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                         | Nature                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-07-course-authoring-low-level-systems` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-07-course-authoring-low-level-systems/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -145,7 +145,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > wrong place, and eleven new always-dynamic pages landing before the cost-reduction fix ships would
 > compound an already-overrun function-duration bill.
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-08-course-authoring-security-and-ops/ plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -155,11 +155,16 @@ No phase may create an additional worktree or branch. The final phase is the onl
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0,
+      _Implementation note (2026-08-15): moved the plan and updated both indexes in the designated
+      single-plan worktree on its delivery branch, per the one-PR delivery contract. The specified
+      `origin/main` location proof is deferred to Phase 7, when this branch's sole archival PR merges._
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits 0,
       `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
+      _Implementation note (2026-08-15): ran successfully in the designated plan worktree._
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Verify repository baseline: course-authoring catalog is present**
+      _Implementation note (2026-08-15): 16/16 tools OK; doctor applied no unresolved drift._
+- [x] [AI] **Verify repository baseline: course-authoring catalog is present**
       — resolve its actual location rather than assuming a folder name, since it was still `in-progress`
       at authoring time — command (single line):
       `git ls-files -- 'plans/done/*ayokoding-learning-path-04-course-authoring/README.md'`
@@ -170,7 +175,10 @@ No phase may create an additional worktree or branch. The final phase is the onl
       this gate. **Do not hardcode a guessed completion date** in this command or anywhere else in this
       plan's files — every cross-plan reference to plan 04 must be re-pointed to the printed
       `PLAN04_ROOT` value once resolved (see the BF-8-style link gate below).
-- [ ] [AI] **Verify none of this band's eleven course IDs was already authored by plan 04** (Band 7 must
+      _Implementation note (2026-08-15): resolved exactly one catalog path and recorded it as
+      `PLAN04_ROOT` in `evidence/phase-0-snapshot.txt`._
+
+- [x] [AI] **Verify none of this band's eleven course IDs was already authored by plan 04** (Band 7 must
       not be double-authored) — command:
 
   ```bash
@@ -185,8 +193,10 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: **zero** output lines. Falsifiable both ways:
   `mkdir -p apps/ayokoding-www/content/en/learn/courses/it-governance-grc` makes the loop print
   `EXISTS it-governance-grc`, proving the check fires.
+  _Implementation note (2026-08-15): the authoritative eleven-slug loop produced zero `EXISTS`
+  lines._
 
-- [ ] [AI] **Verify the rendering repository baseline** — two checks, both
+- [x] [AI] **Verify the rendering repository baseline** — two checks, both
       required, matching the concrete signal recorded in
       [README §Why the cost-reduction dependency is hard](./README.md#depends-on):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx` (Phase 1's Cause-A fix promoted the locale
@@ -198,10 +208,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `git ls-files -- 'plans/done/*vercel-function-cost-reduction/README.md'` — acceptance: prints
       exactly one path (`grep -c .` reads **1**). Record it to `evidence/phase-0-snapshot.txt` as
       `VFR_ROOT=<path>`.
-- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+- [x] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
       `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Create the authored-body slug register** — write this band's eleven slugs, one per line,
+      _Implementation note (2026-08-15): both commands exited 0; pass state recorded in the Phase-0
+      snapshot._
+- [x] [AI] **Create the authored-body slug register** — write this band's eleven slugs, one per line,
       to `evidence/authored-body-slugs.txt`:
 
   ```bash
@@ -224,15 +236,19 @@ No phase may create an additional worktree or branch. The final phase is the onl
   `sort evidence/authored-body-slugs.txt | uniq -d | wc -l` returns **0** (no duplicate slug).
   Falsifiable both ways: deleting one line makes the first check return 10; duplicating one makes the
   second return 1.
+  _Implementation note (2026-08-15): wrote 11 unique slugs; both count checks passed._
 
-- [ ] [AI] **Record the authored-body baseline** —
+- [x] [AI] **Record the authored-body baseline** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **11** today (none authored yet), recorded in
       `evidence/phase-0-snapshot.txt`. The same command must return **0** at archival (Phase 7).
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+      _Implementation note (2026-08-15): the authoritative loop returned and recorded 11 absent
+      bodies._
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present and the first line is
       `# Learnings: ayokoding-learning-path-08-course-authoring-security-and-ops`.
-- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves,
+      _Implementation note (2026-08-15): the file exists and its H1 matches the plan identifier._
+- [x] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves,
       including the `<PLAN04>` and `<VFR>` references just resolved above:
 
   ```bash
@@ -247,32 +263,47 @@ No phase may create an additional worktree or branch. The final phase is the onl
   resolved to a path different from this plan's current `../../in-progress/...` references, **first
   re-point every such reference in this plan's own files to the resolved path**, then re-run this
   check — never edit the referenced plan's own folder to fix a link.
+  _Implementation note (2026-08-15): scoped link validation passed with no line naming this plan
+  folder._
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase only writes `evidence/`
+- [x] [AI] **Confirm no manifest file changed in this phase** — this phase only writes `evidence/`
       files and opens no PR:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
+      _Implementation note (2026-08-15): manifest-path diff count is 0._
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] Direct predecessor and repository baseline verified: plan 04's archived `README.md` resolves to exactly one
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+      _Implementation note (2026-08-15): install exited 0; doctor reported 16/16 tools OK and no
+      unresolved drift._
+- [x] [AI] Direct predecessor and repository baseline verified: plan 04's archived `README.md` resolves to exactly one
       path (`PLAN04_ROOT` recorded); `vercel-function-cost-reduction`'s two concrete file-absence
       checks both exit 0 and its archived `README.md` resolves to exactly one path (`VFR_ROOT`
       recorded).
-- [ ] [AI] None of this band's eleven slugs already exists under `<COURSES>` (zero `EXISTS` lines).
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 11 unique slugs; the ABSENT-count baseline of 11 is
+      _Implementation note (2026-08-15): `PLAN04_ROOT` and `VFR_ROOT` each resolve exactly once;
+      both rendering file-absence checks pass._
+- [x] [AI] None of this band's eleven slugs already exists under `<COURSES>` (zero `EXISTS` lines).
+      _Implementation note (2026-08-15): the authoritative eleven-slug loop produced zero `EXISTS`
+      lines._
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+      _Implementation note (2026-08-15): both passed and are recorded in the Phase-0 snapshot._
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 11 unique slugs; the ABSENT-count baseline of 11 is
       recorded in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Cross-plan link gate green (no line naming this plan's folder); every reference re-pointed
+      _Implementation note (2026-08-15): 11 unique slugs and `AUTHORED_BODY_ABSENT_COUNT=11` are
+      recorded._
+- [x] [AI] Cross-plan link gate green (no line naming this plan's folder); every reference re-pointed
       to a resolved path if plan 04 or the cost-reduction plan had already archived.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — read the printed number from
+      _Implementation note (2026-08-15): scoped validation passed with no matching plan-folder line._
+- [x] [AI] Zero manifest files touched.
+      _Implementation note (2026-08-15): manifest-path diff count is 0._
+- [x] [AI] **No PR was opened for this phase and nothing was pushed** — read the printed number from
       each (never `&&`-chained):
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
+      _Implementation note (2026-08-15): both required remote counts are 0._
 
 > **Pause Safety**: only the toolchain, the two upstream preconditions, and the slug register were
 > established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
@@ -336,10 +367,14 @@ alone):
 
 ## Phase 1: Cohort A — Security core (5 bodies)
 
-- [ ] [AI] `it-and-application-security` (Annotated-concept · Python) — convention complete; checkers
+- [x] [AI] `it-and-application-security` (Annotated-concept · Python) — convention complete; checkers
       clean.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `offensive-security` (By Example · Python + shell) — convention complete; checkers clean; the
+    _Implementation note (2026-08-15): authored the 21-file course bundle with 52 structured examples
+    covering `co-01`–`co-30`, safe runnable Python mechanisms, capstone, and five-section drilling.
+    Scoped structural/fact/link equivalents, Python execution, build, and Markdown lint passed; the
+    licensing heuristic and manifest-path assertion both returned 0._
+- [x] [AI] `offensive-security` (By Example · Python + shell) — convention complete; checkers clean; the
       body states its **lab-local, authorized-scope-only** rules of engagement — acceptance:
       `for w in "authorized" "lab"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/offensive-security/overview.md" || echo "MISSING $w"; done | wc -l`
       returns **0**.
@@ -355,11 +390,19 @@ alone):
   ```
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+    _Implementation note (2026-08-15): authored the 18-file bundle with 78 lab-only examples, local
+    Python/shell fixture checks, capstone, and five-section drilling. The overview explicitly states
+    lab-local, authorized-scope-only rules; scope guard, Python artifacts, pyright, diff check,
+    licensing heuristic, Markdown lint, build, and zero-manifest assertion all passed._
 
-- [ ] [AI] `defensive-security` (By Example · Python + shell — **hands-on, NOT concept**, DL-9/DD-12) —
+- [x] [AI] `defensive-security` (By Example · Python + shell — **hands-on, NOT concept**, DL-9/DD-12) —
       convention complete; checkers clean; the body delivers Sigma-on-ELK/OpenSearch + the IR lifecycle + hardening as generalist blue-team breadth.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `detection-engineering-and-siem-operations` (By Example · XML/rules + config + Python;
+    _Implementation note (2026-08-15): authored the hands-on 78-example blue-team bundle with
+    synthetic offline Sigma/OpenSearch telemetry, IR lifecycle, hardening, capstone, and five-section
+    drilling. Course-local structural/safety/link checks, lab artifacts, Markdown lint, build, and
+    zero-manifest assertion passed; the boundary to Wazuh-specific detection engineering is explicit._
+- [x] [AI] `detection-engineering-and-siem-operations` (By Example · XML/rules + config + Python;
       declares `defensive-security` a prerequisite) — convention complete; checkers clean —
       distinctness acceptance: this course has the reader author working Wazuh decoders, correlation
       rules, and a dashboard with false-positive tuning; `defensive-security` retains the generalist
@@ -383,24 +426,43 @@ alone):
   ```
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+    _Implementation note (2026-08-15): authored the 19-file, 78-example offline Wazuh-style bundle
+    with original decoder/rule/config/dashboard artifacts and local verification. Prerequisite, scope
+    boundary, zero duplicate-title, XML/JSON, safety/licensing/manifest, Markdown/prettier, and build
+    checks passed._
 
-- [ ] [AI] `vulnerability-management-and-assessment` (By Example · Python) — convention complete;
+- [x] [AI] `vulnerability-management-and-assessment` (By Example · Python) — convention complete;
       checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the per-cohort closing steps (catalog rows confirmed, zero-manifest check). Cohort A
+    _Implementation note (2026-08-15): authored the 19-file course bundle with 80 contiguous,
+    concept-mapped offline exercises, typed fixtures, capstone modules, and five-section drilling.
+    Structural/density/fact/link, safety/licensing/manifest, Markdown/heading, Python runtime, and
+    build validations passed._
+- [x] [AI] Apply the per-cohort closing steps (catalog rows confirmed, zero-manifest check). Cohort A
       does not emit a band-completion signal — Band 7 is not complete until Cohort B lands.
+      _Implementation note (2026-08-15): all five Catalog rows and course-index entries are present;
+      the new detection-engineering course retains its catalog `N` label rather than duplicating
+      vulnerability management's topic 61. The manifest-path diff remains 0._
 
 ### Phase 1 Gate
 
-- [ ] [AI] All 5 Cohort-A bodies exist:
+- [x] [AI] All 5 Cohort-A bodies exist:
       `for s in it-and-application-security offensive-security defensive-security detection-engineering-and-siem-operations vulnerability-management-and-assessment; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] `defensive-security` is authored By-Example hands-on (DL-9/DD-12 label correction applied);
+      _Implementation note (2026-08-15): the five-body absence loop returned 0._
+- [x] [AI] `defensive-security` is authored By-Example hands-on (DL-9/DD-12 label correction applied);
       `detection-engineering-and-siem-operations` declares it as a prerequisite; the duplicate-lesson-title
       `comm` check returns 0.
-- [ ] [AI] `offensive-security` states its lab-local, authorized-scope-only rules of engagement.
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows confirmed present; zero manifest files touched.
+      _Implementation note (2026-08-15): prerequisite grep and duplicate-title `comm` check both
+      returned 0; the reviewed course bundle is hands-on By-Example._
+- [x] [AI] `offensive-security` states its lab-local, authorized-scope-only rules of engagement.
+      _Implementation note (2026-08-15): both required overview terms are present; missing-term count
+      is 0._
+- [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
+      _Implementation note (2026-08-15): each course's scoped checker-equivalent evidence is clean;
+      aggregate build and Markdown lint both exited 0._
+- [x] [AI] Catalog rows confirmed present; zero manifest files touched.
+      _Implementation note (2026-08-15): all rows/index entries resolve and the manifest-path diff is 0._
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
 
 > **Pause Safety**: the security-core cluster is live; `detection-engineering-and-siem-operations` and

@@ -1,0 +1,11 @@
+it-and-application-security
+offensive-security
+defensive-security
+detection-engineering-and-siem-operations
+vulnerability-management-and-assessment
+it-governance-grc
+bare-metal-virtualization
+self-managed-kubernetes-and-gitops
+platform-engineering-and-devex
+site-reliability-engineering
+analytics-and-experimentation

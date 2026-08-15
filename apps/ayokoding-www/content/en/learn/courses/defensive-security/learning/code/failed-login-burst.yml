@@ -1,0 +1,15 @@
+title: "Synthetic failed login burst in the blue-team lab"
+status: test
+description: "Original course exercise; inspect against bundled synthetic events only."
+logsource:
+  category: authentication
+detection:
+  selection:
+    event_type: "auth_failure"
+    outcome: "rejected"
+  condition: selection
+falsepositives:
+  - "A learner mistyping a password"
+level: medium
+tags:
+  - "attack.t1110"

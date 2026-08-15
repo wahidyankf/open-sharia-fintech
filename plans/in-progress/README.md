@@ -23,6 +23,8 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety.
+- [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
+  — Authors the Band 7 security, operations, and delivery course bodies.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
