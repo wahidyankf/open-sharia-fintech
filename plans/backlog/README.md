@@ -39,9 +39,6 @@ Plan 06 needs):
 
 **Careers manifests** (splits old `05-manifests`; Plan 04's retained baseline is complete):
 
-- [ayokoding-learning-path-13-careers-ai-manifest](./ayokoding-learning-path-13-careers-ai-manifest/README.md)
-  — the `immediately-effective/ai-engineer` manifest alone, following plan 12.
-
 **Skills — accounting** (splits old `06-skills-accounting`'s 24 courses; strict sequential chain):
 
 - [ayokoding-learning-path-14-skills-accounting-foundations](./ayokoding-learning-path-14-skills-accounting-foundations/README.md)

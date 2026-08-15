@@ -1,0 +1,49 @@
+Phase 16b-2 — 5-case trigger matrix (ose-private), mirroring Phase 9b-2
+
+Method: isolated throwaway git fixture (/tmp/wf16-fixture, git init, no origin — same
+pattern as Phase 16a's RED proof), containing only a minimal repo-config.yml with the
+two new gate entries (governance-word-budget, governance-readme-completeness) copied
+verbatim from ose-private's repo-config.yml. With no origin/main, gate run's pre-push
+candidate-path resolution falls back to staged_paths() (merge_base_paths' documented
+fixture fallback), so staging a file simulates a pre-push/CI trigger check. Each case:
+stage the file, run `gate run --surface=pre-push --only=<gate-id>` for both gates,
+observe whether "Running gate <id>" prints (trigger matched) or nothing prints (silent
+skip — path-gated trigger mismatch is a silent `continue`, confirmed in
+apps/rhino-cli/src/commands/gate/run.rs lines 171-177).
+
+Case 1 — touch repo-governance/README.md
+  governance-word-budget:        Running gate governance-word-budget       -> EXECUTE
+  governance-readme-completeness: Running gate governance-readme-completeness -> EXECUTE
+  Result: execute both (repo-governance/ is in both trigger lists)
+
+Case 2 — touch apps/ayokoding-www/content/foo.mdx
+  governance-word-budget:        (silent, no match)                        -> SKIP
+  governance-readme-completeness: (silent, no match)                        -> SKIP
+  Result: skip both (content tree is outside every trigger prefix)
+
+Case 3 — touch .opencode/agents/foo.md
+  governance-word-budget:        Running gate governance-word-budget       -> EXECUTE
+  governance-readme-completeness: (silent, no match)                        -> SKIP
+  Result: mixed (.opencode/ triggers word-budget only; readme-completeness's
+  trigger list is repo-governance/, .claude/, .codex/, repo-config.yml — no .opencode/)
+
+Case 4 — touch plans/in-progress/foo/delivery.md
+  governance-word-budget:        (silent, no match)                        -> SKIP
+  governance-readme-completeness: (silent, no match)                        -> SKIP
+  Result: skip both (plans/ is not a covered surface, matching FR-1.3)
+
+Case 5 — touch repo-config.yml
+  governance-word-budget:        Running gate governance-word-budget       -> EXECUTE
+  governance-readme-completeness: Running gate governance-readme-completeness -> EXECUTE
+  Result: execute both (repo-config.yml is in both trigger lists — config self-change
+  always re-triggers both gates)
+
+All 5 outcomes match the Phase 9b-2 reference matrix (ose-public), confirming the
+path-gated trigger wiring in ose-private's repo-config.yml behaves identically.
+
+Note: a live test against the real ose-private working tree (staging the actual
+Phase 16 files) does NOT exercise this path — `gate run --surface=pre-push`'s
+candidate-path source for a real repo with an origin is `git diff --name-only
+<merge-base with origin/main> HEAD` (committed diff), not staged files; staging alone
+is invisible to it. The isolated no-origin fixture above is the correct way to
+exercise the trigger-matching logic directly, consistent with Phase 9b-2 and Phase 16a.
