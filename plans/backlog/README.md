@@ -47,12 +47,6 @@ Plan 06 needs):
 — 5 courses (#20-24, follows plan 15): the Sharia-specific extension — `sharia-accounting`
 terminates here.
 
-**Skills — ERP** (splits old `07-skills-erp`'s 30 courses):
-
-- [ayokoding-learning-path-18-skills-erp-enterprise-depth](./ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
-  — 15 courses (Stage B + C merged, follows plan 17): conventional enterprise depth, then the
-  Sharia-compliant design stage.
-
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
 `reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state
