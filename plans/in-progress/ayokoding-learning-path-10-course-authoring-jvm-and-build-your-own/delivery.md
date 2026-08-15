@@ -277,7 +277,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > re-verify → manifest-isolation self-check → licensing self-check). This plan applies the same
 > nine-step convention to every one of its 9 courses without restating it verbatim per course.
 
-- [ ] [AI] `just-enough-java` (Primer · Java) — convention complete; checkers clean; declares
+- [x] [AI] `just-enough-java` (Primer · Java) — convention complete; checkers clean; declares
       `object-oriented-programming-essentials` as its prerequisite (already-shipped) — acceptance:
       `grep -F -q 'object-oriented-programming-essentials' "apps/ayokoding-www/content/en/learn/courses/just-enough-java/_index.md"`
       exits 0.
