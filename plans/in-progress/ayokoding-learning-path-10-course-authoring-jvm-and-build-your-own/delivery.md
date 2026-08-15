@@ -431,7 +431,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] **Re-confirm `build-your-own-database`'s prerequisite body is present** (immediately before
+- [x] [AI] **Re-confirm `build-your-own-database`'s prerequisite body is present** (immediately before
       authoring, not only at Phase 0) — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines`
       — acceptance: exits 0.
@@ -446,7 +446,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
     And build-your-own-database's frontmatter declares it as a prerequisite
   ```
 
-- [ ] [AI] `build-your-own-database` (By Example · Python) — convention complete; checkers clean;
+- [x] [AI] `build-your-own-database` (By Example · Python) — convention complete; checkers clean;
       declares `database-internals-and-storage-engines` and the already-shipped `sql-essentials` as
       prerequisites (**not** `just-enough-python` — corrected) — acceptance:
       `for p in database-internals-and-storage-engines sql-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-database/_index.md" || echo "MISSING $p"; done | grep -c .`
