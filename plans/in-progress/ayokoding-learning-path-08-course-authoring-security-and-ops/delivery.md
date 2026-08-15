@@ -640,7 +640,7 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
       exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation), committing
       preexisting fixes separately.
       _Implementation note (2026-08-15): the equivalent npm-24-safe form `npm exec nx -- affected -t
-  typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The literal form lets
+typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The literal form lets
       npm consume `-t` and fails before Nx receives its required targets._
 - [x] [AI] Build the site: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
       _Implementation note (2026-08-15): build exited 0 after the supersession and local-link repairs._
@@ -724,7 +724,7 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
       _Implementation note (2026-08-15): the `en`-only locale assertion exited 0._
 - [x] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
       _Implementation note (2026-08-15): the required production preview (`npm exec nx -- start
-    ayokoding-www`) served the already-green build on port 3101; `next dev` itself accepted the port
+  ayokoding-www`) served the already-green build on port 3101; `next dev` itself accepted the port
       but did not finish loading a route, so it was stopped and not treated as verification evidence._
 - [x] [AI] **Sample-verify authored course pages** — for **all eleven** authored courses, at breakpoints
       375 / 768 / 1280 px, via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`,
@@ -820,16 +820,19 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
 
 ## Phase 5: Pre-archival Quality & CI Preparation
 
-- [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
+- [x] [AI] Run the full affected suite on the persistent final-delivery branch:
       `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
       `npm exec nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 7 opens the terminal PR.
-- [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
+      _Implementation note (2026-08-15): the npm-24-safe equivalent affected invocation and the site
+      build both exited 0. Existing warning-level lint output did not fail either gate._
+- [x] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
       worktree, branch, or PR is required.
+      _Implementation note (2026-08-15): no failing gate remained; no unrelated remediation was needed._
 
 ### Phase 5 Gate
 
-- [ ] [AI] Full affected suite + build green on the persistent final-delivery branch.
-- [ ] [AI] The band signal is prepared without a merge SHA; downstream notification waits for the
+- [x] [AI] Full affected suite + build green on the persistent final-delivery branch.
+- [x] [AI] The band signal is prepared without a merge SHA; downstream notification waits for the
       terminal PR merge.
 
 > **Pause Safety**: the branch is ready for archival and terminal review. Safe to stop. To resume:
@@ -842,36 +845,39 @@ FINAL_PR: pending — set only after the sole Phase-7 terminal archival PR is me
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-private` only and is
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-private` only and is
       NEVER cross-routed into `ose-public`/`ose-primer`.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix — **code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan and NEVER landed inline**; this plan's own artefacts are content, not
       code.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
-- [ ] [AI] **Confirm no manifest file changed in this phase**:
+- [x] [AI] **Confirm no manifest file changed in this phase**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
+      _Implementation note (2026-08-15): the Rule-15 exemption is terminally retained inline as this
+      archival plan's required record; it needs no code, backlog, or ideas home. No sensitive/private
+      material appeared, and the manifest scope remains 0._
 
 ### Phase 6 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate): the `learnings.md` triage is committed on the
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate): the `learnings.md` triage is committed on the
       shared closeout branch — the closeout PR for Phases 4–7 opens at Phase 7.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to

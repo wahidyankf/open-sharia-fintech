@@ -3,16 +3,13 @@
 
 # Learnings: ayokoding-learning-path-08-course-authoring-security-and-ops
 
-## Phase 4 Rule-15 exemption
+## Rule-15 exemption — retained inline
 
-The `web-exploratory-tester`, `web-usability-tester`, and `web-design-tester` triad is exempt because:
+The `web-exploratory-tester`, `web-usability-tester`, and `web-design-tester` triad is exempt for
+this content-only plan because it ships no screens/components, dedicated content/facts/link checkers
+cover the authored surface, and the triad would test the rendering owned by
+`ayokoding-learning-path-03-navigation-ui` rather than a surface this plan can change. The narrow
+Playwright MCP verification remains mandatory and was completed for all eleven `en` course pages.
 
-1. This plan ships only Markdown course bundles, not screens or components; the rendering surface is
-   owned by `ayokoding-learning-path-03-navigation-ui`.
-2. Dedicated content, facts, and link checkers cover the authored material more directly than the
-   general live-site triad.
-3. A triad run on these pages would exercise the navigation plan's rendering surface and could produce
-   findings this plan cannot act on.
-
-This exemption is narrow: Playwright MCP verification of all eleven `en` course pages at 375, 768, and
-1280 px was performed with screenshot evidence in `evidence/`.
+**Terminal route:** retained inline as this plan's archival Rule-15 record; no new code, backlog, or
+ideas home is warranted.
