@@ -18,4 +18,4 @@ trait. The capstone turns an optional port into a `Result` with `ok_or(...)` and
 possible failure through `?`. The two tests prove its ready and missing-port outcomes.
 
 This is intentionally a short language consolidation, not an application: it prepares the Rust
-surface needed by [Modern System Programming](../../../../modern-system-programming/overview.md).
+surface needed by [Modern System Programming](../../../modern-system-programming/overview.md).

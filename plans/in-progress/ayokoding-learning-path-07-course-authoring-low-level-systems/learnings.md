@@ -27,4 +27,12 @@ This plan authors content only; a defect found in the `course-paths` feature cod
   automatically next time?
 ```
 
-<!-- Entries accumulate below during execution. This plan has not begun execution yet. -->
+## Rule-15 exemption record
+
+The three live-site testers are exempt because this plan ships content bundles rather than a screen
+or component, its rendering surface was already retested by the navigation-UI plan, and dedicated
+course-content checkers cover the authored output more directly. Running the triad would retest a
+surface this plan does not own. This record is terminal: no reusable process or code change follows.
+
+No generalizable learnings — the remaining observations were course-specific content corrections
+already covered by Markdown, link, and course-structure validation.

@@ -251,4 +251,4 @@ Run each experiment on Linux. Each source begins with an annotation naming the s
 
 ---
 
-← Previous: [Learning overview](./overview.md) · Next: [Capstone](./capstone.md) →
+← Previous: [Learning overview](./overview.md) · Next: [Capstone](./capstone/overview.md) →

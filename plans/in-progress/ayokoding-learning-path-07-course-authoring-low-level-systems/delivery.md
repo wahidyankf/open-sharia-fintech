@@ -152,8 +152,8 @@ No phase may create an additional worktree or branch. The final phase is the onl
       (`d2c1d87a4`) is therefore the first commit on this plan's declared worktree branch and is
       included in the sole terminal PR. Before Phase 1, confirm the promoted path is present in
       `HEAD` and absent from the backlog with `git ls-tree -r --name-only HEAD --
-    plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md |
-    grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0**).
+  plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md |
+  grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0**).
       Execution never runs out of `plans/backlog/`; this exception changes only the unavailable
       direct-push mechanism, not the promotion or the one-PR delivery boundary. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
@@ -485,7 +485,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 - [x] [AI] Catalog rows added for both; run `npm exec nx run ayokoding-www:generate-indexes` then `npm exec nx run ayokoding-www:validate-indexes`; zero manifest files touched.
 - [x] [AI] The one band-completion signal is prepared with its course IDs and manifest paths; its
       `FINAL_PR` remains pending until the terminal archival PR merges.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
 
 > **Pause Safety**: all 7 authored bodies are ready on the persistent branch; the one band-completion
@@ -537,11 +537,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ### Phase 3 Gate
 
-- [ ] [AI] All three 7-body structural loops (presence, prerequisites, both tracks) return 0.
-- [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure.
-- [ ] [AI] Zero manifest files touched on this branch.
-- [ ] [AI] **No PR opens for this phase** (intermediate): committed on the shared closeout branch;
+- [x] [AI] All three 7-body structural loops (presence, prerequisites, both tracks) return 0.
+- [x] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
+- [x] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure.
+- [x] [AI] Zero manifest files touched on this branch.
+- [x] [AI] **No PR opens for this phase** (intermediate): committed on the shared closeout branch;
       nothing pushed for review yet — the closeout PR opens at Phase 7.
 
 > **Pause Safety**: the authored 7-course tree passes every automated gate. Safe to stop. To resume:
@@ -558,41 +558,51 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > [README §Rule-15](./README.md#rule-15-three-tester-retest--exemption-recorded). The exemption is
 > narrow — the Playwright manual behavioural verification below is mandatory and performed.
 
-- [ ] [AI] Confirm `en` is the content locale for these 7 courses — command:
+- [x] [AI] Confirm `en` is the content locale for these 7 courses — command:
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `test ! -d apps/ayokoding-www/content/id/learn/courses/just-enough-c`
       exits 0.
-- [ ] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify all 7 authored course pages** at breakpoints 375 / 768 / 1280 px, via
+- [x] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
+- [x] [AI] **Sample-verify all 7 authored course pages** at breakpoints 375 / 768 / 1280 px, via
       Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`, `browser_resize`, then
       `browser_snapshot` — acceptance: each page renders its overview, learning track, and drilling
       track; `html[lang]` is `en`; `browser_console_messages` reports **zero** errors per page per
       breakpoint.
-- [ ] [AI] **Verify prerequisite rendering** — on `system-programming` (declares `just-enough-c` and
+- [x] [AI] **Verify prerequisite rendering** — on `system-programming` (declares `just-enough-c` and
       `linux-os`), confirm both prerequisites are displayed and each link resolves to its canonical
       page — acceptance: both link targets return 200 and land on the named prerequisite.
-- [ ] [AI] **Verify a drilling track renders** — open `linux-os`'s `drilling/overview.md` page and
+- [x] [AI] **Verify a drilling track renders** — open `linux-os`'s `drilling/overview.md` page and
       confirm all five fixed sections are present — acceptance: five section headings visible in
       `browser_snapshot`.
-- [ ] [AI] Capture one screenshot per course per breakpoint to
+- [x] [AI] Capture one screenshot per course per breakpoint to
       `evidence/phase-4-<course-id>-en-<breakpoint>px.png` — acceptance:
       `git ls-files -- 'evidence/phase-4-*-en-*px.png' | grep -c .` returns **21** (7 courses × 3
       breakpoints).
-- [ ] [AI] Document the evidence in this checklist: reference each screenshot
+- [x] [AI] Document the evidence in this checklist: reference each screenshot
       (`![alt](./evidence/...)`) and note the console/network status per course.
-- [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+
+  All routes returned 200 and emitted zero console errors at every width.
+  ![Just Enough C 375](./evidence/phase-4-just-enough-c-en-375px.png) ![Just Enough C 768](./evidence/phase-4-just-enough-c-en-768px.png) ![Just Enough C 1280](./evidence/phase-4-just-enough-c-en-1280px.png)
+  ![Just Enough C++ 375](./evidence/phase-4-just-enough-cpp-en-375px.png) ![Just Enough C++ 768](./evidence/phase-4-just-enough-cpp-en-768px.png) ![Just Enough C++ 1280](./evidence/phase-4-just-enough-cpp-en-1280px.png)
+  ![Linux OS 375](./evidence/phase-4-linux-os-en-375px.png) ![Linux OS 768](./evidence/phase-4-linux-os-en-768px.png) ![Linux OS 1280](./evidence/phase-4-linux-os-en-1280px.png)
+  ![Windows OS 375](./evidence/phase-4-windows-os-en-375px.png) ![Windows OS 768](./evidence/phase-4-windows-os-en-768px.png) ![Windows OS 1280](./evidence/phase-4-windows-os-en-1280px.png)
+  ![System Programming 375](./evidence/phase-4-system-programming-en-375px.png) ![System Programming 768](./evidence/phase-4-system-programming-en-768px.png) ![System Programming 1280](./evidence/phase-4-system-programming-en-1280px.png)
+  ![Just Enough Rust 375](./evidence/phase-4-just-enough-rust-en-375px.png) ![Just Enough Rust 768](./evidence/phase-4-just-enough-rust-en-768px.png) ![Just Enough Rust 1280](./evidence/phase-4-just-enough-rust-en-1280px.png)
+  ![Modern System Programming 375](./evidence/phase-4-modern-system-programming-en-375px.png) ![Modern System Programming 768](./evidence/phase-4-modern-system-programming-en-768px.png) ![Modern System Programming 1280](./evidence/phase-4-modern-system-programming-en-1280px.png)
+
+- [x] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons.
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
 ### Phase 4 Gate
 
-- [ ] [AI] All 7 courses verified across three breakpoints in `en`; zero console errors; prerequisite
+- [x] [AI] All 7 courses verified across three breakpoints in `en`; zero console errors; prerequisite
       display and drilling-track rendering confirmed.
-- [ ] [AI] 21 screenshots present under `evidence/` and referenced in this checklist.
-- [ ] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate) — folds into Phase 7's closeout PR.
+- [x] [AI] 21 screenshots present under `evidence/` and referenced in this checklist.
+- [x] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate) — folds into Phase 7's closeout PR.
 
 > **Pause Safety**: the authored 7-course tree is verified live and defect-clean in `en`. Safe to
 > stop. To resume: restart the dev server and re-open one course per cohort.

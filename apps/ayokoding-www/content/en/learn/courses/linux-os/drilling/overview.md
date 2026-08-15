@@ -24,6 +24,17 @@ weight: 1
 4. Make ex-35 deliberately race, then explain why a shared mapping alone is not synchronization.
 5. Trace the capstone with `strace -f -e trace=process,signal,pipe,mmap` and annotate five calls.
 
+## Debugging drills
+
+1. Start with an intentionally leaked descriptor, inspect `/proc/self/fd`, then close it and compare
+   the two observations.
+2. Use `strace` or `ltrace` to distinguish a user-space wrapper call from the syscall it reaches.
+
+## Capstone rehearsal
+
+1. Run the capstone, capture its process, pipe, shared-memory, and signal transcript, then explain
+   which cleanup action owns each resource.
+
 ## Self-check
 
 - [ ] I can distinguish a syscall from a library wrapper.

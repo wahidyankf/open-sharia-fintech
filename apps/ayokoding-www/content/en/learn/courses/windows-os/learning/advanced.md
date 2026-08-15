@@ -127,7 +127,7 @@ flowchart LR
 ### Example 62: VirtualAlloc Guard Page
 
 _Exercises co-24._ This small experiment isolates **VirtualAlloc Guard Page** and leaves no dependency on a preceding example.
-**Runnable source**: [example.ps1](./code/ex-62-virtualalloc-guard-page/example.ps1)
+**Runnable source**: [example.c](./code/ex-62-virtualalloc-guard-page/example.c)
 
 **Key takeaway**: Treat the Windows return value, state observation, and owned handle as one operation.
 
@@ -136,7 +136,7 @@ _Exercises co-24._ This small experiment isolates **VirtualAlloc Guard Page** an
 ### Example 63: Registry Round Trip
 
 _Exercises co-25._ This small experiment isolates **Registry Round Trip** and leaves no dependency on a preceding example.
-**Runnable source**: [example.ps1](./code/ex-63-registry-round-trip/example.ps1)
+**Runnable source**: [example.c](./code/ex-63-registry-round-trip/example.c)
 
 **Key takeaway**: Treat the Windows return value, state observation, and owned handle as one operation.
 
@@ -199,7 +199,7 @@ flowchart LR
   classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-**Runnable source**: [example.ps1](./code/ex-68-handle-and-file-descriptor-contrast/example.ps1)
+**Runnable source**: [example.c](./code/ex-68-handle-and-file-descriptor-contrast/example.c)
 
 **Key takeaway**: Treat the Windows return value, state observation, and owned handle as one operation.
 
@@ -217,7 +217,7 @@ flowchart LR
   classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-**Runnable source**: [example.ps1](./code/ex-69-createprocess-and-fork-exec-contrast/example.ps1)
+**Runnable source**: [example.c](./code/ex-69-createprocess-and-fork-exec-contrast/example.c)
 
 **Key takeaway**: Treat the Windows return value, state observation, and owned handle as one operation.
 
@@ -226,7 +226,7 @@ flowchart LR
 ### Example 70: Object Manager and VFS Contrast
 
 _Exercises co-27._ This small experiment isolates **Object Manager and VFS Contrast** and leaves no dependency on a preceding example.
-**Runnable source**: [example.ps1](./code/ex-70-object-manager-and-vfs-contrast/example.ps1)
+**Runnable source**: [example.c](./code/ex-70-object-manager-and-vfs-contrast/example.c)
 
 **Key takeaway**: Treat the Windows return value, state observation, and owned handle as one operation.
 
