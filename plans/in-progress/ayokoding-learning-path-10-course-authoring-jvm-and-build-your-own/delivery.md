@@ -306,7 +306,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `lisp` (By Example · Scheme + Clojure) — convention complete; checkers clean; declares the
+- [x] [AI] `lisp` (By Example · Scheme + Clojure) — convention complete; checkers clean; declares the
       already-shipped `functional-programming` and `programming-paradigms` as its prerequisites (not an
       entry point) — acceptance:
       `for p in functional-programming programming-paradigms; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/lisp/_index.md" || echo "MISSING $p"; done | grep -c .`
