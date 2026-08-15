@@ -2819,9 +2819,9 @@ plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag` e
       updated.
       **Result**: `plans/in-progress/README.md` entry removed; `plans/done/README.md` entry added;
       `plans/backlog/README.md` and `plans/README.md` confirmed to hold no reference needing update.
-- [ ] [AI] **Draft PR opened (covers both Phase 6 `learnings.md` triage and Phase 7 archival move +
+- [x] [AI] **Draft PR opened (covers both Phase 6 `learnings.md` triage and Phase 7 archival move +
       repoint, `DN-14`)**; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
-- [ ] [AI] After the archival PR merges, prompt the user before deleting
+- [x] [AI] After the archival PR merges, prompt the user before deleting
       `worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag/`.
 
 > **Pause Safety**: the plan is archived, its final PR is `[AI]`-merged to `main`, and every inbound
@@ -2833,14 +2833,14 @@ plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag` e
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:integration test:e2e` for the
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:integration test:e2e` for the
       phases touching `content-url.ts` — noting both are `echo` no-ops for `ayokoding-www` and prove
       nothing).
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` **exits 0** — unconditionally, with no
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` **exits 0** — unconditionally, with no
       tolerated delta, because every `course-paths` scenario ships `@wip` (Phase 2.0).
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.

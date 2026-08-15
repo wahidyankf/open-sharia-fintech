@@ -75,10 +75,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -184,7 +184,7 @@ ACCT_GATE_C=(
 
 ## Phase 0: Environment Setup
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/ plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -194,35 +194,35 @@ ACCT_GATE_C=(
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Plan 17 is archived on `origin/main` per [§Depends-on](#depends-on); repository baseline checks are informational — acceptance:
+- [x] [AI] Plan 17 is archived on `origin/main` per [§Depends-on](#depends-on); repository baseline checks are informational — acceptance:
       empty output.
-- [ ] [AI] Install dependencies: `npm install`.
-- [ ] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
-- [ ] [AI] Verify dev server starts: `nx dev ayokoding-www`.
-- [ ] [AI] Verify existing tests pass: `npm exec nx run ayokoding-www:test:quick`.
-- [ ] [AI] **Cardinality guard**:
+- [x] [AI] Install dependencies: `npm install`.
+- [x] [AI] Run doctor to verify tooling: `npm run doctor -- --fix`.
+- [x] [AI] Verify dev server starts: `nx dev ayokoding-www`.
+- [x] [AI] Verify existing tests pass: `npm exec nx run ayokoding-www:test:quick`.
+- [x] [AI] **Cardinality guard**:
       `[ "${#ERP_THIS_PLAN[@]}" -eq 15 ] && [ "${#ERP_ALL[@]}" -eq 30 ] && [ "${#ACCT_GATE_B[@]}" -eq 5 ] && [ "${#ACCT_GATE_C[@]}" -eq 2 ] && echo GUARD-OK || echo GUARD-FAIL`
       — acceptance: `GUARD-OK`.
-- [ ] [AI] Verify plan 17's 15 ids actually exist under `<COURSES>` on `origin/main` (the historical repository context
+- [x] [AI] Verify plan 17's 15 ids actually exist under `<COURSES>` on `origin/main` (the historical repository context
       check above confirms the plan merged; this confirms its content landed):
       `for id in "${ERP_STAGE_A[@]}"; do test -d "${COURSES}${id}" || echo "MISSING-FROM-PLAN-17: $id"; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`.
-- [ ] [AI] Verify both manifests exist at exactly 15 ids (plan 17's published state):
+- [x] [AI] Verify both manifests exist at exactly 15 ids (plan 17's published state):
       `grep -cE '^  - ' "${CONVMAN}"` and `grep -cE '^  - ' "${SHARMAN}"` both print `15`.
-- [ ] [AI] Verify no id in `ERP_THIS_PLAN` already exists under `<COURSES>`:
+- [x] [AI] Verify no id in `ERP_THIS_PLAN` already exists under `<COURSES>`:
       `for id in "${ERP_THIS_PLAN[@]}"; do test -d "${COURSES}${id}" && echo "COLLISION: $id"; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`.
-- [ ] [AI] Verify no id in `ERP_ALL` is a substring of another:
+- [x] [AI] Verify no id in `ERP_ALL` is a substring of another:
       `for a in "${ERP_ALL[@]}"; do for b in "${ERP_ALL[@]}"; do [ "$a" != "$b" ] && case "$b" in *"$a"*) echo "SUBSTRING: $a ⊂ $b";; esac; done; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`. **Control probe**: append a known-colliding id to a scratch copy and
       re-run — it must print `FAIL`.
-- [ ] [AI] Verify no id in `ERP_THIS_PLAN` collides with an accounting id:
+- [x] [AI] Verify no id in `ERP_THIS_PLAN` collides with an accounting id:
       `comm -12 <(printf '%s\n' "${ERP_THIS_PLAN[@]}" | sort) <(printf '%s\n' "${ACCT_GATE_B[@]}" "${ACCT_GATE_C[@]}" | sort)`
       — acceptance: empty output.
 
 ### Phase 0 Gate
 
-- [ ] [AI] All checks above pass; `npm exec nx run ayokoding-www:test:quick` is green on a clean tree.
+- [x] [AI] All checks above pass; `npm exec nx run ayokoding-www:test:quick` is green on a clean tree.
 
 > **Pause Safety**: no plan file yet modified. Safe to stop. To resume: re-run
 > `npm exec nx run ayokoding-www:test:quick`.
@@ -234,7 +234,7 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 ### 1.1 — Author all 15 syllabus specs (Stage B's 12 + Stage C's 3)
 
-- [ ] [AI] Create `${PLANDIR}syllabus/README.md`, `${SYL}README.md`, and all 15 `<SYL><id>.md` files
+- [x] [AI] Create `${PLANDIR}syllabus/README.md`, `${SYL}README.md`, and all 15 `<SYL><id>.md` files
       per the [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template).
       Every syllabus file citing a plan-17 course id (per
       [tech-docs.md §Cross-plan prerequisite edges](./tech-docs.md#cross-plan-prerequisite-edges-into-plan-17))
@@ -250,11 +250,11 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
   Acceptance: **empty output**. Guard first —
   `[ "${#ERP_THIS_PLAN[@]}" -eq 15 ] && echo GUARD-OK` must print `GUARD-OK`.
 
-- [ ] [AI] Verify every syllabus file citing a plan-17 id actually links into plan 17's corpus (not a
+- [x] [AI] Verify every syllabus file citing a plan-17 id actually links into plan 17's corpus (not a
       copy):
       `for id in record-to-report-systems inventory-and-warehouse-management production-planning-and-mrp quality-management-and-inspection human-capital-management-and-hire-to-retire erp-security-and-controls islamic-contract-based-transaction-flows; do grep -qF "ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/" "${SYL}${id}.md" || echo "MISSING-CROSS-LINK: $id"; done | grep -q . && echo FAIL || echo PASS`
       — acceptance: `PASS`.
-- [ ] [AI] Author `${PLANDIR}syllabus/paths/README.md`,
+- [x] [AI] Author `${PLANDIR}syllabus/paths/README.md`,
       `${PLANDIR}syllabus/paths/manifest-skills-conventional-erp.md`, and
       `${PLANDIR}syllabus/paths/manifest-skills-sharia-erp.md` — full 27/30-id orderings, positions
       1-15 referencing plan 17's ids by link, positions 16-30 this plan's own courses. Verify:
@@ -271,10 +271,10 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 ### 1.2 — The A4 verification pass before any spec asserts a fact
 
-- [ ] [AI] **Cardinality guard first**:
+- [x] [AI] **Cardinality guard first**:
       `[ "$(find "${SYL}" -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)" -eq 15 ] && echo GUARD-OK || echo GUARD-FAIL`
       — acceptance: `GUARD-OK`.
-- [ ] [AI] For every syllabus's Accuracy notes section, confirm every marker is current and no
+- [x] [AI] For every syllabus's Accuracy notes section, confirm every marker is current and no
       `[Unverified]`/`[Needs Verification]` claim is restated as fact:
       `for f in $(find "${SYL}" -maxdepth 1 -name '*.md' ! -name 'README.md'); do grep -qE '\[(Verified|Unverified|Needs Verification|Judgment call)\]' "$f" && continue; grep -qF 'has not yet run' "$f" && continue; echo "NO-MARKER-AND-NOT-PENDING: $f"; done | grep -c .`
       returns **0**. Do **not** use `grep -L`. **Control probe**: append `x` to both patterns and
@@ -282,24 +282,24 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 ### 1.2a — `web-researcher` confirmation pass (`A12`, coverage-only)
 
-- [ ] [AI] Dispatch `web-researcher` once per syllabus (15 dispatches) asking exactly: "does
+- [x] [AI] Dispatch `web-researcher` once per syllabus (15 dispatches) asking exactly: "does
       APICS/ASCM's CPIM or CSCP topic outline (planning/operations content) or the named open-source
       system's own published module structure (architecture/module-map content, nominative reference
       only) suggest a topic this syllabus's module list omits, or include a topic the field does not
       recognise?" — never "how should these modules be ordered".
-- [ ] [AI] For each finding, add the missing topic in this plan's own words, citing the confirming
+- [x] [AI] For each finding, add the missing topic in this plan's own words, citing the confirming
       body nominatively — never quoting or reproducing its text.
-- [ ] [AI] Resolve every `[Needs Verification]` tag left in a syllabus's Concepts/module list.
-- [ ] [AI] **Re-verify the two open Sharia-specific items** (PSAK-numbering, AAOIFI/PSAK/MASB
+- [x] [AI] Resolve every `[Needs Verification]` tag left in a syllabus's Concepts/module list.
+- [x] [AI] **Re-verify the two open Sharia-specific items** (PSAK-numbering, AAOIFI/PSAK/MASB
       jurisdictional-model table) before Phase 3 begins — dispatch `web-researcher` against AAOIFI's
       and IAI's own published standards indexes; update `sharia-compliant-erp-design.md`'s Accuracy
       notes with the verified answer or an explicit `[Needs Verification]` carry-forward.
 
 ### Phase 1 Gate
 
-- [ ] [AI] `npm run lint:md` is green on all `syllabus/**` files.
-- [ ] [AI] Every syllabus file's Accuracy notes section reflects the Phase 1.2/1.2a pass results.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] `npm run lint:md` is green on all `syllabus/**` files.
+- [x] [AI] Every syllabus file's Accuracy notes section reflects the Phase 1.2/1.2a pass results.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
 > **Pause Safety**: `syllabus/` is fully authored and confirmed; no `<COURSES>` entry yet created and
@@ -314,7 +314,7 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 ### 2.0 — Gate check
 
-- [ ] [AI] Mechanical id-level availability check:
+- [x] [AI] Mechanical id-level availability check:
       `for id in "${ACCT_GATE_B[@]}"; do git fetch origin main -q; git show "origin/main:${COURSES}${id}/_index.md" >/dev/null 2>&1 || echo "WAITING: $id"; done | grep -q . && echo WAIT || echo READY` —
       if `WAIT`, poll every 2 minutes; do not begin 2.1 until `READY`.
 
@@ -328,36 +328,36 @@ transcribing from `<SYL>${id}.md` (this plan's own corpus) or, where the course'
 plan-17 id, from plan 17's `<SYL17>${id}.md` for the cited concept only (never copying the file
 wholesale):
 
-- [ ] [AI] Accuracy pre-verify: re-check every marker in `<SYL>${id}.md`'s Accuracy notes is current —
+- [x] [AI] Accuracy pre-verify: re-check every marker in `<SYL>${id}.md`'s Accuracy notes is current —
       acceptance: every marker re-confirmed or updated, and zero `[Unverified]`/`[Needs Verification]`
       claims restated as settled fact elsewhere in `<SYL>${id}.md`.
-- [ ] [AI] Skeleton: create `<COURSES>${id}/_index.md` with frontmatter (`title`, `format`,
+- [x] [AI] Skeleton: create `<COURSES>${id}/_index.md` with frontmatter (`title`, `format`,
       `prerequisites: [...]` transcribed verbatim from `tech-docs.md`'s catalog table) and the section
       scaffold — acceptance:
       `test -f "${COURSES}${id}/_index.md" && grep -qE '^(title|format|prerequisites):' "${COURSES}${id}/_index.md" && echo PASS`
       prints `PASS`, confirming the file exists and all three frontmatter fields are present.
-- [ ] [AI] Learning track: dispatch `apps-ayokoding-www-annotated-concept-maker` (Annotated-concept
+- [x] [AI] Learning track: dispatch `apps-ayokoding-www-annotated-concept-maker` (Annotated-concept
       ids) or `apps-ayokoding-www-by-example-maker` (By Example ids), transcribing every `co-NN` from
       the syllabus — acceptance:
       `grep -oE 'co-[0-9]+' "${COURSES}${id}/_index.md" | sort -u | wc -l` equals
       `grep -oE 'co-[0-9]+' "${SYL}${id}.md" | sort -u | wc -l` and is **at least 8**.
-- [ ] [AI] Drilling track: for By Example ids, author worked examples from the syllabus's `ex-NN` list
+- [x] [AI] Drilling track: for By Example ids, author worked examples from the syllabus's `ex-NN` list
       (prose worked scenarios, never runnable code standing up a system — A6). For Annotated-concept
       ids, author equivalent worked-scenario drills — acceptance: for By Example ids,
       `grep -oE 'ex-[0-9]+' "${COURSES}${id}/_index.md" | sort -u | wc -l` equals the syllabus count;
       for Annotated-concept ids, every drill traces to a `co-NN` already present.
-- [ ] [AI] Checkers: dispatch `apps-ayokoding-www-annotated-concept-checker` or
+- [x] [AI] Checkers: dispatch `apps-ayokoding-www-annotated-concept-checker` or
       `apps-ayokoding-www-by-example-checker` plus `apps-ayokoding-www-facts-checker` and
       `apps-ayokoding-www-link-checker` — acceptance: zero CRITICAL and zero HIGH findings. For the
       two scope-boundary-risk ids in this stage (`erp-security-and-controls`,
       `erp-analytics-and-reporting`), additionally confirm the scope-boundary self-check worked
       example is present and reviewed by `apps-ayokoding-www-facts-checker`.
-- [ ] [AI] Fixers: dispatch `apps-ayokoding-www-general-fixer`-family agents for every finding —
+- [x] [AI] Fixers: dispatch `apps-ayokoding-www-general-fixer`-family agents for every finding —
       acceptance: zero unresolved CRITICAL/HIGH findings on re-check.
-- [ ] [AI] Re-verify: `test -d "${COURSES}${id}" && test -f "${COURSES}${id}/_index.md" && echo PASS`
+- [x] [AI] Re-verify: `test -d "${COURSES}${id}" && test -f "${COURSES}${id}/_index.md" && echo PASS`
       — acceptance: prints `PASS` for every id in `ERP_STAGE_B`.
 
-- [ ] [AI] `for id in "${ERP_STAGE_B[@]}"; do test -d "${COURSES}${id}" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS` prints `PASS`.
+- [x] [AI] `for id in "${ERP_STAGE_B[@]}"; do test -d "${COURSES}${id}" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS` prints `PASS`.
 
 ### 2.2 — TDD: grow both manifests to 27 ids
 
@@ -371,31 +371,31 @@ Scenario: the shared 27 courses are identical bodies referenced from both manife
   And no second copy of the course file exists on disk
 ```
 
-- [ ] [AI] **RED** — Extend `<MTEST_CE>` and `<MTEST_SE>` asserting each manifest contains all 27
+- [x] [AI] **RED** — Extend `<MTEST_CE>` and `<MTEST_SE>` asserting each manifest contains all 27
       shared ids (plan 17's 15 plus this plan's 12, at the insertion positions in
       [tech-docs.md §courseOrder arrays](./tech-docs.md#courseorder-arrays-at-each-growth-boundary)),
       with every already-published id's relative order unchanged — run
       `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` and verify
       both **fail**.
-- [ ] [AI] **GREEN** — Grow `<CONVMAN>` and `<SHARMAN>` to 27 ids each — run the same command and
+- [x] [AI] **GREEN** — Grow `<CONVMAN>` and `<SHARMAN>` to 27 ids each — run the same command and
       verify both **pass**.
-- [ ] [AI] **REFACTOR** — Re-run `checkManifestIntegrity`/`checkPrerequisiteConsistency` against both;
+- [x] [AI] **REFACTOR** — Re-run `checkManifestIntegrity`/`checkPrerequisiteConsistency` against both;
       verify zero violations, including the hard edge (`record-to-report-systems` requiring
       `financial-statements-and-close-cycle` to exist under `<COURSES>` on `origin/main`).
 
 ### 2.3 — Deferral-check assertion (both directions)
 
-- [ ] [AI] Confirm the **before** half: `grep -F -q 'record-to-report-systems' <(git show HEAD~1:"${CONVMAN}")`
+- [x] [AI] Confirm the **before** half: `grep -F -q 'record-to-report-systems' <(git show HEAD~1:"${CONVMAN}")`
       against the pre-growth commit and verify it **fails**.
-- [ ] [AI] Confirm the **after** half: `grep -F -q 'record-to-report-systems' "${CONVMAN}"` **passes**.
+- [x] [AI] Confirm the **after** half: `grep -F -q 'record-to-report-systems' "${CONVMAN}"` **passes**.
 
 ### 2.4 — Landing update: Dangerous 2 and Dangerous 3 boundaries
 
-- [ ] [AI] Update `<CONVLANDING>` and `<SHARLANDING>` content to show the Dangerous 2 boundary
+- [x] [AI] Update `<CONVLANDING>` and `<SHARLANDING>` content to show the Dangerous 2 boundary
       (course 16) and, for `<CONVLANDING>`, the terminal Dangerous 3 boundary (course 27, "ENDS
       HERE") — acceptance: `grep -q 'Dangerous 2' "${CONVLANDING}" && grep -q 'Dangerous 2' "${SHARLANDING}" && grep -qF 'ENDS HERE' "${CONVLANDING}" && echo PASS`
       prints `PASS`.
-- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (27 generated entries cumulative with plan 17's 15) —
+- [x] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (27 generated entries cumulative with plan 17's 15) —
       acceptance:
       `for id in "${ERP_STAGE_A[@]}" "${ERP_STAGE_B[@]}"; do grep -qF "(/en/learn/courses/${id})" "${COURSES}_index.md" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS`
       prints `PASS`, confirming all 27 cumulative ids have a catalog entry.
@@ -413,7 +413,7 @@ Scenario: conventional-erp landing renders with its full terminal course count
   And the landing states "ENDS HERE" at Dangerous 3
 ```
 
-- [ ] [AI] **RED** — add the `conventional-erp landing renders with its full terminal course count`
+- [x] [AI] **RED** — add the `conventional-erp landing renders with its full terminal course count`
       scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`
       (created by plan 17, extended here), then extend
@@ -421,21 +421,21 @@ Scenario: conventional-erp landing renders with its full terminal course count
       the Dangerous 2 boundary on both landings and the terminal Dangerous 3 / "ENDS HERE" statement
       on `<CONVLANDING>` — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
       scenario is picked up and its assertions **fail**.
-- [ ] [AI] **GREEN** — implement the step bindings against the grown landing content (from §2.4) —
+- [x] [AI] **GREEN** — implement the step bindings against the grown landing content (from §2.4) —
       command: `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: both exit 0.
-- [ ] [AI] **REFACTOR** — parameterize the helper on expected boundary count so §3.5 extends it
+- [x] [AI] **REFACTOR** — parameterize the helper on expected boundary count so §3.5 extends it
       without duplicating assertions — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance:
       exits 0, scenario count unchanged.
 
 ### Phase 2 Gate
 
-- [ ] [AI] `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
-- [ ] [AI] `npm exec nx run ayokoding-www-fe-e2e:test:e2e` green for the extended feature file.
-- [ ] [AI] `npm exec nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
-- [ ] [AI] `<CONVMAN>` has exactly 27 `courseOrder` entries; `<SHARMAN>` has exactly 27 (Stage C not
+- [x] [AI] `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest sharia-erp-manifest` green.
+- [x] [AI] `npm exec nx run ayokoding-www-fe-e2e:test:e2e` green for the extended feature file.
+- [x] [AI] `npm exec nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
+- [x] [AI] `<CONVMAN>` has exactly 27 `courseOrder` entries; `<SHARMAN>` has exactly 27 (Stage C not
       yet grown) — `grep -cE '^  - ' "${CONVMAN}"` prints `27`.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
 > **Pause Safety**: `conventional-erp` is terminal (27/27); `sharia-erp` is mid-growth (27/30). Safe
@@ -447,10 +447,10 @@ Scenario: conventional-erp landing renders with its full terminal course count
 
 ### 3.0 — Gate check
 
-- [ ] [AI] Mechanical id-level gate check:
+- [x] [AI] Mechanical id-level gate check:
       `for id in "${ACCT_GATE_C[@]}"; do git fetch origin main -q; git show "origin/main:${COURSES}${id}/_index.md" >/dev/null 2>&1 || echo "WAITING: $id"; done | grep -q . && echo WAIT || echo READY` —
       poll every 2 minutes if `WAIT`.
-- [ ] [AI] Complete Phase 1.2a's deferred re-verification of the PSAK-numbering and jurisdictional-model
+- [x] [AI] Complete Phase 1.2a's deferred re-verification of the PSAK-numbering and jurisdictional-model
       open items before authoring begins, if not already resolved.
 
 ### 3.1 — Author all 3 Stage C course bodies (maker-checker-fixer, per format)
@@ -462,36 +462,36 @@ re-verify — same cycle as plan 17's own
 transcribing from `<SYL>${id}.md`. Every claim in the jurisdictional-model table carries its A4
 marker into the course body verbatim:
 
-- [ ] [AI] Accuracy pre-verify: re-check every marker in `<SYL>${id}.md`'s Accuracy notes is current,
+- [x] [AI] Accuracy pre-verify: re-check every marker in `<SYL>${id}.md`'s Accuracy notes is current,
       including the jurisdictional-model A4 markers — acceptance: every marker re-confirmed or
       updated, and zero `[Unverified]`/`[Needs Verification]` claims restated as settled fact
       elsewhere in `<SYL>${id}.md`.
-- [ ] [AI] Skeleton: create `<COURSES>${id}/_index.md` with frontmatter (`title`, `format`,
+- [x] [AI] Skeleton: create `<COURSES>${id}/_index.md` with frontmatter (`title`, `format`,
       `prerequisites: [...]` transcribed verbatim from `tech-docs.md`'s catalog table) and the section
       scaffold — acceptance:
       `test -f "${COURSES}${id}/_index.md" && grep -qE '^(title|format|prerequisites):' "${COURSES}${id}/_index.md" && echo PASS`
       prints `PASS`, confirming the file exists and all three frontmatter fields are present.
-- [ ] [AI] Learning track: dispatch `apps-ayokoding-www-annotated-concept-maker` (Annotated-concept
+- [x] [AI] Learning track: dispatch `apps-ayokoding-www-annotated-concept-maker` (Annotated-concept
       ids) or `apps-ayokoding-www-by-example-maker` (By Example ids), transcribing every `co-NN` from
       the syllabus, carrying each A4 jurisdictional-model marker verbatim — acceptance:
       `grep -oE 'co-[0-9]+' "${COURSES}${id}/_index.md" | sort -u | wc -l` equals
       `grep -oE 'co-[0-9]+' "${SYL}${id}.md" | sort -u | wc -l` and is **at least 8**.
-- [ ] [AI] Drilling track: for By Example ids, author worked examples from the syllabus's `ex-NN` list
+- [x] [AI] Drilling track: for By Example ids, author worked examples from the syllabus's `ex-NN` list
       (prose worked scenarios, never runnable code standing up a system — A6). For Annotated-concept
       ids, author equivalent worked-scenario drills — acceptance: for By Example ids,
       `grep -oE 'ex-[0-9]+' "${COURSES}${id}/_index.md" | sort -u | wc -l` equals the syllabus count;
       for Annotated-concept ids, every drill traces to a `co-NN` already present.
-- [ ] [AI] Checkers: dispatch `apps-ayokoding-www-annotated-concept-checker` or
+- [x] [AI] Checkers: dispatch `apps-ayokoding-www-annotated-concept-checker` or
       `apps-ayokoding-www-by-example-checker` plus `apps-ayokoding-www-facts-checker` and
       `apps-ayokoding-www-link-checker` — acceptance: zero CRITICAL and zero HIGH findings, and
       confirm no course body restates the riba doctrinal basis (`OI-2`) or a specific PPSAK/PSAK
       ratification date as settled fact (per the twelfth safe-authoring rule).
-- [ ] [AI] Fixers: dispatch `apps-ayokoding-www-general-fixer`-family agents for every finding —
+- [x] [AI] Fixers: dispatch `apps-ayokoding-www-general-fixer`-family agents for every finding —
       acceptance: zero unresolved CRITICAL/HIGH findings on re-check.
-- [ ] [AI] Re-verify: `test -d "${COURSES}${id}" && test -f "${COURSES}${id}/_index.md" && echo PASS`
+- [x] [AI] Re-verify: `test -d "${COURSES}${id}" && test -f "${COURSES}${id}/_index.md" && echo PASS`
       — acceptance: prints `PASS` for every id in `ERP_STAGE_C`.
 
-- [ ] [AI] `for id in "${ERP_STAGE_C[@]}"; do test -d "${COURSES}${id}" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS` prints `PASS`.
+- [x] [AI] `for id in "${ERP_STAGE_C[@]}"; do test -d "${COURSES}${id}" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS` prints `PASS`.
 
 ### 3.2 — TDD: grow `<SHARMAN>` to 30 ids
 
@@ -509,29 +509,29 @@ Scenario: sharia-erp manifest validates against the PathManifest schema at its t
   And its final courseOrder entry equals "zakat-and-sharia-compliance-modules"
 ```
 
-- [ ] [AI] **RED** — Extend `<MTEST_SE>` **only** (never `<MTEST_CE>`) asserting `<SHARMAN>` contains
+- [x] [AI] **RED** — Extend `<MTEST_SE>` **only** (never `<MTEST_CE>`) asserting `<SHARMAN>` contains
       all 30 ids at the positions in
       [tech-docs.md §courseOrder arrays](./tech-docs.md#courseorder-arrays-at-each-growth-boundary),
       and confirm `<MTEST_CE>`'s existing assertions are untouched — run
       `npm exec nx run ayokoding-www:test:unit -- sharia-erp-manifest` and verify it **fails**. Assert the
       terminal id explicitly, not just the set.
-- [ ] [AI] **GREEN** — Grow `<SHARMAN>` to 30 ids — run the same command and verify it **passes**.
-- [ ] [AI] **REFACTOR** — Re-run integrity checks on `<SHARMAN>` only; verify zero violations. Confirm
+- [x] [AI] **GREEN** — Grow `<SHARMAN>` to 30 ids — run the same command and verify it **passes**.
+- [x] [AI] **REFACTOR** — Re-run integrity checks on `<SHARMAN>` only; verify zero violations. Confirm
       `npm exec nx run ayokoding-www:test:unit -- conventional-erp-manifest` is still green and unmodified.
 
 ### 3.3 — Deferral-check assertion (both directions)
 
-- [ ] [AI] Before/after check for `zakat-and-sharia-compliance-modules`, mirroring 2.3's pattern
+- [x] [AI] Before/after check for `zakat-and-sharia-compliance-modules`, mirroring 2.3's pattern
       against `<SHARMAN>`.
 
 ### 3.4 — Landing update: Dangerous 4 boundary and the terminal L-5 statement
 
-- [ ] [AI] Update `<SHARLANDING>` to show the terminal Dangerous 4 boundary (course 30, "ENDS HERE")
+- [x] [AI] Update `<SHARLANDING>` to show the terminal Dangerous 4 boundary (course 30, "ENDS HERE")
       and to replace plan 17's "identical to conventional-erp" framing with the terminal "covers all
       the basics" statement (DD-9 in this plan's tech-docs.md) — acceptance:
       `grep -qF 'ENDS HERE' "${SHARLANDING}" && grep -qF 'covers all the basics' "${SHARLANDING}" && echo PASS`
       prints `PASS`.
-- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (30 generated entries cumulative across both
+- [x] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually populate `<COURSES>_index.md` (30 generated entries cumulative across both
       manifests) — acceptance:
       `for id in "${ERP_STAGE_C[@]}"; do grep -qF "(/en/learn/courses/${id})" "${COURSES}_index.md" || echo "MISSING: $id"; done | grep -q . && echo FAIL || echo PASS`
       prints `PASS`, confirming all 3 Stage C ids have a catalog entry.
@@ -550,26 +550,26 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
     "conventional-erp" first
 ```
 
-- [ ] [AI] **RED** — add the `sharia-erp landing renders with its full terminal course count and
+- [x] [AI] **RED** — add the `sharia-erp landing renders with its full terminal course count and
 states it covers the basics` scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`,
       then extend `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` to assert the
       Dangerous 4 boundary and the terminal "ENDS HERE" / "covers all the basics" statement on
       `<SHARLANDING>` **only** — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new
       scenario is picked up and its assertion **fails**.
-- [ ] [AI] **GREEN** — implement the step bindings against the grown `<SHARLANDING>` content (from
+- [x] [AI] **GREEN** — implement the step bindings against the grown `<SHARLANDING>` content (from
       §3.4) — command:
       `npm exec nx run ayokoding-www:specs:behavior:coverage && npm exec nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0.
-- [ ] [AI] **REFACTOR** — consolidate the four boundary assertions (Dangerous 1-4) into a single
+- [x] [AI] **REFACTOR** — consolidate the four boundary assertions (Dangerous 1-4) into a single
       table-driven helper — command: `npm exec nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0,
       scenario count unchanged; this is the final growth of `skills-erp-paths.steps.ts`.
 
 ### Phase 3 Gate
 
-- [ ] [AI] All Phase 2 Gate checks re-run and still green; `<CONVMAN>` unchanged at 27.
-- [ ] [AI] `grep -cE '^  - ' "${SHARMAN}"` prints `30`.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] All Phase 2 Gate checks re-run and still green; `<CONVMAN>` unchanged at 27.
+- [x] [AI] `grep -cE '^  - ' "${SHARMAN}"` prints `30`.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
 > **Pause Safety**: both paths are terminal (27/27 and 30/30) and verified on the persistent branch.
@@ -577,12 +577,12 @@ states it covers the basics` scenario above to
 
 ## Phase 4: Cross-Path Integrity and Spec Coverage Verification
 
-- [ ] [AI] Reconcile the declared worktree non-destructively with current `origin/main` while staying
+- [x] [AI] Reconcile the declared worktree non-destructively with current `origin/main` while staying
       on the persistent final-delivery branch. Any fix remains on that branch; no additional branch or
       PR is created.
-- [ ] [AI] Run `checkManifestIntegrity` and `checkPrerequisiteConsistency` against **both** final
+- [x] [AI] Run `checkManifestIntegrity` and `checkPrerequisiteConsistency` against **both** final
       manifests together — acceptance: zero violations reported by each.
-- [ ] [AI] **A11 — one body, two references, across both plans.** Verify no shared course id has a
+- [x] [AI] **A11 — one body, two references, across both plans.** Verify no shared course id has a
       second copy anywhere under `<COURSES>`:
 
   ```bash
@@ -597,13 +597,13 @@ states it covers the basics` scenario above to
   `mkdir -p "${COURSES}sharia-erp/erp-foundations-and-history"` in a scratch checkout and re-run — it
   must print `EXPECTED-1-GOT-2`. Remove it afterwards.
 
-- [ ] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
-- [ ] [AI] `npm exec nx run ayokoding-www:test:unit` **and** `npm exec nx run ayokoding-www-fe-e2e:test:e2e` both green
+- [x] [AI] `npm exec nx run ayokoding-www:specs:behavior:coverage` reports 100% for `skills-erp-paths.feature`.
+- [x] [AI] `npm exec nx run ayokoding-www:test:unit` **and** `npm exec nx run ayokoding-www-fe-e2e:test:e2e` both green
       for the full 30-course corpus.
 
 ### Phase 4 Gate
 
-- [ ] [AI] All checks above pass. Commit any residual fixes to the persistent final-delivery branch;
+- [x] [AI] All checks above pass. Commit any residual fixes to the persistent final-delivery branch;
       nothing opens or merges before Phase 9.
 
 > **Pause Safety**: the full corpus is integrity-verified. Safe to stop. To resume: re-run
@@ -611,10 +611,10 @@ states it covers the basics` scenario above to
 
 ## Phase 5: Section and App Verification (Licensing and Trademark)
 
-- [ ] [AI] **No vendor name in any course id, path id, or product name**:
+- [x] [AI] **No vendor name in any course id, path id, or product name**:
       `grep -riE 'sap|oracle|netsuite|erpnext|odoo' <(printf '%s\n' "${ERP_THIS_PLAN[@]}" skills/conventional-erp skills/sharia-erp)` —
       acceptance: **empty output**.
-- [ ] [AI] **No verbatim AAOIFI standards-text reproduction** (Stage C addendum): for each of the FAS
+- [x] [AI] **No verbatim AAOIFI standards-text reproduction** (Stage C addendum): for each of the FAS
       numbers named in
       [tech-docs.md §AAOIFI FAS verbatim-reproduction rule](./tech-docs.md#aaoifi-fas-verbatim-reproduction-rule)
       (FAS 3, 4, 7, 9, 10, 28, 32, 33, 34), confirm no course body in `ERP_STAGE_C` contains a
@@ -622,18 +622,18 @@ states it covers the basics` scenario above to
       `web-researcher` to diff against the official AAOIFI standard for any course quoting a FAS
       number; acceptance: "no verbatim match found" for every quoted number, or the offending span is
       rewritten before this clause is marked complete.
-- [ ] [AI] **No screenshot of proprietary software** in this plan's 15 course bundles:
+- [x] [AI] **No screenshot of proprietary software** in this plan's 15 course bundles:
       `for id in "${ERP_THIS_PLAN[@]}"; do find "${COURSES}${id}" \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' -o -iname '*.webp' \); done | grep -c .`
       — acceptance: returns **0**. Guard first:
       `[ "$(for id in "${ERP_THIS_PLAN[@]}"; do test -d "${COURSES}${id}" && echo x; done | grep -c .)" -eq 15 ] && echo GUARD-OK || echo GUARD-FAIL`
       must print `GUARD-OK`.
-- [ ] [AI] **No chart of accounts lifted from a reference implementation**: `apps-ayokoding-www-facts-checker`
+- [x] [AI] **No chart of accounts lifted from a reference implementation**: `apps-ayokoding-www-facts-checker`
       reviews every worked example's dataset in every By-Example course under `ERP_THIS_PLAN`;
       acceptance: zero matches.
-- [ ] [AI] **Every syllabus's Scope note ends with the inherited licence tag**:
+- [x] [AI] **Every syllabus's Scope note ends with the inherited licence tag**:
       `for id in "${ERP_THIS_PLAN[@]}"; do grep -qF 'License-aware' "${SYL}${id}.md" || echo "MISSING TAG: $id"; done | grep -q . && echo FAIL || echo PASS` —
       acceptance: `PASS`.
-- [ ] [AI] Read both layers (15 syllabi + 15 course bodies, 30 files total, this plan's own) against
+- [x] [AI] Read both layers (15 syllabi + 15 course bodies, 30 files total, this plan's own) against
       the eleven safe-authoring rules plus the Stage C twelfth rule in
       [tech-docs §Licensing and IP Compliance](./tech-docs.md#licensing-and-ip-compliance--stage-c-addendum-a8):
       confirm none reproduces a standard's clause text, mirrors a commercial curriculum's sequence,
@@ -644,7 +644,7 @@ states it covers the basics` scenario above to
 
 ### Phase 5 Gate
 
-- [ ] [AI] All six clauses above pass. Commit any residual fixes to the persistent final-delivery
+- [x] [AI] All six clauses above pass. Commit any residual fixes to the persistent final-delivery
       branch; nothing opens or merges before Phase 9.
 
 > **Pause Safety**: licensing/trademark posture (including the Sharia addendum) is verified across
@@ -656,15 +656,15 @@ Per [tech-docs.md §R9 gate posture](./tech-docs.md#r9-gate-posture-declared-exp
 UI-gate-exempt. This is this plan's own retest at its terminal checkpoint — distinct from and not
 redundant with plan 17's own Stage A retest (DD-8).
 
-- [ ] [AI] Dispatch `web-exploratory-tester` (spec-aware) against both live landings at their terminal
+- [x] [AI] Dispatch `web-exploratory-tester` (spec-aware) against both live landings at their terminal
       state (`/en/learn/paths/skills/conventional-erp`, `/en/learn/paths/skills/sharia-erp`) in
       `delivery` mode — verify zero CRITICAL/HIGH findings.
-- [ ] [AI] Dispatch `web-usability-tester` (spec-blind) against both landings — verify zero
+- [x] [AI] Dispatch `web-usability-tester` (spec-blind) against both landings — verify zero
       CRITICAL/HIGH findings.
-- [ ] [AI] Dispatch `web-design-tester` (design-aware) against both landings — verify zero
+- [x] [AI] Dispatch `web-design-tester` (design-aware) against both landings — verify zero
       CRITICAL/HIGH findings, and specifically confirm the four-boundary Dangerous-N ramp table
       renders legibly and the color-blind-friendly palette is preserved.
-- [ ] [AI] **Capture the retest evidence**, per the
+- [x] [AI] **Capture the retest evidence**, per the
       [Evidence Capture Convention](../../../repo-governance/development/quality/evidence-capture.md)'s
       hyphenated `phase-{N}-{description}-{locale}-{breakpoint}px` naming pattern (this content
       sub-tree is English-only per `brd.md`'s declared Non-Goal, so `<locale>` is always `en` — never
@@ -677,10 +677,10 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ### Phase 6 Gate
 
-- [ ] [AI] All three testers report zero CRITICAL/HIGH findings, or every finding is fixed and
+- [x] [AI] All three testers report zero CRITICAL/HIGH findings, or every finding is fixed and
       re-verified.
-- [ ] [AI] Evidence captured under `${PLANDIR}evidence/`.
-- [ ] [AI] Evidence is committed to the persistent final-delivery branch; nothing opens or merges
+- [x] [AI] Evidence captured under `${PLANDIR}evidence/`.
+- [x] [AI] Evidence is committed to the persistent final-delivery branch; nothing opens or merges
       before Phase 9.
 
 > **Pause Safety**: both landings are manually retested and clean at their terminal state. Safe to
@@ -688,13 +688,13 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ## Phase 7: Full-Corpus Integration Verification
 
-- [ ] [AI] `npm exec nx run ayokoding-www:build` succeeds with both manifests at their terminal state (27/30)
+- [x] [AI] `npm exec nx run ayokoding-www:build` succeeds with both manifests at their terminal state (27/30)
       and all 30 course bundles present (across plans 17 and 18).
-- [ ] [AI] `npm exec nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
-- [ ] [AI] End-to-end path-walk: navigate `/en/learn/paths/skills/conventional-erp`, step through
+- [x] [AI] `npm exec nx affected -t build,test:quick,lint --base=main` is green for `ayokoding-www`.
+- [x] [AI] End-to-end path-walk: navigate `/en/learn/paths/skills/conventional-erp`, step through
       prev/next across all 27 courses via Playwright MCP, verify no broken link and no console error;
       repeat for `/en/learn/paths/skills/sharia-erp` across all 30.
-- [ ] [AI] **Capture evidence for the walk**, using the same hyphenated
+- [x] [AI] **Capture evidence for the walk**, using the same hyphenated
       `phase-{N}-{description}-{locale}-{breakpoint}px` naming pattern as Phase 6 (`<locale>` is
       always `en`). Write to `${PLANDIR}evidence/`:
   - `browser_take_screenshot` of each path landing at three breakpoints, named
@@ -709,7 +709,7 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ### Phase 7 Gate
 
-- [ ] [AI] Build succeeds; affected checks green; both path-walks complete with zero errors. Commit
+- [x] [AI] Build succeeds; affected checks green; both path-walks complete with zero errors. Commit
       the evidence to the persistent final-delivery branch; Phase 9 alone opens the terminal archival PR.
 
 > **Pause Safety**: the full corpus builds and both paths are walkable end to end at their terminal
@@ -720,30 +720,30 @@ redundant with plan 17's own Stage A retest (DD-8).
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry.
-- [ ] [AI] Apply the secret/sensitivity gate.
-- [ ] [AI] Apply the repo-relevance gate.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+- [x] [AI] Apply the litmus test to every `learnings.md` entry.
+- [x] [AI] Apply the secret/sensitivity gate.
+- [x] [AI] Apply the repo-relevance gate.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR. The sole
       carve-out is a bug/lint/test failure that blocks THIS plan's own scope — that is fixed inline as
       ordinary Root Cause Orientation work, not routed as a deferred learning.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
 
 ### Phase 8 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal, or the explicit "none" escape is recorded.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR.
-- [ ] [AI] The triaged `learnings.md` is committed to the persistent final-delivery branch; no PR is
+- [x] [AI] Every `learnings.md` entry is terminal, or the explicit "none" escape is recorded.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR.
+- [x] [AI] The triaged `learnings.md` is committed to the persistent final-delivery branch; no PR is
       open before archival.
 
 > **Pause Safety**: `learnings.md` is fully triaged. Safe to stop. To resume: re-read `learnings.md`.
@@ -752,34 +752,34 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-18-skills-erp-enterprise-depth`.
-- [ ] [AI] Update `plans/in-progress/README.md` to remove this plan's in-progress entry and reflect its
+- [x] [AI] `git mv plans/in-progress/ayokoding-learning-path-18-skills-erp-enterprise-depth plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-18-skills-erp-enterprise-depth`.
+- [x] [AI] Update `plans/in-progress/README.md` to remove this plan's in-progress entry and reflect its
       completed status.
-- [ ] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR.
+- [x] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR.
       Use a Conventional Commits message, e.g.
       `git commit -m "chore(plans): archive ayokoding-learning-path-18-skills-erp-enterprise-depth"`.
-- [ ] [AI] **Push it** — `git push origin HEAD` — acceptance: exits 0 and
+- [x] [AI] **Push it** — `git push origin HEAD` — acceptance: exits 0 and
       `git status -sb | grep -c 'ahead'` returns **0**.
-- [ ] [AI] **Monitor CI on the new head** — poll every 2 minutes, one
+- [x] [AI] **Monitor CI on the new head** — poll every 2 minutes, one
       `gh run view --json status,conclusion` per wakeup; never tight-loop, never `gh run watch`; on a
       403 rate-limit wait ~35 minutes. Acceptance: `status` is `completed` and `conclusion` is
       `success` **for the run whose head SHA equals `git rev-parse HEAD`**.
-- [ ] [AI] Re-confirm all five PR Merge Protocol preconditions on the new head, perform the `[AI]`
+- [x] [AI] Re-confirm all five PR Merge Protocol preconditions on the new head, perform the `[AI]`
       merge, then deploy `ayokoding-www` to `prod-ayokoding-www`. These are the terminal steps.
 
 ### Phase 9 Gate
 
-- [ ] [AI] The plan folder exists under `plans/done/` with the date prefix; no reference to it remains
+- [x] [AI] The plan folder exists under `plans/done/` with the date prefix; no reference to it remains
       under `plans/backlog/`.
-- [ ] [AI] The archival commit landed **inside** the merged PR:
+- [x] [AI] The archival commit landed **inside** the merged PR:
       `gh pr list --head "$(git rev-parse --abbrev-ref HEAD)" --state merged --json number,mergeCommit`
       returns this plan's PR. Use `gh pr list --head`, not `git merge-base --is-ancestor` (this repo
       squash-merges).
-- [ ] [AI] **Integration**: this phase opens, reviews, and merges the plan's sole terminal archival PR,
+- [x] [AI] **Integration**: this phase opens, reviews, and merges the plan's sole terminal archival PR,
       then deploys `ayokoding-www` to `prod-ayokoding-www`. Both `skills/` ERP paths are complete end
       to end across plans 17 and 18.
 

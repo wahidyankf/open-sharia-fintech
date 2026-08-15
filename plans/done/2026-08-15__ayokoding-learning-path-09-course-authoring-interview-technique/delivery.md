@@ -86,10 +86,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -510,7 +510,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 - [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "<COURSES>$s/learning" && test -d "<COURSES>$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Supersession sweep — not applicable.** All 5 Band-9 bodies are Origin `N` (new), with no
+- [x] [AI] **Supersession sweep — not applicable.** All 5 Band-9 bodies are Origin `N` (new), with no
       legacy `fundamentally-strong/software-engineer/` home — the parent plan's Q-A supersession
       obligation (a "superseded by" line for a course whose subject is covered by a legacy page)
       applies only to re-homed shipped topics 1–33, none of which this plan authors. No conditional
@@ -666,11 +666,11 @@ because its settled prerequisite array is empty.
 ### Sole PR integration (binding)
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Verify ALL delivery checklist items above are ticked.
-- [ ] [AI] Verify ALL quality gates pass (local + CI): `npm exec nx affected -t typecheck lint test:quick
+- [x] [AI] Verify ALL delivery checklist items above are ticked.
+- [x] [AI] Verify ALL quality gates pass (local + CI): `npm exec nx affected -t typecheck lint test:quick
 test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failures, including
       preexisting ones (Root Cause Orientation).
 - [x] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (15 screenshots +
@@ -692,8 +692,8 @@ test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failu
 - [x] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [x] [AI] Update any other README that references this plan by its `backlog/` path.
 - [x] [AI] Commit: `chore(plans): move ayokoding-learning-path-09-course-authoring-interview-technique to done`.
-- [ ] [AI] **Open the terminal archival PR** from `final-delivery`, carrying the archival commit above; run the secret scan, local quality checks, and PR quality-gate verification, and `[AI]` merge once all quality gates are green.
-- [ ] [AI] Prompt the user before removing the worktree
+- [x] [AI] **Open the terminal archival PR** from `final-delivery`, carrying the archival commit above; run the secret scan, local quality checks, and PR quality-gate verification, and `[AI]` merge once all quality gates are green.
+- [x] [AI] Prompt the user before removing the worktree
       (`worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`) — confirm nothing
       is uncommitted or unpushed first.
 
@@ -701,15 +701,15 @@ test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failu
 
 > All checks below must pass before the plan is considered complete.
 
-- [ ] [AI] All delivery checklist items in this file are ticked.
-- [ ] [AI] All quality gates (typecheck, lint, `test:quick`, `test:unit`, `specs:behavior:coverage`)
+- [x] [AI] All delivery checklist items in this file are ticked.
+- [x] [AI] All quality gates (typecheck, lint, `test:quick`, `test:unit`, `specs:behavior:coverage`)
       pass for `ayokoding-www`, locally and in CI.
-- [ ] [AI] The plan's own terminal assertion (5-slug ABSENT check) returns **0**.
-- [ ] [AI] The plan folder move (`git mv` to `plans/done/`) and all three README updates are committed
+- [x] [AI] The plan's own terminal assertion (5-slug ABSENT check) returns **0**.
+- [x] [AI] The plan folder move (`git mv` to `plans/done/`) and all three README updates are committed
       on the `final-delivery` branch — verify with
       `git log --oneline -1 -- plans/done/*ayokoding-learning-path-09-course-authoring-interview-technique/README.md | grep -c .`
       returning **1**.
-- [ ] [AI] The terminal archival PR carrying that archival commit is opened, the secret scan, local quality checks, and PR quality-gate verification is complete, all quality gates are green, and the PR is `[AI]`-merged — confirmed by
+- [x] [AI] The terminal archival PR carrying that archival commit is opened, the secret scan, local quality checks, and PR quality-gate verification is complete, all quality gates are green, and the PR is `[AI]`-merged — confirmed by
       `gh pr list --state merged --head final-delivery --json number --jq 'length'`
       returning **1**.
 

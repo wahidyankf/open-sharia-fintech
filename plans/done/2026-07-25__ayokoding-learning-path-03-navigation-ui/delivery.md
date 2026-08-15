@@ -3994,20 +3994,20 @@ plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/` using today's 
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits.
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage explicit paths only (`git add <path>`) — never `git add -A`; sibling repos and adjacent
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits.
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage explicit paths only (`git add <path>`) — never `git add -A`; sibling repos and adjacent
       plan folders carry concurrent work that must not be swept into this plan's commits.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:e2e` for the feature phases).
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:e2e` for the feature phases).
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.

@@ -86,10 +86,10 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
-- [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
 
@@ -136,7 +136,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `node_modules/` synchronized.
 - [x] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-11-course-authoring-capstones/ plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
@@ -146,11 +146,11 @@ No phase may create an additional worktree or branch. The final phase is the onl
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] **Verify `ayokoding-learning-path-01-url-restructure` and `ayokoding-learning-path-02-schema-and-prerequisite-dag`
+- [x] [AI] **Verify `ayokoding-learning-path-01-url-restructure` and `ayokoding-learning-path-02-schema-and-prerequisite-dag`
       are both archived to `done/`** — command:
       `git ls-files -- 'plans/done/*ayokoding-learning-path-01-url-restructure/README.md' 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md' | grep -c .`
       — acceptance: returns **2**.
-- [ ] [AI] **Verify `ayokoding-learning-path-04-course-authoring`'s Band 1/2 handoff** — the specific
+- [x] [AI] **Verify `ayokoding-learning-path-04-course-authoring`'s Band 1/2 handoff** — the specific
       courses this band's capstones cite from Band 1/2 exist under `<COURSES>`:
 
   ```bash
@@ -164,7 +164,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
   as `backend-at-scale`, not `backend-essentials`; see tech-docs). Falsifiable both ways: `git mv` any
   one of these six out of `<COURSES>` temporarily makes the count return ≥1, proving the check fires.
 
-- [ ] [AI] **Verify `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`'s Band 4
+- [x] [AI] **Verify `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`'s Band 4
       handoff**:
 
   ```bash
@@ -176,7 +176,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: the merge assertion exits **0** and the directory check returns **0**.
 
-- [ ] [AI] **Verify `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`'s Band 5
+- [x] [AI] **Verify `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`'s Band 5
       handoff**:
 
   ```bash
@@ -194,7 +194,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
   both are **confirmed absent on disk** as of this plan's authoring time — see
   [tech-docs.md §Confirmed per-capstone dependency map](./tech-docs.md#confirmed-per-capstone-dependency-map).
 
-- [ ] [AI] **Verify `ayokoding-learning-path-08-course-authoring-security-and-ops`'s Band 7 handoff**:
+- [x] [AI] **Verify `ayokoding-learning-path-08-course-authoring-security-and-ops`'s Band 7 handoff**:
 
   ```bash
   for s in offensive-security defensive-security detection-engineering-and-siem-operations \
@@ -205,7 +205,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: returns **0** (all six present).
 
-- [ ] [AI] **Verify the `ayokoding-learning-path-01-url-restructure`-re-homed prerequisites this band
+- [x] [AI] **Verify the `ayokoding-learning-path-01-url-restructure`-re-homed prerequisites this band
       cites directly are present** (should already hold, independent of the four plans above):
 
   ```bash
@@ -220,7 +220,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
   dependency re-audit found no Band-8 capstone actually cites it; `backend-at-scale`, the course the
   capstones actually cite, is checked under the Band 1/2 handoff above).
 
-- [ ] [AI] **Verify the the rendering repository baseline**:
+- [x] [AI] **Verify the the rendering repository baseline**:
 
   ```bash
   test ! -f apps/ayokoding-www/src/app/layout.tsx \
@@ -236,7 +236,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
   landed.] Falsifiable both ways: once the fix lands, re-running this exact command returns the
   passing state; reverting the fix locally reproduces the failing state.
 
-- [ ] [AI] **Confirm all eight capstone slugs are absent (no collision)** under `<COURSES>`:
+- [x] [AI] **Confirm all eight capstone slugs are absent (no collision)** under `<COURSES>`:
 
   ```bash
   for s in capstone-build-your-own-coding-agent capstone-build-your-own-pentest-engine \
@@ -249,7 +249,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: returns **0**. Falsifiable both ways: `mkdir -p apps/ayokoding-www/content/en/learn/courses/capstone-secure-service`
   makes the count return 1.
 
-- [ ] [AI] **Create the authored-body slug register** — write the 8 slugs, one per line, to
+- [x] [AI] **Create the authored-body slug register** — write the 8 slugs, one per line, to
       `evidence/authored-body-slugs.txt`, in cohort order:
 
   ```bash
@@ -268,13 +268,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **8**, and
   `sort evidence/authored-body-slugs.txt | uniq -d | wc -l` returns **0**.
 
-- [ ] [AI] **Record the authored-body baseline** —
+- [x] [AI] **Record the authored-body baseline** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **8** today; must return **0** at archival (Phase 7). Record in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Confirm `learnings.md` exists with its H1 — command: `test -f learnings.md && head -1 learnings.md`
+- [x] [AI] Confirm `learnings.md` exists with its H1 — command: `test -f learnings.md && head -1 learnings.md`
       — acceptance: first line is `# Learnings: ayokoding-learning-path-11-course-authoring-capstones`.
-- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
+- [x] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -286,7 +286,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: no matching line (exits 1).
 
-- [ ] [AI] **Confirm no manifest file changed in this phase**:
+- [x] [AI] **Confirm no manifest file changed in this phase**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
@@ -294,15 +294,15 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] All five historical source context plans' handoffs verified (plans 01/02 archived; plans 04/05/06/08's
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] All five historical source context plans' handoffs verified (plans 01/02 archived; plans 04/05/06/08's
       specific cited courses present under `<COURSES>`; `vercel-function-cost-reduction`'s checkable
       signal green).
-- [ ] [AI] All eight capstone slugs confirmed absent (zero `EXISTS` lines).
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 8 unique slugs; ABSENT baseline of 8 recorded.
-- [ ] [AI] Cross-plan link gate green.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed**:
+- [x] [AI] All eight capstone slugs confirmed absent (zero `EXISTS` lines).
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 8 unique slugs; ABSENT baseline of 8 recorded.
+- [x] [AI] Cross-plan link gate green.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR was opened for this phase and nothing was pushed**:
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
 
@@ -350,7 +350,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 Each course below is its own sub-step. Its work may have its own thematic commit, but all commits
 remain on the persistent `final-delivery` branch and ship together in the one Phase 7 archival PR:
 
-- [ ] [AI] `capstone-build-your-own-coding-agent` (Harness milestone, Python, settled per
+- [x] [AI] `capstone-build-your-own-coding-agent` (Harness milestone, Python, settled per
       `<SYLLABUS>capstone-build-your-own-coding-agent.md`) — assembles the five-course harness
       cluster into a working coding-agent CLI — acceptance: all 9 convention steps complete; checkers
       report zero CRITICAL/HIGH/MEDIUM; `grep -F -q 'the-agent-loop' "<COURSES>capstone-build-your-own-coding-agent/_index.md"`
@@ -358,7 +358,7 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
       real TDD coding task per the spec's acceptance criteria — the deterministic test suite passes
       with no live model calls.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-build-your-own-pentest-engine` (Security milestone, TypeScript, settled per
+- [x] [AI] `capstone-build-your-own-pentest-engine` (Security milestone, TypeScript, settled per
       `<SYLLABUS>capstone-build-your-own-pentest-engine.md`) — acceptance: all 9 convention steps
       complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'authorized' "<COURSES>capstone-build-your-own-pentest-engine/overview.md"` exits 0
@@ -377,18 +377,18 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `capstone-secure-service` (Security milestone, Python + shell, settled per the embedded
+- [x] [AI] `capstone-secure-service` (Security milestone, Python + shell, settled per the embedded
       spec in `<SYLLABUS>defensive-security.md` lines 339–366) — acceptance: all 9 convention
       steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'OWASP' "<COURSES>capstone-secure-service/overview.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-data-pipeline` (Data milestone, SQL + Python, settled per the embedded spec in
+- [x] [AI] `capstone-data-pipeline` (Data milestone, SQL + Python, settled per the embedded spec in
       `<SYLLABUS>defensive-security.md` lines 368–395) — acceptance: all 9 convention steps
       complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'creating-ai-powered-apps' "<COURSES>capstone-data-pipeline/_index.md"` exits 0
       (confirms the RAG-interface prerequisite is declared, not a Band-7 security course).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-concurrency-showdown` (Comparison milestone, Go + Elixir, settled per the
+- [x] [AI] `capstone-concurrency-showdown` (Comparison milestone, Go + Elixir, settled per the
       embedded spec in `<SYLLABUS>compilers-parsers-and-transpilers.md` lines 293–316) —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'csp-style-concurrency' "<COURSES>capstone-concurrency-showdown/_index.md"` exits 0
@@ -400,13 +400,13 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] All five Cohort-A bodies pass their own 9-step convention with zero CRITICAL/HIGH/MEDIUM
+- [x] [AI] All five Cohort-A bodies pass their own 9-step convention with zero CRITICAL/HIGH/MEDIUM
       findings outstanding.
-- [ ] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` both exit 0 over the Cohort-A tree.
-- [ ] [AI] Zero manifest files touched:
+- [x] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` both exit 0 over the Cohort-A tree.
+- [x] [AI] Zero manifest files touched:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0**.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: Cohort A's five capstones are committed on `final-delivery`; Cohort B has not
@@ -419,13 +419,13 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
 > `capstone-concurrency-and-systems` and `capstone-real-world-delivery` are mutually independent and
 > pipeline concurrently; `capstone-lead-at-altitude` is a serial successor.
 
-- [ ] [AI] `capstone-concurrency-and-systems` (Systems milestone, Go or Elixir + C, settled per the
+- [x] [AI] `capstone-concurrency-and-systems` (Systems milestone, Go or Elixir + C, settled per the
       embedded spec in `<SYLLABUS>compilers-parsers-and-transpilers.md` lines 266–291) — applies
       the same 9-step convention as Cohort A — acceptance: all 9 steps complete; checkers zero
       CRITICAL/HIGH/MEDIUM; `grep -F -q 'site-reliability-engineering' "<COURSES>capstone-concurrency-and-systems/_index.md"`
       exits 0 (the SRE-instrumentation prerequisite is declared).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-real-world-delivery` (Full-stack milestone, Python + TS + IaC, settled per the
+- [x] [AI] `capstone-real-world-delivery` (Full-stack milestone, Python + TS + IaC, settled per the
       embedded spec in `<SYLLABUS>defensive-security.md` lines 303–338) — applies the same
       9-step convention — acceptance: all 9 steps complete; checkers zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'capstone-solid-core' "<COURSES>capstone-real-world-delivery/_index.md"` exits 0
@@ -434,7 +434,7 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
       returns **0** (all five of this capstone's specific confirmed prerequisites — topics 39/42/43/58/59
       from the embedded spec's "Integrates topics" list — are present before authoring begins).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] **Confirm both Cohort-B leaf capstones exist before starting `capstone-lead-at-altitude`**:
+- [x] [AI] **Confirm both Cohort-B leaf capstones exist before starting `capstone-lead-at-altitude`**:
       `test -d apps/ayokoding-www/content/en/learn/courses/capstone-concurrency-and-systems && test -d apps/ayokoding-www/content/en/learn/courses/capstone-real-world-delivery`
       — acceptance: both exit 0.
 
@@ -448,7 +448,7 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
     And capstone-lead-at-altitude's own _index.md prerequisites field names at least one of the two course IDs, per the spec's disjunctive "one of ... or ..." framing
   ```
 
-- [ ] [AI] `capstone-lead-at-altitude` (Whole-journey milestone, polyglot + prose, settled per the
+- [x] [AI] `capstone-lead-at-altitude` (Whole-journey milestone, polyglot + prose, settled per the
       embedded spec in `<SYLLABUS>site-reliability-engineering.md` lines 226–257 — the spec's own
       "Goal" states disjunctively that the capstone takes **one of** `capstone-concurrency-and-systems`
       **or** `capstone-real-world-delivery` as its starting artefact, not both) — applies the same
@@ -459,7 +459,7 @@ remain on the persistent `final-delivery` branch and ship together in the one Ph
       the author is free to declare both if the chosen artefact genuinely draws on both, but the spec
       does not require it).
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] **Record the band-completion signal** — append the five-field signal block (verbatim, per
+- [x] [AI] **Record the band-completion signal** — append the five-field signal block (verbatim, per
       [README §Band-completion signal contract](./README.md#band-completion-signal-contract)) to this
       SHA once merged:
 
@@ -511,12 +511,12 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] All three Cohort-B bodies pass their own 9-step convention with zero CRITICAL/HIGH/MEDIUM
+- [x] [AI] All three Cohort-B bodies pass their own 9-step convention with zero CRITICAL/HIGH/MEDIUM
       findings outstanding, authored in order (the two leaves first, `capstone-lead-at-altitude`
       last).
-- [ ] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` both exit 0 over the Cohort-B tree.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] `npm exec nx run ayokoding-www:build` and `npm run lint:md` both exit 0 over the Cohort-B tree.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7. The band-completion signal becomes consumable
       only after the terminal archival PR merges.
 
@@ -527,27 +527,27 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ## Phase 3: Final content-correctness sweep
 
-- [ ] [AI] **Structural verification** — confirm all 8 bundles hold the fixed anatomy:
+- [x] [AI] **Structural verification** — confirm all 8 bundles hold the fixed anatomy:
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "MALFORMED $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Full build**: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] **Markdown quality**: `npm run lint:md` — acceptance: exits 0.
-- [ ] [AI] **Link validation**:
+- [x] [AI] **Full build**: `npm exec nx run ayokoding-www:build` — acceptance: exits 0.
+- [x] [AI] **Markdown quality**: `npm run lint:md` — acceptance: exits 0.
+- [x] [AI] **Link validation**:
       `apps/rhino-cli/scripts/rhino-bin.sh md links validate --quiet --exclude plans/done --exclude apps/ose-www/content 2>&1 | grep -F "capstone-"`
       — acceptance: no matching line naming any of the 8 capstone slugs as broken.
-- [ ] [AI] **Terminal authored-body assertion** —
+- [x] [AI] **Terminal authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0** (all 8 present; contrast with Phase 0's baseline of 8 absent).
-- [ ] [AI] **Regression check**: `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage`
+- [x] [AI] **Regression check**: `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage`
       — acceptance: all exit 0.
-- [ ] [AI] **Confirm no manifest file changed across the whole plan**:
+- [x] [AI] **Confirm no manifest file changed across the whole plan**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
 ### Phase 3 Gate
 
-- [ ] [AI] All structural, build, lint, link, regression, and manifest-isolation checks pass.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] All structural, build, lint, link, regression, and manifest-isolation checks pass.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: the plan-wide content-correctness sweep is complete on `final-delivery`. Safe to
@@ -557,7 +557,7 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ## Phase 4: Manual Content Verification (Playwright MCP)
 
-- [ ] [AI] Open a sample of authored course pages (at minimum one per cohort — e.g.
+- [x] [AI] Open a sample of authored course pages (at minimum one per cohort — e.g.
       `capstone-build-your-own-coding-agent` and `capstone-lead-at-altitude`) at all three breakpoints
       (mobile/tablet/desktop) in the `en` content locale via Playwright MCP; commit screenshots to
       `evidence/phase-4-<slug>-<breakpoint>.png` — acceptance: screenshots committed, page renders
@@ -565,7 +565,7 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ### Phase 4 Gate
 
-- [ ] [AI] Screenshot evidence committed for the sampled pages at all three breakpoints.
+- [x] [AI] Screenshot evidence committed for the sampled pages at all three breakpoints.
 
 > **Pause Safety**: manual verification evidence is committed locally (rides the Phase 7 closeout PR).
 > Safe to stop. To resume: proceed to Phase 5.
@@ -574,13 +574,13 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ## Phase 5: Final CI/Regression Check
 
-- [ ] [AI] Re-run `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` against
+- [x] [AI] Re-run `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` against
       `final-delivery` — acceptance: all exit 0, confirming no regression introduced by this plan's
       cumulative changes.
 
 ### Phase 5 Gate
 
-- [ ] [AI] All affected targets green.
+- [x] [AI] All affected targets green.
 
 > **Pause Safety**: no routine change in this phase. Safe to stop.
 
@@ -588,14 +588,14 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ## Phase 6: Knowledge Capture
 
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] Triage every entry in `learnings.md` through the
+- [x] [AI] Triage every entry in `learnings.md` through the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)'s
       routing matrix — each surviving learning routed to exactly one durable home, or discarded with a
       one-line reason. If no generalizable learning was recorded, state
@@ -603,7 +603,7 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ### Phase 6 Gate
 
-- [ ] [AI] Every `learnings.md` entry reaches a terminal state (routed, filed as backlog, discarded,
+- [x] [AI] Every `learnings.md` entry reaches a terminal state (routed, filed as backlog, discarded,
       or the explicit no-learnings escape is recorded).
 
 > **Pause Safety**: knowledge capture is complete. Safe to stop.
@@ -614,22 +614,22 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effec
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
-- [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
-- [ ] [AI] Move this plan folder from `plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/`
+- [x] [AI] Move this plan folder from `plans/in-progress/ayokoding-learning-path-11-course-authoring-capstones/`
       to `plans/done/YYYY-MM-DD__ayokoding-learning-path-11-course-authoring-capstones/` (today's
       completion date), update `plans/in-progress/README.md` and `plans/done/README.md`. The source is
       always `plans/in-progress/` — Phase 0's promotion step is a mandatory precondition, so the plan
       never sits in `plans/backlog/` at archival time.
-- [ ] [AI] Push `final-delivery` and open the one terminal archival PR, then run the secret scan, local quality checks, and PR quality-gate verification, CI verification, `[AI]` merge, and deployment.
-- [ ] [AI] Remove the declared worktree only after the terminal archival PR merges and it has no
+- [x] [AI] Push `final-delivery` and open the one terminal archival PR, then run the secret scan, local quality checks, and PR quality-gate verification, CI verification, `[AI]` merge, and deployment.
+- [x] [AI] Remove the declared worktree only after the terminal archival PR merges and it has no
       uncommitted changes.
 
 ### Phase 7 Gate
 
-- [ ] [AI] Plan folder present under `plans/done/` with the completion-date prefix; both index
+- [x] [AI] Plan folder present under `plans/done/` with the completion-date prefix; both index
       `README.md` files updated; terminal archival PR merged; worktree then removed.
 
 > **Pause Safety**: this is the plan's terminal phase. Once complete, the plan is fully archived.
