@@ -82,7 +82,7 @@ and are listed in the full catalog table below rather than in this cross-plan ta
 - `<COURSES>`, `<PATHS>`, `<FEAT>`, `<MANIFESTS>`, `<CONVMAN>`, `<SHARMAN>`, `<MTEST_CE>`, `<MTEST_SE>`,
   `<CONVLANDING>`, `<SHARLANDING>`, `<SPECS>` — identical constants to plan 17's own, since this plan
   edits the same files plan 17 created. See
-  [plan 17's tech-docs.md §Path constants](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#path-constants)
+  [plan 17's tech-docs.md §Path constants](../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#path-constants)
   for the full definitions; not re-derived here.
 - `<SYL>` = `plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/syllabus/courses/` —
   **this plan's own** 15-file syllabus corpus (Stage B + Stage C only; Stage A's 15 files live in plan
@@ -262,7 +262,7 @@ riba doctrinal basis (`OI-2`) **remains OPEN**; no course may restate it as fact
 
 **General ERP licensing posture (per-project licence table, eleven safe-authoring rules, legal basis)
 is inherited unchanged from plan 17** — see
-[plan 17's tech-docs.md §Licensing and IP Compliance](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#licensing-and-ip-compliance-a8);
+[plan 17's tech-docs.md §Licensing and IP Compliance](../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#licensing-and-ip-compliance-a8);
 not reproduced redundantly here. This plan's own first-class addition is the **Sharia-specific**
 addendum, binding on Stage C (courses 28-30) specifically.
 

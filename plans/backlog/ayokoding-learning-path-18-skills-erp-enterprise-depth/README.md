@@ -53,7 +53,7 @@ verbatim-reproduction rule and the PSAK-numbering carry-forward. See
 This plan runs its **own** three-tester Rule-15 retest at its own terminal checkpoint (both manifests
 at their final 27/30-id state) — this is **not** redundant with plan 17's own Stage A retest, since
 each verifies a distinct, independently-shipped state of the same two landings. See plan 17's
-[tech-docs.md §Rule-15 retest split decision](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#rule-15-retest-split-decision)
+[tech-docs.md §Rule-15 retest split decision](../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#rule-15-retest-split-decision)
 for the shared reasoning.
 
 ## Delivery Mode: worktree-to-pr
@@ -77,6 +77,6 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Predecessor plan
 
-[`ayokoding-learning-path-17-skills-erp-foundations`](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/README.md)
+[`ayokoding-learning-path-17-skills-erp-foundations`](../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/README.md)
 — Stage A (15 courses), historical source context nothing accounting-related, already published both manifests at
 15 ids before this plan starts.
