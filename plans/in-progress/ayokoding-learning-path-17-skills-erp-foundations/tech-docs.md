@@ -6,7 +6,7 @@
 **outside `plans/`** reads it (no checker, agent, Nx target, build/generation step, or shipped content
 front-matter names a syllabus path). The corpus therefore moves to `plans/done/` with the plan folder
 on archival. **One consumer inside `plans/` does exist** —
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md)
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md)
 reads this plan's syllabus corpus by relative link for the cross-plan prerequisite edges it must cite
 by id (see [§Corpus Custody](#corpus-custody) below); that is a `plans/`-internal read and does not
 trip the promotion trigger. See

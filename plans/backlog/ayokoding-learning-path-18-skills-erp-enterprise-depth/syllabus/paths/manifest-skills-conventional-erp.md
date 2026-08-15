@@ -12,7 +12,7 @@ plan 17 at 15 ids, grown to this terminal 27-id state by this plan). Path landin
 
 ## Composition (27 courses, terminal — no further growth)
 
-Positions 1-15 are [plan 17's own corpus](../../../ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md)
+Positions 1-15 are [plan 17's own corpus](../../../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md)
 (referenced by id, never copied); positions 16-27 are this plan's own 12 Stage-B courses. **This list
 is the reading ramp, in `courseOrder` order** — authoring order is not reading order (see
 [tech-docs.md §Authoring stages vs reading ramp](../../tech-docs.md#the-erp-catalog-this-plans-15-course-slice)).

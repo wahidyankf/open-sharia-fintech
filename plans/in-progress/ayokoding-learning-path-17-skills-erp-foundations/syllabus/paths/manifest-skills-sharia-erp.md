@@ -33,5 +33,5 @@ The successor plan grows this array to 27 ids identically to `<CONVMAN>`'s own S
 **appends** the 3 Sharia-exclusive ids (`sharia-compliant-erp-design`,
 `islamic-contract-based-transaction-flows`, `zakat-and-sharia-compliance-modules`) after the complete
 27-id shared corpus, occupying positions 28-30 — see
-[tech-docs.md §courseOrder arrays at each growth boundary](../../../ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md#courseorder-arrays-at-each-growth-boundary)
+[tech-docs.md §courseOrder arrays at each growth boundary](../../../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md#courseorder-arrays-at-each-growth-boundary)
 in the successor plan. No id already published above is ever reordered.

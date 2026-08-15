@@ -16,8 +16,8 @@ Several Stage B/C course frontmatter entries cite Stage-A and accounting course 
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                             | Nature                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-17-skills-erp-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-17-skills-erp-foundations/README\.md` exits 0. This is this plan's only plan-level start gate.
@@ -53,7 +53,7 @@ verbatim-reproduction rule and the PSAK-numbering carry-forward. See
 This plan runs its **own** three-tester Rule-15 retest at its own terminal checkpoint (both manifests
 at their final 27/30-id state) — this is **not** redundant with plan 17's own Stage A retest, since
 each verifies a distinct, independently-shipped state of the same two landings. See plan 17's
-[tech-docs.md §Rule-15 retest split decision](../ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#rule-15-retest-split-decision)
+[tech-docs.md §Rule-15 retest split decision](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#rule-15-retest-split-decision)
 for the shared reasoning.
 
 ## Delivery Mode: worktree-to-pr
@@ -77,6 +77,6 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Predecessor plan
 
-[`ayokoding-learning-path-17-skills-erp-foundations`](../ayokoding-learning-path-17-skills-erp-foundations/README.md)
+[`ayokoding-learning-path-17-skills-erp-foundations`](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/README.md)
 — Stage A (15 courses), historical source context nothing accounting-related, already published both manifests at
 15 ids before this plan starts.

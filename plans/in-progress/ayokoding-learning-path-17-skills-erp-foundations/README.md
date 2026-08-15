@@ -13,7 +13,7 @@ Authors **Stage A — Foundations & Architecture**: 15 of the 30-course ERP corp
 **`skills/conventional-erp`** and **`skills/sharia-erp`** — at **15 course ids each**. This is the
 first of a two-plan split of the retired single-plan design
 the superseded ERP-programme draft; the second half,
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
 (historical source context this plan), grows both manifests to their terminal 27/30-id state across Stage B and
 Stage C.
 
@@ -65,7 +65,7 @@ implementation methodology.
 component, a design asset, or a structural `_index.md` (owned by
 `ayokoding-learning-path-01-url-restructure`, A3). It never authors a Stage B or Stage C course body —
 those 15 courses (`#13-16`, `18-21`, `24-27` and `28-30`) belong entirely to
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md).
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md).
 
 ## Why course 17 authors here despite reading late
 
@@ -144,6 +144,6 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Successor plan
 
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
 — Stage B (12 courses) + Stage C (3 courses, `sharia-erp` only), historical source context this plan, grows both
 manifests to their terminal 27/30-id state.

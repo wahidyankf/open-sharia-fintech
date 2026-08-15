@@ -15,7 +15,7 @@ Three standing constraints govern every step below.
 > exact `courseOrder` growth positions are settled in
 > [tech-docs.md](./tech-docs.md#the-erp-catalog-this-plans-15-course-slice). Transcribe them; do not
 > re-derive them. Plan 17's own 15 syllabus files are **read-only** — this plan's steps never write to
-> `../ayokoding-learning-path-17-skills-erp-foundations/syllabus/`.
+> `../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/`.
 >
 > **The category ownership invariant (binding)**: this plan owns 15 new course bundles, its own
 > `syllabus/`, and is explicitly authorized to **grow** `<CONVMAN>`, `<SHARMAN>`, `<MTEST_CE>`,
@@ -82,8 +82,8 @@ This plan produces content only and has exactly one final PR. It has no review-c
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                             | Nature                                                                                                                                                                                                                         |
+| ------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-17-skills-erp-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-17-skills-erp-foundations/README\.md$"` exits 0. This is this plan's only plan-level start gate.
@@ -238,7 +238,7 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
       per the [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template).
       Every syllabus file citing a plan-17 course id (per
       [tech-docs.md §Cross-plan prerequisite edges](./tech-docs.md#cross-plan-prerequisite-edges-into-plan-17))
-      links to `../../ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/<id>.md`
+      links to `../../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/<id>.md`
       rather than restating that file's content. Verify:
 
   ```bash
@@ -323,7 +323,7 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 For each `id` in `ERP_STAGE_B`, following the seven-step NEW-course authoring cycle (accuracy
 pre-verify → skeleton → learning track → drilling track → checkers → fixers → re-verify — same cycle
 as plan 17's own
-[§2.1](../ayokoding-learning-path-17-skills-erp-foundations/delivery.md#21--author-all-15-stage-a-course-bodies-maker-checker-fixer-per-format)),
+[§2.1](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/delivery.md#21--author-all-15-stage-a-course-bodies-maker-checker-fixer-per-format)),
 transcribing from `<SYL>${id}.md` (this plan's own corpus) or, where the course's frontmatter cites a
 plan-17 id, from plan 17's `<SYL17>${id}.md` for the cited concept only (never copying the file
 wholesale):
@@ -458,7 +458,7 @@ Scenario: conventional-erp landing renders with its full terminal course count
 For each `id` in `ERP_STAGE_C`, following the same seven-step NEW-course authoring cycle as §2.1
 above (accuracy pre-verify → skeleton → learning track → drilling track → checkers → fixers →
 re-verify — same cycle as plan 17's own
-[§2.1](../ayokoding-learning-path-17-skills-erp-foundations/delivery.md#21--author-all-15-stage-a-course-bodies-maker-checker-fixer-per-format)),
+[§2.1](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/delivery.md#21--author-all-15-stage-a-course-bodies-maker-checker-fixer-per-format)),
 transcribing from `<SYL>${id}.md`. Every claim in the jurisdictional-model table carries its A4
 marker into the course body verbatim:
 

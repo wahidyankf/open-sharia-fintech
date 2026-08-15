@@ -14,7 +14,7 @@ from the open-source projects and standards bodies the domain touches.
 two-plan split of the retired the superseded ERP-programme draft design: it authors Stage A (15
 of 30 courses) and publishes both `skills/conventional-erp` and `skills/sharia-erp` at 15 ids each.
 The successor plan,
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/brd.md),
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/brd.md),
 grows both manifests to their terminal 27/30-course state. Splitting the retired plan lets Stage A —
 which needs nothing from any accounting plan — ship independently rather than wait on Stage B/C's
 accounting gates.
