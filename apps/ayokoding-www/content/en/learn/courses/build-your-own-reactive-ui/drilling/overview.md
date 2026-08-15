@@ -55,3 +55,8 @@ implementation, and an automaticity checklist. Attempt each prompt before openin
 - [ ] I can trace a signal read into an effect subscription and dispose it safely.
 - [ ] I can explain when fine-grained updates avoid whole-tree work.
 - [ ] I can identify hook-order and diamond-graph failures from their symptoms.
+
+## Extension challenge
+
+Model a small form with two source signals and one derived validity signal. Identify the single
+place where the DOM update effect belongs.

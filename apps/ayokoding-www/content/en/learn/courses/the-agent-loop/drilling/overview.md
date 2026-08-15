@@ -21,3 +21,8 @@ Sketch a bounded mock read-evaluate-act trace and its terminal states.
 
 - [ ] I can distinguish the loop from its tools, memory, and permissions.
 - [ ] I can name a safe stop condition.
+
+## Extension challenge
+
+Write a trace table for one agent turn: observation, selected action, tool result, updated state,
+and the explicit condition that stops the next turn.

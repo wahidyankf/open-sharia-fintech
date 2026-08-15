@@ -26,3 +26,8 @@ partial result when one worker fails.
 - [ ] I can distinguish orchestration structure from loop and tool boundaries.
 - [ ] I record enough trace, log, and metric data to debug a wrong outcome.
 - [ ] I forward deep evaluation work to the evaluation course.
+
+## Extension challenge
+
+Design a two-agent task with a bounded handoff. Name the lead's success criterion, the worker's
+artifact, the trace attributes you would inspect, and the condition that prevents another retry.

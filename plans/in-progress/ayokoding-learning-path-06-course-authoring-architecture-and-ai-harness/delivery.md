@@ -831,41 +831,71 @@ pipeline concurrently through review, bounded by the cap.
 - [x] [AI] Confirm `en` is the content locale for these 15 bodies — command:
       `for s in $(cat plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/authored-body-slugs.txt); do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "MISSING $s"; done | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify authored course pages** — for **6** of the 15 authored courses
+- [x] [AI] Start preview server on port 3101 — `npm exec nx dev ayokoding-www` was attempted, but
+      its local Turbopack compilation stalled under host resource pressure; the freshly built app was
+      instead served with `npm exec -- next start -p 3101` from `apps/ayokoding-www`, which returned
+      HTTP 200 for the verified routes.
+- [x] [AI] **Sample-verify authored course pages** — for **6** of the 15 authored courses
       (`software-architecture`, `distributed-systems`, `creating-ai-powered-apps`, `agentic-ai`,
       `the-agent-loop`, `agent-orchestration-subagents-and-observability`), at breakpoints
       375 / 768 / 1280 px, via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`,
       `browser_resize`, then `browser_snapshot` — acceptance: each page renders its overview, learning
       track, and drilling track; `html[lang]` is `en`; `browser_console_messages` reports **zero**
       errors per page per breakpoint.
-- [ ] [AI] **Verify prerequisite rendering** — on `agentic-ai` (which declares
+- [x] [AI] **Verify prerequisite rendering** — on `agentic-ai` (which declares
       `creating-ai-powered-apps` as a prerequisite), confirm the prerequisite is displayed and its
       link resolves to the prerequisite's canonical page — acceptance: the link target returns 200
       and the landed page is `creating-ai-powered-apps`.
-- [ ] [AI] **Verify a drilling track renders** — open `distributed-systems/drilling` and confirm all
+- [x] [AI] **Verify a drilling track renders** — open `distributed-systems/drilling` and confirm all
       five fixed sections are present in the rendered output — acceptance: five section headings
       visible in `browser_snapshot`.
-- [ ] [AI] Capture one screenshot per sampled course per breakpoint to
+- [x] [AI] Capture one screenshot per sampled course per breakpoint to
       `evidence/phase-6-<course-id>-en-<breakpoint>px.png` — acceptance:
       `git ls-files -- 'plans/in-progress/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/evidence/phase-6-*-en-*px.png' | grep -c .` returns **18** (6 courses × 3
       breakpoints), once staged or committed.
-- [ ] [AI] Document the evidence in this checklist: reference each screenshot
+- [x] [AI] Document the evidence in this checklist: reference each screenshot
       (`![alt](./evidence/...)`) and note the console/network status per sampled course.
+
+  Playwright MCP captured the final production build at every listed breakpoint. Each sampled root
+  page had `html[lang="en"]`, visible overview / learning / drilling links, successful route loading,
+  and zero console errors. `agentic-ai` rendered its prerequisite link to
+  `/en/learn/courses/creating-ai-powered-apps`; that canonical target returned HTTP 200. The rendered
+  Distributed Systems drilling page displayed Recall Q&A, Scenario judgment, Hands-on simulation,
+  Automaticity checklist, and Extension challenge.
+
+  ![Software Architecture at 375px](./evidence/phase-6-software-architecture-en-375px.png)
+  ![Software Architecture at 768px](./evidence/phase-6-software-architecture-en-768px.png)
+  ![Software Architecture at 1280px](./evidence/phase-6-software-architecture-en-1280px.png)
+  ![Distributed Systems at 375px](./evidence/phase-6-distributed-systems-en-375px.png)
+  ![Distributed Systems at 768px](./evidence/phase-6-distributed-systems-en-768px.png)
+  ![Distributed Systems at 1280px](./evidence/phase-6-distributed-systems-en-1280px.png)
+  ![Creating AI-Powered Apps at 375px](./evidence/phase-6-creating-ai-powered-apps-en-375px.png)
+  ![Creating AI-Powered Apps at 768px](./evidence/phase-6-creating-ai-powered-apps-en-768px.png)
+  ![Creating AI-Powered Apps at 1280px](./evidence/phase-6-creating-ai-powered-apps-en-1280px.png)
+  ![Agentic AI at 375px](./evidence/phase-6-agentic-ai-en-375px.png)
+  ![Agentic AI at 768px](./evidence/phase-6-agentic-ai-en-768px.png)
+  ![Agentic AI at 1280px](./evidence/phase-6-agentic-ai-en-1280px.png)
+  ![The Agent Loop at 375px](./evidence/phase-6-the-agent-loop-en-375px.png)
+  ![The Agent Loop at 768px](./evidence/phase-6-the-agent-loop-en-768px.png)
+  ![The Agent Loop at 1280px](./evidence/phase-6-the-agent-loop-en-1280px.png)
+  ![Agent Orchestration and Subagents at 375px](./evidence/phase-6-agent-orchestration-subagents-and-observability-en-375px.png)
+  ![Agent Orchestration and Subagents at 768px](./evidence/phase-6-agent-orchestration-subagents-and-observability-en-768px.png)
+  ![Agent Orchestration and Subagents at 1280px](./evidence/phase-6-agent-orchestration-subagents-and-observability-en-1280px.png)
+
 - [x] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 6 is intermediate:
+- [x] [AI] **Confirm no manifest file changed in this phase** — Phase 6 is intermediate:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Six sampled courses verified across three breakpoints in `en`; zero console errors;
+- [x] [AI] Six sampled courses verified across three breakpoints in `en`; zero console errors;
       prerequisite display and drilling-track rendering confirmed.
-- [ ] [AI] 18 screenshots present under `evidence/` and referenced in this checklist.
-- [ ] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate) — the closeout PR for Phases 6–9 opens at
+- [x] [AI] 18 screenshots present under `evidence/` and referenced in this checklist.
+- [x] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate) — the closeout PR for Phases 6–9 opens at
       Phase 9.
 
 > **Pause Safety**: the authored library is verified live and defect-clean in `en`. Safe to stop. To

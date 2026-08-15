@@ -22,3 +22,8 @@ Write a pure function that maps a tool request and policy to `deny`, `ask`, or `
 - [ ] I distinguish model intent from harness authority.
 - [ ] I can explain filesystem, network, and process sandbox boundaries.
 - [ ] I can identify train-vs-production permission asymmetry as risk.
+
+## Extension challenge
+
+For a file-writing tool, specify the allowed paths, approval boundary, execution sandbox, and the
+audit record that makes a denied action explainable.

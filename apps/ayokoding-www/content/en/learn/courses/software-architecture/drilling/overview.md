@@ -63,3 +63,8 @@ replace the real adapter. Then state the new boundary's cost.
 - [ ] I can write an ADR with context, decision, and consequences.
 - [ ] I can turn one architecture rule into a failing fitness function.
 - [ ] I can explain the cost of a modular-monolith or service boundary.
+
+## Extension challenge
+
+Choose one boundary in a system you know. Write down the capability it owns, the information it
+publishes, and one change that must not require another boundary to change with it.

@@ -21,3 +21,8 @@ Sketch a token budget with stable context before variable context.
 
 - [ ] I can budget a finite context window.
 - [ ] I can distinguish context from durable memory.
+
+## Extension challenge
+
+Order a prompt's stable policy, retrieved facts, current task, and volatile tool output. Explain
+which prefix can be reused safely and which material must remain fresh.

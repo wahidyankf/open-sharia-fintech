@@ -64,3 +64,8 @@ version-selection rule is still needed.
 - [ ] I can explain why idempotency is needed with retries.
 - [ ] I can identify the majority and term evidence a leader needs.
 - [ ] I can name a fencing requirement for an externally protected resource.
+
+## Extension challenge
+
+Draw the failure timeline for a leaseholder that pauses, then resumes after another leaseholder has
+been elected. Mark the fencing token that rejects the old holder's next write.

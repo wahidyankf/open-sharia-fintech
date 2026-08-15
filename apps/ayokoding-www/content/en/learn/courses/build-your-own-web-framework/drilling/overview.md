@@ -60,3 +60,8 @@ Middleware owns whether it calls the next handler. Authentication can return `40
 - [ ] I can predict middleware onion order and a short-circuit.
 - [ ] I can describe request, application, and singleton dependency scopes.
 - [ ] I can trace a request from server protocol to response bytes.
+
+## Extension challenge
+
+Add one route with path parameters and one request-level concern to your framework. Explain why the
+route matcher and the concern run in that order.

@@ -23,3 +23,8 @@ Sketch a bounded mock trace; do not turn it into a build-your-own runtime in thi
 - [ ] I can distinguish a single LLM feature from an agentic control loop.
 - [ ] I can route deep implementation work to the owning harness course.
 - [ ] I can forward-link deep evaluation work instead of duplicating it.
+
+## Extension challenge
+
+Take a workflow you know and identify its uncertainty, action authority, and stopping condition.
+Decide whether it needs an agent or a bounded deterministic workflow, and justify the choice.

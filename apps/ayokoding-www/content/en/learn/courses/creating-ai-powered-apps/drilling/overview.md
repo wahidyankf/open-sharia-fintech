@@ -28,3 +28,8 @@ and an injection guard that treats retrieved instructions as data.
 - [ ] I can distinguish retrieval grounding from deep evaluation design.
 - [ ] I can validate tool input and output before downstream use.
 - [ ] I can add budgets, retries, redaction, and injection defenses.
+
+## Extension challenge
+
+Design a support-summary feature with a deterministic fallback. State the input contract, the
+evaluation signal, and the user-facing response when the model call fails.
