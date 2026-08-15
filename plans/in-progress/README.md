@@ -23,6 +23,9 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public`, `ose-primer`, and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety.
+- [ayokoding-learning-path-18-skills-erp-enterprise-depth](./ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
+  — 15 courses (Stage B + C merged, follows plan 17): conventional enterprise depth, then the
+  Sharia-compliant design stage.
   Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
   work begins.
 
