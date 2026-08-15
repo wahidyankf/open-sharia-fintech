@@ -1,0 +1,11 @@
+{
+  "pathId": "skills/conventional-accounting",
+  "arc": "immediately-effective",
+  "title": "Conventional Accounting",
+  "description": "A practical accounting path from a balancing ledger to controlled reporting.",
+  "courseOrder": [
+    "accounting-foundations",
+    "chart-of-accounts-and-data-modeling",
+    "financial-statements-and-close-cycle"
+  ]
+}

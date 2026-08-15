@@ -1,0 +1,11 @@
+{
+  "pathId": "skills/sharia-accounting",
+  "arc": "immediately-effective",
+  "title": "Sharia Accounting",
+  "description": "A practical accounting path with a shared foundation before Sharia-specific extension.",
+  "courseOrder": [
+    "accounting-foundations",
+    "chart-of-accounts-and-data-modeling",
+    "financial-statements-and-close-cycle"
+  ]
+}

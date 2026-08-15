@@ -5,3 +5,6 @@ date: 2026-07-23T00:00:00+07:00
 draft: false
 weight: 20
 ---
+
+- [Conventional Accounting](/en/learn/paths/skills/conventional-accounting)
+- [Sharia Accounting](/en/learn/paths/skills/sharia-accounting)
