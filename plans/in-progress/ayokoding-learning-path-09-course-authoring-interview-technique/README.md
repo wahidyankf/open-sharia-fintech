@@ -190,7 +190,7 @@ verification step in this plan exercises `en` only and states the deferral inlin
   [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [SE-manifest plan (12, successor to 05-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [SE-manifest plan (12, successor to 05-manifests)](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance

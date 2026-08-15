@@ -47,7 +47,7 @@ wears, or agents the maintainer delegates to:
 - **Deployer** (delegated to `apps-ayokoding-www-deployer`) — pushes the merged content to
   `prod-ayokoding-www`.
 - **Downstream manifest author** (the maintainer, via
-  [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md))
+  [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md))
   — consumes this plan's band-completion signal to grow the two named manifests.
 
 ## Business-Level Success Metrics
