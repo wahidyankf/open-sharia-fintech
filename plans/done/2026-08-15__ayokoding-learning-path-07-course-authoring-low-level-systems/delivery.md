@@ -152,8 +152,8 @@ No phase may create an additional worktree or branch. The final phase is the onl
       (`d2c1d87a4`) is therefore the first commit on this plan's declared worktree branch and is
       included in the sole terminal PR. Before Phase 1, confirm the promoted path is present in
       `HEAD` and absent from the backlog with `git ls-tree -r --name-only HEAD --
-  plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md |
-  grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0**).
+plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md |
+grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0**).
       Execution never runs out of `plans/backlog/`; this exception changes only the unavailable
       direct-push mechanism, not the promotion or the one-PR delivery boundary. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
@@ -611,18 +611,18 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 ## Phase 5: Pre-archival Quality & CI Preparation
 
-- [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
+- [x] [AI] Run the full affected suite on the persistent final-delivery branch:
       `npm exec nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
       `npm exec nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 7 opens the terminal PR.
-- [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
+- [x] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
       worktree, branch, or PR is required.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Full affected suite + build green on the persistent final-delivery branch.
-- [ ] [AI] The band signal is prepared without a merge SHA; downstream notification waits for the
+- [x] [AI] Full affected suite + build green on the persistent final-delivery branch.
+- [x] [AI] The band signal is prepared without a merge SHA; downstream notification waits for the
       terminal PR merge.
-- [ ] [AI] **No PR opens for this phase** — it folds into the Phase 7 archival PR.
+- [x] [AI] **No PR opens for this phase** — it folds into the Phase 7 archival PR.
 
 > **Pause Safety**: the branch is ready for archival and terminal review. Safe to stop. To resume:
 > re-run the affected suite on the persistent final-delivery branch.
@@ -634,33 +634,33 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content never cross-routes into this
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry.
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content never cross-routes into this
       repo.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the routing matrix; code
+- [x] [AI] Route each surviving learning to exactly one durable home per the routing matrix; code
       homes are ALWAYS filed as a separate `plans/backlog/<slug>/` follow-up plan, never landed
       inline.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
       [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md`.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate) — folds into Phase 7's closeout PR.
+- [x] [AI] Every `learnings.md` entry is terminal or the explicit "none" escape is present.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate) — folds into Phase 7's closeout PR.
 
 > **Pause Safety**: `learnings.md` is fully triaged. Safe to stop. To resume: re-read `learnings.md`
 > and confirm every entry is terminal.

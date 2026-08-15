@@ -11,8 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-07-course-authoring-low-level-systems](./ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)
-  — Authors seven C/C++/Rust, Linux/Windows OS, and systems-programming course bodies.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
