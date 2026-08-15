@@ -5,7 +5,7 @@
 This plan uses one branch and its sole PR in Phase 10, after verification and Knowledge Capture; the archival move, secret scan, local quality checks, PR quality gate, merge, and deploy are all in that final delivery. Plan 13 begins only after this plan merges, and carries its own later cross-manifest verification. Earlier per-manifest or delivery-boundary PR wording is superseded.
 
 > **Successor plan.** This plan and its sibling
-> [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
 > together replace the single prior plan that authored, published, grew, and verified all four
 > `careers/` path manifests. That prior plan covered `interview-ready`, `immediately-effective`
 > (both `software-engineer` and `ai-engineer`), and `fundamentally-strong` in one folder. It is split
@@ -296,7 +296,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
   the growth-signal routing table, and the architecture diagrams.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
-- [Sibling plan — `ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
+- [Sibling plan — `ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
   — the fourth `careers/` manifest, coupled to this plan as described above.
 - [Syllabus (cross-plan, read-only)](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) —
   the per-course and per-path detail layer. The three `paths/` manifest mirrors this plan transcribes

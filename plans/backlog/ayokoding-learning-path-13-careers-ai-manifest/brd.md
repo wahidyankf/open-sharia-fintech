@@ -23,7 +23,7 @@ folder. This plan is split out because the AI-engineer manifest converges on a *
 from the three software-engineer-role manifests, has its own independent nine-course growth track (the
 AI/harness cluster), and is never part of any of the three cross-manifest checks that bind the
 software-engineer manifests together (no-forked-body, Band-9 growth, the ownership-boundary sweep) —
-see [the sibling plan's brd.md](../ayokoding-learning-path-12-careers-se-manifests/brd.md#why-this-plan-is-its-own-deliverable-split-out-from-a-four-manifest-predecessor)
+see [the sibling plan's brd.md](../../in-progress/ayokoding-learning-path-12-careers-se-manifests/brd.md#why-this-plan-is-its-own-deliverable-split-out-from-a-four-manifest-predecessor)
 for the shared reasoning behind the 3+1 shape.
 
 ## Why a manifest instead of a bespoke curriculum
