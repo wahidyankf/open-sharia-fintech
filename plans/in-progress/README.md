@@ -11,9 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-16-skills-accounting-sharia-extension](./ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md)
-  — 5 courses (#20-24): Sharia accounting extension and terminal path completion.
-
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.

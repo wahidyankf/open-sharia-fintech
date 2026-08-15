@@ -8,7 +8,7 @@ Feature: Skills accounting path composition
   Scenario Outline: A two-segment skills path ID resolves to its full shared accounting slice
     Given the published accounting manifest for "<path-id>"
     When its ordered course context is inspected
-    Then it contains exactly 19 course IDs in the shared accounting order
+    Then it contains its published accounting order
     And every course context is represented by one course directory
     And an over-segmented path ID is not a published accounting path
 

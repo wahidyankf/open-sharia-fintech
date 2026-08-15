@@ -549,16 +549,14 @@ with the rest of the plan only when Phase 8 opens the sole final PR.
       [tech-docs §Stage-signal contract](./tech-docs.md#stage-signal-contract-the-plan-18-handoff-sharia-stage-granularity),
       each field anchored at column 0, outside any table/bullet/blockquote:
 
-```
+— acceptance: `grep -c '^STAGE: 3$' delivery.md` returns **1** and the signal is committed on this
+plan's persistent final-delivery branch. The terminal archival PR is the only merge record.
+
 STAGE: 3
 PLAN: ayokoding-learning-path-16-skills-accounting-sharia-extension
 LANDED_COURSE_IDS: sharia-accounting-and-aaoifi-standards, islamic-contract-modeling-for-systems, zakah-computation-and-reporting-for-systems, sukuk-and-islamic-capital-markets-accounting, sharia-ledger-system-architecture
 UNBLOCKS_ERP_CAPABILITY: the Sharia-specific ERP stages delivering Sharia-compliant contract handling, Zakah/Sukuk reporting, and Sharia-ledger founding-architecture capability — and the whole sharia-accounting path, and the whole 24-course accounting corpus, are complete at this point
 FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-extension/final-delivery
-```
-
-— acceptance: `grep -c '^STAGE: 3$' delivery.md` returns **1** and the signal is committed on this
-plan's persistent final-delivery branch. The terminal archival PR is the only merge record.
 
 ### Phase 3 Gate
 
