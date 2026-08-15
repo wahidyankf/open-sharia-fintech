@@ -41,8 +41,6 @@ Plan 06 needs):
 
 **Skills — accounting** (splits old `06-skills-accounting`'s 24 courses; strict sequential chain):
 
-- [ayokoding-learning-path-14-skills-accounting-foundations](./ayokoding-learning-path-14-skills-accounting-foundations/README.md)
-  — 11 courses (#1-11): foundations through the transactional/cost-accounting cycle.
 - [ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md)
   — 8 courses (#12-19, follows plan 14): reporting, consolidation, architecture —
   `conventional-accounting` terminates here.

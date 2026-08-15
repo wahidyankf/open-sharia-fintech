@@ -11,6 +11,9 @@ execution checklist.
 
 ## Active Plans
 
+- [ayokoding-learning-path-14-skills-accounting-foundations](./ayokoding-learning-path-14-skills-accounting-foundations/README.md)
+  — 11 courses (#1-11): foundations through the transactional/cost-accounting cycle.
+
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
