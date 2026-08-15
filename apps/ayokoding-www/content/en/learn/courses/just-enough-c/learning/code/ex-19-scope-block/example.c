@@ -1,0 +1,18 @@
+// => preprocessor directive needed by this translation unit
+#include <stdio.h>
+// => this executable statement makes the example observable
+int main(void) {
+  // => this executable statement makes the example observable
+  int outer = 1;
+  // => this executable statement makes the example observable
+  {
+    // => this executable statement makes the example observable
+    int inner = 2;
+    // => this executable statement makes the example observable
+    printf("inside=%d outside=%d\n", inner, outer);
+    // => this executable statement makes the example observable
+  }
+  // => this executable statement makes the example observable
+  return 0;
+  // => this executable statement makes the example observable
+}

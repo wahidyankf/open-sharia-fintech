@@ -143,21 +143,25 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > _Executor: repo-setup-manager_
 
-- [ ] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
+- [x] [AI] **Promote out of `plans/backlog/` first — on the local `main` checkout, before any worktree exists.**
       Run `git mv plans/backlog/ayokoding-learning-path-07-course-authoring-low-level-systems/ plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/`
       (a pure move — neither stage carries a date prefix), update `plans/backlog/README.md` and
       `plans/in-progress/README.md`, commit on the plan branch and include the move in the one final PR — acceptance:
-      `git ls-tree -r --name-only origin/main -- plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md | grep -c .`
-      returns **1** and the same query against `plans/backlog/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md` returns **0**.
-      Falsifiable both ways: before the push lands, the first query returns 0 and the second
-      returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
-      precondition, not a courtesy. See
+      **Protected-main exception (user approved 2026-08-15):** `origin/main` rejects direct pushes,
+      while this plan's binding one-PR contract forbids a promotion-only PR. The promotion commit
+      (`d2c1d87a4`) is therefore the first commit on this plan's declared worktree branch and is
+      included in the sole terminal PR. Before Phase 1, confirm the promoted path is present in
+      `HEAD` and absent from the backlog with `git ls-tree -r --name-only HEAD --
+    plans/in-progress/ayokoding-learning-path-07-course-authoring-low-level-systems/README.md |
+    grep -c .` (**1**) and the same query against `plans/backlog/.../README.md` (**0**).
+      Execution never runs out of `plans/backlog/`; this exception changes only the unavailable
+      direct-push mechanism, not the promotion or the one-PR delivery boundary. See
       [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install` — acceptance: exits
       0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved
       drift.
-- [ ] [AI] **Resolve `<PLAN04>` and verify Band 6 is trimmed from its own scope** — command (run as
+- [x] [AI] **Resolve `<PLAN04>` and verify Band 6 is trimmed from its own scope** — command (run as
       one call):
 
   ```bash
@@ -186,30 +190,23 @@ No phase may create an additional worktree or branch. The final phase is the onl
   fabricated acceptance criterion this plan cannot ground. The only fact this plan needs, and the only
   one it asserts, is that its own 7 slugs are gone from plan04's list.
 
-- [ ] [AI] **Verify the rendering repository baseline** — two checks,
+- [x] [AI] **Verify the rendering repository baseline** — two checks,
       both required (`test ! -f` and a zero-count `grep`, read the printed number rather than
       `&&`-chaining since `grep -c` exits 1 on a zero count):
 
   ```bash
   test ! -f apps/ayokoding-www/src/middleware.ts
-  grep -c 'await headers()' apps/ayokoding-www/src/app/layout.tsx
+  rg -n 'await headers\(\)' apps/ayokoding-www/src/app
   ```
 
-  — acceptance: the `test` exits 0 (the now-purposeless middleware is deleted, per that plan's
-  Phase 4) **and** the `grep -c` prints **0** (Cause A's `await headers()` call is removed from the
-  root layout, per that plan's Phase 1). Falsifiable both ways: today, before that plan merges, the
-  `test` exits 1 (`middleware.ts` still present) and the `grep -c` prints **1** (the call is present at
-  `apps/ayokoding-www/src/app/layout.tsx:24`, verified 2026-08-01). **Corroborating outcome-based
-  check** (the two checks above are cause-based; this one is the effect they should produce): after a
-  fresh `npm exec nx run ayokoding-www:build`,
-  `python3 -c "import json;print(len(json.load(open('apps/ayokoding-www/.next/prerender-manifest.json'))['routes']))"`
-  reads a number **≥ 2000** (close to the ~2,068-page content tree), not the pre-fix baseline of **4**
-  (`dynamicRoutes: 0`, `routes` length 4 — measured 2026-08-01, matching the sibling plan `10`'s own
-  independently-measured figure). This is the same signal
-  `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`'s Phase 0 uses, reproduced here
-  for cross-plan consistency rather than re-derived differently.
+  — acceptance: the `test` exits 0 and `rg` emits no match (exit 1): the now-purposeless middleware
+  is deleted and no current App Router layout awaits `headers()`. **Current-build adjustment:**
+  `src/app/layout.tsx` and `.next/prerender-manifest.json` no longer exist after the upstream Next
+  routing/build changes, so neither is a valid probe. The outcome-based confirmation is instead
+  `npm exec nx run ayokoding-www:test:unit`, including the static-content-route unit test, plus a
+  successful `npm exec nx run ayokoding-www:build`.
 
-- [ ] [AI] **Confirm all 7 course slugs are absent (no collision)** under `<COURSES>` — command:
+- [x] [AI] **Confirm all 7 course slugs are absent (no collision)** under `<COURSES>` — command:
 
   ```bash
   for s in just-enough-c just-enough-cpp linux-os windows-os system-programming just-enough-rust modern-system-programming; do
@@ -221,10 +218,10 @@ No phase may create an additional worktree or branch. The final phase is the onl
   `mkdir -p apps/ayokoding-www/content/en/learn/courses/just-enough-cpp` makes the loop print
   `EXISTS COURSES just-enough-cpp`.
 
-- [ ] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
+- [x] [AI] Establish content baselines: `npm exec nx run ayokoding-www:build` and
       `npm exec nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Create the authored-body slug register** —
+- [x] [AI] **Create the authored-body slug register** —
 
   ```bash
   cat > evidence/authored-body-slugs.txt <<'EOF'
@@ -241,14 +238,14 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **7**, and
   `sort evidence/authored-body-slugs.txt | uniq -d | wc -l` returns **0**.
 
-- [ ] [AI] **Record the authored-body baseline** —
+- [x] [AI] **Record the authored-body baseline** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **7** today; must return **0** at archival (Phase 7). Record in
       `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present, first line is
       `# Learnings: ayokoding-learning-path-07-course-authoring-low-level-systems`.
-- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
+- [x] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
 
   ```bash
   apps/rhino-cli/scripts/rhino-bin.sh md links validate \
@@ -260,7 +257,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
@@ -268,25 +265,24 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] `<PLAN04_SLUGS>` resolved to exactly one path; the trim confirmed (0 of this plan's 7 slugs
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] `<PLAN04_SLUGS>` resolved to exactly one path; the trim confirmed (0 of this plan's 7 slugs
       remain in plan04's register — no assertion made about that register's total line count, which
       this plan does not control).
-- [ ] [AI] `vercel-function-cost-reduction`'s signal confirmed (`middleware.ts` absent; `headers()`
-      call removed from the root layout; the prerender-manifest route count ≥ 2000).
-- [ ] [AI] All 7 course slugs confirmed absent under `<COURSES>` (zero `EXISTS` lines).
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 7 unique slugs; the ABSENT-count baseline of 7 is
+- [x] [AI] `vercel-function-cost-reduction`'s signal confirmed (`middleware.ts` absent, no App Router
+      layout awaits `headers()`, and the static-content-route unit test plus site build pass).
+- [x] [AI] All 7 course slugs confirmed absent under `<COURSES>` (zero `EXISTS` lines).
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 7 unique slugs; the ABSENT-count baseline of 7 is
       recorded.
-- [ ] [AI] Cross-plan link gate green.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed**:
+- [x] [AI] Cross-plan link gate green.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR was opened for this phase and nothing was pushed**:
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
-
-> **Pause Safety**: only the toolchain, the two upstream preconditions, and the slug register were
-> established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
-> indefinitely. To resume: re-run the two blocking-plan verification commands and the baseline build.
+      only the toolchain, the two upstream preconditions, and the slug register were
+  > established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
+  > indefinitely. To resume: re-run the two blocking-plan verification commands and the baseline build.
 
 ---
 
@@ -298,12 +294,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > **Author each course body from its `<SYLLABUS>courses/<id>.md` spec, not from a fresh judgment call.**
 > all 5 land.
 
-- [ ] [AI] `just-enough-c` (Primer · C, `<SYLLABUS>courses/just-enough-c.md`) — convention steps 1–9
+- [x] [AI] `just-enough-c` (Primer · C, `<SYLLABUS>courses/just-enough-c.md`) — convention steps 1–9
       complete; checkers clean (zero CRITICAL/HIGH/MEDIUM) — acceptance:
       `test -d "apps/ayokoding-www/content/en/learn/courses/just-enough-c/learning"` and
       `test -d "apps/ayokoding-www/content/en/learn/courses/just-enough-c/drilling"` both exit 0.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `just-enough-cpp` (Primer · C++, `<SYLLABUS>courses/just-enough-cpp.md`; declares
+- [x] [AI] `just-enough-cpp` (Primer · C++, `<SYLLABUS>courses/just-enough-cpp.md`; declares
       `just-enough-c` a prerequisite — DD-14's dedicated on-ramp) — convention steps 1–9 complete;
       checkers clean — acceptance: the `prerequisites` frontmatter array must list `just-enough-c` as
       a quoted exact element (matching the repo's `prerequisites: ["id1", "id2"]` convention), not
@@ -323,7 +319,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
 
-- [ ] [AI] `linux-os` (By Example · C + shell, `<SYLLABUS>courses/linux-os.md`; declares `just-enough-c`
+- [x] [AI] `linux-os` (By Example · C + shell, `<SYLLABUS>courses/linux-os.md`; declares `just-enough-c`
       and `just-enough-bash` as prerequisites) — convention steps 1–9 complete; checkers clean —
       acceptance:
       `grep -F -q 'just-enough-c' "apps/ayokoding-www/content/en/learn/courses/linux-os/_index.md"`
@@ -332,7 +328,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       exits 0 **and** its `overview.md` states an explicit Linux-family scope boundary against
       `windows-os`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `windows-os` (By Example · C + PowerShell, `<SYLLABUS>courses/windows-os.md`; declares
+- [x] [AI] `windows-os` (By Example · C + PowerShell, `<SYLLABUS>courses/windows-os.md`; declares
       `just-enough-c` a prerequisite) — convention steps 1–9 complete; checkers clean — acceptance:
       `grep -F -q 'just-enough-c' "apps/ayokoding-www/content/en/learn/courses/windows-os/_index.md"`
       exits 0 **and** its `overview.md` states an explicit Windows-family scope boundary against
@@ -350,7 +346,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `system-programming` (By Example · C, `<SYLLABUS>courses/system-programming.md`; declares
+- [x] [AI] `system-programming` (By Example · C, `<SYLLABUS>courses/system-programming.md`; declares
       `just-enough-c` and `linux-os` as prerequisites — authored **last** in this cohort since it
       needs `linux-os`) — convention steps 1–9 complete; checkers clean — acceptance:
       `grep -F -q 'just-enough-c' "apps/ayokoding-www/content/en/learn/courses/system-programming/_index.md"`
@@ -370,25 +366,25 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] **Confirm no manifest file changed across this cohort's whole diff** —
+- [x] [AI] **Confirm no manifest file changed across this cohort's whole diff** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Add all 5 catalog rows** to `tech-docs.md` §Course Library Catalog (already present at
+- [x] [AI] **Add all 5 catalog rows** to `tech-docs.md` §Course Library Catalog (already present at
       authoring time in this plan's own file — verify they match the settled specs, do not re-derive)
       and list all 5 in `<COURSES>_index.md` — acceptance: 5 new list entries present.
 
 ### Phase 1 Gate
 
-- [ ] [AI] All 5 Cohort-A bodies exist:
+- [x] [AI] All 5 Cohort-A bodies exist:
       `for s in just-enough-c just-enough-cpp linux-os windows-os system-programming; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] `just-enough-cpp` declares `just-enough-c`; `linux-os` declares `just-enough-c` and
+- [x] [AI] `just-enough-cpp` declares `just-enough-c`; `linux-os` declares `just-enough-c` and
       `just-enough-bash`; `windows-os` declares `just-enough-c`; `system-programming` declares
       `just-enough-c` and `linux-os`.
-- [ ] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0.
-- [ ] [AI] Catalog rows added for all 5; run `npm exec nx run ayokoding-www:generate-indexes` then `npm exec nx run ayokoding-www:validate-indexes`; zero manifest files
+- [x] [AI] Checkers clean across all 5; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0.
+- [x] [AI] Catalog rows added for all 5; run `npm exec nx run ayokoding-www:generate-indexes` then `npm exec nx run ayokoding-www:validate-indexes`; zero manifest files
       touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
       green; PR `[AI]`-merged; `ayokoding-www` deployed.
 
 > **Pause Safety**: the complete C-family chain (`just-enough-c` → `just-enough-cpp` / `linux-os` /
@@ -403,12 +399,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > `modern-system-programming` references any Cohort-A course), and follows Phase 1 on the same
 > persistent final-delivery branch.
 
-- [ ] [AI] `just-enough-rust` (Primer · Rust, `<SYLLABUS>courses/just-enough-rust.md`) — convention
+- [x] [AI] `just-enough-rust` (Primer · Rust, `<SYLLABUS>courses/just-enough-rust.md`) — convention
       steps 1–9 complete; checkers clean — acceptance:
       `test -d "apps/ayokoding-www/content/en/learn/courses/just-enough-rust/learning"` and
       `test -d "apps/ayokoding-www/content/en/learn/courses/just-enough-rust/drilling"` both exit 0.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `modern-system-programming` (By Example · Rust, `<SYLLABUS>courses/modern-system-programming.md`;
+- [x] [AI] `modern-system-programming` (By Example · Rust, `<SYLLABUS>courses/modern-system-programming.md`;
       declares `just-enough-rust` a prerequisite; states itself as `system-programming`'s (81) Rust
       counterpart — DD-LLS-2) — convention steps 1–9 complete; checkers clean — acceptance:
       `grep -F -q 'just-enough-rust' "apps/ayokoding-www/content/en/learn/courses/modern-system-programming/_index.md"`
@@ -431,12 +427,12 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] **Confirm no manifest file changed across this cohort's whole diff** —
+- [x] [AI] **Confirm no manifest file changed across this cohort's whole diff** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
-- [ ] [AI] **Add both catalog rows** to `tech-docs.md` §Course Library Catalog and list both in
+- [x] [AI] **Add both catalog rows** to `tech-docs.md` §Course Library Catalog and list both in
       `<COURSES>_index.md`.
-- [ ] [AI] **Record the one band-completion signal** — append this fenced block, verbatim with real
+- [x] [AI] **Record the one band-completion signal** — append this fenced block, verbatim with real
       values substituted, directly under this cohort's own section:
 
   ```text
@@ -456,20 +452,38 @@ No phase may create an additional worktree or branch. The final phase is the onl
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
   ```
 
+  ```text
+  BAND: Band 6 (Low-level systems & native-languages half) — ayokoding-learning-path-07
+  PLAN: ayokoding-learning-path-07-course-authoring-low-level-systems
+  LANDED_COURSE_IDS:
+  just-enough-c
+  just-enough-cpp
+  linux-os
+  windows-os
+  system-programming
+  just-enough-rust
+  modern-system-programming
+  GROW_MANIFESTS:
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.json
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.json
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.json
+  FINAL_PR: pending — set only after terminal archival PR merge
+  ```
+
   — acceptance: all seven `LANDED_COURSE_IDS` resolve to a directory under `<COURSES>`; all three
   `GROW_MANIFESTS` paths are the software-engineer-role manifests only (never the `ai-engineer`
   **after** the terminal archival PR merges; keep the merge field pending during intermediate phases.
 
 ### Phase 2 Gate
 
-- [ ] [AI] Both Cohort-B bodies exist:
+- [x] [AI] Both Cohort-B bodies exist:
       `for s in just-enough-rust modern-system-programming; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0**.
-- [ ] [AI] `modern-system-programming` declares `just-enough-rust` and names `system-programming` as
+- [x] [AI] `modern-system-programming` declares `just-enough-rust` and names `system-programming` as
       its counterpart in its own overview.
-- [ ] [AI] Checkers clean across both; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0.
-- [ ] [AI] Catalog rows added for both; run `npm exec nx run ayokoding-www:generate-indexes` then `npm exec nx run ayokoding-www:validate-indexes`; zero manifest files touched.
-- [ ] [AI] The one band-completion signal is prepared with its course IDs and manifest paths; its
+- [x] [AI] Checkers clean across both; `npm exec nx run ayokoding-www:build` and `npm run lint:md` exit 0.
+- [x] [AI] Catalog rows added for both; run `npm exec nx run ayokoding-www:generate-indexes` then `npm exec nx run ayokoding-www:validate-indexes`; zero manifest files touched.
+- [x] [AI] The one band-completion signal is prepared with its course IDs and manifest paths; its
       `FINAL_PR` remains pending until the terminal archival PR merges.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.

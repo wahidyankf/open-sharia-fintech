@@ -1,0 +1,4 @@
+# Lesson binaries are source, not a platform-specific build output.
+!src/
+!src/bin/
+!src/bin/*.rs
