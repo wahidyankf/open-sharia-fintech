@@ -27,7 +27,7 @@ const manifest = PathManifestSchema.parse(
 );
 
 describe("Sharia accounting manifest", () => {
-  it("contains the ordered eleven-course shared accounting foundation and transactional cycle", () => {
+  it("contains the ordered nineteen-course shared accounting spine", () => {
     expect(manifest.pathId).toBe("skills/sharia-accounting");
     expect(manifest.arc).toBe("immediately-effective");
     expect(manifest.courseOrder).toEqual([
@@ -42,6 +42,14 @@ describe("Sharia accounting manifest", () => {
       "fixed-assets-and-depreciation",
       "inventory-and-cogs-accounting",
       "lease-and-intangible-asset-accounting",
+      "multi-currency-accounting-and-fx-translation",
+      "consolidation-and-multi-entity-accounting",
+      "financial-reporting-standards-ifrs-vs-gaap",
+      "audit-controls-and-compliance",
+      "payroll-and-tax-accounting-essentials",
+      "treasury-and-cash-management",
+      "financial-reporting-and-xbrl",
+      "general-ledger-system-architecture",
     ]);
     expect(checkManifestIntegrity(manifest, courseIds)).toEqual({ unresolvedIds: [], duplicateIds: [] });
     expect(checkPrerequisiteConsistency(manifest, prerequisites, courseIds).violations).toEqual([]);

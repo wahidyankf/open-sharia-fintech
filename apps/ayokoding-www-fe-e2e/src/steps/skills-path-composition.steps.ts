@@ -18,6 +18,14 @@ const expectedCourseOrder = [
   "fixed-assets-and-depreciation",
   "inventory-and-cogs-accounting",
   "lease-and-intangible-asset-accounting",
+  "multi-currency-accounting-and-fx-translation",
+  "consolidation-and-multi-entity-accounting",
+  "financial-reporting-standards-ifrs-vs-gaap",
+  "audit-controls-and-compliance",
+  "payroll-and-tax-accounting-essentials",
+  "treasury-and-cash-management",
+  "financial-reporting-and-xbrl",
+  "general-ledger-system-architecture",
 ] as const;
 
 type AccountingWorld = { pathId: string; courseOrder: string[] };
@@ -38,7 +46,7 @@ When("its ordered course context is inspected", async () => {
   expect(activeAccountingWorld).toBeDefined();
 });
 
-Then("it contains exactly 11 course IDs in the shared accounting order", async () => {
+Then("it contains exactly 19 course IDs in the shared accounting order", async () => {
   expect(activeAccountingWorld?.courseOrder).toEqual(expectedCourseOrder);
 });
 
