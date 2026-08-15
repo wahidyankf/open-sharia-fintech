@@ -2,15 +2,15 @@
 
 **RHINO** – Repository Hygiene & INtegration Orchestrator
 
-Command-line tools for repository management and automation. The canonical implementation is Rust (this crate). The Rust rewrite completed 2026-05-23 (the predecessor Go binary remains recoverable from git history).
+Command-line tools for repository management and automation. Canonical implementation is Rust (this crate); the predecessor Go binary is recoverable from git history.
 
 ## What is rhino-cli?
 
-A Rust CLI binary delivering the same observable contract as the original Go implementation — same commands, same flags, same exit codes, same output formats (text / json / markdown). Built with `clap` (derive macros) and consuming the Gherkin specs in [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/).
+A Rust CLI binary with the same commands, flags, exit codes, and output formats (text / json / markdown) as the original Go implementation. Built with `clap` (derive macros), consuming the Gherkin specs in [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/).
 
 ## Status
 
-Production. All commands ported and byte-identical to the original Go binary across shadow-diff corpora. This crate forbids unsafe Rust in both `lib.rs` and `main.rs`; see [`code-quality-standards.md` §Unsafe Code Policy](../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md#unsafe-code-policy).
+Production; byte-identical to the Go binary across shadow-diff corpora. Forbids unsafe Rust in both `lib.rs` and `main.rs`; see [`code-quality-standards.md` §Unsafe Code Policy](../../docs/explanation/software-engineering/programming-languages/rust/code-quality-standards.md#unsafe-code-policy).
 
 ## Quick Start
 
@@ -30,7 +30,7 @@ cargo run --manifest-path apps/rhino-cli/Cargo.toml -- --output xml --help
 
 ## Installation
 
-The crate is local to this monorepo. To produce a standalone binary:
+Local to this monorepo. To produce a standalone binary:
 
 ```bash
 cd apps/rhino-cli
@@ -39,40 +39,38 @@ cargo build --release
 # Or via Nx: nx build rhino-cli → apps/rhino-cli/dist/rhino-cli
 ```
 
-Toolchain is pinned to Rust 1.95.0 via `rust-toolchain.toml`; the first `cargo` call inside this crate auto-bootstraps the toolchain through `rustup`. MSRV is 1.88 (`cucumber 0.23.0` bound).
-
-> **Note (C-06):** `rust-version = "1.88"` in `Cargo.toml` is the _minimum_ compiler version that can build this crate (MSRV). `channel = "1.95.0"` in `rust-toolchain.toml` is the _installed_ toolchain version used by developers and CI. Both are correct — installed ≥ MSRV is the invariant.
+Toolchain pinned to Rust 1.95.0 via `rust-toolchain.toml`; the first `cargo` call auto-bootstraps it through `rustup`. MSRV is 1.88 (`cucumber 0.23.0` bound) — `Cargo.toml`'s `rust-version` is the minimum buildable compiler; `rust-toolchain.toml`'s `channel` is the installed version. Both are correct: installed ≥ MSRV is the invariant.
 
 ## Nx Targets
 
-| Target             | Command                                                                                 |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| `build`            | `cargo build --release` → `dist/rhino-cli`                                              |
-| `lint`             | `cargo clippy --all-targets -- -D warnings`                                             |
-| `typecheck`        | `cargo check --all-targets`                                                             |
-| `test:unit`        | `cargo test --lib` (in-source `#[cfg(test)]` modules)                                   |
-| `test:integration` | `cargo test --tests` (integration tests under `tests/`)                                 |
-| `test:quick`       | `cargo llvm-cov --lib --lcov --fail-under-lines 90` (Phase 1 swaps to native validator) |
-| `specs:coverage`   | Phase 0 stub; Phase 1 wires cucumber-rs spec consumption                                |
-| `run`              | `cargo run --`                                                                          |
-| `install`          | `cargo fetch`                                                                           |
+| Target             | Command                                                 |
+| ------------------ | ------------------------------------------------------- |
+| `build`            | `cargo build --release` → `dist/rhino-cli`              |
+| `lint`             | `cargo clippy --all-targets -- -D warnings`             |
+| `typecheck`        | `cargo check --all-targets`                             |
+| `test:unit`        | `cargo test --lib` (in-source `#[cfg(test)]` modules)   |
+| `test:integration` | `cargo test --tests` (integration tests under `tests/`) |
+| `test:quick`       | `cargo llvm-cov --lib --lcov --fail-under-lines 90`     |
+| `specs:coverage`   | Phase 0 stub; wires cucumber-rs later                   |
+| `run`              | `cargo run --`                                          |
+| `install`          | `cargo fetch`                                           |
 
 ## Global Flags
 
-Global flags (see `src/cli.rs`):
+See `src/cli.rs`:
 
-- `--verbose, -v` — verbose output with timestamps
-- `--quiet, -q` — quiet mode (errors only)
-- `--output, -o text|json|markdown` — output format (default: text). Invalid values exit 1.
-- `--no-color` — disable colored output
-- `--say <msg>` — echo a message to stdout
+- `--verbose, -v` — timestamps
+- `--quiet, -q` — errors only
+- `--output, -o text|json|markdown` — default text; invalid values exit 1
+- `--no-color` — disable color
+- `--say <msg>` — echo to stdout
 - `--help, -h` — print help
 
 ## Specs: E2E Coverage Gap Detection
 
 `specs e2e-coverage validate` detects Gherkin scenarios that `playwright-bdd`'s `missingSteps:
-"skip-scenario"` setting silently converts to `test.fixme(...)` in generated `.spec.js` output,
-checked against a per-project baseline manifest so only _new_ unbound scenarios fail the gate.
+"skip-scenario"` setting silently converts to `test.fixme(...)`, checked against a per-project
+baseline manifest so only _new_ unbound scenarios fail the gate.
 
 ```bash
 cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate \
@@ -91,12 +89,10 @@ cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage valida
 
 Exit codes: `0` on pass (no new unbound scenarios beyond the baseline); non-zero when a new
 `@e2e`-tagged scenario appears as `test.fixme` without a baseline entry, when a declared `@e2e`
-scenario or `Scenario Outline` title is entirely absent from the generated `.spec.js` output (most
-notably an `Examples:` table with zero data rows, which playwright-bdd renders no test at all for —
-this is folded into the same new-gap/baseline flow as an ordinary unbound scenario, so
-`--update-baseline` accepts it like any other gap once the underlying cause is understood and
-either fixed or deliberately deferred), or when `--features-gen` names a directory that does not
-exist (run `npx bddgen` first). See
+scenario or `Scenario Outline` title is entirely absent from the generated `.spec.js` output (e.g.
+an `Examples:` table with zero data rows — folded into the same new-gap/baseline flow as an
+ordinary unbound scenario), or when `--features-gen` names a directory that does not exist (run
+`npx bddgen` first). See
 [`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
 for the full behavior contract.
 
@@ -107,14 +103,13 @@ A new scenario anywhere under
 needs updating in **two** places, not one:
 
 1. the relevant **unit-test module** (e.g. `src/commands/gate/emit.rs`'s `#[cfg(test)]` block) — a
-   plain Rust unit test covering the same behavior, not a step binding, and
-2. **`tests/gate_specs.rs`** — the cucumber harness, the only place that carries actual
+   plain Rust unit test, not a step binding, and
+2. **`tests/gate_specs.rs`** — the cucumber harness, the only place carrying actual
    `#[given]`/`#[when]`/`#[then]` step bindings.
 
-The harness scans the entire feature directory regardless of which change a given scenario belongs
-to, so binding only the unit-test side leaves an undefined-step failure that surfaces on the next
-`test:quick` / pre-push run — after a full commit cycle has already been spent. This has recurred;
-budget for both sites up front.
+The harness scans the entire feature directory regardless of which change a scenario belongs to, so
+binding only the unit-test side leaves an undefined-step failure that surfaces on the next
+`test:quick` / pre-push run. This has recurred; budget for both sites up front.
 
 ```bash
 # Verify BEFORE committing — the narrower --lib filter will not catch it
@@ -122,22 +117,21 @@ cargo test --test gate_specs
 ```
 
 **Author a scenario in the phase that creates its behavior, or an earlier one — never a later one.**
-The harness requires a literal, _passing_ binding for every scenario in the tree at all times, so a
-scenario describing behavior that does not exist yet cannot be bound truthfully; forcing a binding
-means fabricating a fixture that asserts against nothing.
+The harness requires a literal, _passing_ binding for every scenario at all times, so behavior that
+does not exist yet cannot be bound truthfully.
 
 ## Dependency Status
 
-Reviewed 2026-05-23. Policy paths per [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
+Reviewed 2026-05-23 per [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
 
-| Dependency | Pinned | Latest | Path | Decision                                         |
-| ---------- | ------ | ------ | ---- | ------------------------------------------------ |
-| `chrono`   | 0.4.44 | 0.4.44 | A    | Bumped from 0.4.39; patch-only                   |
-| `glob`     | 0.3.3  | 0.3.3  | A    | Bumped from 0.3.2; patch-only                    |
-| `sha2`     | 0.11.0 | 0.11.0 | A    | Bumped from 0.10.9; only `{Digest, Sha256}` used |
-| `tempfile` | 3.27.0 | 3.27.0 | A    | Bumped from 3.14.0; only `TempDir::new()` used   |
+| Dependency | Pinned | Path | Decision                               |
+| ---------- | ------ | ---- | -------------------------------------- |
+| `chrono`   | 0.4.44 | A    | Patch-only bump from 0.4.39            |
+| `glob`     | 0.3.3  | A    | Patch-only bump from 0.3.2             |
+| `sha2`     | 0.11.0 | A    | Bumped from 0.10.9; used API unchanged |
+| `tempfile` | 3.27.0 | A    | Bumped from 3.14.0; used API unchanged |
 
 ## See also
 
-- Migration plan (completed 2026-05-23, `2026-05-23__rhino-cli-rust-rewrite`): documents the Go implementation that preceded this crate (recoverable from git history; not linked here since `plans/done/` is repo-specific and this crate's README is byte-identical across sibling repos)
+- Migration plan (completed 2026-05-23, `2026-05-23__rhino-cli-rust-rewrite`): documents the preceding Go implementation (recoverable from git history; not linked here — `plans/done/` is repo-specific and this README is byte-identical across sibling repos)
 - Gherkin specs (shared with Go binary): [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/)

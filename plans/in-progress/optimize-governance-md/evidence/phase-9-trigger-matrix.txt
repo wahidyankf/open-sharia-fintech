@@ -1,0 +1,158 @@
+Phase 9b-2 — proving `governance-word-budget` / `governance-readme-completeness`
+path-gating fires and skips correctly, on both `pre-push` and `ci`
+====================================================================
+
+Context
+-------
+A trigger list that never fires is worse than no gate — it reads as green. This
+proves both directions on both surfaces for the two gates Phase 9 armed, per
+the falsifiability rule that an acceptance clause must be checkable in both
+directions.
+
+Method
+------
+Isolated throwaway git fixture (not the real ose-public repo), exercised via
+the real CLI binary (`apps/rhino-cli/target/release/rhino-cli`) end-to-end.
+Re-recorded 2026-08-15 under the six mandatory isolation layers required by
+[Git Fixture Isolation](../../../../repo-governance/development/quality/git-fixture-isolation.md)
+— the original transcript (pre-2026-08-15) ran `git reset && git clean -fd`
+with no `GIT_DIR`/`GIT_CEILING_DIRECTORIES`/`GIT_CONFIG_GLOBAL`/`GIT_CONFIG_SYSTEM`
+and no pre-write escape guard, which a PR review correctly flagged: the layers
+were absent, even though no escape actually occurred (the post-run tree was
+clean both times).
+
+Env-var isolation preamble (all `git` and `rhino-cli` invocations below run
+with this environment; verbatim, not paraphrased):
+
+  GIT_DIR=<fixture>/.git
+  GIT_CEILING_DIRECTORIES=<fixture>
+  GIT_CONFIG_GLOBAL=/dev/null
+  GIT_CONFIG_SYSTEM=/dev/null
+
+`GIT_WORK_TREE` is deliberately **not** set (Standard 2's plain-write-sequence
+exception — CWD is already pinned to the fixture root for every command, and
+the escape guard below relies on `--show-toplevel` resolving from `GIT_DIR`
+rather than echoing a set `GIT_WORK_TREE`).
+
+Escape guard (Standard 4): before every write (`init`, `config`, `add`,
+`commit`, `reset --hard`, `clean -fd`), `git rev-parse --show-toplevel` was
+asserted to canonicalize to the fixture root under the same four env vars.
+The guard ran clean on every call this session — no trip, no fallback to
+ambient discovery.
+
+Standard 6 (process rule): the fixture was built, exercised, and destroyed
+from this session's scratchpad directory, never diagnosed against or from the
+primary `ose-public` checkout.
+
+Fixture gate declarations (verbatim from `repo-config.yml`, current shipped
+4-entry `governance-readme-completeness` scope per the Phase 9 narrowing —
+`prd.md` FR-3.7):
+
+  governance-word-budget:
+    pre-push/ci trigger: repo-governance/, .claude/, .cursor/, .codex/,
+      .opencode/, .pi/, .amazonq/, AGENTS.md, CLAUDE.md, repo-config.yml
+
+  governance-readme-completeness:
+    pre-push/ci trigger: repo-governance/, .claude/, .codex/, .pi/,
+      repo-config.yml
+
+Case 1 — `repo-governance/README.md` staged (expect BOTH execute)
+-------------------------------------------------------------------
+  $ git status --short
+  A  repo-governance/README.md
+  $ rhino-cli gate run --surface=pre-push --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=pre-push --only governance-readme-completeness
+  Running gate governance-readme-completeness
+  exit: 0
+  $ rhino-cli gate run --surface=ci --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=ci --only governance-readme-completeness
+  Running gate governance-readme-completeness
+  exit: 0
+Result: both gates EXECUTED on both surfaces — matches expectation.
+
+Case 2 — `apps/ayokoding-www/content/en/lesson-01.md` staged (expect BOTH skip)
+---------------------------------------------------------------------------------
+  $ git status --short
+  A  apps/ayokoding-www/content/en/lesson-01.md
+  $ rhino-cli gate run --surface=pre-push --only governance-word-budget
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=pre-push --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=ci --only governance-word-budget
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=ci --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+Result: both gates SKIPPED (silent skip per `gate::run`'s path-gated `continue`)
+on both surfaces — matches expectation.
+
+Case 3 — `.opencode/agents/foo.md` staged (expect word-budget EXECUTE, readme-completeness SKIP)
+-----------------------------------------------------------------------------------------------------
+  $ git status --short
+  A  .opencode/agents/foo.md
+  $ rhino-cli gate run --surface=pre-push --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=pre-push --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=ci --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=ci --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+Result: mixed as expected — `governance-word-budget`'s trigger list includes
+`.opencode/`, `governance-readme-completeness`'s does not.
+
+Case 4 — `plans/in-progress/foo/delivery.md` staged (expect BOTH skip)
+--------------------------------------------------------------------------
+  $ git status --short
+  A  plans/in-progress/foo/delivery.md
+  $ rhino-cli gate run --surface=pre-push --only governance-word-budget
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=pre-push --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=ci --only governance-word-budget
+  exit: 0   (no "Running gate" line)
+  $ rhino-cli gate run --surface=ci --only governance-readme-completeness
+  exit: 0   (no "Running gate" line)
+Result: both gates SKIPPED on both surfaces — matches expectation.
+
+Case 5 — `repo-config.yml` staged (expect BOTH execute)
+---------------------------------------------------------
+  $ git status --short
+  M  repo-config.yml
+  $ rhino-cli gate run --surface=pre-push --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=pre-push --only governance-readme-completeness
+  Running gate governance-readme-completeness
+  exit: 0
+  $ rhino-cli gate run --surface=ci --only governance-word-budget
+  Running gate governance-word-budget
+  exit: 0
+  $ rhino-cli gate run --surface=ci --only governance-readme-completeness
+  Running gate governance-readme-completeness
+  exit: 0
+Result: both gates EXECUTED on both surfaces — matches expectation.
+
+Note on `governance-readme-index`
+----------------------------------
+Not part of this proof — its scope is `all-file-type` (unconditional), so it
+was never dark-launched and always executes regardless of path. Verified
+separately throughout Phases 1-8 (e.g. `phase-1-ci-path-gated.txt` and the
+real-repo `gate run --surface=pre-push` runs recorded elsewhere in this plan).
+
+Conclusion
+----------
+All 5 cases match delivery.md §9b-2's stated expectations exactly. Both gates'
+`path-gated` trigger lists fire and skip correctly on both `pre-push` and `ci`.
+The escape guard never tripped across setup, all 5 reset/clean cycles, and
+teardown. Fixture directory removed after this evidence was recorded (verified
+via a post-removal directory-existence check) — no artifacts left in the
+working repo.
+
+Date: 2026-08-15 (original); re-recorded 2026-08-15 under full six-layer
+isolation per PR review.

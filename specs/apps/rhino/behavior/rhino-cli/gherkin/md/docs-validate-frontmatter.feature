@@ -31,8 +31,15 @@ Feature: Docs Frontmatter Validation
     Then the command exits with a failure code
     And the frontmatter output identifies the wrong category value
 
-  Scenario: Governance doc with only title passes the lighter schema
+  Scenario: Governance doc with only title fails once when_to_use and description are armed
     Given a governance doc carrying only a title frontmatter field
+    When the developer runs docs validate-frontmatter
+    Then the command exits with a failure code
+    And the frontmatter output identifies the missing when-to-use field
+    And the frontmatter output identifies the missing description field
+
+  Scenario: Governance doc with title, description, and when_to_use passes the lighter schema
+    Given a governance doc with title, description, and when_to_use frontmatter
     When the developer runs docs validate-frontmatter
     Then the command exits successfully
     And the frontmatter output reports zero fail-level findings

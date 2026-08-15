@@ -22,12 +22,16 @@ word ceiling (progressive disclosure applied to itself).
 
 1. **Pre-push (primary)**: `.husky/pre-push` runs `governance word-budget validate` once armed,
    gated on changed paths touching a monitored surface.
-2. **Pre-commit backstop**: `rhino-cli convention audit` includes the word-budget category.
-3. **PR quality gate (CI)**: `npx nx run rhino-cli:governance-word-budget:validation` runs on every
+2. **PR quality gate (CI)**: `npx nx run rhino-cli:governance-word-budget:validation` runs on every
    PR and push to `main`.
-4. **Deterministic preflight**: `rhino-cli repo-governance audit` includes the category alongside
+3. **Deterministic preflight**: `rhino-cli repo-governance audit` includes the category alongside
    `layer-coherence`, `traceability-audit`, and `vendor-audit`, so `repo-rules-checker` consumes the
    findings rather than re-deriving them.
+
+No pre-commit surface is declared for this gate (FR-1.14): a whole-tree scan on every commit buys
+no additional coverage over the pre-push/CI enforcement points above, and
+`rhino-cli convention audit` (`apps/rhino-cli/src/commands/convention_audit.rs`) does not include a
+word-budget member.
 
 ## When the Gate Fails
 

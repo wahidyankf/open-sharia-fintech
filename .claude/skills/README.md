@@ -36,8 +36,8 @@ See [Platform bindings](../../docs/reference/platform-bindings.md).
 Give it one clear job. Put the essential procedure in `SKILL.md`; link to
 deeper material in `reference/` instead of repeating it. State boundaries,
 especially around generated files, credentials, and destructive actions. See
-[AI agents](../../repo-governance/development/agents/ai-agents.md) and the
-[agent-development skill](agent-developing-agents/README.md).
+[AI agents](../../repo-governance/development/agents/ai-agents.md) and the agent-development skill
+(listed in the catalog below).
 
 ## Skill Catalog
 

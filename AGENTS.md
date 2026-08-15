@@ -5,8 +5,8 @@
 
 ## Repository Overview
 
-**open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha. Trunk Based
-Development on `main`. Node.js 24 (Volta), npm. Naming: `[domain]-www` (site), `[domain]-app-web`
+**open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha. Trunk-Based
+Dev on `main`. Node.js 24 (Volta), npm. Naming: `[domain]-www` (site), `[domain]-app-web`
 (client), `[domain]-be` (backend); exception `beavernest-app`.
 
 **See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md)
@@ -32,13 +32,14 @@ npm run doctor -- --fix
 ## Quality Gates
 
 Markdown auto-linted via hooks/CI. Cross-language lint at warning-and-above. Instruction files carry
-a word budget; remediation is progressive disclosure.
+a word budget; READMEs need annotated indexes; remediation is progressive disclosure.
 
-**See**: [governance-word-budget.md](./repo-governance/conventions/structure/governance-word-budget.md)
+**See**: [governance-word-budget.md](./repo-governance/conventions/structure/governance-word-budget.md),
+[governance-readme-completeness.md](./repo-governance/conventions/structure/governance-readme-completeness.md)
 
 ## Git Workflow
 
-`main` is the sole integration target; `prod-*`/`stag-*` deploy targets, never committed to
+`main` is the sole integration target; `prod-*`/`stag-*` deploy targets, never committed
 directly. Conventional Commits, imperative, no period. After a rebase/pull/merge lands foreign
 commits, read the full diff first.
 

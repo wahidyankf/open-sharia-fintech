@@ -211,23 +211,36 @@ subdirectory contains a `README.md`, then check `test -e <dir>/README.md`]
 
 **In scope** (word budget): `repo-governance/**/*.md`, `.claude/**/*.md`, `.cursor/**/*.md`,
 `.codex/**/*.md`, `.opencode/**/*.md`, `.pi/**/*.md`, `.amazonq/**/*.md`, root `AGENTS.md`,
-root `CLAUDE.md` — **including generated mirrors**.
+root `CLAUDE.md` — **including generated mirrors** — plus a separate, blanket `**/README.md`
+surface (700/900/900-word thresholds) that matches every `README.md` in the repo regardless of
+tree, including `apps/**` and `libs/**` — see the "Out of scope" note below for the trees this
+surface is explicitly excluded from via `args.exclude`.
 
 **In scope** (README index, `orphan`/`ghost` — `governance-readme-index`): the gate's current
 `DEFAULT_PATHS`, unchanged through the Phase 1 rename: `repo-governance/`, `.claude/agents/`,
 `.claude/skills/`, `docs/explanation/software-engineering/`.
 
 **In scope** (README completeness, `missing`/`unannotated` — `governance-readme-completeness`,
-new, dark-launched): the wider FR-3.7 list — `repo-governance/`, `.claude/`, `.codex/`, `.pi/`,
-`docs/`, `specs/`. **Not** the generated mirror trees — a 94-entry annotated index
-[Repo-grounded, verified 2026-08-13] fits no defensible ceiling, and nobody navigates
-`.opencode/agents/` by README. Mirrors stay fully inside the word budget.
+armed Phase 9): `repo-governance/`, `.claude/`, `.codex/`, `.pi/` — a 4-entry list. FR-3.7
+originally scoped this wider, also adding `docs/` and `specs/`; narrowed to this list at the
+Phase 9 (`ose-public`) / Phase 16 (`ose-private`) arming step by user decision (word/readme-budget
+gates exist to optimize agent context, not to police human-facing documentation — see `prd.md`
+FR-3.7 and `delivery.md`'s Phase 9 execution log). **Not** the generated mirror trees — a
+94-entry annotated index [Repo-grounded, verified 2026-08-13] fits no defensible ceiling, and
+nobody navigates `.opencode/agents/` by README. Mirrors stay fully inside the word budget.
 
 **In scope** (frontmatter `when_to_use`): `repo-governance/**/*.md` only.
 
-**Out of scope**: `plans/**` (all three gates), `apps/**`, `libs/**`, root
-`README.md`/`CONTRIBUTING.md`/`LICENSING-NOTICE.md`, `ose-primer`, and the plan documents in
-this folder.
+**Out of scope** (README index/completeness and frontmatter, all three): `plans/**`, `apps/**`,
+`libs/**`, `CONTRIBUTING.md`/`LICENSING-NOTICE.md`, `ose-primer`, and the plan documents in this
+folder. **`apps/**`, `libs/**`, and root `README.md` are not out of scope for the word budget** —
+its blanket `**/README.md` surface (declared above) matches every `README.md` in the repo,
+including `apps/**/README.md`, `libs/**/README.md`, and root `README.md` itself (currently 856
+words, WARN band). This PR's own `apps/rhino-cli/README.md` trim (1041 → 884 words) exists to
+satisfy that surface. `plans/**`, `docs/`, `specs/`, `.fvm/`, and `.fvm-cache/` are excluded from
+the word budget via `governance-word-budget`'s `args.exclude` (`repo-config.yml`); `CONTRIBUTING.md`
+and `LICENSING-NOTICE.md` are excluded by construction — neither is named `README.md`, so no
+covered surface glob matches either.
 
 A generated mirror that violates the word budget is **never hand-edited** — the fix belongs in
 `.claude/` source or in the binding generator.

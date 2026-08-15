@@ -1259,6 +1259,14 @@ fn given_fm_gov_title_only(w: &mut DocsWorld) {
     );
 }
 
+#[given("a governance doc with title, description, and when_to_use frontmatter")]
+fn given_fm_gov_title_description_when_to_use(w: &mut DocsWorld) {
+    w.write(
+        "repo-governance/conventions/foo.md",
+        "---\ntitle: T\ndescription: D\nwhen_to_use: W\n---\n\nBody.\n",
+    );
+}
+
 #[given(
     "a software-engineering doc with title, description, category tutorial, subcategory, and tags frontmatter"
 )]
@@ -1330,6 +1338,24 @@ fn then_fm_missing_title(w: &mut DocsWorld) {
 fn then_fm_missing_category(w: &mut DocsWorld) {
     assert!(
         w.stdout().contains("missing-category"),
+        "got: {}",
+        w.stdout()
+    );
+}
+
+#[then("the frontmatter output identifies the missing when-to-use field")]
+fn then_fm_missing_when_to_use(w: &mut DocsWorld) {
+    assert!(
+        w.stdout().contains("missing-when-to-use"),
+        "got: {}",
+        w.stdout()
+    );
+}
+
+#[then("the frontmatter output identifies the missing description field")]
+fn then_fm_missing_description(w: &mut DocsWorld) {
+    assert!(
+        w.stdout().contains("missing-description"),
         "got: {}",
         w.stdout()
     );

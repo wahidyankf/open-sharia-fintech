@@ -188,6 +188,31 @@ pub fn merged_budget_config(repo_root: &Path) -> Option<BudgetConfig> {
     repo_config.governance_word_budget
 }
 
+/// Returns the `args.exclude` list registered against the `governance-word-budget`
+/// gate in `repo-config.yml`'s `gates:` registry, or an empty vector when no such
+/// gate is registered (e.g. before Phase 9 arms it, or in a standalone test
+/// config that omits `gates:` entirely).
+///
+/// This is the single source [`check_instruction_sizes`]'s `excludes` parameter
+/// should be seeded from at every call site — not only the `gate run`
+/// pre-push/CI path, which already sees this list because `fixed_arguments`
+/// materializes `args.exclude` into `--exclude` flags before invoking the
+/// command. The bare `governance word-budget validate` CLI entry point and the
+/// `repo-governance audit --include-category governance-word-budget` path both
+/// read `repo-config.yml` directly through this function instead of silently
+/// defaulting to no exclusions.
+#[must_use]
+pub fn registered_excludes(repo_root: &Path) -> Vec<String> {
+    let repo_config = crate::application::repo_config::load_or_default(repo_root);
+    repo_config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "governance-word-budget")
+        .and_then(|gate| gate.args.get("exclude"))
+        .cloned()
+        .unwrap_or_default()
+}
+
 // ---------------------------------------------------------------------------
 // classify
 // ---------------------------------------------------------------------------
@@ -281,11 +306,22 @@ fn resolved_tree_message(size: u64, rt: &ResolvedTree, severity: &Severity) -> S
 ///
 /// Returns one [`Finding`] per matched file that is not within budget (`Warn`
 /// or `Fail`). Globs that match no files produce no findings. `Ok`-severity
-/// files are not included in the result.
+/// files are not included in the result. `excludes` holds repo-relative path
+/// **prefixes**, matched with a plain `str::starts_with` — not globs, unlike
+/// the identically-named `--exclude` flag on `md links validate`/`md mermaid
+/// validate` (`readme_index.rs`'s `matches_any_glob`,
+/// `governance_audit.rs`'s `exclude_globs`). `.opencode/skills/` excludes
+/// everything under that directory; `.opencode/skills/*` matches nothing
+/// (there is no literal path starting with a `*` character). Not a per-file
+/// waiver on an in-scope surface (FR-1.5 still forbids that), but a way to
+/// keep a broad glob like `**/README.md` from reaching trees the
+/// `governance-word-budget:` surfaces list was never meant to cover (e.g.
+/// `plans/done/`, a local `.fvm/` cache).
 pub fn check_instruction_sizes(
     fs: &dyn Fs,
     repo_root: &Path,
     config: &BudgetConfig,
+    excludes: &[String],
 ) -> Vec<Finding> {
     // Pass 1: select the winning surface per path.
     let mut winners: HashMap<PathBuf, &Surface> = HashMap::new();
@@ -303,6 +339,14 @@ pub fn check_instruction_sizes(
             // see `SKIP_DIRS`. `glob::glob` has no ignore semantics of its
             // own, so this filters matched paths post hoc.
             if is_in_skipped_dir(&entry) {
+                continue;
+            }
+            let rel = entry.strip_prefix(repo_root).unwrap_or(&entry);
+            let rel_str = rel.to_string_lossy();
+            if excludes
+                .iter()
+                .any(|prefix| rel_str.starts_with(prefix.as_str()))
+            {
                 continue;
             }
             // Later-declared surfaces overwrite earlier ones for the same
@@ -566,7 +610,7 @@ resolved_tree:
         let tmp = TempDir::new().unwrap();
         fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         let config = simple_config("AGENTS.md", 400, 500, 500);
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, Severity::Fail);
         assert_eq!(findings[0].path, "AGENTS.md");
@@ -576,7 +620,7 @@ resolved_tree:
     fn check_no_finding_for_absent_glob() {
         let tmp = TempDir::new().unwrap();
         let config = simple_config(".github/copilot-instructions.md", 400, 500, 500);
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert!(findings.is_empty());
     }
 
@@ -585,7 +629,7 @@ resolved_tree:
         let tmp = TempDir::new().unwrap();
         fs::write(tmp.path().join("AGENTS.md"), n_words(200)).unwrap();
         let config = simple_config("AGENTS.md", 400, 500, 500);
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert!(findings.is_empty(), "ok-severity files produce no finding");
     }
 
@@ -594,7 +638,7 @@ resolved_tree:
         let tmp = TempDir::new().unwrap();
         fs::write(tmp.path().join("AGENTS.md"), n_words(450)).unwrap();
         let config = simple_config("AGENTS.md", 400, 500, 500);
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, Severity::Warn);
     }
@@ -604,7 +648,7 @@ resolved_tree:
         let tmp = TempDir::new().unwrap();
         fs::write(tmp.path().join("AGENTS.md"), n_words(600)).unwrap();
         let config = simple_config("AGENTS.md", 400, 500, 500);
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert_eq!(findings.len(), 1);
         let msg = &findings[0].message;
         assert!(
@@ -834,7 +878,7 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         for (_, path) in cases {
             let f = findings
                 .iter()
@@ -880,7 +924,7 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert!(
             findings.iter().all(|f| !f.path.contains("ayokoding-www")),
             "FR-1.3: apps/ is not a covered surface and must never produce a finding: {findings:?}"
@@ -919,7 +963,7 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         let f = findings
             .iter()
             .find(|f| f.path == ".opencode/agents/plan-checker.md")
@@ -1168,7 +1212,7 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert_eq!(
             findings.len(),
             1,
@@ -1212,7 +1256,7 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert!(
             findings.is_empty(),
             "select-then-classify: the winning (more specific) surface's own Ok verdict must \
@@ -1255,10 +1299,53 @@ resolved_tree:
                 fail: 1_500,
             },
         };
-        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config);
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &[]);
         assert!(
             findings.iter().all(|f| !f.path.contains("node_modules")),
             "no finding path may contain node_modules: {findings:?}"
+        );
+        assert_eq!(
+            findings.len(),
+            1,
+            "the first-party README.md at repo root must still be reported: {findings:?}"
+        );
+        assert_eq!(findings[0].path, "README.md");
+    }
+
+    // -----------------------------------------------------------------------
+    // `excludes` — path-prefix exemption for the gate/command layer, not the
+    // config schema (FR-1.5 still forbids an exempt/allow/ignore key there).
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn check_instruction_sizes_excludes_matching_prefixes() {
+        let tmp = TempDir::new().unwrap();
+        fs::create_dir_all(tmp.path().join("plans/done/some-plan")).unwrap();
+        fs::write(
+            tmp.path().join("plans/done/some-plan/README.md"),
+            n_words(1_000),
+        )
+        .unwrap();
+        fs::write(tmp.path().join("README.md"), n_words(1_000)).unwrap();
+        let config = BudgetConfig {
+            surfaces: vec![Surface {
+                glob: "**/README.md".to_string(),
+                target: 400,
+                warn: 900,
+                fail: 900,
+            }],
+            resolved_tree: ResolvedTree {
+                root: "CLAUDE.md".to_string(),
+                target: 1_200,
+                warn: 1_500,
+                fail: 1_500,
+            },
+        };
+        let excludes = vec!["plans/".to_string()];
+        let findings = check_instruction_sizes(&RealFs, tmp.path(), &config, &excludes);
+        assert!(
+            findings.iter().all(|f| !f.path.starts_with("plans/")),
+            "no finding path may start with an excluded prefix: {findings:?}"
         );
         assert_eq!(
             findings.len(),

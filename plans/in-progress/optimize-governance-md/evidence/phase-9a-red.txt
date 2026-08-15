@@ -1,0 +1,116 @@
+Phase 9a — RED: oversized fixture makes pre-push fail
+====================================================================
+
+Part 1 — governance-word-budget catches a whole-tree oversized file
+---------------------------------------------------------------------
+Method: isolated throwaway git fixture (not the real ose-public repo, no
+origin configured), exercised via the real CLI binary
+(apps/rhino-cli/target/release/rhino-cli) end-to-end.
+
+Re-recorded 2026-08-15 under the six mandatory isolation layers required by
+[Git Fixture Isolation](../../../../repo-governance/development/quality/git-fixture-isolation.md)
+— the original transcript ran `git add`/`git init`-adjacent writes against
+the fixture with no `GIT_DIR`/`GIT_CEILING_DIRECTORIES`/`GIT_CONFIG_GLOBAL`/
+`GIT_CONFIG_SYSTEM` and no pre-write escape guard, which a PR review correctly
+flagged: the layers were absent, even though the post-run tree was clean and
+no escape occurred.
+
+Env-var isolation preamble (all `git`/`rhino-cli` invocations below):
+  GIT_DIR=<fixture>/.git
+  GIT_CEILING_DIRECTORIES=<fixture>
+  GIT_CONFIG_GLOBAL=/dev/null
+  GIT_CONFIG_SYSTEM=/dev/null
+(`GIT_WORK_TREE` deliberately unset — Standard 2's plain-write-sequence
+exception.) Escape guard (Standard 4) asserted `git rev-parse --show-toplevel`
+resolves to the fixture root, canonicalized, before `init`, both `config`
+writes, and `add` — no trip. Built, exercised, and destroyed from this
+session's scratchpad directory, never diagnosed in the primary checkout
+(Standard 6).
+
+Fixture `repo-config.yml` (minimal governance-word-budget: + the exact
+FR-1.10 `governance-word-budget` gate block):
+
+  governance-word-budget:
+    surfaces:
+      - glob: "repo-governance/**/*.md"
+        target: 400
+        warn: 500
+        fail: 500
+      - glob: "**/README.md"
+        target: 700
+        warn: 900
+        fail: 900
+    resolved_tree:
+      root: "CLAUDE.md"
+      target: 1200
+      warn: 1500
+      fail: 1500
+
+  gates:
+    - id: governance-word-budget
+      type: check
+      command: governance word-budget validate
+      kind: rhino-cli
+      ci-group: governance
+      surfaces:
+        pre-push: &word-budget-triggers
+          scope: path-gated
+          trigger: [repo-governance/, .claude/, .cursor/, .codex/,
+                     .opencode/, .pi/, .amazonq/, AGENTS.md, CLAUDE.md,
+                     repo-config.yml]
+        ci: *word-budget-triggers
+
+Fixture content:
+  - repo-governance/development/agents/ai-agents.md — 664 words (over the
+    500-word fail ceiling), matching the Gherkin scenario's exact path
+  - repo-governance/conventions/formatting/linking.md — staged/added
+    (the ONLY file git-staged; ai-agents.md itself was never staged)
+
+  $ git add repo-governance/conventions/formatting/linking.md repo-config.yml
+  $ git status --short
+  A  repo-config.yml
+  A  repo-governance/conventions/formatting/linking.md
+  ?? repo-governance/development/          (ai-agents.md unstaged)
+
+  $ rhino-cli gate run --surface=pre-push
+  Running gate governance-word-budget
+  WORD BUDGET: 1 finding(s)
+    [FAIL] repo-governance/development/agents/ai-agents.md — repo-governance/development/agents/ai-agents.md is 664 words (over 500-word fail limit); apply progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md
+  Error: word-budget audit failed: 1 Fail finding(s); apply progressive disclosure — see repo-governance/principles/content/progressive-disclosure.md
+  Error: gate governance-word-budget failed
+  exit=1
+
+Result: CONFIRMED — exit 1, the finding names the fixture
+(repo-governance/development/agents/ai-agents.md), even though only an
+unrelated file (linking.md) was staged. This proves FR-1.12: a matched
+trigger validates the whole covered tree, not just the changed files.
+
+Part 2 — frontmatter WARN pre-arm baseline (real ose-public checkout)
+---------------------------------------------------------------------
+A temporary fixture file was added at
+repo-governance/development/zz-fixture-missing-frontmatter.md, with valid
+YAML frontmatter but no `when_to_use` or `description` fields:
+
+  $ rhino-cli md frontmatter validate
+    .../zz-fixture-missing-frontmatter.md  [warn]  missing-description — recommended field "description" is missing or empty
+    .../zz-fixture-missing-frontmatter.md  [warn]  missing-when-to-use — recommended field "when_to_use" is missing or empty
+
+Result: CONFIRMED — both findings report at [warn], not [fail]. This is
+the pre-arm baseline; Phase 9b's FR-4 step flips
+`frontmatter.rs::validate_governance_schema`'s `KIND_MISSING_WHEN_TO_USE`
+and `description` findings from `SEVERITY_WARN` to `mk_fail()`, scoped to
+`GOVERNANCE_DOC_PREFIXES`.
+
+Cleanup
+-------
+Both fixtures removed after evidence was recorded — throwaway scratch git
+repo deleted entirely (verified via a post-removal directory-existence check
+on the re-recorded run); the real-repo frontmatter fixture file deleted
+(`git status --short` confirms a clean tree, aside from pre-existing
+unrelated foreign WIP in .vscode/settings.json and
+apps/beavernest-app-web-e2e/, left untouched).
+
+Acceptance: the pre-push surface exits 1 and names the fixture — MET.
+
+Date: 2026-08-15 (original); Part 1 re-recorded 2026-08-15 under full
+six-layer isolation per PR review.

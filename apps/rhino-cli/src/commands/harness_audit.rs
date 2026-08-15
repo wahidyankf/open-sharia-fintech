@@ -109,7 +109,9 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
             output_format,
         ),
         "validate-word-budget" => governance_validate_word_budget::run(
-            &governance_validate_word_budget::ValidateWordBudgetArgs {},
+            &governance_validate_word_budget::ValidateWordBudgetArgs {
+                exclude: Vec::new(),
+            },
             output_format,
         ),
         _ => Err(anyhow!("unknown harness validator: {name}")),
