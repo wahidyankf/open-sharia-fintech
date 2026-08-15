@@ -90,9 +90,9 @@ preconditions, and deploys once.
 
 This plan produces content only and has exactly one final PR. It has no review-cycle requirement. Before pushing that PR:
 
-- [ ] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
-- [ ] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
-- [ ] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
+- [x] [AI] Inspect the staged diff and confirm it contains no machine-secret value.
+- [x] [AI] Use a scoped Conventional Commit (for example, `docs(plans): refresh course-preparation backlog`).
+- [x] [AI] Run `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`; acceptance: exits 0 for the affected scope.
 - [ ] [AI] Push the single branch, then wait for `.github/workflows/pr-quality-gate.yml`; acceptance: the PR quality gate is green before merge.
 
 ## Depends-on
@@ -1004,16 +1004,16 @@ pipeline concurrently through review, bounded by the cap.
 - [x] [AI] Update any other READMEs that reference this plan, and notify the four downstream sibling
       plans whose `Depends-on` tables name this plan by folder path — acceptance: no sibling plan's
       link to this folder is left dangling.
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness to done`.
 
 ### Phase 9 Gate
 
-- [ ] [AI] All 15 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline
+- [x] [AI] All 15 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline
       of 15); the slug register holds 15 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The cross-plan link gate is green.
-- [ ] [AI] Plan folder is under
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The cross-plan link gate is green.
+- [x] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`;
       all READMEs updated; archival committed.
 - [ ] [AI] The sole archival PR was opened only after the archival commit; its secret scan, local quality checks, and
@@ -1026,12 +1026,12 @@ pipeline concurrently through review, bounded by the cap.
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — one course bundle per commit is the natural unit here.
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
+- [x] [AI] Commit changes thematically — one course bundle per commit is the natural unit here.
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
       e.g. `feat(ayokoding-www): add distributed-systems course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
       band-authoring plans are being authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
