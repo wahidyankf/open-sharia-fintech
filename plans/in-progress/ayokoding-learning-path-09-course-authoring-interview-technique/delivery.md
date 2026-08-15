@@ -324,7 +324,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
 ### The 5 courses
 
-- [ ] [AI] `coding-interview` (By Example · Python, patterns language-agnostic; 24 concepts, 56 worked
+- [x] [AI] `coding-interview` (By Example · Python, patterns language-agnostic; 24 concepts, 56 worked
       examples, settled per `<SYLLABUS_ROOT>/coding-interview.md`, 282 lines) — reload LeetCode-style
       pattern recognition + time-boxed problem-solving narration; hosts the interview-loop map —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
@@ -332,14 +332,14 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       stated).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `take-home-and-live-coding` (By Example · Python; 22 concepts, 50 worked examples, settled
+- [x] [AI] `take-home-and-live-coding` (By Example · Python; 22 concepts, 50 worked examples, settled
       per `<SYLLABUS_ROOT>/take-home-and-live-coding.md`, 269 lines) — time-boxed take-home + observed
       live/pair technique: scope, test, README hygiene, thinking aloud — acceptance: all 9 convention
       steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'assumes' "<COURSES>take-home-and-live-coding/overview.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] `system-design-interview` (Annotated-concept · no code; 22 concepts, 44 worked scenarios,
+- [x] [AI] `system-design-interview` (Annotated-concept · no code; 22 concepts, 44 worked scenarios,
       settled per `<SYLLABUS_ROOT>/system-design-interview.md`, 263 lines; forward-links
       `system-design`) — the senior/staff system-design interview rubric + whiteboard flow —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
@@ -360,7 +360,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 
-- [ ] [AI] `behavioral-and-leadership-interviews` (Annotated-concept · no code; 22 concepts, 42 worked
+- [x] [AI] `behavioral-and-leadership-interviews` (Annotated-concept · no code; 22 concepts, 42 worked
       scenarios, settled per `<SYLLABUS_ROOT>/behavioral-and-leadership-interviews.md`, 256 lines) —
       convention complete; checkers clean — coverage acceptance: the learning track explicitly covers
       framing an employment gap, a layoff, and a re-entry story, and treats senior/staff/EM leadership
@@ -381,7 +381,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 
-- [ ] [AI] **Verify the refresh register across all four interview courses** — each course's
+- [x] [AI] **Verify the refresh register across all four interview courses** — each course's
       `overview.md` states it assumes prior professional experience and frames the material as
       technique/breadth refresh, never a from-zero concept teach. Verify:
       `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews; do grep -F -q -i "assumes" "<COURSES>$s/overview.md" || echo "MISSING $s"; done | grep -c .`
@@ -397,7 +397,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
     And none teaches core concepts from zero
   ```
 
-- [ ] [AI] `capstone-interview-loop` (Interview milestone · Python + prose; integrates the four
+- [x] [AI] `capstone-interview-loop` (Interview milestone · Python + prose; integrates the four
       courses above, no new concepts of its own, settled per
       `<SYLLABUS_ROOT>/capstone-interview-loop.md`, 98 lines; five ordered artefacts: coding round,
       take-home + live round, system-design walkthrough, behavioral mock round, score sheet) —
@@ -419,15 +419,29 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually edit `<COURSES>_index.md`
+- [x] [AI] Run `npm exec nx run ayokoding-www:generate-indexes`; do not manually edit `<COURSES>_index.md`
       ID, in the order authored above — acceptance:
       `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews capstone-interview-loop; do grep -F -q "$s" "<COURSES>_index.md" || echo "MISSING $s"; done | grep -c .`
       returns **0**.
 
-- [ ] [AI] **Record the one band-completion signal** — append the following fenced `text` block,
+- [x] [AI] **Record the one band-completion signal** — append the following fenced `text` block,
       verbatim in structure, to this file on `final-delivery`; downstream work consumes it only after
       this plan's terminal archival PR merges
       immediately below this step:
+
+  ```text
+  BAND: Band 9 — Interview-technique courses
+  PLAN: ayokoding-learning-path-09-course-authoring-interview-technique
+  LANDED_COURSE_IDS:
+    coding-interview
+    take-home-and-live-coding
+    system-design-interview
+    behavioral-and-leadership-interviews
+    capstone-interview-loop
+  GROW_MANIFESTS:
+    <MANIFESTS>careers/interview-ready/software-engineer.json
+    <MANIFESTS>careers/fundamentally-strong/software-engineer.json
+  ```
 
   ```text
   BAND: Band 9 — Interview-technique courses
@@ -461,20 +475,20 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] All 5 bodies exist:
+- [x] [AI] All 5 bodies exist:
       `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews capstone-interview-loop; do test -d "<COURSES>$s" || echo "ABSENT $s"; done | grep -c .`
       returns **0** (returns 5 before this phase).
-- [ ] [AI] The refresh-register loop returns 0 across all four interview courses; the
+- [x] [AI] The refresh-register loop returns 0 across all four interview courses; the
       employment-gap/layoff/re-entry loop returns 0; `capstone-interview-loop` declares all four as
       prerequisites.
-- [ ] [AI] `system-design-interview` forward-links `system-design` rather than re-teaching depth
+- [x] [AI] `system-design-interview` forward-links `system-design` rather than re-teaching depth
       (DD-10).
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] `<COURSES>_index.md` carries all 5 new entries.
-- [ ] [AI] Band-completion signal recorded naming **exactly two** manifests; zero manifest files
+- [x] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
+- [x] [AI] `<COURSES>_index.md` carries all 5 new entries.
+- [x] [AI] Band-completion signal recorded naming **exactly two** manifests; zero manifest files
       touched (`git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns 0).
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
       no PR, merge, or deployment occurs before Phase 6. The band-completion signal is committed with
       the authored bodies and becomes consumable only after the Phase 6 terminal archival PR merges.
 
@@ -487,13 +501,13 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
 
 ## Phase 2: Section & Authored-Tree Verification
 
-- [ ] [AI] **Verify all 5 authored bodies are present** —
+- [x] [AI] **Verify all 5 authored bodies are present** —
       `while read -r s; do test -d "<COURSES>$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: this returned **5** at the Phase-0 baseline.
-- [ ] [AI] **Verify every authored body declares prerequisites** —
+- [x] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "<COURSES>$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0** (returns 5 at baseline).
-- [ ] [AI] **Verify every authored body has both tracks** —
+- [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "<COURSES>$s/learning" && test -d "<COURSES>$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       — acceptance: returns **0**.
 - [ ] [AI] **Supersession sweep — not applicable.** All 5 Band-9 bodies are Origin `N` (new), with no
@@ -501,7 +515,7 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
       obligation (a "superseded by" line for a course whose subject is covered by a legacy page)
       applies only to re-homed shipped topics 1–33, none of which this plan authors. No conditional
       sweep step is needed here.
-- [ ] [AI] Run the full authored-tree build and lint sweep:
+- [x] [AI] Run the full authored-tree build and lint sweep:
       `npm exec nx run ayokoding-www:build`, `npm run lint:md`, and the link-validation command from
       [tech-docs.md §Cross-plan syllabus/ reference rule](./tech-docs.md#cross-plan-syllabus-reference-rule-binding)
       — acceptance: all three exit 0 / print no matching line.
@@ -516,16 +530,16 @@ ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `
     And link, heading-hierarchy, and markdownlint validation report no errors across them
   ```
 
-- [ ] [AI] Run heading-hierarchy validation over the 5 authored bodies (per the content-quality
+- [x] [AI] Run heading-hierarchy validation over the 5 authored bodies (per the content-quality
       checker suite already invoked in Phase 1) — acceptance: zero heading-hierarchy violations
       reported for any of the 5 course bundles.
 
 ### Phase 2 Gate
 
-- [ ] [AI] All 5 presence/prerequisite/track checks return 0.
-- [ ] [AI] Build, `lint:md`, and link validation all pass with zero findings for this plan's own
+- [x] [AI] All 5 presence/prerequisite/track checks return 0.
+- [x] [AI] Build, `lint:md`, and link validation all pass with zero findings for this plan's own
       files.
-- [ ] [AI] Work committed to the persistent `final-delivery` branch; nothing pushed for review yet.
+- [x] [AI] Work committed to the persistent `final-delivery` branch; nothing pushed for review yet.
 
 > **Pause Safety**: the authored tree is structurally verified. Safe to stop. To resume: re-run the
 > three presence/prerequisite/track loops and the build/lint/link sweep.
