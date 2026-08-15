@@ -9,6 +9,11 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: ayokoding-learning-path-13-careers-ai-manifest](./2026-08-15__ayokoding-learning-path-13-careers-ai-manifest/README.md) —
+  Added the `careers/immediately-effective/ai-engineer` manifest, landing anchor, generated hub entry,
+  and prerequisite-order regression coverage. Delivery Mode: `worktree-to-pr`; terminal delivery is
+  recorded by this plan's sole archival PR.
+
 - [2026-08-15: ayokoding-learning-path-12-careers-se-manifests](./2026-08-15__ayokoding-learning-path-12-careers-se-manifests/README.md) —
   Added the three `software-engineer`-role careers manifests, their landing anchors, generated hub entries,
   and prerequisite-order regression coverage. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded
