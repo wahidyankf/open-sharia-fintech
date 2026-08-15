@@ -11,8 +11,6 @@ execution checklist.
 
 ## Active Plans
 
-- [ayokoding-learning-path-11-course-authoring-capstones](./ayokoding-learning-path-11-course-authoring-capstones/README.md)
-  — Authors eight Band-8 capstone course bodies after the Band-6 split plan lands.
 - [beaver-chat](./beaver-chat/README.md) — Adds a durable, shared, full-authority browser chat
   for authenticated Codex and OpenCode CLI subprocesses, with streamed replies, direct CLI model
   selection, responsive Flutter UI, and explicitly sandbox-scoped trust.
