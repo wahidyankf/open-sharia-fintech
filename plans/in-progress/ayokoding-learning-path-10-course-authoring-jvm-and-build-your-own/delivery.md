@@ -318,7 +318,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `for p in functional-programming object-oriented-programming-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/just-enough-fsharp/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `type-systems` (By Example · OCaml + Haskell + F#) — convention complete; checkers clean;
+- [x] [AI] `type-systems` (By Example · OCaml + Haskell + F#) — convention complete; checkers clean;
       declares the already-shipped `functional-programming`, `programming-paradigms`, and
       `just-enough-typescript` as prerequisites (**not** `just-enough-fsharp` — corrected) —
       acceptance:
