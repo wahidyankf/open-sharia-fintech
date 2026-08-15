@@ -7,3 +7,4 @@ weight: 20
 ---
 
 - [Immediately Effective Software Engineer](/en/learn/paths/careers/immediately-effective/software-engineer)
+- [Immediately Effective AI Engineer](/en/learn/paths/careers/immediately-effective/ai-engineer)
