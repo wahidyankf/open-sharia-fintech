@@ -6,6 +6,6 @@ draft: false
 weight: 20
 ---
 
-This immediately-effective path now completes its shared transactional and cost-accounting cycle through journal entries, recognition, procurement, receivables, cost allocation, assets, inventory, and leases. **Dangerous 1** remains: this is not the whole path, and specialized Sharia contract accounting is still ahead.
+This immediately-effective path now carries the shared nineteen-course accounting spine through enterprise reporting, controls, treasury, digital reporting, and ledger architecture. **Dangerous 2** remains: specialized Sharia contract accounting is still ahead, so this path is not complete.
 
 Choose [conventional-accounting](/en/learn/paths/skills/conventional-accounting) when you need only the general accounting route. Stay here when you need the same foundation followed by the later Sharia-specific extension.

@@ -6,6 +6,6 @@ draft: false
 weight: 10
 ---
 
-This immediately-effective path now completes its shared transactional and cost-accounting cycle through journal entries, recognition, procurement, receivables, cost allocation, long-lived assets, inventory, and leases. **Dangerous 1** remains: this is not the whole path, and the next boundary adds specialized accounting work.
+This immediately-effective path is complete at nineteen courses: it covers foundations, transactional accounting, enterprise reporting, controls, treasury, digital reporting, and ledger architecture. **Dangerous 2** begins outside this path where specialized accounting or implementation depth needs its own scoped learning.
 
-The path links to [SQL Essentials](/en/learn/courses/sql-essentials) where data modeling or querying is needed; it does not duplicate that course. Plan 15 continues this route beyond this eleven-course foundation.
+The path links to [SQL Essentials](/en/learn/courses/sql-essentials) where data modeling or querying is needed; it does not duplicate that course. The path is complete; no later plan appends courses to conventional-accounting.

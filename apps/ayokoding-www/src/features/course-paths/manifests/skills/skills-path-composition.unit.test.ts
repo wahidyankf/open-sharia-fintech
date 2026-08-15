@@ -23,6 +23,14 @@ const expectedCourseOrder = [
   "fixed-assets-and-depreciation",
   "inventory-and-cogs-accounting",
   "lease-and-intangible-asset-accounting",
+  "multi-currency-accounting-and-fx-translation",
+  "consolidation-and-multi-entity-accounting",
+  "financial-reporting-standards-ifrs-vs-gaap",
+  "audit-controls-and-compliance",
+  "payroll-and-tax-accounting-essentials",
+  "treasury-and-cash-management",
+  "financial-reporting-and-xbrl",
+  "general-ledger-system-architecture",
 ];
 
 describeFeature(feature, ({ ScenarioOutline }) => {
@@ -47,7 +55,7 @@ describeFeature(feature, ({ ScenarioOutline }) => {
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-path-composition.feature:A two-segment skills path ID resolves to its full shared accounting slice
-      Then("it contains exactly 11 course IDs in the shared accounting order", () => {
+      Then("it contains exactly 19 course IDs in the shared accounting order", () => {
         expect(manifest.courseOrder).toEqual(expectedCourseOrder);
       });
 
