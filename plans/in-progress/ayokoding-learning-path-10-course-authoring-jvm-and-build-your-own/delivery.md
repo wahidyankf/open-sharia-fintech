@@ -312,7 +312,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `for p in functional-programming programming-paradigms; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/lisp/_index.md" || echo "MISSING $p"; done | grep -c .`
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-fsharp` (Primer · F#) — convention complete; checkers clean; declares the
+- [x] [AI] `just-enough-fsharp` (Primer · F#) — convention complete; checkers clean; declares the
       already-shipped `functional-programming` and `object-oriented-programming-essentials` as its
       prerequisites (not an entry point) — acceptance:
       `for p in functional-programming object-oriented-programming-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/just-enough-fsharp/_index.md" || echo "MISSING $p"; done | grep -c .`

@@ -1,0 +1,17 @@
+---
+title: "Just Enough F#"
+date: 2026-08-15T00:00:00+07:00
+draft: false
+weight: 187
+prerequisites: ["functional-programming", "object-oriented-programming-essentials"]
+---
+
+- [Overview](/en/learn/courses/just-enough-fsharp/overview)
+- [Learning](/en/learn/courses/just-enough-fsharp/learning)
+  - [Overview](/en/learn/courses/just-enough-fsharp/learning/overview)
+  - [Beginner Examples](/en/learn/courses/just-enough-fsharp/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/just-enough-fsharp/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/just-enough-fsharp/learning/advanced)
+  - [Capstone](/en/learn/courses/just-enough-fsharp/learning/capstone)
+- [Drilling](/en/learn/courses/just-enough-fsharp/drilling)
+  - [Overview](/en/learn/courses/just-enough-fsharp/drilling/overview)
