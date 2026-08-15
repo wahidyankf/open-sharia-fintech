@@ -549,7 +549,7 @@ alone):
     decision memo, and a safe typed offline Python capstone. Ruff/Pyright, structural/link, and
     Markdown checks passed._
 
-- [ ] [AI] Apply the per-cohort closing steps (catalog rows confirmed, zero-manifest check), **plus**
+- [x] [AI] Apply the per-cohort closing steps (catalog rows confirmed, zero-manifest check), **plus**
       record the single band-completion signal below — `GROW_MANIFESTS` = the three
       `software-engineer`-role manifests.
 
@@ -724,7 +724,7 @@ typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The liter
       _Implementation note (2026-08-15): the `en`-only locale assertion exited 0._
 - [x] [AI] Start dev server: `npm exec nx dev ayokoding-www` — acceptance: server up on port 3101.
       _Implementation note (2026-08-15): the required production preview (`npm exec nx -- start
-  ayokoding-www`) served the already-green build on port 3101; `next dev` itself accepted the port
+ayokoding-www`) served the already-green build on port 3101; `next dev` itself accepted the port
       but did not finish loading a route, so it was stopped and not treated as verification evidence._
 - [x] [AI] **Sample-verify authored course pages** — for **all eleven** authored courses, at breakpoints
       375 / 768 / 1280 px, via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`,
@@ -889,26 +889,26 @@ typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The liter
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
 - [ ] [AI] Open exactly one draft PR from that branch and run the secret scan, local quality checks, and PR quality-gate verification plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify the Knowledge Capture phase is complete.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
       acceptance: `grep -F -q 'rule-15' learnings.md` exits 0.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **11** — acceptance: both
       hold. **This plan asserts 11, not 127.** The 127-course catalog total is
       `ayokoding-learning-path-12-careers-se-manifests`'s terminal assertion.
-- [ ] [AI] **Verify the ownership invariant held**:
+- [x] [AI] **Verify the ownership invariant held**:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** — acceptance: no manifest file was touched on this branch.
-- [ ] [AI] **Verify every cross-plan reference still resolves after upstream archival** — re-run the
+- [x] [AI] **Verify every cross-plan reference still resolves after upstream archival** — re-run the
       link gate:
 
   ```bash
@@ -922,12 +922,12 @@ typecheck lint test:quick test:unit specs:behavior:coverage` exited 0. The liter
   — acceptance: the `grep` finds **no** matching line (exits 1). Fix references in **this plan's own
   files** if any upstream plan archived mid-execution — never edit the other plan's folder.
 
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/ plans/done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/`
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-08-course-authoring-security-and-ops/ plans/done/YYYY-MM-DD__ayokoding-learning-path-08-course-authoring-security-and-ops/`
       using today's **completion** date, not the creation date (the `evidence/` subfolder moves with
       it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan and notify
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+- [x] [AI] Update any other READMEs that reference this plan and notify
       `ayokoding-learning-path-12-careers-se-manifests`,
       `ayokoding-learning-path-11-course-authoring-capstones` (once its folder exists), and
       `ayokoding-learning-path-12-careers-se-manifests` (once its folder exists) — acceptance: no
