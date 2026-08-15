@@ -950,9 +950,9 @@ Each phase performs the same four operations on its subtree (`<subtree>` = the p
       across two children in `tutorials/in-the-field/` lost its opening/closing fence twice
       (JPA entity/service pair, JDBC database-example pair) — repaired by closing the fence at
       each cut and adding a "Continued in/from" cross-link. `npx nx run
-  rhino-cli:governance-word-budget:validation` reports 0 `[FAIL]` findings under
+rhino-cli:governance-word-budget:validation` reports 0 `[FAIL]` findings under
       `repo-governance/conventions/` (verified via direct `rhino-cli governance word-budget
-  validate` grepped to the subtree — the Nx target's own exit code reflects the whole
+validate` grepped to the subtree — the Nx target's own exit code reflects the whole
       repo-wide scan, which still fails on out-of-scope Phase 3-5 subtrees as expected).
 - [x] `[AI]` **Frontmatter**: add `when_to_use` to every file in `<subtree>`, including new
       children; backfill `description` where missing. Acceptance:
@@ -960,8 +960,8 @@ Each phase performs the same four operations on its subtree (`<subtree>` = the p
       **Date**: 2026-08-14. **Status**: Done for Phase 2. Every parent and child file under
       `repo-governance/conventions/` carries `when_to_use` and `description` frontmatter (parents
       backfilled where missing; children inherit/derive from their split source). `rhino-cli md
-  frontmatter validate repo-governance/conventions/` → `DOCS FRONTMATTER VALIDATION PASSED: no
-  findings`, exit 0.
+frontmatter validate repo-governance/conventions/` → `DOCS FRONTMATTER VALIDATION PASSED: no
+findings`, exit 0.
 - [x] `[AI]` **Index**: create or update every `README.md` in `<subtree>` with annotated entries
       derived from target frontmatter; split directories are indexed by their parent. Acceptance:
       `npx nx run rhino-cli:governance-readme-index:validation` reports 0 `orphan`/`ghost`
@@ -1365,6 +1365,19 @@ rhino-cli:specs:behavior:coverage`
 > stop before Phases 11–15's content splitting begins. To resume: re-run
 > `rhino-cli parity manifest validate` and confirm the boundary diff against `ose-public` is
 > still empty.
+>
+> **Discovered gap (2026-08-15, PR10 CI)**: the byte-for-byte copy also imports `ose-public`'s
+> already-Phase-9-armed `frontmatter.rs::validate_governance_schema` FAIL-severity logic for
+> `md-frontmatter` — there is no WARN/FAIL toggle in the Rust source, only in whether
+> `repo-config.yml` registers a `ci` surface for it. `ose-private`'s pre-existing `repo-config.yml`
+> already had `ci: { scope: all-file-type }` registered for `md-frontmatter` (unrelated to this
+> plan), so the copy silently turned a full-tree FAIL scan on 5 phases ahead of schedule and broke
+> PR10's CI on pre-existing repo-wide debt Phases 11–15 haven't cleared yet. Fix applied in PR10:
+> `repo-config.yml`'s `md-frontmatter` entry drops its `ci` surface (dark-launched, matching the
+> `governance-word-budget` pattern), to be re-added once Phases 11–15 land. **Phase 16b's "apply
+> the identical severity flip" instruction is now moot** — the Rust source is already flipped;
+> Phase 16b's actual remaining action is only to re-add `ci: { scope: all-file-type }` to
+> `repo-config.yml`'s `md-frontmatter` entry.
 
 ---
 
@@ -1465,10 +1478,16 @@ trigger list for `ose-public`'s).
 - [ ] `[AI]` **Arm FR-4** in `ose-private` (register-then-arm for the already-active
       `md-frontmatter` gate): run `rhino-cli md frontmatter validate` against
       `repo-governance/**/*.md` and confirm zero files are missing `when_to_use` or
-      `description` — true only once Phases 11–13 have merged. Then apply the identical
-      `frontmatter.rs::validate_governance_schema` severity flip from Phase 9b's GREEN step —
-      the rhino-cli boundary is byte-identical across repos, so this is the same code change
-      copied, not reimplemented
+      `description` — true only once Phases 11–15 have merged. **Correction (2026-08-15, see
+      Phase 10's "Discovered gap" note)**: the Rust-source severity flip is NOT this step's
+      action — PR10 discovered the byte-for-byte-copied `frontmatter.rs` already carries
+      `ose-public`'s Phase-9 FAIL-severity logic (no WARN toggle exists in the Rust source, only
+      in whether `repo-config.yml` registers a `ci` surface). PR10 dropped `md-frontmatter`'s
+      `ci: { scope: all-file-type }` surface entry in `ose-private`'s `repo-config.yml` to avoid
+      breaking CI on pre-existing debt ahead of schedule. This step's actual action is: **re-add**
+      `ci: { scope: all-file-type }` to `repo-config.yml`'s `md-frontmatter` entry once the zero-gap
+      confirmation above passes — do not look for a `frontmatter.rs` change to make, there isn't
+      one
 - [ ] `[AI]` Remove the fixture
 - [ ] **Command**: `apps/rhino-cli/scripts/rhino-bin.sh gate validate`
 - [ ] **Acceptance**: exit 0
