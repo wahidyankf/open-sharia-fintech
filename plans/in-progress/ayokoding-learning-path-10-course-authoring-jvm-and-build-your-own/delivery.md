@@ -394,7 +394,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 > instruction to defer externally-gated courses as late as possible, giving plans `05`/`06` the maximum
 > window to land.
 
-- [ ] [AI] `compilers-parsers-and-transpilers` (By Example · F#) — convention complete; checkers clean;
+- [x] [AI] `compilers-parsers-and-transpilers` (By Example · F#) — convention complete; checkers clean;
       declares `just-enough-fsharp` and `type-systems` (both cohort 1, already merged) and the
       already-shipped `computer-science-foundations` as prerequisites (**not**
       `data-structures-and-algorithms-essentials` — corrected) — acceptance:
