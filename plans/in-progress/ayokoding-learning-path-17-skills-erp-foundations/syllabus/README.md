@@ -15,7 +15,7 @@ open-source systems' published module structures, named nominatively only. See
 [delivery.md Phase 1.2a](../delivery.md#12a--web-researcher-confirmation-pass-a12-coverage-only).
 
 **Consumer note**: the successor plan,
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md),
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md),
 reads this corpus by relative link for the cross-plan prerequisite edges it must cite by id (course
 13→6,7; 14→6; 18→17; 21→12,17; 24→3; 26→3; 29→10,11) — it is a **read-only consumer**, never an
 editor, and echoes `custodied-by:ayokoding-learning-path-17-skills-erp-foundations` under its own

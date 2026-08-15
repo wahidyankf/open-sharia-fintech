@@ -6,7 +6,7 @@
 **outside `plans/`** reads it (no checker, agent, Nx target, build/generation step, or shipped content
 front-matter names a syllabus path). The corpus therefore moves to `plans/done/` with the plan folder
 on archival. **One consumer inside `plans/` does exist** —
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md)
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md)
 reads this plan's syllabus corpus by relative link for the cross-plan prerequisite edges it must cite
 by id (see [§Corpus Custody](#corpus-custody) below); that is a `plans/`-internal read and does not
 trip the promotion trigger. See
@@ -37,15 +37,15 @@ to their terminal 27/30-id state across Stage B and Stage C.
 It touches **no application code** beyond two new JSON manifest data files and their co-located unit tests.
 Every component, resolver, schema, and route it depends on is built by plans 01–03 and consumed here.
 
-| Layer                                                                                             | Owner                                                    | This plan's relationship            |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------- |
-| `courses/` + `paths/` content homes, structural `_index.md` files                                 | `ayokoding-learning-path-01-url-restructure`             | consumes                            |
-| `PathManifest` zod schema, pure `course-paths` core, integrity gates                              | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                            |
-| `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets | `ayokoding-learning-path-03-navigation-ui`               | consumes                            |
-| Static-rendering fix for `apps/ayokoding-www` (root layout, `?path=` client-side reads)           | `vercel-function-cost-reduction`                         | consumes (repository baseline; see below)          |
-| The accounting corpus, its manifests, its landings                                                | `ayokoding-learning-path-14/15/16-skills-accounting-*`   | no relationship — zero edge         |
-| **The 15 Stage-A ERP courses, both manifests at 15 ids, both landings through Dangerous 1**       | **this plan**                                            | **authors**                         |
-| Stage B/C course bodies, manifest growth past 15 ids, landing content past Dangerous 1            | `ayokoding-learning-path-18-skills-erp-enterprise-depth` | **not this plan — successor's job** |
+| Layer                                                                                             | Owner                                                    | This plan's relationship                  |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------- |
+| `courses/` + `paths/` content homes, structural `_index.md` files                                 | `ayokoding-learning-path-01-url-restructure`             | consumes                                  |
+| `PathManifest` zod schema, pure `course-paths` core, integrity gates                              | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                                  |
+| `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets | `ayokoding-learning-path-03-navigation-ui`               | consumes                                  |
+| Static-rendering fix for `apps/ayokoding-www` (root layout, `?path=` client-side reads)           | `vercel-function-cost-reduction`                         | consumes (repository baseline; see below) |
+| The accounting corpus, its manifests, its landings                                                | `ayokoding-learning-path-14/15/16-skills-accounting-*`   | no relationship — zero edge               |
+| **The 15 Stage-A ERP courses, both manifests at 15 ids, both landings through Dangerous 1**       | **this plan**                                            | **authors**                               |
+| Stage B/C course bodies, manifest growth past 15 ids, landing content past Dangerous 1            | `ayokoding-learning-path-18-skills-erp-enterprise-depth` | **not this plan — successor's job**       |
 
 ## Repository baseline
 
@@ -240,10 +240,7 @@ delivers.
   "arc": "immediately-effective",
   "title": "Enterprise Resource Planning (Conventional)",
   "description": "Learn the architecture and cross-cutting spine of a conventional ERP — deep enough to found an implementation, never asked to build one. This release covers Stage A (Foundations & Architecture); enterprise-depth content follows in a later release.",
-  "courseOrder": [
-    "erp-foundations-and-history",
-    "erp-conceptual-data-model"
-  ]
+  "courseOrder": ["erp-foundations-and-history", "erp-conceptual-data-model"]
 }
 ```
 
@@ -253,9 +250,7 @@ delivers.
   "arc": "immediately-effective",
   "title": "Enterprise Resource Planning (Sharia-Compliant)",
   "description": "The same conventional-ERP grounding, plus jurisdiction-plural Sharia-compliant design in a later release. This release covers Stage A (Foundations & Architecture) — identical to conventional-erp's own Stage A release.",
-  "courseOrder": [
-    "erp-foundations-and-history"
-  ]
+  "courseOrder": ["erp-foundations-and-history"]
 }
 ```
 

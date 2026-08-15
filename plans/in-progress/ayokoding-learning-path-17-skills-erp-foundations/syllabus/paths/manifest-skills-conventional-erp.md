@@ -42,5 +42,5 @@ interleave in the successor plan).
 The successor plan grows this array to 27 ids by **inserting** four Stage-B ids after position 12
 (`erp-procurement-and-fulfillment-exceptions`), four more after position 13
 (`erp-bom-and-routing-architecture`), and **appending** four more at the end — see
-[tech-docs.md §courseOrder arrays at each growth boundary](../../../ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md#courseorder-arrays-at-each-growth-boundary)
+[tech-docs.md §courseOrder arrays at each growth boundary](../../../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/tech-docs.md#courseorder-arrays-at-each-growth-boundary)
 in the successor plan. No id already published above is ever reordered.

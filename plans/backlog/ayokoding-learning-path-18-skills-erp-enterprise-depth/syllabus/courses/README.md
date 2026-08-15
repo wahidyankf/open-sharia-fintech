@@ -7,7 +7,7 @@ and the reading-ramp positions; the
 single source of truth for course ids, formats, and prerequisite edges. **Order is not a property of
 this folder** — it lives in the [path mirrors](../paths/README.md), which carry the **full** 27/30-id
 terminal orderings (positions 1-15 reference
-[plan 17's own corpus](../../../ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md)).
+[plan 17's own corpus](../../../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/README.md)).
 
 Each `<course-id>.md` file is authored at [delivery.md Phase 1](../../delivery.md#11--author-all-15-syllabus-specs-stage-bs-12--stage-cs-3)
 against the REQUIRED/RECOMMENDED section shape defined by the

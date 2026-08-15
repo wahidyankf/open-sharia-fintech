@@ -16,7 +16,7 @@ the successor plan's Stage B/C growth lands.
 Both mirrors carry `arc: immediately-effective` (R8/DD-7), even though the URL omits the arc segment.
 
 **Growth notice**: the successor plan,
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../../ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md),
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md),
 inherits edit rights over both files in this folder to extend them to their terminal 27/30-id
 orderings. This plan's own two mirror files are frozen at 15 ids once this plan archives.
 

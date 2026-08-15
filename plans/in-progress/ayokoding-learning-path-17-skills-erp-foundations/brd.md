@@ -14,7 +14,7 @@ from the open-source projects and standards bodies the domain touches.
 two-plan split of the retired the superseded ERP-programme draft design: it authors Stage A (15
 of 30 courses) and publishes both `skills/conventional-erp` and `skills/sharia-erp` at 15 ids each.
 The successor plan,
-[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../ayokoding-learning-path-18-skills-erp-enterprise-depth/brd.md),
+[`ayokoding-learning-path-18-skills-erp-enterprise-depth`](../../backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/brd.md),
 grows both manifests to their terminal 27/30-course state. Splitting the retired plan lets Stage A —
 which needs nothing from any accounting plan — ship independently rather than wait on Stage B/C's
 accounting gates.
@@ -77,7 +77,7 @@ accounting gates.
 | ------------------------------------------------------------------------------------------------------------------------- | ---------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A course reproduces a copyrighted standard's text, a proprietary system's schema, or copyleft code                        | Medium     | High   | Eleven safe-authoring rules (A8); `apps-ayokoding-www-facts-checker` per-course review; Phase 4 grep-checkable acceptance clauses                  |
 | A vendor name appears in a course title, path segment, or product name (trademark exposure)                               | Low        | Medium | Nominative-use rule; Phase 4 grep clause scanning every id for vendor-name substrings                                                              |
-| The two new static landing pages reintroduce the dynamic-rendering regression `vercel-function-cost-reduction` just fixed | Low        | High   | a repository-baseline check plus a build-time prerender check at this plan's own Phase 0 and Phase 6 gates                                       |
+| The two new static landing pages reintroduce the dynamic-rendering regression `vercel-function-cost-reduction` just fixed | Low        | High   | a repository-baseline check plus a build-time prerender check at this plan's own Phase 0 and Phase 6 gates                                         |
 | The successor plan cannot cite this plan's syllabus corpus correctly (custody drift)                                      | Low        | Medium | This plan's `syllabus/README.md` names itself `**Custodian**`; the successor plan echoes `custodied-by:` under its own `## Corpus Custody` heading |
 | A syllabus's vague module title makes the corpus unverifiable                                                             | Low        | Low    | Module-title specificity rule enforced at authoring time; Phase 1.2a confirmation pass surfaces vagueness                                          |
 

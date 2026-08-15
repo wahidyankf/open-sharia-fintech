@@ -49,9 +49,6 @@ terminates here.
 
 **Skills — ERP** (splits old `07-skills-erp`'s 30 courses):
 
-- [ayokoding-learning-path-17-skills-erp-foundations](./ayokoding-learning-path-17-skills-erp-foundations/README.md)
-  — 15 courses (Stage A): both `conventional-erp` and `sharia-erp` publish here — a genuine,
-  deployable checkpoint.
 - [ayokoding-learning-path-18-skills-erp-enterprise-depth](./ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
   — 15 courses (Stage B + C merged, follows plan 17): conventional enterprise depth, then the
   Sharia-compliant design stage.

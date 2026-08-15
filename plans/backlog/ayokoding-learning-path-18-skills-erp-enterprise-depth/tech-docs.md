@@ -28,14 +28,14 @@ It touches **no application code** beyond editing the two JSON manifest data fil
 co-located unit tests. Every component, resolver, schema, and route it depends on is built by plans
 01–03 and consumed here; every accounting course it links is built by the accounting-split programme.
 
-| Layer                                                                                                 | Owner                                                               | This plan's relationship                                                                              |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `courses/` + `paths/` content homes, structural `_index.md` files                                     | `ayokoding-learning-path-01-url-restructure`                        | consumes                                                                                              |
-| `PathManifest` zod schema, pure `course-paths` core, integrity gates                                  | `ayokoding-learning-path-02-schema-and-prerequisite-dag`            | consumes                                                                                              |
-| `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets     | `ayokoding-learning-path-03-navigation-ui`                          | consumes                                                                                              |
-| 15 Stage-A course bodies, both manifests at 15 ids, both landings through Dangerous 1                 | `ayokoding-learning-path-17-skills-erp-foundations`                 | **grows** (not authors fresh — see [§Manifest ownership](#manifest-ownership-inherited-from-plan-17)) |
-| Accounting course ids used in ERP course frontmatter | existing `origin/main` course bundles | verify the specific ids before authoring; this is artifact context, not a plan dependency |
-| **The 15 Stage-B/C ERP courses, both manifests grown to terminal, both landings through Dangerous 4** | **this plan**                                                       | **authors**                                                                                           |
+| Layer                                                                                                 | Owner                                                    | This plan's relationship                                                                              |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `courses/` + `paths/` content homes, structural `_index.md` files                                     | `ayokoding-learning-path-01-url-restructure`             | consumes                                                                                              |
+| `PathManifest` zod schema, pure `course-paths` core, integrity gates                                  | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes                                                                                              |
+| `path-landing.tsx`, `path-card.tsx`, `manifest-repository.ts`, `?path=` wiring, all design assets     | `ayokoding-learning-path-03-navigation-ui`               | consumes                                                                                              |
+| 15 Stage-A course bodies, both manifests at 15 ids, both landings through Dangerous 1                 | `ayokoding-learning-path-17-skills-erp-foundations`      | **grows** (not authors fresh — see [§Manifest ownership](#manifest-ownership-inherited-from-plan-17)) |
+| Accounting course ids used in ERP course frontmatter                                                  | existing `origin/main` course bundles                    | verify the specific ids before authoring; this is artifact context, not a plan dependency             |
+| **The 15 Stage-B/C ERP courses, both manifests grown to terminal, both landings through Dangerous 4** | **this plan**                                            | **authors**                                                                                           |
 
 ## Manifest ownership (inherited from plan 17)
 
@@ -82,7 +82,7 @@ and are listed in the full catalog table below rather than in this cross-plan ta
 - `<COURSES>`, `<PATHS>`, `<FEAT>`, `<MANIFESTS>`, `<CONVMAN>`, `<SHARMAN>`, `<MTEST_CE>`, `<MTEST_SE>`,
   `<CONVLANDING>`, `<SHARLANDING>`, `<SPECS>` — identical constants to plan 17's own, since this plan
   edits the same files plan 17 created. See
-  [plan 17's tech-docs.md §Path constants](../ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#path-constants)
+  [plan 17's tech-docs.md §Path constants](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#path-constants)
   for the full definitions; not re-derived here.
 - `<SYL>` = `plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth/syllabus/courses/` —
   **this plan's own** 15-file syllabus corpus (Stage B + Stage C only; Stage A's 15 files live in plan
@@ -159,10 +159,10 @@ The retired source plan's `ACCT_GATE_B`/`ACCT_GATE_C` arrays remain course-id-id
 repository artifact checks, not execution dependencies on the accounting plans that first authored
 the course bundles.
 
-| Gate          | Course ids (unchanged)                                                                                                                                                                         | Verification |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| Gate          | Course ids (unchanged)                                                                                                                                                                         | Verification                                                                            |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `ACCT_GATE_B` | `financial-statements-and-close-cycle`, `inventory-and-cogs-accounting`, `payroll-and-tax-accounting-essentials`, `consolidation-and-multi-entity-accounting`, `audit-controls-and-compliance` | Verify the listed course bundles on `origin/main`; no plan merge is an additional gate. |
-| `ACCT_GATE_C` | `islamic-contract-modeling-for-systems`, `sharia-accounting-and-aaoifi-standards` | Verify the listed course bundles on `origin/main`; no plan merge is an additional gate. |
+| `ACCT_GATE_C` | `islamic-contract-modeling-for-systems`, `sharia-accounting-and-aaoifi-standards`                                                                                                              | Verify the listed course bundles on `origin/main`; no plan merge is an additional gate. |
 
 **Caveat:** if repository content renames or restructures any of these seven ids before this plan
 executes, the `ACCT_GATE_*` arrays in [delivery.md](./delivery.md) must be updated to match before
@@ -262,7 +262,7 @@ riba doctrinal basis (`OI-2`) **remains OPEN**; no course may restate it as fact
 
 **General ERP licensing posture (per-project licence table, eleven safe-authoring rules, legal basis)
 is inherited unchanged from plan 17** — see
-[plan 17's tech-docs.md §Licensing and IP Compliance](../ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#licensing-and-ip-compliance-a8);
+[plan 17's tech-docs.md §Licensing and IP Compliance](../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/tech-docs.md#licensing-and-ip-compliance-a8);
 not reproduced redundantly here. This plan's own first-class addition is the **Sharia-specific**
 addendum, binding on Stage C (courses 28-30) specifically.
 

@@ -7,7 +7,7 @@ Per-course module/topic breakdowns for this plan's 15-course slice (Stage B's 12
 the superseded ERP-programme draft design established (`syllabus/courses/` + `syllabus/paths/`).
 
 **This plan is a read-only consumer of plan 17's own 15-file Stage-A corpus** — see
-[`../ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md`](../../ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md)
+[`../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md`](../../../in-progress/ayokoding-learning-path-17-skills-erp-foundations/syllabus/README.md)
 for that corpus's index. Any course below whose prerequisites cite a plan-17 id links to that file
 directly rather than restating its content (see [tech-docs.md §Cross-plan prerequisite
 edges](../tech-docs.md#cross-plan-prerequisite-edges-into-plan-17) for the full list).
