@@ -8,10 +8,10 @@ prerequisites: ["just-enough-python", "version-control-and-git"]
 
 - [Overview](/en/learn/courses/build-your-own-git/overview)
 - [Learning](/en/learn/courses/build-your-own-git/learning)
-  - [Overview](/en/learn/courses/build-your-own-git/learning/overview)
+  - [Learning Overview](/en/learn/courses/build-your-own-git/learning/overview)
   - [Objects](/en/learn/courses/build-your-own-git/learning/beginner)
-  - [Refs and index](/en/learn/courses/build-your-own-git/learning/intermediate)
+  - [Refs and Index](/en/learn/courses/build-your-own-git/learning/intermediate)
   - [Porcelain](/en/learn/courses/build-your-own-git/learning/advanced)
   - [Capstone](/en/learn/courses/build-your-own-git/learning/capstone)
 - [Drilling](/en/learn/courses/build-your-own-git/drilling)
-  - [Overview](/en/learn/courses/build-your-own-git/drilling/overview)
+  - [Drilling Overview](/en/learn/courses/build-your-own-git/drilling/overview)

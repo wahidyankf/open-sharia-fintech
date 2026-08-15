@@ -5,4 +5,9 @@ draft: false
 weight: 1
 ---
 
-Work from roles and terms through replication, then persistence, partitions, and the replicated state machine.
+- [Capstone: Raft KV](/en/learn/courses/build-your-own-raft/learning/capstone)
+  - [Capstone: Raft KV](/en/learn/courses/build-your-own-raft/learning/capstone/overview)
+- [Learning Overview](/en/learn/courses/build-your-own-raft/learning/overview)
+- [Election](/en/learn/courses/build-your-own-raft/learning/beginner)
+- [Replication](/en/learn/courses/build-your-own-raft/learning/intermediate)
+- [Failures and KV](/en/learn/courses/build-your-own-raft/learning/advanced)

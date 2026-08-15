@@ -5,4 +5,4 @@ draft: false
 weight: 1
 ---
 
-- [Overview](/en/learn/courses/build-your-own-raft/drilling/overview)
+- [Drilling Overview](/en/learn/courses/build-your-own-raft/drilling/overview)

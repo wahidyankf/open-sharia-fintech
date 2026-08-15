@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/compilers-parsers-and-transpilers/learning/capstone/overview)
+- [Capstone: Tiny Expression Language](/en/learn/courses/compilers-parsers-and-transpilers/learning/capstone/overview)

@@ -5,4 +5,4 @@ draft: false
 weight: 1
 ---
 
-- [Overview](/en/learn/courses/build-your-own-raft/learning/capstone/overview)
+- [Capstone: Raft KV](/en/learn/courses/build-your-own-raft/learning/capstone/overview)

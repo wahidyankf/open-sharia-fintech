@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/compilers-parsers-and-transpilers/learning/overview)
-- [Front end](/en/learn/courses/compilers-parsers-and-transpilers/learning/beginner)
-- [Parsing and semantics](/en/learn/courses/compilers-parsers-and-transpilers/learning/intermediate)
-- [Back ends](/en/learn/courses/compilers-parsers-and-transpilers/learning/advanced)
+- [Learning Overview](/en/learn/courses/compilers-parsers-and-transpilers/learning/overview)
+- [Front End](/en/learn/courses/compilers-parsers-and-transpilers/learning/beginner)
+- [Parsing and Semantics](/en/learn/courses/compilers-parsers-and-transpilers/learning/intermediate)
+- [Back Ends](/en/learn/courses/compilers-parsers-and-transpilers/learning/advanced)
 - [Capstone](/en/learn/courses/compilers-parsers-and-transpilers/learning/capstone)
-  - [Overview](/en/learn/courses/compilers-parsers-and-transpilers/learning/capstone/overview)
+  - [Capstone: Tiny Expression Language](/en/learn/courses/compilers-parsers-and-transpilers/learning/capstone/overview)

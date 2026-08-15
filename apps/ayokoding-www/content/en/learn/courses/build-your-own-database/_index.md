@@ -6,11 +6,12 @@ weight: 190
 prerequisites: ["database-internals-and-storage-engines", "sql-essentials"]
 ---
 
-- [Overview](/en/learn/courses/build-your-own-database/overview)
+- [Drilling](/en/learn/courses/build-your-own-database/drilling)
+  - [Drilling Overview](/en/learn/courses/build-your-own-database/drilling/overview)
 - [Learning](/en/learn/courses/build-your-own-database/learning)
-  - [Overview](/en/learn/courses/build-your-own-database/learning/overview)
+  - [Capstone: Mini Database](/en/learn/courses/build-your-own-database/learning/capstone)
+  - [Learning Overview](/en/learn/courses/build-your-own-database/learning/overview)
   - [Pages and pager](/en/learn/courses/build-your-own-database/learning/beginner)
   - [Indexes and LSM alternatives](/en/learn/courses/build-your-own-database/learning/intermediate)
   - [Recovery and query](/en/learn/courses/build-your-own-database/learning/advanced)
-  - [Capstone](/en/learn/courses/build-your-own-database/learning/capstone)
-- [Drilling](/en/learn/courses/build-your-own-database/drilling)
+- [Overview](/en/learn/courses/build-your-own-database/overview)

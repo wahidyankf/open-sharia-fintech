@@ -5,4 +5,4 @@ draft: false
 weight: 1
 ---
 
-- [Overview](/en/learn/courses/build-your-own-database/learning/capstone/overview)
+- [Capstone: Mini Database](/en/learn/courses/build-your-own-database/learning/capstone/overview)

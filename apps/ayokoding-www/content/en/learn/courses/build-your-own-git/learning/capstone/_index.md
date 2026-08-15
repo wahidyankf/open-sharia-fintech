@@ -5,4 +5,4 @@ draft: false
 weight: 41
 ---
 
-- [Overview](/en/learn/courses/build-your-own-git/learning/capstone/overview)
+- [Capstone: Isolated Object Store](/en/learn/courses/build-your-own-git/learning/capstone/overview)

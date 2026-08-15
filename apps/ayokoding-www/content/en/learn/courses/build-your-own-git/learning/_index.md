@@ -5,9 +5,9 @@ draft: false
 weight: 111
 ---
 
-- [Overview](/en/learn/courses/build-your-own-git/learning/overview)
+- [Learning Overview](/en/learn/courses/build-your-own-git/learning/overview)
 - [Objects](/en/learn/courses/build-your-own-git/learning/beginner)
-- [Refs and index](/en/learn/courses/build-your-own-git/learning/intermediate)
+- [Refs and Index](/en/learn/courses/build-your-own-git/learning/intermediate)
 - [Porcelain](/en/learn/courses/build-your-own-git/learning/advanced)
 - [Capstone](/en/learn/courses/build-your-own-git/learning/capstone)
-  - [Overview](/en/learn/courses/build-your-own-git/learning/capstone/overview)
+  - [Capstone: Isolated Object Store](/en/learn/courses/build-your-own-git/learning/capstone/overview)
