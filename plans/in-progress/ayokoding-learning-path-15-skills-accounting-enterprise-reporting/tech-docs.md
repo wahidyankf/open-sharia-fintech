@@ -469,21 +469,21 @@ resolver.
 
 ## Testing / Verification Strategy
 
-| Level                     | What it verifies                                                                                            | Mechanism                                                                  |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Manifest unit (TDD, ×2)   | Loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (19), per manifest    | `npm exec nx run ayokoding-www:test:unit`                                       |
-| Path-walk e2e (×2)        | Both 2-segment `pathId`s resolve across all 19 courses; `?path=` persists                                   | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                                 |
-| Composition assertions    | Linked prerequisite absent from both `courseOrder`s **and** present in frontmatter; shared-19 byte-identity | Grep-checkable clauses                                                     |
-| Per-course content checks | Concept coverage, register, format, worked-example volume, scope boundary                                   | `apps-ayokoding-www-by-example-checker` / `-annotated-concept-checker`     |
-| Silent-failure assertion  | Every course #12–#19 carries its section                                                                    | Grep-checkable clause on each authoring step                               |
-| Licensing audit           | No verbatim standards text, no proprietary CoA structure, no copyleft code pasted                           | Reading audit against Phase 1's licensing-sensitive-sources list (Phase 3) |
-| Terminal-freeze assertion | `conventional-accounting.json` unchanged after this plan's own merge point                                  | `git diff --quiet -- "$MANIFEST_CA"`                                       |
-| Structural                | Bundle anatomy present; `prerequisites` declared                                                            | `test -d` / `test -f` plus frontmatter grep                                |
-| Section build             | The authored tree renders                                                                                   | `npm exec nx run ayokoding-www:build`                                           |
-| Markdown quality          | markdownlint, link validation, heading hierarchy                                                            | `npm run lint:md` plus the two `rhino-cli md` subcommands                  |
-| Regression                | No existing project's gates broke                                                                           | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage`     |
-| Manual behavioural        | Both landings and sample courses render at three breakpoints in `en`                                        | Playwright MCP plus committed `evidence/` screenshots                      |
-| Live-site retest          | Rule-15 EWT/UWT/DWT against the running `conventional-accounting` landing and full 19-course walk           | The three live-site testers                                                |
+| Level                     | What it verifies                                                                                            | Mechanism                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Manifest unit (TDD, ×2)   | Loads, zod-validates, integrity, prerequisite-consistency, exact `courseOrder` length (19), per manifest    | `npm exec nx run ayokoding-www:test:unit`                                   |
+| Path-walk e2e (×2)        | Both 2-segment `pathId`s resolve across all 19 courses; `?path=` persists                                   | `npm exec nx run ayokoding-www-fe-e2e:test:e2e`                             |
+| Composition assertions    | Linked prerequisite absent from both `courseOrder`s **and** present in frontmatter; shared-19 byte-identity | Grep-checkable clauses                                                      |
+| Per-course content checks | Concept coverage, register, format, worked-example volume, scope boundary                                   | `apps-ayokoding-www-by-example-checker` / `-annotated-concept-checker`      |
+| Silent-failure assertion  | Every course #12–#19 carries its section                                                                    | Grep-checkable clause on each authoring step                                |
+| Licensing audit           | No verbatim standards text, no proprietary CoA structure, no copyleft code pasted                           | Reading audit against Phase 1's licensing-sensitive-sources list (Phase 3)  |
+| Terminal-freeze assertion | `conventional-accounting.json` unchanged after this plan's own merge point                                  | `git diff --quiet -- "$MANIFEST_CA"`                                        |
+| Structural                | Bundle anatomy present; `prerequisites` declared                                                            | `test -d` / `test -f` plus frontmatter grep                                 |
+| Section build             | The authored tree renders                                                                                   | `npm exec nx run ayokoding-www:build`                                       |
+| Markdown quality          | markdownlint, link validation, heading hierarchy                                                            | `npm run lint:md` plus the two `rhino-cli md` subcommands                   |
+| Regression                | No existing project's gates broke                                                                           | `npm exec nx affected -t typecheck lint test:quick specs:behavior:coverage` |
+| Manual behavioural        | Both landings and sample courses render at three breakpoints in `en`                                        | Playwright MCP plus committed `evidence/` screenshots                       |
+| Live-site retest          | Rule-15 EWT/UWT/DWT against the running `conventional-accounting` landing and full 19-course walk           | The three live-site testers                                                 |
 
 **Locale scope**: `en` only.
 

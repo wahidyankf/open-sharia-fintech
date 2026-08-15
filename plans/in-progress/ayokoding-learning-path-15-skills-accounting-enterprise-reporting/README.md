@@ -8,9 +8,9 @@ merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the second of a three-plan sequential chain** that replaces the retired
 > the superseded accounting-programme draft/`design with three smaller plans:
-> **`ayokoding-learning-path-14-skills-accounting-foundations` (courses #1–#11) → this plan
-> (courses #12–#19) → `ayokoding-learning-path-16-skills-accounting-sharia-extension` (courses
-> #20–#24)**. This plan is repository baseline context plan 14 and hard-blocks plan 16. It shares the retired
+**`ayokoding-learning-path-14-skills-accounting-foundations`(courses #1–#11) → this plan
+(courses #12–#19) →`ayokoding-learning-path-16-skills-accounting-sharia-extension` (courses
+> #20–#24)\*\*. This plan is repository baseline context plan 14 and hard-blocks plan 16. It shares the retired
 > plan's business/product context — personas, the silent-failure constraint (DD-609), the
 > licensing posture (A8) — verbatim with its two siblings; the A10/A11 two-path rationale is stated
 > once, in plan 14, and referenced here. See
@@ -30,7 +30,7 @@ plan 16's.
 
 | Prior artefact                                                                                      | Relationship to this plan                                                                                                                                                                                         |
 | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the superseded accounting-programme draft (reproduced and owned locally)                       | **The direct predecessor this three-plan chain splits from.** Its Stage-2 course range (#4–#19 in its own numbering) is split across plan 14 (courses #4–#11) and this plan (courses #12–#19).                    |
+| the superseded accounting-programme draft (reproduced and owned locally)                            | **The direct predecessor this three-plan chain splits from.** Its Stage-2 course range (#4–#19 in its own numbering) is split across plan 14 (courses #4–#11) and this plan (courses #12–#19).                    |
 | `ayokoding-learning-path-14-skills-accounting-foundations` [Planned — this plan's hard predecessor] | **Supplies the eleven already-merged shared courses** (#1–#11) and both manifests at their 11-entry starting state. This plan's own courses cite four of those eleven as prerequisites (#2, #3, #5, #6, #7, #11). |
 | The 121-course software-engineering library                                                         | **No course duplicates it.** One linked cross-domain prerequisite lands inside this plan's own range (`backend-essentials`, for course #19) — the second and last such edge in the whole 24-course catalog.       |
 
@@ -187,8 +187,8 @@ maintainer judges to be the wrong trade-off for a path this plan explicitly decl
 
 ## Depends-on
 
-| Relation | Plan (full folder name) | Nature |
-| -------- | ----------------------- | ------ |
+| Relation      | Plan (full folder name)                                    | Nature                                                                                                                                                                                                                         |
+| ------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **blockedBy** | `ayokoding-learning-path-14-skills-accounting-foundations` | **Hard; sole direct execution prerequisite.** It must be fully merged and archived on `origin/main` before Phase 0. All earlier completion and repository-baseline facts are transitive context, not extra plan prerequisites. |
 
 **Phase 0 start check:** `git ls-tree -r --name-only origin/main plans/done | rg -q "__ayokoding-learning-path-14-skills-accounting-foundations/README\.md$"` exits 0. This is this plan's only plan-level start gate.
