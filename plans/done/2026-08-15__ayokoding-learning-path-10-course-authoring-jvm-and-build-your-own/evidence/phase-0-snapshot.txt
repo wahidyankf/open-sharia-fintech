@@ -1,0 +1,16 @@
+PLAN09_ARCHIVED_ON_ORIGIN_MAIN=1
+SYLLABUS_ROOT=plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses
+SYLLABUS_SPECS_ABSENT=0
+COURSE_BUCKET=present
+DATABASE_INTERNALS_AND_STORAGE_ENGINES=present
+JUST_ENOUGH_GO=present
+DISTRIBUTED_SYSTEMS=present
+SOFTWARE_ARCHITECTURE=present
+RENDER_ROUTES=no prerender-manifest present after baseline build
+BASELINE_BUILD=pass (2,789 static pages)
+BASELINE_UNIT=pass (159 files, 3,482 passed, 6 skipped)
+SLUG_COLLISIONS=0
+AUTHORED_BODY_ABSENT_COUNT=9
+MANIFEST_DIFF_COUNT=0
+CROSS_PLAN_LINK_GATE=pass
+TOOLCHAIN=npm install and npm run doctor -- --fix passed

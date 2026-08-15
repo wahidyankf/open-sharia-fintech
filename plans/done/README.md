@@ -9,6 +9,11 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-15: ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./2026-08-15__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md) —
+  Authored and Playwright-verified nine JVM, advanced-language, compiler, and build-your-own internals
+  course bodies. Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole
+  archival PR.
+
 - [2026-08-15: ayokoding-learning-path-09-course-authoring-interview-technique](./2026-08-15__ayokoding-learning-path-09-course-authoring-interview-technique/README.md) —
   Authored and Playwright-verified five English interview-technique course bodies and their capstone.
   Delivery Mode: `worktree-to-pr`; terminal delivery is recorded by this plan's sole archival PR.
