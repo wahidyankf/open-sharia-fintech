@@ -57,9 +57,9 @@ Feature: Shared Cargo Target Directories via Doctor
     Then the build emits the expected dist binary
     And the tests pass without reference to a per-worktree target directory
 
-  Scenario: the doctor change is byte-identical across the three repos
-    Given the doctor target-share change is delivered to ose-public, ose-primer, and ose-private
-    When the rhino-cli source and its Gherkin specs are diffed pairwise across the three repos
+  Scenario: the doctor change is byte-identical across the parity repos
+    Given the doctor target-share change is delivered to ose-public and ose-private
+    When the rhino-cli source and its Gherkin specs are diffed pairwise across the parity repos
     Then the diff is empty for every apps/rhino-cli source file and every specs/apps/rhino feature file
 
   Scenario: Nx build caching is unaffected for crates that emit only dist

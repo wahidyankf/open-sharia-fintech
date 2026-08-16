@@ -47,7 +47,7 @@ build is a deliberate trigger rather than a rediscovery.
   A syllabus validator must actually parse the section shape, not merely count files.
 - The existing `rhino-cli md` family (`links validate`, `readme-index validate`, `heading-hierarchy
 validate`) — the established pattern a `md syllabus validate` subcommand would join, including its
-  pre-commit / pre-push / CI wiring and its byte-identity requirement across all three repos.
+  pre-commit / pre-push / CI wiring and its byte-identity requirement across both parity repos.
 
 ## Proposed direction (sketch)
 
@@ -68,7 +68,7 @@ boundary.
 ## Rough scope & non-goals
 
 **In scope**: the subcommand, its unit + Gherkin coverage, its toolchain wiring, and byte-identical
-propagation across `ose-public` / `ose-primer` / `ose-private`.
+propagation across `ose-public` / `ose-private`.
 
 **Non-goals**: retrofitting existing course files to the shape (the convention grandfathers the 17-file
 ordered-list cohort and the capstone variant); validating course _body content_ (only structural

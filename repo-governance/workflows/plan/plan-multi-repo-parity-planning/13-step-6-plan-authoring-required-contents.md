@@ -22,7 +22,6 @@ at the agreed stage. Example (from a plan at `plans/in-progress/foo/README.md`):
 
 This plan is part of a parity set. See sibling plans for context:
 
-- `ose-primer`: `plans/in-progress/foo/README.md`
 - `ose-private`: `plans/in-progress/foo/README.md`
 ```
 

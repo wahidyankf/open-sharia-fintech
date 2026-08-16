@@ -1,14 +1,14 @@
 ---
 title: "Phase 9: .NET Ecosystem (Sequential)"
 description: "Phase 9 (full scope only): install the .NET SDK at the major version pinned by organiclever-be's global.json."
-when_to_use: "Use when setting up .NET for organiclever-be or the ose-primer polyglot demo apps."
+when_to_use: "Use when setting up .NET for the F# backends and libraries."
 ---
 
 # Phase 9: .NET Ecosystem (Sequential)
 
 **Condition**: `{input.scope} == full`
 
-Required for: `organiclever-be`; also polyglot demo apps in ose-primer (extracted 2026-04-18)
+Required for: `organiclever-be`, `ose-be`, `beavernest-be`, `crane-cli`, `fsharp-crane-core`, `fsharp-env-loader`
 
 ## 9.1 Install .NET SDK
 

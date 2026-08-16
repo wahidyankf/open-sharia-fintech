@@ -82,10 +82,10 @@ mod tests {
     // (formerly `commands::java::run_validate_annotations`) with a permanent
     // no-op stub ("dormant in ose-public") while `internal::java::validator`
     // (the working algorithm, with its own passing unit tests) sat unwired
-    // and unreachable in `internal.rs`. ose-primer's
-    // `crud-be-java-springboot` / `crud-be-java-vertx` `typecheck` Nx targets
-    // invoke this exact command before `mvn compile -Pnullcheck`, so a no-op
-    // silently regressed that quality gate. ---
+    // and unreachable in `internal.rs`. A polyglot consumer's Java `crud-be-*`
+    // `typecheck` Nx targets invoke this exact command before
+    // `mvn compile -Pnullcheck`, so a no-op silently regressed that quality
+    // gate. ---
 
     #[test]
     fn run_detects_missing_package_info() {

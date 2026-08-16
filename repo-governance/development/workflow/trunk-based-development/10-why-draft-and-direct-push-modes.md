@@ -34,9 +34,9 @@ branch, no PR, no review gate:
   `origin main`.
 
 `main` is branch-protected against direct pushes for every actor, including admins, in `ose-public`
-and `ose-primer` -- a `pull_request` ruleset rule is active with `bypass_actors: []` and
-`current_user_can_bypass: "never"`. **Neither direct-push mode has an executable path in those two
-repositories, regardless of topology or worktree usage.** In
+-- a `pull_request` ruleset rule is active with `bypass_actors: []` and
+`current_user_can_bypass: "never"`. **Neither direct-push mode has an executable path there,
+regardless of topology or worktree usage.** In
 `ose-private`, both remain available only for infrastructure-as-code plans (Terraform, Ansible, and
 equivalent state-changing infra work needing the primary checkout's real secrets and local state), and
 only when the change is small, well-understood, and does not warrant a review pass. See the

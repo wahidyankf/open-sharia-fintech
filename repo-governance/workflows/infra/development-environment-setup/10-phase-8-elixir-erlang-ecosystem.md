@@ -1,14 +1,14 @@
 ---
 title: "Phase 8: Elixir/Erlang Ecosystem (Sequential)"
 description: "Phase 8 (full scope only): install asdf, then Erlang and Elixir at the versions pinned in .tool-versions."
-when_to_use: "Use when setting up Elixir/Erlang for the ose-primer polyglot demo apps under full scope."
+when_to_use: "Use when setting up Elixir/Erlang under full scope."
 ---
 
 # Phase 8: Elixir/Erlang Ecosystem (Sequential)
 
 **Condition**: `{input.scope} == full`
 
-Required for: polyglot demo apps in ose-primer (extracted 2026-04-18)
+Required for: optional Elixir tooling only — this repo ships no Elixir project today
 
 ## 8.1 Install asdf version manager
 

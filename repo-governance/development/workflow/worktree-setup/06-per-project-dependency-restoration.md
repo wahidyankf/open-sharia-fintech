@@ -28,7 +28,7 @@ the workspace. Most language ecosystems restore dependencies automatically as a 
 their own build/test/typecheck invocation (Rust's `cargo`, TypeScript's package-manager-driven Nx
 executors, Go's module cache, Python's `uv`/`pip`), so this gap is invisible for them. Two
 ecosystems do NOT auto-restore and need an explicit one-time step in a freshly provisioned
-worktree — this surfaced concretely in **ose-primer**'s polyglot demo-app fan-out (`ose-public`
+worktree — this surfaced concretely in a polyglot demo-app fan-out (`ose-public`
 itself currently has no Elixir projects; its own F# apps, e.g. `ose-be`/`organiclever-be`, use
 per-domain names rather than the `*-fsharp-*` demo-app naming below and are unaffected by this
 specific glob):

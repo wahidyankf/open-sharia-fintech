@@ -20,7 +20,7 @@ Specify a non-default `## Delivery Mode` field in a plan if:
 - **Trivial, well-understood change**: A single-line fix or mechanical rename that does not warrant a
   review pass -- use `worktree-to-origin-main` or `main-to-origin-main`.
   **Also subject to the branch-protection axis, independent of the trivial-change rationale**:
-  neither direct-push mode has an executable path in `ose-public` or `ose-primer`; both direct-push
+  neither direct-push mode has an executable path in `ose-public`; both direct-push
   modes remain available only for `ose-private` infrastructure-as-code plans. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 - **External integration**: Working with a third party that requires a specific branch/PR shape.
@@ -30,7 +30,7 @@ Specify a non-default `## Delivery Mode` field in a plan if:
 **Example plan overriding the default** -- recast here as an `ose-private` infrastructure-as-code
 plan, the case this repo's convention treats as the only one where a direct-push mode is genuinely
 sanctioned today (see the branch-protection callout above; a `worktree-to-origin-main`/
-`main-to-origin-main` example targeting `ose-public` or `ose-primer` would fail this
+`main-to-origin-main` example targeting `ose-public` would fail this
 repo's own `plan-checker` gate on sight, because neither mode has an executable path there):
 
 ```markdown
@@ -40,7 +40,7 @@ repo's own `plan-checker` gate on sight, because neither mode has an executable 
 
 **Justification**: This `ose-private` infrastructure-as-code plan updates a single Terraform
 resource tag and needs the primary checkout's local secrets/state access. The change is trivial and
-well-understood; a full PR-review cycle is unnecessary overhead. Not executable in `ose-public` or
-`ose-primer` -- see
+well-understood; a full PR-review cycle is unnecessary overhead. Not executable in `ose-public`
+-- see
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 ```

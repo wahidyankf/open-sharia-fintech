@@ -10,14 +10,14 @@ Every plan resolves to exactly one **delivery mode** before execution begins, de
 - **`main-to-pr`** — primary checkout (no worktree), PR opened against `main`, `[AI]` merges once the hardened preconditions hold (a `[HUMAN]` merge gate applies only where the plan's own step says so).
 
 **Per-Repository Delivery Mode Restrictions (HARD RULE)**: the two direct-push modes above are not
-freely selectable in every repo. `main` is branch-protected (including for admins) in `ose-public`
-and `ose-primer`, so neither direct-push mode has an executable path there — `worktree-to-pr` is
+freely selectable in every repo. `main` is branch-protected (including for admins) in `ose-public`,
+so neither direct-push mode has an executable path there — `worktree-to-pr` is
 **mandatory**, not merely the safest default. Only `ose-private` retains a
 narrow surviving exception, and only for a genuinely infrastructure-as-code plan. See [Plans
 Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repo table and enforcement detail.
 
-`worktree-to-pr` is mandatory in `ose-public` and `ose-primer` — it is the safest choice everywhere
+`worktree-to-pr` is mandatory in `ose-public` — it is the safest choice everywhere
 else too, absent a reason to pick another mode in the one repo (`ose-private`) where an alternative
 is actually available.
 

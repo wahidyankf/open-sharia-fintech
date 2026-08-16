@@ -51,7 +51,7 @@ path failing any single one stays:
 3. Its mtime is older than 7 days.
 4. It neither sits under nor contains `generated-reports/`, any `.env*` file, any git-tracked file,
    any path inside a `git worktree list` entry, or any `.git` directory.
-5. No git-tracked file in any of the three OSE repos references its path.
+5. No git-tracked file in either OSE repo references its path.
 
 **Renamed captures are not artifacts.** A build directory that was renamed to record _what it
 demonstrates_ — `plan04-next-webpack-failed`, `plan04-next-overlap-failure` — is evidence, and

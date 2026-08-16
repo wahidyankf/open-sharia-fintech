@@ -19,7 +19,7 @@ drafting so format and voice stay consistent.
 ```
 Posted: <Weekday, Month D, YYYY>
 Platform: LinkedIn
-Window: <prev-window-end +0700> → <now +0700>. ~<N> commits across the three repos (ose-public <a>, ose-primer <b>, ose-private <c>).
+Window: <prev-window-end +0700> → <now +0700>. ~<N> commits across both repos (ose-public <a>, ose-private <b>).
 
 ---
 
@@ -37,9 +37,6 @@ Highlights: <one-paragraph lead summarizing the biggest changes>
 🏗️ ose-private
 <paragraph(s)>
 
-📦 ose-primer
-<paragraph(s)>
-
 🔜 Next 2–4 weeks
 <forward-looking paragraph>
 
@@ -48,7 +45,6 @@ Highlights: <one-paragraph lead summarizing the biggest changes>
 Insha Allah.
 
 - ose-public: https://github.com/wahidyankf/ose-public
-- ose-primer: https://github.com/wahidyankf/ose-primer
 - OrganicLever: https://www.organiclever.com/
 - Updates: https://www.oseplatform.com/updates/
 - Learning: https://www.ayokoding.com
@@ -64,7 +60,7 @@ reach LinkedIn.
    the highest year folder's last file — do not stop at the current year, which is empty every
    January); take its `Window:` end timestamp as the new window start, and its week number + 1 as
    the new week. New window end = now (+0700).
-2. **Gather commits** across the three repos at `~/ose-projects/{ose-public,ose-primer,ose-private}`.
+2. **Gather commits** across both repos at `~/ose-projects/{ose-public,ose-private}`.
    Fetch safely, then use `git -C <repo> rev-list --count --since=<start> origin/main` for
    accurate totals and `git -C <repo> log origin/main --since=<start>` for subjects. RTK caps
    `git log` output at ~50 lines — use `rtk proxy git -C <repo> log ...` or `rev-list --count` when

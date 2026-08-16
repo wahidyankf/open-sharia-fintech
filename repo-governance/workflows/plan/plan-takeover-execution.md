@@ -14,7 +14,7 @@ inputs:
     type: list
     description: >-
       Explicit override of the candidate repo set Phase A1 probes. Default (when omitted): the
-      current repo, plus `ose-primer` and `ose-private` whenever they exist as sibling checkouts
+      current repo, plus `ose-private` whenever it exists as a sibling checkout
       reachable from the same parent directory as this repo — this default is a FLOOR, never narrowed below the
       current repo, and widened automatically when the plan's own docs name additional repos in
       scope.

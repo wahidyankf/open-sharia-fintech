@@ -1,6 +1,6 @@
 //! `specs counts validate` — checks that spec folders have the minimum required file counts.
 //!
-//! Kept as a standalone leaf (mirroring ose-private/ose-primer) because `specs structure validate`
+//! Kept as a standalone leaf (mirroring ose-private) because `specs structure validate`
 //! hardcodes the `specs/apps/<name>` prefix and cannot reach spec trees that live outside
 //! `specs/apps/` — e.g. `specs/libs/web-ui`, `specs/libs/web-ui-token`, `specs/libs/rust-commons`,
 //! `specs/libs/fsharp-crane-core`, whose `specs:structure-validation` Nx targets pass an explicit

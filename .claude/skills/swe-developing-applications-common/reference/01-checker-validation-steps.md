@@ -28,8 +28,8 @@ Reference: `repo-governance/development/infra/nx-targets.md`.
 
 ## Step 3: Go-Specific Standards
 
-Reference: AyoKoding Go educational content and downstream `ose-primer` Go style guides (`ose-public`
-has no Go projects of its own but this checker also runs against `ose-primer`).
+Reference: AyoKoding Go educational content (`ose-public` has no Go projects of its own today; these
+checks apply the moment one is added).
 
 - **go.mod version**: must specify the current platform standard (Go 1.26) — MEDIUM if outdated.
 - **Single-line main()**: `func main() { cmd.Execute() }` or equivalent; multi-line indicates

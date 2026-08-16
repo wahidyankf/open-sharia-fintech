@@ -7,14 +7,13 @@ when_to_use: Use when deciding whether repos can run in parallel, how a repo's p
 # Parallel Propagation Shape
 
 The repos form a propagation fan-out, not a chain: **`ose-public` is the source of truth**, and
-`ose-primer` and `ose-private` are independent downstream targets. Once the upstream decision is
-recorded, the two downstream repos are **independent DAG nodes** — author and deliver them in
-parallel under the N+1 model (`1 main thread + N background agents`, default **N=3**), never
-serialized behind one another. `ose-private` does not participate in the parity loop for content it
-does not carry.
+`ose-private` is its one downstream target. Where a parity set covers more than two repos, the
+downstream repos are **independent DAG nodes** — author and deliver them in parallel under the N+1
+model (`1 main thread + N background agents`, default **N=3**), never serialized behind one another.
+`ose-private` does not participate in the parity loop for content it does not carry.
 
-The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the three parity repos
-— `ose-public`, `ose-primer`, `ose-private`** — so plans touching it propagate one repo at a time
+The one hard serialization: **`apps/rhino-cli` must stay byte-identical across the parity repos
+— `ose-public` and `ose-private`** — so plans touching it propagate one repo at a time
 rather than concurrently
 ([AGENTS.md §Related Repositories](../../../../AGENTS.md#related-repositories)).
 
@@ -34,8 +33,9 @@ including delivery-boundary PR granularity and the named flag-removal step.
 
 ## Shared-Machine Safety
 
-All three repos share one machine's disk and git object store, and two of them are bare repos driven
-through worktrees. Every git action here is therefore bound by the **no-destructive-git** rule:
+The parity repos share one machine's disk and git object store, and any of them may be a bare repo
+driven through worktrees — verify each repo's topology, never assume it. Every git action here is
+therefore bound by the **no-destructive-git** rule:
 never run an operation that discards a concurrent actor's uncommitted work, and never remove a
 worktree or branch you did not create. See
 [No Destructive Git Operations](../../../development/workflow/no-destructive-git-operations.md) and

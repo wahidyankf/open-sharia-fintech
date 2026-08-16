@@ -35,9 +35,9 @@ sealed-interface form are in `swe-programming-golang` — not restated here.
 
 **CRITICAL**: This agent enforces **OSE Platform-specific style guides**, not educational
 tutorials. `ose-public` no longer ships a Go style-guide tree under `docs/explanation/` (Go was
-removed from active apps; CLIs are now Rust) — this agent authors Go for the downstream
-[`ose-primer`](https://github.com/wahidyankf/ose-primer) template, which is authoritative for Go
-standards. Universal Go idioms come from the AyoKoding educational content, which this agent MUST
+removed from active apps; CLIs are now Rust) — this agent authors Go only for a future Go project in
+this repo, and no external repository is authoritative for its standards. Universal Go idioms come
+from the AyoKoding educational content, which this agent MUST
 consult before authoring: [Go Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang)
 (setup, overview), [By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/by-example)
 (75+ annotated examples), [In the Field](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/in-the-field)

@@ -2,7 +2,7 @@
 
 One-line summary: `ose-private` carries `.opencode/agents/ci-monitor-subagent.md` with no
 `.claude/agents/` source, and the mirror-drift validator stays quiet about it only because
-`rhino-cli` hardcodes a skip for that exact filename — a carve-out that all three repos inherit
+`rhino-cli` hardcodes a skip for that exact filename — a carve-out that both parity repos inherit
 through the byte-identity boundary.
 
 > Provenance: routed to `backlog/` by
@@ -34,8 +34,8 @@ matches a plugin-provided agent (`nx:ci-monitor-subagent`, the CI helper for `/m
 raises the real possibility that the file was installed by tooling rather than authored — in which
 case the right answer is a declared exclusion, not a deletion. That origin is not established.
 
-The carve-out also does not stay in one repo. `apps/rhino-cli` is byte-identical across `ose-public`,
-`ose-primer`, and `ose-private` with no carve-outs, so all three ship a validator that names a
+The carve-out also does not stay in one repo. `apps/rhino-cli` is byte-identical across `ose-public`
+and `ose-private` with no carve-outs, so both ship a validator that names a
 specific file that exists in only one of them.
 
 ## Why now
@@ -50,7 +50,7 @@ in one generated tree and not the others, and the same hardcoded skip keeps that
 too. Every additional harness compounds a divergence nobody can see.
 
 Finally, the skip lives in a byte-identity-gated file. Every future change to the naming validator
-carries the carve-out forward into three repositories, so the cost of leaving it is not static.
+carries the carve-out forward into both parity repos, so the cost of leaving it is not static.
 
 ## Prior art / precedents
 
@@ -118,8 +118,8 @@ Out of scope:
 - **Does removing the skip surface more than one file?** The skip is filename-scoped, so it may be
   masking unsourced mirrors elsewhere. Running the validator without it is the cheapest way to size
   the whole problem — and the answer may be zero, one, or many. (open)
-- **Is a coordinated tri-repo landing proportionate?** The validator sits inside the byte-identity
-  boundary, so even a two-line change must land in three repositories in lockstep. That cost may
+- **Is a coordinated two-repo landing proportionate?** The validator sits inside the byte-identity
+  boundary, so even a two-line change must land in both parity repos in lockstep. That cost may
   exceed the value of removing one carve-out. (open)
 - **Does `ose-private` want this at all?** It is proprietary and sits outside the content-parity
   loop, so a normalization that `ose-public` finds obviously correct may not be wanted there. Same
@@ -139,6 +139,6 @@ Promotion signal: ripe once two things are known — the file's actual origin in
 count of unsourced mirror files that appear when the skip is removed across all repos. Those two
 answers also decide whether this deserves a plan at all: if the origin is "stale leftover" and the
 count is one, this is a delete plus a small validator change and should simply be done, folded into
-the next `apps/rhino-cli` tri-repo landing rather than promoted. Promote only if the count comes back
+the next `apps/rhino-cli` parity landing rather than promoted. Promote only if the count comes back
 greater than one, or if the file turns out to be legitimately tool-installed and the exclusion
 therefore needs a designed, declared home.

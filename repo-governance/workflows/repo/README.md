@@ -1,6 +1,6 @@
 ---
 title: "Repository Workflows"
-description: "Orchestrated repository-level governance workflows — rules consistency, harness compatibility (parity + external drift), ose-primer content synchronization, and dependency bump planning."
+description: "Orchestrated repository-level governance workflows — rules consistency, harness compatibility (parity + external drift), and dependency bump planning."
 when_to_use: Use when routing to a workflow that validates repository-level rules, harness compatibility, or dependency posture.
 category: explanation
 subcategory: workflows

@@ -22,7 +22,7 @@ charitably reinterpreted — an agent runs it, fails, and either stalls or silen
 ## Why now
 
 The drift is self-inflicted and recurring: commands get renamed and removed routinely, and every
-rename silently invalidates an unknown number of citations across all three repos. No amount of
+rename silently invalidates an unknown number of citations across both parity repos. No amount of
 "check the canonical doc" discipline helps when the canonical doc is itself the thing that drifted.
 Only a mechanical check against the running system closes this, and the sibling `md * validate`
 family already establishes the exact pattern to extend.
@@ -52,12 +52,12 @@ family already establishes the exact pattern to extend.
 - A two-tier exemption mechanism: inline per-occurrence annotation with a mandatory written reason,
   plus a config path allowlist for structurally out-of-scope trees.
 - Wire into `pre-push` and the CI `markdown-per-file` job; remediate existing violations first so
-  it lands green; propagate byte-identically to `ose-primer` and `ose-private`.
+  it lands green; propagate byte-identically to `ose-private`.
 
 ## Rough scope & non-goals
 
 In scope: existence-only detection of Nx target, npm script, and rhino-cli subcommand citations, in
-tracked markdown, wired as a pre-push + CI gate across all three repos.
+tracked markdown, wired as a pre-push + CI gate across both parity repos.
 
 Out of scope (for now): shell script and `make` target citations (highest false-positive surface,
 deferred); flag and argument validation (harder problem, weaker oracle); external tools (`git`,
@@ -76,7 +76,7 @@ human or agent decides whether the doc or the tooling is wrong).
 
 ## What success looks like + promotion signal
 
-Success: `md commands validate` exits 0 across all three repos after remediation, and reintroducing
+Success: `md commands validate` exits 0 across both parity repos after remediation, and reintroducing
 any one of the three originally-cited nonexistent targets into tracked markdown fails the pre-push
 hook. No numeric adoption or defect-reduction target is claimed; none has been measured. Ready to
 re-promote to a backlog plan as-is — the design decisions are already settled in git history (CLI

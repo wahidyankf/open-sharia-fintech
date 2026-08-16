@@ -1,5 +1,12 @@
 # 📚 Product Requirements: Reader Journeys and Documentation Experience
 
+> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
+> sync obligation; see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
+> **descoped**, not deferred. References to `ose-primer` below are historical context, not
+> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
+
 ## Product Overview
 
 This program produces three repository experiences that feel related but never interchangeable. A
@@ -142,10 +149,10 @@ formatting, and verifies exact equality with `jq -r '.description' package.json`
 ### In scope
 
 - Reader routing, onboarding tutorials, living READMEs, and directly related current docs in all
-  three repositories.
+  both parity repositories.
 - Evidence-based disposition of every tracked README without forcing cosmetic edits.
 - macOS and Ubuntu fresh-checkout journeys, with WSL2 described only as a possible unverified path.
-- Complete GitHub About metadata for all three repositories.
+- Complete GitHub About metadata for both parity repositories.
 - Secret-safe public summaries of private delivery evidence.
 
 ### Out of scope
@@ -229,7 +236,7 @@ request that the maintainer does not accept.
 
 ```gherkin
 Scenario: Contribution entry points preserve closed external intake
-  Given a reader opens any root README or CONTRIBUTING file in the three-repository delivery
+  Given a reader opens any root README or CONTRIBUTING file in the two-repository delivery
   When the reader looks for contribution instructions
   Then external contributions are clearly described as closed or authorization-only
   And authorized contributors receive the current worktree-to-PR workflow without a response-time promise
@@ -294,7 +301,7 @@ byte identity.
 
 ```gherkin
 Scenario: Repository relationship claims agree
-  Given content parity covers ose-public and ose-primer while Rhino byte identity covers three repositories
+  Given content parity covers ose-public and ose-private while Rhino byte identity covers both parity repositories
   When the reader compares living relationship documentation across the delivery
   Then each document states the same two boundaries without including beaver-nest in either one
   And repository-specific product content is not described as parity content
@@ -307,7 +314,7 @@ choose the right starting point before opening a file.
 
 ```gherkin
 Scenario: GitHub About metadata uses distinct safe positioning
-  Given the three repositories have approved About and package description contracts
+  Given both parity repositories have approved About and package description contracts
   When the metadata changes are applied through the named GitHub and npm commands
   Then each repository displays its own approved purpose and homepage
   And each root package description matches its repository purpose

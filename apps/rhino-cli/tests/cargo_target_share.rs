@@ -22,17 +22,17 @@
 //! on, rather than fabricating cross-repo or Nx-level behavior this binary
 //! does not own:
 //!
-//! - **"the doctor change is byte-identical across the three repos"**: the
-//!   real invariant is a pairwise `diff -rq` across three *separate git
-//!   repositories* (`ose-public`/`ose-primer`/`ose-private`), which is Phase 6
+//! - **"the doctor change is byte-identical across the parity repos"**: the
+//!   real invariant is a pairwise `diff -rq` across *separate git
+//!   repositories* (`ose-public`/`ose-private`), which is Phase 6
 //!   of `plans/in-progress/rust-cargo-target-dir-sharing/delivery.md`, not
 //!   something one compiled binary running against one synthetic repo can
 //!   exercise. What this suite *can* prove, and what actually makes
-//!   byte-identical source produce correct results in three differently
+//!   byte-identical source produce correct results in differently
 //!   named repos, is that the mechanism is genuinely parameterized by the
-//!   repo name (not hardcoded): running `doctor --fix` against three
-//!   identically-shaped synthetic repos named `ose-public`, `ose-primer`,
-//!   and `ose-private` produces three resulting symlink targets that differ
+//!   repo name (not hardcoded): running `doctor --fix` against
+//!   identically-shaped synthetic repos named `ose-public` and
+//!   `ose-private` produces resulting symlink targets that differ
 //!   in *only* the repo-name path segment.
 //! - **"Nx build caching is unaffected for crates that emit only dist"**:
 //!   actual Nx cache-hit verification (`nx run ayokoding-cli:build` twice,
@@ -589,11 +589,11 @@ fn given_target_is_symlink(w: &mut TargetShareWorld) {
     );
 }
 
-#[given("the doctor target-share change is delivered to ose-public, ose-primer, and ose-private")]
-fn given_delivered_to_three_repos(_w: &mut TargetShareWorld) {
+#[given("the doctor target-share change is delivered to ose-public and ose-private")]
+fn given_delivered_to_parity_repos(_w: &mut TargetShareWorld) {
     // Deviation — see the module doc comment: the real invariant (a
-    // three-repository `diff -rq`) is out of this single-suite's reach.
-    // The subsequent When step builds the three named synthetic repos this
+    // cross-repository `diff -rq`) is out of this single-suite's reach.
+    // The subsequent When step builds the named synthetic repos this
     // scenario's proxy actually drives.
 }
 
@@ -807,15 +807,15 @@ fn when_build_and_test_through_nx(w: &mut TargetShareWorld) {
     w.output = Some(if build.status.success() { test } else { build });
 }
 
-#[when("the rhino-cli source and its Gherkin specs are diffed pairwise across the three repos")]
+#[when("the rhino-cli source and its Gherkin specs are diffed pairwise across the parity repos")]
 fn when_diffed_pairwise(w: &mut TargetShareWorld) {
     // Deviation — see the module doc comment: proxy — run `doctor --fix`
-    // against three identically-shaped synthetic repos literally named
-    // `ose-public`, `ose-primer`, `ose-private`, sharing one cache root, and
-    // record each resulting symlink target.
-    let parent = TempDir::new().expect("temp parent for repo trio");
+    // against identically-shaped synthetic repos literally named
+    // `ose-public` and `ose-private`, sharing one cache root, and record each
+    // resulting symlink target.
+    let parent = TempDir::new().expect("temp parent for repo pair");
     let mut results = Vec::new();
-    for name in ["ose-public", "ose-primer", "ose-private"] {
+    for name in ["ose-public", "ose-private"] {
         let repo_dir = parent.path().join(name);
         std::fs::create_dir_all(&repo_dir).expect("mkdir repo dir");
         build_throwaway_repo(&repo_dir);
@@ -1037,7 +1037,7 @@ fn then_tests_pass(w: &mut TargetShareWorld) {
 fn then_diff_empty_proxy(w: &mut TargetShareWorld) {
     assert_eq!(
         w.repo_name_results.len(),
-        3,
+        2,
         "expected one resolved symlink per synthetic repo"
     );
     let leaves: Vec<PathBuf> = w
@@ -1060,7 +1060,7 @@ fn then_diff_empty_proxy(w: &mut TargetShareWorld) {
         .collect();
     assert!(
         leaves.iter().all(|l| *l == leaves[0]),
-        "all three symlinks must share the same cache root, differing only by repo name: {leaves:?}"
+        "all symlinks must share the same cache root, differing only by repo name: {leaves:?}"
     );
 }
 

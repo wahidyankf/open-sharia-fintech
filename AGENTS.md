@@ -115,9 +115,8 @@ Do NOT stage/commit unless explicitly instructed. License MIT — see
 
 ## Related Repositories
 
-Sibling repos: [ose-primer](https://github.com/wahidyankf/ose-primer) (template),
-[ose-private](https://github.com/wahidyankf/ose-private) (infra). `apps/rhino-cli` byte-identity
-spans all three.
+Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private) (infra).
+`apps/rhino-cli` byte-identity spans both. No other repository carries a sync obligation.
 
 **See**: [Related Repositories reference](./docs/reference/related-repositories.md)
 

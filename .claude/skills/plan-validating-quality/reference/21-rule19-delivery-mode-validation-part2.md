@@ -11,7 +11,7 @@ cross-references elsewhere cite them as "rule 19 item 8"/"item 9").
    [Per-Repository Delivery Mode Restrictions](../../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule))
    — determine the repository (`git remote get-url origin` or `repo-config.yml`); check the resolved
    mode against it:
-   - **`ose-public`, `ose-primer`**: `worktree-to-origin-main` or `main-to-origin-main` resolved:
+   - **`ose-public`**: `worktree-to-origin-main` or `main-to-origin-main` resolved:
      **HIGH** — `main` is branch-protected against direct pushes, including for admins, so these
      modes have no executable path.
    - **`ose-private`**: same modes resolved: **HIGH**, unless the plan is genuinely
@@ -30,5 +30,5 @@ PR-creation/review-cycle/merge/CI-verification step in a non-boundary phase: **H
 Change-producing phase absent from `### Delivery Boundaries`: **HIGH**. Non-boundary final
 change-producing phase: **HIGH**. Missing `### Delivery Boundaries` table on a non-trivial plan:
 **MEDIUM**. Single end-of-plan boundary on a plan declaring independent parallel nodes: **MEDIUM**.
-Resolved `worktree-to-origin-main`/`main-to-origin-main` in `ose-public`/`ose-primer`: **HIGH**. Same
+Resolved `worktree-to-origin-main`/`main-to-origin-main` in `ose-public`: **HIGH**. Same
 in `ose-private` on a non-infra plan: **HIGH**.

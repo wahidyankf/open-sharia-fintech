@@ -40,6 +40,4 @@ is compulsory for all apps and E2E runners.
 | ----------------- | --------------------------------------------------------------------- |
 | `organiclever-be` | `dotnet build apps/organiclever-be/organiclever-be.fsproj -c Release` |
 
-> For polyglot backend `typecheck` patterns (Go, F#, Java, Kotlin, Python, Rust, Elixir, TypeScript, C#, Clojure), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
-
 **CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every PR event and on every push to `main` through `pr-quality-gate.yml`; its CI matrix is derived from the gate registry. Heavy integration and E2E tiers remain scheduled-only and are never gate-surface entries.

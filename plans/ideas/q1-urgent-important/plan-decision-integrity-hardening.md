@@ -41,11 +41,13 @@ three was observable in plan one's own documents, at plan-one authoring time:
   The third plan renamed `light` to `haiku`, by which time the identifier had reached six binding
   surfaces (feature types, two URL query values, design tokens, both i18n keys, both step-binding
   layers), and that plan's PR review caught seven stale `sortLight` sites the sweep had missed.
-- **The prevention landed in one repo out of three.** The third plan triaged five Knowledge Capture
-  learnings and routed all five into `repo-governance/`. A fifteen-cell grep (five routings × three
-  repos) reads present in `ose-public` and absent in `ose-primer` and `ose-private` for all five. All
-  ten target files exist in every repo, so this is drift, not a structural difference — the rules
-  written to prevent a recurrence protect one repo in three.
+- **The prevention landed in one parity repo out of two.** The third plan triaged five Knowledge
+  Capture learnings and routed all five into `repo-governance/`. A ten-cell grep (five routings ×
+  the two parity repos) reads present in `ose-public` and absent in `ose-private` for all five. All
+  ten target files exist in both repos, so this is drift, not a structural difference — the rules
+  written to prevent a recurrence protect one repo out of two. (The 2026-07 measurement also
+  covered `ose-primer`; that repo has since left the parity set and carries no propagation
+  obligation, so its cells are dropped rather than backfilled.)
 
 ## Why now
 
@@ -109,17 +111,17 @@ mechanical enforcement step:
   blocker. Matching `plan-maker` emission plus a grill question, `plan-fixer` scaffolds per clause, and
   the `plan-creating-project-plans` skill mirrored. The step is proven non-vacuous against a
   deliberately non-compliant fixture before its gate closes.
-- **Three-repo propagation and retroactive application.** The identical rule text lands in
-  `ose-public`, `ose-primer`, and `ose-private`, with the same fifteen-cell grep that detected the
+- **Two-repo propagation and retroactive application.** The identical rule text lands in
+  `ose-public` and `ose-private`, with the same grep that detected the
   original drift used as the parity gate. Every plan open in `plans/in-progress/` and `plans/backlog/`
-  across the three repos is audited and **fixed**, not merely reported.
+  across both repos is audited and **fixed**, not merely reported.
 
 ## Rough scope & non-goals
 
 In scope: the four rule texts in their existing convention homes; `plan-checker` Step 5o plus the
 matching `plan-maker`/`plan-fixer`/skill wiring; the non-compliant fixture that proves the step fires;
 the five-routing parity backfill into both sibling repos; a blameless post-mortem of the three-plan
-split; a recorded audit verdict and applied fix for every open plan in the three repos; platform
+split; a recorded audit verdict and applied fix for every open plan in both parity repos; platform
 binding regeneration wherever `.claude/` changes.
 
 Out of scope:
@@ -149,7 +151,7 @@ Out of scope:
 - The Primary Job Criterion can degrade into a box-ticking row that restates whichever option the
   author already preferred. The `brd.md`-anchor requirement is the intended defence; whether it
   actually binds in practice is untested. (open)
-- The retrofit's blast radius is real: 25 open plan folders at authoring time across three repos, some
+- The retrofit's blast radius is real: 25 open plan folders at authoring time across the parity repos, some
   of them mid-execution in other sessions' worktrees. Confining retrofit edits to `prd.md` funnel
   tables and `tech-docs.md` records, and touching no `delivery.md` checkbox state, is the proposed
   containment.
@@ -167,8 +169,8 @@ Out of scope:
 Success: a UI-bearing plan's Justify table names one job criterion traceable to a stated problem; no
 option is dropped on a claim nobody rendered; a plan that reverses a predecessor says so and disposes
 of the original reason; a multi-surface identifier set is settled while the rename is a one-file edit.
-Each new rule is present in all three repos, verified by the same per-repo grep that detected the
-drift, and the fifteen-cell routing table reads present in every cell. Step 5o is demonstrated firing
+Each new rule is present in both parity repos, verified by the same per-repo grep that detected the
+drift, and the ten-cell routing table reads present in every cell. Step 5o is demonstrated firing
 against a deliberately non-compliant fixture, so it is proven non-vacuous rather than assumed to work.
 
 Promotion signal — any one of these:

@@ -10,8 +10,8 @@ One-line summary: a single-line test-fixture placeholder string in `sync_validat
 
 ## Problem / context
 
-`apps/rhino-cli` is governed by a byte-identity rule with zero carve-outs across the three sync-loop
-repos (`ose-public`, `ose-primer`, `ose-private`): `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`,
+`apps/rhino-cli` is governed by a byte-identity rule with zero carve-outs across the two sync-loop
+repos (`ose-public`, `ose-private`): `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`,
 `LICENSE`, and the shared Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**`
 must all match byte for byte. A confirmed single-line drift currently violates that rule. In
 `apps/rhino-cli/src/application/agents/sync_validator.rs`, the test fixture that exercises the
@@ -63,13 +63,13 @@ publicly-visible repo whose fixture strings external contributors are most likel
 was explicitly a suggestion, not a requirement, and whoever picks this up may choose the other value if
 something found at pickup time argues for it (for example, a sibling test file already anchored on one
 of them). Whatever is chosen must not encode any assumption about a real, currently-supported model.
-The work itself is: re-verify the drift is still live and check whether `ose-primer` carries either
-value or a third of its own; find every reference to the losing string in each repo; update them
+The work itself is: re-verify the drift is still live in `ose-private`; find every reference to the
+losing string in each repo; update them
 together with the fixtures that depend on them, without deleting or weakening any test to route around
 the change; then re-run the byte-identity `diff` and the local rhino-cli gates. Because `apps/rhino-cli`
 sits inside the zero-carve-out byte-identity boundary, this change is not a single-repo edit — the
-identical bytes must land in `ose-public`, `ose-primer`, and `ose-private`, and the change is not done
-until all three agree.
+identical bytes must land in `ose-public` and `ose-private`, and the change is not done
+until both agree.
 
 ## Rough scope & non-goals
 
@@ -83,17 +83,16 @@ Out of scope, carried forward verbatim from the source plan:
 - The `ose-public`-specific `nx affected` rhino-cli-detection gap — previously slated for
   `rhino-cli-optimization` (superseded and deleted 2026-08-08); not carried by its successor
   [optimize-cis](../../done/2026-08-09__optimize-cis/README.md), so currently untracked pending re-filing.
-- Reconciling `ose-primer`'s copy, unless it turns out to carry this specific string — verify first, do
-  not assume drift where none exists.
+- `ose-primer`'s copy — that repo is outside the parity set and is free to diverge.
 - Any change to the wrong-model _behavior_. Only the fixture string identity moves.
 
 ## Risks & open questions
 
 - Which value becomes canonical? (open — `opencode-go/wrong` is the standing recommendation, not a
   decision; re-evaluate at pickup.)
-- Is the drift still present, and does `ose-primer` hold either value or a third one of its own? (open —
-  must be re-verified before any edit, since the sibling `spec-coverage` drift already demonstrated that
-  these findings can self-resolve between authoring and pickup.)
+- Is the drift still present in `ose-private`? (open — must be re-verified before any edit, since the
+  sibling `spec-coverage` drift already demonstrated that these findings can self-resolve between
+  authoring and pickup.)
 - Does anything outside `sync_validator.rs` reference the losing string, so that changing it in one
   place alone leaves a broken or inconsistent fixture? (open)
 - Coordination risk: a three-repo edit that lands in only two repos recreates exactly the drift class

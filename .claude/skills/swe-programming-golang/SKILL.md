@@ -1,6 +1,6 @@
 ---
 name: swe-programming-golang
-description: Go coding standards quick reference for agents authoring Go code (primarily for downstream ose-primer; ose-public itself has no active Go apps)
+description: Go coding standards quick reference for agents authoring Go code (ose-public has no active Go apps today; use this when adding one)
 ---
 
 # Go Coding Standards
@@ -11,10 +11,9 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 
 > **Scope note**: `ose-public` no longer ships a Go style-guide tree under
 > `docs/explanation/software-engineering/programming-languages/golang/` (Go was removed from active
-> apps 2026-05-23; CLIs are now Rust). This skill is retained because `swe-golang-dev` authors Go
-> for the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) template, which is
-> the authoritative source for OSE Go conventions. Use the AyoKoding educational content below for
-> universal Go idioms.
+> apps 2026-05-23; CLIs are now Rust). This skill is retained so `swe-golang-dev` has standards to
+> apply the moment a Go project returns to this repo. No external repository is authoritative for
+> those standards. Use the AyoKoding educational content below for universal Go idioms.
 
 **Educational Resource**: [AyoKoding Go Learning Path](../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/golang/)
 
@@ -31,7 +30,7 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 3. **[Go In the Field](../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** — Production implementation guides (standard library first, framework integration)
 4. **[Go Release Highlights](../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** — Go 1.18+ features (generics, fuzzing, PGO, iterators, Green Tea GC)
 
-**What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase (and in ose-primer).
+**What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
 
 **What this skill does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
@@ -44,9 +43,8 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 
 ## Comprehensive Documentation
 
-**OSE Platform Go standards** now live in the downstream
-[`ose-primer`](https://github.com/wahidyankf/ose-primer) template (authoritative for Go conventions
-in OSE-derived projects). `ose-public` itself has no active Go apps.
+**OSE Platform Go standards** are the quick-reference modules above; `ose-public` has no active Go
+apps, so no fuller style-guide tree is maintained here today.
 
 **AyoKoding educational content** (universal Go idioms — use for fundamentals and patterns):
 

@@ -14,11 +14,8 @@ created: 2026-03-22
 How code coverage is measured and validated across all projects in the monorepo.
 
 > **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) and their
-> per-language coverage tooling were extracted to
-> [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. That
-> repository is the authoritative reference for polyglot coverage patterns
-> (Java/JaCoCo, Kotlin/Kover, Python/coverage.py, Rust/cargo-llvm-cov,
-> Elixir/excoveralls, C#/Coverlet, Clojure/cloverage, Dart/flutter test).
+> per-language coverage tooling were removed from this repo on 2026-04-18. This page
+> covers only the languages this repository still ships.
 
 ## Coverage Algorithm
 

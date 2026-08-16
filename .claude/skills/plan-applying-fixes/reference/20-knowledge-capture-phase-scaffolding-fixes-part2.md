@@ -14,7 +14,7 @@
 - [ ] [AI] Apply the secret/sensitivity gate — sanitize any secret, credential, token, or private
       hostname to a `<placeholder>` token, or discard if unsanitizable
 - [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-private` only and is
-      NEVER cross-routed into `ose-public`/`ose-primer`
+      NEVER cross-routed into `ose-public`
 - [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix; code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan, NEVER landed inline (the only carve-out is a genuine blocker

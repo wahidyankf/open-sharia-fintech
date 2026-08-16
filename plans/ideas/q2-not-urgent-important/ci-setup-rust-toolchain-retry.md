@@ -2,7 +2,7 @@
 
 One-line summary: the `setup-rust` composite action has no retry around the toolchain install, and
 its download from `static.rust-lang.org` flaked **seven times in a single plan phase** — gating a
-markdown-only changeset it could not have affected; wrap the install in a retry, in all three repos.
+markdown-only changeset it could not have affected; wrap the install in a retry, in both parity repos.
 
 > Surfaced 2026-07-22 during `bare-repo-governance-hardening` Phase 5. Routed as its own brief
 > because it is a CI/code change, which the Knowledge Capture routing matrix forbids landing inline
@@ -35,9 +35,9 @@ The mitigation gap is one step wide: the composite action delegates the toolchai
 third-party action that shells out to `rustup toolchain install`, with **no retry at any layer** —
 while the expensive, large, most-likely-to-fail download is exactly that one.
 
-**Verified complication:** the three copies of this action have already diverged.
-`ose-public` and `ose-primer` install via `actions-rust-lang/setup-rust-toolchain@v1`; the third
-repo uses `dtolnay/rust-toolchain@stable`. So "apply the same fix identically" is not a copy-paste.
+**Verified complication:** the two parity copies of this action have already diverged.
+`ose-public` installs via `actions-rust-lang/setup-rust-toolchain@v1`; `ose-private`
+uses `dtolnay/rust-toolchain@stable`. So "apply the same fix identically" is not a copy-paste.
 
 ## Why now
 
@@ -60,7 +60,7 @@ workflow expects to stay aligned. That deferral is only sound if the follow-up a
   three repos without creating divergence.
   [workflow](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
 - **SDLC Gate Standard** — defines the shared CI gate shape the three repos are held to, which is
-  why the fix must be tri-repo rather than local.
+  why the fix must span both parity repos rather than stay local.
   [sdlc-gate-standard](../../../docs/reference/sdlc-gate-standard.md)
 - **Retry-with-backoff around network fetches in CI** — standard practice (`curl --retry`,
   `nick-fields/retry`, package-manager retry flags); this is applying a well-known pattern one step
@@ -79,7 +79,7 @@ workflow expects to stay aligned. That deferral is only sound if the follow-up a
 
 ## Rough scope & non-goals
 
-In scope: a retry around the toolchain install in `setup-rust` in all three repos; reconciling the
+In scope: a retry around the toolchain install in `setup-rust` in both parity repos; reconciling the
 divergent toolchain-action choice; a note in the action explaining what the retry defends against,
 matching the existing comment style.
 

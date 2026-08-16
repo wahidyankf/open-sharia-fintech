@@ -107,9 +107,9 @@ Out of scope:
   "not worth a rule" for the phantom-refs finding in isolation. This brief exists because the
   _pattern_ (derivation over declaration) is the maintainer's stated general preference, not because
   the specific incident demands a fix. Worth re-confirming appetite before promoting. (open)
-- **Four-repo scope.** `repo-config.yml` and `rhino-cli` both fall under the byte-identity boundary
-  spanning ose-public, ose-primer, and ose-private with zero carve-outs; beaver-nest carries a fork of
-  `rhino-cli` and would need its own deliberate porting decision, separate from the other three. (open)
+- **Three-repo scope.** `repo-config.yml` and `rhino-cli` both fall under the byte-identity boundary
+  spanning ose-public and ose-private with zero carve-outs; beaver-nest carries a fork of
+  `rhino-cli` and would need its own deliberate porting decision, separate from the other two. (open)
 - **Registry staleness is a new failure mode, not a solved one.** A declared registry can itself drift
   from reality (an entry never updated after a branch is actually retired) — the live-ref comparison
   check is what keeps that honest, so it is load-bearing, not optional polish. (open)

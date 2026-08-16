@@ -47,14 +47,6 @@ Plan 06 needs):
 — 5 courses (#20-24, follows plan 15): the Sharia-specific extension — `sharia-accounting`
 terminates here.
 
-**Cross-repo governance follow-ups** (filed directly, not promoted from a two-pager — each closes a
-deferral explicitly recorded in an already-`done/` plan's own README):
-
-- [sync-primer-governance-parity](./sync-primer-governance-parity/README.md) — brings `ose-primer`'s
-  `apps/rhino-cli` boundary and governance-Markdown surface to parity with the word-budget/
-  readme-index gates `optimize-governance-md` shipped in `ose-public`/`ose-private`; closes that
-  plan's own recorded "Accepted divergence: `ose-primer`" deferral.
-
 **Demoted to two-pagers 2026-08-05**: every standalone plan that once sat here — the Ruff config, the
 bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduction, the
 `reuseExistingServer` audit, the Vitest glob guard, the app-shell tap targets, the Vercel steady-state

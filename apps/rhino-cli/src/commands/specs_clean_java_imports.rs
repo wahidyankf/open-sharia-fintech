@@ -140,9 +140,9 @@ mod tests {
     // rationalization replaced the real cleaner with a permanent no-op stub
     // ("dormant in ose-public") while `internal::contracts::java_clean_imports`
     // (the working algorithm, with its own passing unit tests) sat unwired and
-    // unreachable. ose-primer's `crud-be-java-springboot` / `crud-be-java-vertx`
-    // Nx targets pipe real OpenAPI-generated Java through this exact command,
-    // so a no-op regressed those pipelines silently. ---
+    // unreachable. A polyglot consumer's Java `crud-be-*` Nx targets pipe real
+    // OpenAPI-generated Java through this exact command, so a no-op regressed
+    // those pipelines silently. ---
 
     #[test]
     fn run_actually_removes_unused_imports() {

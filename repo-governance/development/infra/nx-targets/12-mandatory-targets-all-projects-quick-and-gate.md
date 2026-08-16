@@ -57,9 +57,6 @@ Canonical example for a Rust CLI project (`rhino-cli`):
 }
 ```
 
-> For polyglot `test:quick` composition patterns (Go, Java, Kotlin, Python, Elixir, TypeScript, C#,
-> Clojure, Dart/Flutter, F#), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
-
 ## Gate-Surface and Scheduled-Tier Rule
 
 **Gate rule**: `(pre-commit ∪ pre-push) == PR gate`; the registry defines the check set and the

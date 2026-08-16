@@ -21,7 +21,7 @@ when_to_use: Use for Layer 3's scope and governance relationships.
 
 **Scope**:
 
-- **Source code** (TypeScript, Go, Rust, and more via ose-primer)
+- **Source code** (TypeScript, Rust, F#, and the other languages this repo ships)
 - **Build systems** (Nx, npm, Volta)
 - **AI agents** (primary binding agents directory)
 - **Git workflows** (commits, branches, hooks)

@@ -1,4 +1,11 @@
-# 🏗️ Technical Design: Three-Repository Documentation System
+# 🏗️ Technical Design: Two-Repository Documentation System
+
+> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
+> sync obligation; see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
+> **descoped**, not deferred. References to `ose-primer` below are historical context, not
+> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
 
 ## Architecture Overview
 
@@ -38,7 +45,7 @@ flowchart TD
 | Behavior and architecture  | `specs/**` and focused reference/explanation docs   | README links rather than duplicating design.                                        | Link and readme-index validation.                              |
 | Contribution posture       | Root policy plus `CONTRIBUTING.md`                  | State closed external intake consistently.                                          | Cross-repository phrase and link audit.                        |
 | Delivery mode              | Plans and trunk/worktree governance                 | Teach `worktree-to-pr` for authorized contributors.                                 | Link check plus workflow review.                               |
-| Repository relationships   | Canonical ecosystem instructions                    | Distinguish public↔primer content parity from three-repo Rhino byte identity.       | Three-repository text audit.                                   |
+| Repository relationships   | Canonical ecosystem instructions                    | Distinguish public↔private content parity from two-repo Rhino byte identity.       | Two-repository text audit.                                   |
 | GitHub About metadata      | GitHub repository fields                            | Root README and About panel must agree in intent.                                   | `gh repo view --json description,homepageUrl,repositoryTopics` |
 | Package description        | Exact PRD package metadata contract                 | Package tooling and repository positioning must agree.                              | `jq -r '.description' package.json`                            |
 | Private operational facts  | Authorized `ose-private` sources only               | Never copy to public plans/docs; summarize purpose with placeholders.               | Secret scan plus independent AI sensitivity review.            |
@@ -96,7 +103,7 @@ flowchart TD
   H -->|No| G{"Generated owner?"}:::orange
   G -->|Yes| GX["generated"]:::gray
   G -->|No| B{"Shared byte-identity boundary?"}:::orange
-  B -->|Yes| S["Three-repo identity audit"]:::blue
+  B -->|Yes| S["Two-repo identity audit"]:::blue
   B -->|No| R["Reader and fact audit"]:::blue
   S --> O["One terminal disposition"]:::teal
   R --> O
@@ -180,7 +187,7 @@ exemption rather than changing the shared validator:
 5. Remove the temporary fixture immediately after the negative check.
 
 The config change is not a production behavior change. If validation requires changes under
-`apps/rhino-cli`, those changes inherit the three-repository code/spec/TDD and byte-identity rules.
+`apps/rhino-cli`, those changes inherit the two-repository code/spec/TDD and byte-identity rules.
 
 ## GitHub Metadata Design
 
@@ -203,9 +210,9 @@ Rollback captures the prior safe field values in the plan evidence and restores 
 
 Content parity and byte identity are different:
 
-- Generic content parity: `ose-public` ↔ `ose-primer`, adapted rather than blindly copied.
+- Generic content parity: `ose-public` → `ose-private`, adapted rather than blindly copied.
 - `apps/rhino-cli/**` and `specs/apps/rhino/behavior/rhino-cli/gherkin/**` byte identity:
-  `ose-public` = `ose-primer` = `ose-private`, zero carve-outs.
+  `ose-public` = `ose-private`, zero carve-outs.
 - `beaver-nest`: a fork outside both sets.
 
 Repository-specific documentation tracks may run independently. A shared Rhino change cannot: its
@@ -333,7 +340,7 @@ public path list would defeat the plan's no-spill requirement.
 
 ## Dependencies
 
-- Repository access and GitHub CLI authorization for all three repositories.
+- Repository access and GitHub CLI authorization for both parity repositories.
 - A clean, independent worktree in each target repository and delivery unit.
 - macOS and Ubuntu environments for fresh-checkout validation.
 - Browser automation for the documented first-success pages.

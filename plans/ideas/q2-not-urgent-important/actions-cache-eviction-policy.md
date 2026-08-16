@@ -81,7 +81,7 @@ target.
 
 - Changing what gets cached, or any `.nx/cache` / cargo cache key composition — the Phase 7 key
   change stays as delivered.
-- The sibling repos. `ose-primer` and `ose-private` have their own ceilings and were never measured;
+- The sibling repo. `ose-private` has its own ceiling and was never measured;
   extending there is a follow-on, not part of this.
 - Anything about CI wall-clock or runner-seconds directly. Those are downstream of cache hit rate and
   will move on their own if this works.

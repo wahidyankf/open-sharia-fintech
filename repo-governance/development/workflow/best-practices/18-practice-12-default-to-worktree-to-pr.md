@@ -10,7 +10,7 @@ when_to_use: Use when choosing a plan's delivery mode, to confirm worktree-to-pr
 
 # Practice 12: Default to `worktree-to-pr`; Select a Direct-Push Mode Deliberately
 
-**Principle**: the repo-wide default delivery mode is `worktree-to-pr` — a short-lived plan branch in a disposable worktree, pushed to a draft PR against `main`, driven green, then merged. The direct-push modes have no executable path in `ose-public` or `ose-primer` (`main` is branch-protected, including for admins); they survive only as an explicit, deliberate selection for a genuinely infrastructure-as-code plan in `ose-private` — never the assumed path. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
+**Principle**: the repo-wide default delivery mode is `worktree-to-pr` — a short-lived plan branch in a disposable worktree, pushed to a draft PR against `main`, driven green, then merged. The direct-push modes have no executable path in `ose-public` (`main` is branch-protected, including for admins); they survive only as an explicit, deliberate selection for a genuinely infrastructure-as-code plan in `ose-private` — never the assumed path. See [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 
 **Good Example:**
 

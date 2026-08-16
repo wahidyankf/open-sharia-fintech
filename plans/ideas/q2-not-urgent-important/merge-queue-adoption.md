@@ -36,7 +36,7 @@ settings" report was **factually correct, not a UI-navigation mistake**. GitHub 
 through a branch protection rule or a repository ruleset targeting `main` with **"Require merge queue"**
 checked — but the feature is gated on **repository owner type**, not visibility and not plan tier.
 Live verification on 2026-07-23 via `gh api repos/<owner>/<repo> --jq '.owner.type'` returned `User`
-for `ose-public`, `ose-primer`, and `ose-private` alike. There is no toggle to find, in any of them.
+for `ose-public` and `ose-private` alike. There is no toggle to find, in either of them.
 
 ## Why now
 
@@ -99,7 +99,7 @@ also a live interaction worth watching — see the promotion signal below.
 In scope: a per-repo availability matrix keyed on owner type; the `merge_group` CI trigger; the
 precondition-(c) reword across every surface that restates it; a merge-queue operations doc; a
 `[HUMAN]` enablement runbook bracketed by `[AI]` prep and `[AI]` verification; and parity of the shared
-scaffolding across the sibling repos with enablement conditional per repo.
+scaffolding across the parity repos (`ose-public`, `ose-private`) with enablement conditional per repo.
 
 Out of scope:
 

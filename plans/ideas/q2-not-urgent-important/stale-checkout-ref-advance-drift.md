@@ -148,7 +148,7 @@ Four angles, none of them yet the pick:
 In scope: deciding whether the topology-keyed reconcile rule needs a stated prohibition and failure
 mode for the has-a-work-tree case; specifying a detector an agent can run cheaply before trusting
 `git status`; deciding whether File-Touch Discipline's deferral clause needs a
-"verify-the-actor-exists" precondition; verifying the tooling audit above across all four repos.
+"verify-the-actor-exists" precondition; verifying the tooling audit above across both parity repos.
 
 Out of scope: recovering the specific `beaver-nest` tree (an operational task with its own care
 requirements, given the 8 files of real uncommitted work); rewriting the bare-repo landing method's

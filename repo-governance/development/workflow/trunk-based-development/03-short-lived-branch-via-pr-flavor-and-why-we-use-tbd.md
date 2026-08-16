@@ -24,7 +24,7 @@ lands on `main` therefore does not contradict TBD; it is one of TBD's recognized
 
 This repository's **repo-wide default delivery mode is `worktree-to-pr`**: a short-lived plan branch
 inside a disposable git worktree, pushed to a PR, driven to a green and fully-reviewed state, then
-merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` is not a generally available alternative in this repo: `main` is branch-protected against direct pushes in `ose-public` and `ose-primer` (including for admins) -- see [Direct-Push Modes Remain Available Where the Topology Supports Them](./10-why-draft-and-direct-push-modes.md#direct-push-modes-remain-available-where-the-topology-supports-them) below for the one surviving exception (`ose-private` infrastructure-as-code plans). See
+merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` is not a generally available alternative in this repo: `main` is branch-protected against direct pushes in `ose-public` (including for admins) -- see [Direct-Push Modes Remain Available Where the Topology Supports Them](./10-why-draft-and-direct-push-modes.md#direct-push-modes-remain-available-where-the-topology-supports-them) below for the one surviving exception (`ose-private` infrastructure-as-code plans). See
 [Default Push and Worktree Execution](./08-default-push-and-worktree-execution.md#default-push-and-worktree-execution) below for the mechanics of
 all four delivery modes, and the
 [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) for

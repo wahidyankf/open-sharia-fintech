@@ -38,7 +38,7 @@ exist, in a document whose job is recording what was verified.
 
 ## Prior art / precedents
 
-- **`sdlc-gate-standard.md`** — the document being corrected, and the authority for the tri-repo
+- **`sdlc-gate-standard.md`** — the document being corrected, and the authority for the cross-repo
   gate shape. [sdlc-gate-standard](../../../docs/reference/sdlc-gate-standard.md)
 - **Bare-Repo Base-Worktree Landing Method** — the document that defines how to ask the bareness
   question properly (`git worktree list`, labelled `core.bare` read), which the corrected paragraph

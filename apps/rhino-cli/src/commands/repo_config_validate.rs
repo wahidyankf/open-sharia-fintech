@@ -7,10 +7,10 @@
 //! `harness[].tier` and `coverage.projects[].levels`. Every failure names the
 //! offending key and its path.
 //!
-//! Because the parsing struct is byte-identical source across ose-public,
-//! ose-primer, and ose-private, each repo validating its own `repo-config.yml`
-//! against its own copy of that struct is equivalent to all three files carrying
-//! an identical key set (values may differ).
+//! Because the parsing struct is byte-identical source across ose-public and
+//! ose-private, each repo validating its own `repo-config.yml` against its own
+//! copy of that struct is equivalent to both files carrying an identical key set
+//! (values may differ).
 
 use std::collections::HashSet;
 

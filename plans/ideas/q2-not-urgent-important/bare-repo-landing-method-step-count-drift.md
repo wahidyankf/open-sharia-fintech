@@ -24,7 +24,7 @@ Three surfaces describe that sequence as seven-step:
 | `repo-governance/development/README.md`                 | "the seven-step base-worktree landing sequence" |
 | `repo-governance/development/workflow/README.md`        | "the seven-step base-worktree landing sequence" |
 
-All three exist in **each** of `ose-public`, `ose-primer`, and `ose-private` — nine sites, verified by
+All three exist in **each** of `ose-public` and `ose-private` — six sites, verified by
 `grep -c "seven-step"` against each repo's `origin/main` blobs. The count is wrong everywhere,
 consistently, because the indexes were written from the frontmatter and the frontmatter was written
 before the reconcile step was promoted into the numbered list.
@@ -32,11 +32,11 @@ before the reconcile step was promoted into the numbered list.
 Two secondary observations from the same read, worth folding into whatever fixes this rather than
 filing separately:
 
-- Both index entries say the method applies to repositories with no primary checkout "**today
-  `ose-primer` and `ose-private`**". That is name-bound phrasing in the index for a document whose
+- Both index entries name specific repositories as the ones with no primary checkout. That is
+  name-bound phrasing in the index for a document whose
   central rule is that carve-outs must key on the **property** (`core.bare=true`, "no primary
-  checkout"), never on repo names, because all three repos are templates. The word "today" hedges it,
-  but the hedge is doing a lot of work.
+  checkout"), never on repo names, because topology flips per clone. Any "today" hedge is doing a
+  lot of work.
 - The `ose-private` PR body's verification line quotes
   `--exclude apps/ayokoding-www/content --exclude apps/ose-www/content`. Neither path exists in
   `ose-private`. Harmless no-ops, but they are vestigial excludes copy-pasted from the `ose-public`
@@ -83,8 +83,8 @@ that a "N-step" claim matches the number of numbered steps in the thing it descr
 2. **Prefer a phrasing that cannot drift.** "The base-worktree landing sequence" carries the same
    meaning with no number to maintain. If a number is genuinely useful to the reader, it belongs in
    the document body next to the list, not in three summaries maintained by hand.
-3. **Property-bind the index entries** while they are being edited — replace "today `ose-primer` and
-   `ose-private`" with the property, matching what the document itself already requires.
+3. **Property-bind the index entries** while they are being edited — replace any named-repo list
+   with the property, matching what the document itself already requires.
 4. **Consider a mechanical check.** A validator asserting that any "N-step" claim about a document
    matches that document's numbered-list length is narrow, cheap, and would have caught this at
    authoring time. Worth scoping before committing to it — the pattern may be too rare to justify.
@@ -114,7 +114,7 @@ answered.
 
 ## What success looks like + promotion signal
 
-Success: `grep -rc "seven-step"` returns zero across all three repos, the surviving phrasing either
+Success: `grep -rc "seven-step"` returns zero across both parity repos, the surviving phrasing either
 carries no number or carries a number that matches the list, and the index entries name the property
 rather than two repo names.
 

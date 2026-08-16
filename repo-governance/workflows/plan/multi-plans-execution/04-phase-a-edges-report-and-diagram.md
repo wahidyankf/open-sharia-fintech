@@ -35,7 +35,7 @@ set — **safety-first: uncertain nodes are treated as conflicting, never as dis
    concurrently — the scheduler serializes them (the later-scheduled one waits). Nodes with disjoint
    resource-sets are **parallelizable**. Two plans that both touch `apps/rhino-cli/**` are always
    serialized at least at their overlapping nodes, because byte-identical propagation across
-   `ose-public`/`ose-primer`/`ose-private` cannot tolerate two concurrent divergent edits.
+   `ose-public`/`ose-private` cannot tolerate two concurrent divergent edits.
 3. **Cycle check.** If explicit `Depends-on` declarations form a cycle, stop and report — a cyclic
    plan graph is a planning error, not something to schedule around.
 

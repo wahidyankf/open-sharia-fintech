@@ -116,9 +116,7 @@ fn then_iac_validators_report_drift(w: &mut EnvContractWorld) {
     );
 }
 
-#[then(
-    "ose-public and ose-primer, which declare no such surfaces, skip validation by data, not by stub"
-)]
+#[then("ose-public, which declares no such surfaces, skips validation by data, not by stub")]
 fn then_no_surface_repo_is_clean(_w: &mut EnvContractWorld) {
     // A repo declaring only an app surface (no terraform/ansible) validates cleanly:
     // the IaC validators never run because no such surface is declared — by data.

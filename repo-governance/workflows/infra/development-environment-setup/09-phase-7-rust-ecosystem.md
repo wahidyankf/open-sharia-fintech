@@ -1,14 +1,14 @@
 ---
 title: "Phase 7: Rust Ecosystem (Sequential)"
-description: "Phase 7 (full scope only): install Rust via rustup and cargo-llvm-cov, required for rhino-cli and ose-primer demo apps."
-when_to_use: "Use when setting up the Rust toolchain for rhino-cli or the ose-primer polyglot demo apps."
+description: "Phase 7 (full scope only): install Rust via rustup and cargo-llvm-cov, required for rhino-cli."
+when_to_use: "Use when setting up the Rust toolchain for rhino-cli."
 ---
 
 # Phase 7: Rust Ecosystem (Sequential)
 
 **Condition**: `{input.scope} == full`
 
-Required for: `rhino-cli`, polyglot demo apps in ose-primer (extracted 2026-04-18)
+Required for: `rhino-cli`, `rust-commons`
 
 ## 7.1 Install Rust via rustup
 

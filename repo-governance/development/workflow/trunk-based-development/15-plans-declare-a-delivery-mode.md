@@ -25,7 +25,7 @@ When creating project plans in `plans/` folder:
 - **If a direct-push mode is chosen** (`worktree-to-origin-main`, `main-to-origin-main`): document why
   in the plan (e.g., "single-line config fix, no review warranted") -- and confirm the mode is
   actually permitted under the per-repository branch-protection restriction: neither direct-push mode
-  has an executable path in `ose-public` or `ose-primer`; both direct-push modes remain available
+  has an executable path in `ose-public`; both direct-push modes remain available
   only for `ose-private` infrastructure-as-code plans. See
   [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule).
 

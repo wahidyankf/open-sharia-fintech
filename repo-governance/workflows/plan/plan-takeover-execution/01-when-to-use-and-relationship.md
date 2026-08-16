@@ -11,8 +11,7 @@ when_to_use: Use when deciding whether a discovery layer is needed before plan-e
 - Resuming a plan after a session boundary, a crash, or a handoff, where it is unknown whether the
   plan already has partial implementation somewhere.
 - A plan is suspected to have been worked concurrently by another agent, session, or human — possibly
-  in a different repo, since `ose-primer` and `ose-private` are siblings that can carry the same
-  plan-identifier.
+  in a different repo, since `ose-private` is a sibling that can carry the same plan-identifier.
 - Before running `plan-execution.md` cold on a plan-identifier that might already have an open PR, an
   orphaned worktree, or a `delivery.md` copy sitting in more than one location.
 

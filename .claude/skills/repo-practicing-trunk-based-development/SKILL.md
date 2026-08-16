@@ -1,13 +1,13 @@
 ---
 name: repo-practicing-trunk-based-development
-description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public or ose-primer, main is branch-protected including for admins, and only ose-private infrastructure-as-code plans retain a surviving direct-push exception). Essential for understanding repository git workflow and keeping branches short-lived
+description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main has no executable path in ose-public, main is branch-protected including for admins, and only ose-private infrastructure-as-code plans retain a surviving direct-push exception). Essential for understanding repository git workflow and keeping branches short-lived
 ---
 
 # Trunk Based Development Skill
 
 ## Purpose
 
-This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository: small, frequent commits integrated continuously into `main` through short-lived, single-purpose branches. The default delivery mode is `worktree-to-pr`; direct commit to `main` has no executable path in `ose-public`/`ose-primer` (branch-protected), and only `ose-private` infra-as-code plans retain a surviving direct-push exception.
+This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository: small, frequent commits integrated continuously into `main` through short-lived, single-purpose branches. The default delivery mode is `worktree-to-pr`; direct commit to `main` has no executable path in `ose-public` (branch-protected), and only `ose-private` infra-as-code plans retain a surviving direct-push exception.
 
 **When to use this Skill:**
 

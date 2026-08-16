@@ -16,9 +16,7 @@ Complete reference for how projects depend on each other in the Nx monorepo.
 Run `nx graph` to visualize this interactively.
 
 > **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`, `a-demo-fs-ts-nextjs`) and
-> their contract/spec infrastructure were extracted to
-> [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. That repository is the
-> authoritative reference for polyglot showcase dependency patterns.
+> their contract/spec infrastructure were removed from this repo on 2026-04-18.
 
 ## Dependency Mechanisms
 

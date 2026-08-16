@@ -18,8 +18,10 @@ navigation or recognition. Do not clone one repository opening into another.
 | Repository    | First Reader Path                                | First Local Success      |
 | ------------- | ------------------------------------------------ | ------------------------ |
 | `ose-public`  | Understand the product, then run OSE locally     | `ose-www`                |
-| `ose-primer`  | Understand the starter, then run a reference app | `crud-fe-ts-nextjs`      |
 | `ose-private` | Understand CoralPolyp, then use a local sandbox  | CoralPolyp local sandbox |
+
+`ose-primer` is not covered by this contract — it left the parity set on 2026-08-16 and carries no
+sync obligation.
 
 macOS and Ubuntu are supported. WSL2 may work but is not supported or verified. External
 contributions are closed: docs may explain the internal AI delivery route but do not invite outside

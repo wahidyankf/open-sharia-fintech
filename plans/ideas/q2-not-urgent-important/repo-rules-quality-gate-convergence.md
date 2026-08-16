@@ -29,8 +29,8 @@ text is actually consistent.
 The same research base that explains the sibling plan applies here: one lens iterating can only
 discover the one class its own shape lets it see, so 15 classes cost roughly 15 rounds. The central
 new finding — **enumeration-based guards fail open on the member nobody listed** — generalizes
-directly into a first-class mechanism, and it composes with the tri-repo byte-identity constraint on
-`apps/rhino-cli`, meaning every fix landed here also has to land cleanly in `ose-primer` and
+directly into a first-class mechanism, and it composes with the two-repo byte-identity constraint on
+`apps/rhino-cli`, meaning every fix landed here also has to land cleanly in
 `ose-private`. Building this alongside the sibling `plan-quality-gate-convergence` plan shares the
 substrate cost.
 
@@ -61,13 +61,13 @@ substrate cost.
   not section self-descriptions) and a **search-tool validity contract** (a zero counts only with a
   verbatim command, unsuppressed stderr, and a known-positive control probe).
 - Shared **parallel disjoint lenses** and **saturation-based termination** with the sibling plan;
-  tri-repo propagation.
+  cross-repo propagation to `ose-private`.
 
 ## Rough scope & non-goals
 
 In scope: the workflow's step model / termination criteria, the new registry, the deterministic
 validator plus Gherkin tree, the three repo-rules-\* agents, the two in-scope PR-review-gate
-termination gaps, binding regeneration, and tri-repo propagation.
+termination gaps, binding regeneration, and propagation to `ose-private`.
 
 Out of scope (for now): the governance change that supplied the evidence (evidence, not a target);
 the sibling gates (`repo-harness-compatibility`, `repo-workflow`) with no evidence chain mined; the

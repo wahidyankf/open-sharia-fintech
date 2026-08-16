@@ -18,10 +18,8 @@ This guide walks you through installing the tools needed to work on an authorize
 project locally. After completing it, the repository can verify your toolchain, Git hooks, and the
 tests relevant to the project you are changing.
 
-> **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) were extracted to
-> [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. If you need to set
-> up Elixir, Clojure, Java, Kotlin, Python, Rust, or Dart toolchains for those apps, see
-> the setup guide in the `ose-primer` repository.
+> **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) were removed from this repo on
+> 2026-04-18. This guide covers only the toolchains this repository actually ships.
 
 ## Overview
 

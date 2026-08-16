@@ -38,7 +38,7 @@ Backup coverage = hardcoded floor ∪ `backup_globs` from the `env-contract:` se
 | Generated inventories        | commented forward-scaffold — activate when IaC is added |
 
 The default backup target is `~/<repo-root-basename>-env-backup/` (e.g. `~/ose-public-env-backup/`).
-This is the canonical per-repo backup directory aligned across the ose-public/ose-primer/ose-private
+This is the canonical per-repo backup directory aligned across the ose-public/ose-private
 sibling repos.
 
 ## `env-contract:` section and drift validation

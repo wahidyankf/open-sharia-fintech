@@ -17,7 +17,7 @@ when_to_use: Use when landing a change into a bare repository, or when a landing
 
 This document defines the **bare-repo git-ops method**: the procedure for landing changes into a
 repository that has no primary checkout, and for closing the silent lag that a landing performed from
-a side worktree can leave behind in local `main`. Any of the three repositories in this project's
+a side worktree can leave behind in local `main`. Any repository in this project's
 ecosystem may be bare (`core.bare=true`) at a given time — bareness is a per-invocation property of a
 specific clone, not a fixed attribute of a repository's name; verify with `git worktree list` (look
 for the `(bare)` marker) rather than assuming from this document which repos are bare today. Any

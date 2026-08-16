@@ -53,4 +53,4 @@ documented here.
 ```
 
 Fails the repo-relevance gate: infra-specific content (a real k3s node/hostname) must stay in
-`ose-private` only, never in `ose-public` or `ose-primer`.
+`ose-private` only, never in `ose-public`.

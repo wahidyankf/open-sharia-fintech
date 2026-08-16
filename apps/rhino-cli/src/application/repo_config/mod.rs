@@ -2,8 +2,8 @@
 //!
 //! Parses the top-level sections relevant to rhino-cli's spec coverage and
 //! structure validators. The file lives at the repo root and its section schema
-//! is byte-identical across all three repos (ose-public, ose-primer, ose-private);
-//! only the per-repo values differ.
+//! is byte-identical across both parity repos (ose-public, ose-private); only the
+//! per-repo values differ.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -506,7 +506,7 @@ mod tests {
     // Regression: this test used to hard-assert repo-specific domain literals
     // ("organiclever", "ose-be", ...), which only hold in ose-public's own
     // repo-config.yml — it failed immediately once rhino-cli's byte-identical
-    // source ran against ose-primer's own repo-config.yml data. `ddd-areas`
+    // source ran against a sibling repo's own repo-config.yml data. `ddd-areas`
     // and `domain-areas` are legitimately empty in some repos (e.g. a scaffold
     // repo whose demo backends aren't DDD-structured), so only assert the one
     // structural property every repo's config must satisfy: at least one

@@ -33,8 +33,8 @@ it silences the signal you would want in the case where the content genuinely ha
 
 **Remote deletion uses `git push origin --delete <branch>`**, only after the PR is MERGED, and only
 for branches this plan pushed. **Never delete `main`, and never delete an environment branch.** Which
-branches those are is **repo-specific**: `ose-public` defines `prod-*` and `stag-*`; `ose-primer` and
-`ose-private` currently define none, so the rule is vacuously satisfied there. Confirm each repo's own
+branches those are is **repo-specific**: `ose-public` defines `prod-*` and `stag-*`; `ose-private`
+currently defines none, so the rule is vacuously satisfied there. Confirm each repo's own
 set with `git branch -a` rather than assuming this pattern is universal — a plan that hardcodes one
 repo's environment-branch shape will eventually run against a repo that does not match it.
 
