@@ -1,4 +1,4 @@
-@repo-governance-instruction-size
+@governance-word-budget-thresholds
 Feature: Governance word-budget gate
 
   As a repository maintainer

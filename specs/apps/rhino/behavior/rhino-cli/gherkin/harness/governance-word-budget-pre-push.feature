@@ -1,4 +1,4 @@
-@repo-governance-instruction-size-pre-push
+@governance-word-budget-pre-push
 Feature: Pre-push enforcement of the word-budget gate
 
   As a repository maintainer

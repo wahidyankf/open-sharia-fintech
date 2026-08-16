@@ -2,7 +2,7 @@
 
 Gherkin scenarios for rhino-cli's `governance` subcommand family — the word-count size gate and
 the README sibling-index gate introduced by the
-`plans/in-progress/optimize-governance-md` plan.
+`plans/done/2026-08-15__optimize-governance-md` plan.
 
 Features in this domain:
 
@@ -12,11 +12,9 @@ Features in this domain:
 - `governance-readme-index.feature` — the README sibling-index gate, a rename-and-extend of the
   already-armed `md readme-index validate` command (`governance readme-index validate`)
 
-> This directory is new as of the `optimize-governance-md` plan's Phase 1a. The
-> `harness/repo-governance-instruction-size*.feature` files and
-> `md/repo-governance-readme-index-audit.feature` remain in place until Phase 1b performs the
-> `git mv` of their underlying Rust modules and rewrites/removes the old feature files in the
-> same commit — see `tech-docs.md` §File-Impact Analysis.
+> The sibling `harness/governance-word-budget-*.feature` files cover the same
+> `governance word-budget validate` command from the harness runner. Consolidating them into this
+> directory requires moving their step definitions between cucumber runners and is deferred.
 
 See [Specs Directory Structure Convention](../../../../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.

@@ -24,8 +24,8 @@ bytes** — it inline-expands governance content that already lives behind links
 `repo-governance/`.
 
 A deterministic gate already exists — `rhino-cli convention agents-md-size`
-([source](../../../apps/rhino-cli/src/application/repo_governance/agents_md_size.rs)) —
-but it has three gaps:
+(source: `apps/rhino-cli/src/application/repo_governance/agents_md_size.rs`, deleted after this
+plan was superseded by the word-budget gate) — but it has three gaps:
 
 1. **Single file only.** It measures `AGENTS.md` and nothing else. The repo is
    multi-harness (Claude Code, OpenCode, Codex CLI, Copilot, Cursor, Windsurf, Junie,
@@ -107,7 +107,7 @@ but it has three gaps:
 
 ## Related
 
-- [apps/rhino-cli/src/application/repo_governance/agents_md_size.rs](../../../apps/rhino-cli/src/application/repo_governance/agents_md_size.rs) — the existing single-file gate being generalized
+- `apps/rhino-cli/src/application/repo_governance/agents_md_size.rs` — the single-file gate this plan generalized; since deleted, so no link resolves
 - [.husky/pre-push](../../../.husky/pre-push) — the changed-path-gated hook this plan extends
 - [repo-rules-quality-gate workflow](../../../repo-governance/workflows/repo/repo-rules-quality-gate.md) — Step 6 / preflight integration
 - [.claude/agents/repo-rules-checker.md](../../../.claude/agents/repo/repo-rules-checker.md) — Step 6 "AGENTS.md Size Check" being extended

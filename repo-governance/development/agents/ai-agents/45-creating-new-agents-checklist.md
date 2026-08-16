@@ -56,7 +56,7 @@ Before submitting a new agent, verify:
 
 ## File Size Compliance
 
-- [ ] Agent size within appropriate tier limits (Simple: <800 lines, Standard: <1,200 lines, Complex: <1,800 lines)
+- [ ] Agent passes the word-budget gate (`rhino-cli governance word-budget validate`)
 - [ ] If approaching warning threshold, consider condensation strategies
 - [ ] Verified no duplication with convention docs (link instead)
 

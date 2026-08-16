@@ -74,17 +74,17 @@ behavior/rhino-cli/gherkin/
 
 ### harness
 
-| File                                                  | Command(s)                             | Scenarios |
-| ----------------------------------------------------- | -------------------------------------- | --------- |
-| `agents-bindings.feature`                             | `harness bindings validate`/`generate` | 8         |
-| `agents-detect-duplication.feature`                   | `harness duplication validate`         | 4         |
-| `agents-sync.feature`                                 | `harness sync validate`                | 7         |
-| `agents-validate-claude.feature`                      | `harness claude validate`              | 5         |
-| `agents-validate-naming.feature`                      | `harness naming validate`              | 4         |
-| `repo-governance-agents-md-size.feature`              | `governance word-budget validate`      | 3         |
-| `repo-governance-instruction-size-governance.feature` | `governance word-budget validate`      | 5         |
-| `repo-governance-instruction-size-pre-push.feature`   | `governance word-budget validate`      | 3         |
-| `repo-governance-instruction-size.feature`            | `governance word-budget validate`      | 6         |
+| File                                        | Command(s)                             | Scenarios |
+| ------------------------------------------- | -------------------------------------- | --------- |
+| `agents-bindings.feature`                   | `harness bindings validate`/`generate` | 8         |
+| `agents-detect-duplication.feature`         | `harness duplication validate`         | 4         |
+| `agents-sync.feature`                       | `harness sync validate`                | 7         |
+| `agents-validate-claude.feature`            | `harness claude validate`              | 5         |
+| `agents-validate-naming.feature`            | `harness naming validate`              | 4         |
+| `governance-word-budget-agents-md.feature`  | `governance word-budget validate`      | 3         |
+| `governance-word-budget-pre-push.feature`   | `governance word-budget validate`      | 3         |
+| `governance-word-budget-rule.feature`       | `governance word-budget validate`      | 5         |
+| `governance-word-budget-thresholds.feature` | `governance word-budget validate`      | 6         |
 
 ### md
 

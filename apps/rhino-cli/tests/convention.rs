@@ -312,13 +312,6 @@ fn then_license_spdx_mismatch(w: &mut ConventionWorld) {
 // convention audit steps (convention-audit.feature)
 // ===========================================================================
 
-#[given("a repository with no AGENTS.md file")]
-fn given_convention_audit_no_agents_md(_w: &mut ConventionWorld) {
-    // No-op: a fresh fixture workspace has no `AGENTS.md`, no emoji-forbidden
-    // file types, and no LICENSE-required directories at all, so `emoji` and
-    // `license` trivially pass while `agents-md-size` fails on the missing file.
-}
-
 #[then(regex = r#"^the output names the failing "([a-z-]+)" validator$"#)]
 #[allow(clippy::needless_pass_by_value)] // cucumber-rs binds the capture by value
 fn then_convention_audit_names_failure(w: &mut ConventionWorld, member: String) {

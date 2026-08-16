@@ -184,8 +184,8 @@ mod tests {
                 by_severity: BTreeMap::new(),
                 by_category: BTreeMap::new(),
                 categories: vec![AuditCategoryResult {
-                    name: "agents-md-size".into(),
-                    command: "repo-governance agents-md-size".into(),
+                    name: "governance-word-budget".into(),
+                    command: "governance word-budget validate".into(),
                     passed: true,
                     findings: vec![],
                 }],
@@ -200,12 +200,12 @@ mod tests {
         env.result.total_findings = 1;
         env.result.categories[0].passed = false;
         env.result.categories[0].findings.push(AuditFinding {
-            key: "agents-md-size|AGENTS.md|abcd1234".into(),
+            key: "governance-word-budget|AGENTS.md|abcd1234".into(),
             severity: "high".into(),
             criticality: "HIGH".into(),
             file: "AGENTS.md".into(),
             line: 0,
-            message: "AGENTS.md exceeds 40KB threshold".into(),
+            message: "AGENTS.md exceeds the word-budget fail threshold".into(),
         });
         env
     }
@@ -215,7 +215,7 @@ mod tests {
         let s = format_text(&sample_passing());
         assert!(s.contains("PASSED"));
         assert!(s.contains("[PASS]"));
-        assert!(s.contains("agents-md-size"));
+        assert!(s.contains("governance-word-budget"));
     }
 
     #[test]
@@ -239,7 +239,7 @@ mod tests {
         let s = format_markdown(&sample_passing());
         assert!(s.contains("## Governance Audit"));
         assert!(s.contains("PASSED"));
-        assert!(s.contains("| agents-md-size | PASS"));
+        assert!(s.contains("| governance-word-budget | PASS"));
     }
 
     #[test]

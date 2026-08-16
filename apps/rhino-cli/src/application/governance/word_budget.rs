@@ -1028,16 +1028,17 @@ resolved_tree:
     }
 
     #[test]
-    fn scenario_old_gate_id_is_gone_from_the_registry() {
+    fn scenario_old_gate_id_is_replaced() {
         let cfg = read_live_repo_config();
         assert!(
             !cfg.contains("id: instruction-size"),
             "FR-2.3: the instruction-size gate id must be removed from the gates: registry"
         );
-        // Word-budget enforcement is dark-launched at Phase 1 — the
-        // `governance-word-budget` gate id is not yet registered in `gates:`
-        // (Phase 9 arms it, `delivery.md` §1d). This assertion only proves
-        // the OLD gate id is gone, matching FR-2.3's own scope.
+        assert!(
+            cfg.contains("id: governance-word-budget"),
+            "FR-2.3: the governance-word-budget gate id must be registered in gates: \
+             (armed at Phase 9, superseding the removed instruction-size entry)"
+        );
     }
 
     #[test]

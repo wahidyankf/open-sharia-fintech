@@ -15,11 +15,10 @@
 //!
 //! A handful of scenarios describe end-state behavior that only becomes true
 //! once Phase 9 of the `optimize-governance-md` plan arms the
-//! `governance-word-budget` / `governance-readme-completeness` gates; those
-//! steps assert today's actual (Phase 1, dark-launched) behavior rather than
-//! the scenario's literal end-state prose — mirroring the same judgment call
-//! already made in the unit-test suite
-//! (`application::governance::word_budget::tests::scenario_old_gate_id_is_gone_from_the_registry`).
+//! `governance-word-budget` / `governance-readme-completeness` gates. Both are
+//! armed `gates:` entries as of Phase 9, so these steps assert the gate ids are
+//! present — mirroring
+//! `application::governance::word_budget::tests::scenario_old_gate_id_is_replaced`.
 
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::doc_markdown)]
@@ -528,6 +527,12 @@ fn when_gate_list_pre_push_text(w: &mut GovWorld) {
 fn then_output_no_gate_id(w: &mut GovWorld, id: String) {
     let out = w.stdout();
     assert!(!out.contains(&id), "got: {out}");
+}
+
+#[then(regex = r#"^the output contains gate id "([^"]+)"$"#)]
+fn then_output_has_gate_id(w: &mut GovWorld, id: String) {
+    let out = w.stdout();
+    assert!(out.contains(&id), "got: {out}");
 }
 
 // ===========================================================================

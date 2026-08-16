@@ -1,6 +1,6 @@
 ---
-title: "Agent File Size Standards — Size Limits by Agent Complexity"
-description: "Defines the three agent complexity tiers and their target file-size limits."
+title: "Agent Complexity Tiers"
+description: "Defines the three agent complexity tiers by scope and reasoning depth; file size is governed solely by the word budget."
 category: explanation
 subcategory: development
 tags:
@@ -9,22 +9,21 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when checking whether an agent definition file's size fits its complexity tier.
+when_to_use: Use when deciding which complexity tier a new or existing agent belongs to.
 ---
 
-# Agent File Size Standards — Size Limits by Agent Complexity
+# Agent Complexity Tiers
 
-## Size Limits by Agent Complexity
+## Tiers by Agent Complexity
 
-Agent files are organized into **three complexity tiers** with corresponding size guidelines. These limits balance agent capability with performance, maintainability, and clarity.
+Agent files are organized into **three complexity tiers**. The tiers describe scope and reasoning
+depth, not file size: every agent definition is held to the same limit by the
+[Governance Word-Budget Convention](../../../conventions/structure/governance-word-budget.md),
+whose thresholds live in `repo-config.yml` and are enforced at pre-push and in CI.
 
 **Rationale**: Research shows LLMs follow ~150-200 instructions reliably, with quality degrading as count increases. While agents are only loaded when spawned (unlike AGENTS.md which is universally included), keeping them focused improves effectiveness.
 
 ### Tier 1: Simple Agents (Deployers, Specialized Operations)
-
-**Target**: < 500 lines / < 15KB
-**Warning**: 600 lines / 18KB
-**Hard Limit**: 800 lines / 25KB
 
 **Characteristics**:
 
@@ -50,10 +49,6 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - No complex orchestration
 
 ### Tier 2: Standard Agents (Makers, Checkers, Validators)
-
-**Target**: < 800 lines / < 25KB
-**Warning**: 1,000 lines / 30KB
-**Hard Limit**: 1,200 lines / 35KB
 
 **Characteristics**:
 
@@ -82,10 +77,6 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - Handles multiple related tasks within a domain
 
 ### Tier 3: Complex Agents (Planners, Orchestrators, Comprehensive Validators)
-
-**Target**: < 1,200 lines / < 35KB
-**Warning**: 1,500 lines / 40KB
-**Hard Limit**: 1,800 lines / 50KB
 
 **Characteristics**:
 

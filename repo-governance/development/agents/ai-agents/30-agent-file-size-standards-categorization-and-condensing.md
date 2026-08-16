@@ -28,7 +28,7 @@ Quick categorization for existing agents:
 
 **Warning Signs (approaching limits)**:
 
-- Agent approaching warning threshold for its tier
+- The word-budget gate reports the agent over target
 - Agent has multiple unrelated responsibilities
 - Documentation becoming hard to navigate
 - Users confused about when to use the agent
@@ -50,7 +50,7 @@ Quick categorization for existing agents:
 
 **When to split an agent**:
 
-- Agent exceeds hard limit for its tier
+- The word-budget gate fails the agent and no redundancy is left to remove
 - Agent has two clearly separable responsibilities
 - Agent requires different tool sets for different tasks
 - Users would benefit from specialized agents

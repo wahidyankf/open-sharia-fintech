@@ -6,6 +6,7 @@ model: sonnet
 color: blue
 skills:
   - pr-review-specialist-protocol
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Security Maker Agent

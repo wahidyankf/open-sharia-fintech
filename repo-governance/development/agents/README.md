@@ -14,7 +14,7 @@ Use this section when defining or changing an AI agent. It explains how to give 
 
 ## Purpose
 
-These standards define **HOW to develop AI agents**, covering agent file structure, naming conventions, frontmatter requirements, tool access patterns, model selection, and size limits. All agents must follow these standards.
+These standards define **HOW to develop AI agents**, covering agent file structure, naming conventions, frontmatter requirements, tool access patterns, model selection, and complexity tiers. All agents must follow these standards.
 
 ## Scope
 

@@ -21,68 +21,56 @@ created: 2025-12-07
 - PASS: Topic addresses a distinct concern not covered by existing conventions
 - PASS: Scope is clearly defined and non-overlapping
 - PASS: Convention will be referenced by multiple documents or agents
-- PASS: Topic requires >500 words of unique content
+- PASS: Topic needs more unique content than one budgeted file holds
 
 ### Update EXISTING convention when
 
 - PASS: Topic extends or clarifies existing convention's scope
 - PASS: New content fits naturally into existing structure
 - PASS: Overlap with existing convention is >60%
-- PASS: Addition is <500 words and doesn't warrant separate doc
+- PASS: Addition fits the existing structure and doesn't warrant a separate doc
 
 ### Consider MERGING when
 
 - PASS: Two conventions overlap significantly (>60% shared scope)
 - PASS: Conventions are always referenced together
 - PASS: Separation causes confusion about which to follow
-- PASS: Combined length would still be <3000 lines
+- PASS: The merged convention would still read as one coherent topic
 
 ### Decision Process
 
 1. **Search existing conventions** - Check `repo-governance/conventions/README.md` for related topics
 2. **Assess overlap** - Read related conventions to understand current coverage
 3. **Define unique scope** - Articulate what the new convention would cover that existing ones don't
-4. **Estimate length** - Will this be >500 words? Multiple sections?
+4. **Estimate scope** - Will this need its own children, or fit an existing parent?
 5. **Check references** - Will this be used by multiple agents/docs/processes?
 6. **Decide:** New, update, or merge based on above criteria
 
 ## Length Guidelines
 
-Convention documents vary in length based on complexity:
+Every individual file is held to the word budget, so length is not a property of a file — it is a
+property of the convention as a whole. A convention is a parent index plus annotated children, and
+"longer" means "more children", never "a bigger file".
 
-### Short Conventions (< 500 lines)
+### Short Conventions (parent only)
 
-**Examples:** Timestamp Format, Mathematical Notation, Emoji Usage
+**Examples:** Timestamp Format, Mathematical Notation
 
-**When appropriate:**
+**When appropriate:** simple focused topic, clear rules with few exceptions, few examples needed.
 
-- Simple, focused topic
-- Clear rules with few exceptions
-- Limited number of examples needed
+### Medium Conventions (parent plus a handful of children)
 
-### Medium Conventions (500-1500 lines)
+**Examples:** File Naming, Linking, README Quality
 
-**Examples:** File Naming, Linking, Tutorial Naming, README Quality
+**When appropriate:** moderate complexity, several categories, balanced examples and rules.
 
-**When appropriate:**
-
-- Moderate complexity
-- Multiple subsections or categories
-- Balanced examples and rules
-
-### Long Conventions (1500+ lines)
+### Long Conventions (parent plus many children)
 
 **Examples:** Diátaxis Framework, Tutorials, Content Quality
 
-**When appropriate:**
+**When appropriate:** complex topic with multiple dimensions, comprehensive examples, high
+reference value.
 
-- Complex topic with multiple dimensions
-- Comprehensive examples needed
-- Covers multiple related subtopics
-- High reference value (frequently consulted)
-
-**Warning signs:** If approaching 3000 lines, consider:
-
-- Splitting into multiple focused conventions
-- Moving detailed examples to separate reference docs
-- Creating "overview + detailed guides" structure
+**Warning signs:** when the children start covering separable concerns, or the parent index itself
+becomes hard to scan, split the convention into several focused conventions rather than adding more
+children.

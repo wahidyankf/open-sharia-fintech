@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - pr-review-synthesis-coordination
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Synthesis Maker Agent

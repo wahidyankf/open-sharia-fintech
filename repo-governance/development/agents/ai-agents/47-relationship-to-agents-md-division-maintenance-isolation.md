@@ -43,26 +43,20 @@ when_to_use: Use when deciding whether new guidance belongs in AGENTS.md or in a
 
 **CRITICAL:** AGENTS.md is a navigation document, not a knowledge dump. All agents must help maintain its conciseness.
 
-**Size Limits:**
-
-- **Hard limit:** 40,000 characters (performance threshold - DO NOT EXCEED)
-- **Target limit:** 30,000 characters (provides 25% headroom)
-- **Warning threshold:** 35,000 characters (time to review and condense)
+**Size Limits:** governed solely by the
+[Governance Word-Budget Convention](../../../conventions/structure/governance-word-budget.md).
+Thresholds live in `repo-config.yml` and are enforced deterministically at pre-push and in CI — no
+agent judges the size by eye, and no other document restates the numbers.
 
 **Agent Responsibilities:**
 
-1. **repo-rules-maker:**
-   - MUST check AGENTS.md size when adding rules
-   - Warn user if file exceeds 35,000 characters
-   - Suggest condensation strategies (move details to convention docs)
-   - Add only 2-5 line summaries to AGENTS.md, link to detailed docs
-
-2. **docs-maker and related content agents:**
+1. **Content agents (`repo-rules-maker`, `docs-maker`, and peers):**
    - MUST NOT add verbose content to AGENTS.md
-   - When adding conventions, create detailed doc first, then brief AGENTS.md summary
-   - Maximum AGENTS.md section length: 3-5 lines + link
+   - When adding conventions, create the detailed doc first, then a brief AGENTS.md summary
+   - When the budget gate reports an over-budget file, remediate by progressive disclosure — split
+     it and link annotated children; never compress to squeak under, never raise a threshold
 
-3. **All agents:**
+2. **All agents:**
    - When in doubt, link to detailed docs rather than duplicate content
    - Each AGENTS.md section should answer "what, where, why" but link to "how"
    - Comprehensive details belong in convention docs, not AGENTS.md

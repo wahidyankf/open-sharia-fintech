@@ -11,6 +11,7 @@ permission:
 color: warning
 skills:
   - pr-review-fixer-resolution
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Fixer Agent

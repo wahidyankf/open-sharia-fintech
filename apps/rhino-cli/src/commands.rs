@@ -1,6 +1,5 @@
 //! Top-level command modules, one per `rhino-cli` subcommand.
 pub mod convention_audit;
-pub mod convention_validate_agents_md_size;
 pub mod convention_validate_emoji;
 pub mod convention_validate_license;
 pub mod doctor;

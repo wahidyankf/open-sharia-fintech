@@ -16,25 +16,17 @@ when_to_use: Use when running the size-checking process on a new or edited agent
 
 ## Size Checking Process
 
-**For agent-maker**:
-
-1. After creating agent file, count lines and characters
-2. Compare to tier limits based on agent type
-3. Warn if approaching warning threshold
-4. Suggest condensation if near limit
-
-**For repo-rules-maker**:
-
-1. When updating agents, check file size before/after
-2. If agent crosses warning threshold, notify user
-3. Suggest condensation strategies
+Nobody counts by hand. The
+[Governance Word-Budget Convention](../../../conventions/structure/governance-word-budget.md)
+measures every agent definition deterministically at pre-push and in CI, so the only authoring
+obligation is to respond to what the gate reports.
 
 **For all agent authors**:
 
-1. Before committing agent changes, verify size
-2. If approaching limits, review for redundancy
-3. Consider moving details to convention docs
-4. Link to detailed docs rather than duplicating
+1. Let the gate report the size — do not estimate it
+2. When it flags a file, review for redundancy against convention docs first
+3. Remediate by progressive disclosure: move detail into a linked doc rather than compressing prose
+4. Link to detailed docs rather than duplicating them
 
 ## Agent Content Philosophy
 

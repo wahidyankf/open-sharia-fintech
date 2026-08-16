@@ -37,7 +37,7 @@ created: 2025-12-04
    - Human-readable working documents
 
 5. **Agent configuration files** - AGENTS.md, primary binding agent files, secondary binding agent files
-   - AGENTS.md - Human-readable navigation document (~1,000 lines) for developers
+   - AGENTS.md - Human-readable navigation document for developers
    - Primary binding agent files (`.claude/agents/*.md`) - Primary agent definitions (source of truth) read by developers to understand agent behavior
    - Secondary binding agent files (`.opencode/agents/*.md`) - Secondary agent definitions (auto-generated from primary binding) for secondary platform binding compatibility
    - Emojis enhance scannability for:
@@ -62,7 +62,7 @@ created: 2025-12-04
 
 **Enhanced scannability:**
 
-- AGENTS.md is a human-readable navigation document (~1,000 lines) that benefits from emoji-enhanced scannability
+- AGENTS.md is a human-readable navigation document that benefits from emoji-enhanced scannability
 - Agent files are human-readable specifications - developers read them to understand behavior, patterns, workflows
 - Emojis provide semantic visual markers that help developers quickly locate sections (criticality, purpose, references)
 

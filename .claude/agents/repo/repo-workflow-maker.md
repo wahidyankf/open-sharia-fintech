@@ -9,6 +9,7 @@ skills:
   - plan-writing-gherkin-criteria
   - repo-defining-workflows
   - docs-applying-diataxis-framework
+  - repo-understanding-shared-vocabulary
 ---
 
 # Workflow Maker Agent

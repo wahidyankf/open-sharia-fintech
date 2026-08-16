@@ -37,6 +37,7 @@ topic (e.g., `#authentication`, `#api`, `#setup`, `#configuration`).
 4. **What belongs in AGENTS.md**: what the convention is (1 sentence), where the detailed docs
    live (link), why it matters (1 sentence, if critical). Detailed examples, comprehensive
    explanations, and complete rule lists belong in convention docs instead.
-5. **Size awareness**: `AGENTS.md` has a hard limit of 40,000 characters; target 30,000 for
-   headroom. Every addition must be minimal and essential — when in doubt, link rather than
-   duplicate.
+5. **Size awareness**: `AGENTS.md` is held to the Governance Word-Budget Convention, whose
+   thresholds live in `repo-config.yml` and are enforced at pre-push and in CI. The file runs close
+   to its ceiling, so every addition must be minimal and essential — when in doubt, link rather
+   than duplicate.

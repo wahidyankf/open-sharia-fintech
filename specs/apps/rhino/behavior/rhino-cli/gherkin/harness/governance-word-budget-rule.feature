@@ -1,4 +1,4 @@
-@repo-governance-instruction-size-governance
+@governance-word-budget-rule
 Feature: Governance of the word-budget rule
 
   As a repository maintainer

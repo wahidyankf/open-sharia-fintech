@@ -403,7 +403,8 @@ pub enum GovernanceReadmeIndexCommands {
 
 // ---------------------------------------------------------------------------
 // convention (verb-last: convention {noun} validate)
-// Note: agents-md-size removed (superseded); instruction-size moved to harness domain.
+// Note: AGENTS.md size is owned by `governance word-budget validate`; the byte-based
+// validator that once lived here is gone, and instruction-size moved to the harness domain.
 // ---------------------------------------------------------------------------
 
 /// Convention validator subcommands.

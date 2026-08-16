@@ -5,10 +5,10 @@
 //! `harness audit`) plus the governance-meta facts the `instruction-size`
 //! gate depends on
 //! (`repo-governance audit` category wiring, the pre-push hook trigger, and
-//! the convention/workflow/checker docs that describe the gate). Feature file
-//! names and some Gherkin step text still say "agents" or "convention
-//! agents-md-size" for historical reasons — the underlying CLI subcommands
-//! live under the `harness` noun today; see `gherkin/harness/README.md`.
+//! the convention/workflow/checker docs that describe the gate). Some feature
+//! file names and Gherkin step text still say "agents" for historical reasons
+//! — the underlying CLI subcommands live under the `harness` and `governance`
+//! nouns today; see `gherkin/harness/README.md`.
 //!
 //! Wires the behavior-contract feature files at
 //! `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/` to step definitions that
@@ -958,7 +958,7 @@ fn real_repo_root() -> PathBuf {
 }
 
 // ===========================================================================
-// AGENTS.md word-budget audit (repo-governance-agents-md-size.feature)
+// AGENTS.md word-budget audit (governance-agents-md-word-budget.feature)
 // governance word-budget validate, scoped to a 400-word target / 500-word
 // fail ceiling matching this feature's own scenario titles.
 // ===========================================================================
@@ -1000,7 +1000,7 @@ fn then_identifies_over_hard_limit(w: &mut AgentsWorld) {
 }
 
 // ===========================================================================
-// Governance word-budget gate (repo-governance-instruction-size.feature)
+// Governance word-budget gate (governance-word-budget-thresholds.feature)
 // ===========================================================================
 
 #[given(
@@ -1098,7 +1098,7 @@ fn then_reports_unknown_subcommand(w: &mut AgentsWorld) {
 
 // ===========================================================================
 // Governance of the word-budget rule
-// (repo-governance-instruction-size-governance.feature) — asserts facts
+// (governance-word-budget-rule.feature) — asserts facts
 // about the real repository tree this crate lives in, not the synthetic
 // fixture. See `real_repo_root()`.
 // ===========================================================================
@@ -1260,7 +1260,7 @@ fn then_does_not_rederive_word_counts(w: &mut AgentsWorld) {
 
 // ===========================================================================
 // Pre-push enforcement of the word-budget gate
-// (repo-governance-instruction-size-pre-push.feature) — dark-launched as of
+// (governance-word-budget-pre-push.feature) — dark-launched as of
 // Phase 1 (not yet registered in `gates:`); these scenarios describe the
 // Phase-9 armed end state, so `matches_word_budget_trigger` mirrors the
 // trigger the OLD `instruction-size` gate used (the shape Phase 9 will reuse

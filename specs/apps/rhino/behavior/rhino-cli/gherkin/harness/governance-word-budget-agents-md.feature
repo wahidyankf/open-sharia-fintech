@@ -1,4 +1,4 @@
-@repo-governance-agents-md-size
+@governance-word-budget-agents-md
 Feature: AGENTS.md word-budget audit
 
   As a repository maintainer

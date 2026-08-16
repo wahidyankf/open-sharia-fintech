@@ -10,6 +10,7 @@ skills:
   - plan-creating-project-plans
   - docs-validating-factual-accuracy
   - grill-me
+  - repo-understanding-shared-vocabulary
 ---
 
 # Plan Maker Agent

@@ -7,6 +7,7 @@ color: blue
 skills:
   - docs-applying-content-quality
   - repo-understanding-repository-architecture
+  - repo-understanding-shared-vocabulary
 ---
 
 # Repository Governance Maker Agent
