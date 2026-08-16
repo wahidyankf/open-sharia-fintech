@@ -11,37 +11,37 @@ PASS=0
 FAIL=0
 
 cleanup() {
-  git restore --staged local-tmp/.env.local 2>/dev/null || true
-  git restore --staged local-tmp/.env.example 2>/dev/null || true
-  rm -f local-tmp/.env.local local-tmp/.env.example
+	git restore --staged local-tmp/.env.local 2>/dev/null || true
+	git restore --staged local-tmp/.env.example 2>/dev/null || true
+	rm -f local-tmp/.env.local local-tmp/.env.example
 }
 trap cleanup EXIT
 
 mkdir -p local-tmp
 
 echo "=== Case 1: staged .env.local must be rejected ==="
-printf 'SECRET=test\n' > local-tmp/.env.local
+printf 'SECRET=test\n' >local-tmp/.env.local
 git add -f local-tmp/.env.local
 guard_output="$("${GUARD_CMD[@]}" 2>&1 || true)"
 if printf '%s' "$guard_output" | grep -q "ERROR"; then
-  echo "PASS [DENY] staged .env.local rejected"
-  PASS=$((PASS + 1))
+	echo "PASS [DENY] staged .env.local rejected"
+	PASS=$((PASS + 1))
 else
-  echo "FAIL [DENY] staged .env.local was not rejected (guard missing or did not output ERROR)"
-  FAIL=$((FAIL + 1))
+	echo "FAIL [DENY] staged .env.local was not rejected (guard missing or did not output ERROR)"
+	FAIL=$((FAIL + 1))
 fi
 git restore --staged local-tmp/.env.local
 rm -f local-tmp/.env.local
 
 echo "=== Case 2: staged .env.example must be allowed ==="
-printf 'SECRET=changeme\n' > local-tmp/.env.example
+printf 'SECRET=changeme\n' >local-tmp/.env.example
 git add -f local-tmp/.env.example
 if "${GUARD_CMD[@]}"; then
-  echo "PASS [ALLOW] staged .env.example allowed"
-  PASS=$((PASS + 1))
+	echo "PASS [ALLOW] staged .env.example allowed"
+	PASS=$((PASS + 1))
 else
-  echo "FAIL [ALLOW] staged .env.example was rejected"
-  FAIL=$((FAIL + 1))
+	echo "FAIL [ALLOW] staged .env.example was rejected"
+	FAIL=$((FAIL + 1))
 fi
 git restore --staged local-tmp/.env.example
 rm -f local-tmp/.env.example
