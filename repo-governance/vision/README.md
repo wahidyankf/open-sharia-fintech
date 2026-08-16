@@ -59,10 +59,9 @@ See [Repository Governance Architecture](../repository-governance-architecture.m
 
 ## Vision Documents
 
-This directory carries two vision documents in a **parent/child** relationship — the ecosystem vision (why OSE exists at all) and the product vision (why this specific product exists) — plus two documents on how the vision governs day-to-day work.
+This directory carries one **ecosystem** vision — why Open Sharia Enterprise exists at all — plus two documents on how that vision governs day-to-day work. Individual products do not get their own Layer 0 document: a product's purpose, scope, and deliberate constraints belong with its own specifications, where the behavior they justify already lives.
 
 - [Open Sharia Enterprise Vision](./open-sharia-enterprise.md) — The foundational purpose and change we seek in democratizing Shariah-compliant enterprise. Use when orienting to why Open Sharia Enterprise exists, who it serves, or what success looks like — the ecosystem's Layer 0 vision.
-- [BeaverNest Vision](./beavernest.md) — The foundational purpose BeaverNest serves as a personal operating layer within the Open Sharia Enterprise ecosystem. Use when orienting to why BeaverNest exists as a product, or checking how it relates to the wider Open Sharia Enterprise ecosystem vision.
 - [How Vision Governs Everything](./how-vision-governs.md) — How the vision propagates through principles, conventions, development, and agents. Use when tracing how the foundational vision shapes principles, conventions, development practices, or agent automation.
 - [Questions the Vision Answers](./questions-vision-answers.md) — Answers the vision gives to contributors, users, and the project itself. Use when explaining to a contributor, user, or reviewer why the project exists or what it offers them.
 

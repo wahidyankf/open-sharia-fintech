@@ -30,8 +30,8 @@ soft-delete behavior.
 - [`beavernest-app-setup`](../../done/2026-08-10__beavernest-app-setup/README.md) — delivered SQLite,
   DbUp, single-host, no-ORM, backup, and real-database test boundaries (closed
   delivered-as-descoped; the SQLite foundation itself shipped).
-- [BeaverNest Vision](../../../repo-governance/vision/beavernest.md) — names assistant, content,
-  posting, and workflow capabilities that may supply the first stateful slice.
+- [BeaverNest — Product](../../../specs/apps/beavernest/product/README.md) — names the assistant,
+  content, posting, and workflow capabilities that may supply the first stateful slice.
 - [Functional Programming](../../../repo-governance/development/pattern/functional-programming.md) —
   requires pure domain logic and an explicit imperative persistence edge.
 - [Database Audit Trail](../../../repo-governance/development/pattern/database-audit-trail.md) —

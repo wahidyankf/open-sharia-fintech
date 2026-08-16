@@ -14,7 +14,7 @@ when_to_use: Use when orienting to why Open Sharia Enterprise exists, who it ser
 
 # Open Sharia Enterprise Vision
 
-This is the foundational, ecosystem-level vision document: why Open Sharia Enterprise exists and what change it seeks. See the [BeaverNest Vision](../vision/beavernest.md) for the product vision of one specific product built within this ecosystem.
+This is the foundational, ecosystem-level vision document: why Open Sharia Enterprise exists and what change it seeks. It is the only vision document; products state their own purpose in their specifications.
 
 ## Contents
 
