@@ -16,12 +16,12 @@ created: 2026-08-16
 Four trees hold written material. They differ by **who is bound and for how long**, not by subject
 matter — the same topic can legitimately appear in more than one.
 
-| Tree               | Audience and force                                          | Lifetime                        |
-| ------------------ | ------------------------------------------------------------ | ------------------------------- |
-| `docs/`            | Explains the product and monorepo to humans and agents      | Lives as long as what it describes |
-| `repo-governance/` | Binds contributors — rules, conventions, workflows          | Until deliberately changed      |
-| `plans/`           | Intent for one piece of work                                | Expires on archival             |
-| `specs/`           | Executable acceptance criteria for products                 | Lives with the feature          |
+| Tree               | Audience and force                                     | Lifetime                           |
+| ------------------ | ------------------------------------------------------ | ---------------------------------- |
+| `docs/`            | Explains the product and monorepo to humans and agents | Lives as long as what it describes |
+| `repo-governance/` | Binds contributors — rules, conventions, workflows     | Until deliberately changed         |
+| `plans/`           | Intent for one piece of work                           | Expires on archival                |
+| `specs/`           | Executable acceptance criteria for products            | Lives with the feature             |
 
 The distinction that misfiles most often: `docs/` **describes**, `repo-governance/` **binds**. A
 document explaining how the monorepo is laid out is `docs/`; a document stating how contributors
@@ -33,7 +33,7 @@ The exception worth memorising is the language style guides under
 
 ## Temporary Directories
 
-`generated-reports/` and `local-temp/` hold build artifacts and scratch output. Both may be swept
+`generated-reports/` and `local-tmp/` hold build artifacts and scratch output. Both may be swept
 at any time without warning. Anything there is regenerable by definition; never write something you
 would need to protect.
 

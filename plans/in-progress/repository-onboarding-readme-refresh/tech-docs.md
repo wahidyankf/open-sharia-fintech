@@ -57,7 +57,7 @@ flowchart TD
 ## Corpus Discovery and Disposition Algorithm
 
 `ose-public` keeps its path-complete Markdown ledger under this plan's `artifacts/` folder.
-`ose-primer` and `ose-private` keep their live path-complete ledgers under plan-scoped `local-temp/`
+`ose-primer` and `ose-private` keep their live path-complete ledgers under plan-scoped `local-tmp/`
 directories in their owning repositories; those files are never committed or copied across
 repositories. The public plan stores only each sibling's source revision, validation result, and
 opaque digest after an independent AI sensitivity review. No ledger quotes document bodies,
@@ -273,9 +273,9 @@ one exact per-document task row in the owning ledger.
 ├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
-├── local-temp/repository-onboarding-readme-refresh/execution-record-phase-0.md [N] — gitignored baseline record
-├── local-temp/repository-onboarding-readme-refresh/execution-record-verification-program.md [N] — gitignored safe-status record
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — conditional local task records
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md [N] — gitignored baseline record
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md [N] — gitignored safe-status record
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — conditional local task records
 └── plans/in-progress/repository-onboarding-readme-refresh/
     ├── {README,brd,prd,tech-docs,delivery,learnings}.md [E] — control plan
     ├── artifacts/reader-doc-disposition-ose-public.md [N] — public path ledger
@@ -297,8 +297,8 @@ one exact per-document task row in the owning ledger.
 ├── docs/**/*.md [E] — exact reader-related rows only
 ├── docs/tutorials/getting-started-with-ose-primer.md [N] — reference-app first success
 ├── {apps,libs,specs,infra,repo-governance}/**/README.md [E] — every README receives a row
-├── local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md [N] — local-only live ledger
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
+├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md [N] — local-only live ledger
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
 ├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 └── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
@@ -313,8 +313,8 @@ one exact per-document task row in the owning ledger.
 ├── package.json [E] — description truth and filename exemption
 ├── docs/tutorials/getting-started-with-ose-private.md [N] — local sandbox first success
 ├── <private-ledger-resolved-reader-paths> [E] — exact private paths stay inside ose-private
-├── local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md [N] — local-only private ledger
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
+├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md [N] — local-only private ledger
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
 ├── <private-ledger-resolved-generated-paths> [G] — exact private paths stay inside ose-private
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 └── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
@@ -324,7 +324,7 @@ one exact per-document task row in the owning ledger.
 
 `[E]` on a bounded family means “eligible for evidence-based editing,” not “every member must
 change.” The owning ledger is the exact file list. Paths assigned `verified-unchanged`, `generated`,
-or `historical-exempt` remain untouched. Both sibling ledgers stay in their owning `local-temp/`
+or `historical-exempt` remain untouched. Both sibling ledgers stay in their owning `local-tmp/`
 directories; only reviewed path-free summaries and opaque digests cross into this plan.
 
 The two placeholder families in the private tree are a deliberate sensitivity exception to the

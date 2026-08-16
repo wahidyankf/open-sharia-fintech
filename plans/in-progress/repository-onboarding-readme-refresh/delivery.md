@@ -54,15 +54,15 @@ the per-document result.
 Exact record ownership:
 
 - Phase 0 writes only to the gitignored public
-  `local-temp/repository-onboarding-readme-refresh/execution-record-phase-0.md`; Phase 1 copies its
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md`; Phase 1 copies its
   sanitized outcomes into the contract record.
 - Contract, public-refresh, and closeout units use
   `artifacts/execution-record-{contract,public,closeout}.md` inside this public plan.
 - Metadata, fresh-checkout, and final read-only verification use the gitignored public
-  `local-temp/repository-onboarding-readme-refresh/execution-record-verification-program.md`; it
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md`; it
   stores only safe status/evidence summaries and is created before Phase 7.
 - Primer, private, Rhino, and correction units use
-  `local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md` inside their owning
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md` inside their owning
   repository. They are never committed across repository boundaries.
 - Closeout publishes one path-free sibling summary per repository containing only revision,
   validation result, applicable PR identifiers, and opaque digest.
@@ -424,7 +424,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
   and the documented inventory has zero missing, duplicate, or unexplained path.
 
 - [x] [AI] [P1-003] In an `ose-primer` session, create
-      `local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md` from
+      `local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md` from
       `git ls-tree -r --name-only <recorded-primer-origin-main-sha> -- '*.md'` — acceptance: every
       committed primer Markdown path appears once and the live ledger never leaves `ose-primer`.
 
@@ -435,7 +435,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
   path-level ledger remains in `ose-primer`.
 
 - [x] [AI] [P1-004] In an `ose-private` session, create
-      `local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md` from
+      `local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md` from
       `git ls-tree -r --name-only <recorded-private-origin-main-sha> -- '*.md'` — acceptance: the
       path-complete ledger never leaves `ose-private` and is never staged.
 
@@ -451,7 +451,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
       operator document is omitted.
   - Date: 2026-08-08
   - Status: passed
-  - Notes: Verified the existing private local-temp ledger against the private session's pinned
+  - Notes: Verified the existing private local-tmp ledger against the private session's pinned
     revision (row count and revision recorded only in the private, gitignored execution record, per
     this plan's sensitivity boundary). Every README row is `audit-required`; every other path is
     differentiated across `reader-related`, `historical`, and `not-reader-doc` buckets — a real
@@ -729,7 +729,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
 
 - [x] [AI] [P3-005] Add the narrow `CONTRIBUTING.md` staged-naming exemption in the authoritative
       public configuration — acceptance: `CONTRIBUTING.md` passes, while a plan-owned
-      `local-temp/.../BAD-NAME.md` negative control produces the expected invalid-filename rule and
+      `local-tmp/.../BAD-NAME.md` negative control produces the expected invalid-filename rule and
       is then removed.
 
   **Date:** 2026-08-07  

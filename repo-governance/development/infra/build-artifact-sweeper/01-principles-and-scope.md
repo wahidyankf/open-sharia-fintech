@@ -70,7 +70,7 @@ This boundary is what makes the response protocol safe. The sweeper does not rem
 
 - tracked files, or uncommitted edits to tracked files
 - `.env*` files
-- `generated-reports/` and `local-temp/`
+- `generated-reports/` and `local-tmp/`
 - worktree directories themselves, or any git ref or the object store
 
 **Anything missing outside the three removable classes is not the sweeper.** Investigate it normally —

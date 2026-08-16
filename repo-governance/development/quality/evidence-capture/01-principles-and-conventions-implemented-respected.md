@@ -37,6 +37,6 @@ when_to_use: "Use when tracing this convention to the principles/conventions beh
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: The `evidence/` subfolder
   sits inside the plan folder and moves with it through the lifecycle (`backlog/` → `in-progress/` →
   `done/`).
-- **[Temporary Files Convention](../../infra/temporary-files.md)**: `local-temp/` is for ephemeral scratch
+- **[Temporary Files Convention](../../infra/temporary-files.md)**: `local-tmp/` is for ephemeral scratch
   work. Evidence that should survive across sessions and be committed belongs in the plan's `evidence/`
-  folder, not in `local-temp/`.
+  folder, not in `local-tmp/`.

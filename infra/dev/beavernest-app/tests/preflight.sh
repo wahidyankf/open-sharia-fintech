@@ -80,7 +80,7 @@ if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \
 	exit 1
 fi
 
-beavernest_repo_subdir="$beavernest_root/local-temp/beavernest-preflight-subdir-of-repo-$$"
+beavernest_repo_subdir="$beavernest_root/local-tmp/beavernest-preflight-subdir-of-repo-$$"
 install -d -m 0700 "$beavernest_repo_subdir"
 trap 'rm -rf -- "$beavernest_fixture" "$beavernest_repo_subdir"' EXIT
 if env -i PATH="$PATH" HOME="$HOME" BEAVERNEST_BE_VPN_HOST_IP=127.0.0.1 \

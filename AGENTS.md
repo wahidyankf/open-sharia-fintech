@@ -103,7 +103,7 @@ skills at `.claude/skills/<name>/SKILL.md`.
 
 ## Plans & Temporary Files
 
-Build artifacts in `generated-reports/` and `local-temp/` may be swept at any time — regenerate,
+Build artifacts in `generated-reports/` and `local-tmp/` may be swept at any time — regenerate,
 never protect.
 
 **See**: [plans.md](./repo-governance/conventions/structure/plans.md)

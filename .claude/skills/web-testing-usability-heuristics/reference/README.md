@@ -18,6 +18,6 @@ title: "Reference"
 - [12 Finding Anatomy And Severity](./12-finding-anatomy-and-severity.md) — the fields every findings.md entry carries and the severity scale
 - [13 Output Modes Overview](./13-output-modes-overview.md) — the output modes selectable at invocation
 - [14 Output Mode Plan And Delivery](./14-output-mode-plan-and-delivery.md) — the plan (default) and delivery output modes
-- [15 Output Mode Localtemp Procedure And Quality](./15-output-mode-localtemp-procedure-and-quality.md) — the local-temp output mode, procedure summary, and quality guidelines
+- [15 Output Mode Localtmp Procedure And Quality](./15-output-mode-localtmp-procedure-and-quality.md) — the local-tmp output mode, procedure summary, and quality guidelines
 - [16 Constraints](./16-constraints.md) — constraints on what this agent must never do
   </content>

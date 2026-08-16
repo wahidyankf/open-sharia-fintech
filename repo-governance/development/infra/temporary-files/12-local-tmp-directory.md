@@ -1,14 +1,14 @@
 ---
-title: "`local-temp/`"
-description: What local-temp/ is for and the predicates for reclaiming anything inside it.
+title: "`local-tmp/`"
+description: What local-tmp/ is for and the predicates for reclaiming anything inside it.
 category: explanation
 subcategory: development
 tags: [temporary-files, ai-agents, file-organization, best-practices]
 created: 2025-12-01
-when_to_use: Use when deciding if a file belongs in local-temp/.
+when_to_use: Use when deciding if a file belongs in local-tmp/.
 ---
 
-# `local-temp/`
+# `local-tmp/`
 
 **Use for**: Miscellaneous temporary files and scratch work
 
@@ -22,17 +22,23 @@ when_to_use: Use when deciding if a file belongs in local-temp/.
 
 **Naming pattern**: No strict pattern required (use descriptive names)
 
+**The directory always exists.** A tracked `local-tmp/.gitkeep` guarantees it in every clone and
+worktree, so a tool that writes here never has to create it first and never fails on a missing path.
+`.gitignore` ignores `local-tmp/*` and re-includes only the `.gitkeep` — everything else you put
+here stays untracked. Do not delete the `.gitkeep`, and do not commit anything else in this
+directory.
+
 **Example files**:
 
 ```
-local-temp/draft-convention.md
-local-temp/temp-analysis.json
-local-temp/scratch-notes.txt
+local-tmp/draft-convention.md
+local-tmp/temp-analysis.json
+local-tmp/scratch-notes.txt
 ```
 
 **Retention**: entries are reclaimable **after 7 days without modification**, and reclaiming them is
 a deliberate act — never automatic. The
-[build-artifact sweeper](../build-artifact-sweeper.md) does **not** touch `local-temp/` and must not
+[build-artifact sweeper](../build-artifact-sweeper.md) does **not** touch `local-tmp/` and must not
 be extended to; the directory exists precisely to hold things no ambient process is allowed to
 remove.
 
@@ -53,7 +59,7 @@ predicate 2 is what excludes it: no command regenerates a particular past failur
 deliberately when you want output preserved, and it will fail predicate 1 on name and predicate 2 on
 substance.
 
-Reclaim by **moving** to a dated quarantine (`local-temp/.reclaim-quarantine-YYYY-MM-DD/`) first,
+Reclaim by **moving** to a dated quarantine (`local-tmp/.reclaim-quarantine-YYYY-MM-DD/`) first,
 then proving nothing load-bearing moved (`npm run doctor -- --fix`, `nx run rhino-cli:test:quick`,
 `nx affected -t build` all exit 0), and only then deleting. Until that proof passes, the whole
 operation is one `mv` from undone.

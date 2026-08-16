@@ -31,7 +31,7 @@ const FULL_REPO_SKIP_DIRS: &[&str] = &[
     ".next",
     "coverage",
     "generated-reports",
-    "local-temp",
+    "local-tmp",
     "archived",
     "apps-labs",
     "worktrees",
@@ -187,7 +187,7 @@ fn get_staged_markdown_files(repo_root: &Path) -> std::result::Result<Vec<PathBu
 
 /// Returns all `.md` files in the repository via a full recursive walk, skipping
 /// known noise directories (`node_modules`, `dist`, `target`, `.next`, `coverage`,
-/// `generated-reports`, `local-temp`, `archived`, `apps-labs`, `.fvm-cache`, `.git`).
+/// `generated-reports`, `local-tmp`, `archived`, `apps-labs`, `.fvm-cache`, `.git`).
 ///
 /// # Errors
 ///

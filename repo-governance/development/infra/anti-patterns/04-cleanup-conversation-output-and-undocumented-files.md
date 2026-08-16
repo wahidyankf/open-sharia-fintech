@@ -27,7 +27,7 @@ ls generated-reports/ | wc -l
 ```bash
 # Periodic cleanup
 find generated-reports/ -name "*.md" -mtime +30 -exec mv {} archive/ \;
-find local-temp/ -mtime +7 -delete
+find local-tmp/ -mtime +7 -delete
 ```
 
 **Rationale:**
@@ -80,15 +80,15 @@ echo "1. Missing alt text in image" >> "$REPORT"
 
 ```bash
 # What are these files?
-local-temp/cache-v3.bin
-local-temp/data-final-2025.json
-local-temp/temp-backup-v2.tar.gz
+local-tmp/cache-v3.bin
+local-tmp/data-final-2025.json
+local-tmp/temp-backup-v2.tar.gz
 ```
 
 **Solution:**
 
 ```bash
-# local-temp/cache/README.md
+# local-tmp/cache/README.md
 # API Response Cache
 #
 # Contains cached API responses for development.

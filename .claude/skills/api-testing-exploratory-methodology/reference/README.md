@@ -18,6 +18,6 @@ title: "Reference"
 - [12 Defect Anatomy And Severity](./12-defect-anatomy-and-severity.md) — the ISTQB-aligned fields every findings.md defect report must carry
 - [13 Output Modes Overview](./13-output-modes-overview.md) — the output modes selectable at invocation
 - [14 Output Mode Plan](./14-output-mode-plan.md) — the default output mode that files findings as a new plan folder
-- [15 Output Modes Delivery Localtemp And Procedure](./15-output-modes-delivery-localtemp-and-procedure.md) — the delivery and local-temp output modes plus the shared procedure summary
+- [15 Output Modes Delivery Localtmp And Procedure](./15-output-modes-delivery-localtmp-and-procedure.md) — the delivery and local-tmp output modes plus the shared procedure summary
 - [16 Quality Guidelines And Constraints](./16-quality-guidelines-and-constraints.md) — quality guidelines including reproducing every finding before reporting it
   </content>

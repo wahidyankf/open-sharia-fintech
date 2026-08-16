@@ -35,7 +35,7 @@ The orchestrator (or user) provides:
      test the live site against. Even when none are named, the agent reads `specs/apps/<target>/**`
      (and `specs/libs/**` for shared libs) by default — see the specs-as-ground-truth reference
      module.
-4. **Output mode & destination** — `plan` (default) | `delivery` | `local-temp`; see the output-modes
+4. **Output mode & destination** — `plan` (default) | `delivery` | `local-tmp`; see the output-modes
    reference module. With `delivery`, also pass a **plan-path**; with `plan`, optionally pass
    `plan-stage: in-progress`.
 

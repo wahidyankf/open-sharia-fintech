@@ -1,4 +1,4 @@
-# Output Modes `delivery`, `local-temp`, and Procedure Summary
+# Output Modes `delivery`, `local-tmp`, and Procedure Summary
 
 ## Mode `delivery` — fold findings into an existing plan's `delivery.md`
 
@@ -18,15 +18,15 @@ near-end retest, folded back into the host plan. Do not create a new plan folder
 - Run `npm run lint:md` over the edited `delivery.md`, and return the same severity-count summary to
   the orchestrator.
 
-### Mode `local-temp` — a throwaway findings file for direct fixing
+### Mode `local-tmp` — a throwaway findings file for direct fixing
 
-Selected with `output-mode: local-temp`. Write a single `local-temp/<YYYY-MM-DD>__<slug>/findings.md`
+Selected with `output-mode: local-tmp`. Write a single `local-tmp/<YYYY-MM-DD>__<slug>/findings.md`
 carrying the full finding catalog (same anatomy, severity/priority, steps-to-reproduce) plus an
 `evidence/` subfolder beside it for cited captures. Emit **no**
 `README`/`brd`/`prd`/`spec-gaps`/`tech-docs`/`delivery`, and make **no** entry in
 `plans/backlog/README.md`. The folder is gitignored and ephemeral — the calling session reads
 `findings.md` and applies the fixes directly in the same run. Return the same severity-count summary
-plus the `local-temp/` path to the orchestrator.
+plus the `local-tmp/` path to the orchestrator.
 
 ## Procedure Summary
 

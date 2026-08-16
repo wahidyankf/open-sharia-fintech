@@ -27,7 +27,7 @@ This applies identically to a summary written for a human, a handoff to another 
 automatic context compaction. When writing any of them, the file inventory is a required section.
 
 For long autonomous runs, materialize the ledger outside the context window — in the active plan's
-`delivery.md`, or a scratch file under `local-temp/` — so that no summarization step can lose it.
+`delivery.md`, or a scratch file under `local-tmp/` — so that no summarization step can lose it.
 
 ## Standard 5 — Absent a Ledger, Nothing Is Yours
 

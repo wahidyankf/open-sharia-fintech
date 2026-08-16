@@ -1,12 +1,12 @@
-# Output Mode `local-temp`, Procedure Summary, and Quality Guidelines
+# Output Mode `local-tmp`, Procedure Summary, and Quality Guidelines
 
-## Mode `local-temp` — a throwaway findings file for direct fixing
+## Mode `local-tmp` — a throwaway findings file for direct fixing
 
-Write a single `local-temp/<YYYY-MM-DD>__<slug>/findings.md` carrying the full finding catalog plus
+Write a single `local-tmp/<YYYY-MM-DD>__<slug>/findings.md` carrying the full finding catalog plus
 an `evidence/` subfolder beside it. Emit **no**
 `README`/`brd`/`prd`/`walkthrough`/`spec-suggestions`/`tech-docs`/`delivery`, and make **no** entry
 in `plans/backlog/README.md`. The folder is gitignored and ephemeral. Return the same severity-count
-summary plus the `local-temp/` path to the orchestrator.
+summary plus the `local-tmp/` path to the orchestrator.
 
 ## Procedure Summary
 

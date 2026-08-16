@@ -13,7 +13,7 @@ caught mechanically.
 (`plans/in-progress/**/*.md`, `plans/backlog/**/*.md`). **Exempt**: website content
 (`apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-www/`, `apps/wahidyankf-www/`),
 `plans/done/` (immutable archive), generated mirrors (`.opencode/`, `.cursor/`, `.amazonq/`),
-`generated-reports/`, `local-temp/`, `worktrees/`.
+`generated-reports/`, `local-tmp/`, `worktrees/`.
 
 Validates: file naming, linking, emoji usage, convention compliance, registry-gate consistency
 (live hook/CI docs delegate command discovery to `gate list`, verified by `gate validate` — flag

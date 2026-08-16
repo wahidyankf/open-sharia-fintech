@@ -1,6 +1,6 @@
 ---
 name: web-testing-usability-heuristics
-description: Spec-blind heuristic usability evaluation methodology for web-usability-tester — Nielsen's 10 heuristics, cognitive walkthrough, first-click/information-scent analysis, the usability dimensions checklist, four mandatory systematic probes, URL naturalness, responsive usability, finding anatomy, and the three output modes (plan/delivery/local-temp).
+description: Spec-blind heuristic usability evaluation methodology for web-usability-tester — Nielsen's 10 heuristics, cognitive walkthrough, first-click/information-scent analysis, the usability dimensions checklist, four mandatory systematic probes, URL naturalness, responsive usability, finding anatomy, and the three output modes (plan/delivery/local-tmp).
 when_to_use: When performing spec-blind, first-time-user usability evaluation of a live website, or extending/auditing the web-usability-tester agent's methodology.
 ---
 
@@ -34,7 +34,7 @@ against established usability science, without reading specs, source, or mockups
   Nielsen 0-4 severity scale.
 - `reference/13-output-modes-overview.md` and `reference/14-output-mode-plan-and-delivery.md` — the
   output-mode selection table and the `plan`/`delivery` modes' document sets.
-- `reference/15-output-mode-localtemp-procedure-and-quality.md` — the `local-temp` mode, the
+- `reference/15-output-mode-localtmp-procedure-and-quality.md` — the `local-tmp` mode, the
   11-step procedure summary, and quality guidelines.
 - `reference/16-constraints.md` — hard constraints.
 

@@ -1,6 +1,6 @@
 ---
 name: api-exploratory-tester
-description: Performs spec-aware, contract-aware session-based exploratory testing of a live API — REST or GraphQL — given an endpoint/base-URL and a testing goal, then files findings as a new backlog plan a developer can pick up and fix. Hunts edge cases and boundary conditions (payloads, status codes, error envelopes, auth, pagination, idempotency, GraphQL nullability/partial-errors/depth), not just the happy path. Compares live responses against the API contract and existing specs/** Gherkin, proposing scenarios for correct behaviours lacking coverage. Never drives a browser — for rendered UI use the web tester triad. Output destination selectable via output-mode — plan (default), delivery, or local-temp.
+description: Performs spec-aware, contract-aware session-based exploratory testing of a live API — REST or GraphQL — given an endpoint/base-URL and a testing goal, then files findings as a new backlog plan a developer can pick up and fix. Hunts edge cases and boundary conditions (payloads, status codes, error envelopes, auth, pagination, idempotency, GraphQL nullability/partial-errors/depth), not just the happy path. Compares live responses against the API contract and existing specs/** Gherkin, proposing scenarios for correct behaviours lacking coverage. Never drives a browser — for rendered UI use the web tester triad. Output destination selectable via output-mode — plan (default), delivery, or local-tmp.
 model: composer-2.5
 ---
 
@@ -34,7 +34,7 @@ the `AET-###` defect anatomy, and the three output modes.
    recompute derived values rather than trust presence.
 5. Triage findings with severity + priority; draft `SG-###` spec-gap proposals for correct-but-
    unprotected behaviour.
-6. Write the backlog plan (or fold into an existing `delivery.md`, or `local-temp/findings.md`) per
+6. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
    `output-mode`.
 
 Discovers and documents defects; never fixes them, mutates state beyond authorized writes, or drives

@@ -29,8 +29,8 @@ validation-output.txt
 ```bash
 # Organized in designated directories
 generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md
-local-temp/scratch-notes.txt
-local-temp/analysis.json
+local-tmp/scratch-notes.txt
+local-tmp/analysis.json
 ```
 
 **Rationale:**

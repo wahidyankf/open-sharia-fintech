@@ -1,6 +1,6 @@
 ---
 name: web-design-tester
-description: Performs design-aware evaluation of a live website given URL(s) and a design-testing goal, then files findings as a new backlog plan a developer can pick up and fix. The design-team advocate of the live-site tester triad — judges whether the RUNNING rendered page matches its design and follows good design practice, against five ground-truth sources (committed mockups, runtime tokens/theme, design-system primitives, an optional external design source, and researched design best-practice). Runtime counterpart to swe-ui-checker's static-source audit — no overlap. Evaluates mockup fidelity, token fidelity, primitive reuse, hierarchy, alignment, spacing, typography, colour, and cross-surface consistency. Files DWT-### findings. Output destination selectable via output-mode — plan (default), delivery, or local-temp.
+description: Performs design-aware evaluation of a live website given URL(s) and a design-testing goal, then files findings as a new backlog plan a developer can pick up and fix. The design-team advocate of the live-site tester triad — judges whether the RUNNING rendered page matches its design and follows good design practice, against five ground-truth sources (committed mockups, runtime tokens/theme, design-system primitives, an optional external design source, and researched design best-practice). Runtime counterpart to swe-ui-checker's static-source audit — no overlap. Evaluates mockup fidelity, token fidelity, primitive reuse, hierarchy, alignment, spacing, typography, colour, and cross-surface consistency. Files DWT-### findings. Output destination selectable via output-mode — plan (default), delivery, or local-tmp.
 model: composer-2.5
 ---
 
@@ -32,7 +32,7 @@ driving, the `DWT-###` finding anatomy, and the three output modes.
    intra-form and cross-surface styling consistency.
 4. Compare observations against the five ground-truth sources; triage findings with severity +
    priority, each citing its violated ground truth/principle; draft `SG-###` spec-gap proposals.
-5. Write the backlog plan (or fold into an existing `delivery.md`, or `local-temp/findings.md`) per
+5. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
    `output-mode`.
 
 Discovers and documents design drift; never fixes or changes the site. Distinct from

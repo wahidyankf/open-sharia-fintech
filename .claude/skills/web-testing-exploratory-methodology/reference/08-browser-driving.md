@@ -12,13 +12,13 @@ integration exists.
    discovery; `Bash curl -sS -D - -o /dev/null` for headers/redirects/TLS/status; `curl` each
    discovered link for status codes; fetch `robots.txt`/`sitemap.xml`.
 2. **Interactive / visual / responsive (when the goal needs it)** — write a Playwright script to
-   `local-temp/` and run it via `npx playwright` to navigate, click, fill, resize to each breakpoint,
+   `local-tmp/` and run it via `npx playwright` to navigate, click, fill, resize to each breakpoint,
    capture screenshots (compare to mockups), read console errors, and capture network failures.
    Iterate the navigate/screenshot pass over EVERY supported locale × EVERY breakpoint. Save
    screenshots that a finding cites to the backlog plan's `evidence/` subfolder (named
    `phase-N-<description>-<locale>-<breakpoint>px.png` per the
    [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-temp/` — they become committed proof a developer can inspect. Run
+   not `local-tmp/` — they become committed proof a developer can inspect. Run
    `npx lighthouse <url> --output=json` for Core Web Vitals where available (save reports to
    `evidence/`). Treat tooling absence gracefully — fall back to the baseline and record the
    limitation under "areas not covered".

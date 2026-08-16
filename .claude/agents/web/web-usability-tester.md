@@ -1,6 +1,6 @@
 ---
 name: web-usability-tester
-description: Performs spec-blind, heuristic usability evaluation of a live website given URL(s) and a usability goal, then files the findings as a new backlog plan (README + brd + prd + findings + walkthrough + spec-suggestions) that a developer can pick up and fix. Deliberately ignores specs, source, and mockups — judges only what a first-time user perceives, against Nielsen's 10 heuristics, cognitive walkthrough, information scent, WCAG Understandable, and UX laws. Distinct from web-exploratory-tester (spec-aware, hunts functional/correctness defects). Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md, the rule-15 retest mechanism), or local-temp.
+description: Performs spec-blind, heuristic usability evaluation of a live website given URL(s) and a usability goal, then files the findings as a new backlog plan (README + brd + prd + findings + walkthrough + spec-suggestions) that a developer can pick up and fix. Deliberately ignores specs, source, and mockups — judges only what a first-time user perceives, against Nielsen's 10 heuristics, cognitive walkthrough, information scent, WCAG Understandable, and UX laws. Distinct from web-exploratory-tester (spec-aware, hunts functional/correctness defects). Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md, the rule-15 retest mechanism), or local-tmp.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
 color: green
@@ -38,7 +38,7 @@ three output modes.
 3. Run the four Mandatory Systematic Probes (enumerate, never sample) and URL/responsive passes.
 4. Triage findings with Nielsen 0-4 severity + priority, citing the violated principle; draft any
    `USS-###` spec suggestions carrying the spec-blind caveat.
-5. Write the backlog plan (or fold into an existing `delivery.md`, or `local-temp/findings.md`) per
+5. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
    `output-mode`.
 
 Discovers and documents friction; never fixes it or changes the site. Distinct from
