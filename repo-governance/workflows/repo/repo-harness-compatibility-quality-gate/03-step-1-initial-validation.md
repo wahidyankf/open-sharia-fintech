@@ -22,9 +22,9 @@ external drift detection (Phase 1).
 1. Governance prose vendor-neutrality — runs `rhino-cli repo-governance vendor validate repo-governance/`
 2. Root instruction surface vendor-neutrality — runs vendor-audit on `AGENTS.md` and `CLAUDE.md`
 3. Binding sync no-op — runs `npm run generate:bindings && git diff --quiet .opencode/ .amazonq/`
-4. Agent count parity — compares `find .claude/agents -name '*.md' ! -name README.md | wc -l` vs
-   `ls .opencode/agents/*.md | wc -l` (`.claude/agents/` is nested into role subfolders;
-   `.opencode/agents/` is flat)
+4. Agent count parity — compares `find .claude/agents -name '*.md' ! -name README.md | wc -l`
+   against the same command over `.opencode/agents/` (`.claude/agents/` is nested into role
+   subfolders, `.opencode/agents/` is flat, and `README.md` indexes both without being an agent)
 5. Translation-map coverage — checks all distinct `color:` and `model:` frontmatter values
    appear in the color-translation table and tier map
 
