@@ -19,11 +19,12 @@ Each language has authoritative coding standards in:
 docs/explanation/software-engineering/programming-languages/[language]/README.md
 ```
 
-A guide exists only for a language this repository builds in. Today that is:
+A guide exists only for a language this repository builds on. Today that is:
 
 - TypeScript: `docs/explanation/software-engineering/programming-languages/typescript/README.md`
 - Rust: `docs/explanation/software-engineering/programming-languages/rust/README.md`
 - F#: `docs/explanation/software-engineering/programming-languages/f-sharp/README.md`
+- C#: `docs/explanation/software-engineering/programming-languages/c-sharp/README.md` (.NET interop with F#)
 
 Read the parent
 [`programming-languages/README.md`](../../../../docs/explanation/software-engineering/programming-languages/README.md)

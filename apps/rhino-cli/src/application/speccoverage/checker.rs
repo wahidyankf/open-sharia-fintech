@@ -613,7 +613,7 @@ fn extract_scenario_titles(test_file_path: &Path) -> std::result::Result<HashSet
         .and_then(|s| s.to_str())
         .unwrap_or("");
     match ext {
-        "rs" | "dart" => extract_comment_scenario_titles(test_file_path),
+        "cs" | "rs" | "dart" => extract_comment_scenario_titles(test_file_path),
         "fs" => Ok(HashSet::new()), // auto-bind framework
         _ => extract_ts_scenario_titles(test_file_path),
     }
@@ -702,6 +702,7 @@ pub fn extract_all_step_texts(
         let _ = match ext {
             "ts" | "tsx" | "js" | "jsx" => extract_ts_step_texts(path, &mut sm),
             "rs" => extractors::extract_rust_step_texts(path, &mut sm),
+            "cs" => extractors::extract_csharp_step_texts(path, &mut sm),
             "fs" => extractors::extract_fsharp_step_texts(path, &mut sm),
             "dart" => extractors::extract_dart_step_texts(path, &mut sm),
             _ => Ok(()),

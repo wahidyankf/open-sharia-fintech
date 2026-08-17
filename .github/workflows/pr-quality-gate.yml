@@ -99,7 +99,7 @@ jobs:
             for tag in $TAGS; do
               case "$tag" in
                 lang:ts) echo "has-ts=true" >> "$GITHUB_OUTPUT" ;;
-                lang:fsharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
+                lang:fsharp | lang:csharp) echo "has-dotnet-projects=true" >> "$GITHUB_OUTPUT" ;;
                 lang:rust) echo "has-rust=true" >> "$GITHUB_OUTPUT" ;;
                 lang:dart) echo "has-dart=true" >> "$GITHUB_OUTPUT" ;;
               esac
@@ -326,7 +326,7 @@ jobs:
       - uses: ./.github/actions/setup-node
       # --parallel=2 bounds peak memory when many TS projects are affected at once (e.g. a
       # shared-lib change).
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:rust,tag:lang:dart' --parallel=2
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:fsharp,tag:lang:csharp,tag:lang:rust,tag:lang:dart' --parallel=2
 
   dotnet:
     name: .NET quality gate
@@ -356,11 +356,11 @@ jobs:
       - uses: ./.github/actions/setup-rust
       # Rust targets share Cargo's registry and build locks. Keep the target families serial so
       # the nested test:quick gate cannot contend with standalone checks on CI runners.
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:dart' --parallel=1 --outputStyle=stream
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
       # Coverage was lifted out of the local `test:quick` chain (DD-7) so pre-push stays fast. It
       # still gates merge — `--fail-under-lines 90` lives in the target itself, so a coverage drop
       # turns this job red exactly as it previously turned pre-push red.
-      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:dart' --parallel=1 --outputStyle=stream
+      - run: npx nx affected -t test:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:dart' --parallel=1 --outputStyle=stream
 
   flutter:
     name: Flutter quality gate
@@ -384,7 +384,7 @@ jobs:
           echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
       - name: Install the repository Flutter SDK
         run: fvm install
-      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:rust' --parallel=1
+      - run: npx nx affected -t typecheck lint test:quick specs:behavior:coverage --exclude='tag:lang:ts,tag:lang:fsharp,tag:lang:csharp,tag:lang:rust' --parallel=1
 
   compat-min-version:
     name: Minimum version compatibility (all affected)

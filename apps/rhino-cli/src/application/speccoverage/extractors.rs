@@ -1,9 +1,9 @@
 //! Per-language step-definition extractors.
 //!
-//! Covers the languages this repository actually writes step definitions in —
-//! Rust, F#, and Dart — alongside the TypeScript extractor that lives in
-//! [`super::checker`]. Extractors for languages with no test suite here were
-//! removed; re-add one only when a project starts running Gherkin in it.
+//! Covers the languages this repository builds in — Rust, F#, C#, and Dart —
+//! alongside the TypeScript extractor that lives in [`super::checker`].
+//! Extractors for languages this repository does not build in were removed;
+//! re-add one only when a project starts running Gherkin in it.
 //!
 //! Each public function reads the file at `path` and inserts extracted step
 //! entries into `sm` via the [`super::matcher`] helpers. Per-language nuance
@@ -100,6 +100,24 @@ fn dart_step_re() -> &'static Regex {
             r#"(?s)\b(?:s|scenario)\.(?:given|when|then|and|but)\s*\(\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')\s*,"#,
         )
         .expect("valid regex")
+    })
+}
+
+/// Matches a C# verbatim-string `[Given(@"…")]` step attribute.
+fn cs_verbatim_step_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(r#"(?s)\[(?:Given|When|Then|And|But)\s*\(\s*@"((?:[^"]|"")*)"\s*\)\s*\]"#)
+            .expect("valid regex")
+    })
+}
+
+/// Matches a C# regular-string `[Given("…")]` step attribute.
+fn cs_regular_step_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(r#"(?s)\[(?:Given|When|Then|And|But)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)\s*\]"#)
+            .expect("valid regex")
     })
 }
 
@@ -240,6 +258,48 @@ pub fn extract_dart_step_texts(
         let sq = caps.get(2).map_or("", |m| m.as_str());
         let text = unescape_string(first_non_empty(dq, sq));
         add_step_to_matcher_with_origin(sm, &text, &path_s);
+    }
+    Ok(())
+}
+
+/// Extracts step definitions from a C# `SpecFlow` source file.
+///
+/// Processes verbatim strings (`@"…"`) before regular strings (`"…"`) so that
+/// the more specific form takes priority.  Verbatim `""` escape sequences are
+/// collapsed to a single `"` character.
+///
+/// # Errors
+///
+/// Returns an error if the file cannot be read.
+///
+/// # Panics
+///
+/// Panics if a regex capture group that is always present is absent (indicates
+/// a bug in the compiled regex).
+pub fn extract_csharp_step_texts(
+    path: &Path,
+    sm: &mut StepMatcher,
+) -> std::result::Result<(), Error> {
+    let content = fs::read_to_string(path)?;
+    let path_s = path.to_string_lossy();
+    // Verbatim strings first (more specific).
+    for caps in cs_verbatim_step_re().captures_iter(&content) {
+        let text = caps
+            .get(1)
+            .expect("capture group 1 always present")
+            .as_str()
+            .replace("\"\"", "\"");
+        add_step_to_matcher_with_origin(sm, &text, &path_s);
+    }
+    // Regular strings.
+    for caps in cs_regular_step_re().captures_iter(&content) {
+        add_step_to_matcher_with_origin(
+            sm,
+            caps.get(1)
+                .expect("capture group 1 always present")
+                .as_str(),
+            &path_s,
+        );
     }
     Ok(())
 }
@@ -472,6 +532,19 @@ mod tests {
         let mut sm = StepMatcher::new();
         extract_dart_step_texts(&p, &mut sm).unwrap();
         assert!(sm.matches("user logs in"));
+    }
+
+    #[test]
+    fn csharp_verbatim_string_step() {
+        let tmp = TempDir::new().unwrap();
+        let p = write(
+            tmp.path(),
+            "Steps.cs",
+            "[Given(@\"user says \"\"hello\"\"\")]\nvoid Step() {}\n",
+        );
+        let mut sm = StepMatcher::new();
+        extract_csharp_step_texts(&p, &mut sm).unwrap();
+        assert!(sm.matches(r#"user says "hello""#));
     }
 
     #[test]

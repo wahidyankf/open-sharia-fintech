@@ -73,6 +73,7 @@ below.
 - [Swe Developing Applications Common](./swe-developing-applications-common/README.md) — shared workflow patterns across language developers
 - [Swe Developing E2e Test With Playwright](./swe-developing-e2e-test-with-playwright/README.md) — Playwright E2E testing standards
 - [Swe Developing Frontend Ui](./swe-developing-frontend-ui/README.md) — UI tokens, shadcn/Radix composition, accessibility
+- [Swe Programming Csharp](./swe-programming-csharp/README.md) — C# coding standards
 - [Swe Programming Fsharp](./swe-programming-fsharp/README.md) — F# coding standards
 - [Swe Programming Rust](./swe-programming-rust/README.md) — Rust coding standards
 - [Swe Programming Typescript](./swe-programming-typescript/README.md) — TypeScript coding standards
