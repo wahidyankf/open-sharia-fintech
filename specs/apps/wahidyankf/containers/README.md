@@ -23,3 +23,4 @@ static TypeScript modules bundled at build time.
 
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../components/`](../components/README.md) — C4 L3 zoom into the `web` container's internals
+- [wahidyankf-web — Container Diagram (C4 L2)](./container.md)

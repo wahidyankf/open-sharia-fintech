@@ -107,3 +107,6 @@ See
 [BDD Spec-to-Test Mapping Convention](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 for the mandatory 1:1 mapping between commands and `@tags`, file naming patterns, and coverage
 enforcement rules.
+
+- [rhino-cli — Behavior](./behavior/README.md)
+- [rhino — product](./product/README.md)

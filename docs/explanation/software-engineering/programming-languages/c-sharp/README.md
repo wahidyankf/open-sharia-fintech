@@ -328,7 +328,19 @@ graph LR
 
 - [Tech Stack Languages Index](../README.md)
 - [Monorepo Structure](../../../../reference/monorepo-structure.md)
-- [Code Templates](./templates/README.md) - Starter templates for C# projects
+- [C# Documentation Templates](./templates/README.md) — Reusable templates for C# development patterns in OSE Platform
+- [C# API Standards](./api-standards.md) — Authoritative OSE Platform C# API standards (ASP.NET Core REST, Minimal API, versioning, OpenAPI, CQRS with MediatR)
+- [C# Build Configuration Standards](./build-configuration.md) — Authoritative OSE Platform C# build configuration standards (.csproj, Directory.Build.props, NuGet Central Package Management)
+- [C# Code Quality Standards](./code-quality-standards.md) — Authoritative OSE Platform C# code quality standards (Roslyn analyzers, dotnet format, editorconfig, nullable reference types)
+- [C# Coding Standards](./coding-standards.md) — Authoritative OSE Platform C# coding standards (naming conventions, idioms, best practices, anti-patterns)
+- [C# Concurrency Standards](./concurrency-standards.md) — Authoritative OSE Platform C# concurrency standards (async/await, CancellationToken, Channel<T>, Parallel.ForEachAsync)
+- [C# DDD Standards](./ddd-standards.md) — Authoritative OSE Platform C# Domain-Driven Design standards (Value Objects with records, Aggregate roots, Domain Events, Clean Architecture)
+- [C# Error Handling Standards](./error-handling-standards.md) — Authoritative OSE Platform C# error handling standards (exception hierarchy, ProblemDetails, Result pattern, global middleware)
+- [C# Framework Integration Standards](./framework-integration.md) — Authoritative OSE Platform C# framework integration standards (ASP.NET Core DI, EF Core, SignalR, middleware pipeline)
+- [C# Performance Standards](./performance-standards.md) — Authoritative OSE Platform C# performance standards (Span<T>, ArrayPool, BenchmarkDotNet, dotnet-trace profiling, IAsyncEnumerable)
+- [C# Security Standards](./security-standards.md) — Authoritative OSE Platform C# security standards (ASP.NET Core Data Protection, JWT, FluentValidation, CORS, secrets management)
+- [C# Testing Standards](./testing-standards.md) — Authoritative OSE Platform C# testing standards (xUnit, FluentAssertions, Moq, TestContainers.Net)
+- [C# Type Safety Standards](./type-safety-standards.md) — Authoritative OSE Platform C# type safety standards (nullable reference types, generics, discriminated unions, pattern matching)
 
 ---
 

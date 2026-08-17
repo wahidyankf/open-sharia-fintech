@@ -48,3 +48,9 @@ nx run web-ui:test:unit
 
 Every scenario is consumed at the unit level via the matching `*.steps.tsx` file co-located with
 each component under `libs/web-ui/src/components/`.
+
+- [Behavior — web-ui](./behavior/README.md)
+- [Components — web-ui](./components/README.md)
+- [Containers — web-ui](./containers/README.md)
+- [Product — web-ui](./product/README.md)
+- [System Context — web-ui](./system-context/README.md)

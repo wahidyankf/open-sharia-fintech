@@ -39,3 +39,7 @@ names.
 - **Parent**: [`../../README.md`](../../README.md)
 - **api perspective counterpart**: [`../../api/gherkin/`](../../platform-be/gherkin/README.md)
 - **DDD registry**: `../../../ddd/bounded-contexts.yaml`
+
+- [app-shell — platform-web Gherkin Domain](./app-shell/README.md)
+- [config — platform-web Gherkin Domain](./config/README.md)
+- [landing — platform-web Gherkin Domain](./landing/README.md)

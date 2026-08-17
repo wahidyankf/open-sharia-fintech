@@ -29,3 +29,5 @@ bounded context, not to one perspective surface.
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../containers/`](../containers/README.md) — C4 L2
 - [`../behavior/`](../behavior/README.md) — Gherkin scenarios that exercise the components
+- [AyoKoding API Perspective Specs](./api/README.md)
+- [AyoKoding Web Perspective Specs](./web/README.md)

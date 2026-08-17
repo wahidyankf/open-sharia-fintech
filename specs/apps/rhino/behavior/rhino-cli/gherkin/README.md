@@ -156,3 +156,20 @@ behavior/rhino-cli/gherkin/
 
 See [Specs Directory Structure Convention](../../../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.
+
+- [Contracts Domain](./contracts/README.md)
+- [rhino — behavior/rhino-cli/gherkin/convention](./convention/README.md)
+- [rhino — behavior/rhino-cli/gherkin/cursor-binding](./cursor-binding/README.md)
+- [rhino — behavior/rhino-cli/gherkin/ddd](./ddd/README.md)
+- [rhino — behavior/rhino-cli/gherkin/env](./env/README.md)
+- [Gate Gherkin Specs](./gate/README.md)
+- [rhino — behavior/rhino-cli/gherkin/git](./git/README.md)
+- [rhino — behavior/rhino-cli/gherkin/governance](./governance/README.md)
+- [rhino — behavior/rhino-cli/gherkin/harness](./harness/README.md)
+- [Java Domain](./java/README.md)
+- [rhino — behavior/rhino-cli/gherkin/md](./md/README.md)
+- [rhino — behavior/rhino-cli/gherkin/repo-governance](./repo-governance/README.md)
+- [rhino — behavior/rhino-cli/gherkin/spec-coverage](./spec-coverage/README.md)
+- [rhino — behavior/rhino-cli/gherkin/system](./system/README.md)
+- [Test Coverage Domain](./test-coverage/README.md)
+- [rhino — behavior/rhino-cli/gherkin/workflows](./workflows/README.md)

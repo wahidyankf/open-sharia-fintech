@@ -1,0 +1,15 @@
+---
+title: "Governance Vendor-Independence Convention"
+description: "Governance prose must be vendor-neutral. Vendor-specific bindings belong in platform-binding directories, not in repo-governance/."
+when_to_use: "Read this index to find the right Governance Vendor-Independence Convention child document."
+---
+
+# Governance Vendor-Independence Convention
+
+- [Governance Vendor-Independence — Purpose and Scope](./01-purpose-and-scope.md) — Why governance prose must be vendor-neutral, and exactly which files (repo-governance/, AGENTS.md, CLAUDE.md) this convention governs vs. exempts. Use when checking whether a file or line falls inside the vendor-independence convention's scope.
+- [Forbidden Vendor Terms — Product Names and Paths](./02-forbidden-vendor-terms-names-and-paths.md) — Forbidden coding-agent/harness product names and vendor-specific binding directory path patterns, part 1 of the Forbidden Vendor Terms catalog. Use when checking whether a coding-agent product name or a binding directory path in governance prose is forbidden.
+- [Forbidden Vendor Terms — Models and Branded Concepts](./03-forbidden-vendor-terms-models-and-concepts.md) — Forbidden model-family/model names and vendor-branded concept terms, part 2 of the Forbidden Vendor Terms catalog, plus the combined audit regex and false-positive notes. Use when checking whether a model name or vendor-branded concept term in governance prose is forbidden, or when you need the combined vendor-audit regex.
+- [Allowlist Mechanism](./04-allowlist-mechanism.md) — The two mechanisms — binding-example fences and the Platform Binding Examples heading — that allow vendor references inside governance files for illustrative purposes. Use when you need to legitimately include a vendor-specific example inside governance prose without triggering the vendor-audit scanner.
+- [Vocabulary Map](./05-vocabulary-map.md) — The table of vendor-specific terms and their vendor-neutral equivalents to use when rewriting governance prose. Use when rewriting governance prose and you need the vendor-neutral replacement for a specific vendor term.
+- [Platform Binding Directory Pattern, and Migration Guidance](./06-platform-binding-directory-pattern-and-migration.md) — The catalog of per-platform binding directories and root instruction files, plus the step-by-step process for refactoring an existing governance file to be vendor-neutral. Use when you need the catalog of platform-binding directories, or the step-by-step process for scrubbing vendor terms from an existing governance file.
+- [Enforcement, and Exceptions and Escape Hatches](./07-enforcement-and-exceptions.md) — How the vendor-audit scanner is run and what it respects, plus the explicit list of situations that never constitute a violation. Use when running the vendor-independence audit manually, or checking whether a specific case is an explicitly permitted exception.

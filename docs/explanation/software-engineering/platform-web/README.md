@@ -155,3 +155,5 @@ All framework documentation follows the repository's core principles:
 - **[Architecture](../architecture/README.md)** - Architecture patterns and models
 - **[Development Practices](../development/README.md)** - Development methodologies
 - **[Monorepo Structure](../../../reference/monorepo-structure.md)** - Nx workspace organization
+
+- [Web Development Tools and Frameworks](./tools/README.md) — Find the web framework guidance used by open-sharia-enterprise

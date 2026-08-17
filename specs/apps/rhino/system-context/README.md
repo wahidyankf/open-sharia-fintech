@@ -6,3 +6,5 @@ C4 L1 — actors and external systems interacting with rhino-cli.
 
 See [Specs Directory Structure Convention](../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.
+
+- [rhino-cli — System Context](./context.md)

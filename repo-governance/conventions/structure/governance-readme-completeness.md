@@ -14,18 +14,31 @@ created: 2026-08-15
 
 # Governance README Completeness Convention
 
-Every directory that needs an index — one with a sibling `.md` file besides `README.md`, or a
-subdirectory carrying its own `README.md` — must have one, and that index must link every such
-sibling with a derived annotation. `rhino-cli governance readme-index validate` enforces this via
-two separately-registered `gates:` entries that invoke the **same** underlying binary
+**Every directory carries a literal `README.md` — no exception.** A sibling `<dir-name>.md`
+progressive-disclosure parent no longer excuses a directory from having one; the former
+split-directory exemption is removed. That index must link every sibling `.md` file and every
+subdirectory. `rhino-cli governance readme-index validate` enforces this via two
+separately-registered `gates:` entries that invoke the **same** underlying binary
 (`governance readme-index validate`) with different `args`.
+
+A `<dir-name>.md` parent stays audited as a second index over the same contents, and linking it
+satisfies the subdirectory requirement — no index carries two links to one target.
 
 ## The Two Gates
 
-| Gate id                          | Finding kinds            | Scan scope (`--paths`)                                                                                              | Armed                                             |
-| -------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `governance-readme-index`        | `orphan`, `ghost`        | `DEFAULT_PATHS`: `repo-governance/`, `.claude/agents/`, `.claude/skills/`, `docs/explanation/software-engineering/` | Continuously, since Phase 1                       |
-| `governance-readme-completeness` | `missing`, `unannotated` | `repo-governance/`, `.claude/`, `.codex/`, `.pi/`                                                                   | Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
+| Gate id                          | Finding kinds                | Scan scope (`--paths`)                            | Armed                                             |
+| -------------------------------- | ---------------------------- | ------------------------------------------------- | ------------------------------------------------- |
+| `governance-readme-index`        | `missing`, `orphan`, `ghost` | `docs/`, `repo-governance/`, `specs/`, `.claude/` | Continuously, since Phase 1                       |
+| `governance-readme-completeness` | `missing`, `unannotated`     | `repo-governance/`, `.claude/`, `.codex/`, `.pi/` | Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
+
+Structural enforcement covers every content tree. Annotation enforcement stays scoped to trees that
+can satisfy it: `docs/` indexes are partly hand-designed tables and `specs/` targets carry no
+frontmatter, so no annotation is derivable without a content restructure. Raising those two is
+tracked separately.
+
+Generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are deliberately outside both
+gates — `harness bindings generate` emits them from `.claude/`, so any index written into them is
+regenerated away. `.claude/`, their source, is scanned instead.
 
 ## Finding Kinds
 

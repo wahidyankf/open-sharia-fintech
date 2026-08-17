@@ -107,15 +107,15 @@ Playwright usage in this platform follows the software engineering principles fr
 
 **Core Documentation:**
 
-- [Idioms](idioms.md) - Playwright patterns (auto-waiting, test fixtures, page objects)
-- [Best Practices](best-practices.md) - Framework testing standards
-- [Anti-Patterns](anti-patterns.md) - Common Playwright mistakes
-- [Configuration](configuration.md) - playwright.config.ts, CI setup
-- [Page Objects](page-objects.md) - Page Object Model, component patterns
-- [Test Organization](test-organization.md) - Test structure, naming, grouping
-- [Selectors](selectors.md) - Locator strategies, accessibility selectors
-- [Assertions](assertions.md) - Web-first assertions, soft assertions
-- [Debugging](debugging.md) - Trace viewer, inspector, debug mode
+- [Playwright Idioms](./idioms.md) — Authoritative OSE Platform Playwright idioms (framework-specific patterns, auto-waiting, fixture patterns, locator chaining)
+- [Playwright Best Practices](./best-practices.md) — Authoritative OSE Platform Playwright best practices (test isolation, idempotency, deterministic tests)
+- [Playwright Anti-Patterns](./anti-patterns.md) — Authoritative OSE Platform Playwright anti-patterns (common mistakes, problematic patterns to avoid)
+- [Playwright Configuration Standards](./configuration.md) — Authoritative OSE Platform Playwright configuration standards (playwright.config.ts setup, environment-specific configs, CI/CD integration)
+- [Playwright Page Object Standards](./page-objects.md) — Authoritative OSE Platform Playwright Page Object Model standards (class-based patterns, locator composition, TypeScript typing)
+- [Playwright Test Organization Standards](./test-organization.md) — Authoritative OSE Platform Playwright test organization standards (structure, naming, grouping, fixtures)
+- [Playwright Selector Standards](./selectors.md) — Authoritative OSE Platform Playwright selector standards (locator strategies, accessibility-first selectors, selector resilience)
+- [Playwright Assertion Standards](./assertions.md) — Authoritative OSE Platform Playwright assertion standards (web-first assertions, auto-waiting, assertion patterns)
+- [Playwright Debugging Standards](./debugging.md) — Authoritative OSE Platform Playwright debugging standards (trace viewer, inspector, debug mode, screenshot on failure)
 
 ## Playwright Version Strategy
 
@@ -497,6 +497,16 @@ Read complementary documentation:
 - [TypeScript Standards](../../../programming-languages/typescript/README.md)
 - [Testing Principles](../../../../../../repo-governance/development/quality/code.md)
 - [CI/CD Workflows](../../../../../../repo-governance/development/workflow/implementation.md)
+- [Playwright Anti-Patterns](./anti-patterns.md) — Authoritative OSE Platform Playwright anti-patterns (common mistakes, problematic patterns to avoid)
+- [Playwright Assertion Standards](./assertions.md) — Authoritative OSE Platform Playwright assertion standards (web-first assertions, auto-waiting, assertion patterns)
+- [Playwright BDD Integration (playwright-bdd)](./bdd.md) — OSE Platform standards for playwright-bdd — driving Playwright tests from Gherkin feature files
+- [Playwright Best Practices](./best-practices.md) — Authoritative OSE Platform Playwright best practices (test isolation, idempotency, deterministic tests)
+- [Playwright Configuration Standards](./configuration.md) — Authoritative OSE Platform Playwright configuration standards (playwright.config.ts setup, environment-specific configs, CI/CD integration)
+- [Playwright Debugging Standards](./debugging.md) — Authoritative OSE Platform Playwright debugging standards (trace viewer, inspector, debug mode, screenshot on failure)
+- [Playwright Idioms](./idioms.md) — Authoritative OSE Platform Playwright idioms (framework-specific patterns, auto-waiting, fixture patterns, locator chaining)
+- [Playwright Page Object Standards](./page-objects.md) — Authoritative OSE Platform Playwright Page Object Model standards (class-based patterns, locator composition, TypeScript typing)
+- [Playwright Selector Standards](./selectors.md) — Authoritative OSE Platform Playwright selector standards (locator strategies, accessibility-first selectors, selector resilience)
+- [Playwright Test Organization Standards](./test-organization.md) — Authoritative OSE Platform Playwright test organization standards (structure, naming, grouping, fixtures)
 
 ## Related Documentation
 

@@ -934,13 +934,36 @@ gates:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
 
+  # Structural index enforcement across every content tree. `missing` is armed
+  # here (not only in governance-readme-completeness below) so the "every
+  # directory carries a literal README.md" rule binds `docs/` and `specs/` too
+  # — the former FR-3.5 split-directory exemption is removed in
+  # `readme_index.rs`, so a progressive-disclosure `<name>.md` parent no longer
+  # excuses its directory from having one.
+  #
+  # `unannotated` is deliberately NOT armed here: `docs/` indexes are partly
+  # hand-designed Markdown tables and `specs/` targets carry no frontmatter at
+  # all, so a derived annotation cannot be computed for either without a
+  # content restructure. Those two trees therefore get structural enforcement
+  # only; annotation stays scoped to the conforming trees below.
+  #
+  # The generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are
+  # absent by design: they are emitted by `harness bindings generate` from
+  # `.claude/`, are never hand-edited, and an index written into them would be
+  # regenerated away. `.claude/` — their source of truth — is covered instead.
   - id: governance-readme-index
     type: check
     command: governance readme-index validate
     kind: rhino-cli
     ci-group: markdown
     args:
+      paths:
+        - docs/
+        - repo-governance/
+        - specs/
+        - .claude/
       fail-kinds:
+        - missing
         - orphan
         - ghost
     surfaces:

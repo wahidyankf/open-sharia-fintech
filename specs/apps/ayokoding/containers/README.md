@@ -21,3 +21,4 @@ separate `ayokoding-cli` Go binary) and `build-tools` (build-time index-generati
 
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../components/`](../components/README.md) — C4 L3 zoom into per-perspective internals
+- [Container Diagram: AyoKoding Web](./container.md)

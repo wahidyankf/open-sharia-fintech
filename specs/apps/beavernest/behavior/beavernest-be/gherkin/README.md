@@ -28,4 +28,5 @@ Derived from the current BeaverNest foundation behavior contract.
 
 - [behavior/README.md](../../README.md) — behavior index
 - [../../../containers/contracts/](../../../containers/contracts/README.md) — the OpenAPI
+- [configuration — beavernest-be Gherkin Domain](./configuration/README.md)
   contract these scenarios exercise

@@ -36,3 +36,5 @@ organized per bounded context.
 - **web perspective**: [`../web/`](../platform-web/README.md)
 - **DDD registry**: `../../ddd/bounded-contexts.yaml`
 - **Parent**: [`../README.md`](../README.md)
+
+- [Component Diagram: api perspective (tRPC HTTP)](./component-api.md)

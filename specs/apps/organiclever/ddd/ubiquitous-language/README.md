@@ -49,3 +49,7 @@ Phase 9 of the [DDD adoption plan](../../../../../plans/done/2026-05-03__organic
 - [BDD with DDD Standards](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
 - [organiclever specs README](../../README.md)
 - [organiclever web specs README](../../components/app-web/README.md)
+- [Ubiquitous Language — be-db](./be-db.md)
+- [Ubiquitous Language — be-health](./be-health.md)
+- [Ubiquitous Language — be-journal](./be-journal.md)
+- [Ubiquitous Language — messaging](./messaging.md)

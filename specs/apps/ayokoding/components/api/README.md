@@ -94,3 +94,5 @@ canonical input pattern in `project.json`:
 - **Parent**: [ayokoding specs](../../README.md)
 - **Web counterpart**: [components/web/](../web/README.md) — UI-semantic web specs
 - **Ubiquitous Language**: `ddd/ubiquitous-language/`
+
+- [Component Diagram: tRPC API Perspective](./component-api.md)

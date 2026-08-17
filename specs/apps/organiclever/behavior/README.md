@@ -65,4 +65,8 @@ Greenfield-simple marketing surface (no DDD bounded contexts).
 
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
 - [`../containers/contracts/`](../containers/contracts/README.md) — OpenAPI contract the
+- [organiclever-app-web — Behavior Surface](./organiclever-app-web/README.md)
+- [organiclever-be — Behavior Surface](./organiclever-be/README.md)
+- [organiclever-www-be — Behavior Surface](./organiclever-www-be/README.md)
+- [organiclever-www — Behavior Surface](./organiclever-www/README.md)
   backend scenarios assert against (moved from legacy `contracts/` in Phase 2A.7)

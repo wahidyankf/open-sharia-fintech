@@ -1,0 +1,14 @@
+---
+title: "Specs Validation Workflow"
+description: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings."
+when_to_use: "Read this index to find the right Specs Validation Workflow child document."
+---
+
+# Specs Validation Workflow
+
+- [Specs Quality Gate — Execution Mode and Scope](./01-execution-mode-and-scope.md) — Explains how to invoke the specs quality-gate workflow (agent delegation vs manual orchestration), and clarifies exactly which folders and content types it validates. Use when deciding whether to run this workflow via agent delegation or manual orchestration, or to confirm what falls inside or outside its validation scope.
+- [Specs Quality Gate — Validation Dimensions](./02-validation-dimensions.md) — Lists the nine validation categories the specs-checker enforces and which categories are offloaded to deterministic rhino-cli subcommands versus LLM reasoning. Use when checking exactly what a specs-quality-gate audit report is scoring, or which rhino-cli command backs a given category.
+- [Specs Quality Gate — Steps: Initial Validation and Fixes](./03-steps-initial-validation-and-fixes.md) — Documents steps 1-3 of the specs-quality-gate loop: initial specs-checker validation, the findings threshold decision, and applying specs-fixer fixes by mode. Use when tracing exactly what happens in the first half of a specs-quality-gate check-fix cycle, before re-validation.
+- [Specs Quality Gate — Steps: Re-validate Through Termination](./04-steps-revalidate-through-termination.md) — Documents steps 4-6 of the specs-quality-gate loop (re-validation, iteration control, finalization) and the mode-specific termination criteria for pass/partial/fail. Use when tracing how the specs-quality-gate loop decides to iterate again or terminate, or when checking the pass/partial/fail definitions per mode.
+- [Specs Quality Gate — Example and Iteration Usage](./05-example-and-iteration-usage.md) — Worked usage examples across all four modes (single folder, cross-folder, strict, ocd), plus a full traced iteration example showing the check-fix loop converging. Use when you need a concrete example of invoking this workflow at a given mode, or want to see how consecutive-zero convergence plays out across iterations.
+- [Specs Quality Gate — Safety, Related Workflows, and Conventions](./06-safety-related-and-conventions.md) — Covers the loop's infinite-loop and false-positive safeguards, related workflows, operating notes, and the principles/conventions/agents this workflow implements. Use when checking the convergence safeguards behind this workflow, how it relates to other quality gates, or which agents and conventions back it.

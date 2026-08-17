@@ -20,3 +20,6 @@ bounded contexts.
 2. Glossary updates ride with the code change that introduces them.
 3. Code identifiers match the Rust type/module name verbatim.
 4. Forbidden synonyms must be explicit.
+
+- [Ubiquitous Language — db](./db.md)
+- [Ubiquitous Language — messaging](./messaging.md)

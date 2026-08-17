@@ -36,3 +36,7 @@ specs/apps/organiclever/behavior/organiclever-www/gherkin/
 - **Marketing component specs**: [web component specs](../../../components/web/README.md)
 - **App-client counterpart**: [organiclever-app-web behavior specs](../../organiclever-app-web/gherkin/README.md)
 - **Parent**: [behavior specs](../../README.md)
+
+- [accessibility — organiclever-www Gherkin Domain](./accessibility/README.md)
+- [env-loader — organiclever-www Gherkin Domain](./env-loader/README.md)
+- [home — organiclever-www Gherkin Domain](./home/README.md)

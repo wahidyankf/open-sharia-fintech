@@ -42,3 +42,5 @@ contracts/
 ## Related
 
 - [../](../README.md) — containers index (C4 L2)
+- [generated — BeaverNest Contracts](./generated/README.md)
+- [tests — BeaverNest Contracts](./tests/README.md)

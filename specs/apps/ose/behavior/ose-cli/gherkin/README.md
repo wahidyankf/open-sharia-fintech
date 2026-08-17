@@ -19,3 +19,5 @@ CLI tool for ose-www site link validation. 1 file, 4 scenarios.
 
 - **Parent**: [ose-cli specs](../../README.md)
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+
+- [ose-platform-cli — links domain](./links/README.md)

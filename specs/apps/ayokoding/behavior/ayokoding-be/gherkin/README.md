@@ -58,3 +58,9 @@ same `web` Next.js container; the split is a slug, not a container boundary.
 - **Bounded-context map**: bounded-context-map.md
 - **Web counterpart**: [web gherkin specs](../../ayokoding-www/gherkin/README.md)
 - **Parent**: [api component specs](../../../components/api/README.md)
+
+- [content — ayokoding-be Gherkin Domain](./content/README.md)
+- [health — ayokoding-be Gherkin Domain](./health/README.md)
+- [i18n — ayokoding-be Gherkin Domain](./i18n/README.md)
+- [navigation — ayokoding-be Gherkin Domain](./navigation/README.md)
+- [search — ayokoding-be Gherkin Domain](./search/README.md)

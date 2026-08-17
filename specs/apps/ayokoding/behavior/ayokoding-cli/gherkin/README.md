@@ -19,3 +19,5 @@ tool for ayokoding-www content validation. 1 file, 4 scenarios.
 
 - **Parent**: [ayokoding-cli specs](../../README.md)
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+
+- [ayokoding-cli — links domain](./links/README.md)

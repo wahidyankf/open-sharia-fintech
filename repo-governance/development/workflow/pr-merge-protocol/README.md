@@ -1,0 +1,18 @@
+---
+title: "PR Merge Protocol"
+description: "Practice governing PR merges — merge authority comes from hardened preconditions, not a per-instance prompt; `[AI]` merges by default."
+when_to_use: "Read this index to find the right PR Merge Protocol child document."
+---
+
+# PR Merge Protocol
+
+- [Principles and Conventions Implemented](./01-principles-and-conventions-implemented.md) — The principles and companion conventions the PR merge protocol implements and respects. Use when tracing why the PR merge protocol exists back to the principles and conventions it respects.
+- [The Rule](./02-the-rule.md) — The five hardened preconditions that must all hold before an AI agent or automation may merge a pull request. Use immediately before merging any pull request, to confirm all five preconditions hold.
+- [Quality Gates](./03-quality-gates.md) — The local and CI gates an eligible or noneligible PR must pass, the universal secret check, and the no-bypass-without-permission rule. Use when confirming which gates a PR must pass before merge, or when a secret exposure is suspected in a PR diff.
+- [When This Applies and Scope](./04-when-this-applies-and-scope.md) — Which delivery modes and PR types this protocol governs, which it does not, and which agents and automation it binds. Use when determining whether a given PR, phase, or delivery mode is governed by this protocol.
+- [The `worktree-to-pr` Terminal Step](./05-the-worktree-to-pr-terminal-step.md) — The sequence an AI runs after all commits are pushed under worktree-to-pr - the review/fix cycle, the done-definition, and flipping the PR to ready. Use when a worktree-to-pr plan branch has all its commits pushed and the AI needs to know what "done" requires before the merge.
+- [Draft PR Lifecycle](./06-draft-pr-lifecycle.md) — Why every PR opens as a GitHub draft, and the four-step lifecycle from draft open through the merge that follows the precondition gate. Use when opening a PR under worktree-to-pr or main-to-pr, or when deciding whether flipping a PR to ready authorizes merging it.
+- [Before Merging](./07-before-merging.md) — The full (a)-(e) precondition checklist an agent must confirm immediately before merging, and why the list is spelled out in full rather than abbreviated. Use as the final checklist immediately before executing a PR merge.
+- [Resolving Merge Conflicts in Generated Files](./08-resolving-merge-conflicts-in-generated-files.md) — Why a CONFLICTING state after a clean review cycle is not necessarily a PR defect, and why a conflict inside a marker-owned or generated file must be resolved at its source and regenerated. Use when a PR shows a merge conflict against the target branch, especially inside a generated or marker-owned file.
+- [Precondition Summary and When Gates Fail](./09-precondition-summary-and-when-gates-fail.md) — The status summary an agent presents before merging, and the fix-then-re-evaluate procedure to follow when a quality gate fails. Use when writing the merge status summary, or when a quality gate has failed and the merge is on hold.
+- [Examples](./10-examples.md) — Worked pass/fail examples of the PR merge protocol - correct precondition-gated merges, premature merges, and a user-authorized gate bypass. Use as a reference when unsure whether a specific merge decision matches or violates this protocol.

@@ -66,4 +66,8 @@ Organized by bounded context (one folder per BC, matching the DDD registry).
 ## Related
 
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
+- [ayokoding-be — Behavior Surface](./ayokoding-be/README.md)
+- [ayokoding-build-tools — Behavior Surface](./ayokoding-build-tools/README.md)
+- [ayokoding-cli — Behavior Surface](./ayokoding-cli/README.md)
+- [ayokoding-www — Behavior Surface](./ayokoding-www/README.md)
 - `../ddd/` — DDD registry + glossaries that own the vocabulary

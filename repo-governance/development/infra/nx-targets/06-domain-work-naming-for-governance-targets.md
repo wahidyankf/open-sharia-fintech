@@ -37,7 +37,7 @@ operation. This distinguishes governance targets from language-level lifecycle t
 | `governance:vendor-audit-validation`   | `repo-governance/` docs contain no vendor-specific content                                 |
 | `cross-vendor:parity-validation`       | Cross-vendor behavioral parity (Phase 0 deterministic invariants)                          |
 | `governance-word-budget:validation`    | Word budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |
-| `governance-readme-index:validation`   | README index/completeness audit (`repo-governance/`, `.claude/agents/`, `.claude/skills/`) |
+| `governance-readme-index:validation`   | README index audit (`docs/`, `repo-governance/`, `specs/`, `.claude/`)                     |
 | `harness:bindings-validation`          | `.claude/` ↔ `.opencode/` ↔ `.amazonq/` binding parity                                     |
 | `compat:min-version`                   | Minimum Supported Rust Version compatibility                                               |
 

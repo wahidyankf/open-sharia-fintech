@@ -108,3 +108,6 @@ The canonical input pattern used in `project.json`:
 - **Parent**: [organiclever specs](../../README.md)
 - **Frontend counterpart**: [web/](../app-web/README.md) — UI-semantic frontend specs
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+
+- [OrganicLever Backend — API](./api.md)
+- [Component Diagram: F#/Giraffe REST API](./component-be.md)

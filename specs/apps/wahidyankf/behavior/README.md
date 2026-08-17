@@ -33,4 +33,5 @@ rendering layer or API is added later, a `behavior/wahidyankf-be/gherkin/` folde
 ## Related
 
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
+- [wahidyankf-web — Web Behavior](./wahidyankf-www/README.md)
 - `../ddd/` — Ubiquitous language governing scenario vocabulary

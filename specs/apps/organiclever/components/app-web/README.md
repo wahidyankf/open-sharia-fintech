@@ -102,3 +102,8 @@ the glossary in the same commit as the feature change. See the
 - **C4 Architecture**: see `system-context/`, `containers/`, `components/` top-level folders
 - **Backend counterpart**: [components/be/](../be/README.md) — HTTP-semantic API specs
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+
+- [OrganicLever Web — Architecture](./architecture.md)
+- [Component Diagram: Next.js Frontend](./component-web.md)
+- [OrganicLever Web — Design System](./design-system.md)
+- [OrganicLever Web — Routes and Screens](./routes-and-screens.md)

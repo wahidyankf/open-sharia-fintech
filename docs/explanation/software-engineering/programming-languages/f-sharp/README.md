@@ -316,7 +316,19 @@ graph LR
 
 - [Tech Stack Languages Index](../README.md)
 - [Monorepo Structure](../../../../reference/monorepo-structure.md)
-- [Code Templates](./templates/README.md) - Starter templates for F# projects
+- [F# Documentation Templates](./templates/README.md) — Reusable templates for F# development patterns in OSE Platform
+- [F# API Standards](./api-standards.md) — Authoritative OSE Platform F# API standards — Giraffe HttpHandler composition, Saturn controllers, JSON serialization
+- [F# Build Configuration](./build-configuration.md) — Authoritative OSE Platform F# build configuration — .fsproj structure, file ordering, Paket, FAKE, global.json
+- [F# Code Quality Standards](./code-quality-standards.md) — Authoritative OSE Platform F# code quality standards — Fantomas formatter, FSharpLint, compiler warnings as errors
+- [F# Coding Standards](./coding-standards.md) — Authoritative OSE Platform F# coding standards — naming, module organization, pipeline idioms, discriminated unions
+- [F# Concurrency Standards](./concurrency-standards.md) — Authoritative OSE Platform F# concurrency standards — async workflows, MailboxProcessor actor model, Task interop
+- [F# DDD Standards](./ddd-standards.md) — Authoritative OSE Platform F# domain-driven design standards — discriminated unions, value objects, aggregate pattern
+- [F# Error Handling Standards](./error-handling-standards.md) — Authoritative OSE Platform F# error handling standards — railway-oriented programming, Result type, Option, FsToolkit
+- [F# Functional Programming Standards](./functional-programming-standards.md) — Authoritative OSE Platform F# functional programming standards — computation expressions, monadic composition, applicative validation
+- [F# Performance Standards](./performance-standards.md) — Authoritative OSE Platform F# performance standards — tail recursion, struct DUs, BenchmarkDotNet, AltCover profiling
+- [F# Security Standards](./security-standards.md) — Authoritative OSE Platform F# security standards — type-driven validation, Giraffe auth, parameterized queries
+- [F# Testing Standards](./testing-standards.md) — Authoritative OSE Platform F# testing standards — Expecto, FsCheck property-based testing, coverage requirements
+- [F# Type Safety Standards](./type-safety-standards.md) — Authoritative OSE Platform F# type safety standards — making illegal states unrepresentable, units of measure, single-case DUs, generics
 
 ---
 

@@ -58,15 +58,15 @@ BDD is especially useful when a feature needs a shared business conversation; TD
 
 The platform uses more than one language and framework because its web applications, services, and repository tooling have different needs. The guidance in these sections explains the conventions and trade-offs for each supported stack:
 
-- [Programming Languages](./programming-languages/README.md) covers [TypeScript](./programming-languages/typescript/README.md), [Rust](./programming-languages/rust/README.md), [F#](./programming-languages/f-sharp/README.md), and [C#](./programming-languages/c-sharp/README.md).
-- [Libraries and Frameworks](./platform-web/README.md) covers the web stack, including [React](./platform-web/tools/fe-react/README.md) and [Next.js](./platform-web/tools/fe-nextjs/README.md).
+- [Programming Languages](./programming-languages/README.md) — Language-specific idioms, best practices, and antipatterns
+- [Libraries and Frameworks](./platform-web/README.md) — Documentation on libraries and frameworks for building scalable applications
 
 Use these pages after you know the relevant application or library. They explain how to apply a language or framework well here; they are not a substitute for choosing a product boundary or defining the feature's behavior.
 
 ### Quality and operational confidence
 
-- [Automation Testing](./automation-testing/README.md) introduces automated browser and end-to-end testing, including [Playwright](./automation-testing/tools/playwright/README.md).
-- [Licensing](./licensing/README.md) records compatibility analysis and decisions for selected dependencies, helping teams understand the obligations that may accompany a technical choice.
+- [Automation Testing](./automation-testing/README.md) — Why and where automated checks build confidence in open-sharia-enterprise
+- [Licensing](./licensing/README.md) — License analysis and compliance decisions for open-source dependencies used in open-sharia-enterprise
 
 ## How this material relates to the rest of the documentation
 

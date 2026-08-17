@@ -27,3 +27,8 @@ paths unambiguous.
 - [../containers/](../containers/README.md) — C4 L2
 - [../components/](../components/README.md) — C4 L3
 - [../ddd/](../ddd/README.md) — Domain model
+- [app-web — Behavior Surface](./app-web/README.md)
+- [ose-be — Behavior Surface](./be/README.md)
+- [ose-cli — Behavior Surface](./ose-cli/README.md)
+- [platform-be — Behavior Surface](./platform-be/README.md)
+- [platform-web — Behavior Surface](./platform-web/README.md)

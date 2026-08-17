@@ -1,0 +1,22 @@
+---
+title: "Implementation Workflow"
+description: "Three-stage development workflow - make it work, make it right, make it fast"
+when_to_use: "Read this index to find the right Implementation Workflow child document."
+---
+
+# Implementation Workflow
+
+- [Workflow Overview, Principles, and Conventions](./01-workflow-overview-principles-and-conventions.md) — The three-stage workflow at a glance, and the principles and conventions it implements/respects. Use when orienting to the three-stage workflow's shape, or tracing it back to the principles and conventions it implements.
+- [Stage 1: Make It Work](./02-stage-1-make-it-work.md) — The first workflow stage - get functionality working with the simplest possible solution. Use when starting a new feature or bug fix and deciding how much design work is appropriate before anything runs.
+- [Stage 2: Make It Right](./03-stage-2-make-it-right.md) — The second workflow stage - refactor working code for readability, maintainability, and clean code principles. Use once functionality from Stage 1 works and tests pass, before considering any optimization.
+- [Stage 3: Make It Fast (If Needed)](./04-stage-3-make-it-fast.md) — The third workflow stage - optimize performance only if measurements show it is necessary. Use only after profiling data shows a measured bottleneck in code that already works and is clean.
+- [Surgical Changes — Principle](./05-surgical-changes-principle.md) — The touch-only-what-you-must principle for editing existing code, its four core rules, and the one-sentence test for scope. Use when editing existing code and deciding what is and is not in scope for the change.
+- [Surgical Changes — Application Examples](./06-surgical-changes-application-examples.md) — Worked bug-fix and validation examples contrasting scope-creep changes with surgical ones. Use as a worked reference when deciding whether a specific edit is surgical or has drifted into scope creep.
+- [Surgical Changes — Orphans, Checklist, and Application](./07-surgical-changes-orphans-checklist-and-application.md) — What to remove when your own changes create orphaned code, the pre-commit checklist, and how surgical changes relate to core principles and AI agents. Use when deciding whether to remove code your change made unused, or before committing a surgical change.
+- [Goal-Driven Execution — Defining and Planning Goals](./08-goal-driven-execution-defining-and-planning-goals.md) — Turning tasks into verifiable goals with measurable success criteria, and planning multi-step tasks with per-step verification. Use when starting a task and turning a vague request into a measurable success criterion before writing code.
+- [Goal-Driven Execution — Verification and Iteration](./09-goal-driven-execution-verification-and-iteration.md) — The test-first verification pattern and the loop-until-verified habit that replaces assuming a change works. Use when implementing a change and deciding whether to write the test first and whether "done" has actually been verified.
+- [Goal-Driven Execution — Application Examples](./10-goal-driven-execution-application-examples.md) — Two worked examples of goal-driven execution end to end - a new API endpoint and a bug fix. Use as a worked reference when applying goal-driven execution to a new endpoint or a bug fix task.
+- [Goal-Driven Execution — Checklist and Relationship](./11-goal-driven-execution-checklist-and-relationship.md) — The before/during-execution checklist for goal-driven execution, and how it relates to core principles and AI agents. Use before starting a task and during execution to confirm goal-driven execution is actually being followed.
+- [Anti-Patterns](./12-anti-patterns.md) — Four implementation-workflow anti-patterns - premature optimization, skipping "make it right," optimizing everything, and optimizing without measurement. Use when reviewing a change to check it isn't optimizing prematurely, skipping cleanup, over-optimizing, or optimizing on a guess.
+- [Best Practices](./13-best-practices.md) — Six best practices for the implementation workflow, from starting simple through re-measuring after optimization. Use as a checklist when implementing, refactoring, or optimizing any change.
+- [When to Apply and References](./14-when-to-apply-and-references.md) — Where the three-stage workflow applies, its exceptions, and further reading on the underlying software-engineering ideas. Use when deciding whether the full three-stage workflow applies to a task, or when looking for further reading.

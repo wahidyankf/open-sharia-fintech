@@ -1,0 +1,65 @@
+---
+title: "AI Agents Convention"
+description: "Standards for creating and managing AI agents in the platform binding directory (primary) and secondary agent directories"
+when_to_use: "Read this index to find the right AI Agents Convention child document."
+---
+
+# AI Agents Convention
+
+- [Overview](./01-overview.md) — Introduces what AI agents are
+- [Principles Implemented/Respected](./02-principles-implemented-respected.md) — Lists the core repository principles
+- [Token Budget Philosophy](./03-token-budget-philosophy.md) — Explains the unlimited-budget mindset for
+- [Conventions Implemented/Respected](./04-conventions-implemented-respected.md) — Lists the related repository conventions
+- [Agent File Structure — Required Frontmatter](./05-agent-file-structure-required-frontmatter.md) — Defines the mandatory frontmatter fields
+- [Agent File Structure — Optional Frontmatter Fields](./06-agent-file-structure-optional-frontmatter-fields.md) — Defines optional frontmatter fields an
+- [Agent File Structure — Agent skills References](./07-agent-file-structure-skills-references.md) — Defines the agent skills frontmatter
+- [Agent File Structure — Agent skills References (Continued)](./08-agent-file-structure-skills-references-continued.md) — Continues agent skills reference guidance:
+- [Agent File Structure — Document Structure](./09-agent-file-structure-document-structure.md) — Defines the required document structure
+- [Agent Naming Conventions](./10-agent-naming-conventions.md) — Defines file naming and scope-prefix
+- [Agent Naming Conventions — Naming Guidelines and Agent Name vs. Description](./11-agent-naming-conventions-guidelines-and-name-vs-description.md) — Gives the general naming guidelines
+- [Tool Access Patterns](./12-tool-access-patterns.md) — Introduces the tool-access patterns table
+- [Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements](./13-tool-access-patterns-report-generating-agents.md) — States the mandatory Write and
+- [Tool Access Patterns — Report-Generating Agents: Mandatory Tool Requirements (Continued)](./14-tool-access-patterns-report-generating-agents-continued.md) — Continues the report-generating agent tool
+- [Tool Access Patterns — Writing to Platform Binding Directories](./15-tool-access-patterns-writing-to-platform-binding-directories.md) — Defines which tools an agent
+- [Model Selection Guidelines](./16-model-selection-guidelines.md) — Summarizes the model-tier decision tree
+- [Agent Color Categorization](./17-agent-color-categorization.md) — Defines the color field and
+- [Platform Binding Examples — Color Translation Table](./18-platform-binding-examples-color-translation-table.md) — Provides the full color-to-role translation
+- [Platform Binding Examples — Categorization Rationale and Link Checker Note](./19-platform-binding-examples-categorization-rationale-and-notes.md) — Explains why the color categorization
+- [Platform Binding Examples — Research Agent Note](./20-platform-binding-examples-research-agent-note.md) — Gives the special note for
+- [Platform Binding Examples — Assigning Colors to New Agents](./21-platform-binding-examples-assigning-colors-to-new-agents.md) — Gives the step-by-step procedure for
+- [Platform Binding Examples — Color Accessibility for Agent Identification](./22-platform-binding-examples-color-accessibility.md) — Covers multiple identification methods and
+- [Platform Binding Examples — Agent Identification Example](./23-platform-binding-examples-color-accessibility-continued.md) — Continues color accessibility guidance with
+- [Platform Binding Examples — Using Colors in Documentation and Examples](./24-platform-binding-examples-using-colors-in-documentation.md) — Shows how to reference agent
+- [Agent Responsibility Boundaries](./25-agent-responsibility-boundaries.md) — Defines single-responsibility, overlap-avoidance, and specialization-vs-generalization
+- [Agent Invocation Patterns — Patterns and Decision Matrix](./26-agent-invocation-patterns-and-decision-matrix.md) — Defines the two agent invocation
+- [Agent Invocation Patterns — Workflow Execution, Current Limitation, and Examples](./27-agent-invocation-patterns-limitation-and-examples.md) — States that workflows require direct
+- [Convention Referencing Standards](./28-convention-referencing-standards.md) — Defines the required Reference Documentation
+- [Agent Complexity Tiers](./29-agent-file-size-standards-size-limits.md) — Defines the three agent complexity
+- [Agent File Size Standards — Categorization Reference and When to Condense](./30-agent-file-size-standards-categorization-and-condensing.md) — Gives the agent categorization reference
+- [Agent File Size Standards — Size Checking Process and Content Philosophy](./31-agent-file-size-standards-size-checking-and-philosophy.md) — Describes the size-checking process to
+- [Agent-Skill Separation — Purpose and Knowledge Classification](./32-agent-skill-separation-purpose-and-knowledge-classification.md) — Explains why agent content and
+- [Agent-Skill Separation — Four Separation Patterns (A-C)](./33-agent-skill-separation-patterns-a-b-c.md) — Defines Separation Patterns A through
+- [Agent-Skill Separation — Pattern D: Retain Task-Specific Logic](./34-agent-skill-separation-pattern-d.md) — Defines Separation Pattern D, for
+- [Agent-Skill Separation — Guidelines, Validation, and Frontmatter Field](./35-agent-skill-separation-guidelines-validation-frontmatter.md) — Covers guidelines for future agent
+- [Agent-Skill Separation — Duplication Patterns and Before/After Example](./36-agent-skill-separation-duplication-and-example.md) — Lists common duplication patterns to
+- [Agent-Skill Separation — Benefits of Proper Separation](./37-agent-skill-separation-benefits.md) — Lists the benefits of keeping
+- [Agent Documentation Standards](./38-agent-documentation-standards.md) — Defines required and recommended documentation
+- [Information Accuracy and Verification — Principles and Requirements](./39-information-accuracy-verification-principles.md) — States the core verification principle,
+- [Information Accuracy and Verification — Git Worktree Awareness](./40-information-accuracy-verification-git-worktree-awareness.md) — Explains why agents must use
+- [Information Accuracy and Verification — Git Worktree Awareness: Toolchain Initialization Rule](./41-information-accuracy-verification-git-worktree-toolchain-init.md) — States the two-step npm install
+- [Information Accuracy and Verification — Git Worktree Awareness: Default Push Behavior and Example](./42-information-accuracy-verification-git-worktree-awareness-continued.md) — Continues Git Worktree Awareness with
+- [Information Accuracy and Verification — Verification Checklist for Agents](./43-information-accuracy-verification-checklist.md) — Gives the verification checklist an
+- [Creating New Agents — When to Create a New Agent](./44-creating-new-agents-when-to-create.md) — States the criteria for deciding
+- [Creating New Agents — Agent Creation Checklist](./45-creating-new-agents-checklist.md) — Gives the full checklist (frontmatter,
+- [Creating New Agents — Agent Template](./46-creating-new-agents-template.md) — Provides the boilerplate template structure
+- [Relationship to AGENTS.md — Division, Maintenance, and Isolation](./47-relationship-to-agents-md-division-maintenance-isolation.md) — Defines the division of responsibilities
+- [Relationship to AGENTS.md — What Belongs Where](./48-relationship-to-agents-md-what-belongs-where.md) — Summarizes what content belongs in
+- [Special Cases](./49-special-cases.md) — Covers agent directory structure, agent
+- [Anti-Patterns](./50-anti-patterns.md) — Lists agent-authoring anti-patterns to avoid,
+- [Validation and Compliance](./51-validation-and-compliance.md) — Explains how repo-rules-checker validates agent
+- [Agent-Skill Separation — When to Use agent skills vs. Agent Content](./52-agent-skill-separation-when-and-what-belongs.md) — Defines when to use agent
+- [Agent-Skill Separation — Examples and Decision Tree](./53-agent-skill-separation-examples-and-decision-tree.md) — Walks through worked examples of
+- [Agent-Skill Separation — Benefits, Implementation, Measurement, and Vigilance](./54-agent-skill-separation-benefits-implementation-measurement-vigilance.md) — Covers the benefits of proper
+- [Related Documentation](./55-related-documentation.md) — Links to documentation related to
+- [Multi-Harness Binding Operation — Directory Structure and Format Differences](./56-multi-harness-binding-directory-hierarchy-format.md) — Defines the multi-harness directory structure,
+- [Multi-Harness Binding Operation — Sync Automation, References, History, Practices, and Troubleshooting](./57-multi-harness-binding-sync-references-history-troubleshooting.md) — Covers sync automation, documentation references,
