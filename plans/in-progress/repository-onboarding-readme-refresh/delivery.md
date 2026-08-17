@@ -10,6 +10,9 @@
 > future plan inherits the work. Already-merged primer PRs and their evidence rows are kept verbatim
 > as historical record. Rows that are struck through below were descoped by this amendment.
 
+<!-- Separates the scope amendment above from the legend below; without it the two
+     blockquotes merge and the legend renders under the amendment's heading. -->
+
 > **Legend** — `[AI]`: an agent performs the step. Every executable checklist item in this plan is
 > marked `[AI]`; there are no human approval, intervention, or merge gates. If execution discovers
 > a task that genuinely requires a person or real-secret handling, stop that task as out of scope
@@ -177,41 +180,41 @@ flowchart TD
 
 ### DAG Registry
 
-| Node | Work                                                            | blockedBy     | blocks        |
-| ---- | --------------------------------------------------------------- | ------------- | ------------- |
-| P0   | Safe baseline                                                   | —             | P1            |
-| P1   | Owning-repository corpus ledgers and exact task rows            | P0            | P2            |
-| P2   | Shared fact, voice, journey, metadata, and sensitivity contract | P1            | PUB, PRI, PVT |
-| PUB  | Complete `ose-public` documentation refresh                     | P2            | RH            |
-| ~~PRI~~ | ~~Complete `ose-primer` documentation refresh~~ — **descoped 2026-08-16** | P2            | RH            |
-| PVT  | Complete `ose-private` documentation refresh                    | P2            | RH            |
-| RH   | Conditional documentation-only Rhino identity delivery          | PUB, PVT      | META          |
-| META | Exact About metadata for both parity repositories               | RH            | WALK          |
-| WALK | Six fresh-checkout journeys                                     | META          | FIX           |
-| FIX  | Conditional owning-repository correction PRs                    | WALK          | Q             |
-| Q    | Full corpus, voice, mechanical, and sensitivity reconciliation  | FIX           | K             |
-| K    | Sanitized evidence and knowledge capture                        | Q             | C             |
-| C    | Archival, post-move inventory, and cleanup                      | K             | —             |
+| Node    | Work                                                                      | blockedBy | blocks        |
+| ------- | ------------------------------------------------------------------------- | --------- | ------------- |
+| P0      | Safe baseline                                                             | —         | P1            |
+| P1      | Owning-repository corpus ledgers and exact task rows                      | P0        | P2            |
+| P2      | Shared fact, voice, journey, metadata, and sensitivity contract           | P1        | PUB, PRI, PVT |
+| PUB     | Complete `ose-public` documentation refresh                               | P2        | RH            |
+| ~~PRI~~ | ~~Complete `ose-primer` documentation refresh~~ — **descoped 2026-08-16** | P2        | RH            |
+| PVT     | Complete `ose-private` documentation refresh                              | P2        | RH            |
+| RH      | Conditional documentation-only Rhino identity delivery                    | PUB, PVT  | META          |
+| META    | Exact About metadata for both parity repositories                         | RH        | WALK          |
+| WALK    | Six fresh-checkout journeys                                               | META      | FIX           |
+| FIX     | Conditional owning-repository correction PRs                              | WALK      | Q             |
+| Q       | Full corpus, voice, mechanical, and sensitivity reconciliation            | FIX       | K             |
+| K       | Sanitized evidence and knowledge capture                                  | Q         | C             |
+| C       | Archival, post-move inventory, and cleanup                                | K         | —             |
 
 ### Delivery Boundaries
 
-| Phase / unit                 | Repository    | Exact branch                                    | Exact worktree                                              | PR                        |
-| ---------------------------- | ------------- | ----------------------------------------------- | ----------------------------------------------------------- | ------------------------- |
-| 0                            | all three     | —                                               | primary checkouts; tracked state read-only                  | none                      |
-| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-p1-p2-progress`²    | `worktrees/repository-onboarding-readme-refresh-contract/`  | opens at Phase 2          |
-| 3 `public`                   | `ose-public`  | `docs/repository-onboarding-public`             | `worktrees/repository-onboarding-readme-refresh-public/`    | opens at Phase 3          |
-| ~~4 `primer`~~               | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer`~~      | ~~`worktrees/repository-onboarding-readme-refresh-primer/`~~ | delivered, then **descoped 2026-08-16** |
-| 5 `private`                  | `ose-private` | `docs/repository-onboarding-private`            | `worktrees/repository-onboarding-readme-refresh-private/`   | opens at Phase 5          |
-| 6A `rhino-public` if needed  | `ose-public`  | `docs/rhino-readme-identity-public`             | `worktrees/rhino-readme-identity-public/`                   | conditional               |
-| ~~6B `rhino-primer`~~        | ~~`ose-primer`~~ | ~~`docs/rhino-readme-identity-primer`~~      | ~~`worktrees/rhino-readme-identity-primer/`~~               | **descoped 2026-08-16**   |
-| 6C `rhino-private` if needed | `ose-private` | `docs/rhino-readme-identity-private`            | `worktrees/rhino-readme-identity-private/`                  | conditional               |
-| 7                            | all three     | —                                               | authenticated repository sessions                           | none; metadata only       |
-| 8                            | all three     | —                                               | explicit temporary clean clones                             | none; verification only   |
-| 9A `public-fixes-<nn>`       | `ose-public`  | `docs/repository-onboarding-public-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
-| ~~9B `primer-fixes-<nn>`~~   | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer-fixes-<nn>`~~ | ~~`worktrees/repository-onboarding-readme-refresh/`~~   | **descoped 2026-08-16**   |
-| 9C `private-fixes-<nn>`      | `ose-private` | `docs/repository-onboarding-private-fixes-<nn>` | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
-| 10 verification              | all three     | —                                               | merged `main`, read-only                                    | none                      |
-| 11–12 `closeout`             | `ose-public`  | `docs/repository-onboarding-closeout`           | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | opens at Phase 12         |
+| Phase / unit                 | Repository       | Exact branch                                       | Exact worktree                                               | PR                                      |
+| ---------------------------- | ---------------- | -------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------- |
+| 0                            | all three        | —                                                  | primary checkouts; tracked state read-only                   | none                                    |
+| 1–2 `contract`               | `ose-public`     | `docs/repository-onboarding-p1-p2-progress`²       | `worktrees/repository-onboarding-readme-refresh-contract/`   | opens at Phase 2                        |
+| 3 `public`                   | `ose-public`     | `docs/repository-onboarding-public`                | `worktrees/repository-onboarding-readme-refresh-public/`     | opens at Phase 3                        |
+| ~~4 `primer`~~               | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer`~~            | ~~`worktrees/repository-onboarding-readme-refresh-primer/`~~ | delivered, then **descoped 2026-08-16** |
+| 5 `private`                  | `ose-private`    | `docs/repository-onboarding-private`               | `worktrees/repository-onboarding-readme-refresh-private/`    | opens at Phase 5                        |
+| 6A `rhino-public` if needed  | `ose-public`     | `docs/rhino-readme-identity-public`                | `worktrees/rhino-readme-identity-public/`                    | conditional                             |
+| ~~6B `rhino-primer`~~        | ~~`ose-primer`~~ | ~~`docs/rhino-readme-identity-primer`~~            | ~~`worktrees/rhino-readme-identity-primer/`~~                | **descoped 2026-08-16**                 |
+| 6C `rhino-private` if needed | `ose-private`    | `docs/rhino-readme-identity-private`               | `worktrees/rhino-readme-identity-private/`                   | conditional                             |
+| 7                            | all three        | —                                                  | authenticated repository sessions                            | none; metadata only                     |
+| 8                            | all three        | —                                                  | explicit temporary clean clones                              | none; verification only                 |
+| 9A `public-fixes-<nn>`       | `ose-public`     | `docs/repository-onboarding-public-fixes-<nn>`     | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | conditional per iteration               |
+| ~~9B `primer-fixes-<nn>`~~   | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer-fixes-<nn>`~~ | ~~`worktrees/repository-onboarding-readme-refresh/`~~        | **descoped 2026-08-16**                 |
+| 9C `private-fixes-<nn>`      | `ose-private`    | `docs/repository-onboarding-private-fixes-<nn>`    | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | conditional per iteration               |
+| 10 verification              | all three        | —                                                  | merged `main`, read-only                                     | none                                    |
+| 11–12 `closeout`             | `ose-public`     | `docs/repository-onboarding-closeout`              | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | opens at Phase 12                       |
 
 ¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
 

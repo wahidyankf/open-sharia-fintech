@@ -6,7 +6,7 @@ is verified by its PR checks and then never re-verified in its merged state.
 
 > **Scope note (2026-08-16)**: `ose-primer` left the parity set. The 2026-07 measurements below
 > are preserved as evidence; only the `ose-private` half is actionable.
-
+>
 > Provenance: the single unticked box in
 > [`plans/done/2026-07-22__bare-repo-governance-hardening`](../../done/2026-07-22__bare-repo-governance-hardening/README.md)
 > (188 checked, 1 unchecked). Recorded there as partially unmet rather than ticked; filed here so it

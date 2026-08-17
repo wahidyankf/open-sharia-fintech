@@ -15,10 +15,10 @@ Start with the product purpose. Write for product people and early-career engine
 unfamiliar terms when first used, use direct active language, and use emojis only where they improve
 navigation or recognition. Do not clone one repository opening into another.
 
-| Repository    | First Reader Path                                | First Local Success      |
-| ------------- | ------------------------------------------------ | ------------------------ |
-| `ose-public`  | Understand the product, then run OSE locally     | `ose-www`                |
-| `ose-private` | Understand CoralPolyp, then use a local sandbox  | CoralPolyp local sandbox |
+| Repository    | First Reader Path                               | First Local Success      |
+| ------------- | ----------------------------------------------- | ------------------------ |
+| `ose-public`  | Understand the product, then run OSE locally    | `ose-www`                |
+| `ose-private` | Understand CoralPolyp, then use a local sandbox | CoralPolyp local sandbox |
 
 `ose-primer` is not covered by this contract — it left the parity set on 2026-08-16 and carries no
 sync obligation.

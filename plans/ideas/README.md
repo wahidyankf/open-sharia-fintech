@@ -18,7 +18,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
-- [beavernest-database-config-test-flake](./q1-urgent-important/beavernest-database-config-test-flake.md) — seven cases share one bare `Assert.True`, so two `.NET quality gate` flakes have produced no evidence about which case is nondeterministic.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [plan-checker-forward-reference-detection](./q1-urgent-important/plan-checker-forward-reference-detection.md) — a step can name an artifact only a later phase creates; two instances hard-errored in one plan after five clean checker passes.
 - [plan-decision-integrity-hardening](./q1-urgent-important/plan-decision-integrity-hardening.md) — four authoring-time rules plus a mechanical `plan-checker` step stop a plan shipping pre-loaded with its own successor.
@@ -83,6 +82,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 
 Something active references these, but they carry none of the importance signals. Delegate or timebox.
 
+- [beavernest-database-config-test-flake](./q3-urgent-not-important/beavernest-database-config-test-flake.md) — seven cases share one bare `Assert.True`, so three `.NET quality gate` flakes have produced no evidence about which case is nondeterministic.
 - [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
 
 ### Q4 — Neither Urgent nor Important

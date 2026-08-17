@@ -17,14 +17,14 @@ created: 2026-08-16
 These six terms nest, and conflating any two of them produces either a PR per phase or a single PR
 for a whole quarter.
 
-| Term                 | What it is                                                          |
-| -------------------- | ------------------------------------------------------------------- |
-| **Plan**             | One piece of intended work, held in `plans/` as a document set      |
-| **Phase**            | One step of a plan's delivery checklist                             |
-| **Delivery unit**    | A contiguous run of phases that is independently shippable          |
-| **Delivery boundary**| The point where a delivery unit ends and its PR opens               |
-| **Delivery mode**    | Where work happens and how it reaches the integration target        |
-| **Worktree**         | A work location — an isolated checkout, not an integration decision |
+| Term                  | What it is                                                          |
+| --------------------- | ------------------------------------------------------------------- |
+| **Plan**              | One piece of intended work, held in `plans/` as a document set      |
+| **Phase**             | One step of a plan's delivery checklist                             |
+| **Delivery unit**     | A contiguous run of phases that is independently shippable          |
+| **Delivery boundary** | The point where a delivery unit ends and its PR opens               |
+| **Delivery mode**     | Where work happens and how it reaches the integration target        |
+| **Worktree**          | A work location — an isolated checkout, not an integration decision |
 
 ## How They Nest
 
@@ -37,8 +37,8 @@ review cycle, because there is nothing yet to review.
 
 ## Mode Versus Location
 
-Delivery mode and worktree answer different questions. A worktree is *where the work happens*;
-delivery mode additionally fixes *the integration target* and *merge authority*. The repo-wide
+Delivery mode and worktree answer different questions. A worktree is _where the work happens_;
+delivery mode additionally fixes _the integration target_ and _merge authority_. The repo-wide
 default is `worktree-to-pr` — isolated worktree, draft PR against the trunk, merged by the agent
 once preconditions hold.
 

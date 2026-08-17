@@ -50,11 +50,11 @@ The account above named the local-gate scope as the cause. That is a real contri
 **not** why that repo alone was red. Measured directly on 2026-07-22, the repos then in the family
 invoked the same validator with three different flag sets in `.github/workflows/main-ci.yml`:
 
-| Repo          | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
-| ------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
-| `ose-public`  | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
-| `ose-private` | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
-| sibling (now out of the parity set) | `--exclude apps/rhino-cli/tests/fixtures`                                     | **red**             |
+| Repo                                | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
+| `ose-public`                        | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
+| `ose-private`                       | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
+| sibling (now out of the parity set) | `--exclude apps/rhino-cli/tests/fixtures`                                                           | **red**             |
 
 That sibling was the only one missing `--exclude plans/done`. The file it failed on,
 `plans/done/2026-07-03__unify-rhino-cli-sdlc-parity/tech-docs.md`, was **byte-identical** across the

@@ -14,13 +14,13 @@ created: 2026-08-16
 
 # Governance Surfaces
 
-| Term                 | What it means                                                            |
-| -------------------- | ------------------------------------------------------------------------ |
-| **Surface**          | A file class a gate measures, declared as a glob with thresholds         |
-| **Instruction file** | A file a coding agent reads on its own, without being asked              |
-| **Harness**          | A coding agent that reads this repository                                |
-| **Binding**          | Harness-specific configuration translating shared rules into its format  |
-| **Mirror**           | A generated binding, derived from the primary one                        |
+| Term                 | What it means                                                           |
+| -------------------- | ----------------------------------------------------------------------- |
+| **Surface**          | A file class a gate measures, declared as a glob with thresholds        |
+| **Instruction file** | A file a coding agent reads on its own, without being asked             |
+| **Harness**          | A coding agent that reads this repository                               |
+| **Binding**          | Harness-specific configuration translating shared rules into its format |
+| **Mirror**           | A generated binding, derived from the primary one                       |
 
 ## Surface
 

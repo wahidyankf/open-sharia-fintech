@@ -80,7 +80,7 @@ fn is_authenticated(w: &mut LoginWorld) {
 }
 ```
 
-## F#
+## F\#
 
 F# suites auto-bind scenarios by name rather than declaring explicit step definitions, so there is
 no step-definition file to write — name the test after the scenario and the binding follows.

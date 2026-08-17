@@ -17,17 +17,17 @@ created: 2026-08-16
 Five things are routinely confused because all five "run something". They differ by **what holds
 the knowledge** and **who decides when it runs**.
 
-| Term            | What it is                                                        | Who triggers it            |
-| --------------- | ------------------------------------------------------------------ | -------------------------- |
-| **Agent**       | A role with its own context, tools, and charter                   | Delegated to on demand     |
-| **Agent skill** | Reusable methodology an agent declares and loads                  | Loaded by its holder       |
-| **Gate**        | One declared check with a pass/fail verdict                       | A hook or pipeline trigger |
-| **Quality gate**| A multi-agent loop that runs until findings are resolved          | Invoked as a workflow      |
-| **Workflow**    | A documented multi-step process composing agents and procedures   | Invoked deliberately       |
+| Term             | What it is                                                      | Who triggers it            |
+| ---------------- | --------------------------------------------------------------- | -------------------------- |
+| **Agent**        | A role with its own context, tools, and charter                 | Delegated to on demand     |
+| **Agent skill**  | Reusable methodology an agent declares and loads                | Loaded by its holder       |
+| **Gate**         | One declared check with a pass/fail verdict                     | A hook or pipeline trigger |
+| **Quality gate** | A multi-agent loop that runs until findings are resolved        | Invoked as a workflow      |
+| **Workflow**     | A documented multi-step process composing agents and procedures | Invoked deliberately       |
 
 ## Agent Versus Agent Skill
 
-An agent is *who*; an agent skill is *what they know*. Methodology shared by several agents belongs
+An agent is _who_; an agent skill is _what they know_. Methodology shared by several agents belongs
 in a skill, declared by each agent that needs it — duplicating it into each definition is the
 failure this split prevents.
 

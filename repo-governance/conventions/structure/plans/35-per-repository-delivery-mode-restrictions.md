@@ -21,7 +21,7 @@ available wherever a plan finds it easier.
 
 - **`ose-public`**: `main` is branch-protected against direct pushes, **including for
   repository admins** — verified live via a legacy `/branches/main/protection` check. Note that a
-  repo whose protection is expressed as a repository *ruleset* is misreported as unprotected by that
+  repo whose protection is expressed as a repository _ruleset_ is misreported as unprotected by that
   legacy endpoint alone, so check the rulesets API too before concluding a repo is unprotected.
   `worktree-to-origin-main` and `main-to-origin-main` are therefore **unavailable** here — no
   credential or role can push to `main` outside a merged PR.
