@@ -5,25 +5,20 @@
 //! `specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/` (`ddd-bc.feature`,
 //! `ddd-ul.feature`) to step definitions.
 //!
-//! # Deviations from the literal Gherkin text
+//! # How the scenarios are driven
 //!
-//! Neither `ddd bc`/`ddd ul` (as written in the scenarios) nor `specs bc`/
-//! `specs ul` exist as invokable CLI subcommands today. `cli.rs`'s own test
-//! suite documents the history (`specs_validate_bc_no_longer_parses`,
-//! `specs_validate_ul_no_longer_parses`): the standalone leaf commands were
-//! deliberately removed and folded into `specs structure validate`, which
-//! calls `application::bcregistry::validate_all` /
+//! The bounded-context and ubiquitous-language checks have **no CLI verb of
+//! their own** — `specs validate bc` / `specs validate ul` were deliberately
+//! removed and folded into `specs structure validate`, which calls
+//! `application::bcregistry::validate_all` /
 //! `application::glossary::validate_all` internally but does not expose their
-//! `--severity` override on its own CLI surface. Per the precedent already
-//! established in `test_coverage.rs` for `test-coverage diff`/`merge` (verbs
-//! not wired to the CLI — those scenarios call the internal
-//! `application::testcoverage::{diff,merge}` functions in-process instead of
-//! inventing a non-existent CLI verb), these scenarios call
-//! `application::bcregistry::validate_all` and `application::glossary::validate_all`
-//! directly in-process. This replicates exactly what the real (dormant)
-//! `commands::specs_bc`/`commands::specs_ul` wrapper modules do line-for-line,
-//! including `severity::resolve` for the `--severity` flag and the
-//! `OSE_RHINO_DDD_SEVERITY` env var, without inventing new CLI behavior.
+//! `--severity` override on its own CLI surface (see `cli.rs`'s
+//! `specs_validate_bc_no_longer_parses` / `specs_validate_ul_no_longer_parses`).
+//! The feature files therefore phrase every `When` at the **validator** level
+//! rather than naming a command, and these steps call the two `validate_all`
+//! functions in-process, including `severity::resolve` for the severity
+//! override and the `OSE_RHINO_DDD_SEVERITY` env var. This is the same
+//! precedent `test_coverage.rs` follows for `test-coverage diff`/`merge`.
 //!
 //! `ddd-ul.feature`'s Background says "the repository has a valid
 //! bounded-contexts.yaml for organiclever" — read here as "a repository"
@@ -481,14 +476,14 @@ fn given_env_var_set(w: &mut DddWorld, _var: String, val: String) {
 // ddd-bc.feature — When steps
 // ===========================================================================
 
-#[when(regex = r#"^the developer runs "rhino-cli ddd bc ([\w-]+) --severity=(\w+)"$"#)]
+#[when(regex = r#"^the bounded-context validator runs for "([\w-]+)" with severity "(\w+)"$"#)]
 fn when_bc_run_with_inline_severity(w: &mut DddWorld, app: String, sev: String) {
     w.app = app;
     w.severity_flag = sev;
     w.run_bc();
 }
 
-#[when(regex = r#"^the developer runs "rhino-cli ddd bc ([\w-]+)"$"#)]
+#[when(regex = r#"^the bounded-context validator runs for "([\w-]+)"$"#)]
 fn when_bc_run(w: &mut DddWorld, app: String) {
     w.app = app;
     w.run_bc();
@@ -635,14 +630,14 @@ fn given_ul_term_collision(w: &mut DddWorld) {
 // ddd-ul.feature — When steps
 // ===========================================================================
 
-#[when(regex = r#"^I run "rhino-cli ddd ul ([\w-]+)" with the "--severity=(\w+)" flag$"#)]
+#[when(regex = r#"^the glossary validator runs for "([\w-]+)" with severity "(\w+)"$"#)]
 fn when_ul_run_with_flag(w: &mut DddWorld, app: String, sev: String) {
     w.app = app;
     w.severity_flag = sev;
     w.run_ul();
 }
 
-#[when(regex = r#"^I run "rhino-cli ddd ul ([\w-]+)"$"#)]
+#[when(regex = r#"^the glossary validator runs for "([\w-]+)"$"#)]
 fn when_ul_run(w: &mut DddWorld, app: String) {
     w.app = app;
     w.run_ul();

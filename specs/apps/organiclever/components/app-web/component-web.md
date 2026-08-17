@@ -171,7 +171,7 @@ graph LR
     classDef external fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px,stroke-dasharray:5 5
 ```
 
-**Layer rules** (enforced by ESLint `boundaries` at error severity, plus `rhino-cli ddd bc`):
+**Layer rules** (enforced by ESLint `boundaries` at error severity, plus the `bc:` layer of `specs structure validate`):
 
 - `domain` ← no project imports
 - `application` ← `domain` only
@@ -199,11 +199,11 @@ Each bounded context owns its Gherkin features under
 
 ## DDD Enforcement
 
-Two `rhino-cli ddd` subcommands run automatically as part of `test:quick`:
+Two `rhino-cli specs` subcommands run automatically as part of `test:quick`:
 
-- **`rhino-cli ddd bc organiclever`** — verifies every context's `code:`, `glossary:`, and
+- **The `bc:` layer of `specs structure validate`** — verifies every context's `code:`, `glossary:`, and
   `gherkin:` paths exist with the declared layer subfolders, no orphans, relationship symmetry.
-- **`rhino-cli ddd ul organiclever`** — verifies every glossary file is well-formed, code
+- **The `ul:` layer of `specs structure validate`** — verifies every glossary file is well-formed, code
   identifiers in backticks resolve in the BC code path, feature references resolve to real
   `.feature` files, and term collisions across glossaries carry mutual `Forbidden-synonyms`
   cross-links.

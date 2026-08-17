@@ -10,18 +10,18 @@ Enumerate every in-scope dependency manifest and capture its currently-pinned ve
 governed by the policy (intersected with `scope-filter`/`ecosystems`):
 
 - **npm**: workspace-root `package.json` (`volta` block = Node/npm language pins; `dependencies`,
-  `devDependencies`, `optionalDependencies`), `apps/*/package.json`, `libs/*/package.json`, and the
-  `.opencode/package.json` binding manifest.
+  `devDependencies`, `optionalDependencies`), `apps/*/package.json`, and `libs/*/package.json`.
 - **Cargo**: `apps/*/Cargo.toml` and `libs/*/Cargo.toml` `[dependencies]` (e.g. `rhino-cli`,
   `rust-commons`, `ose-cli`, `ayokoding-cli`), plus per-project `rust-toolchain.toml`
   compiler-channel pins (every Rust app **and** `libs/rust-commons`).
-- **.NET**: `apps/*/*.fsproj`/`*.csproj` `<PackageReference>` (e.g. `crane-cli`). The .NET SDK
-  version is **not** pinned via a per-app `global.json` here — it lives in the
-  `.github/actions/setup-dotnet` composite-action default (see GitHub Actions below). Inventory a
-  `global.json` only if one exists.
-- **Go**: `apps/*/go.mod` Go version + module requirements **if any exist**. The active tree
-  currently has no Go modules (former Go CLIs `ayokoding-cli` and `ose-cli` are now Rust/Cargo);
-  treat Go as empty unless a `go.mod` is found.
+- **.NET**: `apps/*/*.fsproj`/`*.csproj` `<PackageReference>` (e.g. `crane-cli`), plus the per-app
+  `global.json` SDK pins (`apps/beavernest-be`, `apps/organiclever-be`, `apps/ose-be`). The
+  `.github/actions/setup-dotnet` composite-action default pins the SDK CI installs; bump the two
+  together. `repo-config.yml` → `doctor.dotnet-global-json` names the `global.json` that
+  `rhino-cli doctor` reads.
+- **Go**: no Go module exists in the active tree — the former Go CLIs `ayokoding-cli` and `ose-cli`
+  are Rust/Cargo now, and the tracked `*.go` files are AyoKoding course corpora with no `go.mod`.
+  Treat Go as empty unless a `go.mod` appears.
 - **Docker**: `FROM` base-image tags in **all** Dockerfiles (`apps/*/Dockerfile*` including
   `Dockerfile.integration`, and `infra/**/Dockerfile*`) plus the `image:` references in
   `apps/*/docker-compose*.yml` and `infra/**/docker-compose*.yml`.

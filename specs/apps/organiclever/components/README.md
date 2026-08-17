@@ -22,7 +22,7 @@ language belongs to the bounded context, not to one implementation surface.
 
 ## Related
 
-- [`../ddd/`](../ddd/README.md) — DDD artifacts (registry + glossaries + map) consumed by `rhino-cli ddd`
+- [`../ddd/`](../ddd/README.md) — DDD artifacts (registry + glossaries + map) consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../containers/`](../containers/README.md) — C4 L2
 - [`../behavior/`](../behavior/README.md) — Gherkin scenarios that exercise the components

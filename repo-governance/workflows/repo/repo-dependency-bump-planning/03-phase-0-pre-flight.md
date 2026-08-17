@@ -14,8 +14,8 @@ when_to_use: Use when starting a dependency-bump planning run and needing the pr
   policy's [Cutoff Date Computation](../../../development/workflow/dependency-bump-policy.md) section.
 - Resolve `scope-filter` and `ecosystems`. Default scope = every dependency-bearing manifest in
   the monorepo: `apps/` and `libs/` project manifests, the workspace-root language pins,
-  `.opencode/package.json`, per-project `rust-toolchain.toml`, `infra/` container definitions, and
-  the CI toolchain pins under `.github/`.
+  per-project `rust-toolchain.toml`, per-app `global.json`, `infra/` container definitions, and the
+  CI toolchain pins under `.github/`.
 
 **Output**: Cutoff date computed. Scope resolved.
 

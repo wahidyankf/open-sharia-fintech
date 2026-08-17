@@ -34,15 +34,15 @@ when_to_use: "Use to find the doc backing this pattern."
 
 **Agent Examples**:
 
-- `.claude/agents/repo-rules-maker.md` - Example maker agent
-- `.claude/agents/repo-rules-checker.md` - Example checker agent
-- `.claude/agents/repo-rules-fixer.md` - Example fixer agent
-- `.claude/agents/apps-ayokoding-www-general-maker.md` - General Next.js content maker
-- `.claude/agents/apps-ayokoding-www-by-example-maker.md` - By-example tutorial maker
-- `.claude/agents/apps-ayokoding-www-general-checker.md` - General Next.js content checker
-- `.claude/agents/apps-ayokoding-www-by-example-checker.md` - By-example tutorial checker
-- `.claude/agents/apps-ayokoding-www-general-fixer.md` - General Next.js content fixer
-- `.claude/agents/apps-ayokoding-www-by-example-fixer.md` - By-example tutorial fixer
+- `.claude/agents/repo/repo-rules-maker.md` - Example maker agent
+- `.claude/agents/repo/repo-rules-checker.md` - Example checker agent
+- `.claude/agents/repo/repo-rules-fixer.md` - Example fixer agent
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-general-maker.md` - General Next.js content maker
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-by-example-maker.md` - By-example tutorial maker
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-general-checker.md` - General Next.js content checker
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-by-example-checker.md` - By-example tutorial checker
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-general-fixer.md` - General Next.js content fixer
+- `.claude/agents/apps-ayokoding-www/apps-ayokoding-www-by-example-fixer.md` - By-example tutorial fixer
 
 ---
 

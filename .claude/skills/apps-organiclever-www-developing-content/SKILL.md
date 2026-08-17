@@ -43,7 +43,7 @@ See [Content Validation Checklist and Common Mistakes](./reference/validation-ch
 
 ## Domain-Driven Design
 
-Follows DDD with a canonical bounded-context registry, per-context glossaries, and `rhino-cli ddd bc`/`ul` enforcement in `test:quick`. See [Domain-Driven Design](./reference/domain-driven-design.md) for registry links, layer rules, XState placement, cross-context call rules, and the glossary authoring rule.
+Follows DDD with a canonical bounded-context registry, per-context glossaries, and `specs structure validate` `bc:`/`ul:` layer enforcement in `test:quick`. See [Domain-Driven Design](./reference/domain-driven-design.md) for registry links, layer rules, XState placement, cross-context call rules, and the glossary authoring rule.
 
 ## Reference Documentation
 

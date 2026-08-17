@@ -19,7 +19,7 @@ Workflows are first-class composable units. A workflow step can be another workf
 ```markdown
 ### 2. Run Validation Workflow (Nested)
 
-**Workflow**: `docs/quality-gate`
+**Workflow**: `docs/docs-quality-gate`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{validation-status}`

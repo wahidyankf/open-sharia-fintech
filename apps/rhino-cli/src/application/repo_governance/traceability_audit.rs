@@ -67,9 +67,16 @@ fn conventions_re() -> &'static Regex {
 
 /// Returns a compiled `Regex` that matches any `.claude/agents/<name>.md`
 /// reference in a workflow document.
+///
+/// Agent definitions live one directory deep (`.claude/agents/<domain>/<name>.md`),
+/// so the optional `<domain>/` segment is part of the pattern; a flat
+/// `.claude/agents/<name>.md` still matches for forward compatibility.
 fn agent_ref_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"\.claude/agents/[a-z0-9-]+\.md").expect("valid hardcoded regex"))
+    RE.get_or_init(|| {
+        Regex::new(r"\.claude/agents/(?:[a-z0-9-]+/)?[a-z0-9-]+\.md")
+            .expect("valid hardcoded regex")
+    })
 }
 
 /// Relative paths (within the workflows directory) that are exempt from the
@@ -286,10 +293,36 @@ fn list_governance_markdown(fs: &dyn Fs, root: &Path) -> std::result::Result<Vec
                 n.ends_with(".md") && n != "README.md"
             })
         })
+        .filter(|p| !is_split_child(p))
         .map(|p| p.to_string_lossy().to_string())
         .collect();
     files.sort();
     Ok(files)
+}
+
+/// Reports whether `path` is a progressive-disclosure split child.
+///
+/// Splitting a governance document produces `<name>.md` (the parent, which
+/// keeps the traceability headings) plus a `<name>/` directory of `NN-<slug>.md`
+/// children indexed by a sibling `README.md`. A child carries one section of
+/// the parent and structurally cannot repeat the parent's
+/// `## Principles Implemented/Respected` / `## Conventions Implemented/Respected`
+/// / `## Vision Supported` headings, so requiring them of every child would
+/// make the audit report thousands of unfixable findings. The parent is still
+/// checked — the requirement is enforced exactly once per document.
+fn is_split_child(path: &Path) -> bool {
+    let Some(name) = path.file_name().map(|n| n.to_string_lossy().to_string()) else {
+        return false;
+    };
+    let numbered = name.len() > 3
+        && name.as_bytes()[0].is_ascii_digit()
+        && name.as_bytes()[1].is_ascii_digit()
+        && name.as_bytes()[2] == b'-';
+    if !numbered {
+        return false;
+    }
+    path.parent()
+        .is_some_and(|dir| dir.join("README.md").is_file())
 }
 
 #[cfg(test)]
@@ -303,6 +336,44 @@ mod tests {
     fn write(p: &Path, content: &str) {
         fs::create_dir_all(p.parent().unwrap()).unwrap();
         fs::write(p, content).unwrap();
+    }
+
+    #[test]
+    fn split_children_are_exempt_but_their_parent_is_not() {
+        let tmp = TempDir::new().unwrap();
+        // Parent keeps the heading requirement...
+        write(
+            &tmp.path().join("repo-governance/principles/p.md"),
+            "# P\n\nno heading here\n",
+        );
+        // ...its split children are indexed by a README and are exempt.
+        write(
+            &tmp.path().join("repo-governance/principles/p/README.md"),
+            "# P\n\n- [One](./01-one.md) — x\n",
+        );
+        write(
+            &tmp.path().join("repo-governance/principles/p/01-one.md"),
+            "# One\n\nno heading here either\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert_eq!(
+            findings.len(),
+            1,
+            "only the parent may be flagged, got {findings:?}"
+        );
+        assert!(findings[0].path.ends_with("principles/p.md"));
+    }
+
+    #[test]
+    fn numbered_file_without_a_sibling_readme_is_still_checked() {
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path()
+                .join("repo-governance/principles/01-standalone.md"),
+            "# S\n\nno heading\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert_eq!(findings.len(), 1, "got {findings:?}");
     }
 
     #[test]
@@ -391,6 +462,20 @@ mod tests {
         );
         let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
         assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn workflow_passes_when_agent_referenced_in_a_subdirectory() {
+        let tmp = TempDir::new().unwrap();
+        write(
+            &tmp.path().join("repo-governance/workflows/w.md"),
+            "# W\n\nSee `.claude/agents/pr-review/pr-review-fixer.md`\n",
+        );
+        let findings = audit_traceability(&RealFs, tmp.path()).unwrap();
+        assert!(
+            findings.is_empty(),
+            "nested agent paths are the real on-disk layout and must satisfy the reference check"
+        );
     }
 
     #[test]

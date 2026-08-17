@@ -1,6 +1,6 @@
 # Ubiquitous Language — OrganicLever
 
-This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits inside `specs/apps/organiclever/ddd/` alongside [`bounded-contexts.yaml`](../bounded-contexts.yaml) because both are DDD artifacts read by `rhino-cli ddd ul` and `rhino-cli ddd bc`. The same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
+This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits inside `specs/apps/organiclever/ddd/` alongside [`bounded-contexts.yaml`](../bounded-contexts.yaml) because both are DDD artifacts read by the `ul:` and `bc:` layers of `rhino-cli specs structure validate`. The same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
 
 ## What lives here
 

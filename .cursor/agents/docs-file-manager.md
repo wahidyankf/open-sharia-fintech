@@ -8,8 +8,8 @@ model: composer-2.5
 
 ## Agent Metadata
 
-- **Role**: Fixer (yellow). **Size Tier**: Tier 2 (standard agent — deterministic file operations
-  with scripted link updates).
+- **Role**: Fixer (yellow). Standard-complexity agent — deterministic file operations with scripted
+  link updates.
 - **Model**: `haiku` — deterministic file operations (move, rename, delete) with clear pass/fail
   outcomes; kebab-case compliance and link updates are pattern-matching, not judgment calls; git
   history preservation is scripted (`git mv`); deletion safety is a deterministic link-graph

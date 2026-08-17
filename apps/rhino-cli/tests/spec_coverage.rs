@@ -215,24 +215,29 @@ fn given_marker_passed(w: &mut SpecWorld) {
 #[given("feature files with test implementations in multiple languages")]
 fn given_multilang(w: &mut SpecWorld) {
     // Three features, each matched by a DIFFERENT language's test-file naming
-    // convention (Go `_test.go`, Python `test_`, TS `.test.ts`). Each test file
-    // carries the scenario title (via the appropriate convention) and the step.
+    // convention (Rust `_test.rs`, Dart `_test.dart`, TS `.test.ts`) and a
+    // different scenario-title convention (`// Scenario:` comment marker for
+    // Rust/Dart, `Scenario("…")` call for TS). Each test file carries the
+    // scenario title and the step. The three languages are drawn from the set
+    // `extract_step_definitions` actually dispatches on — the Go and Python
+    // extractors were removed when those stacks left the repo, so a fixture
+    // written in them would assert extraction that no longer exists.
     w.write(
-        "specs/go-feature.feature",
-        "Feature: Go\nScenario: G\n  Given a go step\n",
+        "specs/rs-feature.feature",
+        "Feature: Rs\nScenario: R\n  Given a rust step\n",
     );
     w.write(
-        "app/go_feature_test.go",
-        "// Scenario: G\nfunc x(sc *godog.ScenarioContext) {\n  sc.Step(`^a go step$`, fn)\n}\n",
+        "app/rs_feature_test.rs",
+        "// Scenario: R\n#[given(\"a rust step\")]\nfn a_rust_step() {}\n",
     );
 
     w.write(
-        "specs/py-feature.feature",
-        "Feature: Py\nScenario: P\n  Given a python step\n",
+        "specs/dart-feature.feature",
+        "Feature: Dart\nScenario: D\n  Given a dart step\n",
     );
     w.write(
-        "app/test_py_feature.py",
-        "@scenario(\"py-feature.feature\", \"P\")\ndef t():\n    pass\n@given(\"a python step\")\ndef s():\n    pass\n",
+        "app/dart_feature_test.dart",
+        "// Scenario: D\nvoid main() {\n  s.given(\"a dart step\", () {});\n}\n",
     );
 
     w.write(

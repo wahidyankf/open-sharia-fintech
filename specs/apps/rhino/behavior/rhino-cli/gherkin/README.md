@@ -34,10 +34,10 @@ behavior/rhino-cli/gherkin/
 
 ### ddd
 
-| File             | Command(s) | Scenarios |
-| ---------------- | ---------- | --------- |
-| `ddd-bc.feature` | `ddd bc`   | 11        |
-| `ddd-ul.feature` | `ddd ul`   | 7         |
+| File             | Command(s)                               | Scenarios |
+| ---------------- | ---------------------------------------- | --------- |
+| `ddd-bc.feature` | `specs structure validate` (`bc:` layer) | 11        |
+| `ddd-ul.feature` | `specs structure validate` (`ul:` layer) | 7         |
 
 ### env
 

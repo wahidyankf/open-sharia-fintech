@@ -23,7 +23,7 @@ findings directly, the single explicit carve-out to its otherwise-transform-only
 - **`pr-review-scout-maker`** — pipeline stage 0, runs once at the start of each cycle before the
   specialist fan-out. Owns risk-tier classification and specialist-set selection (D12) and
   shared-context assembly (D13), and reads the prior cycle's thread-resolution/dismissal state so the
-  fan-out does not re-litigate a settled thread. Defined at `.claude/agents/pr-review-scout-maker.md`.
+  fan-out does not re-litigate a settled thread. Defined at `.claude/agents/pr-review/pr-review-scout-maker.md`.
 - **Nine discipline specialists** — execution/sonnet-tier agents, one per discipline, run
   **concurrently** within a cycle's tier-selected fan-out. **Even under `full` tier, the fan-out is
   not unconditionally all nine**: the scout's Content-Type Applicability Filter (DD-10) skips
@@ -46,9 +46,9 @@ findings directly, the single explicit carve-out to its otherwise-transform-only
 - **`pr-review-synthesis-maker`** — planning/opus-tier coordinator, the eleventh pipeline agent.
   Deduplicates, re-categorizes, reasonableness-filters, and tool-verifies the specialists' raw
   findings before posting exactly ONE consolidated, numeric-confidence, cited, line-anchored review
-  via the GitHub Reviews API. Defined at `.claude/agents/pr-review-synthesis-maker.md`.
+  via the GitHub Reviews API. Defined at `.claude/agents/pr-review/pr-review-synthesis-maker.md`.
 - **`pr-review-fixer`** — execution/sonnet-tier agent, unchanged from the prior single-maker design.
   Lists unresolved review threads from the consolidated review, triages each, applies fixes, pushes,
-  replies, and resolves threads. Defined at `.claude/agents/pr-review-fixer.md`.
+  replies, and resolves threads. Defined at `.claude/agents/pr-review/pr-review-fixer.md`.
 
 See [Pipeline Diagrams](./04-pipeline-diagrams.md) for the participants flowchart.

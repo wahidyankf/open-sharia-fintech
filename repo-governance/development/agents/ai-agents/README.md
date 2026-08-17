@@ -34,9 +34,9 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Agent Invocation Patterns — Patterns and Decision Matrix](./26-agent-invocation-patterns-and-decision-matrix.md) — Defines the two agent invocation
 - [Agent Invocation Patterns — Workflow Execution, Current Limitation, and Examples](./27-agent-invocation-patterns-limitation-and-examples.md) — States that workflows require direct
 - [Convention Referencing Standards](./28-convention-referencing-standards.md) — Defines the required Reference Documentation
-- [Agent Complexity Tiers](./29-agent-file-size-standards-size-limits.md) — Defines the three agent complexity
-- [Agent File Size Standards — Categorization Reference and When to Condense](./30-agent-file-size-standards-categorization-and-condensing.md) — Gives the agent categorization reference
-- [Agent File Size Standards — Size Checking Process and Content Philosophy](./31-agent-file-size-standards-size-checking-and-philosophy.md) — Describes the size-checking process to
+- [Agent Complexity Tiers](./29-agent-complexity-tiers.md) — Defines the three agent complexity
+- [Condensing and Splitting Agents](./30-condensing-and-splitting-agents.md) — Gives the criteria for deciding
+- [Agent Size Checking and Content Philosophy](./31-agent-size-checking-and-content-philosophy.md) — Describes how agent file size is
 - [Agent-Skill Separation — Purpose and Knowledge Classification](./32-agent-skill-separation-purpose-and-knowledge-classification.md) — Explains why agent content and
 - [Agent-Skill Separation — Four Separation Patterns (A-C)](./33-agent-skill-separation-patterns-a-b-c.md) — Defines Separation Patterns A through
 - [Agent-Skill Separation — Pattern D: Retain Task-Specific Logic](./34-agent-skill-separation-pattern-d.md) — Defines Separation Pattern D, for

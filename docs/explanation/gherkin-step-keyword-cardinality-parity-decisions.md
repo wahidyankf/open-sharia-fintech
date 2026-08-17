@@ -27,6 +27,11 @@ Sibling plans:
 - `ose-private`: `plans/done/2026-06-07__gherkin-step-keyword-cardinality/` (private repo)
 - `ose-primer`: `plans/done/2026-06-07__gherkin-step-keyword-cardinality/` (public template repo)
 
+> **Historical record.** This log describes the repository set as it stood on 2026-06-07.
+> `ose-primer` has since left the parity set — the `rhino-cli` byte-identity boundary now spans
+> ose-public and ose-private only, and no `ose-primer` propagation obligation remains. Read the
+> decisions below as history, not as current routing.
+
 ## Background
 
 The three repositories share a governance layer originally authored in ose-public.

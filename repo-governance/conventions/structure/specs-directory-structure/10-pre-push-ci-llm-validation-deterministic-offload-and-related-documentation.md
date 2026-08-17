@@ -20,16 +20,19 @@ created: 2026-04-02
 
 ## Pre-push + CI gating surfaces
 
-Every `validate:specs-*` target runs on all four gating surfaces — no surface lags behind:
+Specs validation is declared in the `gates:` registry of `repo-config.yml`, never wired by hand.
+`specs-gherkin-cardinality` and `specs-structure` both carry `ci-group: specs` and run on every
+surface their entries declare:
 
-- `.husky/pre-push` (every developer push, single line)
-- `.github/workflows/pr-quality-gate.yml` (every PR, dedicated `specs-gate` job in `quality-gate.needs:`)
-- `.github/workflows/_reusable-www-test-local-deploy.yml` (called by the www cron deploys, `specs-gate` job in `deploy.needs:`)
-- `.github/workflows/organiclever-app-test-local-deploy-stag.yml` (cron on `main`, `specs-gate` job in `deploy.needs:`)
+- `.husky/pre-push` — `gate run --surface=pre-push` reads them from the registry
+- `.github/workflows/pr-quality-gate.yml` — the `specs-structure` job in `quality-gate.needs:`
+- `_reusable-www-test-local-deploy.yml` and `_reusable-app-test-local-deploy-stag.yml` — the
+  `specs-gate` job in `deploy.needs:`, called by the www and app cron deploys
 
-`docs validate-links` is NOT gated by this plan — it scans the entire repo's markdown (repo-governance/, docs/, app READMEs) and is owned by a separate planned validator-unification effort.
-
-After this plan ships, **zero specs/BDD/DDD scripts in `rhino-cli` are dead** — every command file under `apps/rhino-cli/src/commands/specs_*.rs`, `src/commands/ddd_*.rs`, and `src/commands/spec_coverage*.rs` is invoked by at least one Nx target or pre-push surface.
+**No specs/DDD command in `rhino-cli` is dead** — every `commands/specs_*.rs` module is reachable
+from a `SpecsCommands` variant, and every variant is invoked by an Nx target or registry gate. The
+DDD bounded-context and ubiquitous-language validators have no CLI verb; `specs structure validate`
+is their only entry point.
 
 ## LLM Semantic Validation (specs-checker)
 

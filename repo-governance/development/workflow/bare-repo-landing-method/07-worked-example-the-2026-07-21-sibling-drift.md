@@ -16,7 +16,10 @@ when_to_use: Use as a concrete reference example when explaining why the termina
 # Worked Example — the 2026-07-21 Sibling Drift
 
 Both `ose-primer` and `ose-infra` were found in exactly the state this method exists to close, on the
-same day this document was written:
+same day this document was written. The transcript below is preserved verbatim, so it uses the names
+as they stood that day: `ose-infra` is the repository now named `ose-private`, and `ose-primer` has
+since left the parity set entirely. Neither name is a path to run against today — the method, not the
+repositories, is what this example teaches:
 
 ```console
 $ git -C ose-primer rev-list --left-right --count origin/main...main

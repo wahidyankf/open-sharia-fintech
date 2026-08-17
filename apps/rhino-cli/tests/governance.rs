@@ -602,15 +602,28 @@ fn then_word_budget_finding_names(w: &mut GovWorld, name: String) {
 
 #[when("the developer runs md links validate")]
 fn when_md_links_validate(w: &mut GovWorld) {
-    // `--exclude plans/` scopes out `plans/done/`'s large pre-existing,
-    // unrelated broken-anchor debt (heading renames from other, unrelated
-    // past plans) so this scenario asserts what it actually means to assert:
-    // this plan's own convention-doc rename left no *new* broken link
-    // anywhere outside the archival plans tree. The two `plans/ideas/`
-    // broken links this plan's own rename did introduce were fixed directly
-    // (not exempted) during Phase 1b — see `tech-docs.md`'s inbound-link
-    // sweep.
-    w.exec_real(&["md", "links", "validate", "--exclude", "plans/"]);
+    // Exclusions mirror the armed `md-links` entry in `repo-config.yml`
+    // (`plans/done`, `apps/ayokoding-www/content`, `apps/ose-www/content`),
+    // widened to all of `plans/` — so this scenario asserts what it actually
+    // means to assert: the convention-doc rename left no *new* broken link on
+    // any surface the gate itself polices. The content trees carry authored
+    // forward-references to not-yet-written course pages and are excluded by
+    // the gate for that reason; `plans/done/` carries large pre-existing
+    // broken-anchor debt from unrelated past heading renames. The two
+    // `plans/ideas/` broken links this plan's own rename did introduce were
+    // fixed directly (not exempted) during Phase 1b — see `tech-docs.md`'s
+    // inbound-link sweep.
+    w.exec_real(&[
+        "md",
+        "links",
+        "validate",
+        "--exclude",
+        "plans/",
+        "--exclude",
+        "apps/ayokoding-www/content",
+        "--exclude",
+        "apps/ose-www/content",
+    ]);
 }
 
 // ===========================================================================

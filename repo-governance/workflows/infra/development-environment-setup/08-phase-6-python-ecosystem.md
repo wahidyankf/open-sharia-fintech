@@ -1,6 +1,6 @@
 ---
 title: "Phase 6: Python Ecosystem (Sequential)"
-description: "Phase 6 (full scope only): install Python 3.13+ via pyenv or Homebrew, for optional Python tooling."
+description: "Phase 6 (full scope only): install Python and ruff so the Python course corpora stay formatted."
 when_to_use: "Use when setting up Python under full scope."
 ---
 
@@ -8,7 +8,10 @@ when_to_use: "Use when setting up Python under full scope."
 
 **Condition**: `{input.scope} == full`
 
-Required for: optional Python tooling only — this repo ships no Python project today
+Required for: formatting only. This repository ships no Python application or library. The `*.py`
+files it tracks are AyoKoding course corpora under `apps/ayokoding-www/content/**` plus a few
+harness helper scripts, and the `format-ruff` / `format-verify-ruff` gates in `repo-config.yml`
+keep them formatted. `rhino-cli doctor` does not check Python or ruff.
 
 ## 6.1 Install Python 3.13+
 
@@ -25,6 +28,19 @@ brew install python@3.13
 sudo apt-get install -y python3 python3-pip python3-venv
 ```
 
-Pin the version in a `.python-version` file alongside any Python project you add.
+No `.python-version` file exists at the repository root; pin one alongside any Python project you
+add.
 
-**Success criteria**: `python3 --version` shows a version >= the `.python-version` file.
+**Success criteria**: `python3 --version` shows 3.13 or later.
+
+## 6.2 Install ruff
+
+```bash
+# macOS
+brew install ruff
+
+# Linux
+pipx install ruff
+```
+
+**Success criteria**: `ruff --version` returns a version string.

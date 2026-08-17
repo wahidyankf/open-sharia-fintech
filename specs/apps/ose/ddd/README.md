@@ -3,8 +3,8 @@
 Domain-Driven Design artifacts for the OSE family. The `ose-be` backend uses a
 bounded-context architecture; `ose-web` (OSE Platform) has no bounded contexts defined.
 
-These files are the machine-readable source of truth consumed by `rhino-cli ddd bc` and
-`rhino-cli ddd ul`.
+These files are the machine-readable source of truth consumed by `rhino-cli specs structure validate`
+(its `bc:` and `ul:` layers).
 
 ## Structure
 
@@ -26,4 +26,4 @@ specs/apps/ose/ddd/
 
 ## Related
 
-- [rhino-cli ddd commands](../../../../apps/rhino-cli/README.md#quick-start)
+- [rhino-cli commands](../../../../apps/rhino-cli/README.md#quick-start)

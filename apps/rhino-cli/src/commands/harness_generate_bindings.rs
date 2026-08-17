@@ -293,6 +293,7 @@ fn report_amazonq_dry_run(
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
+    use crate::test_support::CwdLock;
 
     #[test]
     fn args_defaults() {
@@ -537,6 +538,9 @@ mod tests {
 
     #[test]
     fn amazonq_dry_run_text_output_runs_without_panic() {
+        // `find_root()` reads the process cwd; serialize against the other
+        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
+        let _cwd = CwdLock::acquire();
         let a = GenerateBindingsArgs {
             opencode: false,
             cursor: false,
@@ -553,6 +557,9 @@ mod tests {
 
     #[test]
     fn amazonq_dry_run_json_output_runs_without_panic() {
+        // `find_root()` reads the process cwd; serialize against the other
+        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
+        let _cwd = CwdLock::acquire();
         let a = GenerateBindingsArgs {
             opencode: false,
             cursor: false,
@@ -569,6 +576,9 @@ mod tests {
 
     #[test]
     fn amazonq_dry_run_markdown_output_runs_without_panic() {
+        // `find_root()` reads the process cwd; serialize against the other
+        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
+        let _cwd = CwdLock::acquire();
         let a = GenerateBindingsArgs {
             opencode: false,
             cursor: false,
@@ -587,7 +597,9 @@ mod tests {
     fn harness_amazonq_dry_run_via_run_reaches_dry_run_branch() {
         // `harness bindings generate --harness amazonq --dry-run` must take the
         // dry-run branch (no filesystem writes, no git-root-dependent failure from
-        // `emit_bindings`).
+        // `emit_bindings`). `run()` resolves the repo root from the process cwd,
+        // so hold the cwd lock for the duration.
+        let _cwd = CwdLock::acquire();
         let a = GenerateBindingsArgs {
             opencode: false,
             cursor: false,

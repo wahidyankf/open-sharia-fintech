@@ -38,8 +38,8 @@ created: YYYY-MM-DD
 - Category is always `explanation`
 - Subcategory is always `conventions`
 - Tags help with discoverability (3-5 tags)
-- `created` uses `YYYY-MM-DD` format (date-only, not full timestamp)
-- `updated:` field MUST NOT be included — per [No Manual Date Metadata Convention](../../structure/no-date-metadata.md), git history is the authoritative change record
+- `created` uses `YYYY-MM-DD` (date-only)
+- No `updated:` field — git history is the authoritative change record, per [No Manual Date Metadata Convention](../../structure/no-date-metadata.md)
 
 ## 2. Introduction (H1 + opening paragraph)
 
@@ -50,7 +50,7 @@ Brief overview explaining what this convention covers and why it exists.
 1-3 paragraphs maximum.
 ```
 
-**Purpose:** Immediately orient readers to the convention's scope and value.
+**Purpose:** Orient readers to the convention's scope and value.
 
 ## 3. Principles Implemented/Respected Section (H2)
 
@@ -63,16 +63,17 @@ This convention implements/respects the following core principles:
 - **[Another Principle](../../principles/[category]/[name].md)**: Another explanation.
 ```
 
-**Purpose:** Explicit traceability from documentation standards back to foundational values. Makes governance hierarchy visible and verifiable.
+**Purpose:** Traceability from documentation standards back to foundational values, made verifiable.
 
 **Requirements:**
 
 - List ALL principles this convention implements or respects
-- Include working link to each principle document
-- Explain HOW the convention embodies each principle (not just listing names)
-- Use relative paths: `../principles/[category]/[name].md`
+- Link each one with a relative path: `../principles/[category]/[name].md`
+- Explain HOW the convention embodies each principle, not just its name
 
 **Note:** This section is MANDATORY for all convention documents. It enables traceability validation and ensures conventions trace back to foundational values.
+
+**Once a document is split**, the heading belongs to the **parent** `<name>.md`, not to the `NN-<slug>.md` children. `repo-governance traceability validate` skips numbered children that sit beside a `README.md`, so the requirement binds once per document. Same for `## Vision Supported` and `## Conventions Implemented/Respected`.
 
 ## 4. Purpose Section (H2)
 
@@ -97,7 +98,7 @@ Include the intended audience and use cases.
 - Bulleted list of excluded topics (with references to appropriate conventions)
 ```
 
-**Note:** Explicit exclusions prevent scope creep and guide readers to related conventions.
+**Note:** Exclusions prevent scope creep and point readers at related conventions.
 
 ## 6. Standards/Rules Section (H2)
 

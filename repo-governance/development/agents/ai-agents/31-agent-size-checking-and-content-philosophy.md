@@ -1,6 +1,6 @@
 ---
-title: "Agent File Size Standards — Size Checking Process and Content Philosophy"
-description: "Describes the size-checking process to run before finalizing an agent, and the content philosophy behind the size limits."
+title: "Agent Size Checking and Content Philosophy"
+description: "Describes how agent file size is measured — by the word-budget gate, not by hand — and the content philosophy that keeps agents small."
 category: explanation
 subcategory: development
 tags:
@@ -9,10 +9,10 @@ tags:
   - development
   - standards
 created: 2025-11-23
-when_to_use: Use when running the size-checking process on a new or edited agent, or explaining why the size limits exist.
+when_to_use: Use when the word-budget gate flags an agent, or when explaining why agent definitions are kept small.
 ---
 
-# Agent File Size Standards — Size Checking Process and Content Philosophy
+# Agent Size Checking and Content Philosophy
 
 ## Size Checking Process
 

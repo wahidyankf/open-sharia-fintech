@@ -24,6 +24,6 @@ When files become too large (any instruction surface the word-budget gate report
 This convention applies to:
 
 - **AGENTS.md condensation** - Reducing main guidance file size
-- **Agent file condensation** - Keeping agent prompts within size tiers
+- **Agent file condensation** - Keeping agent prompts within the word budget
 - **Documentation deduplication** - Eliminating cross-file duplication
 - **Convention extraction** - Moving shared patterns to convention docs

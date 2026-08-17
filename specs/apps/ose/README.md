@@ -92,7 +92,7 @@ Content and marketing site for the OSE Platform.
 ## Spec Artifacts
 
 - **[ddd/](./ddd/README.md)** — DDD artifacts (ose-app): bounded-contexts.yaml registry,
-  ubiquitous-language glossaries; consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
+  ubiquitous-language glossaries; consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - **[containers/](./containers/README.md)** — C4 architecture diagrams (L2)
 - **[containers/contracts/](./containers/contracts/README.md)** — OpenAPI 3.1 contract spec
   (ose-app only); generates types for ose-be and ose-app-web via `codegen` Nx target
