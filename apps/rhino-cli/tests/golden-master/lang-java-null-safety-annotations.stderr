@@ -1,6 +1,0 @@
-error: 'rhino-cli lang java null-safety-annotations' requires a subcommand but one was not provided
-  [subcommands: validate, help]
-
-Usage: rhino-cli lang java null-safety-annotations [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

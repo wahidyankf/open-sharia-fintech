@@ -31,7 +31,7 @@ Domain-specialized agents hallucinate less than generic orchestration because th
 
 **When to annotate**:
 
-- The action touches a specific language (`.ts`/`.tsx` → `swe-typescript-dev`, `.go` → `swe-golang-dev`, `.rs` → `swe-rust-dev`, `.fs`/`.fsproj` → `swe-fsharp-dev`, `.cs`/`.csproj` → `swe-csharp-dev`, etc.).
+- The action touches a specific language (`.ts`/`.tsx` → `swe-typescript-dev`, `.rs` → `swe-rust-dev`, `.fs`/`.fsproj` → `swe-fsharp-dev`, etc.).
 - The action touches a specific app context (`apps/ose-www/...` → `apps-ose-www-content-maker` for content edits).
 - The action is a content/documentation change (`docs-maker`, `readme-maker`).
 - The action is repo-governance/repo-rules (`repo-rules-maker`).

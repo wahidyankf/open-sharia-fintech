@@ -1537,7 +1537,6 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 - [Rust Documentation](../rust/README.md)
 - [F# Documentation](../f-sharp/README.md)
-- [C# Documentation](../c-sharp/README.md)
 - [TypeScript Documentation Templates](./templates/README.md) — Reusable templates for TypeScript development patterns in OSE Platform
 - [TypeScript Anti-Patterns](./anti-patterns.md) — Common TypeScript mistakes and how to avoid them
 - [TypeScript Behaviour-Driven Development](./behaviour-driven-development.md) — BDD practices with Cucumber and Playwright for TypeScript

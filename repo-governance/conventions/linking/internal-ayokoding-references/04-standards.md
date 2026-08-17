@@ -32,7 +32,7 @@ When documentation in `docs/` references educational content in `apps/ayokoding-
 ### ❌ WRONG: Public Web URL
 
 ```markdown
-[Java Explanation](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/)
+[TypeScript Explanation](https://ayokoding.com/en/learn/software-engineering/programming-languages/typescript/)
 ```
 
 **Problems:**
@@ -45,7 +45,7 @@ When documentation in `docs/` references educational content in `apps/ayokoding-
 ### ✅ CORRECT: Relative Repository Path
 
 ```markdown
-[Java Explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/)
+[TypeScript Explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/)
 ```
 
 **Benefits:**
@@ -67,29 +67,29 @@ To calculate the correct relative path from `docs/` to `apps/ayokoding-www/`:
 
 ## Common Path Examples
 
-### From docs/explanation/software-engineering/programming-languages/java/
+### From docs/explanation/software-engineering/programming-languages/typescript/
 
-**Depth:** 5 levels deep (`docs` → `explanation` → `software-engineering` → `programming-languages` → `java`)
+**Depth:** 5 levels deep (`docs` → `explanation` → `software-engineering` → `programming-languages` → `typescript`)
 
-**Target:** `apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/`
+**Target:** `apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/`
 
 **Path:**
 
 ```markdown
-../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/
+../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/
 ```
 
 **Breakdown:**
 
 ```
-Start:  docs/explanation/software-engineering/programming-languages/java/README.md
+Start:  docs/explanation/software-engineering/programming-languages/typescript/README.md
 ../     docs/explanation/software-engineering/programming-languages/  (up 1)
 ../     docs/explanation/software-engineering/                        (up 2)
 ../     docs/explanation/                                             (up 3)
 ../     docs/                                                          (up 4)
 ../     [repository root]                                              (up 5)
 apps/ayokoding-www/                                                    (down 1)
-content/en/learn/software-engineering/programming-languages/java/     (down to target)
+content/en/learn/software-engineering/programming-languages/typescript/     (down to target)
 ```
 
 ### From docs/explanation/software-engineering/platform-web/tools/jvm-spring/
@@ -141,7 +141,7 @@ Use **descriptive, context-appropriate link text** that follows [Content Quality
 **Good examples:**
 
 ```markdown
-[Java programming language explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/)
+[TypeScript programming language explanation](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/)
 
 [Spring Framework fundamentals](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/)
 
@@ -151,7 +151,7 @@ Use **descriptive, context-appropriate link text** that follows [Content Quality
 **Avoid:**
 
 ```markdown
-[here](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/java/) ← Vague
+[here](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/) ← Vague
 
 [Click this link](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/platforms/web/tools/jvm-spring/) ← Non-descriptive
 

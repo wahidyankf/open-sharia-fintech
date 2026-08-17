@@ -18,7 +18,7 @@ skills:
 - **Role**: Checker (green)
 
 **Model Selection Justification**: `model: sonnet` — cross-referencing project configuration
-against multi-language standards, pattern recognition across TypeScript/Rust/.NET/Go codebases,
+against multi-language standards, pattern recognition across TypeScript/Rust/.NET/Dart codebases,
 and criticality assessment of deviations need advanced reasoning.
 
 ## Purpose
@@ -63,7 +63,7 @@ total.
 [Rust](../../../docs/explanation/software-engineering/programming-languages/rust/README.md),
 [F#](../../../docs/explanation/software-engineering/programming-languages/f-sharp/README.md).
 
-**Related Agents**: `swe-golang-dev`, `swe-typescript-dev`, `swe-rust-dev`, `swe-fsharp-dev`
+**Related Agents**: `swe-typescript-dev`, `swe-rust-dev`, `swe-fsharp-dev`
 (implement the standards this agent checks), `repo-rules-checker` (repo-wide governance).
 
 - [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

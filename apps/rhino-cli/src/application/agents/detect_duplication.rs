@@ -454,7 +454,7 @@ mod tests {
     fn role_suffix_matches_known_suffixes() {
         assert_eq!(role_suffix("docs-fixer"), Some("-fixer"));
         assert_eq!(role_suffix("apps-ose-www-deployer"), Some("-deployer"));
-        assert_eq!(role_suffix("swe-golang-dev"), Some("-dev"));
+        assert_eq!(role_suffix("swe-rust-dev"), Some("-dev"));
         assert_eq!(role_suffix("web-design-tester"), Some("-tester"));
         assert_eq!(role_suffix("docs-file-manager"), None);
         assert_eq!(role_suffix("skills/plan-creating-project-plans"), None);

@@ -597,8 +597,8 @@ mod tests {
         let app_dir = root.join("app");
         std::fs::create_dir_all(app_dir.join("content")).unwrap();
         std::fs::write(
-            app_dir.join("content/legacy_steps.py"),
-            "@given(\"a taught condition\")\ndef given_taught():\n    pass\n",
+            app_dir.join("content/legacy_steps.dart"),
+            "s.given(\"a taught condition\", (Scenario s) async {});\n",
         )
         .unwrap();
         std::fs::create_dir_all(app_dir.join("src")).unwrap();
@@ -657,8 +657,8 @@ mod tests {
         let mut args = base_args(vec![specs_dir, app_dir]);
         args.shared_steps = true;
 
-        // Without --exclude-source-dir, the app-tree walk picks up the Python
-        // step decorator under `content/`. It matches no Gherkin step, so it
+        // Without --exclude-source-dir, the app-tree walk picks up the Dart
+        // step annotation under `content/`. It matches no Gherkin step, so it
         // surfaces as an orphan step impl and run() fails.
         let err = run(&args, OutputFormat::Text).unwrap_err();
         assert!(

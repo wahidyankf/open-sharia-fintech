@@ -28,7 +28,7 @@ This directory contains comprehensive documentation on programming languages use
 2. **Best Practices** - Proven approaches for writing clean, maintainable code
 3. **Antipatterns** - Common mistakes and pitfalls to avoid
 
-**Domain-Specific Standards Pattern** (Rust, F#, C#):
+**Domain-Specific Standards Pattern** (Rust, F#):
 
 Multiple domain-focused standards files covering specific areas (testing, security, concurrency, etc.) as separate documents rather than three consolidated files. See each language's README for their specific document structure.
 
@@ -42,14 +42,12 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 | Infrastructure tooling                   | Rust                 | See existing CLI tools                          |
 | Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
 | Complex domain logic with DDD            | F#/Rust              | See language-specific README files              |
-| Enterprise API with .NET interop         | C#/F#                | See c-sharp/ and f-sharp/ README files          |
 
 **Platform Guidance**:
 
 - **TypeScript**: Active for frontend applications, including Next.js sites
 - **Rust**: Active for CLI tools (rhino-cli, ayokoding-cli, ose-cli, crane-cli)
 - **F#**: Active for REST API backends (organiclever-be, ose-be) and content pipeline tooling (crane-cli — Content Retrieval And Normalization Engine)
-- **C#**: Retained for potential .NET interop with F#
 
 ## Purpose
 
@@ -80,7 +78,6 @@ All code written in the languages documented here MUST follow the standards, pat
 - `swe-programming-typescript` - TypeScript standards quick reference
 - `swe-programming-rust` - Rust standards quick reference
 - `swe-programming-fsharp` - F# standards quick reference
-- `swe-programming-csharp` - C# standards quick reference
 
 <!-- TODO: Software Design Reference - Create governance documentation for software design principles -->
 
@@ -98,7 +95,7 @@ Each language directory contains a README.md (language overview and version info
 └── antipatterns.md        # Common antipatterns
 ```
 
-**Domain-Specific Standards Pattern** (Rust, F#, C#):
+**Domain-Specific Standards Pattern** (Rust, F#):
 
 ```
 [language-name]/
@@ -135,20 +132,6 @@ Each language directory contains a README.md (language overview and version info
 - Security vulnerabilities
 - Maintainability issues
 - Anti-idiomatic code patterns
-
-### 💠 [C#](./c-sharp/README.md)
-
-**C# development with ASP.NET Core, Entity Framework Core, and functional patterns**
-
-C# is a versatile, type-safe language on the .NET ecosystem. These standards guide C# development with ASP.NET Core, applying functional patterns through records, pattern matching, and nullable reference types.
-
-**Use C# when you need:**
-
-- Enterprise backend APIs (ASP.NET Core)
-- Database-driven applications (Entity Framework Core)
-- High-performance services with async/await and Channels
-- Domain modeling with records and sealed class hierarchies
-- .NET interop with F# components
 
 ### 🔷 [F#](./f-sharp/README.md)
 
@@ -217,21 +200,20 @@ Languages in this documentation are chosen based on:
 
 ### Current Language Usage
 
-| Language       | Primary Use Cases                     | Status                                                   |
-| -------------- | ------------------------------------- | -------------------------------------------------------- |
-| **C#**         | Enterprise APIs, .NET interop with F# | 📋 Retained — .NET interop                               |
-| **F#**         | REST API backends, content pipeline   | ✅ Active — organiclever-be, ose-be, crane-cli           |
-| **Rust**       | CLI tools, infrastructure             | ✅ Active — rhino-cli, ayokoding-cli, ose-cli, crane-cli |
-| **TypeScript** | Frontend applications, tRPC backends  | ✅ Active — all Next.js apps                             |
+| Language       | Primary Use Cases                    | Status                                                   |
+| -------------- | ------------------------------------ | -------------------------------------------------------- |
+| **F#**         | REST API backends, content pipeline  | ✅ Active — organiclever-be, ose-be, crane-cli           |
+| **Rust**       | CLI tools, infrastructure            | ✅ Active — rhino-cli, ayokoding-cli, ose-cli, crane-cli |
+| **TypeScript** | Frontend applications, tRPC backends | ✅ Active — all Next.js apps                             |
 
-**Legend**: ✅ Active (in use in ose-public) | 📋 Retained (standards documented; not yet used in active apps)
+**Legend**: ✅ Active (in use in ose-public). A language earns a guide here only while this repository builds something in it.
 
 ### For Backend Developers
 
 1. **F# backends** - See [organiclever-be](../../../../apps/organiclever-be/README.md) and [ose-be](../../../../apps/ose-be/README.md) for active examples
 2. **Apply Rust standards** - [Rust Standards](./rust/README.md)
 3. **Hexagonal DDD** - [DDD + Hexagonal In Practice](../architecture/ddd-hexagonal-in-practice/README.md)
-4. **For F#/C# standards** - See language-specific README files
+4. **For F# standards** - See the F# language README
 
 ### For Full-Stack Developers
 

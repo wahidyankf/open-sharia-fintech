@@ -31,7 +31,7 @@ fan-out **only** when its own declared artifact class is verifiably absent from 
 current diff** — never from a prior cycle's diff, never cached:
 
 - `pr-review-types-maker` — skip if the current diff contains **zero** files with a
-  TypeScript/Rust/F#/C# extension (`.ts`, `.tsx`, `.rs`, `.fs`, `.fsx`, `.cs`) or this repo's own
+  TypeScript/Rust/F#/Dart extension (`.ts`, `.tsx`, `.rs`, `.fs`, `.fsx`, `.dart`) or this repo's own
   equivalent typed-language set.
 - `pr-review-integrity-maker` — skip if the current diff contains **zero** test files or
   CI/workflow config files (this repo's own test-path and `.github/workflows/**` conventions).

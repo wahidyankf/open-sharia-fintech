@@ -60,7 +60,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 
 - `docs-maker` - Documentation only
 - `repo-rules-checker` - Consistency validation only
-- `swe-golang-dev` - Go development only
+- `swe-rust-dev` - Rust development only
 
 **FAIL: Bad - Over-Generalized:**
 

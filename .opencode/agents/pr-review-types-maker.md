@@ -1,5 +1,5 @@
 ---
-description: Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and C#. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behavior is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
+description: Execution-grade PR reviewer scoped to the type-soundness discipline only — type-system soundness beyond what the compiler already enforces, across TypeScript, Rust, F#, and Dart. Flags unsound type escapes (unjustified any/unknown, unexplained unsafe blocks, panic-prone unwrap/expect on fallible paths, null-forgiving-operator misuse, non-exhaustive match/switch), never a compile/build failure (already CI-gated) and never whether a well-typed function's behavior is correct (pr-review-logic-maker's charter). One of nine discipline-scoped specialists feeding the pr-review-synthesis-maker coordinator; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -35,11 +35,11 @@ behavior.
 
 Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline: static type-system soundness beyond what the compiler
-already enforces, across this repo's polyglot codebase.
+already enforces, across this repo's typed languages.
 
 **Owns**: TypeScript unjustified `any`/`unknown`/`@ts-ignore`; Rust `unsafe` blocks with no
 invariant comment and `unwrap()`/`expect()` on a fallible path with no upstream validation; F#
-non-exhaustive `match` relying on a silent default; C# null-forgiving-operator (`!`) overuse on a
+non-exhaustive `match` relying on a silent default; Dart null-assertion (`!`) overuse on a
 genuinely-nullable path.
 
 **Routes elsewhere**: a compile/build failure is not a finding — CI's build step already gates

@@ -91,9 +91,9 @@ pub fn is_minimal_tool(name: &str) -> bool {
 /// Result of checking a single tool against its version requirement.
 #[derive(Debug, Clone)]
 pub struct ToolCheck {
-    /// Human-readable tool name (e.g. `"node"`, `"golang"`).
+    /// Human-readable tool name (e.g. `"node"`, `"rust"`).
     pub name: String,
-    /// Name of the executable that is invoked (e.g. `"node"`, `"go"`).
+    /// Name of the executable that is invoked (e.g. `"node"`, `"rustc"`).
     pub binary: String,
     /// Whether the tool is present and at the right version.
     pub status: ToolStatus,

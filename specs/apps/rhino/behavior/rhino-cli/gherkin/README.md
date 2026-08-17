@@ -166,7 +166,6 @@ for the canonical purpose of this folder.
 - [rhino — behavior/rhino-cli/gherkin/git](./git/README.md)
 - [rhino — behavior/rhino-cli/gherkin/governance](./governance/README.md)
 - [rhino — behavior/rhino-cli/gherkin/harness](./harness/README.md)
-- [Java Domain](./java/README.md)
 - [rhino — behavior/rhino-cli/gherkin/md](./md/README.md)
 - [rhino — behavior/rhino-cli/gherkin/repo-governance](./repo-governance/README.md)
 - [rhino — behavior/rhino-cli/gherkin/spec-coverage](./spec-coverage/README.md)

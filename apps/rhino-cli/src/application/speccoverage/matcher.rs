@@ -10,8 +10,7 @@ use std::collections::HashMap;
 use regex::Regex;
 
 use super::cucumber_expr::{
-    convert_python_parsers_expr, cucumber_expr_to_regex, has_cucumber_expressions,
-    is_python_parsers_expr, unescape_cucumber_expr,
+    cucumber_expr_to_regex, has_cucumber_expressions, unescape_cucumber_expr,
 };
 use super::util::normalize_ws;
 
@@ -144,43 +143,6 @@ pub fn add_step_to_matcher_with_origin(sm: &mut StepMatcher, text: &str, origin_
     sm.add_exact_with_origin(&unescape_cucumber_expr(&text), origin_file);
 }
 
-/// Python-specific variant of [`add_step_to_matcher_with_origin`].
-///
-/// Handles `parsers.parse({name:d})` format strings before falling back to
-/// the generic Cucumber expression path. The dispatch order is:
-///
-/// 1. Regex (starts with `^`).
-/// 2. Python `parsers.parse` expression (`{name:spec}`).
-/// 3. Cucumber expression (`{type}`).
-/// 4. Exact literal.
-pub fn add_python_step_to_matcher_with_origin(sm: &mut StepMatcher, text: &str, origin_file: &str) {
-    let text = normalize_ws(text);
-    if text.is_empty() {
-        return;
-    }
-    if text.starts_with('^') {
-        if let Ok(re) = Regex::new(&text) {
-            sm.add_pattern_with_origin(re, &text, origin_file);
-        }
-        return;
-    }
-    if is_python_parsers_expr(&text) {
-        let pattern = format!("^{}$", convert_python_parsers_expr(&text));
-        if let Ok(re) = Regex::new(&pattern) {
-            sm.add_pattern_with_origin(re, &text, origin_file);
-        }
-        return;
-    }
-    if has_cucumber_expressions(&text) {
-        let pattern = format!("^{}$", cucumber_expr_to_regex(&text));
-        if let Ok(re) = Regex::new(&pattern) {
-            sm.add_pattern_with_origin(re, &text, origin_file);
-        }
-        return;
-    }
-    sm.add_exact_with_origin(&text, origin_file);
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -215,13 +177,5 @@ mod tests {
         let mut sm = StepMatcher::new();
         sm.add_exact_with_origin("", "x.rs");
         assert!(sm.entries.is_empty());
-    }
-
-    #[test]
-    fn python_parsers_d_compiles_correctly() {
-        let mut sm = StepMatcher::new();
-        add_python_step_to_matcher_with_origin(&mut sm, "ratio {n:d}", "x.py");
-        assert!(sm.matches("ratio 42"));
-        assert!(!sm.matches("ratio abc"));
     }
 }

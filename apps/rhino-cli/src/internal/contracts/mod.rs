@@ -7,5 +7,4 @@
 //! command family.
 
 pub mod dart_scaffold;
-pub mod java_clean_imports;
 pub mod types;

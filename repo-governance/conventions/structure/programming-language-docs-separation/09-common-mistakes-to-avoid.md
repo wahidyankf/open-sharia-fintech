@@ -20,38 +20,38 @@ created: 2026-02-04
 **FAIL: Duplicating in docs/explanation/**:
 
 ````markdown
-# docs/explanation/.../golang/best-practices.md
+# docs/explanation/.../rust/best-practices.md
 
-## Variables in Go
+## Variables in Rust
 
-Go variables can be declared in multiple ways:
+Rust bindings can be declared in several ways:
 
-```go
-var x int = 10
-y := 20
+```rust
+let x: i32 = 10;
+let mut y = 20;
 ```
 ````
 
-Use `:=` for local variables, `var` for package-level...
+Use `let` for immutable bindings, `let mut` when you need mutation...
 
 ````
 
-**Why it fails**: This is educational content about Go syntax. Belongs in ayokoding-www, not docs/explanation/.
+**Why it fails**: This is educational content about Rust syntax. Belongs in ayokoding-www, not docs/explanation/.
 
 **PASS: Repository-specific convention**:
 
 ```markdown
-# docs/explanation/.../golang/best-practices.md
+# docs/explanation/.../rust/best-practices.md
 
-**Prerequisite**: Complete [ayokoding-www Golang By Example](https://ayokoding.com/en/learn/.../golang/by-example/).
+**Prerequisite**: Complete the ayokoding-www Rust By Example tutorial.
 
-## Variable Naming in OSE Platform
+## Naming in OSE Platform
 
-OSE Platform Go code follows these conventions:
+OSE Platform Rust code follows these conventions:
 
 - Domain entities: `ZakatPayment`, `WaqfDonation`
-- Repository variables: `zakatRepo`, `waqfRepo`
-- Service variables: `zakatService`, `donationService`
+- Repository bindings: `zakat_repo`, `waqf_repo`
+- Service bindings: `zakat_service`, `donation_service`
 
 **Rationale**: Explicit domain terminology for Shariah compliance clarity.
 ````
@@ -63,38 +63,38 @@ OSE Platform Go code follows these conventions:
 **FAIL: No prerequisite link**:
 
 ```markdown
-# docs/explanation/.../python/README.md
+# docs/explanation/.../typescript/README.md
 
-# Python
+# TypeScript
 
-Python is used for data processing...
+TypeScript is used for the web tier...
 
 ## Best Practices
 
-Follow PEP 8 standards...
+Enable `strict` in tsconfig...
 ```
 
-**Why it fails**: Doesn't tell developers where to learn Python. Assumes knowledge.
+**Why it fails**: Doesn't tell developers where to learn TypeScript. Assumes knowledge.
 
 **PASS: Explicit prerequisite**:
 
 ```markdown
-# docs/explanation/.../python/README.md
+# docs/explanation/.../typescript/README.md
 
-# Python
+# TypeScript
 
 ## Prerequisite Knowledge
 
-**This documentation assumes you have completed the ayokoding-www Python learning path**:
+**This documentation assumes you have completed the ayokoding-www TypeScript learning path**:
 
-- [ayokoding-www Python Overview](https://ayokoding.com/en/learn/.../python/)
-- [By Example Tutorial](https://ayokoding.com/en/learn/.../python/by-example/)
+- [ayokoding-www TypeScript Overview](https://ayokoding.com/en/learn/.../typescript/)
+- [By Example Tutorial](https://ayokoding.com/en/learn/.../typescript/by-example/)
 
-If you're new to Python, **start with ayokoding-www first**.
+If you're new to TypeScript, **start with ayokoding-www first**.
 
 ## What This Documentation Covers
 
-OSE Platform-specific Python conventions...
+OSE Platform-specific TypeScript conventions...
 ```
 
 **Why it passes**: Explicit prerequisite statement, clear scope definition.
@@ -104,18 +104,15 @@ OSE Platform-specific Python conventions...
 **FAIL: OSE Platform patterns in ayokoding-www**:
 
 ````markdown
-# apps/ayokoding-www/.../golang/in-practice/error-handling.md
+# an ayokoding-www Rust in-practice error-handling lesson
 
 ## Error Handling
 
 In OSE Platform, all errors must include request IDs and error codes:
 
-```go
-if err != nil {
-    logger.Error("operation failed",
-        "request_id", reqID,
-        "error_code", "ERRZAKAT001")
-}
+```rust
+tracing::error!(request_id = %req_id, error_code = "ERRZAKAT001",
+    "operation failed");
 ```
 ````
 
@@ -123,32 +120,29 @@ if err != nil {
 
 **Why it fails**: This is OSE Platform-specific convention. Belongs in docs/explanation/, not ayokoding-www.
 
-**PASS: Generic Go error patterns**:
+**PASS: Generic Rust error patterns**:
 
 ```markdown
-# apps/ayokoding-www/.../golang/in-practice/error-handling.md
+# an ayokoding-www Rust in-practice error-handling lesson
 
-## Error Handling in Go
+## Error Handling in Rust
 
-Go uses explicit error returns:
+Rust returns fallibility in the type:
 
-```go
-func divide(a, b int) (int, error) {
+```rust
+fn divide(a: i32, b: i32) -> Result<i32, DivideError> {
     if b == 0 {
-        return 0, errors.New("division by zero")
+        return Err(DivideError::ByZero);
     }
-    return a / b, nil
+    Ok(a / b)
 }
 
-result, err := divide(10, 2)
-if err != nil {
-    return fmt.Errorf("divide failed: %w", err)
-}
+let result = divide(10, 2)?;
 ````
 
-Key takeaway: Check errors explicitly, wrap with context using `%w`.
+Key takeaway: handle `Result` explicitly, propagate with `?`, add context at the boundary.
 
 ```
 
-**Why it passes**: Generic Go error patterns, no OSE Platform-specific conventions.
+**Why it passes**: Generic Rust error patterns, no OSE Platform-specific conventions.
 ```

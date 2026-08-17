@@ -22,7 +22,9 @@ a clean, known-good state.
 **Step 1 — Install Dependencies**: `npm install`. Acceptance: exits 0, `node_modules/` synced.
 
 **Step 2 — Converge Polyglot Toolchain**: `npm run doctor -- --fix`. Acceptance: exits 0, no
-unresolved drift — if drift remains, report which tools couldn't auto-fix and stop.
+unresolved drift — if drift remains, report which tools couldn't auto-fix and stop. Doctor spans
+more languages than this repo builds: `apps/` and `libs/` ship **TypeScript, Rust, F#, and Dart**
+only; the rest format `apps/ayokoding-www/content/**` katas and never block a non-content plan.
 
 **Step 3 — Baseline Test Run**: run the full suite for projects in scope (`nx affected` for a
 subset, `nx run-many -t test:unit` for a full baseline). Record exact pass/fail/skip counts and

@@ -57,14 +57,8 @@ fn ts_regex_step_re() -> &'static Regex {
     })
 }
 
-/// Matches a Go godog sc.Step call (godog step registration pattern).
-fn go_step_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"\.Step\(`([^`]+)`").expect("valid regex"))
-}
-
-/// Matches a Go `// Scenario: Title` comment used to declare scenario coverage.
-fn go_scenario_comment_re() -> &'static Regex {
+/// Matches a `// Scenario: Title` comment used to declare scenario coverage.
+fn scenario_comment_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"//\s*Scenario:\s*(.+?)\s*$").expect("valid regex"))
 }
@@ -607,8 +601,8 @@ fn find_all_matching_test_files(
 /// Dispatches to the appropriate scenario-title extractor based on the file
 /// extension of `test_file_path`.
 ///
-/// Auto-bind frameworks (Elixir, F#, Clojure) return an empty set because
-/// their scenario matching is implicit.
+/// Auto-bind frameworks (F#) return an empty set because their scenario
+/// matching is implicit.
 ///
 /// # Errors
 ///
@@ -619,9 +613,8 @@ fn extract_scenario_titles(test_file_path: &Path) -> std::result::Result<HashSet
         .and_then(|s| s.to_str())
         .unwrap_or("");
     match ext {
-        "go" | "java" | "kt" | "cs" | "rs" | "dart" => extract_go_scenario_titles(test_file_path),
-        "py" => extractors::extract_python_scenario_titles(test_file_path),
-        "exs" | "fs" | "clj" => Ok(HashSet::new()), // auto-bind frameworks
+        "rs" | "dart" => extract_comment_scenario_titles(test_file_path),
+        "fs" => Ok(HashSet::new()), // auto-bind framework
         _ => extract_ts_scenario_titles(test_file_path),
     }
 }
@@ -646,17 +639,17 @@ fn extract_ts_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, 
     Ok(titles)
 }
 
-/// Extracts scenario titles from a Go (or other language) test file by
-/// scanning for `// Scenario: Title` comment markers.
+/// Extracts scenario titles from a test file by scanning for
+/// `// Scenario: Title` comment markers.
 ///
 /// # Errors
 ///
 /// Returns an error if the file cannot be read.
-fn extract_go_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, Error> {
+fn extract_comment_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, Error> {
     let content = fs::read_to_string(p)?;
     let mut titles = HashSet::new();
     for line in content.lines() {
-        if let Some(caps) = go_scenario_comment_re().captures(line) {
+        if let Some(caps) = scenario_comment_re().captures(line) {
             titles.insert(normalize_ws(
                 caps.get(1)
                     .expect("capture group 1 always present")
@@ -708,14 +701,8 @@ pub fn extract_all_step_texts(
         let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
         let _ = match ext {
             "ts" | "tsx" | "js" | "jsx" => extract_ts_step_texts(path, &mut sm),
-            "go" => extract_go_step_texts(path, &mut sm),
-            "java" | "kt" => extractors::extract_jvm_step_texts(path, &mut sm),
-            "py" => extractors::extract_python_step_texts(path, &mut sm),
-            "ex" | "exs" => extractors::extract_elixir_step_texts(path, &mut sm),
             "rs" => extractors::extract_rust_step_texts(path, &mut sm),
-            "cs" => extractors::extract_csharp_step_texts(path, &mut sm),
             "fs" => extractors::extract_fsharp_step_texts(path, &mut sm),
-            "clj" => extractors::extract_clojure_step_texts(path, &mut sm),
             "dart" => extractors::extract_dart_step_texts(path, &mut sm),
             _ => Ok(()),
         };
@@ -749,28 +736,6 @@ fn extract_ts_step_texts(path: &Path, sm: &mut StepMatcher) -> std::result::Resu
             .as_str();
         if let Ok(re) = Regex::new(pattern) {
             sm.add_pattern_with_origin(re, pattern, &path_s);
-        }
-    }
-    Ok(())
-}
-
-/// Extracts step definitions from a Go godog source file by scanning for godog step registration calls.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-fn extract_go_step_texts(path: &Path, sm: &mut StepMatcher) -> std::result::Result<(), Error> {
-    let content = fs::read_to_string(path)?;
-    let path_s = path.to_string_lossy();
-    for line in content.lines() {
-        for caps in go_step_re().captures_iter(line) {
-            let pattern = caps
-                .get(1)
-                .expect("capture group 1 always present")
-                .as_str();
-            if let Ok(re) = Regex::new(pattern) {
-                sm.add_pattern_with_origin(re, pattern, &path_s);
-            }
         }
     }
     Ok(())
@@ -962,13 +927,13 @@ mod tests {
     fn extract_all_step_texts_aggregates_across_languages() {
         let tmp = TempDir::new().unwrap();
         std::fs::write(
-            tmp.path().join("steps.go"),
-            "func step(sc *godog.ScenarioContext) {\n  sc.Step(`^user logs in$`, login)\n}\n",
+            tmp.path().join("steps.rs"),
+            "#[when(\"user logs in\")]\nfn when_login() {}\n",
         )
         .unwrap();
         std::fs::write(
-            tmp.path().join("Steps.java"),
-            "@Given(\"a user\")\nvoid step() {}\n",
+            tmp.path().join("steps.dart"),
+            "s.given(\"a user\", (Scenario s) async {});\n",
         )
         .unwrap();
         let sm = extract_all_step_texts(tmp.path(), &[]).unwrap();
@@ -987,8 +952,8 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         std::fs::create_dir_all(tmp.path().join("content/learning/code")).unwrap();
         std::fs::write(
-            tmp.path().join("content/learning/code/test_bdd_example.py"),
-            "@given(\"a taught condition\")\ndef given_taught():\n    pass\n",
+            tmp.path().join("content/learning/code/bdd_example.dart"),
+            "s.given(\"a taught condition\", (Scenario s) async {});\n",
         )
         .unwrap();
         std::fs::create_dir_all(tmp.path().join("src")).unwrap();
@@ -1318,20 +1283,20 @@ mod tests {
     }
 
     #[test]
-    fn extract_go_scenario_titles_picks_up_comment() {
+    fn extract_comment_scenario_titles_picks_up_comment() {
         let tmp = TempDir::new().unwrap();
-        let p = tmp.path().join("x_test.go");
-        std::fs::write(&p, "// Scenario: Foo bar baz\nfunc Test() {}\n").unwrap();
-        let titles = extract_go_scenario_titles(&p).unwrap();
+        let p = tmp.path().join("x_test.rs");
+        std::fs::write(&p, "// Scenario: Foo bar baz\nfn test() {}\n").unwrap();
+        let titles = extract_comment_scenario_titles(&p).unwrap();
         assert!(titles.contains("Foo bar baz"));
     }
 
     #[test]
     fn extract_scenario_titles_dispatches_by_extension() {
         let tmp = TempDir::new().unwrap();
-        let go = tmp.path().join("x_test.go");
-        std::fs::write(&go, "// Scenario: Go T\n").unwrap();
-        assert!(extract_scenario_titles(&go).unwrap().contains("Go T"));
+        let rs = tmp.path().join("x_test.rs");
+        std::fs::write(&rs, "// Scenario: Rust T\n").unwrap();
+        assert!(extract_scenario_titles(&rs).unwrap().contains("Rust T"));
 
         let ts = tmp.path().join("x.test.ts");
         std::fs::write(&ts, "Scenario(\"TS T\", () => {});\n").unwrap();
@@ -1395,8 +1360,8 @@ mod tests {
         )
         .unwrap();
         std::fs::write(
-            app.join("steps.go"),
-            "// stub\nfunc x(sc *godog.ScenarioContext) {\n  sc.Step(`^user logs in$`, fn)\n}\n",
+            app.join("steps.rs"),
+            "// stub\n#[given(\"user logs in\")]\nfn given_login() {}\n",
         )
         .unwrap();
         let opts = ScanOptions {
