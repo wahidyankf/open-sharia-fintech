@@ -300,7 +300,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 1a (TDD RED) — plans/done/2026-08-15__optimize-governance-md
     //
     // FR-1.10/FR-1.11/FR-5.8: two new repeatable flags land on
     // `ReadmeIndexAuditArgs` — `--paths` (overrides `DEFAULT_PATHS`) and

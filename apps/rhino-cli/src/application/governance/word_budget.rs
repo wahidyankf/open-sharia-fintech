@@ -782,7 +782,7 @@ resolved_tree:
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 1a (TDD RED) — plans/done/2026-08-15__optimize-governance-md
     //
     // Tests below cover every FR-1/FR-2 Gherkin scenario in `prd.md`, plus the
     // new select-then-classify overlap logic from `tech-docs.md` §1.1/§1.3.

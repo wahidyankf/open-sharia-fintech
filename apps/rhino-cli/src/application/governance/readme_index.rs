@@ -1058,7 +1058,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 1a (TDD RED) — plans/done/2026-08-15__optimize-governance-md
     //
     // Tests below cover every FR-3 Gherkin scenario in `prd.md` that is
     // testable at this module's boundary. Two scenarios are deliberately
