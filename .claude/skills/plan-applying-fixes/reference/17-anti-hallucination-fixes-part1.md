@@ -22,8 +22,9 @@ jq -r '.dependencies.<pkg> // .devDependencies.<pkg>' package.json
 # Symbol replacement — confirm grep evidence
 rg -l "<symbol>" apps/ libs/
 
-# Agent / skill name replacement — confirm definition exists
-test -f .claude/agents/<name>.md && echo "HIGH apply" || echo "MEDIUM manual"
+# Agent / skill name replacement — confirm definition exists (agents live in nested role
+# subfolders, e.g. .claude/agents/swe/swe-typescript-dev.md, not flat under .claude/agents/)
+find .claude/agents -name '<name>.md' | grep -q . && echo "HIGH apply" || echo "MEDIUM manual"
 ```
 
 If the recipe fails: search for a correct value, re-run the recipe with it; if still no correct

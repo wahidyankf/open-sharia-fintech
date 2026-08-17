@@ -19,8 +19,9 @@ When the same procedural pattern appears duplicated **across 3 or more agents** 
 threshold — below 3, leave it inline; extracting a Skill for 2 agents is not worth the indirection)
 and no existing Skill covers it:
 
-1. Confirm the 3+-agent threshold via Grep across `.claude/agents/*.md` for the pattern's
-   distinctive phrasing.
+1. Confirm the 3+-agent threshold via a recursive Grep across `.claude/agents/` for the pattern's
+   distinctive phrasing (`.claude/agents/` is nested into role subfolders — a non-recursive
+   `.claude/agents/*.md` glob only matches `README.md` and silently misses every agent).
 2. Design the new Skill: `SKILL.md` plus `reference/NN-*.md` modules as needed, following the
    established shape (frontmatter `name`/`description`/`when_to_use`, Overview, reference
    pointers, Core Principles, Related Agents).

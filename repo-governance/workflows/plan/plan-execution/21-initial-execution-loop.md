@@ -18,7 +18,9 @@ For each checklist item in reading order (phase by phase, item by item, includin
 2. **Pre-Item Repo-Grounding (HARD GATE — Anti-Hallucination)**: before delegating, repo-ground every claim in the checkbox per the [Plan Anti-Hallucination Convention §Repo-Grounding Rule](../../../development/quality/plan-anti-hallucination/05-repo-grounding-rule-hard.md#repo-grounding-rule-hard):
    - For each cited file path: `Bash test -f <path>`. If missing AND not marked `_New file_`: HALT the item, escalate to user with the failing path (do not invent a substitute).
    - For each cited Nx target: `jq -r '.targets | keys[]' apps/<project>/project.json | grep -qx '<target>'`. If missing AND not marked `_New target_`: HALT the item.
-   - For each cited agent: `test -f .claude/agents/<name>.md`. If missing: HALT (no fabricating).
+   - For each cited agent: `find .claude/agents -name '<name>.md'` returns a match (agent
+     definitions live in nested role subfolders, e.g. `.claude/agents/swe/swe-typescript-dev.md`,
+     not flat under `.claude/agents/`). If missing: HALT (no fabricating).
    - For each cited symbol: `Grep` for evidence. Missing AND not marked `_New symbol_`: HALT.
    - **Refuse-on-uncertainty**: if a cited fact cannot be grounded and the checkbox does not mark it as new, the orchestrator MUST escalate rather than guess. Surface the failure to the user with the specific claim and the missing artifact.
 3. **Analyze the item** to determine whether to delegate to a specialized agent (see Agent Selection) or execute directly. If the checkbox carries a `_Suggested executor:_` annotation, use that agent (Priority 0). If the checklist text is otherwise ambiguous, the orchestrator MAY consult the plan's `brd.md` / `prd.md` / `tech-docs.md` for additional context — business intent lives in `brd.md`, product scope and Gherkin acceptance criteria in `prd.md`, architecture decisions in `tech-docs.md`.

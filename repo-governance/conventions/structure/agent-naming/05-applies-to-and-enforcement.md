@@ -27,7 +27,7 @@ Filenames MUST be identical pair-for-pair between the two directories. Every `.c
 `repo-rules-checker` MUST run the following audit command as part of every governance pass:
 
 ```bash
-ls .claude/agents/*.md \
+find .claude/agents -name '*.md' ! -name README.md \
   | sed 's|.*/||; s|\.md$||' \
   | grep -vE -- '-(maker|checker|fixer|dev|deployer|manager|tester|researcher)$' \
   | grep -v '^README$'

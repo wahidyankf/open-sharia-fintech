@@ -38,11 +38,13 @@ deterministic drift before spending time on web research.
 
 ## Invariant 4 — Agent count parity
 
-- **Tool**: `ls .claude/agents/*.md | wc -l` and same for `.opencode/agents/*.md`
+- **Tool**: `find .claude/agents -name '*.md' | wc -l` and same for `.opencode/agents/*.md`
+  (`.claude/agents/` is nested into role subfolders; `.opencode/agents/` is flat — `find` is
+  required on the `.claude/` side, a plain `ls` glob only sees the top-level `README.md`)
 - **Pass**: counts equal
 - **Fail**: counts differ — diff via
-  `comm -3 <(ls .claude/agents | sort) <(ls .opencode/agents | sort)`, report only-`.claude` and
-  only-`.opencode` entries
+  `comm -3 <(find .claude/agents -name '*.md' -exec basename {} \; | sort) <(ls .opencode/agents | sort)`,
+  report only-`.claude` and only-`.opencode` entries
 - **Default criticality**: HIGH (sets diverge → contributors get different agent inventories).
   **Confidence**: HIGH
 - **Known intentional skip**: `README.md` is present in both directories as an index file, not
@@ -53,9 +55,10 @@ deterministic drift before spending time on web research.
 
 ## Invariant 5 — Translation-map coverage
 
-- **Tools**: color map — `grep -h "^color:" .claude/agents/*.md | sort -u` vs. the Color
-  Translation Table in `repo-governance/development/agents/ai-agents.md`; tier map —
-  `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u` vs. the capability-tier
+- **Tools**: color map — `grep -rh "^color:" .claude/agents/ | sort -u` (recursive — `.claude/agents/`
+  is nested, a non-recursive glob silently returns nothing) vs. the Color Translation Table in
+  `repo-governance/development/agents/ai-agents.md`; tier map —
+  `grep -rh "^model:" .claude/agents/ .opencode/agents/*.md | sort -u` vs. the capability-tier
   map in `repo-governance/development/agents/model-selection.md`
 - **Pass**: every distinct frontmatter value appears in the corresponding map
 - **Fail**: any value not in the map — report the missing entry

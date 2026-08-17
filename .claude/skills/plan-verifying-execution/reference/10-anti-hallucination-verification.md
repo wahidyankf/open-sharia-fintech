@@ -26,7 +26,8 @@ occurrence (may be legitimate version bump during execution; flag for review).
 (the test was claimed but never written).
 
 **E. Agent-name claims** — for every agent name cited (especially `_Suggested executor:_`
-annotations): `Bash test -f .claude/agents/<name>.md`. Missing: **HIGH** per occurrence
+annotations): `find .claude/agents -name '<name>.md'` returns a match (agent definitions live in
+nested role subfolders, not flat under `.claude/agents/`). Missing: **HIGH** per occurrence
 (Anti-Pattern AP-7).
 
 **F. Behavior claims** — for every claim about library or framework behavior in tech-docs.md: verify
