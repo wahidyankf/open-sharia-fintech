@@ -18,15 +18,15 @@ matching heading exists — but it only ever sees **one repo at a time**, so a l
 valid in `ose-public` becomes a latent break the moment the file lands somewhere else.
 
 This is not hypothetical. During Phase 6 of `adopt-cursor-platform-binding`, `ose-public` governance
-was copied verbatim into `ose-primer`, and the sibling's own pre-push gate blocked on a
+was copied verbatim into a sibling repo, and that repo's own pre-push gate blocked on a
 `#platform-binding-color-translation` anchor that resolved cleanly in `ose-public` but had no
-corresponding heading in `ose-primer`'s `ai-agents.md`. The fix was to add a
+corresponding heading in the sibling's `ai-agents.md`. The fix was to add a
 `### Platform Binding Color Translation` heading in the sibling. The defect was real, but it was
 found by the **destination** repo's push gate, mid-landing, rather than by anything the landing
 itself ran — so it surfaced as a blocker at the worst moment instead of as a pre-flight check.
 
 The failure mode generalizes past anchors to any relative link whose target path exists in the source
-repo and not in the destination: `ose-primer` and `ose-private` each ship a different project set, so
+repo and not in the destination: `ose-private` ships a different project set, so
 a link into `apps/` or `docs/` that is fine upstream can point at nothing downstream.
 
 ## Why now
@@ -35,9 +35,9 @@ Multi-repo landings are now routine rather than exceptional, and each one is ano
 reintroduce the same class of break. The parity boundaries make this worse, not better, because they
 cover **different repo sets** and must not be conflated:
 
-- **Content parity** is `ose-public` ↔ `ose-primer` only, and it is the boundary along which
+- **Content parity** is `ose-public` → `ose-private` only, and it is the boundary along which
   governance prose actually flows.
-- **`apps/rhino-cli` byte-identity** spans `ose-public`, `ose-primer`, and `ose-private` — a
+- **`apps/rhino-cli` byte-identity** spans `ose-public` and `ose-private` — a
   code-shaped boundary that says nothing about doc anchors.
 - Governance copies into `ose-private` happen **manually, case by case**; there is no
   classifier-driven content sync between it and `ose-public`, so nothing systematic catches drift
@@ -102,13 +102,13 @@ Out of scope (for now):
 - **Where does the check run?** A cross-repo check needs both trees present. Does it run in the
   landing worktree (which already has the source), in the destination's CI, or as an explicit step in
   the parity workflow? (open)
-- **How does it read the destination repo**, given `ose-primer` and `ose-private` are bare repos and
-  `ose-private` is private with no public read access? (open)
+- **How does it read the destination repo**, given `ose-private` may be a bare repo and
+  is private with no public read access? (open)
 - **Which files count as "shared governance surface"?** An explicit registry is more predictable but
   needs maintenance; deriving the set from what a landing actually copies is self-maintaining but
   only knows the answer mid-landing. (open)
-- **Divergence is sometimes correct.** Siblings legitimately differ — `ose-primer` uses different
-  governance-target naming than `ose-public` for some targets — so a strict "anchors must match"
+- **Divergence is sometimes correct.** Siblings legitimately differ — `ose-private` ships a
+  different project set than `ose-public` — so a strict "anchors must match"
   rule would produce false positives. The check needs a way to record intentional divergence. (open)
 - Rabbit hole: this could grow into a general cross-repo doc-diff engine. It should stay a link and
   anchor resolution check.

@@ -30,8 +30,8 @@ follows good visual-design practice — the design-team advocate of the live-sit
 8. [Output Modes Overview](reference/11-output-modes-overview.md) and
    [Output Mode: plan](reference/12-output-mode-plan.md) — the output-mode selection table and the
    default `plan` mode's document set.
-9. [Output Modes: delivery/local-temp, and Procedure](reference/13-output-modes-delivery-localtemp-and-procedure.md)
-   — the `delivery` and `local-temp` modes, and the procedure summary.
+9. [Output Modes: delivery/local-tmp, and Procedure](reference/13-output-modes-delivery-localtmp-and-procedure.md)
+   — the `delivery` and `local-tmp` modes, and the procedure summary.
 10. [Quality Guidelines and Constraints](reference/14-quality-guidelines-and-constraints.md) — quality
     guidelines and hard constraints.
 

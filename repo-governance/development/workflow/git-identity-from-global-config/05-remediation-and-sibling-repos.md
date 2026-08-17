@@ -1,6 +1,6 @@
 ---
 title: "Remediation and Sibling Repos"
-description: The commands to remove an existing per-repo [user] override, and how the behavioral guardrail applies across the three sibling repositories.
+description: The commands to remove an existing per-repo [user] override, and how the behavioral guardrail applies across the sibling repositories.
 category: explanation
 subcategory: development
 tags:
@@ -10,7 +10,7 @@ tags:
   - security
   - reproducibility
 created: 2026-05-19
-when_to_use: Use when an existing `[user]` override must be removed, or when verifying the guardrail's coverage across ose-public, ose-private, and ose-primer.
+when_to_use: Use when an existing `[user]` override must be removed, or when verifying the guardrail's coverage across ose-public and ose-private.
 ---
 
 # Remediation and Sibling Repos
@@ -48,10 +48,9 @@ behavioral Git Identity Guardrail
 ([Standard 3](./03-standards.md#standard-3-enforcement-is-a-behavioral-guardrail-not-a-pre-commit-script))
 is a shared `AGENTS.md` guardrail and
 applies identically wherever each sibling's own `AGENTS.md` copy is loaded. Human developers in
-any of the three repos should periodically verify that no `[user]` section exists in that repo's
+either repo should periodically verify that no `[user]` section exists in that repo's
 `.git/config`:
 
 ```bash
 git -C /path/to/ose-private config --local --list | grep "^user\." || echo "clean"
-git -C /path/to/ose-primer config --local --list | grep "^user\." || echo "clean"
 ```

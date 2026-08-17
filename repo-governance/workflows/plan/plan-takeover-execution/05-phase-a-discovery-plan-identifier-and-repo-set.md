@@ -28,8 +28,8 @@ for A2's own ground-truth verification. Nothing found here is itself evidence; t
 would a colleague's verbal summary — useful context, independently checked before acting on it. Absence
 of a handover document is a non-event, not an anomaly — most plans will never have one.
 
-**A1. Resolve the candidate repo set.** Always include: the current repo, plus `ose-primer` and
-`ose-private` whenever they exist as sibling checkouts reachable from the same parent directory as
+**A1. Resolve the candidate repo set.** Always include: the current repo, plus `ose-private`
+whenever it exists as a sibling checkout reachable from the same parent directory as
 this repo (per [Related Repositories](../../../../docs/reference/related-repositories.md)) — this is a
 **floor, not a ceiling**. If the plan's own `README.md`/`delivery.md` names other repos in its scope
 (an explicit "Affected subrepos and apps" table, or a multi-repo-parity companion plan), add those

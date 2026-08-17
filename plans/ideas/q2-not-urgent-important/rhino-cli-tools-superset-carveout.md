@@ -115,8 +115,7 @@ Out of scope:
   divergence is checked, not about adding more of it.
 - `beaver-nest`'s `rhino-cli` fork — out of the enforced byte-identity boundary per the
   `sdlc-gate-registry-enforcement` Scope Amendment (2026-08-07); this brief inherits that same
-  two-repo (`ose-public`, `ose-private`) scope, with `ose-primer` synced periodically rather than
-  continuously per that same amendment.
+  two-repo (`ose-public`, `ose-private`) scope; no third repo is synced.
 
 ## Risks & open questions
 

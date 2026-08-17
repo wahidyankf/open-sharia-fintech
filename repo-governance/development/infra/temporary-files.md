@@ -14,7 +14,7 @@ when_to_use: Use when an AI agent needs to create a temporary uncommitted file o
 
 # Temporary Files Convention
 
-The rule is simple — `generated-reports/` for reports, `local-temp/` for everything else — with the details linked below.
+The rule is simple — `generated-reports/` for reports, `local-tmp/` for everything else — with the details linked below.
 
 ## Rules and Report Generation
 
@@ -35,7 +35,7 @@ The rule is simple — `generated-reports/` for reports, `local-temp/` for every
 - [Report File Naming Standard — Repository Audit and Link Validation Reports](./temporary-files/09-report-file-naming-early-report-types.md) — Filename pattern and retention for repo-rules-checker and docs-link-checker reports. Use when naming a repo-rules-checker or docs-link-checker report.
 - [Report File Naming Standard — Fixer Reports (Universal Pattern)](./temporary-files/10-fixer-reports-universal-pattern.md) — The shared fixer-report naming, audit-fix pairing, and content structure fixers follow. Use when a fixer agent generates its fix report.
 - [Report File Naming Standard — Content, Documentation, and Plan Validation Reports](./temporary-files/11-report-file-naming-content-and-plan-reports.md) — Filename patterns for the content, docs, plan, and plan-execution families. Use when naming a content, docs, or plan report.
-- [`local-temp/`](./temporary-files/12-local-temp-directory.md) — What local-temp/ is for and the predicates for reclaiming anything inside it. Use when deciding if a file belongs in local-temp/.
+- [`local-tmp/`](./temporary-files/12-local-tmp-directory.md) — What local-tmp/ is for and the predicates for reclaiming anything inside it. Use when deciding if a file belongs in local-tmp/.
 
 ## Usage and Reference
 

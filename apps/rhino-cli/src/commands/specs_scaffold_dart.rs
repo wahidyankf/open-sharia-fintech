@@ -143,7 +143,7 @@ mod tests {
     // replaced the real scaffolder with a permanent no-op stub ("dormant in
     // ose-public") while `internal::contracts::dart_scaffold` (the working
     // algorithm, with its own passing unit tests) sat unwired and unreachable.
-    // ose-primer's `crud-fe-dart-flutterweb` Nx target pipes real
+    // A polyglot consumer's `crud-fe-dart-flutterweb` Nx target pipes real
     // OpenAPI-generated Dart models through this exact command before running
     // `flutter pub get`, so a no-op regressed that pipeline silently. ---
 

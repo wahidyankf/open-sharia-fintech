@@ -27,7 +27,7 @@ gh pr create --draft --base main
 
 **Also correct — a declared direct-push mode for a trivial `ose-private` infrastructure-as-code
 change** (the one repo where this mode has an executable path; `main` is branch-protected,
-including for admins, in `ose-public` and `ose-primer` — see [Plans Organization Convention
+including for admins, in `ose-public` — see [Plans Organization Convention
 §Per-Repository Delivery Mode
 Restrictions (HARD RULE)](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)):
 

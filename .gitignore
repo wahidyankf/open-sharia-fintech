@@ -80,10 +80,9 @@ Thumbs.db
 
 # Temporary files
 tmp/
-temp/
 *.tmp
-local-temp/
-local-tmp/
+local-tmp/*
+!local-tmp/.gitkeep
 
 # Generated reports
 generated-reports/

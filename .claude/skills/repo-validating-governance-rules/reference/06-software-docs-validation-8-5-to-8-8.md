@@ -27,8 +27,9 @@ README could be more comprehensive.
 ## 8.8 Version Documentation Consistency
 
 Pattern: `release-<version>.md` inside the language directory. Check README version mentions have
-corresponding docs; LTS coverage per language (Java: 17/21/25; Python: 3.11+; TypeScript: recent
-majors; Go: supported versions; Elixir: recent releases). **CRITICAL**: README mentions a version
+corresponding docs; LTS coverage per language (TypeScript: recent majors; .NET/F#: current LTS;
+Rust: recent stable editions) — read the language's own README for the set it claims, never a
+fixed list. **CRITICAL**: README mentions a version
 with no corresponding doc. **HIGH**: missing LTS version doc. **MEDIUM**: missing non-LTS recent
 version. **LOW**: could document additional versions.
 

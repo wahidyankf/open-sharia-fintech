@@ -24,65 +24,64 @@ created: 2026-02-04
 ```
 Is this content about {LANGUAGE} fundamentals or generic patterns?
 ├─ Yes → ayokoding-www (educational content)
-│   Examples: syntax, by-example code, generic error patterns, DDD in Go
+│   Examples: syntax, by-example code, generic error patterns, DDD in Rust
 │
 └─ No → Is this content OSE Platform-specific?
     ├─ Yes → docs/explanation/ (style guide)
-    │   Examples: "We use Gin for HTTP", "Name variables like this in OSE Platform"
+    │   Examples: "We use Axum for HTTP", "Name bindings like this in OSE Platform"
     │
     └─ No → Still ayokoding-www (generic programming knowledge)
 ```
 
 **Example - Error Handling**:
 
-**ayokoding-www** (`apps/ayokoding-www/content/en/learn/.../golang/in-practice/error-handling.md`):
+**ayokoding-www** (a Rust in-practice error-handling lesson):
 
 ````markdown
-# Error Handling in Go
+# Error Handling in Rust
 
-This guide covers generic Go error patterns.
+This guide covers generic Rust error patterns.
 
-## Error Interface
+## The Error Trait
 
-Go's error interface is simple:
+Rust models fallibility in the type system:
 
-```go
-type error interface {
-    Error() string
+```rust
+pub enum Result<T, E> {
+    Ok(T),
+    Err(E),
 }
 ```
 ````
 
-Use `errors.New()` to create errors, `fmt.Errorf()` to wrap them...
+Use `thiserror` to define error enums, `?` to propagate them...
 
 ````
 
-**docs/explanation/** (`docs/explanation/.../golang/error-handling.md`):
+**docs/explanation/** (`docs/explanation/.../rust/error-handling.md`):
 
 ```markdown
-# Go Error Handling - OSE Platform Standards
+# Rust Error Handling - OSE Platform Standards
 
-**Prerequisite**: Complete [ayokoding-www Error Handling](https://ayokoding.com/en/learn/.../golang/in-practice/error-handling/) first.
+**Prerequisite**: Complete the ayokoding-www Rust error-handling lesson first.
 
 ## OSE Platform Error Standards
 
 In OSE Platform, all errors MUST:
 
-1. Use structured logging with `slog` package
+1. Use structured logging with the `tracing` crate
 2. Include request IDs for tracing
 3. Follow error code taxonomy: `ERRZAKAT001`, `ERRWAQF001`
 
 Example:
 
-```go
+```rust
 // OSE Platform pattern
-if err != nil {
-    logger.Error("zakat calculation failed",
-        "request_id", reqID,
-        "error_code", "ERRZAKAT001",
-        "error", err)
-    return nil, fmt.Errorf("ERRZAKAT001: %w", err)
-}
+let total = calculate_zakat(&input).map_err(|err| {
+    tracing::error!(request_id = %req_id, error_code = "ERRZAKAT001", %err,
+        "zakat calculation failed");
+    ZakatError::Calculation { code: "ERRZAKAT001", source: err }
+})?;
 ````
 
 **Why**: Enables distributed tracing, compliance auditing, Shariah audit trails.
@@ -91,7 +90,7 @@ if err != nil {
 
 **Key differences**:
 
-- **ayokoding-www**: Generic Go error patterns (what `error` interface is, how to use `errors.New()`)
+- **ayokoding-www**: Generic Rust error patterns (what `Result` is, how to define an error enum)
 - **docs/explanation/**: OSE Platform-specific error conventions (structured logging, error codes, audit requirements)
 
 ## Rule 5: Cross-Referencing Pattern

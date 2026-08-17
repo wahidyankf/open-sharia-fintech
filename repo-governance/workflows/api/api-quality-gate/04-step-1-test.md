@@ -7,7 +7,7 @@ when_to_use: Use when running the first step of the API quality gate loop.
 # Step 1: Test (Agent Delegation)
 
 Invoke `api-exploratory-tester` with the `scope` input and `output-mode: delivery` when running
-inside a plan, or `local-temp` for a throwaway pass.
+inside a plan, or `local-tmp` for a throwaway pass.
 
 The tester exercises, at minimum: contract conformance (status codes, response shapes, error
 envelopes), auth/authz boundaries, pagination, idempotency, boundary and edge-case payloads, and —
@@ -15,5 +15,5 @@ for GraphQL — nullability, partial errors, and query depth. It compares observ
 both the contract and existing `specs/**` Gherkin.
 
 **Output**: `AET-###` findings, written to the destination the selected `output-mode` directs — an
-existing plan's `delivery.md` under `delivery`, or `local-temp/<slug>/findings.md` under
-`local-temp`. The tester writes nowhere else; in particular it does not emit to `generated-reports/`.
+existing plan's `delivery.md` under `delivery`, or `local-tmp/<slug>/findings.md` under
+`local-tmp`. The tester writes nowhere else; in particular it does not emit to `generated-reports/`.

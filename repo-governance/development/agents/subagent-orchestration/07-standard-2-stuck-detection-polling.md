@@ -37,7 +37,7 @@ When a stuck agent is detected:
 
 1. Call `TaskStop` with the agent's `agentId` (obtained from the Agent-tool spawn response)
 2. Relaunch the same agent with the same prompt and output path
-3. Log the relaunch in the batch tracking state (e.g., `local-temp/todo.md`) so the main agent can detect if the same agent stalls a second time
+3. Log the relaunch in the batch tracking state (e.g., `local-tmp/todo.md`) so the main agent can detect if the same agent stalls a second time
 4. If a relaunched agent stalls again, reduce the chunk size and relaunch with narrower scope
 
 **Why relaunch works**: The stuck condition is almost always caused by output-token-budget exhaustion during the agent's internal planning phase. The agent consumes its token budget reasoning about structure before generating output, leaving little budget for the actual content. Relaunch starts fresh with full token budget; the agent typically completes normally because it encounters fewer planning branches on a familiar task.

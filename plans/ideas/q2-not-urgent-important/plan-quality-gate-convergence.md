@@ -57,13 +57,13 @@ substrate worth building once rather than a one-off tweak.
 - **Parallel operationally-disjoint lenses** per round (each declaring the artifact set it reads;
   a subset declaration is rejected as a relabel) and **saturation-based termination** — stop when the
   new-class discovery curve flattens across disjoint lenses, never on a round count.
-- Shared idempotent substrate with the sibling plan; tri-repo propagation of the rhino-cli pieces.
+- Shared idempotent substrate with the sibling plan; propagation of the rhino-cli pieces to `ose-private`.
 
 ## Rough scope & non-goals
 
 In scope: the workflow's step model / termination criteria, the new registry, the deterministic
 validator plus Gherkin tree, the four plan-\* agents and the plan-authoring skill, binding
-regeneration, and tri-repo propagation.
+regeneration, and propagation to `ose-private`.
 
 Out of scope (for now): editing the audited plan itself (it is evidence, not a target); the
 PR-review quality gate (the sibling plan owns it); any relaxation of a check, threshold, or

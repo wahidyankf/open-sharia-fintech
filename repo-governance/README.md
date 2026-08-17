@@ -59,6 +59,7 @@ Use the question below to decide where a new governance document belongs.
 | What documentation rule should we follow?         | [`conventions/`](./conventions/README.md) — documentation conventions and standards                        |
 | How should we develop, test, or operate software? | [`development/`](./development/README.md) — internal development guidance for delivery work                |
 | When should a multi-step process run?             | [`workflows/`](./workflows/README.md) — composes agents and procedures toward a goal                       |
+| What does a disputed term actually cover?         | [`glossary.md`](./glossary.md) — shared vocabulary for terms whose scope crosses directories               |
 
 Keep governance prose vendor-neutral. Details that apply only to a particular tool or platform belong in its platform-binding documentation, as described by the [Governance Vendor-Independence Convention](./conventions/structure/governance-vendor-independence.md).
 

@@ -34,10 +34,10 @@ behavior/rhino-cli/gherkin/
 
 ### ddd
 
-| File             | Command(s) | Scenarios |
-| ---------------- | ---------- | --------- |
-| `ddd-bc.feature` | `ddd bc`   | 11        |
-| `ddd-ul.feature` | `ddd ul`   | 7         |
+| File             | Command(s)                               | Scenarios |
+| ---------------- | ---------------------------------------- | --------- |
+| `ddd-bc.feature` | `specs structure validate` (`bc:` layer) | 11        |
+| `ddd-ul.feature` | `specs structure validate` (`ul:` layer) | 7         |
 
 ### env
 
@@ -74,17 +74,17 @@ behavior/rhino-cli/gherkin/
 
 ### harness
 
-| File                                                  | Command(s)                             | Scenarios |
-| ----------------------------------------------------- | -------------------------------------- | --------- |
-| `agents-bindings.feature`                             | `harness bindings validate`/`generate` | 8         |
-| `agents-detect-duplication.feature`                   | `harness duplication validate`         | 4         |
-| `agents-sync.feature`                                 | `harness sync validate`                | 7         |
-| `agents-validate-claude.feature`                      | `harness claude validate`              | 5         |
-| `agents-validate-naming.feature`                      | `harness naming validate`              | 4         |
-| `repo-governance-agents-md-size.feature`              | `governance word-budget validate`      | 3         |
-| `repo-governance-instruction-size-governance.feature` | `governance word-budget validate`      | 5         |
-| `repo-governance-instruction-size-pre-push.feature`   | `governance word-budget validate`      | 3         |
-| `repo-governance-instruction-size.feature`            | `governance word-budget validate`      | 6         |
+| File                                        | Command(s)                             | Scenarios |
+| ------------------------------------------- | -------------------------------------- | --------- |
+| `agents-bindings.feature`                   | `harness bindings validate`/`generate` | 8         |
+| `agents-detect-duplication.feature`         | `harness duplication validate`         | 4         |
+| `agents-sync.feature`                       | `harness sync validate`                | 7         |
+| `agents-validate-claude.feature`            | `harness claude validate`              | 5         |
+| `agents-validate-naming.feature`            | `harness naming validate`              | 4         |
+| `governance-word-budget-agents-md.feature`  | `governance word-budget validate`      | 3         |
+| `governance-word-budget-pre-push.feature`   | `governance word-budget validate`      | 3         |
+| `governance-word-budget-rule.feature`       | `governance word-budget validate`      | 5         |
+| `governance-word-budget-thresholds.feature` | `governance word-budget validate`      | 6         |
 
 ### md
 
@@ -156,3 +156,19 @@ behavior/rhino-cli/gherkin/
 
 See [Specs Directory Structure Convention](../../../../../../repo-governance/conventions/structure/specs-directory-structure.md)
 for the canonical purpose of this folder.
+
+- [Contracts Domain](./contracts/README.md)
+- [rhino — behavior/rhino-cli/gherkin/convention](./convention/README.md)
+- [rhino — behavior/rhino-cli/gherkin/cursor-binding](./cursor-binding/README.md)
+- [rhino — behavior/rhino-cli/gherkin/ddd](./ddd/README.md)
+- [rhino — behavior/rhino-cli/gherkin/env](./env/README.md)
+- [Gate Gherkin Specs](./gate/README.md)
+- [rhino — behavior/rhino-cli/gherkin/git](./git/README.md)
+- [rhino — behavior/rhino-cli/gherkin/governance](./governance/README.md)
+- [rhino — behavior/rhino-cli/gherkin/harness](./harness/README.md)
+- [rhino — behavior/rhino-cli/gherkin/md](./md/README.md)
+- [rhino — behavior/rhino-cli/gherkin/repo-governance](./repo-governance/README.md)
+- [rhino — behavior/rhino-cli/gherkin/spec-coverage](./spec-coverage/README.md)
+- [rhino — behavior/rhino-cli/gherkin/system](./system/README.md)
+- [Test Coverage Domain](./test-coverage/README.md)
+- [rhino — behavior/rhino-cli/gherkin/workflows](./workflows/README.md)

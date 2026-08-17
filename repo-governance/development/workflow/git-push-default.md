@@ -17,7 +17,7 @@ when_to_use: Use before pushing anything, or when a plan needs to override the w
 
 The repo-wide default integration target for every push is a **PR branch opened against `main`**
 (the `worktree-to-pr` delivery mode). Direct push to `origin main` has **no executable path at all
-in `ose-public` or `ose-primer`** — `main` is branch-protected against direct pushes for every
+in `ose-public`** — `main` is branch-protected against direct pushes for every
 actor, including admins. In `ose-private`, the direct-push modes remain available only for an
 explicitly selected infrastructure-as-code plan; `main-to-origin-main` further requires an
 `.md`-only change set or explicit user go-ahead (Standard 2). This applies to general work and

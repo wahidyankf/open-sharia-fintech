@@ -1,8 +1,12 @@
-# Propagate the optimize-cis-era `apps/rhino-cli` byte-identity drift to `ose-primer`/`ose-private`
+# Propagate the optimize-cis-era `apps/rhino-cli` byte-identity drift to `ose-private`
 
-One-line summary: `apps/rhino-cli` byte-identity parity across `ose-public`/`ose-primer`/`ose-private`
-— a zero-carve-out MUST boundary — is currently broken across a 17-file union, and both sibling
-`optimize-cis` PRs are already merged, so nothing propagates it automatically.
+One-line summary: `apps/rhino-cli` byte-identity parity across `ose-public`/`ose-private`
+— a zero-carve-out MUST boundary — is currently broken, and the sibling
+`optimize-cis` PR is already merged, so nothing propagates it automatically.
+
+> **Scope note (2026-08-16)**: `ose-primer` left the parity set and carries no propagation
+> obligation. The 2026-08-09 measurements below are preserved verbatim as evidence, but only the
+> `ose-private` half of the drift is actionable; the `ose-primer`-only files are out of scope.
 
 ## Problem / context
 
@@ -79,23 +83,23 @@ either sibling's `rhino-cli` changes independently before this is closed.
   some are plainly this `optimize-cis` PR's own Phase 2-9 work that Phase 10 propagated and a
   sibling then diverged from post-merge; others may be the reverse. Do not assume `ose-public` wins
   by default.
-- **Step 2 — propagate via `plan-multi-repo-parity-planning`.** Author the propagation as a proper
-  parallel-fan-out plan (`ose-primer` and `ose-private` are independent DAG nodes, not a chain) per
-  that workflow, each landing in its own worktree/PR.
-- **Step 3 — re-verify.** `parity manifest validate` must exit 0 with an identical hash in all three
-  repos before this is closed. Re-tick `optimize-cis`'s AC-15 checkbox and its terminal closing
+- **Step 2 — propagate via `plan-multi-repo-parity-planning`.** Author the propagation for
+  `ose-private` per that workflow, landing in its own worktree/PR.
+- **Step 3 — re-verify.** `parity manifest validate` must exit 0 with an identical hash in both
+  parity repos before this is closed. Re-tick `optimize-cis`'s AC-15 checkbox and its terminal closing
   criterion only once that is independently confirmed, per the plan's own instruction not to
   silently re-tick.
 
 ## Rough scope & non-goals
 
-**In scope**: reproducing and classifying the 17-file drift; a propagation plan/PR pair per sibling
-repo; re-verification of `parity manifest validate` across all three repos.
+**In scope**: reproducing and classifying the drift against `ose-private`; a propagation plan/PR for
+that repo; re-verification of `parity manifest validate` across both parity repos.
 
 **Out of scope**:
 
-- Re-opening or amending either already-merged sibling PR (`ose-primer` #31, `ose-private` #30) —
+- Re-opening or amending the already-merged sibling PR (`ose-private` #30) —
   propagation lands as new commits/PRs, not history rewrites.
+- The `ose-primer`-only files in the measured union — that repo is outside the parity set.
 - Any further `apps/rhino-cli` feature work beyond what closes this specific drift.
 - `beaver-nest` — it is deliberately outside the 3-repo parity boundary (it carries a fork, not a
   byte-identical copy).
@@ -113,7 +117,7 @@ repo; re-verification of `parity manifest validate` across all three repos.
 ## What success looks like + promotion signal
 
 Success: `apps/rhino-cli/scripts/rhino-bin.sh parity manifest validate` (or the cross-repo
-equivalent) exits 0 with an identical manifest hash in `ose-public`, `ose-primer`, and
+equivalent) exits 0 with an identical manifest hash in `ose-public` and
 `ose-private`, and `optimize-cis`'s AC-15 checkbox is legitimately re-ticked with the re-verification
 evidence recorded.
 

@@ -55,6 +55,7 @@ Decision logs record the context, options, and conclusions behind changes that a
 ### What can we learn from a problem after it has been resolved?
 
 - [Post-Mortems](./post-mortems/README.md) — Blameless retrospectives for incidents and regressions, plus the writing template and [Post-Mortem Convention](../../repo-governance/conventions/structure/post-mortems.md).
+- [Standardize Secrets and Env — Parity Decisions (2026-06-10)](./standardize-secrets-and-env-parity-decisions.md) — >-
 
 ## Growing areas
 

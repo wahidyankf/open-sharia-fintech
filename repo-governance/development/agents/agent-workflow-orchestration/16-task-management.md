@@ -25,7 +25,7 @@ Mark items complete as you go. An updated checklist shows what has been done and
 
 ## Use Granular Task Items
 
-Each item in a task list or plan checklist must represent one independently completable unit of work. This applies to `local-temp/todo.md` plans and to any checklist an agent produces in delivery plans.
+Each item in a task list or plan checklist must represent one independently completable unit of work. This applies to `local-tmp/todo.md` plans and to any checklist an agent produces in delivery plans.
 
 **Rule**: One item = one concrete action. Never bundle multiple steps behind a single checkbox.
 
@@ -64,7 +64,7 @@ This provides real-time progress tracking that survives context compaction and m
 
 ## Document Results
 
-Add a review section to `local-temp/todo.md` after completing the task. The review captures:
+Add a review section to `local-tmp/todo.md` after completing the task. The review captures:
 
 - What the task accomplished
 - Any significant decisions made during execution
@@ -72,4 +72,4 @@ Add a review section to `local-temp/todo.md` after completing the task. The revi
 
 ## Capture Lessons
 
-After any correction, update `local-temp/lessons.md`. This is the direct application of the self-improvement loop to task management.
+After any correction, update `local-tmp/lessons.md`. This is the direct application of the self-improvement loop to task management.

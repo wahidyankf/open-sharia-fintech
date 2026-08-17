@@ -19,18 +19,18 @@ Prettier + markdownlint pipeline (requires `jq`).
 Edit both with normal `Write`/`Edit` tools — pre-authorized in `.claude/settings.json`, no approval
 prompt fires.
 
-- `.claude/agents/*.md` — agent definitions
+- `.claude/agents/<role-subfolder>/*.md` — agent definitions, nested into role subfolders
 - `.claude/skills/*/SKILL.md` — source of truth for both Claude Code and OpenCode (OpenCode reads
   natively, no mirror)
 - `.claude/skills/*/reference/*.md` — skill reference modules
-- `.opencode/agents/*.md` — auto-synced OpenCode mirrors
+- `.opencode/agents/*.md` — auto-synced OpenCode mirrors, flattened to one level
 
 **See**: [primary binding agent catalog](./.claude/agents/README.md)
 
 ### Delivery Mode default
 
 `worktree-to-pr` is inherited from `AGENTS.md` §Git Workflow §Delivery Mode. The PR-review-cycle
-agents are ordinary `.claude/agents/*.md` files under this binding.
+agents are ordinary `.claude/agents/pr-review/*.md` files under this binding.
 
 **See**: [AGENTS.md §AI Agents](./AGENTS.md#ai-agents)
 

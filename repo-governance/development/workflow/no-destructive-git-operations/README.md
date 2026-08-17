@@ -1,0 +1,13 @@
+---
+title: "No Destructive Git Operations Convention"
+description: "Forbids destructive git operations that can discard a concurrent actor's uncommitted work on a shared machine, and prescribes the safe equivalent."
+when_to_use: "Read this index to find the right No Destructive Git Operations Convention child document."
+---
+
+# No Destructive Git Operations Convention
+
+- [The Same-Machine Assumption, Principles, and Conventions](./01-the-same-machine-assumption-principles-and-conventions.md) — Why this convention assumes concurrent actors share the same machine, and the principles and conventions it implements. Use when deciding whether a git operation is dangerous on a shared machine, or when tracing this convention back to what it implements.
+- [Forbidden Operations](./02-forbidden-operations.md) — The table of local git operations forbidden without explicit per-instance approval, what each one destroys, and the non-destructive equivalent. Use before running any git operation that could discard uncommitted work, rewrite history, or delete a branch or worktree.
+- [Forbidden-Operations Caveats and Cross-Worktree Facts](./03-forbidden-operations-caveats-and-cross-worktree-facts.md) — Two forbidden-operation behaviors that are easy to misread as safe, and the git mechanics that already enforce isolation across worktrees. Use when tempted to treat bare --force-with-lease or --prune=now as safe, or when reasoning about what git already isolates between worktrees.
+- [Whole-Tree Staging Is Forbidden](./04-whole-tree-staging-is-forbidden.md) — Why staging the entire working tree is forbidden on a shared machine, every forbidden spelling of it, and the explicit-paths procedure to use instead. Use before running git add or git commit -a, to confirm you are staging only paths you can account for.
+- [No Corner-Cutting and Preferring Additive Operations](./05-no-corner-cutting-and-preferring-additive-operations.md) — Why weakening a failing gate is forbidden, what corner-cutting looks like, and the additive-and-own-worktree habits that prevent most destructive operations from ever arising. Use when a gate, test, lint, or CI job fails and there is pressure to make it pass quickly, or when choosing between a destructive and an additive git operation.

@@ -1,0 +1,19 @@
+---
+title: "Evidence Capture Convention"
+description: "Standards for capturing and organizing testing evidence (screenshots, curl outputs, console logs) in plan folders and delivery.md during plan execution"
+when_to_use: "Read this index to find the right Evidence Capture Convention child document."
+---
+
+# Evidence Capture Convention
+
+- [Principles and Conventions Implemented/Respected](./01-principles-and-conventions-implemented-respected.md) — Principles and conventions this convention implements. Use when tracing this convention to the principles/conventions behind it.
+- [The Rule](./02-the-rule.md) — The rule requiring evidence capture for testing performed during plan execution. Use when you need the exact wording of the evidence-capture rule.
+- [Evidence Folder Location](./03-evidence-folder-location.md) — Where captured evidence lives within a plan folder. Use when deciding where to save a screenshot or curl output during plan execution.
+- [What Goes Where](./04-what-goes-where.md) — Which evidence type goes in which file/folder, and what delivery.md must reference. Use when unsure which evidence file to save a specific artifact into.
+- [Screenshot Conventions](./05-screenshot-conventions.md) — Naming, format, and content requirements for captured screenshots. Use when naming or capturing a screenshot as plan evidence.
+- [curl / API Evidence Conventions](./06-curl-api-evidence-conventions.md) — How to capture and format curl/API evidence during plan execution. Use when capturing curl or API-response evidence for a plan.
+- [Locale Testing Evidence Requirements](./07-locale-testing-evidence-requirements.md) — The evidence bar for locale/i18n testing across supported languages. Use when verifying a locale-sensitive feature and capturing its evidence.
+- [What plan-execution-checker Validates](./08-what-plan-execution-checker-validates.md) — What the plan-execution-checker agent inspects in captured evidence. Use when you need to know what evidence the plan-execution-checker gate inspects.
+- [Examples](./09-examples.md) — Worked examples of correctly captured evidence. Use when you need a concrete example of properly captured evidence.
+- [Relationship to Other Conventions](./10-relationship-to-other-conventions.md) — How this convention relates to manual-behavioral-verification and other quality conventions. Use when deciding whether evidence capture or another convention governs a specific check.
+- [Related Documentation](./11-related-documentation.md) — Cross-references to related verification and plan conventions. Use when you need a related convention on verification or plan structure.

@@ -32,4 +32,4 @@ The Agent tool returns an `agentId` for each spawn. The main agent MUST:
 
 Task-notification messages from the harness signal completion (or kill). These are the primary completion signal. File mtime polling is the secondary stuck-detection signal, not a substitute for task-notifications.
 
-`TaskList` does NOT show spawned Agent IDs. The only source of an Agent ID is the response from the Agent-tool spawn call. The main agent must preserve these IDs in local tracking state (e.g., `local-temp/todo.md`) for the duration of the batch.
+`TaskList` does NOT show spawned Agent IDs. The only source of an Agent ID is the response from the Agent-tool spawn call. The main agent must preserve these IDs in local tracking state (e.g., `local-tmp/todo.md`) for the duration of the batch.

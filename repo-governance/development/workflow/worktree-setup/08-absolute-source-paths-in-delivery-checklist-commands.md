@@ -27,7 +27,7 @@ to a real, existing file, just the stale one on `main` instead of the branch's i
 This makes it dangerous: a `cp`/`diff` command sourcing from the wrong checkout does not error, it
 silently succeeds with stale content.
 
-This surfaced concretely in a tri-repo `worktree-to-pr` plan's own Phase 3 sibling-propagation `cp`
+This surfaced concretely in a multi-repo `worktree-to-pr` plan's own Phase 3 sibling-propagation `cp`
 commands (verbatim text written into `delivery.md` itself, not a live agent misread): the source
 path omitted the `worktrees/<plan-id>/` segment, so the first propagation copy silently pulled
 pre-Phase-1 content. It was caught only because the sibling's subsequent test run showed fewer new

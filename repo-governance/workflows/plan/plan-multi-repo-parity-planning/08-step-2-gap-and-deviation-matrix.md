@@ -23,9 +23,6 @@ Meta-dimensions to include alongside technical dimensions:
 - **Rationale doc location**: where each repo's `docs/explanation/<objective-slug>-parity-decisions.md`
   (or closest equivalent) will be created (app-scoped `apps/<app>/docs/`, lib-scoped
   `libs/<lib>/docs/`, repo governance tree, etc.)
-- **ose-primer delivery mode**: which delivery mode (draft PR vs. direct push to `ose-primer:main`)
-  the selected parity mode implies for the primer — both are first-class, caller-chosen, neither
-  default (applies when ose-primer is in the parity set)
 - **Repo-specific constraints**: any repo constraint (private visibility, self-hosted CI runner,
   dual-CLI parity guard, missing toolchain) that forces a per-repo deviation
 

@@ -20,8 +20,8 @@ word ceiling (progressive disclosure applied to itself).
 
 ## Enforcement Points
 
-1. **Pre-push (primary)**: `.husky/pre-push` runs `governance word-budget validate` once armed,
-   gated on changed paths touching a monitored surface.
+1. **Pre-push (primary)**: `.husky/pre-push` runs `governance word-budget validate`, gated on
+   changed paths touching a monitored surface.
 2. **PR quality gate (CI)**: `npx nx run rhino-cli:governance-word-budget:validation` runs on every
    PR and push to `main`.
 3. **Deterministic preflight**: `rhino-cli repo-governance audit` includes the category alongside

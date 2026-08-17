@@ -64,7 +64,7 @@ review buffer:
 delivery-mode: main-to-origin-main
 rationale: "ose-private infrastructure-as-code plan updating a single Terraform resource tag;
   needs the primary checkout's local secrets/state access; trivial and well-understood; full gate
-  passes locally. Not executable in ose-public/ose-primer (branch-protected main)."
+  passes locally. Not executable in ose-public (branch-protected main)."
 ```
 
 ### Agent Behavior Rules

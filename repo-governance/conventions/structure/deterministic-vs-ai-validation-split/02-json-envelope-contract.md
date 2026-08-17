@@ -26,7 +26,7 @@ The deterministic preflight emits a JSON envelope with this canonical key order 
     "ran_at": "2026-05-12T12:00:00Z",
     "total_findings": 0,
     "by_severity": { "critical": 0, "high": 0, "medium": 0, "low": 0 },
-    "by_category": { "agents-md-size": 0, "frontmatter-audit": 0 },
+    "by_category": { "layer-coherence": 0, "traceability-audit": 0 },
     "categories": [
       {
         "name": "<category-name>",

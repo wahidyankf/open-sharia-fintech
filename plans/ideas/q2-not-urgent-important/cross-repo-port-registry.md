@@ -15,7 +15,7 @@ and a validator, so a colliding port allocation fails a check instead of failing
 
 Port allocation across the four sibling repos is documented nowhere machine-readable — only as a
 prose table in each repo's own `docs/reference/monorepo-structure.md`, and only for that repo's own
-apps. `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest` sit side by side under one parent
+apps. `ose-public`, `ose-private`, and `beaver-nest` sit side by side under one parent
 directory on a single development machine and can all run concurrently, so a collision is a
 cross-repo concern that no single repo's table can settle. This repo's
 [Port Allocation section](https://github.com/wahidyankf/beaver-nest/blob/main/docs/reference/monorepo-structure.md#port-allocation) records
@@ -78,7 +78,7 @@ collision forces the issue means building this while also debugging a bind failu
 ## Rough scope & non-goals
 
 In scope: designing and placing a shared, machine-checkable port registry spanning `ose-public`,
-`ose-primer`, `ose-private`, and `beaver-nest`, plus a validator runnable from any one of them, so a
+`ose-private`, and `beaver-nest`, plus a validator runnable from any one of them, so a
 new app's port allocation is checked automatically instead of by manual prose-table review.
 
 Out of scope:
@@ -91,8 +91,8 @@ Out of scope:
 
 - Where does the registry live? A shared file synced via the parity loop, a `repo-config.yml` key
   each repo checks independently, or a dedicated cross-repo file. A registry spanning repos has no
-  single obvious home: the content-parity loop covers only `ose-public` and `ose-primer`, and
-  `beaver-nest` participates in no cross-repo boundary at all — so none of the four repos is the
+  single obvious home: the content-parity loop covers only `ose-public` and `ose-private`, and
+  `beaver-nest` participates in no cross-repo boundary at all — so none of the three repos is the
   natural owner, and "shared" has no existing location to mean. (open)
 - Where does the validator live — a new `rhino-cli` subcommand, or a script wired into an existing
   Nx target? (open)

@@ -16,6 +16,7 @@ skills:
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
   - repo-generating-validation-reports
+  - repo-understanding-shared-vocabulary
 ---
 
 # Repository Harness Compatibility Fixer Agent

@@ -12,7 +12,7 @@ when_to_use: Use when setting up temporary file locations, naming a new report f
 
 ## Practice 1: Use Designated Temporary Directories
 
-**Principle**: All temporary files go in `generated-reports/` or `local-temp/`, never repository root.
+**Principle**: All temporary files go in `generated-reports/` or `local-tmp/`, never repository root.
 
 **Good Example:**
 
@@ -21,7 +21,7 @@ when_to_use: Use when setting up temporary file locations, naming a new report f
 generated-reports/docs__a1b2c3__2025-12-14--20-45__audit.md
 
 # Scratch work
-local-temp/draft-analysis.txt
+local-tmp/draft-analysis.txt
 ```
 
 **Bad Example:**

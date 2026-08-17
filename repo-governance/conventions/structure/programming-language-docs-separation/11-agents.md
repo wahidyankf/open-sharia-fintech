@@ -34,5 +34,5 @@ created: 2026-02-04
 
 ---
 
-**Scope**: All programming languages in repository (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
+**Scope**: Every language with a style guide under `docs/explanation/software-engineering/programming-languages/` (today TypeScript, Rust, F#) and every language AyoKoding teaches. Read those two indexes rather than a fixed list here.
 **Maintainers**: Repository Governance Team

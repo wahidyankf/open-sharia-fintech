@@ -16,7 +16,7 @@ Both directories are **gitignored** (not tracked by version control):
 
 Under the "Temporary files" section (line 70):
 
-- `local-temp/`
+- `local-tmp/`
 
 Under the "Generated reports" section (line 73):
 
@@ -47,7 +47,7 @@ The rule includes "unless specified otherwise by other repo-governance/conventio
 
 ## Related Conventions
 
-- [Build-Artifact Sweeper Convention](../build-artifact-sweeper.md) - The complementary boundary: an ambient sweeper removes gitignored **build output and caches** (`target/`, `dist/`, `.next/`, `.nx/cache`) at any time, but never the agent-owned `generated-reports/` and `local-temp/` directories defined here. A report or scratch file missing is therefore never explained by a sweep
+- [Build-Artifact Sweeper Convention](../build-artifact-sweeper.md) - The complementary boundary: an ambient sweeper removes gitignored **build output and caches** (`target/`, `dist/`, `.next/`, `.nx/cache`) at any time, but never the agent-owned `generated-reports/` and `local-tmp/` directories defined here. A report or scratch file missing is therefore never explained by a sweep
 - [File Naming Convention](../../../conventions/structure/file-naming.md) - For permanent documentation files
 - [AI Agents Convention](../../agents/ai-agents.md) - For agent design and tool access
 - [Diátaxis Framework](../../../conventions/structure/diataxis-framework.md) - For documentation organization
@@ -65,7 +65,7 @@ This convention provides:
 ## Important Notes
 
 - Always use one of these directories for temporary files (never the repository root)
-- Choose `generated-reports/` for structured reports, `local-temp/` for everything else
+- Choose `generated-reports/` for structured reports, `local-tmp/` for everything else
 - Include dates in report filenames for traceability
 - Remember these files are gitignored and won't be committed
 - Clean up old files periodically to prevent accumulation

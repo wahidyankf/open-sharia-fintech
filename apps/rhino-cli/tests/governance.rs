@@ -15,11 +15,10 @@
 //!
 //! A handful of scenarios describe end-state behavior that only becomes true
 //! once Phase 9 of the `optimize-governance-md` plan arms the
-//! `governance-word-budget` / `governance-readme-completeness` gates; those
-//! steps assert today's actual (Phase 1, dark-launched) behavior rather than
-//! the scenario's literal end-state prose — mirroring the same judgment call
-//! already made in the unit-test suite
-//! (`application::governance::word_budget::tests::scenario_old_gate_id_is_gone_from_the_registry`).
+//! `governance-word-budget` / `governance-readme-completeness` gates. Both are
+//! armed `gates:` entries as of Phase 9, so these steps assert the gate ids are
+//! present — mirroring
+//! `application::governance::word_budget::tests::scenario_old_gate_id_is_replaced`.
 
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::doc_markdown)]
@@ -530,6 +529,12 @@ fn then_output_no_gate_id(w: &mut GovWorld, id: String) {
     assert!(!out.contains(&id), "got: {out}");
 }
 
+#[then(regex = r#"^the output contains gate id "([^"]+)"$"#)]
+fn then_output_has_gate_id(w: &mut GovWorld, id: String) {
+    let out = w.stdout();
+    assert!(out.contains(&id), "got: {out}");
+}
+
 // ===========================================================================
 // governance-word-budget.feature — resolved tree
 // ===========================================================================
@@ -597,15 +602,28 @@ fn then_word_budget_finding_names(w: &mut GovWorld, name: String) {
 
 #[when("the developer runs md links validate")]
 fn when_md_links_validate(w: &mut GovWorld) {
-    // `--exclude plans/` scopes out `plans/done/`'s large pre-existing,
-    // unrelated broken-anchor debt (heading renames from other, unrelated
-    // past plans) so this scenario asserts what it actually means to assert:
-    // this plan's own convention-doc rename left no *new* broken link
-    // anywhere outside the archival plans tree. The two `plans/ideas/`
-    // broken links this plan's own rename did introduce were fixed directly
-    // (not exempted) during Phase 1b — see `tech-docs.md`'s inbound-link
-    // sweep.
-    w.exec_real(&["md", "links", "validate", "--exclude", "plans/"]);
+    // Exclusions mirror the armed `md-links` entry in `repo-config.yml`
+    // (`plans/done`, `apps/ayokoding-www/content`, `apps/ose-www/content`),
+    // widened to all of `plans/` — so this scenario asserts what it actually
+    // means to assert: the convention-doc rename left no *new* broken link on
+    // any surface the gate itself polices. The content trees carry authored
+    // forward-references to not-yet-written course pages and are excluded by
+    // the gate for that reason; `plans/done/` carries large pre-existing
+    // broken-anchor debt from unrelated past heading renames. The two
+    // `plans/ideas/` broken links this plan's own rename did introduce were
+    // fixed directly (not exempted) during Phase 1b — see `tech-docs.md`'s
+    // inbound-link sweep.
+    w.exec_real(&[
+        "md",
+        "links",
+        "validate",
+        "--exclude",
+        "plans/",
+        "--exclude",
+        "apps/ayokoding-www/content",
+        "--exclude",
+        "apps/ose-www/content",
+    ]);
 }
 
 // ===========================================================================

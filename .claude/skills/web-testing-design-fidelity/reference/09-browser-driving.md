@@ -13,13 +13,13 @@ integration exists.
 1. **Baseline** — `WebFetch` the target(s) for rendered HTML/CSS and link discovery; identify the
    routes and the locale-prefix structure.
 2. **Render, measure, screenshot (per breakpoint × per locale)** — write a Playwright script to
-   `local-temp/` and run it via `npx playwright` to navigate each route, resize to each breakpoint,
+   `local-tmp/` and run it via `npx playwright` to navigate each route, resize to each breakpoint,
    read **computed styles** for the elements under test (colour, spacing, font, radius, shadow), and
    capture screenshots. Iterate the render/measure/screenshot pass over EVERY supported locale × EVERY
    breakpoint (375 / 768 / 1280, plus 320/1440 when `thorough`). Save cited screenshots to the backlog
    plan's `evidence/` subfolder (named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
    [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-temp/` — they become committed proof. Treat tooling absence gracefully — fall back to
+   not `local-tmp/` — they become committed proof. Treat tooling absence gracefully — fall back to
    `WebFetch` static inspection and record the limitation under "areas not covered".
 3. **Ground-truth comparison** — `Read`/`Glob`/`Grep` the plan `assets/` mockups, the design tokens/
    theme, and the `libs/web-ui` primitive library to decide whether an observation diverges from the

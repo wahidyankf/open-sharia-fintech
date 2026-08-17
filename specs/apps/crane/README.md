@@ -61,3 +61,9 @@ nx run crane-cli:specs:coverage
 
 All scenarios in every feature file must be implemented in a corresponding step file.
 `nx run crane-cli:specs:coverage` enforces this using rhino-cli.
+
+- [crane — behavior](./behavior/README.md)
+- [crane — components](./components/README.md)
+- [crane — containers](./containers/README.md)
+- [crane — product](./product/README.md)
+- [crane — system-context](./system-context/README.md)

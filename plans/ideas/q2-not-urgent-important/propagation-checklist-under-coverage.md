@@ -37,7 +37,7 @@ intermittent**.
 ## Why now
 
 Every propagation phase in this repo family runs this shape, and the parity loop between
-`ose-public` and `ose-primer` is a standing commitment, not a one-off. The next multi-repo plan
+`ose-public` and `ose-private` is a standing commitment, not a one-off. The next multi-repo plan
 inherits all three failure modes verbatim unless the workflow that governs them changes. The
 evidence is unusually good right now — two siblings, one changeset, per-premise verdicts recorded
 while the work was live — and it decays as memory of which cycle touched what fades.

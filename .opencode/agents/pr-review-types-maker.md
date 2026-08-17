@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - pr-review-specialist-protocol
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Types Maker Agent
@@ -34,7 +35,7 @@ behavior.
 
 Per [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 this agent owns exactly one discipline: static type-system soundness beyond what the compiler
-already enforces, across this repo's polyglot codebase.
+already enforces, across this repo's typed languages.
 
 **Owns**: TypeScript unjustified `any`/`unknown`/`@ts-ignore`; Rust `unsafe` blocks with no
 invariant comment and `unwrap()`/`expect()` on a fallible path with no upstream validation; F#

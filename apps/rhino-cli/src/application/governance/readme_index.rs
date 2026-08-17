@@ -8,7 +8,7 @@
 //! (`tech-docs.md` §1.1/§4): the `orphan`/`ghost` detection below is carried
 //! forward unchanged; `missing` and `unannotated` are new finding kinds.
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
@@ -39,7 +39,12 @@ pub struct ReadmeIndexFinding {
 fn readme_link_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r"\[[^\]]+\]\(([^)]*\.md(?:[#?][^)]*)?)\)").expect("valid hardcoded regex")
+        // The link-text group tolerates ONE level of nested square brackets
+        // (`[Executor Tagging — [AI] vs [HUMAN]](./17-….md)`), which real
+        // governance titles use. A flat `[^\]]+` silently fails to match those
+        // links, so a correctly-linked sibling was reported as an orphan.
+        Regex::new(r"\[(?:[^\[\]]|\[[^\[\]]*\])+\]\(([^)]*\.md(?:[#?][^)]*)?)\)")
+            .expect("valid hardcoded regex")
     })
 }
 
@@ -50,7 +55,8 @@ fn readme_link_re() -> &'static Regex {
 fn annotated_link_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r"\[[^\]]+\]\([^)]*\.md(?:[#?][^)]*)?\)\s*(?:—|--)\s*\S")
+        // Same one-level nested-bracket tolerance as `readme_link_re`.
+        Regex::new(r"\[(?:[^\[\]]|\[[^\[\]]*\])+\]\([^)]*\.md(?:[#?][^)]*)?\)\s*(?:—|--)\s*\S")
             .expect("valid hardcoded regex")
     })
 }
@@ -111,59 +117,60 @@ fn audit_root(
     Ok(findings)
 }
 
-/// Audits a single directory: split-exemption, missing-README detection, and
-/// (when an index file exists) orphan/ghost/unannotated detection.
+/// Audits a single directory: mandatory-README detection, additive
+/// sibling-index auditing, and orphan/ghost/unannotated detection.
 fn audit_one_dir(
     fs: &dyn Fs,
     dir: &Path,
     root: &Path,
     excludes: &[String],
 ) -> std::result::Result<Vec<ReadmeIndexFinding>, Error> {
-    // Split-directory exemption (FR-3.5): a sibling "<dir-name>.md" file next
-    // to `dir` makes `dir` exempt from needing its own README.md — that
-    // sibling file indexes `dir`'s contents instead. Never applied to `dir ==
-    // root`: the scan root has no meaningful "sibling" outside the scan.
+    let mut findings = Vec::new();
+
+    // A sibling "<dir-name>.md" progressive-disclosure parent is still audited
+    // as an index over `dir`'s contents whenever it exists, so its own
+    // orphan/ghost/unannotated coverage is unchanged. What it no longer does
+    // is EXEMPT `dir` from carrying its own README.md: the former FR-3.5
+    // split-directory exemption is removed, and every directory now carries a
+    // literal README.md with no exception. Both indexes are audited when both
+    // exist — each is independently required to list the directory's contents.
     if dir != root
         && let Some(parent) = dir.parent()
         && let Some(name) = dir.file_name()
     {
         let split_index = parent.join(format!("{}.md", name.to_string_lossy()));
         if fs.exists(&split_index) {
-            return audit_index_file(fs, &split_index, dir, root, excludes);
+            findings.extend(audit_index_file(fs, &split_index, dir, root, excludes)?);
         }
     }
 
     let readme_path = dir.join("README.md");
     if fs.exists(&readme_path) {
-        return audit_index_file(fs, &readme_path, dir, root, excludes);
+        findings.extend(audit_index_file(fs, &readme_path, dir, root, excludes)?);
+        return Ok(findings);
     }
 
-    // No README.md — report "missing" only when this directory actually
-    // needs an index (FR-3.1's Applicability rule). The scan root itself is
-    // exempt: a caller passes a covered-tree root (e.g. "repo-governance/")
-    // deliberately, and a scan root that also happens to hold a split-index
-    // sibling file (e.g. "ai-agents.md" beside "ai-agents/") is not "loose
-    // ungoverned content" in the FR-3.1 sense — it is itself another
-    // directory's index. Real covered-tree roots already carry a top-level
-    // README.md today, so this exemption has no practical effect during the
-    // Phase 1-8 dark-launch window (`missing` is discoverable, not yet
-    // armed); a descendant directory is never exempt this way.
+    // No README.md — report "missing" whenever the directory actually holds
+    // indexable content (FR-3.1's Applicability rule). The scan root stays
+    // exempt for one narrow reason only: a caller passes a covered-tree root
+    // deliberately, and every real covered-tree root already carries a
+    // top-level README.md. A descendant directory is never exempt.
     if dir == root {
-        return Ok(Vec::new());
+        return Ok(findings);
     }
     let targets = list_sibling_targets(fs, dir, root, excludes)?;
     if !targets.files.is_empty() || !targets.sub_dirs.is_empty() {
         let dir_display = dir.to_string_lossy().to_string();
-        return Ok(vec![ReadmeIndexFinding {
+        findings.push(ReadmeIndexFinding {
             file: dir_display.clone(),
             severity: "high".to_string(),
             kind: "missing".to_string(),
             message: format!(
                 "missing: {dir_display} contains indexable content but has no README.md"
             ),
-        }]);
+        });
     }
-    Ok(Vec::new())
+    Ok(findings)
 }
 
 /// Audits a single index file (`README.md`, or a split directory's sibling
@@ -199,20 +206,35 @@ fn audit_index_file(
             .file_name()
             .map(|n| format!("{}/", n.to_string_lossy()))
     };
-    let normalize = |raw: &str| -> String {
-        strip_prefix
-            .as_deref()
-            .and_then(|p| raw.strip_prefix(p))
-            .map_or_else(|| raw.to_string(), std::string::ToString::to_string)
+    // Returns the normalized link plus whether `raw` actually carried the
+    // `strip_prefix` (i.e. was genuinely written relative to `target_dir`'s
+    // parent). This provenance matters below: only a link that never carried
+    // the prefix may fall back to resolving against `index_dir` — a
+    // prefixed link that fails to resolve under `target_dir` is a genuine
+    // ghost, not a same-dir sibling reference, even if a same-named file
+    // happens to sit beside `index_dir`.
+    let normalize = |raw: &str| -> (String, bool) {
+        match strip_prefix.as_deref().and_then(|p| raw.strip_prefix(p)) {
+            Some(stripped) => (stripped.to_string(), true),
+            None => (raw.to_string(), false),
+        }
     };
 
-    let linked: HashSet<String> = extract_readme_links(&data)
-        .iter()
-        .map(|l| normalize(l))
-        .collect();
+    // Map from normalized link -> "was this link ever seen prefixed with
+    // target_dir's name?". Defaults to `false` (unprefixed); flips to `true`
+    // if any raw occurrence of this normalized link carried the prefix, so
+    // that the ghost guard below always errs toward reporting rather than
+    // silently swallowing a genuine ghost.
+    let mut linked_provenance: HashMap<String, bool> = HashMap::new();
+    for l in &extract_readme_links(&data) {
+        let (normalized, was_prefixed) = normalize(l);
+        let entry = linked_provenance.entry(normalized).or_insert(false);
+        *entry = *entry || was_prefixed;
+    }
+    let linked: HashSet<String> = linked_provenance.keys().cloned().collect();
     let unannotated: HashSet<String> = extract_unannotated_link_targets(&data)
         .iter()
-        .map(|l| normalize(l))
+        .map(|l| normalize(l).0)
         .collect();
     let actual = list_sibling_targets(fs, target_dir, root, excludes)?;
 
@@ -220,15 +242,28 @@ fn audit_index_file(
 
     // Orphans: file on disk but not in the index.
     for name in actual.sorted_names() {
-        if !linked.contains(&name) {
-            let full = target_dir.join(&name);
-            findings.push(ReadmeIndexFinding {
-                file: full.to_string_lossy().to_string(),
-                severity: "high".to_string(),
-                kind: "orphan".to_string(),
-                message: format!("orphan: {name} exists but is not linked from {index_display}"),
-            });
+        if linked.contains(&name) {
+            continue;
         }
+        // A subdirectory target `<name>/README.md` is equally satisfied by a
+        // link to its progressive-disclosure parent `<name>.md`: that sibling
+        // file is itself an index over the same directory, so the directory is
+        // reachable from here either way. Without this, every governance index
+        // would have to carry two links to the same content — one to
+        // `<name>.md` and one to `<name>/README.md` — now that a split
+        // directory also carries its own README.md.
+        if let Some(dir_name) = name.strip_suffix("/README.md")
+            && linked.contains(&format!("{dir_name}.md"))
+        {
+            continue;
+        }
+        let full = target_dir.join(&name);
+        findings.push(ReadmeIndexFinding {
+            file: full.to_string_lossy().to_string(),
+            severity: "high".to_string(),
+            kind: "orphan".to_string(),
+            message: format!("orphan: {name} exists but is not linked from {index_display}"),
+        });
     }
 
     // Ghosts and unannotated: index links a target.
@@ -241,6 +276,20 @@ fn audit_index_file(
             // subdirectory.  If the path exists on disk the link is valid — don't
             // ghost it.  Only report ghost when the target is genuinely missing.
             if fs.exists(&full) {
+                continue;
+            }
+            // A split-index file (index_dir != target_dir) physically lives in
+            // index_dir, not target_dir — it may legitimately link a sibling of
+            // itself (e.g. "general.md") rather than a child under target_dir.
+            // Such a link resolves against index_dir, the file's real location,
+            // not target_dir. Check that base too before declaring ghost — but
+            // ONLY when this link never carried the target_dir prefix. A link
+            // that WAS written with the prefix (e.g. "ai-agents/foo.md") is
+            // unambiguously a target_dir-relative reference; if it fails to
+            // resolve there it is a genuine ghost, even when an unrelated file
+            // with a matching basename happens to sit beside index_dir.
+            let was_prefixed = linked_provenance.get(&link).copied().unwrap_or(false);
+            if !was_prefixed && index_dir != target_dir && fs.exists(&index_dir.join(&link)) {
                 continue;
             }
             findings.push(ReadmeIndexFinding {
@@ -600,25 +649,30 @@ fn generate_root(
     let dirs = list_all_dirs(fs, root_p, excludes)?;
     let mut written = Vec::new();
     for dir in &dirs {
-        if let Some(path) = generate_one_dir(fs, dir, root_p, excludes)? {
-            written.push(path);
-        }
+        written.extend(generate_one_dir(fs, dir, root_p, excludes)?);
     }
     Ok(written)
 }
 
-/// Mirrors [`audit_one_dir`]'s split-exemption / existing-index /
+/// Mirrors [`audit_one_dir`]'s sibling-index / existing-index /
 /// root-exemption / applicability decision tree exactly, so `generate` and
 /// `validate` never disagree about which directories need an index — but
-/// writes a conforming file instead of reporting a `"missing"` finding.
+/// writes conforming files instead of reporting `"missing"` findings.
+///
+/// Returns every index written for this directory: the progressive-disclosure
+/// sibling index when one exists, and `dir/README.md`, which is now mandatory
+/// rather than substitutable (the former FR-3.5 exemption is removed).
 fn generate_one_dir(
     fs: &dyn Fs,
     dir: &Path,
     root: &Path,
     excludes: &[String],
-) -> std::result::Result<Option<PathBuf>, Error> {
-    // Split-directory exemption (FR-3.5/FR-3.6): a sibling "<dir-name>.md"
-    // file next to `dir` is the index instead of `dir/README.md`.
+) -> std::result::Result<Vec<PathBuf>, Error> {
+    let mut written = Vec::new();
+
+    // A sibling "<dir-name>.md" progressive-disclosure parent is still
+    // regenerated as an index over `dir`, carrying the FR-3.6 link prefix. It
+    // no longer substitutes for `dir/README.md`.
     if dir != root
         && let Some(parent) = dir.parent()
         && let Some(name) = dir.file_name()
@@ -626,29 +680,50 @@ fn generate_one_dir(
         let split_index = parent.join(format!("{}.md", name.to_string_lossy()));
         if fs.exists(&split_index) {
             let link_prefix = format!("{}/", name.to_string_lossy());
-            return generate_index_file(fs, &split_index, dir, root, excludes, &link_prefix)
-                .map(Some);
+            written.push(generate_index_file(
+                fs,
+                &split_index,
+                dir,
+                root,
+                excludes,
+                &link_prefix,
+            )?);
         }
     }
 
     let readme_path = dir.join("README.md");
     if fs.exists(&readme_path) {
-        return generate_index_file(fs, &readme_path, dir, root, excludes, "").map(Some);
+        written.push(generate_index_file(
+            fs,
+            &readme_path,
+            dir,
+            root,
+            excludes,
+            "",
+        )?);
+        return Ok(written);
     }
 
     // No README.md on disk yet. Mirror `audit_one_dir`'s root exemption: the
-    // scan root itself is never auto-created (a caller passes a
-    // covered-tree root deliberately — see `audit_one_dir`'s doc comment for
-    // the full rationale); only a genuine descendant directory gets a
-    // brand-new index.
+    // scan root itself is never auto-created (a caller passes a covered-tree
+    // root deliberately — see `audit_one_dir`'s doc comment for the full
+    // rationale); only a genuine descendant directory gets a brand-new index.
     if dir == root {
-        return Ok(None);
+        return Ok(written);
     }
     let targets = list_sibling_targets(fs, dir, root, excludes)?;
     if targets.files.is_empty() && targets.sub_dirs.is_empty() {
-        return Ok(None);
+        return Ok(written);
     }
-    generate_index_file(fs, &readme_path, dir, root, excludes, "").map(Some)
+    written.push(generate_index_file(
+        fs,
+        &readme_path,
+        dir,
+        root,
+        excludes,
+        "",
+    )?);
+    Ok(written)
 }
 
 /// Writes a single conforming index file at `index_path`, listing every
@@ -983,7 +1058,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 1a (TDD RED) — plans/done/2026-08-15__optimize-governance-md
     //
     // Tests below cover every FR-3 Gherkin scenario in `prd.md` that is
     // testable at this module's boundary. Two scenarios are deliberately
@@ -1097,7 +1172,7 @@ mod tests {
     }
 
     #[test]
-    fn scenario_a_split_directory_is_exempt_and_its_parent_indexes_it() {
+    fn scenario_a_split_directory_still_requires_its_own_readme() {
         let tmp = TempDir::new().unwrap();
         fs::write(
             tmp.path().join("ai-agents.md"),
@@ -1108,14 +1183,114 @@ mod tests {
         fs::create_dir_all(&sub).unwrap();
         fs::write(sub.join("01-catalog.md"), "x").unwrap();
         fs::write(sub.join("02-naming.md"), "x").unwrap();
-        // FR-3.5: ai-agents/ is a split directory (sibling "ai-agents.md"
-        // exists) and needs no README.md of its own; FR-3.6's
-        // parent-links-every-child requirement is satisfied here.
+        // The former FR-3.5 exemption is removed: a sibling "ai-agents.md"
+        // fully linking every child no longer excuses ai-agents/ from carrying
+        // its own README.md. Every directory carries one, with no exception.
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings
+                .iter()
+                .any(|f| f.kind == "missing" && f.file.ends_with("ai-agents")),
+            "a split directory with no README.md must report a missing finding: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn scenario_a_split_directory_with_a_readme_passes_and_both_indexes_are_audited() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n[naming](./ai-agents/02-naming.md)\n",
+        )
+        .unwrap();
+        let sub = tmp.path().join("ai-agents");
+        fs::create_dir_all(&sub).unwrap();
+        fs::write(sub.join("01-catalog.md"), "x").unwrap();
+        fs::write(sub.join("02-naming.md"), "x").unwrap();
+        fs::write(
+            sub.join("README.md"),
+            "[catalog](./01-catalog.md)\n[naming](./02-naming.md)\n",
+        )
+        .unwrap();
         let findings =
             audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert!(
             has_no_completeness_finding(&findings),
-            "FR-3.5/FR-3.6: a fully-linked split directory must pass cleanly: {findings:?}"
+            "a split directory carrying its own fully-linked README.md must pass cleanly: \
+             {findings:?}"
+        );
+        // The sibling index keeps its own coverage: dropping a child from it
+        // is still an orphan finding even though README.md lists everything.
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n",
+        )
+        .unwrap();
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings
+                .iter()
+                .any(|f| f.kind == "orphan" && f.file.ends_with("02-naming.md")),
+            "the sibling index must still be audited alongside README.md: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn scenario_a_split_index_link_to_its_own_sibling_is_not_a_ghost() {
+        let tmp = TempDir::new().unwrap();
+        // ai-agents.md (the split-index file) lives beside general.md, its own
+        // sibling — NOT under ai-agents/. This link is written unprefixed
+        // (no "ai-agents/" prefix) because it targets index_dir itself, not
+        // target_dir. It must resolve against index_dir, the file's real
+        // location, and never be reported as a ghost.
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n[general](./general.md)\n",
+        )
+        .unwrap();
+        fs::write(tmp.path().join("general.md"), "x").unwrap();
+        let sub = tmp.path().join("ai-agents");
+        fs::create_dir_all(&sub).unwrap();
+        fs::write(sub.join("01-catalog.md"), "x").unwrap();
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings.iter().all(|f| f.kind != "ghost"),
+            "a split-index link to its own unprefixed sibling must resolve against index_dir, \
+             not be reported as ghost: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn scenario_a_split_index_prefixed_link_to_a_genuinely_missing_target_is_still_ghost() {
+        let tmp = TempDir::new().unwrap();
+        // The link IS prefixed ("ai-agents/missing.md") — it unambiguously
+        // targets target_dir, not index_dir. An unrelated file that happens
+        // to share the same basename ("missing.md") sitting beside the index
+        // file must NOT suppress the ghost finding: only unprefixed links may
+        // fall back to resolving against index_dir.
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n[missing](./ai-agents/missing.md)\n",
+        )
+        .unwrap();
+        // Decoy: a same-basename file beside index_dir, NOT under target_dir.
+        fs::write(tmp.path().join("missing.md"), "x").unwrap();
+        let sub = tmp.path().join("ai-agents");
+        fs::create_dir_all(&sub).unwrap();
+        fs::write(sub.join("01-catalog.md"), "x").unwrap();
+        // Deliberately do not create ai-agents/missing.md — the link is a
+        // genuine ghost.
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings
+                .iter()
+                .any(|f| f.kind == "ghost" && f.message.contains("missing.md")),
+            "a target_dir-prefixed link to a genuinely missing target must still be reported as \
+             ghost, even when an unrelated same-basename file sits beside index_dir: {findings:?}"
         );
     }
 
@@ -1391,8 +1566,13 @@ mod tests {
              {written:?}"
         );
         assert!(
-            !sub.join("README.md").exists(),
-            "FR-3.5: a split directory must never get its own README.md"
+            written.contains(&sub.join("README.md")),
+            "a split directory must ALSO get its own README.md — the FR-3.5 exemption is \
+             removed: {written:?}"
+        );
+        assert!(
+            sub.join("README.md").exists(),
+            "every directory carries a literal README.md, with no exception"
         );
         let content = fs::read_to_string(&split_index).unwrap();
         assert!(content.contains("./ai-agents/01-catalog.md"), "{content}");

@@ -2,7 +2,7 @@
 
 ## Default Behavior
 
-**Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` via the `worktree-to-origin-main` and `main-to-origin-main` modes has no executable path in `ose-public` or `ose-primer` (`main` is branch-protected against direct pushes, including for admins); only an `ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception — see [When a Direct-Push Mode Is Appropriate](./delivery-modes-direct-push.md#when-a-direct-push-mode-is-appropriate).
+**Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` via the `worktree-to-origin-main` and `main-to-origin-main` modes has no executable path in `ose-public` (`main` is branch-protected against direct pushes, including for admins); only an `ose-private` infrastructure-as-code plan retains a surviving, explicitly declared exception — see [When a Direct-Push Mode Is Appropriate](./delivery-modes-direct-push.md#when-a-direct-push-mode-is-appropriate).
 
 **Standard workflow** (the default `worktree-to-pr` mode):
 

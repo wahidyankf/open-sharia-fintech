@@ -56,11 +56,11 @@ Standards for creating, structuring, and managing AI agents in the platform bind
 - [Invocation Limitation](./ai-agents/27-agent-invocation-patterns-limitation-and-examples.md) — isolation.
 - [Referencing Standards](./ai-agents/28-convention-referencing-standards.md) — reference.
 
-## File Size and Agent-Skill Separation
+## Complexity, Size, and Agent-Skill Separation
 
-- [Size Limits](./ai-agents/29-agent-file-size-standards-size-limits.md) — tier sizes.
-- [Categorization Reference](./ai-agents/30-agent-file-size-standards-categorization-and-condensing.md) — condensing.
-- [Size Checking](./ai-agents/31-agent-file-size-standards-size-checking-and-philosophy.md) — checking.
+- [Complexity Tiers](./ai-agents/29-agent-complexity-tiers.md) — tier taxonomy.
+- [Condensing and Splitting](./ai-agents/30-condensing-and-splitting-agents.md) — condensing.
+- [Size Checking](./ai-agents/31-agent-size-checking-and-content-philosophy.md) — the gate reports it.
 - [Skill Separation Purpose](./ai-agents/32-agent-skill-separation-purpose-and-knowledge-classification.md) — rationale.
 - [Separation Patterns A-C](./ai-agents/33-agent-skill-separation-patterns-a-b-c.md) — patterns A-C.
 - [Pattern D](./ai-agents/34-agent-skill-separation-pattern-d.md) — task logic.

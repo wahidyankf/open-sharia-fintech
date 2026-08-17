@@ -6,7 +6,7 @@
 - **Glossaries**: `specs/apps/organiclever/ddd/ubiquitous-language/<bc>.md`
 - **Design intent (full prose)**: [`plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md`](../../../../plans/done/2026-05-03__organiclever-adopt-ddd/tech-docs.md)
 - **ADR**: [`specs/apps/organiclever/ddd/bounded-context-map.md`](../../../../specs/apps/organiclever/ddd/bounded-context-map.md)
-- **Enforcement**: [`apps/rhino-cli/README.md`](../../../../apps/rhino-cli/README.md) — `rhino-cli ddd bc` and `rhino-cli ddd ul`
+- **Enforcement**: [`apps/rhino-cli/README.md`](../../../../apps/rhino-cli/README.md) — `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 
 ## Bounded Contexts
 
@@ -52,9 +52,8 @@ When you add a new domain term to code OR a Gherkin feature:
 ```bash
 nx run organiclever-www:test:quick
 # This runs (among other things):
-#   rhino-cli ddd bc organiclever
-#   rhino-cli ddd ul organiclever
-# Both must exit zero before the commit can proceed.
+#   rhino-cli specs structure validate   (its bc: and ul: layers)
+# It must exit zero before the commit can proceed.
 ```
 
 If either reports a finding:

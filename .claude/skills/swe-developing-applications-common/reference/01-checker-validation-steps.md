@@ -15,35 +15,28 @@ Reference: `repo-governance/development/infra/nx-targets.md`.
   — check each exists in `project.json` with a non-empty command.
 - **Tag convention**: all 4 dimensions present (`type:app|lib`, `platform:*`, `lang:*`,
   `domain:*`) with values following convention.
-- **CGO_ENABLED=0 (Go)**: every Go target (`build`, `test:quick`, `test:unit`,
-  `test:integration`, `lint`) must prefix its command with `CGO_ENABLED=0` — HIGH if missing
-  (build reproducibility).
 - **Cache configuration**: `build`/`lint`/`test:quick` need `cache: true` (`build` needs proper
   `outputs`); `test:integration` only if it uses in-process mocking; `dev` needs `cache: false` or
   absent.
-- **Coverage enforcement**: Go `test:quick` must include
-  `rhino-cli test-coverage validate <path>/cover.out 95`; TypeScript must include
+- **Coverage enforcement**: TypeScript `test:quick` must include
   `rhino-cli test-coverage validate <path>/lcov.info 95`; Rust must enforce ≥90% via
-  `cargo-llvm-cov`/`rhino-cli test-coverage validate`.
+  `cargo-llvm-cov`/`rhino-cli test-coverage validate`; F# must pass a `/p:Threshold` line
+  threshold to `dotnet test --collect:"XPlat Code Coverage"`.
 
-## Step 3: Go-Specific Standards
+## Step 3: F#-Specific Standards
 
-Reference: AyoKoding Go educational content and downstream `ose-primer` Go style guides (`ose-public`
-has no Go projects of its own but this checker also runs against `ose-primer`).
+Reference: `docs/explanation/software-engineering/programming-languages/f-sharp/README.md`.
 
-- **go.mod version**: must specify the current platform standard (Go 1.26) — MEDIUM if outdated.
-- **Single-line main()**: `func main() { cmd.Execute() }` or equivalent; multi-line indicates
-  uncovered paths — MEDIUM.
-- **os.Exit dependency injection**: `var osExit = os.Exit` pattern in `cmd/root.go`, mocked in
-  tests for error-path coverage — MEDIUM.
-- **Cobra CLI patterns** (CLI apps): `RunE` not `Run`; root sets `SilenceErrors: true`;
-  domain-prefixed subcommand naming (`{app} {domain} {action}`) — HIGH.
-- **Integration tests**: Godog BDD tests in `test/integration/` or `internal/*/test/`, `.feature`
-  files, `integration` build tag — MEDIUM.
-- **Test patterns**: table-driven preferred, raw `testing.T` (no testify in unit tests),
-  `*_test.go` naming — LOW.
-- **Output functions**: `outputFuncs` pattern (text/json/markdown formatters), consistent across
-  commands — LOW.
+- **Coverage**: `dotnet test --collect:"XPlat Code Coverage"` with an explicit
+  `/p:Threshold` + `/p:ThresholdType=line` — HIGH if the threshold is absent.
+- **Railway-oriented error handling**: fallible operations return `Result<_, _>`; no bare
+  `failwith` on a domain path — HIGH.
+- **Type safety**: domain values wrapped in single-case DUs rather than raw primitives;
+  exhaustive `match` with no catch-all silently swallowing cases — HIGH.
+- **Giraffe/API patterns** (if applicable): handlers compose `HttpHandler` functions; wiring lives
+  in the composition root, not in domain modules — MEDIUM.
+- **Test patterns**: unit suites under `tests/unit/*.fsproj`, scenario-named tests that auto-bind
+  to the Gherkin scenario titles the spec-coverage gate reads — MEDIUM.
 
 ## Step 4: TypeScript-Specific Standards
 
@@ -67,7 +60,9 @@ Reference: `docs/explanation/software-engineering/programming-languages/rust/REA
 
 ## Step 6: Cross-Project Consistency
 
-- **Go version alignment**: all Go projects share one `go.mod` version — HIGH if mismatched.
-- **Coverage uniformity**: all projects enforce ≥95% line coverage — HIGH if any project is below.
-- **Shared library usage**: Go projects import `golang-commons`; TypeScript projects use workspace
-  libs; flag duplicated utility code — MEDIUM.
+- **Toolchain version alignment**: all projects in one ecosystem share a single pinned version
+  (`.tool-versions`, `global.json`, `rust-toolchain.toml`) — HIGH if mismatched.
+- **Coverage uniformity**: all projects enforce the language's declared line-coverage floor — HIGH
+  if any project is below it.
+- **Shared library usage**: TypeScript projects use workspace libs rather than copied helpers;
+  flag duplicated utility code — MEDIUM.

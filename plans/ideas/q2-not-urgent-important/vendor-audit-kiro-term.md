@@ -1,4 +1,4 @@
-# Vendor-audit: add `Kiro` to the vendor-term list (tri-repo)
+# Vendor-audit: add `Kiro` to the vendor-term list (parity repos)
 
 One-line summary: teach the vendor-audit scanner the term `Kiro` (and `.kiro/`) so a Kiro mention
 leaking into vendor-neutral governance prose is caught instead of passing silently.
@@ -37,13 +37,13 @@ so it is cheapest to close before the first mention lands, not after.
 - Update the companion term table in the Governance Vendor-Independence Convention in the same change,
   so the documented list and the scanner agree (editing only the doc would make it lie about the
   tool).
-- Land the change byte-identically in all three repos together, and add `.kiro/` to the
+- Land the change byte-identically in both parity repos together, and add `.kiro/` to the
   platform-bindings catalog only if a Kiro binding is actually shipped.
 
 ## Rough scope & non-goals
 
 In scope: the `Kiro`/`.kiro/` term addition, the doc-table sync, the Gherkin, and byte-identical
-tri-repo landing.
+two-repo parity landing.
 
 Out of scope (for now): the broader redesign from denylist to allowlist — evaluate whether the
 scanner should instead fail closed on any proper-noun tool reference outside an allowlisted set, but
@@ -52,9 +52,9 @@ next-vendor-hits-this-again denylist.
 
 ## Risks & open questions
 
-- The change touches `apps/rhino-cli/**`, required byte-identical across `ose-public`, `ose-primer`,
+- The change touches `apps/rhino-cli/**`, required byte-identical across `ose-public`
   and `ose-private` — this is why the originating single-repo plan could not fix it; execution must be a
-  coordinated tri-repo parity change.
+  coordinated two-repo parity change.
 - Denylist vs. allowlist redesign is the real open decision: patch the one term now, or fix the class
   so the next unnamed vendor fails closed? A patch is cheap but recurring; the redesign is larger
   appetite. (open — must be decided or explicitly deferred before promotion)
@@ -64,6 +64,6 @@ next-vendor-hits-this-again denylist.
 Success: a file under `repo-governance/` containing "Kiro" is flagged by name with a non-zero exit,
 a Kiro mention under a Platform Binding Examples heading is still skipped, vendor-free prose still
 passes (the falsifiability control), and the documented term table diffs identical to the scanner's
-list across all three repos. Ready to re-promote once the denylist-vs-allowlist scope question is
+list across both parity repos. Ready to re-promote once the denylist-vs-allowlist scope question is
 settled — either "just add the term" is accepted as the appetite, or the allowlist redesign is
 chosen as the real deliverable.

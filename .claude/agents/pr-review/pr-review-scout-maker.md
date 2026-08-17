@@ -6,6 +6,7 @@ model: opus
 color: blue
 skills:
   - pr-review-scout-classification
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Scout Maker Agent

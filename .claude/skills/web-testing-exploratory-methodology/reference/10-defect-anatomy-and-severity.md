@@ -15,7 +15,7 @@ Every finding in `findings.md` carries the ISTQB-aligned fields:
 - **Evidence** — screenshot path in the plan's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), console excerpt, network entry,
   response header — never secrets/PII. Screenshots a finding cites are committed to `evidence/`, not
-  left in `local-temp/`, per the
+  left in `local-tmp/`, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Defect type** — Functional / UI / Responsive / Accessibility / Performance / Security / Content /

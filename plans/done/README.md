@@ -16,8 +16,8 @@ Archived plans and completed project planning documents.
   under `repo-governance/`, `.claude/agents/`, `.claude/skills/`, and root instruction files into
   progressive-disclosure children with annotated README indexes; flipped `md-frontmatter`'s
   `description` field from WARN to FAIL for governance docs. Delivered by PR1-PR17 across both
-  repos; `ose-primer` parity filed as a follow-up at
-  `plans/backlog/sync-primer-governance-parity/`.
+  repos. The `ose-primer` parity follow-up was retired on 2026-08-16 when that repo left the parity
+  set entirely.
 
 - [2026-08-16: ayokoding-learning-path-18-skills-erp-enterprise-depth](./2026-08-16__ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md) —
   Added fifteen enterprise-depth and Sharia-compliant ERP courses, completed the conventional and

@@ -91,10 +91,6 @@ name = "agent_naming_validator"
 harness = false
 
 [[test]]
-name = "java"
-harness = false
-
-[[test]]
 name = "repo_governance"
 harness = false
 

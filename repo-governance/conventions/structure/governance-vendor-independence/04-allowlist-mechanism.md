@@ -37,7 +37,7 @@ Place all vendor-specific content for a page under a heading whose text matches 
 
 ### Claude Code
 
-The `.claude/agents/plan-maker.md` frontmatter sets `model: claude-sonnet-4-6`.
+The `.claude/agents/plan/plan-maker.md` frontmatter sets `model: claude-sonnet-4-6`.
 
 ### OpenCode
 

@@ -26,7 +26,7 @@ Enter plan mode for any non-trivial task. A task is non-trivial if it meets any 
 
 ## Plan Format
 
-Write the plan as a checklist in `local-temp/todo.md`. Each item should be independently verifiable.
+Write the plan as a checklist in `local-tmp/todo.md`. Each item should be independently verifiable.
 
 ```
 ## Plan: [Brief task description]

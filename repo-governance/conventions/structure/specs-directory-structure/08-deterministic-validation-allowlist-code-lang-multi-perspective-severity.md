@@ -58,10 +58,6 @@ The validator iterates every declared path in `checkGherkin`, `registeredGherkin
 
 ## Severity audit log + env var
 
-`OSE_RHINO_DDD_SEVERITY=warn` downgrades all `ddd bc` and `ddd ul` findings to warnings (exit 0 even when findings exist). Every honored downgrade emits a stderr audit line:
+The bounded-context and glossary validators accept a severity override (`OSE_RHINO_DDD_SEVERITY=warn`, or a `--severity` argument taking precedence) that downgrades findings to warnings and emits a stderr audit line.
 
-```
-WARN: severity downgraded to "warn" via OSE_RHINO_DDD_SEVERITY env var
-```
-
-The legacy `ORGANICLEVER_RHINO_DDD_SEVERITY` env var was removed without a deprecation period in this same plan; every in-tree reference was renamed atomically. The flag form `--severity=warn|error` takes precedence over the env var.
+**No surface exposes it.** `specs bc`/`specs ul` were merged into `specs structure validate`, which always runs both layers at `error`; a gate cannot be downgraded from the command line. The override survives only as a validator-level capability, exercised by the `ddd-bc`/`ddd-ul` behavior contracts.

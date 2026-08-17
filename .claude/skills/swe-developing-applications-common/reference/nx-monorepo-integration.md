@@ -16,7 +16,7 @@ This platform uses **Nx** for monorepo management with clear separation of conce
 - Reusable code modules
 - Flat structure (no nesting)
 - Can import other libraries (no circular dependencies)
-- Naming convention: `[language]-[name]` (e.g., `ts-utils`, `java-common`)
+- Naming convention: `[language]-[name]` (e.g., `ts-env-loader`, `rust-commons`, `fsharp-env-loader`)
 
 ## Common Nx Commands
 

@@ -34,8 +34,8 @@ registry with `gate validate`, update affected workflow and hook documentation p
 then regenerate harness bindings from the canonical `.claude/` source.
 
 For any portable governance, agent, or skill rule, inventory every canonical consumer first and
-propagate it manually across `ose-public`, immediately to `ose-private`, and to `ose-primer` when the
-plan puts Primer in scope. Verify the declared portable manifest byte-for-byte and record only
+propagate it manually across `ose-public` and immediately to `ose-private`. No other repository is a
+propagation target. Verify the declared portable manifest byte-for-byte and record only
 explicit private-only operational exceptions. Preserve the active goal during runner contention:
 investigate and poll patiently, never cancel merely because a runner is queued. Require immediate
 exact-path cleanup only for worktrees the plan itself created and verified; never touch foreign

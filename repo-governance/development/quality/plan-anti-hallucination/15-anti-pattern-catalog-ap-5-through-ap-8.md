@@ -32,7 +32,9 @@ If the test does not exist yet, the plan must say `_New test_`. If the file does
 
 > "Delegate to `swe-rust-dev`..."
 
-The agent must be present at `.claude/agents/<name>.md`. List the directory first or check the AGENTS.md catalog.
+The agent must resolve via `find .claude/agents -name '<name>.md'` (agent definitions live in
+nested role subfolders, e.g. `.claude/agents/swe/swe-rust-dev.md`, not flat under
+`.claude/agents/`). List the directory first or check the AGENTS.md catalog.
 
 ## AP-8: Citing a CLI flag without `--help`
 

@@ -1,6 +1,6 @@
 # Ubiquitous Language — OrganicLever
 
-This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits inside `specs/apps/organiclever/ddd/` alongside [`bounded-contexts.yaml`](../bounded-contexts.yaml) because both are DDD artifacts read by `rhino-cli ddd ul` and `rhino-cli ddd bc`. The same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
+This folder is the **platform-agnostic glossary** of OrganicLever's bounded contexts. It sits inside `specs/apps/organiclever/ddd/` alongside [`bounded-contexts.yaml`](../bounded-contexts.yaml) because both are DDD artifacts read by the `ul:` and `bc:` layers of `rhino-cli specs structure validate`. The same vocabulary governs frontend, backend (when DDD adoption reaches `organiclever-be`), and any future surface (CLI, mobile, etc.). The frontend consumes it today; the backend consumes it on adoption.
 
 ## What lives here
 
@@ -49,3 +49,7 @@ Phase 9 of the [DDD adoption plan](../../../../../plans/done/2026-05-03__organic
 - [BDD with DDD Standards](../../../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/bdd-with-ddd-standards.md)
 - [organiclever specs README](../../README.md)
 - [organiclever web specs README](../../components/app-web/README.md)
+- [Ubiquitous Language — be-db](./be-db.md)
+- [Ubiquitous Language — be-health](./be-health.md)
+- [Ubiquitous Language — be-journal](./be-journal.md)
+- [Ubiquitous Language — messaging](./messaging.md)

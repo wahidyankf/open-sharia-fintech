@@ -9,14 +9,13 @@ when_to_use: Use when deciding whether to run repos concurrently, or the parity-
 **Continues from** [Step 4 — Execution Phase](./05-step-4-execution-phase.md).
 
 **Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
-fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` and `ose-private` are
-**independent downstream nodes** that read from it without reading each other. Once
-`ose-public` reaches `pass`, the downstream repos may run as concurrent DAG nodes under the N+1 model
-(`1 main thread + N background agents`, default **N=3**) rather than serialized behind one another.
+fan-out, not a chain — `ose-public` is the source of truth and `ose-private` its one downstream node.
+Once `ose-public` reaches `pass`, downstream repos may run as concurrent DAG nodes under the N+1
+model (`1 main thread + N background agents`, default **N=3**) rather than serialized.
 
 Two constraints override that fan-out and force strict serialization:
 
-- **`apps/rhino-cli` byte-identity** across the three parity repos — `ose-public`, `ose-primer`,
+- **`apps/rhino-cli` byte-identity** across the parity repos — `ose-public` and
   `ose-private` — a plan touching it propagates one repo at a time, never concurrently
   ([AGENTS.md §Related Repositories](../../../../AGENTS.md#related-repositories)).
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
@@ -27,12 +26,12 @@ cross-repo work.** Editing a byte-identity-governed file (`apps/rhino-cli/src/`,
 `Cargo.lock`, `project.json`, `LICENSE`, the shared Gherkin tree) invalidates **this repo's own**
 recorded checksum the moment the file changes. The gate is a same-repo self-consistency check, not a
 cross-repo diff — it is not a signal that propagation is overdue, and it fires identically whether
-the other repos are already in sync or untouched. Clear it with
+the other repo is already in sync or untouched. Clear it with
 `rhino-cli parity manifest generate`, committed as its own follow-up commit, then push.
 
 Regenerating the local manifest **does not discharge the propagation obligation** — the gate's own
 error text says so. It unblocks this repo's push and nothing more; the identical change still has to
-reach the other two parity repos.
+reach the other parity repo.
 
 **Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
 **one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged at its
@@ -42,8 +41,9 @@ repo's plan is capped at one worktree, reused across every delivery unit it land
 [Plans Organization Convention §Worktree Cap](../../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 See [plan-planning §Planning Granularity](../plan-planning/03-planning-granularity-and-one-branch-rule.md#planning-granularity-and-the-one-branch-one-pr-rule).
 
-**Shared-machine safety**: all three repos share one machine's disk and git object store, and two of
-them are bare repos driven through worktrees. The **no-destructive-git** rule binds every git action
+**Shared-machine safety**: the parity repos share one machine's disk and git object store, and any of
+them may be a bare repo driven through worktrees — verify each repo's topology, never assume it. The
+**no-destructive-git** rule binds every git action
 here — never discard a concurrent actor's uncommitted work, never remove a worktree or branch you
 did not create. See
 [No Destructive Git Operations](../../../development/workflow/no-destructive-git-operations.md).

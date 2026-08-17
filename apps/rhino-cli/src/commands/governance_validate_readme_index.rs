@@ -27,22 +27,19 @@ const SCHEMA: &str = "rhino-cli/readme-index-audit/v1";
 
 /// Default paths scanned when no `--paths` flag is supplied.
 ///
-/// Unwidened — this is the continuity-preserving scope
-/// `governance-readme-index` (the rename of `md-readme-index`) keeps
-/// scanning unchanged. The widened FR-3.7 6-entry scope is passed explicitly
-/// via `--paths` by the separate `governance-readme-completeness`
-/// registration; see `tech-docs.md` §4.
+/// Every content tree the repository governs, so a bare invocation matches
+/// what the `governance-readme-index` gate enforces rather than a narrower
+/// legacy subset. The generated harness mirrors (`.opencode/`, `.cursor/`,
+/// `.amazonq/`) are deliberately absent: they are emitted from `.claude/` by
+/// `harness bindings generate`, are never hand-edited, and an index written
+/// into them would be regenerated away — `.claude/`, their source of truth,
+/// is scanned instead.
 ///
 /// `pub(crate)` — reused as-is by `governance readme-index generate`
 /// (`commands::governance_generate_readme_index`, FR-3.12) so `generate` and
 /// `validate` default to exactly the same scan scope, per the same "one
 /// constant, no drift" rationale [`resolve_scan_paths`]'s doc comment states.
-pub(crate) const DEFAULT_PATHS: &[&str] = &[
-    "repo-governance/",
-    ".claude/agents/",
-    ".claude/skills/",
-    "docs/explanation/software-engineering/",
-];
+pub(crate) const DEFAULT_PATHS: &[&str] = &["docs/", "repo-governance/", "specs/", ".claude/"];
 
 /// CLI arguments for `governance readme-index validate`.
 #[derive(Args, Debug)]
@@ -303,7 +300,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 1a (TDD RED) — plans/in-progress/optimize-governance-md
+    // Phase 1a (TDD RED) — plans/done/2026-08-15__optimize-governance-md
     //
     // FR-1.10/FR-1.11/FR-5.8: two new repeatable flags land on
     // `ReadmeIndexAuditArgs` — `--paths` (overrides `DEFAULT_PATHS`) and

@@ -27,3 +27,9 @@ specs/libs/web-ui-token/
 `test:unit` is currently an `echo` placeholder (no test runner is configured for this package
 yet) — this spec tree is scaffolded ahead of that work so the C4 structure and `specs:*`
 validators pass uniformly across every project.
+
+- [Behavior — web-ui-token](./behavior/README.md)
+- [Components — web-ui-token](./components/README.md)
+- [Containers — web-ui-token](./containers/README.md)
+- [Product — web-ui-token](./product/README.md)
+- [System Context — web-ui-token](./system-context/README.md)

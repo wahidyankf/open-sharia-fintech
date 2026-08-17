@@ -1,14 +1,14 @@
 ---
-title: "The Plan-Docs-Only Carve-Out (Superseded — Retired in Two of Three Repos)"
+title: "The Plan-Docs-Only Carve-Out (Superseded — Retired in ose-public)"
 description: Documents the retired plan-docs-only direct-push carve-out for historical context, and how it survives narrowed in ose-private.
 when_to_use: Use when researching why a plans/**-only change used to skip worktree-to-pr, or when working in ose-private and checking whether the narrowed carve-out still applies.
 ---
 
-# The Plan-Docs-Only Carve-Out (Superseded — Retired in Two of Three Repos)
+# The Plan-Docs-Only Carve-Out (Superseded — Retired in ose-public)
 
-**This carve-out is retired in `ose-public` and `ose-primer`**: `main` is
-branch-protected against direct pushes in both repos (including for admins), so in
-both repositories a plan-docs-only change uses `worktree-to-pr` like any other change, since there is
+**This carve-out is retired in `ose-public`**: `main` is
+branch-protected against direct pushes (including for admins), so a plan-docs-only change here uses
+`worktree-to-pr` like any other change, since there is
 no direct-push path left to carve out of. It survives, narrowed, in
 `ose-private` only as the infrastructure-as-code carve-out — see
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)

@@ -1,6 +1,6 @@
 ---
 title: "Per-Repository Delivery Mode Restrictions (HARD RULE)"
-description: States which delivery modes are actually available in ose-public, ose-primer, and ose-private given each repo's branch-protection state.
+description: States which delivery modes are actually available in ose-public and ose-private given each repo's branch-protection state.
 category: explanation
 subcategory: conventions
 tags:
@@ -19,12 +19,12 @@ subsection states what is **actually allowed per repository**, and is the narrow
 Direct push to `origin main` is a scarce, protected capability going forward — not a convenience
 available wherever a plan finds it easier.
 
-- **`ose-public`, `ose-primer`**: `main` is branch-protected against direct pushes, **including for
-  repository admins** — verified live via a legacy `/branches/main/protection` check for
-  `ose-public` and a ruleset check for `ose-primer` (its protection is a repository ruleset, which
-  the legacy endpoint alone would misreport as unprotected). `worktree-to-origin-main` and
-  `main-to-origin-main` are therefore **unavailable** in these two repos — no credential or role can
-  push to `main` outside a merged PR.
+- **`ose-public`**: `main` is branch-protected against direct pushes, **including for
+  repository admins** — verified live via a legacy `/branches/main/protection` check. Note that a
+  repo whose protection is expressed as a repository _ruleset_ is misreported as unprotected by that
+  legacy endpoint alone, so check the rulesets API too before concluding a repo is unprotected.
+  `worktree-to-origin-main` and `main-to-origin-main` are therefore **unavailable** here — no
+  credential or role can push to `main` outside a merged PR.
 - **`ose-private`**: `worktree-to-pr` is likewise the required mode for **every plan except**
   infrastructure-as-code plans (Terraform, Ansible, and equivalent state-changing infra work). Those
   plans use **`main-to-origin-main`**, because they need the real `.env` credentials and local
@@ -40,4 +40,4 @@ available wherever a plan finds it easier.
   convention-enforced (not independently confirmed mechanically-enforced) footing until it is checked
   with sufficient API access.
 
-See [Per-Repository Delivery Mode Restrictions — Enforcement and File Naming](./36-per-repository-restrictions-enforcement-and-file-naming.md) for `main-to-pr`'s status in `ose-public`/`ose-primer` and the enforcement rules.
+See [Per-Repository Delivery Mode Restrictions — Enforcement and File Naming](./36-per-repository-restrictions-enforcement-and-file-naming.md) for `main-to-pr`'s status in `ose-public` and the enforcement rules.

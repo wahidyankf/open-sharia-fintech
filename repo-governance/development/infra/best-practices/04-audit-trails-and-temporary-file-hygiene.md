@@ -50,7 +50,7 @@ FIX="generated-reports/docs__d4e5f6__2025-12-14--21-00__fix.md"
 find generated-reports/ -name "*.md" -mtime +30 -exec mv {} archive/ \;
 
 # Clean scratch files (>7 days)
-find local-temp/ -mtime +7 -delete
+find local-tmp/ -mtime +7 -delete
 ```
 
 **Bad Example:**
@@ -73,7 +73,7 @@ find local-temp/ -mtime +7 -delete
 **Good Example:**
 
 ```bash
-# local-temp/cache/README.md
+# local-tmp/cache/README.md
 # Performance Cache
 #
 # This directory contains cached API responses for development.
@@ -85,9 +85,9 @@ find local-temp/ -mtime +7 -delete
 
 ```bash
 # Mysterious temporary files with no explanation
-local-temp/data-2025.json
-local-temp/cache-v3.bin
-local-temp/temp-final-v2.txt
+local-tmp/data-2025.json
+local-tmp/cache-v3.bin
+local-tmp/temp-final-v2.txt
 ```
 
 **Rationale:**

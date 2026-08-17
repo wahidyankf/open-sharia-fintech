@@ -78,7 +78,7 @@ When generating a validation report:
 
 Agents creating miscellaneous temporary files should:
 
-1. Use `local-temp/` directory
+1. Use `local-tmp/` directory
 2. Use descriptive filenames
 3. Clean up files after use (when appropriate)
 4. Document the purpose of temporary files if they're long-lived

@@ -1,16 +1,14 @@
 //! Per-language step-definition extractors.
 //!
-//! Ports `rust_steps.go`, `java_steps.go`, `dart_steps.go`,
-//! `clojure_steps.go`, `elixir_steps.go`, `python_steps.go`,
-//! `dotnet_steps.go`, and the Go/TS extractors that live inside
-//! `checker.go`.
+//! Covers the languages this repository builds in — Rust, F#, C#, and Dart —
+//! alongside the TypeScript extractor that lives in [`super::checker`].
+//! Extractors for languages this repository does not build in were removed;
+//! re-add one only when a project starts running Gherkin in it.
 //!
 //! Each public function reads the file at `path` and inserts extracted step
 //! entries into `sm` via the [`super::matcher`] helpers. Per-language nuance
-//! (verbatim strings, regex form, F# backtick names, Python `parsers.parse`,
-//! etc.) is preserved verbatim from the Go original.
+//! (raw-string forms, regex form, F# backtick names) is preserved.
 
-use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 use std::sync::OnceLock;
@@ -18,9 +16,7 @@ use std::sync::OnceLock;
 use anyhow::Error;
 use regex::Regex;
 
-use super::matcher::{
-    StepMatcher, add_python_step_to_matcher_with_origin, add_step_to_matcher_with_origin,
-};
+use super::matcher::{StepMatcher, add_step_to_matcher_with_origin};
 use super::util::{first_non_empty, normalize_ws, unescape_string};
 
 // ============================================================
@@ -96,16 +92,6 @@ fn rs_step_regex_bare_re() -> &'static Regex {
     })
 }
 
-/// Matches a JVM (Java/Kotlin) `@Given("…")` / `@When("…")` / `@Then("…")`
-/// / `@And("…")` / `@But("…")` annotation.
-fn jvm_step_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| {
-        Regex::new(r#"@(?:Given|When|Then|And|But)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)"#)
-            .expect("valid regex")
-    })
-}
-
 /// Matches a Dart `s.given("…", …)` / `s.when("…", …)` / etc. step call.
 fn dart_step_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
@@ -114,43 +100,6 @@ fn dart_step_re() -> &'static Regex {
             r#"(?s)\b(?:s|scenario)\.(?:given|when|then|and|but)\s*\(\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')\s*,"#,
         )
         .expect("valid regex")
-    })
-}
-
-/// Matches a Clojure `(Given "…")` / `(When "…")` / etc. step form.
-fn clj_step_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| {
-        Regex::new(r#"\((?:Given|When|Then|And|But)\s+"((?:[^"\\]|\\.)*)""#).expect("valid regex")
-    })
-}
-
-/// Matches an Elixir `defgiven ~r/…/` / `defwhen ~r/…/` / etc. step macro.
-fn ex_step_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| {
-        Regex::new(r"def(?:given|when|then|and_|but_)\s+~r/\^?(.*?)\$?/").expect("valid regex")
-    })
-}
-
-/// Matches a Python pytest-bdd `@given("…")` / `@when("…")` / etc. decorator,
-/// including the `parsers.parse(…)` and `parsers.cfparse(…)` wrappers.
-fn py_step_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| {
-        Regex::new(
-            r#"(?s)@(?:given|when|then|step)\s*\(\s*(?:parsers\.(?:parse|cfparse)\s*\(\s*)?(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')\s*\)?\s*(?:,\s*[^)]*)?\)"#,
-        )
-        .expect("valid regex")
-    })
-}
-
-/// Matches a Python `@scenario("feature.feature", "Title")` decorator.
-fn py_scenario_re() -> &'static Regex {
-    static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| {
-        Regex::new(r#"@scenario\s*\(\s*"[^"]*"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)"#)
-            .expect("valid regex")
     })
 }
 
@@ -216,8 +165,8 @@ fn fs_let_backtick_re() -> &'static Regex {
 /// single match — silently dropping the step definition and producing a
 /// false step-coverage gap even though cucumber-rs (which binds attributes
 /// from the token stream, not source lines) matches the step correctly at
-/// runtime. Same class of bug already fixed for the JVM/Kotlin and Dart
-/// extractors (see [`extract_jvm_step_texts`] and [`extract_dart_step_texts`]).
+/// runtime. Same class of bug already fixed for the Dart extractor (see
+/// [`extract_dart_step_texts`]).
 /// None of the five regexes below need a dotall flag to support this: they
 /// have no `.` metacharacter, and `\s`/negated character classes already
 /// match `\n`.
@@ -290,49 +239,6 @@ pub fn extract_rust_step_texts(
     Ok(())
 }
 
-/// Extracts step definitions from a JVM (Java or Kotlin) source file.
-///
-/// Recognises `@Given("…")`, `@When("…")`, `@Then("…")`, `@And("…")`,
-/// and `@But("…")` annotations.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-///
-/// # Panics
-///
-/// Panics if a regex capture group that is always present is absent (indicates
-/// a bug in the compiled regex).
-pub fn extract_jvm_step_texts(path: &Path, sm: &mut StepMatcher) -> std::result::Result<(), Error> {
-    let content = fs::read_to_string(path)?;
-    let path_s = path.to_string_lossy();
-    // Scan the whole file content, not line-by-line: formatters routinely
-    // wrap long step strings onto their own line (`@When(\n  "..."\n)`), and
-    // a per-line scan would never see the opening paren, string, and closing
-    // paren in a single match. `jvm_step_re()` needs no dotall flag for this
-    // — it has no `.` metacharacter, and its negated character classes
-    // (`[^"\\]`) already match `\n` — so matching against `&content` (like
-    // `extract_dart_step_texts` already does) is sufficient.
-    for caps in jvm_step_re().captures_iter(&content) {
-        let raw = caps
-            .get(1)
-            .expect("capture group 1 always present")
-            .as_str();
-        // Java/Kotlin string literals require a doubled backslash (`\\`)
-        // to embed a single `\` at runtime — e.g. a `^`-anchored regex
-        // source `\\?` (escaped literal `?`) or a Cucumber-expression
-        // source `\\/`/`\\{`/`\\}` (escaped literal `/`/`{`/`}`) both
-        // compile to one runtime backslash. The regex capture pulls raw
-        // source bytes, so it must be unescaped to the true runtime
-        // string value before `add_step_to_matcher_with_origin` decides
-        // whether that value is a regex, a Cucumber expression, or an
-        // exact literal — otherwise doubled backslashes are misread
-        // (e.g. `\\?` as "zero-or-one backslash", never matching `?`).
-        add_step_to_matcher_with_origin(sm, &unescape_string(raw), &path_s);
-    }
-    Ok(())
-}
-
 /// Extracts step definitions from a Dart source file.
 ///
 /// Recognises `s.given("…", …)` / `s.when("…", …)` / etc. call patterns
@@ -354,128 +260,6 @@ pub fn extract_dart_step_texts(
         add_step_to_matcher_with_origin(sm, &text, &path_s);
     }
     Ok(())
-}
-
-/// Extracts step definitions from a Clojure source file.
-///
-/// Recognises `(Given "…")`, `(When "…")`, `(Then "…")`, `(And "…")`,
-/// and `(But "…")` step forms.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-///
-/// # Panics
-///
-/// Panics if a regex capture group that is always present is absent (indicates
-/// a bug in the compiled regex).
-pub fn extract_clojure_step_texts(
-    path: &Path,
-    sm: &mut StepMatcher,
-) -> std::result::Result<(), Error> {
-    let content = fs::read_to_string(path)?;
-    let path_s = path.to_string_lossy();
-    for line in content.lines() {
-        for caps in clj_step_re().captures_iter(line) {
-            add_step_to_matcher_with_origin(
-                sm,
-                caps.get(1)
-                    .expect("capture group 1 always present")
-                    .as_str(),
-                &path_s,
-            );
-        }
-    }
-    Ok(())
-}
-
-/// Extracts step definitions from an Elixir source file.
-///
-/// Recognises `defgiven ~r/…/`, `defwhen ~r/…/`, `defthen ~r/…/`, etc.
-/// macros and compiles the sigil body as a regex pattern.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-///
-/// # Panics
-///
-/// Panics if a regex capture group that is always present is absent (indicates
-/// a bug in the compiled regex).
-pub fn extract_elixir_step_texts(
-    path: &Path,
-    sm: &mut StepMatcher,
-) -> std::result::Result<(), Error> {
-    let content = fs::read_to_string(path)?;
-    let path_s = path.to_string_lossy();
-    for line in content.lines() {
-        for caps in ex_step_re().captures_iter(line) {
-            let pattern = caps
-                .get(1)
-                .expect("capture group 1 always present")
-                .as_str();
-            if let Ok(re) = Regex::new(pattern) {
-                sm.add_pattern_with_origin(re, pattern, &path_s);
-            }
-        }
-    }
-    Ok(())
-}
-
-/// Extracts step definitions from a Python (pytest-bdd) source file.
-///
-/// Recognises `@given(…)`, `@when(…)`, `@then(…)`, and `@step(…)` decorators,
-/// including the `parsers.parse(…)` and `parsers.cfparse(…)` wrappers.
-///
-/// Double braces `{{` / `}}` are collapsed to single braces before dispatching
-/// to the Python matcher helper.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-pub fn extract_python_step_texts(
-    path: &Path,
-    sm: &mut StepMatcher,
-) -> std::result::Result<(), Error> {
-    let content = fs::read_to_string(path)?;
-    let path_s = path.to_string_lossy();
-    for caps in py_step_re().captures_iter(&content) {
-        let dq = caps.get(1).map_or("", |m| m.as_str());
-        let sq = caps.get(2).map_or("", |m| m.as_str());
-        let mut text = first_non_empty(dq, sq).to_string();
-        // Python uses {{...}} for literal braces in parsers.parse format strings.
-        text = text.replace("{{", "{").replace("}}", "}");
-        add_python_step_to_matcher_with_origin(sm, &text, &path_s);
-    }
-    Ok(())
-}
-
-/// Extracts `@scenario("feature.feature", "Title")` scenario titles from a
-/// Python pytest-bdd test file.
-///
-/// # Errors
-///
-/// Returns an error if the file cannot be read.
-///
-/// # Panics
-///
-/// Panics if a regex capture group that is always present is absent (indicates
-/// a bug in the compiled regex).
-pub fn extract_python_scenario_titles(
-    test_file_path: &Path,
-) -> std::result::Result<HashSet<String>, Error> {
-    let content = fs::read_to_string(test_file_path)?;
-    let mut titles = HashSet::new();
-    for line in content.lines() {
-        for caps in py_scenario_re().captures_iter(line) {
-            titles.insert(normalize_ws(
-                caps.get(1)
-                    .expect("capture group 1 always present")
-                    .as_str(),
-            ));
-        }
-    }
-    Ok(titles)
 }
 
 /// Extracts step definitions from a C# `SpecFlow` source file.
@@ -652,9 +436,7 @@ mod tests {
         // paren, string, and closing bracket in a single line, silently dropping
         // the step definition and producing a false step-coverage gap even though
         // cucumber-rs itself (which operates on the token stream, not source
-        // lines) binds the step correctly at runtime. Same class of bug already
-        // fixed for the JVM/Kotlin extractor (see
-        // `jvm_step_regex_matches_annotation_split_across_lines` above).
+        // lines) binds the step correctly at runtime.
         let tmp = TempDir::new().unwrap();
         let p = write(
             tmp.path(),
@@ -740,65 +522,6 @@ mod tests {
     }
 
     #[test]
-    fn jvm_step_extraction() {
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "Steps.java",
-            "@Given(\"user logs in\")\nvoid step() {}\n@When(\"submits {string}\")\nvoid step2() {}\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_jvm_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches("user logs in"));
-        assert!(sm.matches(r#"submits "alice""#));
-    }
-
-    #[test]
-    fn jvm_step_regex_unescapes_doubled_backslash_before_literal_question_mark() {
-        // Java/Kotlin source must double a backslash to embed a single `\` in
-        // the compiled regex, so `@When("^...pl\\?from=...$")` in the .java
-        // file is the runtime regex `^...pl\?from=...$` (an escaped literal
-        // `?`). Feeding the raw, un-unescaped source bytes straight to
-        // `Regex::new` turned `\\?` into "zero-or-one literal backslash",
-        // never matching the literal `?` in the Gherkin step text.
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "ReportingSteps.java",
-            "@When(\"^alice sends GET /api/v1/reports/pl\\\\?from=2025-01-01&to=2025-01-31&currency=USD$\")\nvoid step() {}\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_jvm_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches(
-            "alice sends GET /api/v1/reports/pl?from=2025-01-01&to=2025-01-31&currency=USD"
-        ));
-    }
-
-    #[test]
-    fn jvm_step_regex_matches_annotation_split_across_lines() {
-        // Kotlin/Java formatters wrap long step strings onto their own line:
-        // `@When(\n  "..."\n)`. The extractor previously scanned line-by-line
-        // (`for line in content.lines()`), so `jvm_step_re()` — which needs
-        // the opening paren, string, and closing paren on one match — never
-        // saw the annotation at all, silently dropping the step definition.
-        // None of the character classes in the pattern need a dotall flag
-        // (there is no `.` metacharacter — `[^"\\]` already matches `\n`),
-        // so scanning the whole file content (like the Dart extractor
-        // already does) is sufficient to fix this.
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "AuthSteps.kt",
-            "@When(\n  \"^the client sends POST /api/v1/auth/login with body \\\\{ \\\"username\\\": \\\"([^\\\"]+)\\\", \\\"password\\\": \\\"([^\\\"]+)\\\" \\\\}$\"\n)\nfun step() {}\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_jvm_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches(
-            r#"the client sends POST /api/v1/auth/login with body { "username": "alice", "password": "Str0ng#Pass1" }"#
-        ));
-    }
-
-    #[test]
     fn dart_step_extraction() {
         let tmp = TempDir::new().unwrap();
         let p = write(
@@ -809,57 +532,6 @@ mod tests {
         let mut sm = StepMatcher::new();
         extract_dart_step_texts(&p, &mut sm).unwrap();
         assert!(sm.matches("user logs in"));
-    }
-
-    #[test]
-    fn clojure_step_extraction() {
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "steps.clj",
-            "(Given \"user logs in\" []\n  ...)\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_clojure_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches("user logs in"));
-    }
-
-    #[test]
-    fn elixir_step_extraction() {
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "steps.ex",
-            "defgiven ~r/^user logs in$/ do\nend\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_elixir_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches("user logs in"));
-    }
-
-    #[test]
-    fn python_step_extraction_with_parsers_parse() {
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "steps.py",
-            "@given(parsers.parse(\"count is {n:d}\"))\ndef step(n):\n    pass\n",
-        );
-        let mut sm = StepMatcher::new();
-        extract_python_step_texts(&p, &mut sm).unwrap();
-        assert!(sm.matches("count is 42"));
-    }
-
-    #[test]
-    fn python_scenario_titles_extracted() {
-        let tmp = TempDir::new().unwrap();
-        let p = write(
-            tmp.path(),
-            "test.py",
-            "@scenario(\"foo.feature\", \"User logs in\")\ndef test_login():\n    pass\n",
-        );
-        let titles = extract_python_scenario_titles(&p).unwrap();
-        assert!(titles.contains("User logs in"));
     }
 
     #[test]

@@ -20,7 +20,7 @@ docs
 plans
 governance
 generated-reports
-local-temp
+local-tmp
 specs
 !specs/apps/a-demo/be/gherkin
 !specs/apps/a-demo/fe/gherkin

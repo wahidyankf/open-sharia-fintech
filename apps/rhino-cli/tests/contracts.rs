@@ -1,11 +1,10 @@
-//! Cucumber-rs integration tests for the `specs clean java-imports` and
-//! `specs scaffold dart` commands.
+//! Cucumber-rs integration tests for the `specs scaffold dart` command.
 //!
 //! Wires the behavior-contract feature files at
 //! `specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/` to step definitions that
 //! synthesize generated-contracts fixtures inside a fresh temp directory and
 //! drive the compiled `rhino-cli` binary, asserting on output, exit code, and
-//! the on-disk effects (rewritten Java files / generated Dart scaffold).
+//! the on-disk effects (generated Dart scaffold).
 
 // Test step-definition scaffolding: private World state and step fns are
 // self-documenting via their #[given]/#[when]/#[then] gherkin strings.
@@ -60,8 +59,8 @@ impl ContractsWorld {
 
     /// Runs `rhino-cli` with `args` followed by `--dir <fixture-dir> --no-color`.
     ///
-    /// `args` is the subcommand path, e.g. `["specs", "clean", "java-imports"]`
-    /// for `specs clean java-imports --dir <dir> --no-color`.
+    /// `args` is the subcommand path, e.g. `["specs", "scaffold", "dart"]`
+    /// for `specs scaffold dart --dir <dir> --no-color`.
     fn exec(&mut self, args: &[&str]) {
         let dir = self.dir.path().to_string_lossy().into_owned();
         let out = std::process::Command::new(cargo_bin("rhino-cli"))
@@ -84,47 +83,6 @@ impl ContractsWorld {
             .code()
             .unwrap_or(-1)
     }
-}
-
-// ===========================================================================
-// Given steps — java-clean-imports
-// ===========================================================================
-
-#[given("a generated-contracts directory with Java files containing unused imports")]
-fn given_unused_imports(w: &mut ContractsWorld) {
-    w.write(
-        "Foo.java",
-        "package com.foo;\nimport java.util.List;\nimport java.util.Map;\n\nclass Foo { List x; }\n",
-    );
-}
-
-#[given("a generated-contracts directory with Java files containing same-package imports")]
-fn given_same_package_imports(w: &mut ContractsWorld) {
-    w.write(
-        "Bar.java",
-        "package com.foo;\nimport com.foo.Helper;\nimport java.util.List;\n\nclass Bar { Helper h; List x; }\n",
-    );
-}
-
-#[given("a generated-contracts directory with Java files containing duplicate imports")]
-fn given_duplicate_imports(w: &mut ContractsWorld) {
-    w.write(
-        "Dup.java",
-        "package com.foo;\nimport java.util.List;\nimport java.util.List;\n\nclass Dup { List x; }\n",
-    );
-}
-
-#[given("a generated-contracts directory with Java files having only required imports")]
-fn given_required_only(w: &mut ContractsWorld) {
-    w.write(
-        "Clean.java",
-        "package com.foo;\nimport java.util.List;\n\nclass Clean { List x; }\n",
-    );
-}
-
-#[given("an empty generated-contracts directory")]
-fn given_empty_dir(_w: &mut ContractsWorld) {
-    // The fresh temp dir is already empty.
 }
 
 // ===========================================================================
@@ -153,11 +111,6 @@ fn given_old_scaffold(w: &mut ContractsWorld) {
 // When steps
 // ===========================================================================
 
-#[when("the developer runs contracts java-clean-imports on the directory")]
-fn when_run_clean_imports(w: &mut ContractsWorld) {
-    w.exec(&["specs", "clean", "java-imports"]);
-}
-
 #[when("the developer runs contracts dart-scaffold on the directory")]
 fn when_run_dart_scaffold(w: &mut ContractsWorld) {
     w.exec(&["specs", "scaffold", "dart"]);
@@ -170,51 +123,6 @@ fn when_run_dart_scaffold(w: &mut ContractsWorld) {
 #[then("the command exits successfully")]
 fn then_exit_ok(w: &mut ContractsWorld) {
     assert_eq!(w.exit_code(), 0, "stdout: {}", w.stdout());
-}
-
-// ===========================================================================
-// Then steps — java-clean-imports
-// ===========================================================================
-
-#[then("unused imports are removed from the Java files")]
-fn then_unused_removed(w: &mut ContractsWorld) {
-    let f = w.read("Foo.java");
-    assert!(f.contains("import java.util.List;"), "List kept: {f}");
-    assert!(!f.contains("import java.util.Map;"), "Map removed: {f}");
-}
-
-#[then("same-package imports are removed from the Java files")]
-fn then_same_package_removed(w: &mut ContractsWorld) {
-    let f = w.read("Bar.java");
-    assert!(
-        !f.contains("import com.foo.Helper;"),
-        "same-pkg removed: {f}"
-    );
-    assert!(f.contains("import java.util.List;"), "List kept: {f}");
-}
-
-#[then("only one copy of each import remains")]
-fn then_deduplicated(w: &mut ContractsWorld) {
-    let f = w.read("Dup.java");
-    assert_eq!(
-        f.matches("import java.util.List;").count(),
-        1,
-        "expected single import: {f}"
-    );
-}
-
-#[then("the Java files are unchanged")]
-fn then_unchanged(w: &mut ContractsWorld) {
-    let f = w.read("Clean.java");
-    assert_eq!(
-        f,
-        "package com.foo;\nimport java.util.List;\n\nclass Clean { List x; }\n"
-    );
-}
-
-#[then("the command reports no files modified")]
-fn then_reports_none_modified(w: &mut ContractsWorld) {
-    assert_eq!(w.stdout(), "No imports needed cleaning.\n");
 }
 
 // ===========================================================================

@@ -33,5 +33,5 @@ is not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/` — gets its own dedicate
 `pr-review-instruction-maker`, rather than being folded into `pr-review-governance-maker`.
 `pr-review-governance-maker` checks conformance to the documented rules; it does not check whether
 those rules themselves have gone stale against a changed toolchain. `pr-review-instruction-maker`
-also penalizes instruction bloat (documents exceeding roughly 200 lines, or generic filler that adds
-no enforceable rule).
+also penalizes instruction bloat — generic filler that adds no enforceable rule. It does not police
+file length: the word-budget gate owns that, and owns it deterministically.

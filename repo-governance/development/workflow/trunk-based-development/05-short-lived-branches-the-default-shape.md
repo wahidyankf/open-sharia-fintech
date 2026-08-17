@@ -16,8 +16,8 @@ when_to_use: Use when creating a short-lived plan branch, or checking whether a 
 # Short-Lived Branches (the Default Shape)
 
 Under the repo-wide `worktree-to-pr` default, a short-lived plan branch is the norm for every plan in
-`ose-public` and `ose-primer` -- direct commit to `main`
-(`worktree-to-origin-main`, `main-to-origin-main`) is not a routine alternative in either;
+`ose-public` -- direct commit to `main`
+(`worktree-to-origin-main`, `main-to-origin-main`) is not a routine alternative here;
 it survives only as an `ose-private` infrastructure-as-code exception -- see
 [Direct-Push Modes Remain Available Where the Topology Supports Them](./10-why-draft-and-direct-push-modes.md#direct-push-modes-remain-available-where-the-topology-supports-them)
 below.

@@ -20,7 +20,7 @@ Every finding in `findings.md` carries:
 - **Evidence** — screenshot path in the plan's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), a computed-style excerpt, or a
   mockup-vs-render comparison — never secrets/PII. Cited screenshots are committed to `evidence/`, not
-  left in `local-temp/`, per the
+  left in `local-tmp/`, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Defect type** — Mockup-fidelity / Token / Primitive-reuse / Hierarchy / Alignment /

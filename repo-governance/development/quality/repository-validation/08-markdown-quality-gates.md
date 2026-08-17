@@ -16,39 +16,57 @@ when_to_use: "Use when locating a markdown quality gate's command or exclusions.
 
 # Markdown Quality Gates
 
-Three automated markdown validators run on every commit and in CI. Per-file validators (mermaid,
-heading-hierarchy) run via lint-staged; the repo-wide link validator (`md links validate`) runs as
-the `md-links` gate job in `pr-quality-gate.yml`:
+Seven gates carry `ci-group: markdown` in `repo-config.yml`: `markdownlint`, `md-mermaid`,
+`md-heading-hierarchy`, `md-naming`, `md-frontmatter`, `md-links`, and `governance-readme-index`.
+The registry is the source of truth for every command, argument, and surface below — read
+`repo-config.yml` when this page and the registry disagree.
+
+Nothing invokes these by hand. `gate run --surface=pre-commit`, `--surface=pre-push`, and the
+CI matrix derived from `ci-group` execute them; the commands below are what those surfaces run.
 
 ## 1. Mermaid Diagram Validation
 
-**Command**: `npx nx run rhino-cli:mermaid:validation`
+**Command**: `md mermaid validate`
 
-Repo-wide scan: the Nx target runs `md validate mermaid --max-depth=4 --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` (plus the standardized noise-skip set: `node_modules`, `dist`, `target`, `.next`, `coverage`, `generated-reports`, `local-temp`, `archived`, `worktrees`, `.terraform`, `generated-contracts`, `.nx`, `.git`). Checks: maximum horizontal width (4 nodes per rank), label line length (≤ 30 chars), single diagram per fenced block, valid syntax. Diagram types covered: `flowchart`/`graph` (all directions) and `stateDiagram-v2`/`stateDiagram` (v1) — state node count contributes to width; state display names and transition edge labels are subject to the ≤ 30-char limit. The `--exclude` flag is repeatable; pass additional prefixes to suppress noise in project-specific runs.
+Checks maximum horizontal width (4 nodes per rank), label line length (≤ 30 chars), single diagram
+per fenced block, and valid syntax. Diagram types covered: `flowchart`/`graph` (all directions) and
+`stateDiagram-v2`/`stateDiagram` (v1) — state node count contributes to width; state display names
+and transition edge labels are subject to the ≤ 30-char limit.
 
-**Gate locations**: Pre-commit (staged `.md` files only, via lint-staged). Not at pre-push. Not in
-a standalone CI workflow (markdown validation is folded into lint-staged and `pr-quality-gate.yml`).
+**Registry exclusions**: `apps/rhino-cli/tests/fixtures`, `plans/done`,
+`apps/ayokoding-www/content`. The `--exclude` flag is repeatable; pass extra prefixes to suppress
+noise in project-specific runs.
+
+**Surfaces**: pre-commit (staged `.md` files) and CI (all `.md` files).
 
 ## 2. Markdown Link Validation
 
-**Command**: `npx nx run rhino-cli:links:validation`
+**Command**: `md links validate`
 
-Full-repo link scan (same standardized noise-skip set as `mermaid:validation`). Validates all relative `[text](path.md)` links resolve to existing files. Also validates `#fragment` anchor references using the GitHub slug algorithm — underscores and Unicode letters/digits are kept, spaces map to hyphens, duplicates receive `-1`, `-2`, … suffixes (verified against the `github-slugger` v2 reference implementation). A fragment with no matching heading emits a `broken-anchor` finding.
+Full-repo link scan. Validates all relative `[text](path.md)` links resolve to existing files. Also
+validates `#fragment` anchor references using the GitHub slug algorithm — underscores and Unicode
+letters/digits are kept, spaces map to hyphens, duplicates receive `-1`, `-2`, … suffixes (verified
+against the `github-slugger` v2 reference implementation). A fragment with no matching heading
+emits a `broken-anchor` finding.
 
-**Gate locations**: Pre-commit (staged `.md` files only, link step) + `md-links` gate job in
-`pr-quality-gate.yml`. Not at pre-push.
+**Registry exclusions**: `plans/done`, `apps/ayokoding-www/content`, `apps/ose-www/content`.
+
+**Surfaces**: pre-push (all `.md` files) and CI (all `.md` files). Deliberately **not** at
+pre-commit — a repo-wide link scan is too slow for every commit.
 
 ## 3. Heading Hierarchy Validation
 
-**Command**: `npx nx run rhino-cli:headings:hierarchy-validation`
+**Command**: `md heading-hierarchy validate`
 
-Validates heading nesting on a prose allowlist (default-deny): `docs/`, `repo-governance/`, `plans/` (excluding `plans/done/`), `specs/`, root `*.md`, `apps/*/README.md`, `libs/*/README.md`, `apps/*/docs/**`, `libs/*/docs/**`. All other paths (including `.claude/**`, `apps/ayokoding-www/content/`, `apps/ose-www/content/`, `plans/done/`) are skipped.
+Validates heading nesting on a prose allowlist (default-deny): `docs/`, `repo-governance/`,
+`plans/` (excluding `plans/done/`), `specs/`, root `*.md`, `apps/*/README.md`, `libs/*/README.md`,
+`apps/*/docs/**`, `libs/*/docs/**`. All other paths (including `.claude/**`,
+`apps/ayokoding-www/content/`, `apps/ose-www/content/`, `plans/done/`) are skipped.
 
-**Gate locations**: Pre-commit (staged `.md` files within the prose allowlist, via lint-staged). Not
-at pre-push. Not in a standalone CI workflow (folded into lint-staged and `pr-quality-gate.yml`).
+**Surfaces**: pre-commit (staged `.md` files) and CI (all `.md` files).
 
 ## CI Enforcement
 
-The standalone `markdown-validate.yml` workflow has been deleted. Markdown validation now runs via
-lint-staged (per-file: mermaid, heading-hierarchy, markdownlint) and the `md-links` gate job in
-`pr-quality-gate.yml` (repo-wide link validation on every `push` and `pull_request` targeting `main`).
+There is no standalone `markdown-validate.yml` workflow. Every markdown gate runs in the
+`markdown` matrix job of `pr-quality-gate.yml`, which derives its members from `ci-group` at
+runtime — adding a gate with `ci-group: markdown` puts it in that job with no workflow edit.

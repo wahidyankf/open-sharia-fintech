@@ -55,7 +55,7 @@ const SKIP_DIRS: &[&str] = &[
     ".next",
     "coverage",
     "generated-reports",
-    "local-temp",
+    "local-tmp",
     "archived",
     "apps-labs",
     "worktrees",

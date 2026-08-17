@@ -30,8 +30,6 @@ language:
 | -------- | ---------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------- |
 | Rust     | `{projectRoot}/src/**/*.rs`, `{projectRoot}/tests/**/*.rs` | `{projectRoot}/generated-contracts/**/*` | `{workspaceRoot}/specs/apps/<app-name>/**/*.feature` |
 
-> For canonical inputs patterns across Go, Java, Kotlin, TypeScript, Python, Elixir, C#, F#, Clojure, and Dart, see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
-
 **Rust CLI app** (`rhino-cli`) also consumes Gherkin specs in `test:unit`. Its `test:unit` and `test:quick` inputs must include the CLI's own spec files:
 
 | CLI App     | Gherkin specs input                             |

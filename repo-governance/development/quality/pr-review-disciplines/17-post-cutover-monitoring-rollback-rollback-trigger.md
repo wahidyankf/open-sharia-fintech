@@ -42,7 +42,7 @@ pressure of a live incident.
 operation**, never a history rewrite:
 
 1. `git revert` (or `git checkout` of the pre-deletion commit) the change that removed
-   `.claude/agents/pr-review-maker.md` and its register/catalog entries, reintroducing them as a new
+   `.claude/agents/pr-review/pr-review-maker.md` and its register/catalog entries, reintroducing them as a new
    commit on top of the current branch.
 2. Run `npm run generate:bindings` to resynchronize `.opencode/` and `.amazonq/` against the restored
    `.claude/` source of truth.

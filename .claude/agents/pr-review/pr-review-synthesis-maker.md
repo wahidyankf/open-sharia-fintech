@@ -6,6 +6,7 @@ model: opus
 color: blue
 skills:
   - pr-review-synthesis-coordination
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Synthesis Maker Agent

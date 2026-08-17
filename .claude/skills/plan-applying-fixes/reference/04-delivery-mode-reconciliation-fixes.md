@@ -25,8 +25,8 @@ PR`, `Open PR`, `Submit PR`, or equivalent) is present with no explicit PR requi
 
 Per
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions (HARD RULE)](../../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
-when `plan-checker` item 9's HIGH finding flags a resolved direct-push mode in `ose-public`/
-`ose-primer` (no executable path there), this is a **different finding class** from PR Step/Delivery
+when `plan-checker` item 9's HIGH finding flags a resolved direct-push mode in `ose-public`
+(no executable path there), this is a **different finding class** from PR Step/Delivery
 Mode Reconciliation above and takes a different fix:
 
 - Always rewrite the resolved mode to `worktree-to-pr` (or `main-to-pr` if the plan's work location

@@ -8,10 +8,8 @@ OSE is for product people exploring that problem and early-career engineers who 
 product platform is being built. This is a pre-alpha repository: the architecture and APIs will
 change as product, research, assurance, and platform work develops.
 
-This is the active OSE product monorepo, not a generic project starter. Its sibling
-[ose-primer](https://github.com/wahidyankf/ose-primer) packages reusable governance, automation,
-and reference applications for teams starting their own repositories. `ose-public` holds OSE
-product work, its supporting research, and the shared source material from which that starter grew.
+This is the active OSE product monorepo, not a generic project starter. It holds OSE product work,
+its supporting research, and the governance and automation that carry them.
 
 External contributions are currently closed while the project stabilizes its product and engineering
 patterns.

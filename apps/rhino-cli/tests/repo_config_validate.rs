@@ -140,7 +140,7 @@ fn then_fails_on_key_set_drift(_w: &mut RepoConfigValidateWorld) {
 }
 
 #[then(
-    "running it independently against the byte-identical schema in all three repos is equivalent to an identical key set across all three repo-config.yml files"
+    "running it independently against the byte-identical schema in both repos is equivalent to an identical key set across both repo-config.yml files"
 )]
 fn then_identical_key_set_equivalence(_w: &mut RepoConfigValidateWorld) {
     // Equivalence: value-only difference (identical key set) passes; a key-set

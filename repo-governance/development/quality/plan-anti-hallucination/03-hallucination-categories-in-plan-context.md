@@ -28,7 +28,7 @@ Plans drift from reality in predictable ways. Each category maps to a verificati
 | **API signature**     | `unstable_cache(fn, keyParts, { revalidate })`            | `web-researcher` against authoritative docs                                                                    |
 | **Command flag**      | `npx nx affected -t typecheck --parallel=cores-1`         | `<cmd> --help` or repo's documented usage in `package.json` scripts                                            |
 | **Test name**         | `RateLimit_RejectsExceedingRequests`                      | If pre-existing, `Grep` test files; if NEW, mark `_New test_`                                                  |
-| **Agent name**        | `swe-typescript-dev`, `web-researcher`                    | List `.claude/agents/*.md` and confirm                                                                         |
+| **Agent name**        | `swe-typescript-dev`, `web-researcher`                    | `find .claude/agents -name '<name>.md'` and confirm (nested role subfolders, not flat)                         |
 | **Skill name**        | `plan-creating-project-plans`                             | List `.claude/skills/` and confirm                                                                             |
 | **External standard** | "AGENTS.md spec at agents.md", "Conventional Commits 1.0" | `web-researcher` with cited excerpt + URL + access date                                                        |
 | **Behavior claim**    | "Next.js serves `app/robots.ts` over `public/robots.txt`" | `web-researcher` with cited official-doc excerpt                                                               |

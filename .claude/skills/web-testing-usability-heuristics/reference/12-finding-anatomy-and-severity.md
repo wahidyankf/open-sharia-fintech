@@ -20,7 +20,7 @@ Every finding in `findings.md` carries:
 - **Evidence** — screenshot path in the plan's `evidence/` subfolder
   (`./evidence/phase-N-<description>-<locale>-<breakpoint>px.png`), the confusing label/copy, a
   timing measurement — never secrets/PII. Cited screenshots are committed to `evidence/`, not left in
-  `local-temp/`, per the
+  `local-tmp/`, per the
   [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md).
 - **Reproducibility** — Always / Intermittent (N/M) / Once.
 - **Suggested clarification** — best-guess fix to restore predictability (clearly a hypothesis:

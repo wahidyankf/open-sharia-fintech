@@ -7,10 +7,10 @@
    `/swagger.json` when present; for GraphQL, `POST` an `__schema` introspection query to obtain the
    live SDL. Pipe JSON through `jq` to assert on shape and values rather than eyeballing.
 2. **Edge & negative probes** — write request scripts (a shell loop of `curl` calls, or a small
-   Node/`jq` harness) to `local-temp/` that exercise the boundary/malformed/auth-context matrix across
+   Node/`jq` harness) to `local-tmp/` that exercise the boundary/malformed/auth-context matrix across
    every operation; capture each request (method, path, redacted headers, body) and its response
    (status, headers, body). Save captures a finding cites to the backlog plan's `evidence/` subfolder
-   (named `phase-N-<operation>-<condition>.http` or `.json`), not `local-temp/` — they become
+   (named `phase-N-<operation>-<condition>.http` or `.json`), not `local-tmp/` — they become
    committed proof a developer can inspect. Treat tooling absence gracefully — fall back to plain
    `curl` and record the limitation under "areas not covered".
 3. **Ground-truth comparison** — `Read`/`Glob`/`Grep` the OpenAPI spec / SDL, `specs/**`, handler

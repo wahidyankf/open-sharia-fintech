@@ -17,7 +17,7 @@ no capture, no notes, no LLM calls, and no prompt plumbing at all.
 [is out of scope]. No capture, no notes, no LLM calls, no prompt plumbing, no AI SDK dependency, no
 scheduling, no posting." That was correct for establishing the engineering harness, but it means
 none of BeaverNest's actual stated purpose — an AI assistant, per
-[BeaverNest Vision](../../../repo-governance/vision/beavernest.md) — exists yet.
+[BeaverNest — Product](../../../specs/apps/beavernest/product/README.md) — exists yet.
 
 ## Why now
 
@@ -26,9 +26,9 @@ to build. Choosing a provider/SDK before a feature is scoped would be speculativ
 
 ## Prior art / precedents
 
-- [BeaverNest Vision](../../../repo-governance/vision/beavernest.md) — states the product is "an AI
-  assistant, a content builder, a posting helper, and a personal workflow engine"; this idea is the
-  first slice of the "AI assistant" facet.
+- [BeaverNest — Product](../../../specs/apps/beavernest/product/README.md) — scopes the product to
+  assistant work, content building, posting, and personal workflow automation; this idea is the
+  first slice of the assistant facet, listed there as the Assistant Core deferred capability.
 - `vercel:ai-architect` agent (already available in this repo's agent roster) — specializes in
   architecting AI-powered applications, choosing AI SDK patterns, and configuring providers; the
   natural agent to drive this once scoped.

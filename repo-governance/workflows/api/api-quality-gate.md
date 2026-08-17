@@ -40,7 +40,7 @@ outputs:
     description: Number of test-fix cycles executed
   - name: final-report
     type: file
-    pattern: "the destination selected by the tester's output-mode: the plan folder (plan), the plan's delivery.md (delivery), or local-temp/<slug>/findings.md (local-temp)"
+    pattern: "the destination selected by the tester's output-mode: the plan folder (plan), the plan's delivery.md (delivery), or local-tmp/<slug>/findings.md (local-tmp)"
     description: Final findings record, written wherever the invoked output-mode directs
 ---
 

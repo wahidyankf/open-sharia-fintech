@@ -29,8 +29,6 @@ TypeScript and other statically typed projects:
 compilation already enforces types and `build` covers it — except when an additional static
 analysis pass is warranted.
 
-> For polyglot `typecheck` patterns in Go, Java, Kotlin, Python, Rust, Elixir, TypeScript, C#, F#, and Clojure backends, see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
-
 ## Compiled and Bundled Projects
 
 Projects that produce artifacts from a compilation or bundling step (Rust, .NET, Next.js):

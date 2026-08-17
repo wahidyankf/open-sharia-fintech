@@ -38,6 +38,6 @@ for a **new** corpus created after this convention lands; the two existing corpo
 and lack these files are **grandfathered** — see the
 [Grandfathered Format Cohort](./12-grandfathered-format-cohort.md) child for why retrofitting them
 is out of scope. A corpus without a `courses/README.md` is on borrowed time
-regardless: `rhino-cli md readme-index validate` flags an unindexed sibling file as an orphan the
+regardless: `rhino-cli governance readme-index validate` flags an unindexed sibling as an orphan the
 moment any other file in the same directory changes, so adding the README is a low-cost task a new
 corpus should not defer.

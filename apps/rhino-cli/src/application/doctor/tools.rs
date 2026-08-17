@@ -38,7 +38,7 @@ pub type InstallFunc = fn(required: &str, platform: &str) -> Vec<InstallStep>;
 pub struct ToolDef {
     /// Human-readable name (e.g. `"node"`).
     pub name: String,
-    /// Executable name passed to the runner (e.g. `"node"`, `"go"`).
+    /// Executable name passed to the runner (e.g. `"node"`, `"rustc"`).
     pub binary: String,
     /// Config file that provides the required version (for display only).
     pub source: String,

@@ -66,3 +66,13 @@ definitions in `apps/organiclever-app-web/test/unit/steps/`.
 - **Bounded-context map**: [bounded-context-map.md](../../../ddd/bounded-context-map.md)
 - **Backend counterpart**: [be gherkin specs](../../organiclever-be/gherkin/README.md)
 - **Parent**: [web component specs](../../../components/app-web/README.md)
+
+- [app-shell — organiclever-app-web Gherkin Domain](./app-shell/README.md)
+- [env-loader — organiclever-app-web Gherkin Domain](./env-loader/README.md)
+- [health — organiclever-app-web Gherkin Domain](./health/README.md)
+- [journal — organiclever-app-web Gherkin Domain](./journal/README.md)
+- [routine — organiclever-app-web Gherkin Domain](./routine/README.md)
+- [routing — organiclever-app-web Gherkin Domain](./routing/README.md)
+- [settings — organiclever-app-web Gherkin Domain](./settings/README.md)
+- [stats — organiclever-app-web Gherkin Domain](./stats/README.md)
+- [workout-session — organiclever-app-web Gherkin Domain](./workout-session/README.md)

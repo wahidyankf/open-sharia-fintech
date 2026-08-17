@@ -25,4 +25,4 @@ when_to_use: "Use when deciding whether evidence capture or another convention g
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)** — plan folder structure,
   lifecycle (in-progress → done), and the evidence/ subfolder naming.
 - **[Temporary Files Convention](../../infra/temporary-files.md)** — evidence/ in a plan folder is NOT a
-  temporary file; it is committed and permanent. Use local-temp/ for scratch work only.
+  temporary file; it is committed and permanent. Use local-tmp/ for scratch work only.

@@ -55,5 +55,5 @@ When creating new convention or development documents during offload, `docs-make
 
 ## Related Conventions
 
-- [AI Agents Convention](../../agents/ai-agents.md) - Agent file size tiers and condensation
+- [AI Agents Convention](../../agents/ai-agents.md) - Agent complexity tiers and condensation
 - [Convention Writing Convention](../../../conventions/writing/conventions.md) - How to structure convention documents

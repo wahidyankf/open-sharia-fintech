@@ -11,14 +11,14 @@ integration exists.
 1. **Baseline** — `WebFetch` the target(s) for rendered text, headings, nav labels, and link
    discovery; `Bash curl -sS -D - -o /dev/null` to read the redirect/locale-prefix/trailing-slash
    structure that feeds the URL-naturalness pass.
-2. **Interactive walkthrough & responsive passes** — write a Playwright script to `local-temp/` and
+2. **Interactive walkthrough & responsive passes** — write a Playwright script to `local-tmp/` and
    run it via `npx playwright` to navigate each task step, click, fill benign data, resize to each
    breakpoint, capture screenshots, read console/network for surprising behaviour, and time perceived
    latency on key interactions (flag > ~400 ms without a progress indicator). Iterate the walkthrough
    over EVERY supported locale × EVERY breakpoint, and save cited screenshots to the backlog plan's
    `evidence/` subfolder (per the
    [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-   not `local-temp/`. Treat tooling absence gracefully — fall back to the baseline and record the
+   not `local-tmp/`. Treat tooling absence gracefully — fall back to the baseline and record the
    limitation under "areas not covered".
 3. **External-consistency research** — when judging whether a widget matches the universal
    convention, `WebSearch` or delegate to `web-researcher`; cite the convention, not this product's

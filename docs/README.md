@@ -15,12 +15,12 @@ to prepare a supported development environment and run the OSE Platform website 
 The documentation uses the [Diátaxis framework](https://diataxis.fr/) so you can choose material
 that matches the question you have today.
 
-- [Tutorials](./tutorials/README.md) help you learn by doing, starting with a guided local product
+- [Tutorials](./tutorials/README.md) — Guided, learn-by-doing journeys for using Open Sharia Enterprise.
   journey.
-- [How-to guides](./how-to/README.md) help you complete a specific task once you know your goal.
-- [Reference](./reference/README.md) provides precise facts about the monorepo, its configuration,
+- [How-To Guides](./how-to/README.md) — Problem-solving guides for working safely and confidently in OSE Public
+- [Reference](./reference/README.md) — Precise technical reference for the OSE platform, Nx workspace, quality gates, and supporting systems
   and its systems.
-- [Explanation](./explanation/README.md) gives the context behind platform decisions, architecture,
+- [Explanation](./explanation/README.md) — Conceptual documentation for open-sharia-enterprise
   and engineering practices.
 
 ## Work with confidence

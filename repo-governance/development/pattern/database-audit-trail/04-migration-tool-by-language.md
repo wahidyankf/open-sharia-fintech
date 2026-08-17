@@ -23,6 +23,4 @@ Each backend uses the idiomatic migration tool for its language and framework ec
 | organiclever-be | DbUp           | MIT     |
 | ose-be          | DbUp           | MIT     |
 
-> For polyglot migration tool patterns (Liquibase, Ecto, Alembic, goose, Flyway, EF Core, Migratus, @effect/sql, SQLx, Drizzle), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
-
 For licensing decisions related to Liquibase's FSL-1.1-ALv2 licence (introduced in version 5.0), see [Licensing Decisions](../../../../docs/explanation/software-engineering/licensing/licensing-decisions.md).

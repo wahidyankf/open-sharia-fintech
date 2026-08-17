@@ -60,7 +60,7 @@ File-based artifacts that would bloat `delivery.md` if inlined:
 - **Lighthouse reports** — `evidence/phase-{N}-lighthouse-{locale}.json`
 - **Test coverage HTML** — `evidence/phase-{N}-coverage-report.html` (if exported)
 
-## NOT in evidence/ (use local-temp/ for ephemeral work)
+## NOT in evidence/ (use local-tmp/ for ephemeral work)
 
 - Intermediate screenshots taken for the agent's own orientation that are not cited in delivery.md
 - Scratch Playwright scripts used during testing

@@ -316,7 +316,19 @@ graph LR
 
 - [Tech Stack Languages Index](../README.md)
 - [Monorepo Structure](../../../../reference/monorepo-structure.md)
-- [Code Templates](./templates/README.md) - Starter templates for Rust projects
+- [Rust Documentation Templates](./templates/README.md) — Reusable templates for Rust development patterns in OSE Platform
+- [Rust API Standards](./api-standards.md) — Authoritative OSE Platform Rust API standards (Axum routing, extractors, Tower middleware, AppState)
+- [Rust Build Configuration](./build-configuration.md) — Authoritative OSE Platform Rust build configuration standards (Cargo.toml, workspaces, profiles, cargo-nextest)
+- [Rust Code Quality Standards](./code-quality-standards.md) — Authoritative OSE Platform Rust code quality standards (rustfmt, Clippy, cargo audit, unsafe policy)
+- [Rust Coding Standards](./coding-standards.md) — Authoritative OSE Platform Rust coding standards (naming, modules, idioms, anti-patterns)
+- [Rust Concurrency Standards](./concurrency-standards.md) — Authoritative OSE Platform Rust concurrency standards (Send/Sync, async/await, Tokio, Arc/Mutex, channels)
+- [Rust DDD Standards](./ddd-standards.md) — Authoritative OSE Platform Rust Domain-Driven Design standards (value objects, aggregates, Repository trait, domain events)
+- [Rust Error Handling Standards](./error-handling-standards.md) — Authoritative OSE Platform Rust error handling standards (Result, Option, thiserror, anyhow)
+- [Rust Memory Management Standards](./memory-management-standards.md) — Authoritative OSE Platform Rust memory management standards (ownership, borrowing, lifetimes, smart pointers)
+- [Rust Performance Standards](./performance-standards.md) — Authoritative OSE Platform Rust performance standards (zero-cost abstractions, benchmarks, profiling, allocations)
+- [Rust Security Standards](./security-standards.md) — Authoritative OSE Platform Rust security standards (memory safety, cargo audit, secrecy crate, safe code)
+- [Rust Testing Standards](./testing-standards.md) — Authoritative OSE Platform Rust testing standards (cargo test, proptest, mockall, async tests)
+- [Rust Type Safety Standards](./type-safety-standards.md) — Authoritative OSE Platform Rust type safety standards (traits, generics, algebraic types, phantom types)
 
 ---
 

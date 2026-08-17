@@ -12,9 +12,9 @@ inputs:
     required: true
   - name: repos
     type: string
-    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-primer, ose-private')"
+    description: "Comma-separated target repository names or absolute paths in the parity set (e.g., 'ose-public, ose-private')"
     required: false
-    default: "ose-public, ose-primer, ose-private"
+    default: "ose-public, ose-private"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main, worktree-to-pr]

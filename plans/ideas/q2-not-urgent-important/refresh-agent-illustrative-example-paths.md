@@ -56,9 +56,9 @@ Out of scope: `docs/explanation/software-engineering/**` (explicitly excluded pe
 
 ## Risks & open questions
 
-- Are any of these examples load-bearing for a downstream template consumer (e.g. `ose-primer`) who
-  expects the generic agent file to demonstrate a multi-app monorepo shape? If so, a fictional
-  placeholder may be clearer than pointing at this repo's own single surviving app. (open)
+- Are any of these examples load-bearing for a reader who expects the generic agent file to
+  demonstrate a multi-app monorepo shape? If so, a fictional placeholder may be clearer than
+  pointing at this repo's own single surviving app. (open)
 
 ## What success looks like + promotion signal
 

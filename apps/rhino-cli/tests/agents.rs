@@ -5,10 +5,10 @@
 //! `harness audit`) plus the governance-meta facts the `instruction-size`
 //! gate depends on
 //! (`repo-governance audit` category wiring, the pre-push hook trigger, and
-//! the convention/workflow/checker docs that describe the gate). Feature file
-//! names and some Gherkin step text still say "agents" or "convention
-//! agents-md-size" for historical reasons — the underlying CLI subcommands
-//! live under the `harness` noun today; see `gherkin/harness/README.md`.
+//! the convention/workflow/checker docs that describe the gate). Some feature
+//! file names and Gherkin step text still say "agents" for historical reasons
+//! — the underlying CLI subcommands live under the `harness` and `governance`
+//! nouns today; see `gherkin/harness/README.md`.
 //!
 //! Wires the behavior-contract feature files at
 //! `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/` to step definitions that
@@ -354,7 +354,8 @@ fn then_sync_all_passing(w: &mut AgentsWorld) {
 #[then("the output identifies the agent with the mismatched description")]
 fn then_identifies_desc_mismatch(w: &mut AgentsWorld) {
     let out = w.stdout();
-    assert!(out.contains("Agent: foo-maker.md"), "got: {out}");
+    // The sync validator names agents by agent name, not by filename.
+    assert!(out.contains("Agent: foo-maker"), "got: {out}");
     assert!(out.contains("Description mismatch"), "got: {out}");
 }
 
@@ -958,7 +959,7 @@ fn real_repo_root() -> PathBuf {
 }
 
 // ===========================================================================
-// AGENTS.md word-budget audit (repo-governance-agents-md-size.feature)
+// AGENTS.md word-budget audit (governance-agents-md-word-budget.feature)
 // governance word-budget validate, scoped to a 400-word target / 500-word
 // fail ceiling matching this feature's own scenario titles.
 // ===========================================================================
@@ -1000,7 +1001,7 @@ fn then_identifies_over_hard_limit(w: &mut AgentsWorld) {
 }
 
 // ===========================================================================
-// Governance word-budget gate (repo-governance-instruction-size.feature)
+// Governance word-budget gate (governance-word-budget-thresholds.feature)
 // ===========================================================================
 
 #[given(
@@ -1098,10 +1099,82 @@ fn then_reports_unknown_subcommand(w: &mut AgentsWorld) {
 
 // ===========================================================================
 // Governance of the word-budget rule
-// (repo-governance-instruction-size-governance.feature) — asserts facts
+// (governance-word-budget-rule.feature) — asserts facts
 // about the real repository tree this crate lives in, not the synthetic
 // fixture. See `real_repo_root()`.
 // ===========================================================================
+
+/// Reads a governance document the way its author sees it: the parent
+/// `<name>.md` plus every child in the sibling `<name>/` directory that
+/// progressive disclosure split it into. Asserting against the parent alone
+/// would fail the moment a document is split, even though nothing about the
+/// rule changed.
+fn read_document_tree(rel: &str) -> String {
+    let parent = real_repo_root().join(rel);
+    let mut out = std::fs::read_to_string(&parent).unwrap_or_else(|e| panic!("read {rel}: {e}"));
+    let children = parent.with_extension("");
+    if children.is_dir() {
+        let mut paths: Vec<PathBuf> = std::fs::read_dir(&children)
+            .expect("read split-children directory")
+            .filter_map(Result::ok)
+            .map(|e| e.path())
+            .filter(|p| p.extension().is_some_and(|x| x == "md"))
+            .collect();
+        paths.sort();
+        for child in paths {
+            out.push('\n');
+            out.push_str(&std::fs::read_to_string(&child).expect("read split child"));
+        }
+    }
+    out
+}
+
+/// Reads an agent's full instruction surface: its own definition plus every
+/// skill it declares in `skills:` (each skill's `SKILL.md` and every file under
+/// its `reference/`). Agent-Skill separation moves procedural detail out of the
+/// agent body, so a rule the agent must follow commonly lives in a skill.
+fn read_agent_surface(agent_rel: &str) -> String {
+    let root = real_repo_root();
+    let agent = root.join(agent_rel);
+    let mut out =
+        std::fs::read_to_string(&agent).unwrap_or_else(|e| panic!("read {agent_rel}: {e}"));
+    let mut in_skills = false;
+    let mut declared: Vec<String> = Vec::new();
+    for line in out.lines() {
+        if line.starts_with("skills:") {
+            in_skills = true;
+            continue;
+        }
+        if in_skills {
+            if let Some(name) = line.strip_prefix("  - ") {
+                declared.push(name.trim().to_string());
+            } else {
+                in_skills = false;
+            }
+        }
+    }
+    for skill in declared {
+        let dir = root.join(".claude/skills").join(&skill);
+        let mut paths: Vec<PathBuf> = vec![dir.join("SKILL.md")];
+        if dir.join("reference").is_dir() {
+            let mut refs: Vec<PathBuf> = std::fs::read_dir(dir.join("reference"))
+                .expect("read skill reference directory")
+                .filter_map(Result::ok)
+                .map(|e| e.path())
+                .filter(|p| p.extension().is_some_and(|x| x == "md"))
+                .collect();
+            refs.sort();
+            paths.extend(refs);
+        }
+        for path in paths {
+            if let Ok(text) = std::fs::read_to_string(&path) {
+                out.push('\n');
+                out.push_str(&text);
+            }
+        }
+    }
+    out
+}
 
 #[given("the plan is complete")]
 fn given_the_plan_is_complete(_w: &mut AgentsWorld) {
@@ -1133,17 +1206,19 @@ fn then_file_lists_class_budgets_enforcement(w: &mut AgentsWorld) {
 
 #[when(r#""repo-rules-checker" runs Step 6"#)]
 fn when_repo_rules_checker_runs_step_6(w: &mut AgentsWorld) {
-    w.lookup_file_content =
-        std::fs::read_to_string(real_repo_root().join(".claude/agents/repo-rules-checker.md"))
-            .expect("read repo-rules-checker.md");
+    w.lookup_file_content = read_agent_surface(".claude/agents/repo/repo-rules-checker.md");
 }
 
 #[then("it reports qualitative bloat concerns across the whole instruction-file class")]
 fn then_reports_qualitative_bloat(w: &mut AgentsWorld) {
+    let content = &w.lookup_file_content;
     assert!(
-        w.lookup_file_content.contains("qualitative bloat"),
-        "got: {}",
-        w.lookup_file_content
+        content.contains("qualitative concerns the mechanical gate can't measure"),
+        "checker must own the qualitative half of the budget rule"
+    );
+    assert!(
+        content.contains("progressive disclosure"),
+        "checker must name the sanctioned remediation"
     );
 }
 
@@ -1162,10 +1237,7 @@ fn then_annotates_deterministic_ceiling(w: &mut AgentsWorld) {
 
 #[when(regex = r#"^I read "([^"]+)"$"#)]
 fn when_i_read(w: &mut AgentsWorld, path: String) {
-    w.lookup_file_content =
-        std::fs::read_to_string(real_repo_root().join(&path)).unwrap_or_else(|e| {
-            panic!("read {path}: {e}");
-        });
+    w.lookup_file_content = read_document_tree(&path);
 }
 
 #[then(r#""governance-word-budget" is named among the Step 0.5 categories"#)]
@@ -1221,9 +1293,7 @@ fn given_preflight_json_has_word_budget_findings(_w: &mut AgentsWorld) {
 
 #[when(r#""repo-rules-checker" runs Step 0.5"#)]
 fn when_repo_rules_checker_runs_step_0_5(w: &mut AgentsWorld) {
-    w.lookup_file_content =
-        std::fs::read_to_string(real_repo_root().join(".claude/agents/repo-rules-checker.md"))
-            .expect("read repo-rules-checker.md");
+    w.lookup_file_content = read_agent_surface(".claude/agents/repo/repo-rules-checker.md");
 }
 
 #[then(r#"it populates the deterministic skip set with "governance-word-budget""#)]
@@ -1252,15 +1322,14 @@ fn then_embeds_preflight_findings_verbatim(w: &mut AgentsWorld) {
 fn then_does_not_rederive_word_counts(w: &mut AgentsWorld) {
     assert!(
         w.lookup_file_content
-            .contains("DO NOT re-derive word counts"),
-        "got: {}",
-        w.lookup_file_content
+            .contains("never re-derive sizes; defer to preflight"),
+        "checker must defer word counting to the preflight rather than redoing it"
     );
 }
 
 // ===========================================================================
 // Pre-push enforcement of the word-budget gate
-// (repo-governance-instruction-size-pre-push.feature) — dark-launched as of
+// (governance-word-budget-pre-push.feature) — dark-launched as of
 // Phase 1 (not yet registered in `gates:`); these scenarios describe the
 // Phase-9 armed end state, so `matches_word_budget_trigger` mirrors the
 // trigger the OLD `instruction-size` gate used (the shape Phase 9 will reuse

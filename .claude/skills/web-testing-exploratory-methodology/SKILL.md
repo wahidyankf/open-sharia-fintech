@@ -1,6 +1,6 @@
 ---
 name: web-testing-exploratory-methodology
-description: Spec-aware session-based exploratory testing methodology for web-exploratory-tester — charter framing, testing tours, SFDIPOT/CRUSSPIC STMPL coverage models, the test dimensions checklist, three mandatory systematic sweeps, specs-as-ground-truth comparison and spec-gap detection, defect anatomy, and the three output modes (plan/delivery/local-temp).
+description: Spec-aware session-based exploratory testing methodology for web-exploratory-tester — charter framing, testing tours, SFDIPOT/CRUSSPIC STMPL coverage models, the test dimensions checklist, three mandatory systematic sweeps, specs-as-ground-truth comparison and spec-gap detection, defect anatomy, and the three output modes (plan/delivery/local-tmp).
 when_to_use: When performing spec-aware exploratory testing of a live website for functional/correctness defects, or extending/auditing the web-exploratory-tester agent's methodology.
 ---
 
@@ -31,7 +31,7 @@ truth.
   severity/priority scales.
 - `reference/11-output-modes-overview.md` and `reference/12-output-mode-plan.md` — the output-mode
   selection table and the default `plan` mode's document set.
-- `reference/13-output-modes-delivery-localtemp-and-procedure.md` — the `delivery` and `local-temp`
+- `reference/13-output-modes-delivery-localtmp-and-procedure.md` — the `delivery` and `local-tmp`
   modes, and the 10-step procedure summary.
 - `reference/14-quality-guidelines-and-constraints.md` — quality guidelines and hard constraints.
 

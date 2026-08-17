@@ -31,7 +31,7 @@ Breakdown of the 636: 465 `label_too_long` (node labels over the 30-char-per-lin
 
 ### A second instance of the same class (2026-07-22)
 
-Surfaced during `bare-repo-governance-hardening` Phase 4: `ose-primer`'s `main-ci` was **already red
+Surfaced during `bare-repo-governance-hardening` Phase 4: a sibling repo's `main-ci` was **already red
 before the phase started**, failing `Mermaid diagram validation (all .md)` with 3 violations in an
 archived `plans/done/` file — and nobody had seen it. Two reasons compounded. The workflow is
 **schedule**-triggered rather than push-triggered, so it did not run on the merge at all; and the
@@ -47,27 +47,27 @@ deliberately does not cover.
 #### Root cause re-measured 2026-07-22: divergent CI flags, not divergent content
 
 The account above named the local-gate scope as the cause. That is a real contributing factor but
-**not** why `ose-primer` alone is red. Measured directly, the three repos invoke the same validator
-with three different flag sets in `.github/workflows/main-ci.yml`:
+**not** why that repo alone was red. Measured directly on 2026-07-22, the repos then in the family
+invoked the same validator with three different flag sets in `.github/workflows/main-ci.yml`:
 
-| Repo          | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
-| ------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
-| `ose-public`  | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
-| `ose-private` | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
-| `ose-primer`  | `--exclude apps/rhino-cli/tests/fixtures`                                                           | **red**             |
+| Repo                                | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
+| `ose-public`                        | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
+| `ose-private`                       | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
+| sibling (now out of the parity set) | `--exclude apps/rhino-cli/tests/fixtures`                                                           | **red**             |
 
-`ose-primer` is the only one missing `--exclude plans/done`. The file it fails on,
-`plans/done/2026-07-03__unify-rhino-cli-sdlc-parity/tech-docs.md`, is **byte-identical** in
-`ose-public` and `ose-primer` (`diff` of both `origin/main` blobs reports no difference), and
-`ose-private` carries 423 files under `plans/done/` of its own. So identical content passes in two
-repos and fails in the third purely on a flag. `--max-depth=4` is a second divergence, present only
+That sibling was the only one missing `--exclude plans/done`. The file it failed on,
+`plans/done/2026-07-03__unify-rhino-cli-sdlc-parity/tech-docs.md`, was **byte-identical** across the
+repos (`diff` of the `origin/main` blobs reported no difference), and
+`ose-private` carries 423 files under `plans/done/` of its own. So identical content passed in two
+repos and failed in the third purely on a flag. `--max-depth=4` is a second divergence, present only
 in `ose-private`.
 
 This reframes the fix. Editing the three violations in an archived plan document treats the symptom
 and leaves the divergence in place; the root-cause fix is deciding which flag set is correct and
-bringing all three to it. That is a CI-parity question, not a diagram question — and it is worth
-asking whether `ose-primer`'s stricter form is the right one and the other two repos' `plans/done`
-excludes are the drift, rather than assuming the majority is correct.
+bringing `ose-public` and `ose-private` to it. That is a CI-parity question, not a diagram question —
+and it is worth asking whether the stricter form is the right one and the `plans/done`
+excludes are the drift, rather than assuming the current shape is correct.
 
 ## Why now
 

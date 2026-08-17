@@ -1,4 +1,11 @@
-# 🏗️ Technical Design: Three-Repository Documentation System
+# 🏗️ Technical Design: Two-Repository Documentation System
+
+> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
+> sync obligation; see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
+> **descoped**, not deferred. References to `ose-primer` below are historical context, not
+> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
 
 ## Architecture Overview
 
@@ -38,7 +45,7 @@ flowchart TD
 | Behavior and architecture  | `specs/**` and focused reference/explanation docs   | README links rather than duplicating design.                                        | Link and readme-index validation.                              |
 | Contribution posture       | Root policy plus `CONTRIBUTING.md`                  | State closed external intake consistently.                                          | Cross-repository phrase and link audit.                        |
 | Delivery mode              | Plans and trunk/worktree governance                 | Teach `worktree-to-pr` for authorized contributors.                                 | Link check plus workflow review.                               |
-| Repository relationships   | Canonical ecosystem instructions                    | Distinguish public↔primer content parity from three-repo Rhino byte identity.       | Three-repository text audit.                                   |
+| Repository relationships   | Canonical ecosystem instructions                    | Distinguish public↔private content parity from two-repo Rhino byte identity.        | Two-repository text audit.                                     |
 | GitHub About metadata      | GitHub repository fields                            | Root README and About panel must agree in intent.                                   | `gh repo view --json description,homepageUrl,repositoryTopics` |
 | Package description        | Exact PRD package metadata contract                 | Package tooling and repository positioning must agree.                              | `jq -r '.description' package.json`                            |
 | Private operational facts  | Authorized `ose-private` sources only               | Never copy to public plans/docs; summarize purpose with placeholders.               | Secret scan plus independent AI sensitivity review.            |
@@ -57,7 +64,7 @@ flowchart TD
 ## Corpus Discovery and Disposition Algorithm
 
 `ose-public` keeps its path-complete Markdown ledger under this plan's `artifacts/` folder.
-`ose-primer` and `ose-private` keep their live path-complete ledgers under plan-scoped `local-temp/`
+`ose-primer` and `ose-private` keep their live path-complete ledgers under plan-scoped `local-tmp/`
 directories in their owning repositories; those files are never committed or copied across
 repositories. The public plan stores only each sibling's source revision, validation result, and
 opaque digest after an independent AI sensitivity review. No ledger quotes document bodies,
@@ -96,7 +103,7 @@ flowchart TD
   H -->|No| G{"Generated owner?"}:::orange
   G -->|Yes| GX["generated"]:::gray
   G -->|No| B{"Shared byte-identity boundary?"}:::orange
-  B -->|Yes| S["Three-repo identity audit"]:::blue
+  B -->|Yes| S["Two-repo identity audit"]:::blue
   B -->|No| R["Reader and fact audit"]:::blue
   S --> O["One terminal disposition"]:::teal
   R --> O
@@ -180,7 +187,7 @@ exemption rather than changing the shared validator:
 5. Remove the temporary fixture immediately after the negative check.
 
 The config change is not a production behavior change. If validation requires changes under
-`apps/rhino-cli`, those changes inherit the three-repository code/spec/TDD and byte-identity rules.
+`apps/rhino-cli`, those changes inherit the two-repository code/spec/TDD and byte-identity rules.
 
 ## GitHub Metadata Design
 
@@ -203,9 +210,9 @@ Rollback captures the prior safe field values in the plan evidence and restores 
 
 Content parity and byte identity are different:
 
-- Generic content parity: `ose-public` ↔ `ose-primer`, adapted rather than blindly copied.
+- Generic content parity: `ose-public` → `ose-private`, adapted rather than blindly copied.
 - `apps/rhino-cli/**` and `specs/apps/rhino/behavior/rhino-cli/gherkin/**` byte identity:
-  `ose-public` = `ose-primer` = `ose-private`, zero carve-outs.
+  `ose-public` = `ose-private`, zero carve-outs.
 - `beaver-nest`: a fork outside both sets.
 
 Repository-specific documentation tracks may run independently. A shared Rhino change cannot: its
@@ -273,9 +280,9 @@ one exact per-document task row in the owning ledger.
 ├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
-├── local-temp/repository-onboarding-readme-refresh/execution-record-phase-0.md [N] — gitignored baseline record
-├── local-temp/repository-onboarding-readme-refresh/execution-record-verification-program.md [N] — gitignored safe-status record
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — conditional local task records
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md [N] — gitignored baseline record
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md [N] — gitignored safe-status record
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — conditional local task records
 └── plans/in-progress/repository-onboarding-readme-refresh/
     ├── {README,brd,prd,tech-docs,delivery,learnings}.md [E] — control plan
     ├── artifacts/reader-doc-disposition-ose-public.md [N] — public path ledger
@@ -297,8 +304,8 @@ one exact per-document task row in the owning ledger.
 ├── docs/**/*.md [E] — exact reader-related rows only
 ├── docs/tutorials/getting-started-with-ose-primer.md [N] — reference-app first success
 ├── {apps,libs,specs,infra,repo-governance}/**/README.md [E] — every README receives a row
-├── local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md [N] — local-only live ledger
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
+├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md [N] — local-only live ledger
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
 ├── {.opencode,.cursor,.amazonq}/** [G] — generated from canonical sources
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 └── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
@@ -313,8 +320,8 @@ one exact per-document task row in the owning ledger.
 ├── package.json [E] — description truth and filename exemption
 ├── docs/tutorials/getting-started-with-ose-private.md [N] — local sandbox first success
 ├── <private-ledger-resolved-reader-paths> [E] — exact private paths stay inside ose-private
-├── local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md [N] — local-only private ledger
-├── local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
+├── local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md [N] — local-only private ledger
+├── local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md [N] — local-only task records
 ├── <private-ledger-resolved-generated-paths> [G] — exact private paths stay inside ose-private
 ├── apps/rhino-cli/** [E] — identical documentation-only change when needed
 └── specs/apps/rhino/behavior/rhino-cli/gherkin/** [E] — bound identical docs/specs
@@ -324,7 +331,7 @@ one exact per-document task row in the owning ledger.
 
 `[E]` on a bounded family means “eligible for evidence-based editing,” not “every member must
 change.” The owning ledger is the exact file list. Paths assigned `verified-unchanged`, `generated`,
-or `historical-exempt` remain untouched. Both sibling ledgers stay in their owning `local-temp/`
+or `historical-exempt` remain untouched. Both sibling ledgers stay in their owning `local-tmp/`
 directories; only reviewed path-free summaries and opaque digests cross into this plan.
 
 The two placeholder families in the private tree are a deliberate sensitivity exception to the
@@ -333,7 +340,7 @@ public path list would defeat the plan's no-spill requirement.
 
 ## Dependencies
 
-- Repository access and GitHub CLI authorization for all three repositories.
+- Repository access and GitHub CLI authorization for both parity repositories.
 - A clean, independent worktree in each target repository and delivery unit.
 - macOS and Ubuntu environments for fresh-checkout validation.
 - Browser automation for the documented first-success pages.

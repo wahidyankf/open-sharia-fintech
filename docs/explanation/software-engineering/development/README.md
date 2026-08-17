@@ -68,7 +68,7 @@ Test-Driven Development is a software development approach where tests are writt
 
 **OSE Platform Standards:**
 
-- [TDD Standards Overview](test-driven-development-tdd/README.md) - Complete prescriptive TDD style guide ⭐
+- [Test-Driven Development (TDD)](./test-driven-development-tdd/README.md) — OSE Platform TDD standards for Red-Green-Refactor cycle, testing frameworks, and domain-driven testing
 - [TDD Cycle Standards](test-driven-development-tdd/tdd-cycle-standards.md) - Red-Green-Refactor requirements
 - [Testing Standards](test-driven-development-tdd/testing-standards.md) - FIRST principles, AAA pattern
 - [Test Doubles Standards](test-driven-development-tdd/test-doubles-standards.md) - When to use mocks, stubs, fakes
@@ -91,7 +91,7 @@ Behavior-Driven Development extends TDD by focusing on behavior specification th
 
 **OSE Platform Standards:**
 
-- [BDD Standards Overview](behavior-driven-development-bdd/README.md) - Complete prescriptive BDD style guide ⭐
+- [Behavior-Driven Development (BDD)](./behavior-driven-development-bdd/README.md) — OSE Platform BDD standards for Gherkin scenarios, Three Amigos collaboration, and acceptance testing
 - [Gherkin Standards](behavior-driven-development-bdd/gherkin-standards.md) - Feature file structure, Given-When-Then requirements
 - [Scenario Standards](behavior-driven-development-bdd/scenario-standards.md) - Scenario independence, naming conventions
 - [Three Amigos Standards](behavior-driven-development-bdd/three-amigos-standards.md) - Collaborative discovery requirements

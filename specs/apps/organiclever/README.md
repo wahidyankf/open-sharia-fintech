@@ -82,7 +82,7 @@ Counts are Gherkin features per container. `--` means no features in that contai
 - **[ddd/](./ddd/README.md)** — DDD artifacts:
   [bounded-contexts.yaml](./ddd/bounded-contexts.yaml) (registry) and
   [ubiquitous-language/](./ddd/ubiquitous-language/README.md) (glossaries);
-  consumed by `rhino-cli ddd bc` and `rhino-cli ddd ul`
+  consumed by `rhino-cli specs structure validate` (its `bc:` and `ul:` layers)
 - **[system-context/](./system-context/README.md)**, **[containers/](./containers/README.md)**,
   **[components/](./components/README.md)** — C4 architecture diagrams (L1/L2/L3)
 - **[components/be/](./components/be/README.md)** — Backend API component specs
@@ -93,7 +93,7 @@ Counts are Gherkin features per container. `--` means no features in that contai
 ## DDD Registry (`bounded-contexts.yaml`)
 
 `bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
-`organiclever-app-web`. Two `rhino-cli ddd` subcommands read it to enforce structural and
+`organiclever-app-web`. `specs structure validate` reads it in two rule layers (`bc:` and `ul:`) to enforce structural and
 vocabulary invariants automatically in `nx run organiclever-app-web:test:quick`.
 
 ### Schema
@@ -112,9 +112,9 @@ Each entry under `contexts:` declares:
 
 Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
 For `customer-supplier` and `conformist`, both sides must declare the relationship
-(symmetry enforced by `ddd bc`).
+(symmetry enforced by the `bc:` layer).
 
-### `rhino-cli ddd bc organiclever` — structural parity
+### The `bc:` layer — structural parity
 
 Reads the registry and verifies the **filesystem** matches exactly:
 
@@ -125,7 +125,7 @@ Reads the registry and verifies the **filesystem** matches exactly:
 - No **orphan** directories exist under `src/contexts/` that aren't in the registry
 - Relationship declarations are symmetric across both context entries
 
-### `rhino-cli ddd ul organiclever` — glossary parity
+### The `ul:` layer — glossary parity
 
 Reads the registry to locate every `glossary:` file, then validates each:
 
@@ -139,16 +139,8 @@ Reads the registry to locate every `glossary:` file, then validates each:
 
 ### Severity and escape hatch
 
-Both commands default to `error` severity — a finding fails the build.
-
-```bash
-# Downgrade to warnings locally (never commit with this set)
-OSE_RHINO_DDD_SEVERITY=warn nx run organiclever-app-web:test:quick
-
-# Or per-command
-rhino-cli ddd bc organiclever --severity=warn
-rhino-cli ddd ul organiclever --severity=warn
-```
+Both layers always run at `error` severity — a finding fails the build. `specs structure validate`
+exposes no severity override, so there is no escape hatch: fix the finding or fix the registry.
 
 ### Adding a new bounded context
 
@@ -156,7 +148,7 @@ rhino-cli ddd ul organiclever --severity=warn
 2. Create the code directory with the declared layer subfolders.
 3. Create the glossary file at the declared path (use an existing one as a template).
 4. Create the gherkin directory and add at least one `.feature` file.
-5. Run `nx run organiclever-app-web:test:quick` — `ddd bc` and `ddd ul` will confirm
+5. Run `nx run organiclever-app-web:test:quick` — the `bc:` and `ul:` layers will confirm
    the registry matches the filesystem before any unit tests run.
 
 ## Spec Consumption
@@ -204,3 +196,4 @@ new to DDD, ask an engineer to walk you through `bounded-context-map.md` first.
 - [Three-Level Testing Standard](../../../repo-governance/development/quality/three-level-testing-standard.md)
 - [BDD Spec-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
+- [OrganicLever — Product](./product/README.md)

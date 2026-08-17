@@ -6,7 +6,7 @@
 that is available in exactly one place: **`ose-private`, and only for a genuinely
 infrastructure-as-code plan** (Terraform, Ansible, and equivalent state-changing infra work needing
 the primary checkout's real secrets and local state). `main` is branch-protected against direct
-pushes, including for admins, in `ose-public` and `ose-primer` — neither direct-push mode has an
+pushes, including for admins, in `ose-public` — neither direct-push mode has an
 executable path there, regardless of how small or well-understood the change is.
 
 Within that one surviving `ose-private` infrastructure-as-code case, select a direct-push mode for

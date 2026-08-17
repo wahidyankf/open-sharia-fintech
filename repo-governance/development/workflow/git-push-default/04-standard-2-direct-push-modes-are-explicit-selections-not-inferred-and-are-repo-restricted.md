@@ -16,13 +16,13 @@ when_to_use: Use when a plan or invocation might call for pushing directly to or
 # Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred — and Are Repo-Restricted
 
 `worktree-to-origin-main` and `main-to-origin-main` push directly to `origin main` with no PR. Before
-either signal below is even relevant, check repository availability first: in `ose-public` and
-`ose-primer`, `main` is branch-protected against direct pushes (including for admins) — **neither
-direct-push mode has an executable path in those two repositories, full stop**.
+either signal below is even relevant, check repository availability first: in `ose-public`,
+`main` is branch-protected against direct pushes (including for admins) — **neither
+direct-push mode has an executable path there, full stop**.
 
 In `ose-private`, both direct-push modes remain available only for infrastructure-as-code plans
 (Terraform, Ansible, and equivalent state-changing infra work needing the primary checkout's real
-secrets and local state). Every other plan, in all three repositories, uses `worktree-to-pr`. See
+secrets and local state). Every other plan, in both repositories, uses `worktree-to-pr`. See
 [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 for the full per-repository rule — this is the current binding constraint, and it applies before the
 selection-signal and content-restriction tests below.
@@ -63,4 +63,4 @@ only when **one** of two conditions also holds:
 Absent one of these two, use `worktree-to-pr` even with a valid selection signal present. See
 [Plans Organization Convention — Delivery Mode](../../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
 for the canonical statement of this restriction and its relationship to the
-[Plan-Docs-Only Carve-Out](../../../workflows/plan/plan-planning/07-plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos).
+[Plan-Docs-Only Carve-Out](../../../workflows/plan/plan-planning/07-plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-ose-public).

@@ -1,7 +1,7 @@
 @env-contract-iac
 Feature: IaC env-validation dispatch for terraform and ansible surfaces
 
-  As a maintainer keeping rhino-cli byte-identical across ose-public, ose-primer, and ose-private
+  As a maintainer keeping rhino-cli byte-identical across ose-public and ose-private
   I want env validate to dispatch to the real terraform and ansible validators by declared surface kind
   So that infra's IaC env-drift detection survives the canonical synthesis and no-ops elsewhere by data
 
@@ -9,4 +9,4 @@ Feature: IaC env-validation dispatch for terraform and ansible surfaces
     Given ose-private declares terraform and ansible surfaces in repo-config.yml
     When env validate runs
     Then validate_terraform and validate_ansible execute and report drift
-    And ose-public and ose-primer, which declare no such surfaces, skip validation by data, not by stub
+    And ose-public, which declares no such surfaces, skips validation by data, not by stub

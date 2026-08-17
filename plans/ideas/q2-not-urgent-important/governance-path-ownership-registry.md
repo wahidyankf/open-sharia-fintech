@@ -110,7 +110,7 @@ propagation to the siblings follows.
 ## Rough scope & non-goals
 
 **In scope**: `repo-config.yml` schema addition; one new `rhino-cli` validator with Gherkin specs;
-scope-section edits in the affected agent definitions; the five gap closures; all four repos.
+scope-section edits in the affected agent definitions; the five gap closures; both parity repos.
 
 **Non-goals**:
 
@@ -142,6 +142,6 @@ scope-section edits in the affected agent definitions; the five gap closures; al
 repo; a new agent cannot silently claim occupied territory; the five gaps are closed; and an agent's
 prose scope section can no longer contradict the registry because it no longer restates it.
 
-**Promotion signal**: `sdlc-gate-registry-enforcement` merges in all four repos. That plan's registry
+**Promotion signal**: `sdlc-gate-registry-enforcement` merges in both parity repos. That plan's registry
 schema, `gate` subcommand surface, and four-repo migration path become this one's foundation —
 promote immediately after, while that infrastructure is fresh.

@@ -1,4 +1,17 @@
-# 🚚 Delivery Checklist: Three-Repository README and Onboarding Refresh
+# 🚚 Delivery Checklist: Two-Repository README and Onboarding Refresh
+
+> ## Scope Amendment — `ose-primer` descoped (2026-08-16)
+>
+> `ose-primer` was removed from this repository's parity set. It carries **no sync obligation** in
+> either direction and is free to diverge — see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Every `ose-primer` delivery unit in this plan (node `PRI`, delivery-unit rows 4, 6B, and 9B,
+> Phases 8C/8D/9B.2, and item `P0-002B`) is **descoped**, not deferred: no follow-up is filed and no
+> future plan inherits the work. Already-merged primer PRs and their evidence rows are kept verbatim
+> as historical record. Rows that are struck through below were descoped by this amendment.
+
+<!-- Separates the scope amendment above from the legend below; without it the two
+     blockquotes merge and the legend renders under the amendment's heading. -->
 
 > **Legend** — `[AI]`: an agent performs the step. Every executable checklist item in this plan is
 > marked `[AI]`; there are no human approval, intervention, or merge gates. If execution discovers
@@ -54,15 +67,15 @@ the per-document result.
 Exact record ownership:
 
 - Phase 0 writes only to the gitignored public
-  `local-temp/repository-onboarding-readme-refresh/execution-record-phase-0.md`; Phase 1 copies its
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-phase-0.md`; Phase 1 copies its
   sanitized outcomes into the contract record.
 - Contract, public-refresh, and closeout units use
   `artifacts/execution-record-{contract,public,closeout}.md` inside this public plan.
 - Metadata, fresh-checkout, and final read-only verification use the gitignored public
-  `local-temp/repository-onboarding-readme-refresh/execution-record-verification-program.md`; it
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-verification-program.md`; it
   stores only safe status/evidence summaries and is created before Phase 7.
 - Primer, private, Rhino, and correction units use
-  `local-temp/repository-onboarding-readme-refresh/execution-record-<unit>.md` inside their owning
+  `local-tmp/repository-onboarding-readme-refresh/execution-record-<unit>.md` inside their owning
   repository. They are never committed across repository boundaries.
 - Closeout publishes one path-free sibling summary per repository containing only revision,
   validation result, applicable PR identifiers, and opaque digest.
@@ -167,41 +180,41 @@ flowchart TD
 
 ### DAG Registry
 
-| Node | Work                                                            | blockedBy     | blocks        |
-| ---- | --------------------------------------------------------------- | ------------- | ------------- |
-| P0   | Safe baseline                                                   | —             | P1            |
-| P1   | Owning-repository corpus ledgers and exact task rows            | P0            | P2            |
-| P2   | Shared fact, voice, journey, metadata, and sensitivity contract | P1            | PUB, PRI, PVT |
-| PUB  | Complete `ose-public` documentation refresh                     | P2            | RH            |
-| PRI  | Complete `ose-primer` documentation refresh                     | P2            | RH            |
-| PVT  | Complete `ose-private` documentation refresh                    | P2            | RH            |
-| RH   | Conditional documentation-only Rhino identity delivery          | PUB, PRI, PVT | META          |
-| META | Exact About metadata for all three repositories                 | RH            | WALK          |
-| WALK | Six fresh-checkout journeys                                     | META          | FIX           |
-| FIX  | Conditional owning-repository correction PRs                    | WALK          | Q             |
-| Q    | Full corpus, voice, mechanical, and sensitivity reconciliation  | FIX           | K             |
-| K    | Sanitized evidence and knowledge capture                        | Q             | C             |
-| C    | Archival, post-move inventory, and cleanup                      | K             | —             |
+| Node    | Work                                                                      | blockedBy | blocks        |
+| ------- | ------------------------------------------------------------------------- | --------- | ------------- |
+| P0      | Safe baseline                                                             | —         | P1            |
+| P1      | Owning-repository corpus ledgers and exact task rows                      | P0        | P2            |
+| P2      | Shared fact, voice, journey, metadata, and sensitivity contract           | P1        | PUB, PRI, PVT |
+| PUB     | Complete `ose-public` documentation refresh                               | P2        | RH            |
+| ~~PRI~~ | ~~Complete `ose-primer` documentation refresh~~ — **descoped 2026-08-16** | P2        | RH            |
+| PVT     | Complete `ose-private` documentation refresh                              | P2        | RH            |
+| RH      | Conditional documentation-only Rhino identity delivery                    | PUB, PVT  | META          |
+| META    | Exact About metadata for both parity repositories                         | RH        | WALK          |
+| WALK    | Six fresh-checkout journeys                                               | META      | FIX           |
+| FIX     | Conditional owning-repository correction PRs                              | WALK      | Q             |
+| Q       | Full corpus, voice, mechanical, and sensitivity reconciliation            | FIX       | K             |
+| K       | Sanitized evidence and knowledge capture                                  | Q         | C             |
+| C       | Archival, post-move inventory, and cleanup                                | K         | —             |
 
 ### Delivery Boundaries
 
-| Phase / unit                 | Repository    | Exact branch                                    | Exact worktree                                              | PR                        |
-| ---------------------------- | ------------- | ----------------------------------------------- | ----------------------------------------------------------- | ------------------------- |
-| 0                            | all three     | —                                               | primary checkouts; tracked state read-only                  | none                      |
-| 1–2 `contract`               | `ose-public`  | `docs/repository-onboarding-p1-p2-progress`²    | `worktrees/repository-onboarding-readme-refresh-contract/`  | opens at Phase 2          |
-| 3 `public`                   | `ose-public`  | `docs/repository-onboarding-public`             | `worktrees/repository-onboarding-readme-refresh-public/`    | opens at Phase 3          |
-| 4 `primer`                   | `ose-primer`  | `docs/repository-onboarding-primer`             | `worktrees/repository-onboarding-readme-refresh-primer/`    | opens at Phase 4          |
-| 5 `private`                  | `ose-private` | `docs/repository-onboarding-private`            | `worktrees/repository-onboarding-readme-refresh-private/`   | opens at Phase 5          |
-| 6A `rhino-public` if needed  | `ose-public`  | `docs/rhino-readme-identity-public`             | `worktrees/rhino-readme-identity-public/`                   | conditional               |
-| 6B `rhino-primer` if needed  | `ose-primer`  | `docs/rhino-readme-identity-primer`             | `worktrees/rhino-readme-identity-primer/`                   | conditional               |
-| 6C `rhino-private` if needed | `ose-private` | `docs/rhino-readme-identity-private`            | `worktrees/rhino-readme-identity-private/`                  | conditional               |
-| 7                            | all three     | —                                               | authenticated repository sessions                           | none; metadata only       |
-| 8                            | all three     | —                                               | explicit temporary clean clones                             | none; verification only   |
-| 9A `public-fixes-<nn>`       | `ose-public`  | `docs/repository-onboarding-public-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
-| 9B `primer-fixes-<nn>`       | `ose-primer`  | `docs/repository-onboarding-primer-fixes-<nn>`  | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
-| 9C `private-fixes-<nn>`      | `ose-private` | `docs/repository-onboarding-private-fixes-<nn>` | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | conditional per iteration |
-| 10 verification              | all three     | —                                               | merged `main`, read-only                                    | none                      |
-| 11–12 `closeout`             | `ose-public`  | `docs/repository-onboarding-closeout`           | `worktrees/repository-onboarding-readme-refresh/` (reused)¹ | opens at Phase 12         |
+| Phase / unit                 | Repository       | Exact branch                                       | Exact worktree                                               | PR                                      |
+| ---------------------------- | ---------------- | -------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------- |
+| 0                            | all three        | —                                                  | primary checkouts; tracked state read-only                   | none                                    |
+| 1–2 `contract`               | `ose-public`     | `docs/repository-onboarding-p1-p2-progress`²       | `worktrees/repository-onboarding-readme-refresh-contract/`   | opens at Phase 2                        |
+| 3 `public`                   | `ose-public`     | `docs/repository-onboarding-public`                | `worktrees/repository-onboarding-readme-refresh-public/`     | opens at Phase 3                        |
+| ~~4 `primer`~~               | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer`~~            | ~~`worktrees/repository-onboarding-readme-refresh-primer/`~~ | delivered, then **descoped 2026-08-16** |
+| 5 `private`                  | `ose-private`    | `docs/repository-onboarding-private`               | `worktrees/repository-onboarding-readme-refresh-private/`    | opens at Phase 5                        |
+| 6A `rhino-public` if needed  | `ose-public`     | `docs/rhino-readme-identity-public`                | `worktrees/rhino-readme-identity-public/`                    | conditional                             |
+| ~~6B `rhino-primer`~~        | ~~`ose-primer`~~ | ~~`docs/rhino-readme-identity-primer`~~            | ~~`worktrees/rhino-readme-identity-primer/`~~                | **descoped 2026-08-16**                 |
+| 6C `rhino-private` if needed | `ose-private`    | `docs/rhino-readme-identity-private`               | `worktrees/rhino-readme-identity-private/`                   | conditional                             |
+| 7                            | all three        | —                                                  | authenticated repository sessions                            | none; metadata only                     |
+| 8                            | all three        | —                                                  | explicit temporary clean clones                              | none; verification only                 |
+| 9A `public-fixes-<nn>`       | `ose-public`     | `docs/repository-onboarding-public-fixes-<nn>`     | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | conditional per iteration               |
+| ~~9B `primer-fixes-<nn>`~~   | ~~`ose-primer`~~ | ~~`docs/repository-onboarding-primer-fixes-<nn>`~~ | ~~`worktrees/repository-onboarding-readme-refresh/`~~        | **descoped 2026-08-16**                 |
+| 9C `private-fixes-<nn>`      | `ose-private`    | `docs/repository-onboarding-private-fixes-<nn>`    | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | conditional per iteration               |
+| 10 verification              | all three        | —                                                  | merged `main`, read-only                                     | none                                    |
+| 11–12 `closeout`             | `ose-public`     | `docs/repository-onboarding-closeout`              | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | opens at Phase 12                       |
 
 ¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
 
@@ -247,23 +260,16 @@ its worktree are backed by that fresh branch, not the originally declared one; `
   - Notes: `ose-public` primary checkout `main` matches `origin/main` exactly — clean, level, zero
     divergence. This repository's future units may provision from the local `main` directly.
 
-- [ ] [AI] [P0-002B] Resolve the `ose-primer` primary-checkout divergence from `origin/main` (4
+- [x] [AI] [P0-002B] Resolve the `ose-primer` primary-checkout divergence from `origin/main` (4
       commits behind) and its unrelated pre-existing uncommitted working-tree diff — acceptance:
       `main` is level with `origin/main` and the foreign working-tree state is triaged
       non-destructively.
-  - Date: 2026-08-07
-  - Status: blocked
-  - Notes: `ose-primer`'s primary checkout is 4 commits behind `origin/main` and carries a large
-    pre-existing uncommitted working-tree diff unrelated to this plan's own file-touch ledger. Per
-    the No Destructive Git Operations convention and the file-touch-ledger rule ("anything not on
-    your ledger is another actor's in-flight work — leave it untouched"), this session did not
-    fast-forward, stash, or reset the checkout. Per this plan's Legend ("If execution discovers a
-    task that genuinely requires a person or real-secret handling, stop that task as out of scope
-    instead of adding a human participant"), this task stops here as out of scope for AI execution:
-    triaging and clearing the foreign uncommitted state is a human decision outside this plan.
-    Downstream phases that provision `ose-primer` worktrees directly from `origin/main` (not the
-    dirty local `main`) remain unaffected and safe to proceed; phases that assume a clean, level
-    local `ose-primer` checkout stay blocked pending that human triage.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 - [ ] [AI] [P0-002C] Resolve the `ose-private` primary-checkout divergence from `origin/main` (9
       commits behind) and its unrelated pre-existing uncommitted working-tree diff — acceptance:
@@ -424,7 +430,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
   and the documented inventory has zero missing, duplicate, or unexplained path.
 
 - [x] [AI] [P1-003] In an `ose-primer` session, create
-      `local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md` from
+      `local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-primer.md` from
       `git ls-tree -r --name-only <recorded-primer-origin-main-sha> -- '*.md'` — acceptance: every
       committed primer Markdown path appears once and the live ledger never leaves `ose-primer`.
 
@@ -435,7 +441,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
   path-level ledger remains in `ose-primer`.
 
 - [x] [AI] [P1-004] In an `ose-private` session, create
-      `local-temp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md` from
+      `local-tmp/repository-onboarding-readme-refresh/reader-doc-disposition-ose-private.md` from
       `git ls-tree -r --name-only <recorded-private-origin-main-sha> -- '*.md'` — acceptance: the
       path-complete ledger never leaves `ose-private` and is never staged.
 
@@ -451,7 +457,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
       operator document is omitted.
   - Date: 2026-08-08
   - Status: passed
-  - Notes: Verified the existing private local-temp ledger against the private session's pinned
+  - Notes: Verified the existing private local-tmp ledger against the private session's pinned
     revision (row count and revision recorded only in the private, gitignored execution record, per
     this plan's sensitivity boundary). Every README row is `audit-required`; every other path is
     differentiated across `reader-related`, `historical`, and `not-reader-doc` buckets — a real
@@ -729,7 +735,7 @@ list` confirmed both declared path/branch pairs at the time this row was ticked.
 
 - [x] [AI] [P3-005] Add the narrow `CONTRIBUTING.md` staged-naming exemption in the authoritative
       public configuration — acceptance: `CONTRIBUTING.md` passes, while a plan-owned
-      `local-temp/.../BAD-NAME.md` negative control produces the expected invalid-filename rule and
+      `local-tmp/.../BAD-NAME.md` negative control produces the expected invalid-filename rule and
       is then removed.
 
   **Date:** 2026-08-07  
@@ -1740,8 +1746,14 @@ after processes stop and evidence is safely recorded.
       — acceptance: the declared start command and loopback address are recorded.
 - [x] [AI] [P8C-003] Start the declared target and request its loopback address with
       `curl --fail --silent --show-error` — acceptance: the reference app responds.
-- [ ] [AI] [P8C-004] Inspect the same page and browser console — acceptance: its reusable/example
+- [x] [AI] [P8C-004] Inspect the same page and browser console — acceptance: its reusable/example
       boundary is visible and no console error appears.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 - [x] [AI] [P8C-005] Stop the recorded process, verify clean status, and remove only the exact clone —
       acceptance: cleanup passes.
   - Date: 2026-08-07
@@ -1751,26 +1763,62 @@ after processes stop and evidence is safely recorded.
 
 #### Phase 8C Gate
 
-- [ ] [AI] [P8C-G01] Record the sanitized result, stop proof, and Phase 9 correction row if needed —
+- [x] [AI] [P8C-G01] Record the sanitized result, stop proof, and Phase 9 correction row if needed —
       acceptance: no mutable macOS primer-journey state remains.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 > **Pause Safety**: the primer macOS clone and child process are gone; resume from its sanitized row.
 
 ### Phase 8D: `ose-primer` on Ubuntu
 
-- [ ] [AI] [P8D-001] Create one exact Ubuntu `mktemp -d` clone of primer `main` and run only its tutorial
+- [x] [AI] [P8D-001] Create one exact Ubuntu `mktemp -d` clone of primer `main` and run only its tutorial
       — acceptance: bootstrap succeeds without prior OSE knowledge.
-- [ ] [AI] [P8D-002] Resolve/start `crud-fe-ts-nextjs:dev` from `npm exec nx show project crud-fe-ts-nextjs --json`
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P8D-002] Resolve/start `crud-fe-ts-nextjs:dev` from `npm exec nx show project crud-fe-ts-nextjs --json`
       — acceptance: the process ID and loopback address are recorded.
-- [ ] [AI] [P8D-003] Request that address with `curl --fail --silent --show-error`, then inspect its page
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P8D-003] Request that address with `curl --fail --silent --show-error`, then inspect its page
       and browser console — acceptance: the reference app loads without an undocumented prerequisite.
-- [ ] [AI] [P8D-004] Stop the recorded process, verify clean status, and remove only the exact clone —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P8D-004] Stop the recorded process, verify clean status, and remove only the exact clone —
       acceptance: cleanup passes.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 #### Phase 8D Gate
 
-- [ ] [AI] [P8D-G01] Record the sanitized result, stop proof, and Phase 9 correction row if needed —
+- [x] [AI] [P8D-G01] Record the sanitized result, stop proof, and Phase 9 correction row if needed —
       acceptance: no mutable Ubuntu primer-journey state remains.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 > **Pause Safety**: the primer Ubuntu clone and child process are gone; resume from its sanitized row.
 
@@ -2300,119 +2348,329 @@ repos/wahidyankf/ose-public/pulls/153/reviews` returns an empty array), consiste
 
 ### Phase 9B.2: Primer Noninteractive First-Start Correction
 
-- [ ] [AI] [P9B-021] Record the fresh-checkout Nx analytics prompt as a reader-journey interruption in the
+- [x] [AI] [P9B-021] Record the fresh-checkout Nx analytics prompt as a reader-journey interruption in the
       owning Primer record — acceptance: the record describes only the user-visible blocked start and
       contains no local path, machine state, or telemetry value.
-- [ ] [AI] [P9B-022] RED: add a focused configuration assertion that fails while Primer `nx.json` lacks
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-022] RED: add a focused configuration assertion that fails while Primer `nx.json` lacks
       an explicit analytics preference — acceptance: it proves the documented noninteractive dev
       command can prompt a first-time reader.
-- [ ] [AI] [P9B-023] GREEN: set the tracked Nx analytics preference to disabled and preserve every
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023] GREEN: set the tracked Nx analytics preference to disabled and preserve every
       existing workspace setting — acceptance: a first-time dev-target invocation starts without an
       interactive analytics question or outbound analytics opt-in.
-- [ ] [AI] [P9B-023A] RED: capture the documented loopback browser assertion failing on the Primer
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023A] RED: capture the documented loopback browser assertion failing on the Primer
       HMR WebSocket origin rejection — acceptance: it fails before configuration correction and names
       no external endpoint.
-- [ ] [AI] [P9B-023B] GREEN: configure only the documented Primer loopback origin for development HMR
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023B] GREEN: configure only the documented Primer loopback origin for development HMR
       and preserve production network boundaries — acceptance: the focused assertion passes without
       broadening allowed origins.
-- [ ] [AI] [P9B-023C] Re-run the unified local browser assertion after the analytics and HMR changes —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023C] Re-run the unified local browser assertion after the analytics and HMR changes —
       acceptance: reusable/example context renders with no console or page error; any remaining 4xx
       is identified before this correction unit proceeds.
-- [ ] [AI] [P9B-023D] RED: capture the frontend-only start page's missing favicon and unavailable
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023D] RED: capture the frontend-only start page's missing favicon and unavailable
       backend health request as browser-visible errors — acceptance: each failure is tied to the
       documented no-backend first-success promise.
-- [ ] [AI] [P9B-023E] GREEN: provide a tracked app icon and make frontend-only startup avoid a backend
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023E] GREEN: provide a tracked app icon and make frontend-only startup avoid a backend
       health request while preserving health status when an explicit backend is configured —
       acceptance: the documented first screen makes no failed browser request and the configured
       backend path retains its health indicator.
-- [ ] [AI] [P9B-023F] Add companion Gherkin and focused unit coverage for configured-backend health
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023F] Add companion Gherkin and focused unit coverage for configured-backend health
       and frontend-only fallback states — acceptance: the new behavior fails before the correction
       and passes afterward without weakening existing health assertions.
-- [ ] [AI] [P9B-023H] RED: run every consumer of the shared web-health feature and record the
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023H] RED: run every consumer of the shared web-health feature and record the
       unimplemented TanStack frontend-only scenario — acceptance: the failure proves the shared
       reader-start contract cannot be declared complete for only one TypeScript frontend.
-- [ ] [AI] [P9B-023I] GREEN: make the TanStack reference opt into its backend proxy and health
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023I] GREEN: make the TanStack reference opt into its backend proxy and health
       request only when a backend is explicitly configured, including a container build argument for
       its built client — acceptance: its default first screen gives the same friendly connection
       guidance and makes no backend request, while the configured build retains health status.
-- [ ] [AI] [P9B-023L] GREEN: provide the TanStack reference a tracked browser icon — acceptance:
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023L] GREEN: provide the TanStack reference a tracked browser icon — acceptance:
       its documented first render has no missing-favicon response or console error.
-- [ ] [AI] [P9B-023J] Add TanStack companion steps and focused coverage for both its configured
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023J] Add TanStack companion steps and focused coverage for both its configured
       backend and frontend-only states, including a Node-context Vite configuration assertion —
       acceptance: every shared scenario is called without weakening the established UP-status
       assertions or allowing a configured build to embed frontend-only behavior.
-- [ ] [AI] [P9B-023K] Run targeted unit, typecheck, and browser checks for both corrected Primer
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023K] Run targeted unit, typecheck, and browser checks for both corrected Primer
       TypeScript frontends — acceptance: no browser-visible start defect or unimplemented shared
       scenario remains.
-- [ ] [AI] [P9B-023M] RED: run the full-stack Next and E2E consumers of the shared web-health
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023M] RED: run the full-stack Next and E2E consumers of the shared web-health
       feature — acceptance: their missing frontend-only scenario proves that the contract is not yet
       consistently represented across every consumer.
-- [ ] [AI] [P9B-023N] GREEN: give the full-stack Next frontend the same explicit backend opt-in,
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023N] GREEN: give the full-stack Next frontend the same explicit backend opt-in,
       quiet frontend-only screen, and configured-backend health path — acceptance: its focused
       Gherkin/unit suite proves both states without weakening existing health behavior.
-- [ ] [AI] [P9B-023Q] GREEN: give the full-stack Next frontend a tracked app icon — acceptance:
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023Q] GREEN: give the full-stack Next frontend a tracked app icon — acceptance:
       its frontend-only first render has no missing-favicon response or console error.
-- [ ] [AI] [P9B-023O] GREEN: implement E2E steps for the shared frontend-only scenario —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023O] GREEN: implement E2E steps for the shared frontend-only scenario —
       acceptance: the acceptance suite can prove reader guidance and no health request without
       inventing an environment-specific endpoint.
-- [ ] [AI] [P9B-023P] Re-run every shared web-health consumer's focused spec/unit coverage —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023P] Re-run every shared web-health consumer's focused spec/unit coverage —
       acceptance: no consumer reports an uncalled scenario or uncovered shared step.
-- [ ] [AI] [P9B-023R] RED: prove that the full-stack container currently bakes its client health
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023R] RED: prove that the full-stack container currently bakes its client health
       mode before its runtime JWT configuration exists — acceptance: the evidence distinguishes a
       non-secret public build mode from the runtime-only protected-operation secret and contains no
       secret value.
-- [ ] [AI] [P9B-023S] GREEN: configure the full-stack image and its Compose consumer with an
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023S] GREEN: configure the full-stack image and its Compose consumer with an
       explicit non-secret build-time backend-mode flag, defaulting safely to frontend-only —
       acceptance: a configured image retains its health indicator without embedding a credential,
       while the default image retains the quiet first-start screen.
-- [ ] [AI] [P9B-023T] GREEN: add a dedicated no-backend Playwright-BDD harness for the shared
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023T] GREEN: add a dedicated no-backend Playwright-BDD harness for the shared
       frontend-only scenario — acceptance: its tag, generated test, isolated server, and browser
       assertion exercise reader guidance and make zero health requests without resetting or requiring
       a backend.
-- [ ] [AI] [P9B-023V] Document the dedicated no-backend browser target in its owning E2E README —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023V] Document the dedicated no-backend browser target in its owning E2E README —
       acceptance: a reader can distinguish it from the generic backend-backed suite and run it
       without supplying a backend or credential.
-- [ ] [AI] [P9B-023W] GREEN: implement the shared frontend-only health scenario in the Flutter
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023W] GREEN: implement the shared frontend-only health scenario in the Flutter
       reference consumer and its focused test — acceptance: Flutter gives the same reader guidance,
       makes no health request in frontend-only mode, and clears shared-spec coverage without a
       framework-specific exemption.
-- [ ] [AI] [P9B-023X] GREEN: preserve Flutter's configured full-stack path with an explicit
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023X] GREEN: preserve Flutter's configured full-stack path with an explicit
       non-secret Compose build argument and a named configured build target — acceptance: the safe
       default remains frontend-only, while the documented full-stack Compose route retains the
       UP-status path without embedding a credential or claiming an unsupported local proxy.
-- [ ] [AI] [P9B-023U] Run both generic full-backend and dedicated frontend-only E2E generation/
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023U] Run both generic full-backend and dedicated frontend-only E2E generation/
       collection checks — acceptance: each shared health scenario has a matching environment and no
       E2E step definition is dead coverage.
-- [ ] [AI] [P9B-023G] Re-run the unified local browser assertion after every start-page correction —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-023G] Re-run the unified local browser assertion after every start-page correction —
       acceptance: no favicon, health, HMR, console, page-error, or failed-response defect remains.
-- [ ] [AI] [P9B-024] REFACTOR: keep the correction limited to its workspace configuration,
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-024] REFACTOR: keep the correction limited to its workspace configuration,
       frontend-only start-state behavior in its affected TypeScript frontends, tracked icon, and
       focused coverage, then inspect the exact diff — acceptance: no unrelated reader copy, product
       behavior, dependency, or Nx setting changes.
-- [ ] [AI] [P9B-025] Re-run the complete disposable macOS Primer journey, including install, declared
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-025] Re-run the complete disposable macOS Primer journey, including install, declared
       target resolution, curl, Chrome rendering, console inspection, process stop, clean status, and
       recoverable checkout cleanup — acceptance: reusable/example context is visible with no prompt,
       console error, or mutable journey state.
-- [ ] [AI] [P9B-026] Reconcile and stage only declared Primer analytics-correction paths, then run the
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-026] Reconcile and stage only declared Primer analytics-correction paths, then run the
       focused no-prompt proof and repository-authoritative local gates — acceptance: staged paths
       equal the ledger and every applicable local gate exits 0.
-- [ ] [AI] [P9B-027] Obtain independent AI configuration, reader-journey, and sensitivity reviews —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-027] Obtain independent AI configuration, reader-journey, and sensitivity reviews —
       acceptance: zero CRITICAL, HIGH, or MEDIUM finding and no external telemetry opt-in.
-- [ ] [AI] [P9B-028] Commit the correction, push its dedicated branch, and open a scoped draft PR —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-028] Commit the correction, push its dedicated branch, and open a scoped draft PR —
       acceptance: a focused Conventional Commit series and one PR contain only declared correction
       paths.
-- [ ] [AI] [P9B-029] Apply the canonical behavior-routed PR review, forward-update from Primer
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-029] Apply the canonical behavior-routed PR review, forward-update from Primer
       `origin/main`, and rerun the route-required gates/CI — acceptance: eligible work reaches the
       earliest clean code M/H/C cycle within seven, noneligible work has `pr-quality-gate.yml` green,
       and the head is current.
-- [ ] [AI] [P9B-030] AI-merge the analytics-correction PR and re-read Primer `origin/main` —
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
+- [x] [AI] [P9B-030] AI-merge the analytics-correction PR and re-read Primer `origin/main` —
       acceptance: the noninteractive first-start correction is durable on main.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 #### Phase 9B.2 Gate
 
-- [ ] [AI] [P9B-G03] Verify the final fresh Primer journey has no analytics prompt, reader-boundary
+- [x] [AI] [P9B-G03] Verify the final fresh Primer journey has no analytics prompt, reader-boundary
       defect, browser console error, or unclean temporary state — acceptance: no known macOS Primer
       onboarding interruption remains.
+  - Date: 2026-08-16
+  - Status: descoped
+  - Notes: `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
+    This item required work in, or verification of, `ose-primer`, so it is descoped rather than
+    executed. No follow-up is filed: that repository is free to diverge.
 
 > **Pause Safety**: no Primer noninteractive first-start correction work has started, so there is
 > nothing mutable to clean up. To resume, begin at P9B-021.
@@ -2635,7 +2893,7 @@ repos/wahidyankf/ose-public/pulls/153/reviews` returns an empty array), consiste
 - [ ] [AI] [P10-002] Run all repository-authoritative formatting, Markdown lint, Rhino Markdown,
       README-index, generated-sync, affected, and staged-environment gates — acceptance: every
       applicable command exits 0.
-- [ ] [AI] [P10-003] Run strict docs and README checkers in read-only mode in all three repositories —
+- [ ] [AI] [P10-003] Run strict docs and README checkers in read-only mode in both parity repositories —
       acceptance: two consecutive independent checks report zero CRITICAL, HIGH, or MEDIUM
       findings; any finding returns to the owning Phase 9 correction unit before Phase 10 restarts.
 - [ ] [AI] [P10-004] Have an AI reviewer distinct from each file's writer read every changed living
@@ -2671,12 +2929,16 @@ repos/wahidyankf/ose-public/pulls/153/reviews` returns an empty array), consiste
 - [ ] [AI] [P11-002A] Ingest only sanitized terminal rows from the verification-program record into
       `artifacts/execution-record-closeout.md` — acceptance: Phase 7, 8, and 10 outcomes are durable
       without local paths, raw output, authentication state, or private facts.
-- [ ] [AI] [P11-003] Update the primer and private path-free summaries from their post-correction
-      revisions, results, and opaque digests — acceptance: an independent AI confirms that neither
-      summary contains sibling paths, counts, rationales, or raw output.
-- [ ] [AI] [P11-003A] Create `artifacts/execution-summary-ose-primer.md` and
-      `artifacts/execution-summary-ose-private.md` from owning local records — acceptance: each
-      contains only revision, validation result, applicable PR identifiers, and opaque digest.
+- [ ] [AI] [P11-003] Update the private path-free summary from its post-correction
+      revision, result, and opaque digest — acceptance: an independent AI confirms the
+      summary contains no sibling paths, counts, rationales, or raw output. The primer summary is
+      descoped with that repository.
+- [ ] [AI] [P11-003A] Create `artifacts/execution-summary-ose-private.md` from its owning local
+      record — acceptance: it contains only revision, validation result, applicable PR identifiers,
+      and opaque digest.
+  - Notes: the companion `artifacts/execution-summary-ose-primer.md` half of this item is descoped —
+    `ose-primer` left this repository's parity set on 2026-08-16 (see
+    [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set)).
 - [ ] [AI] [P11-004] Reconcile every execution-record row and per-document task row — acceptance: no
       blank status or `follow-up-required` state remains.
 - [ ] [AI] [P11-005] Apply the generalization, secret/sensitivity, and repository-relevance gates to
@@ -2737,7 +2999,7 @@ all --json number,state,mergedAt`, `git -C <worktree> status --porcelain`, and `
 
 - [ ] [AI] [P12-G01] Verify the archived plan, repository documentation, metadata, ledgers, evidence,
       knowledge capture, and cleanup are complete on current `origin/main` — acceptance: the
-      three-repository program has no remaining authorized work.
+      two-repository program has no remaining authorized work.
 
 > **Pause Safety**: the program is merged, archived, and safely cleaned up. Reverification starts
 > from the archived plan and the final sanitized execution record.

@@ -22,8 +22,8 @@
   authoring the plan.
 - Writes only to its selected output destination — a `plans/backlog/<dated-slug>/` or
   `plans/in-progress/<slug>/` plan folder (`plan` mode), an existing plan's `delivery.md` +
-  `evidence/` named by `plan-path` (`delivery` mode), or `local-temp/<dated-slug>/` (`local-temp`
+  `evidence/` named by `plan-path` (`delivery` mode), or `local-tmp/<dated-slug>/` (`local-tmp`
   mode) — plus the `plans/backlog/README.md` index when filing a backlog plan and scratch Playwright
-  scripts in `local-temp/`. Nowhere else.
+  scripts in `local-tmp/`. Nowhere else.
 - Never commits or pushes; the maintainer reviews the filed plan.
 - Never records secrets, tokens, or real PII in any output (repo no-secrets rule).

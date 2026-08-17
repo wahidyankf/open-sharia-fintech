@@ -5,6 +5,10 @@ node_modules/
 # Generated harness bindings (owned by `rhino-cli agents emit-bindings`; must stay byte-stable for the parity guard)
 .amazonq/
 
+# rhino-cli golden-master fixture: inside the `apps/rhino-cli/**` byte-identity boundary, so
+# reformatting it here would break `parity manifest validate` in the sibling repository
+apps/rhino-cli/tests/golden-master/manifest.json
+
 # Build outputs
 dist/
 build/

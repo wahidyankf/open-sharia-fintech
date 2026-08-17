@@ -1,6 +1,6 @@
 ---
 title: "Cross-Repo rhino-cli Byte-Identity Standard"
-description: The four rules holding apps/rhino-cli to a stricter, byte-identical standard across ose-public, ose-primer, and ose-private.
+description: The four rules holding apps/rhino-cli to a stricter, byte-identical standard across ose-public and ose-private.
 category: explanation
 subcategory: development
 tags:
@@ -16,17 +16,17 @@ when_to_use: Use when changing anything under apps/rhino-cli and verifying cross
 # Cross-Repo rhino-cli Byte-Identity Standard
 
 `apps/rhino-cli` is the one project held to a stricter, cross-repo standard beyond the per-project
-`inputs`/caching rules above. Four rules govern it, in force across `ose-public`, `ose-primer`, and
-`ose-private`:
+`inputs`/caching rules above. Four rules govern it, in force across `ose-public` and `ose-private`
+— the only two repos in the parity set:
 
 1. `apps/rhino-cli`'s `src/`, `Cargo.toml`, `Cargo.lock`, `project.json`, and `LICENSE` MUST be
-   byte-identical across `ose-public`/`ose-primer`/`ose-private` with zero carve-outs (carrying the
+   byte-identical across `ose-public`/`ose-private` with zero carve-outs (carrying the
    union command superset).
 2. Every Nx-registered project in every repo (per `nx show projects` — this includes the
    `*-contracts` projects rooted under `specs/apps/*/containers/contracts/`, which a directory-only
    `apps`/`libs` scan cannot see) MUST declare `namedInputs.specs`.
-3. rhino-cli's own behaviour MUST be cucumber-covered in all three repos.
-4. All three `repo-config.yml` files MUST carry an identical key set (the schema-parity gate,
+3. rhino-cli's own behaviour MUST be cucumber-covered in both repos.
+4. Both `repo-config.yml` files MUST carry an identical key set (the schema-parity gate,
    enforced by `rhino-cli repo-config validate`).
 
 See [SDLC Gate Standard §rhino-cli Byte-Identity Boundary](../../../../docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary)

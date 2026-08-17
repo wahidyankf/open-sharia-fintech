@@ -1037,7 +1037,7 @@ fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
 }
 
 #[then(
-    "the harness set is data in repo-config.yml, identical across all three repos, not a hard-coded directory list"
+    "the harness set is data in repo-config.yml, identical across both parity repos, not a hard-coded directory list"
 )]
 fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
     // Cross-check: every KNOWN_BINDING_DIRS entry (the constant `harness bindings validate`

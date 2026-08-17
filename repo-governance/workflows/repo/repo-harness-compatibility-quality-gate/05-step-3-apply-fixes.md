@@ -34,7 +34,7 @@ Apply validated fixes from the audit report based on mode level.
 
 - **Parity Invariants 1, 2** (governance prose, AGENTS.md/CLAUDE.md vendor-audit violations):
   rewriting load-bearing prose requires human judgment per the convention's Migration Guidance
-- **Parity Invariant 4** (count mismatch): an orphan in `.opencode/` may need deletion OR a
+- **Parity Invariant 4** (inventory mismatch): an orphan in `.opencode/` may need deletion OR a
   missing `.claude/` counterpart may need authoring — either choice has product implications
 - **Parity Invariant 5** (color-map or tier-map gap): adding a new color/tier requires a
   decision about role mapping that a fixer cannot make mechanically

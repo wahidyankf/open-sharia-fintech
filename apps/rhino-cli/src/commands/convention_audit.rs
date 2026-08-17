@@ -1,18 +1,16 @@
 //! `convention audit` — runs all convention validators in sequence.
 //!
-//! Runs emoji, license, and agents-md-size validators with default arguments.
+//! Runs the emoji and license validators with default arguments.
 //! Use `--skip <name>` to exclude individual validators.
 
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::commands::{
-    convention_validate_agents_md_size, convention_validate_emoji, convention_validate_license,
-};
+use crate::commands::{convention_validate_emoji, convention_validate_license};
 use crate::domain::cliout::OutputFormat;
 
 /// Member validators run by `convention audit` in order.
-const MEMBERS: &[&str] = &["emoji", "license", "agents-md-size"];
+const MEMBERS: &[&str] = &["emoji", "license"];
 
 /// CLI arguments for `convention audit`.
 #[derive(Args, Debug)]
@@ -78,10 +76,6 @@ fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<()
             &convention_validate_license::LicenseAuditArgs {},
             output_format,
         ),
-        "agents-md-size" => convention_validate_agents_md_size::run(
-            &convention_validate_agents_md_size::AgentsMdSizeArgs,
-            output_format,
-        ),
         _ => Err(anyhow!("unknown convention validator: {name}")),
     }
 }
@@ -93,14 +87,13 @@ mod tests {
 
     #[test]
     fn members_list_has_expected_count() {
-        assert_eq!(MEMBERS.len(), 3);
+        assert_eq!(MEMBERS.len(), 2);
     }
 
     #[test]
     fn members_list_contains_expected_validators() {
         assert!(MEMBERS.contains(&"emoji"));
         assert!(MEMBERS.contains(&"license"));
-        assert!(MEMBERS.contains(&"agents-md-size"));
     }
 
     #[test]
@@ -130,9 +123,9 @@ mod tests {
     #[test]
     fn run_with_partial_skip_does_not_panic() {
         let args = AuditArgs {
-            skip: vec!["emoji".to_string(), "license".to_string()],
+            skip: vec!["emoji".to_string()],
         };
-        // agents-md-size will fail (no git root), triggering the failure path.
+        // `license` still runs; a failure there exercises the failure path.
         let _ = run(&args, OutputFormat::Text);
     }
 

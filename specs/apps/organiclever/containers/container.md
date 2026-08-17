@@ -50,7 +50,7 @@ by both, so adding them would clutter the rank without adding signal). Their wir
   BDD scenarios at the `test:unit` level (organized by bounded context, with `vitest-cucumber`)
   and `organiclever-app-web-e2e` Playwright scenarios at the `test:e2e` level.
 - **DDD enforcement** (`specs/apps/organiclever/ddd/`) is validated by
-  `rhino-cli ddd bc` and `rhino-cli ddd ul`, both run as part of `test:quick` for
+  `rhino-cli specs structure validate` (its `bc:` and `ul:` layers), both run as part of `test:quick` for
   `organiclever-app-web`.
 - **Main CI** runs `typecheck`, `lint`, `test:quick` for both containers on a 4x/day schedule plus manual dispatch (no push trigger); `pr-quality-gate.yml` is what runs them per PR and per push to `main`.
 - **E2E CI** runs the full Docker Compose stack on a twice-daily cron.

@@ -45,5 +45,5 @@ For the test-first practices that connect product examples to implementation, se
 ## Related reading
 
 - [Software Engineering](../README.md) — the wider engineering map.
-- [Testing tools](./tools/README.md) — the available tool documentation.
+- [Automation Testing Tools](./tools/README.md) — Find the automation tool guidance used by open-sharia-enterprise
 - [Code quality](../../../../repo-governance/development/quality/code.md) — repository-level quality rules.

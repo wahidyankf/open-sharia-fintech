@@ -37,7 +37,7 @@ The orchestrator (or user) provides:
      heuristic sweep + 2-4 task walkthroughs across breakpoints), or `thorough` (adds
      external-consistency research, first-click analysis on every key task, and a deep URL/IA
      legibility audit).
-4. **Output mode & destination** — `plan` (default) | `delivery` | `local-temp`; see the Output Modes
+4. **Output mode & destination** — `plan` (default) | `delivery` | `local-tmp`; see the Output Modes
    reference module. With `delivery`, also pass a **plan-path**; with `plan`, optionally pass
    `plan-stage: in-progress`.
 

@@ -63,7 +63,7 @@ See [Mandatory Pre-Write and Post-Write Grilling](01-mandatory-grilling.md).
 
 **Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`) — `ose-private` infrastructure-as-code plans only**:
 
-- Not available in `ose-public`, `ose-primer` (branch-protected `main`, including for admins) — see
+- Not available in `ose-public` (branch-protected `main`, including for admins) — see
   the Per-Repository Delivery Mode Restrictions HARD RULE in
   [09-delivery-mode.md](09-delivery-mode.md)
 - Reachable only for a genuinely infrastructure-as-code plan in `ose-private`

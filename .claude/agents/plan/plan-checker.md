@@ -13,6 +13,7 @@ skills:
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-understanding-shared-vocabulary
 ---
 
 # Plan Checker Agent

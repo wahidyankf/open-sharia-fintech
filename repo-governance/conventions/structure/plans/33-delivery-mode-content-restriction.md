@@ -29,7 +29,7 @@ Absent one of these two, use `worktree-to-pr` even if a direct-push mode would o
 convenient. This restriction targets `main-to-origin-main` specifically — working directly in the
 primary checkout skips both PR review and worktree isolation, so it is held to a narrower bar than
 `worktree-to-origin-main`, which still isolates work from the primary checkout even though it also
-skips review. The [Plan-Docs-Only Carve-Out](../../../workflows/plan/plan-planning/07-plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-two-of-three-repos)
+skips review. The [Plan-Docs-Only Carve-Out](../../../workflows/plan/plan-planning/07-plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-ose-public)
 is the plan-authoring-time instance of condition 1 above — see that section for how the two
 reconcile when a plan folder's push includes non-markdown evidence files.
 

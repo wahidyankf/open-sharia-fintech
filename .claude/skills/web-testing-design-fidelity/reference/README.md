@@ -16,6 +16,6 @@ title: "Reference"
 - [10 Finding Anatomy And Severity](./10-finding-anatomy-and-severity.md) — the fields every findings.md entry carries, and the severity/priority scales
 - [11 Output Modes Overview](./11-output-modes-overview.md) — the output modes selectable at invocation
 - [12 Output Mode Plan](./12-output-mode-plan.md) — the default output mode that files findings as a new plan folder
-- [13 Output Modes Delivery Localtemp And Procedure](./13-output-modes-delivery-localtemp-and-procedure.md) — the delivery and local-temp output modes plus the shared procedure summary
+- [13 Output Modes Delivery Localtmp And Procedure](./13-output-modes-delivery-localtmp-and-procedure.md) — the delivery and local-tmp output modes plus the shared procedure summary
 - [14 Quality Guidelines And Constraints](./14-quality-guidelines-and-constraints.md) — quality guidelines and constraints for design evaluation
   </content>

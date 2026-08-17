@@ -50,24 +50,24 @@ This documentation is the **authoritative reference for {LANGUAGE} coding standa
 ```markdown
 ## Prerequisite Knowledge
 
-**This documentation assumes you have completed the ayokoding-www Golang learning path**:
+**This documentation assumes you have completed the ayokoding-www Rust learning path**:
 
-- [ayokoding-www Golang Overview](https://ayokoding.com/en/learn/software-engineering/programming-languages/golang/)
-- [By Example Tutorial](https://ayokoding.com/en/learn/software-engineering/programming-languages/golang/by-example/)
+- [ayokoding-www Rust Overview](https://ayokoding.com/en/learn/software-engineering/programming-languages/rust/)
+- [By Example Tutorial](https://ayokoding.com/en/learn/software-engineering/programming-languages/rust/by-example/)
 
-If you're new to Go, **start with ayokoding-www first**.
+If you're new to Rust, **start with ayokoding-www first**.
 ```
 
 **FAIL: No prerequisite statement**:
 
 ```markdown
-# Golang
+# Rust
 
-Go is used for high-performance services...
+Rust is used for high-performance services...
 
 ## Best Practices
 
-Use goroutines for concurrency...
+Use channels for concurrency...
 ```
 
-**Why it fails**: Doesn't tell developers where to learn Go fundamentals. Assumes knowledge.
+**Why it fails**: Doesn't tell developers where to learn Rust fundamentals. Assumes knowledge.

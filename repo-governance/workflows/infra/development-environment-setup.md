@@ -34,10 +34,9 @@ outputs:
 configuring every tool required to work on any project in this monorepo — from git hooks to
 integration tests to E2E tests.
 
-> **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) were extracted to
-> [ose-primer](https://github.com/wahidyankf/ose-primer) on 2026-04-18. If you need to set
-> up Elixir, Clojure, Python, Rust, Dart/Flutter toolchains for those apps, see the
-> ose-primer setup guide.
+> **Note**: The polyglot demo apps (`a-demo-be-*`, `a-demo-fe-*`) were removed from this repo on
+> 2026-04-18. The optional-scope phases below survive for languages this repo may still need; a phase
+> with no project in this repo is safe to skip.
 
 **When to use**: new developer onboarding, a fresh machine/OS install, recovering a broken
 toolchain, or verifying an environment after adding a new project language.

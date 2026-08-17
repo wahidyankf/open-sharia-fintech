@@ -1,6 +1,6 @@
 ---
 title: "Platform Binding Examples"
-description: "Covers the Claude Code and Cursor model-ID mapping tables, tier collapse, and why glm-5.2 is the OpenCode default."
+description: "Covers the per-harness model-ID mapping tables, tier collapse, and why glm-5.2 is the default on one secondary harness."
 category: explanation
 subcategory: development
 tags:

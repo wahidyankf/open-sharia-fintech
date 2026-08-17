@@ -2,7 +2,7 @@
 
 1. **Repo-relevance gate satisfied** — confirm no infra-private content (Terraform, k3s, Proxmox,
    `coralpolyp`, real hostnames/inventories) was routed into this repo's public surfaces (`docs/`,
-   `repo-governance/`, `.claude/`) when this repo is `ose-public` or `ose-primer`. Any cross-routed
+   `repo-governance/`, `.claude/`) when this repo is `ose-public`. Any cross-routed
    infra-private content: **CRITICAL** finding — archival is BLOCKED.
 2. **Mandatory phase presence carried through to archival** — if `plan-checker`'s silent-absence
    MEDIUM finding for the Knowledge Capture phase was never resolved before this archival check runs,

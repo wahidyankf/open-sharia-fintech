@@ -71,7 +71,7 @@ Counts are Gherkin features per container.
 ## DDD Registry (`bounded-contexts.yaml`)
 
 `bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
-`wahidyankf-www`. Two `rhino-cli ddd` subcommands read it to enforce structural and
+`wahidyankf-www`. `specs structure validate` reads it in two rule layers (`bc:` and `ul:`) to enforce structural and
 vocabulary invariants automatically in `npm exec nx -- run wahidyankf-www:test:quick`.
 
 ### Schema
@@ -90,7 +90,7 @@ Each entry under `contexts:` declares:
 
 Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
 
-### `rhino-cli ddd bc wahidyankf` — structural parity
+### The `bc:` layer — structural parity
 
 Reads the registry and verifies the **filesystem** matches exactly:
 
@@ -99,7 +99,7 @@ Reads the registry and verifies the **filesystem** matches exactly:
 - Every declared `gherkin:` directory exists and contains ≥1 `.feature` file
 - No orphan directories under `src/contexts/` outside the registry
 
-### `rhino-cli ddd ul wahidyankf` — glossary parity
+### The `ul:` layer — glossary parity
 
 Reads the registry to locate every `glossary:` file, then validates each:
 

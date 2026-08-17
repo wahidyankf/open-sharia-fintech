@@ -1,0 +1,16 @@
+---
+title: "Convention Writing Convention"
+description: "Meta-convention defining how to write and organize convention documents in the conventions/ directory"
+when_to_use: "Read this index to find the right Convention Writing Convention child document."
+---
+
+# Convention Writing Convention
+
+- [Convention Writing Convention — Purpose, Principles, and Scope](./01-purpose-principles-and-scope.md) — Why the convention-writing meta-convention exists, which core principles it implements, and what topics fall inside vs. outside conventions/. Use when deciding whether a new document belongs in conventions/ vs. development/, or when citing which principles a convention document implements.
+- [Convention Document Structure — Required Sections](./02-document-structure-required-sections.md) — The required frontmatter, introduction, Principles Implemented/Respected, Purpose, Scope, and Standards sections every convention document must include. Use when drafting a new convention document and assembling its mandatory sections.
+- [Convention Document Structure — Recommended and Optional Sections](./03-document-structure-recommended-and-optional-sections.md) — The recommended Examples, Comparison Tables, Special Considerations, Tools and Automation, and References sections, plus the optional Quick Reference/Migration Guide/FAQ/Rationale sections. Use when deciding whether to add optional or recommended sections to a convention document beyond the required minimum.
+- [Convention Writing Convention — Quality Checklist](./04-quality-checklist.md) — The completeness, clarity, usability, convention-compliance, integration, and accessibility checks to run before publishing a convention document. Use immediately before publishing or merging a new or updated convention document.
+- [Convention Writing Convention — Creation Criteria and Length Guidelines](./05-creation-criteria-and-length-guidelines.md) — Decision criteria for creating a new convention vs. updating or merging an existing one, and expected length ranges (short/medium/long) for convention documents. Use when deciding whether a new topic warrants its own convention document or belongs inside an existing one.
+- [Convention Writing Convention — Naming, Maintenance, and Example Conventions](./06-naming-maintenance-and-example-conventions.md) — The file/title naming pattern for convention documents, the review and deprecation process, and a curated list of exemplary conventions to model. Use when naming a new convention file, reviewing an existing one for staleness, or looking for a structural example to imitate.
+- [Convention Writing Convention — Examples and Common Mistakes](./07-examples-and-common-mistakes.md) — A worked good-vs-bad example of full convention document structure, plus a table of common authoring mistakes and their fixes. Use when you need a concrete template to copy or want to check a draft against known authoring pitfalls.
+- [Convention Writing Convention — Integration with Agents and References](./08-integration-with-agents-and-references.md) — Which agents create and consume convention documents, the agent-integration checklist, and cross-references to related meta-documentation. Use when wiring a new convention into agent prompts or looking up related meta-conventions and governance documents.

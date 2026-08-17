@@ -10,3 +10,6 @@ Playwright-BDD (`apps/ose-app-web-e2e`); the `env-loader` domain is consumed by
 | ---------------------------------------------------------------- | ---------- |
 | [smoke/smoke.feature](./smoke/smoke.feature)                     | smoke      |
 | [env-loader/env-loader.feature](./env-loader/env-loader.feature) | env-loader |
+
+- [env-loader — OSE Application Web Gherkin Domain](./env-loader/README.md)
+- [smoke — app-web Gherkin Domain](./smoke/README.md)

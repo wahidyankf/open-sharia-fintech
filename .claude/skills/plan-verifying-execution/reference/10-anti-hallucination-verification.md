@@ -2,17 +2,15 @@
 
 ## 2. Anti-Hallucination Post-Execution Validation (Step 5f — MANDATORY HARD RULE)
 
-After verifying phase gates and execution markers (Step 5f-gates), verify that every factual claim in
-`delivery.md` (file paths, Nx targets, package versions, function names, agent names, test names,
-behavior claims) still holds against the post-execution repo state. Hallucinated claims that survived
-authoring may have been silently fabricated by the executor — this step catches them.
+After Step 5f-gates, verify every factual claim in `delivery.md` (paths, Nx targets, versions,
+function/agent/test names, behavior claims) still holds against the post-execution repo state. This
+catches hallucinated claims the executor fabricated silently.
 
 ### What to Validate
 
-**A. File-path claims** — for every file path mentioned in delivery.md (checkbox prose and
-implementation-notes blocks): `Bash test -f <path>`. Missing AND no documented deletion/move: **HIGH**
-per occurrence. If newly created, verify `git log --diff-filter=A` shows the creation in the
-plan-execution timeframe.
+**A. File-path claims** — for every path in delivery.md (checkbox prose and implementation-notes):
+`Bash test -f <path>`. Missing with no documented deletion/move: **HIGH** per occurrence. If newly
+created, confirm `git log --diff-filter=A` dates it to the execution window.
 
 **B. Nx-target claims** — for every Nx target invoked in delivery.md commands: read
 `apps/<project>/project.json`, confirm the target appears under `targets`. Missing: **HIGH** per
@@ -26,17 +24,16 @@ occurrence (may be legitimate version bump during execution; flag for review).
 (the test was claimed but never written).
 
 **E. Agent-name claims** — for every agent name cited (especially `_Suggested executor:_`
-annotations): `Bash test -f .claude/agents/<name>.md`. Missing: **HIGH** per occurrence
-(Anti-Pattern AP-7).
+annotations): `find .claude/agents -name '<name>.md'` returns a match — definitions live in nested
+role subfolders, so a flat path test always fails. Missing: **HIGH** (AP-7).
 
 **F. Behavior claims** — for every claim about library or framework behavior in tech-docs.md: verify
 it is backed by a `[Web-cited]` inline excerpt + URL + access date, or by a repo-doc reference.
 Missing source: **MEDIUM** per occurrence.
 
-**G. KPI claims** — for every numeric KPI in brd.md or implementation-notes: confirm the number is
-either an observable check, a cited measurement, qualitative reasoning, or explicitly labeled
-`_Judgment call:_`. Bare unlabeled percentage or duration: **HIGH** per occurrence (Anti-Pattern
-AP-5).
+**G. KPI claims** — for every numeric KPI in brd.md or implementation-notes: confirm it is an
+observable check, a cited measurement, qualitative reasoning, or labeled `_Judgment call:_`. Bare
+unlabeled percentage or duration: **HIGH** per occurrence (AP-5).
 
 **H. Cross-link integrity** — for every relative cross-link in plan files: resolve and `Bash test -f`.
 Broken: **HIGH** per occurrence (Anti-Pattern AP-10).

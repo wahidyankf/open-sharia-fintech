@@ -16,7 +16,7 @@ integration target and merge authority.
    silently coerced to the default — flag it directly.
 2. **Absence is not itself a violation** — an unmarked plan resolves to the tier-3 default
    (`worktree-to-pr`); don't flag omission. `plan-maker` always authors the section explicitly (see
-   `.claude/agents/plan-maker.md` Step 7) — flag a freshly-authored plan missing it entirely at
+   `.claude/agents/plan/plan-maker.md` Step 7) — flag a freshly-authored plan missing it entirely at
    **LOW** (best-practice gap, not correctness defect).
 3. **Every PR carries the behavior classifier** — when the resolved mode produces a PR, `delivery.md`
    records the canonical classifier: eligible executable work runs sequential CI-green-gated

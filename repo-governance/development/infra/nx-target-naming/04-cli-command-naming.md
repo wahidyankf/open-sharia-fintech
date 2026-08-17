@@ -19,27 +19,26 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 
 **Pattern**: `{domain} {sub-domain…} {noun} {verb}`
 
-| Old (verb-middle)                            | New (verb-last)                              |
-| -------------------------------------------- | -------------------------------------------- |
-| `convention validate emoji`                  | `convention emoji validate`                  |
-| `convention validate license`                | `convention license validate`                |
-| `harness validate bindings`                  | `harness bindings validate`                  |
-| `harness validate duplication`               | `harness duplication validate`               |
-| `harness validate naming`                    | `harness naming validate`                    |
-| `harness validate sync`                      | `harness sync validate`                      |
-| `harness validate claude`                    | `harness claude validate`                    |
-| `harness generate bindings`                  | `harness bindings generate`                  |
-| `md validate links`                          | `md links validate`                          |
-| `md validate mermaid`                        | `md mermaid validate`                        |
-| `md validate heading-hierarchy`              | `md heading-hierarchy validate`              |
-| `md validate naming`                         | `md naming validate`                         |
-| `md validate frontmatter`                    | `md frontmatter validate`                    |
-| `md validate frontmatter-dates`              | `md frontmatter-dates validate`              |
-| `repo-governance validate vendor`            | `repo-governance vendor validate`            |
-| `repo-governance validate layer-coherence`   | `repo-governance layer-coherence validate`   |
-| `repo-governance validate traceability`      | `repo-governance traceability validate`      |
-| `specs validate gherkin-cardinality`         | `specs gherkin-cardinality validate`         |
-| `lang java validate null-safety-annotations` | `lang java null-safety-annotations validate` |
+| Old (verb-middle)                          | New (verb-last)                            |
+| ------------------------------------------ | ------------------------------------------ |
+| `convention validate emoji`                | `convention emoji validate`                |
+| `convention validate license`              | `convention license validate`              |
+| `harness validate bindings`                | `harness bindings validate`                |
+| `harness validate duplication`             | `harness duplication validate`             |
+| `harness validate naming`                  | `harness naming validate`                  |
+| `harness validate sync`                    | `harness sync validate`                    |
+| `harness validate claude`                  | `harness claude validate`                  |
+| `harness generate bindings`                | `harness bindings generate`                |
+| `md validate links`                        | `md links validate`                        |
+| `md validate mermaid`                      | `md mermaid validate`                      |
+| `md validate heading-hierarchy`            | `md heading-hierarchy validate`            |
+| `md validate naming`                       | `md naming validate`                       |
+| `md validate frontmatter`                  | `md frontmatter validate`                  |
+| `md validate frontmatter-dates`            | `md frontmatter-dates validate`            |
+| `repo-governance validate vendor`          | `repo-governance vendor validate`          |
+| `repo-governance validate layer-coherence` | `repo-governance layer-coherence validate` |
+| `repo-governance validate traceability`    | `repo-governance traceability validate`    |
+| `specs validate gherkin-cardinality`       | `specs gherkin-cardinality validate`       |
 
 **Cross-domain moves** (domain changes, not just verb position):
 
@@ -63,6 +62,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 **Rules**:
 
 - Verbs (`validate`, `generate`, `clean`, `scaffold`) are always the LAST token.
-- Nouns are kebab-case (`heading-hierarchy`, `gherkin-cardinality`, `null-safety-annotations`).
+- Nouns are kebab-case (`heading-hierarchy`, `gherkin-cardinality`, `frontmatter-dates`).
 - Cross-domain moves require removing the old path entirely — no aliases are kept.
 - Any new CLI command added must follow this verb-last pattern.

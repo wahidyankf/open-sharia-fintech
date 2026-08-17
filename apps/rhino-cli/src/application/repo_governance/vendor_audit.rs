@@ -272,7 +272,7 @@ const ROOT_INSTRUCTION_SURFACES: &[&str] = &["AGENTS.md", "CLAUDE.md"];
 /// This is the scope the `repo-governance audit` orchestrator uses — narrower
 /// than a whole-repo walk so build caches, app content, worktrees, and
 /// third-party vendored skills are never scanned. Mirrors the default scope of
-/// the standalone `repo-governance validate vendor` command (which defaults to
+/// the standalone `repo-governance vendor validate` command (which defaults to
 /// `repo-governance/`), extended with the two root instruction surfaces the
 /// convention also governs.
 ///

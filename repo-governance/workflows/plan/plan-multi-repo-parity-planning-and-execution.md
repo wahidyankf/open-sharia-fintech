@@ -14,7 +14,7 @@ inputs:
     type: string
     description: "Comma-separated target repository names or absolute paths in the parity set"
     required: false
-    default: "ose-public, ose-primer, ose-private"
+    default: "ose-public, ose-private"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main]

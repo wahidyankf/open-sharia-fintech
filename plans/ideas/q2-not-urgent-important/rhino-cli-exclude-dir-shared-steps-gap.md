@@ -6,7 +6,7 @@ same directories consistently.
 
 > Surfaced 2026-07-03 while fixing `crud-be-kotlin-ktor` spec-coverage; worked around per-project
 > rather than fixed at the rhino-cli level.
-> Relocated from ose-primer/plans/ideas/rhino-cli-exclude-dir-shared-steps-gap.md on 2026-08-06 by plan-ideas-grooming.
+> Relocated from a sibling repo's `plans/ideas/` on 2026-08-06 by plan-ideas-grooming.
 
 ## Problem / context
 
@@ -40,7 +40,7 @@ three repos, so a real fix propagates once and protects every consumer.
   agreement. [step-definitions](https://cucumber.io/docs/cucumber/step-definitions/)
 - **Regression Test Mandate (repo-internal)** — the promoted plan must land a reproducing fixture test
   (fail-before / pass-after), exactly as the brief anticipates.
-  [regression-test-mandate](https://github.com/wahidyankf/ose-primer/blob/main/repo-governance/development/quality/regression-test-mandate.md)
+  [regression-test-mandate](../../../repo-governance/development/quality/regression-test-mandate.md)
 
 ## Proposed direction (sketch)
 

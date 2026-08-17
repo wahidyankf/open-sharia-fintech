@@ -37,11 +37,11 @@ Every git delivery under this workflow's `worktree-to-pr` default — unconditio
 runs the full PR-Review Maker→Fixer Cycle in the processed repo before the change lands, per
 [Plans Organization Convention §Per-Repository Delivery Mode
 Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
-`main` is branch-protected against direct pushes in `ose-public` and `ose-primer`, so the historical
+`main` is branch-protected against direct pushes in `ose-public`, so the historical
 `plans/**`-only **plan-docs-only carve-out**
 ([`plan-planning`](../plan-planning/07-plan-docs-only-carve-out.md))
 that once let this workflow push directly to each processed repo's own `main` with no review cycle
-is retired in those two repositories — a plan-docs-only change there uses `worktree-to-pr` like
+is retired there — a plan-docs-only change in `ose-public` uses `worktree-to-pr` like
 any other change. The carve-out survives, narrowed, only in `ose-private` as an
 infrastructure-as-code exception — but this workflow's write scope is strictly `plans/ideas/**`
 (see the Scope Boundary above), which is never infrastructure-as-code work, so no invocation of this

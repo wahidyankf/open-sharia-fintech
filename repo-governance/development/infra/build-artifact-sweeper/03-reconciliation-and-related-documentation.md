@@ -38,7 +38,7 @@ when_to_use: Use when a rule in another convention seems to conflict with the sw
 ## Related Documentation
 
 - [Temporary Files Convention](../temporary-files.md) — the agent-owned temporary directories
-  (`generated-reports/`, `local-temp/`) that sit outside the sweeper's scope
+  (`generated-reports/`, `local-tmp/`) that sit outside the sweeper's scope
 - [Worktree and Artifact Cleanup Convention](../../workflow/worktree-and-artifact-cleanup.md) — the
   agent-side deletion gate this convention reconciles with
 - [Worktree Toolchain Initialization](../../workflow/worktree-setup.md) — the provisioning commands used

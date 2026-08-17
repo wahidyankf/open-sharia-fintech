@@ -1,5 +1,12 @@
 # 🧭 Business Requirements: README and Onboarding Refresh
 
+> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
+> sync obligation; see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
+> **descoped**, not deferred. References to `ose-primer` below are historical context, not
+> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
+
 ## Business Goal
 
 Make the Open Sharia Enterprise repository family understandable and runnable without requiring a
@@ -105,7 +112,7 @@ persona walkthroughs create a repeatable maintenance method. A file that is alre
 - Opening contribution intake to the public.
 - Marketing launch, search-engine campaign, or social-media copy.
 - Changing product behavior, UI design, APIs, or production infrastructure.
-- Making the three repositories sound identical.
+- Making both parity repositories sound identical.
 - Publishing private operational knowledge into either public repository.
 - Treating WSL2 as a supported platform before it receives its own verified plan.
 

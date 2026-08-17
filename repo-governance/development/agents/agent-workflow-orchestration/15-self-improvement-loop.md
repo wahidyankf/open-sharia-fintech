@@ -20,9 +20,9 @@ After any correction from the user, extract the lesson.
 ## The Process
 
 1. **Identify the pattern**: What category of mistake was made? (misread requirement, wrong assumption, insufficient verification, scope creep, etc.)
-2. **Write a rule**: Write a concrete rule in `local-temp/lessons.md` that would prevent this mistake
+2. **Write a rule**: Write a concrete rule in `local-tmp/lessons.md` that would prevent this mistake
 3. **Iterate**: After repeated mistakes of the same type, revise the rule until the mistake stops occurring
-4. **Review at session start**: Check `local-temp/lessons.md` at the beginning of work on a project to activate relevant lessons
+4. **Review at session start**: Check `local-tmp/lessons.md` at the beginning of work on a project to activate relevant lessons
 
 ## Lessons File Format
 

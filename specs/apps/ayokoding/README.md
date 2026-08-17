@@ -96,7 +96,7 @@ Counts are Gherkin features per perspective. `--` means no features in that pers
 ## DDD Registry (`bounded-contexts.yaml`)
 
 `bounded-contexts.yaml` is the machine-readable declaration of every bounded context in
-`ayokoding-www`. Two `rhino-cli ddd` subcommands read it to enforce structural and
+`ayokoding-www`. `specs structure validate` reads it in two rule layers (`bc:` and `ul:`) to enforce structural and
 vocabulary invariants automatically in `npm exec nx -- run ayokoding-www:test:quick`.
 
 ### Schema
@@ -115,7 +115,7 @@ Each entry under `contexts:` declares:
 
 Relationship `kind` values: `customer-supplier`, `conformist`, `shared-kernel`.
 For `customer-supplier` and `conformist`, both sides must declare the relationship
-(symmetry enforced by `ddd bc`).
+(symmetry enforced by the `bc:` layer).
 
 ### Multi-perspective `gherkin:` workaround
 
@@ -124,11 +124,11 @@ perspectives (`content`, `search`, `i18n`, `navigation`). The registry can only 
 one path per BC, so each multi-perspective BC registers its **web-side** path. The api-side
 features (`content-api.feature`, `search-api.feature`, `i18n-api.feature`,
 `navigation-api.feature`) are still validated by the `specs:coverage` target (which runs
-against both perspectives independently), but are not walked by `ddd bc` for that BC's
+against both perspectives independently), but are not walked by the `bc:` layer for that BC's
 `gherkin:` field. This limitation is tracked in the `bdd-ddd-tooling-gap-fill` plan
 (fix #11: `gherkin: []string` schema extension).
 
-### `rhino-cli ddd bc ayokoding` — structural parity
+### The `bc:` layer — structural parity
 
 Reads the registry and verifies the **filesystem** matches exactly:
 
@@ -139,7 +139,7 @@ Reads the registry and verifies the **filesystem** matches exactly:
 - No **orphan** directories exist under `src/contexts/` that aren't in the registry
 - Relationship declarations are symmetric across both context entries
 
-### `rhino-cli ddd ul ayokoding` — glossary parity
+### The `ul:` layer — glossary parity
 
 Reads the registry to locate every `glossary:` file, then validates each:
 
@@ -159,7 +159,7 @@ Reads the registry to locate every `glossary:` file, then validates each:
 3. Create the glossary file at `ddd/ubiquitous-language/<bc>.md`.
 4. Create the gherkin directory and add at least one `.feature` file under
    `behavior/ayokoding-www/gherkin/<bc>/` (and optionally `behavior/ayokoding-be/gherkin/<bc>/`).
-5. Run `npm exec nx -- run ayokoding-www:test:quick` — `ddd bc` and `ddd ul` confirm
+5. Run `npm exec nx -- run ayokoding-www:test:quick` — the `bc:` and `ul:` layers confirm
    the registry matches the filesystem before any unit tests run.
 
 ## tRPC Procedures

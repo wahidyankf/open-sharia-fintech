@@ -1,29 +1,27 @@
 # Phase 0: Cross-Vendor Parity Invariants (Deterministic)
 
-Run all five invariants before starting Phase 1. Phase 0 always runs in full, even when Phase 1
-is scoped to one harness — checker findings are reported first so the fixer can address
-deterministic drift before spending time on web research.
+Run all five before Phase 1, always in full even when Phase 1 is scoped to one harness, so the
+fixer clears deterministic drift before spending time on web research.
 
 ## Invariant 1 — Governance prose vendor-neutrality
 
 - **Tool**: `apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/`
 - **Pass**: exits 0 with `GOVERNANCE VENDOR AUDIT PASSED: no violations found`
-- **Fail**: any non-zero exit; report each violation with file path, line number, forbidden term,
-  suggested replacement (already in tool output)
+- **Fail**: any non-zero exit; report each violation (file, line, term, replacement — all in the
+  tool output)
 - **Default criticality**: HIGH. **Confidence**: HIGH (deterministic regex match)
-- **Fix scope**: human-required — rewriting governance prose requires judgment per the
-  convention's Migration Guidance
+- **Fix scope**: human-required — rewriting governance prose needs judgment per the convention's
+  Migration Guidance
 
 ## Invariant 2 — Root instruction surface vendor-neutrality
 
 - **Tool**: `apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate AGENTS.md` and
   same for `CLAUDE.md`
-- **Pass**: both exit 0 with no violations outside `binding-example` fences and "Platform
-  Binding Examples" headings
+- **Pass**: both exit 0, no violations outside `binding-example` fences and "Platform Binding
+  Examples" headings
 - **Fail**: any violation in load-bearing prose
-- **Default criticality**: HIGH (root surface read by multiple coding agents). **Confidence**:
-  HIGH
-- **Fix scope**: human-required — same reasoning as Invariant 1
+- **Default criticality**: HIGH (root surface, many agents read it). **Confidence**: HIGH
+- **Fix scope**: human-required — as Invariant 1
 
 ## Invariant 3 — Binding sync no-op
 
@@ -32,34 +30,33 @@ deterministic drift before spending time on web research.
 - **Fail**: sync produced drift in `.opencode/` — report the changed files
 - **Default criticality**: MEDIUM (drift means upstream `.claude/` edits were not synced).
   **Confidence**: HIGH
-- **Fix scope**: **auto-fixable** — run `npm run generate:bindings` again, stage the resulting
-  `.opencode/` changes, re-run to confirm idempotence, hand staged changes back to the
-  orchestrator for commit (message `chore(opencode): re-sync agents from .claude/`)
+- **Fix scope**: **auto-fixable** — re-run `npm run generate:bindings`, stage the `.opencode/`
+  changes, re-run to confirm idempotence, hand them back for commit
+  (`chore(opencode): re-sync agents from .claude/`)
 
-## Invariant 4 — Agent count parity
+## Invariant 4 — Agent inventory parity
 
-- **Tool**: `ls .claude/agents/*.md | wc -l` and same for `.opencode/agents/*.md`
-- **Pass**: counts equal
-- **Fail**: counts differ — diff via
-  `comm -3 <(ls .claude/agents | sort) <(ls .opencode/agents | sort)`, report only-`.claude` and
-  only-`.opencode` entries
-- **Default criticality**: HIGH (sets diverge → contributors get different agent inventories).
-  **Confidence**: HIGH
-- **Known intentional skip**: `README.md` is present in both directories as an index file, not
-  an agent definition — the sync tool (`converter.rs` line ~391) explicitly excludes it. Compare
-  filesystem counts to each other, never to the sync tool's conversion count.
-- **Fix scope**: human-required — an orphan in `.opencode/` may need deletion OR a missing
-  `.claude/` counterpart may need authoring; either choice has product implications
+- **Tool**: compare filename sets, not counts — equal counts with mismatched names must still fail.
+  `comm -3 <(find .claude/agents -name '*.md' ! -name README.md -exec basename {} \; | sort) <(find .opencode/agents -name '*.md' ! -name README.md -exec basename {} \; | sort)`
+- **Pass**: empty output
+- **Fail**: any line — tab-indented names are `.opencode/` orphans, the rest are missing mirrors
+- **Default criticality**: HIGH (divergent agent inventories). **Confidence**: HIGH
+- **Known intentional skip**: `README.md` is an index, not an agent, and is excluded on both sides.
+  `find` is required on the `.claude/` side, which nests into role subfolders.
+- **Fix scope**: human-required — deleting an `.opencode/` orphan or authoring a missing `.claude/`
+  counterpart both have product implications
 
 ## Invariant 5 — Translation-map coverage
 
-- **Tools**: color map — `grep -h "^color:" .claude/agents/*.md | sort -u` vs. the Color
-  Translation Table in `repo-governance/development/agents/ai-agents.md`; tier map —
-  `grep -h "^model:" .claude/agents/*.md .opencode/agents/*.md | sort -u` vs. the capability-tier
+Both greps must be recursive: `.claude/agents/` is nested, and a non-recursive glob silently
+returns nothing — a no-op check.
+
+- **Tools**: color map — `grep -rh "^color:" .claude/agents/ | sort -u` vs. the Color Translation
+  Table in `repo-governance/development/agents/ai-agents.md`; tier map —
+  `grep -rh "^model:" .claude/agents/ .opencode/agents/*.md | sort -u` vs. the capability-tier
   map in `repo-governance/development/agents/model-selection.md`
 - **Pass**: every distinct frontmatter value appears in the corresponding map
 - **Fail**: any value not in the map — report the missing entry
-- **Default criticality**: MEDIUM (sync may produce wrong-translated output for the missing
-  entry). **Confidence**: HIGH
+- **Default criticality**: MEDIUM (sync may mistranslate the missing entry). **Confidence**: HIGH
 - **Fix scope**: human-required — adding a new color/tier requires a role-mapping decision a
   fixer cannot make mechanically

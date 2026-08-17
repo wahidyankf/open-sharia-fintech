@@ -1,4 +1,11 @@
-# 🌱 Three-Repository README and Onboarding Refresh
+# 🌱 Two-Repository README and Onboarding Refresh
+
+> **Scope Amendment (2026-08-16)** — `ose-primer` left this repository's parity set and carries no
+> sync obligation; see
+> [Related Repositories §Repositories outside the parity set](../../../docs/reference/related-repositories.md#repositories-outside-the-parity-set).
+> Its already-merged units stay as historical record; every unexecuted `ose-primer` unit is
+> **descoped**, not deferred. References to `ose-primer` below are historical context, not
+> outstanding scope. See `delivery.md` §Scope Amendment for the item-level disposition.
 
 ## Context
 
@@ -34,7 +41,7 @@ result, and recover from common failures without guessing.
 
 - Exhaustively inventory every tracked `README.md` plus every tracked Markdown document that is
   related to current onboarding, setup, architecture, navigation, security, contribution, or
-  repository relationships in all three repositories. Record one terminal disposition for every
+  repository relationships in both parity repositories. Record one terminal disposition for every
   resolved document; treat `follow-up-required` as a blocking non-terminal state.
 - Refresh living reader-facing READMEs and directly related onboarding, contribution, setup,
   architecture, repository-relationship, and navigation documentation when the audit finds a
@@ -52,17 +59,17 @@ result, and recover from common failures without guessing.
   filename, with negative controls proving other invalid uppercase names remain rejected.
 - Validate macOS and Ubuntu Linux onboarding paths. Mention Windows through WSL2 as potentially
   workable but unsupported and unverified.
-- Update the GitHub description, homepage, and safe topics for all three repositories with distinct
+- Update the GitHub description, homepage, and safe topics for both parity repositories with distinct
   positioning.
-- Preserve byte identity for `apps/rhino-cli/**` and its bound Gherkin tree across `ose-public`,
-  `ose-primer`, and `ose-private` whenever a file in that boundary changes.
+- Preserve byte identity for `apps/rhino-cli/**` and its bound Gherkin tree across `ose-public`
+  and `ose-private` whenever a file in that boundary changes.
 - Use purposeful emojis for wayfinding in allowed Markdown surfaces without replacing clear labels.
 - Apply a human voice contract: product purpose first, second person, plain verbs, explained terms,
   short paragraphs, concrete outcomes, and varied prose that sounds like a welcoming teammate.
 
 ### Out of scope
 
-- `beaver-nest`; it remains outside both content parity and the three-repository byte-identity set.
+- `beaver-nest`; it remains outside both content parity and the two-repository byte-identity set.
 - Rewriting completed plans under `plans/done/**` or changing historical claims merely to match the
   present.
 - Hand-editing generated harness bindings or other generated READMEs.
@@ -117,7 +124,7 @@ The user resolved these decisions through the mandatory one-question-at-a-time p
    filename alone.
 9. Verify onboarding from fresh checkouts on macOS and Ubuntu Linux; label WSL2 as unsupported.
 10. Use `ose-www`, `crud-fe-ts-nextjs`, and a local CoralPolyp sandbox as first-success milestones.
-11. Update complete GitHub About metadata for all three repositories with distinct positioning.
+11. Update complete GitHub About metadata for both parity repositories with distinct positioning.
 12. Use purposeful emojis and enforce a natural, non-robotic editorial voice.
 13. Expand shared-file changes to all three byte-identity repositories whenever required.
 14. Keep all plan content and evidence free of secrets, private paths, and sensitive
@@ -133,7 +140,7 @@ but no companion plan folder.
 
 Each delivery unit uses one worktree, one branch, and one PR. Cross-repository tasks never write
 directly into a sibling repository from another repository's session. Shared `rhino-cli` changes
-serialize across the three repositories so each new merge is forwarded before the next sibling PR
+serialize across both parity repositories so each new merge is forwarded before the next sibling PR
 runs its final review cycle.
 
 See [delivery.md](./delivery.md#parallelization-model) for the complete DAG, worktree paths, and

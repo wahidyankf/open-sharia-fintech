@@ -18,8 +18,8 @@ repo-file-quoting code fence. Bare unlabeled claims default to `[Unverified]`: *
 - **AP-4** function/method name cited without import-path evidence or web citation: **HIGH**
 - **AP-5** numeric KPI presented as measured fact with no baseline: **HIGH**
 - **AP-6** test name cited that doesn't exist and isn't marked `_New test_`: **HIGH**
-- **AP-7** agent/skill name cited that doesn't resolve to `.claude/agents/<name>.md` or
-  `.claude/skills/<name>/SKILL.md`: **HIGH**
+- **AP-7** agent/skill name cited that doesn't resolve via `find .claude/agents -name '<name>.md'`
+  (nested role subfolders) or `.claude/skills/<name>/SKILL.md`: **HIGH**
 - **AP-8** CLI flag cited without `<cmd> --help` evidence or repo-doc reference: **MEDIUM**
 - **AP-9** behavior claim cited without a source: **MEDIUM**
 - **AP-10** cross-link target resolving to a non-existent file: **HIGH**
@@ -27,8 +27,8 @@ repo-file-quoting code fence. Bare unlabeled claims default to `[Unverified]`: *
 (all per occurrence)
 
 **C. Suggested-executor annotation validity** — where a checkbox carries `_Suggested executor:
-<agent-name>_`: the agent file exists at `.claude/agents/<name>.md` (missing: **HIGH**, counts as
-AP-7); the agent's role suits the action (e.g. `swe-fsharp-dev` for a `.fs` edit, not
+<agent-name>_`: `find .claude/agents -name '<agent-name>.md'` returns a match (missing: **HIGH**,
+counts as AP-7); the agent's role suits the action (e.g. `swe-fsharp-dev` for a `.fs` edit, not
 `swe-typescript-dev`; mismatch: **MEDIUM**).
 
 **D. Web-citation completeness** — every `[Web-cited]` claim includes URL, access date, and excerpt

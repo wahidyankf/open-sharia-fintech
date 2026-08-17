@@ -49,8 +49,8 @@ legitimately needs a different declaration order.
 
 ## Enforcement Points
 
-Runs at pre-push (changed-path gated), pre-commit (`convention audit`), CI, and as category 4 of
-`repo-governance audit`'s preflight. See
+Runs at pre-push (changed-path gated), in CI, and as category 4 of `repo-governance audit`'s
+preflight. No pre-commit surface is declared. See
 [Governance Word-Budget Remediation](../structure/governance-word-budget-remediation.md) for the enforcement
 breakdown, the progressive-disclosure fix, and forbidden anti-fixes (deleting a rule, dense
 compression, splitting into another auto-loaded file, or an incomplete `See`-link target).

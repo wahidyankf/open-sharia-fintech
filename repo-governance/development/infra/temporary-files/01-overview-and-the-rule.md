@@ -14,7 +14,7 @@ when_to_use: Use before creating any temporary file, to confirm the mandatory di
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
+- **[Explicit Over Implicit](../../../principles/software-engineering/explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-tmp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
 
 - **[Simplicity Over Complexity](../../../principles/general/simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
 
@@ -39,6 +39,6 @@ This convention establishes designated directories for temporary files created b
 **AI agents creating temporary uncommitted file(s) or folder(s) MUST use one of these directories:**
 
 - `generated-reports/` - For validation, audit, and check reports
-- `local-temp/` - For miscellaneous temporary files and scratch work
+- `local-tmp/` - For miscellaneous temporary files and scratch work
 
 **Exception**: Unless specified otherwise by other existing repo-governance/conventions in the repository.

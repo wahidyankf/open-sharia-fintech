@@ -1538,7 +1538,26 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 - [Rust Documentation](../rust/README.md)
 - [F# Documentation](../f-sharp/README.md)
 - [C# Documentation](../c-sharp/README.md)
-- [Code Templates](./templates/README.md) - Starter templates for TypeScript projects
+- [TypeScript Documentation Templates](./templates/README.md) — Reusable templates for TypeScript development patterns in OSE Platform
+- [TypeScript Anti-Patterns](./anti-patterns.md) — Common TypeScript mistakes and how to avoid them
+- [TypeScript Behaviour-Driven Development](./behaviour-driven-development.md) — BDD practices with Cucumber and Playwright for TypeScript
+- [TypeScript Best Practices](./best-practices.md) — Modern TypeScript coding standards and proven approaches (TypeScript 5.0+)
+- [TypeScript Concurrency and Parallelism](./concurrency-and-parallelism.md) — Asynchronous and concurrent programming patterns in TypeScript
+- [TypeScript Domain-Driven Design](./domain-driven-design.md) — Domain-Driven Design patterns and practices in TypeScript
+- [TypeScript Error Handling](./error-handling.md) — Error handling patterns for robust TypeScript applications
+- [TypeScript Finite State Machines](./finite-state-machine.md) — Implementing finite state machines in TypeScript
+- [TypeScript Functional Programming](./functional-programming.md) — Functional programming patterns and practices in TypeScript
+- [TypeScript Idioms](./idioms.md) — TypeScript-specific patterns and conventions for writing idiomatic code
+- [TypeScript Interfaces and Types](./interfaces-and-types.md) — Deep dive into TypeScript's interface and type system
+- [TypeScript Linting and Formatting](./linting-and-formatting.md) — Code quality with ESLint and Prettier for TypeScript
+- [TypeScript Memory Management](./memory-management.md) — Memory management and garbage collection in TypeScript/Node.js
+- [TypeScript Modules and Dependencies](./modules-and-dependencies.md) — Module systems and dependency management in TypeScript
+- [TypeScript Performance](./performance.md) — Performance optimization and profiling for TypeScript applications
+- [TypeScript Security](./security.md) — Defense-in-depth security for TypeScript applications including input validation, authentication, authorization, secure communication, and data protection for financial applications
+- [TypeScript Test-Driven Development](./test-driven-development.md) — TDD practices and testing frameworks for TypeScript
+- [TypeScript Testing](./testing.md) — OSE Platform TypeScript testing standards — unit tests with Vitest and vi.fn, integration tests with vitest-cucumber and MSW, E2E tests with Playwright
+- [TypeScript Type Safety](./type-safety.md) — Leveraging TypeScript's type system for safer financial code
+- [TypeScript Web Services](./web-services.md) — Building web services and APIs with TypeScript frameworks
 
 ---
 

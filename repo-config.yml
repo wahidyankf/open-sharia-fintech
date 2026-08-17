@@ -1,7 +1,7 @@
 # repo-config.yml — schema: rhino-cli/repo-config/v1
 #
-# Unified repository configuration. Structure is byte-identical across all three
-# repos (ose-public, ose-primer, ose-private); values reflect each repo's actual
+# Unified repository configuration. Structure is byte-identical across both
+# parity repos (ose-public, ose-private); values reflect each repo's actual
 # project set and surfaces. rhino-cli commands read their relevant section.
 #
 # Sections defined here:
@@ -206,11 +206,11 @@ specs:
     - ose-be
 
 # governance-word-budget: registered here (config-only) at Phase 1 of
-# plans/in-progress/optimize-governance-md — dark-launched, not yet an armed
-# `gates:` entry (Phase 9 arms it). Word count is the raw whole-file
-# split_whitespace() count (tech-docs.md §1.2); see also FR-1.5: no exempt/
-# allow/ignore/waiver/override key is ever permitted in this block, enforced
-# by BudgetConfig's deny_unknown_fields schema.
+# plans/done/2026-08-15__optimize-governance-md and armed as a `gates:` entry at
+# Phase 9 — it now runs at pre-push and in CI (see the entry below). Word count
+# is the raw whole-file split_whitespace() count (tech-docs.md §1.2); see also
+# FR-1.5: no exempt/allow/ignore/waiver/override key is ever permitted in this
+# block, enforced by BudgetConfig's deny_unknown_fields schema.
 governance-word-budget:
   surfaces:
     - glob: "repo-governance/**/*.md"
@@ -934,13 +934,36 @@ gates:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
 
+  # Structural index enforcement across every content tree. `missing` is armed
+  # here (not only in governance-readme-completeness below) so the "every
+  # directory carries a literal README.md" rule binds `docs/` and `specs/` too
+  # — the former FR-3.5 split-directory exemption is removed in
+  # `readme_index.rs`, so a progressive-disclosure `<name>.md` parent no longer
+  # excuses its directory from having one.
+  #
+  # `unannotated` is deliberately NOT armed here: `docs/` indexes are partly
+  # hand-designed Markdown tables and `specs/` targets carry no frontmatter at
+  # all, so a derived annotation cannot be computed for either without a
+  # content restructure. Those two trees therefore get structural enforcement
+  # only; annotation stays scoped to the conforming trees below.
+  #
+  # The generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are
+  # absent by design: they are emitted by `harness bindings generate` from
+  # `.claude/`, are never hand-edited, and an index written into them would be
+  # regenerated away. `.claude/` — their source of truth — is covered instead.
   - id: governance-readme-index
     type: check
     command: governance readme-index validate
     kind: rhino-cli
     ci-group: markdown
     args:
+      paths:
+        - docs/
+        - repo-governance/
+        - specs/
+        - .claude/
       fail-kinds:
+        - missing
         - orphan
         - ghost
     surfaces:
@@ -1010,6 +1033,33 @@ gates:
           - repo-governance/
       ci: { scope: other }
 
+  # Second entry for the same binary as vendor-independence above, not a wider
+  # scope on it: `repo-governance vendor validate` accepts a single positional
+  # [PATH], and `args:` can only emit `--flag value` pairs — so an additional
+  # covered surface costs an additional gate entry. The Vendor-Independence
+  # Convention governs AGENTS.md as a canonical root instruction surface
+  # (conventions/structure/governance-vendor-independence/01-purpose-and-scope.md),
+  # so leaving it ungated let neutrality hold only by hand.
+  #
+  # CLAUDE.md is deliberately NOT gated: its "Platform Binding Examples" heading
+  # opens at line 5 with only deeper headings beneath, and the scanner exempts
+  # everything until the next heading of equal-or-shallower level, so a gate
+  # there could only ever police the four lines above it. Total exemption is
+  # intended — that file is a single-vendor binding shim — and an always-green
+  # gate is exactly the vacuous-trigger failure the harness-naming comment
+  # above warns about.
+  - id: vendor-independence-agents-md
+    type: check
+    command: repo-governance vendor validate AGENTS.md
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - AGENTS.md
+      ci: { scope: other }
+
   - id: convention-license
     type: check
     command: convention license validate
@@ -1047,7 +1097,7 @@ gates:
           - repo-governance/
       ci: { scope: other }
 
-  # Armed at Phase 9 of plans/in-progress/optimize-governance-md, dark-launched at Phase 1
+  # Armed at Phase 9 of plans/done/2026-08-15__optimize-governance-md, dark-launched at Phase 1
   # (config-only, see governance-word-budget: above). No pre-commit surface (FR-1.14): a
   # whole-tree scan on every commit buys no additional coverage over pre-push/ci.
   #
@@ -1102,7 +1152,7 @@ gates:
 
   # New gate id (FR-3.20) — shares the governance readme-index binary with
   # governance-readme-index above via --paths/--fail-kinds (FR-5.8). Scoped to just the
-  # trees Phases 1-8 of plans/in-progress/optimize-governance-md actually brought to
+  # trees Phases 1-8 of plans/done/2026-08-15__optimize-governance-md actually brought to
   # compliance — repo-governance/, .claude/, .codex/, .pi/ — narrower than FR-1.11's
   # originally-declared 6-entry list (which also named docs/, specs/): those two trees
   # were never remediated by any phase of this plan and carry ~880 pre-existing

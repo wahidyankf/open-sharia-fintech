@@ -19,13 +19,16 @@ Each language has authoritative coding standards in:
 docs/explanation/software-engineering/programming-languages/[language]/README.md
 ```
 
-**Examples**:
+A guide exists only for a language this repository builds on. Today that is:
 
 - TypeScript: `docs/explanation/software-engineering/programming-languages/typescript/README.md`
-- Java: `docs/explanation/software-engineering/programming-languages/java/README.md`
-- Python: `docs/explanation/software-engineering/programming-languages/python/README.md`
-- Elixir: `docs/explanation/software-engineering/programming-languages/elixir/README.md`
-- Go: `docs/explanation/software-engineering/programming-languages/golang/README.md`
+- Rust: `docs/explanation/software-engineering/programming-languages/rust/README.md`
+- F#: `docs/explanation/software-engineering/programming-languages/f-sharp/README.md`
+- C#: `docs/explanation/software-engineering/programming-languages/c-sharp/README.md` (.NET interop with F#)
+
+Read the parent
+[`programming-languages/README.md`](../../../../docs/explanation/software-engineering/programming-languages/README.md)
+index rather than assuming a guide exists for a given language.
 
 **Each language README covers**:
 

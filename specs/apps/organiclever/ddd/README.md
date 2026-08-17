@@ -1,8 +1,8 @@
 # OrganicLever DDD Artifacts
 
 Domain-Driven Design artifacts for the `organiclever-app-web` bounded-context architecture.
-These files are the machine-readable source of truth consumed by `rhino-cli ddd bc` and
-`rhino-cli ddd ul` during `nx run organiclever-app-web:test:quick`.
+These files are the machine-readable source of truth consumed by `rhino-cli specs structure validate`
+(its `bc:` and `ul:` layers) during `nx run organiclever-app-web:test:quick`.
 
 DDD artifacts live at the application root (`specs/apps/organiclever/ddd/`), not under
 `components/app-web/`, because the ubiquitous language belongs to the bounded context — not to one
@@ -25,12 +25,12 @@ specs/apps/organiclever/ddd/
 
 - **[bounded-contexts.yaml](./bounded-contexts.yaml)** — Declares every bounded context: layer
   subfolders, list of code paths (one per implementation surface — FE today, BE later), glossary
-  path, gherkin path, and inter-context relationships. Read by `rhino-cli ddd bc` to validate
+  path, gherkin path, and inter-context relationships. Read by the `bc:` layer of `specs structure validate` to validate
   structural parity against the filesystem.
 
 - **[ubiquitous-language/](./ubiquitous-language/README.md)** — One Markdown glossary per bounded
   context. Each term entry maps a domain concept to its code identifiers and feature file
-  references. Read by `rhino-cli ddd ul` to validate vocabulary consistency.
+  references. Read by the `ul:` layer of `specs structure validate` to validate vocabulary consistency.
 
 ## How enforcement works
 
@@ -40,4 +40,4 @@ for full details on what each command checks.
 ## Related
 
 - [bounded-context-map.md](./bounded-context-map.md) — Visual bounded-context map with Mermaid
-- [rhino-cli ddd commands](../../../../apps/rhino-cli/README.md#quick-start)
+- [rhino-cli commands](../../../../apps/rhino-cli/README.md#quick-start)

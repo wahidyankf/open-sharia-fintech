@@ -1,6 +1,6 @@
 ---
 title: "Default Branch and Working on Main Directly"
-description: The trunk is main with no develop/release/hotfix branches, and the classic direct-commit-to-trunk shape (not executable in ose-public/ose-primer).
+description: The trunk is main with no develop/release/hotfix branches, and the classic direct-commit-to-trunk shape (not executable in ose-public).
 category: explanation
 subcategory: development
 tags:
@@ -29,9 +29,9 @@ when_to_use: Use when explaining why there is no develop/release/hotfix branch, 
 > This repository's own **repo-wide default** is the short-lived-branch-via-PR shape (`worktree-to-pr`)
 > — see [Default Push and Worktree Execution](./08-default-push-and-worktree-execution.md#default-push-and-worktree-execution) below.
 >
-> **Per-repository restriction (independent of the shape described here)**: in `ose-public` and
-> `ose-primer`, `main` is branch-protected against direct pushes — including for admins — so
-> **neither direct-push mode has an executable path in those two repositories at all**. In
+> **Per-repository restriction (independent of the shape described here)**: in `ose-public`,
+> `main` is branch-protected against direct pushes — including for admins — so
+> **neither direct-push mode has an executable path there at all**. In
 > `ose-private`, both remain available only for infrastructure-as-code plans. See
 > [Plans Organization Convention §Per-Repository Delivery Mode Restrictions](../../../conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > for the full rule. The PASS example immediately below is therefore **not executable in this repo

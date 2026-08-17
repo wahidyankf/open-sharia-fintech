@@ -1,6 +1,0 @@
-error: 'rhino-cli lang' requires a subcommand but one was not provided
-  [subcommands: java, help]
-
-Usage: rhino-cli lang [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

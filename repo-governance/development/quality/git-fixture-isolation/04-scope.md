@@ -19,7 +19,7 @@ when_to_use: "Use when checking whether a test or fixture is in scope."
 
 ## What This Convention Covers
 
-- Any test, fixture, or test-support helper -- in Rust, Go, TypeScript, Python, F#/.NET, or any
+- Any test, fixture, or test-support helper -- in Rust, TypeScript, F#/.NET, Dart, or any
   other language used in this monorepo or its sibling repos -- that invokes the `git` binary to
   **create or mutate** a throwaway repository (`git init`, `git commit`, `git config`,
   `git worktree add`, `git branch`, `git checkout -b`, `git reset --hard`, and equivalents).

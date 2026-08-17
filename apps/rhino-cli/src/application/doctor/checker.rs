@@ -723,8 +723,8 @@ mod tests {
 
     #[test]
     fn parse_line_word_strips_prefix() {
-        let s = parse_line_word("go version go1.25.0 darwin", "go version ", 2, "go");
-        assert_eq!(s, "1.25.0");
+        let s = parse_line_word("OpenTofu v1.9.0", "OpenTofu ", 1, "v");
+        assert_eq!(s, "1.9.0");
     }
 
     #[test]

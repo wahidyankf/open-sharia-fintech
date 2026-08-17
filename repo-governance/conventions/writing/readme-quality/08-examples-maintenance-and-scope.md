@@ -88,7 +88,7 @@ This project uses Nx to manage applications and libraries:
 - Any paragraph exceeds 5 lines
 - Any acronym without context
 - Any jargon from "avoid" list above
-- README file exceeds 400 lines
+- The word-budget gate reports the README over target
 - Complaints from contributors about clarity
 
 ## Scope vs Structural Conventions

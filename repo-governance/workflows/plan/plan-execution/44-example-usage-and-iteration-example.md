@@ -78,7 +78,7 @@ Step 2: Execute all items sequentially
   Phase 2 (Implementation):
     Item 4 → swe-typescript-dev → checkbox ticked
     Item 5 → swe-e2e-dev   → checkbox ticked
-    Item 6 → swe-golang-dev     → checkbox ticked
+    Item 6 → swe-rust-dev       → checkbox ticked
     ...and so on without stopping between phases
 
 Step 3: Validate → 4 findings (quality issues, missing tests)

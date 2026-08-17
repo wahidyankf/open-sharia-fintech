@@ -17,7 +17,7 @@ created: 2026-08-13
 
 | Category                          | Owner         | Rationale                                                                                  |
 | --------------------------------- | ------------- | ------------------------------------------------------------------------------------------ |
-| `agents-md-size`                  | Deterministic | Single file size threshold check                                                           |
+| `governance-word-budget`          | Deterministic | Whole-file word count against a per-surface threshold                                      |
 | `frontmatter-audit`               | Deterministic | YAML parse + regex against frontmatter and body                                            |
 | `traceability-audit`              | Deterministic | Walk + regex for required H2 sections                                                      |
 | `license-audit`                   | Deterministic | File existence + SPDX line comparison against notice table                                 |

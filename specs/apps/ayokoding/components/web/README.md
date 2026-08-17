@@ -74,3 +74,5 @@ relationships.
 - **Parent**: [ayokoding specs](../../README.md)
 - **API counterpart**: [components/api/](../api/README.md) — HTTP-semantic API specs
 - **Ubiquitous Language**: `ddd/ubiquitous-language/`
+
+- [Component Diagram: UI (Frontend)](./component-web.md)

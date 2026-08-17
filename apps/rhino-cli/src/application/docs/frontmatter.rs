@@ -310,7 +310,7 @@ fn validate_governance_schema(path: &str, fm: &serde_norway::Value) -> Vec<DocsF
         ));
     }
     // FR-4 armed at Phase 9 (ose-public) / Phase 16 (ose-private): `when_to_use` is
-    // now FAIL-severity, per plans/in-progress/optimize-governance-md `tech-docs.md`
+    // now FAIL-severity, per plans/done/2026-08-15__optimize-governance-md `tech-docs.md`
     // §5 "Dark-launch sequencing" — was WARN-severity from Phase 1 through Phase 8.
     if !has_non_empty_string(fm, "when_to_use") {
         findings.push(mk_fail(
@@ -549,7 +549,7 @@ mod tests {
     }
 
     // -----------------------------------------------------------------------
-    // Phase 9 (armed) — plans/in-progress/optimize-governance-md
+    // Phase 9 (armed) — plans/done/2026-08-15__optimize-governance-md
     //
     // FR-4: `KIND_MISSING_WHEN_TO_USE` was WARN-severity (dark-launched) from
     // Phase 1 through Phase 8; Phase 9 (ose-public) / Phase 16 (ose-private)

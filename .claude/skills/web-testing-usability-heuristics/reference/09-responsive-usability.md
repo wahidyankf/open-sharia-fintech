@@ -23,4 +23,4 @@ Responsiveness here is judged as **usability at each size**, not merely "does th
 Capture a screenshot per breakpoint/locale for the evidence trail, saved to the backlog plan's
 `evidence/` subfolder (named `phase-N-<description>-<locale>-<breakpoint>px.png` per the
 [Evidence Capture Convention](../../../../repo-governance/development/quality/evidence-capture.md)),
-not `local-temp/` — cited screenshots are committed proof.
+not `local-tmp/` — cited screenshots are committed proof.

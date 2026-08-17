@@ -1,5 +1,5 @@
 ---
-description: Performs spec-aware session-based exploratory testing of a live website given URL(s) and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps) that a developer can pick up and fix. Hunts edge cases and boundary conditions, not just the happy path. Compares live behaviour against existing specs/** Gherkin and proposes scenarios for correct behaviours lacking coverage. Covers functional, behavioural-consistency, edge-case, UI/UX, responsive, accessibility, performance, URL/IA, and safe security defects. For spec-blind usability evaluation use web-usability-tester instead. Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md), or local-temp.
+description: Performs spec-aware session-based exploratory testing of a live website given URL(s) and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps) that a developer can pick up and fix. Hunts edge cases and boundary conditions, not just the happy path. Compares live behaviour against existing specs/** Gherkin and proposes scenarios for correct behaviours lacking coverage. Covers functional, behavioural-consistency, edge-case, UI/UX, responsive, accessibility, performance, URL/IA, and safe security defects. For spec-blind usability evaluation use web-usability-tester instead. Output destination selectable via output-mode — plan (default), delivery (folds into an existing plan's delivery.md), or local-tmp.
 model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
@@ -49,7 +49,7 @@ spec-gap detection, the `EWT-###` defect anatomy, and the three output modes.
    recompute values rather than trust presence.
 5. Triage findings with severity + priority; draft `SG-###` spec-gap proposals for correct-but-
    unprotected behaviour.
-6. Write the backlog plan (or fold into an existing `delivery.md`, or `local-temp/findings.md`) per
+6. Write the backlog plan (or fold into an existing `delivery.md`, or `local-tmp/findings.md`) per
    `output-mode`.
 
 Discovers and documents defects; never fixes them or changes the site. Distinct from

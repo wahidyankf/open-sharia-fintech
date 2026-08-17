@@ -11,6 +11,7 @@ permission:
 color: primary
 skills:
   - pr-review-specialist-protocol
+  - repo-understanding-shared-vocabulary
 ---
 
 # PR Review Logic Maker Agent

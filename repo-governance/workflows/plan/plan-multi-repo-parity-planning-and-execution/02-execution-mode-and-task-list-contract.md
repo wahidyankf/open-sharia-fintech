@@ -45,7 +45,7 @@ mandates:
 - One `TaskCreate` per remaining `- [ ]` checkbox, INCLUDING every nested sub-bullet — each
   sub-bullet is its own task, never rolled into its parent. Nesting on disk becomes a flat,
   reading-order sequence of tasks in the list (prefix titles with the repo name for parity runs,
-  e.g., `ose-primer: add markdownlint gate to CI`).
+  e.g., `ose-private: add markdownlint gate to CI`).
 - Strict 1:1 mapping both directions: every checkbox has exactly one task; every task has exactly
   one checkbox. Verify `count(remaining checkboxes) == count(created tasks)` before starting.
 - The Atomic Sync Ritual governs every completion: tick the checkbox on disk, persist

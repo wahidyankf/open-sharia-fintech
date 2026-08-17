@@ -41,3 +41,4 @@ npx nx run rhino-cli:specs:structure-validation
 - [../containers/](../containers/README.md) — C4 L2, hosts the OpenAPI contract these scenarios
   exercise
 - [../system-context/](../system-context/README.md) — C4 L1
+- [Beavernest Be](./beavernest-be/README.md)

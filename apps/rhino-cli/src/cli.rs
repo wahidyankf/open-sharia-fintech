@@ -8,11 +8,10 @@ use crate::commands::{
     governance_generate_readme_index, governance_layer_coherence, governance_traceability_audit,
     governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_naming, harness_validate_sync,
-    lang_java_validate_null_safety, md_audit, md_validate_frontmatter,
-    md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
-    md_validate_mermaid, md_validate_naming, parity, repo_config_validate, specs_audit,
-    specs_clean_java_imports, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
+    harness_validate_duplication, harness_validate_naming, harness_validate_sync, md_audit,
+    md_validate_frontmatter, md_validate_frontmatter_dates, md_validate_heading_hierarchy,
+    md_validate_links, md_validate_mermaid, md_validate_naming, parity, repo_config_validate,
+    specs_audit, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
     specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
     workflows_validate_naming,
 };
@@ -97,9 +96,6 @@ pub enum Commands {
     /// Spec tree validators and contract codegen helpers.
     #[command(name = "specs", subcommand)]
     Specs(SpecsCommands),
-    /// Language-source correctness checks, nested by language.
-    #[command(name = "lang", subcommand)]
-    Lang(LangCommands),
     /// Repository configuration (`repo-config.yml`) schema-parity validator.
     #[command(name = "repo-config", subcommand)]
     RepoConfig(RepoConfigCommands),
@@ -403,7 +399,8 @@ pub enum GovernanceReadmeIndexCommands {
 
 // ---------------------------------------------------------------------------
 // convention (verb-last: convention {noun} validate)
-// Note: agents-md-size removed (superseded); instruction-size moved to harness domain.
+// Note: AGENTS.md size is owned by `governance word-budget validate`; the byte-based
+// validator that once lived here is gone, and instruction-size moved to the harness domain.
 // ---------------------------------------------------------------------------
 
 /// Convention validator subcommands.
@@ -539,9 +536,6 @@ pub enum SpecsCommands {
     /// Run per-level @covers coverage validation scoped to domain/** feature files.
     #[command(name = "domain-coverage", subcommand)]
     DomainCoverage(SpecsDomainCoverageCommands),
-    /// Clean generated contract files (e.g. strip unused Java imports).
-    #[command(name = "clean", subcommand)]
-    Clean(SpecsCleanCommands),
     /// Scaffold generated contract package structure (e.g. Dart pubspec).
     #[command(name = "scaffold", subcommand)]
     Scaffold(SpecsScaffoldCommands),
@@ -599,48 +593,12 @@ pub enum SpecsCountsCommands {
     Validate(specs_validate_counts::ValidateCountsArgs),
 }
 
-/// Specs clean subcommands.
-#[derive(Subcommand, Debug)]
-pub enum SpecsCleanCommands {
-    /// Strip unused/same-package imports from generated Java contract files (dormant in ose-public).
-    #[command(name = "java-imports")]
-    JavaImports(specs_clean_java_imports::CleanJavaImportsArgs),
-}
-
 /// Specs scaffold subcommands.
 #[derive(Subcommand, Debug)]
 pub enum SpecsScaffoldCommands {
     /// Generate Dart package scaffolding around generated contract types (dormant in ose-public).
     #[command(name = "dart")]
     Dart(specs_scaffold_dart::ScaffoldDartArgs),
-}
-
-// ---------------------------------------------------------------------------
-// lang (verb-last: lang java null-safety-annotations validate)
-// ---------------------------------------------------------------------------
-
-/// Language-source correctness subcommands, nested by language.
-#[derive(Subcommand, Debug)]
-pub enum LangCommands {
-    /// Java language checks.
-    #[command(name = "java", subcommand)]
-    Java(LangJavaCommands),
-}
-
-/// Java language subcommands.
-#[derive(Subcommand, Debug)]
-pub enum LangJavaCommands {
-    /// Check Java packages carry required null-safety annotations (dormant in ose-public).
-    #[command(name = "null-safety-annotations", subcommand)]
-    NullSafetyAnnotations(LangJavaNullSafetyAnnotationsCommands),
-}
-
-/// `lang java null-safety-annotations` subcommands.
-#[derive(Subcommand, Debug)]
-pub enum LangJavaNullSafetyAnnotationsCommands {
-    /// Check Java packages carry required null-safety annotations.
-    #[command(name = "validate")]
-    Validate(lang_java_validate_null_safety::ValidateNullSafetyArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -704,7 +662,6 @@ fn dispatch(cmd: &Commands, output_format: OutputFormat, verbose: bool, quiet: b
         Commands::Harness(hc) => dispatch_harness(hc, output_format),
         Commands::Governance(gc) => dispatch_governance(gc, output_format),
         Commands::Specs(sc) => dispatch_specs(sc, output_format),
-        Commands::Lang(lc) => dispatch_lang(lc, output_format),
         Commands::RepoConfig(rc) => match rc {
             RepoConfigCommands::Validate(args) => repo_config_validate::run(args, output_format),
         },
@@ -953,35 +910,10 @@ fn dispatch_specs(
                 specs_coverage::run_domain(args, output_format)
             }
         },
-        SpecsCommands::Clean(cc) => match cc {
-            SpecsCleanCommands::JavaImports(args) => {
-                specs_clean_java_imports::run(args, output_format)
-            }
-        },
         SpecsCommands::Scaffold(sc) => match sc {
             SpecsScaffoldCommands::Dart(args) => specs_scaffold_dart::run(args, output_format),
         },
         SpecsCommands::Audit(args) => specs_audit::run(args, output_format),
-    }
-}
-
-/// Route a [`LangCommands`] variant to its handler.
-///
-/// # Errors
-///
-/// Propagates any error returned by the selected lang subcommand.
-fn dispatch_lang(
-    lc: &LangCommands,
-    output_format: OutputFormat,
-) -> std::result::Result<(), anyhow::Error> {
-    match lc {
-        LangCommands::Java(jc) => match jc {
-            LangJavaCommands::NullSafetyAnnotations(nc) => match nc {
-                LangJavaNullSafetyAnnotationsCommands::Validate(args) => {
-                    lang_java_validate_null_safety::run(args, output_format)
-                }
-            },
-        },
     }
 }
 

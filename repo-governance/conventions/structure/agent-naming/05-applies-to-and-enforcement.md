@@ -17,20 +17,28 @@ created: 2026-04-17
 
 This convention applies to both:
 
-- **`.claude/agents/*.md`** — Source of truth. All agent definitions authored here.
-- **`.opencode/agents/*.md`** — Generated mirror. Produced by the sync pipeline from `.claude/agents/`.
+- **`.claude/agents/<role>/<name>.md`** — Source of truth. All agent definitions authored here,
+  nested one level into role subfolders.
+- **`.opencode/agents/*.md`** — Generated mirror, flat. Produced by the sync pipeline from
+  `.claude/agents/`.
 
-Filenames MUST be identical pair-for-pair between the two directories. Every `.claude/agents/<name>.md` has exactly one corresponding `.opencode/agents/<name>.md`, and vice versa. Any asymmetry (orphan file in either tree, rename in one tree but not the other) is a governance violation.
+Filenames MUST be identical pair-for-pair between the two directories, ignoring the source-side role
+subfolder. Every `.claude/agents/<role>/<name>.md` has exactly one corresponding
+`.opencode/agents/<name>.md`, and vice versa. Any asymmetry (orphan file in either tree, rename in one tree but not the other) is a governance violation.
 
 ## Enforcement
 
 `repo-rules-checker` MUST run the following audit command as part of every governance pass:
 
 ```bash
-ls .claude/agents/*.md \
+find .claude/agents -name '*.md' ! -name README.md \
   | sed 's|.*/||; s|\.md$||' \
   | grep -vE -- '-(maker|checker|fixer|dev|deployer|manager|tester|researcher)$' \
   | grep -v '^README$'
 ```
 
-Any non-empty output is a governance violation. Every line printed is an agent filename whose suffix does not match the Role Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass. The same command SHOULD be run against `.opencode/agents/*.md` to detect mirror drift.
+Any non-empty output is a governance violation. Every line printed is an agent filename whose suffix does not match the Role Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass.
+
+The pair-for-pair requirement above is checked separately, by Harness-Compatibility Phase 0
+Invariant 4 — it compares the two inventories filename-by-filename and reports an orphan in either
+tree.

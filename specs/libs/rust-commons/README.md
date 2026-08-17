@@ -28,3 +28,9 @@ specs/libs/rust-commons/
 `test:unit` (`cargo test --lib`) exercises the `links` module directly via Rust unit tests; no
 Cucumber/Gherkin runner is wired up for this crate yet — `specs:behavior:coverage` is an `echo`
 placeholder until that lands.
+
+- [Behavior — rust-commons](./behavior/README.md)
+- [Components — rust-commons](./components/README.md)
+- [Containers — rust-commons](./containers/README.md)
+- [Product — rust-commons](./product/README.md)
+- [System Context — rust-commons](./system-context/README.md)

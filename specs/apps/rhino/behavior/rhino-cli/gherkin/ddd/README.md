@@ -1,6 +1,7 @@
 # rhino — behavior/rhino-cli/gherkin/ddd
 
-Gherkin scenarios for rhino-cli DDD (Domain-Driven Design) commands.
+Gherkin scenarios for the rhino-cli DDD (Domain-Driven Design) validators. Both run as rule
+layers inside `specs structure validate` — neither has a CLI verb of its own.
 
 Features in this domain:
 

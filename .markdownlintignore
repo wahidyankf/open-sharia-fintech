@@ -30,7 +30,7 @@ package-lock.json
 generated-reports/
 
 # Local temporary files (AI agent scratch space, upstream clones)
-local-temp/
+local-tmp/
 
 # Flutter generated files
 **/.dart_tool/

@@ -45,12 +45,12 @@ Zero screenshots for a UI verification step is a finding under
 
 ## How to Capture
 
-Write a Playwright script to `local-temp/` and run it via `npx playwright`:
+Write a Playwright script to `local-tmp/` and run it via `npx playwright`:
 
 ```bash
 # Example: capture homepage at all breakpoints in all locales
-npx playwright test local-temp/capture-evidence.spec.ts
+npx playwright test local-tmp/capture-evidence.spec.ts
 ```
 
 Or use Playwright MCP `browser_take_screenshot` for interactive captures. Either way, save
-screenshots to the plan's `evidence/` subfolder, not to `local-temp/`.
+screenshots to the plan's `evidence/` subfolder, not to `local-tmp/`.

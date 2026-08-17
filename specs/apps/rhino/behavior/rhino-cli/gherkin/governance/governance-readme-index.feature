@@ -39,13 +39,14 @@ Feature: README sibling index
     When the developer runs governance readme-index validate
     Then the command exits successfully
 
-  Scenario: A split directory is exempt and its parent indexes it
+  Scenario: A split directory still needs its own README
     Given file "repo-governance/development/agents/ai-agents.md" exists
     And directory "repo-governance/development/agents/ai-agents/" contains "01-catalog.md" and "02-naming.md"
     And "ai-agents/" contains no "README.md"
     And "ai-agents.md" links "./ai-agents/01-catalog.md" and "./ai-agents/02-naming.md"
     When the developer runs governance readme-index validate
-    Then the command exits successfully
+    Then the command exits with a failure code
+    And the finding reports a missing index for that directory
 
   Scenario: A split directory whose parent omits a child fails
     Given file "repo-governance/development/agents/ai-agents.md" exists

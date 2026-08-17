@@ -1,19 +1,16 @@
 # Claude Code skills
 
 Skills are short, reusable guides that give an AI agent the right context at
-the right moment. Think of them as a practical field guide: an agent can load
-the relevant skill instead of carrying every repository convention into every
-task.
+the right moment: an agent loads the relevant skill instead of carrying every
+repository convention into every task.
 
-If you are new here, begin with [AGENTS.md](../../AGENTS.md). Then use this
-directory when you want to understand the guidance behind a task or add a new
-skill.
+New here? Begin with [AGENTS.md](../../AGENTS.md).
 
 ## Read a skill before using it
 
-Each skill has a `SKILL.md` file. Read it in full before acting on its
-instructions; it may point to a small reference or a supplied script that is
-part of the workflow. A typical package looks like this:
+Each skill has a `SKILL.md` file. Read it in full before acting on it; it may
+point to a reference or a supplied script that is part of the workflow. A
+typical package looks like this:
 
 ```text
 skill-name/
@@ -26,18 +23,18 @@ skill-name/
 ## Source and platform behavior
 
 `.claude/skills/` is the hand-authored source for these skill packages.
-OpenCode reads compatible skills from this location; it does not need a copied
-skill directory. Do not create or hand-edit `.opencode/skills/` mirrors.
-When a skill changes, verify the repository state with `npm run validate:sync`.
+OpenCode reads compatible skills here; it needs no copied directory. Never
+create or hand-edit `.opencode/skills/` mirrors. After a skill changes, verify
+with `npm run validate:sync`.
 See [Platform bindings](../../docs/reference/platform-bindings.md).
 
 ## Keep a new skill useful
 
 Give it one clear job. Put the essential procedure in `SKILL.md`; link to
-deeper material in `reference/` instead of repeating it. State boundaries,
-especially around generated files, credentials, and destructive actions. See
+deeper material instead of repeating it. State boundaries, especially around
+generated files, credentials, and destructive actions. See
 [AI agents](../../repo-governance/development/agents/ai-agents.md) and the agent-development skill
-(listed in the catalog below).
+below.
 
 ## Skill Catalog
 
@@ -78,7 +75,6 @@ especially around generated files, credentials, and destructive actions. See
 - [Swe Developing Frontend Ui](./swe-developing-frontend-ui/README.md) — UI tokens, shadcn/Radix composition, accessibility
 - [Swe Programming Csharp](./swe-programming-csharp/README.md) — C# coding standards
 - [Swe Programming Fsharp](./swe-programming-fsharp/README.md) — F# coding standards
-- [Swe Programming Golang](./swe-programming-golang/README.md) — Go coding standards (ose-primer)
 - [Swe Programming Rust](./swe-programming-rust/README.md) — Rust coding standards
 - [Swe Programming Typescript](./swe-programming-typescript/README.md) — TypeScript coding standards
 
@@ -116,6 +112,7 @@ especially around generated files, credentials, and destructive actions. See
 - [Repo Practicing Trunk Based Development](./repo-practicing-trunk-based-development/README.md) — Trunk Based Development and the worktree-to-pr default
 - [Repo Rules Fixing](./repo-rules-fixing/README.md) — repo-rules-fixer's applying-fixes mechanics
 - [Repo Understanding Repository Architecture](./repo-understanding-repository-architecture/README.md) — six-layer governance hierarchy
+- [Repo Understanding Shared Vocabulary](./repo-understanding-shared-vocabulary/README.md) — what repo rules, content trees, and delivery units cover
 - [Repo Validating Governance Rules](./repo-validating-governance-rules/README.md) — repo-rules-checker's repo-wide consistency methodology
 - [Social Linkedin Posting](./social-linkedin-posting/README.md) — social-linkedin-post-maker's character-limit and workflow rules
 - [Specs Scaffolding](./specs-scaffolding/README.md) — specs-maker's four surface-profile trees

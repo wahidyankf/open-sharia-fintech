@@ -6,17 +6,30 @@
 ## Repository Overview
 
 **open-sharia-enterprise** — Sharia-compliant business platform, Nx monorepo, pre-alpha. Trunk-Based
-Dev on `main`. Node.js 24 (Volta), npm. Naming: `[domain]-www` (site), `[domain]-app-web`
-(client), `[domain]-be` (backend); exception `beavernest-app`.
+Dev on `main`. Node.js 24 (Volta), npm.
 
-**See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md)
+**See**: [monorepo-structure.md](./docs/reference/monorepo-structure.md) (app naming),
+[web-sites.md](./docs/reference/web-sites.md) (domains, ports)
+
+## Glossary
+
+These terms carry exactly these meanings everywhere.
+
+- **Repo rules** — every normative surface, not one directory: `repo-governance/`, `AGENTS.md`,
+  `CLAUDE.md`, `.claude/` + mirrors, `repo-config.yml`, enforcement machinery, SE style guides.
+- **Content trees** — `docs/` explains, `repo-governance/` binds, `plans/` expires, `specs/` tests.
+- **Delivery unit** — one branch, one PR, one shippable slice; phases are smaller.
+- **Surface** — what a gate measures; **binding** — a harness mirror.
+
+**See**: [glossary.md](./repo-governance/glossary.md)
 
 ## Project Structure
 
-`apps/` (deployable), `libs/` (flat), `docs/` (Diátaxis), `repo-governance/`, `plans/`, `.claude/`
-(primary binding), `.opencode/` (auto-synced). Filenames: lowercase kebab-case.
+`apps/` (deployable), `libs/` (flat), `.claude/` (primary binding), `.opencode/` (auto-synced).
+Filenames: lowercase kebab-case.
 
-**See**: [add-new-app.md](./docs/how-to/add-new-app.md)
+**See**: [add-new-app.md](./docs/how-to/add-new-app.md),
+[repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md)
 
 ## Build, Test, Lint
 
@@ -24,15 +37,14 @@ Dev on `main`. Node.js 24 (Volta), npm. Naming: `[domain]-www` (site), `[domain]
 npm install                     # deps + doctor
 nx run [project]:test:quick     # pre-push gate
 nx affected -t build,test:quick,lint
-npm run doctor -- --fix
 ```
 
 **See**: [nx-targets.md](./repo-governance/development/infra/nx-targets.md)
 
 ## Quality Gates
 
-Markdown auto-linted via hooks/CI. Cross-language lint at warning-and-above. Instruction files carry
-a word budget; READMEs need annotated indexes; remediation is progressive disclosure.
+Markdown auto-linted via hooks/CI; cross-language lint at warning-and-above. Instruction files carry
+a word budget; READMEs need annotated indexes.
 
 **See**: [governance-word-budget.md](./repo-governance/conventions/structure/governance-word-budget.md),
 [governance-readme-completeness.md](./repo-governance/conventions/structure/governance-readme-completeness.md)
@@ -63,16 +75,16 @@ carries a regression test; every plan ends with Knowledge Capture.
 
 ### Reproducible Environments
 
-Never commit secrets. Real values live only in uncommitted `.env*` (except `.env.example`); agents
-must not touch `.env.prod`/`.env.stag`. No agent sets/modifies git identity.
+Never commit secrets; real values only in uncommitted `.env*` (except `.env.example`). Never touch
+`.env.prod`/`.env.stag`. No agent sets or modifies git identity.
 
 **See**: [Secrets and Env Standards](./repo-governance/conventions/security/secrets-and-env-standards.md)
 
 ### Agent Workflow Orchestration
 
-Plan mode for non-trivial tasks. N+1 model (1 main + N background, default N=3). File-touch ledger
-reconciled against `git status`. Harness sync generated (`.claude/` hand-authored; others via
-`npm run generate:bindings`, same commit). Poll CI every 2 minutes, never `gh run watch`.
+Plan mode for non-trivial tasks. N+1 agents (default N=3). File-touch ledger reconciled against
+`git status`. `.claude/` hand-authored; mirrors via `npm run generate:bindings`, same commit. Poll
+CI every 2 minutes, never `gh run watch`.
 
 **See**: [agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md)
 
@@ -84,28 +96,15 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 
 ## AI Agents
 
-[Agent catalog](./.claude/agents/README.md) is authoritative, `<domain>-<role>` naming.
-maker/checker/fixer pattern. PR Review Cycle: nine specialists → `pr-review-synthesis-maker` →
-`pr-review-fixer`. Skills at `.claude/skills/<name>/SKILL.md`.
+[Agent catalog](./.claude/agents/README.md) is authoritative, `<domain>-<role>` naming. Agent
+skills at `.claude/skills/<name>/SKILL.md`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 
-## Repository Architecture
-
-Six-layer: Vision → Principles → Conventions → Development → AI Agents → Workflows.
-
-**See**: [repository-governance-architecture.md](./repo-governance/repository-governance-architecture.md)
-
-## Web Sites
-
-Names, domains, ports, and prod branches for every app.
-
-**See**: [Web Sites reference](./docs/reference/web-sites.md)
-
 ## Plans & Temporary Files
 
-`plans/`: `ideas/`, `backlog/`, `in-progress/`, `done/`. `generated-reports/`, `local-temp/`. Build
-artifacts may be swept at any time — regenerate, never protect.
+Build artifacts in `generated-reports/` and `local-tmp/` may be swept at any time — regenerate,
+never protect.
 
 **See**: [plans.md](./repo-governance/conventions/structure/plans.md)
 
@@ -116,18 +115,14 @@ Do NOT stage/commit unless explicitly instructed. License MIT — see
 
 ## Related Repositories
 
-Three sibling repos: [ose-public](https://github.com/wahidyankf/ose-public) (this repo, upstream),
-[ose-primer](https://github.com/wahidyankf/ose-primer) (template),
-[ose-private](https://github.com/wahidyankf/ose-private) (infra). `apps/rhino-cli` byte-identity
-spans all three.
+Sole parity sibling: [ose-private](https://github.com/wahidyankf/ose-private) (infra).
+`apps/rhino-cli` byte-identity spans both. No other repository carries a sync obligation.
 
 **See**: [Related Repositories reference](./docs/reference/related-repositories.md)
 
 ## Platform Binding Examples
 
-Vendor-specific; the audit scanner skips this section. Tier-1 harnesses read `AGENTS.md` natively.
-Exceptions: Claude Code → `.claude/`; OpenCode → `.opencode/agents/`; Cursor → `.cursor/agents/`;
-Amazon Q → `.amazonq/`; Aider → `CONVENTIONS.md`. Mirrors generated via
-`rhino-cli harness bindings generate`.
+Vendor-specific; the audit scanner skips this section. Tier-1 harnesses read `AGENTS.md` natively;
+others need a binding, generated via `rhino-cli harness bindings generate`.
 
 **See**: [platform catalog](./docs/reference/platform-bindings.md)

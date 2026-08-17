@@ -46,4 +46,4 @@ See [Related Conventions](./reference/related-conventions.md) for workflow, qual
 
 ## Related Skills
 
-Language-specific skills provide deep expertise: `swe-programming-typescript`, `swe-programming-java`, `swe-programming-python`, `swe-programming-elixir`, `swe-programming-golang`.
+Language-specific skills provide deep expertise: `swe-programming-typescript`, `swe-programming-rust`, `swe-programming-fsharp`, `swe-programming-csharp`.

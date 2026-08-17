@@ -25,9 +25,14 @@ Enforcement is automated via `rhino-cli repo-governance vendor validate`.
 # Audit the repo-governance/ directory (default)
 apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate repo-governance/
 
+# Audit the canonical root instruction surface
+apps/rhino-cli/scripts/rhino-bin.sh repo-governance vendor validate AGENTS.md
+
 # Or via Nx (cached)
 npx nx run rhino-cli:governance:vendor-audit-validation
 ```
+
+The validator takes one path per invocation, so each covered surface is audited separately.
 
 Exit code 0 means clean; exit code 1 means violations found. Each finding prints:
 
@@ -37,8 +42,12 @@ Exit code 0 means clean; exit code 1 means violations found. Each finding prints
 
 ### Pre-push integration
 
-The pre-push hook automatically runs `governance:vendor-audit-validation` when any `repo-governance/**/*.md`
-file changes. No manual invocation needed on pushes.
+Two gates cover the audit at pre-push and in CI: one triggers on any `repo-governance/**/*.md`
+change, the other on `AGENTS.md`. No manual invocation is needed on pushes.
+
+`CLAUDE.md` carries no gate. Its "Platform Binding Examples" heading opens near the top of the
+file, so the allowlist below exempts the whole body — a gate there could only police the few lines
+above that heading, and a check that can never fail is worse than none.
 
 ### Scope of the scanner
 

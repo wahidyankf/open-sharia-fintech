@@ -33,3 +33,9 @@ domain. Step definitions live in `apps/crane-cli/tests/unit/steps/`.
 | report-management   | 4         |
 | skiplist-management | 5         |
 | **Total**           | **41**    |
+
+- [crane — behavior/crane-cli/gherkin/content](./content/README.md)
+- [crane — behavior/crane-cli/gherkin/media](./media/README.md)
+- [crane — behavior/crane-cli/gherkin/pdf](./pdf/README.md)
+- [crane — behavior/crane-cli/gherkin/reporting](./reporting/README.md)
+- [crane — behavior/crane-cli/gherkin/system](./system/README.md)

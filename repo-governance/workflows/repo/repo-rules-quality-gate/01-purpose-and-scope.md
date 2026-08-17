@@ -1,6 +1,6 @@
 ---
 title: "Purpose and Scope"
-description: What this workflow validates (repo-governance/, .claude/agents/, .claude/skills/, docs/explanation/ partially) versus what it skips, and why.
+description: What this workflow validates (repo-governance/, the primary binding directory agent and skill sources, docs/explanation/ partially) versus what it skips, and why.
 when_to_use: Use when checking whether a specific directory or file family is in scope for this quality gate, or is delegated to a specialized agent family instead.
 ---
 

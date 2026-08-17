@@ -1,6 +1,6 @@
 ---
 title: "Integration with Test Automation"
-description: Mapping Gherkin scenarios to step definitions in Cucumber.js, Jest-Cucumber, Behave, and Godog.
+description: Mapping Gherkin scenarios to step definitions in Cucumber.js, Jest-Cucumber, and cucumber-rs.
 category: explanation
 subcategory: development
 tags:
@@ -9,7 +9,7 @@ tags:
   - testing
   - requirements
 created: 2025-12-07
-when_to_use: Use when wiring a Gherkin scenario to a BDD test framework in JavaScript/TypeScript, Python, or Go.
+when_to_use: Use when wiring a Gherkin scenario to a BDD test framework in TypeScript, Rust, or F#.
 ---
 
 # Integration with Test Automation
@@ -57,47 +57,36 @@ defineFeature(feature, (test) => {
 });
 ```
 
-## Python
+## Rust
 
-**Behave**:
+**cucumber-rs** (the `harness = false` test-binary pattern `rhino-cli` uses):
 
-```python
-# features/login.feature (Gherkin)
-# features/steps/login.py
-@given('a user with email "{email}"')
-def step_impl(context, email):
-  context.user = create_user(email=email)
-
-@when('the user logs in with correct password')
-def step_impl(context):
-  context.response = login(context.user.email, context.user.password)
-
-@then('the user should be authenticated')
-def step_impl(context):
-  assert context.response.authenticated == True
-```
-
-## Go
-
-**Godog**:
-
-```go
-// features/login.feature (Gherkin)
-// login_test.go
-func (s *Suite) aUserWithEmail(email string) error {
- s.user = createUser(email)
- return nil
+```rust
+// specs/.../login.feature (Gherkin)
+// tests/login.rs
+#[given(regex = r#"^a user with email "([^"]*)"$"#)]
+fn a_user_with_email(w: &mut LoginWorld, email: String) {
+    w.user = create_user(&email);
 }
 
-func (s *Suite) theUserLogsInWithCorrectPassword() error {
- s.response = login(s.user.Email, s.user.Password)
- return nil
+#[when("the user logs in with correct password")]
+fn logs_in(w: &mut LoginWorld) {
+    w.response = login(&w.user.email, &w.user.password);
 }
 
-func (s *Suite) theUserShouldBeAuthenticated() error {
- if !s.response.Authenticated {
-  return fmt.Errorf("expected user to be authenticated")
- }
- return nil
+#[then("the user should be authenticated")]
+fn is_authenticated(w: &mut LoginWorld) {
+    assert!(w.response.authenticated);
 }
 ```
+
+## F\#
+
+F# suites auto-bind scenarios by name rather than declaring explicit step definitions, so there is
+no step-definition file to write — name the test after the scenario and the binding follows.
+
+## Adding a Language
+
+Only wire a framework for a language this repository actually builds in. Adding a new one also
+means teaching `rhino-cli`'s spec-coverage extractor to recognise its step-definition syntax —
+otherwise the scenarios read as uncovered.

@@ -1,9 +1,12 @@
 # `main-ci` never runs on a sibling merge commit
 
-One-line summary: `ose-primer` and `ose-private` have no post-merge CI signal on `main`, because the
-only workflow that would provide one is schedule-triggered — so a merge to `main` in either sibling
+One-line summary: `ose-private` has no post-merge CI signal on `main`, because the
+only workflow that would provide one is schedule-triggered — so a merge to `main` there
 is verified by its PR checks and then never re-verified in its merged state.
 
+> **Scope note (2026-08-16)**: `ose-primer` left the parity set. The 2026-07 measurements below
+> are preserved as evidence; only the `ose-private` half is actionable.
+>
 > Provenance: the single unticked box in
 > [`plans/done/2026-07-22__bare-repo-governance-hardening`](../../done/2026-07-22__bare-repo-governance-hardening/README.md)
 > (188 checked, 1 unchecked). Recorded there as partially unmet rather than ticked; filed here so it
@@ -58,7 +61,7 @@ that is green because nothing looked, not because something passed.
 
 ## Proposed direction (sketch)
 
-- First **measure**, do not assume: read `main-ci`'s trigger block in all three repos and write down
+- First **measure**, do not assume: read `main-ci`'s trigger block in both parity repos and write down
   what actually differs. The claim above is from one observation on two merge commits.
 - Determine whether `main-ci` in the siblings is schedule-triggered deliberately (cost, runner
   capacity on the self-hosted stack) or incidentally. That answer decides everything downstream.
