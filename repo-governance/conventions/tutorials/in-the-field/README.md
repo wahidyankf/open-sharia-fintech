@@ -42,7 +42,7 @@ when_to_use: "Read this index to find the right In-the-Field Tutorial Convention
 - [File Naming and Organization](./34-file-naming-and-organization.md) — Creating or naming a new In-the-Field guide file and assigning it a topic weight.
 - [Topic Weight Layers 1-5](./35-topic-weight-layers-1-5.md) — Assigning a topic weight to a guide in the Foundation-through-Data-Management range.
 - [Topic Weight Layers 6-10](./36-topic-weight-layers-6-10.md) — Assigning a topic weight to a guide in the Integration-Patterns-through-Meta-Topics range.
-- [Topic Weight Progression](./37-topic-weight-progression-and-example.md) — Adapting the topic-weight scheme to a new language or reviewing a complete worked example.
+- [Topic Weight Progression, Customization, and Java Example](./37-topic-weight-progression-and-example.md) — Adapting the topic-weight scheme to a new language or reviewing a complete worked example.
 - [Frontmatter Requirements](./38-frontmatter-requirements.md) — Writing frontmatter for a new In-the-Field guide page.
 - [Quality Checklist](./39-quality-checklist.md) — A final checklist before publishing an In-the-Field guide.
 - [Validation and Enforcement](./40-validation-and-enforcement.md) — The automated checks and quality-gate workflow that validate In-the-Field guides.

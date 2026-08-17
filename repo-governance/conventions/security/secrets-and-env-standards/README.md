@@ -18,7 +18,8 @@ when_to_use: "Read this index to find the right Secrets and Environment-Variable
 - [Variable Classes with Injection Homes](./10-variable-classes-with-injection-homes.md) — The four variable classes (app-runtime server, app-runtime public build, CI test-harness, platform-injected) and where each is injected, including why VERCEL_AUTOMATION_BYPASS_SECRET is load-bearing.
 - [Injection Matrix](./11-injection-matrix.md) — The full table mapping each app type and deploy stage to its injection platform, injection home, and value owner, plus the two load-bearing boundaries it implies.
 - [infra/dev/<stack> Compose Env — No Duplicate Templates](./12-infra-dev-compose-env-no-duplicate-templates.md) — Why compose stacks must not introduce a second .env.example key list, and how they load a gitignored local .env with CI overrides instead.
-- [GitHub Environment Key Registry](./13-github-environment-key-registry.md) — The table of which vars./secrets.
+- [GitHub Environment Key Registry](./13-github-environment-key-registry.md) — Which `vars.`/`secrets.` keys each named GitHub environment holds, and when to
+  omit an empty environment.
 - [`env-injection:` Section — Value-Less Injection Manifest](./14-env-injection-section-value-less-injection-manifest.md) — The repo-config.yml env-injection section that declares, per app, the injection home for every key at every stage, and how it feeds the validate-env manifest-consistency check.
 - [Secret-Surface Census](./15-secret-surface-census.md) — The full inventory of every secret-bearing surface in the repo — app env files, .secrets/, secrets.json, IaC vars, and each platform's environment — with backing tool, backup, and validation status.
 - [`guard-env-file-access` Policy](./16-guard-env-file-access-policy.md) — The agent-access policy denying direct Read/Write/Edit of .env.prod and .env.stag, its decoupling from commit policy, its exceptions, and its enforcement mechanism plus residual gap.

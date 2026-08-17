@@ -37,4 +37,8 @@ find .claude/agents -name '*.md' ! -name README.md \
   | grep -v '^README$'
 ```
 
-Any non-empty output is a governance violation. Every line printed is an agent filename whose suffix does not match the Role Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass. The same command SHOULD be run against `.opencode/agents/*.md` to detect mirror drift.
+Any non-empty output is a governance violation. Every line printed is an agent filename whose suffix does not match the Role Vocabulary; each such file MUST be renamed to a compliant name before the checker can pass.
+
+The pair-for-pair requirement above is checked separately, by Harness-Compatibility Phase 0
+Invariant 4 — it compares the two inventories filename-by-filename and reports an orphan in either
+tree.
