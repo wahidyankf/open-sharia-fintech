@@ -36,15 +36,15 @@ fixer clears deterministic drift before spending time on web research.
 
 ## Invariant 4 — Agent count parity
 
-- **Tool**: `find .claude/agents -name '*.md' | wc -l` and same for `.opencode/agents/*.md`.
-  `.claude/agents/` is nested into role subfolders, so `find` is required there — a plain `ls`
-  glob sees only the top-level `README.md`. `.opencode/agents/` is flat.
+- **Tool**: `find .claude/agents -name '*.md' ! -name README.md | wc -l` and same for
+  `.opencode/agents/`. `.claude/agents/` nests into role subfolders, so `find` is required there;
+  `.opencode/agents/` is flat.
 - **Pass**: counts equal
 - **Fail**: counts differ — diff via
-  `comm -3 <(find .claude/agents -name '*.md' -exec basename {} \; | sort) <(ls .opencode/agents | sort)`
+  `comm -3 <(find .claude/agents -name '*.md' ! -name README.md -exec basename {} \; | sort) <(ls .opencode/agents | grep -v '^README.md$' | sort)`
 - **Default criticality**: HIGH (divergent agent inventories). **Confidence**: HIGH
-- **Known intentional skip**: `README.md` is an index in both directories, not an agent, and the
-  sync tool excludes it. Compare filesystem counts to each other, never to the conversion count.
+- **Known intentional skip**: `README.md` indexes both directories, is not an agent, and is
+  excluded above. Compare filesystem counts to each other, never to the conversion count.
 - **Fix scope**: human-required — an `.opencode/` orphan may need deletion, or a missing `.claude/`
   counterpart authoring; either has product implications
 
