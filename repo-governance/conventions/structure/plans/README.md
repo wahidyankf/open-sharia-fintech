@@ -47,7 +47,7 @@ when_to_use: "Read this index to find the right Plans Organization Convention ch
 - [Infra-Apply Gate and Plan Index Files](./39-infra-apply-gate-and-plan-index-files.md) — Why pending infra-apply steps keep a plan in in-progress/, plus each subfolder's index rules.
 - [Diagrams in Plans](./40-diagrams-required.md) — Deciding whether a plan section needs its own Mermaid diagram.
 - [Skipping, Accessibility, and Example](./41-diagrams-skip-accessibility-and-example.md) — A plan is simple enough to consider skipping diagrams, or when applying the accessible color palette to a plan diagram.
-- [Relative Link Paths in Plan Files](./42-relative-link-paths.md) — Writing a relative link from inside a plan folder or a two-pager to a repo-root file.
+- [Relative Link Paths in Plan Files](./42-relative-link-paths.md) — Three-level `../../../` depth to repo-root files, one level shallower for two-pagers.
 - [Related Documentation](./43-related-documentation.md) — The decision guides, related conventions, and development guides that cross-reference the plans organization convention.
 - [Best Practices](./44-best-practices.md) — Looking for day-to-day working habits for maintaining plan documents over their lifecycle.
 - [Examples](./45-examples.md) — You want a concrete worked example of a single-file plan, a multi-file plan layout, or a two-pager.

@@ -34,16 +34,15 @@ fixer clears deterministic drift before spending time on web research.
   changes, re-run to confirm idempotence, hand them back for commit
   (`chore(opencode): re-sync agents from .claude/`)
 
-## Invariant 4 — Agent count parity
+## Invariant 4 — Agent inventory parity
 
-- **Tool**: `find .claude/agents -name '*.md' ! -name README.md | wc -l` and same for
-  `.opencode/agents/`. Use `find` on both — `.claude/agents/` nests into role subfolders.
-- **Pass**: counts equal
-- **Fail**: counts differ — diff via
+- **Tool**: compare filename sets, not counts — equal counts with mismatched names must still fail.
   `comm -3 <(find .claude/agents -name '*.md' ! -name README.md -exec basename {} \; | sort) <(find .opencode/agents -name '*.md' ! -name README.md -exec basename {} \; | sort)`
+- **Pass**: empty output
+- **Fail**: any line — tab-indented names are `.opencode/` orphans, the rest are missing mirrors
 - **Default criticality**: HIGH (divergent agent inventories). **Confidence**: HIGH
 - **Known intentional skip**: `README.md` is an index, not an agent, and is excluded on both sides.
-  Compare filesystem counts to each other, never to the conversion count.
+  `find` is required on the `.claude/` side, which nests into role subfolders.
 - **Fix scope**: human-required — deleting an `.opencode/` orphan or authoring a missing `.claude/`
   counterpart both have product implications
 

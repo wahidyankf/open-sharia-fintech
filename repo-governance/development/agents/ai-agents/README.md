@@ -36,7 +36,7 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Convention Referencing Standards](./28-convention-referencing-standards.md) — Writing or validating an agent's Reference Documentation section.
 - [Agent Complexity Tiers](./29-agent-complexity-tiers.md) — The three complexity tiers by scope and reasoning depth, not file size.
 - [Condensing and Splitting Agents](./30-condensing-and-splitting-agents.md) — The word-budget gate flags an agent and you must condense or split it.
-- [Agent Size Checking and Content Philosophy](./31-agent-size-checking-and-content-philosophy.md) — Explaining why agent definitions are kept small.
+- [Agent Size Checking and Content Philosophy](./31-agent-size-checking-and-content-philosophy.md) — How agent size is measured, and why agents stay small.
 - [Purpose and Knowledge Classification](./32-agent-skill-separation-purpose-and-knowledge-classification.md) — Deciding whether knowledge belongs in an agent body or a Skill.
 - [Four Separation Patterns (A-C)](./33-agent-skill-separation-patterns-a-b-c.md) — How Patterns A-C divide knowledge between agents and skills.
 - [Pattern D](./34-agent-skill-separation-pattern-d.md) — Deciding that task-specific logic belongs in the agent body, not a Skill.
@@ -49,7 +49,7 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Git Worktree Awareness](./41-information-accuracy-verification-git-worktree-toolchain-init.md) — The two-step toolchain-initialization rule for a new worktree.
 - [Git Worktree Awareness](./42-information-accuracy-verification-git-worktree-awareness-continued.md) — The default-push-behavior rule, with an example and its consequences.
 - [Verification Checklist for Agents](./43-information-accuracy-verification-checklist.md) — A final checklist before an agent reports a task complete.
-- [When to Create a New Agent](./44-creating-new-agents-when-to-create.md) — Deciding whether a task needs a new agent.
+- [When to Create a New Agent](./44-creating-new-agents-when-to-create.md) — Deciding whether a task needs a new agent or fits an existing one.
 - [Agent Creation Checklist](./45-creating-new-agents-checklist.md) — The step-by-step checklist while creating a new agent definition file.
 - [Agent Template](./46-creating-new-agents-template.md) — The starting skeleton when writing a brand-new agent definition file.
 - [Division, Maintenance, and Isolation](./47-relationship-to-agents-md-division-maintenance-isolation.md) — Deciding whether guidance belongs in AGENTS.md or one agent.
@@ -58,7 +58,7 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Anti-Patterns](./50-anti-patterns.md) — Reviewing an agent definition for common authoring mistakes.
 - [Validation and Compliance](./51-validation-and-compliance.md) — Running or interpreting an agent-compliance validation pass.
 - [When to Use agent skills vs. Agent Content](./52-agent-skill-separation-when-and-what-belongs.md) — Agent skills versus inline content.
-- [Examples and Decision Tree](./53-agent-skill-separation-examples-and-decision-tree.md) — Worked examples of agent-skill separation, with a decision tree for judging a split.
+- [Examples and Decision Tree](./53-agent-skill-separation-examples-and-decision-tree.md) — Worked separation examples plus a decision tree for judging a split.
 - [Benefits, Implementation, Measurement, and Vigilance](./54-agent-skill-separation-benefits-implementation-measurement-vigilance.md) — Implementing an agent-skill separation, and measuring whether it worked.
 - [Related Documentation](./55-related-documentation.md) — Looking for further reading on agent-skill separation.
 - [Directory Structure and Format Differences](./56-multi-harness-binding-directory-hierarchy-format.md) — The multi-harness directory structure and source-of-truth hierarchy.

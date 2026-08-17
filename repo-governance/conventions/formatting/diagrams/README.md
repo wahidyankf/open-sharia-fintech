@@ -23,7 +23,7 @@ when_to_use: "Read this index to find the right Diagram and Schema Convention ch
 - [Mermaid Best Practices](./15-mermaid-best-practices.md) — General best practices for writing maintainable, readable Mermaid diagrams.
 - [Mermaid Comment Syntax](./16-mermaid-comment-syntax.md) — Adding explanatory comments inside a Mermaid diagram definition.
 - [Mermaid Color Accessibility](./17-mermaid-color-accessibility-palette.md) — Why color-blind accessibility matters for Mermaid diagrams and gives the accessible color palette to use.
-- [Mermaid Color Accessibility](./18-mermaid-color-accessibility-implementation.md) — Implementing accessible colors in a Mermaid diagram and need a concrete classDef example.
+- [Mermaid Color Accessibility](./18-mermaid-color-accessibility-implementation.md) — Dark/light mode compliance, required shape differentiation, and a worked classDef example.
 - [Mermaid Color Accessibility](./19-mermaid-color-accessibility-testing-and-docs.md) — Verifying or documenting that a Mermaid diagram's colors meet the accessibility requirements.
 - [Mermaid Resources](./20-mermaid-resources.md) — Links to external Mermaid documentation and reference resources.
 - [ASCII Art](./21-ascii-art-when-and-why.md) — Deciding whether a diagram should be ASCII art instead of Mermaid.
