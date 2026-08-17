@@ -1,6 +1,6 @@
 ---
-title: "Platform Binding Examples — Claude Code and OpenCode"
-description: How the grill-me skill invokes Claude Code's AskUserQuestion and OpenCode's question tool, including the AskUserQuestion example invocation shape.
+title: "Platform Binding Examples — Primary and Secondary Harnesses"
+description: How the grill-me skill invokes the native multiple-choice tool on the primary and secondary harnesses, including the example invocation shape.
 category: explanation
 subcategory: development
 tags:
@@ -12,7 +12,7 @@ tags:
   - interaction
   - agents
 created: 2026-05-26
-when_to_use: Use when implementing or verifying a grilling interaction on a Claude Code or OpenCode root session.
+when_to_use: Use when implementing or verifying a grilling interaction on a primary- or secondary-harness root session.
 ---
 
 # Platform Binding Examples — Claude Code and OpenCode

@@ -11,7 +11,7 @@ tags:
   - compaction
   - discipline
 created: 2026-08-01
-when_to_use: Use when writing ledger entries or deciding how to commit a .claude/ edit and its generated mirrors.
+when_to_use: Use when writing ledger entries or deciding how to commit a primary binding directory edit and its generated mirrors.
 ---
 
 # Anti-Patterns: Commit Hygiene

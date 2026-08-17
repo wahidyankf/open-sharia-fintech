@@ -1,6 +1,6 @@
 ---
-title: "Platform Binding Examples — Codex and All Other Harnesses"
-description: How the root orchestrator invokes Codex's request_user_input, and the markdown fallback required for any harness without a native interactive tool.
+title: "Platform Binding Examples — All Other Harnesses"
+description: How the root orchestrator invokes a third harness's user-input tool, and the markdown fallback required for any harness without a native interactive tool.
 category: explanation
 subcategory: development
 tags:
@@ -12,7 +12,7 @@ tags:
   - interaction
   - agents
 created: 2026-05-26
-when_to_use: Use when implementing or verifying a grilling interaction on an OpenAI Codex root session, or on a harness with no native multiple-choice tool at all.
+when_to_use: Use when implementing or verifying a grilling interaction on that harness, or on a harness with no native multiple-choice tool at all.
 ---
 
 # Platform Binding Examples — Codex and All Other Harnesses
