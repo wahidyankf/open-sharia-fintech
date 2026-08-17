@@ -524,7 +524,6 @@ fn is_test_file(path: &Path) -> bool {
     let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
     match ext {
         "" => true, // exact stem match w/o extension
-        "go" => base.ends_with("_test.go"),
         "ts" | "tsx" | "js" | "jsx" => {
             base.contains(".test.")
                 || base.contains(".spec.")
@@ -532,9 +531,6 @@ fn is_test_file(path: &Path) -> bool {
                 || base.contains(".integration.")
                 || base.contains("_test.")
         }
-        "java" | "kt" => is_in_test_dir(path),
-        "py" => base.starts_with("test_") || base.ends_with("_test.py") || is_in_test_dir(path),
-        "exs" => base.ends_with("_test.exs") || base.ends_with("_steps.exs"),
         "rs" => base.ends_with("_test.rs") || is_in_test_dir(path),
         "fs" | "cs" => {
             is_in_test_dir(path)
@@ -543,7 +539,6 @@ fn is_test_file(path: &Path) -> bool {
                 || base.ends_with("Steps.fs")
                 || base.ends_with("Tests.fs")
         }
-        "clj" => base.ends_with("_test.clj") || base.ends_with("_steps.clj"),
         "dart" => base.ends_with("_test.dart") || is_in_test_dir(path),
         _ => false,
     }
@@ -614,8 +609,12 @@ fn extract_scenario_titles(test_file_path: &Path) -> std::result::Result<HashSet
         .unwrap_or("");
     match ext {
         "cs" | "rs" | "dart" => extract_comment_scenario_titles(test_file_path),
-        "fs" => Ok(HashSet::new()), // auto-bind framework
-        _ => extract_ts_scenario_titles(test_file_path),
+        "ts" | "tsx" | "js" | "jsx" => extract_ts_scenario_titles(test_file_path),
+        // "fs" is an auto-bind framework (scenario matching is implicit, no
+        // titles needed); any other extension is unsupported/unrecognized.
+        // Both return an empty set rather than silently falling through to
+        // the TS parser, which would misparse an unrelated language's file.
+        _ => Ok(HashSet::new()),
     }
 }
 
@@ -866,16 +865,32 @@ mod tests {
     }
 
     #[test]
-    fn is_test_file_go() {
-        assert!(is_test_file(Path::new("foo_test.go")));
-        assert!(!is_test_file(Path::new("foo.go")));
+    fn is_test_file_rejects_retired_dispatch_languages() {
+        // Regression: `go`/`java`/`kt`/`py`/`exs`/`clj` were retired from both
+        // scenario-title and step-text dispatch. `is_test_file` must not keep
+        // recognizing them as test files, or a matched file would be collected
+        // for coverage and then silently fall through to zero step definitions
+        // and zero (or wrongly TS-parsed) scenario titles.
+        assert!(!is_test_file(Path::new("foo_test.go")));
+        assert!(!is_test_file(Path::new("test_foo.py")));
+        assert!(!is_test_file(Path::new("foo_test.py")));
+        assert!(!is_test_file(Path::new("tests/foo.py")));
+        assert!(!is_test_file(Path::new("tests/FooTest.java")));
+        assert!(!is_test_file(Path::new("tests/FooTest.kt")));
+        assert!(!is_test_file(Path::new("foo_test.exs")));
+        assert!(!is_test_file(Path::new("foo_test.clj")));
     }
 
     #[test]
-    fn is_test_file_python() {
-        assert!(is_test_file(Path::new("test_foo.py")));
-        assert!(is_test_file(Path::new("foo_test.py")));
-        assert!(is_test_file(Path::new("tests/foo.py")));
+    fn extract_scenario_titles_unsupported_extension_returns_empty_not_ts_misparse() {
+        // Regression: an unrecognized extension must not silently fall through
+        // to the TypeScript scenario-title parser (which would spuriously
+        // match `Scenario(...)`-shaped text in an unrelated language file).
+        let dir = TempDir::new().unwrap();
+        let path = dir.path().join("foo_test.py");
+        fs::write(&path, "def test_foo():\n    Scenario(\"not really\")\n").unwrap();
+        let titles = extract_scenario_titles(&path).unwrap();
+        assert!(titles.is_empty());
     }
 
     #[test]
