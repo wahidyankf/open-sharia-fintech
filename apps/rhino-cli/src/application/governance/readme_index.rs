@@ -8,7 +8,7 @@
 //! (`tech-docs.md` §1.1/§4): the `orphan`/`ghost` detection below is carried
 //! forward unchanged; `missing` and `unannotated` are new finding kinds.
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
@@ -206,20 +206,35 @@ fn audit_index_file(
             .file_name()
             .map(|n| format!("{}/", n.to_string_lossy()))
     };
-    let normalize = |raw: &str| -> String {
-        strip_prefix
-            .as_deref()
-            .and_then(|p| raw.strip_prefix(p))
-            .map_or_else(|| raw.to_string(), std::string::ToString::to_string)
+    // Returns the normalized link plus whether `raw` actually carried the
+    // `strip_prefix` (i.e. was genuinely written relative to `target_dir`'s
+    // parent). This provenance matters below: only a link that never carried
+    // the prefix may fall back to resolving against `index_dir` — a
+    // prefixed link that fails to resolve under `target_dir` is a genuine
+    // ghost, not a same-dir sibling reference, even if a same-named file
+    // happens to sit beside `index_dir`.
+    let normalize = |raw: &str| -> (String, bool) {
+        match strip_prefix.as_deref().and_then(|p| raw.strip_prefix(p)) {
+            Some(stripped) => (stripped.to_string(), true),
+            None => (raw.to_string(), false),
+        }
     };
 
-    let linked: HashSet<String> = extract_readme_links(&data)
-        .iter()
-        .map(|l| normalize(l))
-        .collect();
+    // Map from normalized link -> "was this link ever seen prefixed with
+    // target_dir's name?". Defaults to `false` (unprefixed); flips to `true`
+    // if any raw occurrence of this normalized link carried the prefix, so
+    // that the ghost guard below always errs toward reporting rather than
+    // silently swallowing a genuine ghost.
+    let mut linked_provenance: HashMap<String, bool> = HashMap::new();
+    for l in &extract_readme_links(&data) {
+        let (normalized, was_prefixed) = normalize(l);
+        let entry = linked_provenance.entry(normalized).or_insert(false);
+        *entry = *entry || was_prefixed;
+    }
+    let linked: HashSet<String> = linked_provenance.keys().cloned().collect();
     let unannotated: HashSet<String> = extract_unannotated_link_targets(&data)
         .iter()
-        .map(|l| normalize(l))
+        .map(|l| normalize(l).0)
         .collect();
     let actual = list_sibling_targets(fs, target_dir, root, excludes)?;
 
@@ -261,6 +276,20 @@ fn audit_index_file(
             // subdirectory.  If the path exists on disk the link is valid — don't
             // ghost it.  Only report ghost when the target is genuinely missing.
             if fs.exists(&full) {
+                continue;
+            }
+            // A split-index file (index_dir != target_dir) physically lives in
+            // index_dir, not target_dir — it may legitimately link a sibling of
+            // itself (e.g. "general.md") rather than a child under target_dir.
+            // Such a link resolves against index_dir, the file's real location,
+            // not target_dir. Check that base too before declaring ghost — but
+            // ONLY when this link never carried the target_dir prefix. A link
+            // that WAS written with the prefix (e.g. "ai-agents/foo.md") is
+            // unambiguously a target_dir-relative reference; if it fails to
+            // resolve there it is a genuine ghost, even when an unrelated file
+            // with a matching basename happens to sit beside index_dir.
+            let was_prefixed = linked_provenance.get(&link).copied().unwrap_or(false);
+            if !was_prefixed && index_dir != target_dir && fs.exists(&index_dir.join(&link)) {
                 continue;
             }
             findings.push(ReadmeIndexFinding {
@@ -1205,6 +1234,63 @@ mod tests {
                 .iter()
                 .any(|f| f.kind == "orphan" && f.file.ends_with("02-naming.md")),
             "the sibling index must still be audited alongside README.md: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn scenario_a_split_index_link_to_its_own_sibling_is_not_a_ghost() {
+        let tmp = TempDir::new().unwrap();
+        // ai-agents.md (the split-index file) lives beside general.md, its own
+        // sibling — NOT under ai-agents/. This link is written unprefixed
+        // (no "ai-agents/" prefix) because it targets index_dir itself, not
+        // target_dir. It must resolve against index_dir, the file's real
+        // location, and never be reported as a ghost.
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n[general](./general.md)\n",
+        )
+        .unwrap();
+        fs::write(tmp.path().join("general.md"), "x").unwrap();
+        let sub = tmp.path().join("ai-agents");
+        fs::create_dir_all(&sub).unwrap();
+        fs::write(sub.join("01-catalog.md"), "x").unwrap();
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings.iter().all(|f| f.kind != "ghost"),
+            "a split-index link to its own unprefixed sibling must resolve against index_dir, \
+             not be reported as ghost: {findings:?}"
+        );
+    }
+
+    #[test]
+    fn scenario_a_split_index_prefixed_link_to_a_genuinely_missing_target_is_still_ghost() {
+        let tmp = TempDir::new().unwrap();
+        // The link IS prefixed ("ai-agents/missing.md") — it unambiguously
+        // targets target_dir, not index_dir. An unrelated file that happens
+        // to share the same basename ("missing.md") sitting beside the index
+        // file must NOT suppress the ghost finding: only unprefixed links may
+        // fall back to resolving against index_dir.
+        fs::write(
+            tmp.path().join("ai-agents.md"),
+            "[catalog](./ai-agents/01-catalog.md)\n[missing](./ai-agents/missing.md)\n",
+        )
+        .unwrap();
+        // Decoy: a same-basename file beside index_dir, NOT under target_dir.
+        fs::write(tmp.path().join("missing.md"), "x").unwrap();
+        let sub = tmp.path().join("ai-agents");
+        fs::create_dir_all(&sub).unwrap();
+        fs::write(sub.join("01-catalog.md"), "x").unwrap();
+        // Deliberately do not create ai-agents/missing.md — the link is a
+        // genuine ghost.
+        let findings =
+            audit_readme_index(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(
+            findings
+                .iter()
+                .any(|f| f.kind == "ghost" && f.message.contains("missing.md")),
+            "a target_dir-prefixed link to a genuinely missing target must still be reported as \
+             ghost, even when an unrelated same-basename file sits beside index_dir: {findings:?}"
         );
     }
 

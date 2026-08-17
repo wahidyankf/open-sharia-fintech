@@ -50,7 +50,7 @@ ff25cb9c7c31f8cf78e2d14310d75a3423a1b3f62a0aca8e811cb8179431c8f8  apps/rhino-cli
 238ec41ad27e2b759c82b4e3ec095dd28e8dd33e322a56afdc1fb93219af451e  apps/rhino-cli/src/application/git/port.rs
 430463e3691e08ead38bd807887b00d25ae8a4f52b151bca745fe529049016ba  apps/rhino-cli/src/application/glossary.rs
 a72ce44e6d40ab4803f70d0b3f7850fe3f438aaeb33ad83b5a31d67de5bf51de  apps/rhino-cli/src/application/governance/mod.rs
-e9bfc53c190f8495fbe77ec8bca3cf6bb3e3f8eb1d9fb2e81db75467a7588a89  apps/rhino-cli/src/application/governance/readme_index.rs
+f5da3ed10121b2a0b5463d1d024c59c880bf63c15a1cbad79badb9844027b78e  apps/rhino-cli/src/application/governance/readme_index.rs
 31839db528901525dcf55688f45d47c13133d274b8b0a733b22a0047d3a008a7  apps/rhino-cli/src/application/governance/word_budget.rs
 35abdae3174fb38de79208e146a92ce1f9c481b6a9a0e4ba1cca6b50491e081a  apps/rhino-cli/src/application/mermaid/mod.rs
 f822da06492dffb5432c7f10f2a56601b144af68c45e8b6f8ab01ae31b21c0c7  apps/rhino-cli/src/application/mermaid/port.rs
