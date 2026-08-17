@@ -12,7 +12,7 @@ document), FALSE_POSITIVE (drift no longer exists, or source was `[Outdated]` �
 ## Out-of-Scope (Require Human Judgment)
 
 The fixer does NOT auto-remediate: Invariant 1/2 failures (rewriting governance/root-instruction
-prose); Invariant 4 (count mismatch — either an orphan deletion or a missing-counterpart
+prose); Invariant 4 (inventory mismatch — either an orphan deletion or a missing-counterpart
 authoring, a product decision); Invariant 5 (adding a color/tier mapping); a Tier 1→2
 reclassification; higher-precedence filename discoveries (AD3 implications); new harness
 additions (full onboarding); rhino-cli generator-logic changes (a translation rule, not just

@@ -61,7 +61,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 > **Harness compatibility (Phase 0 + Phase 1)**: `repo-harness-compatibility-checker`
 > (green) and `repo-harness-compatibility-fixer` (yellow) validate both internal
 > cross-vendor parity invariants (Phase 0: governance prose vendor-neutrality;
-> AGENTS.md / CLAUDE.md vendor-neutrality; binding sync no-op; agent count parity;
+> AGENTS.md / CLAUDE.md vendor-neutrality; binding sync no-op; agent inventory parity;
 > color-translation map and capability-tier map coverage) and external harness drift
 > (Phase 1: per-harness web-research-backed comparison against upstream docs). They
 > are orchestrated by the

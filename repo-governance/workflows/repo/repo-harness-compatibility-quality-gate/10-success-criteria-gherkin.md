@@ -11,7 +11,7 @@ Scenario: Phase 0 parity invariants pass before external drift check
   Given the five deterministic parity invariants are configured
   When repo-harness-compatibility-checker runs Phase 0
   Then it invokes rhino-cli vendor-audit for governance prose and root instruction surfaces
-  And it verifies the binding sync no-op, agent count parity, and translation-map coverage
+  And it verifies the binding sync no-op, agent inventory parity, and translation-map coverage
   And only after all five invariants pass does it proceed to Phase 1 web research
 
 Scenario: Phase 0 binding sync drift is auto-fixed
