@@ -1002,7 +1002,7 @@ gates:
   # [PATH], and `args:` can only emit `--flag value` pairs — so an additional
   # covered surface costs an additional gate entry. The Vendor-Independence
   # Convention governs AGENTS.md as a canonical root instruction surface
-  # (conventions/structure/governance-vendor-independence/01-purpose-and-scope.md),
+  # (conventions/structure/governance-vendor-independence/purpose-and-scope.md),
   # so leaving it ungated let neutrality hold only by hand.
   #
   # CLAUDE.md is deliberately NOT gated: its "Platform Binding Examples" heading

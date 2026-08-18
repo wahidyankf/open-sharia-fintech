@@ -173,7 +173,7 @@ specs/apps/a-demo/contracts/generated/
 
 # Manual-verification evidence belongs in the owning plan's evidence/ subfolder
 # (plans/{backlog,in-progress,done}/<slug>/evidence/), which moves with the plan on
-# archival — see repo-governance/development/quality/evidence-capture/02-the-rule.md.
+# archival — see repo-governance/development/quality/evidence-capture/.
 # A repo-root evidence/ is always a misplacement. The leading slash anchors this to
 # the root, so per-plan evidence/ folders are unaffected.
 /evidence/
