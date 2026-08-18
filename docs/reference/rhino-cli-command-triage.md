@@ -253,7 +253,9 @@ driven by the `harness:` registry (not hard-coded):
 4. **The harness set is data, not code** — the eleven harnesses live in `repo-config.yml` under a new
    `harness:` section, **one entry per harness carrying every field the harness commands consume**:
    `tier`, `agent-dir` (if agent-bearing — feeds `naming`/`duplication`), `mirrors` (the source dir a
-   generated tier's agent set must match — feeds `naming`), the `instruction` surface list (fed, at
+   generated tier's agent set must match — feeds `naming`; the `naming` validator named in both
+   parentheticals was since deleted, so `agent-dir` feeds only `duplication` and `mirrors` only
+   `bindings` today — see item 6), the `instruction` surface list (fed, at
    the time this doc was written, the now-superseded registry-merged word-budget check — see item 7
    below), and the `shadow` glob (feeds `bindings` no-shadowing). **Every** harness
    command reads this one list, so adding a twelfth harness is a config edit, identical across all 3

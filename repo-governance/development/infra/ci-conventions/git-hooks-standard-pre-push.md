@@ -34,8 +34,9 @@ which derives its warm-target list from the same `gate list --surface=pre-push` 
 projection rather than a hardcoded target list — then push again; cached results make the second
 run fast.
 
-The registry set includes path-gated entries (e.g. `harness-naming` fires when `.claude/agents/**`
-or `.opencode/agents/**` changed; `workflows-naming` fires when `repo-governance/workflows/**`
-changed) that carry their own trigger lists and are skipped when their triggers miss, so no-op
-pushes pay near-zero cost. The CI quality-gate workflow runs the equivalent checks unconditionally
-on every PR against `main` to catch drift from hand-edited files that bypassed the local hook.
+The registry set includes path-gated entries (e.g. `governance-word-budget` and
+`governance-readme-completeness` fire only when a governance surface such as `repo-governance/`,
+`.claude/`, or `repo-config.yml` changed) that carry their own trigger lists and are skipped when
+their triggers miss, so no-op pushes pay near-zero cost. The CI quality-gate workflow runs the
+equivalent checks unconditionally on every PR against `main` to catch drift from hand-edited files
+that bypassed the local hook.

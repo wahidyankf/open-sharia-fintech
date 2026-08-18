@@ -49,17 +49,17 @@ form `rhino {group} {verb} [{noun}]`. The `validate:*` prefix used before P10 is
 
 Deprecated prefix→canonical mapping reference:
 
-| Old (abolished)                            | Canonical                                                 |
-| ------------------------------------------ | --------------------------------------------------------- |
-| `validate:env`                             | `env:validation`                                          |
-| `validate:links`                           | `links:validation`                                        |
-| `validate:mermaid`                         | `mermaid:validation`                                      |
-| `validate:heading-hierarchy`               | `headings:hierarchy-validation`                           |
-| `validate:specs-tree`                      | `specs:tree-validation`                                   |
-| `validate:specs-counts`                    | `specs:counts-validation`                                 |
-| `validate:specs-adoption`                  | `specs:adoption-validation`                               |
-| `validate:naming-agents`                   | `naming:harness-validation` (withdrawn, no replacement)   |
-| `validate:naming-workflows`                | `naming:workflows-validation` (withdrawn, no replacement) |
-| `validate:repo-governance-vendor-audit`    | `governance:vendor-audit-validation`                      |
-| `validate:cross-vendor-parity`             | `cross-vendor:parity-validation`                          |
-| `validate:harness-bindings` (package.json) | `harness:bindings-validation`                             |
+| Old (abolished)                            | Canonical                                                                                                                 |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `validate:env`                             | `env:validation`                                                                                                          |
+| `validate:links`                           | `links:validation`                                                                                                        |
+| `validate:mermaid`                         | `mermaid:validation`                                                                                                      |
+| `validate:heading-hierarchy`               | `headings:hierarchy-validation`                                                                                           |
+| `validate:specs-tree`                      | `specs:tree-validation`                                                                                                   |
+| `validate:specs-counts`                    | `specs:counts-validation`                                                                                                 |
+| `validate:specs-adoption`                  | `specs:adoption-validation`                                                                                               |
+| `validate:naming-agents`                   | `naming:harness-validation` (withdrawn — role-suffix rule withdrawn; agent-set mirror now in `harness bindings validate`) |
+| `validate:naming-workflows`                | `naming:workflows-validation` (withdrawn, no replacement)                                                                 |
+| `validate:repo-governance-vendor-audit`    | `governance:vendor-audit-validation`                                                                                      |
+| `validate:cross-vendor-parity`             | `cross-vendor:parity-validation`                                                                                          |
+| `validate:harness-bindings` (package.json) | `harness:bindings-validation`                                                                                             |
