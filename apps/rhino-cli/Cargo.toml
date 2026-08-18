@@ -87,19 +87,11 @@ name = "repo_config_validate"
 harness = false
 
 [[test]]
-name = "agent_naming_validator"
-harness = false
-
-[[test]]
 name = "repo_governance"
 harness = false
 
 [[test]]
 name = "spec_coverage"
-harness = false
-
-[[test]]
-name = "workflows"
 harness = false
 
 [[test]]

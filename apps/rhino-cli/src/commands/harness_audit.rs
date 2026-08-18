@@ -1,7 +1,7 @@
 //! `harness audit` — runs all harness validators in sequence.
 //!
-//! Runs validate-naming, detect-duplication, validate-claude, validate-sync,
-//! and validate-bindings with default arguments.  Generator commands (sync,
+//! Runs detect-duplication, validate-claude, validate-sync, and
+//! validate-bindings with default arguments.  Generator commands (sync,
 //! emit-bindings, generate-bindings) are intentionally excluded.
 //! Use `--skip <name>` to exclude individual validators.
 
@@ -10,7 +10,7 @@ use clap::Args;
 
 use crate::commands::{
     governance_validate_word_budget, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_naming, harness_validate_sync,
+    harness_validate_duplication, harness_validate_sync,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -19,7 +19,6 @@ use crate::domain::cliout::OutputFormat;
 /// Generator commands (`sync`, `emit-bindings`, `generate-bindings`) are
 /// excluded because they modify files rather than validate them.
 const MEMBERS: &[&str] = &[
-    "validate-naming",
     "detect-duplication",
     "validate-claude",
     "validate-sync",
@@ -77,10 +76,6 @@ pub fn run(args: &AuditArgs, output_format: OutputFormat) -> std::result::Result
 /// Dispatch a single validator by name with default arguments.
 fn run_member(name: &str, output_format: OutputFormat) -> std::result::Result<(), Error> {
     match name {
-        "validate-naming" => harness_validate_naming::run(
-            &harness_validate_naming::ValidateNamingArgs {},
-            output_format,
-        ),
         "detect-duplication" => harness_validate_duplication::run(
             &harness_validate_duplication::DetectDuplicationArgs {},
             output_format,
@@ -125,12 +120,11 @@ mod tests {
 
     #[test]
     fn members_list_has_expected_count() {
-        assert_eq!(MEMBERS.len(), 6);
+        assert_eq!(MEMBERS.len(), 5);
     }
 
     #[test]
     fn members_list_contains_expected_validators() {
-        assert!(MEMBERS.contains(&"validate-naming"));
         assert!(MEMBERS.contains(&"detect-duplication"));
         assert!(MEMBERS.contains(&"validate-claude"));
         assert!(MEMBERS.contains(&"validate-sync"));
@@ -167,7 +161,6 @@ mod tests {
         // Skip all but one to trigger failure path.
         let args = AuditArgs {
             skip: vec![
-                "validate-naming".to_string(),
                 "detect-duplication".to_string(),
                 "validate-claude".to_string(),
                 "validate-sync".to_string(),
@@ -180,7 +173,7 @@ mod tests {
     #[test]
     fn audit_args_skip_is_vec() {
         let a = AuditArgs {
-            skip: vec!["validate-naming".to_string()],
+            skip: vec!["detect-duplication".to_string()],
         };
         assert_eq!(a.skip.len(), 1);
     }
