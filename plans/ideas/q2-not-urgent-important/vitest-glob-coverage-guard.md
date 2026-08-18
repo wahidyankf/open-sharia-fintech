@@ -37,6 +37,25 @@ The specific glob was widened inline in that PR — `unit-fe` now also includes
 `src/app/**/*.test.{ts,tsx}`, with `**/*.unit.test.{ts,tsx}` excluded so already-covered files do not
 double-run under jsdom. That fix is done and merged. The **class** is not fixed anywhere.
 
+### The mirror-image failure: a glob too wide (2026-08-18)
+
+The same config fails the other way, and the second direction is louder but no better understood.
+The `unit` project's `include` is `**/*.unit.{test,spec}.{ts,tsx}` with `exclude: ["node_modules"]`.
+Vitest's default excludes cover `**/dist/**` but not `.next/`, so after
+`nx build ayokoding-www` populates `apps/ayokoding-www/.next/standalone/` with flattened copies of
+`src/`, every `*.unit.test.ts` in that build output is discovered as a real test — and fails, because
+the flattening breaks its relative imports (`Cannot find module '../../core/manifest-integrity'`).
+
+Surfaced during `repo-clean-up`: an `nx affected -t build,test:quick,lint` run passed, then the very
+next `git push` failed its pre-push `test:quick` on five phantom failures — because the _earlier
+build_ had created the files the _later test run_ discovered. Deleting `.next/standalone` and
+re-running passed. Ordering-dependent, fully reproducible, and it makes a green build the cause of a
+red test.
+
+Both directions have the same root shape: nothing asserts that the set of files a glob matches is
+the set anyone intended. A guard for the narrow case (a `*.test.ts` no project matches) and the wide
+case (a matched file outside `src/` and `test/`) is the same guard.
+
 ## Why now
 
 The only thing that caught this was a specialist reviewer manually reverting a fix and re-running the

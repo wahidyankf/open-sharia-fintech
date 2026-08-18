@@ -66,3 +66,13 @@ Committed as `c0a219ea4` (58 files).
 | `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`                       | new    | Two-pager for the delegation-outlives-its-owner class.                                              |
 | `plans/ideas/README.md`                                                                           | edit   | Index entry for the new two-pager.                                                                  |
 | `plans/in-progress/repo-clean-up/learnings.md`                                                    | edit   | Triage table routing all nine entries to a terminal state.                                          |
+
+## Phase 4 — Archival and Delivery
+
+| Path                                                                              | Action | Note                                                                                          |
+| --------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------- |
+| `plans/in-progress/repo-clean-up/` → `plans/done/2026-08-18__repo-clean-up/`      | rename | Archival inside the delivering PR; `main` is branch-protected.                                |
+| `plans/in-progress/README.md`, `plans/done/README.md`                             | edit   | Plan index entries moved.                                                                     |
+| `plans/ideas/q2-not-urgent-important/ayokoding-course-root-overview-parity.md`    | edit   | Its `repo-clean-up` link retargeted at the archived path.                                     |
+| `plans/done/2026-08-18__repo-clean-up/evidence/quality-worktree-repo-clean-up.md` | new    | Delivery-boundary pre-push gate and `nx affected` evidence.                                   |
+| `plans/ideas/q2-not-urgent-important/vitest-glob-coverage-guard.md`               | edit   | Tenth learning folded in — the mirror-image glob-too-wide failure found at the push boundary. |
