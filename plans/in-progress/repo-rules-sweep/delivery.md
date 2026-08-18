@@ -196,10 +196,13 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 ### The convention
 
 - [ ] [AI] Create `repo-governance/conventions/structure/ordinal-filename-prefixes.md` stating the
-      rule from `tech-docs.md` §2 plus its three worked **Fails** cases and the explicit note that no
-      file in the tree today satisfies the **Passes** condition — acceptance: the file exists, cites
-      no fabricated passing example, and `rhino governance word-budget validate` reports it under
-      500 words.
+      rule from `tech-docs.md` §2 with worked cases on **both** sides: the three **Fails** cases and
+      the real **Passes** case (`04-step-4-fixer.md` → `04-fixer.md`, from
+      `repo-governance/workflows/**/*-quality-gate/`, where the ordinal already equals the step's own
+      number) — acceptance: the file exists, every example it cites resolves to a real path verified
+      by `find` at authoring time, and `rhino governance word-budget validate` reports it under 500
+      words. **Do not write that no file satisfies the Passes condition** — that claim is false and
+      would turn the convention into the blanket ban this plan explicitly rejected.
 - [ ] [AI] Add the required frontmatter (`title`, `description`, `when_to_use`, `category`,
       `subcategory`, `tags`, `created`) — acceptance: `rhino md frontmatter validate` reports no
       finding for the file.
@@ -604,6 +607,22 @@ _Suggested executor:_ `docs-file-manager` for the renames and link repair; `repo
 
 _Suggested executor:_ `docs-file-manager` and `repo-rules-fixer`, same split as Phase 4
 
+**Parity target: the same maintainer experience, not the same bytes.** Every WS-A and WS-C outcome
+lands in both repositories. `ose-private` carries all of them, but its shard structure and its config
+differ, so **derive every path and every list from `ose-private` itself — never copy an `ose-public`
+path or an `ose-public` exclude list**. Audited 2026-08-18: `agent-naming/` holds 3 files there (7
+here), `workflow-naming/` holds 4 (6 here), the evidence-capture rule lives in
+`evidence-capture/01-what-goes-where.md` (not `02-the-rule.md`), and that repo's word-budget exclude
+list carries an extra `infra/on-premise/terraform/.terraform/` entry. Copying this repo's list there
+would publish a wrong list — the exact defect WS-C exists to fix.
+
+- [ ] [AI] Re-derive every `ose-private` surface by command before editing anything, and fail loudly
+      if one is missing rather than proceeding on an assumed path — acceptance: each of
+      `repo-governance/conventions/structure/{agent-naming,workflow-naming,governance-word-budget,file-naming}.md`,
+      the `agent-naming/` and `workflow-naming/` shard directories, the four `apps/rhino-cli/`
+      naming sources, the `harness-naming` and `workflows-naming` gate ids in `repo-config.yml`, and
+      the `repo-governance/development/quality/evidence-capture/` shard that states the placement
+      rule are each confirmed present with their actual path and file count recorded.
 - [ ] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
       from its `main` — acceptance: `git worktree list` in `ose-private` shows the path.
 - [ ] [AI] Apply the Phase 2 and Phase 3 `apps/rhino-cli/` changes byte-identically — acceptance:
@@ -627,6 +646,22 @@ _Suggested executor:_ `docs-file-manager` and `repo-rules-fixer`, same split as 
 - [ ] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
       emitting `renames-private.tsv` — acceptance: the same five gate commands exit 0 in
       `ose-private`.
+- [ ] [AI] Document `ose-private`'s word-budget exclude list in its own
+      `governance-word-budget.md`, derived from **its** `repo-config.yml` — acceptance:
+      `grep -F 'terraform' repo-governance/conventions/structure/governance-word-budget.md` returns a
+      match there and does **not** in `ose-public`, proving each repo documents its own list rather
+      than a copied one.
+- [ ] [AI] State the evidence placement rule in `ose-private`'s evidence-capture convention, in
+      whichever shard the re-derivation step identified — acceptance: that shard mentions the
+      `.gitignore` anchor and the plan-subfolder rule.
+- [ ] [AI] Add the root-anchored `/evidence/` guard to `ose-private`'s `.gitignore`, which does not
+      have it — acceptance: in `ose-private`, `git check-ignore -q evidence/probe.png` succeeds and
+      the same check on a per-plan `evidence/` path fails. Both directions must hold. No repo-root
+      `evidence/` directory exists there, so nothing is deleted. Delete the probe files afterwards.
+- [ ] [AI] Confirm the maintainer experience actually matches: in **both** repositories a probe agent
+      file named `repo-rules-frobnicator.md` passes `rhino gate run --surface=pre-push`, and
+      `rhino harness naming validate` exits non-zero — acceptance: identical outcomes in both.
+      Delete the probe files afterwards.
 - [ ] [AI] Run the `parity-manifest` gate in both repositories — acceptance: both exit 0.
 - [ ] [AI] Run `npx nx run rhino-cli:test` in `ose-private` — acceptance: exits 0.
 
