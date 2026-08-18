@@ -1,6 +1,0 @@
-error: 'rhino-cli repo-governance workflows' requires a subcommand but one was not provided
-  [subcommands: naming, help]
-
-Usage: rhino-cli repo-governance workflows [OPTIONS] <COMMAND>
-
-For more information, try 'help'.

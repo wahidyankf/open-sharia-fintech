@@ -52,3 +52,28 @@ Prettier will not do this to you — it only happens when a human or agent hand-
 **Follow-up (not this plan's scope)**: the audit should pair backticks over the whole document, or
 at least track an open-span carry across lines, instead of resetting per line. Filed for a backlog
 plan; the plan in hand is about filename ordinals, not the vendor scanner.
+
+## `harness bindings validate` is not registry-driven for agent dirs (Phase 3)
+
+Deleting `harness naming validate` stranded `harness-registry-driven.feature`, whose scenario
+claimed two harness commands derive their target sets from `repo-config.yml`. The obvious repair —
+repoint the claim at `harness bindings validate` — **failed the test**: against a synthetic repo
+whose source tier lives at `.custom-src/agents`, the validator reported
+`Failed to read Claude agents directory: .../.claude/agents ... No such file or directory`. It
+hard-codes the path.
+
+This does not undo the Phase 3 probe (P3.1), which proved `bindings validate` detects mirror drift
+in **this** repository's real layout, in both directions. It does mean the withdrawal lost a
+property nothing else carries: no surviving command derives an agent-dir set from the registry, so
+adding a twelfth agent-bearing harness now needs a source edit, not just a config edit. The scenario
+was narrowed to `harness duplication validate` — the one command the fixture still proves
+registry-driven — rather than left asserting something false.
+
+**Routing**: backlog plan. Making `bindings validate` read its agent dirs from the `harness:`
+registry is a code change with its own TDD cycle and a cross-repo parity obligation, out of scope
+here.
+
+**The general defect**: a spec scenario named two commands and asserted one property of "each". When
+one command died, the surviving half of the sentence looked like a safe place to re-point it. It was
+not — the property was never true of the replacement. Repointing a spec at a different subject is a
+new claim and needs a new test run, not a rename.

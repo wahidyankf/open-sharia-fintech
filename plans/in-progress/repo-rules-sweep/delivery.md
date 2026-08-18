@@ -455,25 +455,41 @@ validate` therefore removes a **second, overlapping** check of the same duty, no
       acceptance: `grep -F 'harness naming validate' repo-config.yml` and
       `grep -F 'workflows naming validate' repo-config.yml` each return zero matches, while
       `grep -F 'md naming validate' repo-config.yml` still returns one.
-- [ ] [AI] Regenerate the hook shims and CI job matrix from the registry — acceptance:
+- [x] [AI] Regenerate the hook shims and CI job matrix from the registry — acceptance:
       `rhino gate validate` exits 0 and no CI job references a removed gate id.
 
 ### Prose sweep
 
-- [ ] [AI] Enumerate every site stating either rule, with a per-file verdict, before editing any of
+- [x] [AI] Enumerate every site stating either rule, with a per-file verdict, before editing any of
       them:
       `grep -rn 'harness naming validate\|workflows naming validate\|role suffix\|Role Vocabulary\|Type Vocabulary' AGENTS.md CLAUDE.md .claude repo-governance docs specs`
       — acceptance: the verdict table lists every hit as `edited`, `deleted`, or
       `no-change (unrelated sense)`. `<type>` and `<role>` appear in Conventional-Commits and
       emoji-vocabulary docs in an unrelated sense; those are `no-change`.
-- [ ] [AI] Edit `AGENTS.md` §AI Agents to drop `<domain>-<role>` naming — acceptance:
+      _Verdict table written to `local-tmp/repo-rules-sweep/ws-c-verdicts.md`. The plan's grep found
+      29 hits; the union with a `-F agent-naming.md` / `-F workflow-naming.md` link sweep and the 21
+      broken links `md links validate` reported after the deletions raised the surface to 32 files.
+      22 edited, 0 deleted, 10 no-change. The five `role suffix` hits in the colour/accessibility
+      docs are `no-change (unrelated sense)`: they describe an agent's observed suffix to justify a
+      colour, and state no naming rule._
+- [x] [AI] Edit `AGENTS.md` §AI Agents to drop `<domain>-<role>` naming — acceptance:
       `grep -F '<domain>-<role>' AGENTS.md` returns zero matches, and `rhino governance word-budget validate` exits 0.
-- [ ] [AI] Update `.claude/agents/README.md`, `repo-governance/workflows/README.md`,
+- [x] [AI] Update `.claude/agents/README.md`, `repo-governance/workflows/README.md`,
       `repo-governance/development/agents/ai-agents/10-agent-naming-conventions.md`,
       `docs/reference/rhino-cli-command-triage.md`, `docs/reference/sdlc-gate-standard.md`, and
       `repo-governance/development/infra/nx-target-naming/04-cli-command-naming.md` — acceptance:
       every verdict in the table above is discharged and `rhino md links validate` exits 0.
-- [ ] [AI] Regenerate mirrors: `npm run generate:bindings` — acceptance: `npm run validate:sync`
+      _Wider than the six files listed. `.claude/agents/README.md` needed **no change** — it
+      documents `name:`-based discovery, never the withdrawn filename rule. Beyond the list, the
+      sweep also had to repair `governance-vendor-independence.md`, `worktree-path/04-*.md`, ten
+      workflow shards carrying a Related-Conventions bullet to the deleted convention,
+      `ci-conventions/13-*.md`, `.claude/agents/pr-review/pr-review-governance-maker.md`, and two
+      spec surfaces — `harness-registry-driven.feature` (repointed to `harness bindings validate`,
+      which is equally registry-driven and still exists) plus the gherkin `README.md`.
+      `10-agent-naming-conventions.md` was rewritten as guidance rather than deleted: its
+      scope-prefix material is still useful and is not the withdrawn rule.
+      `md links validate` exits 0 with zero broken links._
+- [x] [AI] Regenerate mirrors: `npm run generate:bindings` — acceptance: `npm run validate:sync`
       exits 0 and mirrors land in the same commit as their `.claude/` sources.
 
 ### Evidence placement: a stated rule with nothing behind it
@@ -495,18 +511,18 @@ reports — an agent writing to the root gets no signal, the files simply never 
 over a staged-path gate for cost. If evidence is misplaced again somewhere the anchor does not
 reach, that is the signal to revisit.
 
-- [ ] [AI] Verify the guard is present and correctly anchored — acceptance:
+- [x] [AI] Verify the guard is present and correctly anchored — acceptance:
       `git check-ignore -q evidence/probe.png` succeeds **and**
       `git check-ignore -q plans/in-progress/repo-rules-sweep/evidence/probe.png` fails. Both
       directions must hold: an anchor that also ignored per-plan evidence folders would silently stop
       every plan from committing its screenshots. Delete the probe files afterwards.
-- [ ] [AI] State the placement rule explicitly in
+- [x] [AI] State the placement rule explicitly in
       `repo-governance/development/quality/evidence-capture/02-the-rule.md`: a repo-root `evidence/`
       is always a misplacement, the `.gitignore` anchor exists, and the anchor is the only mechanical
       backstop — acceptance:
       `grep -F 'gitignore' repo-governance/development/quality/evidence-capture/02-the-rule.md`
       returns at least one match and the file still passes its 500-word budget.
-- [ ] [AI] Cross-link the guard from the temporary-files convention so an author looking for "where
+- [x] [AI] Cross-link the guard from the temporary-files convention so an author looking for "where
       do artifacts go" finds it — acceptance: `rhino md links validate` exits 0.
 
 ### The word budget that already does not apply to `plans/`
@@ -519,42 +535,75 @@ list into a bare CLI run. No config change is needed. The defect is that
 devotes a paragraph to glob-overlap resolution, and never mentions the exclusions — so an author
 trims a plan README to satisfy a budget that was never going to be measured.
 
-- [ ] [AI] Verify the exclusion before documenting it, rather than trusting the config: create a
+- [x] [AI] Verify the exclusion before documenting it, rather than trusting the config: create a
       throwaway `plans/in-progress/probe/README.md` of 1200 words, run
       `rhino governance word-budget validate`, delete it — acceptance: exit 0 with no finding naming
       that path. If it _does_ report, the exclusion is not what it appears and this section becomes
       a config change instead.
-- [ ] [AI] Delete the throwaway probe directory — acceptance: `plans/in-progress/probe/` does not
+- [x] [AI] Delete the throwaway probe directory — acceptance: `plans/in-progress/probe/` does not
       exist and `git status --short` shows no trace of it.
-- [ ] [AI] Document the exclusion list in
+- [x] [AI] Document the exclusion list in
       `repo-governance/conventions/structure/governance-word-budget.md`, next to the surface table:
       the seven excluded prefixes, that they are `str::starts_with` prefixes and not globs, and that
       `plans/`, `docs/`, and `specs/` are content trees the budget was never meant to reach —
       acceptance: `grep -F 'plans/' repo-governance/conventions/structure/governance-word-budget.md`
       returns at least one match, and the file still passes its own 500-word budget.
-- [ ] [AI] State the rule the exclusion implies — a budget surface is a glob **minus** the registered
+- [x] [AI] State the rule the exclusion implies — a budget surface is a glob **minus** the registered
       exclude prefixes, and the exclude list is part of the published rule, not an implementation
       detail — acceptance: the convention says so in one sentence.
+      _Both P3.22 and P3.23 landed, but not all in `governance-word-budget.md`. Adding the
+      exclusion list inline pushed that file to 550 words — over its own 500-word fail limit (the
+      validator counts the whole file including frontmatter, so a body-only count reads ~50 words
+      low). Applied the sanctioned remediation instead: the detail moved to a new child,
+      `governance-word-budget/excluded-prefixes.md`, and the parent keeps the one-sentence rule
+      plus the `plans/`/`docs/`/`specs/` consequence at 494 whole-file words. The new shard takes
+      a plain name, not an `NN-` ordinal, per this plan's own Phase 1 convention._
 
 ### Phase 3 Gate
 
-- [ ] [AI] `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` — both exit 0.
-- [ ] [AI] `rhino parity manifest generate` has been run and staged after the deletions —
+- [x] [AI] `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` — both exit 0.
+      _`rhino-cli:test` does not exist (the same defect Phase 2 recorded); the project declares
+      `test:quick`, `test:unit`, `test:integration`, `test:coverage`, `test:specs`, `test:e2e`.
+      Ran the two that cover this phase's blast radius: `test:quick` exit 0 (1387 + 17 passed),
+      `test:integration` exit 0 (all cucumber and golden-master suites). `lint` exit 0._
+- [x] [AI] `rhino parity manifest generate` has been run and staged after the deletions —
       acceptance: `rhino parity manifest validate` exits 0. Four source files and a module directory
       were removed; the manifest lists them until regenerated.
-- [ ] [AI] `rhino repo-config validate`, `rhino gate validate`, `rhino specs coverage` — all exit 0.
-- [ ] [AI] `rhino md links validate` — exits 0; no document links to a deleted convention.
-- [ ] [AI] `rhino governance word-budget validate` — exits 0, and `governance-word-budget.md`
+      _`generate` refuses while any manifest-covered file differs from the Git index, so
+      `specs/apps/rhino/` and `repo-config.yml` had to be staged first. Validate exits 0._
+- [x] [AI] `rhino repo-config validate`, `rhino gate validate`, `rhino specs coverage` — all exit 0.
+      _`specs coverage` is spelled `specs behavior-coverage validate` and takes required PATHS; ran
+      it through its Nx target with `--skip-nx-cache` (the cached result predated these edits):
+      64 specs, 494 scenarios, 2017 steps, all covered._
+- [x] [AI] `rhino md links validate` — exits 0; no document links to a deleted convention.
+- [x] [AI] `rhino governance word-budget validate` — exits 0, and `governance-word-budget.md`
       documents the exclude list it has always applied.
-- [ ] [AI] `git check-ignore -q evidence/probe.png` succeeds and the same check on a per-plan
+- [x] [AI] `git check-ignore -q evidence/probe.png` succeeds and the same check on a per-plan
       `evidence/` path fails — the anchor blocks the root and nothing else.
-- [ ] [AI] `npm run validate:sync` — exits 0. `rhino harness bindings validate` (the already-declared
+- [x] [AI] `npm run validate:sync` — exits 0. `rhino harness bindings validate` (the already-declared
       `harness-bindings` gate) also exits 0, confirming `.opencode/` and `.cursor/` mirror-drift
       coverage survived the deletion.
-- [ ] [AI] An agent file named `.claude/agents/repo/repo-rules-frobnicator.md` passes every gate —
+- [x] [AI] An agent file named `.claude/agents/repo/repo-rules-frobnicator.md` passes every gate —
       acceptance: `rhino gate run --surface=pre-push` exits 0 with that file present. This is the
       point of the phase; if it still fails, the rule was not actually withdrawn. Delete the probe
       file afterwards.
+      _Discharged, but the gate run does not exit 0 — for a reason unrelated to the probe. **No gate
+      names the probe**: `grep -ci frobnicator` over the full gate output returns 0, and the whole
+      `-frobnicator` basename — a token never in the withdrawn role vocabulary — passes
+      `harness bindings validate`, `harness duplication validate`, `md naming validate`, and the
+      readme-index gate. That is the claim this item exists to test, and it holds._
+      _Two things had to be separated out first. (1) The probe initially tripped `governance-readme-index`
+      as an `orphan` — an agent file not linked from `.claude/agents/repo/README.md`. That is the
+      catalog-completeness rule, not the naming rule, so indexing the probe (as any real agent
+      would be) is the correct fair test; it then passed. (2) `convention-license` fails on
+      `apps/ayokoding-cli`, `apps/ose-cli`, and `libs/rust-commons` — three **empty `target/`
+      directory shells** left behind locally by deleted projects, holding zero files and zero
+      tracked entries. Proved independent of this plan: `convention license validate` produces a
+      byte-identical 3-finding report with and without the probe present. They are absent from a
+      fresh clone and from CI, so this is local cruft, not a repository defect. Left in place —
+      removing them is a developer-machine cleanup, not a plan change._
+      _Probe and its three generated mirrors deleted; `validate:sync` exits 0 and `git status` shows
+      no trace._
 
 > **Pause Safety**: the two rules and their tooling are gone, the already-declared `harness-bindings`
 > gate continues to cover the `.opencode/`/`.cursor/` mirror duty that `harness naming validate` used

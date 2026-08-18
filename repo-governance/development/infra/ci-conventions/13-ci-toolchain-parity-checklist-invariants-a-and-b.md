@@ -40,8 +40,3 @@ Three Husky hooks, each with a fixed shape:
 | `commit-msg` | `commitlint --edit "$1"` — enforces Conventional Commits format                                                                                                                                                                                                                                                    |
 | `pre-commit` | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-commit` (validate configs, format staged, validate links, lint markdown, shellcheck/hadolint/actionlint)                                                                                                                                               |
 | `pre-push`   | `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push` — every registry-declared `pre-push`-surface gate, in declaration order; see [Git Hook Lifecycle](../../workflow/git-hook-lifecycle.md) and discover the live set with `gate list --surface=pre-push --format=text` rather than a hardcoded list |
-
-Two of the registry-declared `pre-push` gates are path-gated naming validators:
-
-- `harness-naming` (`harness naming validate`) — fires when `.claude/agents/**` or `.opencode/agents/**` changed
-- `workflows-naming` (`repo-governance workflows naming validate`) — fires when `repo-governance/workflows/**` changed

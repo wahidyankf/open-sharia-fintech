@@ -12,4 +12,3 @@ when_to_use: Use when looking for documentation related to the API quality gate.
 - [PR Review Quality Gate](../../pr/pr-review-quality-gate.md) - Consumes this gate as merge precondition clause (e)
 - [Manual Behavioral Verification](../../../development/quality/manual-behavioral-verification.md) - Why behaviour is verified against a running surface rather than inferred from source
 - [Regression Test Mandate](../../../development/quality/regression-test-mandate.md) - Every fix ships with a reproducing test
-- [Workflow Naming Convention](../../../conventions/structure/workflow-naming.md) - Basename `api-quality-gate` parses as scope=`api`, type=`quality-gate`

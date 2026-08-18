@@ -37,7 +37,6 @@ All prose under `repo-governance/` must be readable and actionable by any contri
 ## Related Conventions
 
 - [File Naming Convention](../structure/file-naming.md) — Kebab-case file naming
-- [Agent Naming Convention](../structure/agent-naming.md) — Agent file naming standards
 - [Plans Organization](../structure/plans.md) — How plans are structured
 - [Platform Bindings Catalog](../../../docs/reference/platform-bindings.md) — Full catalog of all platform bindings
 

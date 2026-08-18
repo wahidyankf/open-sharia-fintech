@@ -29,7 +29,6 @@ when_to_use: "Use when tracing which agent or convention backs a specific behavi
 ## Conventions Implemented/Respected
 
 - **[Live-Tester Systematic Coverage](../../../development/quality/live-tester-systematic-coverage.md)**: the cross-tester forcing-functions (enumerate-don't-sample matrices, declared-invariant conformance), the recurrence + diff-since-last-run memory, and the cross-tester completeness critic this workflow enforces are defined canonically here.
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: Basename `web-ux-test-fixing-planning` parses as scope=`web`, qualifier=`ux` (the umbrella for the three live-site UX-quality lenses — exploratory correctness, usability, and design), descriptor=`test-fixing`, type=`planning`.
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: The plan lands at `plans/in-progress/<identifier>/` with no date prefix.
 - **[Feature Change Completeness](../../../development/quality/feature-change-completeness.md)**: The delivery checklist carries the specs+Gherkin coverage steps for the exploratory spec-gap proposals.
 - **[UI Mockups in Plan Docs](../../../conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)**: A UI-bearing plan carries an `assets/` folder with both-tier (lo-fi ASCII + hi-fi `.excalidraw.png`) mobile/tablet/desktop mockups, design-funnel alternatives, grounding rule, and token-only colors.

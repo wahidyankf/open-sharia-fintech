@@ -80,7 +80,6 @@ behavior/rhino-cli/gherkin/
 | `agents-detect-duplication.feature`         | `harness duplication validate`         | 4         |
 | `agents-sync.feature`                       | `harness sync validate`                | 7         |
 | `agents-validate-claude.feature`            | `harness claude validate`              | 5         |
-| `agents-validate-naming.feature`            | `harness naming validate`              | 4         |
 | `governance-word-budget-agents-md.feature`  | `governance word-budget validate`      | 3         |
 | `governance-word-budget-pre-push.feature`   | `governance word-budget validate`      | 3         |
 | `governance-word-budget-rule.feature`       | `governance word-budget validate`      | 5         |
@@ -122,7 +121,7 @@ behavior/rhino-cli/gherkin/
 | `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 2         |
 | `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                        | 1         |
 | `harness-bindings.feature`        | `harness bindings validate`                                                                 | 1         |
-| `harness-registry-driven.feature` | `harness naming validate` / `harness duplication validate`                                  | 1         |
+| `harness-registry-driven.feature` | `harness bindings validate` / `harness duplication validate`                                | 1         |
 | `specs-audit.feature`             | `specs audit`                                                                               | 1         |
 | `validate-adoption.feature`       | `specs structure validate` (merged; scenarios exercise `validate_spec_adoption` in-process) | 4         |
 | `validate-counts.feature`         | `specs counts validate`                                                                     | 4         |
@@ -171,4 +170,3 @@ for the canonical purpose of this folder.
 - [rhino — behavior/rhino-cli/gherkin/spec-coverage](./spec-coverage/README.md)
 - [rhino — behavior/rhino-cli/gherkin/system](./system/README.md)
 - [Test Coverage Domain](./test-coverage/README.md)
-- [rhino — behavior/rhino-cli/gherkin/workflows](./workflows/README.md)

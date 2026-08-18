@@ -1,5 +1,5 @@
 error: 'rhino-cli governance readme-index' requires a subcommand but one was not provided
-  [subcommands: validate, generate, help]
+  [subcommands: validate, generate, rewrite-paths, help]
 
 Usage: rhino-cli governance readme-index [OPTIONS] <COMMAND>
 

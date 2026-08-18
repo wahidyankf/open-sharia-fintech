@@ -647,7 +647,7 @@ fn then_catalog_missing(w: &mut CursorWorld) {
     );
 }
 
-// --- Naming validate ---
+// --- Bindings validate: Cursor mirror drift ---
 
 #[given(
     "a repository whose registry declares the cursor entry as a generated tier mirroring .claude/agents"
@@ -667,26 +667,30 @@ fn given_registry_cursor_generated(w: &mut CursorWorld) {
     assert_eq!(w.exit_code(), 0, "{}", w.combined_output());
 }
 
-#[when("the developer deletes one Cursor agent file and runs harness naming validate")]
-fn when_delete_and_naming(w: &mut CursorWorld) {
+#[when("the developer deletes one Cursor agent file and runs harness bindings validate")]
+fn when_delete_and_bindings(w: &mut CursorWorld) {
     std::fs::remove_file(w.root().join(".cursor/agents/mirror-a.md")).expect("delete cursor agent");
-    w.exec(&["harness", "naming", "validate"]);
+    w.exec(&["harness", "bindings", "validate"]);
 }
 
 #[when(
-    "the developer adds a Cursor agent file with no Claude counterpart and runs harness naming validate"
+    "the developer adds a Cursor agent file with no Claude counterpart and runs harness bindings validate"
 )]
-fn when_add_orphan_and_naming(w: &mut CursorWorld) {
+fn when_add_orphan_and_bindings(w: &mut CursorWorld) {
     w.write(
         ".cursor/agents/unsourced-agent.md",
         "---\nname: unsourced\ndescription: d\nmodel: composer-2.5\n---\n# x\n",
     );
-    w.exec(&["harness", "naming", "validate"]);
+    w.exec(&["harness", "bindings", "validate"]);
 }
 
-#[then("the command reports a mirror-drift violation")]
+#[then("the command reports Cursor mirror drift")]
 fn then_mirror_drift(w: &mut CursorWorld) {
-    assert!(w.combined_output().contains("mirror-drift"));
+    // `harness bindings validate` reports drift as a failing Cursor check
+    // rather than with the literal token the withdrawn naming validator used.
+    assert_ne!(w.exit_code(), 0, "{}", w.combined_output());
+    let out = w.combined_output();
+    assert!(out.contains("Cursor"), "got: {out}");
 }
 
 #[then(
@@ -694,7 +698,7 @@ fn then_mirror_drift(w: &mut CursorWorld) {
 )]
 fn then_deleted_violation(w: &mut CursorWorld) {
     let out = w.combined_output();
-    assert!(out.contains("mirror-drift"), "got: {out}");
+    assert!(out.contains("Cursor mirror file missing"), "got: {out}");
     assert!(
         out.contains("mirror-a") || out.contains("fixture-agent"),
         "got: {out}"
@@ -706,7 +710,7 @@ fn then_deleted_violation(w: &mut CursorWorld) {
 )]
 fn then_added_violation(w: &mut CursorWorld) {
     let out = w.combined_output();
-    assert!(out.contains("mirror-drift"), "got: {out}");
+    assert!(out.contains("Cursor Orphan"), "got: {out}");
     assert!(out.contains("unsourced-agent"), "got: {out}");
 }
 

@@ -51,8 +51,6 @@ Reference agents or tools that interact with this convention:
 **Related Conventions:**
 
 - [File Naming Convention](../file-naming.md) — Kebab-case file naming standards
-- [Agent Naming Convention](../agent-naming.md) — Agent file naming patterns
-- [Workflow Naming Convention](../workflow-naming.md) — Workflow file naming patterns
 
 **Related Documentation:**
 

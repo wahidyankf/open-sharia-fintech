@@ -8,8 +8,6 @@ when_to_use: Use when checking which repo-governance conventions govern a specif
 
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)** — respects Delivery Modes,
   executor tagging, worktree specification, and archival for every plan.
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)** — plain-name
-  workflow file.
 - **[Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md)** —
   pre-execution grill on unresolved cross-plan ordering.
 - **[Knowledge Capture Convention](../../../development/quality/knowledge-capture.md)** — the triage

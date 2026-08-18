@@ -1,6 +1,6 @@
 ---
-title: "Agent Naming Conventions"
-description: "Defines file naming and scope-prefix guidelines for agent definition files."
+title: "Agent Naming Guidance"
+description: "Scope-prefix guidance for agent definition filenames, and the naming rule that no longer binds them."
 category: explanation
 subcategory: development
 tags:
@@ -12,67 +12,51 @@ created: 2025-11-23
 when_to_use: Use when naming or renaming an agent definition file.
 ---
 
-# Agent Naming Conventions
+# Agent Naming Guidance
 
-## File Naming
+Agent filenames are ordinary lowercase kebab-case, per
+[File Naming](../../../conventions/structure/file-naming.md). Nothing else is mandatory.
 
-Agent files follow the authoritative pattern defined in the [Agent Naming Convention](../../../conventions/structure/agent-naming.md). That convention is the single source of truth for agent filenames; the summary below is informational only.
+The former Agent Naming Convention required every basename to parse as
+`<scope>(-<qualifier>)*-<role>` with `role` drawn from a closed vocabulary, and a validator enforced
+it. Both were withdrawn — the check compared only a basename's last token against a list, so it
+never prevented a real defect while forcing a rename whenever a new kind of agent appeared. See
+[Withdrawn Rules](../../../conventions/structure/file-naming.md#withdrawn-rules). No existing agent
+filename changed, so the names below are still what you will find on disk.
 
-**Pattern**: `<scope>(-<qualifier>)*-<role>` (hyphens only — no underscores, no double-underscores)
+## Scope Prefixes Are Guidance, Not a Grammar
 
-Where:
+Most agents carry a leading scope token because it groups the catalog usefully, not because a rule
+demands it. Follow it when it helps a reader find the agent.
 
-- `scope`: one token from the scope vocabulary in `agent-naming.md` (e.g., `docs`, `repo`, `apps-ayokoding-web`, `plan`)
-- `qualifier`: zero or more narrowing tokens (e.g., `by-example`, `software-engineering-separation`)
-- `role`: one of `maker`, `checker`, `fixer`, `dev`, `deployer`, etc.
+**Use a scope prefix when the agent works only within one app or library:**
 
-```
-PASS: Good - General agents (no scope prefix):
-- docs-maker.md
-- repo-rules-checker.md
-- plan-execution-checker.md
-- readme-maker.md
+- `apps-<app-name>-` — content creation, validation, or deployment for a single app.
+  Examples: `apps-ayokoding-www-general-maker`, `apps-ose-www-deployer`.
+- `libs-<lib-name>-` — work confined to one library.
+  Examples: `libs-ts-auth-validator`, `libs-ts-payment-checker`.
 
-PASS: Good - App-scoped agents:
-- apps-ayokoding-www-general-maker.md
-- apps-ayokoding-www-by-example-checker.md
-- apps-ose-www-content-maker.md
-- apps-ose-www-deployer.md
+**Skip the prefix when the agent is not app-scoped:**
 
-FAIL: Bad:
-- DocWriter.md (PascalCase)
-- doc_writer.md (snake_case)
-- documentation-writer-agent.md (redundant suffix)
-- ayokoding-general-maker.md (missing scope)
-- apps_ayokoding-web_general-maker.md (underscores forbidden — use hyphens)
-- libs__ts-auth__validator.md (double-underscores forbidden — violates file naming convention)
-```
+- Repository-wide agents — `docs-maker`, `repo-rules-checker`, `plan-execution-checker`.
+- Cross-cutting agents spanning several apps — `readme-maker`, `agent-maker`,
+  `repo-workflow-maker`.
+- Meta-agents managing repository structure — `docs-file-manager`, `repo-rules-maker`.
 
-See [Agent Naming Convention](../../../conventions/structure/agent-naming.md) for the complete, authoritative naming rule including the full scope vocabulary.
+**When you do use a scope:**
 
-## Scope Prefix Guidelines
+- Match the directory name exactly — `ayokoding-www` for `apps/ayokoding-www/`.
+- Stay kebab-case throughout; hyphens separate every part. No camelCase, PascalCase, or
+  underscores — the file naming convention still forbids those.
 
-**When to use scope prefixes:**
+## Trailing Role Tokens
 
-1. **`apps-[app-name]-`** - Agent works ONLY with a specific app
-   - Content creation for Next.js sites (ayokoding-www, ose-www)
-   - App-specific validation, deployment, structure management
-   - Examples: `apps-ayokoding-www-general-maker`, `apps-ose-www-deployer`
+Names like `-maker`, `-checker`, `-fixer`, `-dev`, and `-deployer` describe what an agent does and
+recur throughout the catalog. They remain useful shorthand and the colour and accessibility
+guidance elsewhere in this document leans on them. They are descriptive: an agent whose job has no
+matching token needs no new token and no exception.
 
-2. **`libs-[lib-name]-`** - Agent works ONLY with a specific library
-   - Future use when monorepo has libraries with specific agents
-   - Library-specific validation, testing, documentation
-   - Examples: `libs-ts-auth-validator`, `libs-ts-payment-checker`
+## Related
 
-**When NOT to use scope prefixes:**
-
-- **General-purpose agents**: Work across entire repository (docs-maker, repo-rules-checker, plan-execution-checker)
-- **Cross-cutting agents**: Apply to multiple apps/libs (readme-maker, agent-maker, repo-workflow-maker)
-- **Meta-agents**: Manage repository structure (docs-file-manager, repo-rules-maker)
-
-**Scope naming rules:**
-
-- App/lib names must match directory names exactly (e.g., `ayokoding-www` matches `apps/ayokoding-www/`)
-- Use kebab-case throughout (no camelCase, PascalCase, or snake_case)
-- Hyphens `-` separate all parts of the agent name (consistent kebab-case throughout)
-- Agent name after scope uses standard kebab-case patterns
+- [File Naming](../../../conventions/structure/file-naming.md) — the kebab-case base rule.
+- [Agent catalog](../../../../.claude/agents/README.md) — the authoritative list of agents.

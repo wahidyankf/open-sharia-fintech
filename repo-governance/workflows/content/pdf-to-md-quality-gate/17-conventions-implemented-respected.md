@@ -6,7 +6,6 @@ when_to_use: "Use when auditing this workflow against repository-wide structural
 
 # Conventions Implemented/Respected
 
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: `pdf-to-md-quality-gate` follows `<scope>-<type>` pattern
 - **[File Naming Convention](../../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention
 - **[Linking Convention](../../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
 - **[Content Quality Principles](../../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1

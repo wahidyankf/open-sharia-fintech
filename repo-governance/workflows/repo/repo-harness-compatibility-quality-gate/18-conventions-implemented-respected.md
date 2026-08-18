@@ -10,9 +10,6 @@ when_to_use: Use when auditing this workflow for traceability back to other repo
   this workflow is the enforcement arm of that convention's two-tier binding model and
   no-shadowing rule; it keeps both internal parity and the platform-binding catalog true to
   current upstream conventions
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: filename
-  `repo-harness-compatibility-quality-gate` follows the `<scope>(-<qualifier>)*-<type>` rule
-  (scope `repo`, qualifier `harness-compatibility`, type `quality-gate`)
 - **[File Naming Convention](../../../conventions/structure/file-naming.md)**: workflow file
   uses plain kebab-case in the correct subdirectory (`repo-governance/workflows/repo/`)
 - **[Linking Convention](../../../conventions/formatting/linking.md)**: all cross-references

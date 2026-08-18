@@ -22,10 +22,6 @@ when_to_use: Use when auditing this workflow's governance alignment or looking u
 
 ## Conventions Implemented/Respected
 
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: Filename
-  `plan-multi-repo-parity-planning-and-execution` — scope `plan`, qualifiers `multi-repo` +
-  `parity` + `planning` + `and`, type `execution` (the composite's terminal deliverable is
-  executed, archived plans).
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: Five-document
   layout, `in-progress` staging, worktree specification, executor tagging, and phase gates all
   enforced through the nested workflows.

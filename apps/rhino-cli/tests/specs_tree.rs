@@ -29,20 +29,21 @@
 //!   `feature` paths are byte-identical to the absolute, glob-resolved paths
 //!   the real command computes at runtime.
 //! - `harness-bindings.feature` / `harness-registry-driven.feature`: harness
-//!   binding/naming/duplication validators. `harness bindings
+//!   binding/duplication validators. `harness bindings
 //!   validate`'s core (`application::agents::bindings::validate_bindings`) is
 //!   driven in-process against the real repository's `repo-config.yml` (its
 //!   own `#[cfg(test)]` module already proves the exact "all 11 harnesses"
-//!   claim this feature makes); naming/duplication are driven
-//!   as subprocesses against a synthetic repo-config.yml with renamed
-//!   (non-`.claude`/`.opencode`) tier directories, to prove they are
-//!   registry-driven rather than hard-coded. This scenario used to cover a
-//!   third validator, `harness instruction-size validate`, alongside
-//!   naming/duplication — the `optimize-governance-md` plan's Phase 1b
-//!   renamed that command to `governance word-budget validate` and moved its
-//!   surface list to a dedicated `governance-word-budget:` config key,
-//!   unrelated to the `harness:` tier registry this scenario exercises, so
-//!   it was dropped from this scenario rather than renamed in place.
+//!   claim this feature makes); duplication is driven as a subprocess against
+//!   a synthetic repo-config.yml with renamed (non-`.claude`/`.opencode`) tier
+//!   directories, to prove it is registry-driven rather than hard-coded.
+//!   This scenario once covered two more validators. `harness
+//!   instruction-size validate` became `governance word-budget validate`,
+//!   whose surface list moved to a dedicated `governance-word-budget:` config
+//!   key unrelated to the `harness:` tier registry. `harness naming validate`
+//!   was deleted outright when the agent role-suffix rule was withdrawn — and
+//!   no surviving command derives an *agent-dir* set from the registry
+//!   (`harness bindings validate` hard-codes `.claude/agents`), so the
+//!   scenario now claims only what duplication actually proves.
 //! - `validate-adoption.feature` / `validate-tree.feature`: `specs
 //!   validate-adoption` / `specs validate-tree` no longer exist as CLI verbs —
 //!   `cli.rs`'s own test suite documents both were merged into `specs
@@ -190,7 +191,6 @@ struct SpecsTreeWorld {
 
     // --- harness-registry-driven.feature (subprocess, synthetic repo-config.yml) ---
     hrd_work: Option<TempDir>,
-    hrd_naming_output: Option<Output>,
     hrd_dup_output: Option<Output>,
 
     // --- worktree-agnostic.feature (in-process) ---
@@ -233,7 +233,6 @@ impl SpecsTreeWorld {
             hb_harness: Vec::new(),
             hb_result: None,
             hrd_work: None,
-            hrd_naming_output: None,
             hrd_dup_output: None,
             wt_main: None,
             wt_worktree_dir: None,
@@ -1083,7 +1082,7 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     run_git(root, &["init", "-q"]);
 
-    // Custom (non-`.claude`/`.opencode`) tier directories — proves the naming/duplication
+    // Custom (non-`.claude`/`.opencode`) tier directories — proves the bindings/duplication
     // validators derive target sets from the registry, not hard-coded paths.
     let config = concat!(
         "harness:\n",
@@ -1144,28 +1143,21 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     w.hrd_work = Some(tmp);
 }
 
-#[when("harness naming validate and harness duplication validate run")]
-fn when_hrd_run_both(w: &mut SpecsTreeWorld) {
+#[when("harness duplication validate runs")]
+fn when_hrd_run_dup(w: &mut SpecsTreeWorld) {
     let root = w
         .hrd_work
         .as_ref()
         .expect("fixture built by Given step")
         .path()
         .to_path_buf();
-    w.hrd_naming_output = Some(run_rhino(&root, &["harness", "naming", "validate"]));
     w.hrd_dup_output = Some(run_rhino(&root, &["harness", "duplication", "validate"]));
 }
 
-#[then("each derives its target set from the registry, not a hard-coded .claude/.opencode pair")]
+#[then("it derives its target set from the registry, not a hard-coded .claude/.opencode pair")]
 fn then_hrd_registry_driven(w: &mut SpecsTreeWorld) {
-    let naming = w.hrd_naming_output.as_ref().expect("naming ran");
-    let naming_text = combined_output(naming);
-    assert!(!naming.status.success(), "naming output: {naming_text}");
-    assert!(
-        naming_text.contains(".custom-gen") || naming_text.contains(".custom-src"),
-        "got: {naming_text}"
-    );
-
+    // The fixture's source tier lives at `.custom-src/agents`, a path the validator can only
+    // reach through `repo-config.yml`. Finding the planted duplicate there is the proof.
     let dup = w.hrd_dup_output.as_ref().expect("duplication ran");
     let dup_text = combined_output(dup);
     assert!(!dup.status.success(), "dup output: {dup_text}");
@@ -1175,20 +1167,12 @@ fn then_hrd_registry_driven(w: &mut SpecsTreeWorld) {
     );
 }
 
-#[then("harness naming validate checks the Amazon Q agent dir and the N-way mirror")]
-fn then_hrd_naming_checks_amazonq(w: &mut SpecsTreeWorld) {
-    let naming = w.hrd_naming_output.as_ref().expect("naming ran");
-    let text = combined_output(naming);
-    assert!(text.contains("amazonq"), "got: {text}");
-}
-
 #[then("a config-only addition of a new agent-bearing tier is covered with no source edit")]
 fn then_hrd_config_only(w: &mut SpecsTreeWorld) {
     // The Given step wrote only `repo-config.yml` plus fixture data files under the synthetic
-    // temp root -- no `.rs` source under the crate was touched. Both registry-driven
-    // validators still detected their respective custom-tier violations (asserted above),
-    // proving the config-only addition is covered end to end.
-    assert!(!w.hrd_naming_output.as_ref().expect("ran").status.success());
+    // temp root -- no `.rs` source under the crate was touched. The validator still detected the
+    // custom-tier violation (asserted above), proving the config-only addition is covered end to
+    // end.
     assert!(!w.hrd_dup_output.as_ref().expect("ran").status.success());
 }
 

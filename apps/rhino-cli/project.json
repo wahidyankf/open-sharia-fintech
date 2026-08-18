@@ -160,27 +160,6 @@
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/specs/**/*.feature"]
     },
-    "naming:harness-validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness naming validate"
-      },
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.rs",
-        "{workspaceRoot}/.claude/agents/**/*.md",
-        "{workspaceRoot}/.opencode/agents/**/*.md",
-        "{workspaceRoot}/.cursor/agents/**/*.md"
-      ]
-    },
-    "naming:workflows-validation": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cargo run --profile gate --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance workflows naming validate"
-      },
-      "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.rs", "{workspaceRoot}/repo-governance/workflows/**/*.md"]
-    },
     "governance:vendor-audit-validation": {
       "executor": "nx:run-commands",
       "options": {

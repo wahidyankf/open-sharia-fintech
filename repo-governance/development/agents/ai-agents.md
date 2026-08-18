@@ -30,7 +30,7 @@ Standards for creating, structuring, and managing AI agents in the platform bind
 
 ## Naming and Tool Access
 
-- [Naming Conventions](./ai-agents/10-agent-naming-conventions.md) — file naming.
+- [Naming Guidance](./ai-agents/10-agent-naming-conventions.md) — scope prefixes.
 - [Naming Guidelines](./ai-agents/11-agent-naming-conventions-guidelines-and-name-vs-description.md) — name vs. desc.
 - [Tool Access Patterns](./ai-agents/12-tool-access-patterns.md) — four patterns.
 - [Report-Generating Agents](./ai-agents/13-tool-access-patterns-report-generating-agents.md) — Write+Bash rule.

@@ -15,7 +15,6 @@ when_to_use: Use when checking which cross-cutting principles or repo-governance
 
 ## Conventions Implemented/Respected
 
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: Basename `plan-idea-promotion-planning` parses as scope=`plan`, qualifier=`idea-promotion`, type=`planning`.
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: The backlog plan uses the `<identifier>/` folder form (no date prefix); the two-pager is deleted and de-indexed on promotion.
 - **[Web Research Delegation Convention](../../../conventions/writing/web-research-delegation.md)**: The deep prior-art study is delegated to `web-researcher`.
 - **[Subagent Orchestration Convention](../../../development/agents/subagent-orchestration.md)**: Research angles fan out under the N+1 model — `1 main thread + N background agents = N+1 total`, default N=3 — with the main thread kept vacant as orchestrator.

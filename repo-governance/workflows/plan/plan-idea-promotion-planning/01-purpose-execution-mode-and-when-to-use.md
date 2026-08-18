@@ -22,9 +22,7 @@ idea now lives as a plan.
 > no separate human promotion step is required.
 
 This is a `planning`-type workflow: a single forward procedure whose terminal deliverable is a plan
-document. It is **not** an iterative quality gate. Per the
-[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md), the basename parses as
-scope=`plan`, qualifier=`idea-promotion`, type=`planning`.
+document. It is **not** an iterative quality gate.
 
 ## Execution Mode
 

@@ -1,7 +1,7 @@
 23e9109bd73c084143dc439efbd6e227955c99ee3928819f2f584f2ec1f00cc9  apps/rhino-cli/Cargo.lock
 992d8faa39f991af5f9abe0787491a73e03f9045aaf80d72d5beb43822d8cd34  apps/rhino-cli/Cargo.toml
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
-ad261c9d007a5d113ed7103d29fc9aebd621835c04f480fc390ffa49afda352a  apps/rhino-cli/project.json
+d44bc3538ee9cbd583ab64e8902add14eba76a2847d1f7f5765d861754dbc00d  apps/rhino-cli/project.json
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
 066407817f5a688cd428cbc2c9ec82e7b2176ca710afec05f18d7de311b1ecad  apps/rhino-cli/src/application/agents/bindings.rs
 07dd2ceb069411b1d60ca01701aa4d2e49d421dd0826b399f34c1f9e9316524e  apps/rhino-cli/src/application/agents/claude_validator.rs
@@ -188,7 +188,7 @@ af6651b2adb5ee6d5becf743af675eab72210e35cb5e3c510c08d78dbb07f838  apps/rhino-cli
 d6b8c614e58d37f36e0b6a6813e2b8e89138cc5a2053a90e14c2a71f1d6e3462  apps/rhino-cli/tests/cli_smoke.rs
 99c7a02e2e4c15a49b5dd28a9cec875a613636ed8db94c604a6e4339cf7f350f  apps/rhino-cli/tests/contracts.rs
 8fb398b662cb78834ab11ca8fca74a94bf2620bd1f1806ec0c8213901728b2da  apps/rhino-cli/tests/convention.rs
-0ddb6a425aa46de48d07fb23c104c69e9bd1675beabe631aa6859be99eb0142a  apps/rhino-cli/tests/cursor_binding.rs
+85640305b4501cde8f06613f58b67a9d5402e2662bef9906651dbd1f153f52ce  apps/rhino-cli/tests/cursor_binding.rs
 5418b190e6d021a5aa2d3292cfaafa90740e3b81ce401632d7b2c0306e50e880  apps/rhino-cli/tests/ddd.rs
 833615279902b0a5275632c98b0574df275820714838c5a33f7a4cdb2c3c780a  apps/rhino-cli/tests/docs.rs
 485f51eb59885b8aeaf2127fe5417f21aba149fd60d0addc2ad94443a04955ab  apps/rhino-cli/tests/doctor.rs
@@ -280,7 +280,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/governance-readme-index-validate.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/governance-readme-index-validate.stdout
 53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3  apps/rhino-cli/tests/golden-master/governance-readme-index.exit
-0acb80571dbc34c6b8f0a57d5a06071739655a9639096e174d93eed02cfdd027  apps/rhino-cli/tests/golden-master/governance-readme-index.stderr
+c9900df673a8f5e3de43057dec8ea47fba12d0910c595fc2d14771be0c1463d6  apps/rhino-cli/tests/golden-master/governance-readme-index.stderr
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/governance-readme-index.stdout
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/governance-word-budget-validate.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/governance-word-budget-validate.stderr
@@ -325,7 +325,7 @@ f72ae554aa2a99bf6f5f6fdef3bb12d8ea07750ff399ddb502196f4602a4da01  apps/rhino-cli
 0f8b25378deae27818989cb3df771da2d3cb111c89ff5763b0effc0290ee1d0d  apps/rhino-cli/tests/golden-master/harness-generate.stderr
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/harness-generate.stdout
 53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3  apps/rhino-cli/tests/golden-master/harness-help.exit
-44ad943a7d1374b34f6e836ba2fe7d482bcbf20c91925761a8962a174723bced  apps/rhino-cli/tests/golden-master/harness-help.stderr
+94aa2e20a20141a2bdcb80e79b9a04602bbabe01f00d76e63edb77481c869bc9  apps/rhino-cli/tests/golden-master/harness-help.stderr
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/harness-help.stdout
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/harness-sync-opencode.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/harness-sync-opencode.stderr
@@ -351,7 +351,7 @@ f72ae554aa2a99bf6f5f6fdef3bb12d8ea07750ff399ddb502196f4602a4da01  apps/rhino-cli
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/help.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/help.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/help.stdout
-b5643da1fb7fa0ed0375a67c47010422c07f2475685779f05f2d934188adb953  apps/rhino-cli/tests/golden-master/manifest.json
+e9e5835b119c786f32594bfd2415ba5e6ab0fd8c6773873306606e2e8d08eb6c  apps/rhino-cli/tests/golden-master/manifest.json
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/md-audit.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/md-audit.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/md-audit.stdout
@@ -419,7 +419,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/repo-governance-audit.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/repo-governance-audit.stdout
 53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3  apps/rhino-cli/tests/golden-master/repo-governance-help.exit
-d7938e19ae5a67e42e5ad7be6ab3eb2b1506548ee8dda391d9a4bcda3c14d1f4  apps/rhino-cli/tests/golden-master/repo-governance-help.stderr
+3f71265bd2d8d7202aed8fb0465465993da12222dd5e2af00262d457e6afd446  apps/rhino-cli/tests/golden-master/repo-governance-help.stderr
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/repo-governance-help.stdout
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/repo-governance-layer-coherence-validate.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/repo-governance-layer-coherence-validate.stderr
@@ -451,9 +451,6 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli
 53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3  apps/rhino-cli/tests/golden-master/repo-governance-vendor.exit
 bb4db3fdb39f2948f7ba4a7e193c8116ef34ba99a5feb4c6aa48b0706cc79d87  apps/rhino-cli/tests/golden-master/repo-governance-vendor.stderr
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/repo-governance-vendor.stdout
-53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3  apps/rhino-cli/tests/golden-master/repo-governance-workflows.exit
-fe108ee7a2e0814ad2f1ead7731470e9f8cb5027ae6ec771123fb0b6d331ea19  apps/rhino-cli/tests/golden-master/repo-governance-workflows.stderr
-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/repo-governance-workflows.stdout
 9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  apps/rhino-cli/tests/golden-master/specs-audit.exit
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  apps/rhino-cli/tests/golden-master/specs-audit.stderr
 03758d1179abb6762def04e53007cfa422d7ea6d63169c8866e7ba6763375617  apps/rhino-cli/tests/golden-master/specs-audit.stdout
@@ -497,9 +494,9 @@ ab2858b4a5657f6782fc39eda4b8f7e1bb7906a5e543f75af77b2ff7d88c9f48  apps/rhino-cli
 7b0ef8698434abe1343d9619edd59fe5e682c216d09263b4b6b09f3ffaae0279  apps/rhino-cli/tests/repo_config_validate.rs
 97f66d71265c3062512eba571f1c004cd6ae90e3f310105d608a72b66fba2114  apps/rhino-cli/tests/repo_governance.rs
 3fd10208abb5a9af807b425cde017b9615f0b5abd13ba4243c93ebb6d2fb78c3  apps/rhino-cli/tests/spec_coverage.rs
-1e831821018fc307c879a15be98233440cde487eed880b2916bdd5e8351bb38e  apps/rhino-cli/tests/specs_tree.rs
+069780cf48846f1e9f3ecd1ec40aff73473bb6f831ec98447312b248c3660842  apps/rhino-cli/tests/specs_tree.rs
 471afb2c45384e1a61f2a5c4b7dc6659c9edfd320bcd2fcdaccb137277f3d90a  apps/rhino-cli/tests/test_coverage.rs
-d778c384f86f0c13f0e4be71515b6aa5db81487333ef2189c40fe859fcd11b38  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
+89a9d761a4f0de66ff98c05d7e2fa9bf9c1acdcc28be21f136081c2a5da998e0  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
 922519ea75132b0e693d320213ed8d51c4e18735a9d32599ca19e606159b0bd9  specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/README.md
 794a661fe7d935ebc5ea7a2704b0160ed611b206320aeff9f3a8c295c0553508  specs/apps/rhino/behavior/rhino-cli/gherkin/contracts/contracts-dart-scaffold.feature
 a46716a9602c75464f5b93c102e5c8763979ae8f216bd16ed8a1672b1983b017  specs/apps/rhino/behavior/rhino-cli/gherkin/convention/README.md
@@ -507,7 +504,7 @@ a46716a9602c75464f5b93c102e5c8763979ae8f216bd16ed8a1672b1983b017  specs/apps/rhi
 2ef87608004d97cac9f965c88261070f90b7deb90befebd3b2dd023b0efeef2e  specs/apps/rhino/behavior/rhino-cli/gherkin/convention/repo-governance-emoji-audit.feature
 8b8e3bdc740490fc6bf754748a9f17af67980924c475967c453711d2a7f72106  specs/apps/rhino/behavior/rhino-cli/gherkin/convention/repo-governance-license-audit.feature
 d20ea1203c224d0ff725f4f5d43441c0cc38eb76f86052122504c44d955a656d  specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/README.md
-dbd14fee84d388d5aaa0025e1675ae99c68ce53f9478c0f92f86af55b8ea42f3  specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/cursor-binding.feature
+46b5eab212c70fefe506b5e00c60e1645e56373223b24772f7875bcbdc3763b4  specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/cursor-binding.feature
 fa2cd94f36d12b7e13a4a0805c1de2aaa37b01ace8c5411db4ccc307590a9aed  specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/README.md
 2fbbf1e062f493872a01e69839a0af9999402f0c4b4caf18794434949a059e96  specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-bc.feature
 63dfacf51b86ade09ed7547fb7e322d22698e27f5a4115211c5576176eaf6b58  specs/apps/rhino/behavior/rhino-cli/gherkin/ddd/ddd-ul.feature
@@ -564,7 +561,7 @@ bd42aba4e9496160242ed178f2b33719494a2f7c050a83e4b52be17095ed714d  specs/apps/rhi
 7036dbbbb84d8f616721fea5aceac09cfb90362f2e0fe1c67b6d7af7f0470f75  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature
 c2a50b3eed5b6bcca94febc88e5d3f81ffbc2359bf28558714110d6e3286102c  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/gherkin-cardinality.feature
 6401857022e69799b6bedfe98be9f2a145a3b04be0a6214cdd63cb0825a1c474  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature
-e8d378401c5a5a6285d0b0fcc0bc5f922fa92f50662a4a9462663d6bc75ff752  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature
+aa0f087f4f42af18704eda9eb244388ff8e326c29820ed962d990c1c8b6b5d80  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature
 3f99403bb03e236d1df08af2ec6a998a25498acfb9d038ed133c0c2939e2ae12  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/specs-audit.feature
 dc0533b835b12c0ffad47be531eb98063e46ad4356646ee457182fa4bdaf1245  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-adoption.feature
 4b7bb6a12662c140be4624fae8cd71942b22ec1e43ccf38e6c3db2f2c4e05ac2  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-counts.feature

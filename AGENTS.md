@@ -96,8 +96,8 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 
 ## AI Agents
 
-[Agent catalog](./.claude/agents/README.md) is authoritative, `<domain>-<role>` naming. Agent
-skills at `.claude/skills/<name>/SKILL.md`.
+[Agent catalog](./.claude/agents/README.md) is authoritative; filenames follow the ordinary
+kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 

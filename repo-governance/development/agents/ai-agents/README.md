@@ -15,7 +15,7 @@ when_to_use: "Read this index to find the right AI Agents Convention child docum
 - [Agent skills References](./07-agent-file-structure-skills-references.md) — Referencing a Skill via frontmatter versus documenting inline.
 - [Agent skills References](./08-agent-file-structure-skills-references-continued.md) — Reviewing how an agent documents its skills usage in its body.
 - [Document Structure](./09-agent-file-structure-document-structure.md) — Laying out the body sections of a new agent definition file.
-- [Agent Naming Conventions](./10-agent-naming-conventions.md) — Naming or renaming an agent definition file.
+- [Agent Naming Guidance](./10-agent-naming-conventions.md) — Naming or renaming an agent definition file.
 - [Naming Guidelines and Agent Name vs. Description](./11-agent-naming-conventions-guidelines-and-name-vs-description.md) — Choosing an agent's short name, or writing its frontmatter description.
 - [Tool Access Patterns](./12-tool-access-patterns.md) — Deciding the baseline tool-access pattern for a new agent.
 - [Report-Generating Agents](./13-tool-access-patterns-report-generating-agents.md) — Creating or auditing a checker agent's frontmatter tools list.

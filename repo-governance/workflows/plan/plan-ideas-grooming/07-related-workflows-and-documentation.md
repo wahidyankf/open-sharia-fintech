@@ -23,8 +23,6 @@ when_to_use: Use when navigating from this workflow to a composed workflow or a 
 - [Ideas Folder (Two-Pagers) convention](../../../conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) —
   the two-pager template, file layout, and promotion procedure this workflow reshapes every surviving
   idea against.
-- [Workflow Naming Convention](../../../conventions/structure/workflow-naming.md) — defines the
-  `grooming` type token this workflow's own filename uses (scope `plan`, type `grooming`).
 - [Plan-docs-only carve-out](../plan-planning/07-plan-docs-only-carve-out.md) — the
   retired convention that once justified a `main-to-origin-main` default for this workflow, since
   every path it touches sits under `plans/**`; superseded by [Per-Repository Delivery Mode

@@ -25,7 +25,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | `convention validate license`              | `convention license validate`              |
 | `harness validate bindings`                | `harness bindings validate`                |
 | `harness validate duplication`             | `harness duplication validate`             |
-| `harness validate naming`                  | `harness naming validate`                  |
 | `harness validate sync`                    | `harness sync validate`                    |
 | `harness validate claude`                  | `harness claude validate`                  |
 | `harness generate bindings`                | `harness bindings generate`                |
@@ -45,7 +44,8 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | Removed                                        | Replaced by                                      |
 | ---------------------------------------------- | ------------------------------------------------ |
 | legacy `convention` per-surface size validator | `governance word-budget validate`                |
-| `workflows validate naming`                    | `repo-governance workflows naming validate`      |
+| `harness validate naming`                      | Removed (agent role-suffix rule withdrawn)       |
+| `workflows validate naming`                    | Removed (workflow type-suffix rule withdrawn)    |
 | `harness sync opencode`                        | `harness bindings generate --harness opencode`   |
 | `harness emit amazonq`                         | `harness bindings generate --harness amazonq`    |
 | `convention validate agents-md-size`           | Removed (superseded by `governance-word-budget`) |

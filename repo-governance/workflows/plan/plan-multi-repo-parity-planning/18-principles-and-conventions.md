@@ -23,9 +23,6 @@ when_to_use: Use when auditing this workflow's governance alignment or citing wh
 
 ## Conventions Implemented/Respected
 
-- **[Workflow Naming Convention](../../../conventions/structure/workflow-naming.md)**: Filename
-  `plan-multi-repo-parity-planning` — scope `plan`, qualifiers `multi-repo` + `parity`, type
-  `planning` (surveys repo state, produces plans, never implements).
 - **[Plans Organization Convention](../../../conventions/structure/plans.md)**: Five-document
   multi-file layout; stage-aware folder naming (no date prefix in `backlog/` or
   `in-progress/`; completion-date prefix in `done/` only); worktree specification in each plan's
