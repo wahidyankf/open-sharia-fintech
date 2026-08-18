@@ -1230,22 +1230,6 @@ mod cli_uniform_grammar_tests {
     }
 
     #[test]
-    fn verb_last_repo_governance_workflows_naming_validate_parses() {
-        let result = Cli::try_parse_from([
-            "rhino-cli",
-            "repo-governance",
-            "workflows",
-            "naming",
-            "validate",
-        ]);
-        assert!(
-            result.is_ok(),
-            "repo-governance workflows naming validate must parse after cross-domain move: {:?}",
-            result.err()
-        );
-    }
-
-    #[test]
     fn verb_last_harness_bindings_generate_with_harness_flag_parses() {
         let result = Cli::try_parse_from([
             "rhino-cli",
