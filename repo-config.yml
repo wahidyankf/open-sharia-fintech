@@ -963,7 +963,15 @@ gates:
     type: check
     command: harness duplication validate
     kind: rhino-cli
-    ci-group: naming
+    # Was `ci-group: naming` — accurate while `harness naming validate` and
+    # `repo-governance workflows naming validate` were also members of this
+    # group. Both were withdrawn (see file-naming.md and
+    # ordinal-filename-prefixes.md), leaving this the group's sole member; a
+    # gate that only checks for duplicate registry entries is not a naming
+    # check. Renamed to `harness`, which is what it and any future member of
+    # this ci-group actually validate. No branch-protection required-check
+    # list references the old name in this repository.
+    ci-group: harness
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
