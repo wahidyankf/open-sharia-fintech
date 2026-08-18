@@ -14,7 +14,7 @@ fast-forwards it. The branch is 26 commits ahead of `origin/main` with a zero co
 of an earlier squash-merge), so the PR's file diff is correct while its commit list carries landed
 history — accepted rather than rewritten.
 
-**`ose-private`** — `worktrees/repo-rules-sweep/`, provisioned in Phase 4.
+**`ose-private`** — `worktrees/repo-rules-sweep/`, provisioned in Phase 5.
 
 One worktree per repository per plan, per
 [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
@@ -22,7 +22,7 @@ One worktree per repository per plan, per
 ## Delivery Mode
 
 **`worktree-to-pr`.** Exactly **one PR per repository for the entire plan** — every phase commits to
-its repository's single branch and nothing opens a PR until Phase 6. Phase 0 opens no PR and pushes
+its repository's single branch and nothing opens a PR until Phase 7. Phase 0 opens no PR and pushes
 no branch. `[AI]` merges once the PR-Review Maker→Fixer Cycle and the quality gate are satisfied.
 
 Because there is one PR per repo, the Knowledge Capture and Archival phases commit to the same branch
@@ -34,9 +34,14 @@ in-PR archival coherent here.
 | ID | Workstream | Phases | Status |
 | --- | --- | --- | --- |
 | — | Shared baseline | 0 | Specified |
-| WS-A | Ordinal filename prefixes in governed trees | 1–4 | Specified |
+| WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified |
+| WS-C | Withdraw rules that obstruct: two suffix rules, one undocumented budget carve-out | 3 | Specified |
 | WS-B | File Naming Convention rework | — | **Declared, not executable** |
-| — | Knowledge Capture, Archival, and integration (terminal) | 5–6 | Specified |
+| — | Knowledge Capture, Archival, and integration (terminal) | 6–7 | Specified |
+
+WS-C runs **before** the sweep on purpose: it deletes thirteen numbered shards under
+`agent-naming/` and `workflow-naming/` that the sweep would otherwise rename first and discard
+second.
 
 A workstream added later inserts its phases before Knowledge Capture and renumbers the terminal
 phases. No workstream executes until its phases, gates, and acceptance criteria are written here and
@@ -45,17 +50,18 @@ its requirements into `prd.md`.
 ## Parallelization Model
 
 - **Serial spine**: Phase 1 (convention and machinery) → Phase 2 (index tooling) → Phase 3
-  (`ose-public` sweep) → Phase 4 (`ose-private`) → Phase 5 (Knowledge Capture) → Phase 6
-  (archival and integration). Each builds what the next reads: the rule is what rename decisions are
-  made against, the order-preserving generator is the precondition that makes renaming non-lossy,
-  and `ose-private` copies a finished `rhino-cli` change.
+  (withdraw obstructive rules) → Phase 4 (`ose-public` sweep) → Phase 5 (`ose-private`) → Phase 6
+  (Knowledge Capture) → Phase 7 (archival and integration). Each builds what the next reads: the rule
+  is what rename decisions are made against, the order-preserving generator is the precondition that
+  makes renaming non-lossy, the withdrawal removes files the sweep would otherwise process, and
+  `ose-private` copies a finished `rhino-cli` change.
 - **No independent branch.** Every phase writes to `repo-governance/` or `.claude/`, or depends on a
   tooling change, so nothing fans out. This is a genuine serial chain, not a list that happens to be
   ordered.
-- **Chosen N**: 3 (the repository default). Within Phase 3 the per-directory rename work may fan out
+- **Chosen N**: 3 (the repository default). Within Phase 4 the per-directory rename work may fan out
   across N agents, since directories do not read each other's output; the rename map is the shared
   artifact and is written before the fan-out, not during it.
-- **Terminal node**: Phase 6 depends on every other phase. Both PRs open there, and no worktree is
+- **Terminal node**: Phase 7 depends on every other phase. Both PRs open there, and no worktree is
   removed until both have merged.
 
 ### Delivery Boundaries
@@ -63,8 +69,8 @@ its requirements into `prd.md`.
 | Phase(s) | Delivery unit | Worktree | Branch | PR opens |
 | --- | --- | --- | --- | --- |
 | 0 | — (setup and baseline) | — | — | no |
-| 1–3, 5–6 | `ose-public` rules sweep | `worktrees/optimize-gov` (existing) | `worktree/optimize-gov` (existing) | yes — at Phase 6 |
-| 4, 6 | `ose-private` rules sweep | `worktrees/repo-rules-sweep` (in `ose-private`) | `repo-rules-sweep` | yes — at Phase 6 |
+| 1–4, 6–7 | `ose-public` rules sweep and rule withdrawal | `worktrees/optimize-gov` (existing) | `worktree/optimize-gov` (existing) | yes — at Phase 7 |
+| 5, 7 | `ose-private` rules sweep and rule withdrawal | `worktrees/repo-rules-sweep` (in `ose-private`) | `repo-rules-sweep` | yes — at Phase 7 |
 
 ## Phase 0: Baseline
 
@@ -250,7 +256,151 @@ GREEN step, then a REFACTOR step.
 > **Pause Safety**: the generator preserves hand-authored order and a rename-aware mode exists. No
 > filename has changed. Safe to stop. To resume: `npx nx run rhino-cli:test`.
 
-## Phase 3: `ose-public` Sweep
+## Phase 3: Withdraw Rules That Obstruct (WS-C)
+
+Two enforced filename rules are withdrawn: the **agent role suffix** (`harness naming validate`) and
+the **governance workflow type suffix** (`repo-governance workflows naming validate`). Both check
+only a basename's last token against a closed vocabulary. Neither prevents a real defect, and both
+force a rename whenever a genuinely new kind of agent or workflow appears.
+
+**Existing filenames do not change.** `repo-rules-checker.md` and `pr-review-quality-gate.md` keep
+their names; they simply stop being mandatory. This phase removes a constraint, not a convention in
+practice.
+
+### The mirror-drift hazard
+
+`harness naming validate` has a **second, unrelated job**: it walks every generated tier in the
+harness registry and reports `mirror-drift` when a `.claude/agents/` file has no counterpart. That
+duty must survive. `harness sync validate` already covers `.opencode/` and `.cursor/`, and
+`harness bindings validate` covers the Amazon Q bridge — but `harness sync validate` is reachable
+only through `npm run validate:sync`; it is **not a declared gate**. Deleting `harness naming
+validate` without acting would remove the only *gated* `.opencode/` mirror check.
+
+- [ ] [AI] Confirm the hazard before deleting anything: `rhino harness naming validate` reports a
+      `mirror-drift` kind, and `grep -F 'harness-sync' repo-config.yml` returns zero matches —
+      acceptance: both hold, proving the coverage gap is real and not assumed.
+- [ ] [AI] Declare a `harness-sync` gate in `repo-config.yml` running `harness sync validate` on the
+      `pre-push` and `ci` surfaces — acceptance: `rhino repo-config validate` exits 0, and
+      `grep -F 'harness sync validate' repo-config.yml` returns exactly one match.
+- [ ] [AI] Prove the replacement gate actually catches what is being deleted: delete one
+      `.opencode/agents/*.md` in a scratch copy, run `rhino harness sync validate`, restore it, run
+      again — acceptance: non-zero exit before restore, exit 0 after. A gate that passes in both
+      states has not replaced anything.
+
+### Convention removal
+
+- [ ] [AI] Delete `repo-governance/conventions/structure/agent-naming.md` and the seven files under
+      `repo-governance/conventions/structure/agent-naming/` — acceptance:
+      `find repo-governance/conventions/structure -name 'agent-naming*' | wc -l` returns 0.
+- [ ] [AI] Delete `repo-governance/conventions/structure/workflow-naming.md` and the six files under
+      `repo-governance/conventions/structure/workflow-naming/` — acceptance:
+      `find repo-governance/conventions/structure -name 'workflow-naming*' | wc -l` returns 0.
+- [ ] [AI] Record the withdrawal in
+      `repo-governance/conventions/structure/file-naming.md` — one short paragraph naming both
+      withdrawn rules and why, so a future reader finds the decision instead of the absence —
+      acceptance: `grep -F 'role suffix' repo-governance/conventions/structure/file-naming.md`
+      returns at least one match.
+- [ ] [AI] Re-index the parent: `rhino governance readme-index generate` on
+      `repo-governance/conventions/structure/` — acceptance:
+      `rhino governance readme-index validate` exits 0 with no `ghost` finding.
+
+### Tooling removal
+
+- [ ] [AI] Delete `apps/rhino-cli/src/commands/harness_validate_naming.rs` and
+      `apps/rhino-cli/src/commands/workflows_validate_naming.rs` — acceptance: both paths absent.
+- [ ] [AI] Delete `apps/rhino-cli/src/internal/naming.rs` and
+      `apps/rhino-cli/src/application/naming/` (`mod.rs`, `reporter.rs`). These are used **only** by
+      the two deleted commands — acceptance:
+      `grep -rn 'internal::naming\|application::naming' apps/rhino-cli/src apps/rhino-cli/tests`
+      returns zero matches, and `npx nx run rhino-cli:build` exits 0.
+- [ ] [AI] Remove both `pub mod` lines from `apps/rhino-cli/src/commands.rs`, both subcommand
+      variants and both dispatch arms from `apps/rhino-cli/src/cli.rs`, and the three stale CLI
+      parser tests that assert these commands parse (`old_harness_validate_naming_fails`,
+      `new_harness_validate_naming_passes`, `verb_middle_workflows_validate_naming_no_longer_parses`)
+      — acceptance: `npx nx run rhino-cli:build` exits 0 and
+      `rhino harness naming validate` exits non-zero with an unrecognised-subcommand error.
+- [ ] [AI] Delete `apps/rhino-cli/tests/agent_naming_validator.rs` and the twelve
+      `tests/golden-master/{harness-naming*,harness-validate-naming*,workflows-validate-naming*,repo-governance-workflows-naming*}.{exit,stdout,stderr}`
+      fixtures. **Keep every `md-naming*` fixture** — `md naming validate` is a different command and
+      stays — acceptance: `find apps/rhino-cli/tests/golden-master -name 'md-naming*' | wc -l`
+      is unchanged from the Phase 0 baseline.
+- [ ] [AI] Delete the two feature files
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-naming.feature` and
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/workflows/workflows-validate-naming.feature`, plus
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/agent-naming/agent-naming-validator.feature` —
+      acceptance: `rhino specs coverage` exits 0, reporting neither an orphaned feature nor an
+      uncovered command.
+
+### Gate removal
+
+- [ ] [AI] Delete the `harness-naming` and `workflows-naming` gate entries from `repo-config.yml` —
+      acceptance: `grep -F 'harness naming validate' repo-config.yml` and
+      `grep -F 'workflows naming validate' repo-config.yml` each return zero matches, while
+      `grep -F 'md naming validate' repo-config.yml` still returns one.
+- [ ] [AI] Regenerate the hook shims and CI job matrix from the registry — acceptance:
+      `rhino gate validate` exits 0 and no CI job references a removed gate id.
+
+### Prose sweep
+
+- [ ] [AI] Enumerate every site stating either rule, with a per-file verdict, before editing any of
+      them:
+      `grep -rn 'harness naming validate\|workflows naming validate\|role suffix\|Role Vocabulary\|Type Vocabulary' AGENTS.md CLAUDE.md .claude repo-governance docs specs`
+      — acceptance: the verdict table lists every hit as `edited`, `deleted`, or
+      `no-change (unrelated sense)`. `<type>` and `<role>` appear in Conventional-Commits and
+      emoji-vocabulary docs in an unrelated sense; those are `no-change`.
+- [ ] [AI] Edit `AGENTS.md` §AI Agents to drop `<domain>-<role>` naming — acceptance:
+      `grep -F '<domain>-<role>' AGENTS.md` returns zero matches, and `rhino governance word-budget validate` exits 0.
+- [ ] [AI] Update `.claude/agents/README.md`, `repo-governance/workflows/README.md`,
+      `repo-governance/development/agents/ai-agents/10-agent-naming-conventions.md`,
+      `docs/reference/rhino-cli-command-triage.md`, `docs/reference/sdlc-gate-standard.md`, and
+      `repo-governance/development/infra/nx-target-naming/04-cli-command-naming.md` — acceptance:
+      every verdict in the table above is discharged and `rhino md links validate` exits 0.
+- [ ] [AI] Regenerate mirrors: `npm run generate:bindings` — acceptance: `npm run validate:sync`
+      exits 0 and mirrors land in the same commit as their `.claude/` sources.
+
+### The word budget that already does not apply to `plans/`
+
+`plans/**/README.md` is **already** outside the word budget: the `governance-word-budget` gate
+carries an `exclude` prefix list (`plans/`, `docs/`, `specs/`, `.fvm/`, `.fvm-cache/`,
+`.opencode/skills/`, `.opencode/commands/`), and `governance_validate_word_budget.rs` folds that same
+list into a bare CLI run. No config change is needed. The defect is that
+`governance-word-budget.md` publishes the `**/README.md` 700/900/900 row as though it were universal,
+devotes a paragraph to glob-overlap resolution, and never mentions the exclusions — so an author
+trims a plan README to satisfy a budget that was never going to be measured.
+
+- [ ] [AI] Verify the exclusion before documenting it, rather than trusting the config: create a
+      throwaway `plans/in-progress/probe/README.md` of 1200 words, run
+      `rhino governance word-budget validate`, delete it — acceptance: exit 0 with no finding naming
+      that path. If it *does* report, the exclusion is not what it appears and this section becomes
+      a config change instead.
+- [ ] [AI] Document the exclusion list in
+      `repo-governance/conventions/structure/governance-word-budget.md`, next to the surface table:
+      the seven excluded prefixes, that they are `str::starts_with` prefixes and not globs, and that
+      `plans/`, `docs/`, and `specs/` are content trees the budget was never meant to reach —
+      acceptance: `grep -F 'plans/' repo-governance/conventions/structure/governance-word-budget.md`
+      returns at least one match, and the file still passes its own 500-word budget.
+- [ ] [AI] State the rule the exclusion implies — a budget surface is a glob **minus** the registered
+      exclude prefixes, and the exclude list is part of the published rule, not an implementation
+      detail — acceptance: the convention says so in one sentence.
+
+### Phase 3 Gate
+
+- [ ] [AI] `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` — both exit 0.
+- [ ] [AI] `rhino repo-config validate`, `rhino gate validate`, `rhino specs coverage` — all exit 0.
+- [ ] [AI] `rhino md links validate` — exits 0; no document links to a deleted convention.
+- [ ] [AI] `rhino governance word-budget validate` — exits 0, and `governance-word-budget.md`
+      documents the exclude list it has always applied.
+- [ ] [AI] `npm run validate:sync` — exits 0, with the new `harness-sync` gate carrying it.
+- [ ] [AI] An agent file named `.claude/agents/repo/repo-rules-frobnicator.md` passes every gate —
+      acceptance: `rhino gate run --surface=pre-push` exits 0 with that file present. This is the
+      point of the phase; if it still fails, the rule was not actually withdrawn. Delete the probe
+      file afterwards.
+
+> **Pause Safety**: the two rules and their tooling are gone, `harness-sync` covers the mirror duty
+> that `harness naming validate` used to carry, and no file has been renamed. Safe to stop. To
+> resume: `rhino gate validate && npx nx run rhino-cli:test`.
+
+## Phase 4: `ose-public` Sweep
 
 - [ ] [AI] Build the per-directory rename plan for every numbered directory under
       `repo-governance/` and `.claude/`, recording for each file a disposition of `renamed`,
@@ -279,7 +429,7 @@ GREEN step, then a REFACTOR step.
 - [ ] [AI] Spot-verify that annotations survived by diffing one index's entry text before and after —
       acceptance: entry text is byte-identical apart from link targets.
 
-### Phase 3 Gate
+### Phase 4 Gate
 
 - [ ] [AI] `find repo-governance .claude -name '*.md' | grep -E '/[0-9]{2}-'` returns only files on
       the recorded `kept` list.
@@ -294,7 +444,7 @@ GREEN step, then a REFACTOR step.
 > its order and annotations, and the mirrors are regenerated. Committed to the branch, not yet pushed
 > or reviewed. Safe to stop. To resume: `rhino md links validate`.
 
-## Phase 4: `ose-private` Sweep
+## Phase 5: `ose-private` Sweep
 
 - [ ] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
       from its `main` — acceptance: `git worktree list` in `ose-private` shows the path.
@@ -305,13 +455,17 @@ GREEN step, then a REFACTOR step.
 - [ ] [AI] Apply the Phase 1 convention and machinery edits, adapted to `ose-private`'s own paths —
       acceptance: the ordinal-prefix convention exists there and its `file-naming.md` carries the
       same reconciliation.
-- [ ] [AI] Run the Phase 3 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
+- [ ] [AI] Apply the Phase 3 withdrawal: delete the same two convention trees, the same `rhino-cli`
+      commands and shared `naming` modules, the same gate entries, and add the same `harness-sync`
+      gate — acceptance: `rhino harness naming validate` exits non-zero in `ose-private` too, and
+      `grep -F 'harness sync validate' repo-config.yml` returns one match there.
+- [ ] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
       emitting `renames-private.tsv` — acceptance: the same five gate commands exit 0 in
       `ose-private`.
 - [ ] [AI] Run the `parity-manifest` gate in both repositories — acceptance: both exit 0.
 - [ ] [AI] Run `npx nx run rhino-cli:test` in `ose-private` — acceptance: exits 0.
 
-### Phase 4 Gate
+### Phase 5 Gate
 
 - [ ] [AI] `parity-manifest` exits 0 in both repositories.
 - [ ] [AI] `rhino md links validate`, `rhino governance readme-index validate`,
@@ -321,7 +475,7 @@ GREEN step, then a REFACTOR step.
 > **Pause Safety**: both repositories are swept and their tooling is byte-identical. Both branches
 > hold committed, unpushed work. Safe to stop. To resume: run `parity-manifest` in either repository.
 
-## Phase 5: Knowledge Capture
+## Phase 6: Knowledge Capture
 
 - [ ] [AI] Triage every entry in `learnings.md` through the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)
@@ -331,8 +485,16 @@ GREEN step, then a REFACTOR step.
       acceptance: each entry records a gate verdict.
 - [ ] [AI] Record what `file-naming.md` still gets wrong, as the specification input for WS-B —
       acceptance: a WS-B input note exists in `learnings.md` or a `plans/backlog/` follow-up.
+- [ ] [AI] Record the withdrawal criterion WS-C applied — a rule that inspects one token, never reads
+      the file, and forces a code change to name a document — and audit the three surviving gated
+      filename rules against it — acceptance: each of `md naming`, the `harness-sync` mirror check,
+      and the `specs coverage` mapping carries a keep-or-withdraw verdict with a reason.
+- [ ] [AI] Record the general defect WS-C's word-budget item exposed: a gate's `args` (exclude lists,
+      thresholds) are part of the published rule, and a convention that documents only its surface
+      globs misstates what is enforced — acceptance: the entry names at least one other gate whose
+      `args` are undocumented, or states that none were found.
 
-### Phase 5 Gate
+### Phase 6 Gate
 
 - [ ] [AI] `learnings.md` has no untriaged entry, or carries the explicit
       `No generalizable learnings — <reason>` escape.
@@ -342,7 +504,7 @@ GREEN step, then a REFACTOR step.
 > **Pause Safety**: all durable knowledge has a home outside this plan folder. Safe to stop.
 > To resume: re-read `learnings.md`.
 
-## Phase 6: Archival and Integration
+## Phase 7: Archival and Integration
 
 Archival commits to the same branch and lands inside the single PR, per the Delivery Mode section
 above.
@@ -374,7 +536,7 @@ above.
 - [ ] [AI] Delete `local-tmp/repo-rules-sweep/` in both repositories — acceptance: the path no longer
       exists in either.
 
-### Phase 6 Gate
+### Phase 7 Gate
 
 - [ ] [AI] Both PRs show MERGED.
 - [ ] [AI] `parity-manifest` exits 0 in both repositories against their merged `main`.

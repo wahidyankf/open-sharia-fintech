@@ -61,6 +61,16 @@ document.
 identically in `ose-private` with the `rhino-cli` change byte-identical, **so that** cross-repo rule
 work needs no per-repo naming translation.
 
+### US-7 — Name a new kind of agent without amending a vocabulary
+
+**As an** agent author, **I want** to commit `.claude/agents/repo/repo-rules-frobnicator.md` without
+rebuilding `rhino-cli`, **so that** naming a document never requires a code change.
+
+### US-8 — Read a budget rule that matches what the budget measures
+
+**As a** plan author, **I want** the word-budget convention to publish the trees it excludes, **so
+that** I stop trimming plan READMEs against a threshold nothing measures.
+
 ## Acceptance Criteria
 
 ### Feature: The ordinal filename prefix rule
@@ -173,6 +183,37 @@ Scenario: Both repositories end on the same rule
   And the parity-manifest gate exits 0 in both
 ```
 
+### Feature: Withdrawing rules that obstruct
+
+```gherkin
+Feature: Withdrawing rules that obstruct
+
+  Scenario: A new kind of agent needs no vocabulary amendment
+    Given an agent file whose basename ends in a word outside the former role vocabulary
+    When the maintainer runs the pre-push gate surface
+    Then the gate exits zero
+
+  Scenario: A new kind of workflow needs no vocabulary amendment
+    Given a governance workflow file whose basename ends in a word outside the former type vocabulary
+    When the maintainer runs the pre-push gate surface
+    Then the gate exits zero
+
+  Scenario: The mirror-drift duty survives the deletion
+    Given the harness naming validator has been deleted and a mirror file is missing
+    When the maintainer runs the harness sync gate
+    Then the gate exits non-zero naming the missing mirror
+
+  Scenario: The kebab-case rule is untouched
+    Given a markdown file named with an uppercase letter under repo-governance
+    When the maintainer runs the md naming gate
+    Then the gate exits non-zero
+
+  Scenario: The word-budget convention publishes the trees it excludes
+    Given a plan README far longer than the published README threshold
+    When the maintainer runs the governance word-budget validator
+    Then it exits zero and the convention document names plans as an excluded prefix
+```
+
 ## Product Scope
 
 **In scope**
@@ -185,12 +226,21 @@ Scenario: Both repositories end on the same rule
 - The full rename sweep of `repo-governance/` and `.claude/` in both repositories, including
   continuation-shard boundary rework and word-budget re-splits.
 - Regeneration of `.opencode/`, `.cursor/`, `.amazonq/` from `.claude/`.
+- Withdrawal of the agent-role and workflow-type suffix rules: both convention trees, both
+  `rhino-cli` commands, their shared `naming` modules, specs, golden-master fixtures, and gate
+  entries — in both repositories.
+- Promotion of `harness sync validate` to a declared `harness-sync` gate, so the mirror-drift duty
+  survives the deletion.
+- Publishing the word-budget exclude list in `governance-word-budget.md`.
 
 **Out of scope**
 
 - Any gate, detector, audit category, or exit code enforcing the rule.
 - `docs/`, `specs/`, `apps/`, `plans/done/`.
-- Changing word-budget thresholds.
+- Changing word-budget thresholds, surfaces, or the exclude list itself — WS-C documents the
+  exclusion, it does not alter it.
+- Renaming existing agents or workflows to match or unmatch the withdrawn rules.
+- Withdrawing `md naming validate`; lowercase-kebab-case stays gated.
 - WS-B, the File Naming Convention rework.
 
 ## Product-Level Risks
