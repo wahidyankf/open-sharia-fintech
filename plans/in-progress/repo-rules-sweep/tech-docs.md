@@ -258,7 +258,26 @@ controls, since human diff-reading cannot carry the review load:
 - The per-directory rename map, with a `renamed` / `merged-into` / `kept` disposition per file, is
   the auditable artifact a reviewer reads instead of the diff.
 
-## 11. Follow-Ups Recorded, Not Done
+## 11. Autonomy Preconditions Verified at Authoring Time
+
+These were checked against the live tree while writing the plan, so execution does not have to
+discover them. Each carries a re-verification checkbox in `delivery.md`.
+
+| Fact | Command | Value at authoring |
+| --- | --- | --- |
+| No agent definition carries an ordinal | `find .claude/agents -name '*.md' \| grep -cE '/[0-9]{2}-'` | 0 |
+| No `SKILL.md` carries an ordinal | `find .claude/skills -name 'SKILL.md' \| grep -cE '/[0-9]{2}-'` | 0 |
+| All numbered `.claude/` files are skill reference modules | `find .claude -name '*.md' \| grep -E '/[0-9]{2}-'` | 232, all under `skills/*/reference/` |
+| `internal/naming.rs` and `application/naming/` have no other consumer | `grep -rln 'internal::naming\|application::naming' apps/rhino-cli/src` | only the two commands being deleted |
+| `plans/` is already outside the word budget | `governance-word-budget` gate `args.exclude` | `plans/` present |
+| `harness sync validate` is not a declared gate | `grep -F 'harness-sync' repo-config.yml` | 0 matches |
+
+The first two matter most: agent and skill names are **identities** (frontmatter `name` must equal
+the filename stem or directory name), while reference modules are reached only by link. Because no
+identity-bearing file is numbered, the sweep cannot break agent resolution. If a re-verification
+returns non-zero, that reasoning no longer holds — stop rather than proceed.
+
+## 12. Follow-Ups Recorded, Not Done
 
 - **WS-B** — the File Naming Convention rework, specified only after this workstream's Knowledge
   Capture records what `file-naming.md` still gets wrong.

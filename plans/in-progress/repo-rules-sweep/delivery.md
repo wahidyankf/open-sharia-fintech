@@ -22,12 +22,54 @@ One worktree per repository per plan, per
 ## Delivery Mode
 
 **`worktree-to-pr`.** Exactly **one PR per repository for the entire plan** — every phase commits to
-its repository's single branch and nothing opens a PR until Phase 7. Phase 0 opens no PR and pushes
-no branch. `[AI]` merges once the PR-Review Maker→Fixer Cycle and the quality gate are satisfied.
+its repository's single branch, and no phase opens a second PR.
 
-Because there is one PR per repo, the Knowledge Capture and Archival phases commit to the same branch
-and land inside that PR. The plan is complete at the moment the PR merges, which is what makes
+**`ose-public`'s PR already exists**: <https://github.com/wahidyankf/ose-public/pull/227>, opened as
+a **draft** carrying the plan documents, before execution began. This is a deliberate deviation from
+the usual "PR opens at the delivery boundary" flow, taken so the plan is executed *through* its own
+PR. Two consequences bind the executor:
+
+- **Never run `gh pr create` for `ose-public`.** It would fail; the PR exists. At Phase 7 the action
+  is `gh pr ready 227`, not create.
+- **Every phase pushes to `worktree/optimize-gov`**, including Phase 0. The Phase 0 "pushes nothing,
+  opens no PR" exemption
+  ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md))
+  is already discharged: the PR was opened before Phase 0 and Phase 0 opens nothing further. Pushing
+  Phase 0's baseline evidence to the existing branch satisfies that convention's intent — the
+  evidence lands in the first (and only) PR — while its letter, "do not open a PR for Phase 0",
+  is not violated because no PR-opening action occurs in Phase 0.
+
+Intermediate phases push for durability and run **no** PR-Review cycle. The cycle runs once, at
+Phase 7, against the whole accumulated PR. Knowledge Capture and Archival commit to the same branch
+and land inside that PR, so the plan is complete at the moment the PR merges — which is what makes
 in-PR archival coherent here.
+
+## Autonomous Execution Contract
+
+This plan is designed to run end-to-end under
+[plan-execution](../../../repo-governance/workflows/plan/plan-execution.md) **with no human in the
+loop**. Everything that workflow would otherwise stop and ask about is pre-resolved here. If
+execution reaches a decision this section does not cover, that is a plan defect — surface it rather
+than inventing an answer.
+
+| plan-execution stop | Resolution for this plan |
+| --- | --- |
+| `[HUMAN]` / `[AI+HUMAN]` checkbox (Iron Rule 2) | **None exist.** All 123 checkboxes are `[AI]`. |
+| Rule-15 three-tester web-UI retest (shard 36) | **Not applicable — no rendered surface.** This plan changes markdown, `repo-config.yml`, and Rust CLI internals. It ships no route, component, or template. Do not invoke `web-exploratory-tester`, `web-usability-tester`, or `web-design-tester`. |
+| Rule-16 API retest (shard 37) | **Not applicable — no HTTP surface.** No REST, GraphQL, or tRPC endpoint is added or changed. Do not invoke `api-exploratory-tester`. |
+| Rule-1 production visual sign-off (shard 36) | **Not applicable** — same reason as rule-15. |
+| Infra-Execution Gate (shard 40) | **Not applicable.** No `terraform apply`, no Ansible converge, no state-changing infrastructure operation appears in any phase. |
+| Manual behavioral assertions (Iron Rule 8) | **Satisfied by gate commands, not by Playwright or curl.** The behavioral assertions for this plan are the acceptance clauses on each checkbox — exit codes and grep counts. There is nothing to click and nothing to `curl`. |
+| `gh pr create` at the delivery boundary (shard 25) | **`ose-public`: forbidden**, PR #227 exists — use `gh pr ready 227`. **`ose-private`: see the `ose-private` delivery row in the Delivery Boundaries table.** |
+| PR-Review Maker→Fixer Cycle (shard 39) | Runs **once per repository at Phase 7**, N = 3 cycles, hard ceiling. An `escalated` exit blocks the merge and is a legitimate stop — surface it. |
+| Merge actor (shard 42) | **`[AI]`.** Merge once all four done-definition items hold. No `[HUMAN]` merge gate is declared anywhere in this plan. |
+| Worktree cleanup prompt (shards 41, 42) | See **Worktree Disposition** below — pre-authorized, no prompt. |
+| "Wait for user commit approval" (shard 02, item 10) | **Superseded by the per-phase gate flow.** Each `### Phase N Gate` commits and pushes under Iron Rules 5 and 7; there is no separate end-of-run approval step for this plan. |
+
+**Legitimate stops that remain.** Autonomy is not a mandate to push through a genuine blocker. Stop
+and surface, do not improvise, when: a gate fails for a reason no checkbox anticipated; the PR-Review
+cycle exits `escalated`; a rename decision is genuinely ambiguous under the tie-breakers below and
+the conservative default would lose information; or `ose-private` is unreachable.
 
 ## Workstreams
 
@@ -74,6 +116,8 @@ its requirements into `prd.md`.
 
 ## Phase 0: Baseline
 
+_Suggested executor:_ `repo-setup-manager`
+
 - [ ] [AI] Verify the active worktree is `worktrees/optimize-gov` — acceptance: `git rev-parse --show-toplevel`
       ends in `worktrees/optimize-gov` and `git branch --show-current` prints `worktree/optimize-gov`.
 - [ ] [AI] Fast-forward the branch with `git fetch origin && git merge --ff-only origin/main` —
@@ -103,11 +147,18 @@ its requirements into `prd.md`.
 - [ ] [AI] `git status --short` — prints nothing.
 - [ ] [AI] Both baseline files exist with all five figures each.
 
-> **Pause Safety**: the existing worktree is verified and current, the toolchain converged, and both
-> repositories' numbering baselines recorded. Nothing is committed and no branch is pushed. Safe to
-> stop. To resume: `npx nx run rhino-cli:test:quick`.
+- [ ] [AI] Commit the baseline evidence and push to the existing `worktree/optimize-gov` branch —
+      acceptance: `git status --short` prints nothing and `git rev-list --count origin/worktree/optimize-gov..HEAD`
+      returns 0. Phase 0 opens no PR; PR #227 already exists, so this push adds evidence to it rather
+      than creating anything.
+
+> **Pause Safety**: the existing worktree is verified and current, the toolchain converged, both
+> repositories' numbering baselines recorded, and the evidence pushed to the existing branch. No PR
+> was opened. Safe to stop. To resume: `npx nx run rhino-cli:test:quick`.
 
 ## Phase 1: Convention and Rules-Machinery Propagation
+
+_Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` and `repo-workflow-maker` for the machinery edits
 
 ### The convention
 
@@ -190,6 +241,8 @@ its requirements into `prd.md`.
 
 ## Phase 2: Order-Preserving Index Tooling
 
+_Suggested executor:_ `swe-rust-dev`
+
 TDD is required. Each behaviour cycle is one RED step binding exactly one Gherkin scenario, then a
 GREEN step, then a REFACTOR step.
 
@@ -257,6 +310,8 @@ GREEN step, then a REFACTOR step.
 > filename has changed. Safe to stop. To resume: `npx nx run rhino-cli:test`.
 
 ## Phase 3: Withdraw Rules That Obstruct (WS-C)
+
+_Suggested executor:_ `swe-rust-dev` for the deletions and gate registry; `repo-rules-maker` for the convention removals and the word-budget documentation; `repo-rules-fixer` for the prose sweep
 
 Two enforced filename rules are withdrawn: the **agent role suffix** (`harness naming validate`) and
 the **governance workflow type suffix** (`repo-governance workflows naming validate`). Both check
@@ -373,6 +428,8 @@ trims a plan README to satisfy a budget that was never going to be measured.
       `rhino governance word-budget validate`, delete it — acceptance: exit 0 with no finding naming
       that path. If it *does* report, the exclusion is not what it appears and this section becomes
       a config change instead.
+- [ ] [AI] Delete the throwaway probe directory — acceptance: `plans/in-progress/probe/` does not
+      exist and `git status --short` shows no trace of it.
 - [ ] [AI] Document the exclusion list in
       `repo-governance/conventions/structure/governance-word-budget.md`, next to the surface table:
       the seven excluded prefixes, that they are `str::starts_with` prefixes and not globs, and that
@@ -402,6 +459,19 @@ trims a plan README to satisfy a budget that was never going to be measured.
 
 ## Phase 4: `ose-public` Sweep
 
+_Suggested executor:_ `docs-file-manager` for the renames and link repair; `repo-rules-fixer` for boundary rework
+
+> **No identity-bearing filename is at risk.** All 232 numbered files under `.claude/` are skill
+> **reference modules** (`.claude/skills/*/reference/NN-*.md`). Zero agent definitions and zero
+> `SKILL.md` files carry an ordinal — verified at authoring time with
+> `find .claude/agents -name '*.md' | grep -cE '/[0-9]{2}-'` returning 0. Agent and skill names are
+> identities (frontmatter `name` must equal the filename stem or directory name); reference modules
+> are reached only by link, which `rewrite-paths` repairs. Re-verify this before renaming: if either
+> count is non-zero, stop — the sweep would break agent resolution.
+
+- [ ] [AI] Re-verify the identity-safety precondition — acceptance:
+      `find .claude/agents -name '*.md' | grep -cE '/[0-9]{2}-'` and
+      `find .claude/skills -name 'SKILL.md' | grep -cE '/[0-9]{2}-'` both return 0. Stop if not.
 - [ ] [AI] Build the per-directory rename plan for every numbered directory under
       `repo-governance/` and `.claude/`, recording for each file a disposition of `renamed`,
       `merged-into`, or `kept` with a one-line reason — acceptance: every numbered file in the Phase 0
@@ -446,6 +516,8 @@ trims a plan README to satisfy a budget that was never going to be measured.
 
 ## Phase 5: `ose-private` Sweep
 
+_Suggested executor:_ `docs-file-manager` and `repo-rules-fixer`, same split as Phase 4
+
 - [ ] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
       from its `main` — acceptance: `git worktree list` in `ose-private` shows the path.
 - [ ] [AI] Apply the Phase 2 `apps/rhino-cli/` change byte-identically — acceptance: `diff -r` between
@@ -477,6 +549,8 @@ trims a plan README to satisfy a budget that was never going to be measured.
 
 ## Phase 6: Knowledge Capture
 
+_Suggested executor:_ the orchestrator directly — triage is judgment, not delegation
+
 - [ ] [AI] Triage every entry in `learnings.md` through the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)
       routing matrix — acceptance: every entry reaches a terminal state (routed inline, filed as a
@@ -506,33 +580,53 @@ trims a plan README to satisfy a budget that was never going to be measured.
 
 ## Phase 7: Archival and Integration
 
-Archival commits to the same branch and lands inside the single PR, per the Delivery Mode section
-above.
+_Suggested executor:_ the orchestrator directly
+
+Archival commits to the same branch and lands inside each repository's single PR, per the Delivery
+Mode section above. **`ose-public`'s PR (#227) already exists as a draft** — this phase readies it,
+it does not create it.
 
 - [ ] [AI] Move the plan folder to `plans/done/<YYYY-MM-DD>__repo-rules-sweep/` using the completion
       date — acceptance: the folder exists under `plans/done/` and no longer under
       `plans/in-progress/`.
-- [ ] [AI] Update `plans/README.md` and `plans/in-progress/README.md` indexes — acceptance:
-      `rhino governance readme-index validate --paths plans/` exits 0.
-- [ ] [AI] Push the `ose-public` branch to `origin worktree/optimize-gov` — acceptance: the branch
-      exists on `origin`.
+- [ ] [AI] Update `plans/README.md`, `plans/in-progress/README.md`, and `plans/done/README.md`
+      indexes — acceptance: `rhino governance readme-index validate --paths plans/` exits 0 and
+      `plans/done/README.md` carries a dated entry for this plan.
+- [ ] [AI] Search for orphaned references to `plans/in-progress/repo-rules-sweep` and repoint them —
+      acceptance: `grep -rn 'plans/in-progress/repo-rules-sweep' --exclude-dir=node_modules --exclude-dir=.git .`
+      returns zero matches.
+- [ ] [AI] Push the `ose-public` branch to `origin worktree/optimize-gov` — acceptance:
+      `git rev-list --count origin/worktree/optimize-gov..HEAD` returns 0.
 - [ ] [AI] Push the `ose-private` branch to `origin repo-rules-sweep` — acceptance: the branch exists
       on `origin`.
-- [ ] [AI] Open one draft PR per repository against that repository's `main` — acceptance:
-      `gh pr view` shows a PR in each.
+- [ ] [AI] Mark PR #227 ready for review with `gh pr ready 227` — acceptance: `gh pr view 227 --json isDraft`
+      reports `false`. **Do not run `gh pr create` for `ose-public`**; it would fail.
+- [ ] [AI] Open the `ose-private` PR — acceptance: `gh pr view` in `ose-private` shows an open PR
+      against its `main`.
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle on each PR per
       [pr-review-quality-gate](../../../repo-governance/workflows/pr/pr-review-quality-gate.md),
-      supplying the per-directory rename maps as the review artifact — acceptance: a clean cycle on
-      each with no unresolved MEDIUM-or-higher thread.
-- [ ] [AI] Merge the `ose-public` PR once `pr-quality-gate.yml` is green — acceptance: `gh pr view`
-      shows MERGED.
-- [ ] [AI] Merge the `ose-private` PR once its gate is green — acceptance: `gh pr view` shows MERGED.
+      supplying the per-directory rename maps as the review artifact — acceptance: N = 3 cycles
+      complete on each, every thread answered, no unresolved MEDIUM-or-higher thread, and the loop
+      did not exit `escalated`. An `escalated` exit blocks the merge and is a legitimate stop.
+- [ ] [AI] Merge the `ose-public` PR once `pr-quality-gate.yml` is green — acceptance: `gh pr view 227`
+      shows MERGED. `[AI]` merges; no human gate is declared.
+- [ ] [AI] Merge the `ose-private` PR — acceptance: `gh pr view` shows MERGED. **Expect
+      `parity-manifest` to report drift on this PR until it merges**: `apps/rhino-cli` byte-identity
+      spans both repositories, so between the two merges the trees genuinely differ. That drift is
+      the gate working, not a defect — it clears when the second merge lands. Merge the two as close
+      together as the review cycles allow, and assert parity only after both.
 - [ ] [AI] Verify nothing is uncommitted or unpushed in either worktree — acceptance:
       `git status --short` prints nothing in both.
-- [ ] [AI] Remove `worktrees/repo-rules-sweep/` in `ose-private` — acceptance: `git worktree list`
-      no longer shows it.
+- [ ] [AI] Remove `worktrees/repo-rules-sweep/` in `ose-private` with non-force
+      `git worktree remove` — acceptance: `git worktree list` no longer shows it. **The user has
+      pre-authorized this removal**; the interactive confirmation that
+      [shard 42](../../../repo-governance/workflows/plan/plan-execution/42-finalization-pr-merge-and-final-status.md)
+      normally requires is granted here in writing, so do not prompt. The safety preconditions still
+      apply in full: refuse if `git status --porcelain` is non-empty or the branch is not an ancestor
+      of `origin/main`.
 - [ ] [AI] Leave `worktrees/optimize-gov/` in place — acceptance: it still appears in
-      `git worktree list`; it predates this plan and is not this plan's to remove.
+      `git worktree list`. It predates this plan and is not this plan's to remove; the pre-authorization
+      above does **not** extend to it.
 - [ ] [AI] Delete `local-tmp/repo-rules-sweep/` in both repositories — acceptance: the path no longer
       exists in either.
 
@@ -541,7 +635,8 @@ above.
 - [ ] [AI] Both PRs show MERGED.
 - [ ] [AI] `parity-manifest` exits 0 in both repositories against their merged `main`.
 - [ ] [AI] The plan folder exists only under `plans/done/`.
-- [ ] [AI] `git worktree list` in `ose-private` shows no plan worktree.
+- [ ] [AI] `git worktree list` in `ose-private` shows no plan worktree; `worktrees/optimize-gov/`
+      still exists in `ose-public`.
 
 > **Pause Safety**: both repositories carry the swept trees on `main`, the plan is archived, and only
 > the pre-existing `optimize-gov` worktree remains. Terminal state.
