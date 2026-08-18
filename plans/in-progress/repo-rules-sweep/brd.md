@@ -77,7 +77,7 @@ agent whose definition links a renamed path.
    merged file busts the budget and no index lost a child.
 6. **Observable fact** — every file returned by the filename-rule discovery sweep and classified
    `states-the-rule` carries a recorded disposition of `updated` or `no-change-needed`. Baseline:
-   about 50 files match and none carries a verdict.
+   251 files match and none carries a verdict.
 7. **Observable fact** — `grep -F 'harness naming validate' repo-config.yml` and
    `grep -F 'workflows naming validate' repo-config.yml` each return zero matches in both
    repositories, while `grep -F 'md naming validate' repo-config.yml` still returns one. Baseline:
@@ -85,9 +85,11 @@ agent whose definition links a renamed path.
 8. **Observable fact** — a probe agent file `.claude/agents/repo/repo-rules-frobnicator.md` passes
    `rhino gate run --surface=pre-push` in both repositories. Baseline: it fails on `role-suffix` in
    both.
-9. **Observable fact** — `grep -F 'harness sync validate' repo-config.yml` returns exactly one match
-   in each repository, and deleting one `.opencode/agents/*.md` makes that gate exit non-zero.
-   Baseline: zero matches; the mirror check is reachable only through an npm script.
+9. **Observable fact** — deleting one `.opencode/agents/*.md` file makes `rhino harness bindings
+   validate` (already declared as `harness-bindings` in `repo-config.yml`) exit non-zero in both
+   repositories, confirming mirror-drift coverage survives the withdrawal of `harness naming
+   validate` without a new gate. Baseline: true today — `harness-bindings` already exercises this
+   check, independent of `harness naming validate`.
 10. **Observable fact** — `grep -F 'plans/' repo-governance/conventions/structure/governance-word-budget.md`
     returns at least one match, and a 1200-word plan README produces no word-budget finding.
     Baseline: zero matches; the exclusion works but is undocumented.
@@ -115,6 +117,6 @@ agent whose definition links a renamed path.
 | Boundary rework is editorial judgment across 176 directories and can silently change meaning. | Rework is confined to merging or re-splitting existing text on topic seams; no rule text is rewritten. Any file whose content would change meaning is left split and merely renamed, with the decision recorded per directory. |
 | De-numbering reorders every generated index to alphabetical. | The generator is changed first to be order-preserving, and a rename-aware `rewrite-paths` mode updates link targets without touching entry order. No rename happens before that lands. |
 | The two repositories fall out of step mid-sweep. | `ose-private` is swept in the same plan, with the `rhino-cli` change byte-identical and the `parity-manifest` gate as its acceptance check. |
-| Deleting `harness naming validate` silently drops the only gated `.opencode/` mirror-drift check, since that command carries mirror detection as a second duty. | `harness sync validate` is promoted to a declared `harness-sync` gate **before** the deletion, and the phase proves it fails on a real missing mirror and passes after restore. A replacement that passes in both states has replaced nothing. |
+| `harness naming validate`'s own mirror-drift check for `.opencode/` (and partially `.amazonq/`) looked like the only gated coverage, risking an undetected gap if deleted without verification. | Re-verified against the live gate registry: the already-declared `harness-bindings` gate independently runs `validate_sync` (`.opencode/`) and `validate_cursor_sync` (`.cursor/`) on `pre-push` and unconditionally in `ci`. Phase 3 proves this by deleting a mirror file in a scratch copy and confirming `harness bindings validate` fails, then passes after restore — no new gate is declared. |
 | Withdrawing a rule leaves future readers unable to find the decision, only the absence. | The withdrawal is recorded in `file-naming.md` naming both rules and the reason, and in this plan's Knowledge Capture. |
 | A prose-only rule decays exactly as `file-naming.md` did. | `repo-rules-checker` carries it as an AI-only validation category and `repo-rules-fixer` carries a rename-and-relink recipe, so drift is surfaced by the same machinery as every other repo rule. |

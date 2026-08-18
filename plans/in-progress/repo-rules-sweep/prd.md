@@ -200,7 +200,7 @@ Feature: Withdrawing rules that obstruct
 
   Scenario: The mirror-drift duty survives the deletion
     Given the harness naming validator has been deleted and a mirror file is missing
-    When the maintainer runs the harness sync gate
+    When the maintainer runs the harness bindings gate
     Then the gate exits non-zero naming the missing mirror
 
   Scenario: The kebab-case rule is untouched
@@ -229,8 +229,8 @@ Feature: Withdrawing rules that obstruct
 - Withdrawal of the agent-role and workflow-type suffix rules: both convention trees, both
   `rhino-cli` commands, their shared `naming` modules, specs, golden-master fixtures, and gate
   entries — in both repositories.
-- Promotion of `harness sync validate` to a declared `harness-sync` gate, so the mirror-drift duty
-  survives the deletion.
+- Verification that the already-declared `harness-bindings` gate keeps the mirror-drift duty covered
+  after `harness naming validate` is deleted. No new gate is added.
 - Publishing the word-budget exclude list in `governance-word-budget.md`.
 
 **Out of scope**
@@ -249,5 +249,5 @@ Feature: Withdrawing rules that obstruct
 | --- | --- | --- |
 | Boundary rework changes meaning while claiming to be a rename. | Governance rules silently altered. | Rework only merges or re-splits existing text on topic seams; a file whose content would change meaning stays split and is merely renamed, with the decision recorded per directory. |
 | A rename map entry is wrong and a link silently resolves to the wrong file. | Broken navigation that no gate catches, because the target exists. | The rename map is generated once and applied by `rewrite-paths`; `md links validate` plus `readme-index validate` run over both repositories after application. |
-| Authors read the rule as "numbers are banned" and de-number a genuinely ordered procedure. | Semantic order lost. | The rule is stated with a worked example on each side, including `01-init-with-repo-setup-manager.md` as a passing case. |
+| Authors read the rule as "numbers are banned" and de-number a genuinely ordered procedure. | Semantic order lost. | The rule is stated with worked examples on **both** sides — three **Fails** cases and a real **Passes** case (`04-step-4-fixer.md` → `04-fixer.md`, from `repo-governance/workflows/**/*-quality-gate/`, where the ordinal already equals the step's own number). A rule with only failing examples reads as a ban, which is exactly this risk. |
 | The prose-only rule decays without a gate. | The `file-naming.md` failure repeats. | `repo-rules-checker` carries it as an AI-only category; `repo-rules-fixer` carries the fix recipe. |

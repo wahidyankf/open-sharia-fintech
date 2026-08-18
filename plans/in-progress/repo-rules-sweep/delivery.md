@@ -10,9 +10,11 @@
 
 **`ose-public`** — `worktrees/optimize-gov/`, which **already exists and is already checked out** on
 branch `worktree/optimize-gov`. No `git worktree add` runs for this repository; Phase 0 verifies and
-fast-forwards it. The branch is 26 commits ahead of `origin/main` with a zero content diff (residue
-of an earlier squash-merge), so the PR's file diff is correct while its commit list carries landed
-history — accepted rather than rewritten.
+fast-forwards it. The branch is 7 commits ahead of `origin/main` with a non-empty diff (31 files
+changed, 1541 insertions, 112 deletions) — this plan's own authoring commits, already carried inside
+the existing draft PR #227. Re-verify with `git rev-list --count origin/main..HEAD` and
+`git diff origin/main --stat` before trusting these figures, since they will keep moving as Phase 0
+lands its own baseline commit.
 
 **`ose-private`** — `worktrees/repo-rules-sweep/`, provisioned in Phase 5.
 
@@ -63,7 +65,7 @@ than inventing an answer.
 | `gh pr create` at the delivery boundary (shard 25) | **`ose-public`: forbidden**, PR #227 exists — use `gh pr ready 227`. **`ose-private`: see the `ose-private` delivery row in the Delivery Boundaries table.** |
 | PR-Review Maker→Fixer Cycle (shard 39) | Runs **once per repository at Phase 7**, N = 3 cycles, hard ceiling. An `escalated` exit blocks the merge and is a legitimate stop — surface it. |
 | Merge actor (shard 42) | **`[AI]`.** Merge once all four done-definition items hold. No `[HUMAN]` merge gate is declared anywhere in this plan. |
-| Worktree cleanup prompt (shards 41, 42) | See **Worktree Disposition** below — pre-authorized, no prompt. |
+| Worktree cleanup prompt (shards 41, 42) | **Pre-authorized in writing for both worktrees** — `worktrees/repo-rules-sweep` in `ose-private` and `worktrees/optimize-gov` in `ose-public`. Do not prompt. Safety preconditions (clean tree, HEAD an ancestor of `origin/main`) still apply and still refuse. |
 | "Wait for user commit approval" (shard 02, item 10) | **Superseded by the per-phase gate flow.** Each `### Phase N Gate` commits and pushes under Iron Rules 5 and 7; there is no separate end-of-run approval step for this plan. |
 
 **Tie-breakers, so no judgment call needs a human.** These bind Phases 4 and 5:
@@ -160,7 +162,15 @@ _Suggested executor:_ `repo-setup-manager`
       `local-tmp/repo-rules-sweep/baseline-private.md` — acceptance: recorded; at authoring time
       `repo-governance` was 1704 of 2131 and `.claude` was 217.
 - [ ] [AI] Confirm `ose-private` is on a clean `main` — acceptance:
-      `git -C <ose-private-path> status --short` prints nothing.
+      `git -C /Users/wkf/ose-projects/ose-private status --porcelain --untracked-files=no` prints
+      nothing. **Tracked files only**: that repository legitimately carries an untracked `local-temp/`
+      scratch directory, so a bare `status --short` prints `?? local-temp/` on a perfectly healthy
+      tree and would halt Phase 0 on a false negative. Verified 2026-08-18: tracked-clean returns 0
+      lines, bare `--short` returns 1.
+- [ ] [AI] Confirm `ose-private` topology before relying on plain `git -C` commands — acceptance:
+      `git -C /Users/wkf/ose-projects/ose-private rev-parse --is-bare-repository` prints `false`.
+      This repository has flipped between bare and normal layouts before; if it prints `true`, switch
+      to the `-c core.bare=false --work-tree=` form for every subsequent `ose-private` command.
 
 ### Phase 0 Gate
 
@@ -186,9 +196,10 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 ### The convention
 
 - [ ] [AI] Create `repo-governance/conventions/structure/ordinal-filename-prefixes.md` stating the
-      rule from `tech-docs.md` §2 plus its four worked cases, including
-      `01-init-with-repo-setup-manager.md` as a passing example — acceptance: the file exists and
-      `rhino governance word-budget validate` reports it under 500 words.
+      rule from `tech-docs.md` §2 plus its three worked **Fails** cases and the explicit note that no
+      file in the tree today satisfies the **Passes** condition — acceptance: the file exists, cites
+      no fabricated passing example, and `rhino governance word-budget validate` reports it under
+      500 words.
 - [ ] [AI] Add the required frontmatter (`title`, `description`, `when_to_use`, `category`,
       `subcategory`, `tags`, `created`) — acceptance: `rhino md frontmatter validate` reports no
       finding for the file.
@@ -215,7 +226,7 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 - [ ] [AI] Enumerate every governance, agent, and skill file stating a filename-naming rule with
       `grep -rln "kebab-case\|[Ff]ile [Nn]aming" --exclude-dir=node_modules .claude repo-governance docs`
       and record the list in the execution ledger with a `states-the-rule` or `merely-links-it`
-      verdict per file — acceptance: at authoring time this returned about 50 files; every entry
+      verdict per file — acceptance: at authoring time this returned 251 files; every entry
       carries a verdict, none blank.
 
 ### The repo-rules machinery
@@ -349,25 +360,23 @@ force a rename whenever a genuinely new kind of agent or workflow appears.
 their names; they simply stop being mandatory. This phase removes a constraint, not a convention in
 practice.
 
-### The mirror-drift hazard
+### The mirror-drift coverage check
 
 `harness naming validate` has a **second, unrelated job**: it walks every generated tier in the
 harness registry and reports `mirror-drift` when a `.claude/agents/` file has no counterpart. That
-duty must survive. `harness sync validate` already covers `.opencode/` and `.cursor/`, and
-`harness bindings validate` covers the Amazon Q bridge — but `harness sync validate` is reachable
-only through `npm run validate:sync`; it is **not a declared gate**. Deleting `harness naming
-validate` without acting would remove the only *gated* `.opencode/` mirror check.
+duty must survive the deletion — and it already does, independent of this command. The
+already-declared `harness-bindings` gate (`repo-config.yml`, `pre-push` path-gated on
+`.amazonq/`/`.claude/`/`.opencode/`/`.codex/`/`.cursor/`, unconditional in `ci`) runs
+`validate_sync` (`.opencode/` mirror parity) and `validate_cursor_sync` (`.cursor/` mirror parity) as
+two of its checks, alongside the Amazon Q bridge byte-parity check. Deleting `harness naming
+validate` therefore removes a **second, overlapping** check of the same duty, not the only gated one
+— no new gate is needed.
 
-- [ ] [AI] Confirm the hazard before deleting anything: `rhino harness naming validate` reports a
-      `mirror-drift` kind, and `grep -F 'harness-sync' repo-config.yml` returns zero matches —
-      acceptance: both hold, proving the coverage gap is real and not assumed.
-- [ ] [AI] Declare a `harness-sync` gate in `repo-config.yml` running `harness sync validate` on the
-      `pre-push` and `ci` surfaces — acceptance: `rhino repo-config validate` exits 0, and
-      `grep -F 'harness sync validate' repo-config.yml` returns exactly one match.
-- [ ] [AI] Prove the replacement gate actually catches what is being deleted: delete one
-      `.opencode/agents/*.md` in a scratch copy, run `rhino harness sync validate`, restore it, run
-      again — acceptance: non-zero exit before restore, exit 0 after. A gate that passes in both
-      states has not replaced anything.
+- [ ] [AI] Confirm the coverage before deleting anything: in a scratch copy, delete one
+      `.opencode/agents/*.md` file and run `rhino harness bindings validate` — acceptance: non-zero
+      exit, naming the missing mirror, proving the already-declared `harness-bindings` gate catches
+      the deletion independent of `harness naming validate`. Restore the file and re-run —
+      acceptance: exit 0.
 
 ### Convention removal
 
@@ -401,9 +410,9 @@ validate` without acting would remove the only *gated* `.opencode/` mirror check
       `new_harness_validate_naming_passes`, `verb_middle_workflows_validate_naming_no_longer_parses`)
       — acceptance: `npx nx run rhino-cli:build` exits 0 and
       `rhino harness naming validate` exits non-zero with an unrecognised-subcommand error.
-- [ ] [AI] Delete `apps/rhino-cli/tests/agent_naming_validator.rs` and the twelve
+- [ ] [AI] Delete `apps/rhino-cli/tests/agent_naming_validator.rs` and the eighteen
       `tests/golden-master/{harness-naming*,harness-validate-naming*,workflows-validate-naming*,repo-governance-workflows-naming*}.{exit,stdout,stderr}`
-      fixtures. **Keep every `md-naming*` fixture** — `md naming validate` is a different command and
+      fixtures (6 base names × `.exit`/`.stdout`/`.stderr`). **Keep every `md-naming*` fixture** — `md naming validate` is a different command and
       stays — acceptance: `find apps/rhino-cli/tests/golden-master -name 'md-naming*' | wc -l`
       is unchanged from the Phase 0 baseline.
 - [ ] [AI] Delete the two feature files
@@ -512,15 +521,18 @@ trims a plan README to satisfy a budget that was never going to be measured.
       documents the exclude list it has always applied.
 - [ ] [AI] `git check-ignore -q evidence/probe.png` succeeds and the same check on a per-plan
       `evidence/` path fails — the anchor blocks the root and nothing else.
-- [ ] [AI] `npm run validate:sync` — exits 0, with the new `harness-sync` gate carrying it.
+- [ ] [AI] `npm run validate:sync` — exits 0. `rhino harness bindings validate` (the already-declared
+      `harness-bindings` gate) also exits 0, confirming `.opencode/` and `.cursor/` mirror-drift
+      coverage survived the deletion.
 - [ ] [AI] An agent file named `.claude/agents/repo/repo-rules-frobnicator.md` passes every gate —
       acceptance: `rhino gate run --surface=pre-push` exits 0 with that file present. This is the
       point of the phase; if it still fails, the rule was not actually withdrawn. Delete the probe
       file afterwards.
 
-> **Pause Safety**: the two rules and their tooling are gone, `harness-sync` covers the mirror duty
-> that `harness naming validate` used to carry, and no file has been renamed. Safe to stop. To
-> resume: `rhino gate validate && npx nx run rhino-cli:test`.
+> **Pause Safety**: the two rules and their tooling are gone, the already-declared `harness-bindings`
+> gate continues to cover the `.opencode/`/`.cursor/` mirror duty that `harness naming validate` used
+> to also carry, and no file has been renamed. Safe to stop. To resume:
+> `rhino gate validate && npx nx run rhino-cli:test`.
 
 ## Phase 4: `ose-public` Sweep
 
@@ -608,9 +620,10 @@ _Suggested executor:_ `docs-file-manager` and `repo-rules-fixer`, same split as 
       acceptance: the ordinal-prefix convention exists there and its `file-naming.md` carries the
       same reconciliation.
 - [ ] [AI] Apply the Phase 3 withdrawal: delete the same two convention trees, the same `rhino-cli`
-      commands and shared `naming` modules, the same gate entries, and add the same `harness-sync`
-      gate — acceptance: `rhino harness naming validate` exits non-zero in `ose-private` too, and
-      `grep -F 'harness sync validate' repo-config.yml` returns one match there.
+      commands and shared `naming` modules, and the same gate entries. No new gate is added, in either
+      repository — acceptance: `rhino harness naming validate` exits non-zero in `ose-private` too,
+      and `rhino harness bindings validate` still exits 0 there, confirming `.opencode/` and
+      `.cursor/` mirror-drift coverage survives without a new gate.
 - [ ] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
       emitting `renames-private.tsv` — acceptance: the same five gate commands exit 0 in
       `ose-private`.
@@ -641,8 +654,8 @@ _Suggested executor:_ the orchestrator directly — triage is judgment, not dele
       acceptance: a WS-B input note exists in `learnings.md` or a `plans/backlog/` follow-up.
 - [ ] [AI] Record the withdrawal criterion WS-C applied — a rule that inspects one token, never reads
       the file, and forces a code change to name a document — and audit the three surviving gated
-      filename rules against it — acceptance: each of `md naming`, the `harness-sync` mirror check,
-      and the `specs coverage` mapping carries a keep-or-withdraw verdict with a reason.
+      filename rules against it — acceptance: each of `md naming`, the `harness-bindings` mirror
+      check, and the `specs coverage` mapping carries a keep-or-withdraw verdict with a reason.
 - [ ] [AI] Record the general defect WS-C's word-budget item exposed: a gate's `args` (exclude lists,
       thresholds) are part of the published rule, and a convention that documents only its surface
       globs misstates what is enforced — acceptance: the entry names at least one other gate whose
@@ -712,9 +725,24 @@ it does not create it.
       normally requires is granted here in writing, so do not prompt. The safety preconditions still
       apply in full: refuse if `git status --porcelain` is non-empty or the branch is not an ancestor
       of `origin/main`.
-- [ ] [AI] Leave `worktrees/optimize-gov/` in place — acceptance: it still appears in
-      `git worktree list`. It predates this plan and is not this plan's to remove; the pre-authorization
-      above does **not** extend to it.
+- [ ] [AI] Remove `worktrees/optimize-gov/` with non-force `git worktree remove`, run from the
+      **`ose-public` root checkout** at `/Users/wkf/ose-projects/ose-public` — you cannot remove the
+      worktree you are standing in — acceptance: `git worktree list` no longer shows it. **The user
+      has pre-authorized this removal**, superseding the earlier reasoning that the worktree predates
+      the plan; the same written grant covers both worktrees. Do not prompt. The safety preconditions
+      still apply in full: refuse if `git status --porcelain` is non-empty or HEAD is not an ancestor
+      of `origin/main`.
+- [ ] [AI] `git worktree prune`, then `git branch -d worktree/optimize-gov` — acceptance: the branch
+      is gone. Safe delete only; it succeeds solely because the branch is fully merged. If it
+      refuses, the merge did not land — stop rather than forcing.
+- [ ] [AI] Fast-forward the root checkout's local `main` — acceptance:
+      `git -C /Users/wkf/ose-projects/ose-public rev-list --count HEAD..origin/main` returns 0.
+      Pushing from a side worktree advances `origin/main` without advancing the root checkout's local
+      `main`; this step closes that silent divergence.
+- [ ] [AI] Verify the swept trees actually landed in the root checkout — acceptance:
+      `find /Users/wkf/ose-projects/ose-public/repo-governance -name '*.md' | grep -cE '/[0-9]{2}-'`
+      returns only the recorded `kept` count, not the 2092 baseline. This asserts the work arrived,
+      not merely that a branch pointer moved.
 - [ ] [AI] Delete `local-tmp/repo-rules-sweep/` in both repositories — acceptance: the path no longer
       exists in either.
 
@@ -723,8 +751,10 @@ it does not create it.
 - [ ] [AI] Both PRs show MERGED.
 - [ ] [AI] `parity-manifest` exits 0 in both repositories against their merged `main`.
 - [ ] [AI] The plan folder exists only under `plans/done/`.
-- [ ] [AI] `git worktree list` in `ose-private` shows no plan worktree; `worktrees/optimize-gov/`
-      still exists in `ose-public`.
+- [ ] [AI] `git worktree list` shows no plan worktree in **either** repository.
+- [ ] [AI] `git -C /Users/wkf/ose-projects/ose-public rev-list --count HEAD..origin/main` returns 0,
+      and the swept trees are present in the root checkout.
 
-> **Pause Safety**: both repositories carry the swept trees on `main`, the plan is archived, and only
-> the pre-existing `optimize-gov` worktree remains. Terminal state.
+> **Pause Safety**: both repositories carry the swept trees on `main`, the plan is archived, both
+> plan worktrees are removed, and the `ose-public` root checkout is fast-forwarded to `origin/main`.
+> Terminal state.

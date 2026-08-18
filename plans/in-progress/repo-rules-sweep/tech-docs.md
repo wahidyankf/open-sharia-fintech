@@ -55,10 +55,34 @@ the plain-name outcome, purple the ordinal-kept outcome, gray the index both rel
 
 | Filename | Verdict |
 | --- | --- |
-| `01-init-with-repo-setup-manager.md` | **Passes** — a real step, prefix is the step number |
 | `29-common-syntax-errors-special-characters.md` | **Fails** — serial position from a word-budget split → `common-syntax-errors-special-characters.md` |
 | `04-phase-1-system-package-manager.md` | **Fails** — two numbering systems → `01-system-package-manager.md` |
 | `01b-inherited-and-specialized-requirements.md` | **Fails** — insert escape → `inherited-and-specialized-requirements.md` |
+| `02-step-1-and-2-maker-and-checker.md` | **Fails** — ordinal 02 labels steps 1–2, so the two systems disagree → `02-maker-and-checker.md`, keeping the ordinal because the file *is* a step |
+| `04-step-4-fixer.md` | **Keeps its ordinal, sheds the redundant token** → `04-fixer.md` |
+| `04-fixer.md` (post-rename) | **Passes** — a real step in an ordered sequence whose ordinal is that step's own number |
+
+**The keep-clause is not vacuous.** Genuine ordered step sequences exist in
+`repo-governance/workflows/**/*-quality-gate/`. In
+`ayokoding-web-swe-by-example-quality-gate/`, `03-step-3-user-review.md` and `04-step-4-fixer.md`
+have an ordinal that already equals the step's own number; they fail today only on the redundant
+second token, which the rule strips to yield `03-user-review.md` and `04-fixer.md`. Those are the
+convention's positive worked cases.
+
+Verify before relying on it:
+
+```bash
+find repo-governance/workflows -name '*.md' | grep -E '/[0-9]{2}-' | grep -E 'step-[0-9]+' | while read f; do
+  b=$(basename "$f"); ord=$(echo "$b" | grep -oE '^[0-9]{2}' | sed 's/^0//')
+  emb=$(echo "$b" | grep -oE 'step-[0-9]+' | grep -oE '[0-9]+$' | head -1)
+  [ "$ord" = "$emb" ] && echo "$f"
+done
+```
+
+This distinction is load-bearing. If the Passes condition had no instances, tie-breaker 1 (**strip
+unless proven ordered**) would strip every ordinal in the repository and the rule would collapse
+into the blanket ban that was explicitly rejected when this plan was scoped. The sweep must
+**preserve** these ordinals while removing their redundant `step-N` token.
 
 ## 3. Where Index Order Comes From
 
@@ -102,7 +126,7 @@ skills, and conventions all link numbered shards.
 
 | # | Decision | Rationale | Rejected alternative |
 | --- | --- | --- | --- |
-| D1 | Prefix allowed only when it is a real step number | Preserves genuine step sequences like `01-init-with-repo-setup-manager.md` while excluding shard serials | Blanket ban — strips a number that is real; status quo — leaves the insert problem |
+| D1 | Prefix allowed only when it is a real step number | Preserves genuine step sequences — `repo-governance/workflows/**/*-quality-gate/` holds several whose ordinal already equals the step's own number (`03-step-3-user-review.md`, `04-step-4-fixer.md`), which the rule keeps while stripping the redundant `step-N` token — while excluding shard serials, offset phase/step files, and insert escapes | Blanket ban — strips a number that is real; status quo — leaves the insert problem |
 | D2 | Hand-authored index is authoritative; generator preserves order | Order is editorial judgment, not derivable from filenames once prefixes are gone | A frontmatter `order:` field — a second source of truth to keep in sync; alphabetical — loses reading order |
 | D3 | Full sweep of both repositories | Half a sweep leaves the two trees divergent and the contradiction alive in the untouched one | Prospective-only; pilot-one-directory |
 | D4 | One atomic PR per repository | Directed by the maintainer; see §10 for the stated deviation | One PR per subtree; one PR per directory |
@@ -119,11 +143,12 @@ skills, and conventions all link numbered shards.
 | D17 | `ose-private` gets its own PR and full review cycle | The `rhino-cli` command deletions there deserve the same scrutiny as `ose-public`'s, and symmetry keeps the two repos' histories legible | Direct push to `origin main` — lands deletions unreviewed; defer to a follow-up plan — leaves the repos divergent and `parity-manifest` reporting drift indefinitely |
 | D18 | The sweep commits **one commit per top-level subtree** | About six commits, each independently revertible and reviewable as a unit; bisect lands in a tree that can be reasoned about | One commit for everything — a bad rename anywhere forces reverting all 2092; one per directory — 176 commits nobody reads |
 | D22 | Evidence placement is guarded by a `.gitignore` anchor only | Maintainer's explicit choice over the recommended staged-path gate. One root-anchored `/evidence/` line, no code, no gate. **Known limits, accepted**: blocks only the repo root, `git add -f` bypasses it, and it hides rather than reports — an agent writing there gets no signal | A staged-path guard modeled on `env-staged-guard` — deterministic, zero legacy findings after the deletion, but costs a command, specs, and a gate entry; prose plus an AI-only checker category — prose alone already failed to hold this rule once |
+| D23 | Both plan worktrees are removed at plan end, and the `ose-public` root checkout is fast-forwarded | Explicit user authorization, superseding the earlier reasoning that `worktrees/optimize-gov` predates the plan and is therefore not the plan's to remove. The root fast-forward is not redundant: pushing from a side worktree advances `origin/main` while the root checkout's local `main` silently stays behind | Leave `optimize-gov` in place — declined; remove without the root fast-forward — leaves the primary checkout stale on a tree that just changed 2000+ filenames |
 | D19 | PR review is scoped to artifacts, not renames | Nine specialists × 3 cycles over 2092 near-identical rename hunks buries real findings in volume. The renames are gate-verified; the reviewable artifacts are the `rhino-cli` diff, the convention text, `repo-config.yml`, and the rename maps | Full-diff review — mostly wasted attention; one cycle instead of three — weakens review depth on a PR that also deletes real code |
 | D20 | Phases 4 and 5 run strictly serial, no fan-out | Renaming and link rewriting are one coupled operation over a shared corpus; links cross every subtree boundary, so concurrent `git mv` plus `rewrite-paths` is a race no acceptance clause here would catch | Fan out across top-level subtrees — faster, but the rewrite pass still shares state across the boundary that was supposed to isolate the agents |
 | D21 | Iron Rule 3 applies in full — fix every preexisting failure, unscoped | Maintainer's explicit choice over the recommended alternative of scoping fixes to this plan's own surfaces. Accepted cost: an unattended run may spend substantial budget provisioning a toolchain this plan never uses | Scope to Rust/markdown/config and record the rest — declined; halt and surface — reintroduces the human-in-the-loop stop this plan exists to remove |
 | D14 | The `plans/` word-budget exclusion is documented, not changed | `plans/`, `docs/`, and `specs/` are already excluded by path prefix on both the gate and a bare CLI run. Nothing to remove — the defect is that `governance-word-budget.md` publishes the `**/README.md` row as universal and never mentions the exclude list, so authors trim plan READMEs against a budget nothing measures | Deleting the `**/README.md` surface — would drop the budget on `repo-governance/` READMEs too, which do need it; adding a redundant `plans/**/README.md` surface — a second mechanism for an exclusion that already works |
-| D13 | `harness sync validate` is promoted to a declared gate before the deletion | `harness naming validate` also carries mirror-drift detection, and it is the only *gated* `.opencode/` mirror check today. Deleting it first would silently drop that coverage | Delete and rely on `harness bindings generate` self-healing at pre-commit — makes drift undetectable rather than impossible |
+| D13 | No new gate is added for mirror-drift; the already-declared `harness-bindings` gate is confirmed sufficient | `harness naming validate` also carried a `mirror-drift` check, but it duplicated coverage the `harness-bindings` gate already provides via `validate_sync` (`.opencode/`) and `validate_cursor_sync` (`.cursor/`), and which is already `pre-push` path-gated and unconditional in `ci`. An earlier draft of this decision conflated "`harness sync validate` is not a declared gate id" with "the coverage is not gated" — `harness-bindings` is a declared gate and already exercises the equivalent checks, so deleting `harness naming validate` removes a redundant check, not the only gated one | Promote `harness sync validate` to a new declared `harness-sync` gate — rejected once the coverage was reverified: it would gate the same duty twice, once under `harness-bindings` and once under a new id, with no coverage gained |
 
 ## 6. File-Impact Analysis
 
@@ -160,10 +185,10 @@ skills, and conventions all link numbered shards.
 │   ├── src/commands/harness_validate_naming.rs [D], src/commands/workflows_validate_naming.rs [D]
 │   ├── src/internal/naming.rs [D], src/application/naming/ [D] — used only by the two above
 │   ├── src/cli.rs [E], src/commands.rs [E] — subcommands, dispatch arms, three stale parser tests
-│   ├── tests/agent_naming_validator.rs [D] and 12 golden-master fixtures [D] — md-naming* kept
+│   ├── tests/agent_naming_validator.rs [D] and 18 golden-master fixtures [D] — md-naming* kept
 │   └── (build proves the deletion: no dangling module reference)
 ├── .gitignore [E] — root-anchored /evidence/ guard
-├── repo-config.yml [E] — drop harness-naming + workflows-naming gates, add harness-sync
+├── repo-config.yml [E] — drop harness-naming + workflows-naming gates (no gate added — see D13)
 ├── AGENTS.md [E] — drop the `<domain>-<role>` naming claim
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature [E]
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/{harness,workflows,agent-naming}/*naming*.feature [D]
@@ -177,10 +202,12 @@ records a per-file verdict rather than trusting the authoring-time list:
 
 - Files stating a filename-naming rule:
   `grep -rln "kebab-case\|[Ff]ile [Nn]aming" --exclude-dir=node_modules .claude repo-governance docs`
-  — about 50 matches at authoring time, each classified `states-the-rule` or `merely-links-it`.
+  — 251 matches at authoring time, each classified `states-the-rule` or `merely-links-it`.
 - Files hard-linking a numbered governance shard:
   `grep -rEln '\]\([^)]*/[0-9]{2}-[a-z0-9-]+\.md' --exclude-dir=node_modules --exclude-dir=.git .`
-  — 203 matches at authoring time, every one inside a generated harness mirror.
+  — 1106 matches at authoring time. The large majority are hand-authored `repo-governance/` source
+  files linking their own numbered shards (e.g. `repo-governance/workflows/web/web-ux-test-fixing-planning/README.md`
+  linking its own numbered children), not generated harness mirrors.
 
 **Rename-map construction.** The map is built per directory, not globally, so a reviewer can audit one
 directory's decisions in isolation even though the PR is atomic. Each row records old path, new path,
@@ -231,9 +258,9 @@ one.
 - Phase 4 depends on Phase 1 for the rule that rename decisions are made against.
 - Phase 3 must land before Phase 4: it deletes thirteen numbered shards the sweep would otherwise
   rename and then discard.
-- Within Phase 3, the `harness-sync` gate must be declared and proven to fail on a real missing
-  mirror **before** `harness naming validate` is deleted. Reversing that order leaves `.opencode/`
-  mirror parity ungated for the length of the phase.
+- Within Phase 3, the already-declared `harness-bindings` gate's `.opencode/` and `.cursor/`
+  mirror-drift coverage must be reconfirmed live (deleting and restoring a mirror file, not just
+  trusted from this document) **before** `harness naming validate` is deleted — see D13.
 - Phase 5 copies finished `rhino-cli` changes from Phases 2 and 3, so both must be complete.
 - `ose-private` must be reachable and on a clean `main` before Phase 5.
 - The `ose-public` worktree already exists and is already checked out; no provisioning step is
@@ -245,7 +272,7 @@ one.
 | --- | --- |
 | 1 | Revert the convention and machinery commits; no filename or tooling behaviour depends on them yet. |
 | 2 | Revert the `readme_index.rs` commit. Indexes are untouched at this point, so nothing regenerates differently. |
-| 3 | Revert the deletion commits. Restoring the two commands, the shared `naming` modules, the two gate entries, and the two convention trees returns enforcement exactly as it was; the added `harness-sync` gate is independently useful and can be kept on revert. |
+| 3 | Revert the deletion commits. Restoring the two commands, the shared `naming` modules, the two gate entries, and the two convention trees returns enforcement exactly as it was. No new gate was added, so there is nothing extra to keep or remove on revert. |
 | 4 | Revert the sweep commits. Renames are `git mv` plus a `rewrite-paths` pass in the same commits, so a revert restores both sides. Because the PR is atomic, reverting it returns `ose-public` wholly to its pre-sweep state. |
 | 5 | Revert in `ose-private` only. `ose-public` is unaffected, and the `parity-manifest` gate then reports the drift it exists to report. |
 | 6–7 | Revert the capture and archival commits; the plan folder returns to `plans/in-progress/`. |
@@ -280,7 +307,6 @@ discover them. Each carries a re-verification checkbox in `delivery.md`.
 | All numbered `.claude/` files are skill reference modules | `find .claude -name '*.md' \| grep -E '/[0-9]{2}-'` | 232, all under `skills/*/reference/` |
 | `internal/naming.rs` and `application/naming/` have no other consumer | `grep -rln 'internal::naming\|application::naming' apps/rhino-cli/src` | only the two commands being deleted |
 | `plans/` is already outside the word budget | `governance-word-budget` gate `args.exclude` | `plans/` present |
-| `harness sync validate` is not a declared gate | `grep -F 'harness-sync' repo-config.yml` | 0 matches |
 
 The first two matter most: agent and skill names are **identities** (frontmatter `name` must equal
 the filename stem or directory name), while reference modules are reached only by link. Because no

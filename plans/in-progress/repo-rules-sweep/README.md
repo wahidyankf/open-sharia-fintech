@@ -99,9 +99,12 @@ and the command deletions.
 ## The Rule (WS-A)
 
 A filename carries a leading ordinal **only when the file is a real step in an ordered sequence and
-the ordinal is that step's own number**. `01-init-with-repo-setup-manager.md` qualifies; everything
-else takes a plain kebab-case name and the parent index carries the order. A basename never carries
-two numbering systems.
+the ordinal is that step's own number**; everything else takes a plain kebab-case name and the
+parent index carries the order. A basename never carries two numbering systems. The keep side is
+real: `repo-governance/workflows/**/*-quality-gate/` holds genuine ordered step sequences, and files
+like `04-step-4-fixer.md` already have an ordinal equal to the step's own number — they fail today
+only on the redundant `step-N` token the rule strips, becoming `04-fixer.md` (see `tech-docs.md`
+§2's worked cases). The sweep preserves those ordinals.
 
 The rule is **prose only**: no gate, no `rhino-cli` detector, no audit category. `repo-rules-checker`
 judges it as an AI-only category and `repo-rules-fixer` repairs it.
@@ -112,8 +115,9 @@ judges it as an AI-only category and `repo-rules-fixer` repairs it.
    `repo-rules-quality-gate` workflow.
 2. **Make the index generator order-preserving** and add a rename-aware `rewrite-paths` mode.
 3. **Withdraw the obstructive rules** — delete both suffix conventions, their `rhino-cli` commands,
-   shared modules, specs, fixtures, and gate entries, after promoting `harness sync validate` to a
-   declared gate so the mirror-drift duty survives; and document the word-budget exclude list.
+   shared modules, specs, fixtures, and gate entries, after confirming the already-declared
+   `harness-bindings` gate keeps `.opencode/` and `.cursor/` mirror-drift covered; and document the
+   word-budget exclude list.
 4. **Sweep `ose-public`** — rename every non-qualifying file, rework continuation-shard boundaries
    into self-standing topics, re-split anything that busts the word budget on a topic seam.
 5. **Sweep `ose-private`** the same way, applying the same withdrawal, with the tooling
