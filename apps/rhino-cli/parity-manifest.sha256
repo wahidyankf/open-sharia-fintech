@@ -154,7 +154,8 @@ acef5c935a6c7b96710e0113bcdc13f86c616c2269ca0dc1ee2f029f89b5877e  apps/rhino-cli
 15307cb6f470d66a5abb9fff24c314f4b7082a731ec35760ce3044270e672979  apps/rhino-cli/src/domain/mermaid/state.rs
 ec12080c1c4be343807680703c64b6cc346f778cd4d37b54bfc680d9b43aa3d1  apps/rhino-cli/src/domain/mermaid/types.rs
 5b595b353a25d0b598d93a0a751eb22b8118fecdba309c361c7a71aaf54d5592  apps/rhino-cli/src/domain/mermaid/validator.rs
-ee7bc53ed5a854429f7ee16dd1c7e32a99d7b2b24353ae87383a5a92c3aca869  apps/rhino-cli/src/domain/mod.rs
+ad6ab8fb81cc36db5fba87a3079312c0117f359b7ea66ce4f2ac4a16f6207575  apps/rhino-cli/src/domain/mod.rs
+6698378e490ee9fe63cd19cace25ca8d89a535116848f3ef9a56c2d9e36148ac  apps/rhino-cli/src/domain/stdio_blocking.rs
 6a74f74ee9e4299c2cf9cacfb3ad1c160d57a430a1c97312b3ac3c13822e2fec  apps/rhino-cli/src/infrastructure/fs/mod.rs
 dbf08270520ed73430aec0ed931d1d6d54d6253beb8a037a38e68600edc3b993  apps/rhino-cli/src/infrastructure/fs/real.rs
 9d8f5674dc3dcb4c28f90792f7c101a2e26fb35fc131c217ad8df248c7cd0e28  apps/rhino-cli/src/infrastructure/git/common_dir.rs
@@ -185,7 +186,7 @@ a78fd31e8c0466be5e206ec816bc463a288b0bf1226291c19f5de5d455978901  apps/rhino-cli
 35e159507f792388a2b9492d90b854142bd680504b424b0b6b616b13cbda0274  apps/rhino-cli/src/internal/speccoverage.rs
 f1026443fbcd7f1c673c9fa7ce2cc1aadb881aad012e5d034f6757f3d85b4c82  apps/rhino-cli/src/internal/specs.rs
 066e20bf5b87e97ac5e791c5ef67457fea69dc50a48507bb0239c6fb0375f29f  apps/rhino-cli/src/lib.rs
-303a205712f399049fff94468e24d01f308b425f8e5e90db593f47d78d50da10  apps/rhino-cli/src/main.rs
+a611b4760bdcf728492e6ccb9a096030d0e6e2718099d0901f0e8f1ab4fcf3e6  apps/rhino-cli/src/main.rs
 af6651b2adb5ee6d5becf743af675eab72210e35cb5e3c510c08d78dbb07f838  apps/rhino-cli/src/test_support.rs
 1acfdaa6fb586bae30ed0ae223222f9d551d5adc3ebaa6574424db5c8d1ac36e  apps/rhino-cli/tests/agent_naming_validator.rs
 e6a6c4fa26208a9c9910ad08926cc8b93f55d118dc594b82de1d3000e6862858  apps/rhino-cli/tests/agents.rs
