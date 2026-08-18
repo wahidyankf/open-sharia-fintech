@@ -7,7 +7,7 @@ weight: 1
 
 ## Prerequisites
 
-- **Prior topics**: [Accounting Foundations](../accounting-foundations/overview.md) and [SQL Essentials](../sql-essentials/overview.md).
+- **Prior topics**: [Accounting Foundations](../accounting-foundations/overview.md) and [SQL Essentials](../sql-essentials/learning/overview.md).
 - **Assumed knowledge**: the accounting equation and basic record concepts.
 
 ## Why this exists

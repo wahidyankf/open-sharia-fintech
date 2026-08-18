@@ -48,7 +48,7 @@ which differ from the CLI app naming patterns the tool currently expects. This w
 
 ## Adding a New Command
 
-### Rust CLI apps (ayokoding-cli, ose-cli, rhino-cli)
+### Rust CLI apps (rhino-cli)
 
 1. Create the feature file `specs/apps/{app}/behavior/<product>-cli/gherkin/{domain}/{domain}-{action}.feature`
 2. Create `apps/{app}/src/commands/{domain}_{action}.rs` with the Clap subcommand (register in `main.rs`)

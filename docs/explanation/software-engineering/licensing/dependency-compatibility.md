@@ -38,9 +38,6 @@ scoped to FSL-1.1-MIT; now MIT throughout.
 | `ose-be`               | .NET (NuGet) | All permissive (MIT, Apache-2.0, PostgreSQL)  |
 | `crane-cli`            | Rust         | MIT/Apache-2.0 (Cargo dependencies)           |
 | `rhino-cli`            | Rust         | MIT (Cargo dependencies — all permissive)     |
-| `ayokoding-cli`        | Rust         | MIT/Apache-2.0 (Cargo dependencies)           |
-| `ose-cli`              | Rust         | MIT/Apache-2.0 (Cargo dependencies)           |
-| `rust-commons`         | Rust         | MIT/Apache-2.0 (Cargo dependencies)           |
 
 ## LGPL-3.0 Elimination: `@img/sharp-libvips`
 

@@ -24,16 +24,16 @@ implementations satisfy those ports.
 
 ## Directory Layout
 
-The table below shows the canonical layout for all four CLI apps.
+The table below shows the canonical layout for both CLI apps.
 
-| Layer              | rhino-cli (Rust)      | crane-cli (F#)      | ose-cli (Rust)        | ayokoding-cli (Rust)  |
-| ------------------ | --------------------- | ------------------- | --------------------- | --------------------- |
-| Inbound adapter    | `src/commands/`       | `src/Adapters/In/`  | `src/commands/`       | `src/commands/`       |
-| Application        | `src/application/`    | `src/Core/Logic/`   | `src/application/`    | `src/application/`    |
-| Domain             | `src/domain/`         | `src/Core/Domain/`  | `src/domain/`         | `src/domain/`         |
-| Outbound adapters  | `src/infrastructure/` | `src/Adapters/Out/` | `src/infrastructure/` | `src/infrastructure/` |
-| I/O port contracts | —                     | `src/Core/Ports.fs` | —                     | —                     |
-| Binary entry point | `src/main.rs`         | `src/Program.fs`    | `src/main.rs`         | `src/main.rs`         |
+| Layer              | rhino-cli (Rust)      | crane-cli (F#)      |
+| ------------------ | --------------------- | ------------------- |
+| Inbound adapter    | `src/commands/`       | `src/Adapters/In/`  |
+| Application        | `src/application/`    | `src/Core/Logic/`   |
+| Domain             | `src/domain/`         | `src/Core/Domain/`  |
+| Outbound adapters  | `src/infrastructure/` | `src/Adapters/Out/` |
+| I/O port contracts | —                     | `src/Core/Ports.fs` |
+| Binary entry point | `src/main.rs`         | `src/Program.fs`    |
 
 **`src/internal/` backward-compatibility shim**: `rhino-cli` retains a `src/internal/` directory containing
 thin re-export modules (e.g., `pub use crate::application::agents::*;`). These exist solely for callers that

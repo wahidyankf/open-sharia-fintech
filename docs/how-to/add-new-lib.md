@@ -29,7 +29,7 @@ Follow the naming convention: `[language-prefix]-[name]`
 **Language Prefixes**:
 
 - `ts-` - TypeScript
-- `rust-` - Rust (e.g., `rust-commons`)
+- `rust-` - Rust
 - `java-` - Java (future)
 - `py-` - Python (future)
 
@@ -37,7 +37,7 @@ Follow the naming convention: `[language-prefix]-[name]`
 
 - `ts-utils` - TypeScript utility functions
 - `ts-components` - Reusable React components
-- `rust-commons` - Shared Rust utilities (link-checking, HTTP)
+- `rust-parsing` - Shared Rust parsing utilities
 
 ### Step 2: Create Library Directory
 

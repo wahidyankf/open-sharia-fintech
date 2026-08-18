@@ -48,25 +48,6 @@ Example for `rhino-cli` `test:unit` inputs:
 ]
 ```
 
-**Rust CLI apps** (`ayokoding-cli`, `ose-cli`) also consume Gherkin specs in `test:unit`. Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
-
-| CLI App         | Gherkin specs input                                 |
-| --------------- | --------------------------------------------------- |
-| `ayokoding-cli` | `{workspaceRoot}/specs/apps/ayokoding/**/*.feature` |
-| `ose-cli`       | `{workspaceRoot}/specs/apps/ose/**/*.feature`       |
-
-Example for `ayokoding-cli` `test:unit` inputs:
-
-```json
-"inputs": [
-  "{projectRoot}/cmd/**/*.go",
-  "{projectRoot}/internal/**/*.go",
-  "{projectRoot}/go.mod",
-  "{projectRoot}/go.sum",
-  "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"
-]
-```
-
 **Why specs and contracts in inputs**: If a Gherkin feature file changes or the OpenAPI contract
 spec changes (triggering `codegen`), `test:unit` and `test:quick` must re-run even if application
 source files are unchanged. Without these paths in `inputs`, Nx incorrectly serves cached results.

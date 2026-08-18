@@ -13,19 +13,18 @@ truth.
 
 Each row links to the specification index first, then to the implementation it describes.
 
-| Product or library    | Specification                                       | Implementation                                                                                                                                                   |
-| --------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AyoKoding             | [Application specs](./apps/ayokoding/README.md)     | [website](../apps/ayokoding-www/README.md) and [CLI](../apps/ayokoding-cli/README.md)                                                                            |
-| BeaverNest            | [Application specs](./apps/beavernest/README.md)    | [Flutter Web app](../apps/beavernest-app/README.md) and [backend](../apps/beavernest-be/README.md)                                                               |
-| Crane                 | [CLI specs](./apps/crane/README.md)                 | [crane-cli](../apps/crane-cli/README.md)                                                                                                                         |
-| OrganicLever          | [Application specs](./apps/organiclever/README.md)  | [public website](../apps/organiclever-www/README.md), [web app](../apps/organiclever-app-web/README.md), and [backend](../apps/organiclever-be/README.md)        |
-| OSE                   | [Product-family specs](./apps/ose/README.md)        | [public website](../apps/ose-www/README.md), [web app](../apps/ose-app-web/README.md), [backend](../apps/ose-be/README.md), and [CLI](../apps/ose-cli/README.md) |
-| Rhino                 | [CLI specs](./apps/rhino/README.md)                 | [rhino-cli](../apps/rhino-cli/README.md)                                                                                                                         |
-| WahidYankf            | [Website specs](./apps/wahidyankf/README.md)        | [wahidyankf-www](../apps/wahidyankf-www/README.md)                                                                                                               |
-| Shared web UI         | [Library specs](./libs/web-ui/README.md)            | [web-ui](../libs/web-ui/README.md)                                                                                                                               |
-| Shared design tokens  | [Library specs](./libs/web-ui-token/README.md)      | [web-ui-token](../libs/web-ui-token/README.md)                                                                                                                   |
-| Shared Rust utilities | [Library specs](./libs/rust-commons/README.md)      | [rust-commons source](../libs/rust-commons/)                                                                                                                     |
-| Shared F# Crane core  | [Library specs](./libs/fsharp-crane-core/README.md) | [fsharp-crane-core source](../libs/fsharp-crane-core/)                                                                                                           |
+| Product or library   | Specification                                       | Implementation                                                                                                                                            |
+| -------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AyoKoding            | [Application specs](./apps/ayokoding/README.md)     | [website](../apps/ayokoding-www/README.md)                                                                                                                |
+| BeaverNest           | [Application specs](./apps/beavernest/README.md)    | [Flutter Web app](../apps/beavernest-app/README.md) and [backend](../apps/beavernest-be/README.md)                                                        |
+| Crane                | [CLI specs](./apps/crane/README.md)                 | [crane-cli](../apps/crane-cli/README.md)                                                                                                                  |
+| OrganicLever         | [Application specs](./apps/organiclever/README.md)  | [public website](../apps/organiclever-www/README.md), [web app](../apps/organiclever-app-web/README.md), and [backend](../apps/organiclever-be/README.md) |
+| OSE                  | [Product-family specs](./apps/ose/README.md)        | [public website](../apps/ose-www/README.md), [web app](../apps/ose-app-web/README.md), and [backend](../apps/ose-be/README.md)                            |
+| Rhino                | [CLI specs](./apps/rhino/README.md)                 | [rhino-cli](../apps/rhino-cli/README.md)                                                                                                                  |
+| WahidYankf           | [Website specs](./apps/wahidyankf/README.md)        | [wahidyankf-www](../apps/wahidyankf-www/README.md)                                                                                                        |
+| Shared web UI        | [Library specs](./libs/web-ui/README.md)            | [web-ui](../libs/web-ui/README.md)                                                                                                                        |
+| Shared design tokens | [Library specs](./libs/web-ui-token/README.md)      | [web-ui-token](../libs/web-ui-token/README.md)                                                                                                            |
+| Shared F# Crane core | [Library specs](./libs/fsharp-crane-core/README.md) | [fsharp-crane-core source](../libs/fsharp-crane-core/)                                                                                                    |
 
 ## Read a specification from the outside in
 

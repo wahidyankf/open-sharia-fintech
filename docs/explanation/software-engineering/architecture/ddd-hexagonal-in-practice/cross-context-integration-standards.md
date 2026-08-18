@@ -205,7 +205,7 @@ com.organicleverbe.
 
 **REQUIRED**: Shared kernel types MUST be immutable value objects with no behavioral dependencies on any single context's domain logic.
 
-**Current shared kernel location**: `libs/rust-commons` (Rust utilities). Shared types are collocated in `organiclever-be` under a `shared-kernel` module until a dedicated library is warranted.
+**Current shared kernel location**: `libs/` holds the shared libraries (`web-ui`, `web-ui-token`, `ts-env-loader`, `fsharp-env-loader`, `fsharp-crane-core`). Shared types are collocated in `organiclever-be` under a `shared-kernel` module until a dedicated library is warranted.
 
 ## Rationale
 

@@ -50,40 +50,24 @@ invalidated and `nx affected` flags the project.
 
 ## Visual Dependency Graph
 
-**Rust CLI ecosystem and content sites:**
+**CLI ecosystem:**
+
+Content sites no longer depend on any CLI — `ayokoding-www` and `ose-www` dropped their
+`implicitDependencies` when the per-domain link-checkers were retired.
 
 ```mermaid
 graph TD
-  %% Content sites (top level)
-  AKW[ayokoding-www]
-  OPW[ose-www]
-  WKF[wahidyankf-www]
-
-  %% CLI tools
-  AKC[ayokoding-cli]
-  OPC[ose-cli]
   RC[rhino-cli]
+  CC[crane-cli]
+  FCC[fsharp-crane-core]
 
-  %% Rust lib
-  RSC[rust-commons]
-
-  %% Content site → CLI
-  AKW --> AKC
-  OPW --> OPC
-
-  %% CLI → shared libs
-  AKC --> RSC
-  AKC --> RC
-  OPC --> RSC
-  OPC --> RC
+  CC --> FCC
 
   classDef lib fill:#029E73,stroke:#016B4E,color:#FFFFFF
   classDef cli fill:#DE8F05,stroke:#A56A04,color:#FFFFFF
-  classDef site fill:#CC78BC,stroke:#9A5A8E,color:#FFFFFF
 
-  class RSC lib
-  class RC,AKC,OPC cli
-  class AKW,OPW,WKF site
+  class FCC lib
+  class RC,CC cli
 ```
 
 **OrganicLever product stack:**
@@ -145,25 +129,15 @@ and other validation tasks.
 - **Own dependency**: None (self-contained Rust application with only Rust crate dependencies)
 - **Note**: rhino-cli was ported from Go to Rust (2026-05-23).
 
-### rust-commons
-
-**Location**: `libs/rust-commons/`
-
-Shared Rust utilities (link-checking, HTTP utilities). Created 2026-05-25 to
-consolidate logic shared by `ose-cli` and `ayokoding-cli` after their Go-to-Rust migration.
-
-- **Dependents**: `ose-cli`, `ayokoding-cli`
-- **Mechanism**: Cargo workspace `path` dependency
-
 ## Project Dependency Table
 
 ### Content Platforms
 
-| Project        | Dependencies  | Spec Inputs |
-| -------------- | ------------- | ----------- |
-| ayokoding-www  | ayokoding-cli | (none)      |
-| ose-www        | ose-cli       | (none)      |
-| wahidyankf-www | (none)        | (none)      |
+| Project        | Dependencies | Spec Inputs |
+| -------------- | ------------ | ----------- |
+| ayokoding-www  | (none)       | (none)      |
+| ose-www        | (none)       | (none)      |
+| wahidyankf-www | (none)       | (none)      |
 
 ### OrganicLever
 
@@ -180,17 +154,16 @@ consolidate logic shared by `ose-cli` and `ayokoding-cli` after their Go-to-Rust
 
 ### CLI Tools
 
-| Project       | Dependencies            | Spec Inputs                         |
-| ------------- | ----------------------- | ----------------------------------- |
-| ayokoding-cli | rust-commons, rhino-cli | ayokoding-cli/\* (test:integration) |
-| ose-cli       | rust-commons, rhino-cli | ose-cli/\* (test:integration)       |
-| rhino-cli     | (none — self-contained) | rhino-cli/\* (test:integration)     |
+| Project   | Dependencies            | Spec Inputs                     |
+| --------- | ----------------------- | ------------------------------- |
+| rhino-cli | (none — self-contained) | rhino-cli/\* (test:integration) |
+| crane-cli | fsharp-crane-core       | crane-cli/\* (test:integration) |
 
 ### Libraries
 
-| Project      | Dependencies | Spec Inputs                 |
-| ------------ | ------------ | --------------------------- |
-| rust-commons | (none)       | rust-commons/\* (test:unit) |
+| Project           | Dependencies | Spec Inputs                      |
+| ----------------- | ------------ | -------------------------------- |
+| fsharp-crane-core | (none)       | fsharp-crane-core/\* (test:unit) |
 
 ## Spec Directory Mapping
 
@@ -202,8 +175,8 @@ All Gherkin specs and API contracts live under `specs/` and are consumed via
 | `specs/apps/organiclever/containers/contracts/` | organiclever-app-web, organiclever-be          | codegen                                 |
 | `specs/apps/organiclever/`                      | organiclever-app-web, organiclever-app-web-e2e | test:integration, typecheck, test:quick |
 | `specs/apps/rhino/`                             | rhino-cli                                      | test:integration                        |
-| `specs/apps/ayokoding/`                         | ayokoding-cli, ayokoding-www                   | test:integration                        |
-| `specs/apps/ose/`                               | ose-cli, ose-www                               | test:integration                        |
+| `specs/apps/ayokoding/`                         | ayokoding-www                                  | test:integration                        |
+| `specs/apps/ose/`                               | ose-www                                        | test:integration                        |
 
 ## Related Documentation
 

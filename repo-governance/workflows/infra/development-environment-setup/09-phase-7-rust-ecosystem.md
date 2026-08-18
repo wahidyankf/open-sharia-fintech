@@ -8,7 +8,7 @@ when_to_use: "Use when setting up the Rust toolchain for rhino-cli."
 
 **Condition**: `{input.scope} == full`
 
-Required for: `rhino-cli`, `rust-commons`
+Required for: `rhino-cli`
 
 ## 7.1 Install Rust via rustup
 

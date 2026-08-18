@@ -225,7 +225,6 @@ timeline
 
 **CLI Tools**:
 
-- ayokoding-cli for content link validation
 - rhino-cli for repository management and hygiene
 - Build tools and code generators
 - Database migration scripts
@@ -679,8 +678,7 @@ apps/
 ├── ayokoding-www/            # Next.js 16 fullstack content platform (TypeScript, tRPC)
 ├── organiclever-www/         # Next.js 16 landing website
 ├── wahidyankf-www/           # Next.js 16 personal portfolio
-├── ayokoding-cli/            # Rust CLI tool (content link validation)
-└── rhino-cli/               # Rust CLI tool (repository management)
+└── rhino-cli/                # Rust CLI tool (repository management)
 
 libs/
 ├── ts-ui/                   # Shared TypeScript UI components

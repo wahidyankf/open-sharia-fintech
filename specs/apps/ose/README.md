@@ -5,7 +5,7 @@ tree:
 
 - **OSE Application** (`ose-app-*`) — AI-assisted GRC platform (app.oseplatform.com).
   F#/Giraffe backend + Next.js 16 frontend.
-- **OSE Platform Web** (`ose-www`, `ose-cli`) — Marketing and updates site
+- **OSE Platform Web** (`ose-www`) — Marketing and updates site
   (oseplatform.com). Next.js 16 + tRPC, single container.
 
 ## 🧭 Start here
@@ -39,8 +39,7 @@ specs/apps/ose/
     ├── be/gherkin/             # ose-be HTTP-semantic scenarios
     ├── app-web/gherkin/        # ose-app-web UI-semantic scenarios
     ├── platform-be/gherkin/    # ose-www tRPC HTTP-semantic scenarios
-    ├── platform-web/gherkin/   # ose-www UI-semantic scenarios
-    └── ose-cli/gherkin/        # ose-cli link-check scenarios
+    └── platform-web/gherkin/   # ose-www UI-semantic scenarios
 ```
 
 ## OSE Application (`ose-app-*`)
@@ -64,7 +63,7 @@ GRC fullstack: AI-assisted gap analysis between regulatory documents and interna
 | `gap-analysis`      |       —       | Compares regulatory corpus against policy corpus; emits GapItem records |
 | `ai-orchestration`  |       —       | Wraps LLM calls (OpenRouter), prompt management, retry/backoff          |
 
-## OSE Platform Web (`ose-www`, `ose-cli`)
+## OSE Platform Web (`ose-www`)
 
 Content and marketing site for the OSE Platform.
 
@@ -74,9 +73,8 @@ Content and marketing site for the OSE Platform.
 | -------------- | --------------------------------------- | -------------------------- | --------------------- |
 | `platform-be`  | tRPC HTTP-semantic (procedures, routes) | `Given the API is running` | `apps/ose-www-be-e2e` |
 | `platform-web` | UI-semantic (clicks, types, sees)       | `Given the app is running` | `apps/ose-www-fe-e2e` |
-| `cli`          | CLI invocation (link validation)        | N/A                        | `apps/ose-cli` (Rust) |
 
-### Bounded Contexts (ose-www/ose-cli)
+### Bounded Contexts (ose-www)
 
 | Bounded Context | `platform-web` features | `platform-be` features | Description                                                           |
 | --------------- | :---------------------: | :--------------------: | --------------------------------------------------------------------- |
@@ -87,7 +85,6 @@ Content and marketing site for the OSE Platform.
 | `rss-feed`      |            —            |           1            | RSS 2.0 feed generation route handler                                 |
 | `seo`           |            —            |           1            | Sitemap, robots, per-route metadata                                   |
 | `health`        |            —            |           1            | Health probe (tRPC) + system-status diagnostic page                   |
-| `links`         |           N/A           |          N/A           | ose-cli internal link validation                                      |
 
 ## Spec Artifacts
 
@@ -106,4 +103,3 @@ Content and marketing site for the OSE Platform.
 - [apps/ose-be/](../../../apps/ose-be/README.md)
 - [apps/ose-app-web/](../../../apps/ose-app-web/README.md)
 - [apps/ose-www/](../../../apps/ose-www/README.md)
-- [apps/ose-cli/](../../../apps/ose-cli/README.md)

@@ -13,7 +13,7 @@ when_to_use: Use when writing unit vs. integration step definitions for a CLI co
 
 # CLI Apps: Dual-Level Spec Consumption
 
-All Rust CLI apps (`ayokoding-cli`, `ose-cli`, `rhino-cli`) consume Gherkin specs at both the unit and integration test levels. The same feature files serve as the contract for both levels — only the step implementations differ.
+Rust CLI apps (`rhino-cli`) consume Gherkin specs at both the unit and integration test levels. The same feature files serve as the contract for both levels — only the step implementations differ.
 
 ## Architecture
 

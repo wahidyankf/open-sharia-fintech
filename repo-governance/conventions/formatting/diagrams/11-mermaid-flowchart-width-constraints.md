@@ -32,7 +32,7 @@ The `rhino-cli md mermaid validate` command enforces a maximum horizontal width 
 apps/rhino-cli/scripts/rhino-bin.sh md mermaid validate
 ```
 
-Run without flags to perform a repo-wide scan (the Nx target runs with `--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` plus the standardized noise-skip set) using defaults (MaxWidth=4, unlimited depth). Pass additional `--exclude <prefix>` flags to suppress noise in project-specific runs.
+Run without flags to perform a repo-wide scan (the Nx target runs with `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` plus the standardized noise-skip set) using defaults (MaxWidth=4, unlimited depth). Pass additional `--exclude <prefix>` flags to suppress noise in project-specific runs.
 
 **Gate location**: Runs at **pre-commit (staged `.md` files only)** via the `rhino-cli` pre-commit
 hook (lint-staged) via `npx nx run rhino-cli:mermaid:validation`. Does NOT run at pre-push or in a

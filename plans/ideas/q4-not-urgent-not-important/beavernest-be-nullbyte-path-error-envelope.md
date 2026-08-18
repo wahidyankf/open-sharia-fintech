@@ -33,7 +33,7 @@ version-independent Kestrel behavior — not specific to this app, Giraffe, or t
 ## Why now
 
 Not yet — Minor severity, Low priority. Reachable only via a hand-crafted malformed URL; no real
-client (including `beavernest-app-web`'s generated OpenAPI contract client) can ever produce this
+client (including `beavernest-app`'s generated OpenAPI contract client) can ever produce this
 input.
 
 ## Prior art / precedents
@@ -62,7 +62,7 @@ Neither is recommended unless a real client is ever found to produce this input 
 
 In scope: deciding whether this is worth fixing at all, and if so, which of the two directions above.
 
-Out of scope: any change to `beavernest-app-web` or its generated contract client (neither can
+Out of scope: any change to `beavernest-app` or its generated contract client (neither can
 produce this input).
 
 ## Risks & open questions

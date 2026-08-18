@@ -34,8 +34,7 @@ This convention documents the automated code-quality toolchain -- Prettier, Husk
 - [Troubleshooting: Pre-push Hook](./code/11-troubleshooting-pre-push-hook.md) — Fixes for a slow or failing pre-push hook. Use when pre-push is slow or a check fails.
 - [Adding New File Types](./code/12-adding-new-file-types.md) — How to add a new file type to the pipeline. Use when a new file type needs lint coverage.
 - [Integration with Development Workflow](./code/13-integration-with-development-workflow.md) — How quality tooling fits the dev workflow. Use to see how quality tooling fits your workflow.
-- [ayokoding-www Link Validation](./code/14-ayokoding-www-link-validation.md) — Link validation specific to the ayokoding-www content pipeline. Use when debugging a link-validation failure in ayokoding-www content.
-- [Rust CLI Linting](./code/15-rust-cli-linting.md) — How Rust CLI code (rhino-cli) is linted. Use when configuring or debugging Rust CLI lint gates.
-- [Language-Specific Auto-Formatters](./code/16-language-specific-auto-formatters.md) — Auto-formatters used per language across the repository. Use when checking which formatter applies to a given language.
-- [Best Practices](./code/17-best-practices.md) — Best practices for working with the code-quality tooling. Use for a quick best-practice reminder on code quality.
-- [Related Documentation and References](./code/18-related-documentation-and-references.md) — Related conventions and external references. Use for a related convention or reference.
+- [Rust CLI Linting](./code/14-rust-cli-linting.md) — How Rust CLI code (rhino-cli) is linted. Use when configuring or debugging Rust CLI lint gates.
+- [Language-Specific Auto-Formatters](./code/15-language-specific-auto-formatters.md) — Auto-formatters used per language across the repository. Use when checking which formatter applies to a given language.
+- [Best Practices](./code/16-best-practices.md) — Best practices for working with the code-quality tooling. Use for a quick best-practice reminder on code quality.
+- [Related Documentation and References](./code/17-related-documentation-and-references.md) — Related conventions and external references. Use for a related convention or reference.
