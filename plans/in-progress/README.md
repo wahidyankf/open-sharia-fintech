@@ -18,6 +18,10 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public` and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety (`ose-primer` units descoped 2026-08-16).
+- [repo-clean-up](./repo-clean-up/README.md) — Retires the dormant `ayokoding-cli` and `ose-cli`
+  binaries with their orphaned `rust-commons` library, spec trees, and documenting surfaces, then
+  closes the `md-links` coverage gap those CLIs were assumed to be filling.
+
   Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
   work begins.
 
