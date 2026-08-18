@@ -2,7 +2,6 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/ose-www/src",
   "projectType": "application",
-  "implicitDependencies": ["ose-cli"],
   "targets": {
     "generate-search-data": {
       "command": "npx tsx src/scripts/generate-search-data.ts",
@@ -113,12 +112,6 @@
     "test:integration": {
       "command": "echo 'no-op: target not applicable for this project'",
       "cache": true
-    },
-    "links:check": {
-      "command": "../../apps/ose-cli/dist/ose-cli links check --content content",
-      "options": {
-        "cwd": "apps/ose-www"
-      }
     },
     "clean": {
       "command": "rm -rf .next"

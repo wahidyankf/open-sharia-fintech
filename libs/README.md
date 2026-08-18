@@ -5,7 +5,6 @@ learning the product; come here when you need to understand a capability shared 
 
 ## What is here
 
-- `rust-commons/` — shared Rust utilities used by repository command-line tools.
 - `fsharp-crane-core/` — the F# core used by the Crane PDF-to-Markdown tooling.
 - [`web-ui/`](./web-ui/README.md) — shared web interface building blocks.
 

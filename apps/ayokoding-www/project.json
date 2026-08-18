@@ -187,6 +187,5 @@
       "{workspaceRoot}/specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/**/*.feature"
     ]
   },
-  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"],
-  "implicitDependencies": ["ayokoding-cli"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]
 }

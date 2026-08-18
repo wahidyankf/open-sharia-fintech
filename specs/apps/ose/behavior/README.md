@@ -10,14 +10,13 @@ Gherkin feature files for all OSE-family products, organized by flat product-sur
 | `app-web`      | ose-app-web    | Browser UI      | `behavior/app-web/gherkin/`      |
 | `platform-be`  | ose-web (tRPC) | tRPC HTTP       | `behavior/platform-be/gherkin/`  |
 | `platform-web` | ose-web (UI)   | Browser UI      | `behavior/platform-web/gherkin/` |
-| `cli`          | ose-cli        | CLI             | `behavior/ose-cli/gherkin/`      |
 
 ## Naming Convention
 
 Each surface directory is named `<product>-<surface>` where:
 
 - `<product>` identifies the deployable (`app`, `platform`)
-- `<surface>` identifies the perspective (`be`, `web`, `cli`)
+- `<surface>` identifies the perspective (`be`, `web`)
 
 This flat naming avoids nested `api/` or bare `be/` dirs and makes per-product Gherkin
 paths unambiguous.
@@ -29,6 +28,5 @@ paths unambiguous.
 - [../ddd/](../ddd/README.md) — Domain model
 - [app-web — Behavior Surface](./app-web/README.md)
 - [ose-be — Behavior Surface](./be/README.md)
-- [ose-cli — Behavior Surface](./ose-cli/README.md)
 - [platform-be — Behavior Surface](./platform-be/README.md)
 - [platform-web — Behavior Surface](./platform-web/README.md)

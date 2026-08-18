@@ -1,0 +1,26 @@
+# File-Touch Ledger — Repository Clean-Up
+
+Append-only. Every path this plan touches is recorded here before it is staged. The commit protocol
+stages **only** ledger-owned paths, so an unrecorded path is silently excluded from every commit.
+
+## Phase 0
+
+| Path                                                                                          | Action | Note                                                                                                                                                                                                       |
+| --------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/ayokoding-www/content/en/learn/courses/chart-of-accounts-and-data-modeling/overview.md` | edit   | Line 10 retargeted from `../sql-essentials/overview.md` to `../sql-essentials/learning/overview.md`. Applied before this ledger existed; recorded first so it cannot be dropped. Committed as `e075c2e09`. |
+| `plans/in-progress/repo-clean-up/**`                                                          | new    | Plan documents and evidence. Committed as `c53ce0d6b`.                                                                                                                                                     |
+| `plans/in-progress/README.md`                                                                 | edit   | Plan index entry. Committed as `c53ce0d6b`.                                                                                                                                                                |
+
+## Phase 1
+
+| Path                                                                                                                                                                                                  | Action | Note                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| `apps/ayokoding-cli/`, `apps/ose-cli/`, `libs/rust-commons/`, `apps/beavernest-app-web/`                                                                                                              | delete | Four retired projects, whole trees.                                                              |
+| `specs/apps/ayokoding/behavior/ayokoding-cli/`, `specs/apps/ose/behavior/ose-cli/`, `specs/libs/rust-commons/`                                                                                        | delete | Spec trees, no Gherkin salvaged.                                                                 |
+| `apps/ose-www/project.json`                                                                                                                                                                           | edit   | Dropped `implicitDependencies` and the `links:check` target.                                     |
+| `apps/ayokoding-www/project.json`                                                                                                                                                                     | edit   | Dropped `implicitDependencies`.                                                                  |
+| `repo-config.yml`                                                                                                                                                                                     | edit   | Removed the `ose-cli`, `ayokoding-cli`, `rust-commons` registry entries.                         |
+| `.dockerignore`                                                                                                                                                                                       | edit   | Removed the two CLI paths.                                                                       |
+| `libs/README.md`                                                                                                                                                                                      | edit   | Removed the `rust-commons/` entry.                                                               |
+| `specs/README.md`, `specs/libs/README.md`, `specs/apps/{ayokoding,ose}/README.md`, `.../behavior/README.md`, `.../system-context/context.md`, `specs/apps/ayokoding/containers/{README,container}.md` | edit   | Index and C4 references to the deleted trees, including two Mermaid `CLI` nodes and their edges. |
+| `plans/in-progress/repo-clean-up/evidence/**`                                                                                                                                                         | new    | Phase 0 baseline and dormancy proof.                                                             |

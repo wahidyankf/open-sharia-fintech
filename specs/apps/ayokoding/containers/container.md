@@ -26,12 +26,11 @@ container. AyoKoding does not have one and never will under the current architec
 
 ## Out-of-scope legacy slugs
 
-Two `specs/apps/ayokoding/` paths are preserved unchanged in the current spec reshape:
+One `specs/apps/ayokoding/` path is preserved unchanged in the current spec reshape:
 
-- `cli/gherkin/` — owned by the separate `ayokoding-cli` deployable (Go binary).
 - `build-tools/gherkin/` — owned by build-time index-generation scripts (not deployed).
 
-Neither is part of the `web` container. They are documented here only to establish the
+It is not part of the `web` container. It is documented here only to establish the
 boundary; their migration to the five-folder spec format is a separate plan if/when those
 deployables grow into independent spec trees.
 
