@@ -28,7 +28,7 @@ its repository's single branch, and no phase opens a second PR.
 
 **`ose-public`'s PR already exists**: <https://github.com/wahidyankf/ose-public/pull/227>, opened as
 a **draft** carrying the plan documents, before execution began. This is a deliberate deviation from
-the usual "PR opens at the delivery boundary" flow, taken so the plan is executed *through* its own
+the usual "PR opens at the delivery boundary" flow, taken so the plan is executed _through_ its own
 PR. Two consequences bind the executor:
 
 - **Never run `gh pr create` for `ose-public`.** It would fail; the PR exists. At Phase 7 the action
@@ -54,27 +54,27 @@ loop**. Everything that workflow would otherwise stop and ask about is pre-resol
 execution reaches a decision this section does not cover, that is a plan defect — surface it rather
 than inventing an answer.
 
-| plan-execution stop | Resolution for this plan |
-| --- | --- |
-| `[HUMAN]` / `[AI+HUMAN]` checkbox (Iron Rule 2) | **None exist.** Every checkbox is `[AI]` — verify with `grep -c '^\s*- \[ \] \[HUMAN\]' delivery.md` returning 0, rather than trusting a count that drifts as the plan is edited. |
-| Rule-15 three-tester web-UI retest (shard 36) | **Not applicable — no rendered surface.** This plan changes markdown, `repo-config.yml`, and Rust CLI internals. It ships no route, component, or template. Do not invoke `web-exploratory-tester`, `web-usability-tester`, or `web-design-tester`. |
-| Rule-16 API retest (shard 37) | **Not applicable — no HTTP surface.** No REST, GraphQL, or tRPC endpoint is added or changed. Do not invoke `api-exploratory-tester`. |
-| Rule-1 production visual sign-off (shard 36) | **Not applicable** — same reason as rule-15. |
-| Infra-Execution Gate (shard 40) | **Not applicable.** No `terraform apply`, no Ansible converge, no state-changing infrastructure operation appears in any phase. |
-| Manual behavioral assertions (Iron Rule 8) | **Satisfied by gate commands, not by Playwright or curl.** The behavioral assertions for this plan are the acceptance clauses on each checkbox — exit codes and grep counts. There is nothing to click and nothing to `curl`. |
-| `gh pr create` at the delivery boundary (shard 25) | **`ose-public`: forbidden**, PR #227 exists — use `gh pr ready 227`. **`ose-private`: see the `ose-private` delivery row in the Delivery Boundaries table.** |
-| PR-Review Maker→Fixer Cycle (shard 39) | Runs **once per repository at Phase 7**, N = 3 cycles, hard ceiling. An `escalated` exit blocks the merge and is a legitimate stop — surface it. |
-| Merge actor (shard 42) | **`[AI]`.** Merge once all four done-definition items hold. No `[HUMAN]` merge gate is declared anywhere in this plan. |
-| Worktree cleanup prompt (shards 41, 42) | **Pre-authorized in writing for both worktrees** — `worktrees/repo-rules-sweep` in `ose-private` and `worktrees/optimize-gov` in `ose-public`. Do not prompt. Safety preconditions (clean tree, HEAD an ancestor of `origin/main`) still apply and still refuse. |
-| "Wait for user commit approval" (shard 02, item 10) | **Superseded by the per-phase gate flow.** Each `### Phase N Gate` commits and pushes under Iron Rules 5 and 7; there is no separate end-of-run approval step for this plan. |
+| plan-execution stop                                 | Resolution for this plan                                                                                                                                                                                                                                         |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[HUMAN]` / `[AI+HUMAN]` checkbox (Iron Rule 2)     | **None exist.** Every checkbox is `[AI]` — verify with `grep -c '^\s*- \[ \] \[HUMAN\]' delivery.md` returning 0, rather than trusting a count that drifts as the plan is edited.                                                                                |
+| Rule-15 three-tester web-UI retest (shard 36)       | **Not applicable — no rendered surface.** This plan changes markdown, `repo-config.yml`, and Rust CLI internals. It ships no route, component, or template. Do not invoke `web-exploratory-tester`, `web-usability-tester`, or `web-design-tester`.              |
+| Rule-16 API retest (shard 37)                       | **Not applicable — no HTTP surface.** No REST, GraphQL, or tRPC endpoint is added or changed. Do not invoke `api-exploratory-tester`.                                                                                                                            |
+| Rule-1 production visual sign-off (shard 36)        | **Not applicable** — same reason as rule-15.                                                                                                                                                                                                                     |
+| Infra-Execution Gate (shard 40)                     | **Not applicable.** No `terraform apply`, no Ansible converge, no state-changing infrastructure operation appears in any phase.                                                                                                                                  |
+| Manual behavioral assertions (Iron Rule 8)          | **Satisfied by gate commands, not by Playwright or curl.** The behavioral assertions for this plan are the acceptance clauses on each checkbox — exit codes and grep counts. There is nothing to click and nothing to `curl`.                                    |
+| `gh pr create` at the delivery boundary (shard 25)  | **`ose-public`: forbidden**, PR #227 exists — use `gh pr ready 227`. **`ose-private`: see the `ose-private` delivery row in the Delivery Boundaries table.**                                                                                                     |
+| PR-Review Maker→Fixer Cycle (shard 39)              | Runs **once per repository at Phase 7**, N = 3 cycles, hard ceiling. An `escalated` exit blocks the merge and is a legitimate stop — surface it.                                                                                                                 |
+| Merge actor (shard 42)                              | **`[AI]`.** Merge once all four done-definition items hold. No `[HUMAN]` merge gate is declared anywhere in this plan.                                                                                                                                           |
+| Worktree cleanup prompt (shards 41, 42)             | **Pre-authorized in writing for both worktrees** — `worktrees/repo-rules-sweep` in `ose-private` and `worktrees/optimize-gov` in `ose-public`. Do not prompt. Safety preconditions (clean tree, HEAD an ancestor of `origin/main`) still apply and still refuse. |
+| "Wait for user commit approval" (shard 02, item 10) | **Superseded by the per-phase gate flow.** Each `### Phase N Gate` commits and pushes under Iron Rules 5 and 7; there is no separate end-of-run approval step for this plan.                                                                                     |
 
 **Tie-breakers, so no judgment call needs a human.** These bind Phases 4 and 5:
 
 1. **Ordinal ambiguity → strip.** A directory keeps its ordinals only when the prose explicitly
-   calls the files steps or phases *and* they are read in order. If the evidence is merely
+   calls the files steps or phases _and_ they are read in order. If the evidence is merely
    suggestive, de-number. The burden of proof is on keeping the number.
 2. **Boundary rework → conservative merge only.** Merge a continuation run only when its titles
-   continue one another *and* the combined text stays under 500 words. Every other run gets a
+   continue one another _and_ the combined text stays under 500 words. Every other run gets a
    self-standing rename in place. Never rewrite a rule's wording to make a merge fit — if it needs
    rewording, it is not a mechanical merge.
 3. **Commit shape → one commit per top-level subtree.** `repo-governance/conventions/`,
@@ -95,13 +95,13 @@ the conservative default would lose information; or `ose-private` is unreachable
 
 ## Workstreams
 
-| ID | Workstream | Phases | Status |
-| --- | --- | --- | --- |
-| — | Shared baseline | 0 | Specified |
-| WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified |
-| WS-C | Realign rules whose enforcement misfires: two withdrawn, one documented, one guarded | 3 | Specified |
-| WS-B | File Naming Convention rework | — | **Declared, not executable** |
-| — | Knowledge Capture, Archival, and integration (terminal) | 6–7 | Specified |
+| ID   | Workstream                                                                           | Phases   | Status                       |
+| ---- | ------------------------------------------------------------------------------------ | -------- | ---------------------------- |
+| —    | Shared baseline                                                                      | 0        | Specified                    |
+| WS-A | Ordinal filename prefixes in governed trees                                          | 1–2, 4–5 | Specified                    |
+| WS-C | Realign rules whose enforcement misfires: two withdrawn, one documented, one guarded | 3        | Specified                    |
+| WS-B | File Naming Convention rework                                                        | —        | **Declared, not executable** |
+| —    | Knowledge Capture, Archival, and integration (terminal)                              | 6–7      | Specified                    |
 
 WS-C runs **before** the sweep on purpose: it deletes thirteen numbered shards under
 `agent-naming/` and `workflow-naming/` that the sweep would otherwise rename first and discard
@@ -133,47 +133,42 @@ its requirements into `prd.md`.
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit | Worktree | Branch | PR opens |
-| --- | --- | --- | --- | --- |
-| 0 | — (setup and baseline) | — | — | no |
-| 1–4, 6–7 | `ose-public` rules sweep and rule withdrawal | `worktrees/optimize-gov` (existing) | `worktree/optimize-gov` (existing) | yes — at Phase 7 |
-| 5, 7 | `ose-private` rules sweep and rule withdrawal | `worktrees/repo-rules-sweep` (in `ose-private`) | `repo-rules-sweep` | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                 | Worktree                                        | Branch                             | PR opens         |
+| -------- | --------------------------------------------- | ----------------------------------------------- | ---------------------------------- | ---------------- |
+| 0        | — (setup and baseline)                        | —                                               | —                                  | no               |
+| 1–4, 6–7 | `ose-public` rules sweep and rule withdrawal  | `worktrees/optimize-gov` (existing)             | `worktree/optimize-gov` (existing) | yes — at Phase 7 |
+| 5, 7     | `ose-private` rules sweep and rule withdrawal | `worktrees/repo-rules-sweep` (in `ose-private`) | `repo-rules-sweep`                 | yes — at Phase 7 |
 
 ## Phase 0: Baseline
 
 _Suggested executor:_ `repo-setup-manager`
 
-- [ ] [AI] Verify the active worktree is `worktrees/optimize-gov` — acceptance: `git rev-parse --show-toplevel`
+- [x] [AI] Verify the active worktree is `worktrees/optimize-gov` — acceptance: `git rev-parse --show-toplevel`
       ends in `worktrees/optimize-gov` and `git branch --show-current` prints `worktree/optimize-gov`.
-- [ ] [AI] Fast-forward the branch with `git fetch origin && git merge --ff-only origin/main` —
+- [x] [AI] Fast-forward the branch with `git fetch origin && git merge --ff-only origin/main` —
       acceptance: `git rev-list --count HEAD..origin/main` returns 0.
-- [ ] [AI] Run `npm install` — acceptance: exits 0 (this worktree has no `node_modules/` yet).
-- [ ] [AI] Run `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved toolchain findings.
-- [ ] [AI] Run `npx nx run rhino-cli:test:quick` — acceptance: exits 0; record the pass count.
-- [ ] [AI] Record the `ose-public` numbering baseline into
+- [x] [AI] Run `npm install` — acceptance: exits 0 (this worktree has no `node_modules/` yet).
+- [x] [AI] Run `npm run doctor -- --fix` — acceptance: exits 0 with no unresolved toolchain findings.
+- [x] [AI] Run `npx nx run rhino-cli:test:quick` — acceptance: exits 0; record the pass count.
+- [x] [AI] Record the `ose-public` numbering baseline into
       `local-tmp/repo-rules-sweep/baseline-public.md`, capturing verbatim output of each command —
-      acceptance: all five figures recorded.
-      - `find repo-governance -name '*.md' | grep -cE '/[0-9]{2}-'`
-      - `find .claude -name '*.md' | grep -cE '/[0-9]{2}-'`
-      - `find . -name '*.md' -not -path './node_modules/*' | grep -E '/[0-9]{2}[a-z]-'`
-      - `find repo-governance/workflows -name '*.md' | grep -E '/[0-9]{2}-phase-[0-9]+'`
-      - `grep -rEn '\]\([^)]*/[0-9]{2}-[a-z0-9-]+\.md' --exclude-dir=node_modules --exclude-dir=.git . | wc -l`
-- [ ] [AI] Record the `md-naming*` golden-master fixture count into
+      acceptance: all five figures recorded. - `find repo-governance -name '*.md' | grep -cE '/[0-9]{2}-'` - `find .claude -name '*.md' | grep -cE '/[0-9]{2}-'` - `find . -name '*.md' -not -path './node_modules/*' | grep -E '/[0-9]{2}[a-z]-'` - `find repo-governance/workflows -name '*.md' | grep -E '/[0-9]{2}-phase-[0-9]+'` - `grep -rEn '\]\([^)]*/[0-9]{2}-[a-z0-9-]+\.md' --exclude-dir=node_modules --exclude-dir=.git . | wc -l`
+- [x] [AI] Record the `md-naming*` golden-master fixture count into
       `local-tmp/repo-rules-sweep/baseline-public.md` as a sixth figure —
       `find apps/rhino-cli/tests/golden-master -name 'md-naming*' | wc -l` — acceptance: the
       number is written to that file. Phase 3 asserts this count is unchanged after deleting the
       naming-command fixtures, so the baseline must exist before Phase 3 runs. Verified
       2026-08-18: the count is 6.
-- [ ] [AI] Record the same five figures for `ose-private` into
+- [x] [AI] Record the same five figures for `ose-private` into
       `local-tmp/repo-rules-sweep/baseline-private.md` — acceptance: recorded; at authoring time
       `repo-governance` was 1704 of 2131 and `.claude` was 217.
-- [ ] [AI] Confirm `ose-private` is on a clean `main` — acceptance:
+- [x] [AI] Confirm `ose-private` is on a clean `main` — acceptance:
       `git -C /Users/wkf/ose-projects/ose-private status --porcelain --untracked-files=no` prints
       nothing. **Tracked files only**: that repository legitimately carries an untracked `local-temp/`
       scratch directory, so a bare `status --short` prints `?? local-temp/` on a perfectly healthy
       tree and would halt Phase 0 on a false negative. Verified 2026-08-18: tracked-clean returns 0
       lines, bare `--short` returns 1.
-- [ ] [AI] Confirm `ose-private` topology before relying on plain `git -C` commands — acceptance:
+- [x] [AI] Confirm `ose-private` topology before relying on plain `git -C` commands — acceptance:
       `git -C /Users/wkf/ose-projects/ose-private rev-parse --is-bare-repository` prints `false`.
       This repository has flipped between bare and normal layouts before; if it prints `true`, switch
       to the `-c core.bare=false --work-tree=` form for every subsequent `ose-private` command.
@@ -182,11 +177,11 @@ _Suggested executor:_ `repo-setup-manager`
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
 - [ ] [AI] `git status --short` — prints nothing.
-- [ ] [AI] Both baseline files exist with all five figures each.
+- [x] [AI] `baseline-public.md` exists with all six figures and `baseline-private.md` with all five.
 
-- [ ] [AI] Commit the baseline evidence and push to the existing `worktree/optimize-gov` branch —
+- [x] [AI] Commit the baseline evidence and push to the existing `worktree/optimize-gov` branch —
       acceptance: `git status --short` prints nothing and `git rev-list --count origin/worktree/optimize-gov..HEAD`
       returns 0. Phase 0 opens no PR; PR #227 already exists, so this push adds evidence to it rather
       than creating anything.
@@ -305,6 +300,7 @@ GREEN step, then a REFACTOR step.
       ```
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
+
 - [ ] [AI] GREEN: parse an existing index's entry list in `generate_index_file`, preserve each
       entry's position and annotation verbatim, and append only on-disk targets absent from it —
       acceptance: `npx nx run rhino-cli:test` exits 0.
@@ -320,6 +316,7 @@ GREEN step, then a REFACTOR step.
       ```
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
+
 - [ ] [AI] GREEN: keep today's `sorted_names()` scaffold behaviour for the no-index case —
       acceptance: `npx nx run rhino-cli:test` exits 0.
 - [ ] [AI] RED: add a failing unit test for the new mode.
@@ -334,6 +331,7 @@ GREEN step, then a REFACTOR step.
       ```
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
+
 - [ ] [AI] GREEN: implement `readme-index rewrite-paths --map <tsv>` operating over the tracked
       markdown corpus, rewriting link targets only — acceptance: `npx nx run rhino-cli:test` exits 0.
 - [ ] [AI] REFACTOR: extract index parsing into one named function shared by `generate` and
@@ -464,7 +462,7 @@ The [Evidence Capture Convention](../../../repo-governance/development/quality/e
 already requires file-based evidence to live in **the plan's `evidence/` subfolder**, which moves
 with the plan to `plans/done/` on archival. It was violated anyway: 24 files landed in a repo-root
 `evidence/` across two unrelated commits (`eca01f826`, `ab842ee8e`) and sat there unreferenced.
-Nothing enforces *placement* — `plan-execution-checker` inspects what evidence contains, not where it
+Nothing enforces _placement_ — `plan-execution-checker` inspects what evidence contains, not where it
 lives.
 
 The stray directory was deleted, and a root-anchored `/evidence/` entry added to `.gitignore`,
@@ -472,7 +470,7 @@ before this plan's execution began. This phase makes the convention state the ru
 implements.
 
 **The guard's limits are known and accepted** (see D22). It blocks only the repo-root case; a
-misplaced `apps/foo/evidence/` is not caught. `git add -f` bypasses it. And it *hides* rather than
+misplaced `apps/foo/evidence/` is not caught. `git add -f` bypasses it. And it _hides_ rather than
 reports — an agent writing to the root gets no signal, the files simply never stage. This was chosen
 over a staged-path gate for cost. If evidence is misplaced again somewhere the anchor does not
 reach, that is the signal to revisit.
@@ -504,7 +502,7 @@ trims a plan README to satisfy a budget that was never going to be measured.
 - [ ] [AI] Verify the exclusion before documenting it, rather than trusting the config: create a
       throwaway `plans/in-progress/probe/README.md` of 1200 words, run
       `rhino governance word-budget validate`, delete it — acceptance: exit 0 with no finding naming
-      that path. If it *does* report, the exclusion is not what it appears and this section becomes
+      that path. If it _does_ report, the exclusion is not what it appears and this section becomes
       a config change instead.
 - [ ] [AI] Delete the throwaway probe directory — acceptance: `plans/in-progress/probe/` does not
       exist and `git status --short` shows no trace of it.
