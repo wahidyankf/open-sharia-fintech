@@ -393,7 +393,7 @@ two of its checks, alongside the Amazon Q bridge byte-parity check. Deleting `ha
 validate` therefore removes a **second, overlapping** check of the same duty, not the only gated one
 — no new gate is needed.
 
-- [ ] [AI] Confirm the coverage before deleting anything: in a scratch copy, delete one
+- [x] [AI] Confirm the coverage before deleting anything: in a scratch copy, delete one
       `.opencode/agents/*.md` file and run `rhino harness bindings validate` — acceptance: non-zero
       exit, naming the missing mirror, proving the already-declared `harness-bindings` gate catches
       the deletion independent of `harness naming validate`. Restore the file and re-run —
@@ -401,51 +401,57 @@ validate` therefore removes a **second, overlapping** check of the same duty, no
 
 ### Convention removal
 
-- [ ] [AI] Delete `repo-governance/conventions/structure/agent-naming.md` and the seven files under
+- [x] [AI] Delete `repo-governance/conventions/structure/agent-naming.md` and the seven files under
       `repo-governance/conventions/structure/agent-naming/` — acceptance:
       `find repo-governance/conventions/structure -name 'agent-naming*' | wc -l` returns 0.
-- [ ] [AI] Delete `repo-governance/conventions/structure/workflow-naming.md` and the six files under
+- [x] [AI] Delete `repo-governance/conventions/structure/workflow-naming.md` and the six files under
       `repo-governance/conventions/structure/workflow-naming/` — acceptance:
       `find repo-governance/conventions/structure -name 'workflow-naming*' | wc -l` returns 0.
-- [ ] [AI] Record the withdrawal in
+- [x] [AI] Record the withdrawal in
       `repo-governance/conventions/structure/file-naming.md` — one short paragraph naming both
       withdrawn rules and why, so a future reader finds the decision instead of the absence —
       acceptance: `grep -F 'role suffix' repo-governance/conventions/structure/file-naming.md`
       returns at least one match.
-- [ ] [AI] Re-index the parent: `rhino governance readme-index generate` on
+- [x] [AI] Re-index the parent: `rhino governance readme-index generate` on
       `repo-governance/conventions/structure/` — acceptance:
       `rhino governance readme-index validate` exits 0 with no `ghost` finding.
 
 ### Tooling removal
 
-- [ ] [AI] Delete `apps/rhino-cli/src/commands/harness_validate_naming.rs` and
+- [x] [AI] Delete `apps/rhino-cli/src/commands/harness_validate_naming.rs` and
       `apps/rhino-cli/src/commands/workflows_validate_naming.rs` — acceptance: both paths absent.
-- [ ] [AI] Delete `apps/rhino-cli/src/internal/naming.rs` and
+- [x] [AI] Delete `apps/rhino-cli/src/internal/naming.rs` and
       `apps/rhino-cli/src/application/naming/` (`mod.rs`, `reporter.rs`). These are used **only** by
       the two deleted commands — acceptance:
       `grep -rn 'internal::naming\|application::naming' apps/rhino-cli/src apps/rhino-cli/tests`
       returns zero matches, and `npx nx run rhino-cli:build` exits 0.
-- [ ] [AI] Remove both `pub mod` lines from `apps/rhino-cli/src/commands.rs`, both subcommand
+- [x] [AI] Remove both `pub mod` lines from `apps/rhino-cli/src/commands.rs`, both subcommand
       variants and both dispatch arms from `apps/rhino-cli/src/cli.rs`, and the three stale CLI
       parser tests that assert these commands parse (`old_harness_validate_naming_fails`,
       `new_harness_validate_naming_passes`, `verb_middle_workflows_validate_naming_no_longer_parses`)
       — acceptance: `npx nx run rhino-cli:build` exits 0 and
       `rhino harness naming validate` exits non-zero with an unrecognised-subcommand error.
-- [ ] [AI] Delete `apps/rhino-cli/tests/agent_naming_validator.rs` and the eighteen
+- [x] [AI] Delete `apps/rhino-cli/tests/agent_naming_validator.rs` and the eighteen
       `tests/golden-master/{harness-naming*,harness-validate-naming*,workflows-validate-naming*,repo-governance-workflows-naming*}.{exit,stdout,stderr}`
       fixtures (6 base names × `.exit`/`.stdout`/`.stderr`). **Keep every `md-naming*` fixture** — `md naming validate` is a different command and
       stays — acceptance: `find apps/rhino-cli/tests/golden-master -name 'md-naming*' | wc -l`
       is unchanged from the Phase 0 baseline.
-- [ ] [AI] Delete the two feature files
+- [x] [AI] Delete the two feature files
       `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-naming.feature` and
       `specs/apps/rhino/behavior/rhino-cli/gherkin/workflows/workflows-validate-naming.feature`, plus
       `specs/apps/rhino/behavior/rhino-cli/gherkin/agent-naming/agent-naming-validator.feature` —
       acceptance: `rhino specs coverage` exits 0, reporting neither an orphaned feature nor an
       uncovered command.
+      _Wider than the plan stated. Deleting the three features also stranded their step
+      definitions: 17 orphan step impls. Removed `apps/rhino-cli/tests/workflows.rs` (whole
+      cucumber binary, all 10 steps were for the withdrawn command) and the 105-line
+      `agents validate-naming` step section from `tests/agents.rs`, plus both `[[test]]` entries
+      in `Cargo.toml`. Also removed the now-empty `gherkin/workflows/` and `gherkin/agent-naming/`
+      directories. Coverage: 64 specs, 494 scenarios, 2018 steps — all covered, exit 0._
 
 ### Gate removal
 
-- [ ] [AI] Delete the `harness-naming` and `workflows-naming` gate entries from `repo-config.yml` —
+- [x] [AI] Delete the `harness-naming` and `workflows-naming` gate entries from `repo-config.yml` —
       acceptance: `grep -F 'harness naming validate' repo-config.yml` and
       `grep -F 'workflows naming validate' repo-config.yml` each return zero matches, while
       `grep -F 'md naming validate' repo-config.yml` still returns one.
