@@ -80,7 +80,7 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 
 ## Principles Implemented/Respected
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Kebab-case is the simplest viable naming scheme; no prefixes, abbreviations, or hierarchical encoding
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Kebab-case is the simplest viable naming scheme; avoid abbreviations and hierarchical encoding. Leading `NN-` ordinals are governed by [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md)
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - Filenames explicitly describe content; directory hierarchy explicitly encodes category
 - **[Documentation First](../../principles/content/documentation-first.md)** - Consistent, predictable naming supports discoverability across GitHub web and standard markdown tooling
 
@@ -90,6 +90,7 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 
 ## Related Documentation
 
+- [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md)
 - [Linking Convention](../formatting/linking.md)
 - [Diátaxis Framework](../structure/diataxis-framework.md)
 - [Conventions Index](../README.md)

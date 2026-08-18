@@ -178,7 +178,7 @@ _Suggested executor:_ `repo-setup-manager`
 > All checks below must pass before starting Phase 1.
 
 - [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `git status --short` — prints nothing.
+- [x] [AI] `git status --short` — prints nothing.
 - [x] [AI] `baseline-public.md` exists with all six figures and `baseline-private.md` with all five.
 
 - [x] [AI] Commit the baseline evidence and push to the existing `worktree/optimize-gov` branch —
@@ -196,7 +196,7 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 
 ### The convention
 
-- [ ] [AI] Create `repo-governance/conventions/structure/ordinal-filename-prefixes.md` stating the
+- [x] [AI] Create `repo-governance/conventions/structure/ordinal-filename-prefixes.md` stating the
       rule from `tech-docs.md` §2 with worked cases on **both** sides: the three **Fails** cases and
       the real **Passes** case (`04-step-4-fixer.md` → `04-fixer.md`, from
       `repo-governance/workflows/**/*-quality-gate/`, where the ordinal already equals the step's own
@@ -204,23 +204,29 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
       by `find` at authoring time, and `rhino governance word-budget validate` reports it under 500
       words. **Do not write that no file satisfies the Passes condition** — that claim is false and
       would turn the convention into the blanket ban this plan explicitly rejected.
-- [ ] [AI] Add the required frontmatter (`title`, `description`, `when_to_use`, `category`,
+- [x] [AI] Add the required frontmatter (`title`, `description`, `when_to_use`, `category`,
       `subcategory`, `tags`, `created`) — acceptance: `rhino md frontmatter validate` reports no
       finding for the file.
-- [ ] [AI] Edit `repo-governance/conventions/structure/file-naming.md`: replace the "no prefixes,
+- [x] [AI] Edit `repo-governance/conventions/structure/file-naming.md`: replace the "no prefixes,
       abbreviations, or hierarchical encoding" clause with a deferral to the new convention, and add
       the cross-link — acceptance: `grep -c 'no prefixes' repo-governance/conventions/structure/file-naming.md`
       returns 0 and a link to `ordinal-filename-prefixes.md` is present.
-- [ ] [AI] Edit `repo-governance/conventions/structure/governance-word-budget-remediation.md` to
+- [x] [AI] Edit `repo-governance/conventions/structure/governance-word-budget-remediation.md` to
       state that shard filenames carry no ordinal and the parent index carries reading order —
       acceptance: the sentence is present and links the new convention.
-- [ ] [AI] Edit `repo-governance/conventions/structure/workflow-naming.md` (and its shards) so the
-      workflow filename rule composes with the ordinal rule — acceptance: the two conventions
-      cross-link and neither asserts a rule the other forbids.
-- [ ] [AI] Edit `repo-governance/development/infra/temporary-files/08-report-file-naming-standard.md`
+- [x] [AI] ~~Edit `repo-governance/conventions/structure/workflow-naming.md` (and its shards) so the
+      workflow filename rule composes with the ordinal rule.~~ **Superseded by Phase 3 during
+      execution (2026-08-18).** Phase 3 deletes `workflow-naming.md` and all six shards outright
+      (its acceptance requires `find repo-governance/conventions/structure -name 'workflow-naming*' | wc -l`
+      to return 0), so there is no surviving document for the ordinal rule to compose with. Performing
+      this edit would author a cross-link into a file the same PR deletes, which Phase 3's link
+      validation would then have to strip. The end state is identical either way. Recorded as a
+      Phase 6 learning: a plan that both edits and deletes the same surface should sequence the
+      deletion first.
+- [x] [AI] Edit `repo-governance/development/infra/temporary-files/08-report-file-naming-standard.md`
       to state whether report filenames are exempt — acceptance: an explicit exempt-or-not sentence
       exists.
-- [ ] [AI] Add the new convention to `repo-governance/conventions/structure/README.md` with a
+- [x] [AI] Add the new convention to `repo-governance/conventions/structure/README.md` with a
       description-plus-`when_to_use` annotation — acceptance:
       `rhino governance readme-index validate --paths repo-governance/` reports no `orphan` or
       `unannotated` finding.

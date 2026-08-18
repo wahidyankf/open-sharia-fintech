@@ -14,6 +14,11 @@ when_to_use: Use when constructing a checker or fixer report filename.
 
 **Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{suffix}.md`
 
+**Exempt from ordinal prefixes.** Report filenames never carry a leading `NN-` ordinal, and
+[Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md) does not
+apply to them: they are generated artifacts in `generated-reports/`, ordered by their timestamp
+component rather than by a parent index.
+
 **Components** (4 parts):
 
 - `{agent-family}`: Agent name WITHOUT checker/fixer/maker suffix (e.g., `repo-rules`, `ayokoding-web`, `docs`, `plan`, `plan-execution`)
