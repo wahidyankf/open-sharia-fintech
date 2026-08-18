@@ -5,7 +5,8 @@ use clap::{Parser, Subcommand};
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
     env_init, env_restore, env_staged_guard, env_validate, gate, git, governance_audit,
-    governance_generate_readme_index, governance_layer_coherence, governance_traceability_audit,
+    governance_generate_readme_index, governance_layer_coherence,
+    governance_rewrite_readme_index_paths, governance_traceability_audit,
     governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
     harness_validate_duplication, harness_validate_naming, harness_validate_sync, md_audit,
@@ -395,6 +396,10 @@ pub enum GovernanceReadmeIndexCommands {
     /// indexes for every covered directory that needs one (FR-3.12).
     #[command(name = "generate")]
     Generate(governance_generate_readme_index::ReadmeIndexGenerateArgs),
+    /// Repoint markdown link targets across the corpus from a TSV rename map,
+    /// leaving entry order, annotations, and prose untouched.
+    #[command(name = "rewrite-paths")]
+    RewritePaths(governance_rewrite_readme_index_paths::ReadmeIndexRewritePathsArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -803,6 +808,9 @@ fn dispatch_governance(
             }
             GovernanceReadmeIndexCommands::Generate(args) => {
                 governance_generate_readme_index::run(args, output_format)
+            }
+            GovernanceReadmeIndexCommands::RewritePaths(args) => {
+                governance_rewrite_readme_index_paths::run(args, output_format)
             }
         },
     }

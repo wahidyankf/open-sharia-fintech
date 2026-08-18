@@ -13,6 +13,7 @@ pub mod git;
 pub mod governance_audit;
 pub mod governance_generate_readme_index;
 pub mod governance_layer_coherence;
+pub mod governance_rewrite_readme_index_paths;
 pub mod governance_traceability_audit;
 pub mod governance_validate_readme_index;
 pub mod governance_validate_word_budget;
