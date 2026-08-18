@@ -3,7 +3,7 @@
 ## Context
 
 Three defects in `apps/rhino-cli`'s governance tooling, all surfaced by executing
-[`repo-rules-sweep`](../../in-progress/repo-rules-sweep/README.md) and routed here by its Phase 6
+[`repo-rules-sweep`](../../done/2026-08-18__repo-rules-sweep/README.md) and routed here by its Phase 6
 Knowledge Capture (entries 2, 3, 4, and 5 of that plan's `learnings.md`).
 
 Each defect is a **silent** one: the tool exits 0 and reports success while doing less than the

@@ -17,11 +17,11 @@ each workstream adds phases before Knowledge Capture, which stays terminal with 
 
 ## Workstreams
 
-| ID | Workstream | Phases | Status |
-| --- | --- | --- | --- |
-| WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified |
-| WS-C | Realign rules whose enforcement misfires | 3 | Specified |
-| WS-B | File Naming Convention rework | — | **Declared, not executable** |
+| ID   | Workstream                                  | Phases   | Status                       |
+| ---- | ------------------------------------------- | -------- | ---------------------------- |
+| WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified                    |
+| WS-C | Realign rules whose enforcement misfires    | 3        | Specified                    |
+| WS-B | File Naming Convention rework               | —        | **Declared, not executable** |
 
 ### WS-A — Ordinal filename prefixes
 
@@ -61,7 +61,7 @@ token** against a closed vocabulary:
 Neither prevents a defect. Both inspect one token, ignore the rest, and never read the file. What
 they reliably do is obstruct: a new kind of agent or workflow either takes a misleading suffix or
 forces a vocabulary amendment before it can be committed. Both rules and all their tooling are
-withdrawn — including the **scope vocabulary** each declares for the *first* token, which no
+withdrawn — including the **scope vocabulary** each declares for the _first_ token, which no
 validator has ever read.
 
 **Existing filenames do not change.** `repo-rules-checker.md` keeps its name — it stops being

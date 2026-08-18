@@ -3,12 +3,12 @@
 ## Context
 
 WS-B was **declared but deliberately unspecified** in
-[`repo-rules-sweep`](../../in-progress/repo-rules-sweep/README.md): that plan touched
+[`repo-rules-sweep`](../../done/2026-08-18__repo-rules-sweep/README.md): that plan touched
 `file-naming.md` only enough to remove the contradiction WS-A created, and left the broader rework to
 be specified "only after WS-A's Knowledge Capture records what is still wrong".
 
 That record now exists — entries 6, 7, and 8 of
-[`repo-rules-sweep/learnings.md`](../../in-progress/repo-rules-sweep/learnings.md). This plan is WS-B,
+[`repo-rules-sweep/learnings.md`](../../done/2026-08-18__repo-rules-sweep/learnings.md). This plan is WS-B,
 specified from it.
 
 ## The Problem

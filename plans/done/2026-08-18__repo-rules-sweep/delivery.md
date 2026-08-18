@@ -827,7 +827,7 @@ would publish a wrong list — the exact defect WS-C exists to fix.
       Action paragraph rewritten; `docs/reference/sdlc-gate-standard.md` dropped pre-push rows 4–5 and
       renumbered 6–8 → 4–6. Left alone as a different, still-live rule: every
       `github-actions-workflow-naming` reference. Left alone as historical record: `plans/done/`
-      mentions and the `plan-domain-parity-decisions.md` narrative (its dead *link* was removed).
+      mentions and the `plan-domain-parity-decisions.md` narrative (its dead _link_ was removed).
 - [x] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
       emitting `renames-private.tsv` — acceptance: the same five gate commands exit 0 in
       `ose-private`.
@@ -934,7 +934,7 @@ _Suggested executor:_ the orchestrator directly — triage is judgment, not dele
       token, hostname, or private IP; nothing needed sanitizing, so nothing was discarded on that
       gate. Repo-relevance: all nine are public-governance tooling content and belong in both
       repositories. Entry 8 is the only one whose **instances** are `ose-private`-only — the 40
-      truncated-stem files — and it is scoped so that only the collision *shape* is described, never
+      truncated-stem files — and it is scoped so that only the collision _shape_ is described, never
       a private path, with the rule gap itself routed to both repos.
 - [x] [AI] Record what `file-naming.md` still gets wrong, as the specification input for WS-B —
       acceptance: a WS-B input note exists in `learnings.md` or a `plans/backlog/` follow-up.
@@ -1004,15 +1004,41 @@ Archival commits to the same branch and lands inside each repository's single PR
 Mode section above. **`ose-public`'s PR (#227) already exists as a draft** — this phase readies it,
 it does not create it.
 
-- [ ] [AI] Move the plan folder to `plans/done/<YYYY-MM-DD>__repo-rules-sweep/` using the completion
+- [x] [AI] Move the plan folder to `plans/done/<YYYY-MM-DD>__repo-rules-sweep/` using the completion
       date — acceptance: the folder exists under `plans/done/` and no longer under
       `plans/in-progress/`.
-- [ ] [AI] Update `plans/README.md`, `plans/in-progress/README.md`, and `plans/done/README.md`
+      **Result:** `git mv` to `plans/done/2026-08-18__repo-rules-sweep/`. Both directions verified.
+      The relative-link depth is unchanged (`plans/<stage>/<slug>/`), so every `../../../` link into
+      `repo-governance/` still resolves — confirmed by `md links validate` exiting 0 afterwards.
+- [x] [AI] Update `plans/README.md`, `plans/in-progress/README.md`, and `plans/done/README.md`
       indexes — acceptance: `rhino governance readme-index validate --paths plans/` exits 0 and
       `plans/done/README.md` carries a dated entry for this plan.
-- [ ] [AI] Search for orphaned references to `plans/in-progress/repo-rules-sweep` and repoint them —
+      **Result:** `plans/done/README.md` carries the dated entry, placed above `repo-clean-up` in
+      the existing reverse-chronological order.
+      **Two findings, both recorded rather than papered over:**
+      (a) `plans/in-progress/README.md` never listed this plan, so there was no entry to remove. That
+      index is not gate-checked — the `governance-readme-index` gate's registered `paths` are
+      `docs/`, `repo-governance/`, `specs/`, `.claude/`, and `plans/` is not among them — so the
+      omission was invisible for the plan's whole life. Nothing was invented to cover it up.
+      (b) `plans/README.md` needs no edit: it links the three stage folders, not individual plans.
+      **Deviation:** the acceptance's `readme-index validate --paths plans/` exits **1** with 885
+      findings. Every one is pre-existing in other plans (chiefly `unannotated` links and a
+      README-less `artifacts/` folder under `repository-onboarding-readme-refresh`); **0** name this
+      plan's folder, the archived path, or either new backlog folder. The clause asked a gate to pass
+      on a surface the gate does not run on, which is the same defect WS-C fixed for word-budget:
+      a rule stated without its registered `args`. Recorded, not worked around.
+- [x] [AI] Search for orphaned references to `plans/in-progress/repo-rules-sweep` and repoint them —
       acceptance: `grep -rn 'plans/in-progress/repo-rules-sweep' --exclude-dir=node_modules --exclude-dir=.git .`
       returns zero matches.
+      **Result:** zero orphans **outside** this plan's own folder — the scan found no reference to
+      the in-progress path anywhere else in either repository, before or after the move. The four
+      links this plan's own Knowledge Capture had just written into the two new backlog plans were
+      repointed to `plans/done/2026-08-18__repo-rules-sweep/`.
+      **Deviation:** the literal acceptance cannot return zero, and could never have. Four matches
+      remain, all inside the archived plan itself: two are this very checklist item quoting its own
+      search string, one is a `git check-ignore` probe path recorded in a completed P3 item, and one
+      is `tech-docs.md`'s file-impact tree showing `in-progress → done` as the archival move.
+      Rewriting them would falsify the historical record to satisfy a self-matching grep.
 - [ ] [AI] Push the `ose-public` branch to `origin worktree/optimize-gov` — acceptance:
       `git rev-list --count origin/worktree/optimize-gov..HEAD` returns 0.
 - [ ] [AI] Push the `ose-private` branch to `origin repo-rules-sweep` — acceptance: the branch exists

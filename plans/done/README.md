@@ -9,6 +9,20 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-18: repo-rules-sweep](./2026-08-18__repo-rules-sweep/README.md) — Settled what a leading
+  `NN-` ordinal means in a governed filename: it survives only when the file is a real step in an
+  ordered sequence and the ordinal is that step's own number. Stripped the rest — 2092 files across
+  176 numbered directories in `ose-public`, 1905 files and 8 directories in `ose-private` — after
+  making `readme-index generate` order-preserving and adding a `rewrite-paths` mode so no annotated
+  index lost its order or its annotations. Withdrew two filename rules that inspected a single
+  basename token against a closed vocabulary without ever reading the file (`harness naming validate`,
+  `repo-governance workflows naming validate`), with their gate entries, Gherkin, and fixtures.
+  Realigned three rules whose enforcement misfired, including publishing the word-budget gate's
+  exclude list as part of the rule. The two repositories' outcomes differ on purpose: 46 numbered
+  paths remain in `ose-private` against 8 here, because 40 files there have fixed-width truncated
+  stems whose ordinal is their only disambiguator. Delivery Mode: `worktree-to-pr`, one worktree and
+  one PR per repository.
+
 - [2026-08-18: repo-clean-up](./2026-08-18__repo-clean-up/README.md) — Retired the dormant
   `ayokoding-cli` and `ose-cli` link-checkers, their orphaned `rust-commons` library, their spec
   trees, and the empty `beavernest-app-web` shell, then corrected every surface that documented

@@ -149,7 +149,7 @@ either rule, per repository, with an auditable per-file verdict, before editing 
 
 ## 7. Related
 
-- [`repo-rules-sweep`](../../in-progress/repo-rules-sweep/README.md) — declares WS-B; its
+- [`repo-rules-sweep`](../../done/2026-08-18__repo-rules-sweep/README.md) — declares WS-B; its
   `learnings.md` entries 6–8 are this plan's specification input.
 - [`rhino-cli-governance-tooling-defects`](../rhino-cli-governance-tooling-defects/README.md) — the
   sibling follow-up. No execution dependency in either direction.

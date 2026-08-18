@@ -138,7 +138,7 @@ and must be recreated, since it was a throwaway at the time.
 
 ## 7. Related
 
-- [`repo-rules-sweep` learnings](../../in-progress/repo-rules-sweep/learnings.md) — entries 2–5, the
+- [`repo-rules-sweep` learnings](../../done/2026-08-18__repo-rules-sweep/learnings.md) — entries 2–5, the
   origin of every defect here.
 - [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md) —
   why these are a separate plan rather than inline fixes.
