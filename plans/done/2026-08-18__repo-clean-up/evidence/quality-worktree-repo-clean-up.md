@@ -1,7 +1,7 @@
 # Pre-Push Quality Evidence — `worktree/repo-clean-up`
 
 Run from the plan's worktree on 2026-08-18, at the delivery boundary (Phase 4, before the single
-push that carries all five commits).
+push that carries every commit on the branch — nine, from merge base `a36388a77`).
 
 ## `apps/rhino-cli/scripts/rhino-bin.sh gate run --surface=pre-push`
 

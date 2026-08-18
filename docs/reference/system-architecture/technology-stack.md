@@ -39,7 +39,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 
 **Rust CLI Tools**:
 
-- **Language**: Rust (edition 2024, rust-version 1.88)
+- **Language**: Rust (edition 2024, rust-version 1.95.0)
 - **Build**: Cargo via Nx
 - **Distribution**: Local binaries
 - **Applications**: rhino-cli (Repository Hygiene & INtegration Orchestrator)

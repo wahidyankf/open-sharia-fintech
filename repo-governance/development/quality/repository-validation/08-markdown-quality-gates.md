@@ -49,7 +49,7 @@ letters/digits are kept, spaces map to hyphens, duplicates receive `-1`, `-2`, â
 against the `github-slugger` v2 reference implementation). A fragment with no matching heading
 emits a `broken-anchor` finding.
 
-**Registry exclusions**: `plans/done`, `apps/ayokoding-www/content`, `apps/ose-www/content`.
+**Registry exclusions**: `plans/done`.
 
 **Surfaces**: pre-push (all `.md` files) and CI (all `.md` files). Deliberately **not** at
 pre-commit â€” a repo-wide link scan is too slow for every commit.

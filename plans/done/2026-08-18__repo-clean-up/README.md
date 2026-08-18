@@ -64,7 +64,15 @@ not exist. All 47 other files referencing that course use `../sql-essentials/lea
   into `rhino-cli`. There is nothing to fold: their only capability already exists there.
 - **The CLI Gherkin trees are deleted, not salvaged.** `md links validate` already carries its own
   spec coverage for the same behaviour at repository scope; folding the per-domain scenarios in
-  would duplicate it.
+  would duplicate it. One exception is knowingly not carried over: each deleted feature's
+  `Scenario: JSON output produces structured results` has no equivalent in the successor
+  `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-links.feature`. The behaviour
+  itself is live and unit-tested (`apps/rhino-cli/src/commands/md_validate_links.rs:47`;
+  `links.rs:966-972,1028-1039`) — only the BDD scenario is gone. Restoring it is left out of this
+  plan because `docs-validate-links.feature` is line 571 of
+  `apps/rhino-cli/parity-manifest.sha256`, so editing it opens the same four-repo parity obligation
+  ruled out of scope above for `apps/rhino-cli/**` generally. Filed as
+  [`rhino-cli-md-links-json-output-scenario-gap`](../../ideas/q2-not-urgent-important/rhino-cli-md-links-json-output-scenario-gap.md).
 - **`14-ayokoding-www-link-validation.md` is deleted, not rewritten.** Nothing survives the phantom
   chain, and `md links validate` is already documented in the gate registry and the SDLC gate
   standard; a thin pointer would be one more surface to keep true. Files `15`–`18` renumber to

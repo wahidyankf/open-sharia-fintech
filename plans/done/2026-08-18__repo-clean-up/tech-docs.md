@@ -98,8 +98,13 @@ dependency-compatibility.md`, `.dockerignore`.
    - `docs-creating-by-example-tutorials/reference/checking-grouping-compliance-and-diagrams.md:49`
      — "If the link checker (`ayokoding-cli`) is wired to validate anchors…"
 
-   Editing `.claude/**` obliges regenerating the `.opencode/`, `.cursor/`, and `.amazonq/` mirrors
-   via `npm run generate:bindings` **in the same commit**; the mirrors are never hand-edited.
+   Editing `.claude/agents/**` obliges regenerating the `.opencode/`, `.cursor/`, and `.amazonq/`
+   mirrors via `npm run generate:bindings` **in the same commit**; the mirrors are never
+   hand-edited. This does not apply here: both files are `.claude/skills/*/reference/*.md`, and
+   skill files are not mirrored (`CLAUDE.md`; `apps/rhino-cli/src/application/agents/sync.rs:37-40`
+   documents `skills_copied` as always 0). `npm run generate:bindings` is still run, to confirm no
+   drift — `npm run validate:sync` exits 0 with zero files staged under `.opencode/`, `.cursor/`,
+   or `.amazonq/`.
 
 5. **Live forward-looking plan idea** — `plans/ideas/q2-not-urgent-important/
 beavernest-first-deploy.md` proposes deploying `beavernest-app-web` to Vercel (9 mentions) and
@@ -171,6 +176,31 @@ Related but deliberately out of scope: 23 of 181 course directories lack a cours
 `overview.md`. Only `sql-essentials` was linked as though it had one, so only that one link broke.
 Authoring the missing overviews is content work, not clean-up — it is filed as a `plans/ideas/`
 two-pager so the observation is not lost.
+
+### Cost and Blast Radius — Deliberately Accepted Tradeoff
+
+Widening `md-links` from 1 exclude to 3 excludes was measured only for correctness above; the cost
+and the widened push-blocking radius are recorded here.
+
+**Measured cost** (pinned binary `./apps/rhino-cli/target/gate/rhino-cli`, 3 runs each, `-o json`
+`total_files`/`duration_ms`, independently reproduced twice):
+
+| scope               | `total_files` | `duration_ms` (3 runs) |
+| ------------------- | ------------- | ---------------------- |
+| pre-PR (3 excludes) | 4,036         | ~358–408               |
+| post-PR (1 exclude) | 7,435         | ~565–615               |
+
++84% files scanned, roughly +55% wall-clock, paid on every `git push` and every CI run, going
+forward.
+
+**Blast radius**: `md-links` runs `scope: all-file-type` on `pre-push` (see
+`docs/reference/sdlc-gate-standard.md:126`). Post-PR, one broken relative link anywhere in either
+content tree blocks `git push` for every contributor, including ones working nowhere near either
+content tree. This is the _intended_ direction — the gate's own stated rationale is repo-wide
+scope "because adding, deleting, or renaming any markdown file can break links in untouched
+files" — and it is a **deliberately accepted tradeoff** of this plan, not an oversight. The
+`pre-push` surface stays `all-file-type` (not narrowed to `affected-file-type`): narrowing it
+would silently reintroduce exactly the blind spot that rationale exists to prevent.
 
 ## File-Impact Analysis
 

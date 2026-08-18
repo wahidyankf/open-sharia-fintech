@@ -36,7 +36,7 @@ pedantic profile with selective allows.
 
 ```bash
 # Run via Nx (standard)
-npm exec nx -- lint rhino-cli
+nx run rhino-cli:lint
 
 # Run directly
 cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings
