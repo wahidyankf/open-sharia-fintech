@@ -63,7 +63,7 @@ commits, read the full diff first.
 green `pr-quality-gate.yml`. `[AI]` merges by default. One worktree per repo per plan; Phase 0 opens
 none.
 
-**See**: [Delivery Mode](./repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+**See**: [Delivery Mode](./repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 
 ## Conventions
 

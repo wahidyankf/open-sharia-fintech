@@ -49,7 +49,7 @@ Claude Code uses tool arrays and named colors; OpenCode uses a `permission` obje
 mirrored — OpenCode reads `.claude/skills/{name}/SKILL.md` natively. Only use skills from trusted
 sources; all skills here are maintained by the project team.
 
-**See**: [Platform Binding Color Translation](./repo-governance/development/agents/ai-agents/17-agent-color-categorization.md#platform-binding-color-translation)
+**See**: [Platform Binding Color Translation](./repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
 
 ### organiclever-www skill
 

@@ -125,7 +125,7 @@ the PR-only default of the ose-primer sync convention.
 **Why the deviation is acceptable**: The invoker explicitly selected `worktree-to-main` (the
 mode name at the time of this 2026-06-07 decision; the same direct-push-to-`origin-main` mode
 was later renamed `worktree-to-origin-main` in the canonical four-mode Delivery Mode vocabulary —
-see [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode))
+see [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode))
 for the entire parity set at planning time. ose-primer's own git-push-default convention also
 defaults to direct main push. The ose-primer sync convention's PR-only default applies when
 propagating from ose-public; it does not apply when the plan originates in ose-primer itself

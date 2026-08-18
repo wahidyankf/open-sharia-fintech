@@ -157,7 +157,7 @@ file is not an error) guarantees the loader won't fail when no tier file exists,
 any `.env.*` file on disk is by design, not an oversight.
 
 See the tiered injection standard in
-[Secrets and Environment-Variable Standards](../../repo-governance/conventions/security/secrets-and-env-standards/09-tiered-injection-standard.md#tiered-injection-standard)
+[Secrets and Environment-Variable Standards](../../repo-governance/conventions/security/secrets-and-env-standards/tiered-injection-standard.md#tiered-injection-standard)
 for the full mapping of which platform (GitHub Environment, Vercel, k3s) injects which key at
 each stage.
 
@@ -181,7 +181,7 @@ Each app's `apps/<app>/src/env.ts` declares its variables through `@t3-oss/env-n
 `createEnv()`, under a `server` key (server-only) or a `client` key (must be `NEXT_PUBLIC_`-
 prefixed, and is enforced by TypeScript types — a client variable without the prefix is a compile
 error). See
-[Secrets and Environment-Variable Standards §5](../../repo-governance/conventions/security/secrets-and-env-standards/07-startup-validation.md#startup-validation)
+[Secrets and Environment-Variable Standards §5](../../repo-governance/conventions/security/secrets-and-env-standards/startup-validation.md#startup-validation)
 for the full `createEnv()` pattern.
 
 ## Agent access to `.env.stag` and `.env.prod` is restricted
