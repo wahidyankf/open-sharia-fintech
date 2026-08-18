@@ -9,6 +9,15 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-18: repo-clean-up](./2026-08-18__repo-clean-up/README.md) — Retired the dormant
+  `ayokoding-cli` and `ose-cli` link-checkers, their orphaned `rust-commons` library, their spec
+  trees, and the empty `beavernest-app-web` shell, then corrected every surface that documented
+  them. Closed the coverage gap underneath: the `md-links` gate had excluded
+  `apps/ayokoding-www/content` and `apps/ose-www/content` on the belief those CLIs covered them,
+  so both trees were checked by nothing. Arming cost exactly one broken link, and a negative test
+  records the gate failing and recovering on both trees. Delivery Mode: `worktree-to-pr`, one
+  worktree and one PR.
+
 - [2026-08-15: optimize-governance-md](./2026-08-15__optimize-governance-md/README.md) — Capped
   every governance Markdown file at 500 words (900 for README.md) across `ose-public` and
   `ose-private`, enforced via two new rhino-cli gates (`governance word-budget validate`,

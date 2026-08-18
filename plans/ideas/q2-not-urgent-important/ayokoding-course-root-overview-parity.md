@@ -39,7 +39,7 @@ before the next content push adds more cross-course links.
 
 - The 158 conforming courses are their own precedent; `accounting-foundations` is the canonical
   shape (`overview.md` + `_index.md` + `learning/` + `drilling/`).
-- [`repo-clean-up`](../../in-progress/repo-clean-up/README.md) armed the gate and documented the
+- [`repo-clean-up`](../../done/2026-08-18__repo-clean-up/README.md) armed the gate and documented the
   single broken link as measured cost, deferring the rest here.
 - [`ayokoding-learning-path-01-url-restructure`](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
   is the precedent for a bulk, mechanical content-layout change across this tree.
