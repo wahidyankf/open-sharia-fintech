@@ -53,6 +53,19 @@ bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduct
 grading, and plan-decision-integrity hardening — was reduced to a single-file idea brief in
 [`../ideas/`](../ideas/README.md).
 
+**Governance follow-ups from `repo-rules-sweep`** (filed 2026-08-18 by that plan's Knowledge Capture
+phase, which routes code-bearing learnings straight to a backlog plan rather than through a
+two-pager — both arrived plan-ready, with the defect reproduced and the fix designed):
+
+- [rhino-cli-governance-tooling-defects](./rhino-cli-governance-tooling-defects/README.md) — three
+  `rhino-cli` tools that exit 0 while doing less than the caller believes: the vendor audit mis-pairs
+  a wrapped inline code span, `harness bindings validate` hard-codes `.claude/agents` instead of
+  reading the registry, and `readme-index rewrite-paths` matches by basename and reads only `.md`.
+- [file-naming-convention-rework](./file-naming-convention-rework/README.md) — WS-B, declared but
+  unspecified by `repo-rules-sweep` and now specified from its learnings: `file-naming.md` documents
+  two of eleven enforced exemptions, its scope clause cannot be evaluated, and the ordinal convention
+  contradicts its own worked example.
+
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
 

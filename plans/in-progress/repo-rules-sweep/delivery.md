@@ -915,29 +915,83 @@ would publish a wrong list — the exact defect WS-C exists to fix.
 
 _Suggested executor:_ the orchestrator directly — triage is judgment, not delegation
 
-- [ ] [AI] Triage every entry in `learnings.md` through the
+- [x] [AI] Triage every entry in `learnings.md` through the
       [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)
       routing matrix — acceptance: every entry reaches a terminal state (routed inline, filed as a
       backlog plan, or discarded with a one-line reason).
-- [ ] [AI] Run both safety gates (secret/sensitivity and repo-relevance) on every surviving entry —
+      **Result:** nine entries, nine terminal states, none discarded — every one passed the litmus.
+      1 → fixed inline in `7958ae19d` under the Iron Rule 3 blocker carve-out (it blocked this plan's
+      own pushes, so it is Root Cause Orientation, not deferred work). 2, 3, 4, 5 → filed as
+      `plans/backlog/rhino-cli-governance-tooling-defects/`. 6, 7, 8 → filed as
+      `plans/backlog/file-naming-convention-rework/` (WS-B). 9 → routed inline; WS-C already landed
+      the word-budget half, and the `md-naming` half folds into WS-B's scope rather than a third plan.
+      **Deviation:** the log's original three entries grew to nine. Phases 4 and 5 surfaced six more,
+      and the convention says append in the moment — so they were appended, not reconstructed as a
+      summary.
+- [x] [AI] Run both safety gates (secret/sensitivity and repo-relevance) on every surviving entry —
       acceptance: each entry records a gate verdict.
-- [ ] [AI] Record what `file-naming.md` still gets wrong, as the specification input for WS-B —
+      **Result:** both verdicts recorded on all nine. Secret/sensitivity: nine passes, no credential,
+      token, hostname, or private IP; nothing needed sanitizing, so nothing was discarded on that
+      gate. Repo-relevance: all nine are public-governance tooling content and belong in both
+      repositories. Entry 8 is the only one whose **instances** are `ose-private`-only — the 40
+      truncated-stem files — and it is scoped so that only the collision *shape* is described, never
+      a private path, with the rule gap itself routed to both repos.
+- [x] [AI] Record what `file-naming.md` still gets wrong, as the specification input for WS-B —
       acceptance: a WS-B input note exists in `learnings.md` or a `plans/backlog/` follow-up.
-- [ ] [AI] Record the withdrawal criterion WS-C applied — a rule that inspects one token, never reads
+      **Result:** both. `learnings.md` entry 6 states four defects, each derived from the enforcing
+      code rather than from reading the convention: (a) the gate exempts **eleven** basenames and the
+      convention names **two** — `AGENTS.md` and `CLAUDE.md` are in neither exception clause; (b)
+      `_index.md` contradicts the "no underscores" rule outright and is exempt in code with no
+      document saying so; (c) the scope clause "and similar locations" is unfalsifiable, and
+      `naming.rs`'s own doc comment quotes it back as its justification; (d) four of the six governed
+      extensions are unenforced — the validator skips anything not ending in `.md`. Entry 7 adds the
+      ordinal convention's self-contradicting worked-case row; entry 8 adds the collision gap. All
+      three are the specification input for
+      [`plans/backlog/file-naming-convention-rework/`](../../backlog/file-naming-convention-rework/README.md).
+- [x] [AI] Record the withdrawal criterion WS-C applied — a rule that inspects one token, never reads
       the file, and forces a code change to name a document — and audit the three surviving gated
       filename rules against it — acceptance: each of `md naming`, the `harness-bindings` mirror
       check, and the `specs coverage` mapping carries a keep-or-withdraw verdict with a reason.
-- [ ] [AI] Record the general defect WS-C's word-budget item exposed: a gate's `args` (exclude lists,
+      **Result:** criterion stated as a three-part conjunction in `learnings.md`, with a per-rule
+      verdict table. All three surviving rules are **KEEP**, and none fails on a single condition:
+      `md naming` fails (1) and (3) — its rule is generative, so any new name passes if lowercase
+      kebab; `harness bindings validate` fails all but (3) — it reads and diffs both files' contents;
+      `specs coverage` fails all three — the mapping is an explicit `coverage.projects[].specs`
+      registry, and it parses scenarios and `@covers` markers inside the files.
+      The audit is not vacuous: `md naming` was the closest call, and the distinction that saved it —
+      **generative** rules (a charset any name can satisfy) versus **enumerative** ones (only names
+      ending in a listed token pass) — is what WS-C actually established, not "filename rules are bad".
+- [x] [AI] Record the general defect WS-C's word-budget item exposed: a gate's `args` (exclude lists,
       thresholds) are part of the published rule, and a convention that documents only its surface
       globs misstates what is enforced — acceptance: the entry names at least one other gate whose
       `args` are undocumented, or states that none were found.
+      **Result:** one other gate found and named — **`md-naming`**. Its `args.exempt` globs
+      (`*__linkedin__*.md`, `CONTRIBUTING.md`) are documented nowhere: `file-naming.md` mentions
+      neither, and `markdown-quality-gates.md` opens by naming seven `ci-group: markdown` gates and
+      then documents only three, stopping after heading-hierarchy. So a double-underscore basename —
+      which the convention's own "no underscores" clause forbids — is silently allowed by registry
+      config no prose states.
+      All six gates carrying `args` were enumerated, not sampled: `governance-readme-index`,
+      `governance-readme-completeness`, `md-mermaid`, and `md-links` are documented; `governance-word-budget`
+      is documented as of WS-C; `md-naming` is not.
+      Two sub-lessons recorded separately: a **partial** reference page is worse than none (its
+      seven-gate opening sentence reads as a completeness claim), and `fail-kinds` can invert a gate's
+      apparent meaning — `governance-readme-index` prints `README INDEX AUDIT FAILED: 439 finding(s)`
+      and exits **0**.
 
 ### Phase 6 Gate
 
-- [ ] [AI] `learnings.md` has no untriaged entry, or carries the explicit
+- [x] [AI] `learnings.md` has no untriaged entry, or carries the explicit
       `No generalizable learnings — <reason>` escape.
-- [ ] [AI] Every large or code-bearing routing exists as a `plans/backlog/` folder.
-- [ ] [AI] The WS-B specification input is recorded.
+      **Result:** nine of nine triaged; the escape was not needed.
+- [x] [AI] Every large or code-bearing routing exists as a `plans/backlog/` folder.
+      **Result:** two folders, each with the full five-document layout —
+      `rhino-cli-governance-tooling-defects/` (entries 2–5, three workstreams, all code) and
+      `file-naming-convention-rework/` (entries 6–8, WS-B). Both are listed in
+      `plans/backlog/README.md`. Entry 1 is the only code-bearing learning **not** filed, because it
+      was fixed inline under the blocker carve-out; entry 9's remaining half folds into WS-B.
+- [x] [AI] The WS-B specification input is recorded.
+      **Result:** recorded in `learnings.md` entries 6–8 and carried into the WS-B backlog plan.
 
 > **Pause Safety**: all durable knowledge has a home outside this plan folder. Safe to stop.
 > To resume: re-read `learnings.md`.
