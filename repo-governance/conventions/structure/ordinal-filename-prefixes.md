@@ -49,23 +49,23 @@ For a step **range**, the ordinal equals the first step:
 `05-step-5-and-6-iteration-control-and-finalization.md` passes, becoming
 `05-iteration-control-and-finalization.md`.
 
-**Known deviation, not a second rule**: the last two rows' real application split 2-2 across four
-`*-quality-gate/` dirs — `in-the-field`/`swe-by-example` kept the ordinal as shown;
-`annotated-concept`/`primer` stripped it instead (`step-4-fixer.md`), matching row 44. Pre-existing
-drift, left for future housekeeping.
+**Known deviation, not a second rule**: four `*-quality-gate/` dirs split 2-2 —
+`in-the-field`/`swe-by-example` carry the prescribed `04-fixer.md`; `annotated-concept`/`primer`
+carry `step-4-fixer.md`, which no row licenses. Pre-existing drift.
 
 ## The Keep-Clause Is Not Vacuous
 
-E.g. `ayokoding-web-in-the-field-quality-gate/03-user-review.md` already carries an ordinal equal to
-its own step, no second colliding number — a real Passes instance.
-
-Confirm non-emptiness rather than trusting this:
+`ayokoding-web-in-the-field-quality-gate/03-user-review.md` passes: its ordinal is its own step,
+with no colliding second number. Confirm non-emptiness rather than trusting that:
 
 ```bash
-find repo-governance/workflows -name '[0-9][0-9]-*.md'
+find repo-governance/workflows -regex '.*/[0-9]+-[^/]*\.md'
 ```
 
-With no matches, the rule collapses into the ban it replaces. (Returns 8 files as of this writing.)
+No matches means the rule has collapsed into the ban it replaces. Returns 8 today.
+
+One or more digits, not two: a padded `[0-9][0-9]-` glob skips single-digit ordinals and can report
+a false zero. Both return 8 here; the sibling's padded form misses 65 files.
 
 ## Where Order Comes From
 
