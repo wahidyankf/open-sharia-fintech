@@ -97,7 +97,7 @@ the conservative default would lose information; or `ose-private` is unreachable
 | --- | --- | --- | --- |
 | — | Shared baseline | 0 | Specified |
 | WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified |
-| WS-C | Withdraw rules that obstruct: two suffix rules, one undocumented budget carve-out | 3 | Specified |
+| WS-C | Realign rules whose enforcement misfires: two withdrawn, one documented, one guarded | 3 | Specified |
 | WS-B | File Naming Convention rework | — | **Declared, not executable** |
 | — | Knowledge Capture, Archival, and integration (terminal) | 6–7 | Specified |
 
@@ -112,7 +112,7 @@ its requirements into `prd.md`.
 ## Parallelization Model
 
 - **Serial spine**: Phase 1 (convention and machinery) → Phase 2 (index tooling) → Phase 3
-  (withdraw obstructive rules) → Phase 4 (`ose-public` sweep) → Phase 5 (`ose-private`) → Phase 6
+  (realign misfiring rules) → Phase 4 (`ose-public` sweep) → Phase 5 (`ose-private`) → Phase 6
   (Knowledge Capture) → Phase 7 (archival and integration). Each builds what the next reads: the rule
   is what rename decisions are made against, the order-preserving generator is the precondition that
   makes renaming non-lossy, the withdrawal removes files the sweep would otherwise process, and
@@ -336,7 +336,7 @@ GREEN step, then a REFACTOR step.
 > **Pause Safety**: the generator preserves hand-authored order and a rename-aware mode exists. No
 > filename has changed. Safe to stop. To resume: `npx nx run rhino-cli:test`.
 
-## Phase 3: Withdraw Rules That Obstruct (WS-C)
+## Phase 3: Realign Rules Whose Enforcement Misfires (WS-C)
 
 _Suggested executor:_ `swe-rust-dev` for the deletions and gate registry; `repo-rules-maker` for the convention removals and the word-budget documentation; `repo-rules-fixer` for the prose sweep
 
@@ -440,6 +440,39 @@ validate` without acting would remove the only *gated* `.opencode/` mirror check
 - [ ] [AI] Regenerate mirrors: `npm run generate:bindings` — acceptance: `npm run validate:sync`
       exits 0 and mirrors land in the same commit as their `.claude/` sources.
 
+### Evidence placement: a stated rule with nothing behind it
+
+The [Evidence Capture Convention](../../../repo-governance/development/quality/evidence-capture/02-the-rule.md)
+already requires file-based evidence to live in **the plan's `evidence/` subfolder**, which moves
+with the plan to `plans/done/` on archival. It was violated anyway: 24 files landed in a repo-root
+`evidence/` across two unrelated commits (`eca01f826`, `ab842ee8e`) and sat there unreferenced.
+Nothing enforces *placement* — `plan-execution-checker` inspects what evidence contains, not where it
+lives.
+
+The stray directory was deleted, and a root-anchored `/evidence/` entry added to `.gitignore`,
+before this plan's execution began. This phase makes the convention state the rule the guard
+implements.
+
+**The guard's limits are known and accepted** (see D22). It blocks only the repo-root case; a
+misplaced `apps/foo/evidence/` is not caught. `git add -f` bypasses it. And it *hides* rather than
+reports — an agent writing to the root gets no signal, the files simply never stage. This was chosen
+over a staged-path gate for cost. If evidence is misplaced again somewhere the anchor does not
+reach, that is the signal to revisit.
+
+- [ ] [AI] Verify the guard is present and correctly anchored — acceptance:
+      `git check-ignore -q evidence/probe.png` succeeds **and**
+      `git check-ignore -q plans/in-progress/repo-rules-sweep/evidence/probe.png` fails. Both
+      directions must hold: an anchor that also ignored per-plan evidence folders would silently stop
+      every plan from committing its screenshots. Delete the probe files afterwards.
+- [ ] [AI] State the placement rule explicitly in
+      `repo-governance/development/quality/evidence-capture/02-the-rule.md`: a repo-root `evidence/`
+      is always a misplacement, the `.gitignore` anchor exists, and the anchor is the only mechanical
+      backstop — acceptance:
+      `grep -F 'gitignore' repo-governance/development/quality/evidence-capture/02-the-rule.md`
+      returns at least one match and the file still passes its 500-word budget.
+- [ ] [AI] Cross-link the guard from the temporary-files convention so an author looking for "where
+      do artifacts go" finds it — acceptance: `rhino md links validate` exits 0.
+
 ### The word budget that already does not apply to `plans/`
 
 `plans/**/README.md` is **already** outside the word budget: the `governance-word-budget` gate
@@ -477,6 +510,8 @@ trims a plan README to satisfy a budget that was never going to be measured.
 - [ ] [AI] `rhino md links validate` — exits 0; no document links to a deleted convention.
 - [ ] [AI] `rhino governance word-budget validate` — exits 0, and `governance-word-budget.md`
       documents the exclude list it has always applied.
+- [ ] [AI] `git check-ignore -q evidence/probe.png` succeeds and the same check on a per-plan
+      `evidence/` path fails — the anchor blocks the root and nothing else.
 - [ ] [AI] `npm run validate:sync` — exits 0, with the new `harness-sync` gate carrying it.
 - [ ] [AI] An agent file named `.claude/agents/repo/repo-rules-frobnicator.md` passes every gate —
       acceptance: `rhino gate run --surface=pre-push` exits 0 with that file present. This is the

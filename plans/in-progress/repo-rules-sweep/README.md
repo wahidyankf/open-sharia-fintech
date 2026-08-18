@@ -20,7 +20,7 @@ each workstream adds phases before Knowledge Capture, which stays terminal with 
 | ID | Workstream | Phases | Status |
 | --- | --- | --- | --- |
 | WS-A | Ordinal filename prefixes in governed trees | 1–2, 4–5 | Specified |
-| WS-C | Withdraw rules that obstruct | 3 | Specified |
+| WS-C | Realign rules whose enforcement misfires | 3 | Specified |
 | WS-B | File Naming Convention rework | — | **Declared, not executable** |
 
 ### WS-A — Ordinal filename prefixes
@@ -46,7 +46,7 @@ Three defects show the numbering has stopped paying for itself:
   itself as "no prefixes, abbreviations, or hierarchical encoding" while 84% of the tree it governs
   carries a prefix.
 
-### WS-C — Withdraw rules that obstruct
+### WS-C — Realign rules whose enforcement misfires
 
 Two of the five mechanically-enforced filename rules here check nothing but a basename's **last
 token** against a closed vocabulary:
@@ -68,7 +68,12 @@ validator has ever read.
 mandatory. WS-C runs before the sweep because these two convention trees hold thirteen numbered
 shards the sweep would otherwise rename first and delete second.
 
-Third, the **word budget on plan READMEs**, which already does not apply: the
+Third, **evidence placement**. The Evidence Capture Convention already requires file-based evidence
+to live in the plan's own `evidence/` subfolder, and 24 files landed in a repo-root `evidence/`
+anyway. The directory is deleted and a root-anchored `/evidence/` `.gitignore` entry now blocks the
+root case; WS-C makes the convention state the rule that guard implements.
+
+Fourth, the **word budget on plan READMEs**, which already does not apply: the
 `governance-word-budget` gate excludes `plans/`, `docs/`, and `specs/` by path prefix, but
 `governance-word-budget.md` publishes the 700/900/900 README row as universal and never says so. The
 rule is fine; its documentation causes authors to trim plan READMEs against a budget nothing

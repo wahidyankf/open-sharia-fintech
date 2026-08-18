@@ -118,6 +118,7 @@ skills, and conventions all link numbered shards.
 | D16 | Boundary rework is **conservative merge only** | An unsupervised agent gets the narrowest editorial mandate that still fixes the defect: merge only where titles continue each other and the combined text fits the budget. Everything else is renamed in place | Merge-wherever-it-fits — broad editorial authority over governance text with no human reviewer; rename-only — leaves fragments whose sole cohesion signal was the number |
 | D17 | `ose-private` gets its own PR and full review cycle | The `rhino-cli` command deletions there deserve the same scrutiny as `ose-public`'s, and symmetry keeps the two repos' histories legible | Direct push to `origin main` — lands deletions unreviewed; defer to a follow-up plan — leaves the repos divergent and `parity-manifest` reporting drift indefinitely |
 | D18 | The sweep commits **one commit per top-level subtree** | About six commits, each independently revertible and reviewable as a unit; bisect lands in a tree that can be reasoned about | One commit for everything — a bad rename anywhere forces reverting all 2092; one per directory — 176 commits nobody reads |
+| D22 | Evidence placement is guarded by a `.gitignore` anchor only | Maintainer's explicit choice over the recommended staged-path gate. One root-anchored `/evidence/` line, no code, no gate. **Known limits, accepted**: blocks only the repo root, `git add -f` bypasses it, and it hides rather than reports — an agent writing there gets no signal | A staged-path guard modeled on `env-staged-guard` — deterministic, zero legacy findings after the deletion, but costs a command, specs, and a gate entry; prose plus an AI-only checker category — prose alone already failed to hold this rule once |
 | D19 | PR review is scoped to artifacts, not renames | Nine specialists × 3 cycles over 2092 near-identical rename hunks buries real findings in volume. The renames are gate-verified; the reviewable artifacts are the `rhino-cli` diff, the convention text, `repo-config.yml`, and the rename maps | Full-diff review — mostly wasted attention; one cycle instead of three — weakens review depth on a PR that also deletes real code |
 | D20 | Phases 4 and 5 run strictly serial, no fan-out | Renaming and link rewriting are one coupled operation over a shared corpus; links cross every subtree boundary, so concurrent `git mv` plus `rewrite-paths` is a race no acceptance clause here would catch | Fan out across top-level subtrees — faster, but the rewrite pass still shares state across the boundary that was supposed to isolate the agents |
 | D21 | Iron Rule 3 applies in full — fix every preexisting failure, unscoped | Maintainer's explicit choice over the recommended alternative of scoping fixes to this plan's own surfaces. Accepted cost: an unattended run may spend substantial budget provisioning a toolchain this plan never uses | Scope to Rust/markdown/config and record the rest — declined; halt and surface — reintroduces the human-in-the-loop stop this plan exists to remove |
@@ -137,6 +138,7 @@ skills, and conventions all link numbered shards.
 │   │   └── README.md [E] — index the new convention
 │   ├── conventions/**, development/**, workflows/**, principles/**, vision/**, glossary/** [E] —
 │   │   the sweep: every non-qualifying file renamed, boundaries reworked, indexes path-rewritten
+│   ├── development/quality/evidence-capture/02-the-rule.md [E] — state the placement rule
 │   ├── conventions/structure/governance-word-budget.md [E] — publish the exclude list
 │   ├── conventions/structure/agent-naming.md + agent-naming/ (7 files) [D] — rule withdrawn
 │   ├── conventions/structure/workflow-naming.md + workflow-naming/ (6 files) [D] — rule withdrawn
@@ -160,6 +162,7 @@ skills, and conventions all link numbered shards.
 │   ├── src/cli.rs [E], src/commands.rs [E] — subcommands, dispatch arms, three stale parser tests
 │   ├── tests/agent_naming_validator.rs [D] and 12 golden-master fixtures [D] — md-naming* kept
 │   └── (build proves the deletion: no dangling module reference)
+├── .gitignore [E] — root-anchored /evidence/ guard
 ├── repo-config.yml [E] — drop harness-naming + workflows-naming gates, add harness-sync
 ├── AGENTS.md [E] — drop the `<domain>-<role>` naming claim
 ├── specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature [E]
