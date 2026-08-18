@@ -54,7 +54,7 @@ than inventing an answer.
 
 | plan-execution stop | Resolution for this plan |
 | --- | --- |
-| `[HUMAN]` / `[AI+HUMAN]` checkbox (Iron Rule 2) | **None exist.** All 123 checkboxes are `[AI]`. |
+| `[HUMAN]` / `[AI+HUMAN]` checkbox (Iron Rule 2) | **None exist.** Every checkbox is `[AI]` — verify with `grep -c '^\s*- \[ \] \[HUMAN\]' delivery.md` returning 0, rather than trusting a count that drifts as the plan is edited. |
 | Rule-15 three-tester web-UI retest (shard 36) | **Not applicable — no rendered surface.** This plan changes markdown, `repo-config.yml`, and Rust CLI internals. It ships no route, component, or template. Do not invoke `web-exploratory-tester`, `web-usability-tester`, or `web-design-tester`. |
 | Rule-16 API retest (shard 37) | **Not applicable — no HTTP surface.** No REST, GraphQL, or tRPC endpoint is added or changed. Do not invoke `api-exploratory-tester`. |
 | Rule-1 production visual sign-off (shard 36) | **Not applicable** — same reason as rule-15. |
@@ -78,7 +78,12 @@ than inventing an answer.
 3. **Commit shape → one commit per top-level subtree.** `repo-governance/conventions/`,
    `repo-governance/development/`, `repo-governance/workflows/`, `repo-governance/principles/`,
    `repo-governance/vision/`, `.claude/skills/`. Roughly six commits, each independently revertible.
-4. **When 1 and 2 disagree** — a run that should be merged sits inside a directory that should keep
+4. **Preexisting failures → fix everything, no scoping.** Iron Rule 3 applies in full. If Phase 0's
+   `npm run doctor` or any gate surfaces a failure in a language this plan never touches — Flutter,
+   F#, Elixir, C# — fix it rather than record and continue. Commit those fixes separately from plan
+   work per Iron Rule 7. **This is a deliberate choice with a known cost**: an unattended run can
+   spend substantial budget provisioning a toolchain this plan does not use, and that is accepted.
+5. **When 1 and 2 disagree** — a run that should be merged sits inside a directory that should keep
    its ordinals — the directory-level verdict wins and the run is renamed in place, not merged.
 
 **Legitimate stops that remain.** Autonomy is not a mandate to push through a genuine blocker. Stop
@@ -115,9 +120,12 @@ its requirements into `prd.md`.
 - **No independent branch.** Every phase writes to `repo-governance/` or `.claude/`, or depends on a
   tooling change, so nothing fans out. This is a genuine serial chain, not a list that happens to be
   ordered.
-- **Chosen N**: 3 (the repository default). Within Phase 4 the per-directory rename work may fan out
-  across N agents, since directories do not read each other's output; the rename map is the shared
-  artifact and is written before the fan-out, not during it.
+- **Chosen N**: 3 (the repository default) — but **Phase 4 and Phase 5 run strictly serial, no
+  fan-out**. Renaming and link rewriting are one coupled operation over a shared corpus: links cross
+  every subtree boundary, so concurrent `git mv` plus `rewrite-paths` against overlapping targets is
+  a race none of this plan's acceptance clauses would detect. A single agent sweeps directory by
+  directory, in the commit order named in the tie-breakers. N=3 still applies to genuinely
+  independent work elsewhere.
 - **Terminal node**: Phase 7 depends on every other phase. Both PRs open there, and no worktree is
   removed until both have merged.
 
@@ -640,6 +648,14 @@ it does not create it.
       reports `false`. **Do not run `gh pr create` for `ose-public`**; it would fail.
 - [ ] [AI] Open the `ose-private` PR — acceptance: `gh pr view` in `ose-private` shows an open PR
       against its `main`.
+- [ ] [AI] Brief `pr-review-scout-maker` to scope the specialists **to the artifacts, not the
+      renames**: the `apps/rhino-cli/` diff, the convention text, `repo-config.yml`, and the
+      `renames-*.tsv` maps. The ~2092 mechanical renames are gate-verified — `md links validate`,
+      `readme-index validate`, `word-budget validate`, and `validate:sync` all exit 0 — and are
+      excluded from specialist attention so real findings are not drowned in near-identical rename
+      hunks. This is the review-side expression of the compensating controls in `tech-docs.md` §10 —
+      acceptance: the scout's context brief names the four artifact surfaces and states the rename
+      exclusion.
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle on each PR per
       [pr-review-quality-gate](../../../repo-governance/workflows/pr/pr-review-quality-gate.md),
       supplying the per-directory rename maps as the review artifact — acceptance: N = 3 cycles
