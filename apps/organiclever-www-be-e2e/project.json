@@ -14,7 +14,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx oxlint@latest .",
+        "command": "npx oxlint .",
         "cwd": "apps/organiclever-www-be-e2e"
       }
     },

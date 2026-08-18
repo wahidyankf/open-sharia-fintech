@@ -47,7 +47,7 @@
       "cache": true
     },
     "lint": {
-      "command": "npx oxlint@latest --jsx-a11y-plugin -c oxlint.json --tsconfig tsconfig.json src/",
+      "command": "npx oxlint --jsx-a11y-plugin -c oxlint.json --tsconfig tsconfig.json src/",
       "options": {
         "cwd": "apps/ose-www"
       },

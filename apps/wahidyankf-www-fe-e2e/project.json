@@ -22,7 +22,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx oxlint@latest .",
+        "command": "npx oxlint .",
         "cwd": "{projectRoot}"
       }
     },
