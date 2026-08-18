@@ -1,7 +1,0 @@
-just-enough-c
-just-enough-cpp
-linux-os
-windows-os
-system-programming
-just-enough-rust
-modern-system-programming
