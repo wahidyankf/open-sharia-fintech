@@ -919,8 +919,6 @@ gates:
     args:
       exclude:
         - plans/done
-        - apps/ayokoding-www/content
-        - apps/ose-www/content
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }
