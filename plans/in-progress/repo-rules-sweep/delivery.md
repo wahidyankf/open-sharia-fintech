@@ -749,61 +749,164 @@ here), `workflow-naming/` holds 4 (6 here), the evidence-capture rule lives in
 list carries an extra `infra/on-premise/terraform/.terraform/` entry. Copying this repo's list there
 would publish a wrong list — the exact defect WS-C exists to fix.
 
-- [ ] [AI] Re-derive every `ose-private` surface by command before editing anything, and fail loudly
+- [x] [AI] Re-derive every `ose-private` surface by command before editing anything, and fail loudly
       if one is missing rather than proceeding on an assumed path — acceptance: each of
       `repo-governance/conventions/structure/{agent-naming,workflow-naming,governance-word-budget,file-naming}.md`,
       the `agent-naming/` and `workflow-naming/` shard directories, the four `apps/rhino-cli/`
       naming sources, the `harness-naming` and `workflows-naming` gate ids in `repo-config.yml`, and
       the `repo-governance/development/quality/evidence-capture/` shard that states the placement
       rule are each confirmed present with their actual path and file count recorded.
-- [ ] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
+      **Result:** every surface confirmed present, recorded with path and count in
+      `local-tmp/repo-rules-sweep/private-surfaces.md`. `ose-private` is a **normal** (non-bare)
+      checkout at `884a330f6`, level with `origin/main`. Key derived differences from `ose-public`:
+      `agent-naming/` holds 3 files (incl. README), `workflow-naming/` holds 4, the placement shard is
+      `evidence-capture/01-what-goes-where.md` (there is no `02-the-rule.md` there), `.gitignore`
+      carries **no** `/evidence/` guard, and the word-budget exclude list has **six** prefixes, not
+      seven — it alone carries `infra/on-premise/terraform/.terraform/` and it lacks `.fvm/` and
+      `.fvm-cache/`. Numbered-markdown baseline: **1961** files.
+- [x] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
       from its `main` — acceptance: `git worktree list` in `ose-private` shows the path.
-- [ ] [AI] Apply the Phase 2 and Phase 3 `apps/rhino-cli/` changes byte-identically — acceptance:
+      **Result:** `/Users/wkf/ose-projects/ose-private/worktrees/repo-rules-sweep  884a330f6 [repo-rules-sweep]`.
+- [x] [AI] Apply the Phase 2 and Phase 3 `apps/rhino-cli/` changes byte-identically — acceptance:
       `diff -r` prints nothing for `src/application/governance/`, `src/commands/`, `src/internal/`,
       and `src/application/` between the two repositories, and neither repository still contains
       `naming.rs` under `src/internal/`. Do **not** blanket-converge the two `rhino-cli` trees: the
       parity boundary is not the whole app and each repository legitimately carries files the other
       does not.
-- [ ] [AI] Regenerate and stage `ose-private`'s parity manifest with `rhino parity manifest generate`
+      **Result:** `diff -rq` over the whole of `apps/rhino-cli/src` **and** `apps/rhino-cli/tests`
+      prints nothing (exit 0) — a stronger check than the four directories this clause names. Neither
+      repository still has `src/internal/naming.rs` or `src/application/naming/`.
+      **Method, chosen to avoid blanket convergence:** before copying anything, every file that
+      differed between the repos was compared against `ose-public`'s pre-plan baseline
+      (`d41ea40c4`, the merge-base with `origin/main`). **All 12** differing files were byte-identical
+      to that baseline, proving the entire delta was this branch's own work and none of it was
+      independent `ose-private` divergence. Only then were the branch's 20 added/modified files copied
+      and its 28 deletions applied. Note the port also carries `src/domain/stdio_blocking.rs` and the
+      EAGAIN fix (`7958ae19d`), a mid-plan `rhino-cli` change that is inside the parity boundary.
+- [x] [AI] Regenerate and stage `ose-private`'s parity manifest with `rhino parity manifest generate`
       — acceptance: `rhino parity manifest validate` exits 0 there.
-- [ ] [AI] Apply the matching `specs/apps/rhino/` scenario additions — acceptance: the feature files
+      **Result:** exit 0 there, and exit 0 in `ose-public` too. `generate` refuses while a covered file
+      differs from the index, so `apps/rhino-cli/`, `specs/`, and `repo-config.yml` were staged first.
+- [x] [AI] Apply the matching `specs/apps/rhino/` scenario additions — acceptance: the feature files
       are byte-identical across both repositories.
-- [ ] [AI] Apply the Phase 1 convention and machinery edits, adapted to `ose-private`'s own paths —
+      **Result:** `diff -rq specs/apps/rhino/behavior` between the two repositories prints nothing.
+      Same baseline check as P5.3 first: all 4 changed spec files matched `ose-public`'s pre-plan
+      baseline in `ose-private`, and all 4 deletions were present to delete.
+      **Left alone, deliberately:** 4 files outside `behavior/` still differ
+      (`product/overview.md`, `system-context/context.md`, `containers/container.md`,
+      `components/cli/component-cli.md`). That is pre-existing divergence — `ose-private` carries a
+      stale paragraph calling `rhino-cli` "a Go CLI tool" — not something this plan introduced, and
+      converging it would be exactly the blanket convergence the Phase 5 preamble forbids.
+- [x] [AI] Apply the Phase 1 convention and machinery edits, adapted to `ose-private`'s own paths —
       acceptance: the ordinal-prefix convention exists there and its `file-naming.md` carries the
       same reconciliation.
-- [ ] [AI] Apply the Phase 3 withdrawal: delete the same two convention trees, the same `rhino-cli`
+      **Result:** `repo-governance/conventions/structure/ordinal-filename-prefixes.md` created there
+      (497 whole-file words), indexed in that tree's `README.md`, and `file-naming.md` carries the same
+      `## Withdrawn Rules` section plus both links to the new convention (487 words, trimmed to fit its
+      own budget — its prose was more verbose than `ose-public`'s).
+      **Derived, not copied:** the convention's non-vacuity section had to be rewritten. `ose-public`
+      cites 8 live keep-clause instances; `ose-private` has **zero** — every numbered basename under
+      its `repo-governance/workflows/` fails on a second embedded number. The section now says so
+      honestly and carries a re-check script, rather than importing `ose-public`'s claim.
+- [x] [AI] Apply the Phase 3 withdrawal: delete the same two convention trees, the same `rhino-cli`
       commands and shared `naming` modules, and the same gate entries. No new gate is added, in either
       repository — acceptance: `rhino harness naming validate` exits non-zero in `ose-private` too,
       and `rhino harness bindings validate` still exits 0 there, confirming `.opencode/` and
       `.cursor/` mirror-drift coverage survives without a new gate.
-- [ ] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
+      **Result:** `harness naming validate` exits **2** in `ose-private`; `harness bindings validate`
+      exits **0** after regenerating mirrors; `repo-config validate` and `gate validate` both exit 0;
+      `npm run validate:sync` reports 58/58 passed. Deleted there: `agent-naming.md` + its 3-file shard
+      dir, `workflow-naming.md` + its 4-file shard dir, both gate entries in `repo-config.yml`.
+      **Prose sweep, enumerated by command rather than copied from Phase 3's list** — `ose-private`'s
+      sites differ. 13 Related/Conventions-Implemented bullets naming a deleted convention removed
+      across 12 files; `workflows/README.md`'s `## Naming Rule` rewritten to `## Naming`;
+      `conventions/structure/README.md` re-indexed; `AGENTS.md` dropped `<domain>-<role>`;
+      `ai-agents/11-agent-naming-conventions.md` given the withdrawal note;
+      `nx-target-naming/03-scheme-3-…md` moved both commands into its Removed table;
+      `docs/reference/rhino-cli-command-triage.md` rows 20/29 marked removed with item 6 and the
+      Action paragraph rewritten; `docs/reference/sdlc-gate-standard.md` dropped pre-push rows 4–5 and
+      renumbered 6–8 → 4–6. Left alone as a different, still-live rule: every
+      `github-actions-workflow-naming` reference. Left alone as historical record: `plans/done/`
+      mentions and the `plan-domain-parity-decisions.md` narrative (its dead *link* was removed).
+- [x] [AI] Run the Phase 4 sweep procedure over `ose-private`'s `repo-governance/` and `.claude/`,
       emitting `renames-private.tsv` — acceptance: the same five gate commands exit 0 in
       `ose-private`.
-- [ ] [AI] Document `ose-private`'s word-budget exclude list in its own
+      **Result:** all five exit 0 — `md links validate --exclude plans/done`,
+      `governance readme-index validate` (gate args), `governance word-budget validate`,
+      `npm run validate:sync`, `harness bindings validate`. Full record in
+      `local-tmp/repo-rules-sweep/private-sweep-result.md`.
+      **The sweep did NOT transfer cleanly, and the outcome differs from `ose-public` on purpose.**
+      1905 files and 8 directories renamed; **46** numbered paths remain there against 8 here.
+      (a) `ose-private` also has **numbered directories** — 11 of them; `ose-public` had none.
+      (b) 40 files across 18 groups have byte-identical stems truncated to a fixed width, differing
+      only by ordinal (`04-anti-pattern-10-…-tha.md` / `05-anti-pattern-10-…-tha.md`). Stripping
+      collides. The convention has no answer: they are not steps, yet the ordinal is their only
+      disambiguator. Giving them distinct names is authoring, not a sweep, so they keep their
+      ordinals and the truncated-stem defect is routed to Phase 6.
+      (c) Renaming 3 numbered directories broke the validator's `X.md` ↔ `X/README.md` pairing with
+      their kept parent files, producing 5 new `orphan` findings. Proven new against a pristine
+      `main` worktree (baseline: **0** findings), then reverted.
+      (d) `rewrite-paths` keys by basename, so it cannot repoint a **directory** segment; the 8
+      directory renames needed a separate path-level pass over every tracked `.md`.
+- [x] [AI] Document `ose-private`'s word-budget exclude list in its own
       `governance-word-budget.md`, derived from **its** `repo-config.yml` — acceptance:
       `grep -F 'terraform' repo-governance/conventions/structure/governance-word-budget.md` returns a
       match there and does **not** in `ose-public`, proving each repo documents its own list rather
       than a copied one.
-- [ ] [AI] State the evidence placement rule in `ose-private`'s evidence-capture convention, in
+      **Result:** both directions hold — 1 match in `ose-private`, **0** in `ose-public`.
+      The lists are genuinely different, not near-copies: `ose-private` registers **six** prefixes
+      including `infra/on-premise/terraform/.terraform/` and no `.fvm`; `ose-public` registers
+      **seven** including `.fvm/` and `.fvm-cache/`. Each was re-derived from that repository's own
+      `repo-config.yml`, never transcribed from the other. New child shard
+      `governance-word-budget/excluded-prefixes.md` (294 words) carries the table and says in prose
+      that the list is this repository's own.
+- [x] [AI] State the evidence placement rule in `ose-private`'s evidence-capture convention, in
       whichever shard the re-derivation step identified — acceptance: that shard mentions the
       `.gitignore` anchor and the plan-subfolder rule.
-- [ ] [AI] Add the root-anchored `/evidence/` guard to `ose-private`'s `.gitignore`, which does not
+      **Result:** stated in `repo-governance/development/quality/evidence-capture/what-goes-where.md`
+      (the shard the P5.1 re-derivation named — post-sweep it lost its `01-` ordinal). Both facts
+      present: the plan-subfolder rule (`plans/{backlog,in-progress,done}/<slug>/evidence/`) and the
+      root-anchored `.gitignore` backstop with its three stated limits. 420 words, under budget.
+- [x] [AI] Add the root-anchored `/evidence/` guard to `ose-private`'s `.gitignore`, which does not
       have it — acceptance: in `ose-private`, `git check-ignore -q evidence/probe.png` succeeds and
       the same check on a per-plan `evidence/` path fails. Both directions must hold. No repo-root
       `evidence/` directory exists there, so nothing is deleted. Delete the probe files afterwards.
-- [ ] [AI] Confirm the maintainer experience actually matches: in **both** repositories a probe agent
+      **Result:** both directions hold — `evidence/probe.png` is ignored, and
+      `plans/in-progress/foo/evidence/probe.png` is **not**. The leading slash is what separates
+      them. No repo-root `evidence/` directory existed, so nothing was deleted. Probe paths were
+      never written to disk — `git check-ignore` tests the pattern, not the file.
+- [x] [AI] Confirm the maintainer experience actually matches: in **both** repositories a probe agent
       file named `repo-rules-frobnicator.md` passes `rhino gate run --surface=pre-push`, and
       `rhino harness naming validate` exits non-zero — acceptance: identical outcomes in both.
       Delete the probe files afterwards.
-- [ ] [AI] Run the `parity-manifest` gate in both repositories — acceptance: both exit 0.
-- [ ] [AI] Run `npx nx run rhino-cli:test` in `ose-private` — acceptance: exits 0.
+      **Result:** identical in both. `harness naming validate` exits **2** (command gone) in each.
+      With the probe planted and indexed, every `rhino-cli` gate on the pre-push surface was run
+      individually — env, md-links, readme-index, harness-duplication, parity-manifest, both
+      vendor-audit gates, convention-license, harness-bindings, word-budget — all exit 0, and
+      `grep -ci frobnicator` over each gate's own output is **0**. Probes and their generated mirrors
+      deleted; `find . -name '*frobnicator*'` returns nothing in either repository.
+      **Method note:** the first run reported exit 2 for all ten gates. That was zsh not word-splitting
+      an unquoted command string, not a real failure — re-run with proper argv.
+- [x] [AI] Run the `parity-manifest` gate in both repositories — acceptance: both exit 0.
+      **Result:** both exit 0.
+- [x] [AI] Run `npx nx run rhino-cli:test` in `ose-private` — acceptance: exits 0.
+      **Deviation (same as P2.11 here):** `rhino-cli:test` is not a real Nx target in either
+      repository. Ran the targets that exist: `test:quick` exit 0, `test:integration` exit 0
+      (3 features, 17 scenarios, 64 steps, all passing — this is the target that actually exercises
+      cucumber and the golden masters the withdrawal deleted fixtures from), `lint` exit 0.
 
 ### Phase 5 Gate
 
-- [ ] [AI] `parity-manifest` exits 0 in both repositories.
-- [ ] [AI] `rhino md links validate`, `rhino governance readme-index validate`,
+- [x] [AI] `parity-manifest` exits 0 in both repositories.
+      **Result:** exit 0 in both.
+- [x] [AI] `rhino md links validate`, `rhino governance readme-index validate`,
       `rhino governance word-budget validate`, `npm run validate:sync` — all exit 0 in `ose-private`.
-- [ ] [AI] `npx nx run rhino-cli:test` — exits 0 in `ose-private`.
+      **Result:** all exit 0 there. `md links validate` needs the gate's own `--exclude plans/done`
+      to match what CI runs; the bare command reports pre-existing archived-plan breakage this branch
+      did not cause. `readme-index validate` likewise runs with the gate's registered
+      `--fail-kinds missing,orphan,ghost`.
+- [x] [AI] `npx nx run rhino-cli:test` — exits 0 in `ose-private`.
+      **Result:** substituted as in P5.14 — `test:quick`, `test:integration`, `lint` all exit 0.
 
 > **Pause Safety**: both repositories are swept and their tooling is byte-identical. Both branches
 > hold committed, unpushed work. Safe to stop. To resume: run `parity-manifest` in either repository.
