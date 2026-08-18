@@ -15,54 +15,57 @@ created: 2026-08-15
 # Governance README Completeness Convention
 
 **Every directory carries a literal `README.md` — no exception.** A sibling `<dir-name>.md`
-progressive-disclosure parent no longer excuses a directory from having one; the former
-split-directory exemption is removed. That index must link every sibling `.md` file and every
-subdirectory. `rhino-cli governance readme-index validate` enforces this via two
-separately-registered `gates:` entries that invoke the **same** underlying binary
-(`governance readme-index validate`) with different `args`.
+progressive-disclosure parent no longer excuses one; the former split-directory exemption is
+removed. That index must link every sibling `.md` file and every subdirectory. Two
+separately-registered `gates:` entries enforce it, both invoking the same
+`governance readme-index validate` binary with different `args`.
 
-A `<dir-name>.md` parent stays audited as a second index over the same contents, and linking it
+A `<dir-name>.md` parent stays audited as a second index over the same contents; linking it
 satisfies the subdirectory requirement — no index carries two links to one target.
 
 ## The Two Gates
 
 | Gate id                          | Finding kinds                | Scan scope (`--paths`)                            | Armed                                             |
 | -------------------------------- | ---------------------------- | ------------------------------------------------- | ------------------------------------------------- |
-| `governance-readme-index`        | `missing`, `orphan`, `ghost` | `docs/`, `repo-governance/`, `specs/`, `.claude/` | Continuously, since Phase 1                       |
+| `governance-readme-index`        | `missing`, `orphan`, `ghost` | `docs/`, `repo-governance/`, `specs/`, `.claude/` | Continuous since Phase 1                          |
 | `governance-readme-completeness` | `missing`, `unannotated`     | `repo-governance/`, `.claude/`, `.codex/`, `.pi/` | Phase 9 (`ose-public`) / Phase 16 (`ose-private`) |
 
 Structural enforcement covers every content tree. Annotation enforcement stays scoped to trees that
 can satisfy it: `docs/` indexes are partly hand-designed tables and `specs/` targets carry no
-frontmatter, so no annotation is derivable without a content restructure. Raising those two is
-tracked separately.
+frontmatter, so no annotation is derivable. Raising those two is tracked separately.
 
-Generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are deliberately outside both
-gates — `harness bindings generate` emits them from `.claude/`, so any index written into them is
-regenerated away. `.claude/`, their source, is scanned instead.
+Generated mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) sit outside both gates.
+`harness bindings generate` emits them from `.claude/`, so any index written there is regenerated
+away. `.claude/`, their source, is scanned instead.
 
 ## Finding Kinds
 
-- `orphan` — a sibling `.md` file or subdirectory README exists but is not linked from the index.
+- `orphan` — a sibling `.md` file or subdirectory README exists but is unlinked.
 - `ghost` — the index links a target that does not exist on disk.
-- `missing` — a directory needs an index (per the rule above) but has none.
+- `missing` — a directory needs an index but has none.
 - `unannotated` — the index links a target with no `- [<title>](<path>) — <description>
-<when_to_use>` annotation on that line (an em-dash or `--` followed by non-whitespace text).
+<when_to_use>` annotation (an em-dash or `--` followed by non-whitespace text).
 
 ## Remediation
 
-Run `rhino-cli governance readme-index generate <dir>` to scaffold a compliant `README.md` for a
-directory reported `missing`. For `orphan`/`ghost`/`unannotated`, hand-edit the index: add the
-missing link, remove the dangling one, or append `— <description>` derived from the target's own
-frontmatter `description` (and `when_to_use` where the target carries one). An annotation that
-merely repeats text already stated in the surrounding sentence or an adjacent table column adds no
-navigational value — write it to convey information the reader doesn't already have.
+`readme-index generate <dir>` behaves two ways. Given **no index** it scaffolds one in sorted order
+— the `missing` remedy. Given one, it **edits, never rebuilds**: authored order, annotations,
+headings, and prose survive byte-for-byte; only absent targets are spliced in. A target linked
+anywhere, table cell included, counts as present, so `generate` is a no-op on a conforming tree.
+
+`readme-index rewrite-paths --map <tsv>` repoints targets after a rename from `old<TAB>new` rows,
+rewriting only what sits inside `](...)`. A malformed row errors rather than dropping a rename.
+
+Fix `orphan`/`ghost`/`unannotated` by hand: add the link, drop the dangling one, or append
+`— <description>` from the target's frontmatter (plus `when_to_use` if present). An annotation
+repeating its surroundings adds nothing.
 
 ## Enforcement Points
 
-Both gates run at pre-push (changed-path gated) and in the PR quality gate (CI). Neither runs at
-pre-commit — a whole-tree scan on every commit buys no additional coverage over pre-push/CI.
+Both gates run at pre-push (changed-path gated) and in CI's PR quality gate. Neither runs at
+pre-commit — a whole-tree scan per commit adds no coverage over pre-push/CI.
 
 ## Updating Scope
 
-Edit the `args.paths`/`args.exclude`/`trigger` lists on the relevant `gates:` entry in
-`repo-config.yml` and record the rationale as a YAML comment.
+Edit `args.paths`/`args.exclude`/`trigger` on the relevant `gates:` entry in `repo-config.yml`,
+recording the rationale as a YAML comment.
