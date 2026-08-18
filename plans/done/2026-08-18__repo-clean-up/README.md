@@ -68,7 +68,7 @@ not exist. All 47 other files referencing that course use `../sql-essentials/lea
   `Scenario: JSON output produces structured results` has no equivalent in the successor
   `specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-links.feature`. The behaviour
   itself is live and unit-tested (`apps/rhino-cli/src/commands/md_validate_links.rs:47`;
-  `links.rs:966-972,1028-1039`) — only the BDD scenario is gone. Restoring it is left out of this
+  `links.rs:966-972,1030-1042`) — only the BDD scenario is gone. Restoring it is left out of this
   plan because `docs-validate-links.feature` is line 571 of
   `apps/rhino-cli/parity-manifest.sha256`, so editing it opens the same four-repo parity obligation
   ruled out of scope above for `apps/rhino-cli/**` generally. Filed as
