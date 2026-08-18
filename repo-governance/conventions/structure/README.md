@@ -17,7 +17,6 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 
 ## Documents
 
-- [Agent Naming Convention](./agent-naming.md) — Single rule for agent filename structure across `.claude/agents` and `.opencode/agent`. Use when naming or renaming an agent definition file.
 - [App README vs Specs Convention](./app-readme-vs-specs.md) — Defines what content lives in app/infra READMEs vs specs/, the C4-aware five-folder spec tree shape, and the PM-readability contract for specs/. Use when deciding whether content belongs in an app README or in its specs/ tree, or when shaping a specs/apps/ tree.
 - [Deterministic vs AI Validation Split Convention](./deterministic-vs-ai-validation-split.md) — Defines which governance validation layer (deterministic preflight vs AI checker) owns which category, and the contract between them. Use when deciding whether a governance validation rule belongs in the deterministic preflight or the AI checker.
 - [Diátaxis Framework](./diataxis-framework.md) — Understanding the Diátaxis documentation framework used in open-sharia-enterprise. Use when deciding where new documentation belongs or organizing content by Diátaxis category.
@@ -36,7 +35,6 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 - [Post-Mortem Convention](./post-mortems.md) — Standards for blameless incident post-mortems — location, naming, mandatory sections, severity scale, and action-item tracking. Read this when you need to write, name, or review a blameless incident post-mortem.
 - [Programming Language Documentation Separation Convention](./programming-language-docs-separation.md) — Establishes the relationship between docs/explanation/ style guides and ayokoding-www educational content. Read this when deciding whether new programming-language content belongs in a style guide or in ayokoding-www.
 - [Specs Directory Structure Convention](./specs-directory-structure.md) — Canonical C4-aware five-folder directory structure for specs/ — Gherkin feature files, C4 diagrams, DDD artifacts, and OpenAPI contracts. Read this when placing a spec artifact or scaffolding specs/ for a new app or library.
-- [Workflow Naming Convention](./workflow-naming.md) — Single rule for workflow filename structure under repo-governance/workflows. Read this when naming a new workflow file, or validating an existing one.
 - [Worktree Path Convention](./worktree-path.md) — Defines the worktree directory structure, naming convention, and gitignore requirements for claude --worktree routing. Read this when creating, naming, or cleaning up a worktree, or configuring the WorktreeCreate hook.
 
 ## Related Documentation
