@@ -158,6 +158,12 @@ _Suggested executor:_ `repo-setup-manager`
       - `find . -name '*.md' -not -path './node_modules/*' | grep -E '/[0-9]{2}[a-z]-'`
       - `find repo-governance/workflows -name '*.md' | grep -E '/[0-9]{2}-phase-[0-9]+'`
       - `grep -rEn '\]\([^)]*/[0-9]{2}-[a-z0-9-]+\.md' --exclude-dir=node_modules --exclude-dir=.git . | wc -l`
+- [ ] [AI] Record the `md-naming*` golden-master fixture count into
+      `local-tmp/repo-rules-sweep/baseline-public.md` as a sixth figure —
+      `find apps/rhino-cli/tests/golden-master -name 'md-naming*' | wc -l` — acceptance: the
+      number is written to that file. Phase 3 asserts this count is unchanged after deleting the
+      naming-command fixtures, so the baseline must exist before Phase 3 runs. Verified
+      2026-08-18: the count is 6.
 - [ ] [AI] Record the same five figures for `ose-private` into
       `local-tmp/repo-rules-sweep/baseline-private.md` — acceptance: recorded; at authoring time
       `repo-governance` was 1704 of 2131 and `.claude` was 217.
