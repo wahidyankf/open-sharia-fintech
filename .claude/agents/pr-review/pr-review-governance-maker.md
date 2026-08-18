@@ -64,7 +64,7 @@ deviation; `LOW` = a cosmetic structure preference with no enforceable rule behi
 [File Naming](../../../repo-governance/conventions/structure/file-naming.md),
 [Feature Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md)
 (spec-file-presence half of ruling (d)),
-[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[nine-discipline table](../../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-instruction-maker`,
 `pr-review-synthesis-maker`, `pr-review-fixer`, `web-researcher`, `repo-rules-checker`.

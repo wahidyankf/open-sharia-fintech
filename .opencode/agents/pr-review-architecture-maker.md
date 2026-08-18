@@ -68,7 +68,7 @@ style preference with no measurable consequence.
 
 ## Reference Documentation
 
-[Nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[Nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [PR Reviewer-Discipline Convention](../../repo-governance/development/quality/pr-review-disciplines.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related
 agents: `pr-review-logic-maker`, `pr-review-governance-maker`, `pr-review-synthesis-maker`,

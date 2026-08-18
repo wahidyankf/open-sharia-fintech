@@ -55,5 +55,5 @@ See [Traps and Termination Audit](./reference/traps-and-termination-audit.md) fo
 ## Related
 
 - [`plan-ideas-grooming` workflow](../../../repo-governance/workflows/plan/plan-ideas-grooming.md) — the normative procedure.
-- [Ideas Folder (Two-Pagers) convention](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) — the template every survivor is reshaped against.
+- [Ideas Folder (Two-Pagers) convention](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers) — the template every survivor is reshaped against.
 - [`plan-idea-promotion-planning`](../../../repo-governance/workflows/plan/plan-idea-promotion-planning.md) — promotes a groomed idea to a plan; this Skill never does.

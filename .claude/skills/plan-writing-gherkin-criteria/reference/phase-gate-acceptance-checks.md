@@ -9,5 +9,5 @@ When writing phase gate items, apply the same Given-When-Then reasoning used for
 scenarios — ask "what is the precondition, what command runs, and what does success look like?" —
 then express it as a single runnable check rather than a full scenario block.
 
-See [Plans Organization Convention §Phases as Natural Pauses With Clear Gates](../../../../repo-governance/conventions/structure/plans/20-phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule)
+See [Plans Organization Convention §Phases as Natural Pauses With Clear Gates](../../../../repo-governance/conventions/structure/plans/phases-as-natural-pauses.md#phases-as-natural-pauses-with-clear-gates-hard-rule)
 for the gate structure rule and worked example.

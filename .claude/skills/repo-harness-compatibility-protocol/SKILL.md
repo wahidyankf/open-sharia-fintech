@@ -14,18 +14,18 @@ detects; the fixer remediates what's safely mechanical and flags the rest for hu
 
 ## Reference Modules
 
-- [01-phase0-parity-invariants.md](./reference/01-phase0-parity-invariants.md) — the five
+- [01-phase0-parity-invariants.md](./reference/phase0-parity-invariants.md) — the five
   invariants, each with detection tool/pass/fail/criticality AND fix scope (auto-fixable vs.
   human-required)
-- [02-phase1-drift-dimensions-d1-d3.md](./reference/02-phase1-drift-dimensions-d1-d3.md) and
-  [03-phase1-drift-dimensions-d4-d7.md](./reference/03-phase1-drift-dimensions-d4-d7.md) — the
+- [02-phase1-drift-dimensions-d1-d3.md](./reference/phase1-drift-dimensions-d1-d3.md) and
+  [03-phase1-drift-dimensions-d4-d7.md](./reference/phase1-drift-dimensions-d4-d7.md) — the
   seven dimensions (D1–D7), each with drift indicator/criticality AND fix target/action
-- [04-checker-workflow.md](./reference/04-checker-workflow.md) and
-  [05-checker-finding-format.md](./reference/05-checker-finding-format.md) — the checker's own
+- [04-checker-workflow.md](./reference/checker-workflow.md) and
+  [05-checker-finding-format.md](./reference/checker-finding-format.md) — the checker's own
   workflow steps, research delegation pattern, and finding format
-- [06-fixer-confidence-and-scope.md](./reference/06-fixer-confidence-and-scope.md),
-  [07-fixer-patterns-and-process.md](./reference/07-fixer-patterns-and-process.md), and
-  [08-fixer-report-format.md](./reference/08-fixer-report-format.md) — the fixer's own confidence
+- [06-fixer-confidence-and-scope.md](./reference/fixer-confidence-and-scope.md),
+  [07-fixer-patterns-and-process.md](./reference/fixer-patterns-and-process.md), and
+  [08-fixer-report-format.md](./reference/fixer-report-format.md) — the fixer's own confidence
   re-validation, fix patterns, process summary, fix report format, and FALSE_POSITIVE
   carry-forward
 

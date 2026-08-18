@@ -74,7 +74,7 @@ See [Guide Count and Diagram Standards](./reference/guide-count-and-diagrams.md)
 
 ## Checker Validation Checklist
 
-See [Checking In-the-Field Format](./reference/01-checking-in-the-field-format.md) for the
+See [Checking In-the-Field Format](./reference/checking-in-the-field-format.md) for the
 `apps-ayokoding-www-in-the-field-checker` validation checklist and step-by-step validation order.
 
 ## References

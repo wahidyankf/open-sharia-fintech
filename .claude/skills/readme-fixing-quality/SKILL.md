@@ -15,12 +15,12 @@ auto-fixed.
 
 ## Reference Modules
 
-- [01-domain-confidence-examples.md](./reference/01-domain-confidence-examples.md) — README-specific
+- [01-domain-confidence-examples.md](./reference/domain-confidence-examples.md) — README-specific
   HIGH / MEDIUM / FALSE_POSITIVE examples
-- [02-high-confidence-validation-checks.md](./reference/02-high-confidence-validation-checks.md) —
+- [02-high-confidence-validation-checks.md](./reference/high-confidence-validation-checks.md) —
   the four objective checks (paragraph length, jargon pattern, acronym context, passive voice)
   with exact bash re-validation patterns
-- [03-medium-confidence-and-safeguards.md](./reference/03-medium-confidence-and-safeguards.md) —
+- [03-medium-confidence-and-safeguards.md](./reference/medium-confidence-and-safeguards.md) —
   the four subjective categories that always get flagged, plus refusal conditions, required
   output, and convergence safeguards
 

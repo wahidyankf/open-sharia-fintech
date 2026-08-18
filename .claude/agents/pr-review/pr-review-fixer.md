@@ -37,7 +37,7 @@ stopgap plus mandatory pre-push gate re-run.
 **Project Guidance**:
 
 - [AGENTS.md](../../../AGENTS.md) - Primary guidance
-- [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -
+- [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) -
   The four delivery modes; `*-to-pr` modes are this agent's applicability boundary
 
 **Related Agents / Workflows**:

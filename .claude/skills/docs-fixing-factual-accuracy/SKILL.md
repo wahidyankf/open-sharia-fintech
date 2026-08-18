@@ -10,15 +10,15 @@ objective fixes — without independent web access, trusting the checker's docum
 
 ## Reference Modules
 
-1. [Confidence Assessment and Mode Handling](reference/01-confidence-and-mode-handling.md) — the
+1. [Confidence Assessment and Mode Handling](reference/confidence-and-mode-handling.md) — the
    quick-summary workflow, domain-specific HIGH/MEDIUM/FALSE_POSITIVE examples.
-2. [Trust Model and Re-Validation Guidelines](reference/02-trust-model-and-revalidation.md) — why
+2. [Trust Model and Re-Validation Guidelines](reference/trust-model-and-revalidation.md) — why
    this agent has no web tools, how it re-validates without one, and per-finding-type re-validation
    guidance (command syntax, versions, feature existence, code examples, contradictions, outdated
    info).
-3. [Fix Patterns and Report Format](reference/03-fix-patterns-and-report-format.md) — the six fix
+3. [Fix Patterns and Report Format](reference/fix-patterns-and-report-format.md) — the six fix
    application patterns and the full fix-report markdown template.
-4. [Tools, Best Practices, and Safeguards](reference/04-tools-practices-safeguards.md) — tool usage,
+4. [Tools, Best Practices, and Safeguards](reference/tools-practices-safeguards.md) — tool usage,
    best practices, and convergence safeguards (changed-files capture, false-positive persistence,
    self-verification).
 

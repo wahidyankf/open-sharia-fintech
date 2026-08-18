@@ -57,7 +57,7 @@ ambiguity with no material behavioral consequence.
 
 [Feature Change Completeness](../../repo-governance/development/quality/feature-change-completeness.md)
 (companion-artifact completeness underlying ruling (d)),
-[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-synthesis-maker`
 (owns final architecture↔correctness re-categorization), `pr-review-fixer`, `web-researcher`.

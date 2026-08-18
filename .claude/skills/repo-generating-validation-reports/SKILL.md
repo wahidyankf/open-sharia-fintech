@@ -57,7 +57,7 @@ See [Usage Example](./reference/usage-example.md) for a complete checker-agent s
 
 Checker agents re-running across maker-checker-fixer iterations MUST apply the known-false-positive
 skip list, scoped re-validation, cached-verification, escalation, and convergence-target rules in
-[reference/01-convergence-safeguards.md](./reference/01-convergence-safeguards.md).
+[reference/01-convergence-safeguards.md](./reference/convergence-safeguards.md).
 
 ## Integration with Other Skills
 

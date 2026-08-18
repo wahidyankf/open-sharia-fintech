@@ -4,18 +4,18 @@ title: "Reference"
 
 # Reference
 
-- [01 Validation Scope](./01-validation-scope.md) — the core responsibility and scope of post-execution plan verification
-- [02 Workflow Overview](./02-workflow-overview.md) — the workflow overview, sharing the Step-0/Final-Step report scaffold with repo-applying-maker-checker-fixer
-- [03 Operational Readiness Execution](./03-operational-readiness-execution.md) — verifying operational readiness was actually executed (Step 5b)
-- [04 Manual Assertions Ui Api E2e Locale](./04-manual-assertions-ui-api-e2e-locale.md) — verifying manual UI, API, end-to-end, and locale behavioral assertions (Step 5c)
-- [05 Manual Assertions Evidence And Retests](./05-manual-assertions-evidence-and-retests.md) — evidence capture and retest requirements for manual behavioral assertions (Step 5c continued)
-- [06 Plan Archival](./06-plan-archival.md) — verifying plan archival and README updates were completed (Step 5d)
-- [07 Worktree Verification Declaration And History](./07-worktree-verification-declaration-and-history.md) — verifying the worktree was used, via declaration and git history (Step 5e)
-- [08 Worktree Verification Freshness Cleanup And Cap](./08-worktree-verification-freshness-cleanup-and-cap.md) — verifying worktree freshness sync, cleanup, and the one-worktree cap (Step 5e continued)
-- [09 Phase Gate And Execution Marker](./09-phase-gate-and-execution-marker.md) — post-execution validation of phase gates and execution markers (Step 5f-gates)
-- [10 Anti Hallucination Verification](./10-anti-hallucination-verification.md) — post-execution anti-hallucination validation (Step 5f)
-- [11 Knowledge Capture Terminal States](./11-knowledge-capture-terminal-states.md) — verifying Knowledge Capture routing terminal states and secret/sensitivity gates (Step 5h)
-- [12 Knowledge Capture Audit And Severity](./12-knowledge-capture-audit-and-severity.md) — verifying repo-relevance, audit procedure, and severity for Knowledge Capture routing (Step 5h continued)
-- [13 Delivery Mode Pr Review Cycle](./13-delivery-mode-pr-review-cycle.md) — verifying delivery mode and the PR-review cycle were followed (Step 5i)
-- [14 Delivery Mode Phase0 And Boundaries](./14-delivery-mode-phase0-and-boundaries.md) — verifying Phase 0 opened no PR and delivery boundaries were respected (Step 5i continued)
+- [01 Validation Scope](./validation-scope.md) — the core responsibility and scope of post-execution plan verification
+- [02 Workflow Overview](./workflow-overview.md) — the workflow overview, sharing the Step-0/Final-Step report scaffold with repo-applying-maker-checker-fixer
+- [03 Operational Readiness Execution](./operational-readiness-execution.md) — verifying operational readiness was actually executed (Step 5b)
+- [04 Manual Assertions Ui Api E2e Locale](./manual-assertions-ui-api-e2e-locale.md) — verifying manual UI, API, end-to-end, and locale behavioral assertions (Step 5c)
+- [05 Manual Assertions Evidence And Retests](./manual-assertions-evidence-and-retests.md) — evidence capture and retest requirements for manual behavioral assertions (Step 5c continued)
+- [06 Plan Archival](./plan-archival.md) — verifying plan archival and README updates were completed (Step 5d)
+- [07 Worktree Verification Declaration And History](./worktree-verification-declaration-and-history.md) — verifying the worktree was used, via declaration and git history (Step 5e)
+- [08 Worktree Verification Freshness Cleanup And Cap](./worktree-verification-freshness-cleanup-and-cap.md) — verifying worktree freshness sync, cleanup, and the one-worktree cap (Step 5e continued)
+- [09 Phase Gate And Execution Marker](./phase-gate-and-execution-marker.md) — post-execution validation of phase gates and execution markers (Step 5f-gates)
+- [10 Anti Hallucination Verification](./anti-hallucination-verification.md) — post-execution anti-hallucination validation (Step 5f)
+- [11 Knowledge Capture Terminal States](./knowledge-capture-terminal-states.md) — verifying Knowledge Capture routing terminal states and secret/sensitivity gates (Step 5h)
+- [12 Knowledge Capture Audit And Severity](./knowledge-capture-audit-and-severity.md) — verifying repo-relevance, audit procedure, and severity for Knowledge Capture routing (Step 5h continued)
+- [13 Delivery Mode Pr Review Cycle](./delivery-mode-pr-review-cycle.md) — verifying delivery mode and the PR-review cycle were followed (Step 5i)
+- [14 Delivery Mode Phase0 And Boundaries](./delivery-mode-phase0-and-boundaries.md) — verifying Phase 0 opened no PR and delivery boundaries were respected (Step 5i continued)
   </content>

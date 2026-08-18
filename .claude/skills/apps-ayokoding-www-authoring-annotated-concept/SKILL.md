@@ -10,14 +10,14 @@ sub-mode) for `apps/ayokoding-www/`, at equal annotation density to By Example.
 
 ## Reference Modules
 
-1. [When to Use and Mode Selection](reference/01-when-to-use-and-mode-selection.md) — when to use
+1. [When to Use and Mode Selection](reference/when-to-use-and-mode-selection.md) — when to use
    this agent and determining standard vs. no-code sub-mode.
-2. [Requirements: Standard and No-Code Modes](reference/02-requirements.md) — the worked-example/
+2. [Requirements: Standard and No-Code Modes](reference/requirements.md) — the worked-example/
    scenario requirements for each mode.
-3. [Worked-Example Structure, Diagrams, Integration](reference/03-structure-diagrams-integration.md)
+3. [Worked-Example Structure, Diagrams, Integration](reference/structure-diagrams-integration.md)
    — the shared worked-example/scenario structure, diagram requirements, and ayokoding-web
    integration.
-4. [Workflow and Quality Standards](reference/04-workflow-and-quality.md) — the 7-step content
+4. [Workflow and Quality Standards](reference/workflow-and-quality.md) — the 7-step content
    creation workflow and the quality-standards checklist.
 
 ## Core Principles

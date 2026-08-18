@@ -13,12 +13,12 @@ tutorials, distinct from the universal `docs-applying-content-quality` and
 
 ## Reference Modules
 
-- [Tutorial Types and Diagram Orientation](reference/01-tutorial-types-and-diagrams.md) — the
+- [Tutorial Types and Diagram Orientation](reference/tutorial-types-and-diagrams.md) — the
   seven types with coverage percentages, and the tutorial-specific diagram orientation override
-- [Tutorial Structure Template](reference/02-tutorial-structure-template.md) — the seven-section
+- [Tutorial Structure Template](reference/tutorial-structure-template.md) — the seven-section
   template (frontmatter, introduction, prerequisites, steps, validation, next steps,
   troubleshooting)
-- [Workflow and Quality Requirements](reference/03-workflow-and-quality.md) — the create/update
+- [Workflow and Quality Requirements](reference/workflow-and-quality.md) — the create/update
   workflows and the tutorial-specific quality bar beyond general content quality
 
 ## Core Principles
