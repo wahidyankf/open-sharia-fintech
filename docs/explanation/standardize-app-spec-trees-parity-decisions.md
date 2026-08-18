@@ -65,7 +65,6 @@ identifier (e.g. `organiclever`, `ayokoding`, `ose`).
 - `behavior/app-web/gherkin/` — OSE Application frontend (app.oseplatform.com)
 - `behavior/platform-be/gherkin/` — OSE Platform backend tRPC API
 - `behavior/platform-web/gherkin/` — OSE Platform marketing site
-- `behavior/ose-cli/gherkin/` — OSE CLI tool
 
 **Why**:
 
@@ -105,21 +104,20 @@ into another surface.
 
 **Why**:
 
-- **Active surface**: The `ayokoding-cli` build tool is a real Nx project with live
-  Gherkin feature coverage. Retiring the surface would leave those feature files
-  without a home.
+- **Active surface**: `ayokoding-build-tools` is a real surface with live Gherkin feature
+  coverage. Retiring it would leave those feature files without a home.
 - **Follows the `<product>-<surface>` rule**: `build-tools` is a surface type (CLI
   tooling), `ayokoding` is the product. The compound form `ayokoding-build-tools`
   satisfies the same naming convention as `ayokoding-web` and `ayokoding-be`.
-- **Distinguishable from other CLI surfaces**: `ayokoding-cli` (link validation) and
-  `ayokoding-build-tools` (content pipeline tooling) are distinct tools with distinct
-  feature sets. Keeping separate surfaces prevents feature file confusion.
+- **Distinguishable from other surfaces**: `ayokoding-build-tools` covers content-pipeline
+  tooling with its own feature set, distinct from the web and backend surfaces. Keeping it
+  separate prevents feature file confusion.
 
 **Alternatives rejected**:
 
-- _Merge into `ayokoding-cli`_: Rejected because `ayokoding-build-tools` covers the
-  content-pipeline CLI (`ayokoding-cli`), which is a distinct executable from any
-  general CLI surface. Merging would blur the product boundary.
+- _Merge into a general CLI surface_: Rejected because `ayokoding-build-tools` covers
+  build-time content-pipeline tooling, which is distinct from any deployed surface.
+  Merging would blur the product boundary.
 - _Retire and inline_: Rejected because active feature files would be lost or
   orphaned. No inactive surface should be deleted while it has live coverage.
 

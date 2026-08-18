@@ -32,13 +32,13 @@ exercised at the correct test level. It is enforced by the pre-push hook alongsi
 
 | Project group                                                   | Status   | Notes                                                                                                                   |
 | --------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Rust CLI apps (`rhino-cli`, `ayokoding-cli`, `ose-cli`)         | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                                                |
+| Rust CLI apps (`rhino-cli`)                                     | Enforced | `--shared-steps` only; no `--exclude-dir` needed (no test-support specs)                                                |
 | API backends (`organiclever-be`)                                | Enforced | `--shared-steps --exclude-dir test-support`                                                                             |
 | E2E runners (`organiclever-be-e2e`, `organiclever-app-web-e2e`) | Enforced | `--shared-steps` only; test-support steps are implemented here                                                          |
 | Content platforms (`ose-www`)                                   | Enforced | `--shared-steps`                                                                                                        |
 | Content platforms (`ayokoding-www`)                             | Enforced | `--shared-steps --exclude-source-dir content` (excludes the Next.js `content/` directory from the app-tree source walk) |
 | Web UI apps (`organiclever-app-web`)                            | Enforced | `--shared-steps`                                                                                                        |
-| Libraries (`rust-commons`)                                      | Enforced | `--shared-steps`                                                                                                        |
+| Libraries (`web-ui`, `web-ui-token`)                            | Enforced | `--shared-steps`                                                                                                        |
 | Projects with genuine step gaps                                 | Deferred | `specs:behavior:coverage` target exists but validation deferred until step implementation is complete                   |
 
 All apps and E2E runners are required to have a `specs:behavior:coverage` target. Projects with

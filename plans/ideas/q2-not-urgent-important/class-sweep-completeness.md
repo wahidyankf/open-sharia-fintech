@@ -39,12 +39,35 @@ review cycles each declared the sweep done; each was wrong in a different way.
   any two of the six derivatives would have looked fine while the authoritative copy was the wrong
   one.
 
+### Second instance, 2026-08-18 (`repo-clean-up`)
+
+A retirement sweep over four deleted project names reproduced the class and added three shapes the
+first instance did not name. Notably, all three are cases where the _correct_ action was **not** to
+edit the matched site — the opposite failure mode from the three above.
+
+- **The exception list is the sweep.** The acceptance clause named three exempt roots. Execution
+  found five more legitimate ones: inert `#[cfg(test)]` fixture strings behind a parity boundary,
+  another in-progress plan's dated audit ledger, an `assert_no_match` guard, the plan's own prose,
+  and a dated retarget note. Each would have read as a failure against the written clause, and the
+  cheap fix for each is to edit the file rather than the clause. A sweep clause that enumerates
+  matches without enumerating accepted non-matches pushes the executor toward the wrong repair.
+- **Deleting a matched token can weaken a test.** One hit was
+  `assert_no_match grep -Eq 'beavernest-app-web|…'` — an assertion that the workflow does _not_
+  mention the removed app. It looks exactly like a stale reference. Removing it would have silently
+  deleted a passing assertion: the CI-gaming shape, reached by mechanical tidying rather than by
+  intent. Absence-assertions must name the absent thing, so they always match a sweep for it.
+- **The neighbouring sentence is where the other errors live.** Correcting a `rust-commons` mention
+  in an idea brief required reading around it, which exposed a claim that no `fsharp-crane-core`
+  existed in the repo — it does, along with the exact file the brief says is absent, inverting one
+  of its findings. A token-matching sweep never reads the sentence.
+
 ## Why now
 
 The pattern repeated three times inside one plan, each time surviving a review cycle that had
-explicitly been asked to sweep. That is evidence the failure is structural rather than a lapse of
-care: the sweep is being expressed in a way that cannot reach these surfaces. Every future rule
-narrowing — of a delivery mode, a naming enum, a permitted command set — inherits all three shapes.
+explicitly been asked to sweep, and then recurred in a second, unrelated plan five weeks later with
+three further shapes. That is evidence the failure is structural rather than a lapse of care: the
+sweep is being expressed in a way that cannot reach these surfaces. Every future rule narrowing — of
+a delivery mode, a naming enum, a permitted command set — and every retirement sweep inherits them.
 
 ## Prior art / precedents
 

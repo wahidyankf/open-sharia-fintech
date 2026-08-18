@@ -13,7 +13,7 @@ no capture, no notes, no LLM calls, and no prompt plumbing at all.
 ## Problem / context
 
 `beaver-nest`'s `baseerah-repo-reset` scoped `beaver-nest-be`/`beaver-nest-fe` (now
-`beavernest-be`/`beavernest-app-web`) as a pure hello-world walking skeleton: "Every product feature
+`beavernest-be`/`beavernest-app`) as a pure hello-world walking skeleton: "Every product feature
 [is out of scope]. No capture, no notes, no LLM calls, no prompt plumbing, no AI SDK dependency, no
 scheduling, no posting." That was correct for establishing the engineering harness, but it means
 none of BeaverNest's actual stated purpose — an AI assistant, per

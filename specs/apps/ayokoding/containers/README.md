@@ -10,8 +10,8 @@ both the SSR/SSG server tier and the in-browser client tier). The Gherkin behavi
 along **API perspective** (`web` UI-semantic vs `api` tRPC HTTP-semantic), not along container
 boundaries. See `container.md` for the slug-vs-container distinction.
 
-Two legacy slugs are preserved unchanged and out of scope for this plan: `cli` (owned by the
-separate `ayokoding-cli` Go binary) and `build-tools` (build-time index-generation scripts).
+One legacy slug is preserved unchanged and out of scope for this plan: `build-tools`
+(build-time index-generation scripts).
 
 ## Children
 

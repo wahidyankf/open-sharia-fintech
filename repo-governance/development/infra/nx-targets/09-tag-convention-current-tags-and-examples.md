@@ -20,17 +20,15 @@ when_to_use: Use when copying an existing project's tag set as a template or che
 | Project                    | Tags                                                                     |
 | -------------------------- | ------------------------------------------------------------------------ |
 | `ayokoding-www`            | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
-| `ayokoding-cli`            | `["type:app", "platform:cli", "lang:rust", "domain:ayokoding"]`          |
 | `rhino-cli`                | `["type:app", "platform:cli", "lang:rust", "domain:tooling"]`            |
 | `organiclever-app-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
 | `organiclever-be`          | `["type:app", "platform:giraffe", "lang:dotnet", "domain:organiclever"]` |
 | `organiclever-app-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
 | `organiclever-be-e2e`      | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
-| `ose-cli`                  | `["type:app", "platform:cli", "lang:rust", "domain:ose"]`                |
 | `ose-www`                  | `["type:app", "platform:nextjs", "lang:ts", "domain:ose"]`               |
 | `wahidyankf-www`           | `["type:app", "platform:nextjs", "lang:ts", "domain:wahidyankf"]`        |
 | `wahidyankf-www-fe-e2e`    | `["type:e2e", "platform:playwright", "lang:ts", "domain:wahidyankf"]`    |
-| `rust-commons`             | `["type:lib", "lang:rust"]`                                              |
+| `ts-env-loader`            | `["type:lib", "lang:ts", "domain:config"]`                               |
 
 ## Example: Complete Tag Declaration
 
@@ -43,12 +41,12 @@ An F#/Giraffe backend app declares all four dimensions:
 }
 ```
 
-A Rust lib has no platform boundary and no domain, so it omits both:
+A library has no platform boundary, so it omits `platform:` and declares the other three:
 
 ```json
 {
-  "name": "rust-commons",
-  "tags": ["type:lib", "lang:rust"]
+  "name": "ts-env-loader",
+  "tags": ["type:lib", "lang:ts", "domain:config"]
 }
 ```
 

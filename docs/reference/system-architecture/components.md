@@ -26,13 +26,6 @@ Shows the internal components within each container. Components are groupings of
 - **Source Directory**: App source at `apps/ose-www/src/`
 - **Static Assets**: Images and public assets at `apps/ose-www/public/`
 
-### ayokoding-cli Components (Rust CLI Tool)
-
-**Component Responsibilities:**
-
-- **Root Command**: CLI entry point, command routing, help text
-- **Links Check Command**: Validate internal links in ayokoding-www content
-
 ### rhino-cli Components (Rust CLI Tool)
 
 ```mermaid
@@ -79,6 +72,7 @@ graph TB
 
 Shows implementation details for critical components. Focus on Rust CLI tool package structures and key implementation patterns.
 
-### ayokoding-cli Package Structure (Rust)
+### rhino-cli Package Structure (Rust)
 
-ayokoding-cli now provides only `links check` for validating internal links in ayokoding-www content. The title update and navigation regeneration commands were removed as part of the migration from Hugo to Next.js.
+`rhino-cli` is the workspace's only Rust project. Its `md links validate` command validates internal
+Markdown links across the whole repository, including both content trees.

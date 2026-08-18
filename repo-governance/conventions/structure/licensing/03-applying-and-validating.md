@@ -48,12 +48,12 @@ apps/
     LICENSE          <-- MIT (product app)
     src/
     ...
-  ayokoding-cli/
+  crane-cli/
     LICENSE          <-- MIT (CLI tool)
-    cmd/
+    src/
     ...
 libs/
-  rust-commons/
+  web-ui/
     LICENSE          <-- MIT (shared library)
     ...
 ```

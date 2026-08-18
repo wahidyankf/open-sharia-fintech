@@ -56,8 +56,8 @@ markdown/prettier are already gated.
 
 **Decision**: Delete the root `.golangci.yml`.
 
-**Rationale**: ose-public has **zero `go.mod` files** — Go was fully removed and
-the former Go CLIs (`ayokoding-cli`, `ose-cli`) are now Rust projects. No
+**Rationale**: ose-public has **zero `go.mod` files** — Go was fully removed when
+the last Go CLIs were ported to Rust. No
 `project.json` lint target invokes `golangci-lint run`, and the `setup-golang`
 composite action installs the binary only for the `oapi-codegen` toolchain, never
 to lint. The config was dead. The `golangci-lint` references that remain are in

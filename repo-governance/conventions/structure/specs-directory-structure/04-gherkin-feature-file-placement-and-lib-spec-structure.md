@@ -61,7 +61,7 @@ A domain folder may contain one or many feature files.
 specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature
 specs/apps/rhino/behavior/rhino-cli/gherkin/env/env-backup.feature
 specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature
-specs/apps/ayokoding/behavior/ayokoding-cli/gherkin/links/links-check.feature
+specs/apps/crane/behavior/crane-cli/gherkin/pdf/pdf-commands.feature
 ```
 
 `rhino-cli specs validate-tree` enforces this rule: a `.feature` file placed directly under `behavior/<product>-<surface>/gherkin/` (with no domain subdirectory) is a HIGH finding.
@@ -73,13 +73,15 @@ Library specs use a simpler layout with no five-folder tree — libs do not have
 ```
 specs/libs/<lib-name>/
 ├── README.md
-└── gherkin/
-    └── <package>/           # Package or module subdirectories
-        └── <feature>.feature
+└── behavior/
+    └── gherkin/
+        └── <package>/       # Package or module subdirectories
+            └── <feature>.feature
 ```
 
 **Examples:**
 
 ```
-specs/libs/rust-commons/gherkin/links/check-links.feature
+specs/libs/web-ui-token/behavior/gherkin/tokens/tokens-export.feature
+specs/libs/ts-env-loader/behavior/gherkin/env-loader/env-loader.feature
 ```

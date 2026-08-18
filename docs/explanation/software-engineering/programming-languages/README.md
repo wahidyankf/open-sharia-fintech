@@ -38,7 +38,7 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 | ---------------------------------------- | -------------------- | ----------------------------------------------- |
 | REST API backend                         | F#/Giraffe           | See the F# guidance and the relevant app README |
 | Frontend web application                 | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
-| CLI tool for repository automation       | Rust                 | See rhino-cli, ayokoding-cli, ose-cli (Rust)    |
+| CLI tool for repository automation       | Rust                 | See rhino-cli (Rust)                            |
 | Infrastructure tooling                   | Rust                 | See existing CLI tools                          |
 | Real-time updates and WebSocket handling | TypeScript           | [TypeScript Standards](./typescript/README.md)  |
 | Complex domain logic with DDD            | F#/Rust              | See language-specific README files              |
@@ -47,7 +47,7 @@ Multiple domain-focused standards files covering specific areas (testing, securi
 **Platform Guidance**:
 
 - **TypeScript**: Active for frontend applications, including Next.js sites
-- **Rust**: Active for CLI tools (rhino-cli, ayokoding-cli, ose-cli, crane-cli)
+- **Rust**: Active for CLI tools (rhino-cli); crane-cli is F#
 - **F#**: Active for REST API backends (organiclever-be, ose-be) and content pipeline tooling (crane-cli — Content Retrieval And Normalization Engine)
 - **C#**: Retained for potential .NET interop with F#
 
@@ -168,7 +168,7 @@ F# is a functional-first .NET language where immutability is the default and dis
 
 **Rust development with ownership-based memory safety, zero-cost abstractions, and Axum**
 
-Rust guarantees memory safety and fearless concurrency without a garbage collector, making it ideal for high-performance, security-critical systems. OSE Platform uses Rust for CLI tools (rhino-cli, ayokoding-cli, ose-cli, crane-cli).
+Rust guarantees memory safety and fearless concurrency without a garbage collector, making it ideal for high-performance, security-critical systems. OSE Platform uses Rust for CLI tools (rhino-cli).
 
 **Use Rust when you need:**
 
@@ -217,12 +217,12 @@ Languages in this documentation are chosen based on:
 
 ### Current Language Usage
 
-| Language       | Primary Use Cases                     | Status                                                   |
-| -------------- | ------------------------------------- | -------------------------------------------------------- |
-| **C#**         | Enterprise APIs, .NET interop with F# | 📋 Retained — .NET interop                               |
-| **F#**         | REST API backends, content pipeline   | ✅ Active — organiclever-be, ose-be, crane-cli           |
-| **Rust**       | CLI tools, infrastructure             | ✅ Active — rhino-cli, ayokoding-cli, ose-cli, crane-cli |
-| **TypeScript** | Frontend applications, tRPC backends  | ✅ Active — all Next.js apps                             |
+| Language       | Primary Use Cases                     | Status                                         |
+| -------------- | ------------------------------------- | ---------------------------------------------- |
+| **C#**         | Enterprise APIs, .NET interop with F# | 📋 Retained — .NET interop                     |
+| **F#**         | REST API backends, content pipeline   | ✅ Active — organiclever-be, ose-be, crane-cli |
+| **Rust**       | CLI tools, infrastructure             | ✅ Active — rhino-cli                          |
+| **TypeScript** | Frontend applications, tRPC backends  | ✅ Active — all Next.js apps                   |
 
 **Legend**: ✅ Active (in use in ose-public) | 📋 Retained (standards documented; not yet used in active apps)
 

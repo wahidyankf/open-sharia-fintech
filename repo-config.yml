@@ -102,9 +102,6 @@ coverage:
     - name: ose-www-fe-e2e
       levels: [e2e]
       specs: "specs/apps/ose/behavior/www/**"
-    - name: ose-cli
-      levels: [unit, integration]
-      specs: "specs/apps/ose/behavior/cli/**"
 
     # organiclever domain
     - name: organiclever-be
@@ -139,9 +136,6 @@ coverage:
     - name: ayokoding-www-fe-e2e
       levels: [e2e]
       specs: "specs/apps/ayokoding/behavior/www/**"
-    - name: ayokoding-cli
-      levels: [unit, integration]
-      specs: "specs/apps/ayokoding/behavior/cli/**"
 
     # wahidyankf domain
     - name: wahidyankf-www
@@ -171,9 +165,6 @@ coverage:
       specs: "specs/apps/beavernest/behavior/beavernest-app/gherkin/**"
 
     # libs
-    - name: rust-commons
-      levels: [unit]
-      specs: "specs/libs/rust-commons/behavior/**"
     - name: web-ui
       levels: [unit]
       specs: "specs/libs/web-ui/behavior/**"
@@ -928,8 +919,6 @@ gates:
     args:
       exclude:
         - plans/done
-        - apps/ayokoding-www/content
-        - apps/ose-www/content
     surfaces:
       pre-push: { scope: all-file-type }
       ci: { scope: all-file-type }

@@ -9,7 +9,8 @@ discharged check; clauses should state what makes them **fail**, not only what m
 
 ## Problem / context
 
-Five vacuous clauses were caught inside a single plan, each vacuous for a different reason:
+Five vacuous clauses were caught inside a single plan, each vacuous for a different reason; a
+sixth shape surfaced later in an unrelated plan and is listed alongside them:
 
 - **Wrong identifier.** A step asserted two briefs were absent from a sibling, and its clause
   grepped for the slug of the one that genuinely _was_ absent. The clause was well-formed,
@@ -27,6 +28,13 @@ Five vacuous clauses were caught inside a single plan, each vacuous for a differ
   pre-commit hook undetected.
 - **The named target is a no-op.** A clause citing an Nx target that is an `echo` stub is vacuous by
   construction; it reports success for a command that does nothing.
+- **A planning-time count frozen into the clause.** A clause read "the two-pager names each of the
+  22 directories". The 22 was counted while the plan was written; execution re-counted 23. The
+  clause is falsifiable in form, but it now certifies conformance to a stale number, and an
+  executor who trusts it produces a deliverable that fails its own check. Counts discovered at
+  authoring time belong in the prose as estimates; the clause should name the command that derives
+  the number, not the number.
+  Surfaced 2026-08-18 in `repo-clean-up`.
 - **A tooling layer rewrote a hard error into a clean pass.** A worktree-removal precondition phrased
   as "`git stash list` is empty" was checked in a bare repo. Raw `git` answers
   `fatal: this operation must be run in a work tree` and exits non-zero — the command cannot run

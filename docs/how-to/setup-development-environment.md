@@ -147,7 +147,7 @@ volta install npm@11.11.0
 
 ### Step 4: Rust Toolchain
 
-Required for `rhino-cli`, `ose-cli`, `ayokoding-cli`, and `libs/rust-commons`. The toolchain version is pinned via `rust-toolchain.toml` in each project — `rustup` picks it up automatically.
+Required for `rhino-cli`. The toolchain version is pinned via `rust-toolchain.toml` in the project — `rustup` picks it up automatically.
 
 `doctor` additionally checks that every `rust-toolchain.toml` (the workspace root and each
 `apps/*`/`libs/*` project) declares the `rustfmt` and `clippy` components. A toolchain pinned

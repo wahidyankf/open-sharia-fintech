@@ -19,7 +19,7 @@ The mapping operates at three levels:
 ## 1. Command to Tag (mandatory)
 
 > **Scope note**: The file naming and tag derivation rules below apply to all Rust CLI apps
-> (`ayokoding-cli`, `ose-cli`, `rhino-cli`). See the
+> (`rhino-cli`). See the
 > ["CLI App Families"](./04-cli-dual-level-spec-consumption.md#cli-apps-dual-level-spec-consumption) section for `.rs` file patterns
 > and test file locations.
 

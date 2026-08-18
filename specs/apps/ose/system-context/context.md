@@ -27,8 +27,6 @@ graph TD
 
     SYSTEM["OSE Platform Web<br/>──────────────────────<br/>Next.js 16 Content Platform<br/><br/>Marketing site<br/>Update posts<br/>Full-text search<br/>RSS feed<br/>English only<br/>ISR caching"]:::system
 
-    CLI("ose-cli<br/>──────────────────<br/>Content link validation<br/>Internal link checks<br/>Part of test:quick"):::ci
-
     CI("CI Pipeline<br/>──────────────────<br/>Main CI: test:quick<br/>BE E2E: Playwright<br/>FE E2E: Playwright"):::ci
 
     VERCEL("Vercel Platform<br/>──────────────────<br/>CDN + Edge Network<br/>ISR revalidation<br/>Standalone deployment"):::infra
@@ -37,7 +35,6 @@ graph TD
 
     VISITOR -- browse and search --> SYSTEM
     AUTHOR -- write markdown content --> SYSTEM
-    CLI -- validate links --> SYSTEM
     CI -- typecheck, lint, test --> SYSTEM
     SYSTEM -- deploy + serve --> VERCEL
     SYSTEM -- send analytics events --> GA4
@@ -52,14 +49,13 @@ graph TD
 
 ### Actors
 
-| Actor            | Role                                                                     |
-| ---------------- | ------------------------------------------------------------------------ |
-| Visitor          | Browses updates, searches content, reads about page                      |
-| Content Author   | Creates markdown content with YAML frontmatter in `content/` directory   |
-| ose-cli          | Validates internal links in content files (runs as part of `test:quick`) |
-| CI Pipeline      | Runs typecheck, lint, unit tests, BE/FE E2E tests via Playwright         |
-| Vercel           | Hosts the production deployment with ISR and CDN edge caching            |
-| Google Analytics | Collects page view and event data via GA4 (`@next/third-parties`)        |
+| Actor            | Role                                                                   |
+| ---------------- | ---------------------------------------------------------------------- |
+| Visitor          | Browses updates, searches content, reads about page                    |
+| Content Author   | Creates markdown content with YAML frontmatter in `content/` directory |
+| CI Pipeline      | Runs typecheck, lint, unit tests, BE/FE E2E tests via Playwright       |
+| Vercel           | Hosts the production deployment with ISR and CDN edge caching          |
+| Google Analytics | Collects page view and event data via GA4 (`@next/third-parties`)      |
 
 ## Related
 

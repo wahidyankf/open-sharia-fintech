@@ -21,12 +21,14 @@ paths and produced an 11-line diff carrying zero information about any code chan
 `ose-private`, and `beaver-nest` all sit side by side under one parent directory, plus per-plan
 worktrees, that noise erodes trust in `git status`.
 
-Re-verifying in this repo on 2026-08-05 changes the picture substantially, and the honest finding is
-that **the defect is largely already fixed**:
+Re-verifying in this repo on 2026-08-05 changed the picture substantially — **most known instances
+are already neutralized** — though a 2026-08-18 re-check found one of those findings overstated:
 
-- The file the original plan named, `libs/fsharp-crane-core/tests/unit/coverage.json`, **does not
-  exist here** — there is no `fsharp-crane-core` anywhere in the repo. `libs/` holds `rust-commons`,
-  `web-ui`, and `web-ui-token`, none of them .NET.
+- The file the original plan named, `libs/fsharp-crane-core/tests/unit/coverage.json`, **does exist
+  here** — re-checked 2026-08-18 by the `repo-clean-up` plan, which corrects the 2026-08-05 reading
+  that no `fsharp-crane-core` was present. `libs/` holds `fsharp-crane-core`, `fsharp-env-loader`,
+  `ts-env-loader`, `web-ui`, and `web-ui-token`. Whether that instance is already `.gitignore`d is
+  an open question this two-pager should settle before promotion.
 - The class did transfer to the F# backend. `apps/beaver-nest-be/tests/unit/coverage.json` exists
   on disk (2,802 bytes) and contains 5 absolute paths, every one of them rooted at a
   `.../ose-projects/baseerah/...` prefix — the repository's pre-rebrand directory name, so the copy

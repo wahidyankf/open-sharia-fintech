@@ -41,6 +41,5 @@ All CLI apps in this monorepo use **Clap subcommands** grouped by domain. The do
 
 ```
 rhino-cli {domain} {action}
-ayokoding-cli {domain} {action}
-ose-cli {domain} {action}
+crane-cli {domain} {action}
 ```

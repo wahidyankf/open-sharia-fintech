@@ -50,7 +50,6 @@ specs/apps/ayokoding/
     ├── ayokoding-be/gherkin/          # tRPC API scenarios (per bounded context)
     ├── ayokoding-build-tools/gherkin/ # Build-time index-generation scripts
     │   └── index-generation/
-    ├── ayokoding-cli/gherkin/         # Link-validation CLI scenarios
     └── ayokoding-www/gherkin/         # Browser UI scenarios (per bounded context)
 ```
 
@@ -189,4 +188,3 @@ The `web` container consumes specs at two test levels:
 - [BDD Spec-Test Mapping](../../../repo-governance/development/infra/bdd-spec-test-mapping.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/ayokoding-www/](../../../apps/ayokoding-www/README.md) — Next.js implementation
-- [apps/ayokoding-cli/](../../../apps/ayokoding-cli/README.md) — CLI tool (content link validation)

@@ -14,7 +14,6 @@ along **perspective**, not deployable-container boundary:
 
 - `ayokoding-www/` — UI-semantic scenarios (DOM, navigation, accessibility, locale).
 - `ayokoding-be/` — tRPC HTTP-semantic scenarios (procedure shapes, error codes, locale).
-- `ayokoding-cli/` — CLI-semantic scenarios for `ayokoding-cli`.
 - `ayokoding-build-tools/` — build-time tooling (index generation, etc.).
 
 The `ayokoding-be` slug is a **perspective slug**, not a container. tRPC procedures run
@@ -25,17 +24,15 @@ about API contract behavior without conflating it with UI behavior.
 
 - `ayokoding-www/gherkin/` — Browser UI Gherkin scenarios.
 - `ayokoding-be/gherkin/` — tRPC API Gherkin scenarios (HTTP semantic).
-- `ayokoding-cli/` — CLI-semantic scenarios for `ayokoding-cli`.
 - `ayokoding-build-tools/` — Build-time tooling scenarios.
 
 ## Surfaces
 
-| Surface                 | Background                          | Step style                                     | Consumed by                              |
-| ----------------------- | ----------------------------------- | ---------------------------------------------- | ---------------------------------------- |
-| `ayokoding-www`         | `Given the app is running`          | `clicks`, `types`, `sees`, `navigates`         | `apps/ayokoding-www-fe-e2e` (Playwright) |
-| `ayokoding-be`          | `Given the API is running`          | `the client calls`, response shape, error code | `apps/ayokoding-www-be-e2e` (Playwright) |
-| `ayokoding-cli`         | `Given the CLI binary is available` | `runs`, exit code, output assertions           | `apps/ayokoding-cli` (Go test + godog)   |
-| `ayokoding-build-tools` | build-time                          | index generation assertions                    | `apps/ayokoding-www` (unit tests)        |
+| Surface                 | Background                 | Step style                                     | Consumed by                              |
+| ----------------------- | -------------------------- | ---------------------------------------------- | ---------------------------------------- |
+| `ayokoding-www`         | `Given the app is running` | `clicks`, `types`, `sees`, `navigates`         | `apps/ayokoding-www-fe-e2e` (Playwright) |
+| `ayokoding-be`          | `Given the API is running` | `the client calls`, response shape, error code | `apps/ayokoding-www-be-e2e` (Playwright) |
+| `ayokoding-build-tools` | build-time                 | index generation assertions                    | `apps/ayokoding-www` (unit tests)        |
 
 ## Gherkin coverage
 
@@ -68,6 +65,5 @@ Organized by bounded context (one folder per BC, matching the DDD registry).
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
 - [ayokoding-be — Behavior Surface](./ayokoding-be/README.md)
 - [ayokoding-build-tools — Behavior Surface](./ayokoding-build-tools/README.md)
-- [ayokoding-cli — Behavior Surface](./ayokoding-cli/README.md)
 - [ayokoding-www — Behavior Surface](./ayokoding-www/README.md)
 - `../ddd/` — DDD registry + glossaries that own the vocabulary

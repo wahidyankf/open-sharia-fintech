@@ -34,7 +34,7 @@ The exact directory structure varies by language convention (e.g., Rust uses `#[
 
 ## CLI App Implementation Pattern
 
-The Rust CLI apps (`rhino-cli`, `ayokoding-cli`, `ose-cli`) consume the same Gherkin specs from `specs/apps/<cli-name>/` at both the unit and integration levels. The difference is what the tests use as their I/O substrate:
+The Rust CLI apps (`rhino-cli`) consume the same Gherkin specs from `specs/apps/<product>/behavior/<product>-cli/gherkin/` at both the unit and integration levels. The difference is what the tests use as their I/O substrate:
 
 | Level       | Test File Location               | Implementation                                                       | What's Real                   |
 | ----------- | -------------------------------- | -------------------------------------------------------------------- | ----------------------------- |
