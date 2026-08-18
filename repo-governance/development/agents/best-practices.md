@@ -20,11 +20,11 @@ This document outlines best practices for developing AI agents in the `.claude/a
 
 ## Contents
 
-- [Overview](./best-practices/01-overview.md) — why this matters.
-- [Purpose](./best-practices/02-purpose.md) — what this document provides.
-- [Single Responsibility, Minimum Tools, Model Choice, and Descriptions](./best-practices/03-best-practices-1-to-4.md) — practices 1-4.
-- [Tool Usage Docs, Testing, Frontmatter Context, Naming, and Dependencies](./best-practices/04-best-practices-5-to-9.md) — practices 5-9.
-- [Related Documentation](./best-practices/05-related-documentation.md) — further reading.
-- [Summary](./best-practices/06-summary.md) — quick-reference table.
-- [Principles Implemented/Respected](./best-practices/07-principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./best-practices/08-conventions-implemented-respected.md) — sibling conventions.
+- [Overview](./best-practices/overview.md) — why this matters.
+- [Purpose](./best-practices/purpose.md) — what this document provides.
+- [Single Responsibility, Minimum Tools, Model Choice, and Descriptions](./best-practices/best-practices-1-to-4.md) — practices 1-4.
+- [Tool Usage Docs, Testing, Frontmatter Context, Naming, and Dependencies](./best-practices/best-practices-5-to-9.md) — practices 5-9.
+- [Related Documentation](./best-practices/related-documentation.md) — further reading.
+- [Summary](./best-practices/summary.md) — quick-reference table.
+- [Principles Implemented/Respected](./best-practices/principles-implemented-respected.md) — principle list.
+- [Conventions Implemented/Respected](./best-practices/conventions-implemented-respected.md) — sibling conventions.

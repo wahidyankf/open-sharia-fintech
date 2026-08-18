@@ -78,7 +78,7 @@ shared-course-library-and-learning-paths/<phase-slug>`), authors its work there,
 branch, and opens **its own draft PR**.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -87,7 +87,7 @@ runs the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer
 CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
 are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
 plan ships to ayokoding.com). See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
@@ -262,7 +262,7 @@ subagents capped per the orchestration convention). The main thread self-promote
 > render widths, and alt-text rules: [prd.md §Hi-fi asset matrix](./prd.md#hi-fi-asset-matrix-screen--option--viewport).
 > Every file is `assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png`, rendered from
 > `assets/src/<same-stem>.html` at **375 / 768 / 1280 px** — `.png` only, per the
-> [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+> [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 > (`.excalidraw.svg` and inline HTML+CSS are ruled out: GitHub strips styles and blocks Excalidraw fonts).
 
 - [ ] [AI] **Verify the 8 existing desktop renders** carry the `-desktop` suffix and are still embedded

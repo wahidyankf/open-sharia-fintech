@@ -61,6 +61,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
 - [pr-review-bot-identity](./q2-not-urgent-important/pr-review-bot-identity.md) — a dedicated bot identity so blocking reviews post as `REQUEST_CHANGES`.
+- [pr-review-disciplines-applicability-shard-empty](./q2-not-urgent-important/pr-review-disciplines-applicability-shard-empty.md) — the "Applicability and Finding Disposition" shard's frontmatter promises content its body never delivers; pre-existing, examined and deferred during PR #227.
 - [propagation-checklist-under-coverage](./q2-not-urgent-important/propagation-checklist-under-coverage.md) — propagation checklists enumerated by change ID under-cover the merged changeset; derive the file list from the PR diff.
 - [refresh-agent-illustrative-example-paths](./q2-not-urgent-important/refresh-agent-illustrative-example-paths.md) — 4 generic agent definitions still illustrate usage with example paths naming apps this repo deleted.
 - [repo-rules-quality-gate-convergence](./q2-not-urgent-important/repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
@@ -69,6 +70,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [rhino-cli-git-env-scrub-widening](./q2-not-urgent-important/rhino-cli-git-env-scrub-widening.md) — `find_root_from` scrubs only `GIT_DIR`/`GIT_WORK_TREE` before invoking `git rev-parse`, leaving `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, and `GIT_COMMON_DIR` unscrubbed.
 - [rhino-cli-md-links-json-output-scenario-gap](./q2-not-urgent-important/rhino-cli-md-links-json-output-scenario-gap.md) — the retired CLI link checkers' `Scenario: JSON output produces structured results` has no equivalent in `rhino-cli`'s successor feature, though the behaviour is live and unit-tested.
 - [rhino-cli-sync-validator-wrong-model-drift](./q2-not-urgent-important/rhino-cli-sync-validator-wrong-model-drift.md) — a one-line test-fixture placeholder in `sync_validator.rs` diverges from ose-public, violating the zero-carve-out `apps/rhino-cli` byte-identity rule.
+- [rhino-cli-test-binaries-run-by-no-gate](./q2-not-urgent-important/rhino-cli-test-binaries-run-by-no-gate.md) — 20 of the 27 test binaries under `apps/rhino-cli/tests/` are executed by no gate on any surface; the `test:unit` allowlist names seven and no workflow ever calls this project's `test:integration`.
 - [rhino-cli-tools-superset-carveout](./q2-not-urgent-important/rhino-cli-tools-superset-carveout.md) — `doctor/tools.rs`'s "zero carve-outs" byte-identity target collides with `ose-private`'s real, needed IaC tool-provisioning extensions.
 - [rust-crate-structural-checklist-promotion](./q2-not-urgent-important/rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
 - [sdlc-gate-standard-property-bound-lag](./q2-not-urgent-important/sdlc-gate-standard-property-bound-lag.md) — `ose-public`'s SDLC gate standard trails both siblings on two name-bound bareness claims; adopt their wording.
@@ -140,7 +142,7 @@ promoted yet" is a legitimate state, distinct from "rejected".
 
 ## See Also
 
-- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
+- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
   — the authoritative convention, template, and discipline.
 - [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md) —
   routes future-work learnings from plan execution here as two-pagers.

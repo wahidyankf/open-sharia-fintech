@@ -31,11 +31,11 @@ This convention defines which categories live in which layer, the JSON envelope 
 
 ## Children
 
-- [The Split](./deterministic-vs-ai-validation-split/01-the-split.md) — the table mapping each validation category to its owning layer and rationale.
-- [JSON Envelope Contract](./deterministic-vs-ai-validation-split/02-json-envelope-contract.md) — the canonical JSON shape, key order, and byte-determinism guarantees.
-- [Handoff to the AI Checker](./deterministic-vs-ai-validation-split/03-handoff-to-the-ai-checker.md) — how the AI checker consumes the preflight's JSON and skips redundant work.
-- [Adding a New Validation Category](./deterministic-vs-ai-validation-split/04-adding-a-new-validation-category.md) — the decision tree and per-layer implementation contracts.
-- [Refactoring to Deterministic, and Out of Scope](./deterministic-vs-ai-validation-split/05-refactoring-and-out-of-scope.md) — triggers for moving an AI category to deterministic, and what this convention does not define.
+- [The Split](./deterministic-vs-ai-validation-split/the-split.md) — the table mapping each validation category to its owning layer and rationale.
+- [JSON Envelope Contract](./deterministic-vs-ai-validation-split/json-envelope-contract.md) — the canonical JSON shape, key order, and byte-determinism guarantees.
+- [Handoff to the AI Checker](./deterministic-vs-ai-validation-split/handoff-to-the-ai-checker.md) — how the AI checker consumes the preflight's JSON and skips redundant work.
+- [Adding a New Validation Category](./deterministic-vs-ai-validation-split/adding-a-new-validation-category.md) — the decision tree and per-layer implementation contracts.
+- [Refactoring to Deterministic, and Out of Scope](./deterministic-vs-ai-validation-split/refactoring-and-out-of-scope.md) — triggers for moving an AI category to deterministic, and what this convention does not define.
 
 ## Conventions Implemented/Respected
 

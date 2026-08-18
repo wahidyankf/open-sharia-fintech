@@ -23,19 +23,19 @@ This convention draws a hard boundary. App and infra READMEs contain only dev-ru
 
 ## Children
 
-- [Principles Implemented/Respected](./app-readme-vs-specs/01-principles.md) — the core principles this convention implements.
-- [Purpose and Scope](./app-readme-vs-specs/02-purpose-and-scope.md) — the three decisions this convention governs and what it does/does not cover.
-- [Standard 1 — Content Split Rule: Category A (Dev-Runtime)](./app-readme-vs-specs/03-standard-1-category-a-dev-runtime.md) — content that stays in the README.
-- [Standard 1 — Content Split Rule: Category B, and Applying the Rule](./app-readme-vs-specs/04-standard-1-category-b-and-applying-the-rule.md) — content that moves to specs/, and the three-question classification test.
-- [Standard 2 and 3 — Required/Forbidden Sections, and Line-Count Caps](./app-readme-vs-specs/05-standard-2-and-3.md) — required and forbidden README headings, plus hard line-count caps.
-- [Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes](./app-readme-vs-specs/06-standard-4-canonical-layout-and-folder-purposes.md) — the five-folder tree diagram and why each folder is top-level.
-- [Standard 4 — Spec Tree Shape: Per-Surface Variants, Creation Rules, and Migration](./app-readme-vs-specs/07-standard-4-variants-creation-rules-and-migration.md) — how the tree varies by surface profile, plus the flat-root migration path.
-- [Standard 5 — PM-Readability Contract (Glossary)](./app-readme-vs-specs/08-standard-5-pm-readability-glossary.md) — which terms need glossing on first use.
-- [Standard 5 — PM-Readability Contract (Rules 1-6)](./app-readme-vs-specs/09-standard-5-pm-readability-rules.md) — the six authoring rules for PM-readable specs files.
-- [Standard 6 and 7 — BDD/DDD/Contracts Adoption, and Cross-Link Integrity](./app-readme-vs-specs/10-standard-6-and-7.md) — adoption expectations by surface profile and app, plus README-to-specs navigation requirements.
-- [Examples: README Trim and PM-Readable Header](./app-readme-vs-specs/11-examples-readme-trim-and-pm-readable-header.md) — worked before/after examples of a README trim and a PM-readable spec header.
-- [Example: Spec Tree Migration](./app-readme-vs-specs/12-examples-spec-tree-migration.md) — a worked flat-root-to-C4-aware migration example and checklist.
-- [Validation and Refinement Log](./app-readme-vs-specs/13-validation-and-refinement-log.md) — deterministic and LLM-semantic enforcement checks, and the convention's change history.
+- [Principles Implemented/Respected](./app-readme-vs-specs/principles.md) — the core principles this convention implements.
+- [Purpose and Scope](./app-readme-vs-specs/purpose-and-scope.md) — the three decisions this convention governs and what it does/does not cover.
+- [Standard 1 — Content Split Rule: Category A (Dev-Runtime)](./app-readme-vs-specs/standard-1-category-a-dev-runtime.md) — content that stays in the README.
+- [Standard 1 — Content Split Rule: Category B, and Applying the Rule](./app-readme-vs-specs/standard-1-category-b-and-applying-the-rule.md) — content that moves to specs/, and the three-question classification test.
+- [Standard 2 and 3 — Required/Forbidden Sections, and Line-Count Caps](./app-readme-vs-specs/standard-2-and-3.md) — required and forbidden README headings, plus hard line-count caps.
+- [Standard 4 — Spec Tree Shape: Canonical Layout and Folder Purposes](./app-readme-vs-specs/standard-4-canonical-layout-and-folder-purposes.md) — the five-folder tree diagram and why each folder is top-level.
+- [Standard 4 — Spec Tree Shape: Per-Surface Variants, Creation Rules, and Migration](./app-readme-vs-specs/standard-4-variants-creation-rules-and-migration.md) — how the tree varies by surface profile, plus the flat-root migration path.
+- [Standard 5 — PM-Readability Contract (Glossary)](./app-readme-vs-specs/standard-5-pm-readability-glossary.md) — which terms need glossing on first use.
+- [Standard 5 — PM-Readability Contract (Rules 1-6)](./app-readme-vs-specs/standard-5-pm-readability-rules.md) — the six authoring rules for PM-readable specs files.
+- [Standard 6 and 7 — BDD/DDD/Contracts Adoption, and Cross-Link Integrity](./app-readme-vs-specs/standard-6-and-7.md) — adoption expectations by surface profile and app, plus README-to-specs navigation requirements.
+- [Examples: README Trim and PM-Readable Header](./app-readme-vs-specs/examples-readme-trim-and-pm-readable-header.md) — worked before/after examples of a README trim and a PM-readable spec header.
+- [Example: Spec Tree Migration](./app-readme-vs-specs/examples-spec-tree-migration.md) — a worked flat-root-to-C4-aware migration example and checklist.
+- [Validation and Refinement Log](./app-readme-vs-specs/validation-and-refinement-log.md) — deterministic and LLM-semantic enforcement checks, and the convention's change history.
 
 ## Related
 

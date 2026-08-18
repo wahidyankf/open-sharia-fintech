@@ -6,3 +6,5 @@ pub mod fs;
 pub mod git;
 /// Mermaid infrastructure adapters (extractor + reporter).
 pub mod mermaid;
+/// Standard-stream descriptor-flag hygiene for git-hook invocations.
+pub mod stdio_blocking;

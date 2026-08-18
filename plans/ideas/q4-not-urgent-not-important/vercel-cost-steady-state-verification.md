@@ -60,7 +60,7 @@ saved for invoice day.
   [knowledge-capture](../../../repo-governance/development/quality/knowledge-capture.md)
 - **Plans Organization Convention §Ideas Folder** — the promotion gate this brief will be judged
   against.
-  [plans §Ideas Folder (Two-Pagers)](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
+  [plans §Ideas Folder (Two-Pagers)](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
 
 ## Proposed direction (sketch)
 

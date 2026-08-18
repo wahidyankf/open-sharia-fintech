@@ -68,31 +68,31 @@ existing conversion before treating it as a reference source.
 
 ## Contents
 
-- [Execution Mode](./pdf-to-md-quality-gate/01-execution-mode.md) — delegation vs. manual mode.
-- [Workflow Overview](./pdf-to-md-quality-gate/02-workflow-overview.md) — flow diagram.
+- [Execution Mode](./pdf-to-md-quality-gate/execution-mode.md) — delegation vs. manual mode.
+- [Workflow Overview](./pdf-to-md-quality-gate/workflow-overview.md) — flow diagram.
 
 ### Steps
 
-- [Step 1: Generate Markdown](./pdf-to-md-quality-gate/03-step-1-generate-markdown.md) — maker.
-- [Step 2: Validate Fidelity](./pdf-to-md-quality-gate/04-step-2-validate-fidelity.md) — checker.
-- [Step 3: Check for Findings](./pdf-to-md-quality-gate/05-step-3-check-for-findings.md) — threshold.
-- [Step 4: Apply Fixes](./pdf-to-md-quality-gate/06-step-4-apply-fixes.md) — fixer, downgrade rules.
-- [Step 5: Re-validate](./pdf-to-md-quality-gate/07-step-5-revalidate.md) — scoped re-check.
-- [Step 6: Iteration Control](./pdf-to-md-quality-gate/08-step-6-iteration-control.md) — loop logic.
-- [Step 7: Finalization](./pdf-to-md-quality-gate/09-step-7-finalization.md) — final status.
+- [Step 1: Generate Markdown](./pdf-to-md-quality-gate/step-1-generate-markdown.md) — maker.
+- [Step 2: Validate Fidelity](./pdf-to-md-quality-gate/step-2-validate-fidelity.md) — checker.
+- [Step 3: Check for Findings](./pdf-to-md-quality-gate/step-3-check-for-findings.md) — threshold.
+- [Step 4: Apply Fixes](./pdf-to-md-quality-gate/step-4-apply-fixes.md) — fixer, downgrade rules.
+- [Step 5: Re-validate](./pdf-to-md-quality-gate/step-5-revalidate.md) — scoped re-check.
+- [Step 6: Iteration Control](./pdf-to-md-quality-gate/step-6-iteration-control.md) — loop logic.
+- [Step 7: Finalization](./pdf-to-md-quality-gate/step-7-finalization.md) — final status.
 
 ### Criteria and Examples
 
-- [Termination Criteria](./pdf-to-md-quality-gate/10-termination-criteria.md) — pass/partial/fail.
-- [Example Usage](./pdf-to-md-quality-gate/11-example-usage.md) — invocation scenarios.
-- [Iteration Example](./pdf-to-md-quality-gate/12-iteration-example.md) — multi-iteration trace.
+- [Termination Criteria](./pdf-to-md-quality-gate/termination-criteria.md) — pass/partial/fail.
+- [Example Usage](./pdf-to-md-quality-gate/example-usage.md) — invocation scenarios.
+- [Iteration Example](./pdf-to-md-quality-gate/iteration-example.md) — multi-iteration trace.
 
 ### Safety and Reference
 
-- [Safety Features](./pdf-to-md-quality-gate/13-safety-features.md) — convergence safeguards.
-- [Tool Dependencies](./pdf-to-md-quality-gate/14-tool-dependencies.md) — crane-cli, tesseract, jq.
-- [Validation Dimensions](./pdf-to-md-quality-gate/15-validation-dimensions-summary.md) — dimension table.
-- [Principles Respected](./pdf-to-md-quality-gate/16-principles-implemented-respected.md) — governance.
-- [Conventions Respected](./pdf-to-md-quality-gate/17-conventions-implemented-respected.md) — naming/linking.
-- [Related Workflows](./pdf-to-md-quality-gate/18-related-workflows.md) — composable workflows.
-- [Related Agents](./pdf-to-md-quality-gate/19-related-agents.md) — maker/checker/fixer.
+- [Safety Features](./pdf-to-md-quality-gate/safety-features.md) — convergence safeguards.
+- [Tool Dependencies](./pdf-to-md-quality-gate/tool-dependencies.md) — crane-cli, tesseract, jq.
+- [Validation Dimensions](./pdf-to-md-quality-gate/validation-dimensions-summary.md) — dimension table.
+- [Principles Respected](./pdf-to-md-quality-gate/principles-implemented-respected.md) — governance.
+- [Conventions Respected](./pdf-to-md-quality-gate/conventions-implemented-respected.md) — naming/linking.
+- [Related Workflows](./pdf-to-md-quality-gate/related-workflows.md) — composable workflows.
+- [Related Agents](./pdf-to-md-quality-gate/related-agents.md) — maker/checker/fixer.

@@ -25,19 +25,19 @@ repository with this shape needs the identical procedure.
 
 ## Contents
 
-- [Principles and Conventions Implemented](./bare-repo-landing-method/01-principles-and-conventions-implemented.md) — Why this method exists.
-- [When This Applies](./bare-repo-landing-method/02-when-this-applies.md) — The two triggering conditions.
-- [Verify Topology First](./bare-repo-landing-method/03-verify-topology-first.md) — Two valid bareness checks, one forbidden command.
-- [The Method, As Numbered Steps](./bare-repo-landing-method/04-the-method-as-numbered-steps.md) — The eight-step landing sequence.
-- [Terminal Reconcile](./bare-repo-landing-method/05-terminal-reconcile.md) — The topology-keyed reconcile command for step 8.
-- [Why Merge --ff-only Cannot Run in the Bare Siblings](./bare-repo-landing-method/06-why-merge-ff-only-cannot-run-in-the-bare-siblings.md) — Why the refspec fetch form is the only universal one.
-- [Worked Example — the 2026-07-21 Sibling Drift](./bare-repo-landing-method/07-worked-example-the-2026-07-21-sibling-drift.md) — A real transcript of silent local-main lag.
-- [Measure After Fetching, Never Before](./bare-repo-landing-method/08-measure-after-fetching-never-before.md) — Why the drift check must run after a fetch.
-- [Remote-Branch Cleanup in a Bare Repository](./bare-repo-landing-method/09-remote-branch-cleanup-in-a-bare-repository.md) — Deleting a merged branch when the bare repo can't push it.
-- [Reading a File From Another Repository](./bare-repo-landing-method/10-reading-a-file-from-another-repository.md) — Reading a sibling repo's file safely by ref.
-- [One Landing Path Per Unit Of Work](./bare-repo-landing-method/11-one-landing-path-per-unit-of-work.md) — Why a unit of work must land through exactly one path.
-- [Long-Lived WIP Belongs on a Branch, Not in the Index](./bare-repo-landing-method/12-long-lived-wip-belongs-on-a-branch-not-in-the-index.md) — Advisory guidance for long-lived WIP.
-- [Why There Is No Guard](./bare-repo-landing-method/13-why-there-is-no-guard.md) — Why no hook can enforce the terminal reconcile step.
+- [Principles and Conventions Implemented](./bare-repo-landing-method/principles-and-conventions-implemented.md) — Why this method exists.
+- [When This Applies](./bare-repo-landing-method/when-this-applies.md) — The two triggering conditions.
+- [Verify Topology First](./bare-repo-landing-method/verify-topology-first.md) — Two valid bareness checks, one forbidden command.
+- [The Method, As Numbered Steps](./bare-repo-landing-method/the-method-as-numbered-steps.md) — The eight-step landing sequence.
+- [Terminal Reconcile](./bare-repo-landing-method/terminal-reconcile.md) — The topology-keyed reconcile command for step 8.
+- [Why Merge --ff-only Cannot Run in the Bare Siblings](./bare-repo-landing-method/why-merge-ff-only-cannot-run-in-the-bare-siblings.md) — Why the refspec fetch form is the only universal one.
+- [Worked Example — the 2026-07-21 Sibling Drift](./bare-repo-landing-method/worked-example-the-2026-07-21-sibling-drift.md) — A real transcript of silent local-main lag.
+- [Measure After Fetching, Never Before](./bare-repo-landing-method/measure-after-fetching-never-before.md) — Why the drift check must run after a fetch.
+- [Remote-Branch Cleanup in a Bare Repository](./bare-repo-landing-method/remote-branch-cleanup-in-a-bare-repository.md) — Deleting a merged branch when the bare repo can't push it.
+- [Reading a File From Another Repository](./bare-repo-landing-method/reading-a-file-from-another-repository.md) — Reading a sibling repo's file safely by ref.
+- [One Landing Path Per Unit Of Work](./bare-repo-landing-method/one-landing-path-per-unit-of-work.md) — Why a unit of work must land through exactly one path.
+- [Long-Lived WIP Belongs on a Branch, Not in the Index](./bare-repo-landing-method/long-lived-wip-belongs-on-a-branch-not-in-the-index.md) — Advisory guidance for long-lived WIP.
+- [Why There Is No Guard](./bare-repo-landing-method/why-there-is-no-guard.md) — Why no hook can enforce the terminal reconcile step.
 
 ## Related Documentation
 

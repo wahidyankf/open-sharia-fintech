@@ -39,7 +39,7 @@ projects, and their formatters run so that content stays consistently formatted.
 
 Every other formatter in the map accepts bare file-path arguments and is wired as a direct
 CLI call in the registry — see
-[Formatting and File-Type Linting](../repo-governance/development/infra/nx-targets/07-formatting-and-file-type-linting.md)
+[Formatting and File-Type Linting](../repo-governance/development/infra/nx-targets/formatting-and-file-type-linting.md)
 for the canonical `glob → formatter` map. Add a wrapper only when the tool itself makes the
 direct call impossible, and say why in a comment at the top of the script, as both files here
 do. Scripts are formatted by `shfmt` and linted by `shellcheck --severity=warning` at

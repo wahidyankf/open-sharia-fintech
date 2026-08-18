@@ -21,20 +21,20 @@ This convention documents the automated code-quality toolchain -- Prettier, Husk
 
 ## Documents
 
-- [Principles and Conventions Implemented/Respected](./code/01-principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this convention's rationale.
-- [Overview](./code/02-overview.md) — Overview of the automated code-quality tooling. Use when orienting to the code-quality toolchain.
-- [Prettier - Code Formatting](./code/03-prettier-code-formatting.md) — How Prettier formats code in this repository. Use when configuring or debugging Prettier formatting.
-- [Husky - Git Hooks](./code/04-husky-git-hooks.md) — How Husky wires git hooks in this repository. Use when configuring or debugging a Husky git hook.
-- [Lint-staged](./code/05-lint-staged.md) — How lint-staged runs formatters/linters on staged files. Use when configuring or debugging lint-staged.
-- [Git Hook Workflow: Pre-commit Hook (Execution Order)](./code/06-git-hook-workflow-pre-commit-execution-order.md) — The pre-commit hook's location and gate steps. Use to trace what runs on git commit.
-- [Git Hook Workflow: Pre-commit Hook (What It Validates)](./code/07-git-hook-workflow-pre-commit-what-it-validates.md) — What the pre-commit hook validates. Use when debugging a pre-commit check failure.
-- [Git Hook Workflow: Commit-msg and Pre-push Hooks](./code/08-git-hook-workflow-commit-msg-and-pre-push-hooks.md) — What the commit-msg and pre-push hooks validate. Use when debugging a commit-msg or pre-push hook.
-- [Bypassing Hooks (Not Recommended)](./code/09-bypassing-hooks-not-recommended.md) — Why bypassing a hook is discouraged. Use before bypassing a git hook.
-- [Troubleshooting: Prettier, Commitlint, and Hooks Not Running](./code/10-troubleshooting-prettier-commitlint-hooks.md) — Fixes for Prettier, commitlint, and non-running hooks. Use when Prettier, commitlint, or a hook misbehaves.
-- [Troubleshooting: Pre-push Hook](./code/11-troubleshooting-pre-push-hook.md) — Fixes for a slow or failing pre-push hook. Use when pre-push is slow or a check fails.
-- [Adding New File Types](./code/12-adding-new-file-types.md) — How to add a new file type to the pipeline. Use when a new file type needs lint coverage.
-- [Integration with Development Workflow](./code/13-integration-with-development-workflow.md) — How quality tooling fits the dev workflow. Use to see how quality tooling fits your workflow.
-- [Rust CLI Linting](./code/14-rust-cli-linting.md) — How Rust CLI code (rhino-cli) is linted. Use when configuring or debugging Rust CLI lint gates.
-- [Language-Specific Auto-Formatters](./code/15-language-specific-auto-formatters.md) — Auto-formatters used per language across the repository. Use when checking which formatter applies to a given language.
-- [Best Practices](./code/16-best-practices.md) — Best practices for working with the code-quality tooling. Use for a quick best-practice reminder on code quality.
-- [Related Documentation and References](./code/17-related-documentation-and-references.md) — Related conventions and external references. Use for a related convention or reference.
+- [Principles and Conventions Implemented/Respected](./code/principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this convention's rationale.
+- [Overview](./code/overview.md) — Overview of the automated code-quality tooling. Use when orienting to the code-quality toolchain.
+- [Prettier - Code Formatting](./code/prettier-code-formatting.md) — How Prettier formats code in this repository. Use when configuring or debugging Prettier formatting.
+- [Husky - Git Hooks](./code/husky-git-hooks.md) — How Husky wires git hooks in this repository. Use when configuring or debugging a Husky git hook.
+- [Lint-staged](./code/lint-staged.md) — How lint-staged runs formatters/linters on staged files. Use when configuring or debugging lint-staged.
+- [Git Hook Workflow: Pre-commit Hook (Execution Order)](./code/git-hook-workflow-pre-commit-execution-order.md) — The pre-commit hook's location and gate steps. Use to trace what runs on git commit.
+- [Git Hook Workflow: Pre-commit Hook (What It Validates)](./code/git-hook-workflow-pre-commit-what-it-validates.md) — What the pre-commit hook validates. Use when debugging a pre-commit check failure.
+- [Git Hook Workflow: Commit-msg and Pre-push Hooks](./code/git-hook-workflow-commit-msg-and-pre-push-hooks.md) — What the commit-msg and pre-push hooks validate. Use when debugging a commit-msg or pre-push hook.
+- [Bypassing Hooks (Not Recommended)](./code/bypassing-hooks-not-recommended.md) — Why bypassing a hook is discouraged. Use before bypassing a git hook.
+- [Troubleshooting: Prettier, Commitlint, and Hooks Not Running](./code/troubleshooting-prettier-commitlint-hooks.md) — Fixes for Prettier, commitlint, and non-running hooks. Use when Prettier, commitlint, or a hook misbehaves.
+- [Troubleshooting: Pre-push Hook](./code/troubleshooting-pre-push-hook.md) — Fixes for a slow or failing pre-push hook. Use when pre-push is slow or a check fails.
+- [Adding New File Types](./code/adding-new-file-types.md) — How to add a new file type to the pipeline. Use when a new file type needs lint coverage.
+- [Integration with Development Workflow](./code/integration-with-development-workflow.md) — How quality tooling fits the dev workflow. Use to see how quality tooling fits your workflow.
+- [Rust CLI Linting](./code/rust-cli-linting.md) — How Rust CLI code (rhino-cli) is linted. Use when configuring or debugging Rust CLI lint gates.
+- [Language-Specific Auto-Formatters](./code/language-specific-auto-formatters.md) — Auto-formatters used per language across the repository. Use when checking which formatter applies to a given language.
+- [Best Practices](./code/best-practices.md) — Best practices for working with the code-quality tooling. Use for a quick best-practice reminder on code quality.
+- [Related Documentation and References](./code/related-documentation-and-references.md) — Related conventions and external references. Use for a related convention or reference.

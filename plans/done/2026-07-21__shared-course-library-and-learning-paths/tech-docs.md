@@ -1933,7 +1933,7 @@ overturned the Screen 3 selection.
   `assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png` from `assets/src/<same-stem>.html`; the
   eight pre-existing files were renamed into the scheme and every `![]()` reference updated. `.png`
   only, per the
-  [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
+  [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
   Delivery enumerates the renders **one checkbox per asset** — a coarse "render all mockups" step can
   be ticked with most of the set missing.
 

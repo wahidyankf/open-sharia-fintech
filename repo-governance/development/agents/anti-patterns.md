@@ -20,21 +20,21 @@ Understanding common mistakes in AI agent development helps teams build more mai
 
 ## Overview and Foundations
 
-- [Overview](./anti-patterns/01-overview.md) — why this matters.
-- [Purpose](./anti-patterns/02-purpose.md) — what this document provides.
-- [Principles Implemented/Respected](./anti-patterns/03-principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./anti-patterns/04-conventions-implemented-respected.md) — sibling conventions.
+- [Overview](./anti-patterns/overview.md) — why this matters.
+- [Purpose](./anti-patterns/purpose.md) — what this document provides.
+- [Principles Implemented/Respected](./anti-patterns/principles-implemented-respected.md) — principle list.
+- [Conventions Implemented/Respected](./anti-patterns/conventions-implemented-respected.md) — sibling conventions.
 
 ## Common Anti-Patterns
 
-- [God Agent, Excessive Tools, Vague Descriptions, and Hardcoded Values](./anti-patterns/05-common-anti-patterns-1-to-4.md) — patterns 1-4.
-- [Error Handling, Tool Documentation, Model Choice, Testing, and Naming](./anti-patterns/06-common-anti-patterns-5-to-9.md) — patterns 5-9.
-- [Anti-Pattern 10: Enumeration-Based Guards](./anti-patterns/07-anti-pattern-10-enumeration-based-guards.md) — denylist guards that fail open.
-- [Anti-Pattern 10 (Continued)](./anti-patterns/08-anti-pattern-10-continued.md) — confidence-assessment recipe.
-- [Anti-Pattern 11: Verification Prompts That Presuppose Their Conclusion](./anti-patterns/09-anti-pattern-11-presupposing-verification.md) — leading prompts.
+- [God Agent, Excessive Tools, Vague Descriptions, and Hardcoded Values](./anti-patterns/common-anti-patterns-1-to-4.md) — patterns 1-4.
+- [Error Handling, Tool Documentation, Model Choice, Testing, and Naming](./anti-patterns/common-anti-patterns-5-to-9.md) — patterns 5-9.
+- [Anti-Pattern 10: Enumeration-Based Guards](./anti-patterns/anti-pattern-10-enumeration-based-guards.md) — denylist guards that fail open.
+- [Anti-Pattern 10 (Continued)](./anti-patterns/anti-pattern-10-continued.md) — confidence-assessment recipe.
+- [Anti-Pattern 11: Verification Prompts That Presuppose Their Conclusion](./anti-patterns/anti-pattern-11-presupposing-verification.md) — leading prompts.
 
 ## Summary and Reference
 
-- [Summary of Anti-Patterns](./anti-patterns/10-summary-of-anti-patterns.md) — quick-reference table.
-- [Related Documentation](./anti-patterns/11-related-documentation.md) — further reading.
-- [Conclusion](./anti-patterns/12-conclusion.md) — closing statement.
+- [Summary of Anti-Patterns](./anti-patterns/summary-of-anti-patterns.md) — quick-reference table.
+- [Related Documentation](./anti-patterns/related-documentation.md) — further reading.
+- [Conclusion](./anti-patterns/conclusion.md) — closing statement.

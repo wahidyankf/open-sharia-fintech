@@ -17,9 +17,9 @@ This convention establishes standard markdown indentation for all files in the r
 
 ## In This Convention
 
-- [Purpose, Scope, and Bullet Indentation Rules](./indentation/01-purpose-scope-and-bullet-indentation-rules.md) — Principles, scope, the core space-indentation principle, and standard bullet indentation
-- [YAML and Code Block Indentation](./indentation/02-yaml-and-code-block-indentation.md) — 2-space YAML frontmatter indentation and language-specific code block indentation
-- [Complete Example and Checklist](./indentation/03-complete-example-and-checklist.md) — A full worked example and the pre-commit indentation checklist
+- [Purpose, Scope, and Bullet Indentation Rules](./indentation/purpose-scope-and-bullet-indentation-rules.md) — Principles, scope, the core space-indentation principle, and standard bullet indentation
+- [YAML and Code Block Indentation](./indentation/yaml-and-code-block-indentation.md) — 2-space YAML frontmatter indentation and language-specific code block indentation
+- [Complete Example and Checklist](./indentation/complete-example-and-checklist.md) — A full worked example and the pre-commit indentation checklist
 
 ## Related Conventions
 

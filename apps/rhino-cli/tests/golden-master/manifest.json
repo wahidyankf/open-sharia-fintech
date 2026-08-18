@@ -72,33 +72,6 @@
     ]
   },
   {
-    "file": "repo-governance-workflows",
-    "args": [
-      "repo-governance",
-      "workflows",
-      "--help"
-    ]
-  },
-  {
-    "file": "repo-governance-workflows-naming",
-    "args": [
-      "repo-governance",
-      "workflows",
-      "naming",
-      "--help"
-    ]
-  },
-  {
-    "file": "repo-governance-workflows-naming-validate",
-    "args": [
-      "repo-governance",
-      "workflows",
-      "naming",
-      "validate",
-      "--help"
-    ]
-  },
-  {
     "file": "md-help",
     "args": [
       "md",
@@ -276,23 +249,6 @@
     "args": [
       "harness",
       "audit",
-      "--help"
-    ]
-  },
-  {
-    "file": "harness-naming",
-    "args": [
-      "harness",
-      "naming",
-      "--help"
-    ]
-  },
-  {
-    "file": "harness-naming-validate",
-    "args": [
-      "harness",
-      "naming",
-      "validate",
       "--help"
     ]
   },

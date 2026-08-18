@@ -14,16 +14,16 @@ discipline.
 
 ## Reference Modules
 
-- [Core Responsibility and Scope Guard](reference/01-core-responsibility-and-scope-guard.md) —
+- [Core Responsibility and Scope Guard](reference/core-responsibility-and-scope-guard.md) —
   consuming the scout's shared-context brief (or deriving it standalone), and the scope guard
   that pins findings to the PR's own declared scope
-- [Finding Requirements Hard Rules](reference/02-finding-requirements-hard-rules.md) — the four
+- [Finding Requirements Hard Rules](reference/finding-requirements-hard-rules.md) — the four
   mandatory elements every posted finding must carry, inherited verbatim from the retired
   monolith
-- [Untrusted-Input Handling](reference/03-untrusted-input-handling.md) — treating PR
+- [Untrusted-Input Handling](reference/untrusted-input-handling.md) — treating PR
   body/comments/issue text as adversarial input, and the routing exception for
   `pr-review-security-maker`
-- [Findings Handoff and Cross-Cycle Behavior](reference/04-findings-handoff-cross-cycle-external-facts.md) —
+- [Findings Handoff and Cross-Cycle Behavior](reference/findings-handoff-cross-cycle-external-facts.md) —
   why specialists never post directly, re-review scope each cycle, and external fact
   verification via `web-researcher`
 

@@ -33,10 +33,10 @@ Simple, single-variant components may colocate the variant definition inline in 
 
 ## Contents
 
-- [Component Pattern](./component-patterns/01-component-pattern.md) — React.ComponentProps over forwardRef, the unified radix-ui import, data-slot, and cn().
-- [CVA Variants and Radix Composition](./component-patterns/02-cva-variants-and-radix-composition.md) — defining variants with cva(), and composing Radix sub-parts.
-- [Required States and the asChild Pattern](./component-patterns/03-required-states-and-aschild-pattern.md) — the full state-coverage table, and delegating rendering via Slot.Root.
-- [Complete Button Example](./component-patterns/04-complete-button-example.md) — the canonical ayokoding-www Button implementation.
+- [Component Pattern](./component-patterns/component-pattern.md) — React.ComponentProps over forwardRef, the unified radix-ui import, data-slot, and cn().
+- [CVA Variants and Radix Composition](./component-patterns/cva-variants-and-radix-composition.md) — defining variants with cva(), and composing Radix sub-parts.
+- [Required States and the asChild Pattern](./component-patterns/required-states-and-aschild-pattern.md) — the full state-coverage table, and delegating rendering via Slot.Root.
+- [Complete Button Example](./component-patterns/complete-button-example.md) — the canonical ayokoding-www Button implementation.
 
 ## Principles Implemented/Respected
 

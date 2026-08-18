@@ -14,18 +14,18 @@ created: 2025-11-19
 
 # File Naming Convention
 
-Files in `docs/`, `repo-governance/`, and similar repository locations follow a single rule designed for **standard markdown and GitHub compatibility**.
+Files in `docs/`, `repo-governance/`, and similar locations follow one rule, designed for **standard markdown and GitHub compatibility**.
 
 ## Why This Rule Exists
 
-Files in this repository are read through two primary surfaces: GitHub web (which renders markdown and turns filenames into URL slugs) and standard markdown tooling (VS Code, markdown linters, static site generators). Both surfaces have the same expectations:
+Files here are read through two surfaces: GitHub web (which renders markdown and turns filenames into URL slugs) and standard markdown tooling. Both expect:
 
 - Lowercase URL slugs (GitHub URLs are case-sensitive on Linux hosting)
-- ASCII-only filenames (avoid mojibake in URLs and cross-OS clones)
+- ASCII-only filenames (no mojibake in URLs or cross-OS clones)
 - No shell or URL metacharacters (prevents link breakage and quoting bugs)
-- Case-insensitive uniqueness inside a directory (so clones to macOS/Windows filesystems do not collide)
+- Case-insensitive uniqueness inside a directory (so macOS/Windows clones do not collide)
 
-Picking a rule that satisfies both surfaces keeps the documentation portable and the tooling simple.
+One rule satisfying both keeps documentation portable and tooling simple.
 
 ## The Rule
 
@@ -45,25 +45,25 @@ monorepo-structure.md
 - No spaces, no uppercase, no camelCase, no underscores in the basename
 - No leading or trailing hyphens
 - No characters that break GitHub URLs or shell quoting: `:` `?` `*` `<` `>` `|` `"` backslash
-- Filenames in the same directory must be unique after lowercasing (for macOS/Windows clone safety)
+- Filenames in one directory must be unique after lowercasing (macOS/Windows clone safety)
 
 ## Exceptions
 
 ### Index files
 
-Each directory's index file is named `README.md`. This exception exists because GitHub automatically renders `README.md` as the directory landing page on the web.
+Each directory's index file is named `README.md`, because GitHub renders it as the directory landing page.
 
 ### Skill definition files
 
-Skill definition files under `.claude/skills/*/` are named `SKILL.md`. The uppercase convention provides immediate visual distinction from other markdown files in skill directories, and `SKILL.md` is the canonical filename referenced throughout the AI agents convention and governance documentation.
+Skill definition files under `.claude/skills/*/` are named `SKILL.md` — uppercase for immediate visual distinction, and the canonical name referenced throughout governance.
 
 ### Operational metadata
 
-Files under `docs/metadata/` are operational artifacts (caches, validation data). The directory itself provides the context, so only machine-parseability matters.
+Files under `docs/metadata/` are operational artifacts (caches, validation data); the directory supplies the context, so only machine-parseability matters.
 
 ### Assets co-located with documentation
 
-Images and diagrams co-located with a markdown file follow the same kebab-case rule:
+Co-located images and diagrams follow the same kebab-case rule:
 
 ```text
 diagrams.md
@@ -78,18 +78,26 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 2025-12-14-phase-0-week-4-initial-commit.md
 ```
 
+## Withdrawn Rules
+
+Three filename rules once bound here and no longer do: the **agent role suffix**, **workflow type
+suffix**, and **workflow scope prefix**. No filename changed. See Withdrawn Rules Detail below for
+what each covered and whether the third's removal was deliberate.
+
 ## Principles Implemented/Respected
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Kebab-case is the simplest viable naming scheme; no prefixes, abbreviations, or hierarchical encoding
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - Filenames explicitly describe content; directory hierarchy explicitly encodes category
-- **[Documentation First](../../principles/content/documentation-first.md)** - Consistent, predictable naming supports discoverability across GitHub web and standard markdown tooling
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Kebab-case is the simplest viable naming scheme; avoid abbreviations and hierarchical encoding. Leading `NN-` ordinals are governed by [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md)
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - Filenames describe content; the directory hierarchy encodes category
+- **[Documentation First](../../principles/content/documentation-first.md)** - Predictable naming supports discoverability across GitHub web and markdown tooling
 
 ## Children
 
-- [App Naming Types](./file-naming/01-app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
+- [App Naming Types](./file-naming/app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
+- [Withdrawn Rules Detail](./file-naming/withdrawn-rules.md) — what each withdrawn rule checked, and whether the scope-prefix drop was deliberate.
 
 ## Related Documentation
 
+- [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md)
 - [Linking Convention](../formatting/linking.md)
 - [Diátaxis Framework](../structure/diataxis-framework.md)
 - [Conventions Index](../README.md)

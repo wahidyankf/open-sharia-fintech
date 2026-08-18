@@ -44,10 +44,10 @@ until zero findings are achieved.
 
 ## Contents
 
-- [When to Use](./ci-quality-gate/01-when-to-use.md) — the four triggers.
-- [Execution Mode](./ci-quality-gate/02-execution-mode.md) — preferred/fallback execution.
-- [Steps](./ci-quality-gate/03-steps.md) — the five-step check-fix-recheck loop.
-- [Related Workflows](./ci-quality-gate/04-related-workflows.md) — other workflows with a similar pattern.
-- [Principles Implemented/Respected](./ci-quality-gate/05-principles-implemented-respected.md) — the principles this gate embodies.
-- [Conventions Implemented/Respected](./ci-quality-gate/06-conventions-implemented-respected.md) — the conventions this gate enforces.
-- [Agents](./ci-quality-gate/07-agents.md) — `ci-checker` and `ci-fixer`.
+- [When to Use](./ci-quality-gate/when-to-use.md) — the four triggers.
+- [Execution Mode](./ci-quality-gate/execution-mode.md) — preferred/fallback execution.
+- [Steps](./ci-quality-gate/steps.md) — the five-step check-fix-recheck loop.
+- [Related Workflows](./ci-quality-gate/related-workflows.md) — other workflows with a similar pattern.
+- [Principles Implemented/Respected](./ci-quality-gate/principles-implemented-respected.md) — the principles this gate embodies.
+- [Conventions Implemented/Respected](./ci-quality-gate/conventions-implemented-respected.md) — the conventions this gate enforces.
+- [Agents](./ci-quality-gate/agents.md) — `ci-checker` and `ci-fixer`.

@@ -33,24 +33,24 @@ source or lands a behaviour change.
 
 ### Overview
 
-- [Purpose, Execution Mode, and When to Use](./web-ux-test-fixing-planning/01-purpose-execution-mode-and-when-to-use.md) — purpose, delegation vs manual mode, when to run it.
-- [Inputs at a Glance and Grilling](./web-ux-test-fixing-planning/02-inputs-at-a-glance-and-grilling.md) — input quick-reference table and human checkpoints.
-- [Inputs Reference — Part 1](./web-ux-test-fixing-planning/14-inputs-reference-part-1.md) — YAML contract, target-urls through locales.
-- [Inputs Reference — Part 2 and Outputs](./web-ux-test-fixing-planning/15-inputs-reference-part-2-and-outputs.md) — YAML contract, remaining inputs and all outputs.
-- [Systematic Coverage & Recurrence](./web-ux-test-fixing-planning/03-systematic-coverage-and-recurrence.md) — the enumerate-don't-sample forcing function.
+- [Purpose, Execution Mode, and When to Use](./web-ux-test-fixing-planning/purpose-execution-mode-and-when-to-use.md) — purpose, delegation vs manual mode, when to run it.
+- [Inputs at a Glance and Grilling](./web-ux-test-fixing-planning/inputs-at-a-glance-and-grilling.md) — input quick-reference table and human checkpoints.
+- [Inputs Reference — Part 1](./web-ux-test-fixing-planning/inputs-reference-part-1.md) — YAML contract, target-urls through locales.
+- [Inputs Reference — Part 2 and Outputs](./web-ux-test-fixing-planning/inputs-reference-part-2-and-outputs.md) — YAML contract, remaining inputs and all outputs.
+- [Systematic Coverage & Recurrence](./web-ux-test-fixing-planning/systematic-coverage-and-recurrence.md) — the enumerate-don't-sample forcing function.
 
 ### Phases
 
-- [Phase 0 — Pre-flight](./web-ux-test-fixing-planning/04-phase-0-pre-flight.md) — clean tree, reachable targets, recurrence memory.
-- [Phase 1 — Exploratory Pass + Integrate](./web-ux-test-fixing-planning/05-phase-1-exploratory-pass-and-integrate.md) — spec-aware correctness pass.
-- [Phase 2 — Usability Pass + Integrate](./web-ux-test-fixing-planning/06-phase-2-usability-pass-and-integrate.md) — spec-blind usability pass.
-- [Phase 3 — Design Pass + Integrate](./web-ux-test-fixing-planning/07-phase-3-design-pass-and-completeness-critic.md) — design-fidelity pass.
-- [Phase 3.5 — Cross-Tester Completeness Critic](./web-ux-test-fixing-planning/13-phase-3-5-completeness-critic.md) — pre-solidification critic.
-- [Phase 4 — Solidify](./web-ux-test-fixing-planning/08-phase-4-solidify.md) — tech-docs.md, delivery.md, conditional UI assets.
-- [Phases 5 and 6 — Quality Gate and Push](./web-ux-test-fixing-planning/09-phase-5-and-6-quality-gate-and-push.md) — hardening gate and final push.
+- [Phase 0 — Pre-flight](./web-ux-test-fixing-planning/phase-0-pre-flight.md) — clean tree, reachable targets, recurrence memory.
+- [Phase 1 — Exploratory Pass + Integrate](./web-ux-test-fixing-planning/phase-1-exploratory-pass-and-integrate.md) — spec-aware correctness pass.
+- [Phase 2 — Usability Pass + Integrate](./web-ux-test-fixing-planning/phase-2-usability-pass-and-integrate.md) — spec-blind usability pass.
+- [Phase 3 — Design Pass + Integrate](./web-ux-test-fixing-planning/phase-3-design-pass-and-completeness-critic.md) — design-fidelity pass.
+- [Phase 3.5 — Cross-Tester Completeness Critic](./web-ux-test-fixing-planning/phase-3-5-completeness-critic.md) — pre-solidification critic.
+- [Phase 4 — Solidify](./web-ux-test-fixing-planning/phase-4-solidify.md) — tech-docs.md, delivery.md, conditional UI assets.
+- [Phases 5 and 6 — Quality Gate and Push](./web-ux-test-fixing-planning/phase-5-and-6-quality-gate-and-push.md) — hardening gate and final push.
 
 ### Reference
 
-- [Gherkin Success Criteria — Part 1](./web-ux-test-fixing-planning/10-gherkin-success-criteria-part-1.md) — first four scenarios.
-- [Gherkin Success Criteria — Part 2](./web-ux-test-fixing-planning/11-gherkin-success-criteria-part-2.md) — remaining four scenarios.
-- [Related Documents, Principles, and Conventions](./web-ux-test-fixing-planning/12-related-documents-principles-and-conventions.md) — agents, workflows, principles, conventions.
+- [Gherkin Success Criteria — Part 1](./web-ux-test-fixing-planning/gherkin-success-criteria-part-1.md) — first four scenarios.
+- [Gherkin Success Criteria — Part 2](./web-ux-test-fixing-planning/gherkin-success-criteria-part-2.md) — remaining four scenarios.
+- [Related Documents, Principles, and Conventions](./web-ux-test-fixing-planning/related-documents-principles-and-conventions.md) — agents, workflows, principles, conventions.

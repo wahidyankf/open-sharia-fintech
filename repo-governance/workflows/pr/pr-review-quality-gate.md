@@ -39,29 +39,29 @@ hard CI-green gate between cycles.
 
 ### Core Flow
 
-- [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/01-purpose-execution-mode-and-classifier.md) — purpose, sequencing rule, eligibility classifier.
-- [Participants](./pr-review-quality-gate/02-participants.md) — the eleven pipeline agents and the trivial-tier branch.
-- [Loop Algorithm](./pr-review-quality-gate/03-loop-algorithm.md) — the review_pr pseudocode and its governing rules.
-- [Pipeline Diagrams](./pr-review-quality-gate/04-pipeline-diagrams.md) — participants flowchart and one-cycle sequence diagram.
+- [Purpose, Execution Mode, and Classifier](./pr-review-quality-gate/purpose-execution-mode-and-classifier.md) — purpose, sequencing rule, eligibility classifier.
+- [Participants](./pr-review-quality-gate/participants.md) — the eleven pipeline agents and the trivial-tier branch.
+- [Loop Algorithm](./pr-review-quality-gate/loop-algorithm.md) — the review_pr pseudocode and its governing rules.
+- [Pipeline Diagrams](./pr-review-quality-gate/pipeline-diagrams.md) — participants flowchart and one-cycle sequence diagram.
 
 ### Steps
 
-- [Steps 0-1 — Classify and Scout Pass](./pr-review-quality-gate/05-steps-0-1-classify-and-scout.md) — resolve inputs, then the scout.
-- [Step 2 — Fan-Out + Synthesis](./pr-review-quality-gate/06-step-2-fan-out-and-synthesis.md) — specialists into one consolidated review.
-- [Steps 3-5 — Fixer, CI Gate, Done-Check](./pr-review-quality-gate/07-steps-3-5-fixer-ci-gate-done-check.md) — triage/push, the hard gate, final status.
+- [Steps 0-1 — Classify and Scout Pass](./pr-review-quality-gate/steps-0-1-classify-and-scout.md) — resolve inputs, then the scout.
+- [Step 2 — Fan-Out + Synthesis](./pr-review-quality-gate/step-2-fan-out-and-synthesis.md) — specialists into one consolidated review.
+- [Steps 3-5 — Fixer, CI Gate, Done-Check](./pr-review-quality-gate/steps-3-5-fixer-ci-gate-done-check.md) — triage/push, the hard gate, final status.
 
 ### API Mechanics and Done-Definition
 
-- [GitHub Reviews API Mechanics — Part 1](./pr-review-quality-gate/08-github-reviews-api-mechanics-part-1.md) — pinning the SHA, posting one review.
-- [GitHub Reviews API Mechanics — Part 2](./pr-review-quality-gate/09-github-reviews-api-mechanics-part-2.md) — reply/resolve, untrusted-input filtering.
-- [Route-Specific Done-Definition](./pr-review-quality-gate/10-route-specific-done-definition.md) — the five items that make a PR "done".
-- [Hardened Merge Preconditions — (a)-(e)](./pr-review-quality-gate/11-hardened-merge-preconditions-a-e.md) — the normative five-lettered merge gate.
-- [Merge Preconditions — Notes and Mechanics](./pr-review-quality-gate/12-hardened-merge-preconditions-notes.md) — per-repo merge command, done-boundary diagram.
+- [GitHub Reviews API Mechanics — Part 1](./pr-review-quality-gate/github-reviews-api-mechanics-part-1.md) — pinning the SHA, posting one review.
+- [GitHub Reviews API Mechanics — Part 2](./pr-review-quality-gate/github-reviews-api-mechanics-part-2.md) — reply/resolve, untrusted-input filtering.
+- [Route-Specific Done-Definition](./pr-review-quality-gate/route-specific-done-definition.md) — the five items that make a PR "done".
+- [Hardened Merge Preconditions — (a)-(e)](./pr-review-quality-gate/hardened-merge-preconditions-a-e.md) — the normative five-lettered merge gate.
+- [Merge Preconditions — Notes and Mechanics](./pr-review-quality-gate/hardened-merge-preconditions-notes.md) — per-repo merge command, done-boundary diagram.
 
 ### Rules and Reference
 
-- [Loop-Exit and Block Rules](./pr-review-quality-gate/13-loop-exit-and-block-rules.md) — when the loop exits, learns, or blocks.
-- [Applicability](./pr-review-quality-gate/14-applicability.md) — mandatory scope; why Phase 0/non-boundary phases are excluded.
-- [Related Workflows and Success Metrics](./pr-review-quality-gate/15-related-workflows-and-success-metrics.md) — composition and tracked metrics.
-- [Notes](./pr-review-quality-gate/16-notes.md) — operating notes, including the sibling-PR staleness pattern.
-- [Principles and Conventions](./pr-review-quality-gate/17-principles-and-conventions.md) — compliance summary.
+- [Loop-Exit and Block Rules](./pr-review-quality-gate/loop-exit-and-block-rules.md) — when the loop exits, learns, or blocks.
+- [Applicability](./pr-review-quality-gate/applicability.md) — mandatory scope; why Phase 0/non-boundary phases are excluded.
+- [Related Workflows and Success Metrics](./pr-review-quality-gate/related-workflows-and-success-metrics.md) — composition and tracked metrics.
+- [Notes](./pr-review-quality-gate/notes.md) — operating notes, including the sibling-PR staleness pattern.
+- [Principles and Conventions](./pr-review-quality-gate/principles-and-conventions.md) — compliance summary.

@@ -25,26 +25,26 @@ environment variables. The three prior docs that covered overlapping ground now 
 
 ## In This Standard
 
-- [Principles Implemented/Respected](./secrets-and-env-standards/01-principles-implemented-respected.md) — Principles this standard implements
-- [Hard Iron Rule — No Secrets in Committed Files](./secrets-and-env-standards/02-hard-iron-rule-no-secrets-in-committed-files.md) — The no-secrets-in-git rule
-- [Secret-Exposure History Remediation](./secrets-and-env-standards/03-secret-exposure-history-remediation.md) — Incident procedure for a leaked secret
-- [Environment Variable Naming Standard](./secrets-and-env-standards/04-environment-variable-naming-standard.md) — Variable classes and prefixing
-- [Layout Standard — One Template per App](./secrets-and-env-standards/05-layout-standard-one-template-per-app.md) — Where env templates live
-- [.env.example Annotation Format](./secrets-and-env-standards/06-env-example-annotation-format.md) — The required comment-block format
-- [Startup Validation](./secrets-and-env-standards/07-startup-validation.md) — Rust and TypeScript startup/build validation
-- [`rhino-cli env` Toolchain](./secrets-and-env-standards/08-rhino-cli-env-toolchain.md) — The backup/restore/init/validate commands
-- [Tiered Injection Standard](./secrets-and-env-standards/09-tiered-injection-standard.md) — How a key is injected — source of truth
-- [Variable Classes with Injection Homes](./secrets-and-env-standards/10-variable-classes-with-injection-homes.md) — The four variable classes
-- [Injection Matrix](./secrets-and-env-standards/11-injection-matrix.md) — App-type × stage × platform mapping
-- [infra/dev/\<stack\> Compose Env](./secrets-and-env-standards/12-infra-dev-compose-env-no-duplicate-templates.md) — No duplicate templates rule
-- [GitHub Environment Key Registry](./secrets-and-env-standards/13-github-environment-key-registry.md) — vars./secrets. per environment
-- [`env-injection:` Manifest](./secrets-and-env-standards/14-env-injection-section-value-less-injection-manifest.md) — Per-app, per-stage injection homes
-- [Secret-Surface Census](./secrets-and-env-standards/15-secret-surface-census.md) — Inventory of secret-bearing surfaces
-- [`guard-env-file-access` Policy](./secrets-and-env-standards/16-guard-env-file-access-policy.md) — Which .env\* files agents may open
-- [Tiered Env Files — the `APP_ENV` Contract](./secrets-and-env-standards/17-tiered-env-files-the-app-env-contract.md) — The tier-file loading contract
-- [Content-Fixture Exclusion](./secrets-and-env-standards/18-content-fixture-exclusion.md) — Rule for course env fixtures
-- [Content-Fixture Exclusion — Enforcement Surfaces](./secrets-and-env-standards/19-content-fixture-exclusion-enforcement-surfaces.md) — Which surface carries it, plus the Codex gotcha
-- [IaC Forward Scaffold](./secrets-and-env-standards/20-iac-forward-scaffold.md) — Pre-staged, commented-out entries
+- [Principles Implemented/Respected](./secrets-and-env-standards/principles-implemented-respected.md) — Principles this standard implements
+- [Hard Iron Rule — No Secrets in Committed Files](./secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md) — The no-secrets-in-git rule
+- [Secret-Exposure History Remediation](./secrets-and-env-standards/secret-exposure-history-remediation.md) — Incident procedure for a leaked secret
+- [Environment Variable Naming Standard](./secrets-and-env-standards/environment-variable-naming-standard.md) — Variable classes and prefixing
+- [Layout Standard — One Template per App](./secrets-and-env-standards/layout-standard-one-template-per-app.md) — Where env templates live
+- [.env.example Annotation Format](./secrets-and-env-standards/env-example-annotation-format.md) — The required comment-block format
+- [Startup Validation](./secrets-and-env-standards/startup-validation.md) — Rust and TypeScript startup/build validation
+- [`rhino-cli env` Toolchain](./secrets-and-env-standards/rhino-cli-env-toolchain.md) — The backup/restore/init/validate commands
+- [Tiered Injection Standard](./secrets-and-env-standards/tiered-injection-standard.md) — How a key is injected — source of truth
+- [Variable Classes with Injection Homes](./secrets-and-env-standards/variable-classes-with-injection-homes.md) — The four variable classes
+- [Injection Matrix](./secrets-and-env-standards/injection-matrix.md) — App-type × stage × platform mapping
+- [infra/dev/\<stack\> Compose Env](./secrets-and-env-standards/infra-dev-compose-env-no-duplicate-templates.md) — No duplicate templates rule
+- [GitHub Environment Key Registry](./secrets-and-env-standards/github-environment-key-registry.md) — vars./secrets. per environment
+- [`env-injection:` Manifest](./secrets-and-env-standards/env-injection-section-value-less-injection-manifest.md) — Per-app, per-stage injection homes
+- [Secret-Surface Census](./secrets-and-env-standards/secret-surface-census.md) — Inventory of secret-bearing surfaces
+- [`guard-env-file-access` Policy](./secrets-and-env-standards/guard-env-file-access-policy.md) — Which .env\* files agents may open
+- [Tiered Env Files — the `APP_ENV` Contract](./secrets-and-env-standards/tiered-env-files-the-app-env-contract.md) — The tier-file loading contract
+- [Content-Fixture Exclusion](./secrets-and-env-standards/content-fixture-exclusion.md) — Rule for course env fixtures
+- [Content-Fixture Exclusion — Enforcement Surfaces](./secrets-and-env-standards/content-fixture-exclusion-enforcement-surfaces.md) — Which surface carries it, plus the Codex gotcha
+- [IaC Forward Scaffold](./secrets-and-env-standards/iac-forward-scaffold.md) — Pre-staged, commented-out entries
 
 ## Related Documents
 

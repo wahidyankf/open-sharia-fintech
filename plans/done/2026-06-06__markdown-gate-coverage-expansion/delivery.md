@@ -20,7 +20,7 @@ claude --worktree markdown-gate-coverage-expansion
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
 and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Push / Definition of Done
 

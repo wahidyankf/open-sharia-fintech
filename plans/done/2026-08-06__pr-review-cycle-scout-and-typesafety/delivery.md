@@ -33,7 +33,7 @@ single-repo gate does not itself jump repos. Each track's own Phase 0 states thi
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree
-Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -48,7 +48,7 @@ not open a second PR.
 `ose-public`'s `plans/` — `ose-primer`, `ose-private`, and `beaver-nest` have no `plans/` entry for
 this work, so their PRs carry no plan-folder content and have no archival step at all. This is the
 ordinary cross-repo carve-out from the
-[Archival-in-PR HARD RULE](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode),
+[Archival-in-PR HARD RULE](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode),
 not a special case invented for this plan — `ose-public`'s own Phase 5 (Track A) is the only one that
 performs the `git mv` into `plans/done/`.
 

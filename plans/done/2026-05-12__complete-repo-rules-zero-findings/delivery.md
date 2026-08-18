@@ -12,7 +12,7 @@ claude --worktree complete-repo-rules-zero-findings
 
 **N/A note (runtime waiver)**: The user has previously waived worktree provisioning for this plan ("do it in this current branch, no need in separate worktree"). The executor MAY skip provisioning and run delivery directly from the repo root. This waiver is documented inline so the worktree section satisfies the Plans Organization Convention's Step-0 hard gate while preserving the user's runtime choice. [Repo-grounded — `repo-governance/conventions/structure/worktree-path.md`]
 
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Environment Setup
 

@@ -36,7 +36,7 @@ already anticipated this exact situation arriving.
 
 - **`plan-execution.md` §8, "Archival-in-PR"** — the rule with the gap; states the delivering-PR
   requirement with no multi-repo carve-out.
-  [plan-execution.md §8](../../../repo-governance/workflows/plan/plan-execution/36-finalization-pre-archival-gates.md#8-finalization-and-archival-sequential)
+  [plan-execution.md §8](../../../repo-governance/workflows/plan/plan-execution/finalization-pre-archival-gates.md#8-finalization-and-archival-sequential)
 - **`plan-multi-repo-parity-planning` workflow** — the repo's existing multi-repo plan-shape
   precedent, whose declared output is "one plan folder path per target repo"; DD-10 of
   `bare-repo-governance-hardening` deliberately diverges from it, which is what exposes the
@@ -45,11 +45,11 @@ already anticipated this exact situation arriving.
 - **The Plan-Docs-Only Carve-Out** — the existing partial mitigation this plan leans on for its
   archival push; its own text already names and disclaims "DD-11 of any individual plan" as a
   non-precedent.
-  [plan-planning.md §The Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning/07-plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-ose-public)
+  [plan-planning.md §The Plan-Docs-Only Carve-Out](../../../repo-governance/workflows/plan/plan-planning/plan-docs-only-carve-out.md#the-plan-docs-only-carve-out-superseded--retired-in-ose-public)
 - **"Archival-in-PR" route-specific done-definition item 5** — the mirrored rule in the PR-review workflow, which
   gestures at a "three-repo nuance" for invocations that do not carry a plan folder but never
   defines one for a plan that does.
-  [pr-review-quality-gate.md §Route-Specific Done-Definition](../../../repo-governance/workflows/pr/pr-review-quality-gate/10-route-specific-done-definition.md#route-specific-done-definition)
+  [pr-review-quality-gate.md §Route-Specific Done-Definition](../../../repo-governance/workflows/pr/pr-review-quality-gate/route-specific-done-definition.md#route-specific-done-definition)
 
 ## Proposed direction (sketch)
 

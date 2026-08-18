@@ -204,7 +204,7 @@ agent frontmatter. OpenCode uses theme tokens (`primary`, `success`, `warning`, 
 - **Source**: `.claude/agents/<name>.md` frontmatter `color:` field
 - **Transform**: `convert_color` in `apps/rhino-cli/src/internal/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `color:` field
-- **Policy**: [Platform Binding Color Translation](../../repo-governance/development/agents/ai-agents/17-agent-color-categorization.md#platform-binding-color-translation)
+- **Policy**: [Platform Binding Color Translation](../../repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
   ("Platform Binding Color Translation" subsection)
 
 | Claude Code color | OpenCode theme token | Role hint            |

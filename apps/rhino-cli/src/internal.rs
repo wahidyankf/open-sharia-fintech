@@ -9,7 +9,6 @@ pub mod envinjection;
 pub mod envvalidate;
 pub mod git;
 pub mod glossary;
-pub mod naming;
 pub mod repo_governance;
 pub mod severity;
 pub mod speccoverage;

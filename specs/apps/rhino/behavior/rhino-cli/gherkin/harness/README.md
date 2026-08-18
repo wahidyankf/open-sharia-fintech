@@ -8,7 +8,6 @@ Features in this domain:
 - `agents-detect-duplication.feature` — detect duplicate agent definitions
 - `agents-sync.feature` — sync agent definitions across platform bindings
 - `agents-validate-claude.feature` — validate Claude Code agent files
-- `agents-validate-naming.feature` — validate agent naming conventions
 - `governance-word-budget-agents-md.feature` — AGENTS.md word-budget audit (`governance word-budget validate`)
 - `governance-word-budget-pre-push.feature` — word-budget pre-push gate (`governance word-budget validate`)
 - `governance-word-budget-rule.feature` — word-budget governance rule (`governance word-budget validate`)
@@ -20,7 +19,9 @@ Features in this domain:
 > `enforce-identical-rhino-cli-gherkin` plan. They were renamed from `repo-governance-*` once the
 > byte-based `agents-md-size` validator was deleted, so every file name now matches the
 > `governance word-budget validate` command it exercises. The remaining `agents-*` names are
-> historical; renaming those is a separate concern. Consolidating these four into
+> historical; renaming those is a separate concern. `agents-validate-naming.feature` was
+> deleted along with the agent role-suffix rule and its validator — see
+> [Withdrawn Rules](../../../../../../../repo-governance/conventions/structure/file-naming.md#withdrawn-rules). Consolidating these four into
 > `gherkin/governance/` alongside `governance-word-budget.feature` requires moving their step
 > definitions between cucumber runners and is likewise deferred.
 

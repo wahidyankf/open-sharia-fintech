@@ -19,21 +19,21 @@ Merging a pull request requires a set of hardened preconditions to hold — not 
 
 ## Contents
 
-- [Principles and Conventions Implemented](./pr-merge-protocol/01-principles-and-conventions-implemented.md) — Why this protocol exists and its companion conventions.
-- [The Rule](./pr-merge-protocol/02-the-rule.md) — The five hardened preconditions that must all hold.
-- [Quality Gates](./pr-merge-protocol/03-quality-gates.md) — The eligible/noneligible gate table, the secret check, and the no-bypass rule.
-- [When This Applies and Scope](./pr-merge-protocol/04-when-this-applies-and-scope.md) — Which delivery modes and PR types this protocol governs, and which agents it binds.
-- [The `worktree-to-pr` Terminal Step](./pr-merge-protocol/05-the-worktree-to-pr-terminal-step.md) — The review/fix cycle and done-definition that precede a merge.
-- [Draft PR Lifecycle](./pr-merge-protocol/06-draft-pr-lifecycle.md) — Why every PR opens as a draft, and the four-step lifecycle to merge.
-- [Before Merging](./pr-merge-protocol/07-before-merging.md) — The full (a)-(e) checklist immediately before merge.
-- [Resolving Merge Conflicts in Generated Files](./pr-merge-protocol/08-resolving-merge-conflicts-in-generated-files.md) — Resolve at the generator's source, never hand-resolve the artifact.
-- [Precondition Summary and When Gates Fail](./pr-merge-protocol/09-precondition-summary-and-when-gates-fail.md) — The status summary format, and the fix-then-re-evaluate procedure.
-- [Examples](./pr-merge-protocol/10-examples.md) — Worked pass/fail examples of this protocol.
+- [Principles and Conventions Implemented](./pr-merge-protocol/principles-and-conventions-implemented.md) — Why this protocol exists and its companion conventions.
+- [The Rule](./pr-merge-protocol/the-rule.md) — The five hardened preconditions that must all hold.
+- [Quality Gates](./pr-merge-protocol/quality-gates.md) — The eligible/noneligible gate table, the secret check, and the no-bypass rule.
+- [When This Applies and Scope](./pr-merge-protocol/when-this-applies-and-scope.md) — Which delivery modes and PR types this protocol governs, and which agents it binds.
+- [The `worktree-to-pr` Terminal Step](./pr-merge-protocol/the-worktree-to-pr-terminal-step.md) — The review/fix cycle and done-definition that precede a merge.
+- [Draft PR Lifecycle](./pr-merge-protocol/draft-pr-lifecycle.md) — Why every PR opens as a draft, and the four-step lifecycle to merge.
+- [Before Merging](./pr-merge-protocol/before-merging.md) — The full (a)-(e) checklist immediately before merge.
+- [Resolving Merge Conflicts in Generated Files](./pr-merge-protocol/resolving-merge-conflicts-in-generated-files.md) — Resolve at the generator's source, never hand-resolve the artifact.
+- [Precondition Summary and When Gates Fail](./pr-merge-protocol/precondition-summary-and-when-gates-fail.md) — The status summary format, and the fix-then-re-evaluate procedure.
+- [Examples](./pr-merge-protocol/examples.md) — Worked pass/fail examples of this protocol.
 
 ## Related Documentation
 
 - [Git Push Safety Convention](../workflow/git-push-safety.md) -- Per-instance approval for destructive git operations; gated by a prompt because their safety is not mechanically checkable, unlike a PR merge's
-- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) -- Establishes `[AI]` merge as the default and `[HUMAN]` as the explicit per-plan opt-in this protocol implements
+- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) -- Establishes `[AI]` merge as the default and `[HUMAN]` as the explicit per-plan opt-in this protocol implements
 - [Code Quality Convention](../quality/code.md) -- Quality gates enforced by git hooks
 - [Trunk Based Development Convention](../workflow/trunk-based-development.md) -- The `worktree-to-pr` default delivery mode and how it relates to TBD
 - [Worktree Toolchain Initialization](../workflow/worktree-setup.md) -- Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree

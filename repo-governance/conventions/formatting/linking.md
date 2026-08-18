@@ -18,12 +18,12 @@ This document defines the standard syntax and practices for linking between docu
 
 ## In This Convention
 
-- [Purpose, Scope, and Why GitHub-Compatible Links](./linking/01-purpose-scope-and-why-github-compatible-links.md) — Principles, scope, and the rationale for GitHub-compatible links
-- [Link Syntax, Examples, and Correct Usage](./linking/02-link-syntax-examples-and-correct-usage.md) — Required syntax, key rules, location-based examples, and correct-vs-incorrect examples
-- [Nested Directory Linking](./linking/03-nested-directory-linking.md) — Calculating relative path depth (`../`) from file nesting
-- [Anchors, Images, and Link Validation](./linking/04-anchors-images-and-link-validation.md) — Anchor links, image links, and the verification checklist
-- [When to Link Rule References: Formatting and Examples](./linking/05-when-to-link-rule-references-formatting-and-examples.md) — The two-tier link-then-inline-code formatting rule
-- [When to Link Rule References: Exclusions](./linking/06-when-to-link-rule-references-exclusions.md) — Where the two-tier formatting rule does not apply
+- [Purpose, Scope, and Why GitHub-Compatible Links](./linking/purpose-scope-and-why-github-compatible-links.md) — Principles, scope, and the rationale for GitHub-compatible links
+- [Link Syntax, Examples, and Correct Usage](./linking/link-syntax-examples-and-correct-usage.md) — Required syntax, key rules, location-based examples, and correct-vs-incorrect examples
+- [Nested Directory Linking](./linking/nested-directory-linking.md) — Calculating relative path depth (`../`) from file nesting
+- [Anchors, Images, and Link Validation](./linking/anchors-images-and-link-validation.md) — Anchor links, image links, and the verification checklist
+- [When to Link Rule References: Formatting and Examples](./linking/when-to-link-rule-references-formatting-and-examples.md) — The two-tier link-then-inline-code formatting rule
+- [When to Link Rule References: Exclusions](./linking/when-to-link-rule-references-exclusions.md) — Where the two-tier formatting rule does not apply
 
 ## Related Documentation
 

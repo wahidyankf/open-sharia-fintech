@@ -53,6 +53,29 @@ bulk-link concurrency fix, merge-queue adoption, the `ayokoding-www` cost reduct
 grading, and plan-decision-integrity hardening — was reduced to a single-file idea brief in
 [`../ideas/`](../ideas/README.md).
 
+**Governance follow-ups from `repo-rules-sweep`** (filed 2026-08-18 by that plan's Knowledge Capture
+phase, which routes code-bearing learnings straight to a backlog plan rather than through a
+two-pager — both arrived plan-ready, with the defect reproduced and the fix designed):
+
+- [oxlint-upgrade-and-lint-reproducibility](./oxlint-upgrade-and-lint-reproducibility/README.md) —
+  every lint target resolved `npx oxlint@latest` at run time, so oxlint 1.79.0 turned CI red on a
+  branch that had passed two hours earlier without touching the file it named; `repo-rules-sweep`
+  pinned 1.78.0 as a blocker fix, and this plan takes the upgrade deliberately, fixes the real
+  `set-state-in-effect` defect it found, and enumerates what else resolves unpinned.
+- [declare-vite-peer-dependency](./declare-vite-peer-dependency/README.md) — ten packages run their
+  tests through a `vite*.config.*` that imports a `vite` none of them declares; it resolves only
+  because npm auto-installs `vitest`'s peer and hoists it to the root. Declaring does not relocate it
+  (tried, and CI failed identically), so this is manifest hygiene plus the gate that would have named
+  the gap before an ose-private runner-cache change made it unreadable.
+- [rhino-cli-governance-tooling-defects](./rhino-cli-governance-tooling-defects/README.md) — three
+  `rhino-cli` tools that exit 0 while doing less than the caller believes: the vendor audit mis-pairs
+  a wrapped inline code span, `harness bindings validate` hard-codes `.claude/agents` instead of
+  reading the registry, and `readme-index rewrite-paths` matches by basename and reads only `.md`.
+- [file-naming-convention-rework](./file-naming-convention-rework/README.md) — WS-B, declared but
+  unspecified by `repo-rules-sweep` and now specified from its learnings: `file-naming.md` documents
+  two of eleven enforced exemptions, its scope clause cannot be evaluated, and the ordinal convention
+  contradicts its own worked example.
+
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
 

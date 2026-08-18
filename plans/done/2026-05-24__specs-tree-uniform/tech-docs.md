@@ -19,7 +19,7 @@ Numbered references trace back to acceptance criteria in [prd.md](./prd.md).
 ## Target Structure per App
 
 The five-folder tree row in
-[specs-directory-structure.md §Per-Surface Variants](../../../repo-governance/conventions/structure/specs-directory-structure/03-canonical-app-spec-tree.md#per-surface-variants)
+[specs-directory-structure.md §Per-Surface Variants](../../../repo-governance/conventions/structure/specs-directory-structure/canonical-app-spec-tree.md#per-surface-variants)
 is authoritative. Mapping every in-scope app to its declared profile:
 
 | App          | Surface profile              | Required folders                                                                                         | Has today                                 | Action                                                                               |
@@ -575,7 +575,7 @@ at execution start. Both greps are part of delivery.md Step 0.
 
 ## Path-Reference Sweep Discipline
 
-Per [Specs Directory Structure Convention §Migration Path](../../../repo-governance/conventions/structure/specs-directory-structure/06-migration-path.md#migration-path-flat-root-to-c4-aware):
+Per [Specs Directory Structure Convention §Migration Path](../../../repo-governance/conventions/structure/specs-directory-structure/migration-path.md#migration-path-flat-root-to-c4-aware):
 
 > The atomic commit is mandatory — splitting the move and the path updates causes test failures
 > between commits.

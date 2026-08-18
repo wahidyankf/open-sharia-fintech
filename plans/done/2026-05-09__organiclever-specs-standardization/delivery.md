@@ -8,7 +8,7 @@ Provisioned via `claude --worktree ddd` from the `ose-public` subrepo root. Bran
 `worktree/ddd`. Plan authoring and execution both run inside this worktree; commits
 publish to `main` via `git push origin worktree/ddd:main` per Trunk-Based Development.
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Commit Guidelines
 

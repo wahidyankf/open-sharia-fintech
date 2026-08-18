@@ -27,17 +27,17 @@ Both steps are required. The first ensures the Nx workspace and its Node/TypeScr
 
 ## Contents
 
-- [Principles and Conventions Implemented](./worktree-setup/01-principles-and-conventions-implemented.md) — Why this practice exists.
-- [The Rule](./worktree-setup/02-the-rule.md) — The exact two-step command sequence, and the shared cargo cache it provisions.
-- [Independent Drift Layers and the `postinstall` Hook](./worktree-setup/03-independent-drift-layers-and-the-postinstall-hook.md) — Why both steps are independently required.
-- [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/04-dependency-isolation-language-breadth-and-idempotency.md) — Why every worktree entry needs the init.
-- [What Goes Wrong Without Both Steps](./worktree-setup/05-what-goes-wrong-and-nx-node-modules-dependency.md) — Build/test/lint/cache failure modes.
-- [Per-Project Dependency Restoration](./worktree-setup/06-per-project-dependency-restoration.md) — The F#/.NET `dotnet restore` gap.
-- [Sibling-Repo Relative Paths From Inside a Worktree](./worktree-setup/07-sibling-repo-relative-paths.md) — Correct path nesting in multi-repo plans.
-- [Absolute Source Paths in Delivery-Checklist Commands](./worktree-setup/08-absolute-source-paths-in-delivery-checklist-commands.md) — Worktree copy vs. stale primary-checkout path.
-- [When This Applies](./worktree-setup/09-when-this-applies.md) — The five triggering conditions.
-- [Step-by-Step Procedure](./worktree-setup/10-step-by-step-procedure.md) — The five numbered steps.
-- [Notes for AI Agents](./worktree-setup/11-notes-for-ai-agents.md) — The MUST-run-both-steps rule for agents.
+- [Principles and Conventions Implemented](./worktree-setup/principles-and-conventions-implemented.md) — Why this practice exists.
+- [The Rule](./worktree-setup/the-rule.md) — The exact two-step command sequence, and the shared cargo cache it provisions.
+- [Independent Drift Layers and the `postinstall` Hook](./worktree-setup/independent-drift-layers-and-the-postinstall-hook.md) — Why both steps are independently required.
+- [Dependency Isolation, Language Breadth, and Idempotency](./worktree-setup/dependency-isolation-language-breadth-and-idempotency.md) — Why every worktree entry needs the init.
+- [What Goes Wrong Without Both Steps](./worktree-setup/what-goes-wrong-and-nx-node-modules-dependency.md) — Build/test/lint/cache failure modes.
+- [Per-Project Dependency Restoration](./worktree-setup/per-project-dependency-restoration.md) — The F#/.NET `dotnet restore` gap.
+- [Sibling-Repo Relative Paths From Inside a Worktree](./worktree-setup/sibling-repo-relative-paths.md) — Correct path nesting in multi-repo plans.
+- [Absolute Source Paths in Delivery-Checklist Commands](./worktree-setup/absolute-source-paths-in-delivery-checklist-commands.md) — Worktree copy vs. stale primary-checkout path.
+- [When This Applies](./worktree-setup/when-this-applies.md) — The five triggering conditions.
+- [Step-by-Step Procedure](./worktree-setup/step-by-step-procedure.md) — The five numbered steps.
+- [Notes for AI Agents](./worktree-setup/notes-for-ai-agents.md) — The MUST-run-both-steps rule for agents.
 
 ## Related Documentation
 
@@ -45,6 +45,6 @@ Both steps are required. The first ensures the Nx workspace and its Node/TypeScr
 - [Reproducible Environments](../workflow/reproducible-environments.md) - Volta pinning and lockfile management
 - [Native-First Toolchain Management](../workflow/native-first-toolchain.md) - Native package managers and `rhino-cli doctor`
 - [AI Agents Convention](../agents/ai-agents.md) - Git Worktree Awareness rules for agents
-- [Trunk Based Development](../workflow/trunk-based-development/08-default-push-and-worktree-execution.md#default-push-and-worktree-execution) - The repo-wide default delivery mode is `worktree-to-pr`
+- [Trunk Based Development](../workflow/trunk-based-development/default-push-and-worktree-execution.md#default-push-and-worktree-execution) - The repo-wide default delivery mode is `worktree-to-pr`
 - [Git Push Default Convention](../workflow/git-push-default.md) - The PR-branch-as-default push target
 - [Nx Targets](../infra/nx-targets.md) - Canonical Nx target names and caching rules

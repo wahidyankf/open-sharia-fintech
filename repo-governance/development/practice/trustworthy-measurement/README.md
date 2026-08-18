@@ -6,5 +6,5 @@ when_to_use: "Read this index to find the right Trustworthy Measurement child do
 
 # Trustworthy Measurement
 
-- [Trustworthy Measurement — Rule 1: Prove the Command Ran](./01-rule-1-prove-the-command-ran.md) — A timing harness reports elapsed time whether or not the measured command executed - assert exit code and output, not just duration, and watch for shell builtin-transform traps Use before trusting any timing number from a benchmark harness or shell loop.
-- [Trustworthy Measurement — Rules 2-4](./02-rules-2-to-4.md) — Measure the integrated path not an isolated invocation, establish the critical path before prescribing a wall-clock remedy, and treat a remedy written before anyone saw a timeline as a hypothesis Use before hard-gating a plan phase on a benchmark number, or before applying a pre-authored performance remedy.
+- [Trustworthy Measurement — Rule 1: Prove the Command Ran](./rule-1-prove-the-command-ran.md) — A timing harness reports elapsed time whether or not the measured command executed - assert exit code and output, not just duration, and watch for shell builtin-transform traps Use before trusting any timing number from a benchmark harness or shell loop.
+- [Trustworthy Measurement — Rules 2-4](./rules-2-to-4.md) — Measure the integrated path not an isolated invocation, establish the critical path before prescribing a wall-clock remedy, and treat a remedy written before anyone saw a timeline as a hypothesis Use before hard-gating a plan phase on a benchmark number, or before applying a pre-authored performance remedy.

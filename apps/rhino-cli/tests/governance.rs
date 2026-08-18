@@ -87,6 +87,13 @@ impl GovWorld {
         self.work.path().join(rel).exists()
     }
 
+    /// Reads `rel` from the fixture workspace, panicking with the path when it
+    /// is absent — a silent empty string would make an assertion pass vacuously.
+    fn read(&self, rel: &str) -> String {
+        let p = self.work.path().join(rel);
+        std::fs::read_to_string(&p).unwrap_or_else(|e| panic!("read fixture {}: {e}", p.display()))
+    }
+
     fn bin() -> PathBuf {
         cargo_bin("rhino-cli")
     }
@@ -859,6 +866,186 @@ fn then_finding_names_as_unindexed(w: &mut GovWorld, name: String) {
 fn then_finding_reports_missing_index(w: &mut GovWorld) {
     let out = w.stdout();
     assert!(out.contains("missing"), "got: {out}");
+}
+
+// ===========================================================================
+// governance-readme-index.feature — order preservation, scaffold, rewrite-paths
+// ===========================================================================
+
+/// The fixture directory these three scenarios operate on.
+const ORDER_DIR: &str = "repo-governance/formatting/";
+
+/// Writes a governance target with derivable frontmatter.
+fn write_target(w: &GovWorld, rel: &str, title: &str) {
+    w.write(
+        rel,
+        &format!(
+            "---\ntitle: \"{title}\"\ndescription: a description\nwhen_to_use: Use when testing\n---\n\n# {title}\n"
+        ),
+    );
+}
+
+#[given("a directory already has a README.md index with hand-authored entry order")]
+fn given_index_with_hand_authored_order(w: &mut GovWorld) {
+    write_target(w, &format!("{ORDER_DIR}linking.md"), "Linking");
+    write_target(w, &format!("{ORDER_DIR}emoji.md"), "Emoji");
+    write_target(w, &format!("{ORDER_DIR}appended.md"), "Appended");
+    // linking BEFORE emoji — the reverse of sorted order, so preserving it is
+    // reachable only by keeping the authored order, never by re-deriving it.
+    w.write(
+        &format!("{ORDER_DIR}README.md"),
+        concat!(
+            "---\ntitle: \"Formatting\"\n---\n\n# Formatting\n\n",
+            "- [Linking](./linking.md) — HAND-AUTHORED annotation.\n",
+            "- [Emoji](./emoji.md) — second annotation.\n",
+        ),
+    );
+    w.last_dir = ORDER_DIR.to_string();
+}
+
+#[given("a directory has no README.md index")]
+fn given_directory_without_index(w: &mut GovWorld) {
+    write_target(w, &format!("{ORDER_DIR}linking.md"), "Linking");
+    write_target(w, &format!("{ORDER_DIR}emoji.md"), "Emoji");
+    write_target(w, &format!("{ORDER_DIR}zebra.md"), "Zebra");
+    assert!(
+        !w.exists(&format!("{ORDER_DIR}README.md")),
+        "fixture must start without an index"
+    );
+    w.last_dir = ORDER_DIR.to_string();
+}
+
+#[given("a rename map of old and new paths for a directory's children")]
+fn given_rename_map(w: &mut GovWorld) {
+    write_target(w, &format!("{ORDER_DIR}01-linking.md"), "Linking");
+    write_target(w, &format!("{ORDER_DIR}02-emoji.md"), "Emoji");
+    w.write(
+        &format!("{ORDER_DIR}README.md"),
+        concat!(
+            "---\ntitle: \"Formatting\"\n---\n\n# Formatting\n\n",
+            "Prose mentioning 01-linking.md inline.\n\n",
+            "- [Linking](./01-linking.md) — annotation one.\n",
+            "- [Emoji](./02-emoji.md) — annotation two.\n",
+        ),
+    );
+    w.write(
+        "renames.tsv",
+        "01-linking.md\tlinking.md\n02-emoji.md\temoji.md\n",
+    );
+    w.last_dir = ORDER_DIR.to_string();
+}
+
+#[when("the maintainer runs rhino-cli governance readme-index generate on that directory")]
+fn when_generate_on_directory(w: &mut GovWorld) {
+    w.exec(&[
+        "governance",
+        "readme-index",
+        "generate",
+        "--paths",
+        "repo-governance/",
+    ]);
+}
+
+#[when("the maintainer runs rhino-cli governance readme-index rewrite-paths with that map")]
+fn when_rewrite_paths(w: &mut GovWorld) {
+    w.exec(&[
+        "governance",
+        "readme-index",
+        "rewrite-paths",
+        "--map",
+        "renames.tsv",
+        "--paths",
+        "repo-governance/",
+    ]);
+}
+
+#[then("the existing entries keep their order and annotations")]
+fn then_entries_keep_order_and_annotations(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    let l = body.find("./linking.md").expect("linking entry");
+    let e = body.find("./emoji.md").expect("emoji entry");
+    assert!(l < e, "authored order must survive:\n{body}");
+    assert!(
+        body.contains("HAND-AUTHORED annotation."),
+        "annotation must survive verbatim:\n{body}"
+    );
+}
+
+#[then("only genuinely missing entries are appended")]
+fn then_only_missing_appended(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    assert!(
+        body.contains("./appended.md"),
+        "missing target must be appended:\n{body}"
+    );
+    for name in ["./linking.md", "./emoji.md", "./appended.md"] {
+        assert_eq!(
+            body.matches(name).count(),
+            1,
+            "{name} must appear once:\n{body}"
+        );
+    }
+}
+
+#[then("a complete annotated index is written")]
+fn then_complete_annotated_index(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    for name in ["./linking.md", "./emoji.md", "./zebra.md"] {
+        assert!(body.contains(name), "{name} must be indexed:\n{body}");
+    }
+    assert!(
+        body.contains(" — "),
+        "entries must carry a derived annotation:\n{body}"
+    );
+}
+
+#[then("every sibling file and subdirectory appears exactly once")]
+fn then_every_sibling_appears_once(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    for name in ["./linking.md", "./emoji.md", "./zebra.md"] {
+        assert_eq!(
+            body.matches(name).count(),
+            1,
+            "{name} must appear once:\n{body}"
+        );
+    }
+}
+
+#[then("every index link target is updated to its new path")]
+fn then_targets_updated(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    assert!(
+        body.contains("(./linking.md)"),
+        "target must be rewritten:\n{body}"
+    );
+    assert!(
+        body.contains("(./emoji.md)"),
+        "target must be rewritten:\n{body}"
+    );
+    assert!(
+        !body.contains("(./01-linking.md)"),
+        "old target must be gone:\n{body}"
+    );
+}
+
+#[then("entry order, annotation text, and surrounding prose are unchanged")]
+fn then_order_annotations_and_prose_unchanged(w: &mut GovWorld) {
+    let body = w.read(&format!("{ORDER_DIR}README.md"));
+    let l = body.find("./linking.md").expect("linking entry");
+    let e = body.find("./emoji.md").expect("emoji entry");
+    assert!(l < e, "entry order must be unchanged:\n{body}");
+    assert!(
+        body.contains("— annotation one."),
+        "annotation must survive:\n{body}"
+    );
+    assert!(
+        body.contains("— annotation two."),
+        "annotation must survive:\n{body}"
+    );
+    assert!(
+        body.contains("Prose mentioning 01-linking.md inline."),
+        "a bare non-link mention must NOT be rewritten:\n{body}"
+    );
 }
 
 // ===========================================================================

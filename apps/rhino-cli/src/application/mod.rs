@@ -26,8 +26,6 @@ pub mod glossary;
 pub mod governance;
 /// Mermaid validation use cases and extractor port.
 pub mod mermaid;
-/// Agent and workflow naming convention validators.
-pub mod naming;
 /// Hermetic checksum manifest for the cross-repository Rhino CLI boundary.
 pub mod parity;
 /// Unified repo-config.yml loader.

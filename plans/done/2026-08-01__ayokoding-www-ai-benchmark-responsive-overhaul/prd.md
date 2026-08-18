@@ -49,7 +49,7 @@ output, not organisational stakeholders.
 
 This is a **UI-bearing** plan — it changes user-facing screens under `apps/ayokoding-www`. The
 funnel below runs diverge → narrow → select → justify for each of the three screens, per the
-[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
+[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 ### R5 grounding note (diagrams.md's grounding rule, not `brd.md`'s R5 defect) — survey before drafting
 
@@ -285,7 +285,7 @@ mobile width first**, then at desktop width, per the mobile-first requirement.
 > naming precedent of `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/assets/`.
 > Colours are indicative (Okabe-Ito palette); the implementation resolves every colour through the
 > live `--chart-band-*` tokens. These finalists use the plain-`.png` fallback per
-> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
+> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
 > the design is finalized as of this plan's Select stage below, matching the identical precedent in
 > `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/assets/`.
 
@@ -400,7 +400,7 @@ columns are unreachable on a phone at all, breaking the W-26 figure-parity invar
 > Each finalist `.png` ships with its `.svg` source under this plan's `assets/`. Colours are
 > indicative; the implementation resolves every colour through the live design tokens. These
 > finalists use the plain-`.png` fallback per
-> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
+> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
 > the design is finalized as of this plan's Select stage below, matching the identical precedent in
 > `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/assets/`.
 
@@ -548,7 +548,7 @@ The two strongest alternatives carried forward as hi-fi mockups, each drawn **be
 > Each finalist `.png` ships with its `.svg` source under this plan's `assets/`. Colours are
 > indicative; the implementation resolves every colour through the live design tokens. These
 > finalists use the plain-`.png` fallback per
-> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
+> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
 > the design is finalized as of this sub-funnel's Select stage below, matching the identical
 > precedent in `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/assets/`.
 
@@ -652,7 +652,7 @@ MOBILE (< md, 390px)                        DESKTOP (lg)
 > Each finalist `.png` ships with its `.svg` source under this plan's `assets/`. Colours are
 > indicative; the implementation resolves every colour through the live design tokens. These
 > finalists use the plain-`.png` fallback per
-> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
+> [diagrams.md §The Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule):
 > the design is finalized as of this plan's Select stage below, matching the identical precedent in
 > `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/assets/`.
 

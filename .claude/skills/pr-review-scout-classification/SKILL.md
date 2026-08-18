@@ -15,13 +15,13 @@ re-litigate.
 
 ## Reference Modules
 
-- [01-risk-tier-and-specialist-selection.md](./reference/01-risk-tier-and-specialist-selection.md) —
+- [risk-tier-and-specialist-selection.md](./reference/risk-tier-and-specialist-selection.md) —
   the trivial/lite/full thresholds, the security-sensitive-path override, and the Content-Type
   Applicability Filter (DD-10)
-- [02-shared-context-and-prior-cycle-read.md](./reference/02-shared-context-and-prior-cycle-read.md) —
+- [shared-context-and-prior-cycle-read.md](./reference/shared-context-and-prior-cycle-read.md) —
   assembling the once-per-cycle shared-context brief (no-exclusion posture, large-diff slicing),
   and reading prior-cycle thread-resolution/human-dismissal state
-- [03-untrusted-input-and-output-contract.md](./reference/03-untrusted-input-and-output-contract.md) —
+- [untrusted-input-and-output-contract.md](./reference/untrusted-input-and-output-contract.md) —
   this agent's first-ingestion-point untrusted-input handling, the trivial-tier handoff, and the
   three-part output contract
 

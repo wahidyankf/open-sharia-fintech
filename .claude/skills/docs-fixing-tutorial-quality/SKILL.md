@@ -13,13 +13,13 @@ covered by `repo-applying-maker-checker-fixer` and `repo-assessing-criticality-c
 
 ## Reference Modules
 
-- [Confidence Assessment and Domain Examples](reference/01-confidence-and-mode-handling.md) —
+- [Confidence Assessment and Domain Examples](reference/confidence-and-mode-handling.md) —
   the quick-summary workflow and tutorial-specific HIGH/MEDIUM/FALSE_POSITIVE examples
-- [HIGH-Confidence Validation Checks](reference/02-tutorial-validation-checks.md) — the five
+- [HIGH-Confidence Validation Checks](reference/tutorial-validation-checks.md) — the five
   objective re-validation checks with their exact bash patterns
-- [MEDIUM-Confidence Subjective Checks](reference/03-medium-confidence-checks.md) — the four
+- [MEDIUM-Confidence Subjective Checks](reference/medium-confidence-checks.md) — the four
   subjective-quality categories that always route to manual review
-- [Safeguards and Output Format](reference/04-safeguards-and-output.md) — refusal conditions,
+- [Safeguards and Output Format](reference/safeguards-and-output.md) — refusal conditions,
   the required output shape, and convergence safeguards
 
 ## Core Principles

@@ -1,6 +1,6 @@
 //! Cucumber-rs integration tests for the whole `harness` command group
 //! (`harness bindings generate/validate`, `harness claude validate`,
-//! `harness sync validate`, `harness naming validate`,
+//! `harness sync validate`,
 //! `harness duplication validate`, `harness instruction-size validate`,
 //! `harness audit`) plus the governance-meta facts the `instruction-size`
 //! gate depends on
@@ -461,111 +461,6 @@ fn then_reports_duplicate(w: &mut AgentsWorld) {
     let out = w.stdout();
     assert!(out.contains("Name Uniqueness"), "got: {out}");
     assert!(out.contains("dup-maker"), "got: {out}");
-}
-
-// ===========================================================================
-// agents validate-naming — Given steps
-// ===========================================================================
-
-/// Writes a synced agent pair (Claude + OpenCode) with a valid role suffix.
-fn write_named_pair(w: &AgentsWorld, name: &str) {
-    w.write(
-        &format!(".claude/agents/{name}.md"),
-        &format!(
-            "---\nname: {name}\ndescription: d\ntools: Read\nmodel:\ncolor: blue\n---\n# Body\n"
-        ),
-    );
-    w.write(
-        &format!(".opencode/agents/{name}.md"),
-        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
-    );
-}
-
-#[given(
-    "a repository where every agent filename ends with an allowed role suffix and mirrors across harnesses"
-)]
-fn given_naming_clean(w: &mut AgentsWorld) {
-    write_named_pair(w, "foo-maker");
-    write_named_pair(w, "bar-checker");
-}
-
-#[given("a repository with one agent whose filename ends in an unknown suffix")]
-fn given_naming_bad_suffix(w: &mut AgentsWorld) {
-    write_named_pair(w, "foo-maker");
-    // `foo-widget` has no allowed role suffix.
-    w.write(
-        ".claude/agents/foo-widget.md",
-        "---\nname: foo-widget\ndescription: d\ntools: Read\nmodel:\ncolor: blue\n---\n# Body\n",
-    );
-    w.write(
-        ".opencode/agents/foo-widget.md",
-        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
-    );
-}
-
-#[given(
-    "a repository with a .claude/agents/ file whose frontmatter name differs from its filename"
-)]
-fn given_naming_frontmatter_mismatch(w: &mut AgentsWorld) {
-    write_named_pair(w, "foo-maker");
-    // Filename foo-checker.md but frontmatter name says something-else-maker.
-    w.write(
-        ".claude/agents/baz-checker.md",
-        "---\nname: wrong-checker\ndescription: d\ntools: Read\nmodel:\ncolor: blue\n---\n# Body\n",
-    );
-    w.write(
-        ".opencode/agents/baz-checker.md",
-        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
-    );
-}
-
-#[given("a repository where one .claude/agents/ file has no corresponding .opencode/agent/ file")]
-fn given_naming_mirror_drift(w: &mut AgentsWorld) {
-    write_named_pair(w, "foo-maker");
-    // Claude-only file (no opencode mirror).
-    w.write(
-        ".claude/agents/lonely-maker.md",
-        "---\nname: lonely-maker\ndescription: d\ntools: Read\nmodel:\ncolor: blue\n---\n# Body\n",
-    );
-}
-
-// ===========================================================================
-// agents validate-naming — When/Then steps
-// ===========================================================================
-
-#[when("the developer runs agents validate-naming")]
-fn when_validate_naming(w: &mut AgentsWorld) {
-    w.exec(&["harness", "naming", "validate"]);
-}
-
-#[then("the output reports zero naming violations")]
-fn then_naming_zero(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(
-        out.contains("VALIDATION PASSED (0 violations)"),
-        "got: {out}"
-    );
-}
-
-#[then("the output identifies the offending agent file and its unknown suffix")]
-fn then_naming_bad_suffix(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("foo-widget"), "got: {out}");
-    assert!(out.contains("role-suffix"), "got: {out}");
-}
-
-#[then("the output identifies the frontmatter mismatch")]
-fn then_naming_frontmatter_mismatch(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("frontmatter-mismatch"), "got: {out}");
-    assert!(out.contains("wrong-checker"), "got: {out}");
-}
-
-#[then("the output identifies the mirror-drift violation")]
-fn then_naming_mirror_drift(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(out.contains("mirror-drift"), "got: {out}");
-    assert!(out.contains("lonely-maker"), "got: {out}");
 }
 
 // ===========================================================================
@@ -1431,10 +1326,9 @@ fn then_push_proceeds(w: &mut AgentsWorld) {
 #[given("a repository with no .claude or .opencode agent directories")]
 fn given_harness_audit_no_dirs(_w: &mut AgentsWorld) {
     // No-op: a fresh fixture workspace has no `.claude/`, `.opencode/`, or
-    // `repo-config.yml` at all, so `validate-naming` and `detect-duplication`
-    // trivially report zero violations while `validate-claude`,
-    // `validate-sync`, and `validate-bindings` each fail on the missing
-    // directories/catalog.
+    // `repo-config.yml` at all, so `detect-duplication` trivially reports zero
+    // violations while `validate-claude`, `validate-sync`, and
+    // `validate-bindings` each fail on the missing directories/catalog.
 }
 
 #[when(regex = r#"^the developer runs "rhino-cli harness audit"$"#)]

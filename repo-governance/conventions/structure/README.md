@@ -17,7 +17,6 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 
 ## Documents
 
-- [Agent Naming Convention](./agent-naming.md) — Single rule for agent filename structure across `.claude/agents` and `.opencode/agent`. Use when naming or renaming an agent definition file.
 - [App README vs Specs Convention](./app-readme-vs-specs.md) — Defines what content lives in app/infra READMEs vs specs/, the C4-aware five-folder spec tree shape, and the PM-readability contract for specs/. Use when deciding whether content belongs in an app README or in its specs/ tree, or when shaping a specs/apps/ tree.
 - [Deterministic vs AI Validation Split Convention](./deterministic-vs-ai-validation-split.md) — Defines which governance validation layer (deterministic preflight vs AI checker) owns which category, and the contract between them. Use when deciding whether a governance validation rule belongs in the deterministic preflight or the AI checker.
 - [Diátaxis Framework](./diataxis-framework.md) — Understanding the Diátaxis documentation framework used in open-sharia-enterprise. Use when deciding where new documentation belongs or organizing content by Diátaxis category.
@@ -31,11 +30,11 @@ Use these conventions to decide where a document belongs, how to name it, and ho
 - [Multi-Harness Binding Convention](./multi-harness-binding.md) — Rules governing how this repository stays compatible with many AI coding-agent harnesses while keeping AGENTS.md as the single canonical instruction surface. Read this before adding, changing, or auditing any file that wires a coding-agent harness to the repository.
 - [No Manual Date Metadata Convention](./no-date-metadata.md) — Non-website markdown files must not contain manual date metadata of any kind; git history is the single source of truth. Read this before adding, reviewing, or removing any date field in a non-website markdown file.
 - [No Last Updated Convention](./no-last-updated.md) — Superseded stub — redirects to No Manual Date Metadata Convention. Read this only if you were linked here directly.
+- [Ordinal Filename Prefixes Convention](./ordinal-filename-prefixes.md) — When a governed markdown filename may carry a leading NN- ordinal, and when the parent index carries order instead. Use when naming or renaming a governed markdown file whose name starts with a number, or when splitting a document into shards.
 - [Plans Organization Convention](./plans.md) — Standards for organizing project planning documents in plans/ folder. Use when deciding where a plan document belongs, how to name/structure it, or how it moves through the lifecycle.
 - [Post-Mortem Convention](./post-mortems.md) — Standards for blameless incident post-mortems — location, naming, mandatory sections, severity scale, and action-item tracking. Read this when you need to write, name, or review a blameless incident post-mortem.
 - [Programming Language Documentation Separation Convention](./programming-language-docs-separation.md) — Establishes the relationship between docs/explanation/ style guides and ayokoding-www educational content. Read this when deciding whether new programming-language content belongs in a style guide or in ayokoding-www.
 - [Specs Directory Structure Convention](./specs-directory-structure.md) — Canonical C4-aware five-folder directory structure for specs/ — Gherkin feature files, C4 diagrams, DDD artifacts, and OpenAPI contracts. Read this when placing a spec artifact or scaffolding specs/ for a new app or library.
-- [Workflow Naming Convention](./workflow-naming.md) — Single rule for workflow filename structure under repo-governance/workflows. Read this when naming a new workflow file, or validating an existing one.
 - [Worktree Path Convention](./worktree-path.md) — Defines the worktree directory structure, naming convention, and gitignore requirements for claude --worktree routing. Read this when creating, naming, or cleaning up a worktree, or configuring the WorktreeCreate hook.
 
 ## Related Documentation

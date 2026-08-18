@@ -19,17 +19,17 @@ This document defines conventions for emoji usage in markdown documentation acro
 
 ## In This Convention
 
-- [Principles, Scope, and Purpose](./emoji/01-principles-scope-and-purpose.md) — What this convention covers and why emojis are used
-- [Tasteful Usage: Where Emojis Help and Hurt](./emoji/02-tasteful-usage-where-emojis-help-and-hurt.md) — Jobs emojis do well versus common anti-patterns
-- [Tasteful Usage: Density Cap and Examples](./emoji/03-tasteful-usage-density-cap-and-examples.md) — Soft density limits and good-vs-bad worked examples
-- [Emoji Vocabulary: Document, Status, and Process Markers](./emoji/04-emoji-vocabulary-document-status-and-process-markers.md) — Standard emojis for document types, status, and process
-- [Emoji Vocabulary: Domain-Specific Markers](./emoji/05-emoji-vocabulary-domain-specific-markers.md) — Standard emojis for technical, enterprise/financial, and AI agent domains
-- [Color Accessibility for Colored Emojis](./emoji/06-color-accessibility-for-colored-emojis.md) — Accessible use of colored square emojis for categorization
-- [Emoji Usage Rules 1-6](./emoji/07-emoji-usage-rules-1-through-6.md) — Consistency, restraint, placement, technical content, accessibility, and frontmatter rules
-- [Emoji Usage Rule 7: Scope - Where to Use Emojis](./emoji/08-emoji-usage-rule-7-scope-where-to-use-emojis.md) — The full allowed-vs-forbidden file scope rule
-- [Document Type Specific Guidelines](./emoji/09-document-type-specific-guidelines.md) — Recommended emojis per document type with worked examples
-- [Migration Strategy and Validation Checklist](./emoji/10-migration-strategy-and-validation-checklist.md) — Phased rollout plan and pre-review checklist
-- [Notes](./emoji/11-notes.md) — Vocabulary rationale, cultural considerations, and adding a new emoji
+- [Principles, Scope, and Purpose](./emoji/principles-scope-and-purpose.md) — What this convention covers and why emojis are used
+- [Tasteful Usage: Where Emojis Help and Hurt](./emoji/tasteful-usage-where-emojis-help-and-hurt.md) — Jobs emojis do well versus common anti-patterns
+- [Tasteful Usage: Density Cap and Examples](./emoji/tasteful-usage-density-cap-and-examples.md) — Soft density limits and good-vs-bad worked examples
+- [Emoji Vocabulary: Document, Status, and Process Markers](./emoji/emoji-vocabulary-document-status-and-process-markers.md) — Standard emojis for document types, status, and process
+- [Emoji Vocabulary: Domain-Specific Markers](./emoji/emoji-vocabulary-domain-specific-markers.md) — Standard emojis for technical, enterprise/financial, and AI agent domains
+- [Color Accessibility for Colored Emojis](./emoji/color-accessibility-for-colored-emojis.md) — Accessible use of colored square emojis for categorization
+- [Emoji Usage Rules 1-6](./emoji/emoji-usage-rules-1-through-6.md) — Consistency, restraint, placement, technical content, accessibility, and frontmatter rules
+- [Emoji Usage Rule 7: Scope - Where to Use Emojis](./emoji/emoji-usage-rule-7-scope-where-to-use-emojis.md) — The full allowed-vs-forbidden file scope rule
+- [Document Type Specific Guidelines](./emoji/document-type-specific-guidelines.md) — Recommended emojis per document type with worked examples
+- [Migration Strategy and Validation Checklist](./emoji/migration-strategy-and-validation-checklist.md) — Phased rollout plan and pre-review checklist
+- [Notes](./emoji/notes.md) — Vocabulary rationale, cultural considerations, and adding a new emoji
 
 ## Related Conventions
 

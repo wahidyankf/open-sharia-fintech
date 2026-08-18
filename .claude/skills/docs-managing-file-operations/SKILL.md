@@ -10,21 +10,21 @@ conventions, fixing links, preserving git history, and avoiding orphaned referen
 
 ## Reference Modules
 
-1. [When to Use and Naming Convention](reference/01-when-to-use-and-naming.md) — when to use this
+1. [When to Use and Naming Convention](reference/when-to-use-and-naming.md) — when to use this
    agent, what it's not for, and the file naming convention review.
-2. [Discovery and Planning](reference/02-discovery-and-planning.md) — Phase 1-2 of the four-phase
+2. [Discovery and Planning](reference/discovery-and-planning.md) — Phase 1-2 of the four-phase
    process: Discovery & Analysis, then Planning.
-3. [Execution and Validation](reference/03-execution-and-validation.md) — Phase 3-4 of the
+3. [Execution and Validation](reference/execution-and-validation.md) — Phase 3-4 of the
    four-phase process: Execution, then Validation.
-4. [Deletion Operations](reference/04-deletion-operations.md) — safe deletion, deleting directories,
+4. [Deletion Operations](reference/deletion-operations.md) — safe deletion, deleting directories,
    the deletion safety checklist.
-5. [Link Updates and Git Operations](reference/05-link-updates-and-git-ops.md) — calculating relative
+5. [Link Updates and Git Operations](reference/link-updates-and-git-ops.md) — calculating relative
    paths, removing links to deleted files, git best practices, batch ordering.
-6. [Index Updates and Validation](reference/06-index-updates-and-validation.md) — when/how to update
+6. [Index Updates and Validation](reference/index-updates-and-validation.md) — when/how to update
    README.md indices, the full validation checklist.
-7. [Safety Guidelines and Edge Cases](reference/07-safety-and-edge-cases.md) — read-before-edit,
+7. [Safety Guidelines and Edge Cases](reference/safety-and-edge-cases.md) — read-before-edit,
    confirmation gates, README.md special-casing, circular updates, uncommitted files.
-8. [Integration and Communication](reference/08-integration-communication-antipatterns.md) —
+8. [Integration and Communication](reference/integration-communication-antipatterns.md) —
    coordinating with `docs-link-checker`/`repo-rules-checker`/`docs-maker`, summary format, and the
    anti-patterns table.
 

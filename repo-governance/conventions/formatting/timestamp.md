@@ -18,9 +18,9 @@ This convention establishes UTC+7 timezone with ISO 8601 format as the standard 
 
 ## In This Convention
 
-- [Purpose, Scope, and Standard Format](./timestamp/01-purpose-scope-and-standard-format.md) — Principles, scope, overview, the baseline format, and why UTC+7
-- [Applicability, Format Specification, and Validation](./timestamp/02-applicability-format-specification-and-validation.md) — Where to use and not use UTC+7, implementation examples, format components, UTC conversion, and valid/invalid examples
-- [Generating Current Timestamps](./timestamp/03-generating-current-timestamps.md) — Bash commands for AI agents and scripts to generate real timestamps, and anti-patterns to avoid
+- [Purpose, Scope, and Standard Format](./timestamp/purpose-scope-and-standard-format.md) — Principles, scope, overview, the baseline format, and why UTC+7
+- [Applicability, Format Specification, and Validation](./timestamp/applicability-format-specification-and-validation.md) — Where to use and not use UTC+7, implementation examples, format components, UTC conversion, and valid/invalid examples
+- [Generating Current Timestamps](./timestamp/generating-current-timestamps.md) — Bash commands for AI agents and scripts to generate real timestamps, and anti-patterns to avoid
 
 ## Related Conventions
 

@@ -44,15 +44,15 @@ leftovers, then hand off to [`plan-execution.md`](../plan/plan-execution.md).
 
 ## Contents
 
-- [When to Use, Relationship](./plan-takeover-execution/01-when-to-use-and-relationship.md) — scope.
-- [Why This Exists](./plan-takeover-execution/02-why-this-workflow-exists.md) — motivation.
-- [Execution Mode, Concurrency](./plan-takeover-execution/03-execution-mode-and-concurrency-model.md) — fan-out.
-- [Task List Discipline](./plan-takeover-execution/04-task-list-discipline.md) — Task mapping.
-- [Phase A — Identifier, Repos](./plan-takeover-execution/05-phase-a-discovery-plan-identifier-and-repo-set.md) — A0-A1.
-- [Phase A — Per-Repo Probes](./plan-takeover-execution/06-phase-a-discovery-per-repo-probes-and-persistence.md) — A2-A3.
-- [Phase B — Reconcile](./plan-takeover-execution/07-phase-b-reconcile-findings.md) — buckets.
-- [Phase C — Adopt, Ledger](./plan-takeover-execution/08-phase-c-adopt-freshness-and-ledger.md) — steps 1-3.
-- [Phase C — PR, delivery.md](./plan-takeover-execution/09-phase-c-pr-record-and-reconcile-delivery.md) — steps 4-5.
-- [Phase D — Clean Up](./plan-takeover-execution/10-phase-d-clean-up-confirmed-stale-leftovers.md) — removal.
-- [Phase E — Hand Off](./plan-takeover-execution/11-phase-e-hand-off-to-plan-execution.md) — invocation.
-- [Related Documentation](./plan-takeover-execution/12-related-documentation.md) — cross-references.
+- [When to Use, Relationship](./plan-takeover-execution/when-to-use-and-relationship.md) — scope.
+- [Why This Exists](./plan-takeover-execution/why-this-workflow-exists.md) — motivation.
+- [Execution Mode, Concurrency](./plan-takeover-execution/execution-mode-and-concurrency-model.md) — fan-out.
+- [Task List Discipline](./plan-takeover-execution/task-list-discipline.md) — Task mapping.
+- [Phase A — Identifier, Repos](./plan-takeover-execution/phase-a-discovery-plan-identifier-and-repo-set.md) — A0-A1.
+- [Phase A — Per-Repo Probes](./plan-takeover-execution/phase-a-discovery-per-repo-probes-and-persistence.md) — A2-A3.
+- [Phase B — Reconcile](./plan-takeover-execution/phase-b-reconcile-findings.md) — buckets.
+- [Phase C — Adopt, Ledger](./plan-takeover-execution/phase-c-adopt-freshness-and-ledger.md) — steps 1-3.
+- [Phase C — PR, delivery.md](./plan-takeover-execution/phase-c-pr-record-and-reconcile-delivery.md) — steps 4-5.
+- [Phase D — Clean Up](./plan-takeover-execution/phase-d-clean-up-confirmed-stale-leftovers.md) — removal.
+- [Phase E — Hand Off](./plan-takeover-execution/phase-e-hand-off-to-plan-execution.md) — invocation.
+- [Related Documentation](./plan-takeover-execution/related-documentation.md) — cross-references.

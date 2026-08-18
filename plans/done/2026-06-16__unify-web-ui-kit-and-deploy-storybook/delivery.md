@@ -22,7 +22,7 @@ No `worktrees/` directory is provisioned for this plan.
 > command (`claude --worktree unify-web-ui-kit-and-deploy-storybook`) is intentionally NOT used.
 > See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
 > and [Plans Organization Convention §Worktree
-> Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+> Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 > For plan-execution Step 0: do NOT provision or enter a worktree for this plan. Confirm the
 > working tree is on `main` and clean, then proceed with Phase 0 in the root checkout.
 

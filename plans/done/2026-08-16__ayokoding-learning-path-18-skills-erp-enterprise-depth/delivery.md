@@ -54,9 +54,9 @@ per-course/cohort/stage worktrees nor per-phase branches. Remove it only after t
 
 > **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
 > single, plan-wide worktree before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > rules landed. Reviewed against both — already compliant, no change required.
 
 ## Delivery Mode: worktree-to-pr
@@ -193,7 +193,7 @@ ACCT_GATE_C=(
       Falsifiable both ways: before the push lands, the first query returns 0 and the second
       returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/example-usage-and-iteration-example.md#execute-plan-from-backlog).
 - [x] [AI] Plan 17 is archived on `origin/main` per [§Depends-on](#depends-on); repository baseline checks are informational — acceptance:
       empty output.
 - [x] [AI] Install dependencies: `npm install`.
@@ -235,7 +235,7 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 ### 1.1 — Author all 15 syllabus specs (Stage B's 12 + Stage C's 3)
 
 - [x] [AI] Create `${PLANDIR}syllabus/README.md`, `${SYL}README.md`, and all 15 `<SYL><id>.md` files
-      per the [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template).
+      per the [Learning-Plan Syllabus Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus/copy-paste-course-template.md#copy-paste-course-template).
       Every syllabus file citing a plan-17 course id (per
       [tech-docs.md §Cross-plan prerequisite edges](./tech-docs.md#cross-plan-prerequisite-edges-into-plan-17))
       links to `../../../done/2026-08-16__ayokoding-learning-path-17-skills-erp-foundations/syllabus/courses/<id>.md`
@@ -733,7 +733,7 @@ redundant with plan 17's own Stage A retest (DD-8).
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
 - [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in

@@ -68,7 +68,7 @@ See [Checker Implementation Patterns](./reference/checker-implementation-pattern
 ## docs-link-checker Agent Contract
 
 `docs-link-checker` diverges from this Skill's generic cache sketch. See
-[docs-link-checker Cache and Workflow](./reference/01-cache-and-workflow.md) for its specific
+[docs-link-checker Cache and Workflow](./reference/cache-and-workflow.md) for its specific
 6-month per-link expiry cache contract, required outputs, discovery/extraction patterns, and
 fixing workflow.
 

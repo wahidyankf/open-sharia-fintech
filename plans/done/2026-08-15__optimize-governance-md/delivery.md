@@ -18,7 +18,7 @@
 
 **Exactly one worktree named `optimize-governance-md` per repository**, reused across every delivery unit
 landed there — the
-[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 Two repos, two worktrees, no more. Verify with `git worktree list` before creating anything.
 
 After `git worktree add` in `ose-private`, run `npm install` **and**
@@ -33,7 +33,7 @@ claude --worktree optimize-governance-md
 
 Phase 0 enters this worktree by default; the command above only pre-provisions it. `optimize-governance-md`
 matches the plan-folder identifier per the
-[Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification)
+[Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification)
 — no naming deviation. (See `brd.md` §Constraints for the note on the `ose-public` worktree's
 mid-session rename from its original shorter provisioning name.)
 

@@ -18,20 +18,20 @@ Monitoring CI runs is a required step after every push, whether the target is a 
 
 ## Contents
 
-- [Overview and Absolute Floor](./ci-monitoring/01-overview-and-absolute-floor.md) — Default poll interval and the hard 2-minute minimum spacing.
-- [Runner Contention Across the OSE Repos (Read First)](./ci-monitoring/02-runner-contention-across-the-ose-repos.md) — Shared, finite runner pools; wait-and-check response.
-- [Principles and Conventions Implemented](./ci-monitoring/03-principles-and-conventions-implemented.md) — Why this convention exists.
-- [Purpose and Scope](./ci-monitoring/04-purpose-and-scope.md) — What this convention covers and defers.
-- [Rate Limit Budget Facts](./ci-monitoring/05-rate-limit-budget-facts.md) — Quota, window, and exhaustion math.
-- [ScheduleWakeup Every 2 Minutes (Required Default)](./ci-monitoring/06-schedulewakeup-every-2-minutes.md) — The required default polling pattern.
-- [Manual Poll Loop With 2-Minute Sleep (Unavoidable Loop Cases)](./ci-monitoring/07-manual-poll-loop-with-2-minute-sleep.md) — The fallback when ScheduleWakeup is unavailable.
-- [Trigger Discipline](./ci-monitoring/08-trigger-discipline.md) — Never retrigger a workflow within 10 minutes.
-- [Diagnosing a Stuck Self-Hosted Runner Job](./ci-monitoring/09-diagnosing-a-stuck-self-hosted-runner-job.md) — Telling hung from slow, and remediating.
-- [Retriggering a Stuck Run With No Contention (PR Branches)](./ci-monitoring/10-retriggering-a-stuck-run-with-no-contention.md) — Rebase-and-push as last resort.
-- [Recovery When Rate-Limited](./ci-monitoring/11-recovery-when-rate-limited.md) — Scheduled-wait recovery from HTTP 403.
-- [Locating the Failing Task in a Parallel Runner's Log](./ci-monitoring/12-locating-the-failing-task-in-a-parallel-runners-log.md) — Why the log tail misleads under Nx.
-- [Application in Plan Execution (Step 2c)](./ci-monitoring/13-application-in-plan-execution-step-2c.md) — Required pattern and forbidden shortcuts.
-- [Examples](./ci-monitoring/14-examples.md) — Worked pass/fail examples.
+- [Overview and Absolute Floor](./ci-monitoring/overview-and-absolute-floor.md) — Default poll interval and the hard 2-minute minimum spacing.
+- [Runner Contention Across the OSE Repos (Read First)](./ci-monitoring/runner-contention-across-the-ose-repos.md) — Shared, finite runner pools; wait-and-check response.
+- [Principles and Conventions Implemented](./ci-monitoring/principles-and-conventions-implemented.md) — Why this convention exists.
+- [Purpose and Scope](./ci-monitoring/purpose-and-scope.md) — What this convention covers and defers.
+- [Rate Limit Budget Facts](./ci-monitoring/rate-limit-budget-facts.md) — Quota, window, and exhaustion math.
+- [ScheduleWakeup Every 2 Minutes (Required Default)](./ci-monitoring/schedulewakeup-every-2-minutes.md) — The required default polling pattern.
+- [Manual Poll Loop With 2-Minute Sleep (Unavoidable Loop Cases)](./ci-monitoring/manual-poll-loop-with-2-minute-sleep.md) — The fallback when ScheduleWakeup is unavailable.
+- [Trigger Discipline](./ci-monitoring/trigger-discipline.md) — Never retrigger a workflow within 10 minutes.
+- [Diagnosing a Stuck Self-Hosted Runner Job](./ci-monitoring/diagnosing-a-stuck-self-hosted-runner-job.md) — Telling hung from slow, and remediating.
+- [Retriggering a Stuck Run With No Contention (PR Branches)](./ci-monitoring/retriggering-a-stuck-run-with-no-contention.md) — Rebase-and-push as last resort.
+- [Recovery When Rate-Limited](./ci-monitoring/recovery-when-rate-limited.md) — Scheduled-wait recovery from HTTP 403.
+- [Locating the Failing Task in a Parallel Runner's Log](./ci-monitoring/locating-the-failing-task-in-a-parallel-runners-log.md) — Why the log tail misleads under Nx.
+- [Application in Plan Execution (Step 2c)](./ci-monitoring/application-in-plan-execution-step-2c.md) — Required pattern and forbidden shortcuts.
+- [Examples](./ci-monitoring/examples.md) — Worked pass/fail examples.
 
 ## Related Documentation
 

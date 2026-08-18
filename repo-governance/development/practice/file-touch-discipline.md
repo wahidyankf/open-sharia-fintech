@@ -48,12 +48,12 @@ for a path actually requires.
 
 ## Contents
 
-- [Purpose and Scope](./file-touch-discipline/01-purpose-and-scope.md) — the three observed failure modes and what this practice covers.
-- [Standards 1-3 — Opening and Building the Ledger](./file-touch-discipline/02-standards-1-to-3.md) — open before the first mutation, append with reason, never reconstruct from the tree.
-- [Standards 4-5 — Carrying and Losing the Ledger](./file-touch-discipline/03-standards-4-to-5.md) — surviving compaction, and degraded mode when it doesn't.
-- [Standard 6 — Reconciling Before Commit](./file-touch-discipline/04-standard-6.md) — comparing ledger against tree in both directions.
-- [Standards 7-8 — Scope and Foreign Files](./file-touch-discipline/05-standards-7-to-8.md) — one ledger per (repository, worktree) pair; leave foreign files untouched.
-- [Standard 9 — Generated Mirrors](./file-touch-discipline/06-standard-9.md) — mirrors belong on the ledger, in the same commit as their source.
-- [Anti-Patterns — Ledger Integrity](./file-touch-discipline/07-anti-patterns-ledger-integrity.md) — blanket staging, diff-based reconstruction, tidying, trusting a clean worktree.
-- [Anti-Patterns — Commit Hygiene](./file-touch-discipline/08-anti-patterns-commit-hygiene.md) — vague-prose ledgers, orphan sync commits, hand-editing a mirror.
-- [Agent Checklist and Related Documentation](./file-touch-discipline/09-agent-checklist-and-related-docs.md) — nine-point summary and related conventions.
+- [Purpose and Scope](./file-touch-discipline/purpose-and-scope.md) — the three observed failure modes and what this practice covers.
+- [Standards 1-3 — Opening and Building the Ledger](./file-touch-discipline/standards-1-to-3.md) — open before the first mutation, append with reason, never reconstruct from the tree.
+- [Standards 4-5 — Carrying and Losing the Ledger](./file-touch-discipline/standards-4-to-5.md) — surviving compaction, and degraded mode when it doesn't.
+- [Standard 6 — Reconciling Before Commit](./file-touch-discipline/standard-6.md) — comparing ledger against tree in both directions.
+- [Standards 7-8 — Scope and Foreign Files](./file-touch-discipline/standards-7-to-8.md) — one ledger per (repository, worktree) pair; leave foreign files untouched.
+- [Standard 9 — Generated Mirrors](./file-touch-discipline/standard-9.md) — mirrors belong on the ledger, in the same commit as their source.
+- [Anti-Patterns — Ledger Integrity](./file-touch-discipline/anti-patterns-ledger-integrity.md) — blanket staging, diff-based reconstruction, tidying, trusting a clean worktree.
+- [Anti-Patterns — Commit Hygiene](./file-touch-discipline/anti-patterns-commit-hygiene.md) — vague-prose ledgers, orphan sync commits, hand-editing a mirror.
+- [Agent Checklist and Related Documentation](./file-touch-discipline/agent-checklist-and-related-docs.md) — nine-point summary and related conventions.

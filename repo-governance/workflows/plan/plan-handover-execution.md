@@ -29,9 +29,9 @@ stepping away, so the next agent or session can resume from fact rather than re-
 
 ## Contents
 
-- [Purpose, Scope, and Relationship](./plan-handover-execution/01-purpose-scope-and-relationship.md) — when (not) to use it; ties to plan-takeover-execution.md.
-- [Why This Exists](./plan-handover-execution/02-why-this-exists.md) — the two kinds of knowledge delivery.md misses.
-- [Required Document Structure](./plan-handover-execution/03-required-document-structure.md) — the literal template, section by section.
-- [Notes and Execution Mode](./plan-handover-execution/04-notes-and-execution-mode.md) — load-bearing sections; who writes it.
-- [Steps](./plan-handover-execution/05-steps.md) — the seven steps to write a handover.
-- [Related Documentation](./plan-handover-execution/06-related-documentation.md) — cross-references.
+- [Purpose, Scope, and Relationship](./plan-handover-execution/purpose-scope-and-relationship.md) — when (not) to use it; ties to plan-takeover-execution.md.
+- [Why This Exists](./plan-handover-execution/why-this-exists.md) — the two kinds of knowledge delivery.md misses.
+- [Required Document Structure](./plan-handover-execution/required-document-structure.md) — the literal template, section by section.
+- [Notes and Execution Mode](./plan-handover-execution/notes-and-execution-mode.md) — load-bearing sections; who writes it.
+- [Steps](./plan-handover-execution/steps.md) — the seven steps to write a handover.
+- [Related Documentation](./plan-handover-execution/related-documentation.md) — cross-references.

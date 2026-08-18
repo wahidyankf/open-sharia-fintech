@@ -20,7 +20,7 @@ a clean, known-good state.
 > reviewable, under every Delivery Mode. Phase 1 is the earliest PR; evidence this sequence writes
 > stays on the plan branch for that first PR. A Phase 0 checklist containing a push/PR/merge step
 > is a plan defect — report it for `plan-fixer`, do not execute it. See
-> [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+> [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 **Step 1 — Install Dependencies**: `npm install`. Acceptance: exits 0, `node_modules/` synced.
 

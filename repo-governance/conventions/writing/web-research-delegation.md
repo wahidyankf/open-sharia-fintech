@@ -19,7 +19,7 @@ AI agents frequently need facts that live outside the repository — current API
 
 ## Contents
 
-- [Purpose and Scope](./web-research-delegation/01-purpose-and-scope.md) — the principles behind the convention, what it covers, and what it explicitly does not cover.
-- [The Rule](./web-research-delegation/02-the-rule.md) — the bright-line delegation threshold and the three documented exceptions.
-- [Applying the Rule and Examples](./web-research-delegation/03-applying-the-rule-and-examples.md) — how agent, skill, and workflow files should cite the rule, plus worked good/bad examples.
-- [Validation, Tooling, and References](./web-research-delegation/04-validation-tooling-and-references.md) — the compliance checklist and the agents/skills/workflows that reference this convention.
+- [Purpose and Scope](./web-research-delegation/purpose-and-scope.md) — the principles behind the convention, what it covers, and what it explicitly does not cover.
+- [The Rule](./web-research-delegation/the-rule.md) — the bright-line delegation threshold and the three documented exceptions.
+- [Applying the Rule and Examples](./web-research-delegation/applying-the-rule-and-examples.md) — how agent, skill, and workflow files should cite the rule, plus worked good/bad examples.
+- [Validation, Tooling, and References](./web-research-delegation/validation-tooling-and-references.md) — the compliance checklist and the agents/skills/workflows that reference this convention.

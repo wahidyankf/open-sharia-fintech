@@ -49,7 +49,7 @@ boundary** — see [Delivery Boundaries](#delivery-boundaries) below for which p
 artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -60,7 +60,7 @@ Each **delivery unit** — the contiguous phase ranges named in
 flips the PR to ready, and `[AI]` **merges it automatically once all quality gates are green** — then
 `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this plan ships to
 ayokoding.com). See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
@@ -81,7 +81,7 @@ must-pass — not once per phase; a delivery unit's intermediate phases commit t
 and pass their own `### Phase N Gate`, but do not run this protocol). **Phase 0 is excluded**: it is
 Environment Setup and Baseline, opens no PR, pushes no branch, runs no review cycle, and merges
 nothing; its evidence artifacts ride the Phase 1 PR
-([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the worktree to latest `origin/main` and branch:
    `git fetch origin && git checkout main && git pull && git checkout -b
@@ -454,7 +454,7 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
 > output file is `<PLAN>assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png`, rendered from
 > `<PLAN>assets/src/<screen>-option-<a|b>-desktop.html` at **375 / 768 / 1280 px** — `.png` only, per
 > the
-> [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+> [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 > (`.excalidraw.svg` and inline HTML+CSS are ruled out: GitHub strips styles and blocks Excalidraw fonts).
 >
 > **Screen 4's six renders are NOT produced here** — they belong to

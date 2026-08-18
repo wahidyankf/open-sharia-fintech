@@ -174,7 +174,7 @@ one diff.
 ## Worktree and Delivery Mode
 
 **Delivery Mode**: `worktree-to-pr` (see
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)),
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)),
 run as **four independent tracks, one per repo**. Each track executes in its own dedicated worktree
 inside that repo (`worktrees/pr-review-cycle-scout-and-typesafety/` in each of `ose-public`,
 `ose-primer`, `ose-private`, `beaver-nest`), opens its own PR against that repo's own `main`, and runs

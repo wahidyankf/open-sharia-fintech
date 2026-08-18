@@ -1159,7 +1159,7 @@ uniform; every `![]()` reference was updated with them.
 to the widths the plan's Playwright verification steps resize to.
 
 **Format** — `.png` only, per the
-[UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope):
+[UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope):
 `.excalidraw.svg` is ruled out (GitHub blocks the Excalidraw font) and inline HTML+CSS is ruled out
 (GitHub strips styles). The `.html` sources are build inputs, never the embedded artefact.
 

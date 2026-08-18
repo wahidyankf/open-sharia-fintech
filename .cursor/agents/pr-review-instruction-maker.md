@@ -54,7 +54,7 @@ toolchain detail omitted from an otherwise-current doc.
 ## Reference Documentation
 
 [Governance Word-Budget](../../repo-governance/conventions/structure/governance-word-budget.md),
-[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-governance-maker`, `pr-review-architecture-maker`, `pr-review-synthesis-maker`,
 `pr-review-fixer`, `repo-harness-compatibility-checker`.

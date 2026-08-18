@@ -171,7 +171,7 @@ _Option B — Twin-Track Mirrored Bars (runner-up). See
 > (`assets/ai-benchmark-merged-option-a-stacked-rows.svg`,
 > `assets/ai-benchmark-merged-option-b-mirrored-bars.svg`) rendered via `rsvg-convert` to the `.png`
 > files embedded above, per the
-> [UI Mockups in Plan Docs §Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule).
+> [UI Mockups in Plan Docs §Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule).
 > Colours approximate the real `--chart-band-opus`/`-sonnet`/`-light`/`-unrated` OKLCH tokens
 > `[Repo-grounded — libs/web-ui-token/src/ayokoding.css, accessed 2026-07-30]` using the same
 > literal-hex stand-ins the prior plan's own mockups used (`#CC78BC`, `#029E73`, `#DE8F05`,

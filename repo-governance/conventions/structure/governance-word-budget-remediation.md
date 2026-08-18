@@ -39,6 +39,9 @@ word-budget member.
 a one-line summary and a `See` link to its canonical home. The detail stays fully reachable, just
 no longer inlined.
 
+**Naming the shards.** A shard is not a step, so its filename carries **no** ordinal; the parent
+index carries order. See [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md).
+
 ### Forbidden Anti-Fixes
 
 1. **Delete a rule** — removes coverage; rules must stay reachable.
@@ -51,7 +54,7 @@ no longer inlined.
    incomplete: complete it first, or restate the inline rule as a **pattern** rather than an
    enumeration (e.g. "every `prod-*`/`stag-*` ref is a deploy target" instead of listing them),
    which is both shorter and immune to new entries appearing. See
-   [Anti-Pattern 10: Enumeration-Based Guards](../../development/agents/anti-patterns/07-anti-pattern-10-enumeration-based-guards.md#anti-pattern-10-enumeration-based-guards-denylist-guards-that-fail-open).
+   [Anti-Pattern 10: Enumeration-Based Guards](../../development/agents/anti-patterns/anti-pattern-10-enumeration-based-guards.md#anti-pattern-10-enumeration-based-guards-denylist-guards-that-fail-open).
 
 **Never compress a safety guardrail to save words.** Secrets/`.env` rules, the Git Identity
 Guardrail, and environment-branch rules trim **last and only via a complete target** — never by
@@ -75,3 +78,4 @@ parent convention does: reliable instruction delivery across the multi-harness a
 
 - [Governance Word-Budget Convention](./governance-word-budget.md) — thresholds and monitored
   surfaces
+- [Ordinal Filename Prefixes](./ordinal-filename-prefixes.md) — naming split shards

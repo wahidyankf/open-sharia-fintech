@@ -18,8 +18,8 @@ This convention defines how to reference dynamic collections in documentation. A
 
 ## Contents
 
-- [Purpose, Principles, and Scope](./dynamic-collection-references/01-purpose-principles-and-scope.md) — why hardcoded counts are a problem, the principles this convention implements, and what is in/out of scope.
-- [Standards (Rules 1-4)](./dynamic-collection-references/02-standards-rules-1-to-4.md) — never hardcode counts, layer descriptions, index summaries, and directory tree comments.
-- [Standards (Rules 5-7)](./dynamic-collection-references/03-standards-rules-5-to-7.md) — where counts are acceptable, the index-as-source-of-truth rule, and the amendment numeric-sweep rule.
-- [Examples and Special Considerations](./dynamic-collection-references/04-examples-and-special-considerations.md) — before/after conversions, the pattern-recognition list, and edge cases (index footers, workflow counts).
-- [Tools, Automation, and References](./dynamic-collection-references/05-tools-automation-and-references.md) — enforcing agents and links to related conventions.
+- [Purpose, Principles, and Scope](./dynamic-collection-references/purpose-principles-and-scope.md) — why hardcoded counts are a problem, the principles this convention implements, and what is in/out of scope.
+- [Standards (Rules 1-4)](./dynamic-collection-references/standards-rules-1-to-4.md) — never hardcode counts, layer descriptions, index summaries, and directory tree comments.
+- [Standards (Rules 5-7)](./dynamic-collection-references/standards-rules-5-to-7.md) — where counts are acceptable, the index-as-source-of-truth rule, and the amendment numeric-sweep rule.
+- [Examples and Special Considerations](./dynamic-collection-references/examples-and-special-considerations.md) — before/after conversions, the pattern-recognition list, and edge cases (index footers, workflow counts).
+- [Tools, Automation, and References](./dynamic-collection-references/tools-automation-and-references.md) — enforcing agents and links to related conventions.

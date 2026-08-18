@@ -53,9 +53,9 @@ Workflows support two execution modes and a standard set of input parameters (`m
 
 All `*-quality-gate` workflows follow the check-fix Workflow Pattern (see Workflow Meta Documentation above) which fixes every finding and iterates until zero remain.
 
-## Naming Rule
+## Naming
 
-Every workflow filename follows `<scope>(-<qualifier>)*-<type>`: `scope` is the top-level domain matching the parent directory; `qualifier` is zero or more refinement tokens; `type` is exactly one trailing token from the vocabulary below. No other structure is permitted, except reference material under `repo-governance/workflows/meta/` (see exception below). Normative source: [Workflow Naming Convention](../conventions/structure/workflow-naming.md). Enforcement: `rhino-cli repo-governance workflows naming validate` (pre-push and CI).
+Workflow filenames are ordinary lowercase kebab-case, per [File Naming](../conventions/structure/file-naming.md). Most end in a token naming the workflow's shape; the table below is a **descriptive** vocabulary, not a mandate. The type-suffix rule that once bound this tree, and the validator that enforced it, were withdrawn — see [Withdrawn Rules](../conventions/structure/file-naming.md#withdrawn-rules). A workflow whose shape is not in the table needs no new token and no exception.
 
 | Type           | Semantics                                                                                       | Example                         |
 | -------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- |
@@ -64,8 +64,6 @@ Every workflow filename follows `<scope>(-<qualifier>)*-<type>`: `scope` is the 
 | `setup`        | One-time environment or resource provisioning                                                   | `development-environment-setup` |
 | `planning`     | Surveys/analyzes state and produces a plan as its terminal deliverable                          | `repo-dependency-bump-planning` |
 | `grooming`     | Recurring sweep/reorganization over existing state; no zero-findings convergence or plan output | `plan-ideas-grooming`           |
-
-**Meta reference exception**: files under `repo-governance/workflows/meta/` are reference documentation about the workflow system, not workflows themselves, and are exempt from the type-suffix rule.
 
 **Workflow vs Plans**: a plan is strategic (WHAT to build), free-form, human-authored, and archived once delivered; a workflow is tactical (HOW to build), structured Markdown with YAML, and executed repeatedly. Plans can reference workflows; workflows can be generated from plan checklists.
 

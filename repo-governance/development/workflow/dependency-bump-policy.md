@@ -19,14 +19,14 @@ Every dependency bump MUST satisfy three constraints before it is merged: (1) re
 
 ## Contents
 
-- [Principles and Conventions Implemented](./dependency-bump-policy/01-principles-and-conventions-implemented.md) — Why this policy exists.
-- [Scope](./dependency-bump-policy/02-scope.md) — Which manifests are covered.
-- [Three-Path Decision Tree](./dependency-bump-policy/03-three-path-decision-tree.md) — Path A (LTS), Path B (60-day), Path C (waiver).
-- [KEV Fast-Track and EPSS Escalation](./dependency-bump-policy/04-kev-fast-track-and-epss-escalation.md) — Actively-exploited-CVE overrides.
-- [Selection Rules Within Every Path](./dependency-bump-policy/05-selection-rules-within-every-path.md) — Recency and functional stability.
-- [Pinning Policy (Hard Rule)](./dependency-bump-policy/06-pinning-policy-hard-rule.md) — Exact-pin form per manifest.
-- [CVE Clearance Process](./dependency-bump-policy/07-cve-clearance-process.md) — The five sources and the clearance status values.
-- [Cutoff Date Computation and Plan Duration](./dependency-bump-policy/08-cutoff-date-computation-and-plan-duration.md) — Stating the cutoff, and re-checking on long plans.
-- [Examples](./dependency-bump-policy/09-examples.md) — Worked Path A/B/C decisions.
-- [Application Workflow](./dependency-bump-policy/10-application-workflow.md) — The twelve-step procedure.
-- [Tools, Automation, and References](./dependency-bump-policy/11-tools-automation-and-references.md) — Enforcement tools and the full reference list.
+- [Principles and Conventions Implemented](./dependency-bump-policy/principles-and-conventions-implemented.md) — Why this policy exists.
+- [Scope](./dependency-bump-policy/scope.md) — Which manifests are covered.
+- [Three-Path Decision Tree](./dependency-bump-policy/three-path-decision-tree.md) — Path A (LTS), Path B (60-day), Path C (waiver).
+- [KEV Fast-Track and EPSS Escalation](./dependency-bump-policy/kev-fast-track-and-epss-escalation.md) — Actively-exploited-CVE overrides.
+- [Selection Rules Within Every Path](./dependency-bump-policy/selection-rules-within-every-path.md) — Recency and functional stability.
+- [Pinning Policy (Hard Rule)](./dependency-bump-policy/pinning-policy-hard-rule.md) — Exact-pin form per manifest.
+- [CVE Clearance Process](./dependency-bump-policy/cve-clearance-process.md) — The five sources and the clearance status values.
+- [Cutoff Date Computation and Plan Duration](./dependency-bump-policy/cutoff-date-computation-and-plan-duration.md) — Stating the cutoff, and re-checking on long plans.
+- [Examples](./dependency-bump-policy/examples.md) — Worked Path A/B/C decisions.
+- [Application Workflow](./dependency-bump-policy/application-workflow.md) — The twelve-step procedure.
+- [Tools, Automation, and References](./dependency-bump-policy/tools-automation-and-references.md) — Enforcement tools and the full reference list.

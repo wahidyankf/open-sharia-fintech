@@ -13,10 +13,10 @@ publishing, the frontmatter template, and the distinct rules for editing `AGENTS
 
 ## Reference Modules
 
-- [Verification and Correctness](reference/01-verification-and-correctness.md) — the
+- [Verification and Correctness](reference/verification-and-correctness.md) — the
   Documentation First principle, verification requirements per information type, and the
   pre-publish correctness checklist
-- [Frontmatter, Tags, and AGENTS.md Philosophy](reference/02-templates-and-agents-md-philosophy.md) —
+- [Frontmatter, Tags, and AGENTS.md Philosophy](reference/templates-and-agents-md-philosophy.md) —
   the frontmatter template, date-field convention, tag usage, and the AGENTS.md
   navigation-document rules
 

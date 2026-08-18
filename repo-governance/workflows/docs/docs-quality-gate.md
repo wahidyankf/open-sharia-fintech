@@ -69,32 +69,32 @@ This workflow implements the **Maker-Checker-Fixer pattern** across three valida
 
 ## Contents
 
-- [Execution Mode](./docs-quality-gate/01-execution-mode.md) — delegation vs. manual mode.
-- [Workflow Overview](./docs-quality-gate/02-workflow-overview.md) — flow diagram.
-- [Research Delegation](./docs-quality-gate/03-research-delegation.md) — web-researcher hand-off.
+- [Execution Mode](./docs-quality-gate/execution-mode.md) — delegation vs. manual mode.
+- [Workflow Overview](./docs-quality-gate/workflow-overview.md) — flow diagram.
+- [Research Delegation](./docs-quality-gate/research-delegation.md) — web-researcher hand-off.
 
 ### Steps
 
-- [Step 1: Parallel Validation](./docs-quality-gate/04-step-1-parallel-validation.md) — three checkers.
-- [Step 2: Aggregate Findings](./docs-quality-gate/05-step-2-aggregate-findings.md) — threshold decision.
-- [Step 3: Apply Factual Fixes](./docs-quality-gate/06-step-3-apply-factual-fixes.md) — docs-fixer.
-- [Step 4: Apply Pedagogical Fixes](./docs-quality-gate/07-step-4-apply-pedagogical-fixes.md) — docs-tutorial-fixer.
-- [Step 5: Iteration Control](./docs-quality-gate/08-step-5-iteration-control.md) — loop logic.
-- [Step 6: Finalization](./docs-quality-gate/09-step-6-finalization.md) — final status.
+- [Step 1: Parallel Validation](./docs-quality-gate/step-1-parallel-validation.md) — three checkers.
+- [Step 2: Aggregate Findings](./docs-quality-gate/step-2-aggregate-findings.md) — threshold decision.
+- [Step 3: Apply Factual Fixes](./docs-quality-gate/step-3-apply-factual-fixes.md) — docs-fixer.
+- [Step 4: Apply Pedagogical Fixes](./docs-quality-gate/step-4-apply-pedagogical-fixes.md) — docs-tutorial-fixer.
+- [Step 5: Iteration Control](./docs-quality-gate/step-5-iteration-control.md) — loop logic.
+- [Step 6: Finalization](./docs-quality-gate/step-6-finalization.md) — final status.
 
 ### Criteria and Examples
 
-- [Termination Criteria](./docs-quality-gate/10-termination-criteria.md) — pass/partial/fail rules.
-- [Example Usage](./docs-quality-gate/11-example-usage.md) — invocation scenarios.
-- [Iteration Example](./docs-quality-gate/12-iteration-example.md) — worked trace with broken links.
+- [Termination Criteria](./docs-quality-gate/termination-criteria.md) — pass/partial/fail rules.
+- [Example Usage](./docs-quality-gate/example-usage.md) — invocation scenarios.
+- [Iteration Example](./docs-quality-gate/iteration-example.md) — worked trace with broken links.
 
 ### Reference
 
-- [Safety Features](./docs-quality-gate/13-safety-features.md) — convergence safeguards.
-- [Validation Dimensions](./docs-quality-gate/14-validation-dimensions.md) — what each validator checks.
-- [Edge Cases](./docs-quality-gate/15-edge-cases.md) — five worked edge cases.
-- [Related Workflows](./docs-quality-gate/16-related-workflows.md) — composable workflows.
-- [Success Metrics](./docs-quality-gate/17-success-metrics.md) — operational tracking.
-- [Notes](./docs-quality-gate/18-notes.md) — key operating characteristics.
-- [Principles Respected](./docs-quality-gate/19-principles-implemented-respected.md) — governance.
-- [Conventions Respected](./docs-quality-gate/20-conventions-implemented-respected.md) — governance.
+- [Safety Features](./docs-quality-gate/safety-features.md) — convergence safeguards.
+- [Validation Dimensions](./docs-quality-gate/validation-dimensions.md) — what each validator checks.
+- [Edge Cases](./docs-quality-gate/edge-cases.md) — five worked edge cases.
+- [Related Workflows](./docs-quality-gate/related-workflows.md) — composable workflows.
+- [Success Metrics](./docs-quality-gate/success-metrics.md) — operational tracking.
+- [Notes](./docs-quality-gate/notes.md) — key operating characteristics.
+- [Principles Respected](./docs-quality-gate/principles-implemented-respected.md) — governance.
+- [Conventions Respected](./docs-quality-gate/conventions-implemented-respected.md) — governance.

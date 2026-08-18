@@ -15,7 +15,7 @@ created: 2026-06-01
 # No Secrets in Committed Files
 
 > **Stub.** The full rule, rationale, remediation guidance, and cross-repo canonicalization note live
-> in [`secrets-and-env-standards.md` § 1](./secrets-and-env-standards/02-hard-iron-rule-no-secrets-in-committed-files.md).
+> in [`secrets-and-env-standards.md` § 1](./secrets-and-env-standards/hard-iron-rule-no-secrets-in-committed-files.md).
 
 **Summary**: No system secret may enter any git-tracked file. Real values go in gitignored `.env*`
 files (except `.env.example`), `.secrets/`, or `secrets.json`. Git history is permanent — rotation

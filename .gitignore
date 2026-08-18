@@ -171,6 +171,13 @@ specs/apps/a-demo/contracts/generated/
 /worktrees/*
 !/worktrees/.gitkeep
 
+# Manual-verification evidence belongs in the owning plan's evidence/ subfolder
+# (plans/{backlog,in-progress,done}/<slug>/evidence/), which moves with the plan on
+# archival — see repo-governance/development/quality/evidence-capture/.
+# A repo-root evidence/ is always a misplacement. The leading slash anchors this to
+# the root, so per-plan evidence/ folders are unaffected.
+/evidence/
+
 # OpenCode generated files (package.json and lockfiles are local MCP runner artifacts)
 .opencode/package-lock.json
 .opencode/settings.local.json

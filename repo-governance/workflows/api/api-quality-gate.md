@@ -56,14 +56,14 @@ against a live deployment — every finding originates in an actual HTTP respons
 
 ## Contents
 
-- [Shape: Tester-Driven, Not Checker/Fixer](./api-quality-gate/01-shape-tester-driven-not-checker-fixer.md) — no checker/fixer pair; the loop and its agents.
-- [Execution Mode](./api-quality-gate/02-execution-mode.md) — preferred/fallback execution, how to invoke.
-- [Preconditions](./api-quality-gate/03-preconditions.md) — reachability, contract, non-destructive scope.
-- [Step 1: Test](./api-quality-gate/04-step-1-test.md) — invoke the tester, what it exercises.
-- [Step 2: Triage Against Mode](./api-quality-gate/05-step-2-triage-against-mode.md) — severity-to-threshold mapping.
-- [Step 3: Fix](./api-quality-gate/06-step-3-fix.md) — route findings to the matching `swe-*-dev` agent.
-- [Step 4: Re-Test](./api-quality-gate/07-step-4-re-test.md) — rebuild, redeploy, re-run.
-- [Step 5: Double-Zero Confirmation](./api-quality-gate/08-step-5-double-zero-confirmation.md) — why one zero pass doesn't terminate.
-- [Step 6: Iteration Control](./api-quality-gate/09-step-6-iteration-control.md) — pass/partial/fail, escalation.
-- [Relationship to Other Gates](./api-quality-gate/10-relationship-to-other-gates.md) — surface-conditional applicability, merge precondition.
-- [Related Documentation](./api-quality-gate/11-related-documentation.md) — links to the workflows index, related conventions.
+- [Shape: Tester-Driven, Not Checker/Fixer](./api-quality-gate/shape-tester-driven-not-checker-fixer.md) — no checker/fixer pair; the loop and its agents.
+- [Execution Mode](./api-quality-gate/execution-mode.md) — preferred/fallback execution, how to invoke.
+- [Preconditions](./api-quality-gate/preconditions.md) — reachability, contract, non-destructive scope.
+- [Step 1: Test](./api-quality-gate/step-1-test.md) — invoke the tester, what it exercises.
+- [Step 2: Triage Against Mode](./api-quality-gate/step-2-triage-against-mode.md) — severity-to-threshold mapping.
+- [Step 3: Fix](./api-quality-gate/step-3-fix.md) — route findings to the matching `swe-*-dev` agent.
+- [Step 4: Re-Test](./api-quality-gate/step-4-re-test.md) — rebuild, redeploy, re-run.
+- [Step 5: Double-Zero Confirmation](./api-quality-gate/step-5-double-zero-confirmation.md) — why one zero pass doesn't terminate.
+- [Step 6: Iteration Control](./api-quality-gate/step-6-iteration-control.md) — pass/partial/fail, escalation.
+- [Relationship to Other Gates](./api-quality-gate/relationship-to-other-gates.md) — surface-conditional applicability, merge precondition.
+- [Related Documentation](./api-quality-gate/related-documentation.md) — links to the workflows index, related conventions.

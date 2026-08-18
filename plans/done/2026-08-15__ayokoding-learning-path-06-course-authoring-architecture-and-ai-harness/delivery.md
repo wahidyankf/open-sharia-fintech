@@ -69,9 +69,9 @@ per-course/cohort/stage worktrees nor per-phase branches. Remove it only after t
 
 > **Worktree Cap conformance note (added when the rule landed):** this plan already declared a
 > single, plan-wide worktree before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > rules landed. Reviewed against both — already compliant, no change required.
 
 ## Delivery Mode: worktree-to-pr
@@ -154,7 +154,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       returns **0**. Falsifiable both ways: before the push lands, the first query returns 0 and the
       second returns 1. Execution never runs out of `plans/backlog/` — this push is a mandatory
       precondition, not a courtesy. See
-      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/44-example-usage-and-iteration-example.md#execute-plan-from-backlog).
+      [plan-execution → Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution/example-usage-and-iteration-example.md#execute-plan-from-backlog).
 
   _Implementation notes (2026-08-14): Promotion landed through protected-main PR #194 (merge
   `64a89e65862b5a03e8d5c9b56f1e4845729aa156`) after its 14 required checks passed. `origin/main`
@@ -939,7 +939,7 @@ pipeline concurrently through review, bounded by the cap.
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<slug>.md` when the
       scan confirms no existing brief overlaps (see
-      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
+      [Integrate Before You Add](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#integrate-before-you-add-no-duplicate-two-pagers))
       — acceptance: the entry's routing line names either the folded-into brief or confirms the
       overlap scan found nothing.
 - [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in

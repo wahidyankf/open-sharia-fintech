@@ -18,12 +18,12 @@ After pushing app or library code, you MUST manually trigger all related GitHub 
 
 ## Contents
 
-- [Principles and Conventions Implemented](./ci-post-push-verification/01-principles-and-conventions-implemented.md) — The principles and companion conventions this practice respects.
-- [The Rule and Workflow Mapping](./ci-post-push-verification/02-the-rule-and-workflow-mapping.md) — The four required steps, and which workflow file covers each app.
-- [Monitoring and Commands](./ci-post-push-verification/03-monitoring-and-commands.md) — Rate-limit-safe polling and the reference `gh` command set.
-- [Scope and Pre-Push Hook Coverage](./ci-post-push-verification/04-scope-and-pre-push-hook-coverage.md) — When this convention applies/doesn't, and what the pre-push hook already covers.
-- [Agent Responsibilities and Forbidden Actions](./ci-post-push-verification/05-agent-responsibilities-and-forbidden-actions.md) — Who owes verification, and which shortcuts are forbidden.
-- [Examples](./ci-post-push-verification/06-examples.md) — Worked pass/fail examples, including fixing a failure found during verification.
+- [Principles and Conventions Implemented](./ci-post-push-verification/principles-and-conventions-implemented.md) — The principles and companion conventions this practice respects.
+- [The Rule and Workflow Mapping](./ci-post-push-verification/the-rule-and-workflow-mapping.md) — The four required steps, and which workflow file covers each app.
+- [Monitoring and Commands](./ci-post-push-verification/monitoring-and-commands.md) — Rate-limit-safe polling and the reference `gh` command set.
+- [Scope and Pre-Push Hook Coverage](./ci-post-push-verification/scope-and-pre-push-hook-coverage.md) — When this convention applies/doesn't, and what the pre-push hook already covers.
+- [Agent Responsibilities and Forbidden Actions](./ci-post-push-verification/agent-responsibilities-and-forbidden-actions.md) — Who owes verification, and which shortcuts are forbidden.
+- [Examples](./ci-post-push-verification/examples.md) — Worked pass/fail examples, including fixing a failure found during verification.
 
 ## Related Documentation
 

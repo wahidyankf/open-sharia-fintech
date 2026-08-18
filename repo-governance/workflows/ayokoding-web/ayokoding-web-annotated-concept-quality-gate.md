@@ -71,13 +71,13 @@ Iterative Maker-Checker-Fixer quality gate for Annotated-concept tutorials.
 
 ## Contents
 
-- [Execution Mode](./ayokoding-web-annotated-concept-quality-gate/01-execution-mode.md) — Agent Delegation vs. manual fallback.
-- [Workflow Overview and Research Delegation](./ayokoding-web-annotated-concept-quality-gate/02-workflow-overview-and-research-delegation.md) — flow diagram, research delegation.
-- [Steps 1-2: Maker and Checker](./ayokoding-web-annotated-concept-quality-gate/03-step-1-and-2-maker-and-checker.md) — create examples, validate quality.
-- [Step 3: User Review](./ayokoding-web-annotated-concept-quality-gate/04-step-3-user-review.md) — human decision point.
-- [Step 4: Fixer](./ayokoding-web-annotated-concept-quality-gate/05-step-4-fixer.md) — apply validated fixes.
-- [Steps 5-6: Iteration Control and Finalization](./ayokoding-web-annotated-concept-quality-gate/06-step-5-and-6-iteration-control-and-finalization.md) — continue or finalize.
-- [Termination Criteria](./ayokoding-web-annotated-concept-quality-gate/07-termination-criteria.md) — success/partial/failure conditions.
-- [Iteration and Strictness Examples](./ayokoding-web-annotated-concept-quality-gate/08-iteration-and-strictness-examples.md) — two worked walkthroughs.
-- [Workflow Invocation and Safety Features](./ayokoding-web-annotated-concept-quality-gate/09-workflow-invocation-and-safety-features.md) — how to trigger, loop safeguards.
-- [Workflow Metadata and References](./ayokoding-web-annotated-concept-quality-gate/10-workflow-metadata-and-references.md) — metrics, related workflows, principles.
+- [Execution Mode](./ayokoding-web-annotated-concept-quality-gate/execution-mode.md) — Agent Delegation vs. manual fallback.
+- [Workflow Overview and Research Delegation](./ayokoding-web-annotated-concept-quality-gate/workflow-overview-and-research-delegation.md) — flow diagram, research delegation.
+- [Steps 1-2: Maker and Checker](./ayokoding-web-annotated-concept-quality-gate/step-1-and-2-maker-and-checker.md) — create examples, validate quality.
+- [Step 3: User Review](./ayokoding-web-annotated-concept-quality-gate/step-3-user-review.md) — human decision point.
+- [Step 4: Fixer](./ayokoding-web-annotated-concept-quality-gate/step-4-fixer.md) — apply validated fixes.
+- [Steps 5-6: Iteration Control and Finalization](./ayokoding-web-annotated-concept-quality-gate/step-5-and-6-iteration-control-and-finalization.md) — continue or finalize.
+- [Termination Criteria](./ayokoding-web-annotated-concept-quality-gate/termination-criteria.md) — success/partial/failure conditions.
+- [Iteration and Strictness Examples](./ayokoding-web-annotated-concept-quality-gate/iteration-and-strictness-examples.md) — two worked walkthroughs.
+- [Workflow Invocation and Safety Features](./ayokoding-web-annotated-concept-quality-gate/workflow-invocation-and-safety-features.md) — how to trigger, loop safeguards.
+- [Workflow Metadata and References](./ayokoding-web-annotated-concept-quality-gate/workflow-metadata-and-references.md) — metrics, related workflows, principles.

@@ -59,11 +59,11 @@ Fully automated workflow that validates all ayokoding-web content (quality, fact
 
 ## Contents
 
-- [Execution Mode and Research Delegation](./ayokoding-web-general-quality-gate/01-execution-mode-and-research-delegation.md) — Agent Delegation vs. manual, research delegation.
-- [Steps 1-2: Parallel Validation and Aggregate Findings](./ayokoding-web-general-quality-gate/02-step-1-and-2-parallel-validation-and-aggregate-findings.md) — run checkers, count findings.
-- [Steps 3-4: Apply Content and Facts Fixes](./ayokoding-web-general-quality-gate/03-step-3-and-4-apply-fixes.md) — the two fixer steps.
-- [Steps 5-7: Iteration Control, Final Validation, and Finalization](./ayokoding-web-general-quality-gate/04-step-5-to-7-iteration-final-validation-finalization.md) — continue, confirm, report.
-- [Termination Criteria and Example Usage](./ayokoding-web-general-quality-gate/05-termination-criteria-and-example-usage.md) — pass/partial/fail, invocation examples.
-- [Iteration Example and Safety Features](./ayokoding-web-general-quality-gate/06-iteration-example-and-safety-features.md) — worked flow, loop safeguards.
-- [Validation Dimensions, Related Workflows, and Success Metrics](./ayokoding-web-general-quality-gate/07-validation-dimensions-related-workflows-and-success-metrics.md) — what each validator checks.
-- [Notes, Principles, and Conventions Implemented](./ayokoding-web-general-quality-gate/08-notes-principles-and-conventions.md) — operational notes, principles, conventions.
+- [Execution Mode and Research Delegation](./ayokoding-web-general-quality-gate/execution-mode-and-research-delegation.md) — Agent Delegation vs. manual, research delegation.
+- [Steps 1-2: Parallel Validation and Aggregate Findings](./ayokoding-web-general-quality-gate/step-1-and-2-parallel-validation-and-aggregate-findings.md) — run checkers, count findings.
+- [Steps 3-4: Apply Content and Facts Fixes](./ayokoding-web-general-quality-gate/03-apply-fixes.md) — the two fixer steps.
+- [Steps 5-7: Iteration Control, Final Validation, and Finalization](./ayokoding-web-general-quality-gate/step-5-to-7-iteration-final-validation-finalization.md) — continue, confirm, report.
+- [Termination Criteria and Example Usage](./ayokoding-web-general-quality-gate/termination-criteria-and-example-usage.md) — pass/partial/fail, invocation examples.
+- [Iteration Example and Safety Features](./ayokoding-web-general-quality-gate/iteration-example-and-safety-features.md) — worked flow, loop safeguards.
+- [Validation Dimensions, Related Workflows, and Success Metrics](./ayokoding-web-general-quality-gate/validation-dimensions-related-workflows-and-success-metrics.md) — what each validator checks.
+- [Notes, Principles, and Conventions Implemented](./ayokoding-web-general-quality-gate/notes-principles-and-conventions.md) — operational notes, principles, conventions.

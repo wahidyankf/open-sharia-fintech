@@ -31,7 +31,7 @@ cd worktrees/plan-domain-parity && npm install && npm run doctor -- --fix
 
 See the [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md),
 [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md),
-and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Git Workflow
 

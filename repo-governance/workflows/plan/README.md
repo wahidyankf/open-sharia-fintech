@@ -61,7 +61,7 @@ nodes fan out up to N, and dependent nodes serialize — sequence is not depende
 merged at that unit's **delivery boundary** rather than at every phase or batched at plan end, with
 cleanup as the DAG's terminal node. The **worktree** is a coarser unit — capped at one per repository
 per plan and reused across every node landing in that repo, per
-[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[Plans Organization Convention §Worktree Cap](../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 ## Related Documentation
 

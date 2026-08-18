@@ -27,7 +27,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 deleting the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 > **Safety rule for the whole plan**: no `.env`, `.env.local`, or other real secret file is ever
 > deleted. Tracked `.env.example` templates are moved/removed via `git mv`/`git rm` (reversible);

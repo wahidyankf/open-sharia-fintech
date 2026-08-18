@@ -36,7 +36,7 @@ Pattern: `ayokoding-web-primer__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` —
 
 ## Validation Scope
 
-See [docs-creating-by-example-tutorials/reference/01-checking-primer-format.md](../../.claude/skills/docs-creating-by-example-tutorials/reference/01-checking-primer-format.md)
+See [docs-creating-by-example-tutorials/reference/checking-primer-format.md](../../.claude/skills/docs-creating-by-example-tutorials/reference/checking-primer-format.md)
 for the complete 9-point checklist: example count (75-85 floor), annotation density (1.0-2.25
 ratio), five-part structure, self-containment, scope discipline (this format's CRITICAL defining
 constraint), example grouping, capstone type (light consolidation, not full project),

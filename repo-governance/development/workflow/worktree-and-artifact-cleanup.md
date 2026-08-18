@@ -26,7 +26,7 @@ that combination safe: delete thoroughly, delete only what is yours, and verify 
 **Cleanup is immediate, not deferred.** Remove a repo's worktree the moment this plan is done using
 it — when every delivery unit this plan places in that repo is confirmed merged — right then, not
 batched with unrelated later steps and not left in place "in case it's needed again." Under the
-[Worktree Cap](../../conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
+[Worktree Cap](../../conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule),
 a single-repo plan's "done using it" coincides with plan-end; a multi-repo plan's does not — each
 repo's worktree is torn down as soon as that repo's own units land, independently of whether the
 plan's other repos are still in flight.
@@ -38,13 +38,13 @@ file-touch ledger, or any worktree created by another actor; those remain out of
 
 ## Contents
 
-- [Principles and Conventions Implemented](./worktree-and-artifact-cleanup/01-principles-and-conventions-implemented.md) — Why this gate exists.
-- [Why This Is a Gate](./worktree-and-artifact-cleanup/02-why-this-is-a-gate.md) — Disk, ref namespace, and stale-state risk on a shared machine.
-- [The Three Artifact Classes](./worktree-and-artifact-cleanup/03-the-three-artifact-classes.md) — Worktrees, branches, build output.
-- [Hard Safety Rules](./worktree-and-artifact-cleanup/04-hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
-- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/05-mandatory-pre-removal-checks.md) — The five checks before any `git worktree remove`.
-- [Branch Cleanup](./worktree-and-artifact-cleanup/06-branch-cleanup.md) — Deleting merged local and remote branches safely.
-- [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/07-build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
+- [Principles and Conventions Implemented](./worktree-and-artifact-cleanup/principles-and-conventions-implemented.md) — Why this gate exists.
+- [Why This Is a Gate](./worktree-and-artifact-cleanup/why-this-is-a-gate.md) — Disk, ref namespace, and stale-state risk on a shared machine.
+- [The Three Artifact Classes](./worktree-and-artifact-cleanup/the-three-artifact-classes.md) — Worktrees, branches, build output.
+- [Hard Safety Rules](./worktree-and-artifact-cleanup/hard-safety-rules.md) — Self-created only, verify before deleting, never touch shared caches.
+- [Mandatory Pre-Removal Checks](./worktree-and-artifact-cleanup/mandatory-pre-removal-checks.md) — The five checks before any `git worktree remove`.
+- [Branch Cleanup](./worktree-and-artifact-cleanup/branch-cleanup.md) — Deleting merged local and remote branches safely.
+- [Build-Artifact Cleanup](./worktree-and-artifact-cleanup/build-artifact-cleanup.md) — Purging plan-local build output, never shared caches.
 
 ## Related Documentation
 

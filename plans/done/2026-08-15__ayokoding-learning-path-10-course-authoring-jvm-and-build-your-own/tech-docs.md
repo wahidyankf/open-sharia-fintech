@@ -4,7 +4,7 @@
 
 `custodied-by:ayokoding-learning-path-02-schema-and-prerequisite-dag` — this plan **reads** the shared
 course corpus custodied by plan 02 but never edits, copies, or forks any file under it, per the
-[Learning-Plan Syllabus Convention §Custody Rule](../../../repo-governance/conventions/structure/learning-plan-syllabus/11-custody-rule.md#custody-rule).
+[Learning-Plan Syllabus Convention §Custody Rule](../../../repo-governance/conventions/structure/learning-plan-syllabus/custody-rule.md#custody-rule).
 This mirrors `ayokoding-learning-path-04-course-authoring`'s own Corpus Custody declaration exactly —
 this plan owns no `syllabus/` folder of its own; any needed change to the shared corpus is routed to
 plan 02's own `delivery.md` as a change request, never authored here.

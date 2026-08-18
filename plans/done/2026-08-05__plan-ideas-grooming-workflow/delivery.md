@@ -25,7 +25,7 @@ This satisfies the Plans Organization Convention's mandatory Worktree Specificat
 N/A-with-reason: `main-to-origin-main` Delivery Mode has no worktree to declare, since there is no
 side branch — every phase edits, commits, and pushes directly on `main` in the target repo's
 existing checkout. See
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification)
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification)
 and [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md).
 
 ## Delivery Mode: main-to-origin-main

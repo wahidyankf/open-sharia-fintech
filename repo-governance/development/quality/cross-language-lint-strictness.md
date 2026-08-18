@@ -20,9 +20,9 @@ cross-language lint gates and the policy that binds them.
 
 ## Documents
 
-- [Policy](./cross-language-lint-strictness/01-policy.md) — The warning-and-above threshold, two enforcement points, toolchain convergence, clean-then-gate rollout, and documented-waivers-only rule for every cross-language lint gate. Use when adding a new lint gate, deciding its failure threshold, or documenting a lint-rule waiver.
-- [Gated standards](./cross-language-lint-strictness/02-gated-standards.md) — The table of every currently-gated artifact type, its linter, threshold/config, and CI job. Use when checking which linter and CI job gates a given artifact type (shell, Dockerfile, GitHub Actions YAML, F#, Markdown, formatting).
-- [Configuration files](./cross-language-lint-strictness/03-configuration-files.md) — Where each lint gate's configuration lives and what it pins or ignores. Use when locating or editing a lint tool's configuration file (.shellcheckrc, .hadolint.yaml, .config/dotnet-tools.json).
-- [Rationale and history](./cross-language-lint-strictness/04-rationale-and-history.md) — Where the cross-repository lint-strictness decision log lives, and related documents. Use when you need the historical rationale for why a specific lint rule is fixed or waived.
+- [Policy](./cross-language-lint-strictness/policy.md) — The warning-and-above threshold, two enforcement points, toolchain convergence, clean-then-gate rollout, and documented-waivers-only rule for every cross-language lint gate. Use when adding a new lint gate, deciding its failure threshold, or documenting a lint-rule waiver.
+- [Gated standards](./cross-language-lint-strictness/gated-standards.md) — The table of every currently-gated artifact type, its linter, threshold/config, and CI job. Use when checking which linter and CI job gates a given artifact type (shell, Dockerfile, GitHub Actions YAML, F#, Markdown, formatting).
+- [Configuration files](./cross-language-lint-strictness/configuration-files.md) — Where each lint gate's configuration lives and what it pins or ignores. Use when locating or editing a lint tool's configuration file (.shellcheckrc, .hadolint.yaml, .config/dotnet-tools.json).
+- [Rationale and history](./cross-language-lint-strictness/rationale-and-history.md) — Where the cross-repository lint-strictness decision log lives, and related documents. Use when you need the historical rationale for why a specific lint rule is fixed or waived.
 
 **See also**: [markdown.md](../quality/markdown.md), [repository-validation.md](../quality/repository-validation.md).

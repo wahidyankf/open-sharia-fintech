@@ -54,7 +54,7 @@ bounded, moderate cost increase; `LOW` = a minor efficiency opportunity with neg
 
 ## Reference Documentation
 
-[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md),
+[nine-discipline table](../../repo-governance/development/quality/pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md),
 [Criticality Levels](../../repo-governance/development/quality/criticality-levels.md). Related:
 `pr-review-architecture-maker` (owns quality-attribute tradeoffs, ruling (e)),
 `pr-review-governance-maker` (owns documented perf-budget-rule conformance),

@@ -14,11 +14,11 @@ when_to_use: "Use when looking for a proven practice to apply during quality-foc
 
 ## Documents
 
-- [Overview and Purpose](./best-practices/01-overview-and-purpose.md) — Overview and purpose of this best-practices catalog. Use when orienting to why this catalog exists.
-- [Best Practices 1-3](./best-practices/02-best-practices-1-3.md) — Automate quality checks in git hooks, use criticality for prioritization, assess fixer confidence. Use when applying these three quality best practices.
-- [Best Practices 4-6](./best-practices/03-best-practices-4-6.md) — Preserve content during refactoring, run affected tests only, use standardized validation patterns. Use when applying these three quality best practices.
-- [Best Practices 7-9](./best-practices/04-best-practices-7-9.md) — Combine criticality and confidence, enable lint-staged, document validation rules. Use when applying these three quality best practices.
-- [Best Practices 10](./best-practices/05-best-practices-10.md) — Fail the build on quality violations in CI. Use when wiring a quality gate to fail CI on violation.
-- [Related Documentation](./best-practices/06-related-documentation.md) — Related quality-development documentation. Use when you need a related quality convention.
-- [Summary](./best-practices/07-summary.md) — Closing summary of this best-practices catalog. Use for the closing summary of this catalog.
-- [Principles and Conventions Implemented/Respected](./best-practices/08-principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this catalog's rationale.
+- [Overview and Purpose](./best-practices/overview-and-purpose.md) — Overview and purpose of this best-practices catalog. Use when orienting to why this catalog exists.
+- [Best Practices 1-3](./best-practices/best-practices-1-3.md) — Automate quality checks in git hooks, use criticality for prioritization, assess fixer confidence. Use when applying these three quality best practices.
+- [Best Practices 4-6](./best-practices/best-practices-4-6.md) — Preserve content during refactoring, run affected tests only, use standardized validation patterns. Use when applying these three quality best practices.
+- [Best Practices 7-9](./best-practices/best-practices-7-9.md) — Combine criticality and confidence, enable lint-staged, document validation rules. Use when applying these three quality best practices.
+- [Best Practices 10](./best-practices/best-practices-10.md) — Fail the build on quality violations in CI. Use when wiring a quality gate to fail CI on violation.
+- [Related Documentation](./best-practices/related-documentation.md) — Related quality-development documentation. Use when you need a related quality convention.
+- [Summary](./best-practices/summary.md) — Closing summary of this best-practices catalog. Use for the closing summary of this catalog.
+- [Principles and Conventions Implemented/Respected](./best-practices/principles-and-conventions-implemented-respected.md) — Principles/conventions implemented. Use to trace this catalog's rationale.

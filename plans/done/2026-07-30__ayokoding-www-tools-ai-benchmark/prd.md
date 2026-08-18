@@ -71,7 +71,7 @@ Solo-maintainer repository — the first three are hats the maintainer wears; th
 > **Scope note** — this plan is **UI-bearing**: it adds a user-facing screen under `apps/`. The full
 > diverge → narrow → select → justify funnel is therefore mandatory and is recorded below in this
 > file, per the
-> [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
+> [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 ### R5 grounding note — what already exists
 
@@ -284,7 +284,7 @@ _Option C — Aligned Side-by-Side Comparison Grid (runner-up). See [Justify](#j
 > source (`assets/ai-benchmark-option-a-banded-panels.svg`,
 > `assets/ai-benchmark-option-c-side-by-side.svg`) rendered via `rsvg-convert` to the `.png` files
 > embedded above. Per the
-> [UI Mockups in Plan Docs §Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/44-ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule),
+> [UI Mockups in Plan Docs §Both-Tiers Rule](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-both-tiers-rule.md#ui-mockups-in-plan-docs-the-both-tiers-rule),
 > "Plain `.png` screenshot is the high-fidelity fallback once a design is final and no longer
 > iterating — it renders everywhere but is binary and must be replaced on every change"; the
 > embedded `.png` satisfies this named format, and the `.svg` is kept alongside it purely as the

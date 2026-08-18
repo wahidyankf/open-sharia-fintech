@@ -233,7 +233,7 @@ inside each of the three surviving repos plus `beaver-nest` itself — four work
 [delivery.md's Worktree table](./delivery.md#worktree); `beaver-nest`'s is used only for Phase 8's
 retirement-notice PR). Delivery Mode: **`worktree-to-pr`** — the repo
 default, and the only available mode: per
-[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
 `ose-public`'s `main` is branch-protected against direct pushes — including for repository admins —
 so `worktree-to-origin-main` and `main-to-origin-main` have no path here, regardless of the change
 set's file types.

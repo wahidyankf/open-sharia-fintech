@@ -66,12 +66,12 @@ description: "Workflow name: detailed description"
 
 ## Workflow File Naming
 
-**Convention**: `[workflow-name].md`
+**Convention**: `[workflow-name].md`. Shards are plain-named; a step keeps its own number —
+[Ordinal Prefixes](../../../repo-governance/conventions/structure/ordinal-filename-prefixes.md).
 
 **Examples**:
 
-- `quality-gate.md` - Plan quality gate workflow
-- `quality-gate.md` - Docs quality gate workflow
+- `plan-quality-gate.md` - Plan quality gate workflow
 - `repo-rules-quality-gate.md` - Repo rules quality gate workflow
 
 ## Quality Checklist

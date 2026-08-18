@@ -11,7 +11,7 @@ claude --worktree specs-tree-uniform
 ```
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
-and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 > D1 resolution (2026-05-23): chose option A — migrate `build-tools/` under
 > `behavior/build-tools/gherkin/` — because it is consistent with the "all Gherkin under
@@ -95,7 +95,7 @@ and [Plans Organization Convention §Worktree Specification](../../../repo-gover
 
 - [x] Edit `specs/README.md`: replace the "Standard Folder Pattern" section (currently lines
       46–73) with content matching the five-folder layout from
-      [specs-directory-structure.md §Five-Folder Layout](../../../repo-governance/conventions/structure/specs-directory-structure/03-canonical-app-spec-tree.md#five-folder-layout).
+      [specs-directory-structure.md §Five-Folder Layout](../../../repo-governance/conventions/structure/specs-directory-structure/canonical-app-spec-tree.md#five-folder-layout).
       Show the canonical tree (product/, system-context/, containers/, components/, behavior/)
       with `containers/contracts/` and `behavior/<surface>/gherkin/<domain>/<feature>.feature`
       paths. Acceptance: section no longer mentions `be/fe/fs/cli/gherkin/` as a top-level

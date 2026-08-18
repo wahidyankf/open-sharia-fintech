@@ -5,15 +5,15 @@ use clap::{Parser, Subcommand};
 use crate::commands::{
     convention_audit, convention_validate_emoji, convention_validate_license, doctor, env_backup,
     env_init, env_restore, env_staged_guard, env_validate, gate, git, governance_audit,
-    governance_generate_readme_index, governance_layer_coherence, governance_traceability_audit,
+    governance_generate_readme_index, governance_layer_coherence,
+    governance_rewrite_readme_index_paths, governance_traceability_audit,
     governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
     harness_audit, harness_generate_bindings, harness_validate_bindings, harness_validate_claude,
-    harness_validate_duplication, harness_validate_naming, harness_validate_sync, md_audit,
-    md_validate_frontmatter, md_validate_frontmatter_dates, md_validate_heading_hierarchy,
-    md_validate_links, md_validate_mermaid, md_validate_naming, parity, repo_config_validate,
-    specs_audit, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
-    specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
-    workflows_validate_naming,
+    harness_validate_duplication, harness_validate_sync, md_audit, md_validate_frontmatter,
+    md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
+    md_validate_mermaid, md_validate_naming, parity, repo_config_validate, specs_audit,
+    specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality, specs_scaffold_dart,
+    specs_structure_validate, specs_validate_counts, test_coverage_validate,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -234,9 +234,6 @@ pub enum RepoGovernanceCommands {
     /// Audit governance documents for required traceability sections.
     #[command(name = "traceability", subcommand)]
     Traceability(RepoGovernanceTraceabilityCommands),
-    /// Workflow file validators (naming).
-    #[command(name = "workflows", subcommand)]
-    Workflows(RepoGovernanceWorkflowsCommands),
     /// Run all deterministic governance audits and emit a JSON envelope.
     #[command(name = "audit")]
     Audit(governance_audit::AuditArgs),
@@ -264,22 +261,6 @@ pub enum RepoGovernanceTraceabilityCommands {
     /// Audit governance documents for required traceability sections.
     #[command(name = "validate")]
     Validate(governance_traceability_audit::TraceabilityAuditArgs),
-}
-
-/// `repo-governance workflows` subcommands (absorbed from top-level `workflows` domain).
-#[derive(Subcommand, Debug)]
-pub enum RepoGovernanceWorkflowsCommands {
-    /// Validate workflow filename suffixes and frontmatter name consistency.
-    #[command(name = "naming", subcommand)]
-    Naming(RepoGovernanceWorkflowsNamingCommands),
-}
-
-/// `repo-governance workflows naming` subcommands.
-#[derive(Subcommand, Debug)]
-pub enum RepoGovernanceWorkflowsNamingCommands {
-    /// Validate workflow filename suffixes and frontmatter name consistency.
-    #[command(name = "validate")]
-    Validate(workflows_validate_naming::ValidateNamingArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -395,6 +376,10 @@ pub enum GovernanceReadmeIndexCommands {
     /// indexes for every covered directory that needs one (FR-3.12).
     #[command(name = "generate")]
     Generate(governance_generate_readme_index::ReadmeIndexGenerateArgs),
+    /// Repoint markdown link targets across the corpus from a TSV rename map,
+    /// leaving entry order, annotations, and prose untouched.
+    #[command(name = "rewrite-paths")]
+    RewritePaths(governance_rewrite_readme_index_paths::ReadmeIndexRewritePathsArgs),
 }
 
 // ---------------------------------------------------------------------------
@@ -443,9 +428,6 @@ pub enum ConventionLicenseCommands {
 /// Harness (agent binding) subcommands.
 #[derive(Subcommand, Debug)]
 pub enum HarnessCommands {
-    /// Validate agent filename suffixes and mirror parity.
-    #[command(name = "naming", subcommand)]
-    Naming(HarnessNamingCommands),
     /// Detect verbatim duplication across agent and skill files.
     #[command(name = "duplication", subcommand)]
     Duplication(HarnessDuplicationCommands),
@@ -461,14 +443,6 @@ pub enum HarnessCommands {
     /// Run all harness validators in sequence and aggregate findings.
     #[command(name = "audit")]
     Audit(harness_audit::AuditArgs),
-}
-
-/// `harness naming` subcommands.
-#[derive(Subcommand, Debug)]
-pub enum HarnessNamingCommands {
-    /// Validate agent filename suffixes and mirror parity.
-    #[command(name = "validate")]
-    Validate(harness_validate_naming::ValidateNamingArgs),
 }
 
 /// `harness duplication` subcommands.
@@ -729,13 +703,6 @@ fn dispatch_repo_governance(
                 governance_traceability_audit::run(args, output_format)
             }
         },
-        RepoGovernanceCommands::Workflows(wc) => match wc {
-            RepoGovernanceWorkflowsCommands::Naming(nc) => match nc {
-                RepoGovernanceWorkflowsNamingCommands::Validate(args) => {
-                    workflows_validate_naming::run(args, output_format)
-                }
-            },
-        },
         RepoGovernanceCommands::Audit(args) => governance_audit::run(args, output_format),
     }
 }
@@ -804,6 +771,9 @@ fn dispatch_governance(
             GovernanceReadmeIndexCommands::Generate(args) => {
                 governance_generate_readme_index::run(args, output_format)
             }
+            GovernanceReadmeIndexCommands::RewritePaths(args) => {
+                governance_rewrite_readme_index_paths::run(args, output_format)
+            }
         },
     }
 }
@@ -842,11 +812,6 @@ fn dispatch_harness(
     output_format: OutputFormat,
 ) -> std::result::Result<(), anyhow::Error> {
     match hc {
-        HarnessCommands::Naming(nc) => match nc {
-            HarnessNamingCommands::Validate(args) => {
-                harness_validate_naming::run(args, output_format)
-            }
-        },
         HarnessCommands::Duplication(dc) => match dc {
             HarnessDuplicationCommands::Validate(args) => {
                 harness_validate_duplication::run(args, output_format)
@@ -942,15 +907,6 @@ mod cli_uniform_grammar_tests {
     }
 
     #[test]
-    fn old_harness_validate_naming_fails() {
-        let result = Cli::try_parse_from(["rhino-cli", "harness", "validate-naming"]);
-        assert!(
-            result.is_err(),
-            "harness validate-naming should no longer parse"
-        );
-    }
-
-    #[test]
     fn old_harness_detect_duplication_fails() {
         let result = Cli::try_parse_from(["rhino-cli", "harness", "detect-duplication"]);
         assert!(
@@ -984,16 +940,6 @@ mod cli_uniform_grammar_tests {
         assert!(
             result.is_err(),
             "md validate mermaid must no longer parse after verb-last rename (use: md mermaid validate)"
-        );
-    }
-
-    #[test]
-    fn new_harness_validate_naming_passes() {
-        // After §2a-names: harness validate naming (verb-middle) is removed.
-        let result = Cli::try_parse_from(["rhino-cli", "harness", "validate", "naming"]);
-        assert!(
-            result.is_err(),
-            "harness validate naming must no longer parse after verb-last rename (use: harness naming validate)"
         );
     }
 
@@ -1284,22 +1230,6 @@ mod cli_uniform_grammar_tests {
     }
 
     #[test]
-    fn verb_last_repo_governance_workflows_naming_validate_parses() {
-        let result = Cli::try_parse_from([
-            "rhino-cli",
-            "repo-governance",
-            "workflows",
-            "naming",
-            "validate",
-        ]);
-        assert!(
-            result.is_ok(),
-            "repo-governance workflows naming validate must parse after cross-domain move: {:?}",
-            result.err()
-        );
-    }
-
-    #[test]
     fn verb_last_harness_bindings_generate_with_harness_flag_parses() {
         let result = Cli::try_parse_from([
             "rhino-cli",
@@ -1354,15 +1284,6 @@ mod cli_uniform_grammar_tests {
             result.is_err(),
             "harness validate instruction-size must no longer parse (cross-domain moved to \
              governance word-budget validate)"
-        );
-    }
-
-    #[test]
-    fn verb_middle_workflows_validate_naming_no_longer_parses() {
-        let result = Cli::try_parse_from(["rhino-cli", "workflows", "validate", "naming"]);
-        assert!(
-            result.is_err(),
-            "workflows validate naming must no longer parse (cross-domain moved to repo-governance)"
         );
     }
 

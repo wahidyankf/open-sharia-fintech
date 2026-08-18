@@ -32,7 +32,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 > This `## Worktree` section governs the **`ose-public`** worktree. The `ose-primer` and `ose-infra`
 > replication phases provision their own worktrees at their own repo roots (see Phases 4 and 5).

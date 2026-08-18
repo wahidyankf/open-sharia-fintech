@@ -67,7 +67,7 @@ grep-checkable assertions on the authored bodies, not by application tests.
 
 Every scenario below uses exactly one primary `Given`, one `When`, and one `Then`, with all extras
 chained via `And`, per the
-[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
+[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
 
 Two of the six scenarios below are reproduced **verbatim** from the parent plan's own `prd.md`
 (they were already written and delivery-bound there under Band 9 / Phase 11); the remaining four are

@@ -29,14 +29,14 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
 The repo default. Work happens in the worktree above; a draft PR is opened against `main`; the
 PR-Review Maker→Fixer Cycle runs before the merge; `[AI]` merges once the five hardened preconditions
 hold. See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 ## Surface Exemptions (declared, not skipped)
@@ -402,7 +402,7 @@ flowchart TD
   `## Concepts`; plans 06 and 07 report zero REQUIRED-section misses.
 
 - [x] [AI] Create `plans/ideas/syllabus-conformance-validator.md` (_New file_) as a two-pager per the
-      [Ideas Folder convention](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers),
+      [Ideas Folder convention](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers),
       covering all eight required sections and citing this plan as prior art
       — acceptance: `test -f plans/ideas/syllabus-conformance-validator.md` exits 0; before this step
       it exits 1

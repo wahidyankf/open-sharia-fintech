@@ -4,7 +4,7 @@
 
 `plans/ideas/` is the first stage of this repo's plan lifecycle
 (`ideas/ → backlog/ → in-progress/ → done/`) and is explicitly meant to stay browsable — the
-[Ideas Folder convention](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
+[Ideas Folder convention](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
 frames it as "short enough to write in one sitting and triage at a glance." At 119 idea documents
 across the four repos combined `[Repo-grounded]` (counted 2026-08-05; see Current-State Baseline
 below), flat and unclassified in three of the four repos, that promise is already broken for a

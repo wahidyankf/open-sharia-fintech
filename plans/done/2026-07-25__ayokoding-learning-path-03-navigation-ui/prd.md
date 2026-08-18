@@ -1590,7 +1590,7 @@ arc, sitting above a second section) that can collapse badly on a narrow viewpor
 designed and rendered, not assumed.
 
 **Format** — `.png` only, per the
-[UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope):
+[UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope):
 `.excalidraw.svg` is ruled out (GitHub blocks the Excalidraw font) and inline HTML+CSS is ruled out
 (GitHub strips styles). The `.html` sources are build inputs, never the embedded artefact.
 

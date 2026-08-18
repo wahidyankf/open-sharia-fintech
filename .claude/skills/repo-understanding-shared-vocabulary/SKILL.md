@@ -19,20 +19,20 @@ rule applies usually agree on the rule and disagree on one word in it.
   one directory: governance prose, the root instruction surfaces, agent and skill definitions,
   generated mirrors, the config's machine-readable declarations, the hooks and pipeline jobs
   enforcing them, and the language style guides. A sweep scoped to one tree skips most of it. See
-  [Repo Rules — Scope Boundaries](../../../repo-governance/glossary/01-repo-rules-scope.md).
+  [Repo Rules — Scope Boundaries](../../../repo-governance/glossary/repo-rules-scope.md).
 - **Content trees** — four trees differing by who is bound and for how long, not by subject: one
   describes the product, one binds contributors, one holds work that expires, one holds acceptance
   criteria. See
-  [Content Trees](../../../repo-governance/glossary/02-content-trees.md).
+  [Content Trees](../../../repo-governance/glossary/content-trees.md).
 - **Delivery unit** — the unit a branch and a PR map to: a contiguous run of phases that ships on
   its own. A phase is smaller, and mapping a PR to a phase is the common error. See
-  [Plan Vocabulary](../../../repo-governance/glossary/03-plan-vocabulary.md).
+  [Plan Vocabulary](../../../repo-governance/glossary/plan-vocabulary.md).
 - **Surface and binding** — a surface is the file class a gate measures; a binding is the
   harness-specific configuration, one hand-authored and the rest generated. "Autoloaded" is
   narrow — a link inside an autoloaded file is not itself autoloaded. See
-  [Governance Surfaces](../../../repo-governance/glossary/04-governance-surfaces.md).
+  [Governance Surfaces](../../../repo-governance/glossary/governance-surfaces.md).
 - **Agent, skill, gate, workflow** — distinguished by what holds the knowledge and who decides when
-  it runs. See [Agent Vocabulary](../../../repo-governance/glossary/05-agent-vocabulary.md).
+  it runs. See [Agent Vocabulary](../../../repo-governance/glossary/agent-vocabulary.md).
 
 ## Related Skills
 

@@ -19,7 +19,8 @@ Validate repository-wide consistency across all repository layers.
 ## Core Responsibility
 
 See `repo-validating-governance-rules` Skill for the complete nine-step methodology: Core
-Repository Validation (naming/linking/emoji), Agent-to-Agent and Agent-Skill Duplication Detection,
+Repository Validation (naming/linking/emoji, including ordinal-prefix judgement per
+[Ordinal Filename Prefixes](../../repo-governance/conventions/structure/ordinal-filename-prefixes.md)), Agent-to-Agent and Agent-Skill Duplication Detection,
 Skill-to-Skill Consolidation Analysis, Skills Coverage Gap Analysis, Governance Word Budget
 (delegated to the deterministic gate), Rules Governance Validation (contradictions, inaccuracies,
 inconsistencies, traceability, layer coherence, licensing, dependency-bump policy, Gherkin

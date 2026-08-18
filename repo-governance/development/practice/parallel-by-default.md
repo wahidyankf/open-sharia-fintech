@@ -39,7 +39,7 @@ This practice implements/respects the following conventions:
 
 ## Contents
 
-- [Purpose and Scope](./parallel-by-default/01-purpose-and-scope.md) — the two failure modes this practice eliminates, and exactly what it covers.
-- [Standards 1-2 — Parallel Unless Dependent, and the N+1 Model](./parallel-by-default/02-standards-1-to-2.md) — the default execution model and the adjustable concurrency cap.
-- [Standards 3-4 — Background-Slot Preference and DAG-First Ordering](./parallel-by-default/03-standards-3-to-4.md) — keeping the main thread vacant, and declaring the dependency DAG.
-- [Anti-Patterns and References](./parallel-by-default/04-anti-patterns-and-references.md) — four common failure patterns, related principles, practices, and agents.
+- [Purpose and Scope](./parallel-by-default/purpose-and-scope.md) — the two failure modes this practice eliminates, and exactly what it covers.
+- [Standards 1-2 — Parallel Unless Dependent, and the N+1 Model](./parallel-by-default/standards-1-to-2.md) — the default execution model and the adjustable concurrency cap.
+- [Standards 3-4 — Background-Slot Preference and DAG-First Ordering](./parallel-by-default/standards-3-to-4.md) — keeping the main thread vacant, and declaring the dependency DAG.
+- [Anti-Patterns and References](./parallel-by-default/anti-patterns-and-references.md) — four common failure patterns, related principles, practices, and agents.

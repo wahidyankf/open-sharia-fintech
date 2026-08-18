@@ -19,14 +19,14 @@ This document defines the architectural constraint governing skill context modes
 
 ## Contents
 
-- [Principles Implemented/Respected](./skill-context-architecture/01-principles-implemented-respected.md) — principle list.
-- [Conventions Implemented/Respected](./skill-context-architecture/02-conventions-implemented-respected.md) — sibling conventions.
-- [Purpose](./skill-context-architecture/03-purpose.md) — why this matters.
-- [The Architectural Constraint](./skill-context-architecture/04-the-architectural-constraint.md) — core limitation.
-- [The Repository Standard](./skill-context-architecture/05-the-repository-standard.md) — context modes, inline mode.
-- [Fork agent skills: Main Conversation Only](./skill-context-architecture/06-fork-agent-skills-main-conversation-only.md) — fork use cases.
-- [Validation and Compliance](./skill-context-architecture/07-validation-and-compliance.md) — checklist, mistakes.
-- [Architecture Diagram](./skill-context-architecture/08-architecture-diagram.md) — visual reference.
-- [Related Documentation](./skill-context-architecture/09-related-documentation.md) — further reading.
-- [Enforcement](./skill-context-architecture/10-enforcement.md) — code-review checklist.
-- [Summary](./skill-context-architecture/11-summary.md) — closing recap.
+- [Principles Implemented/Respected](./skill-context-architecture/principles-implemented-respected.md) — principle list.
+- [Conventions Implemented/Respected](./skill-context-architecture/conventions-implemented-respected.md) — sibling conventions.
+- [Purpose](./skill-context-architecture/purpose.md) — why this matters.
+- [The Architectural Constraint](./skill-context-architecture/the-architectural-constraint.md) — core limitation.
+- [The Repository Standard](./skill-context-architecture/the-repository-standard.md) — context modes, inline mode.
+- [Fork agent skills: Main Conversation Only](./skill-context-architecture/fork-agent-skills-main-conversation-only.md) — fork use cases.
+- [Validation and Compliance](./skill-context-architecture/validation-and-compliance.md) — checklist, mistakes.
+- [Architecture Diagram](./skill-context-architecture/architecture-diagram.md) — visual reference.
+- [Related Documentation](./skill-context-architecture/related-documentation.md) — further reading.
+- [Enforcement](./skill-context-architecture/enforcement.md) — code-review checklist.
+- [Summary](./skill-context-architecture/summary.md) — closing recap.

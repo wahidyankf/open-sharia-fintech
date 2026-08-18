@@ -19,13 +19,13 @@ This document defines standards for linking from documentation in `docs/` to edu
 
 ## In This Convention
 
-- [Principles Implemented/Respected](./internal-ayokoding-references/01-principles-implemented-respected.md) — The three software-engineering principles this convention implements
-- [Purpose](./internal-ayokoding-references/02-purpose.md) — Why this convention exists
-- [Scope](./internal-ayokoding-references/03-scope.md) — What this convention covers and excludes
-- [Standards](./internal-ayokoding-references/04-standards.md) — The core rule, path-calculation method, path examples, language selection, and link-text guidelines
-- [Examples](./internal-ayokoding-references/05-examples.md) — Four worked before/after examples
-- [Path Verification Checklist](./internal-ayokoding-references/06-path-verification-checklist.md) — Pre-commit checklist for AyoKoding links
-- [Enforcement](./internal-ayokoding-references/07-enforcement.md) — Manual review, CI validation, and agent validation
-- [Edge Cases and Special Considerations](./internal-ayokoding-references/08-edge-cases-and-special-considerations.md) — When public URLs are correct, Indonesian-language content, path migrations
-- [Real-World Context](./internal-ayokoding-references/09-real-world-context.md) — The historical incident that prompted this convention
-- [References](./internal-ayokoding-references/10-references.md) — Related conventions, principles, and agents
+- [Principles Implemented/Respected](./internal-ayokoding-references/principles-implemented-respected.md) — The three software-engineering principles this convention implements
+- [Purpose](./internal-ayokoding-references/purpose.md) — Why this convention exists
+- [Scope](./internal-ayokoding-references/scope.md) — What this convention covers and excludes
+- [Standards](./internal-ayokoding-references/standards.md) — The core rule, path-calculation method, path examples, language selection, and link-text guidelines
+- [Examples](./internal-ayokoding-references/examples.md) — Four worked before/after examples
+- [Path Verification Checklist](./internal-ayokoding-references/path-verification-checklist.md) — Pre-commit checklist for AyoKoding links
+- [Enforcement](./internal-ayokoding-references/enforcement.md) — Manual review, CI validation, and agent validation
+- [Edge Cases and Special Considerations](./internal-ayokoding-references/edge-cases-and-special-considerations.md) — When public URLs are correct, Indonesian-language content, path migrations
+- [Real-World Context](./internal-ayokoding-references/real-world-context.md) — The historical incident that prompted this convention
+- [References](./internal-ayokoding-references/references.md) — Related conventions, principles, and agents

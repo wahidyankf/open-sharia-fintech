@@ -55,16 +55,16 @@ outputs:
 
 ## Contents
 
-- [Execution Mode](./plan-quality-gate/01-execution-mode.md) — agent delegation vs. manual orchestration.
-- [Research Delegation](./plan-quality-gate/02-research-delegation.md) — when plan-checker delegates to web-researcher.
-- [Step 1 — Initial Validation](./plan-quality-gate/03-step-1-initial-validation.md) — full validation scope.
-- [Steps 2-3 — Check for Findings and Apply Fixes](./plan-quality-gate/04-steps-2-3-check-and-apply-fixes.md) — plan-fixer and its envelope loop.
-- [Steps 4-6 — Re-validate, Iteration Control, Finalization](./plan-quality-gate/05-steps-4-5-6-revalidate-iterate-finalize.md) — the loop logic.
-- [Termination Criteria and Delivery-Mode Relationship](./plan-quality-gate/06-termination-criteria-and-delivery-mode-relationship.md) — pass/partial/fail, and the merge-precondition tie-in.
-- [Example Usage](./plan-quality-gate/07-example-usage.md) — worked invocation examples.
-- [Iteration Example and Safety Features](./plan-quality-gate/08-iteration-example-and-safety-features.md) — convergence walkthrough, safeguards.
-- [Plan-Specific Validation — Completeness Through Clarity](./plan-quality-gate/09-plan-specific-validation-completeness-through-clarity.md) — first half of the checklist.
-- [Plan-Specific Validation — Operational Readiness](./plan-quality-gate/10-plan-specific-validation-operational-readiness.md) — remaining checklist.
-- [Final Audit Report Structure and Observability](./plan-quality-gate/11-final-audit-report-structure-and-observability.md) — report shape, tracked metrics.
-- [Related Workflows and Success Metrics](./plan-quality-gate/12-related-workflows-and-success-metrics.md) — composition, metrics.
-- [Notes, Principles, and Conventions](./plan-quality-gate/13-notes-principles-and-conventions.md) — operational notes, catalog entries.
+- [Execution Mode](./plan-quality-gate/execution-mode.md) — agent delegation vs. manual orchestration.
+- [Research Delegation](./plan-quality-gate/research-delegation.md) — when plan-checker delegates to web-researcher.
+- [Step 1 — Initial Validation](./plan-quality-gate/step-1-initial-validation.md) — full validation scope.
+- [Steps 2-3 — Check for Findings and Apply Fixes](./plan-quality-gate/steps-2-3-check-and-apply-fixes.md) — plan-fixer and its envelope loop.
+- [Steps 4-6 — Re-validate, Iteration Control, Finalization](./plan-quality-gate/steps-4-5-6-revalidate-iterate-finalize.md) — the loop logic.
+- [Termination Criteria and Delivery-Mode Relationship](./plan-quality-gate/termination-criteria-and-delivery-mode-relationship.md) — pass/partial/fail, and the merge-precondition tie-in.
+- [Example Usage](./plan-quality-gate/example-usage.md) — worked invocation examples.
+- [Iteration Example and Safety Features](./plan-quality-gate/iteration-example-and-safety-features.md) — convergence walkthrough, safeguards.
+- [Plan-Specific Validation — Completeness Through Clarity](./plan-quality-gate/plan-specific-validation-completeness-through-clarity.md) — first half of the checklist.
+- [Plan-Specific Validation — Operational Readiness](./plan-quality-gate/plan-specific-validation-operational-readiness.md) — remaining checklist.
+- [Final Audit Report Structure and Observability](./plan-quality-gate/final-audit-report-structure-and-observability.md) — report shape, tracked metrics.
+- [Related Workflows and Success Metrics](./plan-quality-gate/related-workflows-and-success-metrics.md) — composition, metrics.
+- [Notes, Principles, and Conventions](./plan-quality-gate/notes-principles-and-conventions.md) — operational notes, catalog entries.

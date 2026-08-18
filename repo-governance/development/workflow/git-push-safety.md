@@ -19,11 +19,11 @@ AI agents and automation must never execute `git push --force`, `git push --forc
 `git push --no-verify` without obtaining explicit, fresh user approval every single time. Prior
 approval for one instance does not carry forward to any subsequent invocation. The sole standing
 exception is a confirmed secret-exposure incident handled end-to-end under
-[the secret history-remediation procedure](../../conventions/security/secrets-and-env-standards/03-secret-exposure-history-remediation.md#secret-exposure-history-remediation): there, a lease-protected force-push is required to remove
+[the secret history-remediation procedure](../../conventions/security/secrets-and-env-standards/secret-exposure-history-remediation.md#secret-exposure-history-remediation): there, a lease-protected force-push is required to remove
 contaminated reachable history rather than a convenience rewrite.
 
 These rules apply identically regardless of the active delivery mode (see the
-[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)):
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)):
 a force-push or hook-bypass on a `worktree-to-pr` plan branch requires the same explicit, per-instance
 approval as one on `origin main` under `worktree-to-origin-main` or `main-to-origin-main`. The
 integration target changes what the approval prompt describes (a PR branch tip vs. the `main` tip); it
@@ -31,14 +31,14 @@ does not change whether approval is required.
 
 ## Contents
 
-- [Principles and Conventions Implemented](./git-push-safety/01-principles-and-conventions-implemented.md) — Why this rule exists.
-- [Covered Operations](./git-push-safety/02-covered-operations.md) — The operations requiring per-instance approval.
-- [Rule](./git-push-safety/03-rule.md) — The core approval procedure and the secret-exposure exception.
-- [Rationale](./git-push-safety/04-rationale.md) — Why each operation is destructive and when it is legitimate.
-- [What Agents Must Do](./git-push-safety/05-what-agents-must-do.md) — Investigate, prompt, then execute.
-- [Examples](./git-push-safety/06-examples.md) — PASS and FAIL agent transcripts.
-- [Scope](./git-push-safety/07-scope.md) — What is and is not covered.
-- [Post-Push Bypass Detection](./git-push-safety/08-post-push-bypass-detection.md) — The post-hoc check for a bypassed branch-protection rule.
+- [Principles and Conventions Implemented](./git-push-safety/principles-and-conventions-implemented.md) — Why this rule exists.
+- [Covered Operations](./git-push-safety/covered-operations.md) — The operations requiring per-instance approval.
+- [Rule](./git-push-safety/rule.md) — The core approval procedure and the secret-exposure exception.
+- [Rationale](./git-push-safety/rationale.md) — Why each operation is destructive and when it is legitimate.
+- [What Agents Must Do](./git-push-safety/what-agents-must-do.md) — Investigate, prompt, then execute.
+- [Examples](./git-push-safety/examples.md) — PASS and FAIL agent transcripts.
+- [Scope](./git-push-safety/scope.md) — What is and is not covered.
+- [Post-Push Bypass Detection](./git-push-safety/post-push-bypass-detection.md) — The post-hoc check for a bypassed branch-protection rule.
 
 ## Related Documentation
 

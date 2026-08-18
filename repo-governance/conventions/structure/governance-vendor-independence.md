@@ -26,18 +26,17 @@ All prose under `repo-governance/` must be readable and actionable by any contri
 
 ## Children
 
-- [Purpose and Scope](./governance-vendor-independence/01-purpose-and-scope.md) — why governance prose must be vendor-neutral and exactly which files this convention governs vs. exempts.
-- [Forbidden Vendor Terms — Product Names and Paths](./governance-vendor-independence/02-forbidden-vendor-terms-names-and-paths.md) — forbidden coding-agent product names, binding directory paths, and model-vendor company names.
-- [Forbidden Vendor Terms — Models and Branded Concepts](./governance-vendor-independence/03-forbidden-vendor-terms-models-and-concepts.md) — forbidden model names and branded concepts, plus the combined audit regex and false-positive notes.
-- [Allowlist Mechanism](./governance-vendor-independence/04-allowlist-mechanism.md) — the two mechanisms (binding-example fences, Platform Binding Examples heading) that permit vendor references.
-- [Vocabulary Map](./governance-vendor-independence/05-vocabulary-map.md) — vendor-specific terms mapped to their vendor-neutral equivalents.
-- [Platform Binding Directory Pattern, and Migration Guidance](./governance-vendor-independence/06-platform-binding-directory-pattern-and-migration.md) — the per-platform binding-directory catalog and the file-refactoring process.
-- [Enforcement, and Exceptions and Escape Hatches](./governance-vendor-independence/07-enforcement-and-exceptions.md) — how the audit is run, what it respects, and the explicit list of permitted exceptions.
+- [Purpose and Scope](./governance-vendor-independence/purpose-and-scope.md) — why governance prose must be vendor-neutral and exactly which files this convention governs vs. exempts.
+- [Forbidden Vendor Terms — Product Names and Paths](./governance-vendor-independence/forbidden-vendor-terms-names-and-paths.md) — forbidden coding-agent product names, binding directory paths, and model-vendor company names.
+- [Forbidden Vendor Terms — Models and Branded Concepts](./governance-vendor-independence/forbidden-vendor-terms-models-and-concepts.md) — forbidden model names and branded concepts, plus the combined audit regex and false-positive notes.
+- [Allowlist Mechanism](./governance-vendor-independence/allowlist-mechanism.md) — the two mechanisms (binding-example fences, Platform Binding Examples heading) that permit vendor references.
+- [Vocabulary Map](./governance-vendor-independence/vocabulary-map.md) — vendor-specific terms mapped to their vendor-neutral equivalents.
+- [Platform Binding Directory Pattern, and Migration Guidance](./governance-vendor-independence/platform-binding-directory-pattern-and-migration.md) — the per-platform binding-directory catalog and the file-refactoring process.
+- [Enforcement, and Exceptions and Escape Hatches](./governance-vendor-independence/enforcement-and-exceptions.md) — how the audit is run, what it respects, and the explicit list of permitted exceptions.
 
 ## Related Conventions
 
 - [File Naming Convention](../structure/file-naming.md) — Kebab-case file naming
-- [Agent Naming Convention](../structure/agent-naming.md) — Agent file naming standards
 - [Plans Organization](../structure/plans.md) — How plans are structured
 - [Platform Bindings Catalog](../../../docs/reference/platform-bindings.md) — Full catalog of all platform bindings
 

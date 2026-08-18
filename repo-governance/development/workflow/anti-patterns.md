@@ -16,19 +16,19 @@ Understanding common mistakes in development workflows helps teams build more ef
 
 ## Anti-Patterns
 
-- [Overview and Purpose](./anti-patterns/01-overview-and-purpose.md) — Why this document exists and what it covers.
-- [Anti-Pattern: Long-Lived Feature Branches](./anti-patterns/02-long-lived-feature-branches.md) — Long branches cause conflicts and delays. Use when tempted to keep a branch open more than a day or two.
-- [Anti-Pattern: Large, Infrequent Commits](./anti-patterns/03-large-infrequent-commits.md) — Large batched commits are hard to review. Use when about to commit a week's changes as one lump.
-- [Anti-Pattern: Vague Commit Messages](./anti-patterns/04-vague-commit-messages.md) — Vague messages undermine history and changelogs. Use when a commit message doesn't state what changed and why.
-- [Anti-Pattern: Skipping Feature Flags for Incomplete Work](./anti-patterns/05-skipping-feature-flags-for-incomplete-work.md) — Hiding incomplete work in a branch instead of a flag. Use when incomplete work would otherwise sit unmerged.
-- [Anti-Pattern: Premature Optimization](./anti-patterns/06-premature-optimization.md) — Optimizing before it works wastes effort. Use when planning optimization before a working implementation exists.
-- [Anti-Pattern: Unpinned Dependencies](./anti-patterns/07-unpinned-dependencies.md) — Unlocked versions cause inconsistent builds. Use when adding a dependency or configuring pinning.
-- [Anti-Pattern: Ignoring Broken CI](./anti-patterns/08-ignoring-broken-ci.md) — Deferring a CI fix blocks the team. Use when CI fails and there's a temptation to defer the fix.
-- [Anti-Pattern: Mixed Concerns in Single Commit](./anti-patterns/09-mixed-concerns-in-single-commit.md) — Unrelated changes bundled in one commit. Use when a commit would mix unrelated domains.
-- [Anti-Pattern: Hardcoded Environment Configuration](./anti-patterns/10-hardcoded-environment-configuration.md) — Hardcoded prod values create security and portability issues. Use when about to hardcode a URL, key, or env value.
-- [Anti-Pattern: Skipping Local Testing](./anti-patterns/11-skipping-local-testing.md) — Relying on CI alone wastes time. Use when about to push without running tests and lint locally.
-- [Anti-Pattern: Pushing Without Pulling Latest Main](./anti-patterns/12-pushing-without-pulling-latest-main.md) — Pushing without pulling first causes rejections and messy merges. Use when about to push without pulling with rebase first.
-- [Conclusion and Principles](./anti-patterns/13-conclusion-and-principles.md) — Summary table, closing takeaways, and the principles/conventions this document implements.
+- [Overview and Purpose](./anti-patterns/overview-and-purpose.md) — Why this document exists and what it covers.
+- [Anti-Pattern: Long-Lived Feature Branches](./anti-patterns/long-lived-feature-branches.md) — Long branches cause conflicts and delays. Use when tempted to keep a branch open more than a day or two.
+- [Anti-Pattern: Large, Infrequent Commits](./anti-patterns/large-infrequent-commits.md) — Large batched commits are hard to review. Use when about to commit a week's changes as one lump.
+- [Anti-Pattern: Vague Commit Messages](./anti-patterns/vague-commit-messages.md) — Vague messages undermine history and changelogs. Use when a commit message doesn't state what changed and why.
+- [Anti-Pattern: Skipping Feature Flags for Incomplete Work](./anti-patterns/skipping-feature-flags-for-incomplete-work.md) — Hiding incomplete work in a branch instead of a flag. Use when incomplete work would otherwise sit unmerged.
+- [Anti-Pattern: Premature Optimization](./anti-patterns/premature-optimization.md) — Optimizing before it works wastes effort. Use when planning optimization before a working implementation exists.
+- [Anti-Pattern: Unpinned Dependencies](./anti-patterns/unpinned-dependencies.md) — Unlocked versions cause inconsistent builds. Use when adding a dependency or configuring pinning.
+- [Anti-Pattern: Ignoring Broken CI](./anti-patterns/ignoring-broken-ci.md) — Deferring a CI fix blocks the team. Use when CI fails and there's a temptation to defer the fix.
+- [Anti-Pattern: Mixed Concerns in Single Commit](./anti-patterns/mixed-concerns-in-single-commit.md) — Unrelated changes bundled in one commit. Use when a commit would mix unrelated domains.
+- [Anti-Pattern: Hardcoded Environment Configuration](./anti-patterns/hardcoded-environment-configuration.md) — Hardcoded prod values create security and portability issues. Use when about to hardcode a URL, key, or env value.
+- [Anti-Pattern: Skipping Local Testing](./anti-patterns/skipping-local-testing.md) — Relying on CI alone wastes time. Use when about to push without running tests and lint locally.
+- [Anti-Pattern: Pushing Without Pulling Latest Main](./anti-patterns/pushing-without-pulling-latest-main.md) — Pushing without pulling first causes rejections and messy merges. Use when about to push without pulling with rebase first.
+- [Conclusion and Principles](./anti-patterns/conclusion-and-principles.md) — Summary table, closing takeaways, and the principles/conventions this document implements.
 
 ## Related Documentation
 

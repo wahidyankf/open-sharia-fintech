@@ -35,13 +35,13 @@ documentation content quality (`docs-checker`), repository governance (`repo-rul
 ## Validation Methodology
 
 See `swe-developing-applications-common` Skill's reference modules for the complete rule set:
-[01-checker-validation-steps.md](../../.claude/skills/swe-developing-applications-common/reference/01-checker-validation-steps.md)
+[checker-validation-steps.md](../../.claude/skills/swe-developing-applications-common/reference/checker-validation-steps.md)
 covers project discovery, Nx target infrastructure (mandatory targets, tag convention,
 `CGO_ENABLED=0`, cache config, coverage enforcement), and Go/TypeScript/Rust-specific standards
 through cross-project consistency checks;
-[02a-checker-tdd-and-specs-completeness.md](../../.claude/skills/swe-developing-applications-common/reference/02a-checker-tdd-and-specs-completeness.md)
+[checker-tdd-and-specs-completeness.md](../../.claude/skills/swe-developing-applications-common/reference/checker-tdd-and-specs-completeness.md)
 covers TDD compliance and specs/Gherkin completeness for the direct-code path;
-[02b-checker-regression-and-fixture-isolation.md](../../.claude/skills/swe-developing-applications-common/reference/02b-checker-regression-and-fixture-isolation.md)
+[checker-regression-and-fixture-isolation.md](../../.claude/skills/swe-developing-applications-common/reference/checker-regression-and-fixture-isolation.md)
 covers the regression-test mandate for bug fixes and the six mandatory git-fixture-isolation layers.
 
 ## Convergence Safeguards

@@ -23,7 +23,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 deleting the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -32,7 +32,7 @@ Work in `worktrees/rhino-speccoverage-multiline-scenario-scan/`; open a draft PR
 (`pr-review-maker` → `pr-review-fixer`, default 3 sequential CI-gated cycles) before the `[HUMAN]`
 merge. "Done" is a green, fully-reviewed PR handed off; "merged" happens on the maintainer's own
 schedule. See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 `ose-primer` and `ose-infra` resolve this same `worktree-to-pr` mode independently, each inside its
 own repo — see the Multi-Repo rhino-cli Delivery note immediately below.

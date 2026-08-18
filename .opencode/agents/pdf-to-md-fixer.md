@@ -52,8 +52,8 @@ have changed since the audit was generated.
 
 ## Fix Workflow
 
-See [05-fixing-conversions-confidence-and-priority.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/05-fixing-conversions-confidence-and-priority.md)
-and [06-fixing-conversions-operations-and-report.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/06-fixing-conversions-operations-and-report.md)
+See [fixing-conversions-confidence-and-priority.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/fixing-conversions-confidence-and-priority.md)
+and [fixing-conversions-operations-and-report.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/fixing-conversions-operations-and-report.md)
 for the complete confidence assessment (including the confidence-downgrade conditions), the P0-P4
 priority execution order, the per-finding-type fix operations (missing section, incorrect text,
 heading level, content nesting, missing table, invalid Mermaid, missing figure placeholder, missing

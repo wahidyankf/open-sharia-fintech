@@ -14,7 +14,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx oxlint@latest .",
+        "command": "npx oxlint .",
         "cwd": "apps/ose-www-fe-e2e"
       }
     },

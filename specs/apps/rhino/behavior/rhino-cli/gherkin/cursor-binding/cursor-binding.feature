@@ -98,16 +98,16 @@ Feature: Cursor platform binding generation and validation
     Then the command exits with a failure code
     And the output identifies the Cursor directory as missing a catalog row
 
-  Scenario: The naming validator reports mirror drift for a deleted Cursor agent file
+  Scenario: The bindings validator reports mirror drift for a deleted Cursor agent file
     Given a repository whose registry declares the cursor entry as a generated tier mirroring .claude/agents
-    When the developer deletes one Cursor agent file and runs harness naming validate
-    Then the command reports a mirror-drift violation
+    When the developer deletes one Cursor agent file and runs harness bindings validate
+    Then the command reports Cursor mirror drift
     And the violation names the deleted agent as present in the source but absent from the Cursor mirror
 
-  Scenario: The naming validator reports mirror drift for an unsourced Cursor agent file
+  Scenario: The bindings validator reports mirror drift for an unsourced Cursor agent file
     Given a repository whose registry declares the cursor entry as a generated tier mirroring .claude/agents
-    When the developer adds a Cursor agent file with no Claude counterpart and runs harness naming validate
-    Then the command reports a mirror-drift violation
+    When the developer adds a Cursor agent file with no Claude counterpart and runs harness bindings validate
+    Then the command reports Cursor mirror drift
     And the violation names the added agent as present in the Cursor mirror but absent from the source
 
   Scenario: The cursor registry entry declares the generated tier and its mirror source

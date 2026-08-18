@@ -59,21 +59,21 @@ pushed to the confirmed target.
 
 ## Contents
 
-- [Stage Resolution](./plan-planning/01-stage-resolution.md) — how target-stage resolves `<plan-dir>`.
-- [Execution Mode](./plan-planning/02-execution-mode.md) — direct orchestration, worktree default.
-- [Planning Granularity and One-Branch-One-PR](./plan-planning/03-planning-granularity-and-one-branch-rule.md) — the hard rule.
-- [Merge Timing, Feature Flags, worktree-to-pr Binding](./plan-planning/04-delivery-merge-timing-flags-and-worktree-to-pr-binding.md) — when PRs merge.
-- [Surface-Conditional Tester Gates](./plan-planning/05-surface-conditional-tester-gates.md) — routing table, three UI gates.
-- [Vercel MCP Availability](./plan-planning/06-vercel-mcp-availability.md) — probe and boundary.
-- [The Plan-Docs-Only Carve-Out (Superseded)](./plan-planning/07-plan-docs-only-carve-out.md) — retired, narrowed context.
-- [File-Touch Ledger](./plan-planning/08-file-touch-ledger.md) — the two obligations.
-- [Step 0 — Prompt Parsing and Repo Exploration](./plan-planning/09-step-0-prompt-parsing-and-repo-exploration.md) — pre-grill exploration.
-- [Step 1 — First Grill](./plan-planning/10-step-1-first-grill.md) — the ten decisions.
-- [Step 2 — Web Research](./plan-planning/11-step-2-web-research.md) — conditional delegation to web-researcher.
-- [Step 3 — Second Grill: Post-Research Validation](./plan-planning/12-step-3-second-grill.md) — confirm direction.
-- [Step 4 — Plan Creation](./plan-planning/13-step-4-plan-creation.md) — plan-maker handoff and envelope loop.
-- [Step 5 — Plan Review](./plan-planning/14-step-5-plan-review.md) — eleven structural checks.
-- [Step 6 — Quality Gate](./plan-planning/15-step-6-quality-gate.md) — strict-mode plan-quality-gate.
-- [Step 7 — Push and Verify](./plan-planning/16-step-7-push-and-verify.md) — commit, push, CI, cleanup.
-- [Principles and Conventions Implemented/Respected](./plan-planning/17-principles-and-conventions.md) — the catalog entries.
-- [Related Workflows and Documentation](./plan-planning/18-related-workflows-and-documentation.md) — cross-references.
+- [Stage Resolution](./plan-planning/stage-resolution.md) — how target-stage resolves `<plan-dir>`.
+- [Execution Mode](./plan-planning/execution-mode.md) — direct orchestration, worktree default.
+- [Planning Granularity and One-Branch-One-PR](./plan-planning/planning-granularity-and-one-branch-rule.md) — the hard rule.
+- [Merge Timing, Feature Flags, worktree-to-pr Binding](./plan-planning/delivery-merge-timing-flags-and-worktree-to-pr-binding.md) — when PRs merge.
+- [Surface-Conditional Tester Gates](./plan-planning/surface-conditional-tester-gates.md) — routing table, three UI gates.
+- [Vercel MCP Availability](./plan-planning/vercel-mcp-availability.md) — probe and boundary.
+- [The Plan-Docs-Only Carve-Out (Superseded)](./plan-planning/plan-docs-only-carve-out.md) — retired, narrowed context.
+- [File-Touch Ledger](./plan-planning/file-touch-ledger.md) — the two obligations.
+- [Step 0 — Prompt Parsing and Repo Exploration](./plan-planning/step-0-prompt-parsing-and-repo-exploration.md) — pre-grill exploration.
+- [Step 1 — First Grill](./plan-planning/step-1-first-grill.md) — the ten decisions.
+- [Step 2 — Web Research](./plan-planning/step-2-web-research.md) — conditional delegation to web-researcher.
+- [Step 3 — Second Grill: Post-Research Validation](./plan-planning/step-3-second-grill.md) — confirm direction.
+- [Step 4 — Plan Creation](./plan-planning/step-4-plan-creation.md) — plan-maker handoff and envelope loop.
+- [Step 5 — Plan Review](./plan-planning/step-5-plan-review.md) — eleven structural checks.
+- [Step 6 — Quality Gate](./plan-planning/step-6-quality-gate.md) — strict-mode plan-quality-gate.
+- [Step 7 — Push and Verify](./plan-planning/step-7-push-and-verify.md) — commit, push, CI, cleanup.
+- [Principles and Conventions Implemented/Respected](./plan-planning/principles-and-conventions.md) — the catalog entries.
+- [Related Workflows and Documentation](./plan-planning/related-workflows-and-documentation.md) — cross-references.

@@ -54,25 +54,25 @@ child below for the full validates/skips breakdown.
 
 ## Contents
 
-- [Purpose and Scope](./repo-rules-quality-gate/01-purpose-and-scope.md) — what's validated vs. skipped.
-- [Execution Mode](./repo-rules-quality-gate/02-execution-mode.md) — Agent Delegation, invocation.
-- [Step 0.5: Preflight — Overview](./repo-rules-quality-gate/03-step-0-5-deterministic-preflight.md) — what the audit orchestrator does.
-- [Step 0.5: Preflight — Command](./repo-rules-quality-gate/04-step-0-5-deterministic-preflight-continued.md) — invocation and exit-code handling.
-- [Step 1: Initial Validation](./repo-rules-quality-gate/05-step-1-initial-validation.md) — the first checker pass.
-- [Step 2: Check for Findings](./repo-rules-quality-gate/06-step-2-check-for-findings.md) — threshold counting.
-- [Step 3: Apply Fixes](./repo-rules-quality-gate/07-step-3-apply-fixes.md) — mode-scoped fixing.
-- [Step 4: Re-validate](./repo-rules-quality-gate/08-step-4-re-validate.md) — preflight + checker re-run.
-- [Step 5: Iteration Control](./repo-rules-quality-gate/09-step-5-iteration-control.md) — loop/terminate logic.
-- [Step 6: Finalization](./repo-rules-quality-gate/10-step-6-finalization.md) — final status reporting.
-- [Termination Criteria](./repo-rules-quality-gate/11-termination-criteria.md) — pass/partial/fail by mode.
-- [Example Usage](./repo-rules-quality-gate/12-example-usage.md) — normal/strict/ocd/bounded invocations.
-- [Iteration Example](./repo-rules-quality-gate/13-iteration-example.md) — a worked four-iteration trace.
-- [Safety Features](./repo-rules-quality-gate/14-safety-features.md) — loop, convergence, and fix safeguards.
-- [Skip-list Curation Rules](./repo-rules-quality-gate/15-skip-list-curation-rules.md) — the false-positives file.
-- [Related Workflows](./repo-rules-quality-gate/16-related-workflows.md) — deployment/release/content gates.
-- [Observability Metrics](./repo-rules-quality-gate/17-observability-metrics.md) — the nine tracked metrics.
-- [Notes](./repo-rules-quality-gate/18-notes.md) — automation posture, idempotency, terminology.
-- [Backlog](./repo-rules-quality-gate/19-backlog.md) — extending scope to all of docs/.
-- [Principles Implemented/Respected](./repo-rules-quality-gate/20-principles-implemented-respected.md) — traceability.
-- [Conventions Implemented/Respected](./repo-rules-quality-gate/21-conventions-implemented-respected.md) — traceability.
-- [What Changed](./repo-rules-quality-gate/22-what-changed.md) — the Step 0.5 changelog.
+- [Purpose and Scope](./repo-rules-quality-gate/purpose-and-scope.md) — what's validated vs. skipped.
+- [Execution Mode](./repo-rules-quality-gate/execution-mode.md) — Agent Delegation, invocation.
+- [Step 0.5: Preflight — Overview](./repo-rules-quality-gate/step-0-5-deterministic-preflight.md) — what the audit orchestrator does.
+- [Step 0.5: Preflight — Command](./repo-rules-quality-gate/step-0-5-deterministic-preflight-continued.md) — invocation and exit-code handling.
+- [Step 1: Initial Validation](./repo-rules-quality-gate/step-1-initial-validation.md) — the first checker pass.
+- [Step 2: Check for Findings](./repo-rules-quality-gate/step-2-check-for-findings.md) — threshold counting.
+- [Step 3: Apply Fixes](./repo-rules-quality-gate/step-3-apply-fixes.md) — mode-scoped fixing.
+- [Step 4: Re-validate](./repo-rules-quality-gate/step-4-re-validate.md) — preflight + checker re-run.
+- [Step 5: Iteration Control](./repo-rules-quality-gate/step-5-iteration-control.md) — loop/terminate logic.
+- [Step 6: Finalization](./repo-rules-quality-gate/step-6-finalization.md) — final status reporting.
+- [Termination Criteria](./repo-rules-quality-gate/termination-criteria.md) — pass/partial/fail by mode.
+- [Example Usage](./repo-rules-quality-gate/example-usage.md) — normal/strict/ocd/bounded invocations.
+- [Iteration Example](./repo-rules-quality-gate/iteration-example.md) — a worked four-iteration trace.
+- [Safety Features](./repo-rules-quality-gate/safety-features.md) — loop, convergence, and fix safeguards.
+- [Skip-list Curation Rules](./repo-rules-quality-gate/skip-list-curation-rules.md) — the false-positives file.
+- [Related Workflows](./repo-rules-quality-gate/related-workflows.md) — deployment/release/content gates.
+- [Observability Metrics](./repo-rules-quality-gate/observability-metrics.md) — the nine tracked metrics.
+- [Notes](./repo-rules-quality-gate/notes.md) — automation posture, idempotency, terminology.
+- [Backlog](./repo-rules-quality-gate/backlog.md) — extending scope to all of docs/.
+- [Principles Implemented/Respected](./repo-rules-quality-gate/principles-implemented-respected.md) — traceability.
+- [Conventions Implemented/Respected](./repo-rules-quality-gate/conventions-implemented-respected.md) — traceability.
+- [What Changed](./repo-rules-quality-gate/what-changed.md) — the Step 0.5 changelog.

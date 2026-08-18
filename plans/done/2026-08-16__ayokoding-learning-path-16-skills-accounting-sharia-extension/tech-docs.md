@@ -5,7 +5,7 @@
 `archive-with-plan` — this plan custodies its own `syllabus/` corpus (courses #20–#24 only) and no
 consumer **outside `plans/`** reads it. The corpus therefore moves to `plans/done/` with the plan
 folder on archival. See
-[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/10-corpus-disposition.md#corpus-disposition).
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/corpus-disposition.md#corpus-disposition).
 
 ## Provenance of this split
 
@@ -518,7 +518,7 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 **This plan owns its own `syllabus/` corpus slice and must ship the required folder layout** —
 `syllabus/README.md` with the `**Custodian**` line, plus `syllabus/courses/README.md` and
 `syllabus/paths/README.md`, per the
-[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus/05-required-folder-layout.md#required-folder-layout).
+[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus/required-folder-layout.md#required-folder-layout).
 
 **`conventional-accounting.json` is deliberately absent from this tree.** This is the first plan in the
 14 → 15 → 16 chain where the two manifests diverge: the five Sharia-extension courses grow

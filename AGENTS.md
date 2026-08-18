@@ -63,7 +63,7 @@ commits, read the full diff first.
 green `pr-quality-gate.yml`. `[AI]` merges by default. One worktree per repo per plan; Phase 0 opens
 none.
 
-**See**: [Delivery Mode](./repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+**See**: [Delivery Mode](./repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 
 ## Conventions
 
@@ -96,8 +96,8 @@ Verify UI/API behavior manually; investigate CI failures at the root cause, neve
 
 ## AI Agents
 
-[Agent catalog](./.claude/agents/README.md) is authoritative, `<domain>-<role>` naming. Agent
-skills at `.claude/skills/<name>/SKILL.md`.
+[Agent catalog](./.claude/agents/README.md) is authoritative; filenames follow the ordinary
+kebab-case rule. Agent skills at `.claude/skills/<name>/SKILL.md`.
 
 **See**: [ai-agents.md](./repo-governance/development/agents/ai-agents.md)
 

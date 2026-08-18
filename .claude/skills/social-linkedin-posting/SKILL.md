@@ -14,9 +14,9 @@ character body limit measured mechanically, never estimated.
 
 ## Reference Modules
 
-- [01-hard-constraints-and-measurement.md](reference/01-hard-constraints-and-measurement.md) —
+- [hard-constraints-and-measurement.md](reference/hard-constraints-and-measurement.md) —
   the character-limit rule and measurement command, the no-vanity-metrics rule
-- [02-file-format-and-workflow.md](reference/02-file-format-and-workflow.md) — the file path/name
+- [file-format-and-workflow.md](reference/file-format-and-workflow.md) — the file path/name
   convention, the post template, and the 5-step establish-window→write workflow
 
 ## Core Principles

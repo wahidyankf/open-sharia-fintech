@@ -187,7 +187,7 @@ No change to: `core/data/models.ts`, `core/data/benchmarks.ts`, `core/data/opera
 
 Not applicable — this plan is UI-bearing (it changes a rendered screen under `apps/`). The full
 funnel (Diverge/Narrow/Select/Justify, R5 grounding, R7 prior art, responsive strategy) is authored
-in `prd.md` per the [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
+in `prd.md` per the [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope).
 
 ## Dependencies
 

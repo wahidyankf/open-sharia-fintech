@@ -7,7 +7,7 @@ reads it: no checker, agent, Nx target, build/generation step, or shipped conten
 syllabus path (the consumers are the sibling `plans/` — plans 04 and 05 — which do not trigger
 promotion). The corpus therefore moves to `plans/done/` with the plan folder on archival; the
 promotion trigger (name a non-plan reader) is not met. See
-[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/10-corpus-disposition.md#corpus-disposition).
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/corpus-disposition.md#corpus-disposition).
 
 ## Overview
 

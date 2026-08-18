@@ -322,33 +322,52 @@ fn audit_index_file(
 /// Extracts all relative `.md` link targets from `content`, stripping fragment
 /// and query suffixes, leading `./`, and ignoring absolute paths, parent paths,
 /// and URL-like hrefs.
+/// Splits a raw markdown link target into its path part and any trailing
+/// `#fragment` / `?query` suffix. The suffix is preserved verbatim by callers
+/// that rewrite the path, so an anchor survives a rename.
+fn split_link_suffix(target: &str) -> (&str, &str) {
+    match target.find(['#', '?']) {
+        Some(i) => (&target[..i], &target[i..]),
+        None => (target, ""),
+    }
+}
+
+/// Normalises a raw markdown link target into the canonical sibling-target
+/// form the index logic compares on: `./` stripped, any `#fragment`/`?query`
+/// dropped, backslashes normalised to `/`.
+///
+/// Returns `None` for anything that is not a sibling target — an empty target,
+/// an absolute path, a parent-relative path, or a URL — so every caller applies
+/// one definition of "the same target" instead of re-deriving it.
+fn normalize_link_target(raw: &str) -> Option<String> {
+    let raw = raw.trim();
+    if raw.is_empty() {
+        return None;
+    }
+    let raw = raw.strip_prefix("./").unwrap_or(raw);
+    let (raw, _) = split_link_suffix(raw);
+    if raw.is_empty() || raw.starts_with('/') || raw.starts_with("..") {
+        return None;
+    }
+    // Skip URLs: leading scheme followed by ":" before the first "/".
+    let url_like = match raw.find(':') {
+        Some(colon) if colon > 0 => raw.find('/').is_none_or(|s| colon < s),
+        _ => false,
+    };
+    if url_like {
+        return None;
+    }
+    Some(raw.replace('\\', "/"))
+}
+
+/// Extracts every sibling `.md` link target found anywhere in `content`,
+/// normalised by [`normalize_link_target`].
 fn extract_readme_links(content: &str) -> HashSet<String> {
     let mut out = HashSet::new();
     for cap in readme_link_re().captures_iter(content) {
-        let raw = cap[1].trim();
-        if raw.is_empty() {
-            continue;
+        if let Some(target) = normalize_link_target(&cap[1]) {
+            out.insert(target);
         }
-        let raw = raw.strip_prefix("./").unwrap_or(raw);
-        let raw = match raw.find(['#', '?']) {
-            Some(i) => &raw[..i],
-            None => raw,
-        };
-        if raw.is_empty() || raw.starts_with('/') || raw.starts_with("..") {
-            continue;
-        }
-        // Skip URLs: leading scheme followed by ":" before first "/".
-        let url_like = match raw.find(':') {
-            Some(colon) if colon > 0 => {
-                let slash = raw.find('/');
-                slash.is_none_or(|s| colon < s)
-            }
-            _ => false,
-        };
-        if url_like {
-            continue;
-        }
-        out.insert(raw.replace('\\', "/"));
     }
     out
 }
@@ -621,7 +640,8 @@ struct TargetMeta {
 /// # Errors
 ///
 /// Returns an error when `paths` is empty, when a directory cannot be read,
-/// or when a generated index file cannot be written.
+/// when an existing index file cannot be read (never silently rebuilt), or
+/// when a generated index file cannot be written.
 pub fn generate_readme_index(
     fs: &dyn Fs,
     paths: &[String],
@@ -637,6 +657,101 @@ pub fn generate_readme_index(
     written.sort();
     written.dedup();
     Ok(written)
+}
+
+/// Rewrites markdown **link targets** across every `.md` file reachable from
+/// `paths`, according to a rename map of `(old_basename, new_basename)` pairs.
+///
+/// Only the target inside a `](...)` link is touched. Entry order, annotation
+/// text, prose, and every other byte are left exactly as they were — a rename
+/// sweep must not become an unreviewable reformat. A bare mention of an old
+/// filename in prose is deliberately NOT rewritten, because it is not a link
+/// and rewriting it would silently edit narrative text.
+///
+/// Returns the paths whose content actually changed.
+///
+/// # Errors
+///
+/// Returns an error if `paths` is empty, or a file cannot be read or written.
+pub fn rewrite_index_paths(
+    fs: &dyn Fs,
+    paths: &[String],
+    map: &[(String, String)],
+) -> std::result::Result<Vec<PathBuf>, Error> {
+    if paths.is_empty() {
+        return Err(anyhow!("at least one path is required"));
+    }
+    let renames: std::collections::HashMap<&str, &str> =
+        map.iter().map(|(o, n)| (o.as_str(), n.as_str())).collect();
+    if renames.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let mut changed = Vec::new();
+    for root in paths {
+        for file in fs.walk_files(Path::new(root), &[".git", "node_modules", "target"]) {
+            if file.extension().and_then(|e| e.to_str()) != Some("md") {
+                continue;
+            }
+            // `walk_files` just told us this `.md` file exists, so a read
+            // failure here (invalid UTF-8, a transient permission error, a
+            // TOCTOU race) is a real fault, not "nothing to rewrite".
+            // Swallowing it would drop the file from `changed` and let the
+            // command report `status: "passed"` with a lower count, leaving a
+            // stale link behind under a success banner. Mirrors the same
+            // hardening applied to `generate_index_file`'s read.
+            let content = fs
+                .read_to_string(&file)
+                .with_context(|| format!("read {}", file.display()))?;
+            let updated = rewrite_link_targets(&content, &renames);
+            if updated != content {
+                fs.write_string(&file, &updated)
+                    .with_context(|| format!("write {}", file.display()))?;
+                changed.push(file);
+            }
+        }
+    }
+    changed.sort();
+    changed.dedup();
+    Ok(changed)
+}
+
+/// Rewrites every markdown link target in `content` whose final path segment
+/// matches a key in `renames`, preserving the target's directory prefix and any
+/// `#fragment`/`?query` suffix.
+fn rewrite_link_targets(content: &str, renames: &std::collections::HashMap<&str, &str>) -> String {
+    let mut out = String::with_capacity(content.len());
+    let mut rest = content;
+    while let Some(open) = rest.find("](") {
+        let (head, tail) = rest.split_at(open + 2);
+        out.push_str(head);
+        let Some(close) = tail.find(')') else {
+            rest = tail;
+            break;
+        };
+        let (target, after) = tail.split_at(close);
+        out.push_str(&rewrite_one_target(target, renames));
+        rest = after;
+    }
+    out.push_str(rest);
+    out
+}
+
+/// Rewrites a single link target, or returns it unchanged.
+fn rewrite_one_target(target: &str, renames: &std::collections::HashMap<&str, &str>) -> String {
+    // Split off a trailing #fragment / ?query so it survives the rename.
+    let (path_part, suffix) = split_link_suffix(target);
+    let Some(slash) = path_part.rfind('/') else {
+        return match renames.get(path_part) {
+            Some(new) => format!("{new}{suffix}"),
+            None => target.to_string(),
+        };
+    };
+    let (dir, base) = path_part.split_at(slash + 1);
+    match renames.get(base) {
+        Some(new) => format!("{dir}{new}{suffix}"),
+        None => target.to_string(),
+    }
 }
 
 /// Generates every index reachable from `root` that needs one.
@@ -737,6 +852,41 @@ fn generate_one_dir(
 ///
 /// Returns an error when `target_dir` cannot be read or `index_path` cannot
 /// be written.
+/// Returns the zero-based line numbers of an existing index's entry lines —
+/// every list item that links a sibling `.md` target — in document order.
+///
+/// Only the positions are needed: whether a target is already indexed is
+/// decided by [`extract_readme_links`] over the whole document (a link in a
+/// table cell or a sentence counts, exactly as it does for `audit_one_dir`),
+/// while these positions decide only *where* a genuinely missing entry is
+/// spliced in.
+///
+/// Returns an empty vector when the index contains no such entries — precisely
+/// the scaffold case, where the caller derives the whole list from disk.
+fn existing_entry_lines(content: &str) -> Vec<usize> {
+    let mut out = Vec::new();
+    for (line_no, line) in content.lines().enumerate() {
+        let trimmed = line.trim_start();
+        if !(trimmed.starts_with("- ") || trimmed.starts_with("* ")) {
+            continue;
+        }
+        let Some(cap) = readme_link_re().captures(line) else {
+            continue;
+        };
+        if normalize_link_target(&cap[1]).is_some() {
+            out.push(line_no);
+        }
+    }
+    out
+}
+
+/// Writes `index_path`, preserving any existing entry order and annotations
+/// and appending only the sibling targets absent from it.
+///
+/// # Errors
+///
+/// Returns an error if the directory cannot be listed or the index cannot be
+/// written.
 fn generate_index_file(
     fs: &dyn Fs,
     index_path: &Path,
@@ -746,19 +896,95 @@ fn generate_index_file(
     link_prefix: &str,
 ) -> std::result::Result<PathBuf, Error> {
     let targets = list_sibling_targets(fs, target_dir, root, excludes)?;
-    let mut lines = Vec::new();
-    for name in targets.sorted_names() {
+
+    // Builds the entry line for one sibling target.
+    let entry_for = |name: &str| {
         let link = format!("./{link_prefix}{name}");
-        let target_path = target_dir.join(&name);
+        let target_path = target_dir.join(name);
         let meta = read_target_meta(fs, &target_path);
         let title = meta
             .title
             .clone()
-            .unwrap_or_else(|| fallback_entry_title(&name));
+            .unwrap_or_else(|| fallback_entry_title(name));
         let is_governance = path_is_repo_governance(&target_path);
-        lines.push(format_entry(&title, &link, is_governance, &meta));
+        format_entry(&title, &link, is_governance, &meta)
+    };
+
+    // An index that already exists is EDITED, never rebuilt. Reading order is
+    // authored, and so is everything around the list — section headings,
+    // grouping prose, trailing notes. Rebuilding the body would silently
+    // delete all of it, so missing entries are spliced in beside the existing
+    // list and every other byte is left alone. A directory with no index takes
+    // the scaffold path below.
+    if fs.exists(index_path) {
+        // The index is known to exist: a read failure here (invalid UTF-8, a
+        // transient permission error, a TOCTOU race) must propagate as an
+        // error, never fall through to the scaffold path below. Conflating
+        // "no index on disk" with "index exists but could not be read" would
+        // silently overwrite an existing, authored document.
+        let content = fs
+            .read_to_string(index_path)
+            .with_context(|| format!("read {}", index_path.display()))?;
+        let entry_lines = existing_entry_lines(&content);
+        // Membership is decided by the WHOLE document's link set, exactly as
+        // `audit_one_dir` decides it. A target linked from a table cell or a
+        // prose sentence is already indexed; re-appending it as a list entry
+        // would add a duplicate link `validate` never asked for. The
+        // line-scanned `entry_lines` are used only to pick the splice point.
+        let already: HashSet<String> = extract_readme_links(&content);
+        // Compare on the SAME key the emitted link uses. For a split index
+        // (`<name>.md` indexing `<name>/`), `link_prefix` is `<name>/`, so an
+        // already-present link normalises to `<name>/01-foo.md` while
+        // `sorted_names()` yields the bare `01-foo.md`. Comparing the bare
+        // form against prefixed keys marks every existing entry "missing" and
+        // duplicates the whole index.
+        let missing: Vec<String> = targets
+            .sorted_names()
+            .into_iter()
+            .filter(|n| !already.contains(&format!("{link_prefix}{n}")))
+            // Same split-pattern exemption `audit_one_dir` applies: when the
+            // index already links `<dir>.md`, the sibling `<dir>/README.md` is
+            // an index over the same content and is NOT a second missing
+            // entry. Without this, `generate` would append a duplicate link
+            // that `validate` never asked for, and the two would disagree
+            // about what a complete index is.
+            .filter(|n| {
+                n.strip_suffix("/README.md")
+                    .is_none_or(|dir| !already.contains(&format!("{link_prefix}{dir}.md")))
+            })
+            .map(|n| entry_for(&n))
+            .collect();
+
+        if missing.is_empty() {
+            // Already complete: writing nothing is what keeps `generate` safe
+            // to run over a conforming tree.
+            return Ok(index_path.to_path_buf());
+        }
+
+        let mut lines: Vec<String> = content.lines().map(String::from).collect();
+        let insert_at = entry_lines
+            .iter()
+            .map(|n| n + 1)
+            .max()
+            .unwrap_or(lines.len());
+        for (offset, entry) in missing.into_iter().enumerate() {
+            lines.insert(insert_at + offset, entry);
+        }
+        let mut updated = lines.join("\n");
+        if content.ends_with('\n') {
+            updated.push('\n');
+        }
+        fs.write_string(index_path, &updated)
+            .with_context(|| format!("write {}", index_path.display()))?;
+        return Ok(index_path.to_path_buf());
     }
 
+    // Scaffold path: no index on disk, so derive the whole document.
+    let lines: Vec<String> = targets
+        .sorted_names()
+        .iter()
+        .map(|n| entry_for(n))
+        .collect();
     let dir_title_fallback = fallback_index_title(index_path);
     let (frontmatter, h1_title) =
         resolve_frontmatter_and_title(fs, index_path, &dir_title_fallback);
@@ -1612,6 +1838,365 @@ mod tests {
                 .all(|f| f.kind != "missing" && f.kind != "unannotated"),
             "FR-3.12: validate must report zero missing/unannotated findings after generate: \
              {findings:?}"
+        );
+    }
+
+    /// Binds Gherkin scenario "Generate no longer rewrites an existing index's
+    /// order": a directory whose `README.md` already carries hand-authored
+    /// entry order must keep that order and those annotations verbatim, with
+    /// only genuinely missing targets appended.
+    #[test]
+    fn generate_preserves_existing_index_order_and_annotations() {
+        let tmp = TempDir::new().unwrap();
+        let gov_root = tmp.path().join("repo-governance");
+        let leaf = gov_root.join("formatting");
+        fs::create_dir_all(&leaf).unwrap();
+        write_governance_target(
+            &leaf.join("linking.md"),
+            "Linking Convention",
+            "shared standards for links",
+            "Use when adding or reviewing a hyperlink",
+        );
+        write_governance_target(
+            &leaf.join("emoji.md"),
+            "Emoji Convention",
+            "semantic emoji usage",
+            "Use when choosing an emoji",
+        );
+        write_governance_target(
+            &leaf.join("appended.md"),
+            "Appended Convention",
+            "a target absent from the hand-authored index",
+            "Use when checking append behaviour",
+        );
+
+        // Hand-authored index: linking BEFORE emoji. Sorted order would be
+        // appended, emoji, linking — so "linking first" is reachable ONLY by
+        // preserving the hand-authored order, never by re-deriving it.
+        let hand_authored = concat!(
+            "---\n",
+            "title: \"Formatting\"\n",
+            "---\n",
+            "\n",
+            "# Formatting\n",
+            "\n",
+            "- [Linking Convention](./linking.md) — HAND-AUTHORED annotation that must survive.\n",
+            "- [Emoji Convention](./emoji.md) — semantic emoji usage Use when choosing an emoji\n",
+        );
+        fs::write(leaf.join("README.md"), hand_authored).unwrap();
+
+        generate_readme_index(&RealFs, &[gov_root.to_string_lossy().to_string()], &[]).unwrap();
+        let after = fs::read_to_string(leaf.join("README.md")).unwrap();
+
+        let emoji_at = after.find("./emoji.md").expect("emoji entry must survive");
+        let linking_at = after
+            .find("./linking.md")
+            .expect("linking entry must survive");
+        assert!(
+            linking_at < emoji_at,
+            "generate must preserve hand-authored entry order (linking before emoji, which \
+             alphabetical re-derivation would reverse):\n{after}"
+        );
+        assert!(
+            after.contains("HAND-AUTHORED annotation that must survive"),
+            "generate must preserve each existing entry's annotation verbatim:\n{after}"
+        );
+        assert!(
+            after.contains("./appended.md"),
+            "generate must append genuinely missing targets:\n{after}"
+        );
+    }
+
+    /// Binds Gherkin scenario "Generate still scaffolds a directory with no
+    /// index": the no-index path must be unchanged by order preservation — a
+    /// complete annotated index is written and every sibling appears exactly
+    /// once (never duplicated by the append pass).
+    #[test]
+    fn generate_still_scaffolds_a_directory_with_no_index() {
+        let tmp = TempDir::new().unwrap();
+        let gov_root = tmp.path().join("repo-governance");
+        let leaf = gov_root.join("formatting");
+        fs::create_dir_all(&leaf).unwrap();
+        for (name, title) in [
+            ("linking.md", "Linking Convention"),
+            ("emoji.md", "Emoji Convention"),
+            ("zebra.md", "Zebra Convention"),
+        ] {
+            write_governance_target(&leaf.join(name), title, "a description", "Use when testing");
+        }
+        assert!(
+            !leaf.join("README.md").exists(),
+            "fixture must start with no index"
+        );
+
+        generate_readme_index(&RealFs, &[gov_root.to_string_lossy().to_string()], &[]).unwrap();
+        let after = fs::read_to_string(leaf.join("README.md")).unwrap();
+
+        for name in ["linking.md", "emoji.md", "zebra.md"] {
+            let needle = format!("./{name}");
+            assert_eq!(
+                after.matches(&needle).count(),
+                1,
+                "scaffold must emit {name} exactly once:\n{after}"
+            );
+        }
+        // Scaffold order remains sorted, since there is no authored order to keep.
+        let e = after.find("./emoji.md").unwrap();
+        let l = after.find("./linking.md").unwrap();
+        let z = after.find("./zebra.md").unwrap();
+        assert!(
+            e < l && l < z,
+            "scaffold must stay in sorted order:\n{after}"
+        );
+    }
+
+    /// Regression test for the CRITICAL finding on this PR: a read failure
+    /// on an EXISTING index must propagate as an error, never fall through
+    /// to the scaffold path and overwrite the file. Uses invalid UTF-8 bytes
+    /// (`std::fs::read_to_string`'s documented failure mode) rather than a
+    /// permission error, since the latter is not portably reproducible in a
+    /// test sandbox. Written directly via `std::fs::write` (raw bytes, not
+    /// the `String`-typed fixture helpers used elsewhere in this module,
+    /// which cannot hold invalid UTF-8 at all).
+    #[test]
+    fn generate_errors_instead_of_overwriting_an_unreadable_existing_index() {
+        let tmp = TempDir::new().unwrap();
+        let gov_root = tmp.path().join("repo-governance");
+        let leaf = gov_root.join("formatting");
+        fs::create_dir_all(&leaf).unwrap();
+        write_governance_target(
+            &leaf.join("linking.md"),
+            "Linking Convention",
+            "shared standards for links",
+            "Use when adding or reviewing a hyperlink",
+        );
+
+        let invalid_utf8: &[u8] = &[0xFF, 0xFE, b'h', b'i'];
+        let index_path = leaf.join("README.md");
+        fs::write(&index_path, invalid_utf8).unwrap();
+
+        let result = generate_readme_index(&RealFs, &[gov_root.to_string_lossy().to_string()], &[]);
+
+        assert!(
+            result.is_err(),
+            "an existing-but-unreadable index must return Err, not Ok"
+        );
+        let after = fs::read(&index_path).unwrap();
+        assert_eq!(
+            after, invalid_utf8,
+            "the unreadable index's original bytes must survive untouched — a fallthrough to \
+             the scaffold path would silently overwrite them"
+        );
+    }
+
+    /// Binds Gherkin scenario "Rewrite-paths updates link targets without
+    /// touching order": every index link target is repointed to its new path
+    /// while entry order, annotation text, and surrounding prose stay byte-
+    /// identical apart from the target itself.
+    #[test]
+    fn rewrite_paths_updates_targets_without_touching_order_or_prose() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+
+        let before = concat!(
+            "---\n",
+            "title: \"Formatting\"\n",
+            "---\n",
+            "\n",
+            "# Formatting\n",
+            "\n",
+            "Intro prose mentioning 01-linking.md inline, which must NOT be rewritten.\n",
+            "\n",
+            "- [Linking](./01-linking.md) — annotation one.\n",
+            "- [Emoji](./02-emoji.md) — annotation two.\n",
+            "\n",
+            "Trailing prose.\n",
+        );
+        fs::write(dir.join("README.md"), before).unwrap();
+
+        let map = vec![
+            ("01-linking.md".to_string(), "linking.md".to_string()),
+            ("02-emoji.md".to_string(), "emoji.md".to_string()),
+        ];
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map)
+                .unwrap();
+        assert!(
+            !changed.is_empty(),
+            "rewrite-paths must report the file it changed"
+        );
+
+        let after = fs::read_to_string(dir.join("README.md")).unwrap();
+        assert!(
+            after.contains("(./linking.md)"),
+            "link target must be rewritten:\n{after}"
+        );
+        assert!(
+            after.contains("(./emoji.md)"),
+            "link target must be rewritten:\n{after}"
+        );
+        assert!(
+            !after.contains("(./01-linking.md)"),
+            "old target must be gone:\n{after}"
+        );
+
+        // Order preserved: linking still before emoji.
+        assert!(
+            after.find("./linking.md").unwrap() < after.find("./emoji.md").unwrap(),
+            "entry order must be unchanged:\n{after}"
+        );
+        // Annotations and prose preserved verbatim.
+        assert!(
+            after.contains("— annotation one."),
+            "annotation must survive:\n{after}"
+        );
+        assert!(
+            after.contains("— annotation two."),
+            "annotation must survive:\n{after}"
+        );
+        assert!(
+            after.contains("Trailing prose."),
+            "prose must survive:\n{after}"
+        );
+        assert!(
+            after.contains("Intro prose mentioning 01-linking.md inline"),
+            "a bare non-link mention must NOT be rewritten:\n{after}"
+        );
+    }
+
+    /// `rewrite_index_paths(&[], ..)` must reject an empty `paths` list, the
+    /// same way every other multi-path entry point in this module does.
+    #[test]
+    fn rewrite_paths_errors_on_empty_paths() {
+        let err = rewrite_index_paths(&RealFs, &[], &[]).unwrap_err();
+        assert!(
+            err.to_string().contains("at least one path is required"),
+            "{err}"
+        );
+    }
+
+    /// An empty rename map is a legitimate no-op (nothing was asked to be
+    /// renamed) and must return `Ok(Vec::new())` without touching the
+    /// filesystem — this is the early-return branch, distinct from "a
+    /// non-empty map that matches nothing" below, which walks the tree.
+    #[test]
+    fn rewrite_paths_empty_map_is_a_no_touch_no_op() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "- [Linking](./01-linking.md) — annotation.\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+
+        assert!(changed.is_empty(), "empty map must report no changed files");
+        assert_eq!(
+            fs::read_to_string(dir.join("README.md")).unwrap(),
+            before,
+            "empty map must not touch the file on disk"
+        );
+    }
+
+    /// Pins today's silent-no-op behaviour (Finding 5 / WS-3 in
+    /// `plans/backlog/rhino-cli-governance-tooling-defects/`): a non-empty
+    /// rename map that matches no basename anywhere in the tree returns
+    /// `Ok(Vec::new())` — the CLI reports "0 file(s) updated" and exits 0,
+    /// byte-indistinguishable from "nothing needed changing". This is the
+    /// compensating control for deferring the basename→path keying redesign
+    /// to WS-3: the moment that redesign introduces a dead-row exit code,
+    /// this test fails loudly, which is exactly the signal WS-3 wants.
+    #[test]
+    fn rewrite_paths_map_matching_nothing_is_a_silent_ok_no_op() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "- [Linking](./01-linking.md) — annotation.\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+
+        let map = vec![(
+            "no-such-basename.md".to_string(),
+            "irrelevant.md".to_string(),
+        )];
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map)
+                .unwrap();
+
+        assert!(
+            changed.is_empty(),
+            "a map matching nothing must report zero changed files, not an error"
+        );
+        assert_eq!(
+            fs::read_to_string(dir.join("README.md")).unwrap(),
+            before,
+            "a map matching nothing must not touch any file on disk"
+        );
+    }
+
+    /// Non-`.md` files reachable from `paths` must be skipped entirely — a
+    /// filename match against a `.png`/`.rs`/etc. sibling of a renamed
+    /// basename is never rewritten, even when its extension-free stem
+    /// happens to collide.
+    #[test]
+    fn rewrite_paths_skips_non_markdown_files() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "[asset](./old-name.png)\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+        // A non-markdown file whose own name also happens to match a map key
+        // — must be left alone; only `.md` link TARGETS are ever rewritten,
+        // and only inside `.md` SOURCE files.
+        fs::write(dir.join("old-name.png"), b"not a markdown file").unwrap();
+
+        let map = vec![("old-name.png".to_string(), "new-name.png".to_string())];
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map)
+                .unwrap();
+
+        // The link TARGET inside the .md file is still rewritten (targets
+        // are matched by basename regardless of extension); what must be
+        // skipped is walking/rewriting non-`.md` SOURCE files themselves.
+        assert_eq!(
+            changed,
+            vec![dir.join("README.md")],
+            "only the .md source file may be reported as changed"
+        );
+        assert_eq!(
+            fs::read(dir.join("old-name.png")).unwrap(),
+            b"not a markdown file",
+            "a non-markdown file must never be rewritten, even if its name matches a map key"
+        );
+    }
+
+    /// A `.md` file the walker found but that cannot be read (invalid UTF-8,
+    /// a transient permission error, a TOCTOU race) must abort the sweep with
+    /// an error. Swallowing it would drop the file from `changed` and let the
+    /// command report success with a lower count, leaving a stale link behind
+    /// under a green banner — indistinguishable from "nothing needed
+    /// changing". Sibling of
+    /// `generate_errors_instead_of_overwriting_an_unreadable_existing_index`.
+    #[test]
+    fn rewrite_paths_errors_on_an_unreadable_markdown_file() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let invalid_utf8: &[u8] = &[0xFF, 0xFE, b'h', b'i'];
+        fs::write(dir.join("unreadable.md"), invalid_utf8).unwrap();
+
+        let map = vec![("old-name.md".to_string(), "new-name.md".to_string())];
+        let result =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map);
+
+        assert!(
+            result.is_err(),
+            "an unreadable .md file must return Err, not be skipped as a silent no-op"
+        );
+        assert_eq!(
+            fs::read(dir.join("unreadable.md")).unwrap(),
+            invalid_utf8,
+            "the unreadable file's original bytes must survive untouched"
         );
     }
 }

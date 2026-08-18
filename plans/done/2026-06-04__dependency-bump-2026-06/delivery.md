@@ -19,7 +19,7 @@ claude --worktree dependency-bump-2026-06
 ```
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 > **Pre-execution gate (snapshot validity)**: This plan is a snapshot as of `2026-06-04` (Path B
 > soak cutoff `2026-04-05`). If promotion to `in-progress/` was delayed, **re-run the eligibility

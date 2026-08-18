@@ -75,7 +75,7 @@ The reorg is not considered complete until all of the following pass against the
 
 ### FR-7: Worktree Discipline
 
-Per the [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and the [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification), all work for this plan runs in `worktrees/ayokoding-web-learn-reorg/` at the repo root. Direct edits to the main checkout are forbidden during execution.
+Per the [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and the [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification), all work for this plan runs in `worktrees/ayokoding-web-learn-reorg/` at the repo root. Direct edits to the main checkout are forbidden during execution.
 
 ## Non-Functional Requirements
 

@@ -43,8 +43,8 @@ The following structural convention also informs this practice:
 
 ## Contents
 
-- [Purpose and Scope](./task-list-discipline/01-purpose-and-scope.md) — the two failure modes this practice prevents, and what it covers.
-- [Standards 1-5](./task-list-discipline/02-standards-1-to-5.md) — create the list first, mark in-progress/completed accurately, add discovered tasks, one task per outcome.
-- [Standard 6 — Bounded Status-Update Cadence](./task-list-discipline/03-standard-6.md) — the 5-minute generic / 3-minute CI-related reporting cadence.
-- [Anti-Patterns](./task-list-discipline/04-anti-patterns.md) — five common failure patterns and their fixes.
-- [For AI Agents and Related Documentation](./task-list-discipline/05-for-ai-agents-and-related-documentation.md) — the five-point agent checklist and links to related conventions.
+- [Purpose and Scope](./task-list-discipline/purpose-and-scope.md) — the two failure modes this practice prevents, and what it covers.
+- [Standards 1-5](./task-list-discipline/standards-1-to-5.md) — create the list first, mark in-progress/completed accurately, add discovered tasks, one task per outcome.
+- [Standard 6 — Bounded Status-Update Cadence](./task-list-discipline/standard-6.md) — the 5-minute generic / 3-minute CI-related reporting cadence.
+- [Anti-Patterns](./task-list-discipline/anti-patterns.md) — five common failure patterns and their fixes.
+- [For AI Agents and Related Documentation](./task-list-discipline/for-ai-agents-and-related-documentation.md) — the five-point agent checklist and links to related conventions.

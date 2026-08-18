@@ -436,7 +436,7 @@ No data migration, no schema change, no deployed surface is involved.
 - [brd.md](./brd.md) — business rationale and the observable success checks
 - [prd.md](./prd.md) — personas, user stories, and the Gherkin acceptance criteria
 - [delivery.md](./delivery.md) — the phased execution checklist
-- [UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+- [UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
   — the governed precedent whose shape this mirrors
 - [plan-doc-ui-mockup-convention](../../done/2026-06-16__plan-doc-ui-mockup-convention/README.md) —
   the completed plan that closed this same class of gap for UI

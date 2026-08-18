@@ -70,14 +70,14 @@ Iterative Maker-Checker-Fixer quality gate for by-example tutorials.
 
 ## Contents
 
-- [Execution Mode, Workflow Overview, and Research Delegation](./ayokoding-web-swe-by-example-quality-gate/01-execution-mode-workflow-overview-and-research-delegation.md) — how to run, flow diagram.
-- [Steps 1-2: Maker and Checker](./ayokoding-web-swe-by-example-quality-gate/02-step-1-and-2-maker-and-checker.md) — create examples, validate quality.
-- [Step 3: User Review](./ayokoding-web-swe-by-example-quality-gate/03-step-3-user-review.md) — human decision point.
-- [Step 4: Fixer](./ayokoding-web-swe-by-example-quality-gate/04-step-4-fixer.md) — apply validated fixes.
-- [Steps 5-6: Iteration Control and Finalization](./ayokoding-web-swe-by-example-quality-gate/05-step-5-and-6-iteration-control-and-finalization.md) — continue or finalize.
-- [Termination Criteria](./ayokoding-web-swe-by-example-quality-gate/06-termination-criteria.md) — success/partial/failure conditions.
-- [Iteration Examples 1-2](./ayokoding-web-swe-by-example-quality-gate/07-iteration-examples-1-and-2.md) — clean-path and issue-path walkthroughs.
-- [Iteration Example 3](./ayokoding-web-swe-by-example-quality-gate/08-iteration-example-3.md) — major-rework failing-path walkthrough.
-- [Strictness Examples 4-6](./ayokoding-web-swe-by-example-quality-gate/09-strictness-examples.md) — normal, strict, and ocd modes.
-- [Workflow Invocation and Safety Features](./ayokoding-web-swe-by-example-quality-gate/10-workflow-invocation-and-safety-features.md) — how to trigger, loop safeguards.
-- [Workflow Metadata and References](./ayokoding-web-swe-by-example-quality-gate/11-workflow-metadata-and-references.md) — metrics, related workflows, principles.
+- [Execution Mode, Workflow Overview, and Research Delegation](./ayokoding-web-swe-by-example-quality-gate/execution-mode-workflow-overview-and-research-delegation.md) — how to run, flow diagram.
+- [Steps 1-2: Maker and Checker](./ayokoding-web-swe-by-example-quality-gate/step-1-and-2-maker-and-checker.md) — create examples, validate quality.
+- [Step 3: User Review](./ayokoding-web-swe-by-example-quality-gate/03-user-review.md) — human decision point.
+- [Step 4: Fixer](./ayokoding-web-swe-by-example-quality-gate/04-fixer.md) — apply validated fixes.
+- [Steps 5-6: Iteration Control and Finalization](./ayokoding-web-swe-by-example-quality-gate/05-iteration-control-and-finalization.md) — continue or finalize.
+- [Termination Criteria](./ayokoding-web-swe-by-example-quality-gate/termination-criteria.md) — success/partial/failure conditions.
+- [Iteration Examples 1-2](./ayokoding-web-swe-by-example-quality-gate/iteration-examples-1-and-2.md) — clean-path and issue-path walkthroughs.
+- [Iteration Example 3](./ayokoding-web-swe-by-example-quality-gate/iteration-example-3.md) — major-rework failing-path walkthrough.
+- [Strictness Examples 4-6](./ayokoding-web-swe-by-example-quality-gate/strictness-examples.md) — normal, strict, and ocd modes.
+- [Workflow Invocation and Safety Features](./ayokoding-web-swe-by-example-quality-gate/workflow-invocation-and-safety-features.md) — how to trigger, loop safeguards.
+- [Workflow Metadata and References](./ayokoding-web-swe-by-example-quality-gate/workflow-metadata-and-references.md) — metrics, related workflows, principles.

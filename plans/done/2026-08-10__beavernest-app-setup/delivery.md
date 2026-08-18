@@ -13,9 +13,9 @@
 > worktrees (`beaver-nest-app-setup`, `beaver-nest-app-setup-backend`,
 > `beaver-nest-app-setup-client-runtime`) across its delivery units. All three were already
 > provisioned (`git worktree add` steps checked `[x]`) before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > and
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 > rules landed — grandfathered as historical record, not rewritten. No new worktree provisioning
 > remains pending in this plan.
 
