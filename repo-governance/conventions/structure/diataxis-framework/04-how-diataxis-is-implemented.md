@@ -49,7 +49,7 @@ This is intentional and follows standard documentation naming conventions. See t
 
 ## File Naming Integration
 
-Category is conveyed by directory location (`docs/tutorials/`, `docs/how-to/`, etc.). Filenames use kebab-case and describe the content directly without prefix codes. See [File Naming Convention](../file-naming.md) for details.
+Category is conveyed by directory location (`docs/tutorials/`, `docs/how-to/`, etc.). Filenames use kebab-case and describe the content directly without prefix codes. See [File Naming Convention](../file-naming.md) for details, and [Ordinal Filename Prefixes](../ordinal-filename-prefixes.md) for the one case where a leading `NN-` ordinal is permitted (a real step in an ordered sequence).
 
 ## Frontmatter Standard
 

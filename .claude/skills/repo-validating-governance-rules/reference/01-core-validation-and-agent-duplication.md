@@ -15,7 +15,10 @@ caught mechanically.
 `plans/done/` (immutable archive), generated mirrors (`.opencode/`, `.cursor/`, `.amazonq/`),
 `generated-reports/`, `local-tmp/`, `worktrees/`.
 
-Validates: file naming, linking, emoji usage, convention compliance, registry-gate consistency
+Validates: file naming (**including ordinal prefixes** — AI-only; no gate decides whether an `NN-`
+prefix marks a real step, per
+[Ordinal Prefixes](../../../../repo-governance/conventions/structure/ordinal-filename-prefixes.md)),
+linking, emoji usage, convention compliance, registry-gate consistency
 (live hook/CI docs delegate command discovery to `gate list`, verified by `gate validate` — flag
 embedded gate inventories or retired live-CI references), and the No-Last-Updated Convention (flag
 `updated:` frontmatter or `**Last Updated**` footers in non-website files — HIGH — per

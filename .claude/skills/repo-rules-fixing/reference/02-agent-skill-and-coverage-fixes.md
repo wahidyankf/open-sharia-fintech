@@ -22,7 +22,10 @@ and no existing Skill covers it:
 1. Confirm the 3+-agent threshold via a recursive Grep across `.claude/agents/` for the pattern's
    distinctive phrasing (`.claude/agents/` is nested into role subfolders — a non-recursive
    `.claude/agents/*.md` glob only matches `README.md` and silently misses every agent).
-2. Design the new Skill: `SKILL.md` plus `reference/NN-*.md` modules as needed, following the
+2. Design the new Skill: `SKILL.md` plus plain-named `reference/*.md` modules as needed (a reference
+   module is not a step, so it carries no `NN-` ordinal — see
+   [Ordinal Filename Prefixes](../../../../repo-governance/conventions/structure/ordinal-filename-prefixes.md);
+   the module README carries reading order), following the
    established shape (frontmatter `name`/`description`/`when_to_use`, Overview, reference
    pointers, Core Principles, Related Agents).
 3. Rewrite each of the 3+ agent files to remove the duplicated content and point at the new Skill

@@ -19,6 +19,11 @@ The skip-list at `generated-reports/.known-false-positives.md` filters out known
 - `date accepted`: ISO 8601 date
 - `approver`: GitHub handle
 
+**Skip-list keys must be prefix-stable**: a `path` key that embeds a leading `NN-` ordinal breaks the
+moment the file is renamed under
+[Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md). Prefer a
+key that survives renaming, and re-verify entries after any sweep.
+
 **Per-category triage priority**:
 
 1. CRITICAL findings first — fix or escalate, never skip

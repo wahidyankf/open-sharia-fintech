@@ -233,7 +233,7 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 
 ### Discovery for the machinery sweep
 
-- [ ] [AI] Enumerate every governance, agent, and skill file stating a filename-naming rule with
+- [x] [AI] Enumerate every governance, agent, and skill file stating a filename-naming rule with
       `grep -rln "kebab-case\|[Ff]ile [Nn]aming" --exclude-dir=node_modules .claude repo-governance docs`
       and record the list in the execution ledger with a `states-the-rule` or `merely-links-it`
       verdict per file — acceptance: at authoring time this returned 251 files; every entry
@@ -241,42 +241,42 @@ _Suggested executor:_ `repo-rules-maker` for the convention text; `agent-maker` 
 
 ### The repo-rules machinery
 
-- [ ] [AI] Edit `.claude/agents/repo/repo-rules-checker.md` to add ordinal-prefix judgement to its
+- [x] [AI] Edit `.claude/agents/repo/repo-rules-checker.md` to add ordinal-prefix judgement to its
       Core Repository Validation step as an **AI-only** category with no deterministic delegate —
       acceptance: the category and its criticality are stated, and
       `rhino governance word-budget validate` keeps the file under 500 words.
-- [ ] [AI] Edit `.claude/agents/repo/repo-rules-fixer.md` to carry the ordinal-prefix fix
+- [x] [AI] Edit `.claude/agents/repo/repo-rules-fixer.md` to carry the ordinal-prefix fix
       disposition — acceptance: the file states the rename-and-relink sequence it may apply and the
       refusal condition for any path inside a generated mirror.
-- [ ] [AI] Edit `.claude/agents/repo/repo-rules-maker.md` so newly authored conventions and shards are
+- [x] [AI] Edit `.claude/agents/repo/repo-rules-maker.md` so newly authored conventions and shards are
       named under the rule — acceptance: the rule is stated or the convention linked as authority.
-- [ ] [AI] Edit `.claude/skills/repo-validating-governance-rules/reference/01-core-validation-and-agent-duplication.md`
+- [x] [AI] Edit `.claude/skills/repo-validating-governance-rules/reference/01-core-validation-and-agent-duplication.md`
       to add the category to the Core Repository Validation list — acceptance: the category and its
       criticality are stated.
-- [ ] [AI] Add an ordinal-prefix fix recipe to `.claude/skills/repo-rules-fixing/` — acceptance: the
+- [x] [AI] Add an ordinal-prefix fix recipe to `.claude/skills/repo-rules-fixing/` — acceptance: the
       recipe states the rename sequence, the `rewrite-paths` step, the mirror-regeneration
       obligation, and the refusal condition.
-- [ ] [AI] Edit `.claude/skills/repo-defining-workflows/SKILL.md` so workflow shard and step files
+- [x] [AI] Edit `.claude/skills/repo-defining-workflows/SKILL.md` so workflow shard and step files
       follow the rule — acceptance: the rule is stated with one worked filename.
-- [ ] [AI] Edit `.claude/skills/docs-managing-file-operations/reference/01-when-to-use-and-naming.md`
+- [x] [AI] Edit `.claude/skills/docs-managing-file-operations/reference/01-when-to-use-and-naming.md`
       so `docs-file-manager` renames under the rule — acceptance: the rule is stated or linked.
-- [ ] [AI] Edit `repo-governance/workflows/repo/repo-rules-quality-gate/15-skip-list-curation-rules.md`
+- [x] [AI] Edit `repo-governance/workflows/repo/repo-rules-quality-gate/15-skip-list-curation-rules.md`
       to state the stable-key format for an ordinal-prefix finding — acceptance: the format is stated.
-- [ ] [AI] Edit `repo-governance/workflows/repo/repo-rules-quality-gate/22-what-changed.md` to record
+- [x] [AI] Edit `repo-governance/workflows/repo/repo-rules-quality-gate/22-what-changed.md` to record
       the new AI-only category — acceptance: an entry naming it exists.
-- [ ] [AI] For every remaining `states-the-rule` file from the discovery step, apply the same
+- [x] [AI] For every remaining `states-the-rule` file from the discovery step, apply the same
       reconciliation — acceptance: every such entry has a recorded disposition of `updated` or
       `no-change-needed` with a one-line reason; none blank.
-- [ ] [AI] Run `npm run generate:bindings` and `npm run validate:sync` — acceptance: both exit 0 and
+- [x] [AI] Run `npm run generate:bindings` and `npm run validate:sync` — acceptance: both exit 0 and
       the regenerated mirrors are committed alongside the `.claude/` edits.
 
 ### Phase 1 Gate
 
-- [ ] [AI] `rhino governance word-budget validate` — exits 0.
-- [ ] [AI] `rhino governance readme-index validate --paths repo-governance/ --paths .claude/` — exits 0.
-- [ ] [AI] `npm run validate:sync` — exits 0.
-- [ ] [AI] `grep -rn 'ordinal-filename-prefixes' repo-governance/conventions/structure/file-naming.md` — at least one match.
-- [ ] [AI] Every discovery entry with a `states-the-rule` verdict has a recorded disposition.
+- [x] [AI] `rhino governance word-budget validate` — exits 0.
+- [x] [AI] `rhino governance readme-index validate --paths repo-governance/ --paths .claude/` — exits 0.
+- [x] [AI] `npm run validate:sync` — exits 0.
+- [x] [AI] `grep -rn 'ordinal-filename-prefixes' repo-governance/conventions/structure/file-naming.md` — at least one match.
+- [x] [AI] Every discovery entry with a `states-the-rule` verdict has a recorded disposition.
 
 > **Pause Safety**: the rule is published, the `file-naming.md` contradiction is resolved, and the
 > maker/checker/fixer triad plus the quality-gate workflow agree with it. No filename outside

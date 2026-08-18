@@ -42,7 +42,9 @@ Before any operation, understand the
 ```
 
 Use plain kebab-case filenames. Category is encoded by the directory the file lives in, not by a
-filename prefix.
+filename prefix. A leading `NN-` ordinal is permitted only on a real step in an ordered sequence
+whose number it already is — see
+[Ordinal Filename Prefixes](../../../../repo-governance/conventions/structure/ordinal-filename-prefixes.md).
 
 **Examples**:
 

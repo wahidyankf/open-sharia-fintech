@@ -91,4 +91,5 @@ fi
 - Allowed characters in basename: `a-z`, `0-9`, `-`
 - No underscores, no uppercase, no spaces, no leading/trailing hyphens
 - Handle special cases: `README.md`, `docs/metadata/`, date-prefixed files (`YYYY-MM-DD-*`)
-- Directory hierarchy encodes category — no prefix required on filenames
+- Directory hierarchy encodes category — no prefix required on filenames; a leading `NN-` ordinal is
+  permitted only per [Ordinal Filename Prefixes](../../../conventions/structure/ordinal-filename-prefixes.md)

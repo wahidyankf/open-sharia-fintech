@@ -18,7 +18,7 @@ created: 2025-12-07
 
 Convention files follow the [File Naming Convention](../../structure/file-naming.md):
 
-**Pattern:** Lowercase kebab-case basename under the appropriate `repo-governance/conventions/` subdirectory. The directory hierarchy encodes the category — no filename prefix is needed.
+**Pattern:** Lowercase kebab-case basename under the appropriate `repo-governance/conventions/` subdirectory. The directory hierarchy encodes the category — no filename prefix is needed. A convention document is not a step, so it never carries a leading `NN-` ordinal; see [Ordinal Filename Prefixes](../../structure/ordinal-filename-prefixes.md).
 
 **Examples:**
 

@@ -38,7 +38,10 @@ Create repository rules and conventions.
 
 ## Workflow
 
-Document standards following convention structure (Purpose, Standards, Examples, Validation). For a
+Document standards following convention structure (Purpose, Standards, Examples, Validation). Name
+new conventions and any shards a split produces per
+[Ordinal Filename Prefixes](../../repo-governance/conventions/structure/ordinal-filename-prefixes.md):
+a shard is not a step, so it takes a plain name and the parent index carries order. For a
 gate-surface rule change, update the registry-managed documentation to use `gate list`, verify the
 registry with `gate validate`, update affected workflow and hook documentation plus their indexes,
 then regenerate harness bindings from the canonical `.claude/` source.

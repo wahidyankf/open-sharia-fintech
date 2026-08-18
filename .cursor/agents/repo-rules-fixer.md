@@ -30,6 +30,9 @@ carry-forward, mode handling, and the fix procedures for every category above.
 - **Python, not sed, for multi-line edits** — sed is line-oriented and silently fails across
   multi-line patterns.
 - **`.claude/`/`.opencode/` edits are pre-authorized** — use `Write`/`Edit` directly.
+- **Ordinal-prefix findings are renames, not text edits** — strip a leading `NN-` with `git mv` and
+  update the parent index, keeping the ordinal only for a real step whose number it already is. See
+  [Ordinal Filename Prefixes](../../repo-governance/conventions/structure/ordinal-filename-prefixes.md).
 
 See reference module 01 in the skill for both patterns in full.
 
