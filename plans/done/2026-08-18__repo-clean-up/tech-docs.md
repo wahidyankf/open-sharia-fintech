@@ -179,19 +179,25 @@ two-pager so the observation is not lost.
 
 ### Cost and Blast Radius — Deliberately Accepted Tradeoff
 
-Widening `md-links` from 1 exclude to 3 excludes was measured only for correctness above; the cost
+Narrowing `md-links` from 3 excludes to 1 exclude was measured only for correctness above; the cost
 and the widened push-blocking radius are recorded here.
 
-**Measured cost** (pinned binary `./apps/rhino-cli/target/gate/rhino-cli`, 3 runs each, `-o json`
-`total_files`/`duration_ms`, independently reproduced twice):
+**Measured cost** (pinned binary `./apps/rhino-cli/target/gate/rhino-cli`, `-o json`
+`total_files`/`duration_ms`, exit code asserted 0 on every sample, median reported per scope;
+independently reproduced across three separate measurement sessions — 11/14 runs, 3/3 runs, and
+13/13 runs respectively — the last of which ran under elevated background system load, load
+average 10.5–13.2 on a 12-core machine, and is reported unfiltered):
 
-| scope               | `total_files` | `duration_ms` (3 runs) |
-| ------------------- | ------------- | ---------------------- |
-| pre-PR (3 excludes) | 4,036         | ~358–408               |
-| post-PR (1 exclude) | 7,435         | ~565–615               |
+| scope               | `total_files` | `duration_ms` (session medians: 363–430 / 617–671) |
+| ------------------- | ------------- | -------------------------------------------------- |
+| pre-PR (3 excludes) | 4,036–4,037   | ~363–430                                           |
+| post-PR (1 exclude) | 7,435–7,436   | ~617–671                                           |
 
-+84% files scanned, roughly +55% wall-clock, paid on every `git push` and every CI run, going
-forward.
++84% files scanned. The original "+55%" figure and its ~358–408/~565–615ms bands understated the
+regression: two of the three independent sessions measured **+63.7%** (11 pre / 14 post runs,
+median 410ms → 671ms) and **+70.5%** (3/3 runs, median 363ms → 619ms), and post-PR medians in all
+three sessions meet or exceed the originally recorded 615ms ceiling. Corrected: **roughly +55% to
++71%** wall-clock, not a fixed +55%, paid on every `git push` and every CI run, going forward.
 
 **Blast radius**: `md-links` runs `scope: all-file-type` on `pre-push` (see
 `docs/reference/sdlc-gate-standard.md:126`). Post-PR, one broken relative link anywhere in either
@@ -201,6 +207,15 @@ scope "because adding, deleting, or renaming any markdown file can break links i
 files" — and it is a **deliberately accepted tradeoff** of this plan, not an oversight. The
 `pre-push` surface stays `all-file-type` (not narrowed to `affected-file-type`): narrowing it
 would silently reintroduce exactly the blind spot that rationale exists to prevent.
+
+**If this blocks your push**: the break is very likely pre-existing and unrelated to your change —
+this plan measured exactly one such link at PR time (above). Per
+[Proactive Preexisting Error Resolution](../../../repo-governance/development/practice/proactive-preexisting-error-resolution.md),
+fix the broken link at its root cause rather than working around the gate; see
+[Scope Judgment](../../../repo-governance/development/practice/proactive-preexisting-error-resolution/04-scope-judgment.md)
+for sizing — a single broken relative link is a small fix (fix inline, as part of your current
+work) unless it turns out to be symptomatic of a wider, unrelated problem, in which case it earns
+its own commit.
 
 ## File-Impact Analysis
 

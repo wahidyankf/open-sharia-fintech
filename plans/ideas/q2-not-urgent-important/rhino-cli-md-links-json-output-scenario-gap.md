@@ -24,7 +24,7 @@ repo-wide scan, and anchor cases — none of them exercises `--output json` / `-
 
 The behaviour is not missing from the product, only from the BDD spec: JSON output is implemented
 at `apps/rhino-cli/src/commands/md_validate_links.rs:47` and unit-tested at
-`apps/rhino-cli/tests/.../links.rs:966-972,1028-1039`. So there is no live defect — a
+`apps/rhino-cli/src/application/docs/links.rs:966-972,1028-1039`. So there is no live defect — a
 release-blocking gap in JSON-output correctness would already be caught by the unit tests — but the
 BDD layer's promise of full behavioural coverage for this command is not actually kept.
 
