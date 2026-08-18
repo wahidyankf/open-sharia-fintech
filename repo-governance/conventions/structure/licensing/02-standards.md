@@ -32,20 +32,17 @@ all use the same MIT text.
 | Directory                    | License | Notes |
 | ---------------------------- | ------- | ----- |
 | `LICENSE` (root)             | MIT     |       |
-| `apps/ayokoding-cli/`        | MIT     |       |
 | `apps/ayokoding-www/`        | MIT     |       |
 | `apps/crane-cli/`            | MIT     |       |
 | `apps/organiclever-app-web/` | MIT     |       |
 | `apps/organiclever-be/`      | MIT     |       |
 | `apps/organiclever-www/`     | MIT     |       |
-| `apps/ose-cli/`              | MIT     |       |
 | `apps/ose-be/`               | MIT     |       |
 | `apps/ose-app-web/`          | MIT     |       |
 | `apps/ose-www/`              | MIT     |       |
 | `apps/wahidyankf-www/`       | MIT     |       |
 | `specs/`                     | MIT     |       |
 | `libs/fsharp-crane-core/`    | MIT     |       |
-| `libs/rust-commons/`         | MIT     |       |
 | `libs/web-ui/`               | MIT     |       |
 | `libs/web-ui-token/`         | MIT     |       |
 

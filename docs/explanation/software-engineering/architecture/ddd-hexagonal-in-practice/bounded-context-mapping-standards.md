@@ -51,7 +51,7 @@ structure.
 | Open Host Service (OHS)    | Upstream publishes a stable port contract consumed by multiple downstreams | Port interface in upstream `application/port/out/`; consumed via REST or messaging      |
 | Published Language         | Upstream emits domain events as a stable schema; downstreams subscribe     | Event envelope type in `libs/`; event consumer adapter in downstream                    |
 | Partnership                | Two contexts collaborate bidirectionally; no upstream/downstream           | Each context defines its own ports; shared domain events carry the coupling             |
-| Shared Kernel              | Two contexts share a small, co-owned model fragment                        | Shared type in `libs/rust-commons` or a dedicated shared library                        |
+| Shared Kernel              | Two contexts share a small, co-owned model fragment                        | Shared type in `libs/ts-env-loader` or a dedicated shared library                       |
 
 **PROHIBITED**: An adapter that translates between context models without a named port interface. The translation contract must be visible as a port — otherwise swapping the integration technology requires understanding the entire adapter's internals.
 

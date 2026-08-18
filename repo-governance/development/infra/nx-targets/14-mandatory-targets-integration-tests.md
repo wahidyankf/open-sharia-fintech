@@ -24,7 +24,7 @@ Two integration test patterns exist depending on project type:
 
 **API backends** expose `test:integration` which runs `docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build`. This starts a fresh PostgreSQL container, runs migrations, and executes all shared Gherkin scenarios by calling application service/repository functions directly — no HTTP layer. Each backend has a `docker-compose.integration.yml` (postgres + test runner services) and a `Dockerfile.integration` (language runtime + test execution). Coverage is NOT measured at the integration level — coverage comes from `test:unit` only.
 
-**Rust CLIs** (`ayokoding-cli`, `ose-cli`, `rhino-cli`) consume Gherkin specs at both test levels. Each command has two test files:
+**Rust CLIs** (`rhino-cli`) consume Gherkin specs at both test levels. Each command has two test files:
 
 - `{domain}_{action}_test.rs` (unit, inline `#[cfg(test)]` or separate file) — cucumber-rs unit step definitions; runs in `test:quick` via `cargo test`; mocks all I/O via injected function types; coverage measured here
 - `tests/{domain}_{action}_integration_test.rs` — cucumber-rs integration step definitions; drives the command via process invocation against controlled `/tmp` filesystem fixtures; runs in `test:integration`
@@ -33,6 +33,7 @@ Both levels consume the same feature file `@tag`. See
 [BDD Spec-to-Test Mapping Convention](../bdd-spec-test-mapping.md) for the mandatory 1:1 mapping
 between commands and feature file `@tags`.
 
-**Rust libs** (`rust-commons`) expose `test:unit` using the standard `cargo test` harness with
+**Rust libs**, when one exists, expose `test:unit` using the standard `cargo test` harness with
 `cargo-llvm-cov` for coverage. Because libs have no CLI commands, unit tests call the public API
-directly. Feature files live in `specs/libs/{lib-name}/`.
+directly. Feature files live in `specs/libs/{lib-name}/`. There is no Rust lib in the workspace
+today; `rhino-cli` is the only Rust project.

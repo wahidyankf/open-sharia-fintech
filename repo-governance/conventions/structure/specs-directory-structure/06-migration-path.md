@@ -48,22 +48,19 @@ inputs, every cross-link, governance) to relocate.
 
 The atomic commit is mandatory — splitting the move and the path updates causes test failures between commits.
 
-**CLI-flat exception retired (2026-05-23)**: crane, rhino, ayokoding-cli, and ose-cli
-all regrouped under `behavior/<product>-cli/gherkin/<domain>/` during the `specs-tree-uniform`
+**CLI-flat exception retired (2026-05-23)**: every CLI surface then in the workspace
+regrouped under `behavior/<product>-cli/gherkin/<domain>/` during the `specs-tree-uniform`
 pass. `rhino-cli specs validate-tree` now enforces domain subdirs for every surface.
 
-**CLI domain-subdir moves (2026-05-23)**. As part of the `specs-tree-uniform` plan, four CLI
-apps completed migration to the universal domain-subdir layout, then renamed to
-`<product>-<surface>` during the `standardize-app-spec-trees` plan (2026-06-11):
+**CLI domain-subdir moves (2026-05-23)**. As part of the `specs-tree-uniform` plan, the CLI
+apps then in the workspace completed migration to the universal domain-subdir layout, then renamed
+to `<product>-<surface>` during the `standardize-app-spec-trees` plan (2026-06-11):
 
 - `crane` — regrouped into domain subdirs (`pdf/`, `content/`, `media/`, `reporting/`,
   `system/`); bare `cli/` renamed to `crane-cli/`.
 - `rhino` — regrouped into domain subdirs (`agents/`, `system/`, `env/`, `git/`, `ddd/`,
   `docs/`, `spec-coverage/`, `repo-governance/`, `workflows/`); bare `cli/` renamed to
   `rhino-cli/`.
-- `ayokoding-cli` — features at `ayokoding-cli/gherkin/links/`; bare `cli/` renamed to
-  `ayokoding-cli/`.
-- `ose-cli` — bare `cli/` renamed to `ose-cli/` under `specs/apps/ose/behavior/`.
 
 The bare `build-tools` surface was renamed to `ayokoding-build-tools` during the
 `standardize-app-spec-trees` plan to follow `<product>-<surface>` naming; it remains an active

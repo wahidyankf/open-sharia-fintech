@@ -88,9 +88,7 @@ Flat structure - all apps at the same level, no subdirectories.
 - `ayokoding-www` - AyoKoding educational platform (Next.js 16 fullstack content platform, port 3101)
 - `ayokoding-www-be-e2e` - Playwright BE E2E tests for ayokoding-www tRPC API
 - `ayokoding-www-fe-e2e` - Playwright FE E2E tests for ayokoding-www UI
-- `ayokoding-cli` - AyoKoding CLI tool (Rust application)
 - `rhino-cli` - Repository management CLI (Rust application). Ported from Go 2026-05-23 (predecessor Go source recoverable from git history).
-- `ose-cli` - OSE Platform site maintenance CLI (Rust application)
 - `crane-cli` - PDF-to-Markdown pipeline CLI (F# application)
 - `organiclever-www` - OrganicLever marketing website (Next.js 16, port 3200)
 - `organiclever-www-fe-e2e` - Playwright FE E2E tests for organiclever-www
@@ -121,7 +119,7 @@ apps/ose-www/
 ### App Structure (Rust CLI Application)
 
 ```
-apps/ayokoding-cli/
+apps/rhino-cli/
 ├── src/                       # Source code
 │   ├── commands/              # CLI command handlers
 │   ├── domain/                # Domain logic
@@ -193,7 +191,7 @@ Contains reusable library packages.
 **Language Prefixes**:
 
 - `ts-` - TypeScript (future)
-- `rust-` - Rust (e.g., `rust-commons`)
+- `rust-` - Rust (future)
 - `fsharp-` - F# (e.g., `fsharp-crane-core`)
 - `java-` - Java (future)
 - `kt-` - Kotlin (future)
@@ -201,7 +199,6 @@ Contains reusable library packages.
 
 **Current Libraries**:
 
-- `rust-commons` - Shared Rust utilities (link-checking, HTTP)
 - `fsharp-crane-core` - Shared F# PDF-to-Markdown core (PdfPig + Tesseract)
 - `web-ui` - Shared React component library (shadcn/ui patterns, Radix UI primitives, Tailwind CSS)
 
@@ -244,7 +241,8 @@ libs/ts-utils/
 
 ### Current Scope
 
-Rust (`rust-commons`), F# (`fsharp-crane-core`), and TypeScript (`web-ui`) libraries.
+F# (`fsharp-crane-core`, `fsharp-env-loader`) and TypeScript (`web-ui`, `web-ui-token`,
+`ts-env-loader`) libraries. No Rust library exists today.
 
 ## Nx Monorepo Projects (`apps/` and `libs/`)
 
@@ -445,12 +443,12 @@ All projects use a standard four-dimension tag scheme:
 **Rust Apps** use `Cargo.toml` for dependency management:
 
 ```toml
-# apps/ayokoding-cli/Cargo.toml
+# apps/rhino-cli/Cargo.toml
 [package]
-name = "ayokoding-cli"
+name = "rhino-cli"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.95.0"
 ```
 
 **TypeScript/Next.js Apps** use `package.json`:

@@ -17,11 +17,13 @@ when_to_use: "Use when configuring or debugging Rust CLI lint gates."
 
 # Rust CLI Linting
 
-Rust CLI projects (`apps/ayokoding-cli`, `apps/ose-cli`, `apps/rhino-cli`) use [Clippy](https://github.com/rust-lang/rust-clippy) for static analysis.
+`apps/rhino-cli` is the repository's only Rust project. It uses
+[Clippy](https://github.com/rust-lang/rust-clippy) for static analysis.
 
-**Configuration**: Each project declares lints in its `Cargo.toml` under `[lints.clippy]`. The standard pedantic profile is used with selective allows.
+**Configuration**: the project declares its lints in `Cargo.toml` under `[lints.clippy]`, using the
+pedantic profile with selective allows.
 
-**Standard lint set** (from each project's `Cargo.toml`):
+**Standard lint set** (from `apps/rhino-cli/Cargo.toml`):
 
 - `pedantic` at `warn` priority -1 (baseline)
 - `unwrap_used = "deny"` — no `.unwrap()` in production code
@@ -34,10 +36,12 @@ Rust CLI projects (`apps/ayokoding-cli`, `apps/ose-cli`, `apps/rhino-cli`) use [
 
 ```bash
 # Run via Nx (standard)
-nx lint ayokoding-cli
-nx lint ose-cli
-nx lint organiclever-be
+npm exec nx -- lint rhino-cli
 
 # Run directly
-cargo clippy --manifest-path apps/ayokoding-cli/Cargo.toml --all-targets -- -D warnings
+cargo clippy --manifest-path apps/rhino-cli/Cargo.toml --all-targets -- -D warnings
 ```
+
+Other backends are linted by their own language toolchains, not Clippy — `organiclever-be`,
+`ose-be`, and `beavernest-be` are F#, and use the F# analyzers described in this directory's
+formatter and hook documents.

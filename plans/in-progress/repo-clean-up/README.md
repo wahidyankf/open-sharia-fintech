@@ -55,7 +55,7 @@ not exist. All 47 other files referencing that course use `../sql-essentials/lea
 - `apps/rhino-cli/**`. Its four mentions of deleted paths are all `#[cfg(test)]` tempdir fixtures or
   `//!` comments; editing them opens a four-repo parity obligation for no functional gain.
 - The filed `markdownlint` zero-file gate defect, which has its own two-pager.
-- Content rewriting beyond the single broken link. The 22 other courses with no `overview.md` break
+- Content rewriting beyond the single broken link. The 23 courses with no root `overview.md` break
   no link today; filed as a `plans/ideas/` two-pager.
 
 ## Resolved Decisions

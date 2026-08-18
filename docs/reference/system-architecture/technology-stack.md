@@ -42,7 +42,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **Language**: Rust (edition 2024, rust-version 1.88)
 - **Build**: Cargo via Nx
 - **Distribution**: Local binaries
-- **Applications**: rhino-cli (Repository Hygiene & INtegration Orchestrator), ayokoding-cli, ose-cli
+- **Applications**: rhino-cli (Repository Hygiene & INtegration Orchestrator)
 
 **F# CLI Tools**:
 

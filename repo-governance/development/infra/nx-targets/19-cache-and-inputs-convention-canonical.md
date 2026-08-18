@@ -48,22 +48,21 @@ Example for `rhino-cli` `test:unit` inputs:
 ]
 ```
 
-**Rust CLI apps** (`ayokoding-cli`, `ose-cli`) also consume Gherkin specs in `test:unit`. Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
+**Rust CLI apps** also consume Gherkin specs in `test:unit`. Their `test:unit` and `test:quick` inputs must include the CLI's own spec files:
 
-| CLI App         | Gherkin specs input                                 |
-| --------------- | --------------------------------------------------- |
-| `ayokoding-cli` | `{workspaceRoot}/specs/apps/ayokoding/**/*.feature` |
-| `ose-cli`       | `{workspaceRoot}/specs/apps/ose/**/*.feature`       |
+| CLI App     | Gherkin specs input                             |
+| ----------- | ----------------------------------------------- |
+| `rhino-cli` | `{workspaceRoot}/specs/apps/rhino/**/*.feature` |
 
-Example for `ayokoding-cli` `test:unit` inputs:
+Example for `rhino-cli` `test:unit` inputs:
 
 ```json
 "inputs": [
-  "{projectRoot}/cmd/**/*.go",
-  "{projectRoot}/internal/**/*.go",
-  "{projectRoot}/go.mod",
-  "{projectRoot}/go.sum",
-  "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"
+  "{projectRoot}/src/**/*.rs",
+  "{projectRoot}/tests/**/*.rs",
+  "{projectRoot}/Cargo.toml",
+  "{projectRoot}/Cargo.lock",
+  "{workspaceRoot}/specs/apps/rhino/**/*.feature"
 ]
 ```
 

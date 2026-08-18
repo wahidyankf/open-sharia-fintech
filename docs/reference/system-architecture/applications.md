@@ -67,16 +67,6 @@ The platform consists of the following applications across its technology stacks
 
 ### CLI Tools
 
-#### ayokoding-cli
-
-- **Purpose**: Link validation for ayokoding-www content
-- **Language**: Rust
-- **Build Command**: `nx build ayokoding-cli`
-- **Location**: `apps/ayokoding-cli/`
-- **Features**:
-  - Link validation for ayokoding-www content
-- **Usage**: Runs as part of ayokoding-www quality checks
-
 #### rhino-cli
 
 - **Purpose**: Repository management and automation
@@ -84,17 +74,6 @@ The platform consists of the following applications across its technology stacks
 - **Build Command**: `nx build rhino-cli`
 - **Location**: `apps/rhino-cli/`
 - **Status**: Active development
-
-#### ose-cli
-
-- **Purpose**: OSE Platform site link validation
-- **Language**: Rust
-- **Build Command**: `nx build ose-cli`
-- **Location**: `apps/ose-cli/`
-- **Features**:
-  - Validates all internal links in ose-www content
-  - Text, JSON, and markdown output formats
-- **Usage**: Runs as first step of `ose-www`'s `test:quick` target
 
 ### OrganicLever Applications
 
@@ -248,45 +227,15 @@ The platform consists of the following applications across its technology stacks
 
 Shows the high-level technical building blocks (containers) of the system. In C4 terminology, a "container" is a deployable/executable unit (web app, database, file system, etc.), not a Docker container.
 
-**Content and tooling applications:**
+**Content sites and Nx orchestration:**
 
-```mermaid
-graph LR
-    subgraph "Marketing & Education"
-        OSE[ose-www<br/>Next.js App]
-        AYO[ayokoding-www<br/>Next.js App]
-        WKF[wahidyankf-www<br/>Next.js App]
-    end
-
-    subgraph "CLI Tools"
-        AYOCLI[ayokoding-cli<br/>Rust CLI]
-        OSECLI[ose-cli<br/>Rust CLI]
-    end
-
-    subgraph "Shared Infrastructure"
-        LIBS[Shared Libraries<br/>rust-commons]
-    end
-
-    AYOCLI -->|Validates links| AYO
-    OSECLI -->|Validates links| OSE
-    OSE -.->|May import| LIBS
-    AYO -.->|May import| LIBS
-
-    style OSE fill:#0077b6,stroke:#03045e,color:#ffffff
-    style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
-    style WKF fill:#0077b6,stroke:#03045e,color:#ffffff
-    style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style OSECLI fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style LIBS fill:#457b9d,stroke:#1d3557,color:#ffffff
-```
-
-**Nx workspace orchestration:**
+Link validation for every content tree is repository-wide and lives in `rhino-cli`, so no
+content site depends on a per-domain CLI.
 
 ```mermaid
 graph LR
     subgraph "CLI Tools"
         RHINO[rhino-cli<br/>Rust CLI]
-        AYOCLI[ayokoding-cli<br/>Rust CLI]
     end
 
     subgraph "Marketing & Education"
@@ -303,13 +252,11 @@ graph LR
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
     NX -.->|Manages| WKF
-    NX -.->|Manages| AYOCLI
     NX -.->|Manages| RHINO
 
     style OSE fill:#0077b6,stroke:#03045e,color:#ffffff
     style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
     style WKF fill:#0077b6,stroke:#03045e,color:#ffffff
-    style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
 ```
@@ -352,13 +299,12 @@ graph LR
 Marketing & Education Sites:
 
 - ose-www: Next.js 16 content platform
-- ayokoding-www: Next.js fullstack content platform (with CLI link validation)
+- ayokoding-www: Next.js fullstack content platform
 - wahidyankf-www: Next.js 16 personal portfolio
 
 CLI Tools:
 
-- ayokoding-cli: Validates links in ayokoding-www content
-- rhino-cli: Repository management automation
+- rhino-cli: Repository management automation, including repository-wide link validation
 
 **Build-Time Dependencies:**
 
@@ -366,7 +312,8 @@ CLI Tools:
 - CLI tools executed during build processes
 - Shared libraries may be imported at build time via `@open-sharia-enterprise/[lib-name]`
 
-**Link Validation Pipeline (ayokoding-www):**
+**Link Validation Pipeline:**
 
-ayokoding-cli validates internal links in ayokoding-www content as part of the quality gate.
-Content is co-located at `apps/ayokoding-www/content/` and served by the Next.js application.
+`rhino-cli md links validate` checks internal Markdown links across the whole repository,
+including every site's content tree. Content is co-located at `apps/<site>/content/` and
+served by the Next.js application.
