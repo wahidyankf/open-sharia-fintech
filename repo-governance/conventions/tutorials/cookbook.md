@@ -20,18 +20,18 @@ This convention extends the [Tutorials Convention](../tutorials/general.md) for 
 
 ## Contents
 
-1. [Purpose](./cookbook/01-purpose.md) — Why the Cookbook tutorial type exists and who it targets.
-2. [Structure Integration with General Tutorial Standards](./cookbook/02-structure-integration.md) — How Cookbook adapts the general tutorial structure.
-3. [Core Characteristics](./cookbook/03-core-characteristics.md) — The problem-focused approach, coverage domains, recipe independence, and cross-level applicability.
-4. [Recipe Structure Standards: Title, Problem Statement, and Solution](./cookbook/04-recipe-structure-title-problem-solution.md) — The first three required parts of a recipe.
-5. [Recipe Structure Standards: How It Works, Common Pitfalls, and Related Recipes](./cookbook/05-recipe-structure-how-it-works-pitfalls-related.md) — The remaining required and optional recipe parts.
-6. [Recipe Organization and Naming](./cookbook/06-recipe-organization-and-naming.md) — Directory structure, file naming pattern, and category organization.
-7. [Quality Standards](./cookbook/07-quality-standards.md) — Recipe completeness checklist, code quality standards, and annotation density.
-8. [Cookbook vs Other Tutorial Types](./cookbook/08-cookbook-vs-other-tutorial-types.md) — How Cookbook compares to By-Example, How-To Guides, and By-Concept.
-9. [Validation and Quality Metrics](./cookbook/09-validation-and-quality-metrics.md) — Recipe-count coverage metrics and automated/manual quality checks.
-10. [Principles Implemented/Respected](./cookbook/10-principles-implemented-respected.md) — The repository principles this convention implements.
-11. [Scope](./cookbook/11-scope.md) — What this convention covers, does not cover, and where it applies.
-12. [Related Documentation](./cookbook/12-related-documentation.md) — Links to Naming, Tutorials, Programming Language, and By-Example/By-Concept conventions.
+1. [Purpose](./cookbook/purpose.md) — Why the Cookbook tutorial type exists and who it targets.
+2. [Structure Integration with General Tutorial Standards](./cookbook/structure-integration.md) — How Cookbook adapts the general tutorial structure.
+3. [Core Characteristics](./cookbook/core-characteristics.md) — The problem-focused approach, coverage domains, recipe independence, and cross-level applicability.
+4. [Recipe Structure Standards: Title, Problem Statement, and Solution](./cookbook/recipe-structure-title-problem-solution.md) — The first three required parts of a recipe.
+5. [Recipe Structure Standards: How It Works, Common Pitfalls, and Related Recipes](./cookbook/recipe-structure-how-it-works-pitfalls-related.md) — The remaining required and optional recipe parts.
+6. [Recipe Organization and Naming](./cookbook/recipe-organization-and-naming.md) — Directory structure, file naming pattern, and category organization.
+7. [Quality Standards](./cookbook/quality-standards.md) — Recipe completeness checklist, code quality standards, and annotation density.
+8. [Cookbook vs Other Tutorial Types](./cookbook/cookbook-vs-other-tutorial-types.md) — How Cookbook compares to By-Example, How-To Guides, and By-Concept.
+9. [Validation and Quality Metrics](./cookbook/validation-and-quality-metrics.md) — Recipe-count coverage metrics and automated/manual quality checks.
+10. [Principles Implemented/Respected](./cookbook/principles-implemented-respected.md) — The repository principles this convention implements.
+11. [Scope](./cookbook/scope.md) — What this convention covers, does not cover, and where it applies.
+12. [Related Documentation](./cookbook/related-documentation.md) — Links to Naming, Tutorials, Programming Language, and By-Example/By-Concept conventions.
 
 ## Related Documentation
 

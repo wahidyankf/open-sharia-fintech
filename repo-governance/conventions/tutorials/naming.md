@@ -18,21 +18,21 @@ This document defines the standard tutorial types and naming conventions used ac
 
 ## Contents
 
-1. [Principles Implemented/Respected](./naming/01-principles-implemented-respected.md) — The content principles this convention implements.
-2. [Scope](./naming/02-scope.md) — What this convention covers and does not cover.
-3. [Purpose](./naming/03-purpose.md) — Why tutorial naming is standardized.
-4. [Tutorial Types Overview](./naming/04-tutorial-types-overview.md) — The Full Set Tutorial Package architecture and its five components.
-5. [Initial Setup](./naming/05-initial-setup.md) — The 0-5%-coverage getting-started tutorial type.
-6. [Quick Start](./naming/06-quick-start.md) — The 5-30%-coverage independent-exploration tutorial type.
-7. [Beginner](./naming/07-beginner.md) — The 0-60%-coverage comprehensive-foundation tutorial type.
-8. [Intermediate](./naming/08-intermediate.md) — The 60-85%-coverage production-readiness tutorial type.
-9. [Advanced](./naming/09-advanced.md) — The 85-95%-coverage expert-mastery tutorial type.
-10. [Cookbook](./naming/10-cookbook.md) — The practical, problem-focused recipe tutorial type.
-11. [By Example: Overview and Structure](./naming/11-by-example-overview.md) — Coverage, prerequisites, and structure of the By Example tutorial type.
-12. [By Example: Scope and Relationships](./naming/12-by-example-scope-and-relationships.md) — What By Example excludes and how it relates to other types.
-13. [Choosing the Right Tutorial Type](./naming/13-choosing-the-right-tutorial-type.md) — Decision tree and quick-reference table.
-14. [Naming Examples](./naming/14-naming-examples.md) — Worked title examples across languages, frameworks, and domain topics.
-15. [PASS: Best Practices](./naming/15-best-practices.md) — DO and DON'T checklists.
+1. [Principles Implemented/Respected](./naming/principles-implemented-respected.md) — The content principles this convention implements.
+2. [Scope](./naming/scope.md) — What this convention covers and does not cover.
+3. [Purpose](./naming/purpose.md) — Why tutorial naming is standardized.
+4. [Tutorial Types Overview](./naming/tutorial-types-overview.md) — The Full Set Tutorial Package architecture and its five components.
+5. [Initial Setup](./naming/initial-setup.md) — The 0-5%-coverage getting-started tutorial type.
+6. [Quick Start](./naming/quick-start.md) — The 5-30%-coverage independent-exploration tutorial type.
+7. [Beginner](./naming/beginner.md) — The 0-60%-coverage comprehensive-foundation tutorial type.
+8. [Intermediate](./naming/intermediate.md) — The 60-85%-coverage production-readiness tutorial type.
+9. [Advanced](./naming/advanced.md) — The 85-95%-coverage expert-mastery tutorial type.
+10. [Cookbook](./naming/cookbook.md) — The practical, problem-focused recipe tutorial type.
+11. [By Example: Overview and Structure](./naming/by-example-overview.md) — Coverage, prerequisites, and structure of the By Example tutorial type.
+12. [By Example: Scope and Relationships](./naming/by-example-scope-and-relationships.md) — What By Example excludes and how it relates to other types.
+13. [Choosing the Right Tutorial Type](./naming/choosing-the-right-tutorial-type.md) — Decision tree and quick-reference table.
+14. [Naming Examples](./naming/naming-examples.md) — Worked title examples across languages, frameworks, and domain topics.
+15. [PASS: Best Practices](./naming/best-practices.md) — DO and DON'T checklists.
 
 ## Related Documentation
 

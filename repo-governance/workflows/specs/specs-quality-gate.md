@@ -64,9 +64,9 @@ fixes iteratively until all issues are resolved.
 
 ## Contents
 
-- [Execution Mode and Scope](./specs-quality-gate/01-execution-mode-and-scope.md) — agent delegation, how to invoke, and what this workflow does/doesn't validate.
-- [Validation Dimensions](./specs-quality-gate/02-validation-dimensions.md) — the nine categories and deterministic rhino-cli offload.
-- [Steps — Initial Validation and Fixes](./specs-quality-gate/03-steps-initial-validation-and-fixes.md) — steps 1-3 of the check-fix loop.
-- [Steps — Re-validate Through Termination](./specs-quality-gate/04-steps-revalidate-through-termination.md) — steps 4-6 and termination criteria.
-- [Example and Iteration Usage](./specs-quality-gate/05-example-and-iteration-usage.md) — worked usage examples and a traced iteration.
-- [Safety, Related Workflows, and Conventions](./specs-quality-gate/06-safety-related-and-conventions.md) — safeguards, related workflows, notes, principles, conventions, and agents.
+- [Execution Mode and Scope](./specs-quality-gate/execution-mode-and-scope.md) — agent delegation, how to invoke, and what this workflow does/doesn't validate.
+- [Validation Dimensions](./specs-quality-gate/validation-dimensions.md) — the nine categories and deterministic rhino-cli offload.
+- [Steps — Initial Validation and Fixes](./specs-quality-gate/steps-initial-validation-and-fixes.md) — steps 1-3 of the check-fix loop.
+- [Steps — Re-validate Through Termination](./specs-quality-gate/steps-revalidate-through-termination.md) — steps 4-6 and termination criteria.
+- [Example and Iteration Usage](./specs-quality-gate/example-and-iteration-usage.md) — worked usage examples and a traced iteration.
+- [Safety, Related Workflows, and Conventions](./specs-quality-gate/safety-related-and-conventions.md) — safeguards, related workflows, notes, principles, conventions, and agents.

@@ -6,4 +6,4 @@ when_to_use: "Read this index to find the right File Naming Convention child doc
 
 # File Naming Convention
 
-- [App Naming Types](./01-app-naming-types.md) — The [domain]-[type] naming convention and type-suffix vocabulary used for apps under apps/. Use when naming a new app directory under apps/ and choosing its [type] suffix.
+- [App Naming Types](./app-naming-types.md) — The [domain]-[type] naming convention and type-suffix vocabulary used for apps under apps/. Use when naming a new app directory under apps/ and choosing its [type] suffix.

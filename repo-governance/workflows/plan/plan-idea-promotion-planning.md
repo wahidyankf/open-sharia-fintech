@@ -63,9 +63,9 @@ deferred deep prior-art study, hands it to `plan-planning`, and retires the sour
 
 ## Contents
 
-- [Purpose, Execution Mode, and When to Use](./plan-idea-promotion-planning/01-purpose-execution-mode-and-when-to-use.md) — what it does, who runs it.
-- [Phase 0 and Phase 1](./plan-idea-promotion-planning/02-phase-0-pre-flight-and-phase-1-ripeness-gate.md) — pre-flight, then the ripeness gate.
-- [Phase 2 and Phase 3](./plan-idea-promotion-planning/03-phase-2-prior-art-and-phase-3-promotion-checkpoint.md) — prior-art study, then the checkpoint.
-- [Phases 4-6](./plan-idea-promotion-planning/04-phases-4-6-establishment-retirement-and-hand-back.md) — plan authoring, retirement, hand-back.
-- [Gherkin and Related Documents](./plan-idea-promotion-planning/05-gherkin-success-criteria-and-related-documents.md) — acceptance scenarios, cross-references.
-- [Principles and Conventions](./plan-idea-promotion-planning/06-principles-and-conventions.md) — governance this workflow implements.
+- [Purpose, Execution Mode, and When to Use](./plan-idea-promotion-planning/purpose-execution-mode-and-when-to-use.md) — what it does, who runs it.
+- [Phase 0 and Phase 1](./plan-idea-promotion-planning/phase-0-pre-flight-and-phase-1-ripeness-gate.md) — pre-flight, then the ripeness gate.
+- [Phase 2 and Phase 3](./plan-idea-promotion-planning/phase-2-prior-art-and-phase-3-promotion-checkpoint.md) — prior-art study, then the checkpoint.
+- [Phases 4-6](./plan-idea-promotion-planning/phases-4-6-establishment-retirement-and-hand-back.md) — plan authoring, retirement, hand-back.
+- [Gherkin and Related Documents](./plan-idea-promotion-planning/gherkin-success-criteria-and-related-documents.md) — acceptance scenarios, cross-references.
+- [Principles and Conventions](./plan-idea-promotion-planning/principles-and-conventions.md) — governance this workflow implements.

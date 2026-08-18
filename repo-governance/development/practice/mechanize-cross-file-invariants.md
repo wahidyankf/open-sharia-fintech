@@ -36,7 +36,7 @@ This practice respects the following core principles:
 
 ## Contents
 
-- [The Rule](./mechanize-cross-file-invariants/01-the-rule.md) — the four-step generate-and-validate procedure.
-- [Prior Art In This Repository](./mechanize-cross-file-invariants/02-prior-art-in-this-repository.md) — four cross-cutting invariants this pattern already governs.
-- [Examples](./mechanize-cross-file-invariants/03-examples.md) — a PASS and a FAIL worked example.
-- [Scope and Related Documentation](./mechanize-cross-file-invariants/04-scope-and-related-documentation.md) — where this practice applies, and links to related conventions.
+- [The Rule](./mechanize-cross-file-invariants/the-rule.md) — the four-step generate-and-validate procedure.
+- [Prior Art In This Repository](./mechanize-cross-file-invariants/prior-art-in-this-repository.md) — four cross-cutting invariants this pattern already governs.
+- [Examples](./mechanize-cross-file-invariants/examples.md) — a PASS and a FAIL worked example.
+- [Scope and Related Documentation](./mechanize-cross-file-invariants/scope-and-related-documentation.md) — where this practice applies, and links to related conventions.

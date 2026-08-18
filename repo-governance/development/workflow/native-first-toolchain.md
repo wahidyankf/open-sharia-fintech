@@ -19,12 +19,12 @@ This document records the architectural decision to use native toolchain managem
 
 ## Contents
 
-- [Principles, Conventions, Context, and Decision](./native-first-toolchain/01-principles-conventions-context-and-decision.md) — Why native management, and the decision itself.
-- [Rationale — Package Managers Through Docker Performance](./native-first-toolchain/02-rationale-package-managers-through-docker-performance.md) — Idempotency, source of truth, single-machine scope, and Docker's macOS cost.
-- [Rationale — Worktrees and the Doctor Pattern](./native-first-toolchain/03-rationale-worktrees-and-the-doctor-pattern.md) — Worktree incompatibility with containers, the doctor check-diff-apply mapping, and future-decision guidance.
-- [Platform Support and Git Worktree Compatibility](./native-first-toolchain/04-platform-support-and-git-worktree-compatibility.md) — macOS/Ubuntu support and worktree-safe path resolution.
-- [Implementation Notes](./native-first-toolchain/05-implementation-notes.md) — Shell-restart caveat, `--dry-run` mode, and the idempotency contract.
-- [When to Revisit This Decision](./native-first-toolchain/06-when-to-revisit-this-decision.md) — The conditions that would change this decision.
+- [Principles, Conventions, Context, and Decision](./native-first-toolchain/principles-conventions-context-and-decision.md) — Why native management, and the decision itself.
+- [Rationale — Package Managers Through Docker Performance](./native-first-toolchain/rationale-package-managers-through-docker-performance.md) — Idempotency, source of truth, single-machine scope, and Docker's macOS cost.
+- [Rationale — Worktrees and the Doctor Pattern](./native-first-toolchain/rationale-worktrees-and-the-doctor-pattern.md) — Worktree incompatibility with containers, the doctor check-diff-apply mapping, and future-decision guidance.
+- [Platform Support and Git Worktree Compatibility](./native-first-toolchain/platform-support-and-git-worktree-compatibility.md) — macOS/Ubuntu support and worktree-safe path resolution.
+- [Implementation Notes](./native-first-toolchain/implementation-notes.md) — Shell-restart caveat, `--dry-run` mode, and the idempotency contract.
+- [When to Revisit This Decision](./native-first-toolchain/when-to-revisit-this-decision.md) — The conditions that would change this decision.
 
 ## Related Documentation
 

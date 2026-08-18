@@ -1,0 +1,36 @@
+---
+title: "Scope"
+description: "Which agents and content this convention covers."
+category: explanation
+subcategory: development
+tags:
+  - plans
+  - ai-agents
+  - factual-validation
+  - anti-hallucination
+  - web-research
+  - verification
+created: 2026-05-03
+when_to_use: "Use to check whether this applies to an agent."
+---
+
+# Scope
+
+## What This Convention Covers
+
+- All content authored into `plans/` by `plan-maker` (or a human invoking the planning skill).
+- All validation performed by `plan-checker` and `plan-execution-checker`.
+- All remediation performed by `plan-fixer`.
+- Every step of the `plan-quality-gate` and `plan-execution` workflows.
+- The pre-execution gate that refuses to start when claims are unverifiable.
+- **Absence and completeness claims made by any validating agent** — the
+  [Absence and Completeness Claims](./absence-and-completeness-claims-zero-result-search-evidence-part-1.md) rules bind every checker
+  or fixer that reports "zero occurrences found" or "this list is complete", not only the four plan
+  agents.
+
+## What This Convention Does NOT Cover
+
+- **General factual-validation methodology** — see [Factual Validation Convention](../../../conventions/writing/factual-validation.md) for the universal `[Verified]` / `[Outdated]` / `[Unverified]` confidence system. This convention extends those labels with plan-specific repo-grounding labels and stricter delegation thresholds.
+- **Web-research delegation threshold** — see [Web Research Delegation Convention](../../../conventions/writing/web-research-delegation.md) for the universal 2-search / 3-fetch threshold. This convention LOWERS that threshold for plan content (any non-grep'd external claim → delegate).
+- **Plan structure and content placement** — see [Plans Organization Convention](../../../conventions/structure/plans.md). That convention says WHAT goes in a plan; this convention says HOW to verify what you write.
+- **Manual behavioral verification** — Playwright MCP / curl runtime verification is governed by [Manual Behavioral Verification Convention](.././manual-behavioral-verification.md). Anti-hallucination is authoring-and-validation; manual behavioral verification is post-execution.

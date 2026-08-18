@@ -20,18 +20,18 @@ when_to_use: Use when writing any delivery checklist step that ships code, or wh
 
 ## Contents
 
-- [Principles and Conventions Implemented](./test-driven-development/01-principles-and-conventions-implemented.md) — Why TDD is required here.
-- [Scope: Which Tests TDD Covers](./test-driven-development/02-scope-which-tests-tdd-covers.md) — The ten verification levels TDD applies to.
-- [Manual verification is part of TDD](./test-driven-development/03-manual-verification-is-part-of-tdd.md) — Treating a manual script like an automated test.
-- [Picking the right level](./test-driven-development/04-picking-the-right-level.md) — Choosing the cheapest test that exercises the behavior.
-- [The Red-Green-Refactor Cycle](./test-driven-development/05-the-red-green-refactor-cycle.md) — The three-step loop every code change follows.
-- [Mini-TDD Passes](./test-driven-development/06-mini-tdd-passes.md) — Splitting a feature into small Red→Green→Refactor cycles.
-- [Applying TDD to Plans](./test-driven-development/07-applying-tdd-to-plans.md) — Plan creation and plan execution requirements.
-- [TDD Shape for Delivery Checklists](./test-driven-development/08-tdd-shape-for-delivery-checklists.md) — The mandatory RED/GREEN/REFACTOR substep pattern.
-- [Gherkin-Tagged Delivery Steps](./test-driven-development/09-gherkin-tagged-delivery-steps.md) — One cycle per scenario, tag format, exceptions.
-- [Enforcement and Exceptions](./test-driven-development/10-enforcement-and-exceptions.md) — How TDD is enforced, and what it does not apply to.
-- [Examples](./test-driven-development/11-examples.md) — TypeScript, Go, and Gherkin-to-test worked examples.
-- [Relationship to Implementation Workflow](./test-driven-development/12-relationship-to-implementation-workflow.md) — How TDD maps onto the three implementation stages.
+- [Principles and Conventions Implemented](./test-driven-development/principles-and-conventions-implemented.md) — Why TDD is required here.
+- [Scope: Which Tests TDD Covers](./test-driven-development/scope-which-tests-tdd-covers.md) — The ten verification levels TDD applies to.
+- [Manual verification is part of TDD](./test-driven-development/manual-verification-is-part-of-tdd.md) — Treating a manual script like an automated test.
+- [Picking the right level](./test-driven-development/picking-the-right-level.md) — Choosing the cheapest test that exercises the behavior.
+- [The Red-Green-Refactor Cycle](./test-driven-development/the-red-green-refactor-cycle.md) — The three-step loop every code change follows.
+- [Mini-TDD Passes](./test-driven-development/mini-tdd-passes.md) — Splitting a feature into small Red→Green→Refactor cycles.
+- [Applying TDD to Plans](./test-driven-development/applying-tdd-to-plans.md) — Plan creation and plan execution requirements.
+- [TDD Shape for Delivery Checklists](./test-driven-development/tdd-shape-for-delivery-checklists.md) — The mandatory RED/GREEN/REFACTOR substep pattern.
+- [Gherkin-Tagged Delivery Steps](./test-driven-development/gherkin-tagged-delivery-steps.md) — One cycle per scenario, tag format, exceptions.
+- [Enforcement and Exceptions](./test-driven-development/enforcement-and-exceptions.md) — How TDD is enforced, and what it does not apply to.
+- [Examples](./test-driven-development/examples.md) — TypeScript, Go, and Gherkin-to-test worked examples.
+- [Relationship to Implementation Workflow](./test-driven-development/relationship-to-implementation-workflow.md) — How TDD maps onto the three implementation stages.
 
 ## Related Documentation
 

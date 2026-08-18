@@ -19,20 +19,20 @@ when_to_use: Use when deciding how much complexity to expose at once in a docume
 
 ## Foundations
 
-- [Vision Supported](./progressive-disclosure/01-vision-supported.md) — Explains how progressive disclosure advances the project's meet-people-at-their-level vision. Use when justifying layered complexity against the project's mission.
-- [What](./progressive-disclosure/02-what.md) — Contrasts progressive disclosure with immediate complexity. Use for a quick definition of progressive disclosure before applying it.
-- [Why](./progressive-disclosure/03-why.md) — Benefits of progressive disclosure, problems with immediate complexity, and its guiding principles. Use when justifying why complexity should be layered rather than exposed all at once.
+- [Vision Supported](./progressive-disclosure/vision-supported.md) — Explains how progressive disclosure advances the project's meet-people-at-their-level vision. Use when justifying layered complexity against the project's mission.
+- [What](./progressive-disclosure/what.md) — Contrasts progressive disclosure with immediate complexity. Use for a quick definition of progressive disclosure before applying it.
+- [Why](./progressive-disclosure/why.md) — Benefits of progressive disclosure, problems with immediate complexity, and its guiding principles. Use when justifying why complexity should be layered rather than exposed all at once.
 
 ## Applying the Principle
 
-- [How It Applies — Tutorial Levels, Diátaxis, and File Naming](./progressive-disclosure/04-how-it-applies-tutorial-levels-diataxis-and-file-naming.md) — Progressive structure in tutorial skill levels, the Diátaxis framework, and file naming. Use when designing a tutorial's skill-level progression, documentation category, or file names.
-- [How It Applies — Documentation Hierarchy, Convention Documents, and the Word Budget](./progressive-disclosure/05-how-it-applies-documentation-hierarchy-convention-documents-and-the-word-budget.md) — Progressive structure in document sections, convention documents, and the governance word budget. Use when structuring a document's sections or trimming a governance file to fit its word budget.
-- [Anti-Patterns](./progressive-disclosure/06-anti-patterns.md) — Common progressive-disclosure mistakes - front-loading complexity, no starting point, and all-or-nothing docs. Use when auditing content for complexity that overwhelms beginners.
-- [PASS: Best Practices](./progressive-disclosure/07-pass-best-practices.md) — Practices for minimal viable examples, multiple entry points, learn-more links, and complete levels. Use as a checklist when writing layered, audience-aware documentation.
-- [Examples from This Repository](./progressive-disclosure/08-examples-from-this-repository.md) — Real examples from this repository of tutorial levels, documentation structure, and agent tool permissions. Use when looking for worked examples of progressive disclosure applied in this repository.
+- [How It Applies — Tutorial Levels, Diátaxis, and File Naming](./progressive-disclosure/how-it-applies-tutorial-levels-diataxis-and-file-naming.md) — Progressive structure in tutorial skill levels, the Diátaxis framework, and file naming. Use when designing a tutorial's skill-level progression, documentation category, or file names.
+- [How It Applies — Documentation Hierarchy, Convention Documents, and the Word Budget](./progressive-disclosure/how-it-applies-documentation-hierarchy-convention-documents-and-the-word-budget.md) — Progressive structure in document sections, convention documents, and the governance word budget. Use when structuring a document's sections or trimming a governance file to fit its word budget.
+- [Anti-Patterns](./progressive-disclosure/anti-patterns.md) — Common progressive-disclosure mistakes - front-loading complexity, no starting point, and all-or-nothing docs. Use when auditing content for complexity that overwhelms beginners.
+- [PASS: Best Practices](./progressive-disclosure/pass-best-practices.md) — Practices for minimal viable examples, multiple entry points, learn-more links, and complete levels. Use as a checklist when writing layered, audience-aware documentation.
+- [Examples from This Repository](./progressive-disclosure/examples-from-this-repository.md) — Real examples from this repository of tutorial levels, documentation structure, and agent tool permissions. Use when looking for worked examples of progressive disclosure applied in this repository.
 
 ## Reference
 
-- [Relationship to Other Principles](./progressive-disclosure/09-relationship-to-other-principles.md) — How Progressive Disclosure relates to Simplicity Over Complexity, No Time Estimates, and Accessibility First. Use when tracing how this principle interacts with other governance principles.
-- [Related Conventions](./progressive-disclosure/10-related-conventions.md) — Links to the tutorial, Diátaxis, file-naming, and word-budget conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
-- [References](./progressive-disclosure/11-references.md) — External references on UX progressive disclosure, cognitive load, and documentation structure. Use when seeking authoritative external sources on progressive disclosure as a UX principle.
+- [Relationship to Other Principles](./progressive-disclosure/relationship-to-other-principles.md) — How Progressive Disclosure relates to Simplicity Over Complexity, No Time Estimates, and Accessibility First. Use when tracing how this principle interacts with other governance principles.
+- [Related Conventions](./progressive-disclosure/related-conventions.md) — Links to the tutorial, Diátaxis, file-naming, and word-budget conventions that enforce this principle. Use when looking for the specific conventions that enforce this principle's rules.
+- [References](./progressive-disclosure/references.md) — External references on UX progressive disclosure, cognitive load, and documentation structure. Use when seeking authoritative external sources on progressive disclosure as a UX principle.

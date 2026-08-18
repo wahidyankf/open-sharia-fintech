@@ -32,8 +32,8 @@ number is allowed to justify anything.
 
 ## Contents
 
-- [Rule 1 — Prove the Command Ran](./trustworthy-measurement/01-rule-1-prove-the-command-ran.md) — the false-zero timing-harness trap and how to guard against it.
-- [Rules 2-4](./trustworthy-measurement/02-rules-2-to-4.md) — measure the integrated path, establish the critical path, and treat a pre-authored remedy as a hypothesis.
+- [Rule 1 — Prove the Command Ran](./trustworthy-measurement/rule-1-prove-the-command-ran.md) — the false-zero timing-harness trap and how to guard against it.
+- [Rules 2-4](./trustworthy-measurement/rules-2-to-4.md) — measure the integrated path, establish the critical path, and treat a pre-authored remedy as a hypothesis.
 
 ## Scope
 
@@ -44,7 +44,7 @@ in a plan, a gate, or a PR, it is in scope.
 
 ## Related Documentation
 
-- [Acceptance clauses must be falsifiable](../quality/plan-anti-hallucination/06-absence-and-completeness-claims-zero-result-search-evidence-part-1.md) — a target that
+- [Acceptance clauses must be falsifiable](../quality/plan-anti-hallucination/absence-and-completeness-claims-zero-result-search-evidence-part-1.md) — a target that
   cannot fail is not a target; these rules are how you keep it from failing for the wrong reason.
 - [Mechanize Cross-File Invariants](../practice/mechanize-cross-file-invariants.md) — the same instinct
   applied to rules rather than numbers.

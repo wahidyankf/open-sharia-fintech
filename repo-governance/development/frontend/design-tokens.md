@@ -31,12 +31,12 @@ The `color-accessibility` convention remains the master reference for diagrams. 
 
 ## Contents
 
-- [Token Categories and Naming Convention](./design-tokens/01-token-categories-and-naming-convention.md) — structural vs. brand tokens, and the bare-variable/Tailwind-alias naming pattern.
-- [Token Format and Dark Mode](./design-tokens/02-token-format-and-dark-mode.md) — the two current formatting approaches, and the required .dark counterpart for every token.
-- [Per-App Override and Usage](./design-tokens/03-per-app-override-and-usage.md) — how an app overrides brand tokens, and referencing tokens through Tailwind utilities.
-- [OKLCH Brand Tokens (OrganicLever)](./design-tokens/04-oklch-brand-tokens.md) — the warm OKLCH palette and hue/ink/wash token structure.
-- [OKLCH Naming and Usage](./design-tokens/05-oklch-naming-and-usage.md) — the OKLCH naming convention, and dynamic runtime hue backgrounds.
-- [When to Create a New Token, and Anti-Patterns](./design-tokens/06-when-to-create-and-anti-patterns.md) — the three-question decision rule, and four common token mistakes.
+- [Token Categories and Naming Convention](./design-tokens/token-categories-and-naming-convention.md) — structural vs. brand tokens, and the bare-variable/Tailwind-alias naming pattern.
+- [Token Format and Dark Mode](./design-tokens/token-format-and-dark-mode.md) — the two current formatting approaches, and the required .dark counterpart for every token.
+- [Per-App Override and Usage](./design-tokens/per-app-override-and-usage.md) — how an app overrides brand tokens, and referencing tokens through Tailwind utilities.
+- [OKLCH Brand Tokens (OrganicLever)](./design-tokens/oklch-brand-tokens.md) — the warm OKLCH palette and hue/ink/wash token structure.
+- [OKLCH Naming and Usage](./design-tokens/oklch-naming-and-usage.md) — the OKLCH naming convention, and dynamic runtime hue backgrounds.
+- [When to Create a New Token, and Anti-Patterns](./design-tokens/when-to-create-and-anti-patterns.md) — the three-question decision rule, and four common token mistakes.
 
 ## Principles Implemented/Respected
 

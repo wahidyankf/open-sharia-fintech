@@ -21,9 +21,9 @@ maintainers can relicense specific subdirectories independently if needed.
 
 ## Contents
 
-- [Licensing Overview and Scope](./licensing/01-overview-and-scope.md) — why MIT-everywhere, and
+- [Licensing Overview and Scope](./licensing/overview-and-scope.md) — why MIT-everywhere, and
   what this convention covers versus leaves to other policy
-- [Licensing Standards](./licensing/02-standards.md) — the MIT-everywhere rule, the current
+- [Licensing Standards](./licensing/standards.md) — the MIT-everywhere rule, the current
   per-directory LICENSE inventory, root fallback coverage, and required license text
-- [Applying and Validating Licensing](./licensing/03-applying-and-validating.md) — rules for new
+- [Applying and Validating Licensing](./licensing/applying-and-validating.md) — rules for new
   directories, placement examples, and the validation checklist

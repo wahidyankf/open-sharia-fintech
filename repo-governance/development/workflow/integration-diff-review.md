@@ -25,10 +25,10 @@ changed and what it means for what you were doing — not just check that git re
 
 ## Contents
 
-- [Principles and Conventions Implemented](./integration-diff-review/01-principles-and-conventions-implemented.md) — Why this convention exists and its companion conventions.
-- [The Rule and Reading Checklist](./integration-diff-review/02-the-rule-and-reading-checklist.md) — The five-step rule, and what to look for in the diff.
-- [Commands and Agent Responsibilities](./integration-diff-review/03-commands-and-agent-responsibilities.md) — The exact commands per operation, and who is responsible.
-- [Forbidden Actions and Examples](./integration-diff-review/04-forbidden-actions-and-examples.md) — What violates this convention, with worked pass/fail examples.
+- [Principles and Conventions Implemented](./integration-diff-review/principles-and-conventions-implemented.md) — Why this convention exists and its companion conventions.
+- [The Rule and Reading Checklist](./integration-diff-review/the-rule-and-reading-checklist.md) — The five-step rule, and what to look for in the diff.
+- [Commands and Agent Responsibilities](./integration-diff-review/commands-and-agent-responsibilities.md) — The exact commands per operation, and who is responsible.
+- [Forbidden Actions and Examples](./integration-diff-review/forbidden-actions-and-examples.md) — What violates this convention, with worked pass/fail examples.
 
 ## Related Documentation
 

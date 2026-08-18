@@ -61,10 +61,10 @@ Eisenhower-quadrant-organized, correctly-resident set of two-pagers — backlog 
 
 ## Contents
 
-- [Purpose and When to Use](./plan-ideas-grooming/01-purpose-and-when-to-use.md) — what it does; the recurrence trigger.
-- [Scope Boundary and Execution Mode](./plan-ideas-grooming/02-scope-boundary-and-execution-mode.md) — plans/ideas/\*\*-only; orchestration.
-- [Steps 1-3](./plan-ideas-grooming/03-steps-1-3-inventory-dedup-and-cross-repo-dedup.md) — inventory, within-repo dedup, cross-repo dedup.
-- [Steps 4-5](./plan-ideas-grooming/04-steps-4-5-residency-decision-and-relocation.md) — residency rules, relocation sequence.
-- [Steps 6-8](./plan-ideas-grooming/05-steps-6-8-reshape-provenance-and-classification.md) — template reshape, provenance, classification.
-- [Steps 9-10](./plan-ideas-grooming/06-steps-9-10-link-rewrite-and-recurrence-trigger.md) — link rewrite; the re-run condition.
-- [Related Workflows and Documentation](./plan-ideas-grooming/07-related-workflows-and-documentation.md) — cross-references.
+- [Purpose and When to Use](./plan-ideas-grooming/purpose-and-when-to-use.md) — what it does; the recurrence trigger.
+- [Scope Boundary and Execution Mode](./plan-ideas-grooming/scope-boundary-and-execution-mode.md) — plans/ideas/\*\*-only; orchestration.
+- [Steps 1-3](./plan-ideas-grooming/steps-1-3-inventory-dedup-and-cross-repo-dedup.md) — inventory, within-repo dedup, cross-repo dedup.
+- [Steps 4-5](./plan-ideas-grooming/04-residency-decision-and-relocation.md) — residency rules, relocation sequence.
+- [Steps 6-8](./plan-ideas-grooming/steps-6-8-reshape-provenance-and-classification.md) — template reshape, provenance, classification.
+- [Steps 9-10](./plan-ideas-grooming/steps-9-10-link-rewrite-and-recurrence-trigger.md) — link rewrite; the re-run condition.
+- [Related Workflows and Documentation](./plan-ideas-grooming/related-workflows-and-documentation.md) — cross-references.

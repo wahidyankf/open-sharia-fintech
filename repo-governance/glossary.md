@@ -34,18 +34,18 @@ style guide binds exactly as much as one stated in a convention document; only i
 
 ## Children
 
-- [Repo Rules — Scope Boundaries](./glossary/01-repo-rules-scope.md) — the in-scope and out-of-scope
+- [Repo Rules — Scope Boundaries](./glossary/repo-rules-scope.md) — the in-scope and out-of-scope
   table, including why the language style guides are in scope despite living outside
   `repo-governance/`.
-- [Content Trees](./glossary/02-content-trees.md) — what belongs in `docs/`, `repo-governance/`,
+- [Content Trees](./glossary/content-trees.md) — what belongs in `docs/`, `repo-governance/`,
   `plans/`, and `specs/`, and the sweepable temporary directories.
-- [Plan Vocabulary](./glossary/03-plan-vocabulary.md) — plan, phase, delivery unit, delivery
+- [Plan Vocabulary](./glossary/plan-vocabulary.md) — plan, phase, delivery unit, delivery
   boundary, delivery mode, and worktree.
-- [Governance Surfaces](./glossary/04-governance-surfaces.md) — surface, instruction file, binding,
+- [Governance Surfaces](./glossary/governance-surfaces.md) — surface, instruction file, binding,
   mirror, harness, and what "autoloaded" actually means.
-- [Agent Vocabulary](./glossary/05-agent-vocabulary.md) — agent, agent skill, gate, quality gate,
+- [Agent Vocabulary](./glossary/agent-vocabulary.md) — agent, agent skill, gate, quality gate,
   workflow, and the maker/checker/fixer roles.
-- [Principles and Related Conventions](./glossary/06-principles-and-related-conventions.md) — Which
+- [Principles and Related Conventions](./glossary/principles-and-related-conventions.md) — Which
   principles the glossary implements and which conventions authoritatively define the terms it
   names. Use when tracing a glossary entry upward to the principle it serves or downward to the
   convention that governs it.

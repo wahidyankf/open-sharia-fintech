@@ -63,14 +63,14 @@ Plans then executes a cross-repo parity objective in one run.
 
 ## Contents
 
-- [Purpose & Scope](./plan-multi-repo-parity-planning-and-execution/01-purpose-scope-and-when-to-use.md) — why this exists.
-- [Execution Mode & Tasks](./plan-multi-repo-parity-planning-and-execution/02-execution-mode-and-task-list-contract.md) — orchestration, Task list.
-- [Step 1 — Planning](./plan-multi-repo-parity-planning-and-execution/03-step-1-planning-phase.md) — nested workflow.
-- [Steps 2-3 — Gate & Grill](./plan-multi-repo-parity-planning-and-execution/04-step-2-and-3-phase-gate-and-pre-execution-grill.md) — readiness, third grill.
-- [Step 4 — Execution](./plan-multi-repo-parity-planning-and-execution/05-step-4-execution-phase.md) — plan-execution per repo.
-- [Step 4 — Execution (cont.)](./plan-multi-repo-parity-planning-and-execution/06-step-4-execution-phase-continued.md) — propagation, manifest gate.
-- [Step 5 — Finalization](./plan-multi-repo-parity-planning-and-execution/07-step-5-cross-repo-finalization.md) — sibling links, report.
-- [Termination & Grilling](./plan-multi-repo-parity-planning-and-execution/08-termination-criteria-and-grilling-contract.md) — outcomes, three grills.
-- [Example Usage](./plan-multi-repo-parity-planning-and-execution/09-example-usage.md) — two worked examples.
-- [Safety & Related](./plan-multi-repo-parity-planning-and-execution/10-safety-features-and-related-workflows.md) — guarantees, links.
-- [Principles & Conventions](./plan-multi-repo-parity-planning-and-execution/11-principles-conventions-and-agents.md) — governance, agents.
+- [Purpose & Scope](./plan-multi-repo-parity-planning-and-execution/purpose-scope-and-when-to-use.md) — why this exists.
+- [Execution Mode & Tasks](./plan-multi-repo-parity-planning-and-execution/execution-mode-and-task-list-contract.md) — orchestration, Task list.
+- [Step 1 — Planning](./plan-multi-repo-parity-planning-and-execution/step-1-planning-phase.md) — nested workflow.
+- [Steps 2-3 — Gate & Grill](./plan-multi-repo-parity-planning-and-execution/step-2-and-3-phase-gate-and-pre-execution-grill.md) — readiness, third grill.
+- [Step 4 — Execution](./plan-multi-repo-parity-planning-and-execution/step-4-execution-phase.md) — plan-execution per repo.
+- [Step 4 — Execution (cont.)](./plan-multi-repo-parity-planning-and-execution/step-4-execution-phase-continued.md) — propagation, manifest gate.
+- [Step 5 — Finalization](./plan-multi-repo-parity-planning-and-execution/step-5-cross-repo-finalization.md) — sibling links, report.
+- [Termination & Grilling](./plan-multi-repo-parity-planning-and-execution/termination-criteria-and-grilling-contract.md) — outcomes, three grills.
+- [Example Usage](./plan-multi-repo-parity-planning-and-execution/example-usage.md) — two worked examples.
+- [Safety & Related](./plan-multi-repo-parity-planning-and-execution/safety-features-and-related-workflows.md) — guarantees, links.
+- [Principles & Conventions](./plan-multi-repo-parity-planning-and-execution/principles-conventions-and-agents.md) — governance, agents.

@@ -22,10 +22,10 @@ order for the full convention.
 
 ## Contents
 
-1. [Purpose](./security-by-example/01-purpose.md) — Why this convention exists and how it extends SWE By-Example.
-2. [Artifact Type, Self-Containment, and Annotation Semantics](./security-by-example/02-artifact-type-self-containment-and-annotation-semantics.md) — How artifacts, self-containment, and `# =>` annotations differ from SWE By-Example.
-3. [Coverage Metric, Diagram Use Cases, and Core-First Tooling](./security-by-example/03-coverage-metric-diagrams-and-core-first-tooling.md) — Coverage measurement, Mermaid diagram use cases, and core-first tool introduction order.
-4. [Ethical Use Requirements (Red Team Content Only)](./security-by-example/04-ethical-use-requirements.md) — The required ethical-use notice for Red Team level pages.
-5. [Five-Part Format (Security-Adapted)](./security-by-example/05-five-part-format-security-adapted.md) — The security-domain adaptation of the five-part example structure.
-6. [Coverage Levels and Applies To](./security-by-example/06-coverage-levels-and-applies-to.md) — Beginner/Intermediate/Advanced coverage definitions and which content tracks this convention governs.
-7. [Validation Criteria, Principles, and Related Documentation](./security-by-example/07-validation-criteria-principles-and-related-documentation.md) — The quality checklist, implemented principles, and related conventions.
+1. [Purpose](./security-by-example/purpose.md) — Why this convention exists and how it extends SWE By-Example.
+2. [Artifact Type, Self-Containment, and Annotation Semantics](./security-by-example/artifact-type-self-containment-and-annotation-semantics.md) — How artifacts, self-containment, and `# =>` annotations differ from SWE By-Example.
+3. [Coverage Metric, Diagram Use Cases, and Core-First Tooling](./security-by-example/coverage-metric-diagrams-and-core-first-tooling.md) — Coverage measurement, Mermaid diagram use cases, and core-first tool introduction order.
+4. [Ethical Use Requirements (Red Team Content Only)](./security-by-example/ethical-use-requirements.md) — The required ethical-use notice for Red Team level pages.
+5. [Five-Part Format (Security-Adapted)](./security-by-example/five-part-format-security-adapted.md) — The security-domain adaptation of the five-part example structure.
+6. [Coverage Levels and Applies To](./security-by-example/coverage-levels-and-applies-to.md) — Beginner/Intermediate/Advanced coverage definitions and which content tracks this convention governs.
+7. [Validation Criteria, Principles, and Related Documentation](./security-by-example/validation-criteria-principles-and-related-documentation.md) — The quality checklist, implemented principles, and related conventions.

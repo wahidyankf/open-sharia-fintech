@@ -22,8 +22,8 @@ are prohibited regardless of how plausible they appear.
 
 ## Contents
 
-- [Purpose and Scope](./why-it-matters-content/01-purpose-and-scope.md) — the principles behind the rule, the problem it solves, and which files it covers.
-- [Standards](./why-it-matters-content/02-standards.md) — the four content standards: theoretical explanations only, prohibited patterns, the suspension test, and permitted reference patterns.
-- [Examples: Fabricated Anecdotes](./why-it-matters-content/03-examples-fabricated-anecdotes.md) — before/after rewrites of a fabricated corporate case study and a fabricated platform scenario.
-- [Example: Verifiable Fact Used Correctly](./why-it-matters-content/04-example-permitted-reference.md) — a worked example of a correctly sourced historical fact.
-- [Tools, Automation, and References](./why-it-matters-content/05-tools-and-references.md) — the checker/fixer agents that enforce this convention and its related conventions and principles.
+- [Purpose and Scope](./why-it-matters-content/purpose-and-scope.md) — the principles behind the rule, the problem it solves, and which files it covers.
+- [Standards](./why-it-matters-content/standards.md) — the four content standards: theoretical explanations only, prohibited patterns, the suspension test, and permitted reference patterns.
+- [Examples: Fabricated Anecdotes](./why-it-matters-content/examples-fabricated-anecdotes.md) — before/after rewrites of a fabricated corporate case study and a fabricated platform scenario.
+- [Example: Verifiable Fact Used Correctly](./why-it-matters-content/example-permitted-reference.md) — a worked example of a correctly sourced historical fact.
+- [Tools, Automation, and References](./why-it-matters-content/tools-and-references.md) — the checker/fixer agents that enforce this convention and its related conventions and principles.

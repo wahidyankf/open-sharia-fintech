@@ -40,8 +40,8 @@ This practice implements/respects the following conventions:
 
 ## Contents
 
-- [Why This Matters](./proactive-preexisting-error-resolution/01-why-this-matters.md) — the backlog problem, the monkey-patch problem, and the normalization problem.
-- [The Three Anti-Patterns](./proactive-preexisting-error-resolution/02-the-three-anti-patterns.md) — acting ignorant, monkey-patching, and passive mentioning, each with worked examples.
-- [Expected Behavior](./proactive-preexisting-error-resolution/03-expected-behavior.md) — the five-step response: diagnose, fix, verify, scope, communicate.
-- [Scope Judgment](./proactive-preexisting-error-resolution/04-scope-judgment.md) — how to size a fix as small (inline), medium (own commit), or large (a plan).
-- [Checklist, For AI Agents, and Related Documentation](./proactive-preexisting-error-resolution/05-checklist-agents-and-related-documentation.md) — the completion checklist, agent behavior rules, and links to related conventions.
+- [Why This Matters](./proactive-preexisting-error-resolution/why-this-matters.md) — the backlog problem, the monkey-patch problem, and the normalization problem.
+- [The Three Anti-Patterns](./proactive-preexisting-error-resolution/the-three-anti-patterns.md) — acting ignorant, monkey-patching, and passive mentioning, each with worked examples.
+- [Expected Behavior](./proactive-preexisting-error-resolution/expected-behavior.md) — the five-step response: diagnose, fix, verify, scope, communicate.
+- [Scope Judgment](./proactive-preexisting-error-resolution/scope-judgment.md) — how to size a fix as small (inline), medium (own commit), or large (a plan).
+- [Checklist, For AI Agents, and Related Documentation](./proactive-preexisting-error-resolution/checklist-agents-and-related-documentation.md) — the completion checklist, agent behavior rules, and links to related conventions.

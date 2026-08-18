@@ -19,7 +19,7 @@ This convention establishes the worktree directory structure and routing convent
 
 ## In This Convention
 
-- [Principles, Purpose, Relationship to Delivery Mode, and Scope](./worktree-path/01-principles-purpose-relationship-to-delivery-mode-and-scope.md) — The principles this convention implements, why it exists, how it relates to the Delivery Mode concept...
-- [Standards and Examples](./worktree-path/02-standards-and-examples.md) — required directory structure, hook routing mechanism, naming/gitignore requirements, and PASS/FAIL examples
-- [Platform Binding Compatibility and Industry Convention](./worktree-path/03-platform-binding-compatibility-and-industry-convention.md) — cross-platform hook portability and why worktrees live inside the repo instead of as siblings
-- [Cleanup, Multiple Worktrees, Tools, and References](./worktree-path/04-worktree-cleanup-multiple-worktrees-tools-and-references.md) — removal procedure, AI/HUMAN tagging rule, and related documentation
+- [Principles, Purpose, Relationship to Delivery Mode, and Scope](./worktree-path/principles-purpose-relationship-to-delivery-mode-and-scope.md) — The principles this convention implements, why it exists, how it relates to the Delivery Mode concept...
+- [Standards and Examples](./worktree-path/standards-and-examples.md) — required directory structure, hook routing mechanism, naming/gitignore requirements, and PASS/FAIL examples
+- [Platform Binding Compatibility and Industry Convention](./worktree-path/platform-binding-compatibility-and-industry-convention.md) — cross-platform hook portability and why worktrees live inside the repo instead of as siblings
+- [Cleanup, Multiple Worktrees, Tools, and References](./worktree-path/worktree-cleanup-multiple-worktrees-tools-and-references.md) — removal procedure, AI/HUMAN tagging rule, and related documentation

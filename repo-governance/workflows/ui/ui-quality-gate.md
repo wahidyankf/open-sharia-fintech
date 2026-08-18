@@ -51,8 +51,8 @@ outputs:
 
 ## Contents
 
-- [Execution Mode](./ui-quality-gate/01-execution-mode.md) — preferred/fallback execution, how to invoke.
-- [Steps](./ui-quality-gate/02-steps.md) — the six-step check-fix-recheck loop.
-- [Safety Features](./ui-quality-gate/03-safety-features.md) — the four loop safeguards.
-- [Example Usage](./ui-quality-gate/04-example-usage.md) — a worked end-to-end transcript.
-- [Related Documentation](./ui-quality-gate/05-related-documentation.md) — the checker/fixer/maker agents, frontend conventions.
+- [Execution Mode](./ui-quality-gate/execution-mode.md) — preferred/fallback execution, how to invoke.
+- [Steps](./ui-quality-gate/steps.md) — the six-step check-fix-recheck loop.
+- [Safety Features](./ui-quality-gate/safety-features.md) — the four loop safeguards.
+- [Example Usage](./ui-quality-gate/example-usage.md) — a worked end-to-end transcript.
+- [Related Documentation](./ui-quality-gate/related-documentation.md) — the checker/fixer/maker agents, frontend conventions.

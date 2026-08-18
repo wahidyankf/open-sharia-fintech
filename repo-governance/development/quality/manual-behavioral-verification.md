@@ -20,15 +20,15 @@ This convention requires manually verifying UI features and API endpoints -- via
 
 ## Documents
 
-- [Principles and Conventions Implemented/Respected](./manual-behavioral-verification/01-principles-and-conventions-implemented-respected.md) — Principles/conventions this convention implements. Use when tracing this convention's rationale.
-- [The Rule](./manual-behavioral-verification/02-the-rule.md) — The manual-verification rule for UI/API changes. Use for the exact wording of the rule.
-- [UI Verification](./manual-behavioral-verification/03-ui-verification.md) — Required tools for manual UI verification. Use when preparing to manually verify a UI change.
-- [UI Verification Checklist](./manual-behavioral-verification/04-ui-verification-checklist.md) — The checklist to run through when verifying a UI change. Use when manually verifying a UI change.
-- [Example: UI Feature Verification (multi-locale app)](./manual-behavioral-verification/05-example-ui-feature-verification-multi-locale-app.md) — A worked example of manually verifying a UI feature across locales. Use for a concrete example of multi-locale UI verification.
-- [API Verification](./manual-behavioral-verification/06-api-verification.md) — How to manually verify an API endpoint with curl. Use when preparing to manually verify an API change.
-- [When Verification Is Required](./manual-behavioral-verification/07-when-verification-is-required.md) — The triggers that require manual behavioral verification. Use when deciding whether a change needs manual verification.
-- [Relationship to Automated Tests](./manual-behavioral-verification/08-relationship-to-automated-tests.md) — How manual verification relates to automated test coverage. Use when deciding whether automated tests already cover manual verification.
-- [Examples](./manual-behavioral-verification/09-examples.md) — Worked examples of manual behavioral verification. Use for a concrete example of this convention applied.
-- [Scope](./manual-behavioral-verification/10-scope.md) — What this convention applies to and its boundaries. Use when checking whether this convention applies to a change.
-- [Tools and Automation](./manual-behavioral-verification/11-tools-and-automation.md) — Tools used for manual behavioral verification. Use when locating a manual-verification tool.
-- [Related Documentation](./manual-behavioral-verification/12-related-documentation.md) — Related testing and evidence conventions. Use for a related convention on testing or evidence.
+- [Principles and Conventions Implemented/Respected](./manual-behavioral-verification/principles-and-conventions-implemented-respected.md) — Principles/conventions this convention implements. Use when tracing this convention's rationale.
+- [The Rule](./manual-behavioral-verification/the-rule.md) — The manual-verification rule for UI/API changes. Use for the exact wording of the rule.
+- [UI Verification](./manual-behavioral-verification/ui-verification.md) — Required tools for manual UI verification. Use when preparing to manually verify a UI change.
+- [UI Verification Checklist](./manual-behavioral-verification/ui-verification-checklist.md) — The checklist to run through when verifying a UI change. Use when manually verifying a UI change.
+- [Example: UI Feature Verification (multi-locale app)](./manual-behavioral-verification/example-ui-feature-verification-multi-locale-app.md) — A worked example of manually verifying a UI feature across locales. Use for a concrete example of multi-locale UI verification.
+- [API Verification](./manual-behavioral-verification/api-verification.md) — How to manually verify an API endpoint with curl. Use when preparing to manually verify an API change.
+- [When Verification Is Required](./manual-behavioral-verification/when-verification-is-required.md) — The triggers that require manual behavioral verification. Use when deciding whether a change needs manual verification.
+- [Relationship to Automated Tests](./manual-behavioral-verification/relationship-to-automated-tests.md) — How manual verification relates to automated test coverage. Use when deciding whether automated tests already cover manual verification.
+- [Examples](./manual-behavioral-verification/examples.md) — Worked examples of manual behavioral verification. Use for a concrete example of this convention applied.
+- [Scope](./manual-behavioral-verification/scope.md) — What this convention applies to and its boundaries. Use when checking whether this convention applies to a change.
+- [Tools and Automation](./manual-behavioral-verification/tools-and-automation.md) — Tools used for manual behavioral verification. Use when locating a manual-verification tool.
+- [Related Documentation](./manual-behavioral-verification/related-documentation.md) — Related testing and evidence conventions. Use for a related convention on testing or evidence.

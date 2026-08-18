@@ -1,0 +1,39 @@
+---
+title: "Nine Reviewer Disciplines: Table (2)"
+description: "Disciplines Documentation-Type-soundness; scout/synthesis."
+category: explanation
+subcategory: development
+tags:
+  - pr-review
+  - governance
+  - agents
+  - quality-gates
+  - boundary-rules
+created: 2026-07-23
+when_to_use: "Use to find a finding's owning specialist."
+---
+
+# The Nine Reviewer Disciplines (table part 2: Documentation - Type-soundness, and closing notes)
+
+**Continued from** [Nine Reviewer Disciplines: Table (1)](./the-nine-reviewer-disciplines-table-part-1.md) — same table, columns unchanged.
+
+| Discipline            | Specialist agent              | Owns (in-charter)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | NOT its job (routes to)                                                                                                                                                                                       |
+| --------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Performance           | `pr-review-performance-maker` | Concrete or likely performance regressions, hot-path changes, algorithmic-complexity growth, resource (memory/IO/alloc) concerns                                                                                                                                                                                                                                                                                                                                                                   | A quality-attribute tradeoff decision → architecture; a perf-relevant convention (e.g. a documented budget rule) → governance                                                                                 |
+| Documentation-quality | `pr-review-docs-maker`        | Substantive documentation quality and completeness: README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility                                                                                                                                                                                                                                                                                                                                                              | Mechanical doc-convention conformance (heading hierarchy, linking, naming) → governance; whether the documented behavior is correct → logic                                                                   |
+| Instruction-decay     | `pr-review-instruction-maker` | Instruction-decay — a framework/build-tool/package-manager/env-var/CI change in the diff not reflected in `AGENTS.md`/`CLAUDE.md`/`.claude/`; instruction bloat (generic filler adding no enforceable rule — file length is the word budget's job, not a reviewer's)                                                                                                                                                                                                                               | Mechanical convention conformance → governance; whether a new rule should exist → architecture                                                                                                                |
+| Type-soundness        | `pr-review-types-maker`       | Static type-system soundness across languages — TypeScript `any`/unsafe casts/`@ts-ignore`/`@ts-expect-error` misuse, Rust `unsafe` blocks/unchecked casts/`unwrap()`/`expect()` panics on fallible paths with a documented error type available, F# type-erasure/`obj` misuse/non-exhaustive `match` relying on a silent default, C# nullable-reference-type suppression (`!`) misuse — anywhere a type escape hatch or an unhandled fallible path defeats the compiler's own soundness guarantee | Whether the code compiles → CI/build concern, not a review finding; general logic correctness unrelated to type escape hatches → logic; whether a new type/module boundary should exist at all → architecture |
+
+**Instruction-decay is its own eighth discipline, not folded into governance.**
+`pr-review-governance-maker` checks _conformance to_ the repo's instruction docs; nothing in its
+charter checks _staleness of_ those docs against a changed framework, build tool, package manager,
+env var, or CI step. Governance therefore explicitly routes instruction-decay findings to
+`pr-review-instruction-maker` rather than raising them itself.
+
+Two further roles do not discover findings in any of the nine disciplines above. `pr-review-scout-maker`
+classifies each PR and assembles shared context ahead of the fan-out — it precedes the specialists
+rather than reviewing alongside them. `pr-review-synthesis-maker` (the coordinator) deduplicates,
+re-categorizes, reasonableness-filters, and tool-verifies what the nine specialists find, then posts
+exactly one consolidated review. See
+[The Boundary Tie-Breaker Rule](./the-boundary-tie-breaker-rule.md) below for the coordinator's
+highest-risk re-categorization responsibility.

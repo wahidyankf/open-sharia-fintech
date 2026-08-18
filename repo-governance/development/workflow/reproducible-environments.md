@@ -20,18 +20,18 @@ Practices for creating consistent, reproducible development and build environmen
 
 ## Contents
 
-- [Principles, Conventions, and Overview](./reproducible-environments/01-principles-conventions-and-overview.md) — Why this practice exists, and the five areas it covers.
-- [Runtime Version Management with Volta](./reproducible-environments/02-runtime-version-management-with-volta.md) — Pinning, installing, updating, and CI integration.
-- [Dependency Locking](./reproducible-environments/03-dependency-locking.md) — `npm ci`, lockfile freshness, and PR review.
-- [Shared Cargo Target Directories](./reproducible-environments/04-shared-cargo-target-directories.md) — The `doctor --fix` symlink cache and its pruning.
-- [Environment Configuration](./reproducible-environments/05-environment-configuration.md) — `.env` pattern summary, pointing to the full secrets standard.
-- [Containerization for Complex Environments](./reproducible-environments/06-containerization-for-complex-environments.md) — Docker Compose and a development Dockerfile.
-- [Documentation](./reproducible-environments/07-documentation.md) — README setup-instruction and common-tasks templates.
-- [Testing Reproducibility](./reproducible-environments/08-testing-reproducibility.md) — A CI-runnable environment-verification script.
-- [Monorepo Considerations](./reproducible-environments/09-monorepo-considerations.md) — Nx cache config and workspace TypeScript path mapping.
-- [Troubleshooting](./reproducible-environments/10-troubleshooting.md) — Common drift symptoms and a workspace-hoisting gotcha.
-- [Migration Guide](./reproducible-environments/11-migration-guide.md) — Adding Volta or Docker to an existing project.
-- [Git Identity Guardrail](./reproducible-environments/12-git-identity-guardrail.md) — No AI agent sets git identity; the human `includeIf` pattern and CI exemption.
+- [Principles, Conventions, and Overview](./reproducible-environments/principles-conventions-and-overview.md) — Why this practice exists, and the five areas it covers.
+- [Runtime Version Management with Volta](./reproducible-environments/runtime-version-management-with-volta.md) — Pinning, installing, updating, and CI integration.
+- [Dependency Locking](./reproducible-environments/dependency-locking.md) — `npm ci`, lockfile freshness, and PR review.
+- [Shared Cargo Target Directories](./reproducible-environments/shared-cargo-target-directories.md) — The `doctor --fix` symlink cache and its pruning.
+- [Environment Configuration](./reproducible-environments/environment-configuration.md) — `.env` pattern summary, pointing to the full secrets standard.
+- [Containerization for Complex Environments](./reproducible-environments/containerization-for-complex-environments.md) — Docker Compose and a development Dockerfile.
+- [Documentation](./reproducible-environments/documentation.md) — README setup-instruction and common-tasks templates.
+- [Testing Reproducibility](./reproducible-environments/testing-reproducibility.md) — A CI-runnable environment-verification script.
+- [Monorepo Considerations](./reproducible-environments/monorepo-considerations.md) — Nx cache config and workspace TypeScript path mapping.
+- [Troubleshooting](./reproducible-environments/troubleshooting.md) — Common drift symptoms and a workspace-hoisting gotcha.
+- [Migration Guide](./reproducible-environments/migration-guide.md) — Adding Volta or Docker to an existing project.
+- [Git Identity Guardrail](./reproducible-environments/git-identity-guardrail.md) — No AI agent sets git identity; the human `includeIf` pattern and CI exemption.
 
 ## Related Documentation
 

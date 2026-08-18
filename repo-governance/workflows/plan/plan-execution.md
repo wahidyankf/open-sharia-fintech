@@ -43,51 +43,51 @@ outputs:
 
 ## Contents
 
-- [Execution Mode](./plan-execution/01-execution-mode.md) — orchestrator role.
-- [How to Execute](./plan-execution/02-how-to-execute.md) — 12 actions.
-- [Orchestration Model](./plan-execution/03-orchestration-model.md) — delegation rule.
-- [Agent Selection](./plan-execution/04-agent-selection.md) — picking heuristics.
-- [Fan-Out Shape](./plan-execution/05-fan-out-ordering-and-delivery-shape.md) — N+1, DAG.
-- [Tester Gates](./plan-execution/06-surface-conditional-tester-gates.md) — per-surface.
-- [Vercel MCP](./plan-execution/07-vercel-mcp-availability.md) — Phase 0 check.
-- [Task-Checklist Sync](./plan-execution/08-task-checklist-synchronization.md) — 1:1 mapping.
-- [Harness Task List](./plan-execution/09-harness-task-list-primary-observability-surface.md) — invariants.
-- [Sync Ritual](./plan-execution/10-atomic-sync-ritual.md) — tick/notes/update.
-- [Resume Reconciliation](./plan-execution/11-resume-reconciliation.md) — disk truth.
-- [Iron Rules 1-5](./plan-execution/12-iron-rules-1-5.md) — task tracking.
-- [Iron Rules 6-11](./plan-execution/13-iron-rules-6-11.md) — file-touch ledger.
-- [Preconditions](./plan-execution/14-enter-worktree-preconditions-and-work-branch.md) — branch precedence.
-- [Delivery-Mode](./plan-execution/15-enter-worktree-delivery-mode-resolution.md) — mode precedence.
-- [Locate/Provision](./plan-execution/16-enter-worktree-locate-and-provision.md) — auto-provision.
-- [Freshness Gate](./plan-execution/17-enter-worktree-freshness-gate.md) — pull latest.
-- [Secrets/Rationale](./plan-execution/18-enter-worktree-secrets-output-and-rationale.md) — infra ops.
-- [Load Checklist](./plan-execution/19-load-delivery-checklist-and-task-list.md) — task materialize.
-- [Environment Setup](./plan-execution/20-environment-setup.md) — Phase 0.
-- [Execution Loop](./plan-execution/21-initial-execution-loop.md) — items 1-4.
-- [Verify/Sync](./plan-execution/22-initial-execution-items-5-8.md) — items 5-8.
-- [Progress/Stopping](./plan-execution/23-initial-execution-progress-and-stopping-rules.md) — item 9.
-- [Gates](./plan-execution/24-per-phase-quality-gate-gates.md) — Phase N Gate.
-- [Push Targets](./plan-execution/25-per-phase-quality-gate-push-targets.md) — mode push.
-- [Phase 0/Merging](./plan-execution/26-per-phase-quality-gate-phase0-and-boundary-merging.md) — boundary merge.
-- [Cleanup Check](./plan-execution/27-per-phase-quality-gate-cleanup-and-invariant.md) — boundary assert.
-- [CI Overview](./plan-execution/28-post-push-ci-verification-overview.md) — monitoring tool.
-- [CI Direct-Push](./plan-execution/29-post-push-ci-verification-direct-push.md) — main CI.
-- [CI PR-Branch](./plan-execution/30-post-push-ci-verification-pr-branch.md) — PR checks.
-- [Assertions Web/API](./plan-execution/31-manual-behavioral-assertions-web-and-api.md) — Playwright/curl.
-- [Assertions Evidence](./plan-execution/32-manual-behavioral-assertions-full-stack-and-evidence.md) — full-stack.
-- [Validation](./plan-execution/33-validation-and-check-for-findings.md) — checker run.
-- [Continue Execution](./plan-execution/34-continue-execution.md) — fix findings.
-- [Re-validate](./plan-execution/35-revalidate-and-iteration-control.md) — loop/terminate.
-- [Pre-Archival Gates](./plan-execution/36-finalization-pre-archival-gates.md) — rule-15.
-- [Rule-16 Retest](./plan-execution/37-finalization-rule16-api-retest.md) — API retest.
-- [Knowledge Capture](./plan-execution/38-finalization-knowledge-capture.md) — learnings.md.
-- [PR-Review Gate](./plan-execution/39-finalization-pr-review-gate.md) — done-definition.
-- [Status/Infra Gate](./plan-execution/40-finalization-status-logic-and-infra-gate.md) — pass/fail.
-- [Cleanup/Archival](./plan-execution/41-finalization-worktree-cleanup-and-pr-archival.md) — archival-in-PR.
-- [PR Merge/Status](./plan-execution/42-finalization-pr-merge-and-final-status.md) — merge/cleanup.
-- [Task Rules](./plan-execution/43-task-management-rules-and-termination.md) — termination.
-- [Example Usage](./plan-execution/44-example-usage-and-iteration-example.md) — invocations.
-- [Safety Features](./plan-execution/45-safety-features-and-plan-specific-validation.md) — checker scope.
-- [Related Workflows](./plan-execution/46-related-workflows-and-success-metrics.md) — metrics.
-- [Notes](./plan-execution/47-notes.md) — characteristics.
-- [TDD/Principles](./plan-execution/48-tdd-principles-conventions-agents.md) — governance.
+- [Execution Mode](./plan-execution/execution-mode.md) — orchestrator role.
+- [How to Execute](./plan-execution/how-to-execute.md) — 12 actions.
+- [Orchestration Model](./plan-execution/orchestration-model.md) — delegation rule.
+- [Agent Selection](./plan-execution/agent-selection.md) — picking heuristics.
+- [Fan-Out Shape](./plan-execution/fan-out-ordering-and-delivery-shape.md) — N+1, DAG.
+- [Tester Gates](./plan-execution/surface-conditional-tester-gates.md) — per-surface.
+- [Vercel MCP](./plan-execution/vercel-mcp-availability.md) — Phase 0 check.
+- [Task-Checklist Sync](./plan-execution/task-checklist-synchronization.md) — 1:1 mapping.
+- [Harness Task List](./plan-execution/harness-task-list-primary-observability-surface.md) — invariants.
+- [Sync Ritual](./plan-execution/atomic-sync-ritual.md) — tick/notes/update.
+- [Resume Reconciliation](./plan-execution/resume-reconciliation.md) — disk truth.
+- [Iron Rules 1-5](./plan-execution/iron-rules-1-5.md) — task tracking.
+- [Iron Rules 6-11](./plan-execution/iron-rules-6-11.md) — file-touch ledger.
+- [Preconditions](./plan-execution/enter-worktree-preconditions-and-work-branch.md) — branch precedence.
+- [Delivery-Mode](./plan-execution/enter-worktree-delivery-mode-resolution.md) — mode precedence.
+- [Locate/Provision](./plan-execution/enter-worktree-locate-and-provision.md) — auto-provision.
+- [Freshness Gate](./plan-execution/enter-worktree-freshness-gate.md) — pull latest.
+- [Secrets/Rationale](./plan-execution/enter-worktree-secrets-output-and-rationale.md) — infra ops.
+- [Load Checklist](./plan-execution/load-delivery-checklist-and-task-list.md) — task materialize.
+- [Environment Setup](./plan-execution/environment-setup.md) — Phase 0.
+- [Execution Loop](./plan-execution/initial-execution-loop.md) — items 1-4.
+- [Verify/Sync](./plan-execution/initial-execution-items-5-8.md) — items 5-8.
+- [Progress/Stopping](./plan-execution/initial-execution-progress-and-stopping-rules.md) — item 9.
+- [Gates](./plan-execution/per-phase-quality-gate-gates.md) — Phase N Gate.
+- [Push Targets](./plan-execution/per-phase-quality-gate-push-targets.md) — mode push.
+- [Phase 0/Merging](./plan-execution/per-phase-quality-gate-phase0-and-boundary-merging.md) — boundary merge.
+- [Cleanup Check](./plan-execution/per-phase-quality-gate-cleanup-and-invariant.md) — boundary assert.
+- [CI Overview](./plan-execution/post-push-ci-verification-overview.md) — monitoring tool.
+- [CI Direct-Push](./plan-execution/post-push-ci-verification-direct-push.md) — main CI.
+- [CI PR-Branch](./plan-execution/post-push-ci-verification-pr-branch.md) — PR checks.
+- [Assertions Web/API](./plan-execution/manual-behavioral-assertions-web-and-api.md) — Playwright/curl.
+- [Assertions Evidence](./plan-execution/manual-behavioral-assertions-full-stack-and-evidence.md) — full-stack.
+- [Validation](./plan-execution/validation-and-check-for-findings.md) — checker run.
+- [Continue Execution](./plan-execution/continue-execution.md) — fix findings.
+- [Re-validate](./plan-execution/revalidate-and-iteration-control.md) — loop/terminate.
+- [Pre-Archival Gates](./plan-execution/finalization-pre-archival-gates.md) — rule-15.
+- [Rule-16 Retest](./plan-execution/finalization-rule16-api-retest.md) — API retest.
+- [Knowledge Capture](./plan-execution/finalization-knowledge-capture.md) — learnings.md.
+- [PR-Review Gate](./plan-execution/finalization-pr-review-gate.md) — done-definition.
+- [Status/Infra Gate](./plan-execution/finalization-status-logic-and-infra-gate.md) — pass/fail.
+- [Cleanup/Archival](./plan-execution/finalization-worktree-cleanup-and-pr-archival.md) — archival-in-PR.
+- [PR Merge/Status](./plan-execution/finalization-pr-merge-and-final-status.md) — merge/cleanup.
+- [Task Rules](./plan-execution/task-management-rules-and-termination.md) — termination.
+- [Example Usage](./plan-execution/example-usage-and-iteration-example.md) — invocations.
+- [Safety Features](./plan-execution/safety-features-and-plan-specific-validation.md) — checker scope.
+- [Related Workflows](./plan-execution/related-workflows-and-success-metrics.md) — metrics.
+- [Notes](./plan-execution/notes.md) — characteristics.
+- [TDD/Principles](./plan-execution/tdd-principles-conventions-agents.md) — governance.

@@ -27,11 +27,11 @@ The [Color Accessibility Convention](../../conventions/formatting/color-accessib
 
 ## Contents
 
-- [Contrast and Focus](./accessibility/01-contrast-and-focus.md) — WCAG AA minimum contrast ratios, and focus-visible ring patterns.
-- [Reduced Motion and ARIA Attributes](./accessibility/02-reduced-motion-and-aria-attributes.md) — honoring prefers-reduced-motion, and required ARIA by component type.
-- [Form Inputs and Hit Targets](./accessibility/03-form-inputs-and-hit-targets.md) — labels, autoComplete, inputMode, and minimum touch target sizes.
-- [Color and Images](./accessibility/04-color-and-images.md) — no color-only indicators, and alt-text requirements.
-- [Screen Readers and Keyboard Navigation](./accessibility/05-screen-readers-and-keyboard-navigation.md) — DOM order, skip navigation, live regions, and the full keyboard interaction table.
+- [Contrast and Focus](./accessibility/contrast-and-focus.md) — WCAG AA minimum contrast ratios, and focus-visible ring patterns.
+- [Reduced Motion and ARIA Attributes](./accessibility/reduced-motion-and-aria-attributes.md) — honoring prefers-reduced-motion, and required ARIA by component type.
+- [Form Inputs and Hit Targets](./accessibility/form-inputs-and-hit-targets.md) — labels, autoComplete, inputMode, and minimum touch target sizes.
+- [Color and Images](./accessibility/color-and-images.md) — no color-only indicators, and alt-text requirements.
+- [Screen Readers and Keyboard Navigation](./accessibility/screen-readers-and-keyboard-navigation.md) — DOM order, skip navigation, live regions, and the full keyboard interaction table.
 
 ## Principles Implemented/Respected
 

@@ -19,12 +19,12 @@ CSS and Tailwind v4 conventions for all frontend applications in the open-sharia
 
 ## Contents
 
-- [Tailwind Directives and Utility-First Approach](./styling/01-tailwind-directives-and-utility-first-approach.md) — the globals.css directive set, and applying styles as utility classes in TSX.
-- [`!important` and `@apply` Rules](./styling/02-important-and-apply-rules.md) — never use `!important` (with one documented exception), and `@apply` only inside `@layer base`.
-- [Inline Styles, Class Ordering, and Defensive CSS](./styling/03-inline-styles-class-ordering-and-defensive-css.md) — no inline `style={}`, automatic class sorting, and overflow/truncation patterns.
-- [Responsive Design and Touch Targets](./styling/04-responsive-design-and-touch-targets.md) — mobile-first breakpoints, container queries, and the 44×44px minimum tap target.
-- [Content Visibility, Font Loading, and Fluid Typography](./styling/05-content-visibility-fonts-and-typography.md) — never hide content on mobile, `next/font` usage, and `clamp()` for smooth text scaling.
-- [Applying the Implementation Workflow](./styling/06-applying-the-implementation-workflow.md) — the three-stage make-it-work/right/fast approach applied to styling.
+- [Tailwind Directives and Utility-First Approach](./styling/tailwind-directives-and-utility-first-approach.md) — the globals.css directive set, and applying styles as utility classes in TSX.
+- [`!important` and `@apply` Rules](./styling/important-and-apply-rules.md) — never use `!important` (with one documented exception), and `@apply` only inside `@layer base`.
+- [Inline Styles, Class Ordering, and Defensive CSS](./styling/inline-styles-class-ordering-and-defensive-css.md) — no inline `style={}`, automatic class sorting, and overflow/truncation patterns.
+- [Responsive Design and Touch Targets](./styling/responsive-design-and-touch-targets.md) — mobile-first breakpoints, container queries, and the 44×44px minimum tap target.
+- [Content Visibility, Font Loading, and Fluid Typography](./styling/content-visibility-fonts-and-typography.md) — never hide content on mobile, `next/font` usage, and `clamp()` for smooth text scaling.
+- [Applying the Implementation Workflow](./styling/applying-the-implementation-workflow.md) — the three-stage make-it-work/right/fast approach applied to styling.
 
 ## Principles Implemented/Respected
 

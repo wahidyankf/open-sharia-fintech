@@ -26,23 +26,23 @@ This document explains the commit message convention used in the open-sharia-ent
 
 ## Contents
 
-- [Principles and Conventions Implemented](./commit-messages/01-principles-and-conventions-implemented.md) — Why this convention exists.
-- [What are Conventional Commits?](./commit-messages/02-what-are-conventional-commits.md) — The specification and overall structure.
-- [The Format Explained](./commit-messages/03-the-format-explained.md) — Header, body, footer rules.
-- [Valid Commit Types](./commit-messages/04-valid-commit-types.md) — The type table and detailed descriptions.
-- [Scope Examples](./commit-messages/05-scope-examples.md) — Common scope names and usage.
-- [Real-World Examples](./commit-messages/06-real-world-examples.md) — Good and bad commit messages.
-- [Why We Use This Convention](./commit-messages/07-why-we-use-this-convention.md) — Benefits for developers, teams, project, users.
-- [How It's Enforced](./commit-messages/08-how-its-enforced.md) — Commitlint, the Husky hook, and the workflow.
-- [Common Errors and Fixes](./commit-messages/09-common-errors-and-fixes.md) — Fixing the most common Commitlint rejections.
-- [Best Practices](./commit-messages/10-best-practices.md) — Habits beyond the mechanical format rules.
-- [Commit Granularity and When to Split Commits](./commit-messages/11-commit-granularity-and-when-to-split-commits.md) — Why and when to split work into multiple commits.
-- [When to Combine Commits](./commit-messages/12-when-to-combine-commits.md) — When multiple files belong in one commit.
-- [Commit Ordering Best Practices](./commit-messages/13-commit-ordering-best-practices.md) — Ordering a sequence of related commits.
-- [Atomic Commits](./commit-messages/14-atomic-commits.md) — What makes a commit atomic.
-- [Commit Granularity: Real-World Examples](./commit-messages/15-commit-granularity-real-world-examples.md) — Three worked granularity examples.
-- [Benefits of Proper Commit Granularity](./commit-messages/16-benefits-of-proper-commit-granularity.md) — Why granularity discipline pays off.
-- [Making Commits](./commit-messages/17-making-commits.md) — The three practical ways to invoke `git commit`.
+- [Principles and Conventions Implemented](./commit-messages/principles-and-conventions-implemented.md) — Why this convention exists.
+- [What are Conventional Commits?](./commit-messages/what-are-conventional-commits.md) — The specification and overall structure.
+- [The Format Explained](./commit-messages/the-format-explained.md) — Header, body, footer rules.
+- [Valid Commit Types](./commit-messages/valid-commit-types.md) — The type table and detailed descriptions.
+- [Scope Examples](./commit-messages/scope-examples.md) — Common scope names and usage.
+- [Real-World Examples](./commit-messages/real-world-examples.md) — Good and bad commit messages.
+- [Why We Use This Convention](./commit-messages/why-we-use-this-convention.md) — Benefits for developers, teams, project, users.
+- [How It's Enforced](./commit-messages/how-its-enforced.md) — Commitlint, the Husky hook, and the workflow.
+- [Common Errors and Fixes](./commit-messages/common-errors-and-fixes.md) — Fixing the most common Commitlint rejections.
+- [Best Practices](./commit-messages/best-practices.md) — Habits beyond the mechanical format rules.
+- [Commit Granularity and When to Split Commits](./commit-messages/commit-granularity-and-when-to-split-commits.md) — Why and when to split work into multiple commits.
+- [When to Combine Commits](./commit-messages/when-to-combine-commits.md) — When multiple files belong in one commit.
+- [Commit Ordering Best Practices](./commit-messages/commit-ordering-best-practices.md) — Ordering a sequence of related commits.
+- [Atomic Commits](./commit-messages/atomic-commits.md) — What makes a commit atomic.
+- [Commit Granularity: Real-World Examples](./commit-messages/commit-granularity-real-world-examples.md) — Three worked granularity examples.
+- [Benefits of Proper Commit Granularity](./commit-messages/benefits-of-proper-commit-granularity.md) — Why granularity discipline pays off.
+- [Making Commits](./commit-messages/making-commits.md) — The three practical ways to invoke `git commit`.
 
 ## Related Documentation
 

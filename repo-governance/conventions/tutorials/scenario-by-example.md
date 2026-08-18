@@ -23,12 +23,12 @@ sections below have moved into
 
 ## Contents
 
-1. [Purpose](./scenario-by-example/01-purpose.md) — What this convention extends, its target audience, and applicable domains.
-2. [Artifact Type, Self-Containment, and Annotation Semantics](./scenario-by-example/02-artifact-type-self-containment-and-annotation-semantics.md) — How artifact type, self-containment, and `# =>` annotation semantics differ from SWE by-example.
-3. [Coverage Metric, Diagrams, and Framework Sequencing](./scenario-by-example/03-coverage-metric-diagrams-and-framework-sequencing.md) — Domain-competency coverage, Mermaid diagram use cases, and the frameworks-last principle.
-4. [Five-Part Format (scenario-adapted)](./scenario-by-example/04-five-part-format-scenario-adapted.md) — The five-part example structure adapted for scenario domains.
-5. [Coverage Levels and Applies To](./scenario-by-example/05-coverage-levels-and-applies-to.md) — Beginner/Intermediate/Advanced coverage bands and which tutorial tracks this convention governs.
-6. [Validation Criteria and Principles Implemented/Respected](./scenario-by-example/06-validation-criteria-and-principles-implemented-respected.md) — The validation checklist and the principles this convention implements.
+1. [Purpose](./scenario-by-example/purpose.md) — What this convention extends, its target audience, and applicable domains.
+2. [Artifact Type, Self-Containment, and Annotation Semantics](./scenario-by-example/artifact-type-self-containment-and-annotation-semantics.md) — How artifact type, self-containment, and `# =>` annotation semantics differ from SWE by-example.
+3. [Coverage Metric, Diagrams, and Framework Sequencing](./scenario-by-example/coverage-metric-diagrams-and-framework-sequencing.md) — Domain-competency coverage, Mermaid diagram use cases, and the frameworks-last principle.
+4. [Five-Part Format (scenario-adapted)](./scenario-by-example/five-part-format-scenario-adapted.md) — The five-part example structure adapted for scenario domains.
+5. [Coverage Levels and Applies To](./scenario-by-example/coverage-levels-and-applies-to.md) — Beginner/Intermediate/Advanced coverage bands and which tutorial tracks this convention governs.
+6. [Validation Criteria and Principles Implemented/Respected](./scenario-by-example/validation-criteria-and-principles-implemented-respected.md) — The validation checklist and the principles this convention implements.
 
 ## Related Documentation
 

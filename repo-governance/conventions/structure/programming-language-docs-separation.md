@@ -19,14 +19,14 @@ This convention establishes the clear separation between **repository-specific p
 
 ## In This Convention
 
-- [Principles, Purpose, and Scope](./programming-language-docs-separation/01-principles-purpose-and-scope.md) — why this convention exists and what it covers versus excludes
-- [Style Guides vs. Educational Content](./programming-language-docs-separation/02-content-separation-rules-style-guides-vs-educational-content.md) — Rule 1 and Rule 2: what belongs where
-- [Rule 3: Explicit Prerequisite Knowledge Statements](./programming-language-docs-separation/03-rule-3-prerequisite-knowledge-statements.md) — the required README prerequisite template
-- [No Duplication and Cross-Referencing](./programming-language-docs-separation/04-content-separation-rules-no-duplication-and-cross-referencing.md) — Rule 4 and Rule 5: avoiding duplication and required linking
-- [Scope for All Languages and Alignment with SE Principles](./programming-language-docs-separation/05-scope-for-all-languages-and-alignment-with-se-principles.md) — applies to every language; how style guides align with the five SE principles
-- [Example 1: Rust — Correct Separation](./programming-language-docs-separation/06-example-rust.md) — A worked example contrasting an ayokoding-www By Example variables lesson with the corresponding docs/explanation/ OSE Platform...
-- [Example 2: TypeScript — Correct Separation](./programming-language-docs-separation/07-example-typescript.md) — A worked example contrasting an ayokoding-www generic error-handling lesson with the corresponding docs/explanation/ OSE Platform domain...
-- [Example 3: F# — Correct Separation](./programming-language-docs-separation/08-example-fsharp.md) — A worked example contrasting an ayokoding-www Option-for-null-safety lesson with the corresponding docs/explanation/ OSE Platform mandatory-Option-usage rule
-- [Common Mistakes to Avoid](./programming-language-docs-separation/09-common-mistakes-to-avoid.md) — three worked FAIL/PASS pairs
-- [Validation Checklist, Related Conventions, and References](./programming-language-docs-separation/10-validation-checklist-related-conventions-and-references.md) — Pre-publish checklists for both docs/explanation/ style guides and ayokoding-www educational content, plus related-convention and platform-documentation references
-- [Agents](./programming-language-docs-separation/11-agents.md) — makers, checkers, and fixers for this convention
+- [Principles, Purpose, and Scope](./programming-language-docs-separation/principles-purpose-and-scope.md) — why this convention exists and what it covers versus excludes
+- [Style Guides vs. Educational Content](./programming-language-docs-separation/content-separation-rules-style-guides-vs-educational-content.md) — Rule 1 and Rule 2: what belongs where
+- [Rule 3: Explicit Prerequisite Knowledge Statements](./programming-language-docs-separation/rule-3-prerequisite-knowledge-statements.md) — the required README prerequisite template
+- [No Duplication and Cross-Referencing](./programming-language-docs-separation/content-separation-rules-no-duplication-and-cross-referencing.md) — Rule 4 and Rule 5: avoiding duplication and required linking
+- [Scope for All Languages and Alignment with SE Principles](./programming-language-docs-separation/scope-for-all-languages-and-alignment-with-se-principles.md) — applies to every language; how style guides align with the five SE principles
+- [Example 1: Rust — Correct Separation](./programming-language-docs-separation/example-rust.md) — A worked example contrasting an ayokoding-www By Example variables lesson with the corresponding docs/explanation/ OSE Platform...
+- [Example 2: TypeScript — Correct Separation](./programming-language-docs-separation/example-typescript.md) — A worked example contrasting an ayokoding-www generic error-handling lesson with the corresponding docs/explanation/ OSE Platform domain...
+- [Example 3: F# — Correct Separation](./programming-language-docs-separation/example-fsharp.md) — A worked example contrasting an ayokoding-www Option-for-null-safety lesson with the corresponding docs/explanation/ OSE Platform mandatory-Option-usage rule
+- [Common Mistakes to Avoid](./programming-language-docs-separation/common-mistakes-to-avoid.md) — three worked FAIL/PASS pairs
+- [Validation Checklist, Related Conventions, and References](./programming-language-docs-separation/validation-checklist-related-conventions-and-references.md) — Pre-publish checklists for both docs/explanation/ style guides and ayokoding-www educational content, plus related-convention and platform-documentation references
+- [Agents](./programming-language-docs-separation/agents.md) — makers, checkers, and fixers for this convention

@@ -61,30 +61,30 @@ updating style guide or AyoKoding content, before major releases, or periodicall
 
 ## Contents
 
-- [Execution Mode](./docs-software-engineering-separation-quality-gate/01-execution-mode.md) — delegation vs. manual mode.
+- [Execution Mode](./docs-software-engineering-separation-quality-gate/execution-mode.md) — delegation vs. manual mode.
 
 ### Steps
 
-- [Step 1: Initial Validation](./docs-software-engineering-separation-quality-gate/02-step-1-initial-validation.md) — checker run.
-- [Step 2: Check for Findings](./docs-software-engineering-separation-quality-gate/03-step-2-check-for-findings.md) — threshold decision.
-- [Step 3: Apply Fixes](./docs-software-engineering-separation-quality-gate/04-step-3-apply-fixes.md) — fixer run.
-- [Step 4: Re-validate](./docs-software-engineering-separation-quality-gate/05-step-4-revalidate.md) — confirmation check.
-- [Step 5: Iteration Control](./docs-software-engineering-separation-quality-gate/06-step-5-iteration-control.md) — loop logic.
-- [Step 6: Finalization](./docs-software-engineering-separation-quality-gate/07-step-6-finalization.md) — final status.
+- [Step 1: Initial Validation](./docs-software-engineering-separation-quality-gate/step-1-initial-validation.md) — checker run.
+- [Step 2: Check for Findings](./docs-software-engineering-separation-quality-gate/step-2-check-for-findings.md) — threshold decision.
+- [Step 3: Apply Fixes](./docs-software-engineering-separation-quality-gate/step-3-apply-fixes.md) — fixer run.
+- [Step 4: Re-validate](./docs-software-engineering-separation-quality-gate/step-4-revalidate.md) — confirmation check.
+- [Step 5: Iteration Control](./docs-software-engineering-separation-quality-gate/step-5-iteration-control.md) — loop logic.
+- [Step 6: Finalization](./docs-software-engineering-separation-quality-gate/step-6-finalization.md) — final status.
 
 ### Criteria and Examples
 
-- [Termination Criteria](./docs-software-engineering-separation-quality-gate/08-termination-criteria.md) — pass/partial/fail rules.
-- [Example Usage](./docs-software-engineering-separation-quality-gate/09-example-usage.md) — invocation scenarios.
-- [Iteration Example](./docs-software-engineering-separation-quality-gate/10-iteration-example.md) — worked trace.
+- [Termination Criteria](./docs-software-engineering-separation-quality-gate/termination-criteria.md) — pass/partial/fail rules.
+- [Example Usage](./docs-software-engineering-separation-quality-gate/example-usage.md) — invocation scenarios.
+- [Iteration Example](./docs-software-engineering-separation-quality-gate/iteration-example.md) — worked trace.
 
 ### Reference
 
-- [Safety Features](./docs-software-engineering-separation-quality-gate/11-safety-features.md) — convergence safeguards.
-- [Validation Focus](./docs-software-engineering-separation-quality-gate/12-validation-focus.md) — what the checker validates.
-- [Related Workflows](./docs-software-engineering-separation-quality-gate/13-related-workflows.md) — composable workflows.
-- [Success Metrics](./docs-software-engineering-separation-quality-gate/14-success-metrics.md) — operational tracking.
-- [Notes](./docs-software-engineering-separation-quality-gate/15-notes.md) — key operating characteristics.
-- [Principles Respected](./docs-software-engineering-separation-quality-gate/16-principles-implemented-respected.md) — governance.
-- [Conventions Respected](./docs-software-engineering-separation-quality-gate/17-conventions-implemented-respected.md) — governance.
-- [Agents](./docs-software-engineering-separation-quality-gate/18-agents.md) — checker/fixer agent links.
+- [Safety Features](./docs-software-engineering-separation-quality-gate/safety-features.md) — convergence safeguards.
+- [Validation Focus](./docs-software-engineering-separation-quality-gate/validation-focus.md) — what the checker validates.
+- [Related Workflows](./docs-software-engineering-separation-quality-gate/related-workflows.md) — composable workflows.
+- [Success Metrics](./docs-software-engineering-separation-quality-gate/success-metrics.md) — operational tracking.
+- [Notes](./docs-software-engineering-separation-quality-gate/notes.md) — key operating characteristics.
+- [Principles Respected](./docs-software-engineering-separation-quality-gate/principles-implemented-respected.md) — governance.
+- [Conventions Respected](./docs-software-engineering-separation-quality-gate/conventions-implemented-respected.md) — governance.
+- [Agents](./docs-software-engineering-separation-quality-gate/agents.md) — checker/fixer agent links.

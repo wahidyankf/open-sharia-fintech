@@ -53,15 +53,15 @@ A scheduling layer over `plan-execution.md`, driving several ready plans togethe
 
 ## Contents
 
-- [Purpose & Mode](./multi-plans-execution/01-purpose-scope-and-execution-mode.md) — when to use, orchestrator.
-- [Relationship & Concurrency](./multi-plans-execution/02-relationship-and-concurrency-model.md) — inherited vs. added.
-- [Phase A — Scope](./multi-plans-execution/03-phase-a-scope-and-nodes.md) — A1-A3.
-- [Phase A — Edges](./multi-plans-execution/04-phase-a-edges-report-and-diagram.md) — A4-A7.
-- [Phase B — Tasks](./multi-plans-execution/05-phase-b-union-task-list.md) — B1-B5.
-- [Phase C — Scheduler](./multi-plans-execution/06-phase-c-ready-queue-scheduler.md) — C1-C6.
-- [Phase D — Lifecycle](./multi-plans-execution/07-phase-d-lifecycle-and-failure-isolation.md) — D1-D4.
-- [Phase D — Capture](./multi-plans-execution/08-phase-d-knowledge-capture-and-finalization.md) — D5-D6.
-- [Iron Rules & Termination](./multi-plans-execution/09-iron-rules-and-termination-criteria.md) — 8 rules.
-- [Example Usage](./multi-plans-execution/10-example-usage.md) — six patterns.
-- [Safety & Related](./multi-plans-execution/11-safety-related-workflows-and-principles.md) — guardrails, links.
-- [Conventions & Notes](./multi-plans-execution/12-conventions-and-notes.md) — governance, recap.
+- [Purpose & Mode](./multi-plans-execution/purpose-scope-and-execution-mode.md) — when to use, orchestrator.
+- [Relationship & Concurrency](./multi-plans-execution/relationship-and-concurrency-model.md) — inherited vs. added.
+- [Phase A — Scope](./multi-plans-execution/phase-a-scope-and-nodes.md) — A1-A3.
+- [Phase A — Edges](./multi-plans-execution/phase-a-edges-report-and-diagram.md) — A4-A7.
+- [Phase B — Tasks](./multi-plans-execution/phase-b-union-task-list.md) — B1-B5.
+- [Phase C — Scheduler](./multi-plans-execution/phase-c-ready-queue-scheduler.md) — C1-C6.
+- [Phase D — Lifecycle](./multi-plans-execution/phase-d-lifecycle-and-failure-isolation.md) — D1-D4.
+- [Phase D — Capture](./multi-plans-execution/phase-d-knowledge-capture-and-finalization.md) — D5-D6.
+- [Iron Rules & Termination](./multi-plans-execution/iron-rules-and-termination-criteria.md) — 8 rules.
+- [Example Usage](./multi-plans-execution/example-usage.md) — six patterns.
+- [Safety & Related](./multi-plans-execution/safety-related-workflows-and-principles.md) — guardrails, links.
+- [Conventions & Notes](./multi-plans-execution/conventions-and-notes.md) — governance, recap.

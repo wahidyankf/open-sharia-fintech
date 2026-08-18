@@ -19,20 +19,20 @@ This document defines how to write mathematical equations and formulas in the op
 
 ## In This Convention
 
-- [Principles, Purpose, Scope, and the Core Principle](./mathematical-notation/01-principles-purpose-scope-and-the-core-principle.md) — What this convention covers and the core LaTeX rule
-- [Why LaTeX?](./mathematical-notation/02-why-latex.md) — Universal rendering, professional quality, and version-control friendliness
-- [LaTeX Syntax: Inline and Display Math](./mathematical-notation/03-latex-syntax-inline-and-display-math.md) — `$...$` versus `$$...$$` syntax
-- [LaTeX Syntax: Delimiter Placement Rules](./mathematical-notation/04-latex-syntax-delimiter-placement-rules.md) — Critical rules for single vs. double dollar delimiters and `aligned` blocks
-- [Where to Use LaTeX](./mathematical-notation/05-where-to-use-latex.md) — Documentation files, README files, and plans
-- [Where NOT to Use LaTeX](./mathematical-notation/06-where-not-to-use-latex.md) — Code blocks, Mermaid diagrams, ASCII art, and config files
-- [Common LaTeX Patterns](./mathematical-notation/07-common-latex-patterns.md) — Subscripts, Greek letters, fractions, summations, roots, and operators
-- [Finance Formula Examples: WACC and CAPM](./mathematical-notation/08-finance-formula-examples-wacc-and-capm.md) — Worked LaTeX examples
-- [Finance Formula Examples: NPV, Sharpe Ratio, and Compound Interest](./mathematical-notation/09-finance-formula-examples-npv-sharpe-ratio-and-compound-interest.md) — Worked LaTeX examples
-- [Testing LaTeX Rendering](./mathematical-notation/10-testing-latex-rendering.md) — Verifying on GitHub and fixing common rendering issues
-- [Best Practices](./mathematical-notation/11-best-practices.md) — Defining variables, consistent notation, and formatting complex formulas
-- [Migration Strategy](./mathematical-notation/12-migration-strategy.md) — Rules for new and existing documentation
-- [LaTeX Reference](./mathematical-notation/13-latex-reference.md) — Quick-reference table of commands and finance symbols
-- [Validation Checklist and Important Notes](./mathematical-notation/14-validation-checklist-and-important-notes.md) — Pre-commit checklist and browser/performance/accessibility notes
+- [Principles, Purpose, Scope, and the Core Principle](./mathematical-notation/principles-purpose-scope-and-the-core-principle.md) — What this convention covers and the core LaTeX rule
+- [Why LaTeX?](./mathematical-notation/why-latex.md) — Universal rendering, professional quality, and version-control friendliness
+- [LaTeX Syntax: Inline and Display Math](./mathematical-notation/latex-syntax-inline-and-display-math.md) — `$...$` versus `$$...$$` syntax
+- [LaTeX Syntax: Delimiter Placement Rules](./mathematical-notation/latex-syntax-delimiter-placement-rules.md) — Critical rules for single vs. double dollar delimiters and `aligned` blocks
+- [Where to Use LaTeX](./mathematical-notation/where-to-use-latex.md) — Documentation files, README files, and plans
+- [Where NOT to Use LaTeX](./mathematical-notation/where-not-to-use-latex.md) — Code blocks, Mermaid diagrams, ASCII art, and config files
+- [Common LaTeX Patterns](./mathematical-notation/common-latex-patterns.md) — Subscripts, Greek letters, fractions, summations, roots, and operators
+- [Finance Formula Examples: WACC and CAPM](./mathematical-notation/finance-formula-examples-wacc-and-capm.md) — Worked LaTeX examples
+- [Finance Formula Examples: NPV, Sharpe Ratio, and Compound Interest](./mathematical-notation/finance-formula-examples-npv-sharpe-ratio-and-compound-interest.md) — Worked LaTeX examples
+- [Testing LaTeX Rendering](./mathematical-notation/testing-latex-rendering.md) — Verifying on GitHub and fixing common rendering issues
+- [Best Practices](./mathematical-notation/best-practices.md) — Defining variables, consistent notation, and formatting complex formulas
+- [Migration Strategy](./mathematical-notation/migration-strategy.md) — Rules for new and existing documentation
+- [LaTeX Reference](./mathematical-notation/latex-reference.md) — Quick-reference table of commands and finance symbols
+- [Validation Checklist and Important Notes](./mathematical-notation/validation-checklist-and-important-notes.md) — Pre-commit checklist and browser/performance/accessibility notes
 
 ## Related Conventions
 

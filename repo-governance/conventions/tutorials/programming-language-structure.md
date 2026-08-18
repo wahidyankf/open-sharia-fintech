@@ -21,19 +21,19 @@ This convention standardizes how programming language tutorials are organized as
 
 ## Contents
 
-1. [Principles, Purpose, and Scope](./programming-language-structure/01-principles-purpose-and-scope.md) — The content principles this convention implements, why it exists, and what it applies to.
-2. [Directory Structure Pattern](./programming-language-structure/02-directory-structure-pattern.md) — Directory trees for dual-path and single-path languages.
-3. [Full Set Components: Foundational and By-Example](./programming-language-structure/03-full-set-components-foundational-and-by-example.md) — Components 1-3: foundational tutorials and the by-example track.
-4. [Full Set Components: By-Concept and Cookbook](./programming-language-structure/04-full-set-components-by-concept-and-cookbook.md) — Components 4-5: the by-concept track and the cookbook.
-5. [Foundational Tutorials at Root](./programming-language-structure/05-foundational-tutorials-at-root.md) — Why Initial Setup and Quick Start stay at the tutorials root.
-6. [Navigation Ordering](./programming-language-structure/06-navigation-ordering.md) — Required order of paths in tutorials navigation.
-7. [Navigation Pattern: Weight Values](./programming-language-structure/07-navigation-weight-values.md) — The level-based weight-value system for tutorial folders and files.
-8. [Full Set Completeness and Content Requirements](./programming-language-structure/08-completeness-and-content-requirements.md) — The completeness checklist plus frontmatter, link, overview, and index requirements.
-9. [Examples](./programming-language-structure/09-examples.md) — Worked Java (dual-path) and Kotlin (single-path) examples.
-10. [Validation](./programming-language-structure/10-validation.md) — Automated checkers and the manual verification checklist.
-11. [Common Mistakes](./programming-language-structure/11-common-mistakes.md) — Five common structural mistakes with FAIL/PASS examples.
-12. [Migration Guide](./programming-language-structure/12-migration-guide.md) — Six-step walkthrough for completing a Full Set Tutorial Package.
-13. [Tutorial Folder Arrangement Standard](./programming-language-structure/13-tutorial-folder-arrangement-standard.md) — The manual, weight-ordered arrangement standard across all content types.
+1. [Principles, Purpose, and Scope](./programming-language-structure/principles-purpose-and-scope.md) — The content principles this convention implements, why it exists, and what it applies to.
+2. [Directory Structure Pattern](./programming-language-structure/directory-structure-pattern.md) — Directory trees for dual-path and single-path languages.
+3. [Full Set Components: Foundational and By-Example](./programming-language-structure/full-set-components-foundational-and-by-example.md) — Components 1-3: foundational tutorials and the by-example track.
+4. [Full Set Components: By-Concept and Cookbook](./programming-language-structure/full-set-components-by-concept-and-cookbook.md) — Components 4-5: the by-concept track and the cookbook.
+5. [Foundational Tutorials at Root](./programming-language-structure/foundational-tutorials-at-root.md) — Why Initial Setup and Quick Start stay at the tutorials root.
+6. [Navigation Ordering](./programming-language-structure/navigation-ordering.md) — Required order of paths in tutorials navigation.
+7. [Navigation Pattern: Weight Values](./programming-language-structure/navigation-weight-values.md) — The level-based weight-value system for tutorial folders and files.
+8. [Full Set Completeness and Content Requirements](./programming-language-structure/completeness-and-content-requirements.md) — The completeness checklist plus frontmatter, link, overview, and index requirements.
+9. [Examples](./programming-language-structure/examples.md) — Worked Java (dual-path) and Kotlin (single-path) examples.
+10. [Validation](./programming-language-structure/validation.md) — Automated checkers and the manual verification checklist.
+11. [Common Mistakes](./programming-language-structure/common-mistakes.md) — Five common structural mistakes with FAIL/PASS examples.
+12. [Migration Guide](./programming-language-structure/migration-guide.md) — Six-step walkthrough for completing a Full Set Tutorial Package.
+13. [Tutorial Folder Arrangement Standard](./programming-language-structure/tutorial-folder-arrangement-standard.md) — The manual, weight-ordered arrangement standard across all content types.
 
 ## Related Conventions
 

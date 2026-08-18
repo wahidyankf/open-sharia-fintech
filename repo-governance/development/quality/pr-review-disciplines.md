@@ -20,25 +20,25 @@ findings that span disciplines, and the coordinator pipeline's cost- and noise-c
 
 ## Documents
 
-- [Applicability and Finding Disposition](./pr-review-disciplines/01-applicability-and-finding-disposition.md) — Which pipeline this applies to, and how findings are disposed. Use to check whether a review is in scope.
-- [Principles/Conventions](./pr-review-disciplines/02-principles-and-conventions-implemented-respected.md) — Rationale principles and conventions. Use to trace this convention's rationale.
-- [Purpose](./pr-review-disciplines/03-purpose.md) — Why the nine-discipline split exists. Use when orienting to the split.
-- [Nine Reviewer Disciplines: Table (1)](./pr-review-disciplines/04-the-nine-reviewer-disciplines-table-part-1.md) — Shared rules; Architecture through Performance. Use to find which specialist owns a finding.
-- [Nine Reviewer Disciplines: Table (2)](./pr-review-disciplines/05-the-nine-reviewer-disciplines-table-part-2.md) — Documentation through Type-soundness, plus scout/synthesis roles. Use to find which specialist owns a finding.
-- [The Boundary Tie-Breaker Rule](./pr-review-disciplines/06-the-boundary-tie-breaker-rule.md) — Three-step tie-breaker for a cross-discipline finding. Use when a finding spans disciplines.
-- [Seven Grey-Zone Rulings](./pr-review-disciplines/07-seven-grey-zone-rulings.md) — The tie-breaker pre-resolved for seven cases. Use for a recurring grey-zone question.
-- [Cost/Noise Control: Risk-Tier Fan-Out (D12)](./pr-review-disciplines/08-cost-control-noise-control-mechanics-risk-tier-fan-out.md) — Trivial/lite/full specialist fan-out. Use to determine which specialists run.
-- [Cost/Noise Control: Shared-Context Extract-Once (D13)](./pr-review-disciplines/09-cost-control-noise-control-mechanics-shared-context-extract-once.md) — Shared PR context and large-diff handling. Use for a large-diff review.
-- [Cost/Noise Control: SUPPRESS Blocks and D14](./pr-review-disciplines/10-cost-control-noise-control-mechanics-suppress-blocks-and-instruction-decay-specialist.md) — SUPPRESS blocks and the instruction-decay specialist. Use when scoping a SUPPRESS block.
-- [Cost/Noise Control: Dismissal Rule and Tag-Strip](./pr-review-disciplines/11-cost-control-noise-control-mechanics-human-dismissal-and-boundary-tag-strip.md) — Human-dismissal respect and tag-strip hardening. Use on a re-review after a prior dismissal.
-- [Quality Gates: Confidence-Calibration Spot-Check](./pr-review-disciplines/12-quality-gate-enhancements-confidence-calibration-spot-check.md) — Spot-checking confidence calibration. Use when calibrating confidence scoring.
-- [Quality Gates: Selective Adversarial Verification (D4)](./pr-review-disciplines/13-quality-gate-enhancements-selective-adversarial-verification.md) — Adversarial re-verification for selected findings. Use when a finding needs re-verification.
-- [Quality Gates: CRITICAL-Reproduction and Cycle Cap](./pr-review-disciplines/14-quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md) — Reproduction requirement plus seven-cycle cap. Use when CRITICAL lacks reproduction steps.
-- [Post-Cutover Monitoring: Plan (1)](./pr-review-disciplines/15-post-cutover-monitoring-rollback-monitoring-plan-part-1.md) — Why monitoring exists; precision and per-discipline rate. Use when setting up monitoring.
-- [Post-Cutover Monitoring: Plan (2)](./pr-review-disciplines/16-post-cutover-monitoring-rollback-monitoring-plan-part-2.md) — Outdated rate, cost/latency, override rate. Use to track post-cutover health.
-- [Post-Cutover Monitoring: Rollback Trigger (D6)](./pr-review-disciplines/17-post-cutover-monitoring-rollback-rollback-trigger.md) — Trigger and procedure for rollback. Use when deciding whether to roll back.
-- [Future Work: Bot Identity Gap](./pr-review-disciplines/18-future-work-bot-identity.md) — The unresolved bot-identity/REQUEST_CHANGES gap. Use when investigating this gap.
-- [Future Work: Cost and Latency Budgeting](./pr-review-disciplines/19-future-work-cost-and-latency-budgeting.md) — A future per-PR cost/latency budget. Use when proposing such a budget.
-- [Future Work: Deferred Merge Queue (D7/D10)](./pr-review-disciplines/20-future-work-deferred-merge-queue.md) — A deferred merge-queue idea. Use when scoping future merge-queue work.
-- [Examples](./pr-review-disciplines/21-examples.md) — Worked examples of the review pipeline. Use for a concrete example.
-- [Enforcement and Related Documentation](./pr-review-disciplines/22-enforcement-and-related-documentation.md) — Enforcement mechanics and related references. Use to locate enforcement or a related convention.
+- [Applicability and Finding Disposition](./pr-review-disciplines/applicability-and-finding-disposition.md) — Which pipeline this applies to, and how findings are disposed. Use to check whether a review is in scope.
+- [Principles/Conventions](./pr-review-disciplines/principles-and-conventions-implemented-respected.md) — Rationale principles and conventions. Use to trace this convention's rationale.
+- [Purpose](./pr-review-disciplines/purpose.md) — Why the nine-discipline split exists. Use when orienting to the split.
+- [Nine Reviewer Disciplines: Table (1)](./pr-review-disciplines/the-nine-reviewer-disciplines-table-part-1.md) — Shared rules; Architecture through Performance. Use to find which specialist owns a finding.
+- [Nine Reviewer Disciplines: Table (2)](./pr-review-disciplines/the-nine-reviewer-disciplines-table-part-2.md) — Documentation through Type-soundness, plus scout/synthesis roles. Use to find which specialist owns a finding.
+- [The Boundary Tie-Breaker Rule](./pr-review-disciplines/the-boundary-tie-breaker-rule.md) — Three-step tie-breaker for a cross-discipline finding. Use when a finding spans disciplines.
+- [Seven Grey-Zone Rulings](./pr-review-disciplines/seven-grey-zone-rulings.md) — The tie-breaker pre-resolved for seven cases. Use for a recurring grey-zone question.
+- [Cost/Noise Control: Risk-Tier Fan-Out (D12)](./pr-review-disciplines/cost-control-noise-control-mechanics-risk-tier-fan-out.md) — Trivial/lite/full specialist fan-out. Use to determine which specialists run.
+- [Cost/Noise Control: Shared-Context Extract-Once (D13)](./pr-review-disciplines/cost-control-noise-control-mechanics-shared-context-extract-once.md) — Shared PR context and large-diff handling. Use for a large-diff review.
+- [Cost/Noise Control: SUPPRESS Blocks and D14](./pr-review-disciplines/cost-control-noise-control-mechanics-suppress-blocks-and-instruction-decay-specialist.md) — SUPPRESS blocks and the instruction-decay specialist. Use when scoping a SUPPRESS block.
+- [Cost/Noise Control: Dismissal Rule and Tag-Strip](./pr-review-disciplines/cost-control-noise-control-mechanics-human-dismissal-and-boundary-tag-strip.md) — Human-dismissal respect and tag-strip hardening. Use on a re-review after a prior dismissal.
+- [Quality Gates: Confidence-Calibration Spot-Check](./pr-review-disciplines/quality-gate-enhancements-confidence-calibration-spot-check.md) — Spot-checking confidence calibration. Use when calibrating confidence scoring.
+- [Quality Gates: Selective Adversarial Verification (D4)](./pr-review-disciplines/quality-gate-enhancements-selective-adversarial-verification.md) — Adversarial re-verification for selected findings. Use when a finding needs re-verification.
+- [Quality Gates: CRITICAL-Reproduction and Cycle Cap](./pr-review-disciplines/quality-gate-enhancements-critical-reproduction-and-seven-cycle-maximum.md) — Reproduction requirement plus seven-cycle cap. Use when CRITICAL lacks reproduction steps.
+- [Post-Cutover Monitoring: Plan (1)](./pr-review-disciplines/post-cutover-monitoring-rollback-monitoring-plan-part-1.md) — Why monitoring exists; precision and per-discipline rate. Use when setting up monitoring.
+- [Post-Cutover Monitoring: Plan (2)](./pr-review-disciplines/post-cutover-monitoring-rollback-monitoring-plan-part-2.md) — Outdated rate, cost/latency, override rate. Use to track post-cutover health.
+- [Post-Cutover Monitoring: Rollback Trigger (D6)](./pr-review-disciplines/post-cutover-monitoring-rollback-rollback-trigger.md) — Trigger and procedure for rollback. Use when deciding whether to roll back.
+- [Future Work: Bot Identity Gap](./pr-review-disciplines/future-work-bot-identity.md) — The unresolved bot-identity/REQUEST_CHANGES gap. Use when investigating this gap.
+- [Future Work: Cost and Latency Budgeting](./pr-review-disciplines/future-work-cost-and-latency-budgeting.md) — A future per-PR cost/latency budget. Use when proposing such a budget.
+- [Future Work: Deferred Merge Queue (D7/D10)](./pr-review-disciplines/future-work-deferred-merge-queue.md) — A deferred merge-queue idea. Use when scoping future merge-queue work.
+- [Examples](./pr-review-disciplines/examples.md) — Worked examples of the review pipeline. Use for a concrete example.
+- [Enforcement and Related Documentation](./pr-review-disciplines/enforcement-and-related-documentation.md) — Enforcement mechanics and related references. Use to locate enforcement or a related convention.

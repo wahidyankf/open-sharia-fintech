@@ -93,7 +93,7 @@ appeared. No existing filename changed.
 
 ## Children
 
-- [App Naming Types](./file-naming/01-app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
+- [App Naming Types](./file-naming/app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
 
 ## Related Documentation
 

@@ -1,0 +1,53 @@
+---
+title: "Step 2 and 3 — Phase Gate and Pre-Execution Grill"
+description: The hard-gate check that every plan is execution-ready, followed by the third (pre-execution) grill on order, failure policy, and worktree cleanup.
+when_to_use: Use before starting the execution phase, to verify readiness and record the operational decisions that govern it.
+---
+
+# Step 2 — Phase Gate: Plans Ready for Execution (Sequential, Hard Gate)
+
+Before any execution, verify for EVERY target repo:
+
+1. The plan folder exists at `plans/in-progress/<objective-slug>/` with the five-document layout.
+2. The plan reached `pass` on plan-quality-gate (double-zero at the selected gate-mode).
+3. The planning-phase commits are on that repo's `origin main` (`git fetch origin && git log
+origin/main --oneline -5` shows the plan delivery commits).
+4. The plan declares its `## Worktree` section per
+   [Plans Organization Convention §Worktree Specification](../../../conventions/structure/plans/worktree-specification.md#worktree-specification).
+
+**If any check fails for any repo**: STOP. Surface the failing repo and check. Do not execute a
+subset silently — the invoker decides whether to fix and re-gate or abandon.
+
+**Output**: All plans verified execution-ready.
+
+## Step 3 — Pre-Execution Grill (Third Grill, Sequential, Hard Gate)
+
+The composite grills three times: the planning phase's matrix grill and post-research grill, then
+this pre-execution grill. Invoke the `grill-me` skill per the
+[Grilling-With-Options Convention](../../../development/workflow/grilling-with-options.md) — every
+question presents 2-4 concrete options with trade-offs and exactly one **(Recommended)**; one
+question per message; interactive multiple-choice tool when available.
+
+**Mandatory questions** (plus any opened by the answers):
+
+1. **Execution order**: which repo executes first/next/last? Options grounded in the deviation
+   matrix (e.g., anchor repo first as reference implementation **(Recommended)** / riskiest repo
+   first to surface unknowns early / `{input.execution-order}` as given).
+2. **Failure policy**: if repo N's execution ends `partial`/`fail`, do we stop the composite
+   **(Recommended)** or continue to repo N+1 and report at the end?
+3. **Unresolved design decisions**: per plan-execution's pre-execution requirement, stress-test
+   any decision the plans left open — one question per open decision, options from the plan's
+   tech-docs.
+4. **`[HUMAN]` step availability**: the delivery checklists may contain `[HUMAN]` gates; is the
+   invoker available to confirm them during this run, or should execution stop at the first
+   `[HUMAN]` item and resume later?
+5. **Worktree cleanup preference**: after each repo's archival, plan-execution prompts before
+   deleting the plan worktree. Confirm the invoker wants the per-repo prompt (default) or wants
+   to pre-decline cleanup for all repos (worktrees retained). Pre-approving silent deletion is
+   NOT offered — deletion always requires the per-repo prompt.
+
+**Hard gate**: execution does not begin while any question is unresolved. On invoker abandonment,
+terminate with status `fail` — the gated plans remain in `plans/in-progress/` for a later
+standalone plan-execution run.
+
+**Output**: Confirmed execution order, failure policy, and resolved open decisions.

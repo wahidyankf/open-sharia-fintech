@@ -20,14 +20,14 @@ FP-variant by-example tutorials in ayokoding-www teach functional programming co
 
 ## Contents
 
-- [Purpose and Principles](./fp-variant-multi-language/01-purpose-and-principles.md) — why two languages are required and which principles this convention implements.
-- [Scope and Tabbed Format (S1)](./fp-variant-multi-language/02-scope-and-tabbed-format.md) — which files are covered, and the F#-first, Clojure-second tabs structure.
-- [Standards S2: F# Idiomatic Patterns](./fp-variant-multi-language/03-standards-s2-fsharp-idiomatic-patterns.md) — required native F# constructs.
-- [Standards S3: Clojure Idiomatic Patterns](./fp-variant-multi-language/04-standards-s3-clojure-idiomatic-patterns.md) — required native Clojure constructs.
-- [Standards S4-S5: Bidirectional Rule and Cross-Paradigm Handling](./fp-variant-multi-language/05-standards-s4-s5-bidirectional-rule-and-cross-paradigm-handling.md) — neither language mimics the other, and how to handle language-specific concepts.
-- [Standards S6: Annotation Density](./fp-variant-multi-language/06-standards-s6-annotation-density.md) — the 1.0–2.25 comment-to-code ratio per tab.
-- [Examples: PASS Idiomatic F# and Clojure Side-by-Side](./fp-variant-multi-language/07-examples-pass-idiomatic-side-by-side.md) — a full compliant worked example.
-- [Examples: FAIL Non-Idiomatic Patterns](./fp-variant-multi-language/08-examples-fail-non-idiomatic-patterns.md) — two non-compliant examples and why they fail.
-- [Rationale](./fp-variant-multi-language/09-rationale.md) — why two languages, the bidirectional constraint, and closest-equivalent-plus-annotation.
-- [Validation and Tools and Automation](./fp-variant-multi-language/10-validation-and-tools.md) — the six compliance checks and the maker/checker/fixer agents.
-- [References](./fp-variant-multi-language/11-references.md) — related conventions, agents, overview pages, and architecture documents.
+- [Purpose and Principles](./fp-variant-multi-language/purpose-and-principles.md) — why two languages are required and which principles this convention implements.
+- [Scope and Tabbed Format (S1)](./fp-variant-multi-language/scope-and-tabbed-format.md) — which files are covered, and the F#-first, Clojure-second tabs structure.
+- [Standards S2: F# Idiomatic Patterns](./fp-variant-multi-language/standards-s2-fsharp-idiomatic-patterns.md) — required native F# constructs.
+- [Standards S3: Clojure Idiomatic Patterns](./fp-variant-multi-language/standards-s3-clojure-idiomatic-patterns.md) — required native Clojure constructs.
+- [Standards S4-S5: Bidirectional Rule and Cross-Paradigm Handling](./fp-variant-multi-language/standards-s4-s5-bidirectional-rule-and-cross-paradigm-handling.md) — neither language mimics the other, and how to handle language-specific concepts.
+- [Standards S6: Annotation Density](./fp-variant-multi-language/standards-s6-annotation-density.md) — the 1.0–2.25 comment-to-code ratio per tab.
+- [Examples: PASS Idiomatic F# and Clojure Side-by-Side](./fp-variant-multi-language/examples-pass-idiomatic-side-by-side.md) — a full compliant worked example.
+- [Examples: FAIL Non-Idiomatic Patterns](./fp-variant-multi-language/examples-fail-non-idiomatic-patterns.md) — two non-compliant examples and why they fail.
+- [Rationale](./fp-variant-multi-language/rationale.md) — why two languages, the bidirectional constraint, and closest-equivalent-plus-annotation.
+- [Validation and Tools and Automation](./fp-variant-multi-language/validation-and-tools.md) — the six compliance checks and the maker/checker/fixer agents.
+- [References](./fp-variant-multi-language/references.md) — related conventions, agents, overview pages, and architecture documents.
