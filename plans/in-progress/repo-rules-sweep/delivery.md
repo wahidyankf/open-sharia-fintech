@@ -66,6 +66,21 @@ than inventing an answer.
 | Worktree cleanup prompt (shards 41, 42) | See **Worktree Disposition** below — pre-authorized, no prompt. |
 | "Wait for user commit approval" (shard 02, item 10) | **Superseded by the per-phase gate flow.** Each `### Phase N Gate` commits and pushes under Iron Rules 5 and 7; there is no separate end-of-run approval step for this plan. |
 
+**Tie-breakers, so no judgment call needs a human.** These bind Phases 4 and 5:
+
+1. **Ordinal ambiguity → strip.** A directory keeps its ordinals only when the prose explicitly
+   calls the files steps or phases *and* they are read in order. If the evidence is merely
+   suggestive, de-number. The burden of proof is on keeping the number.
+2. **Boundary rework → conservative merge only.** Merge a continuation run only when its titles
+   continue one another *and* the combined text stays under 500 words. Every other run gets a
+   self-standing rename in place. Never rewrite a rule's wording to make a merge fit — if it needs
+   rewording, it is not a mechanical merge.
+3. **Commit shape → one commit per top-level subtree.** `repo-governance/conventions/`,
+   `repo-governance/development/`, `repo-governance/workflows/`, `repo-governance/principles/`,
+   `repo-governance/vision/`, `.claude/skills/`. Roughly six commits, each independently revertible.
+4. **When 1 and 2 disagree** — a run that should be merged sits inside a directory that should keep
+   its ordinals — the directory-level verdict wins and the run is renamed in place, not merged.
+
 **Legitimate stops that remain.** Autonomy is not a mandate to push through a genuine blocker. Stop
 and surface, do not improvise, when: a gate fails for a reason no checkbox anticipated; the PR-Review
 cycle exits `escalated`; a rename decision is genuinely ambiguous under the tie-breakers below and
@@ -295,6 +310,10 @@ GREEN step, then a REFACTOR step.
       markdown corpus, rewriting link targets only — acceptance: `npx nx run rhino-cli:test` exits 0.
 - [ ] [AI] REFACTOR: extract index parsing into one named function shared by `generate` and
       `rewrite-paths` — acceptance: `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` exit 0.
+- [ ] [AI] Regenerate the parity checksum manifest with `rhino parity manifest generate` and stage
+      it in the same commit — acceptance: `rhino parity manifest validate` exits 0.
+      `apps/rhino-cli/parity-manifest.sha256` checksums every `rhino-cli` file against the Git index,
+      so **any** add, delete, or edit under `apps/rhino-cli/` invalidates it until regenerated.
 - [ ] [AI] Document both behaviours in
       `repo-governance/conventions/structure/governance-readme-completeness.md` — acceptance: the
       order-preserving contract and the `rewrite-paths` mode are described.
@@ -443,6 +462,9 @@ trims a plan README to satisfy a budget that was never going to be measured.
 ### Phase 3 Gate
 
 - [ ] [AI] `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` — both exit 0.
+- [ ] [AI] `rhino parity manifest generate` has been run and staged after the deletions —
+      acceptance: `rhino parity manifest validate` exits 0. Four source files and a module directory
+      were removed; the manifest lists them until regenerated.
 - [ ] [AI] `rhino repo-config validate`, `rhino gate validate`, `rhino specs coverage` — all exit 0.
 - [ ] [AI] `rhino md links validate` — exits 0; no document links to a deleted convention.
 - [ ] [AI] `rhino governance word-budget validate` — exits 0, and `governance-word-budget.md`
@@ -493,7 +515,16 @@ _Suggested executor:_ `docs-file-manager` for the renames and link repair; `repo
       returns only links to `kept` files.
 - [ ] [AI] Run `npm run generate:bindings` and `npm run validate:sync` — acceptance: both exit 0 and
       the regenerated mirrors are committed with the `.claude/` renames.
-- [ ] [AI] Run `rhino md links validate` — acceptance: exits 0, no broken link.
+- [ ] [AI] Repair links from **other** in-progress plans into renamed paths. At authoring time
+      `plans/in-progress/repository-onboarding-readme-refresh/delivery.md` carries three such links.
+      `md links validate` excludes `plans/done` but **not** `plans/in-progress`, so these break the
+      gate. This is a mechanical link repair caused by our rename, so it is our obligation — but it
+      touches another plan's docs: record every such path on the file-touch ledger and change nothing
+      but the link target — acceptance: `grep -rEl '\]\([^)]*repo-governance/[^)]*/[0-9]{2}-[a-z0-9-]+\.md' plans/in-progress/`
+      returns no file outside this plan's own folder.
+- [ ] [AI] Run `rhino md links validate` — acceptance: exits 0, no broken link. The rewrite covers
+      the whole tracked corpus including `docs/` and `specs/`, which link **into** `repo-governance/`
+      even though they are out of scope for renaming.
 - [ ] [AI] Run `rhino governance readme-index validate --paths repo-governance/ --paths .claude/` —
       acceptance: exits 0; no `missing`, `orphan`, `ghost`, or `unannotated` finding.
 - [ ] [AI] Spot-verify that annotations survived by diffing one index's entry text before and after —
@@ -520,8 +551,14 @@ _Suggested executor:_ `docs-file-manager` and `repo-rules-fixer`, same split as 
 
 - [ ] [AI] Provision `worktrees/repo-rules-sweep/` in `ose-private` and branch `repo-rules-sweep`
       from its `main` — acceptance: `git worktree list` in `ose-private` shows the path.
-- [ ] [AI] Apply the Phase 2 `apps/rhino-cli/` change byte-identically — acceptance: `diff -r` between
-      the two repositories' `apps/rhino-cli/src/application/governance/` trees prints nothing.
+- [ ] [AI] Apply the Phase 2 and Phase 3 `apps/rhino-cli/` changes byte-identically — acceptance:
+      `diff -r` prints nothing for `src/application/governance/`, `src/commands/`, `src/internal/`,
+      and `src/application/` between the two repositories, and neither repository still contains
+      `naming.rs` under `src/internal/`. Do **not** blanket-converge the two `rhino-cli` trees: the
+      parity boundary is not the whole app and each repository legitimately carries files the other
+      does not.
+- [ ] [AI] Regenerate and stage `ose-private`'s parity manifest with `rhino parity manifest generate`
+      — acceptance: `rhino parity manifest validate` exits 0 there.
 - [ ] [AI] Apply the matching `specs/apps/rhino/` scenario additions — acceptance: the feature files
       are byte-identical across both repositories.
 - [ ] [AI] Apply the Phase 1 convention and machinery edits, adapted to `ose-private`'s own paths —
