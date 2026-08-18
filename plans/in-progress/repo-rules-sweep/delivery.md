@@ -290,10 +290,10 @@ _Suggested executor:_ `swe-rust-dev`
 TDD is required. Each behaviour cycle is one RED step binding exactly one Gherkin scenario, then a
 GREEN step, then a REFACTOR step.
 
-- [ ] [AI] Add the three index-tooling scenarios from `prd.md` to
+- [x] [AI] Add the three index-tooling scenarios from `prd.md` to
       `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature` —
       acceptance: `rhino specs structure validate` exits 0 and the three titles are present.
-- [ ] [AI] RED: add a failing unit test in
+- [x] [AI] RED: add a failing unit test in
       `apps/rhino-cli/src/application/governance/readme_index.rs` asserting order preservation.
       **Gherkin (binds) →** "Generate no longer rewrites an existing index's order"
 
@@ -307,10 +307,15 @@ GREEN step, then a REFACTOR step.
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
 
-- [ ] [AI] GREEN: parse an existing index's entry list in `generate_index_file`, preserve each
+- [x] [AI] GREEN: parse an existing index's entry list in `generate_index_file`, preserve each
       entry's position and annotation verbatim, and append only on-disk targets absent from it —
       acceptance: `npx nx run rhino-cli:test` exits 0.
-- [ ] [AI] RED: add a failing unit test asserting the scaffold path is unchanged.
+- [x] [AI] RED: add a failing unit test asserting the scaffold path is unchanged. **Did not go red
+      during execution (2026-08-18)** — the Phase 2 order-preservation implementation deliberately
+      routes the no-index case through the unchanged `sorted_names()` path, so scaffold behaviour
+      was already correct when the test was written. `generate_still_scaffolds_a_directory_with_no_index`
+      is therefore a **regression guard**, not a RED step: it also asserts each sibling appears
+      exactly once, which is the property the new append pass could plausibly have broken.
       **Gherkin (binds) →** "Generate still scaffolds a directory with no index"
 
       ```gherkin
@@ -323,9 +328,10 @@ GREEN step, then a REFACTOR step.
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
 
-- [ ] [AI] GREEN: keep today's `sorted_names()` scaffold behaviour for the no-index case —
+- [x] [AI] GREEN: keep today's `sorted_names()` scaffold behaviour for the no-index case — satisfied
+      by the same change; no separate edit was needed —
       acceptance: `npx nx run rhino-cli:test` exits 0.
-- [ ] [AI] RED: add a failing unit test for the new mode.
+- [x] [AI] RED: add a failing unit test for the new mode.
       **Gherkin (binds) →** "Rewrite-paths updates link targets without touching order"
 
       ```gherkin
@@ -338,23 +344,25 @@ GREEN step, then a REFACTOR step.
 
       — acceptance: `npx nx run rhino-cli:test` fails on that test only.
 
-- [ ] [AI] GREEN: implement `readme-index rewrite-paths --map <tsv>` operating over the tracked
+- [x] [AI] GREEN: implement `readme-index rewrite-paths --map <tsv>` operating over the tracked
       markdown corpus, rewriting link targets only — acceptance: `npx nx run rhino-cli:test` exits 0.
-- [ ] [AI] REFACTOR: extract index parsing into one named function shared by `generate` and
+- [x] [AI] REFACTOR: extract index parsing into one named function shared by `generate` and
       `rewrite-paths` — acceptance: `npx nx run rhino-cli:test` and `npx nx run rhino-cli:lint` exit 0.
-- [ ] [AI] Regenerate the parity checksum manifest with `rhino parity manifest generate` and stage
+- [x] [AI] Regenerate the parity checksum manifest with `rhino parity manifest generate` and stage
       it in the same commit — acceptance: `rhino parity manifest validate` exits 0.
       `apps/rhino-cli/parity-manifest.sha256` checksums every `rhino-cli` file against the Git index,
       so **any** add, delete, or edit under `apps/rhino-cli/` invalidates it until regenerated.
-- [ ] [AI] Document both behaviours in
+- [x] [AI] Document both behaviours in
       `repo-governance/conventions/structure/governance-readme-completeness.md` — acceptance: the
       order-preserving contract and the `rewrite-paths` mode are described.
 
 ### Phase 2 Gate
 
-- [ ] [AI] `npx nx run rhino-cli:test` — exits 0.
-- [ ] [AI] `npx nx run rhino-cli:lint` — exits 0.
-- [ ] [AI] A dry-run `readme-index generate` over `repo-governance/` produces no index reordering —
+- [x] [AI] `npx nx run rhino-cli:test` — exits 0.
+      _Executed as `npx nx run rhino-cli:test:quick` — `rhino-cli:test` is not a declared target;
+      the real targets are `test:quick`, `test:unit`, `test:specs`, `test:coverage`. Plan defect._
+- [x] [AI] `npx nx run rhino-cli:lint` — exits 0.
+- [x] [AI] A dry-run `readme-index generate` over `repo-governance/` produces no index reordering —
       `git diff --stat` after the dry run is empty.
 
 > **Pause Safety**: the generator preserves hand-authored order and a rename-aware mode exists. No
