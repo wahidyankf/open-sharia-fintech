@@ -672,7 +672,7 @@ pub fn generate_readme_index(
 ///
 /// # Errors
 ///
-/// Returns an error if `paths` is empty or a file cannot be written.
+/// Returns an error if `paths` is empty, or a file cannot be read or written.
 pub fn rewrite_index_paths(
     fs: &dyn Fs,
     paths: &[String],
@@ -693,9 +693,16 @@ pub fn rewrite_index_paths(
             if file.extension().and_then(|e| e.to_str()) != Some("md") {
                 continue;
             }
-            let Ok(content) = fs.read_to_string(&file) else {
-                continue;
-            };
+            // `walk_files` just told us this `.md` file exists, so a read
+            // failure here (invalid UTF-8, a transient permission error, a
+            // TOCTOU race) is a real fault, not "nothing to rewrite".
+            // Swallowing it would drop the file from `changed` and let the
+            // command report `status: "passed"` with a lower count, leaving a
+            // stale link behind under a success banner. Mirrors the same
+            // hardening applied to `generate_index_file`'s read.
+            let content = fs
+                .read_to_string(&file)
+                .with_context(|| format!("read {}", file.display()))?;
             let updated = rewrite_link_targets(&content, &renames);
             if updated != content {
                 fs.write_string(&file, &updated)
@@ -2160,6 +2167,36 @@ mod tests {
             fs::read(dir.join("old-name.png")).unwrap(),
             b"not a markdown file",
             "a non-markdown file must never be rewritten, even if its name matches a map key"
+        );
+    }
+
+    /// A `.md` file the walker found but that cannot be read (invalid UTF-8,
+    /// a transient permission error, a TOCTOU race) must abort the sweep with
+    /// an error. Swallowing it would drop the file from `changed` and let the
+    /// command report success with a lower count, leaving a stale link behind
+    /// under a green banner — indistinguishable from "nothing needed
+    /// changing". Sibling of
+    /// `generate_errors_instead_of_overwriting_an_unreadable_existing_index`.
+    #[test]
+    fn rewrite_paths_errors_on_an_unreadable_markdown_file() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let invalid_utf8: &[u8] = &[0xFF, 0xFE, b'h', b'i'];
+        fs::write(dir.join("unreadable.md"), invalid_utf8).unwrap();
+
+        let map = vec![("old-name.md".to_string(), "new-name.md".to_string())];
+        let result =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map);
+
+        assert!(
+            result.is_err(),
+            "an unreadable .md file must return Err, not be skipped as a silent no-op"
+        );
+        assert_eq!(
+            fs::read(dir.join("unreadable.md")).unwrap(),
+            invalid_utf8,
+            "the unreadable file's original bytes must survive untouched"
         );
     }
 }

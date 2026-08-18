@@ -27,10 +27,12 @@
 //!
 //! The path-keyed redesign (`--include-non-markdown`, a dead-row exit code,
 //! and matching on the full relative path) is tracked as WS-3 of
-//! `plans/backlog/rhino-cli-governance-tooling-defects/` in the sibling
-//! `ose-public` repository, where this plan lives (this repo does not carry
-//! its own copy of `apps/rhino-cli`'s backlog plans) — deliberately deferred
-//! out of this command's first cut, not forgotten.
+//! `plans/backlog/rhino-cli-governance-tooling-defects/` — deliberately
+//! deferred out of this command's first cut, not forgotten.
+//!
+//! This file is parity-governed and byte-identical across every repository
+//! that shares `apps/rhino-cli`. That backlog plan is carried by only one of
+//! them, so the path above may not resolve in the checkout you are reading.
 
 use std::path::Path;
 

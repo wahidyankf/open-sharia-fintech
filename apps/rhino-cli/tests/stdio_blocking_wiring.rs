@@ -20,6 +20,7 @@
 use std::fs;
 use std::io::Read;
 use std::os::fd::AsFd;
+use std::path::Path;
 use std::process::{Command, Stdio};
 use std::time::Duration;
 
@@ -37,16 +38,101 @@ use tempfile::TempDir;
 /// without it.
 const BROKEN_LINK_FILE_COUNT: usize = 6000;
 
+/// Pre-write escape guard (Git Fixture Isolation convention, Standard 4).
+/// Panics unless git, under the same isolation env as [`run_git`], resolves
+/// its top-level to `dir` (canonicalized). Mirrors `tests/governance.rs`'s
+/// and `tests/specs_tree.rs`'s `assert_no_escape` exactly — see those copies'
+/// doc comments for the full rationale. `GIT_WORK_TREE` is deliberately NOT
+/// set: it would make `--show-toplevel` merely echo the variable, defeating
+/// the guard.
+fn assert_no_escape(dir: &Path) {
+    let out = Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
+        .output()
+        .expect("escape-guard: git rev-parse must spawn");
+    assert!(
+        out.status.success(),
+        "escape-guard: `git rev-parse --show-toplevel` failed in {} (git could not confirm an \
+         isolated repository here): {}",
+        dir.display(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    let want = fs::canonicalize(dir).unwrap_or_else(|_| dir.to_path_buf());
+    let got = fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
+    assert_eq!(
+        got,
+        want,
+        "escape-guard: fixture git resolves to {}, not the intended tempdir {} — refusing to \
+         proceed to avoid corrupting the real repository",
+        got.display(),
+        want.display()
+    );
+}
+
+/// Runs `git` with `args` inside `dir`, under full Git Fixture Isolation
+/// (all six mandatory layers — see
+/// `repo-governance/development/quality/git-fixture-isolation.md`). Mirrors
+/// `tests/governance.rs`'s `run_git` exactly: explicit `GIT_DIR` closes
+/// ambient upward discovery (Standard 2), `GIT_CEILING_DIRECTORIES` caps any
+/// residual walk (Standard 1), the nulled `GIT_CONFIG_GLOBAL`/
+/// `GIT_CONFIG_SYSTEM` keep identity deterministic and out of the developer's
+/// real config (Standard 3), the pre-write escape guard runs before every
+/// write once `dir/.git` exists (Standard 4), and the exit status is checked
+/// via `status.success()` rather than a bare `.expect()` on the spawn result
+/// (Standard 5). Standard 6 is a process rule for whoever runs this test:
+/// diagnose failures in a throwaway clone, never in the primary worktree.
+///
+/// Hand-rolling a bare `Command::new("git").args(["init", "--quiet"])` here
+/// instead is not a lesser variant of this helper, it is a live escape: with
+/// an ambient `GIT_DIR` exported, `git init` exits 0, creates nothing in
+/// `dir`, and reinitializes the ambient repository's `config`/`HEAD`/`hooks`
+/// templates.
+fn run_git(dir: &Path, args: &[&str]) {
+    if dir.join(".git").is_dir() {
+        assert_no_escape(dir);
+    }
+    let output = Command::new("git")
+        .args(args)
+        .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
+        .env("GIT_AUTHOR_NAME", "t")
+        .env("GIT_AUTHOR_EMAIL", "t@t")
+        .env("GIT_COMMITTER_NAME", "t")
+        .env("GIT_COMMITTER_EMAIL", "t@t")
+        .output()
+        .expect("git command must spawn");
+    assert!(
+        output.status.success(),
+        "git {args:?} in {} must exit zero, got: {}",
+        dir.display(),
+        String::from_utf8_lossy(&output.stderr)
+    );
+}
+
 #[test]
 fn large_report_completes_over_an_inherited_nonblocking_stdout_pipe() {
     let tmp = TempDir::new().expect("tempdir");
     let root = tmp.path();
 
-    Command::new("git")
-        .args(["init", "--quiet"])
-        .current_dir(root)
-        .status()
-        .expect("git init must succeed");
+    run_git(root, &["init", "-q"]);
+    // The repository must actually exist in the fixture root afterwards: a
+    // `git init` that silently retargeted an ambient repo would leave this
+    // absent while still exiting zero.
+    assert!(
+        root.join(".git").is_dir(),
+        "git init must have created a repository inside the fixture root {}",
+        root.display()
+    );
+    assert_no_escape(root);
 
     for i in 0..BROKEN_LINK_FILE_COUNT {
         fs::write(
@@ -65,6 +151,15 @@ fn large_report_completes_over_an_inherited_nonblocking_stdout_pipe() {
     let child = Command::new(cargo_bin("rhino-cli"))
         .args(["md", "links", "validate"])
         .current_dir(root)
+        // The subject must resolve the fixture repository, not an ambient one
+        // inherited from the caller's environment — otherwise this test
+        // silently stops testing what it claims (and can report on the real
+        // checkout). Mirrors the `env -u GIT_DIR -u GIT_WORK_TREE
+        // -u GIT_COMMON_DIR` prefix every rhino-cli Nx target already carries.
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .env_remove("GIT_COMMON_DIR")
+        .env("GIT_CEILING_DIRECTORIES", root)
         .stdout(writer)
         .stderr(Stdio::piped())
         .spawn()

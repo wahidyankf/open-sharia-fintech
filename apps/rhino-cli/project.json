@@ -105,7 +105,7 @@
       "options": {
         "commands": [
           "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch --test docs"
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch --test docs --test stdio_blocking_wiring"
         ],
         "cwd": "{workspaceRoot}",
         "parallel": false
@@ -121,6 +121,7 @@
         "{projectRoot}/tests/gate_specs.rs",
         "{projectRoot}/tests/gate_dispatch.rs",
         "{projectRoot}/tests/docs.rs",
+        "{projectRoot}/tests/stdio_blocking_wiring.rs",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/**/*.feature",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract/**/*.feature",
         "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/**/*.feature",
