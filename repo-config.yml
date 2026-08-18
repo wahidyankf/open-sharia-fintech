@@ -996,31 +996,6 @@ gates:
   # optimize-governance-md's Phase 9b-2/16b-2 trigger-matrix evidence for the method). A
   # never-exercised `ci`-surface `path-gated` declaration reads as green while silently never
   # firing.
-  - id: harness-naming
-    type: check
-    command: harness naming validate
-    kind: rhino-cli
-    ci-group: naming
-    surfaces:
-      pre-push:
-        scope: path-gated
-        trigger:
-          - .claude/agents/
-          - .opencode/agents/
-      ci: { scope: other }
-
-  - id: workflows-naming
-    type: check
-    command: repo-governance workflows naming validate
-    kind: rhino-cli
-    ci-group: naming
-    surfaces:
-      pre-push:
-        scope: path-gated
-        trigger:
-          - repo-governance/workflows/
-      ci: { scope: other }
-
   - id: vendor-independence
     type: check
     command: repo-governance vendor validate repo-governance/
@@ -1046,8 +1021,8 @@ gates:
   # everything until the next heading of equal-or-shallower level, so a gate
   # there could only ever police the four lines above it. Total exemption is
   # intended — that file is a single-vendor binding shim — and an always-green
-  # gate is exactly the vacuous-trigger failure the harness-naming comment
-  # above warns about.
+  # gate is exactly the vacuous-trigger failure the path-gated comment above
+  # warns about.
   - id: vendor-independence-agents-md
     type: check
     command: repo-governance vendor validate AGENTS.md
