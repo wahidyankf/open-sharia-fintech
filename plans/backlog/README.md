@@ -57,6 +57,11 @@ grading, and plan-decision-integrity hardening — was reduced to a single-file 
 phase, which routes code-bearing learnings straight to a backlog plan rather than through a
 two-pager — both arrived plan-ready, with the defect reproduced and the fix designed):
 
+- [oxlint-upgrade-and-lint-reproducibility](./oxlint-upgrade-and-lint-reproducibility/README.md) —
+  every lint target resolved `npx oxlint@latest` at run time, so oxlint 1.79.0 turned CI red on a
+  branch that had passed two hours earlier without touching the file it named; `repo-rules-sweep`
+  pinned 1.78.0 as a blocker fix, and this plan takes the upgrade deliberately, fixes the real
+  `set-state-in-effect` defect it found, and enumerates what else resolves unpinned.
 - [rhino-cli-governance-tooling-defects](./rhino-cli-governance-tooling-defects/README.md) — three
   `rhino-cli` tools that exit 0 while doing less than the caller believes: the vendor audit mis-pairs
   a wrapped inline code span, `harness bindings validate` hard-codes `.claude/agents` instead of
