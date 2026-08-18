@@ -116,3 +116,21 @@ Feature: README sibling index
     Given a covered directory already has a conforming "README.md"
     When the developer runs governance readme-index generate twice
     Then the second run writes byte-identical content to the first
+
+  Scenario: Generate no longer rewrites an existing index's order
+    Given a directory already has a README.md index with hand-authored entry order
+    When the maintainer runs rhino-cli governance readme-index generate on that directory
+    Then the existing entries keep their order and annotations
+    And only genuinely missing entries are appended
+
+  Scenario: Generate still scaffolds a directory with no index
+    Given a directory has no README.md index
+    When the maintainer runs rhino-cli governance readme-index generate on that directory
+    Then a complete annotated index is written
+    And every sibling file and subdirectory appears exactly once
+
+  Scenario: Rewrite-paths updates link targets without touching order
+    Given a rename map of old and new paths for a directory's children
+    When the maintainer runs rhino-cli governance readme-index rewrite-paths with that map
+    Then every index link target is updated to its new path
+    And entry order, annotation text, and surrounding prose are unchanged
