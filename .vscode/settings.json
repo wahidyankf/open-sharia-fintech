@@ -9,5 +9,6 @@
     "buildFlags": ["-tags=integration"]
   },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "dart.flutterSdkPath": ".fvm-cache/versions/3.41.5"
 }
