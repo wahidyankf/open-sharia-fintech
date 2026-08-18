@@ -2,7 +2,7 @@
 
 ## Refuse-on-Uncertainty
 
-When verification (see [13-verification-recipes.md](verification-recipes.md)) fails or is impossible: REFUSE to write the claim as a fact. Acceptable refusals:
+When verification (see [verification-recipes.md](verification-recipes.md)) fails or is impossible: REFUSE to write the claim as a fact. Acceptable refusals:
 
 1. **Skip the claim** (preferred when omission keeps the plan coherent)
 2. **Use `[Unverified]` label** (flagged for verification before execution)

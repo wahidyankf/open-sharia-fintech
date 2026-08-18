@@ -25,4 +25,4 @@ Domain-specialized agents hallucinate less than generic orchestration. When a de
 - Mechanical operation (`mv`, `git mv`, `npm install`)
 - Shell command without code edits
 
-The plan-execution workflow respects the annotation as Priority 0 — the suggested executor wins over heuristic matches by file extension or content keyword. Citing a non-existent agent is treated as Anti-Pattern AP-7 (HIGH finding by `plan-checker`; see [14-refuse-uncertainty-and-anti-patterns.md](refuse-uncertainty-and-anti-patterns.md)).
+The plan-execution workflow respects the annotation as Priority 0 — the suggested executor wins over heuristic matches by file extension or content keyword. Citing a non-existent agent is treated as Anti-Pattern AP-7 (HIGH finding by `plan-checker`; see [refuse-uncertainty-and-anti-patterns.md](refuse-uncertainty-and-anti-patterns.md)).

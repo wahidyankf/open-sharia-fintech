@@ -42,8 +42,8 @@ Markdown file at `md-file` path. If the file already exists, the maker overwrite
 
 ## Step-by-Step Workflow
 
-See [03-making-conversions-detect-and-extract.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/making-conversions-detect-and-extract.md)
-and [04-making-conversions-assemble-and-write.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/making-conversions-assemble-and-write.md)
+See [making-conversions-detect-and-extract.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/making-conversions-detect-and-extract.md)
+and [making-conversions-assemble-and-write.md](../../.claude/skills/docs-converting-pdf-to-markdown/reference/making-conversions-assemble-and-write.md)
 for the complete five-step workflow: PDF type detection, text-based extraction (chunked), the OCR
 path for image-only PDFs, per-element conversion rules (headings via section-numbering depth,
 tables, figures/Mermaid stubs, nested lists, footnotes, headers/footers), assembly, and output

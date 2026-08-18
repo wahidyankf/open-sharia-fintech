@@ -14,11 +14,11 @@ the caller names, following the C4-aware five-folder shape.
 
 ## Reference Modules
 
-- [01-surface-profile-trees.md](reference/surface-profile-trees.md) — the four surface-profile
+- [surface-profile-trees.md](reference/surface-profile-trees.md) — the four surface-profile
   directory trees (full-stack, web-only, cli-only, multi-cli) and when each folder is created
-- [02-content-generation.md](reference/content-generation.md) — README inference, Gherkin
+- [content-generation.md](reference/content-generation.md) — README inference, Gherkin
   feature file generation, C4 Mermaid diagram generation, DDD artifact scaffolding
-- [03-conventions.md](reference/conventions.md) — the PM-readability contract, feature file
+- [conventions.md](reference/conventions.md) — the PM-readability contract, feature file
   placement rules, README structure, background steps by surface, folder listing order
 
 ## Core Principles

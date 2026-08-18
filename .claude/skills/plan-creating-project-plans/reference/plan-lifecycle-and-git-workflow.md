@@ -65,7 +65,7 @@ See [Mandatory Pre-Write and Post-Write Grilling](mandatory-grilling.md).
 
 - Not available in `ose-public` (branch-protected `main`, including for admins) — see
   the Per-Repository Delivery Mode Restrictions HARD RULE in
-  [09-delivery-mode.md](delivery-mode.md)
+  [delivery-mode.md](delivery-mode.md)
 - Reachable only for a genuinely infrastructure-as-code plan in `ose-private`
 - For small, obviously-safe changes where a PR adds no review value, in that one repo
 - Declare the mode explicitly in `## Delivery Mode` — never assume it

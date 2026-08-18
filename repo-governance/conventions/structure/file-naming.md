@@ -80,10 +80,9 @@ Date-prefixed files use ISO 8601 (`YYYY-MM-DD`) and remain kebab-case overall:
 
 ## Withdrawn Rules
 
-Two filename rules once bound here and no longer do: the **agent role suffix** and the **governance
-workflow type suffix**. Each checked only a basename's last token against a closed vocabulary, so
-neither prevented a real defect while both forced a rename whenever a new kind of agent or workflow
-appeared. No existing filename changed.
+Three filename rules once bound here and no longer do: the **agent role suffix**, **workflow type
+suffix**, and **workflow scope prefix**. No filename changed. See Withdrawn Rules Detail below for
+what each covered and whether the third's removal was deliberate.
 
 ## Principles Implemented/Respected
 
@@ -94,6 +93,7 @@ appeared. No existing filename changed.
 ## Children
 
 - [App Naming Types](./file-naming/app-naming-types.md) — the `[domain]-[type]` naming convention and type-suffix vocabulary for apps under `apps/`.
+- [Withdrawn Rules Detail](./file-naming/withdrawn-rules.md) — what each withdrawn rule checked, and whether the scope-prefix drop was deliberate.
 
 ## Related Documentation
 

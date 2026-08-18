@@ -41,8 +41,6 @@ All defined on `rhino-cli`. Other projects expose `specs:coverage` only.
 | `mermaid:validation`                   | Mermaid diagrams          | Validate width, label length, syntax (flowchart + state)      |
 | `headings:hierarchy-validation`        | Prose `.md` files         | Validate heading nesting on allowlist paths                   |
 | `env:validation`                       | `.env.example` files      | Validate against `env-contract:` section in `repo-config.yml` |
-| `naming:harness-validation`            | Agent definition files    | Validate names match naming convention                        |
-| `naming:workflows-validation`          | Workflow files            | Validate names match naming convention                        |
 | `governance:vendor-audit-validation`   | `repo-governance/` docs   | Validate no vendor-specific content leakage                   |
 | `cross-vendor:parity-validation`       | All binding trees         | Validate cross-vendor behavioral parity                       |
 | `harness:bindings-validation`          | Binding artifacts         | Validate `.claude/` ↔ `.opencode/` ↔ `.amazonq/` parity       |

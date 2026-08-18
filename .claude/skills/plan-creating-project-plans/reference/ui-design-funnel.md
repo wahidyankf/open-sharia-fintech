@@ -45,4 +45,4 @@ The funnel produces four kinds of artefact, all visible in the plan (`prd.md` + 
 (sibling to the specs/Gherkin Step 5j); `plan-fixer` scaffolds missing funnel sections. A UI-bearing
 plan never passes quality gates without its design funnel.
 
-See [07-ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md) for the grilling questions.
+See [ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md) for the grilling questions.

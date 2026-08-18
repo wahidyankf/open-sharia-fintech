@@ -640,7 +640,8 @@ struct TargetMeta {
 /// # Errors
 ///
 /// Returns an error when `paths` is empty, when a directory cannot be read,
-/// or when a generated index file cannot be written.
+/// when an existing index file cannot be read (never silently rebuilt), or
+/// when a generated index file cannot be written.
 pub fn generate_readme_index(
     fs: &dyn Fs,
     paths: &[String],
@@ -908,9 +909,15 @@ fn generate_index_file(
     // delete all of it, so missing entries are spliced in beside the existing
     // list and every other byte is left alone. A directory with no index takes
     // the scaffold path below.
-    if fs.exists(index_path)
-        && let Ok(content) = fs.read_to_string(index_path)
-    {
+    if fs.exists(index_path) {
+        // The index is known to exist: a read failure here (invalid UTF-8, a
+        // transient permission error, a TOCTOU race) must propagate as an
+        // error, never fall through to the scaffold path below. Conflating
+        // "no index on disk" with "index exists but could not be read" would
+        // silently overwrite an existing, authored document.
+        let content = fs
+            .read_to_string(index_path)
+            .with_context(|| format!("read {}", index_path.display()))?;
         let entry_lines = existing_entry_lines(&content);
         // Membership is decided by the WHOLE document's link set, exactly as
         // `audit_one_dir` decides it. A target linked from a table cell or a
@@ -1936,6 +1943,45 @@ mod tests {
         );
     }
 
+    /// Regression test for the CRITICAL finding on this PR: a read failure
+    /// on an EXISTING index must propagate as an error, never fall through
+    /// to the scaffold path and overwrite the file. Uses invalid UTF-8 bytes
+    /// (`std::fs::read_to_string`'s documented failure mode) rather than a
+    /// permission error, since the latter is not portably reproducible in a
+    /// test sandbox. Written directly via `std::fs::write` (raw bytes, not
+    /// the `String`-typed fixture helpers used elsewhere in this module,
+    /// which cannot hold invalid UTF-8 at all).
+    #[test]
+    fn generate_errors_instead_of_overwriting_an_unreadable_existing_index() {
+        let tmp = TempDir::new().unwrap();
+        let gov_root = tmp.path().join("repo-governance");
+        let leaf = gov_root.join("formatting");
+        fs::create_dir_all(&leaf).unwrap();
+        write_governance_target(
+            &leaf.join("linking.md"),
+            "Linking Convention",
+            "shared standards for links",
+            "Use when adding or reviewing a hyperlink",
+        );
+
+        let invalid_utf8: &[u8] = &[0xFF, 0xFE, b'h', b'i'];
+        let index_path = leaf.join("README.md");
+        fs::write(&index_path, invalid_utf8).unwrap();
+
+        let result = generate_readme_index(&RealFs, &[gov_root.to_string_lossy().to_string()], &[]);
+
+        assert!(
+            result.is_err(),
+            "an existing-but-unreadable index must return Err, not Ok"
+        );
+        let after = fs::read(&index_path).unwrap();
+        assert_eq!(
+            after, invalid_utf8,
+            "the unreadable index's original bytes must survive untouched — a fallthrough to \
+             the scaffold path would silently overwrite them"
+        );
+    }
+
     /// Binds Gherkin scenario "Rewrite-paths updates link targets without
     /// touching order": every index link target is repointed to its new path
     /// while entry order, annotation text, and surrounding prose stay byte-
@@ -2009,6 +2055,111 @@ mod tests {
         assert!(
             after.contains("Intro prose mentioning 01-linking.md inline"),
             "a bare non-link mention must NOT be rewritten:\n{after}"
+        );
+    }
+
+    /// `rewrite_index_paths(&[], ..)` must reject an empty `paths` list, the
+    /// same way every other multi-path entry point in this module does.
+    #[test]
+    fn rewrite_paths_errors_on_empty_paths() {
+        let err = rewrite_index_paths(&RealFs, &[], &[]).unwrap_err();
+        assert!(
+            err.to_string().contains("at least one path is required"),
+            "{err}"
+        );
+    }
+
+    /// An empty rename map is a legitimate no-op (nothing was asked to be
+    /// renamed) and must return `Ok(Vec::new())` without touching the
+    /// filesystem — this is the early-return branch, distinct from "a
+    /// non-empty map that matches nothing" below, which walks the tree.
+    #[test]
+    fn rewrite_paths_empty_map_is_a_no_touch_no_op() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "- [Linking](./01-linking.md) — annotation.\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+
+        assert!(changed.is_empty(), "empty map must report no changed files");
+        assert_eq!(
+            fs::read_to_string(dir.join("README.md")).unwrap(),
+            before,
+            "empty map must not touch the file on disk"
+        );
+    }
+
+    /// Pins today's silent-no-op behaviour (Finding 5 / WS-3 in
+    /// `plans/backlog/rhino-cli-governance-tooling-defects/`): a non-empty
+    /// rename map that matches no basename anywhere in the tree returns
+    /// `Ok(Vec::new())` — the CLI reports "0 file(s) updated" and exits 0,
+    /// byte-indistinguishable from "nothing needed changing". This is the
+    /// compensating control for deferring the basename→path keying redesign
+    /// to WS-3: the moment that redesign introduces a dead-row exit code,
+    /// this test fails loudly, which is exactly the signal WS-3 wants.
+    #[test]
+    fn rewrite_paths_map_matching_nothing_is_a_silent_ok_no_op() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "- [Linking](./01-linking.md) — annotation.\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+
+        let map = vec![(
+            "no-such-basename.md".to_string(),
+            "irrelevant.md".to_string(),
+        )];
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map)
+                .unwrap();
+
+        assert!(
+            changed.is_empty(),
+            "a map matching nothing must report zero changed files, not an error"
+        );
+        assert_eq!(
+            fs::read_to_string(dir.join("README.md")).unwrap(),
+            before,
+            "a map matching nothing must not touch any file on disk"
+        );
+    }
+
+    /// Non-`.md` files reachable from `paths` must be skipped entirely — a
+    /// filename match against a `.png`/`.rs`/etc. sibling of a renamed
+    /// basename is never rewritten, even when its extension-free stem
+    /// happens to collide.
+    #[test]
+    fn rewrite_paths_skips_non_markdown_files() {
+        let tmp = TempDir::new().unwrap();
+        let dir = tmp.path().join("repo-governance").join("formatting");
+        fs::create_dir_all(&dir).unwrap();
+        let before = "[asset](./old-name.png)\n";
+        fs::write(dir.join("README.md"), before).unwrap();
+        // A non-markdown file whose own name also happens to match a map key
+        // — must be left alone; only `.md` link TARGETS are ever rewritten,
+        // and only inside `.md` SOURCE files.
+        fs::write(dir.join("old-name.png"), b"not a markdown file").unwrap();
+
+        let map = vec![("old-name.png".to_string(), "new-name.png".to_string())];
+        let changed =
+            rewrite_index_paths(&RealFs, &[tmp.path().to_string_lossy().to_string()], &map)
+                .unwrap();
+
+        // The link TARGET inside the .md file is still rewritten (targets
+        // are matched by basename regardless of extension); what must be
+        // skipped is walking/rewriting non-`.md` SOURCE files themselves.
+        assert_eq!(
+            changed,
+            vec![dir.join("README.md")],
+            "only the .md source file may be reported as changed"
+        );
+        assert_eq!(
+            fs::read(dir.join("old-name.png")).unwrap(),
+            b"not a markdown file",
+            "a non-markdown file must never be rewritten, even if its name matches a map key"
         );
     }
 }

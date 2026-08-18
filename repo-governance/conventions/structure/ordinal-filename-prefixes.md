@@ -39,9 +39,9 @@ Both sides are load-bearing.
 | Filename                                        | Verdict                                                                                                                                        |
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `29-common-syntax-errors-special-characters.md` | **Fails** — serial position from a word-budget split → `common-syntax-errors-special-characters.md`                                            |
-| `04-phase-1-system-package-manager.md`          | **Fails** — two numbering systems → `01-system-package-manager.md`                                                                             |
+| `04-phase-1-system-package-manager.md`          | **Fails** — two numbering systems disagree → `phase-1-system-package-manager.md`, stripping the leading ordinal and keeping the embedded token |
 | `01b-inherited-and-specialized-requirements.md` | **Fails** — insert escape → `inherited-and-specialized-requirements.md`                                                                        |
-| `02-step-1-and-2-maker-and-checker.md`          | **Fails** — ordinal 02 labels steps 1–2, so the systems disagree → `02-maker-and-checker.md`, keeping the ordinal because the file _is_ a step |
+| `02-step-1-and-2-maker-and-checker.md`          | **Fails** — ordinal 02 labels steps 1–2, so the systems disagree → `step-1-and-2-maker-and-checker.md` (four real instances)                   |
 | `04-step-4-fixer.md`                            | **Keeps its ordinal, sheds the redundant token** → `04-fixer.md`                                                                               |
 | `04-fixer.md` (post-rename)                     | **Passes** — a real step whose ordinal is that step's own number                                                                               |
 
@@ -49,23 +49,23 @@ For a step **range**, the ordinal equals the first step:
 `05-step-5-and-6-iteration-control-and-finalization.md` passes, becoming
 `05-iteration-control-and-finalization.md`.
 
+**Known deviation, not a second rule**: the last two rows' real application split 2-2 across four
+`*-quality-gate/` dirs — `in-the-field`/`swe-by-example` kept the ordinal as shown;
+`annotated-concept`/`primer` stripped it instead (`step-4-fixer.md`), matching row 44. Pre-existing
+drift, left for future housekeeping.
+
 ## The Keep-Clause Is Not Vacuous
 
-In `repo-governance/workflows/ayokoding-web/ayokoding-web-swe-by-example-quality-gate/`,
-`03-step-3-user-review.md` and `04-step-4-fixer.md` already carry an ordinal equal to the step's own
-number; they fail only on the redundant second token, which this rule strips.
+E.g. `ayokoding-web-in-the-field-quality-gate/03-user-review.md` already carries an ordinal equal to
+its own step, no second colliding number — a real Passes instance.
 
 Confirm non-emptiness rather than trusting this:
 
 ```bash
-find repo-governance/workflows -name '*.md' | grep -E '/[0-9]{2}-' | grep -E 'step-[0-9]+' | while read f; do
-  b=$(basename "$f"); ord=$(echo "$b" | grep -oE '^[0-9]{2}' | sed 's/^0//')
-  emb=$(echo "$b" | grep -oE 'step-[0-9]+' | grep -oE '[0-9]+$' | head -1)
-  [ "$ord" = "$emb" ] && echo "$f"
-done
+find repo-governance/workflows -name '[0-9][0-9]-*.md'
 ```
 
-With no Passes instances, the rule collapses into the ban it replaces.
+With no matches, the rule collapses into the ban it replaces. (Returns 8 files as of this writing.)
 
 ## Where Order Comes From
 

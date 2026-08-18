@@ -34,7 +34,7 @@ is the tiebreaker for genuinely ambiguous decisions.
 - Are there design decision forks where the user has a preference?
 - **For UI-bearing plans only**: the UI-design-funnel questions — which low-fi alternatives, what
   prior art, which selection + why (see
-  [07-ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md#design-funnel-grilling-questions-ui-bearing-plans)).
+  [ui-design-funnel-grilling-and-learning-plans.md](ui-design-funnel-grilling-and-learning-plans.md#design-funnel-grilling-questions-ui-bearing-plans)).
 
 **Post-write grill covers** (each as a structured multiple-choice question):
 

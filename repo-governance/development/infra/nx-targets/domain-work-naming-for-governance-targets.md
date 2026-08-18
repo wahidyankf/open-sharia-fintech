@@ -32,8 +32,6 @@ operation. This distinguishes governance targets from language-level lifecycle t
 | `mermaid:validation`                   | Mermaid diagram width, label, and syntax rules (flowchart + state)                         |
 | `headings:hierarchy-validation`        | Heading nesting in prose allowlist paths                                                   |
 | `env:validation`                       | `.env.example` surfaces match the `env-contract:` section in `repo-config.yml`             |
-| `naming:harness-validation`            | Agent definition file names match the naming convention                                    |
-| `naming:workflows-validation`          | Workflow file names match the naming convention                                            |
 | `governance:vendor-audit-validation`   | `repo-governance/` docs contain no vendor-specific content                                 |
 | `cross-vendor:parity-validation`       | Cross-vendor behavioral parity (Phase 0 deterministic invariants)                          |
 | `governance-word-budget:validation`    | Word budget on auto-loaded instruction files (`AGENTS.md`, `CLAUDE.md`, harness surfaces)  |

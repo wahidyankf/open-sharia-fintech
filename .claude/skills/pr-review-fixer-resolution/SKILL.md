@@ -14,14 +14,14 @@ findings itself, only resolves what the nine discipline specialists and
 
 ## Reference Modules
 
-- [01-thread-enumeration-and-api-gotchas.md](./reference/thread-enumeration-and-api-gotchas.md) —
+- [thread-enumeration-and-api-gotchas.md](./reference/thread-enumeration-and-api-gotchas.md) —
   GraphQL enumeration query, and three confirmed live-API gotchas (pull_number requirement, `-F`
   vs `-f`, zsh 1-indexed loops)
-- [02-four-way-triage.md](./reference/four-way-triage.md) — the fix / reject / defer / clarify
+- [four-way-triage.md](./reference/four-way-triage.md) — the fix / reject / defer / clarify
   decision table and each path's requirements
-- [03-reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — hard rules for
+- [reply-resolve-discipline.md](./reference/reply-resolve-discipline.md) — hard rules for
   when a thread may actually be resolved, plus repeated-finding handling across cycles
-- [04-identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting
+- [identity-and-quality-gates.md](./reference/identity-and-quality-gates.md) — posting
   identity/write-scope stopgap, and the mandatory pre-push gate re-run
 
 ## Core Principles

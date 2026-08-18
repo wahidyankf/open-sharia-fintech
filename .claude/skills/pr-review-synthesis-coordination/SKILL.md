@@ -15,16 +15,16 @@ tool-verified before posting exactly ONE consolidated review.
 
 ## Reference Modules
 
-- [01-four-coordination-functions.md](./reference/four-coordination-functions.md) — Deduplicate,
+- [four-coordination-functions.md](./reference/four-coordination-functions.md) — Deduplicate,
   Re-categorize (owns the architecture-versus-correctness boundary), Reasonableness-filter,
   Tool-verify, plus the DD-11 attribution-tracking requirement
-- [02-consolidated-review-header.md](./reference/consolidated-review-header.md) — the
+- [consolidated-review-header.md](./reference/consolidated-review-header.md) — the
   fixed-shape review header template and the per-finding `Raised by` attribution line
-- [03-finding-requirements-and-scope-guard.md](./reference/finding-requirements-and-scope-guard.md) —
+- [finding-requirements-and-scope-guard.md](./reference/finding-requirements-and-scope-guard.md) —
   the finding requirements hard rules, CRITICAL-requires-reproduction, and the scope guard
-- [04-github-reviews-api-mechanics.md](./reference/github-reviews-api-mechanics.md) — posting
+- [github-reviews-api-mechanics.md](./reference/github-reviews-api-mechanics.md) — posting
   mechanics (COMMENT-only constraint, SHA reuse), identity note, and untrusted-input handling
-- [05-cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —
+- [cross-cycle-and-external-verification.md](./reference/cross-cycle-and-external-verification.md) —
   full-PR re-review each cycle, human-dismissal respect, and when to delegate to `web-researcher`
 
 ## Core Principles

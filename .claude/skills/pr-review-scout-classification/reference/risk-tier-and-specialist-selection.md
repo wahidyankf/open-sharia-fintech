@@ -7,7 +7,7 @@ security-sensitive path, then select the specialist set accordingly:
   specialists**: hand the assembled context brief to `pr-review-synthesis-maker`, which performs
   one consolidated generalist pass itself, with no specialist fan-out at all (see the Trivial-Tier
   Handoff in
-  [03-untrusted-input-and-output-contract.md](./untrusted-input-and-output-contract.md)).
+  [untrusted-input-and-output-contract.md](./untrusted-input-and-output-contract.md)).
 - **Lite** (≤100 lines AND ≤20 files) → the **four highest-yield specialists** for this repo
   (`pr-review-governance-maker`, `pr-review-logic-maker`, `pr-review-security-maker`,
   `pr-review-integrity-maker`). `pr-review-types-maker` is deliberately **not** included — type-

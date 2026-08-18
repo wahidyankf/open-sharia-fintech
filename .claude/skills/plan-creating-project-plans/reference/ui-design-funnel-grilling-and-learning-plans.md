@@ -3,7 +3,7 @@
 ## Design-funnel grilling questions (UI-bearing plans)
 
 For a UI-bearing plan, the specialist's envelope and the root-owned pre-write grill MUST cover the
-UI-design-funnel decisions (see [06-ui-design-funnel.md](ui-design-funnel.md)) as structured
+UI-design-funnel decisions (see [ui-design-funnel.md](ui-design-funnel.md)) as structured
 multiple-choice questions (each with 2-4 concrete options plus the two standing options — a
 free-form blank-state type and "chat about this"):
 

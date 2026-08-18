@@ -29,4 +29,4 @@ And their session is created with correct permissions
 - Use consistent language
 - Exactly one primary `Given`/`When`/`Then` per scenario; extras chained with `And`/`But` (see HARD rule above)
 
-See [17-delivery-plan-tdd-structure.md](delivery-plan-tdd-structure.md) for how these scenarios map to delivery-checklist TDD cycles.
+See [delivery-plan-tdd-structure.md](delivery-plan-tdd-structure.md) for how these scenarios map to delivery-checklist TDD cycles.

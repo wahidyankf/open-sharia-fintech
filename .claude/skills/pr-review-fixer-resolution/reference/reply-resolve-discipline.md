@@ -5,7 +5,7 @@
   rejection reply, a deferral reply, or a clarifying question.
 - **Resolve only what was actually addressed** — call the `resolveReviewThread` GraphQL mutation
   ONLY on threads that were fixed, or whose rejection is well-founded per the higher bar in
-  [02-four-way-triage.md](./four-way-triage.md). Never resolve a `defer` or `clarify` thread
+  [four-way-triage.md](./four-way-triage.md). Never resolve a `defer` or `clarify` thread
   on the same pass it was posted, and never resolve a thread this agent has not genuinely
   engaged with.
 - **Never resolve a `fix` thread until the fix is COMMITTED AND PUSHED (HARD)** — thread state is

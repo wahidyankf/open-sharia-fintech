@@ -1,6 +1,6 @@
 # Delivery Mode (Mandatory — Applies to ALL Plans)
 
-Every plan resolves to exactly one **delivery mode** before execution begins, declared alongside the `## Worktree` / `## Worktree Specification` section (see [08-worktree-specification.md](worktree-specification.md)). Delivery mode is a sibling concern to the worktree declaration: the worktree fixes the **work location**; delivery mode additionally fixes the **integration target** and **merge authority**.
+Every plan resolves to exactly one **delivery mode** before execution begins, declared alongside the `## Worktree` / `## Worktree Specification` section (see [worktree-specification.md](worktree-specification.md)). Delivery mode is a sibling concern to the worktree declaration: the worktree fixes the **work location**; delivery mode additionally fixes the **integration target** and **merge authority**.
 
 **The four modes** (full table and precedence algorithm: [Plans Organization Convention §Delivery Mode](../../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)):
 

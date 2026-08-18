@@ -21,34 +21,34 @@ This Skill provides comprehensive guidance for creating **structured project pla
 **Start here — mandatory grilling**: before writing any plan content, resolve every open design
 decision through a structured multiple-choice pre-write grill; after writing, run the same
 post-write validation grill. Neither gate is optional. See
-[01-mandatory-grilling.md](reference/mandatory-grilling.md).
+[mandatory-grilling.md](reference/mandatory-grilling.md).
 
 ## Reference Modules
 
-- [01-mandatory-grilling.md](reference/mandatory-grilling.md) — pre/post-write grilling (2-4 options HARD RULE)
-- [02-plan-lifecycle-and-git-workflow.md](reference/plan-lifecycle-and-git-workflow.md) — 4-stage lifecycle + git workflow
-- [03-plan-folder-and-naming.md](reference/plan-folder-and-naming.md) — `plans/` folder layout + stage-aware naming
-- [04-plan-structure-multi-and-single-file.md](reference/plan-structure-multi-and-single-file.md) — five-document structure vs. single-file exception
-- [05-mermaid-diagrams.md](reference/mermaid-diagrams.md) — Mermaid diagram requirements
-- [06-ui-design-funnel.md](reference/ui-design-funnel.md) — UI-design-funnel HARD RULE (diverge→narrow→select→justify)
-- [07-ui-design-funnel-grilling-and-learning-plans.md](reference/ui-design-funnel-grilling-and-learning-plans.md) — funnel grilling questions + Learning-Bearing syllabus record
-- [08-worktree-specification.md](reference/worktree-specification.md) — mandatory `## Worktree` declaration
-- [09-delivery-mode.md](reference/delivery-mode.md) — the four Delivery Modes + per-repo restriction
-- [10-execution-grade-clarity.md](reference/execution-grade-clarity.md) — Execution-Grade Clarity HARD RULE
-- [11-executor-tagging.md](reference/executor-tagging.md) — `[AI]`/`[HUMAN]` tagging HARD RULE
-- [12-phases-as-natural-pauses.md](reference/phases-as-natural-pauses.md) — Phase-Gate + Pause-Safety template
-- [13-verification-recipes.md](reference/verification-recipes.md) — pre-write verification recipes + confidence labels
-- [14-refuse-uncertainty-and-anti-patterns.md](reference/refuse-uncertainty-and-anti-patterns.md) — refuse-on-uncertainty + AP-1..AP-10 catalog
-- [15-specialized-executor-annotation.md](reference/specialized-executor-annotation.md) — suggested-executor annotation
-- [16-gherkin-acceptance-criteria.md](reference/gherkin-acceptance-criteria.md) — Gherkin format + Step-Keyword Cardinality
-- [17-delivery-plan-tdd-structure.md](reference/delivery-plan-tdd-structure.md) — RED/GREEN/REFACTOR checkbox shape
-- [18-operational-readiness.md](reference/operational-readiness.md) — Local Quality Gates, Post-Push, Env Setup, Commits
-- [19-manual-ui-and-api-verification.md](reference/manual-ui-and-api-verification.md) — Playwright/curl manual verification
-- [20-manual-verification-retest-rules.md](reference/manual-verification-retest-rules.md) — rule-15/rule-16 pre-archival retests
-- [21-knowledge-capture-scaffold-and-entries.md](reference/knowledge-capture-scaffold-and-entries.md) — `learnings.md` scaffold + entry shape
-- [22-knowledge-capture-phase-template.md](reference/knowledge-capture-phase-template.md) — Knowledge Capture phase template
-- [23-plan-archival.md](reference/plan-archival.md) — Plan Archival section template
-- [24-common-mistakes.md](reference/common-mistakes.md) — 5 common authoring mistakes
+- [mandatory-grilling.md](reference/mandatory-grilling.md) — pre/post-write grilling (2-4 options HARD RULE)
+- [plan-lifecycle-and-git-workflow.md](reference/plan-lifecycle-and-git-workflow.md) — 4-stage lifecycle + git workflow
+- [plan-folder-and-naming.md](reference/plan-folder-and-naming.md) — `plans/` folder layout + stage-aware naming
+- [plan-structure-multi-and-single-file.md](reference/plan-structure-multi-and-single-file.md) — five-document structure vs. single-file exception
+- [mermaid-diagrams.md](reference/mermaid-diagrams.md) — Mermaid diagram requirements
+- [ui-design-funnel.md](reference/ui-design-funnel.md) — UI-design-funnel HARD RULE (diverge→narrow→select→justify)
+- [ui-design-funnel-grilling-and-learning-plans.md](reference/ui-design-funnel-grilling-and-learning-plans.md) — funnel grilling questions + Learning-Bearing syllabus record
+- [worktree-specification.md](reference/worktree-specification.md) — mandatory `## Worktree` declaration
+- [delivery-mode.md](reference/delivery-mode.md) — the four Delivery Modes + per-repo restriction
+- [execution-grade-clarity.md](reference/execution-grade-clarity.md) — Execution-Grade Clarity HARD RULE
+- [executor-tagging.md](reference/executor-tagging.md) — `[AI]`/`[HUMAN]` tagging HARD RULE
+- [phases-as-natural-pauses.md](reference/phases-as-natural-pauses.md) — Phase-Gate + Pause-Safety template
+- [verification-recipes.md](reference/verification-recipes.md) — pre-write verification recipes + confidence labels
+- [refuse-uncertainty-and-anti-patterns.md](reference/refuse-uncertainty-and-anti-patterns.md) — refuse-on-uncertainty + AP-1..AP-10 catalog
+- [specialized-executor-annotation.md](reference/specialized-executor-annotation.md) — suggested-executor annotation
+- [gherkin-acceptance-criteria.md](reference/gherkin-acceptance-criteria.md) — Gherkin format + Step-Keyword Cardinality
+- [delivery-plan-tdd-structure.md](reference/delivery-plan-tdd-structure.md) — RED/GREEN/REFACTOR checkbox shape
+- [operational-readiness.md](reference/operational-readiness.md) — Local Quality Gates, Post-Push, Env Setup, Commits
+- [manual-ui-and-api-verification.md](reference/manual-ui-and-api-verification.md) — Playwright/curl manual verification
+- [manual-verification-retest-rules.md](reference/manual-verification-retest-rules.md) — rule-15/rule-16 pre-archival retests
+- [knowledge-capture-scaffold-and-entries.md](reference/knowledge-capture-scaffold-and-entries.md) — `learnings.md` scaffold + entry shape
+- [knowledge-capture-phase-template.md](reference/knowledge-capture-phase-template.md) — Knowledge Capture phase template
+- [plan-archival.md](reference/plan-archival.md) — Plan Archival section template
+- [common-mistakes.md](reference/common-mistakes.md) — 5 common authoring mistakes
 
 ## References
 

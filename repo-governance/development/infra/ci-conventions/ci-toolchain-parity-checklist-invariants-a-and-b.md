@@ -28,8 +28,11 @@ must be recorded here with a justification; undocumented deviations are always b
 | App-tier scheduled workflows use staggered 2× WIB cadence: `*-app-test-local-deploy-stag` at 03:00/15:00, `*-app-test-stag` at 05:30/17:30 (+2.5 h)         | `*-app-test-local-deploy-stag.yml` and `*-app-test-stag-*.yml` CRON |
 | www-tier scheduled workflows run at 06:00/18:00 WIB (23:00/11:00 UTC)                                                                                       | `*-www-test-local-deploy-prod.yml` CRON expressions                 |
 
-Note: `rhino-cli:naming:workflows-validation` validates `repo-governance/workflows/*.md` naming
-only — it does **not** validate `.github/workflows/` filenames.
+Note: the `rhino-cli:naming:workflows-validation` Nx target, which once validated
+`repo-governance/workflows/*.md` naming, was withdrawn — see
+[repo-governance/workflows/README.md](../../../workflows/README.md) for the withdrawal record. No
+current gate validates `.github/workflows/` filenames either; workflow-file naming is enforced by
+code review only.
 
 ## Invariant B — Git Hook Lifecycle
 

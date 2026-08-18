@@ -5,6 +5,32 @@
 //! entry list, this command owns the link targets inside it after a rename
 //! sweep. It rewrites **only** the target inside a `](...)` link, leaving entry
 //! order, annotation text, and prose byte-identical.
+//!
+//! # The rename map is keyed on basename, not path
+//!
+//! A match is `renames.get(target's final path segment)` — the *old* column
+//! of the map is compared against a link target's basename only, never its
+//! full relative path. Two consequences follow directly, and both are
+//! current, documented behaviour rather than an oversight this command
+//! silently carries:
+//!
+//! - A *path*-keyed map — the natural artifact of `git diff --name-status -M`
+//!   after a rename sweep — never matches here, because lookup is by
+//!   basename. A map built that way reports `0 file(s) updated` and exits
+//!   `0`, which is byte-indistinguishable from "nothing needed changing".
+//! - Any unrelated file elsewhere in the tree that happens to share a
+//!   renamed file's basename (`README.md`, `overview.md`, and similar common
+//!   names recur across this repo) is rewritten too — there is no
+//!   existence check on the new target. **Directory renames cannot be
+//!   expressed at all**, because the changed path segment is never the
+//!   final one.
+//!
+//! The path-keyed redesign (`--include-non-markdown`, a dead-row exit code,
+//! and matching on the full relative path) is tracked as WS-3 of
+//! `plans/backlog/rhino-cli-governance-tooling-defects/` in the sibling
+//! `ose-public` repository, where this plan lives (this repo does not carry
+//! its own copy of `apps/rhino-cli`'s backlog plans) — deliberately deferred
+//! out of this command's first cut, not forgotten.
 
 use std::path::Path;
 
@@ -26,7 +52,10 @@ const SCHEMA: &str = "rhino-cli/readme-index-rewrite-paths/v1";
 #[derive(Args, Debug)]
 pub struct ReadmeIndexRewritePathsArgs {
     /// Path to a TSV rename map: one `old<TAB>new` pair per line. Lines that
-    /// are blank or start with `#` are ignored.
+    /// are blank or start with `#` are ignored. Both columns are BASENAMES,
+    /// not paths — a match rewrites every link sharing that basename
+    /// anywhere in the scanned tree, and a directory rename cannot be
+    /// expressed. See this command's module documentation.
     #[arg(long = "map")]
     pub map: String,
     /// Path to scan (repeatable). Overrides `DEFAULT_PATHS` when given.

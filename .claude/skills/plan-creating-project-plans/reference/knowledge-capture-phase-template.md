@@ -1,7 +1,7 @@
 # Knowledge Capture Phase Template
 
 **Knowledge Capture phase template** (insert as the last substantive phase, immediately before
-Plan Archival — see [23-plan-archival.md](plan-archival.md)):
+Plan Archival — see [plan-archival.md](plan-archival.md)):
 
 ```markdown
 ## Phase N: Knowledge Capture

@@ -47,4 +47,4 @@ When the plan touches web UI or API code, delivery plans MUST include manual ass
 
 Include both sections above plus an end-to-end flow verification step (per locale).
 
-See [20-manual-verification-retest-rules.md](manual-verification-retest-rules.md) for the mandatory rule-15/rule-16 pre-archival retests.
+See [manual-verification-retest-rules.md](manual-verification-retest-rules.md) for the mandatory rule-15/rule-16 pre-archival retests.

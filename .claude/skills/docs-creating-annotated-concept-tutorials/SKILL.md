@@ -22,7 +22,7 @@ topic's format designation before any other check runs — every subsequent rule
 
 ## Format Requirements
 
-See [reference/01-format-requirements.md](./reference/format-requirements.md) for the complete
+See [reference/format-requirements.md](./reference/format-requirements.md) for the complete
 worked-example/scenario count floors, annotation density formula, five-part structure, mode
 integrity rule, and grouping/diagram requirements — shared by maker, checker, and fixer.
 

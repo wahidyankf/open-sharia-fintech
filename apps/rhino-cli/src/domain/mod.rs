@@ -6,6 +6,3 @@ pub mod cliout;
 pub mod git;
 /// Mermaid diagram parsing and validation domain model.
 pub mod mermaid;
-
-/// Standard-stream descriptor-flag hygiene for git-hook invocations.
-pub mod stdio_blocking;

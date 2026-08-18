@@ -1,8 +1,8 @@
 # Fixer Mechanics: Fix Disposition by Category
 
 Maps `specs-checker`'s nine categories (see
-[01-validation-categories-1-4.md](validation-categories-1-4.md) and
-[02-validation-categories-5-9.md](validation-categories-5-9.md)) to `specs-fixer`'s fix
+[validation-categories-1-4.md](validation-categories-1-4.md) and
+[validation-categories-5-9.md](validation-categories-5-9.md)) to `specs-fixer`'s fix
 disposition.
 
 ## Fix Disposition by Category

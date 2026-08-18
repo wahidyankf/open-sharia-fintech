@@ -1,6 +1,6 @@
 //! Cucumber-rs integration tests for the whole `harness` command group
 //! (`harness bindings generate/validate`, `harness claude validate`,
-//! `harness sync validate`, `harness naming validate`,
+//! `harness sync validate`,
 //! `harness duplication validate`, `harness instruction-size validate`,
 //! `harness audit`) plus the governance-meta facts the `instruction-size`
 //! gate depends on

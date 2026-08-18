@@ -33,4 +33,4 @@ Write one of the following next to each non-trivial claim:
 
 Bare unlabeled claims default to `[Unverified]`. Label proactively.
 
-See [14-refuse-uncertainty-and-anti-patterns.md](refuse-uncertainty-and-anti-patterns.md) for what to do when verification fails.
+See [refuse-uncertainty-and-anti-patterns.md](refuse-uncertainty-and-anti-patterns.md) for what to do when verification fails.

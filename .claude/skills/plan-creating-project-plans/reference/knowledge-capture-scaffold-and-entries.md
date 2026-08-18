@@ -2,7 +2,7 @@
 
 Every substantive plan's `delivery.md` MUST end with a **Knowledge Capture** phase — the final
 substantive phase, positioned immediately before the Plan Archival section (see
-[23-plan-archival.md](plan-archival.md)) — that triages the plan's transient `learnings.md`
+[plan-archival.md](plan-archival.md)) — that triages the plan's transient `learnings.md`
 running log to durable homes before archival. This Skill emits both the `learnings.md` scaffold
 file (created empty in the plan folder alongside `delivery.md`) and the Knowledge Capture phase
 itself into every new substantive plan by default.
@@ -33,7 +33,7 @@ reconstructed from memory at the end):
 - **Why it might generalize**: the litmus reasoning
 ```
 
-See [22-knowledge-capture-phase-template.md](knowledge-capture-phase-template.md) for the phase
+See [knowledge-capture-phase-template.md](knowledge-capture-phase-template.md) for the phase
 template that triages these entries, and the
 [Knowledge Capture Convention](../../../../repo-governance/development/quality/knowledge-capture.md)
 for the authoritative triage rubric, litmus test, and worked examples.

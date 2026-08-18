@@ -20,4 +20,4 @@ Every delivery plan MUST end with a plan archival section:
 - [ ] Commit: `chore(plans): move [plan-name] to done`
 ```
 
-See [21-knowledge-capture-scaffold-and-entries.md](knowledge-capture-scaffold-and-entries.md) and [22-knowledge-capture-phase-template.md](knowledge-capture-phase-template.md) for the mandatory phase that precedes archival, and [24-common-mistakes.md](common-mistakes.md) for authoring pitfalls to avoid before reaching this section.
+See [knowledge-capture-scaffold-and-entries.md](knowledge-capture-scaffold-and-entries.md) and [knowledge-capture-phase-template.md](knowledge-capture-phase-template.md) for the mandatory phase that precedes archival, and [common-mistakes.md](common-mistakes.md) for authoring pitfalls to avoid before reaching this section.

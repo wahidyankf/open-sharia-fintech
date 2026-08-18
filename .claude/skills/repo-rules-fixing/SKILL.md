@@ -15,15 +15,15 @@ agent had this content duplicated 2-3x across its own sections.
 
 ## Reference Modules
 
-- [01-verification-and-edit-discipline.md](reference/verification-and-edit-discipline.md) —
+- [verification-and-edit-discipline.md](reference/verification-and-edit-discipline.md) —
   post-fix verification, Python-for-multi-line-edits, confidence re-validation, changed-file
   capture, FALSE_POSITIVE carry-forward, mode handling
-- [02-agent-skill-and-coverage-fixes.md](reference/agent-skill-and-coverage-fixes.md) —
+- [agent-skill-and-coverage-fixes.md](reference/agent-skill-and-coverage-fixes.md) —
   agent-Skill duplication removal, Skills coverage gap remediation
-- [03-governance-and-licensing-fixes.md](reference/governance-and-licensing-fixes.md) —
+- [governance-and-licensing-fixes.md](reference/governance-and-licensing-fixes.md) —
   rules governance fixes (contradictions/inaccuracies/inconsistencies/traceability/layer
   coherence), licensing convention fixes
-- [04-software-documentation-fixes.md](reference/software-documentation-fixes.md) — the 8
+- [software-documentation-fixes.md](reference/software-documentation-fixes.md) — the 8
   software-documentation sub-patterns, re-validation strategy, execution order, tool selection
 
 ## Core Principles
