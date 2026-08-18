@@ -212,7 +212,7 @@ would silently reintroduce exactly the blind spot that rationale exists to preve
 this plan measured exactly one such link at PR time (above). Per
 [Proactive Preexisting Error Resolution](../../../repo-governance/development/practice/proactive-preexisting-error-resolution.md),
 fix the broken link at its root cause rather than working around the gate; see
-[Scope Judgment](../../../repo-governance/development/practice/proactive-preexisting-error-resolution/04-scope-judgment.md)
+[Scope Judgment](../../../repo-governance/development/practice/proactive-preexisting-error-resolution/scope-judgment.md)
 for sizing — a single broken relative link is a small fix (fix inline, as part of your current
 work) unless it turns out to be symptomatic of a wider, unrelated problem, in which case it earns
 its own commit.

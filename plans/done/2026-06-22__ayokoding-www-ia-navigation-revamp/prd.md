@@ -44,7 +44,7 @@ old URLs. Bilingual (`en`, `id`), responsive at 320/375/768/1280 px, WCAG AA.
 
 ## UI Design Funnel
 
-A UI-bearing plan. Per the [UI-Mockups Placement HARD RULE](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope),
+A UI-bearing plan. Per the [UI-Mockups Placement HARD RULE](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope),
 the full funnel — inline low-fi wireframes, embedded hi-fi mockups, selection, and rationale —
 lives here in `prd.md`; the binary mockup files live beside the plan in [`assets/`](./assets/).
 The funnel covers three screens — **landing homepage**, **`/c` browse index**, and
@@ -115,7 +115,7 @@ from real `libs/web-ui` tokens (see [`assets/README.md`](./assets/README.md) for
 and full per-breakpoint set). Each breakpoint has two files:
 
 - **`.png` file** — the **hi-fi ground truth** (approved fallback format per the
-  [UI-Mockups Placement HARD RULE](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)).
+  [UI-Mockups Placement HARD RULE](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)).
   This is the visual-parity reference used in Phase 6 sign-off and the `delivery.md` Phase 1
   acceptance criteria.
 - **`.svg` file** — the **editable source** only. `.svg` is not an approved hi-fi format in the

@@ -125,7 +125,7 @@ FR-1.9's "zero files" target is scoped to the full covered surface (464/349 toda
 - **`ose-public` completes before `ose-private` begins** its content work.
 - **Exactly one worktree named `optimize-governance-md` per repository**, matching the
   plan-folder identifier per the
-  [Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification)
+  [Worktree Specification HARD RULE](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification)
   — no exception needed. (An earlier session instruction had provisioned the `ose-public`
   worktree under the shorter name `optimize-gov`; it was renamed via `git worktree move` +
   `git branch -m` to `worktrees/optimize-governance-md` on branch

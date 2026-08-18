@@ -20,7 +20,7 @@ repository per plan and reused across every delivery unit landed there — is re
 the plan is done using this repo, not deferred to archival.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -70,7 +70,7 @@ during Phase 10's review cycles — see the third, 2026-08-09-dated deviation be
 plan-attributable PR ledger in `baseline/pr-numbers.md`.)
 
 **This plan authors an explicit, maintainer-authorized deviation from the
-[Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
 HARD RULE**, whose standing shape is one branch → one PR → one delivery unit, opened and merged at
 that unit's own boundary, never held open across later units merely to batch them. This plan does
 not change that convention, and no other plan inherits the deviation below.

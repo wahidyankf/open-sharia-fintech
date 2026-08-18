@@ -30,7 +30,7 @@ the worktree after the plan is archived and pushed. `ose-primer` and `ose-infra`
 worktrees provisioned inside their respective repo roots (see Phase 4 and Phase 5).
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ---
 

@@ -31,11 +31,11 @@ the public repository root, verify the resulting path with `git worktree list`, 
 branch in the Phase 0 execution record. This control worktree owns the plan artifacts; the already-
 merged units in the Delivery Boundaries table below each used their own separate per-unit worktree,
 now removed. **Amended mid-plan for the
-[Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule):**
+[Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule):**
 every not-yet-executed unit reuses this same control worktree (or the equivalent single worktree in
 `ose-primer`/`ose-private`) for its delivery changes too, branch-switching per unit, instead of
 opening a new per-unit worktree. Follow the
-[Plans Organization Convention](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification) for
+[Plans Organization Convention](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification) for
 provisioning and reconciliation.
 
 ## Delivery Mode and Worktrees
@@ -216,7 +216,7 @@ flowchart TD
 | 10 verification              | all three        | —                                                  | merged `main`, read-only                                     | none                                    |
 | 11–12 `closeout`             | `ose-public`     | `docs/repository-onboarding-closeout`              | `worktrees/repository-onboarding-readme-refresh/` (reused)¹  | opens at Phase 12                       |
 
-¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
+¹ **Amended mid-plan for the [Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule) (landed after Phase 8 completed).** Rows 0–8 above are the historical record of the worktrees actually used for those already-merged units (PRs #145–#154 and equivalents in `ose-primer`/`ose-private`) and are kept as-is. Every not-yet-executed row from here on reuses each repository's single worktree — `worktrees/repository-onboarding-readme-refresh/` in `ose-public`, and the equivalent single path in `ose-primer`/`ose-private` — branch-switching for each new fix iteration or the closeout unit, instead of provisioning a new worktree path per unit as the original table specified.
 
 ² **Renamed mid-unit for an out-of-band private-data history scrub (P1-005 remediation).** The unit
 was originally provisioned on the declared `docs/repository-onboarding-contract` branch (see P0-007's

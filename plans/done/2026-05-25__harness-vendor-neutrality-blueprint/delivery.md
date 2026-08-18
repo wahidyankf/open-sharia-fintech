@@ -15,7 +15,7 @@ claude --worktree harness-vendor-neutrality-blueprint
 ```
 
 **See**: [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
-and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Phase 0: Environment Setup
 

@@ -58,7 +58,7 @@ worktree — is the parallelism enabler. N parallel units become **N PRs that re
 INDEPENDENTLY** without blocking each other; that independent-merge property is precisely why the
 default is worktree-**to-PR**. Each DAG leaf that produces changes gets its own worktree + PR.
 Strengthen the rationale in the orchestration surface and cross-link the
-[Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode) section. [Repo-grounded]
+[Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode) section. [Repo-grounded]
 
 ### Delta 3 — same-machine, concurrent-actors assumption (NEW explicit)
 
@@ -596,7 +596,7 @@ another per-plan exception.
   (Delta 10). With phases landing continuously, a human merge gate per phase would serialize the whole
   point of incremental delivery back onto one person's availability.
 
-**Surfaces**: [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+**Surfaces**: [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 (the definitional home of the `[HUMAN]`-merge default), `pr/pr-review-quality-gate.md` (the merge-gate
 done-definition), `plan/plan-execution.md` + `plan/plan-planning.md`, and every `*-to-pr` reference
 that currently hardcodes `[HUMAN]` merge. Propagated to all three repos in Phases 6/7.
@@ -881,7 +881,7 @@ verbatim excerpts in the "Currency gap to flag" paragraph above.
   gates green) — this is a recurring, explicitly-authorized exception across this maintainer's plans,
   not a one-off invention for this plan. Authorizing context: explicit maintainer instruction at
   this plan's authoring time. Scope: this deviation is per-plan, not a rule change — it does NOT
-  amend the [Delivery Mode convention](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)'s
+  amend the [Delivery Mode convention](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)'s
   `[HUMAN]`-merge default for `*-to-pr` plans generally; other plans still require `[HUMAN]` merge
   unless they carry the same explicit authorization. Applies to: the merge checkboxes in `delivery.md`
   Phase 5, Phase 6, and Phase 7 (each cross-references DD-10), and the `## Delivery Mode:
@@ -904,7 +904,7 @@ worktree-to-pr` declaration at the top of `delivery.md`.
   execution" note in `delivery.md`'s `## Delivery Mode` section). Authorizing context: this is an
   architectural consequence of this specific plan's tri-repo shape, not a general precedent — a
   single-repo `*-to-pr` plan MUST still fold its archival step into the delivering PR per the
-  [Delivery Mode convention](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
+  [Delivery Mode convention](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
   Applies to: `delivery.md`'s Plan Archival section (cross-references DD-11) and the "Plan-doc
   authoring vs plan execution" note.
 

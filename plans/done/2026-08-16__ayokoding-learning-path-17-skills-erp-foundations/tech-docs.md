@@ -10,7 +10,7 @@ on archival. **One consumer inside `plans/` does exist** —
 reads this plan's syllabus corpus by relative link for the cross-plan prerequisite edges it must cite
 by id (see [§Corpus Custody](#corpus-custody) below); that is a `plans/`-internal read and does not
 trip the promotion trigger. See
-[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/10-corpus-disposition.md#corpus-disposition).
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/corpus-disposition.md#corpus-disposition).
 
 ## Corpus Custody
 

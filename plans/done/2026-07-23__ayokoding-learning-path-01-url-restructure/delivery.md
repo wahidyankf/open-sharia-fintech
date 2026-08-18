@@ -43,7 +43,7 @@ Every phase branches from the **latest `origin/main`** inside this worktree
 authors its work there, commits, pushes that branch, and opens **its own draft PR**.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -52,7 +52,7 @@ Each phase works in this worktree on its **own branch**, opens a **draft PR** ag
 flips the PR to ready, and `[AI]` **merges it automatically once all quality gates are green** — then
 `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this plan ships to
 ayokoding.com). See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's

@@ -3,7 +3,7 @@
 **Plan**: Plan Convention — Split Requirements into BRD + PRD
 **Date**: 2026-04-18
 
-Granular checkboxes per the [one checkbox = one action](../../../repo-governance/conventions/structure/plans/15-granular-checklist-items.md#granular-checklist-items-in-deliverymd) rule. Execute phases in order.
+Granular checkboxes per the [one checkbox = one action](../../../repo-governance/conventions/structure/plans/granular-checklist-items.md#granular-checklist-items-in-deliverymd) rule. Execute phases in order.
 
 ## Phase 0 — Environment Setup
 

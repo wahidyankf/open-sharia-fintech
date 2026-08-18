@@ -26,14 +26,14 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 deleting the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
 Work happens in the worktree above; a draft PR opens against `main` once Phase 1 has committed
 work; the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles) runs before merge; `[AI]`
 merges once the hardened preconditions hold. See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
 
 ## Parallelization Model
 
@@ -1011,7 +1011,7 @@ test:specs for 25 projects and 6 tasks they depend on` — 0 failures.
 
 > This phase pushes, opens the PR for review, and runs the PR-Review Maker→Fixer Cycle — it does
 > **not** merge. Archival (Phase 9) commits land on this SAME PR branch before the merge; see the
-> [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)'s
+> [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)'s
 > Archival-in-PR requirement.
 
 ### Post-Push CI Verification

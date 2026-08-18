@@ -19,7 +19,7 @@ lands its own baseline commit.
 **`ose-private`** — `worktrees/repo-rules-sweep/`, provisioned in Phase 5.
 
 One worktree per repository per plan, per
-[Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 
 ## Delivery Mode
 
@@ -35,7 +35,7 @@ PR. Two consequences bind the executor:
   is `gh pr ready 227`, not create.
 - **Every phase pushes to `worktree/optimize-gov`**, including Phase 0. The Phase 0 "pushes nothing,
   opens no PR" exemption
-  ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md))
+  ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md))
   is already discharged: the PR was opened before Phase 0 and Phase 0 opens nothing further. Pushing
   Phase 0's baseline evidence to the existing branch satisfies that convention's intent — the
   evidence lands in the first (and only) PR — while its letter, "do not open a PR for Phase 0",
@@ -494,7 +494,7 @@ validate` therefore removes a **second, overlapping** check of the same duty, no
 
 ### Evidence placement: a stated rule with nothing behind it
 
-The [Evidence Capture Convention](../../../repo-governance/development/quality/evidence-capture/02-the-rule.md)
+The [Evidence Capture Convention](../../../repo-governance/development/quality/evidence-capture/the-rule.md)
 already requires file-based evidence to live in **the plan's `evidence/` subfolder**, which moves
 with the plan to `plans/done/` on archival. It was violated anyway: 24 files landed in a repo-root
 `evidence/` across two unrelated commits (`eca01f826`, `ab842ee8e`) and sat there unreferenced.
@@ -622,55 +622,115 @@ _Suggested executor:_ `docs-file-manager` for the renames and link repair; `repo
 > are reached only by link, which `rewrite-paths` repairs. Re-verify this before renaming: if either
 > count is non-zero, stop — the sweep would break agent resolution.
 
-- [ ] [AI] Re-verify the identity-safety precondition — acceptance:
+- [x] [AI] Re-verify the identity-safety precondition — acceptance:
       `find .claude/agents -name '*.md' | grep -cE '/[0-9]{2}-'` and
       `find .claude/skills -name 'SKILL.md' | grep -cE '/[0-9]{2}-'` both return 0. Stop if not.
-- [ ] [AI] Build the per-directory rename plan for every numbered directory under
+- [x] [AI] Build the per-directory rename plan for every numbered directory under
       `repo-governance/` and `.claude/`, recording for each file a disposition of `renamed`,
       `merged-into`, or `kept` with a one-line reason — acceptance: every numbered file in the Phase 0
       baseline appears exactly once with a disposition; the `kept` set contains only real step
       sequences whose ordinal equals the step number.
-- [ ] [AI] For each continuation-shard run (files whose titles continue one another by rule or
+      **Result:** 2319 numbered files across 208 directories, each with exactly one disposition in
+      `local-tmp/repo-rules-sweep/rows.json`; 0 collisions, 0 clashes with an existing file. The
+      `kept` set is **8 files**, all under `repo-governance/workflows/`, where the ordinal equals the
+      step's own number; each sheds its redundant `step-N` token. The other 2311 lose only the leading
+      ordinal, preserving `phase-N`/`step-N` tokens as content. Two judgement calls: the keep set is 8
+      rather than ~74 because the convention's normative sentence requires ordinal == the step's own
+      number, and the contradicting worked case in `ordinal-filename-prefixes.md` is routed to P6.3.
+- [x] [AI] For each continuation-shard run (files whose titles continue one another by rule or
       section number), decide the boundary rework and record it — acceptance: each run has a recorded
       decision of `merge` or `rename-in-place`, with `rename-in-place` reserved for runs whose merge
       would change meaning.
-- [ ] [AI] Apply the merges, then run `rhino governance word-budget validate` — acceptance: exits 0;
+      **Result:** 36 runs across 24 directories, recorded in
+      `local-tmp/repo-rules-sweep/continuation-decisions.md`. **All 36 are `rename-in-place`, none is
+      `merge`** — the smallest combined whole-file word count is 551, above the 500-word governance
+      budget, so every merge would trade one rule violation for another. Runs were derived by ordinal
+      adjacency plus a bidirectional stem relation; a first pass using stem-prefix matching alone
+      under-counted members (base siblings such as `04-standard-library-first-principle.md` and
+      `20-frontmatter-requirements-and-quality-checklist.md` were missed) and was discarded.
+- [x] [AI] Apply the merges, then run `rhino governance word-budget validate` — acceptance: exits 0;
       any file over 500 words is re-split on a topic seam yielding self-standing names, never back
       into a numbered continuation.
-- [ ] [AI] Apply every rename with `git mv`, emitting the old→new rename map as
+      **Result:** zero merges to apply (P4.3 decided all 36 runs `rename-in-place`), so no re-split was
+      needed. `governance word-budget validate` run anyway as the standing check: exit 0, WARN-only
+      findings, no FAIL.
+- [x] [AI] Apply every rename with `git mv`, emitting the old→new rename map as
       `local-tmp/repo-rules-sweep/renames-public.tsv` — acceptance: the map row count equals the
       `renamed` plus `merged-into` disposition count.
-- [ ] [AI] Run `rhino governance readme-index rewrite-paths --map local-tmp/repo-rules-sweep/renames-public.tsv`
+      **Deviation:** the map carries **2319** rows, not the 2311 `renamed` rows this clause predicts.
+      The clause assumed the `kept` set keeps its filename, but the convention makes a kept file shed
+      its redundant `step-N` token, so all 8 kept paths change too. Emitting only 2311 rows would leave
+      8 dangling links. `git status --short | grep -c '^R '` = 2319, 0 `git mv` failures; the only
+      remaining ordinals repo-wide are the 8 kept files.
+- [x] [AI] Run `rhino governance readme-index rewrite-paths --map local-tmp/repo-rules-sweep/renames-public.tsv`
       over the tracked markdown corpus — acceptance: exits 0 and
       `grep -rEn '\]\([^)]*/[0-9]{2}-[a-z0-9-]+\.md' --exclude-dir=node_modules --exclude-dir=.git repo-governance .claude`
       returns only links to `kept` files.
-- [ ] [AI] Run `npm run generate:bindings` and `npm run validate:sync` — acceptance: both exit 0 and
+      **Deviation:** `rewrite_index_paths` keys its rename map by **basename**, not by repo-relative
+      path (`rewrite_one_target` looks up the target's final segment). The full-path
+      `renames-public.tsv` would have matched nothing, so the map actually fed to the command is
+      `local-tmp/repo-rules-sweep/renames-public-basenames.tsv` — 2008 unique basename pairs derived
+      from the same 2319 rows. Verified safe first: **0** basenames map to two different new names,
+      and **0** tracked `.md` files outside `repo-governance/`/`.claude/` share a basename with any map
+      key, so a basename-keyed rewrite cannot mis-target. Run with `--paths .` so root files,
+      `docs/`, `specs/`, `plans/`, and the harness mirrors are all covered: exit 0, **1012** files
+      updated. The grep now returns **16** matches, every one a link to one of the 8 `kept` files.
+- [x] [AI] Run `npm run generate:bindings` and `npm run validate:sync` — acceptance: both exit 0 and
       the regenerated mirrors are committed with the `.claude/` renames.
-- [ ] [AI] Repair links from **other** in-progress plans into renamed paths. At authoring time
+      **Result:** both exit 0; `validate:sync` reports 96/96 checks passed. Working tree after the
+      sweep: 2319 renames (1955 pure `R`, 364 `RM`) plus 649 `M`.
+- [x] [AI] Repair links from **other** in-progress plans into renamed paths. At authoring time
       `plans/in-progress/repository-onboarding-readme-refresh/delivery.md` carries three such links.
       `md links validate` excludes `plans/done` but **not** `plans/in-progress`, so these break the
       gate. This is a mechanical link repair caused by our rename, so it is our obligation — but it
       touches another plan's docs: record every such path on the file-touch ledger and change nothing
       but the link target — acceptance: `grep -rEl '\]\([^)]*repo-governance/[^)]*/[0-9]{2}-[a-z0-9-]+\.md' plans/in-progress/`
       returns no file outside this plan's own folder.
-- [ ] [AI] Run `rhino md links validate` — acceptance: exits 0, no broken link. The rewrite covers
+      **Result:** the grep returns nothing at all — not one file, inside or outside this plan's folder.
+      The `--paths .` rewrite in the previous item already repaired them:
+      `plans/in-progress/repository-onboarding-readme-refresh/delivery.md` is the only foreign plan file
+      touched (3 link targets, 4 changed lines), recorded on the file-touch ledger.
+      **Scope note:** the same rewrite also repaired **159** files under `plans/done/`. That is wider
+      than this clause asked for, and `md links validate` excludes `plans/done`, so no gate forced it.
+      Kept deliberately: the edits are provably link-target-only (`rewrite_link_targets` touches nothing
+      outside a `](...)` target), and leaving an archived plan pointing at a path this sweep deleted
+      would be a defect a gate merely fails to measure.
+- [x] [AI] Run `rhino md links validate` — acceptance: exits 0, no broken link. The rewrite covers
       the whole tracked corpus including `docs/` and `specs/`, which link **into** `repo-governance/`
       even though they are out of scope for renaming.
-- [ ] [AI] Run `rhino governance readme-index validate --paths repo-governance/ --paths .claude/` —
+      **Result:** exit 0 — but only when run the way the gate runs it. The bare
+      `md links validate` exits 1 with 311 findings; the `md-links` gate in `repo-config.yml` carries
+      `args.exclude: [plans/done]`, and every one of those 311 is a pre-existing dead link inside
+      `plans/done/` (115 archived plan files, targets such as `specs/apps/a-demo/**` and
+      `2026-01-17__dolphin-be-init/`). **Zero** of them name a path this sweep renamed — no broken
+      target matches `/[0-9]{2}[a-z]?-…\.md`. Left unfixed: pre-existing, outside the gate's surface,
+      and outside this plan.
+- [x] [AI] Run `rhino governance readme-index validate --paths repo-governance/ --paths .claude/` —
       acceptance: exits 0; no `missing`, `orphan`, `ghost`, or `unannotated` finding.
-- [ ] [AI] Spot-verify that annotations survived by diffing one index's entry text before and after —
+      **Result:** exit 0, zero findings of any kind — `README INDEX AUDIT PASSED`.
+- [x] [AI] Spot-verify that annotations survived by diffing one index's entry text before and after —
       acceptance: entry text is byte-identical apart from link targets.
+      **Result:** stronger than a spot-check — every changed index was compared, not one.
+      All **209** changed `README.md` files under `repo-governance/` and `.claude/` are byte-identical
+      to their `HEAD` version once every `](...)` target is masked; **0** differ outside a link target.
+      Entry order, annotation text, and frontmatter are untouched.
 
 ### Phase 4 Gate
 
-- [ ] [AI] `find repo-governance .claude -name '*.md' | grep -E '/[0-9]{2}-'` returns only files on
+- [x] [AI] `find repo-governance .claude -name '*.md' | grep -E '/[0-9]{2}-'` returns only files on
       the recorded `kept` list.
-- [ ] [AI] `find . -name '*.md' -not -path './node_modules/*' | grep -E '/[0-9]{2}[a-z]-'` — zero matches.
-- [ ] [AI] No basename under `repo-governance/` carries both a leading ordinal and a `phase-<n>` or
+      **Result:** returns exactly the 8 `kept` files, all under `repo-governance/workflows/`.
+- [x] [AI] `find . -name '*.md' -not -path './node_modules/*' | grep -E '/[0-9]{2}[a-z]-'` — zero matches.
+      **Result:** zero matches repo-wide.
+- [x] [AI] No basename under `repo-governance/` carries both a leading ordinal and a `phase-<n>` or
       `step-<n>` token.
-- [ ] [AI] `rhino md links validate`, `rhino governance readme-index validate`,
+      **Result:** zero such basenames.
+- [x] [AI] `rhino md links validate`, `rhino governance readme-index validate`,
       `rhino governance word-budget validate`, `npm run validate:sync` — all exit 0.
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+      **Result:** all four exit 0. `md links validate` is run with the `md-links` gate's own
+      `--exclude plans/done`; see P4.9 for why the bare form reports pre-existing `plans/done` breakage.
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+      **Result:** exit 0 with `--skip-nx-cache`.
 
 > **Pause Safety**: `ose-public`'s governance and `.claude/` trees are fully swept, every index keeps
 > its order and annotations, and the mirrors are regenerated. Committed to the branch, not yet pushed
@@ -829,7 +889,7 @@ it does not create it.
 - [ ] [AI] Remove `worktrees/repo-rules-sweep/` in `ose-private` with non-force
       `git worktree remove` — acceptance: `git worktree list` no longer shows it. **The user has
       pre-authorized this removal**; the interactive confirmation that
-      [shard 42](../../../repo-governance/workflows/plan/plan-execution/42-finalization-pr-merge-and-final-status.md)
+      [shard 42](../../../repo-governance/workflows/plan/plan-execution/finalization-pr-merge-and-final-status.md)
       normally requires is granted here in writing, so do not prompt. The safety preconditions still
       apply in full: refuse if `git status --porcelain` is non-empty or the branch is not an ancestor
       of `origin/main`.

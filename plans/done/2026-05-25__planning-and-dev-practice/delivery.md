@@ -16,7 +16,7 @@ run `npm install` and `npm run doctor -- --fix` from the **repo root** (not from
 the new worktree directory).
 
 See [worktree-path.md](../../../repo-governance/conventions/structure/worktree-path.md) for the
-routing convention. Per [plans.md §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification),
+routing convention. Per [plans.md §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification),
 the canonical Worktree section lives in this `delivery.md`.
 
 ## Development Environment Setup

@@ -8,7 +8,7 @@ design source is the originating plan's committed mockups:
   — the desktop/tablet/mobile hi-fi mockups for the cost-of-living calculator. The fixes here move the
   **running page back toward** those mockups (e.g. styled select chrome, 44px controls, on-design flag).
 
-Per the [UI Mockups in Plan Docs convention](../../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope),
+Per the [UI Mockups in Plan Docs convention](../../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope),
 where a change refines an existing designed surface rather than introducing a new screen, the existing
 hi-fi mockup is the target and this folder carries **Tier-1 low-fidelity** before/after wireframes for the
 genuinely-visual deltas. The three with a meaningful visual decision are captured here:

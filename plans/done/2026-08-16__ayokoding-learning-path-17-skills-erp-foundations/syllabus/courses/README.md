@@ -8,7 +8,7 @@ this folder** — it lives in the [path mirrors](../paths/README.md).
 
 Each `<course-id>.md` file is authored at [delivery.md Phase 1](../../delivery.md#11--author-all-15-syllabus-specs)
 against the REQUIRED/RECOMMENDED section shape defined by the
-[Learning-Plan Syllabus Convention](../../../../../repo-governance/conventions/structure/learning-plan-syllabus/09-copy-paste-course-template.md#copy-paste-course-template).
+[Learning-Plan Syllabus Convention](../../../../../repo-governance/conventions/structure/learning-plan-syllabus/copy-paste-course-template.md#copy-paste-course-template).
 This folder is scaffolded here as the fixed target for that authoring step; the 15 course files
 themselves are Phase 1's output, not pre-written.
 

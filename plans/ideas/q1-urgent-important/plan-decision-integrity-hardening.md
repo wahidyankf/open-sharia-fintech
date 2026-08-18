@@ -63,7 +63,7 @@ argument is in circulation even though the rules themselves are not.
 
 ## Prior art / precedents
 
-- [UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope) —
+- [UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope) —
   the design-funnel convention whose Justify table and inline-note allowance are the two surfaces the
   first two rules would amend.
 - [User-Facing Delivery Hardening](../../../repo-governance/development/quality/user-facing-delivery-hardening.md) —

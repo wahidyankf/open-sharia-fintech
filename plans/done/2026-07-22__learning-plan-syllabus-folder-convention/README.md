@@ -16,9 +16,9 @@ The repo governs the UI case well and the learning case not at all.
 A **UI-bearing** plan must record a complete design funnel in its `prd.md` — Diverge (≥ 2 named
 low-fi alternatives), Narrow (hi-fi `.excalidraw.png` finalists in the plan's `assets/`), Select (the
 named choice), Justify (a rationale table). The rule is written in
-[diagrams.md §UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+[diagrams.md §UI Mockups in Plan Docs](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 `[Repo-grounded]`, referenced from
-[plans.md §Multi-File Structure](../../../repo-governance/conventions/structure/plans/10-multi-file-structure-layout-and-core-files.md#multi-file-structure)
+[plans.md §Multi-File Structure](../../../repo-governance/conventions/structure/plans/multi-file-structure-layout-and-core-files.md#multi-file-structure)
 `[Repo-grounded]`, and enforced by `plan-checker` Step 5k `[Repo-grounded]`.
 
 **Learning-bearing** plans have no equivalent rule, yet three of them have independently grown a
@@ -62,7 +62,7 @@ corpus when its custodian archives, are both unanswered.
   (the trigger analogous to UI-bearing), the required `syllabus/` layout, and the per-course shape.
 - A **copy-paste course template** embedded as a fenced block in that convention, derived from the
   measured section census of the 174 existing course files — mirroring how
-  [diagrams.md](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+  [diagrams.md](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
   ships the funnel record as a copy-paste block.
 - A **Corpus Disposition** rule answering where a syllabus corpus goes on archival, with a
   falsifiable promotion trigger.

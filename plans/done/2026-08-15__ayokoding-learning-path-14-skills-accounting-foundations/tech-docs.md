@@ -6,7 +6,7 @@
 consumer **outside `plans/`** reads it (no checker, agent, Nx target, build/generation step, or
 shipped content front-matter names a syllabus path). The corpus therefore moves to `plans/done/`
 with the plan folder on archival. See
-[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/10-corpus-disposition.md#corpus-disposition).
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/corpus-disposition.md#corpus-disposition).
 
 ## Provenance of this split
 
@@ -658,7 +658,7 @@ Root-relative annotated tree — the scan-first source of truth for this plan's 
 **This plan owns a `syllabus/` corpus and must ship its required folder layout.** Its
 `## Corpus Disposition` above declares `archive-with-plan`, which makes it the corpus **custodian**,
 so under the
-[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus/05-required-folder-layout.md#required-folder-layout)
+[Learning-Plan Syllabus Convention §Required Folder Layout](../../../repo-governance/conventions/structure/learning-plan-syllabus/required-folder-layout.md#required-folder-layout)
 the corpus needs `syllabus/README.md` (carrying the `**Custodian**` line), `syllabus/courses/README.md`,
 and `syllabus/paths/README.md`. This is a **new** corpus created after that convention landed, so the
 two per-subfolder READMEs are REQUIRED, not grandfathered — the plan folder rows above show them as

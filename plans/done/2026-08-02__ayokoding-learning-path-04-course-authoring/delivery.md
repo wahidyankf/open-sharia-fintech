@@ -36,7 +36,7 @@ see [README §Successor plans](./README.md#successor-plans).
 > (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
 > **intermediate** phase instead confirms the work is committed to its delivery unit's branch with
 > nothing pushed for review yet — see [Plans Organization Convention §PRs Open at Delivery
-> Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+> Boundaries](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 > A phase is not complete until every gate check is green.
 >
 > **Executor environment note — RTK-wrapped commands emit an empty-output marker, not true
@@ -487,7 +487,7 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
       Falsifiable both ways: pushing this branch makes the first return **1**; opening a PR for it
       makes the second return **1** — either fails the gate. The `evidence/` baseline and slug
       register written here ride the **Phase 1** PR
-      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
       **Date**: 2026-07-26. **Status**: Done. Both commands returned **0** — branch not pushed, no
       PR open.
 

@@ -184,7 +184,7 @@ low-fi ASCII alternatives (≥2) and a mobile/tablet/desktop responsive strategy
 selection + rationale are recorded in the Selection subsection. The **two hi-fi finalists are
 produced** (Option A — winner, and Option B — runner-up; see [Tier 2](#tier-2--high-fidelity-finalists-cost-of-living)
 below) — neither is deferred. The full
-[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 funnel (diverge → narrow → select → justify) is satisfied across both the low-fi and hi-fi tiers.
 
 **Prior art (R7)** — `web-researcher` surveyed comparable cost-of-living tools: **Numbeo**
@@ -257,7 +257,7 @@ healthcare funding-scheme badge **whose full label fits inside the taller table 
 out-of-pocket legend line**; dual-currency money cells; the snapshot-date + "estimates only"
 disclaimer; and a city-detail inset). Authored as an SVG and rasterised to PNG at 2× via
 `rsvg-convert -z 2`, using the color-blind-friendly palette and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 ![High-fidelity desktop mockup of the Cost-of-living tab as a Category Table: the three-tab toggle shows Cost of living active; a Region/Country/City cascading filter row and household, area, and school-type controls sit above a dense table whose rows (Jakarta Indonesia, Singapore, Berlin Germany) list each expense category with money cells showing local currency over USD and a healthcare funding-scheme badge per row whose full label sits inside the taller row, underlined Country and City links (a City link opens that city's detail, a Country link opens the Cost-of-living tab filtered to that country), a legend explaining OOP means out-of-pocket, and a city-detail inset plus an estimates-only disclaimer.](./assets/ui-cost-of-living-option-a-category-table.png)
 
@@ -270,7 +270,7 @@ active; Region/Country/City cascading filters and shared household/area/school c
 the card grid; healthcare funding-scheme badges are present per card; OOP legend shown. Authored as
 an SVG and rasterised to PNG at 2× via `rsvg-convert -z 2`, using the color-blind-friendly palette
 and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 **Drop reason**: card grid is more visual but shows too few cities per screen for the worldwide scan;
 side-by-side category comparison is weaker than the inline table.
@@ -310,7 +310,7 @@ low-fi ASCII alternatives (≥2) and a mobile/tablet/desktop responsive strategy
 selection + rationale are recorded in the Selection subsection. The **two hi-fi finalists are
 produced** (Option A — winner, and Option B — runner-up; see [Tier 2](#tier-2--high-fidelity-finalists-savings)
 below) — neither is deferred. The full
-[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 funnel (diverge → narrow → select → justify) is satisfied across both the low-fi and hi-fi tiers.
 
 **Prior art (R7)** — `web-researcher` surveyed forward salary-to-savings tooling: **Numbeo
@@ -384,7 +384,7 @@ city-name links; **healthcare scheme badges whose full label fits inside the row
 out-of-pocket legend line**; and the "savings before pension" + "nominal-FX vs PPP" disclaimer).
 Authored as an SVG and rasterised to PNG at 2× via `rsvg-convert -z 2`, using the
 color-blind-friendly palette and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 ![High-fidelity desktop mockup of the Savings tab as a Net/Savings Table: the three-tab toggle shows Savings active; a gross-salary input reads $8,000/mo equals $96,000/yr beside Region/Country/City filters, a roles caption, and a shared cost-basis controls row with household (adults, pre-school kids, school-age kids), area (center/rural), and school-type (public/private) controls; the table ranks Jakarta, Kuala Lumpur, and Berlin by essential savings (the sorted column highlighted) with columns for gross, non-salary comp, total comp, income band, effective tax split federal plus sub-national, net, essentials, lifestyle, essential and after-lifestyle savings, savings percent, and a healthcare scheme badge whose full label sits inside the row, money cells showing local over USD, both Country and City names rendered as underlined links (a City link opens that city's Cost-of-living detail, a Country link opens the Cost-of-living tab filtered to that country), a legend noting OOP means out-of-pocket, and a savings-before-pension and nominal-FX-vs-PPP disclaimer.](./assets/ui-savings-option-a-net-savings-table.png)
 
@@ -396,7 +396,7 @@ after-lifestyle savings with percentages, and a healthcare scheme badge. Cards a
 savings. The three-tab toggle shows Savings active; gross-salary input, Region/Country/City cascading
 filters, and shared cost-basis controls sit above the card grid. Authored as an SVG and rasterised to
 PNG at 2× via `rsvg-convert -z 2`, using the color-blind-friendly palette and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 **Drop reason**: card grid hides the gross→net→essentials→savings chain and shows too few cities per
 screen for the worldwide savings scan; the transparent row-by-row chain of Option A is superior for
@@ -433,7 +433,7 @@ low-fi ASCII alternatives (≥2) and a mobile/tablet/desktop responsive strategy
 selection + rationale are recorded in the Selection subsection. The **two hi-fi finalists are
 produced** (Option A — winner, and Option B — runner-up; see [Tier 2](#tier-2--high-fidelity-finalists-minimum-role)
 below) — neither is deferred. The full
-[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+[UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
 funnel (diverge → narrow → select → justify) is satisfied across both the low-fi and hi-fi tiers.
 
 **Prior art (R7)** — `web-researcher` surveyed reverse salary/role tooling: **levels.fyi**
@@ -519,7 +519,7 @@ dual (display currency on line 1 + local currency on line 2)**; qualifying roles
 a clearly-marked **MINIMUM** row, then a divider, then the dimmed below-minimum roles; and the
 disclaimer line). Authored as an SVG and rasterised to PNG at 2× via `rsvg-convert -z 2`, using the
 color-blind-friendly palette and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 ![High-fidelity desktop mockup of the Minimum-role tab as a Ladder Table: the three-tab toggle shows Minimum role active beside a software-engineering roles caption; a baseline selector (reference role chosen), a USD-default display-currency selector, Region/Country/City scope filters, and a shared cost-basis controls row with household (adults, pre-school kids, school-age kids), area (center/rural), and school-type (public/private) controls sit above the ladder; qualifying roles (Director, Staff SWE) are ranked high to low down to a highlighted Sr SWE MINIMUM row badged MIN, followed by a dashed Below Minimum divider and dimmed SWE II and SWE I rows; every money column (p25, median, p75, non-salary comp, total comp, essential savings) shows the display currency over the local currency, best-city and country are both underlined links (a best-city link opens that city's Cost-of-living detail, a country link opens the Cost-of-living tab filtered to that country), and a legend notes the minimum depends on the household/area cost basis above an estimates-only disclaimer.](./assets/ui-min-role-option-a-ladder-table.png)
 
@@ -531,7 +531,7 @@ role-city combinations sorted by essential savings, then a below-minimum section
 display-currency selector, Region/Country/City scope filters, and shared cost-basis controls sit above
 the banner. Authored as an SVG and rasterised to PNG at 2× via `rsvg-convert -z 2`, using the
 color-blind-friendly palette and WCAG-AA contrast per the
-[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/17-mermaid-color-accessibility-palette.md#accessible-color-palette).
+[Diagrams convention](../../../repo-governance/conventions/formatting/diagrams/mermaid-color-accessibility-palette.md#accessible-color-palette).
 
 **Drop reason**: the banner gives the plain answer directly but hides near-miss context — how close
 failing rungs came to qualifying. The Ladder Table (Option A) surfaces the full qualifying/non-qualifying

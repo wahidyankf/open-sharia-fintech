@@ -11,7 +11,7 @@ Worktree path: `worktrees/repo-clean-up/`, branch `worktree/repo-clean-up`.
 
 This plan declares that worktree. It is the sole worktree for this plan and is reused for every
 delivery unit. If it is missing, provision it with `claude --worktree repo-clean-up` per the
-[Worktree Specification convention](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md),
+[Worktree Specification convention](../../../repo-governance/conventions/structure/plans/worktree-specification.md),
 then run `npm install` and `npm run doctor -- --fix`. Never provision a second worktree for this
 plan under any other name.
 

@@ -858,7 +858,7 @@ very artifact that exposed the auto-switch defect (session logs showing
 This plan's own research never turned up a verified, concrete `cursor-agent` invocation for
 launching a subagent non-interactively and reading its served model back from the session record —
 only the conceptual fact that the CLI exists and that its logs were useful once. Per the
-[Executor Tagging Convention](../../../repo-governance/conventions/structure/plans/17-executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule),
+[Executor Tagging Convention](../../../repo-governance/conventions/structure/plans/executor-tagging-tags-and-bias.md#executor-tagging--ai-vs-human-hard-rule),
 automation replaces a human step only when a real, agent-runnable command is known to exist; absent
 one here, the delivery checklist implements the probe as a single `[HUMAN]` step, with no
 CLI-detection branch. _Future improvement (deferred, not part of this plan): if a concrete, tested

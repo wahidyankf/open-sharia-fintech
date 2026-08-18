@@ -82,7 +82,7 @@ Scoped to this plan's 9-course slice; the full four-path persona set is reproduc
 
 Every scenario below uses exactly one primary `Given`, one `When`, and one `Then`, with all extras
 chained via `And`/`But`, per the
-[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
+[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
 
 ### Course bodies and their prerequisite chains
 

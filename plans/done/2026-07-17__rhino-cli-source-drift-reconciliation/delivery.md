@@ -16,7 +16,7 @@ three repos. Because rhino-cli is byte-identical, the reconciliation runs as one
 `git worktree add`, run `npm install` AND `npm run doctor -- --fix` per
 [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md).
 Paths follow the [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
-and [Plans Organization Convention § Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+and [Plans Organization Convention § Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 Optional manual pre-provisioning (run from each repo's root — `ose-public`, `ose-primer`, and
 `ose-infra` in turn):

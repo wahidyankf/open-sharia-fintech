@@ -24,7 +24,7 @@ the worktree after the plan is archived and pushed. Propagation phases (6, 7) pr
 per-repo worktrees in `ose-primer` and `ose-infra`.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Parallelization Model
 
@@ -390,7 +390,7 @@ N background = N+1`, default N=3), the why-3 rationale, the adjustable/never-sel
       `agent-workflow-orchestration.md`: sharpen that the **PR** (not just the worktree) is the
       independent merge point — N parallel units → N PRs that review/gate/merge independently without
       blocking each other; each DAG leaf producing changes gets its own worktree + PR — cross-link
-      [Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+      [Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
       — acceptance: rationale names the PR as the enabler; link resolves
   - **Date**: 2026-07-20 — **Status**: DONE
   - **Files Changed**: `repo-governance/development/agents/agent-workflow-orchestration.md`

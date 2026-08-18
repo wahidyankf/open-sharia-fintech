@@ -18,7 +18,7 @@ so that:
 
 - **Validator gates lie when reality lies.** `validate-tree`, `validate-counts`, `validate-links`,
   and `validate-adoption` already run on every pre-push and PR per
-  [specs-directory-structure.md §Pre-push + CI gating surfaces](../../../repo-governance/conventions/structure/specs-directory-structure/10-pre-push-ci-llm-validation-deterministic-offload-and-related-documentation.md#pre-push--ci-gating-surfaces).
+  [specs-directory-structure.md §Pre-push + CI gating surfaces](../../../repo-governance/conventions/structure/specs-directory-structure/pre-push-ci-llm-validation-deterministic-offload-and-related-documentation.md#pre-push--ci-gating-surfaces).
   Apps outside the canonical layout silently slip past these checks because they live outside
   the `AppsWithDDD` allowlist or because the validators recognize "legacy flat" as a permitted
   shape. Either path lets drift accumulate. [Repo-grounded]

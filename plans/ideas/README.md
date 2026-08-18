@@ -139,7 +139,7 @@ promoted yet" is a legitimate state, distinct from "rejected".
 
 ## See Also
 
-- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
+- [Plans Organization Convention → Ideas Folder (Two-Pagers)](../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
   — the authoritative convention, template, and discipline.
 - [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md) —
   routes future-work learnings from plan execution here as two-pagers.

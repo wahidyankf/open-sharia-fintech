@@ -32,7 +32,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 deleting the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ### Additional worktrees (sibling repositories)
 
@@ -69,7 +69,7 @@ archiving inside PR 1 would declare the plan complete while two-thirds of its de
 unopened. See `tech-docs.md` DD-8 for the full rationale and the
 [PR Review Quality Gate workflow §Done-Definition, Three-repo nuance](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#done-definition-for--to-pr-modes).
 
-See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
+See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
 
 ## Parallelization Model
 

@@ -24,7 +24,7 @@ engine change (Phase 1) propagates to `ose-primer`/`ose-infra` in their own tree
 rollout batches run in each repo for its own apps/libs.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 **Worktree-gate evidence (Done 2026-07-04)**: work for this plan proceeded directly on `main` in all
 three repos rather than through `worktrees/enforce-repo-wide-scenario-implementation/` — the plan's
@@ -515,7 +515,7 @@ For each project in the batch:
         behaviour requires building a genuinely new user-facing screen or component (not merely new
         backend/CLI logic behind an existing screen), run the UI-design-funnel (diverge → narrow → select
         → justify, per the
-        [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope))
+        [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope))
         BEFORE the RED step below, recording it in this plan's `prd.md` and `assets/`: ≥2 named low-fi
         alternatives, 2 hi-fi `.excalidraw.png` finalists, an explicit selection + rationale, a stated
         mobile/tablet/desktop responsive strategy, an R5 grounding note (survey the project's own repo's

@@ -159,7 +159,7 @@ workflow's own runs, each independently justified.** Two distinct claims, not on
   [plan-docs-only carve-out](../../../repo-governance/workflows/plan/plan-planning.md#the-plan-docs-only-carve-out-superseded--retired-in-three-of-four-repos),
   a change touching only `plans/**` may push direct to `main` — no PR review cycle is warranted for
   idea-brief reshaping, since idea docs are already framed as low-stakes backlog documentation (see
-  [Ideas Folder convention](../../../repo-governance/conventions/structure/plans/03-ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)).
+  [Ideas Folder convention](../../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)).
   This is consistent with the low-stakes framing behind Q10's autonomous-with-ledger resolution.
   The workflow's frontmatter (see "Detailed Design" below) exposes this as a **`delivery-mode`
   input parameter**, defaulting to `main-to-origin-main`, so a future caller may explicitly

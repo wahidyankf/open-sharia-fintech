@@ -4,7 +4,7 @@
 
 `archive-with-plan` — this plan custodies its own 15-file `syllabus/` corpus and no consumer
 **outside `plans/`** reads it. The corpus moves to `plans/done/` with the plan folder on archival. See
-[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/10-corpus-disposition.md#corpus-disposition).
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus/corpus-disposition.md#corpus-disposition).
 
 ## Corpus Custody
 

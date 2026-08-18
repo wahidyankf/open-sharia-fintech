@@ -23,7 +23,7 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 deleting the worktree after the plan is archived and pushed.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -1457,7 +1457,7 @@ not in a render/mockup structural mismatch.
       `resizable-sidebar-option-b.excalidraw.png`) do not depict the plan's own selected design — both
       files are a generic, unrelated documentation-site screenshot, not an Excalidraw rendering of
       AyoKoding's edge-drag-handle sidebar — fixed
-  - **Violated ground truth**: the [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
+  - **Violated ground truth**: the [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)
     (both-tier mockups per screen: a hi-fi `.excalidraw.png` finalist for each named option) and
     `prd.md`'s own Select record ("Selected: Option A — Edge drag handle... a thin vertical strip
     sitting on the existing `border-r`; hover shows a `col-resize` cursor; focus shows a ring.

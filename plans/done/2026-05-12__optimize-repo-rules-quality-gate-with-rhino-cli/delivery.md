@@ -10,7 +10,7 @@ Provision before execution (run from repo root):
 claude --worktree optimize-repo-rules-quality-gate-with-rhino-cli
 ```
 
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 All steps execute inside the worktree at `worktrees/optimize-repo-rules-quality-gate-with-rhino-cli/`. Commits land on branch `worktree-optimize-repo-rules-quality-gate-with-rhino-cli`, then publish to `main` via direct-to-main fast-forward (default for `ose-public` under Trunk Based Development).
 

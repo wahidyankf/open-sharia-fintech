@@ -55,7 +55,7 @@ stop point's PR.
 > for every phase, including phases that are serially dependent on the one before them or that ship
 > no independently-reviewable diff, multiplies review-cycle overhead without a matching increase in
 > reviewability. This plan's four stop points, applying the "genuinely dependent nodes stay one PR"
-> clause of [Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+> clause of [Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 > to this plan's own already-documented [Parallelization Model](#parallelization-model):
 >
 > 1. **Phases 1 + 2** — one PR, merging at the Phase 2 Gate. Phase 2's every RED step imports from
@@ -76,7 +76,7 @@ main`, Phase 5 Gate) — it ships no diff to review.
 > one-PR-per-phase default this section previously declared.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -87,7 +87,7 @@ branch**, opens a **draft PR** against `main`, runs the **PR-Review Maker→Fixe
 ready, and `[AI]` **merges it automatically once all quality gates are green**. Mode inherited from
 the source plan at tier-2 ("plan field") precedence — not re-derived.
 See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
@@ -686,7 +686,7 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   earlier syllabus-intact body step.
 
 - [x] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
-      **Grandfathered exception to [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)**:
+      **Grandfathered exception to [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)**:
       that hard rule landed on `main` (commit `1c24ed636`) while this phase's PR #90 was already open
       and mid-review. #90 had already completed all 3 review cycles and reached CI-green before the
       rule landed, so it merged as a one-time historical exception rather than being abandoned with
@@ -696,8 +696,8 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   **Date**: 2026-07-23. **Status**: Done (historical exception — closed, not repeatable). **Files
   Changed**: none beyond this phase's own evidence. PR #90 ("ayokoding-learning-path-02: Phase 0 —
   environment setup and baseline") merged at `2026-07-23T23:47:38Z`. This is the **last** Phase 0 PR
-  in this repo: both [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/23-phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)
-  and [§PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+  in this repo: both [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans/phase-0-opens-no-pr.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)
+  and [§PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
   now bind, and the `### Delivery Boundaries` table above records Phase 0 as opening no PR.
 
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (this checkbox only). PR #90

@@ -64,7 +64,7 @@ unit's worktree once that unit's own PR lands — never deferred to plan end (se
 Phase N Gate).
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
@@ -78,7 +78,7 @@ its boundary commit to the same worktree's branch and open no PR of their own.
 **Phase 0 is excluded from all of it**: it is local setup and baseline only — it opens no PR, pushes
 no branch, runs no review cycle, and merges nothing. Its evidence artifacts ride the Phase 1 PR.
 
-See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode)
+See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 ## Parallelization Model
@@ -128,7 +128,7 @@ flowchart TB
 
 Each row below gets its **own** worktree and branch — one worktree → one branch → one PR → one
 delivery unit, never a worktree shared across units — per
-[Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/25-prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans/prs-open-at-delivery-boundaries-rules.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
 and the One-Worktree-One-PR HARD RULE in
 [plan-planning.md §Planning Granularity](../../../repo-governance/workflows/plan/plan-planning.md#one-branch-one-pr-one-delivery-unit-hard-rule).
 Phase 0 works inside unit 1's worktree (see [Worktree](#worktree)); every other unit provisions its
@@ -369,7 +369,7 @@ rev-parse --show-toplevel` prints the worktree path
 
 > _Suggested executor: `swe-ui-maker` for the tokens; the design finalists are authored per the
 > `swe-developing-frontend-ui` skill and the
-> [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/42-ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)._
+> [UI Mockups in Plan Docs convention](../../../repo-governance/conventions/formatting/diagrams/ui-mockups-principles-and-scope.md#ui-mockups-in-plan-docs-principles-in-practice-and-scope)._
 >
 > The low-fidelity tier, the named selection, the decision record, the responsive strategy, and both
 > hi-fidelity finalists (each committed as a hand-authored `.svg` source rendered via `rsvg-convert`

@@ -85,7 +85,7 @@ pattern for its own authored surface.
 
 Every scenario below uses exactly one primary `Given`, one `When`, and one `Then`, with all extras
 chained via `And` / `But`, per the
-[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/02-gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
+[Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria/gherkin-format-and-step-keyword-cardinality.md#step-keyword-cardinality-hard-rule).
 
 ### Security reconciliation (routed from plan 04)
 

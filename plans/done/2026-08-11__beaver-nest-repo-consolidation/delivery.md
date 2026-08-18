@@ -155,15 +155,15 @@ method there. **Never** `git rev-parse --is-bare-repository`: that command is ex
 for this question because it false-negatives from inside a linked worktree.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/29-worktree-specification.md#worktree-specification).
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans/worktree-specification.md#worktree-specification).
 
 > **Worktree Cap conformance note (added when the rule landed, corrected on re-review):** this plan
 > already declared **one worktree per repo** (four repos, four rows in the table above — not "a
 > single, plan-wide worktree") before the
-> [Worktree Cap](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
+> [Worktree Cap](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule)
 > rule landed, and is compliant with it: never more than one worktree open per repository. It was
 > **not** compliant with
-> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
+> [Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule):
 > Phase 8 (retiring `beaver-nest`) and Phases 9-10 (Knowledge Capture and Plan Archival in
 > `ose-public`) both described a direct push to a protected `main` under the retired
 > Plan-Docs-Only Carve-Out. Corrected below — Phase 8 now routes through a `beaver-nest` PR (added
@@ -174,7 +174,7 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 ## Delivery Mode: worktree-to-pr
 
 The repo default, and the only available mode here: per
-[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
 `ose-public`'s `main` is branch-protected against direct pushes — including for repository admins —
 so `worktree-to-origin-main` and `main-to-origin-main` have no path here for **any** plan,
 regardless of what file types it touches. This holds independent of the change set's own mix of
@@ -188,7 +188,7 @@ worktree/PR churn — see [tech-docs.md D12](./tech-docs.md#design-decisions)). 
 close their own single-phase delivery unit in `ose-primer` and `ose-private` respectively and open one
 PR each. Phase 8 produces changes only in `beaver-nest` — a markdown-only README edit — and opens no
 `ose-public` PR, but per
-[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 `beaver-nest` is one of the three repos where every plan uses `worktree-to-pr` with no exception, so
 the README edit lands via its own `beaver-nest` PR (worktree row added above), reviewed and merged
 before the archive flip — never a direct push, regardless of whether `beaver-nest`'s branch
@@ -1014,7 +1014,7 @@ Identical in substance to Phase 5, adapted to this repo's own footprint. `ose-pr
 ## Phase 8: Retire the `beaver-nest` Repository (delivery boundary — PR #4)
 
 Changes land only in `beaver-nest`, via that repo's own PR — never a direct push. Per
-[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule),
 `beaver-nest` is one of the three repos where every plan uses `worktree-to-pr` with no exception,
 regardless of whether its branch protection is confirmed active at execution time. Archiving is
 reversible via `gh repo unarchive` [Web-cited, GitHub Docs, accessed 2026-08-06].
@@ -1112,7 +1112,7 @@ own — Phase 10 below is this unit's delivery boundary.
 ## Phase 10: Plan Archival, PR, and Cleanup (delivery boundary — PR #5)
 
 This unit's delivery boundary. Per
-[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/35-per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
+[Per-Repository Delivery Mode Restrictions](../../../repo-governance/conventions/structure/plans/per-repository-delivery-mode-restrictions.md#per-repository-delivery-mode-restrictions-hard-rule)
 the retired Plan-Docs-Only Carve-Out no longer applies to `ose-public` — every plan there uses
 `worktree-to-pr`, with no exception — so the archival commit lands via this phase's own PR, the
 plan's final `ose-public` PR, rather than a direct push. This corrects

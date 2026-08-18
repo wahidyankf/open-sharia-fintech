@@ -257,7 +257,7 @@ A generated mirror that violates the word budget is **never hand-edited** — th
 (Phase 17's knowledge-capture and archival PR, added per Finding 9 of the 2026-08-13 plan audit).
 
 **Exactly one worktree named `optimize-governance-md` per repository** — the
-[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans/31-worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
+[one-worktree-per-repo-per-plan HARD RULE](../../../repo-governance/conventions/structure/plans/worktree-cap.md#worktree-cap--one-worktree-per-repository-per-plan-hard-rule).
 The name matches the plan-folder identifier per the Worktree Specification's name-matching
 requirement — no exception needed (see `brd.md` §Constraints for the note on the `ose-public`
 worktree's mid-session rename from its original provisioning name).

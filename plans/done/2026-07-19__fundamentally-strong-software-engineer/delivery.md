@@ -57,7 +57,7 @@ branch, and opens **its own draft PR**. The worktree is reused across phases —
 branches, many PRs — instead of provisioning a fresh worktree per phase. See Parallelization Model below
 for how this still allows several phases to be in flight concurrently.
 
-See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/32-delivery-mode-the-four-modes.md#delivery-mode).
+See [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans/delivery-mode-the-four-modes.md#delivery-mode).
 
 ## Parallelization Model (Phases 4-109)
 
