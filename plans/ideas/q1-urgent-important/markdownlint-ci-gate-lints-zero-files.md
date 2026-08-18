@@ -57,6 +57,10 @@ commit whose diff was ~34 Markdown files. Four `repo-governance/glossary/` files
 having never been formatted at all. Note `ose-private` already spells this one
 `ci: { scope: all-file-type }`, with a comment explaining the choice, so the two repos disagree.
 
+Corroborated 2026-08-18 in `repo-clean-up`: a branch of ~60 changed Markdown files carried five
+prettier violations with every gate green, caught only by running the repo-pinned binary over the
+branch's own changed set by hand. Second independent instance, different plan.
+
 ## Why now
 
 Measured blast radius, so the fix is not a leap in the dark:

@@ -54,3 +54,15 @@ Committed as `c0a219ea4` (58 files).
 | `repo-config.yml`                                                   | edit   | Dropped the `apps/ayokoding-www/content` and `apps/ose-www/content` exclusions from the `md-links` gate. |
 | `plans/in-progress/repo-clean-up/evidence/phase-3-negative-test.md` | new    | Red/green record proving the gate bites on both trees.                                                   |
 | `plans/in-progress/repo-clean-up/learnings.md`                      | edit   | Execution learnings and follow-ups filed.                                                                |
+
+## Phase 4 — Knowledge Capture
+
+| Path                                                                                              | Action | Note                                                                                                |
+| ------------------------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
+| `repo-governance/development/practice/trustworthy-measurement/01-rule-1-prove-the-command-ran.md` | edit   | Git pathspec globs added to the false-zero family.                                                  |
+| `plans/ideas/q2-not-urgent-important/class-sweep-completeness.md`                                 | edit   | Three further sweep shapes folded in, all cases where the correct action was not to edit the match. |
+| `plans/ideas/q1-urgent-important/acceptance-clause-vacuity.md`                                    | edit   | Sixth vacuity shape: a planning-time count frozen into a clause.                                    |
+| `plans/ideas/q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md`                        | edit   | Second independent instance of the affected-file-type prettier skip.                                |
+| `plans/ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md`                       | new    | Two-pager for the delegation-outlives-its-owner class.                                              |
+| `plans/ideas/README.md`                                                                           | edit   | Index entry for the new two-pager.                                                                  |
+| `plans/in-progress/repo-clean-up/learnings.md`                                                    | edit   | Triage table routing all nine entries to a terminal state.                                          |

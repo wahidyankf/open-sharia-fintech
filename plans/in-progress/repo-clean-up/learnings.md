@@ -55,11 +55,38 @@ a full diff piped through `grep 'content/'` gave the true result. Same false-zer
 Five changed Markdown files failed `prettier --check` with every gate green. Sweeping the branch's
 own changed set with the repo-pinned binary is the only thing that catches it.
 
+## Knowledge Capture — Triage
+
+Both safety gates were run on every entry below before any home was chosen. **Secret/sensitivity**:
+no entry contains a credential, token, key, hostname, or insecure implementation detail — nothing
+needed sanitizing. **Repo-relevance**: every entry is public-governance or public-tooling knowledge
+about `ose-public`'s own gates, sweeps, and plan conventions; none touches infra-private material,
+so none is scoped down. All nine entries reach a terminal state below.
+
+| #   | Entry                                                       | Terminal state                                                                                                                                                                                                                                          |
+| --- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | A dormant tool hides the gap it was supposed to fill        | **Filed** as [`gate-exclusions-need-a-named-owner`](../../ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md) — future-work idea, not yet plan-ready                                                                                   |
+| 2   | "Leftover from the old stack" was wrong                     | **Discarded** — the [Repo-Grounding Rule](../../../repo-governance/development/quality/plan-anti-hallucination/05-repo-grounding-rule-hard.md) already forbids the unverified claim; routing it would change no durable surface, so it fails the litmus |
+| 3   | Test-fixture strings look like real references              | **Routed inline** into [`class-sweep-completeness`](../../ideas/q2-not-urgent-important/class-sweep-completeness.md)                                                                                                                                    |
+| 4   | A sweep's exception list is the sweep                       | **Routed inline** into `class-sweep-completeness`                                                                                                                                                                                                       |
+| 5   | Deleting a token can weaken a test                          | **Routed inline** into `class-sweep-completeness`                                                                                                                                                                                                       |
+| 6   | Correcting one stale fact surfaces its neighbours           | **Routed inline** into `class-sweep-completeness`                                                                                                                                                                                                       |
+| 7   | A count in a plan is an estimate until execution re-runs it | **Routed inline** into [`acceptance-clause-vacuity`](../../ideas/q1-urgent-important/acceptance-clause-vacuity.md) as a sixth vacuity shape                                                                                                             |
+| 8   | Git pathspec globs do not cross `/`                         | **Routed inline** into [`trustworthy-measurement` Rule 1](../../../repo-governance/development/practice/trustworthy-measurement/01-rule-1-prove-the-command-ran.md), which already collects the false-zero family                                       |
+| 9   | The prettier gate is scoped by affected file type           | **Routed inline** into [`markdownlint-ci-gate-lints-zero-files`](../../ideas/q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md) as a second independent instance                                                                             |
+
+Entries 3-6 all describe the same class and fold into one existing brief rather than four new ones,
+per the "fold into an existing two-pager rather than duplicating" rule. No entry implies a code
+change, so no `plans/backlog/` follow-up is required by the code-routing downstream rule.
+
 ## Follow-Ups Filed
 
 - [`ayokoding-course-root-overview-parity`](../../ideas/q2-not-urgent-important/ayokoding-course-root-overview-parity.md)
   — 23 of 181 courses lack a course-root `overview.md`; two layouts coexist and cross-course links
   already guessed wrong once. Filed rather than fixed: authoring 23 overview pages is content work.
+- [`gate-exclusions-need-a-named-owner`](../../ideas/q2-not-urgent-important/gate-exclusions-need-a-named-owner.md)
+  — a gate `exclude:` entry cannot express who covers the excluded tree, so a delegation outlives
+  its owner silently. Filed rather than fixed: the remedy needs an exclusion census first.
 - [`coverage-artifact-relative-paths`](../../ideas/q2-not-urgent-important/coverage-artifact-relative-paths.md)
   — corrected inline (the `fsharp-crane-core` claim), with the re-adjudication of its conclusion
   left as an open question in the brief itself.
