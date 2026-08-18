@@ -19,8 +19,7 @@ behavior/rhino-cli/gherkin/
 ├── repo-governance/  # repo-governance subcommand family
 ├── spec-coverage/    # specs coverage command (folded from old spec-coverage subcommand)
 ├── specs/            # specs subcommand family
-├── system/           # system commands (doctor)
-└── workflows/        # workflows subcommand family
+└── system/           # system commands (doctor)
 ```
 
 ## Feature Files by Domain
@@ -121,7 +120,7 @@ behavior/rhino-cli/gherkin/
 | `env-staged-guard.feature`        | `env staged-guard validate`                                                                 | 2         |
 | `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                        | 1         |
 | `harness-bindings.feature`        | `harness bindings validate`                                                                 | 1         |
-| `harness-registry-driven.feature` | `harness bindings validate` / `harness duplication validate`                                | 1         |
+| `harness-registry-driven.feature` | `harness duplication validate`                                                              | 1         |
 | `specs-audit.feature`             | `specs audit`                                                                               | 1         |
 | `validate-adoption.feature`       | `specs structure validate` (merged; scenarios exercise `validate_spec_adoption` in-process) | 4         |
 | `validate-counts.feature`         | `specs counts validate`                                                                     | 4         |
@@ -135,12 +134,6 @@ behavior/rhino-cli/gherkin/
 | ---------------------------- | ---------- | --------- |
 | `cargo-target-share.feature` | `doctor`   | 18        |
 | `doctor.feature`             | `doctor`   | 17        |
-
-### workflows
-
-| File                                | Command(s)                  | Scenarios |
-| ----------------------------------- | --------------------------- | --------- |
-| `workflows-validate-naming.feature` | `workflows validate-naming` | 4         |
 
 ## Conventions
 
