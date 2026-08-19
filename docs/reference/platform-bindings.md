@@ -293,7 +293,7 @@ wins**, which makes declaration order significant. This repository's generated m
 
 To add a new generated binding:
 
-1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs).
+1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs, and `skills-dir` / `skills-mirrors` / `vendored:` if the harness needs a skills mirror). Also add an `ownership:` list classifying every binding path this entry claims as `generated`, `vendored`, or `source` — `harness ownership validate` is a pre-push gate and fails on any tracked binding file with no declared class.
 2. Add a `catalog:` block to that registry entry, then run `rhino-cli harness catalog generate` — never hand-edit the table above, which is machine-owned inside its generated region.
 3. Implement the converter in `apps/rhino-cli/src/application/agents/` and wire it into `harness bindings generate`.
 4. Add Rust integration tests and Gherkin scenarios under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
@@ -312,4 +312,4 @@ To add a new generated binding:
 - `AGENTS.md` at repo root — canonical root instruction file read by most platforms
 - `CLAUDE.md` at repo root — Claude Code shim importing `AGENTS.md`
 
-Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run harness:bindings-validation`, which covers every harness including `.codex/`; `npm run validate:sync` checks only the OpenCode mirror and the skills mirror, not `.codex/agents/`. Every generated mirror MUST NOT be hand-edited — except a path an entry's `ownership:` list in `repo-config.yml` declares `vendored`, which is hand-maintained by design. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).

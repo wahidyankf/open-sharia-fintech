@@ -16,33 +16,38 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 ## Sync Automation
 
-**Script**: `scripts/sync-agent-configs.sh` (or `.js`)
+**Generator**: `rhino-cli harness bindings generate` (Rust). No `scripts/sync-agent-configs.sh` /
+`.js` exists in this repository.
 
 **Commands**:
 
-- `npm run generate:bindings` - Full sync (agents + skills)
+- `npm run generate:bindings` - Full sync, every generated-tier harness
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` - agent skills for the secondary harness that reads `.claude/skills/`
-  natively (no-op for that harness). Does NOT touch the other secondary harness's real-file mirror
-  under `.agents/skills/` — that one needs the full `generate:bindings` run instead.
-- `npm run validate:sync` - Verify semantic equivalence
+- `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch the
+  `.agents/skills/` real-file mirror
+- `npm run validate:sync` - OpenCode's agent mirror and `.agents/skills/`; does **not** cover
+  `.codex/agents/`
+- `npm run harness:bindings-validation` - every generated-tier binding including `.codex/`; this is
+  what the pre-push gate runs
 
 **Conversion Logic**:
 
-- **Agents**: Primary format → secondary format (tool arrays → permission object, model mapping; boolean flags output is deprecated/legacy)
-- **Agent skills**: one secondary harness reads `.claude/skills/` natively (no copy or
-  conversion). The other has no native skills discovery, so it gets a real-file byte-copy mirror at
-  `.agents/skills/`, materialized by `harness bindings generate` (or `npm run generate:bindings`).
-- **Validation**: Confirms both directories are semantically equivalent
+- **Agents**: Primary format → secondary format (tool arrays → permission object, model mapping)
+- **Agent skills**: one harness reads `.claude/skills/` natively; the other gets a real-file
+  byte-copy mirror at `.agents/skills/`
+- **Validation**: three mirror trees now, not two — `.opencode/agents/`, `.codex/agents/` (plus
+  `.codex/config.toml`), and `.agents/skills/`. `harness:bindings-validation` checks all three;
+  `validate:sync` checks only the first and third.
 
 ## Documentation References
 
-- **[CLAUDE.md](../../../../CLAUDE.md)** (PRIMARY) - primary platform binding configuration
-- **[AGENTS.md](../../../../AGENTS.md)** (SECONDARY) - secondary platform configuration with auto-generated warning
-- **[Primary binding agent catalog](../../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
-- **[Secondary binding agent catalog](../../../../.claude/agents/README.md)** (SECONDARY) - `.opencode/agents/` contains auto-synced agent files; `.claude/agents/README.md` is the authoritative catalog for both bindings
-- **[Primary binding skills catalog](../../../../.claude/skills/README.md)** (PRIMARY) - agent skills catalog
-- **[Secondary binding skills catalog](../../../../.claude/skills/README.md)** (SECONDARY) - secondary skills catalog with warning
+- **[CLAUDE.md](../../../../CLAUDE.md)** - Claude Code's shim, `class: source` (hand-authored)
+- **[AGENTS.md](../../../../AGENTS.md)** - vendor-neutral root file read by OpenCode and Codex,
+  `class: source` for both (hand-authored, no auto-generated warning)
+- **[Agent catalog](../../../../.claude/agents/README.md)** - authoritative for every binding;
+  `.opencode/agents/` and `.codex/agents/` carry no catalog of their own
+- **[Skills catalog](../../../../.claude/skills/README.md)** - authoritative source catalog;
+  **[secondary mirror](../../../../.agents/skills/README.md)** is Codex's generated real-file copy
 
 ## Migration History
 
@@ -51,8 +56,11 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 ## Best Practices
 
-1. **Always edit `.claude/` first** - Never edit `.opencode/` directly (changes will be overwritten)
-2. **Run sync after changes** - Ensure `.opencode/` stays synchronized
+1. **Always edit `.claude/` first** - Never edit a `class: generated` file under `.opencode/` or
+   `.codex/` directly (changes will be overwritten). Exception: a path an entry's `ownership:` list
+   declares `vendored` — e.g. `.opencode/opencode.json`, `.codex/config.toml`'s undelimited
+   region — is hand-maintained by design and MUST be edited directly.
+2. **Run sync after changes** - Ensure every generated-tier binding stays synchronized
 3. **Test both platforms** - Verify agents work in all supported platforms after major changes
 4. **Document sync status** - Keep README files updated in both directories
 5. **Security policy** - Only use skills from trusted sources (all platforms)
