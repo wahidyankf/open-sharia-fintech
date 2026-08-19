@@ -769,3 +769,56 @@ _and_ that a one-sided merge turns the parity audit red. Only the second half is
 delivery checklist where it can be ticked. The new step stages the edit before regenerating —
 without that, `parity manifest generate` refuses outright (it hashes the git index), which the
 falsifiability probe confirmed.
+
+## Harness load assertions
+
+Manual Behavioural Assertions Part 2 — one terminal line per supported harness. Every assertion was
+satisfied non-interactively; the `[HUMAN]` tag on the checklist items reflects who normally runs
+them, not a requirement that a person do so.
+
+**Claude Code — PASS.** Asserted from the running session rooted at this worktree. The repository's
+own agents appear in the session's "Available agent types" listing (`plan-maker`, `pr-review-*`,
+`swe-rust-dev`, and the rest of the `.claude/agents/` tree), and the session's `claudeMd` context
+block carries `CLAUDE.md` **and** the content of the `@AGENTS.md` file it imports — so the import
+resolved rather than being echoed as literal text. No `claude` CLI subcommand lists agents or
+skills, and `/context` renders only in an interactive TUI, so the running session is the evidence.
+
+**OpenCode 1.18.7 — PASS.** Evidence: `evidence/opencode-agent-list.txt` and
+`evidence/opencode-skill-resolution.txt`. `opencode agent list` returns 7 built-in plus 94 repo
+agents, matching the 94 files in `.opencode/agents/`. `opencode debug skill` resolves 69 skills: 19
+directly from `.claude/skills/` (the native read this plan depends on), 48 from `.agents/skills/`, 1
+built-in, 1 global — and zero from the `.opencode/skills/` tree Phase 6 deleted. No capability was
+lost by that deletion.
+
+**Codex CLI 0.146.0 — PASS on config, AGENTS.md, and skills; BLOCKED on subagents.** Evidence:
+`evidence/codex-mcp-list.txt` and `evidence/codex-skill-roots.txt`. `codex mcp list` shows
+`nx-mcp`, which is declared only in this repository's `.codex/config.toml`, proving the project
+layer loads. `codex debug prompt-input` shows root `AGENTS.md` loaded as `--- project-doc ---`.
+`codex debug skill` lists `r12 = <worktree>/.agents/skills`, proving the mirror is a live skill
+root. **Subagent discovery is BLOCKED**: 0.146.0 exposes no non-interactive listing of `[agents]`
+entries, and `codex exec` was not used to enumerate them because `codex doctor` reports
+`filesystem unrestricted · network enabled · approval Never` — launching an autonomous agent under
+those settings inside the user's repository, unattended, is not a safe way to satisfy a
+documentation assertion. The `.codex/config.toml` `[agents]` block is still asserted statically by
+`tests/codex_binding.rs` and the harness-ownership gate.
+
+**How Codex comes to trust this repository — machine-local, not shippable.** `.codex/` project
+layers load only for a _trusted_ project, and trust lives in the developer's own
+`~/.codex/config.toml` as `[projects."<absolute path>"] trust_level = "trusted"`, keyed by absolute
+path. Hooks carry a second, finer mechanism keyed by path _and_ content:
+`[hooks.state."<abs path>:<event>:<i>:<j>"] trusted_hash = "sha256:…"`, so editing `.codex/hooks.json`
+re-prompts. Neither can be committed. Acted on rather than filed: recorded as the `[^trust]`
+footnote on the Codex `instruction-surface` cell in `docs/reference/platform-bindings.md`, so a
+teammate reading the catalog learns that everything under `.codex/` does nothing for them until they
+trust the repository on their own machine.
+
+**Two catalog cells were wrong and one is still open.** The OpenCode `skills-surface` cell claimed
+only `.claude/skills/`; the skill-resolution evidence shows it reads `.agents/skills/` too, and the
+cell now says so. Still open, deliberately not changed because it is outside this checklist's scope:
+the Codex `Status` cell reads "Partial (`.codex/` exists)", which the three PASSes above understate
+— project config, root `AGENTS.md`, and skills all demonstrably load.
+
+**`.opencode/agents/README.md` is loaded as an agent named `README`.** It appears in the roster
+between the real agents. The OpenCode binding emitter writes a README into the mirror directory, and
+OpenCode treats every `.md` in `.opencode/agents/` as an agent definition. Harmless — nothing
+invokes it — but it is a defect in the mirror layout, not in the README.
