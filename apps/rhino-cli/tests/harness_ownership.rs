@@ -20,6 +20,10 @@ use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
 use tempfile::TempDir;
 
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
+use git_fixture::run_git;
+
 /// Feature-level tags this runner owns.
 const OWNED_TAGS: &[&str] = &["binding-ownership"];
 
@@ -204,18 +208,6 @@ fn write_file(root: &Path, rel: &str, content: &str) {
     let p = root.join(rel);
     std::fs::create_dir_all(p.parent().expect("parent")).expect("mkdir");
     std::fs::write(p, content).expect("write");
-}
-
-fn run_git(dir: &Path, args: &[&str]) -> Output {
-    std::process::Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .env("GIT_COMMITTER_NAME", "t")
-        .env("GIT_COMMITTER_EMAIL", "t@t")
-        .output()
-        .expect("git")
 }
 
 fn run_bin(dir: &Path, args: &[&str]) -> Output {

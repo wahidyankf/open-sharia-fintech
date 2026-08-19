@@ -25,6 +25,10 @@ use cucumber::{World as _, given, then, when};
 use rhino_cli::application::agents::catalog::{REGION_END, REGION_START};
 use tempfile::TempDir;
 
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
+use git_fixture::run_git;
+
 /// Feature-level tags this runner owns.
 const OWNED_TAGS: &[&str] = &["catalog-generation"];
 
@@ -314,18 +318,6 @@ fn validate_clean_after_regeneration(world: &mut CatalogWorld) {
         !world.doc().contains("Tampered Harness"),
         "regeneration left the hand edit in place"
     );
-}
-
-fn run_git(dir: &Path, args: &[&str]) -> Output {
-    std::process::Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .env("GIT_COMMITTER_NAME", "t")
-        .env("GIT_COMMITTER_EMAIL", "t@t")
-        .output()
-        .expect("git")
 }
 
 fn run_bin(dir: &Path, args: &[&str]) -> Output {

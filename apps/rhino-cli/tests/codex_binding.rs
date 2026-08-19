@@ -21,6 +21,10 @@ use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
 use tempfile::TempDir;
 
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
+use git_fixture::run_git;
+
 /// Feature-level tag both this runner and `agents.rs` filter on.
 const CODEX_BINDING_TAG: &str = "codex-binding";
 
@@ -173,14 +177,7 @@ impl CodexWorld {
 }
 
 fn init_git_repo(dir: &Path) {
-    let status = std::process::Command::new("git")
-        .args(["init", "-q"])
-        .current_dir(dir)
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .status()
-        .expect("git init");
-    assert!(status.success(), "git init failed in {}", dir.display());
+    run_git(dir, &["init", "-q"]);
 }
 
 /// True when `content` declares TOML key `key` at the start of a line.
