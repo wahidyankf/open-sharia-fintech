@@ -58,15 +58,12 @@ let main args =
     // 4. HTTP host (Giraffe routes for all bounded contexts + EF DbContext), bound to the port
     //    resolved by the repo-wide `--port` > ORGANICLEVER_BE_PORT > 8202 contract — see
     //    libs/fsharp-env-loader/src/PortResolver.fs, shared with every other port-binding app here.
+    let readEnvironment (key: string) =
+        System.Environment.GetEnvironmentVariable key
+
     let listenUrl =
-        match
-            FsharpEnvLoader.PortResolver.resolvePort
-                args
-                System.Environment.GetEnvironmentVariable
-                "ORGANICLEVER_BE_PORT"
-                8202
-        with
-        | Ok port -> FsharpEnvLoader.PortResolver.listenUrl System.Environment.GetEnvironmentVariable port
+        match FsharpEnvLoader.PortResolver.resolvePort args readEnvironment "ORGANICLEVER_BE_PORT" 8202 with
+        | Ok port -> FsharpEnvLoader.PortResolver.listenUrl readEnvironment port
         | Error message ->
             eprintfn "%s" message
             exit 1
