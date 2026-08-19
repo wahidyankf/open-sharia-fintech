@@ -9,6 +9,7 @@ Features in this domain:
 - `agents-detect-duplication.feature` — detect duplicate agent definitions
 - `agents-sync.feature` — sync agent definitions across platform bindings
 - `agents-validate-claude.feature` — validate Claude Code agent files
+- `harness-audit.feature` — aggregate every harness validator into one pass/fail report
 - `codex-binding.feature` — generate the Codex agent binding: standalone TOML files plus the delimited `.codex/config.toml` region
 - `opencode-skills-removal.feature` — delete the ungoverned `.opencode/skills/` and `.opencode/commands/` trees as a deliberate accepted capability loss
 - `vendored-skill-preservation.feature` — the mirror emitter touches only what it generates, leaving declared vendored plugin directories byte-identical
