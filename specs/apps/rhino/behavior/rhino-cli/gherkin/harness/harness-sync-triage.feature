@@ -59,6 +59,19 @@ Feature: Divergence triage and reviewed promotion
     And an agent whose canonical source carries none of them lists nothing, proving the list is computed rather than hardcoded
 
   @unit
+  Scenario: Promoting a both-diverged mirror directly still warns, without requiring triage first
+    Given a canonical source file and its corresponding generated mirror have both been hand-edited
+    When rhino-cli harness sync promote runs against that mirror, without triage having run first
+    Then the output carries a hard-stop warning naming both sides as hand-edited
+    And nothing was written to canonical source
+
+  @unit
+  Scenario: Promoting a skills mirror lists no field at risk, because a byte copy translates nothing
+    Given a generated skills mirror carries a hand edit
+    When rhino-cli harness sync promote runs against that skills mirror
+    Then the output lists nothing under the at-risk heading
+
+  @unit
   Scenario: A vendored file is excluded from triage entirely
     Given a vendored skill directory declared in the registry and a generated mirror file beside it
     When the vendored file is hand-edited and rhino-cli harness sync triage runs

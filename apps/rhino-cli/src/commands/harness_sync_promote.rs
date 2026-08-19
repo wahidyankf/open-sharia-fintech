@@ -43,6 +43,13 @@ fn format_proposal(proposal: &PromoteProposal) -> String {
         "proposed change to {} (from {})\n\n",
         proposal.canonical, proposal.mirror
     );
+    if proposal.both_diverged {
+        out.push_str(
+            "HARD STOP: both the mirror and its canonical source were hand-edited since HEAD. \
+             This diff's removed lines include the canonical-side edit — review it carefully \
+             before applying, or reconcile the two sides by hand instead.\n\n",
+        );
+    }
     if proposal.diff.is_empty() {
         out.push_str("no change: the mirror carries nothing the canonical source lacks\n\n");
     } else {
@@ -76,6 +83,7 @@ mod tests {
             canonical: ".claude/agents/alpha.md".to_string(),
             diff: diff.to_string(),
             at_risk,
+            both_diverged: false,
         }
     }
 
@@ -107,5 +115,23 @@ mod tests {
         let out = format_proposal(&proposal(Vec::new(), ""));
         assert!(out.contains("Nothing was written"));
         assert!(out.contains("no change"));
+    }
+
+    // Regression for M1: `promote` carries no hard-stop signal when it is
+    // called directly (without `triage` having run first) against a pair
+    // where both sides were hand-edited.
+    #[test]
+    fn a_both_diverged_proposal_prints_a_hard_stop_warning() {
+        let mut p = proposal(Vec::new(), "--- a/x\n+++ b/x\n");
+        p.both_diverged = true;
+        let out = format_proposal(&p);
+        assert!(out.contains("HARD STOP"));
+        assert!(out.contains("both the mirror and its canonical source"));
+    }
+
+    #[test]
+    fn an_in_sync_proposal_prints_no_hard_stop_warning() {
+        let out = format_proposal(&proposal(Vec::new(), "--- a/x\n+++ b/x\n"));
+        assert!(!out.contains("HARD STOP"));
     }
 }

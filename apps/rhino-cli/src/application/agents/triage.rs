@@ -114,6 +114,15 @@ pub struct PromoteProposal {
     /// Canonical frontmatter fields the editing harness's schema cannot carry,
     /// paired with why. Whoever edited the mirror never saw these.
     pub at_risk: Vec<(String, String)>,
+    /// `true` when [`attribute`] independently confirms both the mirror and
+    /// its canonical source were hand-edited since `HEAD` (M1). `promote`
+    /// itself still produces a proposal in this case — refusing outright
+    /// would remove the opt-in escape hatch — but the canonical-side edit
+    /// this diff's `-` lines silently absorb is otherwise indistinguishable
+    /// from ordinary diff churn, and nothing tells a caller who never ran
+    /// `harness sync triage` first that the tool's own design calls this
+    /// state unreconcilable.
+    pub both_diverged: bool,
 }
 
 // ---------------------------------------------------------------------------
@@ -407,7 +416,8 @@ pub fn promote(repo_root: &Path, mirror_rel: &str) -> Result<PromoteProposal, St
         .map_err(|e| format!("failed to read {mirror_rel}: {e}"))?;
 
     let entry = owning_entry(&config, &mirror_rel);
-    let proposed = if is_skills_mirror(&config, &mirror_rel) {
+    let skills_mirror = is_skills_mirror(&config, &mirror_rel);
+    let proposed = if skills_mirror {
         // A byte copy translates nothing, so the mirror IS the proposal.
         mirror.clone()
     } else {
@@ -424,11 +434,33 @@ pub fn promote(repo_root: &Path, mirror_rel: &str) -> Result<PromoteProposal, St
         propose_agent(&ctx, &canonical, &mirror)
     };
 
+    // M2: a skills mirror is a byte copy (checked above), so promoting one
+    // translates nothing and puts no field at risk — exactly what
+    // `is_skills_mirror`'s own doc comment already claimed. Computing
+    // `at_risk_fields` unconditionally applied the Codex *agent*
+    // field-policy table to skill frontmatter, which happens to produce no
+    // false positive today only because no `DropWarn`-class agent field name
+    // collides with `name:`/`description:`.
+    let at_risk = if skills_mirror {
+        Vec::new()
+    } else {
+        at_risk_fields(&canonical, entry.map(|e| e.name.as_str()))
+    };
+
+    // M1: `attribute()` is what `harness sync triage` uses to compute
+    // `Outcome::BothDiverged` and print its hard-stop wording; `promote` is
+    // directly callable on its own with no dependency on triage having run,
+    // so the same check runs here too rather than existing only in triage's
+    // output formatter.
+    let both_diverged =
+        attribute(repo_root, &mirror_rel, Some(&canonical_rel)) == Outcome::BothDiverged;
+
     Ok(PromoteProposal {
         diff: unified_diff(&canonical_rel, &canonical, &proposed),
-        at_risk: at_risk_fields(&canonical, entry.map(|e| e.name.as_str())),
+        at_risk,
         mirror: mirror_rel,
         canonical: canonical_rel,
+        both_diverged,
     })
 }
 

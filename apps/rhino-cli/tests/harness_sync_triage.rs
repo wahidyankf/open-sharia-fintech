@@ -20,6 +20,10 @@ use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
 use tempfile::TempDir;
 
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
+use git_fixture::run_git;
+
 /// Feature-level tags this runner owns.
 const OWNED_TAGS: &[&str] = &["sync-triage"];
 
@@ -209,18 +213,6 @@ fn write_file(root: &Path, rel: &str, content: &str) {
     std::fs::write(p, content).expect("write");
 }
 
-fn run_git(dir: &Path, args: &[&str]) -> Output {
-    std::process::Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .env("GIT_COMMITTER_NAME", "t")
-        .env("GIT_COMMITTER_EMAIL", "t@t")
-        .output()
-        .expect("git")
-}
-
 fn run_bin(dir: &Path, args: &[&str]) -> Output {
     let mut all: Vec<&str> = args.to_vec();
     all.push("--no-color");
@@ -337,6 +329,15 @@ fn given_rich_agent(world: &mut TriageWorld) {
     world.build_and_commit();
 }
 
+#[given("a generated skills mirror carries a hand edit")]
+fn given_skills_mirror_edit(world: &mut TriageWorld) {
+    world.build_and_commit();
+    world.append(
+        ".agents/skills/beta/SKILL.md",
+        "\n<!-- skill mirror edit -->\n",
+    );
+}
+
 #[given(
     "a vendored skill directory declared in the registry and a generated mirror file beside it"
 )]
@@ -388,6 +389,31 @@ fn when_promote_rich(world: &mut TriageWorld) {
         "promote",
         "--from",
         &format!(".opencode/agents/{RICH}.md"),
+    ]);
+}
+
+#[when("rhino-cli harness sync promote runs against that mirror, without triage having run first")]
+fn when_promote_both_diverged(world: &mut TriageWorld) {
+    // Deliberately does NOT run `harness sync triage` first — the whole point
+    // of M1 is that `promote` carries its own hard-stop signal rather than
+    // depending on triage having run.
+    world.exec(&[
+        "harness",
+        "sync",
+        "promote",
+        "--from",
+        &format!(".opencode/agents/{PLAIN}.md"),
+    ]);
+}
+
+#[when("rhino-cli harness sync promote runs against that skills mirror")]
+fn when_promote_skills_mirror(world: &mut TriageWorld) {
+    world.exec(&[
+        "harness",
+        "sync",
+        "promote",
+        "--from",
+        ".agents/skills/beta/SKILL.md",
     ]);
 }
 
@@ -569,6 +595,35 @@ fn then_plain_agent_lists_nothing(world: &mut TriageWorld) {
     for field in UNREPRESENTABLE {
         assert!(!out.contains(field), "{field} must not be listed: {out}");
     }
+}
+
+#[then("the output carries a hard-stop warning naming both sides as hand-edited")]
+fn then_promote_hard_stop_warning(world: &mut TriageWorld) {
+    let out = world.combined();
+    assert!(out.contains("HARD STOP"), "{out}");
+    assert!(
+        out.contains("both the mirror and its canonical source"),
+        "{out}"
+    );
+}
+
+#[then("nothing was written to canonical source")]
+fn then_promote_wrote_nothing(world: &mut TriageWorld) {
+    // `promote` never writes canonical source regardless of the warning; the
+    // proposal's own closing line already says so.
+    assert!(
+        world.combined().contains("Nothing was written"),
+        "{}",
+        world.combined()
+    );
+}
+
+#[then("the output lists nothing under the at-risk heading")]
+fn then_at_risk_empty(world: &mut TriageWorld) {
+    assert_eq!(world.exit_code(), 0, "{}", world.combined());
+    let out = world.combined();
+    assert!(out.contains("At risk of loss"), "{out}");
+    assert!(out.contains("(none)"), "{out}");
 }
 
 #[then("no divergence is reported for the vendored file, because the generator does not own it")]
