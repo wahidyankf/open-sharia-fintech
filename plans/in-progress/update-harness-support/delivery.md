@@ -697,13 +697,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ### 6b — Declare the mirror target and the vendored exclusions
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/repo_config_validate.rs` asserting the
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/repo_config_validate.rs` asserting the
       `codex` registry entry declares `.agents/skills` as a mirror of `.claude/skills`, and that the
       registry declares the eight vendored subdirectories
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because neither field exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Extend `HarnessEntry` in
+- [x] [AI] **GREEN**: Extend `HarnessEntry` in
       `apps/rhino-cli/src/application/repo_config/mod.rs` with a skills-mirror target and a
       vendored-subdirectory list, then declare both on the `codex` entry in `repo-config.yml`, using
       the same `mirrors:` mechanism the OpenCode agent mirror already uses
@@ -711,19 +711,19 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: the RED test passes and
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
       exits 0.
-- [ ] [AI] **REFACTOR**: Express the vendored list as one entry per line with an inline comment naming
+- [x] [AI] **REFACTOR**: Express the vendored list as one entry per line with an inline comment naming
       the plugin origin, so a reader can tell why each directory is exempt
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and `deny_unknown_fields` still rejects a typo'd key in the new block.
 
 ### 6c — Emit the real-file mirror
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that a fixture
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that a fixture
       `.claude/skills/<name>/SKILL.md` produces a **real file** at `.agents/skills/<name>/SKILL.md`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails; no `.agents/` emitter exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Implement the mirror emitter in
+- [x] [AI] **GREEN**: Implement the mirror emitter in
       `apps/rhino-cli/src/application/agents/`, wired into `harness bindings generate` behind the
       registry-driven selection from Phase 1. It copies the full skill directory tree — `SKILL.md`,
       `reference/*.md`, and any other payload — as real files
@@ -731,21 +731,21 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: `git status --porcelain .agents/ | grep -c .` reports roughly 545 new paths, where
       it reported 0 before; `find .agents/skills -type l | grep -c .` returns 0, proving no symlink
       was created in either direction.
-- [ ] [AI] **REFACTOR**: Make stale-mirror cleanup remove only emitter-owned directories, skipping
+- [x] [AI] **REFACTOR**: Make stale-mirror cleanup remove only emitter-owned directories, skipping
       every declared vendored directory
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass; renaming a `.claude/skills/` directory and regenerating removes the
       old mirror and creates the new one, and all eight vendored directories are still present.
-- [ ] [AI] Prove idempotence:
+- [x] [AI] Prove idempotence:
       `npm run generate:bindings && git add -A .agents && npm run generate:bindings && git diff --quiet .agents/`
       — acceptance: the final `git diff --quiet` exits 0.
-- [ ] [AI] **Prove vendored preservation (DD-7 acceptance obligation)**: re-run
+- [x] [AI] **Prove vendored preservation (DD-7 acceptance obligation)**: re-run
       `git ls-files .agents | xargs shasum -a 256` and compare the 24 vendored lines against the 6a
       baseline
       — acceptance: all 24 hashes are byte-identical to the recorded baseline and the vendored file
       count is still 24. A matching count alone is NOT sufficient — an in-place rewrite would leave
       the count unchanged, so the hashes are the check. Record the comparison in `learnings.md`.
-- [ ] [AI] Prove the ownership boundary is declared rather than inferred: create
+- [x] [AI] Prove the ownership boundary is declared rather than inferred: create
       `.agents/skills/probe-undeclared/SKILL.md` with no `.claude/skills/` counterpart, run
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`,
       then `rm -rf .agents/skills/probe-undeclared`
@@ -754,23 +754,23 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ### 6d — Guard the mirror against the formatter
 
-- [ ] [AI] **Measure the Prettier round trip before wiring the guard** (this repository has broken a
+- [x] [AI] **Measure the Prettier round trip before wiring the guard** (this repository has broken a
       generated byte-equality guard this way before):
       `npm run generate:bindings && npx --no -- prettier --write ".agents/**/*.md" && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       — acceptance: record the exit code in `learnings.md`. If 0, no `.prettierignore` change is
       needed. If non-zero, add `.agents/` to `.prettierignore` next to the existing generated-file
       entries with an inline rationale, then re-run the same sequence until it exits 0.
-- [ ] [AI] Add `.agents/` to the generated-mirror byte-parity guard by including the mirror files in
+- [x] [AI] Add `.agents/` to the generated-mirror byte-parity guard by including the mirror files in
       `expected_bindings` in `apps/rhino-cli/src/application/agents/bindings.rs`, and add `.agents` to
       `KNOWN_BINDING_DIRS` if Phase 2 did not already include it
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       — acceptance: exits 0; after `printf 'x' >> .agents/skills/<any mirrored>/SKILL.md` it exits
       non-zero naming that file, and exits 0 again after `git checkout -- .agents/`.
-- [ ] [AI] Confirm both npm entry points cover the mirror without gaining a new flag
+- [x] [AI] Confirm both npm entry points cover the mirror without gaining a new flag
       — command: `npm run generate:bindings && npm run validate:sync`
       — acceptance: both exit 0, `validate:sync` reports the `.agents/` mirror in parity, and
       `git diff --stat package.json` shows no change to either script's command string.
-- [ ] [AI] Add `.agents/` to the `harness-bindings` gate `trigger:` list in `repo-config.yml`
+- [x] [AI] Add `.agents/` to the `harness-bindings` gate `trigger:` list in `repo-config.yml`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — acceptance: exits 0 and the trigger list names `.agents/`.
 
@@ -782,36 +782,36 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 > `/monitor-ci` command. The user was told this and chose deletion. Do not describe this change as
 > routine cleanup anywhere.
 
-- [ ] [AI] Confirm the shared provenance before deleting, so the two trees are treated consistently
+- [x] [AI] Confirm the shared provenance before deleting, so the two trees are treated consistently
       — command: `git log --format='%h %s' -- .opencode/skills/monitor-ci | tail -1 && git log --format='%h %s' -- .opencode/commands/monitor-ci.md | tail -1`
       — acceptance: both print the same commit, `4239f3d79`
       ("chore: add Nx-generated AI agent configs for Copilot, Codex, and OpenCode"). A different
       commit on either line means the provenance claim behind DD-8 is wrong — stop and re-verify.
-- [ ] [AI] Delete both trees: `git rm -r .opencode/skills .opencode/commands`
+- [x] [AI] Delete both trees: `git rm -r .opencode/skills .opencode/commands`
       — acceptance: `git ls-files .opencode/skills .opencode/commands | grep -c .` returns 0, where it
       returned 17 at baseline (16 skill files across 7 directories plus 1 command file).
-- [ ] [AI] Remove the `.opencode/skills/` and `.opencode/commands/` prefixes from the
+- [x] [AI] Remove the `.opencode/skills/` and `.opencode/commands/` prefixes from the
       `governance-word-budget` gate's `args.exclude` list in `repo-config.yml`, along with the
       multi-paragraph comment justifying them
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — acceptance: exits 0; `git grep -c "\.opencode/skills/" repo-config.yml` returns no match,
       where it returned 2 before. Exiting 0 here proves the exclusions were removed because the trees
       are gone, not because coverage was weakened.
-- [ ] [AI] Record the loss in `docs/reference/platform-bindings.md` as a deliberate accepted
+- [x] [AI] Record the loss in `docs/reference/platform-bindings.md` as a deliberate accepted
       capability loss, naming what was removed (the seven skill directories and the `/monitor-ci`
       command) and the caveat that OpenCode does not read Claude Code plugins and no `nx-mcp`
       equivalent covers the gap
       — acceptance: the phrase "capability loss" appears in the catalog prose region and no wording
       frames the removal as cleanup.
   - _Suggested executor: `docs-maker`_
-- [ ] [AI] Confirm nothing regenerates the deleted trees
+- [x] [AI] Confirm nothing regenerates the deleted trees
       — command: `npm run generate:bindings && git status --porcelain .opencode/ | grep -c .`
       — acceptance: returns 0. Unlike `.cursor/` and `.amazonq/`, these trees had no emitter — which
       is exactly why they were ungoverned — so the Phase 2 recreation hazard does not apply.
 
 ### 6f — Specs
 
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature`
       carrying the US-4 and US-4b scenarios from `prd.md`, and
       `harness/opencode-skills-removal.feature` carrying the US-4c scenarios; index both in
       `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`
@@ -824,22 +824,22 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before pushing Phase 4-6 to the single PR and starting Phase 7.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `find .agents/skills -type l | grep -c .` — returns 0, proving the mirror is real files and
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `find .agents/skills -type l | grep -c .` — returns 0, proving the mirror is real files and
       no symlink exists in either direction.
-- [ ] [AI] The 24 vendored `.agents/` hashes match the 6a baseline byte-for-byte, recorded in
+- [x] [AI] The 24 vendored `.agents/` hashes match the 6a baseline byte-for-byte, recorded in
       `learnings.md`; the vendored file count is still 24.
-- [ ] [AI] `npm run generate:bindings && git diff --quiet` — exits 0 (idempotence across the whole
+- [x] [AI] `npm run generate:bindings && git diff --quiet` — exits 0 (idempotence across the whole
       binding surface).
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       — exits 0, and exits non-zero under both the mirrored-file edit probe and the
       undeclared-directory probe.
-- [ ] [AI] `npm run validate:sync` — exits 0.
-- [ ] [AI] `git ls-files .opencode/skills .opencode/commands | grep -c .` — returns 0 (17 at
+- [x] [AI] `npm run validate:sync` — exits 0.
+- [x] [AI] `git ls-files .opencode/skills .opencode/commands | grep -c .` — returns 0 (17 at
       baseline).
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — exits 0 with both `.opencode/` exclusions removed.
-- [ ] [AI] `npx --no -- prettier --check ".agents/**/*.md"` — exits 0, or `.agents/` is listed in
+- [x] [AI] `npx --no -- prettier --check ".agents/**/*.md"` — exits 0, or `.agents/` is listed in
       `.prettierignore` with the 6d rationale inline.
 
 > **Pause Safety**: all three harnesses reach the same skills content — Claude Code and OpenCode via
@@ -852,7 +852,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > No PR opens here, and nothing merges here.
 
-- [ ] [AI] Commit thematically: Codex defect correction, Codex emitter, skills surface — acceptance:
+- [x] [AI] Commit thematically: Codex defect correction, Codex emitter, skills surface — acceptance:
       three Conventional Commits.
 - [ ] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.

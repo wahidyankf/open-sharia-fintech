@@ -313,3 +313,118 @@ unrelated app's test inside this plan would violate the "do NOT bundle unrelated
 - `npx nx affected -t typecheck,lint,test:quick` — exits 0 across 28 projects.
 - `governance word-budget validate` — exits 0 (TOML is outside the markdown surface, as planned).
 - `governance readme-index validate` at both gate scopings — exits 0.
+
+## Vendored .agents baseline
+
+Captured before any `.agents/` emitter existed (Phase 6a). 24 tracked files across the eight
+vendored plugin skill directories; none has a `.claude/skills/` counterpart, so none can be
+regenerated (DD-7).
+
+```text
+cabf9d48a0d8d7bb3c7de5306bf9208dfec8fb7d3e50d5b43264d22abaaecd8c  .agents/skills/cavecrew/SKILL.md
+e026b0fbaf28a84db086d76664050baffa9886018477f740edbc317f14c433a8  .agents/skills/caveman-commit/SKILL.md
+cf876eb5972a4cc44a4eaea0889b221ea373081d521c8591fac50b054530978e  .agents/skills/caveman-compress/README.md
+ac3432493cfe71368a141f437bf35562eb8f4ce07ae699e5399c0cb665e02da3  .agents/skills/caveman-compress/SECURITY.md
+d45b4cb20815db99234f8b39b8323b8a1521b7f060ba628c3f2d444122faa5e4  .agents/skills/caveman-compress/SKILL.md
+429c3e1c5cc5b9705f28d77f303c728304ae68693913ad3d5ce9b5a44c8ee40f  .agents/skills/caveman-compress/scripts/__init__.py
+6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279  .agents/skills/caveman-compress/scripts/__main__.py
+877793ffc2cba946deb748097a137a9c810ac35fd01ec2be3c92aef3ba96ebbd  .agents/skills/caveman-compress/scripts/benchmark.py
+caa8a8620990f15cbe4d4f5d4a43d33d7b136aac1c5a0f3e696444d5e151451d  .agents/skills/caveman-compress/scripts/cli.py
+f7380666f19a869e0bf49d895fa8fe5ecfc3fa87e6b3ae3902191c8d61f02b6c  .agents/skills/caveman-compress/scripts/compress.py
+568aff4b04f5b17ab3870a24b55546bc2020faa450d6e923af4390aa8d3f59ee  .agents/skills/caveman-compress/scripts/detect.py
+4f0de7965297e1977f93007ad20fa79ce4792a2077400a7b1bb0786b589dfc63  .agents/skills/caveman-compress/scripts/validate.py
+2706cba96d6989ba5ef60bd8352e83aae0a84fcae72d220447c41f1719d1f1fa  .agents/skills/caveman-help/SKILL.md
+73b4c3c7d7c74dfd9070c011742c47abc27fedd7f4997800dacf2e6ffae84167  .agents/skills/caveman-review/SKILL.md
+b9e49e46ede956e0c1633eae82a695c996f728bc48f3903f001d301068a2b0ea  .agents/skills/caveman-stats/SKILL.md
+8ecb0d04872bfef578e767b9b7d3c0a3ec4ca7bbbda536ddc0627e2023c734cf  .agents/skills/caveman/SKILL.md
+18230a1cb812741e46a53c195652f57d0ac376de87794464a4f6368735aa950e  .agents/skills/compress/SKILL.md
+429c3e1c5cc5b9705f28d77f303c728304ae68693913ad3d5ce9b5a44c8ee40f  .agents/skills/compress/scripts/__init__.py
+6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279  .agents/skills/compress/scripts/__main__.py
+877793ffc2cba946deb748097a137a9c810ac35fd01ec2be3c92aef3ba96ebbd  .agents/skills/compress/scripts/benchmark.py
+caa8a8620990f15cbe4d4f5d4a43d33d7b136aac1c5a0f3e696444d5e151451d  .agents/skills/compress/scripts/cli.py
+f7380666f19a869e0bf49d895fa8fe5ecfc3fa87e6b3ae3902191c8d61f02b6c  .agents/skills/compress/scripts/compress.py
+568aff4b04f5b17ab3870a24b55546bc2020faa450d6e923af4390aa8d3f59ee  .agents/skills/compress/scripts/detect.py
+4f0de7965297e1977f93007ad20fa79ce4792a2077400a7b1bb0786b589dfc63  .agents/skills/compress/scripts/validate.py
+```
+
+Counterpart probe — `for d in cavecrew caveman caveman-commit caveman-compress caveman-help
+caveman-review caveman-stats compress; do test -d ".claude/skills/$d" && echo "COUNTERPART $d"; done`
+— printed only `done`, with no `COUNTERPART` line.
+
+## Phase 6 blockers — CI infra, NOT this branch
+
+Two consecutive `beavernest-app-test-local-deploy-stag` E2E jobs (runs `32231836567`, job
+`96013835006`) were cancelled at their 35-minute `timeout-minutes` while still inside
+`./.github/actions/setup-playwright`. Proof of the exact step, from the job's own teardown rather
+than inference: `Complete job` printed `Terminate orphan process: pid (4377) (npm exec playwright
+install-deps)`. That is the **cache-hit** branch of `.github/actions/setup-playwright/action.yml`,
+which shells out to `apt-get update` against `azure.archive.ubuntu.com`. The earlier run showed the
+same signature with repeated `Ign:` lines and 32 minutes of silence.
+
+Two separate Phase 12 backlog candidates, neither fixed inline (would bundle unrelated fixes):
+
+1. **`repo-config.yml` in an app workflow's `pull_request.paths:` filter.** It is the only
+   PR-changed file matching that filter, so every governance-only edit drags a full BE+FE E2E run.
+   Same class as `repo-config.yml`/`AGENTS.md` behaving as global Nx inputs.
+2. **`setup-playwright` has no apt retry or per-step timeout guard.** One mirror stall consumes the
+   whole 35-minute job budget and surfaces as a generic cancellation with no actionable message.
+
+Phase 6 proceeds: the failing job exercises no code path this branch touches, and the merge gate is
+not due until the terminal section.
+
+## Phase 6 notes
+
+- **6.12 Prettier round trip: exit 0, zero files modified.** No `.prettierignore` entry is needed.
+  The repo's only Prettier surface is `**/*.md` (`format:md`), the mirrored `.md` files are byte
+  copies of an already-formatted source, and both trees share one config — so the mirror is
+  Prettier-clean by construction. The vendored `.py` files are never in scope. Measured BEFORE
+  wiring any guard, per DD-9.
+- **6.13 implemented in `validate_skills_mirror`, not `expected_bindings`.** `BindingFile.content`
+  is a `String`; routing 545 mirror files (including vendored `.py`) through it would require
+  `from_utf8_lossy` and produce false failures on any non-UTF-8 byte. The mirror check compares raw
+  bytes instead, and reuses the emitter's own diff so "what the mirror should hold" is decided in
+  exactly one place. Acceptance met verbatim: exits 0, exits 1 naming the tampered file, exits 0
+  after restore.
+- **6.14 needed a real fix, not just a check.** `npm run validate:sync` runs `harness sync validate`,
+  which covered only the OpenCode mirror and did NOT report `.agents/`. Moved the mirror check into
+  `validate_sync` so both entry points report it from one implementation; `harness bindings validate`
+  picks it up transitively. No new flag, no `package.json` change (`git diff --stat package.json`
+  empty), check count 96 → 97 and 198 → 199.
+- **The mirror exposed a pre-existing defect class: 47 dangling links across 22 skill files.**
+  `docs/links.rs` exempted skill files from link validation, but keyed the rule on the literal
+  `.claude/skills/`. The byte-identical mirror at `.agents/skills/` fell outside it, so the same
+  bytes were reported as both broken and fine. Fixed at root cause by making the exemption a
+  property of skill files as a class (`SKILL_TREE_MARKERS`), covering both trees, with a test that
+  is falsifiable both ways — the same dangling link outside a skill tree is still reported.
+  Repo-wide count returned to exactly the 312 baseline, so no coverage was weakened.
+  **Backlog candidate (Phase 12, NOT fixed here):** those 47 anchors are genuinely dangling in the
+  `.claude/skills/` sources — several point at split-pattern parents that no longer carry the
+  heading. They were invisible for as long as the exemption existed. Fixing them is real work on
+  unrelated content and does not belong in this PR.
+- **6.20 acceptance needs a post-commit re-read.** `git status --porcelain .opencode/` reports 17
+  while the `git rm` is staged-but-uncommitted; every one is a `D` entry. The check that actually
+  matters — nothing _recreated_ — is 0 non-`D` entries after `npm run generate:bindings`, which is
+  what was verified. Re-confirmed as 0 after the Phase 6 commit.
+
+### Phase 6 commit split (recorded post-commit)
+
+Three code commits plus one plan-docs commit:
+
+1. `fix(rhino-cli): exempt every skill tree from link validation` — the `links.rs` root-cause fix.
+2. `feat(rhino-cli): mirror .claude/skills into .agents/skills as real files` — emitter, validator,
+   registry fields, Gherkin, the 545-file mirror, and the refreshed parity manifest.
+3. `chore(harness)!: delete the ungoverned .opencode skill and command trees` — 17 deletions plus
+   the accepted-capability-loss record.
+
+`repo-config.yml` carries changes belonging to both commit 2 (the `skills-mirrors`/`vendored`
+declarations) and commit 3 (the removed word-budget excludes). A single file cannot straddle two
+commits, so it landed whole in commit 2.
+
+`rhino-cli parity manifest generate` refuses to run while any parity-boundary file differs from the
+Git index. The boundary is wider than `apps/rhino-cli/src`: it also covers
+`specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`. Stage the whole boundary before
+generating.
+
+6.20 re-confirmed after the commit: `git status --porcelain -uall .opencode` returns 0 lines, and
+`git ls-files .opencode/skills .opencode/commands` returns 0 — the pre-commit binding regeneration
+did not resurrect either tree.
