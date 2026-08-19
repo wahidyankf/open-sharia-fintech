@@ -6,10 +6,17 @@
 //! `tests/codex_binding.rs`; the three runners split it by feature-level tag so
 //! each keeps exactly one step-definition set.
 //!
-//! Scenarios that assert repository FACTS (tracked-file counts, catalog prose,
-//! registry contents) run read-only against the real repository. Every scenario
-//! that MUTATES anything runs inside a fresh git-rooted temp fixture, so a test
-//! run can never rewrite the working tree it is measuring.
+//! Scenarios that assert repository FACTS (catalog prose, registry contents,
+//! mirror shape) run read-only against the real repository. Every scenario that
+//! MUTATES anything runs inside a fresh git-rooted temp fixture, so a test run
+//! can never rewrite the working tree it is measuring.
+//!
+//! No step reads a pre-change baseline out of `HEAD`. Such a read stops being a
+//! baseline the moment the change is committed, so it can only ever pass in the
+//! uncommitted working state of the phase that wrote it. Nor does any real-repo
+//! step hard-code a count or a vendored directory name: this crate is
+//! byte-identical across sibling repositories whose skill trees differ. Both
+//! kinds of fact are derived — from the registry, or from the tree itself.
 
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::doc_markdown)]
@@ -30,7 +37,8 @@ const OWNED_TAGS: &[&str] = &[
     "opencode-skills-removal",
 ];
 
-/// The eight vendored `.agents/skills/` plugin directories.
+/// Vendored directory names used by the temp FIXTURES only. The real
+/// repository's vendored set is read from its registry, never from this list.
 const VENDORED_DIRS: &[&str] = &[
     "cavecrew",
     "caveman",
@@ -246,10 +254,40 @@ fn tracked_count(paths: &[&str]) -> usize {
         .count()
 }
 
-/// `git show <rev>:<path>` in the real repository.
-fn show_at(rev_path: &str) -> String {
-    let out = run_git(&real_repo_root(), &["show", rev_path]);
-    String::from_utf8_lossy(&out.stdout).into_owned()
+/// The `.agents/skills/` directory names the real repository's registry
+/// declares as vendored. Derived rather than hard-coded, because the vendored
+/// payload is repository-local while this crate is byte-identical across
+/// sibling repositories.
+fn vendored_from_registry() -> Vec<String> {
+    let mut out: Vec<String> = read_real("repo-config.yml")
+        .lines()
+        .filter_map(|l| {
+            l.trim()
+                .strip_prefix("- .agents/skills/")
+                .map(str::to_owned)
+        })
+        .map(|rest| {
+            rest.split(['/', ' ', '#'])
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .to_owned()
+        })
+        .filter(|s| !s.is_empty())
+        .collect();
+    out.sort();
+    out.dedup();
+    out
+}
+
+/// Immediate `.agents/skills/` subdirectories the emitter did not generate,
+/// i.e. those with no `.claude/skills/` counterpart.
+fn unmirrored_agents_dirs() -> Vec<String> {
+    let root = real_repo_root();
+    subdirs(&root.join(".agents/skills"))
+        .into_iter()
+        .filter(|d| !root.join(".claude/skills").join(d).is_dir())
+        .collect()
 }
 
 fn read_real(rel: &str) -> String {
@@ -284,14 +322,12 @@ fn symlink_count(root: &Path) -> usize {
 // US-4 — the mirror target is declared in the registry
 // ===========================================================================
 
-#[given("the harness registry declared a mirrors key only for the OpenCode agent directory")]
-fn given_registry_had_one_mirror(_w: &mut MirrorWorld) {
-    // The pre-change registry is read from git rather than asserted from memory,
-    // so this Given states a checked fact about the baseline, not a belief.
-    let before = show_at("HEAD:repo-config.yml");
+#[given("the harness registry declares an agent-directory mirror for the OpenCode entry")]
+fn given_registry_declares_agent_mirror(_w: &mut MirrorWorld) {
+    let now = read_real("repo-config.yml");
     assert!(
-        !before.contains("skills-mirrors:"),
-        "baseline registry must not already declare a skills mirror"
+        now.contains("mirrors: .claude/agents"),
+        "the registry must declare the agent-directory mirror this scenario builds on"
     );
 }
 
@@ -305,7 +341,7 @@ fn when_codex_declares_skills_mirror(_w: &mut MirrorWorld) {
 }
 
 #[then(
-    "rhino-cli repo-config validate exits 0 with two declared mirror relationships, where it previously validated one"
+    "rhino-cli repo-config validate exits 0 with both kinds of mirror relationship declared: agent directories and skill directories"
 )]
 fn then_two_mirror_relationships(_w: &mut MirrorWorld) {
     let out = run_bin(&real_repo_root(), &["repo-config", "validate"]);
@@ -315,17 +351,14 @@ fn then_two_mirror_relationships(_w: &mut MirrorWorld) {
         String::from_utf8_lossy(&out.stderr)
     );
     let now = read_real("repo-config.yml");
-    let before = show_at("HEAD:repo-config.yml");
-    let kinds = |s: &str| {
-        usize::from(s.contains("mirrors: .claude/agents"))
-            + usize::from(s.contains("skills-mirrors: .claude/skills"))
-    };
-    assert_eq!(
-        kinds(&before),
-        1,
-        "baseline declared one mirror relationship"
+    assert!(
+        now.contains("mirrors: .claude/agents"),
+        "the agent-directory mirror must be declared"
     );
-    assert_eq!(kinds(&now), 2, "the registry now declares two");
+    assert!(
+        now.contains("skills-mirrors: .claude/skills"),
+        "the skill-directory mirror must be declared"
+    );
 }
 
 #[then(
@@ -364,37 +397,21 @@ fn then_generate_needs_no_new_flag(w: &mut MirrorWorld) {
 // ===========================================================================
 
 #[given(
-    "59 skill directories and 545 tracked files under .claude/skills/ and 0 mirrored skill directories under .agents/skills/"
+    ".claude/skills/ holds the repository's canonical skill directories and every one of them is tracked"
 )]
 fn given_real_skill_tree(_w: &mut MirrorWorld) {
     let root = real_repo_root();
     let dirs = subdirs(&root.join(".claude/skills"));
-    assert_eq!(
-        dirs.len(),
-        59,
-        "the canonical skills tree must hold 59 skill directories"
+    assert!(
+        !dirs.is_empty(),
+        "the assertions below prove nothing against an empty skills tree"
     );
+    // Counted, not hard-coded: the tree grows, and it is a different size in
+    // each repository this byte-identical crate ships to.
     assert_eq!(
         tracked_count(&[".claude/skills"]),
-        545,
-        "the canonical skills tree must track 545 files"
-    );
-    // The "0 mirrored directories" half is the pre-change baseline, read from git.
-    let before = run_git(
-        &root,
-        &["ls-tree", "-d", "--name-only", "HEAD", ".agents/skills/"],
-    );
-    let mirrored_before = String::from_utf8_lossy(&before.stdout)
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter(|l| {
-            let name = l.rsplit('/').next().unwrap_or_default();
-            !VENDORED_DIRS.contains(&name)
-        })
-        .count();
-    assert_eq!(
-        mirrored_before, 0,
-        "no non-vendored directory may have existed under .agents/skills/ before this change"
+        relative_files(&root.join(".claude/skills")).len(),
+        "every file under the canonical skills tree must be tracked"
     );
 }
 
@@ -413,9 +430,10 @@ fn when_generate_runs(w: &mut MirrorWorld) {
 fn then_one_mirror_dir_per_skill(_w: &mut MirrorWorld) {
     let root = real_repo_root();
     let source = subdirs(&root.join(".claude/skills"));
+    let vendored = vendored_from_registry();
     let mirrored: Vec<String> = subdirs(&root.join(".agents/skills"))
         .into_iter()
-        .filter(|d| !VENDORED_DIRS.contains(&d.as_str()))
+        .filter(|d| !vendored.contains(d))
         .collect();
     assert_eq!(
         source, mirrored,
@@ -569,21 +587,22 @@ fn then_scripts_cover_mirror(w: &mut MirrorWorld) {
     );
 }
 
-#[then("neither script required a new flag, because both delegate to the registry-driven commands")]
+#[then(
+    "neither script names a skills-specific or mirror-specific flag, because both delegate to the registry-driven commands"
+)]
 fn then_no_new_script_flag(_w: &mut MirrorWorld) {
     let now = read_real("package.json");
-    let before = show_at("HEAD:package.json");
-    let script = |s: &str, name: &str| {
-        s.lines()
+    let script = |name: &str| {
+        now.lines()
             .find(|l| l.contains(&format!("\"{name}\":")))
-            .unwrap_or_default()
+            .unwrap_or_else(|| panic!("package.json must define the {name} script"))
             .to_string()
     };
     for name in ["generate:bindings", "validate:sync"] {
-        assert_eq!(
-            script(&before, name),
-            script(&now, name),
-            "the {name} script command string must be unchanged"
+        let line = script(name);
+        assert!(
+            !line.contains("--skills") && !line.contains("--mirror"),
+            "the {name} script must carry no skills- or mirror-specific flag; got: {line}"
         );
     }
 }
@@ -655,33 +674,33 @@ fn then_prettierignore_fallback(_w: &mut MirrorWorld) {
 // ===========================================================================
 
 #[given(
-    ".agents/skills/ holds 24 tracked files across 8 vendored plugin directories with no .claude/skills/ source and no way to regenerate them"
+    "every .agents/skills/ directory without a .claude/skills/ source is one the emitter cannot regenerate"
 )]
 fn given_vendored_baseline(_w: &mut MirrorWorld) {
     let root = real_repo_root();
-    let before = run_git(&root, &["ls-tree", "-r", "--name-only", "HEAD", ".agents/"]);
-    let count = String::from_utf8_lossy(&before.stdout)
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .count();
-    assert_eq!(count, 24, "the vendored baseline is 24 tracked files");
-    for dir in VENDORED_DIRS {
+    for dir in unmirrored_agents_dirs() {
         assert!(
-            !root.join(".claude/skills").join(dir).exists(),
-            "vendored {dir} must have no .claude/skills/ counterpart"
+            !root.join(".claude/skills").join(&dir).exists(),
+            "{dir} was selected for having no .claude/skills/ source"
+        );
+        assert!(
+            root.join(".agents/skills").join(&dir).is_dir(),
+            "{dir} must be a real directory carrying a payload"
         );
     }
 }
 
-#[when("the harness registry declares those 8 directories as vendored")]
+#[when("the harness registry declares each of those directories as vendored")]
 fn when_registry_declares_vendored(_w: &mut MirrorWorld) {
-    let now = read_real("repo-config.yml");
-    for dir in VENDORED_DIRS {
-        assert!(
-            now.contains(&format!(".agents/skills/{dir}")),
-            "registry must declare vendored {dir}"
-        );
-    }
+    let declared = vendored_from_registry();
+    let undeclared: Vec<String> = unmirrored_agents_dirs()
+        .into_iter()
+        .filter(|d| !declared.contains(d))
+        .collect();
+    assert!(
+        undeclared.is_empty(),
+        "ownership is declared, not inferred: {undeclared:?} carry no vendored declaration"
+    );
 }
 
 #[then("rhino-cli repo-config validate exits 0")]
@@ -819,95 +838,32 @@ fn then_vendored_survive_cleanup(w: &mut MirrorWorld) {
 // US-4c — both trees are removed with their word-budget exclusions
 // ===========================================================================
 
-#[given(
-    ".opencode/skills/ tracks 16 files across 7 directories and .opencode/commands/ tracks 1 file, both introduced by the same tool-generated commit and both excluded from the word budget by a tree-level prefix"
-)]
-fn given_opencode_trees_baseline(_w: &mut MirrorWorld) {
-    let root = real_repo_root();
-    let count = |glob: &str| {
-        String::from_utf8_lossy(
-            &run_git(&root, &["ls-tree", "-r", "--name-only", "HEAD", glob]).stdout,
-        )
-        .lines()
-        .filter(|l| !l.trim().is_empty())
-        .count()
-    };
-    assert_eq!(count(".opencode/skills/"), 16, "16 skill files at baseline");
-    assert_eq!(
-        count(".opencode/commands/"),
-        1,
-        "1 command file at baseline"
-    );
-
-    let dirs = String::from_utf8_lossy(
-        &run_git(
-            &root,
-            &["ls-tree", "-d", "--name-only", "HEAD", ".opencode/skills/"],
-        )
-        .stdout,
-    )
-    .lines()
-    .filter(|l| !l.trim().is_empty())
-    .count();
-    assert_eq!(dirs, 7, "7 skill directories at baseline");
-
-    let first = |p: &str| {
-        String::from_utf8_lossy(&run_git(&root, &["log", "--format=%h", "--", p]).stdout)
-            .lines()
-            .last()
-            .unwrap_or_default()
-            .to_string()
-    };
-    assert_eq!(
-        first(".opencode/skills/monitor-ci"),
-        first(".opencode/commands/monitor-ci.md"),
-        "both trees must trace to the SAME tool-generated commit"
-    );
-
-    let before = show_at("HEAD:repo-config.yml");
-    assert!(
-        before.contains(".opencode/skills/") && before.contains(".opencode/commands/"),
-        "both prefixes must have been in the word-budget exclude list at baseline"
-    );
-}
-
-#[when("both trees are deleted")]
-fn when_trees_deleted(_w: &mut MirrorWorld) {
-    // Deleted in the working tree by the plan step; asserted below.
-}
-
-#[then(
-    "git ls-files .opencode/skills .opencode/commands returns zero tracked files, where it returned 17 before"
-)]
-fn then_trees_untracked(_w: &mut MirrorWorld) {
+#[given("the repository tracks no file under .opencode/skills/ or .opencode/commands/")]
+fn given_opencode_trees_gone(_w: &mut MirrorWorld) {
     assert_eq!(
         tracked_count(&[".opencode/skills", ".opencode/commands"]),
         0,
-        "both trees must be untracked now"
+        "both trees must be untracked"
     );
-    let baseline = String::from_utf8_lossy(
-        &run_git(
-            &real_repo_root(),
-            &[
-                "ls-tree",
-                "-r",
-                "--name-only",
-                "HEAD",
-                ".opencode/skills/",
-                ".opencode/commands/",
-            ],
-        )
-        .stdout,
-    )
-    .lines()
-    .filter(|l| !l.trim().is_empty())
-    .count();
-    assert_eq!(baseline, 17, "17 tracked files at baseline");
 }
 
-#[then(
-    "neither prefix remains in the governance-word-budget gate exclude list, where both were present before"
-)]
+#[when("the governance-word-budget gate exclude list is read")]
+fn when_exclude_list_read(_w: &mut MirrorWorld) {
+    // The list is read in the assertions below; this step names the event.
+}
+
+#[then("neither tree exists as a directory in the working tree")]
+fn then_trees_absent(_w: &mut MirrorWorld) {
+    let root = real_repo_root();
+    for tree in [".opencode/skills", ".opencode/commands"] {
+        assert!(
+            !root.join(tree).exists(),
+            "{tree} must not exist in the working tree"
+        );
+    }
+}
+
+#[then("neither prefix remains in the governance-word-budget gate exclude list")]
 fn then_exclusions_removed(_w: &mut MirrorWorld) {
     let now = read_real("repo-config.yml");
     assert!(

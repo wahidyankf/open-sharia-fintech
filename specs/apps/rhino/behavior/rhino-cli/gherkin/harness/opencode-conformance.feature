@@ -10,6 +10,10 @@ Feature: OpenCode claims target v1 stable and v2 is filed as an idea
   exclusively. The claims the catalog makes are therefore v1 claims, and the v2 rename
   set is captured as an idea rather than smuggled into the binding work.
 
+  The second scenario states that filing rule as a repository-wide invariant over every
+  brief in the ideas tree rather than naming the OpenCode brief. The rule, not one
+  brief's presence, is what the byte-identical CLI carries into every repository.
+
   @unit
   Scenario: The stale upstream repository citation is corrected
     Given repository documents cite the OpenCode upstream repository under its former organization path
@@ -18,8 +22,8 @@ Feature: OpenCode claims target v1 stable and v2 is filed as an idea
     And the current organization path appears in its place
 
   @unit
-  Scenario: The v2 migration is filed as an idea, not a backlog plan
-    Given plans/ideas/ is organized into Eisenhower quadrant subfolders and already holds two harness-related briefs
-    When the OpenCode v2 brief is filed
-    Then a single new file exists under a plans/ideas/ quadrant subfolder and no new folder exists under plans/backlog/
-    And plans/ideas/README.md lists the new brief in the same quadrant section as the file's location
+  Scenario: A rename set filed as an idea stays an idea, linked from its own quadrant
+    Given plans/ideas/ is organized into Eisenhower quadrant subfolders and holds at least one brief
+    When the ideas tree is enumerated
+    Then no brief has been promoted into a same-named folder under plans/backlog/
+    And plans/ideas/README.md links every brief exactly once at its quadrant-matching path

@@ -7,8 +7,11 @@
 //! The citation scenario runs against a temp fixture, because its claim is
 //! about a sweep having a before-state and an after-state — the real repository
 //! only ever shows the after-state. The idea-filing scenario runs read-only
-//! against the real repository, because its claim is about what THIS repository
-//! contains.
+//! against the real repository, and states its claim over whatever briefs that
+//! repository happens to carry. Naming a particular brief would couple this
+//! crate — which is byte-identical across sibling repositories — to one
+//! repository's plan content, and the assertion would then be unsatisfiable in
+//! the others.
 //!
 //! The former organization path is assembled at runtime from `FORMER_ORG`
 //! rather than written as a literal. A literal here would be a tracked file
@@ -35,11 +38,6 @@ const CURRENT_ORG: &str = "anomalyco";
 /// The repository name, shared by both citations.
 const REPO: &str = "opencode";
 
-/// The brief the v2 rename set was filed as.
-const V2_BRIEF: &str = "opencode-v2-migration.md";
-/// The quadrant the brief belongs to.
-const QUADRANT: &str = "q2-not-urgent-important";
-
 fn former_citation() -> String {
     format!("{FORMER_ORG}/{REPO}")
 }
@@ -57,6 +55,8 @@ struct ConformanceWorld {
     before: Option<usize>,
     /// How many cite it after.
     after: Option<usize>,
+    /// Every idea brief found in the real tree, as (quadrant, file name).
+    briefs: Vec<(String, String)>,
 }
 
 impl std::fmt::Debug for ConformanceWorld {
@@ -71,6 +71,7 @@ impl ConformanceWorld {
             work: TempDir::new().expect("temp workspace"),
             before: None,
             after: None,
+            briefs: Vec::new(),
         }
     }
 
@@ -100,6 +101,41 @@ impl ConformanceWorld {
             })
             .count()
     }
+}
+
+/// Whether a directory name is an Eisenhower quadrant subfolder.
+fn is_quadrant(name: &str) -> bool {
+    matches!(name.as_bytes().first(), Some(b'q'))
+        && name
+            .as_bytes()
+            .get(1)
+            .is_some_and(|d| (b'1'..=b'4').contains(d))
+        && name.as_bytes().get(2) == Some(&b'-')
+}
+
+/// Every `.md` brief under the given quadrant directories, as (quadrant, file).
+fn briefs_in(quadrants: &[PathBuf]) -> Vec<(String, String)> {
+    let mut found = Vec::new();
+    for quadrant in quadrants {
+        let name = quadrant
+            .file_name()
+            .and_then(|n| n.to_str())
+            .expect("quadrant name")
+            .to_owned();
+        for entry in std::fs::read_dir(quadrant).expect("readable quadrant") {
+            let path = entry.expect("readable entry").path();
+            if path.extension().is_some_and(|e| e == "md") {
+                let file = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .expect("brief name")
+                    .to_owned();
+                found.push((name.clone(), file));
+            }
+        }
+    }
+    found.sort();
+    found
 }
 
 /// The real repository root, two levels above this crate.
@@ -178,62 +214,69 @@ fn current_in_place(world: &mut ConformanceWorld) {
 }
 
 #[given(
-    "plans/ideas/ is organized into Eisenhower quadrant subfolders and already holds two harness-related briefs"
+    "plans/ideas/ is organized into Eisenhower quadrant subfolders and holds at least one brief"
 )]
-fn ideas_tree_shape(_world: &mut ConformanceWorld) {
+fn ideas_tree_shape(world: &mut ConformanceWorld) {
     let ideas = repo_root().join("plans/ideas");
-    assert!(ideas.join(QUADRANT).is_dir(), "the Q2 quadrant must exist");
-    for sibling in [
-        "harness-binding-catalog-drift.md",
-        "harness-converter-preserve-agent-mode.md",
-    ] {
-        assert!(
-            ideas.join(QUADRANT).join(sibling).is_file(),
-            "the pre-existing harness brief {sibling} must be present"
-        );
-    }
-}
-
-#[when("the OpenCode v2 brief is filed")]
-fn brief_is_filed(_world: &mut ConformanceWorld) {
-    // Filing already happened in the tree under test; this step names the event
-    // the assertions below are about rather than performing it.
-}
-
-#[then(
-    "a single new file exists under a plans/ideas/ quadrant subfolder and no new folder exists under plans/backlog/"
-)]
-fn filed_as_idea_not_backlog(_world: &mut ConformanceWorld) {
-    let root = repo_root();
-    let mut found: Vec<PathBuf> = Vec::new();
-    for entry in std::fs::read_dir(root.join("plans/ideas")).expect("readable ideas tree") {
-        let quadrant = entry.expect("readable entry").path();
-        if quadrant.is_dir() && quadrant.join(V2_BRIEF).is_file() {
-            found.push(quadrant.join(V2_BRIEF));
-        }
-    }
-    assert_eq!(
-        found.len(),
-        1,
-        "the brief must exist exactly once across the quadrants, found {found:?}"
+    assert!(ideas.is_dir(), "the ideas tree must exist");
+    let quadrants: Vec<PathBuf> = std::fs::read_dir(&ideas)
+        .expect("readable ideas tree")
+        .map(|e| e.expect("readable entry").path())
+        .filter(|p| p.is_dir())
+        .collect();
+    assert!(
+        !quadrants.is_empty(),
+        "the ideas tree must be organized into quadrant subfolders"
     );
     assert!(
-        !root.join("plans/backlog/opencode-v2-migration").exists(),
-        "the brief must be an idea, not a promoted backlog plan"
+        quadrants.iter().all(|q| q
+            .file_name()
+            .and_then(|n| n.to_str())
+            .is_some_and(is_quadrant)),
+        "every subfolder of plans/ideas must be an Eisenhower quadrant, found {quadrants:?}"
+    );
+    world.briefs = briefs_in(&quadrants);
+    assert!(
+        !world.briefs.is_empty(),
+        "the assertions below prove nothing against an empty ideas tree"
     );
 }
 
-#[then(
-    "plans/ideas/README.md lists the new brief in the same quadrant section as the file's location"
-)]
-fn readme_lists_in_matching_quadrant(_world: &mut ConformanceWorld) {
+#[when("the ideas tree is enumerated")]
+fn ideas_enumerated(world: &mut ConformanceWorld) {
+    // The tree is read in the Given; this step names the event the assertions
+    // below are about rather than re-reading it.
+    assert!(!world.briefs.is_empty(), "an enumerated ideas tree");
+}
+
+#[then("no brief has been promoted into a same-named folder under plans/backlog/")]
+fn no_brief_also_promoted(world: &mut ConformanceWorld) {
+    let backlog = repo_root().join("plans/backlog");
+    let promoted: Vec<&str> = world
+        .briefs
+        .iter()
+        .map(|(_, file)| file.trim_end_matches(".md"))
+        .filter(|stem| backlog.join(stem).exists())
+        .collect();
+    assert!(
+        promoted.is_empty(),
+        "a brief filed as an idea must not also exist as a backlog plan, found {promoted:?}"
+    );
+}
+
+#[then("plans/ideas/README.md links every brief exactly once at its quadrant-matching path")]
+fn readme_lists_in_matching_quadrant(world: &mut ConformanceWorld) {
     let readme = std::fs::read_to_string(repo_root().join("plans/ideas/README.md"))
         .expect("readable ideas README");
-    let entry = format!("./{QUADRANT}/{V2_BRIEF}");
-    assert_eq!(
-        readme.matches(&entry).count(),
-        1,
-        "the README must link the brief exactly once, at its quadrant-matching path"
+    let unlinked: Vec<String> = world
+        .briefs
+        .iter()
+        .map(|(quadrant, file)| format!("./{quadrant}/{file}"))
+        .filter(|entry| readme.matches(entry.as_str()).count() != 1)
+        .collect();
+    assert!(
+        unlinked.is_empty(),
+        "every brief must be linked exactly once at its quadrant-matching path, offenders {unlinked:?}"
     );
 }
 

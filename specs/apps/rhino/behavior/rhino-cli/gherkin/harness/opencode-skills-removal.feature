@@ -1,12 +1,18 @@
 @opencode-skills-removal
 Feature: The ungoverned OpenCode trees are deleted deliberately
 
+  Before this change .opencode/skills/ tracked 16 files across 7 directories and
+  .opencode/commands/ tracked 1, both emitted by the same tool-generated commit
+  and both excluded from the word budget by a tree-level prefix. That history is
+  recorded here rather than asserted from git, because a step that reads the
+  pre-change tree out of HEAD fails as soon as the change is committed.
+
   @unit
-  Scenario: Both trees are removed and their word-budget exclusions removed with them
-    Given .opencode/skills/ tracks 16 files across 7 directories and .opencode/commands/ tracks 1 file, both introduced by the same tool-generated commit and both excluded from the word budget by a tree-level prefix
-    When both trees are deleted
-    Then git ls-files .opencode/skills .opencode/commands returns zero tracked files, where it returned 17 before
-    And neither prefix remains in the governance-word-budget gate exclude list, where both were present before
+  Scenario: Both trees are gone and their word-budget exclusions with them
+    Given the repository tracks no file under .opencode/skills/ or .opencode/commands/
+    When the governance-word-budget gate exclude list is read
+    Then neither tree exists as a directory in the working tree
+    And neither prefix remains in the governance-word-budget gate exclude list
     And rhino-cli governance word-budget validate exits 0, proving the exclusions were removed because the trees are gone rather than because coverage was weakened
 
   @unit

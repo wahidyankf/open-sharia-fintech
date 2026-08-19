@@ -1,16 +1,23 @@
 @agents-skills-mirror
 Feature: .agents/skills/ is a generated real-file mirror
 
+  The scenarios below state post-change invariants rather than reading the
+  pre-change tree out of git. A baseline read from HEAD stops being a baseline
+  the moment the change is committed, and the counts it would assert are
+  repository-local while this suite is byte-identical across sibling
+  repositories. The history — one mirror relationship before this change, none
+  of .claude/skills/ mirrored — lives here in prose, where it stays true.
+
   @unit
   Scenario: The mirror target is declared in the registry
-    Given the harness registry declared a mirrors key only for the OpenCode agent directory
+    Given the harness registry declares an agent-directory mirror for the OpenCode entry
     When the codex entry is updated to declare .agents/skills as a mirror of .claude/skills
-    Then rhino-cli repo-config validate exits 0 with two declared mirror relationships, where it previously validated one
+    Then rhino-cli repo-config validate exits 0 with both kinds of mirror relationship declared: agent directories and skill directories
     And rhino-cli harness bindings generate emits the .agents/skills mirror without a new command-line flag
 
   @unit
   Scenario: Every repository skill is mirrored as real files, not links
-    Given 59 skill directories and 545 tracked files under .claude/skills/ and 0 mirrored skill directories under .agents/skills/
+    Given .claude/skills/ holds the repository's canonical skill directories and every one of them is tracked
     When rhino-cli harness bindings generate runs
     Then .agents/skills/ contains one real directory per .claude/skills/ skill
     And find .agents/skills -type l returns zero results, proving no symlink was created in either direction
@@ -27,7 +34,7 @@ Feature: .agents/skills/ is a generated real-file mirror
     Given npm run generate:bindings and npm run validate:sync covered only the OpenCode and Amazon Q surfaces
     When both scripts run after the mirror is wired
     Then generate:bindings emits .agents/skills/ and validate:sync reports it as in-parity
-    And neither script required a new flag, because both delegate to the registry-driven commands
+    And neither script names a skills-specific or mirror-specific flag, because both delegate to the registry-driven commands
 
   @unit
   Scenario: The emitted mirror survives the formatter

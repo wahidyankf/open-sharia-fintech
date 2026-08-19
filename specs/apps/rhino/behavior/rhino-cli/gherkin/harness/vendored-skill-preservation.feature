@@ -1,10 +1,16 @@
 @vendored-skill-preservation
 Feature: The emitter owns only what it generates
 
+  Which directories are vendored is repository-local — one sibling repository
+  carries a plugin payload under .agents/skills/ and the other carries none — so
+  the first scenario derives the vendored set from the registry instead of
+  naming it. The second scenario runs entirely inside a temp fixture whose own
+  vendored set it controls.
+
   @unit
   Scenario: Vendored subdirectories are declared, not inferred
-    Given .agents/skills/ holds 24 tracked files across 8 vendored plugin directories with no .claude/skills/ source and no way to regenerate them
-    When the harness registry declares those 8 directories as vendored
+    Given every .agents/skills/ directory without a .claude/skills/ source is one the emitter cannot regenerate
+    When the harness registry declares each of those directories as vendored
     Then rhino-cli repo-config validate exits 0
     And an undeclared directory appearing under .agents/skills/ with no .claude/skills/ counterpart makes rhino-cli harness bindings validate exit non-zero, where an ownership heuristic would have silently deleted it instead
 
