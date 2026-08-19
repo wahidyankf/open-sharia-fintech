@@ -51,6 +51,26 @@ one starts with a registry entry, not a row here.
     The older `~/.codex/prompts/` custom-prompt mechanism is officially deprecated in favour of
     Skills.
 
+### Ownership classes
+
+Every path in this catalog carries exactly one declared ownership class, recorded in the
+`harness[].ownership` list in `repo-config.yml`. There is no fourth class and no unclassified
+residue: `rhino-cli harness ownership validate` enumerates every tracked file under every binding
+directory and fails naming any file it cannot classify.
+
+| Class       | What it means                                                               | Paths here                                                                                                                         |
+| ----------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `source`    | Hand-authored canonical input; never written by the emitter                 | `.claude/`, `CLAUDE.md`, `AGENTS.md`                                                                                               |
+| `generated` | Emitted from canonical source; must reproduce byte-for-byte                 | `.opencode/agents/`, `.codex/agents/`, `.agents/skills/` (emitter-owned subdirectories)                                            |
+| `vendored`  | Third-party payload with no in-repo source; survives regeneration untouched | `.opencode/opencode.json`, `.codex/config.toml`, `.codex/ci-monitor-subagent.toml`, the eight `.agents/skills/` plugin directories |
+
+`.codex/config.toml` is `vendored` **with a delimited generated region**: the emitter owns only the
+region between its markers, and the byte guard covers that region alone. Every `vendored`
+declaration carries a reason, because an exemption from regeneration with a blank justification is
+indistinguishable from an oversight someone silenced.
+
+**See**: [Total Ownership of Binding Files (Rule 8)](../../repo-governance/conventions/structure/multi-harness-binding/ownership-classes.md)
+
 ### Root instruction file hierarchy
 
 Platforms that read `AGENTS.md` natively require no additional binding directory — the native read

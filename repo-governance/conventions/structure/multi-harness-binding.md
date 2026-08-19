@@ -32,6 +32,9 @@ mechanically derived from it — never a hand-maintained copy.
   — required binding files must be generated, and the deterministic pre-push guard that enforces it
 - [npm Script Naming and Catalog Requirement (Rules 6-7)](./multi-harness-binding/rules-6-to-7.md) — Rules 6 and 7 — the harness-neutral generate:/validate: npm script naming constraints, and the requirement that...
   — harness-neutral script naming and the platform-bindings catalog obligation
+- [Total Ownership of Binding Files (Rule 8)](./multi-harness-binding/ownership-classes.md) — the
+  three ownership classes — generated, vendored, source — with no fourth class and no
+  unclassified residue
 - [Examples](./multi-harness-binding/examples.md) — worked PASS/FAIL scenarios for each rule
 - [Platform Binding Examples](./multi-harness-binding/platform-binding-examples.md) — the
   concrete per-harness file names and tier assignments (vendor-specific content)
