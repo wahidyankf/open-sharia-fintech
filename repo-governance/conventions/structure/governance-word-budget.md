@@ -35,7 +35,7 @@ Configured in the `governance-word-budget:` section of `repo-config.yml`; enforc
 
 `repo-governance/**/*.md` is the largest surface by file count.
 
-**A surface is its glob minus the registered exclude prefixes** — the seven `args.exclude` path
+**A surface is its glob minus the registered exclude prefixes** — the thirteen `args.exclude` path
 prefixes on the gate are part of the published rule, not an implementation detail. `plans/`,
 `docs/`, and `specs/` are among them, so a `plans/` README of any length passes. The full list is
 in the Excluded Prefixes child below.
