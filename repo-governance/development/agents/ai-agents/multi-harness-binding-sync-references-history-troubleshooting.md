@@ -25,7 +25,7 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 - `npm run sync:agents` - Agents only
 - `npm run sync:skills` - `.claude/skills/`-native harnesses only (no-op); does NOT touch the
   `.agents/skills/` real-file mirror
-- `npm run validate:sync` - OpenCode's agent mirror and `.agents/skills/`; does **not** cover
+- `npm run validate:sync` - `.opencode/agents/` and `.agents/skills/`; does **not** cover
   `.codex/agents/`
 - `npm run harness:bindings-validation` - every generated-tier binding including `.codex/`; this is
   what the pre-push gate runs
@@ -41,12 +41,12 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 ## Documentation References
 
-- **[CLAUDE.md](../../../../CLAUDE.md)** - Claude Code's shim, `class: source` (hand-authored)
-- **[AGENTS.md](../../../../AGENTS.md)** - vendor-neutral root file read by OpenCode and Codex,
-  `class: source` for both (hand-authored, no auto-generated warning)
+- **[CLAUDE.md](../../../../CLAUDE.md)** - the coding agent's shim, `class: source` (hand-authored)
+- **[AGENTS.md](../../../../AGENTS.md)** - vendor-neutral root file read by `.opencode/` and
+  `.codex/`, `class: source` for both (hand-authored, no auto-generated warning)
 - **[Agent catalog](../../../../.claude/agents/README.md)** - authoritative for every binding;
   `.opencode/agents/` and `.codex/agents/` carry no catalog of their own
-- **[Skills catalog](../../../../.claude/skills/README.md)** - authoritative source catalog;
+- **[Agent skills catalog](../../../../.claude/skills/README.md)** - authoritative source catalog;
   **[secondary mirror](../../../../.agents/skills/README.md)** is Codex's generated real-file copy
 
 ## Migration History
