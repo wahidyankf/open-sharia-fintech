@@ -1,8 +1,8 @@
 # Next.js image builds cannot resolve the `ts-env-loader` workspace lib
 
 One-line summary: all six Next.js app images fail to build because every `next.config.ts` imports
-`@open-sharia-enterprise/ts-env-loader` but no `Dockerfile` makes that workspace package resolvable,
-and no CI job builds these images, so the breakage has never been reported by a gate.
+`@open-sharia-enterprise/ts-env-loader` but no `Dockerfile` makes that workspace package resolvable
+— and four scheduled CI workflows have been reporting exactly this failure twice a day, unread.
 
 > Surfaced 2026-08-19 during the runtime-port-override delivery (PR #230), confirmed pre-existing on
 > `main`, and deliberately left out of that PR's scope.
@@ -10,7 +10,16 @@ and no CI job builds these images, so the breakage has never been reported by a 
 ## Problem / context
 
 `docker build -f apps/ose-www/Dockerfile .` fails with
-`Cannot find module '@open-sharia-enterprise/ts-env-loader'`. The chain is the same in all six apps:
+`Cannot find module '@open-sharia-enterprise/ts-env-loader'`, and CI reproduces it verbatim. Run
+`32196421664` (2026-08-18, `ose-www-test-local-deploy-prod`) fails with:
+
+```text
+⨯ Failed to load next.config.ts
+Error: Cannot find module '@open-sharia-enterprise/ts-env-loader'
+ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+```
+
+The chain is the same in all six apps:
 `next.config.ts` line 1 is `import "./src/env-loader.ts"`, and that file's only job is
 `import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader"`. All 6 of 6 app
 `package.json` files declare the dependency, and the root `package.json` declares
@@ -34,12 +43,22 @@ they land in the **runner** stage for the port wrapper's type-stripped import, l
 
 ## Why now
 
-Nothing catches this. A repo-wide grep of `.github/workflows/` finds exactly two files referencing
-Docker (`_reusable-be-build-deploy.yml`, `publish-images.yml`) and neither names any of the six
-Next.js apps, so no CI job builds these images and CI has stayed green throughout. The six
-Dockerfiles are therefore dead artifacts that look maintained — PR #230 edited all six without the
-breakage surfacing. Every further edit to them compounds the illusion. The window is now, while the
-correct fix is still a four-line copy of a pattern sitting in the same file.
+Four of the six images **are** built by CI, and every one of those builds has been failing. The
+reusable workflow `_reusable-www-test-local-deploy.yml` runs
+`docker compose -f infra/dev/<app>/docker-compose.yml up --build -d`, and each of those compose files
+names the app's own `Dockerfile` as its build target. Four callers pass an app name into it —
+`ose-www`, `ayokoding-www`, `organiclever-www`, and `wahidyankf-www` — each on two `schedule` crons a
+day. All four have been red on every recent run (checked 2026-08-17 through 2026-08-18, eight runs,
+zero passes).
+
+So this is not an unwatched corner: it is a signal being emitted twice daily by four workflows and
+read by nobody. They are `schedule` + `workflow_dispatch` only — there is no `pull_request` trigger —
+so nothing about the failure blocks a merge, and the red runs sit outside the PR checks anyone
+actually looks at. Each of those workflows also force-pushes a `prod-*` branch on success, so the
+production deploy path for four sites has been dead for the whole period.
+
+The remaining two images (`organiclever-app-web`, `ose-app-web`) have no such workflow, so for those
+the breakage really is unobserved.
 
 ## Prior art / precedents
 
@@ -79,14 +98,18 @@ Dockerfiles, which do no workspace grafting and are unaffected.
   (open — needs five more builds before the fix is designed)
 - Is `npm ci` at the workspace root silently tolerating the missing workspace directory rather than
   erroring, and if so does the fix need a lockfile change too? (open)
-- Are these six images actually used by anything today, or has nothing consumed them since they were
-  written? If nothing does, "delete them" is a legitimate competing outcome to "fix them". (open —
-  and it decides whether this is worth a plan at all)
+- Four of the six are consumed by a scheduled deploy workflow, so "delete them" is not available for
+  those. It may still be right for `organiclever-app-web` and `ose-app-web`, which no workflow builds.
+  (open, but now narrowed to two apps)
+- Why did four workflows fail twice daily for days without anyone noticing? That is a monitoring gap
+  independent of this bug, and arguably the more valuable thing to fix. (open — and it may deserve
+  its own brief)
 - Adding a six-image build job lengthens CI noticeably for a repo whose gates are already long.
 
 ## What success looks like + promotion signal
 
-Success: `docker build` succeeds for all six Next.js apps from a clean checkout, and a CI job proves
-it on every change to a `Dockerfile` or a `next.config.ts` — so the next PR that edits all six cannot
-repeat this. Ready to promote once the "fix or delete" question above is answered, since that answer
-changes the plan entirely.
+Success: `docker build` succeeds for all six Next.js apps from a clean checkout, the four scheduled
+workflows go green, and the failure is visible on a surface someone reads — a `pull_request` trigger
+on the paths involved, or an alert on scheduled-workflow failure. Ready to promote now: the defect is
+confirmed in CI logs, the fix pattern already exists four lines up in each affected file, and only
+the two unbuilt apps carry an open fix-or-delete question.
