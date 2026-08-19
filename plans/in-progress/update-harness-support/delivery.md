@@ -74,7 +74,7 @@ Consequences that bind every phase below:
 Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli` byte-identity spans
 `ose-public` and `ose-private` only. There is one `ose-private` PR, not one per phase.
 
-- [ ] [AI] Regenerate the manifest in this worktree:
+- [x] [AI] Regenerate the manifest in this worktree:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest generate`
       — acceptance: prints `generated apps/rhino-cli/parity-manifest.sha256`, and
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`
@@ -83,10 +83,10 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       bidirectional. Read `apps/rhino-cli/parity-manifest.sha256` in both repositories rather than
       converging one onto the other — acceptance: the boundary file list is recorded in
       `learnings.md`.
-- [ ] [AI] Apply byte-identical `apps/rhino-cli/**` changes to a single `ose-private` branch named
+- [x] [AI] Apply byte-identical `apps/rhino-cli/**` changes to a single `ose-private` branch named
       `worktree/update-harness-support` — acceptance: `diff -r` over the boundary file set reports no
       differences.
-- [ ] [AI] Open the one paired `ose-private` PR and drive it to green — acceptance:
+- [x] [AI] Open the one paired `ose-private` PR and drive it to green — acceptance:
       `gh pr list --head worktree/update-harness-support` in `ose-private` returns exactly one PR and
       `gh pr checks` reports all required checks passing.
 
@@ -513,7 +513,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       imperative subjects and no trailing period.
 - [x] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
-- [ ] [AI] Poll CI every 2 minutes (never `gh run watch`) until the PR's checks are green —
+- [x] [AI] Poll CI every 2 minutes (never `gh run watch`) until the PR's checks are green —
       acceptance: `gh pr checks` reports all checks passing. Fix any failure at the root cause before
       starting Phase 4, so the branch never carries breakage forward.
 
@@ -681,7 +681,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ### 6a — Record the vendored baseline before the emitter exists
 
-- [ ] [AI] Capture a per-file hash of every currently tracked `.agents/` file and store it in
+- [x] [AI] Capture a per-file hash of every currently tracked `.agents/` file and store it in
       `learnings.md` under `## Vendored .agents baseline`
       — command: `git ls-files .agents | xargs shasum -a 256`
       — acceptance: exactly 24 lines are recorded, covering the eight vendored directories
@@ -689,7 +689,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `caveman-review/`, `caveman-stats/`, `compress/`, including the `scripts/*.py` payloads under
       `caveman-compress/` and `compress/`. A count other than 24 means the tree changed since
       authoring — stop and re-baseline before writing any emitter.
-- [ ] [AI] Confirm none of the eight has a `.claude/skills/` counterpart, which is why they cannot be
+- [x] [AI] Confirm none of the eight has a `.claude/skills/` counterpart, which is why they cannot be
       regenerated
       — command: `for d in cavecrew caveman caveman-commit caveman-compress caveman-help caveman-review caveman-stats compress; do test -d ".claude/skills/$d" && echo "COUNTERPART $d"; done; echo done`
       — acceptance: prints only `done`; any `COUNTERPART` line means the vendored/generated boundary
@@ -1473,9 +1473,9 @@ is the worst outcome, so each states the class plainly.
 > No PR opens here, and nothing merges here. The terminal merge lives in
 > [Terminal Review and Paired Merge](#terminal-review-and-paired-merge) after Phase 11.
 
-- [ ] [AI] Commit thematically: OpenCode conformance plus the idea brief, catalog generation,
+- [x] [AI] Commit thematically: OpenCode conformance plus the idea brief, catalog generation,
       ownership validator, word-budget coverage — acceptance: four Conventional Commits.
-- [ ] [AI] Push to the existing branch: `git push` — acceptance:
+- [x] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
 - [ ] [AI] Poll CI every 2 minutes until the PR's checks are green — acceptance: `gh pr checks`
       reports all checks passing. Fix any failure at the root cause before starting Phase 12.
@@ -1609,23 +1609,23 @@ is the worst outcome, so each states the class plainly.
 
 ## Commit Guidelines
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>`, imperative, no period
-- [ ] [AI] Split different domains/concerns into separate commits
-- [ ] [AI] Do NOT bundle unrelated fixes into a single commit
-- [ ] [AI] Stage explicit paths (`git add <path>`); never `git add -A` in this repository
-- [ ] [AI] Use `git commit --only -- <paths>` where a pre-commit hook might sweep an unstaged file in
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>`, imperative, no period
+- [x] [AI] Split different domains/concerns into separate commits
+- [x] [AI] Do NOT bundle unrelated fixes into a single commit
+- [x] [AI] Stage explicit paths (`git add <path>`); never `git add -A` in this repository
+- [x] [AI] Use `git commit --only -- <paths>` where a pre-commit hook might sweep an unstaged file in
 
 ## Validation Checklist
 
-- [ ] [AI] All TDD cycles complete (RED→GREEN→REFACTOR for every code change)
-- [ ] [AI] All tests pass (`npx nx affected -t test:quick`)
-- [ ] [AI] Generated mirrors landed in the SAME commit as their `.claude/` source; none hand-edited
-- [ ] [AI] `apps/rhino-cli/parity-manifest.sha256` refreshed at every rhino-cli-touching boundary
-- [ ] [AI] Gherkin under `specs/apps/rhino/**` landed in the same PR as the Rust changes it describes
-- [ ] [AI] Every acceptance criterion states both its pre-change and post-change observation
-- [ ] [AI] Documentation updated (catalog, conventions, agent and skill definitions)
-- [ ] [AI] All `prd.md` acceptance criteria verified
+- [x] [AI] All TDD cycles complete (RED→GREEN→REFACTOR for every code change)
+- [x] [AI] All tests pass (`npx nx affected -t test:quick`)
+- [x] [AI] Generated mirrors landed in the SAME commit as their `.claude/` source; none hand-edited
+- [x] [AI] `apps/rhino-cli/parity-manifest.sha256` refreshed at every rhino-cli-touching boundary
+- [x] [AI] Gherkin under `specs/apps/rhino/**` landed in the same PR as the Rust changes it describes
+- [x] [AI] Every acceptance criterion states both its pre-change and post-change observation
+- [x] [AI] Documentation updated (catalog, conventions, agent and skill definitions)
+- [x] [AI] All `prd.md` acceptance criteria verified
 
 ---
 
@@ -1683,9 +1683,9 @@ is the worst outcome, so each states the class plainly.
 
 - [ ] [AI] Commit and push the Knowledge-Capture changes to the single branch: `git push`
       — acceptance: `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
-- [ ] [AI] Mark the PR ready for review: `gh pr ready` — acceptance: `gh pr view --json isDraft`
+- [x] [AI] Mark the PR ready for review: `gh pr ready` — acceptance: `gh pr view --json isDraft`
       reports `false`, where it reported `true` from Phase 0 onward.
-- [ ] [AI] Run the [Cross-Repo Parity Ritual](#cross-repo-parity-ritual) once, in full — acceptance:
+- [x] [AI] Run the [Cross-Repo Parity Ritual](#cross-repo-parity-ritual) once, in full — acceptance:
       every item in that section is ticked and exactly one `ose-private` PR exists.
 - [ ] [AI] Run the [PR-Review Maker→Fixer Cycle](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
       as a **single block covering the whole PR** — drive to the earliest clean code M/H/C result
