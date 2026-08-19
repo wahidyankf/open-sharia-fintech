@@ -36,17 +36,27 @@ use rhino_cli::application::agents::bindings::{KNOWN_BINDING_DIRS, expected_bind
 use serde_json::Value;
 use tempfile::TempDir;
 
-/// Feature-level tag marking the Codex binding scenarios, which
-/// `tests/codex_binding.rs` owns. Declared identically in both runners so the
-/// shared `gherkin/harness/` directory splits cleanly between them.
-const CODEX_BINDING_TAG: &str = "codex-binding";
-
-/// Feature-level tags owned by `tests/skills_mirror.rs`, excluded here for the
-/// same reason as [`CODEX_BINDING_TAG`]: one step-definition set per runner.
-const SKILLS_MIRROR_TAGS: &[&str] = &[
+/// Feature-level tags owned by a *different* runner over the same shared
+/// `gherkin/harness/` directory. Every sibling runner takes exactly its own
+/// tags; this runner takes everything else. One list rather than one constant
+/// per sibling, so adding a runner is a single entry here and a forgotten
+/// entry cannot hide behind a differently-named constant.
+///
+/// | Tag                          | Owning runner              |
+/// | ---------------------------- | -------------------------- |
+/// | `codex-binding`              | `tests/codex_binding.rs`   |
+/// | `agents-skills-mirror`       | `tests/skills_mirror.rs`   |
+/// | `vendored-skill-preservation`| `tests/skills_mirror.rs`   |
+/// | `opencode-skills-removal`    | `tests/skills_mirror.rs`   |
+/// | `binding-ownership`          | `tests/harness_ownership.rs` |
+/// | `sync-triage`                | `tests/harness_sync_triage.rs` |
+const FOREIGN_TAGS: &[&str] = &[
+    "codex-binding",
     "agents-skills-mirror",
     "vendored-skill-preservation",
     "opencode-skills-removal",
+    "binding-ownership",
+    "sync-triage",
 ];
 
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace
@@ -1448,16 +1458,16 @@ fn then_exit_usage_error(w: &mut AgentsWorld) {
 async fn main() {
     AgentsWorld::cucumber()
         .fail_on_skipped()
-        // The Codex binding scenarios live in the same `gherkin/harness/`
-        // directory but are owned by `tests/codex_binding.rs`. Skipping them
-        // here (and taking only them there) keeps one step-definition set per
-        // runner; without the split each runner meets the other's undefined
-        // steps and `fail_on_skipped` turns those into failures.
+        // Several features live in the same `gherkin/harness/` directory but
+        // are owned by sibling runners. Skipping them here (and taking only
+        // them there) keeps one step-definition set per runner; without the
+        // split each runner meets the other's undefined steps and
+        // `fail_on_skipped` turns those into failures.
         .filter_run_and_exit(feature_dir(), |feature, _rule, _scenario| {
             !feature
                 .tags
                 .iter()
-                .any(|t| t == CODEX_BINDING_TAG || SKILLS_MIRROR_TAGS.contains(&t.as_str()))
+                .any(|t| FOREIGN_TAGS.contains(&t.as_str()))
         })
         .await;
 }
