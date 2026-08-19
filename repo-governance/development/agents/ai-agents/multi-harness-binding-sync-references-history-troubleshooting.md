@@ -22,13 +22,17 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 
 - `npm run generate:bindings` - Full sync (agents + skills)
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` - agent skills only (no-op — secondary harness reads natively from `.claude/skills/`)
+- `npm run sync:skills` - agent skills for the secondary harness that reads `.claude/skills/`
+  natively (no-op for that harness). Does NOT touch the other secondary harness's real-file mirror
+  under `.agents/skills/` — that one needs the full `generate:bindings` run instead.
 - `npm run validate:sync` - Verify semantic equivalence
 
 **Conversion Logic**:
 
 - **Agents**: Primary format → secondary format (tool arrays → permission object, model mapping; boolean flags output is deprecated/legacy)
-- **Agent skills**: No mirror — secondary harness reads `.claude/skills/` natively (no copy or conversion)
+- **Agent skills**: one secondary harness reads `.claude/skills/` natively (no copy or
+  conversion). The other has no native skills discovery, so it gets a real-file byte-copy mirror at
+  `.agents/skills/`, materialized by `harness bindings generate` (or `npm run generate:bindings`).
 - **Validation**: Confirms both directories are semantically equivalent
 
 ## Documentation References
@@ -62,7 +66,9 @@ when_to_use: Use when an agent or Skill change needs to propagate across the mul
 **Solution**: Check agent frontmatter format in `.claude/agents/`, fix YAML syntax, re-sync
 
 **Problem**: agent skills missing in one directory
-**Solution**: Verify skills exist in `.claude/skills/`, run `npm run sync:skills`
+**Solution**: Verify skills exist in `.claude/skills/`, then run `npm run generate:bindings` (not
+`npm run sync:skills` — that command only touches the no-op secondary-harness path and never
+writes the other secondary harness's `.agents/skills/` mirror)
 
 ---
 
