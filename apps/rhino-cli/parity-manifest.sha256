@@ -535,7 +535,7 @@ ea0050aee27166f3a3f74a3a225c0c391e48b681abcd063a26f5931f0d840925  specs/apps/rhi
 bd0f7aca7a725965121c8876c4a3f37c0db8515b1ebeb0270551fc34f067f055  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/README.md
 dce68d3970fd02ab3e1bbd5eb2b20fd5523ed6f5030c8c145f51c2cd503adecd  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature
 d22a103f12c43de6c7af852b87a3566313a3576776c154543a28d608ad32606f  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature
-15b19433b93e72904f2825134a57619218d623fad289b7d39fa2637ae5bddd32  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
+fc885e94e06f86c595aa5244974465e746611125168d123a382a51c0e72ce102  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
 653a6b6c6d69a01763a8adb8238255548f9f6c3913b211781ed051b8bebba197  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
 de8c721980d1577c2a2eb4e8c0dcd41e857137b41cef5b60392d7955bd41c5da  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature
 862293784534647e742c6b8ae77e3941c084ce87af770eb14b91175faa2e4517  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-skills-mirror.feature
@@ -549,6 +549,7 @@ b0911651efad4aa0ab02e683155d832ef3771b54f1c3ef0f772b28e277c15425  specs/apps/rhi
 5bc2514f071df16014d58454f31376f56d7b428a1d840286f82eecab04ee9b1a  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-audit.feature
 254fb93210485e6d853f125243d79994e34a4c1ec6ec1e19a8763e3f5cad3c31  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature
 0f165527bf5bad7fe4be47b08d227958390c60c48550dfdcab773c9f90edcabe  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-sync-triage.feature
+f7405988c77c80366a66608394c909bc6711d07f35a661f84441fe08cbe8ac98  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-conformance.feature
 b7f2ae62b4e9863514b0f53239b902e32dd529bd3044d6eb7500c01a3fa75519  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-skills-removal.feature
 855412b130dbd9fc1bc98a468ae330f367e4e7929ddcdf9c84f2e89f39f32d21  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/vendored-skill-preservation.feature
 618fd07f4747d322b76840ec60a12f310b69128d2fd357600d526f393d9d181f  specs/apps/rhino/behavior/rhino-cli/gherkin/md/README.md

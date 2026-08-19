@@ -14,6 +14,7 @@ Features in this domain:
 - `vendored-skill-preservation.feature` — the mirror emitter touches only what it generates, leaving declared vendored plugin directories byte-identical
 - `harness-ownership.feature` — every tracked binding file carries exactly one declared ownership class: generated, vendored, or source
 - `harness-sync-triage.feature` — divergence between canonical source and its generated mirrors is triaged by content, and a mirror edit is promoted only as a human-reviewed patch
+- `opencode-conformance.feature` — OpenCode claims target v1 stable, and the v2 rename set is filed as a promotable idea rather than a backlog plan
 - `governance-word-budget-agents-md.feature` — AGENTS.md word-budget audit (`governance word-budget validate`)
 - `governance-word-budget-pre-push.feature` — word-budget pre-push gate (`governance word-budget validate`)
 - `governance-word-budget-rule.feature` — word-budget governance rule (`governance word-budget validate`)
