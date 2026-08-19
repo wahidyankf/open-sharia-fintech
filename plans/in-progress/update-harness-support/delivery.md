@@ -1631,43 +1631,43 @@ is the worst outcome, so each states the class plainly.
 
 ## Phase 12: Knowledge Capture
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
       surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
       `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only; public-governance content may route to `ose-public`; never cross-route
       private content into a public repo.
-- [ ] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended — route
+- [x] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended — route
       to whichever surface owns that kind of knowledge (`repo-governance/`, `docs/`,
       `.claude/agents/`, `.claude/skills/`, a post-mortem, or any other durable home), landing a
       small non-code edit inline or filing a `plans/backlog/<slug>/` follow-up plan for larger
       non-code work.
-- [ ] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
+- [x] [AI] For any entry routed to `plans/ideas/`, scan `plans/ideas/README.md` and the existing
       two-pagers FIRST for a brief already covering the same problem or area — fold the learning into
       that brief instead of creating a new file; only create a new `plans/ideas/<quadrant>/<slug>.md`
       when the scan confirms no existing brief overlaps.
-- [ ] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
+- [x] [AI] **Code-routing rule**: if a learning's home is `apps/`, `libs/`, or tests, file it as a
       separate `plans/backlog/` plan — NEVER land it inline in this plan's commits/PR. The sole
       carve-out is a bug/lint/test failure that blocks THIS plan's own scope.
-- [ ] [AI] Specifically consider routing these three candidates, each already visible at authoring
+- [x] [AI] Specifically consider routing these three candidates, each already visible at authoring
       time: (a) the generalization defect behind `forbid-dir: .codex/agents` — one true observation
       about a file extension hardened into a false rule about a directory; (b) the pattern that a
       declared-surface count is a maintenance liability unless each claim carries an expiry; (c) the
       `pre-commit` mutation-gate ordering hazard where deleting a generated directory without its
       emitter causes silent recreation.
-- [ ] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
+- [x] [AI] Record the terminal state of every entry (routed inline / filed as backlog at `<path>` /
       discarded with reason) directly in `learnings.md`.
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
       `No generalizable learnings — <one-line reason>` instead of individual entries.
 
 ### Phase 12 Gate
 
 > All checks below must pass before starting Plan Archival.
 
-- [ ] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed /
+- [x] [AI] Verify every `learnings.md` entry has reached a terminal state (routed / filed /
       discarded) or the explicit "none" escape is present — no entry left open.
-- [ ] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
+- [x] [AI] Verify no code-homed learning landed inline — every code-routed learning has a
       corresponding `plans/backlog/` folder.
 
 > **Pause Safety**: all learnings are triaged to durable homes or explicitly discarded; nothing is

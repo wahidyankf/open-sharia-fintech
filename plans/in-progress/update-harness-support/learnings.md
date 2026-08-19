@@ -822,3 +822,126 @@ the Codex `Status` cell reads "Partial (`.codex/` exists)", which the three PASS
 between the real agents. The OpenCode binding emitter writes a README into the mirror directory, and
 OpenCode treats every `.md` in `.opencode/agents/` as an agent definition. Harmless — nothing
 invokes it — but it is a defect in the mirror layout, not in the README.
+
+## Post-Phase-11 CI finding — openapi-generator JAR download
+
+`Infra shell-test harness` failed on run `32270339593` at head `e4d731aab`, in the
+`beavernest-app-test-local-deploy-stag` workflow. The failing step builds
+`infra/dev/beavernest-app`'s contract image, whose Dockerfile line 18 runs
+`npx openapi-generator-cli generate`; the CLI downloads its generator JAR during `docker build` and
+the download failed with `Download failed, because of: ""` and `AggregateError [ETIMEDOUT]` carrying
+four underlying errors.
+
+Evidence it is not caused by this branch: the branch changes no file under `apps/beavernest-*`,
+`specs/apps/beavernest/`, `infra/`, or `.github/` — verified against
+`git diff --name-only origin/main...HEAD`. The workflow ran only because `repo-config.yml` sits in
+its `pull_request.paths:` filter, which is the Phase 6 finding recorded above, now observed a second
+time and with a second failure mode. Same class as the `setup-playwright` apt stall: an unretried
+network fetch inside a CI build, bounded only by the job timeout.
+
+## Knowledge Capture
+
+Terminal state for every entry above. Blocks that are execution evidence rather than learnings —
+hash baselines, gate-evidence lists, verdict tables, verbatim command output — are labelled
+`EVIDENCE` and retained in place; they are records this plan produced, not knowledge seeking a
+durable home.
+
+Two safety gates were applied to every surviving entry before routing. **Sensitivity**: nothing
+routed carries a secret, a credential, or a machine-local path; the Codex trust mechanism is
+described by its config-key shape, and the absolute paths in `evidence/` are the executor's own
+worktree, already present throughout this repository's tracked content. **Repo-relevance**: every
+routed entry concerns public governance, `rhino-cli`, or the harness bindings — all `ose-public`
+subject matter. Nothing infra-private was produced, so nothing was cross-routed.
+
+### Routed inline
+
+| Entry                                                             | Durable home                                                                                                                                      |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Acceptance clause greps a token the plan itself documents         | `repo-governance/development/quality/plan-anti-hallucination/absence-and-completeness-claims-zero-result-search-evidence-part-1.md` (new point 5) |
+| A no-match clause and a name-the-removed-thing test contradict    | same file (new section)                                                                                                                           |
+| Writing the narrowing note reintroduces the swept token           | same rule — re-run the sweep after writing, not only before                                                                                       |
+| A probe must move the byte the check guards                       | `repo-governance/development/practice/trustworthy-measurement/rule-5-probes-and-scans-must-assert-their-reach.md` (new)                           |
+| A scan must assert where it stopped (the 230-line table walk)     | same file                                                                                                                                         |
+| `clap` exit 2 is not the validator's verdict                      | same file                                                                                                                                         |
+| The word budget counts YAML frontmatter                           | `repo-governance/conventions/structure/governance-word-budget/vision-and-principles.md` (new section)                                             |
+| The validator's count is not `wc -w`                              | same file                                                                                                                                         |
+| A worktree without its own `node_modules` fails late              | `repo-governance/workflows/plan/plan-execution/environment-setup.md`                                                                              |
+| An aggregate audit is not an enforcement path                     | `docs/reference/sdlc-gate-standard.md` §Target Standard                                                                                           |
+| `serde_norway` does not expand YAML merge keys                    | inline comment above `governance-word-budget:` in `repo-config.yml`                                                                               |
+| The bare CLI and the gate share one exclude list                  | `repo-governance/conventions/structure/governance-word-budget/excluded-prefixes.md`                                                               |
+| The parity boundary is wider than `src/`; stage before generating | Phase 0/1 checklists of both backlog plans filed below                                                                                            |
+| A narrow observation hardened into a broad rule (`forbid-dir`)    | `plans/ideas/q2-not-urgent-important/harness-binding-catalog-drift.md`                                                                            |
+| The Codex `Status` cell may understate what loads                 | same brief                                                                                                                                        |
+| A declared count is a liability without an expiry                 | same brief                                                                                                                                        |
+
+### Filed as backlog
+
+| Entry                                                         | Plan                                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `.opencode/agents/README.md` loads as an agent named `README` | `plans/backlog/harness-mirror-and-test-isolation-defects/` (WS-H1) |
+| Generate smoke tests share one process working directory      | same plan (WS-H2)                                                  |
+| 47 dangling anchors under `.claude/skills/`                   | same plan (WS-H3)                                                  |
+| `repo-config.yml` in an app workflow's `paths:` filter        | `plans/backlog/ci-workflow-scope-and-build-resilience/` (WS-C1)    |
+| `setup-playwright` apt stall, no retry or step budget         | same plan (WS-C2)                                                  |
+| openapi-generator JAR `ETIMEDOUT` inside `docker build`       | same plan (WS-C2)                                                  |
+| `DatabaseConfigurationTests` cannot name its failing case     | same plan (WS-C3)                                                  |
+
+Each is a change to `apps/`, `.github/`, or content, so the code-routing rule forbids landing it in
+this plan's commits. None was.
+
+### Discarded, with reason
+
+| Entry                                                                   | Reason                                                                              |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Four Amazon Q tests went red a phase early                              | Plan-sequencing detail; the suite itself reported it at the right moment            |
+| `KNOWN_BINDING_DIRS` learned `.agents` at Phase 1                       | Confirms the registry is authoritative, which is the design, not a lesson           |
+| Fixture repos now need a `repo-config.yml`                              | Mechanical consequence of registry-derived lookup; the tests state it               |
+| US-2's historical-records scenario deferred to Phase 3                  | Scheduling note internal to this plan                                               |
+| Mutated/missing generated-file scenarios removed rather than retargeted | Scoping decision, already visible in the feature files                              |
+| The gate trigger sweep widened past the three named harnesses           | Restates Root Cause Orientation; no new surface would catch it earlier              |
+| `emit_bindings` had three callers outside `bindings.rs`                 | Ordinary refactor hygiene; `cargo` reports it                                       |
+| One stale `.pi/` comment survived on purpose                            | Phase-scoping note, resolved in Phase 3                                             |
+| The verdict table, not the step list, is the scope authority            | Restates that a recorded sweep is the scope; the Phase 3 gate already enforces it   |
+| `platform-bindings.md` had to be edited in Phase 3                      | Plan-internal sequencing                                                            |
+| `repo-config.yml` carried three dead surface globs                      | Fixed; the Phase 11 test now asserts the surface set against the live registry      |
+| `md links validate` needs the gate's own `--exclude`                    | Subsumed by the acceptance-clause rule routed above                                 |
+| Phase 3 Gate's verdict vocabulary is narrower than the table's          | Wording defect in one plan's gate, corrected in place                               |
+| Two constants and one predicate carry the Codex rule                    | Implementation note                                                                 |
+| A test whose name asserts the wrong rule outlives the code              | Real but already enforced socially by review; no validator can judge a test's name  |
+| The `@codex-binding` tag split between two cucumber runners             | Superseded by the Phase 8 fix that collapsed the per-runner constants into one list |
+| The P5.4 RED could not be made to fail                                  | Restates TDD honesty — record it, do not manufacture scaffolding to fail            |
+| `.codex/config.toml` is deliberately absent from `expected_bindings`    | Design note, carried in the code's doc comment                                      |
+| The validator resolves descriptions through the shared convert path     | Implementation note                                                                 |
+| `behavior-coverage` treats an unused step alias as an orphan            | Tool behaviour, discoverable from its own message                                   |
+| Prettier round trip: exit 0, zero files modified                        | Answers DD-9 for this plan; not generalizable                                       |
+| 6.13 compares raw bytes rather than `String` content                    | Implementation note                                                                 |
+| 6.14 moved the mirror check into `validate_sync`                        | Fixed inline; the check now reports from one place                                  |
+| 6.20 needs a post-commit re-read                                        | Acceptance-clause wording, corrected in place                                       |
+| One shared exclusion list for N cucumber runners                        | Fixed inline and structurally; the next runner is one line in one place             |
+| Timestamps were never an option; the guard is executable                | Landed as a guard, which is the durable form                                        |
+| Verbatim body promotion corrupts relative links                         | Fixed inline in `rebase_links_to_canonical`                                         |
+| The failure marker cannot be a literal glyph in Rust source             | The repository's existing `\u{274C}` usage already demonstrates the required form   |
+| Two golden-master fixtures track the subcommand list                    | Discoverable from the fixture manifest                                              |
+| A term-based sweep matches the brief that exists to catch those terms   | Recorded in that brief's own verdict row                                            |
+| P9.1 was already satisfied before Phase 9 started                       | Instance of read-the-live-state, routed once via the acceptance-clause rule         |
+| Three stale converter paths in the catalog                              | Already covered by the `doc-command-existence-validation` idea brief                |
+| Bash-tool edits trip `guard-env-file-access` on content                 | Harness-local tooling behaviour; no repository surface owns it                      |
+| The DD-9 command cannot answer the DD-9 question in Phase 10            | Acceptance-clause wording, corrected in place with the measurement recorded         |
+| Transcribe catalog cells verbatim before changing any                   | An instance of one-change-per-commit, already in the commit-message convention      |
+| Footnote definitions outside the region, references inside              | Encoded in the cucumber fixture, which is the durable form                          |
+| `harness audit` named no member on the passing path                     | Fixed inline for all six members                                                    |
+| P11.1's stated RED reason was stale                                     | Same read-the-live-state lesson, already routed                                     |
+| Phase 3's sweep set contained no `.rs` files                            | Explains three residues found and fixed; the sweep is not re-run                    |
+| AGENTS.md is 495 words, not the 487 the prd records                     | Stale figure in one plan, corrected by measurement                                  |
+| The `$BIN` loop exited 127 and read as a pass                           | Already the worked example in Trustworthy Measurement Rule 1                        |
+
+### Evidence, retained in place
+
+`## Baseline`, `## PR`, `## Sweep verdicts`, `## Parity boundary set`, `## Phase 5 gate evidence`,
+`## Vendored .agents baseline`, `## Ideas-tree verdicts`, the Phase 7 probe tables, the Phase 8
+HARD STOP transcript, the Phase 6 commit split, the four recorded deviations (8.3, the DD-9
+measurement, the verification-stamp placement, the added `harness-catalog` gate), the US-10
+half-workflow/half-gate note, and `## Harness load assertions`.
+
+These are what this plan observed, not what a future plan should know. They stay with the archived
+plan folder.
