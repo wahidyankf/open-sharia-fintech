@@ -11,6 +11,11 @@ These specs define the **observable behavior** of the loader: how it resolves th
 variable always wins over a file value, why a missing tier file is not an error, and why a stray
 auto-loaded env file beside a non-local tier file must fail loudly.
 
+They also define the repo-wide **runtime port contract** the loader exposes alongside tier
+loading: how a listener port resolves from an explicit `--port` flag, then the app's prefixed
+variable, then its compiled-in fallback — and why a present-but-malformed value fails loudly
+instead of silently falling back.
+
 ## Structure
 
 ```
@@ -22,7 +27,8 @@ specs/libs/ts-env-loader/
 ├── components/            # C4 L3 component catalogue
 └── behavior/
     └── gherkin/           # Gherkin feature files
-        └── env-loader/
+        ├── env-loader/
+        └── port-resolver/
 ```
 
 ## Status
@@ -30,7 +36,9 @@ specs/libs/ts-env-loader/
 `test:unit` and `test:coverage` are real, already-wired `vitest` targets (see
 `libs/ts-env-loader/project.json`) — every scenario in
 [behavior/gherkin/env-loader/env-loader.feature](./behavior/gherkin/env-loader/env-loader.feature)
-is exercised by `libs/ts-env-loader/src/env-loader.unit.test.ts` via `@amiceli/vitest-cucumber`.
+is exercised by `libs/ts-env-loader/src/env-loader.unit.test.ts`, and every scenario in
+[behavior/gherkin/port-resolver/port-resolver.feature](./behavior/gherkin/port-resolver/port-resolver.feature)
+by `libs/ts-env-loader/src/port-resolver.unit.test.ts` — both via `@amiceli/vitest-cucumber`.
 
 - [Behavior — ts-env-loader](./behavior/README.md)
 - [Components — ts-env-loader](./components/README.md)

@@ -7,7 +7,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev --port 3200",
+        "command": "node ../../scripts/next-with-port.mjs dev --env ORGANICLEVER_WWW_PORT --default 3200",
         "cwd": "{projectRoot}"
       }
     },
@@ -22,7 +22,7 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start --port 3200",
+        "command": "node ../../scripts/next-with-port.mjs start --env ORGANICLEVER_WWW_PORT --default 3200",
         "cwd": "{projectRoot}"
       }
     },

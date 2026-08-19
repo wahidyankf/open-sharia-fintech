@@ -29,7 +29,7 @@ COPY apps/ose-app-web/package.json apps/ose-app-web/tsconfig.json apps/ose-app-w
 # RUN npx @hey-api/openapi-ts -i specs/apps/ose-app/containers/contracts/generated/openapi-bundled.yaml -o src/generated-contracts -s
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG OSE_BE_URL=http://ose-be:8202
+ARG OSE_BE_URL=http://ose-be:8302
 ENV OSE_BE_URL=${OSE_BE_URL}
 RUN npx next build
 
@@ -42,10 +42,12 @@ RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
 COPY --from=build --chown=app:app /app/.next/standalone ./
 COPY --from=build --chown=app:app /app/.next/static ./.next/static
+COPY --chown=app:app scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=app:app libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER app
 EXPOSE 3300
-ENV PORT=3300 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+ENV OSE_APP_WEB_PORT=3300 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3300/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${OSE_APP_WEB_PORT}/ || exit 1
 
-CMD ["node", "server.js"]
+CMD ["node", "scripts/next-with-port.mjs", "--env", "OSE_APP_WEB_PORT", "--default", "3300", "--server", "server.js"]

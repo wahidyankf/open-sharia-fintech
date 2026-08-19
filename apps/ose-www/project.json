@@ -10,7 +10,7 @@
       }
     },
     "dev": {
-      "command": "next dev --port 3100",
+      "command": "node ../../scripts/next-with-port.mjs dev --env OSE_WWW_PORT --default 3100",
       "options": {
         "cwd": "apps/ose-www"
       },
@@ -33,7 +33,7 @@
       "cache": true
     },
     "start": {
-      "command": "next start --port 3100",
+      "command": "node ../../scripts/next-with-port.mjs start --env OSE_WWW_PORT --default 3100",
       "options": {
         "cwd": "apps/ose-www"
       }

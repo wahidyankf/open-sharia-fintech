@@ -113,3 +113,10 @@ export function loadTierEnv(options: LoadTierEnvOptions = {}): void {
     processEnv: env as unknown as Record<string, string>,
   });
 }
+
+/**
+ * The runtime port contract lives in its own dependency-free module so a container entrypoint can
+ * import it without dragging `dotenv` (and therefore `node_modules`) along — see
+ * `./port-resolver.ts` for why that matters. Re-exported here so app code has one import site.
+ */
+export { resolvePort, type ResolvePortOptions } from "./port-resolver";

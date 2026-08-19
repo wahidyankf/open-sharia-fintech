@@ -24,11 +24,11 @@ let private configureServices (connStr: string) (services: IServiceCollection) =
     services.AddDbContext<AppDbContext>(fun opts -> opts.UseNpgsql(connStr).UseSnakeCaseNamingConvention() |> ignore)
     |> ignore
 
-let private buildHost (args: string[]) (connStr: string) (handler: HttpHandler) =
+let private buildHost (args: string[]) (connStr: string) (handler: HttpHandler) (url: string) =
     Host
         .CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(fun webHostBuilder ->
-            webHostBuilder.Configure(configureApp handler).ConfigureServices(configureServices connStr)
+            webHostBuilder.UseUrls(url).Configure(configureApp handler).ConfigureServices(configureServices connStr)
             |> ignore)
         .Build()
 
@@ -55,8 +55,20 @@ let main args =
         status.Set outcome
     | None -> status.Set(Failed "NATS unavailable at startup")
 
-    // 4. HTTP host (Giraffe routes for all bounded contexts + EF DbContext).
-    let host = buildHost args connStr (buildWebApp status)
+    // 4. HTTP host (Giraffe routes for all bounded contexts + EF DbContext), bound to the port
+    //    resolved by the repo-wide `--port` > ORGANICLEVER_BE_PORT > 8202 contract — see
+    //    libs/fsharp-env-loader/src/PortResolver.fs, shared with every other port-binding app here.
+    let readEnvironment (key: string) =
+        System.Environment.GetEnvironmentVariable key
+
+    let listenUrl =
+        match FsharpEnvLoader.PortResolver.resolvePort args readEnvironment "ORGANICLEVER_BE_PORT" 8202 with
+        | Ok port -> FsharpEnvLoader.PortResolver.listenUrl readEnvironment port
+        | Error message ->
+            eprintfn "%s" message
+            exit 1
+
+    let host = buildHost args connStr (buildWebApp status) listenUrl
 
     host.Run()
 

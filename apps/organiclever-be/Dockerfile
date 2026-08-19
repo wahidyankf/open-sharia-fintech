@@ -29,7 +29,8 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-# Default port — override at runtime via ORGANICLEVER_BE_PORT.
+# Default port — override at runtime with `-e ORGANICLEVER_BE_PORT=<port>`, or with a `--port <port>`
+# argument appended to the entrypoint. Until this change the variable was read by nothing.
 ENV ORGANICLEVER_BE_PORT=8202
 EXPOSE 8202
 

@@ -7,7 +7,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No codegen needed — ayokoding-www has no OpenAPI contract'",
+        "command": "echo 'No codegen needed \u2014 ayokoding-www has no OpenAPI contract'",
         "cwd": "{projectRoot}"
       }
     },
@@ -49,7 +49,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx tsx src/scripts/generate-indexes.ts && next dev --port 3101",
+        "command": "npx tsx src/scripts/generate-indexes.ts && node ../../scripts/next-with-port.mjs dev --env AYOKODING_WWW_PORT --default 3101",
         "cwd": "{projectRoot}"
       }
     },
@@ -65,7 +65,7 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start --port 3101",
+        "command": "node ../../scripts/next-with-port.mjs start --env AYOKODING_WWW_PORT --default 3101",
         "cwd": "{projectRoot}"
       }
     },

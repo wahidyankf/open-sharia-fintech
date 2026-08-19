@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="Tests/EnvTierTests.fs" />
+    <Compile Include="Tests/PortResolverTests.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -29,7 +29,7 @@ WORKDIR /workspace
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3100
+ENV OSE_WWW_PORT=3100
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ose-www/.next/standalone ./
@@ -37,9 +37,11 @@ COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ose-www/.next/static a
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ose-www/public apps/ose-www/public
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ose-www/content apps/ose-www/content
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ose-www/generated apps/ose-www/generated
+COPY --chown=nextjs:nodejs scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=nextjs:nodejs libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER nextjs
 EXPOSE 3100
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3100/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${OSE_WWW_PORT}/ || exit 1
 
-CMD ["node", "apps/ose-www/server.js"]
+CMD ["node", "scripts/next-with-port.mjs", "--env", "OSE_WWW_PORT", "--default", "3100", "--server", "apps/ose-www/server.js"]

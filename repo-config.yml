@@ -271,7 +271,8 @@ env-contract:
       allowlist:
         # Forward-declared config not yet consumed by the Phase 1 F# shell
         # (wired in later phases); declared in .env.example ahead of use.
-        - ORGANICLEVER_BE_PORT
+        # ORGANICLEVER_BE_PORT is no longer listed here: it is now genuinely
+        # read, via PortResolver in Program.fs.
         - ORGANICLEVER_BE_CORS_ORIGINS
         # Tier-selection control var (which .env.<tier> file to load), not an
         # app config value — same treatment as PORT/HOSTNAME for the TS apps.
@@ -282,8 +283,9 @@ env-contract:
       lang: fsharp
       allowlist:
         # Forward-declared config not yet consumed by the Phase 1 F# shell
-        # (port/CORS + OpenRouter wired in later phases); declared ahead of use.
-        - OSE_BE_PORT
+        # (CORS + OpenRouter wired in later phases); declared ahead of use.
+        # OSE_BE_PORT is no longer listed here: it is now genuinely read, via
+        # PortResolver in Program.fs.
         - OSE_BE_CORS_ORIGINS
         - OSE_BE_OPENROUTER_API_KEY
         - OSE_BE_OPENROUTER_MODEL
@@ -296,14 +298,20 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT # framework-reserved Next.js dev-server port
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - OSE_WWW_PORT
         - HOSTNAME # framework-reserved Next.js dev-server hostname
 
     - root: apps/ayokoding-www
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - AYOKODING_WWW_PORT
         - HOSTNAME
         - NODE_ENV # Node-reserved; read by static client-data refresh test guard
 
@@ -311,28 +319,40 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT # framework-reserved Next.js dev-server port
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - ORGANICLEVER_WWW_PORT
         - HOSTNAME # framework-reserved Next.js dev-server hostname
 
     - root: apps/organiclever-app-web
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - ORGANICLEVER_APP_WEB_PORT
         - HOSTNAME
 
     - root: apps/ose-app-web
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - OSE_APP_WEB_PORT
         - HOSTNAME
 
     - root: apps/wahidyankf-www
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
+        # Resolved by scripts/next-with-port.mjs before the app process starts, so it
+        # is read by the launcher rather than by this app's own source.
+        - WAHIDYANKF_WWW_PORT
         - HOSTNAME
 
     - root: apps/beavernest-be

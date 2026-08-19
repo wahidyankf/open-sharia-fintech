@@ -94,7 +94,7 @@
     "test:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test apps/beavernest-be/tests/unit/BeaverNestBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/Program.fs\""
+        "command": "dotnet test apps/beavernest-be/tests/unit/BeaverNestBe.UnitTests.fsproj /p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=line \"/p:ExcludeByFile=**/Program.fs\" \"/p:Include=[BeaverNestBe]*\""
       },
       "cache": true,
       "inputs": ["{projectRoot}/src/**/*.fs", "{projectRoot}/src/**/*.sql", "{projectRoot}/tests/unit/**/*.fs", "env"]
@@ -143,7 +143,7 @@
     "specs:domain:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'specs:domain:coverage: no-op (beavernest is not in specs.domain-areas — no domain/** bounded-context features)'"
+        "command": "echo 'specs:domain:coverage: no-op (beavernest is not in specs.domain-areas \u2014 no domain/** bounded-context features)'"
       },
       "cache": true
     },

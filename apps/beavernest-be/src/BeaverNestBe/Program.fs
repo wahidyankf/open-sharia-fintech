@@ -69,7 +69,7 @@ let private commandMode args databaseConfiguration =
         match restore databaseConfiguration name with
         | Ok() -> Some 0
         | Error error -> Some(fail error)
-    | [||] -> None
+    | _ when isOnlyPortFlags args -> None
     | _ -> Some(fail "invalid command")
 
 [<EntryPoint>]
@@ -84,7 +84,10 @@ let main args =
         match commandMode args databaseConfiguration with
         | Some exitCode -> exitCode
         | None ->
-            match prepareApplication System.Environment.GetEnvironmentVariable with
+            match
+                prepareApplication System.Environment.GetEnvironmentVariable
+                |> Result.bind (applyPortFlag args System.Environment.GetEnvironmentVariable)
+            with
             | Error error -> fail error
             | Ok listener ->
                 match acquireDataDirectoryServiceLock databaseConfiguration with

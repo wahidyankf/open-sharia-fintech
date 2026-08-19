@@ -88,7 +88,7 @@ Create `apps/[app-name]/project.json`:
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev",
+        "command": "node ../../scripts/next-with-port.mjs dev --env [APP_NAME]_PORT --default [port]",
         "cwd": "apps/[app-name]"
       }
     },
@@ -103,7 +103,7 @@ Create `apps/[app-name]/project.json`:
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start",
+        "command": "node ../../scripts/next-with-port.mjs start --env [APP_NAME]_PORT --default [port]",
         "cwd": "apps/[app-name]"
       },
       "dependsOn": ["build"]
@@ -118,6 +118,14 @@ Create `apps/[app-name]/project.json`:
   }
 }
 ```
+
+> **Ports are not optional here.** Every Next.js app in this repository starts through
+> `scripts/next-with-port.mjs`, which resolves the listener port as `--port` flag, then the app's own
+> `[APP_NAME]_PORT` variable, then the `--default` baked into the target. Wiring `next dev`/`next start`
+> directly would silently opt the new app out of that contract. The same wrapper belongs in the app's
+> `Dockerfile` `CMD`, which must also `COPY` both `scripts/next-with-port.mjs` and
+> `libs/ts-env-loader/src/port-resolver.ts`, preserving their relative layout. Pick a `[port]` that no
+> other app claims — see [web-sites.md](../reference/web-sites.md).
 
 **Express API Example**:
 

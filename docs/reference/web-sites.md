@@ -24,6 +24,49 @@ created: 2026-08-14
 | beavernest-app       | TBD (Flutter Web, same-origin combined runtime)          | 19300 | —                           |
 | beavernest-be        | TBD (F# / Giraffe / ASP.NET 10, combined runtime 19300)  | 19320 | —                           |
 
+## Overriding a port
+
+Every app in the table above resolves its listener port the same way: an explicit `--port` flag,
+then the app's prefixed variable, then the default shown. A malformed value fails at startup rather
+than falling back silently.
+
+| App                  | Variable                         |
+| -------------------- | -------------------------------- |
+| ose-www              | `OSE_WWW_PORT`                   |
+| ayokoding-www        | `AYOKODING_WWW_PORT`             |
+| organiclever-www     | `ORGANICLEVER_WWW_PORT`          |
+| wahidyankf-www       | `WAHIDYANKF_WWW_PORT`            |
+| organiclever-app-web | `ORGANICLEVER_APP_WEB_PORT`      |
+| ose-app-web          | `OSE_APP_WEB_PORT`               |
+| organiclever-be      | `ORGANICLEVER_BE_PORT`           |
+| ose-be               | `OSE_BE_PORT`                    |
+| beavernest-be        | `BEAVERNEST_BE_HTTP_LISTEN_PORT` |
+
+```bash
+nx dev ose-www --port=4000          # flag
+OSE_WWW_PORT=4000 nx dev ose-www    # variable
+docker run -e OSE_WWW_PORT=4000 …   # same variable inside a container
+```
+
+A bare `PORT` is deliberately not honoured — one exported `PORT` would otherwise retarget every app
+at once. See the
+[Environment Variable Naming Standard](../../repo-governance/conventions/security/secrets-and-env-standards/environment-variable-naming-standard.md).
+
+## Supporting Service Ports
+
+Every backend test stack publishes its PostgreSQL and NATS containers on distinct host ports so two
+stacks can run at the same time (Nx runs affected projects in parallel).
+
+| Stack                       | PostgreSQL | NATS |
+| --------------------------- | ---------- | ---- |
+| ose-be integration          | 5433       | 4223 |
+| organiclever-be integration | 5434       | 4224 |
+| ose-be e2e                  | 5435       | 4225 |
+| organiclever-be e2e         | 5436       | 4226 |
+
+Host ports 5432 and 4222 stay unclaimed — they remain the defaults in each backend's `.env.example`
+for a developer-run PostgreSQL or NATS shared across apps by database name, not by port.
+
 Each app README at `apps/[app-name]/README.md` covers framework, deployment, E2E tests, and content
 details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 

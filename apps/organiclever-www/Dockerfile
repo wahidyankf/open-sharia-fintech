@@ -42,10 +42,12 @@ WORKDIR /app
 COPY --from=build --chown=app:app /app/.next ./.next
 COPY --from=build --chown=app:app /app/node_modules ./node_modules
 COPY --from=build --chown=app:app /app/package.json ./package.json
+COPY --chown=app:app scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=app:app libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER app
 EXPOSE 3200
-ENV PORT=3200 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+ENV ORGANICLEVER_WWW_PORT=3200 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3200/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${ORGANICLEVER_WWW_PORT}/ || exit 1
 
-CMD ["node_modules/.bin/next", "start", "-p", "3200", "-H", "0.0.0.0"]
+CMD ["node", "scripts/next-with-port.mjs", "start", "--env", "ORGANICLEVER_WWW_PORT", "--default", "3200", "-H", "0.0.0.0"]
