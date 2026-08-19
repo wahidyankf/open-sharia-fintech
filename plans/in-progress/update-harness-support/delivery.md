@@ -419,48 +419,48 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 > Never use `-L` in an acceptance clause. Use `git grep -il` with pathspec exclusions. Every file
 > gets a recorded verdict; there is no silent skip.
 
-- [ ] [AI] Recompute the sweep set and write it to `local-tmp/harness-sweep-current.txt`:
+- [x] [AI] Recompute the sweep set and write it to `local-tmp/harness-sweep-current.txt`:
       `git grep -ilE "cursor|windsurf|junie|antigravity|aider|copilot|pi\.dev|amazonq|Amazon Q|Kiro" -- repo-governance docs .claude specs CLAUDE.md AGENTS.md package.json .github`
       — acceptance: the file lists roughly 60 paths and `wc -l` reports a non-zero count; a zero
       count means the pattern or pathspec is wrong, not that the sweep is done.
-- [ ] [AI] Record a per-file verdict table in `learnings.md` under `## Sweep verdicts`, one row per
+- [x] [AI] Record a per-file verdict table in `learnings.md` under `## Sweep verdicts`, one row per
       path, with verdict `EDIT`, `FALSE-POSITIVE`, or `HISTORICAL-KEEP`
       — acceptance: every path in `local-tmp/harness-sweep-current.txt` appears exactly once; the
       seven `docs/explanation/software-engineering/` paths are marked `FALSE-POSITIVE` with the
       specific sense recorded (text cursor / CSS `cursor` / database cursor).
-- [ ] [AI] Edit the `repo-governance/conventions/structure/multi-harness-binding/` tree and
+- [x] [AI] Edit the `repo-governance/conventions/structure/multi-harness-binding/` tree and
       `repo-governance/conventions/structure/multi-harness-binding.md` to describe a three-harness
       model: one `source` tier and two `generated` tiers, with no `native` and no `source-config` tier
       — acceptance: `git grep -ilE "windsurf|junie|antigravity|aider|copilot" repo-governance/conventions/structure/multi-harness-binding*`
       returns nothing, where it returned at least 1 file before.
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit the five `repo-governance/conventions/structure/governance-vendor-independence/`
+- [x] [AI] Edit the five `repo-governance/conventions/structure/governance-vendor-independence/`
       files so the dropped harnesses remain **forbidden vendor terms** (DD-3) while no longer being
       described as supported platforms
       — acceptance: each file still lists the dropped names under a forbidden-terms heading and none
       lists them under a supported-platform heading.
-- [ ] [AI] Edit `repo-governance/conventions/structure/governance-word-budget.md` and
+- [x] [AI] Edit `repo-governance/conventions/structure/governance-word-budget.md` and
       `governance-readme-completeness.md` so their surface and path lists match the post-Phase-2
       `repo-config.yml` values
       — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       exits 0 and the prose lists exactly the globs the config declares.
-- [ ] [AI] Edit `repo-governance/development/agents/model-selection.md` and
+- [x] [AI] Edit `repo-governance/development/agents/model-selection.md` and
       `repo-governance/development/agents/model-selection/platform-binding-examples.md` to drop the
       Cursor full-tier-collapse table and keep the OpenCode table
       — acceptance: `git grep -c "composer-2.5" repo-governance/` returns no match, where it returned
       at least 3 before.
-- [ ] [AI] Edit the remaining `EDIT`-verdict files in `repo-governance/` — the
+- [x] [AI] Edit the remaining `EDIT`-verdict files in `repo-governance/` — the
       `ai-agents/`, `file-touch-discipline/`, `mechanize-cross-file-invariants/`,
       `no-destructive-git-operations/`, `nx-target-naming/`, `nx-targets/`, and
       `workflows/plan/plan-execution/iron-rules-6-11.md` entries listed in `tech-docs.md`
       — acceptance: every one is ticked in the verdict table with its diff summarized in one line.
-- [ ] [AI] Edit `repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md` and its
+- [x] [AI] Edit `repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md` and its
       `step-1-initial-validation.md` reference so the drift dimensions cover three harnesses, and
       record that the workflow is now **complemented** by the Phase 7 CI gate rather than being the
       only anti-drift mechanism
       — acceptance: the workflow's `scope` input description names the three survivors and the
       document cross-references the new gate id.
-- [ ] [AI] Edit `.claude/agents/README.md`, `.claude/agents/repo/repo-harness-compatibility-checker.md`,
+- [x] [AI] Edit `.claude/agents/README.md`, `.claude/agents/repo/repo-harness-compatibility-checker.md`,
       `.claude/agents/repo/repo-harness-compatibility-fixer.md`, and the four
       `.claude/skills/repo-harness-compatibility-protocol/` files to three-harness scope; Invariant 3
       in `phase0-parity-invariants.md` changes from
@@ -468,19 +468,19 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: `git grep -c "\.amazonq/" .claude/` returns no match, where it returned at least
       2 before.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Edit `AGENTS.md` §Platform Binding Examples and §AI Agents to name three harnesses, then
+- [x] [AI] Edit `AGENTS.md` §Platform Binding Examples and §AI Agents to name three harnesses, then
       re-measure: `tr -s '[:space:]' '\n' < AGENTS.md | grep -c .`
       — acceptance: the count is **strictly below 500** (487 at baseline, 13 words of headroom).
       If the edit would push it over, remove words elsewhere in the same edit — never raise the
       threshold.
-- [ ] [AI] Edit `CLAUDE.md` §Multi-harness configuration to name three harnesses and drop the
+- [x] [AI] Edit `CLAUDE.md` §Multi-harness configuration to name three harnesses and drop the
       `.amazonq/`, `.cursor/` mirror sentence, then re-measure the same way
       — acceptance: the count is strictly below 500 (423 at baseline).
-- [ ] [AI] Edit `docs/reference/rhino-cli-command-triage.md` and `docs/reference/sdlc-gate-standard.md`
+- [x] [AI] Edit `docs/reference/rhino-cli-command-triage.md` and `docs/reference/sdlc-gate-standard.md`
       to the surviving command and gate inventories
       — acceptance: every `harness` command named in both documents exists in
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness --help`.
-- [ ] [AI] Confirm the historical carve-out held: `git grep -c "Amazon Q" docs/explanation/post-mortems/`
+- [x] [AI] Confirm the historical carve-out held: `git grep -c "Amazon Q" docs/explanation/post-mortems/`
       — acceptance: returns a non-zero count, proving the post-mortems kept their references
       verbatim; a zero here means the sweep over-reached and must be reverted for those paths.
 
@@ -488,15 +488,15 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before pushing Phase 1-3 to the single PR and starting Phase 4.
 
-- [ ] [AI] Every path in `local-tmp/harness-sweep-current.txt` has a recorded verdict in
+- [x] [AI] Every path in `local-tmp/harness-sweep-current.txt` has a recorded verdict in
       `learnings.md` — verified by comparing line counts, both non-zero and equal.
-- [ ] [AI] `git grep -ilE "windsurf|junie|antigravity|aider|copilot|pi\.dev|amazonq" -- repo-governance docs/reference .claude AGENTS.md CLAUDE.md repo-config.yml`
+- [x] [AI] `git grep -ilE "windsurf|junie|antigravity|aider|copilot|pi\.dev|amazonq" -- repo-governance docs/reference .claude AGENTS.md CLAUDE.md repo-config.yml`
       returns only files whose verdict is `FALSE-POSITIVE` or that carry the DD-3 forbidden-terms
       rationale — no file presents a dropped harness as supported.
-- [ ] [AI] `tr -s '[:space:]' '\n' < AGENTS.md | grep -c .` and the same for `CLAUDE.md` — both
+- [x] [AI] `tr -s '[:space:]' '\n' < AGENTS.md | grep -c .` and the same for `CLAUDE.md` — both
       strictly below 500.
-- [ ] [AI] `npx nx affected -t typecheck,lint,test:quick` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+- [x] [AI] `npx nx affected -t typecheck,lint,test:quick` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       — exits 0, proving the sweep broke no cross-link.
 
 > **Pause Safety**: the repository consistently describes three harnesses in config, code, specs, and

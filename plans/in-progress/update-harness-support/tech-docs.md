@@ -9,14 +9,13 @@ The harness system has three layers, and they are inconsistently coupled to thei
 ```mermaid
 flowchart TD
     RC["repo-config.yml<br/>harness: 11 entries"]
-    CAT["docs/reference/platform-bindings.md<br/>hand-written prose<br/>stamp: Verified 2026-05-24"]
+    CAT["platform-bindings.md<br/>hand-written prose<br/>stamp: 2026-05-24"]
     GEN["harness bindings generate<br/>hard-coded match arms:<br/>opencode | cursor | amazonq"]
     VAL["harness bindings validate<br/>KNOWN_BINDING_DIRS const"]
     DUP["harness duplication validate<br/>registry-driven"]
     SRC[".claude/<br/>659 tracked files"]
     OC[".opencode/<br/>112 tracked files"]
-    CUR[".cursor/agents/<br/>93 tracked files"]
-    AQ[".amazonq/<br/>2 tracked files"]
+    DROP[".cursor/agents/ — 93 files<br/>.amazonq/ — 2 files"]
     CDX[".codex/<br/>2 hand-maintained TOML"]
     PI[".pi/<br/>1 tracked file"]
     AG[".agents/skills/<br/>24 vendored files,<br/>no source, ungoverned"]
@@ -27,10 +26,9 @@ flowchart TD
     RC -->|"NOT read"| CAT
     SRC --> GEN
     GEN --> OC
-    GEN --> CUR
-    GEN --> AQ
+    GEN --> DROP
     GEN -->|"never writes"| CDX
-    VAL --> AQ
+    VAL --> DROP
     VAL --> CAT
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -40,7 +38,7 @@ flowchart TD
 
     class RC,SRC blue
     class GEN,VAL,DUP orange
-    class OC,CUR,AQ teal
+    class OC,DROP teal
     class CAT,CDX,PI,AG gray
 ```
 
@@ -63,7 +61,7 @@ flowchart TD
     OC[".opencode/agents/<br/>generated mirror"]
     CDX[".codex/agents/*.toml<br/>generated mirror<br/>+ config.toml region"]
     AG[".agents/skills/<br/>generated mirror<br/>(vendored dirs excluded)"]
-    CAT["docs/reference/platform-bindings.md<br/>generated table region"]
+    CAT["platform-bindings.md<br/>generated table region"]
 
     RC --> GEN
     RC --> CATGEN

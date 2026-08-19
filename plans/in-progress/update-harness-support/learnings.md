@@ -84,7 +84,7 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
   returns no match — but a test that asserts the rejection must spell the rejected name. Same shape
   in P2.11: it instructs carrying the US-2 scenarios from `prd.md`, which name `.cursor/`,
   `.amazonq/`, `.pi/` and `--harness cursor` by design, then asserts no surviving scenario names a
-  dropped harness. In both cases the test/scenario proving the *absence* of support is the more
+  dropped harness. In both cases the test/scenario proving the _absence_ of support is the more
   valuable artifact, so it was kept and the grep-count clause recorded as not met. The general
   lesson: a "no match" grep clause and an instruction to write a regression test naming the removed
   thing cannot both hold — the plan-authoring pass should catch that pairing.
@@ -109,3 +109,105 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
   and `tests/specs_tree.rs` both drove it to build fixtures, and the data-driven feature carried an
   Amazon-Q-definition-name scenario. Deleting an emitter is never a single-file edit — grep the test
   tree and the feature tree for the symbol before calling the deletion scoped.
+
+## Sweep verdicts
+
+58 paths, recomputed post-Phase-2 into `local-tmp/harness-sweep-current.txt`. One row per path.
+
+| Path                                                                                                                            | Verdict         | Note                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------------- |
+| `.claude/agents/README.md`                                                                                                      | EDIT            | mirror list names `.cursor/`, `.amazonq/`                                  |
+| `.claude/skills/api-testing-exploratory-methodology/reference/session-based-methodology.md`                                     | FALSE-POSITIVE  | pagination cursor                                                          |
+| `.claude/skills/api-testing-exploratory-methodology/reference/test-dimensions-checklist-part1.md`                               | FALSE-POSITIVE  | pagination cursor                                                          |
+| `.claude/skills/pr-review-scout-classification/reference/shared-context-and-prior-cycle-read.md`                                | EDIT            | generated-path list names `.amazonq/**`                                    |
+| `.claude/skills/repo-harness-compatibility-protocol/reference/phase0-parity-invariants.md`                                      | EDIT            | Invariant 3 diff set                                                       |
+| `.claude/skills/repo-harness-compatibility-protocol/reference/phase1-drift-dimensions-d1-d3.md`                                 | EDIT            | harness enumeration names Aider                                            |
+| `.claude/skills/repo-harness-compatibility-protocol/reference/phase1-drift-dimensions-d4-d7.md`                                 | EDIT            | D7 is a Cursor-only dimension                                              |
+| `.claude/skills/repo-validating-governance-rules/reference/core-validation-and-agent-duplication.md`                            | EDIT            | mirror exclusion list                                                      |
+| `CLAUDE.md`                                                                                                                     | EDIT            | §Multi-harness configuration                                               |
+| `docs/explanation/plan-domain-parity-decisions.md`                                                                              | HISTORICAL-KEEP | dated 2026-06-06 decision record                                           |
+| `docs/explanation/post-mortems/2026-05-03-amazonq-bindings-prettier-parity-guard-break.md`                                      | HISTORICAL-KEEP | incident record                                                            |
+| `docs/explanation/post-mortems/README.md`                                                                                       | HISTORICAL-KEEP | index entry for that incident                                              |
+| `docs/explanation/software-engineering/platform-web/tools/fe-nextjs/styling.md`                                                 | FALSE-POSITIVE  | CSS `cursor:`                                                              |
+| `docs/explanation/software-engineering/platform-web/tools/fe-react/accessibility.md`                                            | FALSE-POSITIVE  | CSS `cursor:`                                                              |
+| `docs/explanation/software-engineering/platform-web/tools/fe-react/data-fetching.md`                                            | FALSE-POSITIVE  | pagination cursor                                                          |
+| `docs/explanation/software-engineering/platform-web/tools/fe-react/styling.md`                                                  | FALSE-POSITIVE  | CSS `cursor:`                                                              |
+| `docs/explanation/software-engineering/programming-languages/c-sharp/api-standards.md`                                          | FALSE-POSITIVE  | cursor-based pagination                                                    |
+| `docs/explanation/software-engineering/programming-languages/typescript/memory-management.md`                                   | FALSE-POSITIVE  | database cursor                                                            |
+| `docs/explanation/software-engineering/programming-languages/typescript/performance.md`                                         | FALSE-POSITIVE  | database cursor                                                            |
+| `docs/reference/ai-model-benchmarks.md`                                                                                         | FALSE-POSITIVE  | CursorBench is an external benchmark name                                  |
+| `docs/reference/platform-bindings.md`                                                                                           | EDIT            | catalog rows; Phase 4 and Phase 10 refine further                          |
+| `docs/reference/rhino-cli-command-triage.md`                                                                                    | EDIT            | command inventory                                                          |
+| `docs/reference/sdlc-gate-standard.md`                                                                                          | EDIT            | gate inventory                                                             |
+| `docs/reference/security/frameworks/nist-sp-800-53-rev5.md`                                                                     | FALSE-POSITIVE  | "precursors"                                                               |
+| `repo-governance/conventions/structure/governance-readme-completeness.md`                                                       | EDIT            | mirror list                                                                |
+| `repo-governance/conventions/structure/governance-vendor-independence/forbidden-vendor-terms-models-and-concepts.md`            | EDIT            | keep terms forbidden (DD-3), drop supported framing                        |
+| `repo-governance/conventions/structure/governance-vendor-independence/forbidden-vendor-terms-names-and-paths.md`                | EDIT            | same                                                                       |
+| `repo-governance/conventions/structure/governance-vendor-independence/platform-binding-directory-pattern-and-migration.md`      | EDIT            | same                                                                       |
+| `repo-governance/conventions/structure/governance-vendor-independence/purpose-and-scope.md`                                     | EDIT            | same                                                                       |
+| `repo-governance/conventions/structure/governance-vendor-independence/vocabulary-map.md`                                        | EDIT            | same                                                                       |
+| `repo-governance/conventions/structure/governance-word-budget.md`                                                               | EDIT            | surface table                                                              |
+| `repo-governance/conventions/structure/multi-harness-binding/platform-binding-examples.md`                                      | EDIT            | three-harness model                                                        |
+| `repo-governance/conventions/structure/post-mortems/mandatory-sections-timeline-through-resolution.md`                          | HISTORICAL-KEEP | worked example quotes a real incident                                      |
+| `repo-governance/conventions/structure/post-mortems/no-secrets-rule-diagrams-and-examples.md`                                   | HISTORICAL-KEEP | same                                                                       |
+| `repo-governance/conventions/structure/post-mortems/optional-sections-and-severity-scale.md`                                    | HISTORICAL-KEEP | same                                                                       |
+| `repo-governance/conventions/tutorials/in-the-field/guide-structure-part2-database-example-setup.md`                            | FALSE-POSITIVE  | database cursor                                                            |
+| `repo-governance/development/agents/ai-agents/multi-harness-binding-directory-hierarchy-format.md`                              | EDIT            | directory hierarchy                                                        |
+| `repo-governance/development/agents/ai-agents/tool-access-patterns-writing-to-platform-binding-directories.md`                  | EDIT            | mirror list                                                                |
+| `repo-governance/development/agents/model-selection.md`                                                                         | EDIT            | index line names Cursor                                                    |
+| `repo-governance/development/agents/model-selection/platform-binding-examples.md`                                               | EDIT            | Cursor tier-collapse table                                                 |
+| `repo-governance/development/infra/nx-target-naming/cli-command-naming.md`                                                      | EDIT            | renamed-command table                                                      |
+| `repo-governance/development/infra/nx-target-naming/domain-work-scheme.md`                                                      | EDIT            | target description                                                         |
+| `repo-governance/development/infra/nx-targets/domain-work-naming-for-governance-targets.md`                                     | EDIT            | target description                                                         |
+| `repo-governance/development/practice/file-touch-discipline/agent-checklist-and-related-docs.md`                                | EDIT            | mirror list                                                                |
+| `repo-governance/development/practice/file-touch-discipline/standard-9.md`                                                      | EDIT            | mirror list                                                                |
+| `repo-governance/development/practice/mechanize-cross-file-invariants/prior-art-in-this-repository.md`                          | EDIT            | mirror list                                                                |
+| `repo-governance/development/quality/pr-review-disciplines/cost-control-noise-control-mechanics-shared-context-extract-once.md` | EDIT            | generated-path list                                                        |
+| `repo-governance/development/quality/pr-review-disciplines/post-cutover-monitoring-rollback-rollback-trigger.md`                | EDIT            | resync instruction                                                         |
+| `repo-governance/development/workflow/no-destructive-git-operations/whole-tree-staging-is-forbidden.md`                         | EDIT            | mirror list                                                                |
+| `repo-governance/development/workflow/trunk-based-development.md`                                                               | EDIT            | mirror list                                                                |
+| `repo-governance/workflows/plan/plan-execution/iron-rules-6-11.md`                                                              | EDIT            | mirror list                                                                |
+| `repo-governance/workflows/repo/repo-harness-compatibility-quality-gate/step-1-initial-validation.md`                           | EDIT            | binding-sync no-op diff set                                                |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature`                                         | EDIT            | example rows use dropped paths                                             |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`                                                                 | EDIT            | annotated index still says Amazon Q                                        |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`                                                   | HISTORICAL-KEEP | US-2 purge scenario names the dropped harnesses as the thing proven absent |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/governance-word-budget-thresholds.feature`                                 | EDIT            | `.github/copilot-instructions.md` surface; Phase 11 owns the final list    |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-vendor-audit.feature`                              | HISTORICAL-KEEP | DD-3: scenarios prove the forbidden tokens are still caught                |
+| `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature`                                             | EDIT            | scenario text still names Amazon Q                                         |
+
+## Phase 3 notes
+
+- **Three `EDIT`-verdict files no explicit P3.x step named** still had to be swept for the gate to
+  pass: `specs/.../gherkin/governance/governance-word-budget.feature` (example rows retargeted to
+  `.codex/agents/example.md` and `.agents/skills/example/SKILL.md`),
+  `specs/.../gherkin/harness/README.md` (index line generalized to "every generated-tier harness
+  binding"), and `specs/.../gherkin/specs/harness-registry-driven.feature` (scenario text
+  de-vendored, with the matching step string in `apps/rhino-cli/tests/specs_tree.rs` updated in the
+  same edit). Lesson: the verdict table, not the step list, is the authority on Phase 3 scope.
+- **`docs/reference/platform-bindings.md` had to be edited in Phase 3**, not deferred wholesale to
+  Phases 4/10. Its verdict row says "Phase 4 and Phase 10 refine further", but the Phase 3 Gate's
+  own clause 2 pathspec includes `docs/reference`, and the catalog listed Cursor as `Active`. The
+  Phase 3 edit trims the table to the three registry harnesses and deletes the Amazon Q bridge
+  section, the Kiro succession section, and both Cursor translation sections. Phase 4's
+  `"never an official"` sentence and Phase 10's generated-region markers are untouched.
+- **`repo-config.yml` carried three dead word-budget surface globs** (`.cursor/**/*.md`,
+  `.pi/**/*.md`, `.amazonq/**/*.md`) plus two stale comments. P2.6 scoped its sweep to the `gates:`
+  section only, so the `word-budget: surfaces:` list survived. Phase 11 rewrites that list wholesale;
+  Phase 3 only removed the globs pointing at directories deleted in Phase 2.
+- **`md links validate` reports 312 broken links repo-wide, all inside `plans/done/`.** The gate
+  clause as written omits the `--exclude plans/done` that `repo-config.yml`'s `md-links` gate
+  declares. With the gate's own exclusion the command reports `All links valid!`. Zero broken links
+  fall in any path this plan touched. Recorded rather than silently reinterpreted.
+- **The worktree had no `node_modules` of its own**, and that broke `nx affected` at
+  `organiclever-app-web:codegen` with `TypeError: Cannot read properties of undefined (reading
+'AnyKeyword')`. Root cause: `npx @hey-api/openapi-ts` checks `${cwd}/node_modules/.bin` and does
+  **not** walk up to the parent checkout's hoisted tree, so it silently fell back to a broken
+  package in the global `~/.npm/_npx/` cache. Running `npm install` inside the worktree fixed it.
+  Generalizable: a worktree that only ever ran Rust/Nx-cached targets can look healthy for phases
+  and then fail on the first TypeScript-touching `affected` run. Same class as
+  `project_ose_primer_rhino_cli_propagation_polyglot_provisioning`.
+- Phase 3 Gate clause 2 admits verdicts `FALSE-POSITIVE` and "carries the DD-3 forbidden-terms
+  rationale". Three `HISTORICAL-KEEP` files under
+  `repo-governance/conventions/structure/post-mortems/` still match, because their worked examples
+  quote a real `.amazonq/` incident. They do not present a dropped harness as supported, which is
+  the clause's stated intent; the verdict vocabulary in the clause is narrower than the table's.
