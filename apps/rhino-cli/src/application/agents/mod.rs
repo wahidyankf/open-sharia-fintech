@@ -4,6 +4,7 @@
 
 pub mod agent_validator;
 pub mod bindings;
+pub mod catalog;
 pub mod claude_validator;
 pub mod codex;
 pub mod converter;

@@ -103,6 +103,15 @@ pub struct HarnessEntry {
     /// Instruction surfaces this harness reads (for instruction-size budgeting).
     #[serde(default)]
     pub instruction: Vec<String>,
+    /// Catalog facts rendered into the generated region of the platform-binding
+    /// catalog document.
+    ///
+    /// Optional so a registry entry can exist before its catalog row is written,
+    /// but `harness catalog generate` fails on an entry that lacks one: a
+    /// silently-skipped harness would produce a catalog that is complete-looking
+    /// and wrong, which is the exact failure generation exists to prevent.
+    #[serde(default)]
+    pub catalog: Option<CatalogEntry>,
     /// Ownership class for every binding path this entry claims.
     ///
     /// A binding file that belongs to no declared class is the defect this field
@@ -140,6 +149,40 @@ impl OwnershipClass {
             Self::Source => "source",
         }
     }
+}
+
+/// One harness's row in the generated platform-binding catalog table.
+///
+/// Every field is a rendered markdown cell rather than a structured fact.
+/// Cells carry inline code spans and footnote references (`[^mcp]`), so the
+/// registry holds the exact text the table shows. Deriving the markup instead
+/// would put a second formatter between the registry and the document, and the
+/// two could disagree — the drift this generation exists to eliminate.
+///
+/// Footnote *definitions* stay in the hand-authored prose outside the generated
+/// region. A cell references one; the emitter does not own its text.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CatalogEntry {
+    /// Display name in the first column (e.g. `"OpenAI Codex CLI"`).
+    pub platform: String,
+    /// Whether the harness reads root `AGENTS.md` natively.
+    #[serde(rename = "reads-agents-md")]
+    pub reads_agents_md: String,
+    /// Tool-specific instruction surface.
+    #[serde(rename = "instruction-surface")]
+    pub instruction_surface: String,
+    /// Project-scoped MCP configuration path.
+    #[serde(rename = "mcp-config")]
+    pub mcp_config: String,
+    /// Custom-agent surface.
+    #[serde(rename = "agent-surface")]
+    pub agent_surface: String,
+    /// Skills surface.
+    #[serde(rename = "skills-surface")]
+    pub skills_surface: String,
+    /// Support status.
+    pub status: String,
 }
 
 /// One binding path and the class that owns it.
@@ -474,6 +517,27 @@ pub struct RepoConfig {
     /// Tools the `doctor` check should skip as inapplicable to this repo.
     #[serde(default)]
     pub doctor: DoctorConfig,
+    /// Where the generated platform-binding catalog lands, and the date its
+    /// claims were last verified against upstream.
+    #[serde(rename = "harness-catalog", default)]
+    pub harness_catalog: Option<HarnessCatalog>,
+}
+
+/// Document-level settings for the generated platform-binding catalog.
+///
+/// Separate from the per-harness `catalog:` blocks because these are facts about
+/// the *document*, not about any one harness. Folding `verified` into the harness
+/// entries would give one stamp three sources that could disagree.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct HarnessCatalog {
+    /// Repository-relative path of the catalog document.
+    pub document: String,
+    /// Date the catalog's upstream claims were last verified, rendered into the
+    /// generated region as the verification stamp. Declared rather than stamped
+    /// at generation time: a generated timestamp would change on every run and
+    /// make the drift guard fire on its own output.
+    pub verified: String,
 }
 
 /// Load and parse `repo-config.yml` at `repo_root`.

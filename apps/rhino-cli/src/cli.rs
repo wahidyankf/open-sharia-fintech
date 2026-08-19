@@ -8,13 +8,13 @@ use crate::commands::{
     governance_generate_readme_index, governance_layer_coherence,
     governance_rewrite_readme_index_paths, governance_traceability_audit,
     governance_validate_readme_index, governance_validate_word_budget, governance_vendor_audit,
-    harness_audit, harness_generate_bindings, harness_sync_promote, harness_sync_triage,
-    harness_validate_bindings, harness_validate_claude, harness_validate_duplication,
-    harness_validate_ownership, harness_validate_sync, md_audit, md_validate_frontmatter,
-    md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
-    md_validate_mermaid, md_validate_naming, parity, repo_config_validate, specs_audit,
-    specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality, specs_scaffold_dart,
-    specs_structure_validate, specs_validate_counts, test_coverage_validate,
+    harness_audit, harness_catalog, harness_generate_bindings, harness_sync_promote,
+    harness_sync_triage, harness_validate_bindings, harness_validate_claude,
+    harness_validate_duplication, harness_validate_ownership, harness_validate_sync, md_audit,
+    md_validate_frontmatter, md_validate_frontmatter_dates, md_validate_heading_hierarchy,
+    md_validate_links, md_validate_mermaid, md_validate_naming, parity, repo_config_validate,
+    specs_audit, specs_coverage, specs_e2e_coverage, specs_gherkin_cardinality,
+    specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -444,9 +444,24 @@ pub enum HarnessCommands {
     /// Validate that every tracked binding file carries one declared owner.
     #[command(name = "ownership", subcommand)]
     Ownership(HarnessOwnershipCommands),
+    /// Generate and guard the platform-binding catalog table.
+    #[command(name = "catalog", subcommand)]
+    Catalog(HarnessCatalogCommands),
     /// Run all harness validators in sequence and aggregate findings.
     #[command(name = "audit")]
     Audit(harness_audit::AuditArgs),
+}
+
+/// `harness catalog` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum HarnessCatalogCommands {
+    /// Render the catalog table from the harness registry into its
+    /// generated region, leaving surrounding prose untouched.
+    #[command(name = "generate")]
+    Generate(harness_catalog::CatalogGenerateArgs),
+    /// Fail when the generated region diverges from the harness registry.
+    #[command(name = "validate")]
+    Validate(harness_catalog::CatalogValidateArgs),
 }
 
 /// `harness duplication` subcommands.
@@ -846,6 +861,14 @@ fn dispatch_harness(
             HarnessSyncCommands::Validate(args) => harness_validate_sync::run(args, output_format),
             HarnessSyncCommands::Triage(args) => harness_sync_triage::run(args),
             HarnessSyncCommands::Promote(args) => harness_sync_promote::run(args),
+        },
+        HarnessCommands::Catalog(cc) => match cc {
+            HarnessCatalogCommands::Generate(args) => {
+                harness_catalog::run_generate(args, output_format)
+            }
+            HarnessCatalogCommands::Validate(args) => {
+                harness_catalog::run_validate(args, output_format)
+            }
         },
         HarnessCommands::Ownership(oc) => match oc {
             HarnessOwnershipCommands::Validate(args) => {

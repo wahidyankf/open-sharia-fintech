@@ -15,6 +15,7 @@ Features in this domain:
 - `harness-ownership.feature` — every tracked binding file carries exactly one declared ownership class: generated, vendored, or source
 - `harness-sync-triage.feature` — divergence between canonical source and its generated mirrors is triaged by content, and a mirror edit is promoted only as a human-reviewed patch
 - `opencode-conformance.feature` — OpenCode claims target v1 stable, and the v2 rename set is filed as a promotable idea rather than a backlog plan
+- `harness-catalog.feature` — the Platform Binding Directories table is rendered from the harness registry, and a hand edit inside the generated region is rejected
 - `governance-word-budget-agents-md.feature` — AGENTS.md word-budget audit (`governance word-budget validate`)
 - `governance-word-budget-pre-push.feature` — word-budget pre-push gate (`governance word-budget validate`)
 - `governance-word-budget-rule.feature` — word-budget governance rule (`governance word-budget validate`)

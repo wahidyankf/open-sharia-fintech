@@ -51,6 +51,7 @@ use tempfile::TempDir;
 /// | `binding-ownership`          | `tests/harness_ownership.rs` |
 /// | `sync-triage`                | `tests/harness_sync_triage.rs` |
 /// | `opencode-conformance`       | `tests/opencode_conformance.rs` |
+/// | `catalog-generation`         | `tests/harness_catalog.rs` |
 const FOREIGN_TAGS: &[&str] = &[
     "codex-binding",
     "agents-skills-mirror",
@@ -59,6 +60,7 @@ const FOREIGN_TAGS: &[&str] = &[
     "binding-ownership",
     "sync-triage",
     "opencode-conformance",
+    "catalog-generation",
 ];
 
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace

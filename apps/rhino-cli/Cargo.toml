@@ -69,6 +69,10 @@ name = "opencode_conformance"
 harness = false
 
 [[test]]
+name = "harness_catalog"
+harness = false
+
+[[test]]
 name = "governance"
 harness = false
 
