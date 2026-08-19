@@ -35,6 +35,17 @@ harness:
     skills-dir: .claude/skills
     instruction:
       - CLAUDE.md
+    # Cells are transcribed verbatim from the hand-maintained table this
+    # generation replaces, so the first generated output is byte-identical and
+    # any later diff is a deliberate content change rather than emitter noise.
+    catalog:
+      platform: Claude Code
+      reads-agents-md: "No — reads `CLAUDE.md` (shim `@AGENTS.md`)"
+      instruction-surface: "`CLAUDE.md`, `.claude/`"
+      mcp-config: "`.mcp.json`"
+      agent-surface: "`.claude/agents/*.md`"
+      skills-surface: "`.claude/skills/*/SKILL.md`"
+      status: Active
     # Every path below carries exactly one of generated | vendored | source.
     # There is no fourth class and no unclassified residue: a tracked binding
     # file matching no declaration fails `harness ownership validate`.
@@ -49,6 +60,14 @@ harness:
     mirrors: .claude/agents
     instruction:
       - AGENTS.md
+    catalog:
+      platform: OpenCode
+      reads-agents-md: "Yes"
+      instruction-surface: "`.opencode/agents/` (auto-synced); reads `.claude/skills/` natively"
+      mcp-config: "`opencode.json`"
+      agent-surface: "`.opencode/agents/*.md`"
+      skills-surface: "reads `.claude/skills/`"
+      status: Active
     ownership:
       - { path: .opencode/agents, class: generated, reason: emitted from .claude/agents }
       - { path: .opencode/opencode.json, class: vendored, reason: OpenCode tooling config; no in-repo source }
@@ -75,6 +94,14 @@ harness:
       - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
+    catalog:
+      platform: OpenAI Codex CLI
+      reads-agents-md: "Yes (since Apr 2025)"
+      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`"
+      mcp-config: "`.codex/config.toml` `[mcp_servers]`[^mcp]"
+      agent-surface: "`.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents]"
+      skills-surface: "`.agents/skills/`[^skills]"
+      status: "Partial (`.codex/` exists)"
     ownership:
       - { path: .codex/agents, class: generated, reason: emitted from .claude/agents }
       - { path: .agents/skills, class: generated, reason: mirrored from .claude/skills }
@@ -89,6 +116,14 @@ harness:
       - { path: .agents/skills/caveman-review, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/caveman-stats, class: vendored, reason: third-party plugin skill; no in-repo source }
       - { path: .agents/skills/compress, class: vendored, reason: third-party plugin skill; no in-repo source }
+
+harness-catalog:
+  # Where the generated catalog region lands, and the date its upstream claims
+  # were last verified by hand. Declared rather than stamped at generation time:
+  # a generated timestamp would change on every run and make the drift guard
+  # fire on its own output.
+  document: docs/reference/platform-bindings.md
+  verified: 2026-05-24
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
@@ -1132,6 +1167,28 @@ gates:
           - AGENTS.md
           - CLAUDE.md
           - repo-config.yml
+
+  # Path-gated on the two inputs the verdict depends on: the registry the table
+  # is rendered from, and the document the region lives in. Nothing else can
+  # change the answer. Without this entry the drift guard would exist but never
+  # run — gates invoke validators directly by `command:`, and nothing invokes
+  # `harness audit`, so aggregate membership alone enforces nothing.
+  - id: harness-catalog
+    type: check
+    command: harness catalog validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-config.yml
+          - docs/reference/platform-bindings.md
+      ci:
+        scope: path-gated
+        trigger:
+          - repo-config.yml
+          - docs/reference/platform-bindings.md
 
   # Armed at Phase 9 of plans/done/2026-08-15__optimize-governance-md, dark-launched at Phase 1
   # (config-only, see governance-word-budget: above). No pre-commit surface (FR-1.14): a
