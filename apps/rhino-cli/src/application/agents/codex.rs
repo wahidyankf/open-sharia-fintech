@@ -320,14 +320,26 @@ fn convert_codex_agent_inner(
         name: agent_name.to_string(),
         ..CodexAgent::default()
     };
+    let mut preserve_findings: Vec<(String, String)> = Vec::new();
     let dropped = walk_frontmatter_fields(&mapping, codex_field_policy(), |_action, key, v| {
-        apply_preserve(&mut out, key, v);
+        if let Some(finding) = apply_preserve(&mut out, key, v) {
+            preserve_findings.push(finding);
+        }
     });
     warnings.extend(dropped.into_iter().map(|d| ConversionWarning {
         agent_name: agent_name.to_string(),
         field: d.field,
         reason: d.reason,
     }));
+    warnings.extend(
+        preserve_findings
+            .into_iter()
+            .map(|(field, reason)| ConversionWarning {
+                agent_name: agent_name.to_string(),
+                field,
+                reason,
+            }),
+    );
 
     let rebased_body = rebase_agent_links(&body, input_path, claude_dir, mirror_dir);
     out.developer_instructions = String::from_utf8_lossy(&rebased_body).into_owned();
@@ -339,11 +351,45 @@ fn convert_codex_agent_inner(
 /// Copy a `Preserve`-tagged field value into the Codex output. `name` is
 /// already resolved from the discovery walk, so the frontmatter copy is
 /// ignored to keep one source of identity.
-fn apply_preserve(out: &mut CodexAgent, key: &str, value: &Value) {
-    if key == "description"
-        && let Some(s) = value.as_str()
-    {
-        out.description = s.to_string();
+///
+/// Returns `Some((field, reason))` when `description` is present but not a
+/// string (M4): every OTHER dropped field in this module surfaces a
+/// `ConversionWarning` through `DropWarn`; `description` is `Preserve`-class
+/// and, before this fix, fell through `.as_str()` returning `None` straight
+/// to `CodexAgent::default()`'s empty string with no signal at all — visually
+/// indistinguishable from a legitimately empty description, and invisible to
+/// `harness bindings validate`, which compares output against the same
+/// renderer that produced the bug.
+fn apply_preserve(out: &mut CodexAgent, key: &str, value: &Value) -> Option<(String, String)> {
+    if key == "description" {
+        return match value.as_str() {
+            Some(s) => {
+                out.description = s.to_string();
+                None
+            }
+            None => Some((
+                key.to_string(),
+                format!(
+                    "description must be a string; got {} — left empty rather than silently \
+                     coerced",
+                    value_kind(value)
+                ),
+            )),
+        };
+    }
+    None
+}
+
+/// A short, stable name for `value`'s YAML kind, for a warning message.
+fn value_kind(value: &Value) -> &'static str {
+    match value {
+        Value::Null => "null",
+        Value::Bool(_) => "a boolean",
+        Value::Number(_) => "a number",
+        Value::String(_) => "a string",
+        Value::Sequence(_) => "a sequence",
+        Value::Mapping(_) => "a mapping",
+        Value::Tagged(_) => "a tagged value",
     }
 }
 
@@ -599,6 +645,42 @@ mod tests {
             .collect();
         assert!(fields.contains(&"model"), "got {fields:?}");
         assert!(fields.contains(&"color"), "got {fields:?}");
+    }
+
+    // Regression for M4: a non-string `description` must warn rather than
+    // silently collapse to an empty string.
+    #[test]
+    fn convert_all_warns_when_description_is_not_a_string() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(
+            &root.join(".claude/agents/numdesc.md"),
+            "---\nname: numdesc-maker\ndescription: 12345\n---\nBody\n",
+        );
+
+        let emitted = convert_all_codex_agents(root, false).unwrap();
+
+        assert_eq!(
+            emitted.result.converted, 1,
+            "conversion itself still succeeds"
+        );
+        let warning = emitted
+            .result
+            .warnings
+            .iter()
+            .find(|w| w.field == "description")
+            .unwrap_or_else(|| panic!("no description warning; got {:?}", emitted.result.warnings));
+        assert!(
+            warning.reason.contains("must be a string"),
+            "got: {}",
+            warning.reason
+        );
+
+        let toml = fs::read_to_string(root.join(".codex/agents/numdesc-maker.toml")).unwrap();
+        assert!(
+            toml.contains("description = \"\""),
+            "the empty description is still written (nothing crashes); got:\n{toml}"
+        );
     }
 
     #[test]
