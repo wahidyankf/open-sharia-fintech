@@ -96,46 +96,46 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > **No PR opens in this phase.**
 
-- [ ] [AI] **Locate and reuse the existing worktree — do NOT create one.**
+- [x] [AI] **Locate and reuse the existing worktree — do NOT create one.**
       command: `git worktree list | grep -F "worktrees/update-harness-support"`
       — acceptance: returns exactly one line naming branch `worktree/update-harness-support`, where a
       zero result would mean the pre-existing worktree is missing and the plan brief's premise is
       wrong. If it returns zero lines, STOP and report rather than creating a new worktree.
-- [ ] [AI] Confirm the working location is that worktree, not the primary checkout —
+- [x] [AI] Confirm the working location is that worktree, not the primary checkout —
       command: `git rev-parse --show-toplevel && git branch --show-current`
       — acceptance: prints a path ending `worktrees/update-harness-support` and branch
       `worktree/update-harness-support`.
-- [ ] [AI] Sync the existing branch with the latest `origin/main` before implementing —
+- [x] [AI] Sync the existing branch with the latest `origin/main` before implementing —
       command: `git fetch origin && git rebase origin/main`
       — acceptance: `git status` reports a clean tree; if foreign commits landed, read the full diff
       before continuing.
-- [ ] [AI] Initialize the toolchain from the ROOT worktree (not this one):
+- [x] [AI] Initialize the toolchain from the ROOT worktree (not this one):
       `npm install && npm run doctor -- --fix`
       — acceptance: `doctor` exits 0 with no unresolved findings.
-- [ ] [AI] Create `plans/in-progress/update-harness-support/learnings.md` if absent, containing the
+- [x] [AI] Create `plans/in-progress/update-harness-support/learnings.md` if absent, containing the
       two HTML scaffold comments and the `# Learnings: update-harness-support` H1
       — acceptance: `test -f plans/in-progress/update-harness-support/learnings.md` exits 0 and
       `head -3` shows the H1 on the third line.
-- [ ] [AI] Record the pre-change baseline into `learnings.md` under a `## Baseline` heading, using
+- [x] [AI] Record the pre-change baseline into `learnings.md` under a `## Baseline` heading, using
       `git ls-files <path> | grep -c .` for each of `.claude`, `.opencode`, `.cursor`, `.agents`,
       `.amazonq`, `.codex`, `.pi`
       — acceptance: the recorded numbers are 659, 112, 93, 24, 2, 2, 1 respectively; any deviation is
       investigated before proceeding, because the whole plan is sized against them.
-- [ ] [AI] Record the pre-change word counts:
+- [x] [AI] Record the pre-change word counts:
       `for f in AGENTS.md CLAUDE.md; do printf "%s: " "$f"; tr -s '[:space:]' '\n' < "$f" | grep -c .; done`
       — acceptance: prints `AGENTS.md: 487` and `CLAUDE.md: 423`; both are under the 500 fail
       threshold with 13 and 77 words of headroom.
-- [ ] [AI] Record the pre-change governance sweep sets to a scratch file (NOT committed):
+- [x] [AI] Record the pre-change governance sweep sets to a scratch file (NOT committed):
       `git grep -il -- "Cursor" -- repo-governance docs .claude specs CLAUDE.md AGENTS.md repo-config.yml .github package.json`
       and the same for the pattern `windsurf|junie|antigravity|aider|copilot|pi\.dev|amazonq|Amazon Q|Kiro`
       using `git grep -ilE`
       — acceptance: the first list has 43 entries and the second 45; both are written to
       `local-tmp/harness-sweep-baseline.txt`.
-- [ ] [AI] Establish the green baseline:
+- [x] [AI] Establish the green baseline:
       `npx nx run rhino-cli:test:quick && npx nx run rhino-cli:lint && npx nx run rhino-cli:typecheck`
       — acceptance: all three exit 0. If any is red before a single edit, fix it first per Root Cause
       Orientation and record the fix in `learnings.md`.
-- [ ] [AI] Confirm the binding generator is currently a no-op:
+- [x] [AI] Confirm the binding generator is currently a no-op:
       `npm run generate:bindings && git diff --quiet` — acceptance: exits 0, proving the committed
       mirrors match the generator before any change.
 
@@ -143,12 +143,12 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `npm run generate:bindings && git diff --quiet` — exits 0.
-- [ ] [AI] `test -f plans/in-progress/update-harness-support/learnings.md` — exits 0 and the file
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `npm run generate:bindings && git diff --quiet` — exits 0.
+- [x] [AI] `test -f plans/in-progress/update-harness-support/learnings.md` — exits 0 and the file
       records all seven baseline counts plus both word counts.
-- [ ] [AI] `git status --porcelain` — reports only the plan folder as untracked/modified.
-- [ ] [AI] `git worktree list | grep -cF "worktrees/update-harness-support"` — returns 1, and no new
+- [x] [AI] `git status --porcelain` — reports only the plan folder as untracked/modified.
+- [x] [AI] `git worktree list | grep -cF "worktrees/update-harness-support"` — returns 1, and no new
       worktree was created during this phase (the count is unchanged from the pre-phase value).
 
 > **Pause Safety**: nothing in the repository has changed except the plan folder; the baseline is
