@@ -12,3 +12,11 @@ Feature: Schema-parity gate for repo-config.yml
     And it passes when only values differ
     And it fails when a required key is missing or an unknown key is present
     And running it independently against the byte-identical schema in both repos is equivalent to an identical key set across both repo-config.yml files
+
+  Scenario: The registry declares the Codex skills mirror and its vendored exclusions
+    Given the canonical repo-config.yml
+    When the codex harness entry is inspected
+    Then it declares ".agents/skills" as a mirror of ".claude/skills"
+    And it declares the eight vendored skill subdirectories
+    And each vendored entry names the plugin it came from
+    And the schema rejects a typo'd key inside the vendored declaration

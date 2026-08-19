@@ -22,6 +22,8 @@ struct RepoConfigValidateWorld {
     repo: TempDir,
     /// Result of validating the canonical (valid) config.
     valid_output: Option<Output>,
+    /// The `codex` harness registry entry, sliced out of the canonical config.
+    codex_entry: Option<String>,
 }
 
 impl std::fmt::Debug for RepoConfigValidateWorld {
@@ -36,6 +38,7 @@ impl RepoConfigValidateWorld {
         Self {
             repo: TempDir::new().expect("temp repo"),
             valid_output: None,
+            codex_entry: None,
         }
     }
 }
@@ -159,6 +162,144 @@ fn then_identical_key_set_equivalence(_w: &mut RepoConfigValidateWorld) {
     assert!(
         !validate_config(&key_variant).status.success(),
         "divergent key set (unknown key) must fail"
+    );
+}
+
+/// The eight vendored `.agents/skills/` subdirectories: plugin payload shipped
+/// with the repository, with no `.claude/skills/` counterpart to regenerate them
+/// from. The mirror emitter must leave every one of them untouched (DD-7).
+const VENDORED_SKILL_DIRS: &[&str] = &[
+    ".agents/skills/cavecrew",
+    ".agents/skills/caveman",
+    ".agents/skills/caveman-commit",
+    ".agents/skills/caveman-compress",
+    ".agents/skills/caveman-help",
+    ".agents/skills/caveman-review",
+    ".agents/skills/caveman-stats",
+    ".agents/skills/compress",
+];
+
+/// Slice the `- name: codex` list item out of the canonical `harness:` block.
+///
+/// Runs from the entry's own `- name: codex` line up to (but excluding) the next
+/// line that starts at column 0, which is the next top-level section.
+fn slice_codex_entry(config: &str) -> String {
+    let start = config
+        .find("  - name: codex")
+        .expect("canonical config declares a codex harness entry");
+    let rest = &config[start..];
+    let end = rest
+        .match_indices('\n')
+        .map(|(i, _)| i + 1)
+        .find(|&i| rest[i..].chars().next().is_some_and(|c| !c.is_whitespace()))
+        .unwrap_or(rest.len());
+    rest[..end].to_string()
+}
+
+#[given("the canonical repo-config.yml")]
+fn given_canonical_config(w: &mut RepoConfigValidateWorld) {
+    init_git_repo(w.repo.path());
+    std::fs::write(
+        w.repo.path().join("repo-config.yml"),
+        canonical_repo_config(),
+    )
+    .unwrap();
+}
+
+#[when("the codex harness entry is inspected")]
+fn when_codex_entry_inspected(w: &mut RepoConfigValidateWorld) {
+    w.codex_entry = Some(slice_codex_entry(&canonical_repo_config()));
+}
+
+#[then("it declares \".agents/skills\" as a mirror of \".claude/skills\"")]
+fn then_declares_skills_mirror(w: &mut RepoConfigValidateWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry sliced");
+    assert!(
+        entry.contains("skills-dir: .agents/skills"),
+        "codex entry must declare the mirror target; entry was:\n{entry}"
+    );
+    assert!(
+        entry.contains("skills-mirrors: .claude/skills"),
+        "codex entry must declare WHICH source tree .agents/skills mirrors, so the \
+         emitter reads its input from the registry rather than inferring it; entry was:\n{entry}"
+    );
+    // A declaration the schema does not know is a silent no-op, so prove the
+    // strict deserializer actually accepts it rather than merely tolerating it.
+    let out = validate_config(&canonical_repo_config());
+    assert!(
+        out.status.success(),
+        "the canonical config carrying skills-mirrors must strict-deserialize; stdout={} stderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+#[then("it declares the eight vendored skill subdirectories")]
+fn then_declares_vendored_dirs(w: &mut RepoConfigValidateWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry sliced");
+    assert!(
+        entry.contains("vendored:"),
+        "codex entry must carry a vendored: block; entry was:\n{entry}"
+    );
+    let missing: Vec<&str> = VENDORED_SKILL_DIRS
+        .iter()
+        .copied()
+        .filter(|dir| !entry.contains(dir))
+        .collect();
+    assert!(
+        missing.is_empty(),
+        "codex entry must declare every vendored directory; missing {missing:?}; entry was:\n{entry}"
+    );
+    assert_eq!(
+        VENDORED_SKILL_DIRS.len(),
+        8,
+        "the vendored set is exactly the eight plugin directories recorded in the Phase 6a baseline"
+    );
+}
+
+#[then("each vendored entry names the plugin it came from")]
+fn then_vendored_entries_name_their_origin(w: &mut RepoConfigValidateWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry sliced");
+    // A bare path list says WHICH directories are exempt but not WHY, so a later
+    // reader cannot tell a genuine plugin payload from a mistake someone silenced.
+    for dir in VENDORED_SKILL_DIRS {
+        let line = entry
+            .lines()
+            .find(|l| l.trim_start().starts_with(&format!("- {dir}")))
+            .unwrap_or_else(|| panic!("vendored entry {dir} must be on its own line"));
+        let (path, comment) = line
+            .split_once('#')
+            .unwrap_or_else(|| panic!("vendored entry {dir} carries no inline origin comment"));
+        assert!(
+            path.trim().ends_with(dir),
+            "vendored entry {dir} must be one path per line; got: {line}"
+        );
+        assert!(
+            comment.contains("plugin"),
+            "vendored entry {dir} must name its plugin origin; got comment: {comment}"
+        );
+    }
+}
+
+#[then("the schema rejects a typo'd key inside the vendored declaration")]
+fn then_rejects_typod_vendored_key(_w: &mut RepoConfigValidateWorld) {
+    // Falsifiable the other way: the same config without the typo must pass, so
+    // the rejection is attributable to the typo and not to the block as a whole.
+    let canonical = canonical_repo_config();
+    assert!(
+        validate_config(&canonical).status.success(),
+        "baseline canonical config must validate before the typo is injected"
+    );
+    let typod = canonical.replacen("    vendored:", "    vendoredd:", 1);
+    assert_ne!(
+        typod, canonical,
+        "the typo injection must actually change the config"
+    );
+    let out = validate_config(&typod);
+    assert!(
+        !out.status.success(),
+        "deny_unknown_fields must reject a typo'd key in the vendored block; stdout={}",
+        String::from_utf8_lossy(&out.stdout)
     );
 }
 

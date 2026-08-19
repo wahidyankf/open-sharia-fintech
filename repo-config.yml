@@ -22,6 +22,8 @@ harness:
   #   skills-dir  — directory of skill files
   #   agent-name  — generated default-agent name (where the harness has one)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
+  #   skills-mirrors — source skills-dir that skills-dir must mirror (generated tier)
+  #   vendored    — directories inside the mirrored trees the emitter must never touch
   #   config      — config file path
   #   instruction — instruction surfaces this harness reads (word budget, per governance-word-budget:)
   #
@@ -39,6 +41,20 @@ harness:
     mirrors: .claude/agents
     config: .codex/config.toml
     skills-dir: .agents/skills
+    skills-mirrors: .claude/skills
+    # Third-party plugin payload committed to the repository. None has a
+    # .claude/skills/ counterpart, so the mirror emitter would have nothing to
+    # regenerate them from — it must leave every one byte-identical (DD-7).
+    # Origin below is each skill's own declared trigger, not an inference.
+    vendored:
+      - .agents/skills/cavecrew # cavecrew plugin — investigator/builder/reviewer subagent presets
+      - .agents/skills/caveman # caveman plugin — /caveman mode toggle
+      - .agents/skills/caveman-commit # caveman plugin — /caveman-commit
+      - .agents/skills/caveman-compress # caveman plugin — /caveman:compress, the full payload
+      - .agents/skills/caveman-help # caveman plugin — /caveman-help
+      - .agents/skills/caveman-review # caveman plugin — /caveman-review
+      - .agents/skills/caveman-stats # caveman plugin — /caveman-stats, /caveman-mode-tracker
+      - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
 
@@ -1045,6 +1061,7 @@ gates:
           - .claude/
           - .opencode/
           - .codex/
+          - .agents/
           - .github/
           - AGENTS.md
           - CLAUDE.md
@@ -1064,17 +1081,6 @@ gates:
   # (plans/, docs/, specs/) and a local, gitignored Flutter SDK version-manager cache
   # (.fvm/, .fvm-cache/) that only exists on disk for developers who run `fvm` locally
   # and is entirely absent from CI.
-  #
-  # The two `.opencode/skills/` and `.opencode/commands/` tree-level entries are a
-  # different, narrower class (FR-1.16, prd.md FR-1 table): unlike `.fvm/`, both are
-  # git-tracked and present in every clone and every CI run — they are excluded not
-  # because they're absent, but because the whole tree was added wholesale by commit
-  # 4239f3d79 ("Nx-generated AI agent configs") with no `.claude/` source of truth this
-  # repo's governance system produces or can regenerate. Tree-level prefixes (not a
-  # per-skill/per-command enumeration) so a future Nx regeneration adding another
-  # skill or command directory stays covered without an edit here. This is not a
-  # per-file waiver on an in-scope surface (FR-1.5 still forbids that) — every
-  # hand-authored `.claude/` source and its generated mirror stays fully gated.
   - id: governance-word-budget
     type: check
     command: governance word-budget validate
@@ -1087,8 +1093,6 @@ gates:
         - specs/
         - .fvm/
         - .fvm-cache/
-        - .opencode/skills/
-        - .opencode/commands/
     surfaces:
       pre-push: &word-budget-triggers
         scope: path-gated

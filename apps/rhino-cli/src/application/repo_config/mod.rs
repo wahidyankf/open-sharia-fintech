@@ -75,6 +75,22 @@ pub struct HarnessEntry {
     /// Source agent-dir this entry must mirror (generated tier).
     #[serde(default)]
     pub mirrors: Option<String>,
+    /// Source skills-dir that `skills-dir` must mirror (generated tier).
+    ///
+    /// Declared rather than inferred: the emitter reads its input tree from the
+    /// registry, so a harness whose skills live somewhere other than
+    /// `.claude/skills` is a config change, not a source edit (DD-2).
+    #[serde(rename = "skills-mirrors", default)]
+    pub skills_mirrors: Option<String>,
+    /// Directories inside this entry's mirrored trees that the emitter must never
+    /// write, delete, or regenerate.
+    ///
+    /// These are third-party plugin payloads committed to the repository with no
+    /// counterpart in the source tree. Ownership is DECLARED here rather than
+    /// inferred from "has no counterpart", because an inference would silently
+    /// delete any genuinely stale mirror directory it could not explain (DD-7).
+    #[serde(default)]
+    pub vendored: Vec<String>,
     /// Config file path (source-config tier).
     #[serde(default)]
     pub config: Option<String>,

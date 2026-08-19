@@ -51,6 +51,10 @@ name = "codex_binding"
 harness = false
 
 [[test]]
+name = "skills_mirror"
+harness = false
+
+[[test]]
 name = "governance"
 harness = false
 

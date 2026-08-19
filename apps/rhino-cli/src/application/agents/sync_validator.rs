@@ -12,6 +12,7 @@ use super::converter::{
     OPENCODE_AGENT_DIR, convert_model, convert_permission, is_mirrorable_agent_filename,
 };
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
+use super::skills_mirror::audit_skills_mirrors;
 use super::types::{ValidationCheck, ValidationResult};
 
 /// Run all sync-parity checks between `.claude/agents/` and `.opencode/agents/`.
@@ -28,9 +29,41 @@ pub fn validate_sync(repo_root: &Path) -> ValidationResult {
     }
 
     result.tally(validate_no_synced_skills(repo_root));
+    result.tally(validate_skills_mirror(repo_root));
 
     result.duration = start.elapsed();
     result
+}
+
+/// Validates that every registry-declared skills mirror agrees with its
+/// canonical source tree.
+///
+/// Deliberately reuses the emitter's own diff rather than re-deriving what the
+/// mirror should hold: a second reader would drift from the emitter the moment
+/// either side changed, and the drift would surface as a false pass.
+fn validate_skills_mirror(repo_root: &Path) -> ValidationCheck {
+    let check_name = "Skills Mirror: .agents/skills".to_string();
+    match audit_skills_mirrors(repo_root) {
+        Err(e) => ValidationCheck::failed_msg(check_name, e),
+        Ok(drifts) if drifts.is_empty() => {
+            ValidationCheck::passed(check_name, "skills mirror matches its source tree")
+        }
+        Ok(drifts) => {
+            let detail = drifts
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<_>>()
+                .join("; ");
+            ValidationCheck::failed(
+                check_name,
+                "mirror byte-equal to its canonical source tree",
+                detail.clone(),
+                format!(
+                    "skills mirror drifted ({detail}); run `rhino-cli harness bindings generate`"
+                ),
+            )
+        }
+    }
 }
 
 /// Check that the legacy singular `.opencode/agent` path does not exist.

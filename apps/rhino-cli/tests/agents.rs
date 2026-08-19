@@ -41,6 +41,14 @@ use tempfile::TempDir;
 /// shared `gherkin/harness/` directory splits cleanly between them.
 const CODEX_BINDING_TAG: &str = "codex-binding";
 
+/// Feature-level tags owned by `tests/skills_mirror.rs`, excluded here for the
+/// same reason as [`CODEX_BINDING_TAG`]: one step-definition set per runner.
+const SKILLS_MIRROR_TAGS: &[&str] = &[
+    "agents-skills-mirror",
+    "vendored-skill-preservation",
+    "opencode-skills-removal",
+];
+
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace
 /// so the binary's `findGitRoot` resolves inside the fixture.
 #[derive(cucumber::World)]
@@ -1446,7 +1454,10 @@ async fn main() {
         // runner; without the split each runner meets the other's undefined
         // steps and `fail_on_skipped` turns those into failures.
         .filter_run_and_exit(feature_dir(), |feature, _rule, _scenario| {
-            !feature.tags.iter().any(|t| t == CODEX_BINDING_TAG)
+            !feature
+                .tags
+                .iter()
+                .any(|t| t == CODEX_BINDING_TAG || SKILLS_MIRROR_TAGS.contains(&t.as_str()))
         })
         .await;
 }

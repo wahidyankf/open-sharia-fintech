@@ -14,6 +14,7 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::agents::codex::emit_codex_bindings;
+use crate::application::agents::skills_mirror::emit_skills_mirrors;
 use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::agents::reporter::{format_sync_json, format_sync_markdown, format_sync_text};
@@ -107,6 +108,18 @@ fn run_codex_emit(args: &GenerateBindingsArgs, repo_root: &Path) -> std::result:
             emitted.result.failed_files.len(),
             emitted.result.failed_files.join(", ")
         ));
+    }
+
+    // The skills mirror is registry-driven: it runs for whichever harness
+    // entries declare both `skills-dir` and `skills-mirrors`, so it needs no
+    // flag of its own and no harness name spelled here.
+    let mirror = emit_skills_mirrors(repo_root, args.dry_run)
+        .map_err(|e| anyhow!("skills mirror failed: {e}"))?;
+    if !args.quiet {
+        println!(
+            "codex: {} skill file(s) mirrored, {} stale removed",
+            mirror.copied, mirror.removed
+        );
     }
     Ok(())
 }

@@ -156,6 +156,8 @@ fn validate_codex_config_region(repo_root: &Path) -> ValidationCheck {
 /// Validates all 3 supported harnesses:
 /// - Static binding files: byte-for-byte parity with `expected_bindings(repo_root)`
 /// - `OpenCode` mirror: `.opencode/agents/` mirrors `.claude/agents/` (via `validate_sync`)
+/// - Skills mirror: `.agents/skills/` mirrors `.claude/skills/` (also via `validate_sync`, so
+///   `harness sync validate` and `harness bindings validate` report it identically)
 /// - Catalog coverage: every present binding dir referenced in the platform-bindings doc
 /// - Codex agent files: every file under `.codex/agents/` uses the official `.toml` extension
 /// - Color/tier translation maps: every `color:` and `model:` value in `.claude/agents/*.md`

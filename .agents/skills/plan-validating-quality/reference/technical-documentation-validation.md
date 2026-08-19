@@ -1,0 +1,26 @@
+# Technical Documentation Validation (Scope 3)
+
+Architecture documented; design decisions justified; implementation approach clear; dependencies
+listed; testing strategy defined.
+
+**File-impact tree (HARD RULE)**: `tech-docs.md` has a `## File-Impact Analysis` whose primary view
+is a root-relative fenced `text` tree; each planned path or bounded pattern carries `[E]`, `[N]`,
+`[D]`, or `[G]` — the tree, not prose bullets, is the scan-first scope. Flag a missing tree, missing
+action markers, an unbounded/vague target, or prose as the primary view as **HIGH**. An optional
+`### More Detail` section must immediately follow the tree and only explain mechanics/ordering/
+discovery/archival follow-up — it cannot replace the tree or contain delivery checkboxes. See
+[Plans Organization Convention §File-Impact Analysis Format](../../../../repo-governance/conventions/structure/plans/file-impact-analysis-format.md#file-impact-analysis-format-hard-rule).
+
+### Diagram Format Check
+
+Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`):
+
+- **MEDIUM**: ASCII art depicting component interactions, data flows, sequences, state machines, or
+  decision branches — a Mermaid diagram would fit better. Simple directory-tree listings are exempt.
+- **MEDIUM (under-diagrammed plan)**: a non-trivial plan covers a diagram-warranting concern
+  (component interactions, agent/system sequence, state transitions, decision branches,
+  upstream/downstream dependency position, phase/delivery flow) with no diagram for it. Trivial
+  plans (single-file config bumps, renames, doc fixes, no-behavior-change dependency bumps) are
+  exempt. Each undiagrammed concern is a separate finding.
+- Reference: [Plans Organization Convention §Diagrams in Plans](../../../../repo-governance/conventions/structure/plans.md) and
+  [Diagrams Convention](../../../../repo-governance/conventions/formatting/diagrams.md).
