@@ -1258,6 +1258,21 @@ is the worst outcome, so each states the class plainly.
       disagreeing with its report body
       — acceptance: the brief states which findings this plan closed and which remain, and its
       `plans/ideas/README.md` one-liner is updated to match.
+- [ ] [AI] Enumerate **every** remaining `plans/ideas/**` brief whose premise names a harness this
+      plan drops and narrow each one the same way — `origin/main` adds ideas continuously, so fix the
+      class, not only the briefs this plan happens to name
+      — command: `git grep -ilE "\\.cursor/|\\.amazonq/|\\.pi/|\\.kiro/|Amazon Q|Antigravity|Windsurf|Junie|Aider" -- plans/ideas | tee local-tmp/harness-ideas-sweep.txt`
+      — acceptance: `local-tmp/harness-ideas-sweep.txt` reports a non-zero line count (a zero count
+      means the pattern or pathspec is wrong, not that the sweep is done); every path it lists appears
+      exactly once in `learnings.md` under `## Ideas-tree verdicts` with verdict `NARROWED`,
+      `FALSE-POSITIVE`, or `HISTORICAL-KEEP`; every `NARROWED` brief names which of its findings this
+      plan made moot and which survive; and each narrowed brief's `plans/ideas/README.md` one-liner
+      matches its new scope. At the time this plan was written the sweep set included
+      `q2-not-urgent-important/harness-level-env-file-enforcement-gap.md` (premise names Cursor and
+      Amazon Q Developer alongside Codex; only the Codex half survives the purge),
+      `q2-not-urgent-important/extend-byte-identity-to-claude-hooks.md`, and
+      `q2-not-urgent-important/governance-command-name-reconciliation.md` — treat that list as a floor,
+      never as the whole set.
 
 - [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-conformance.feature`
       carrying the US-7 `@opencode-conformance` scenarios from `prd.md`; index it in
@@ -1277,6 +1292,9 @@ is the worst outcome, so each states the class plainly.
 - [ ] [AI] `test -f plans/ideas/q2-not-urgent-important/vendor-neutral-canonical-source.md` — exits 0.
 - [ ] [AI] `test -d plans/backlog/opencode-v2-migration` — exits non-zero.
 - [ ] [AI] `test -d plans/backlog/vendor-neutral-canonical-source` — exits non-zero.
+- [ ] [AI] `wc -l < local-tmp/harness-ideas-sweep.txt` reports a non-zero count, and every path it
+      lists has exactly one verdict row under `## Ideas-tree verdicts` in `learnings.md` — proving the
+      ideas-tree sweep ran rather than silently matching nothing.
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       — exits 0.
 - [ ] [AI] `npm run validate:sync` — exits 0.
