@@ -18,6 +18,12 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
+use super::codex::{
+    CODEX_AGENT_DIR, CODEX_AGENT_EXTENSION, CODEX_CONFIG_FILE, GENERATED_REGION_END,
+    GENERATED_REGION_START, is_rejected_codex_agent_filename, plan_codex_agents,
+    render_codex_agent_bytes, render_generated_region,
+};
+use super::converter::discover_agent_sources;
 use super::sync_validator::validate_sync;
 use super::types::{ValidationCheck, ValidationResult};
 
@@ -44,20 +50,107 @@ pub struct BindingFile {
 }
 
 /// The canonical (path, content) pairs the parity guard compares the working
-/// tree against.
+/// tree against: one `.codex/agents/<name>.toml` per `.claude/agents/` agent,
+/// rendered from the same source the emitter uses.
 ///
-/// Currently empty: the Amazon Q bridge this used to describe was deleted with
-/// its harness, and the Codex emitter that replaces it lands in Phase 5 of the
-/// `update-harness-support` plan, which is what fills this vector. Until then
-/// the byte-parity guard has nothing static to compare, and the mirror trees are
-/// covered by the sync validators instead.
+/// `.codex/config.toml` is deliberately absent — only its delimited generated
+/// region is emitter-owned, so whole-file byte parity would fail on the
+/// hand-maintained tables around it. That region is checked separately by
+/// `validate_codex_config_region`.
+///
+/// Returns an empty vector when `.claude/agents/` does not exist, which is the
+/// case inside fixture repositories that only exercise other checks.
 ///
 /// # Errors
 ///
-/// Returns an error when the repository configuration cannot be read. Reserved
-/// for the Phase 5 implementation; the present body cannot fail.
-pub fn expected_bindings(_repo_root: &Path) -> Result<Vec<BindingFile>, String> {
-    Ok(Vec::new())
+/// Returns an error when `.claude/agents/` cannot be read, when two agents
+/// resolve to the same `name`, or when a source agent cannot be rendered.
+pub fn expected_bindings(repo_root: &Path) -> Result<Vec<BindingFile>, String> {
+    let claude_dir = repo_root.join(".claude").join("agents");
+    if !claude_dir.is_dir() {
+        return Ok(Vec::new());
+    }
+    let mirror_dir = repo_root.join(CODEX_AGENT_DIR);
+
+    let sources = discover_agent_sources(&claude_dir)?;
+    let mut bindings = Vec::with_capacity(sources.len());
+    for (input, name) in sources {
+        let content = render_codex_agent_bytes(&input, &name, &claude_dir, &mirror_dir)?;
+        bindings.push(BindingFile {
+            rel_path: format!("{CODEX_AGENT_DIR}/{name}.{CODEX_AGENT_EXTENSION}"),
+            content: String::from_utf8_lossy(&content).into_owned(),
+        });
+    }
+    Ok(bindings)
+}
+
+/// Check that the delimited generated region of `.codex/config.toml` matches
+/// what the emitter would write right now.
+///
+/// Scoped to the region alone: everything outside the markers is
+/// hand-maintained and deliberately unguarded here.
+fn validate_codex_config_region(repo_root: &Path) -> ValidationCheck {
+    let check_name = format!("Codex Config Region: {CODEX_CONFIG_FILE}");
+    let claude_dir = repo_root.join(".claude").join("agents");
+    let config_path = join_rel(repo_root, CODEX_CONFIG_FILE);
+
+    if !claude_dir.is_dir() || !config_path.is_file() {
+        return ValidationCheck::passed(
+            check_name,
+            format!("{CODEX_CONFIG_FILE} absent; nothing to check"),
+        );
+    }
+
+    let content = match fs::read_to_string(&config_path) {
+        Ok(c) => c,
+        Err(e) => {
+            return ValidationCheck::failed_msg(
+                check_name,
+                format!("failed to read {CODEX_CONFIG_FILE}: {e}"),
+            );
+        }
+    };
+
+    let agents = match plan_codex_agents(repo_root) {
+        Ok(a) => a,
+        Err(e) => return ValidationCheck::failed_msg(check_name, e),
+    };
+    let expected = render_generated_region(&agents);
+
+    let actual = match (
+        content.find(GENERATED_REGION_START),
+        content.find(GENERATED_REGION_END),
+    ) {
+        (Some(start), Some(end)) if end >= start => {
+            &content[start..end + GENERATED_REGION_END.len()]
+        }
+        _ => {
+            return ValidationCheck::failed(
+                check_name,
+                "a delimited generated agents region",
+                "no generated region found",
+                format!(
+                    "{CODEX_CONFIG_FILE} has no generated region; run `rhino-cli harness bindings generate`"
+                ),
+            );
+        }
+    };
+
+    if actual == expected {
+        ValidationCheck::passed(
+            check_name,
+            format!("{CODEX_CONFIG_FILE} generated region matches"),
+        )
+    } else {
+        ValidationCheck::failed(
+            check_name,
+            "generated region byte-equal to emitted content",
+            "generated region drifted",
+            format!(
+                "{CODEX_CONFIG_FILE} generated region drifted; run `rhino-cli harness bindings generate`"
+            ),
+        )
+    }
 }
 
 /// Validates all 3 supported harnesses:
@@ -97,6 +190,7 @@ pub fn validate_bindings(repo_root: &Path) -> ValidationResult {
     }
 
     result.tally(validate_codex_agents_dir(repo_root));
+    result.tally(validate_codex_config_region(repo_root));
 
     // Color/tier translation-map coverage (absorbed from validate-cross-vendor-parity.sh §5a/5b)
     for check in validate_color_tier_maps(repo_root) {
@@ -334,25 +428,6 @@ fn validate_catalog_coverage(repo_root: &Path, dir: &str) -> ValidationCheck {
     }
 }
 
-/// Relative path (from repo root) of the Codex per-agent directory.
-pub const CODEX_AGENT_DIR: &str = ".codex/agents";
-
-/// The only file extension Codex CLI recognises for a standalone agent file
-/// under [`CODEX_AGENT_DIR`].
-///
-/// Standalone `<name>.toml` files there **are** an official Codex CLI
-/// convention, alongside `[agents.<name>]` tables in `.codex/config.toml`.
-/// `<name>.md` never was: Codex reads instruction prose from `AGENTS.md`, not
-/// from a per-agent Markdown file.
-pub const CODEX_AGENT_EXTENSION: &str = "toml";
-
-/// Returns true when `file_name` is a file Codex CLI would reject in
-/// [`CODEX_AGENT_DIR`] — anything that is not a `.toml` agent file.
-#[must_use]
-pub fn is_rejected_codex_agent_filename(file_name: &str) -> bool {
-    !file_name.ends_with(&format!(".{CODEX_AGENT_EXTENSION}"))
-}
-
 /// Check that every file under `.codex/agents/` uses the officially-recognised
 /// `.toml` extension.
 ///
@@ -587,13 +662,6 @@ mod tests {
 
         let result = validate_bindings(root);
         assert_eq!(result.failed_checks, 0, "result: {result:#?}");
-    }
-
-    #[test]
-    fn rejected_codex_agent_filename_discriminates_on_extension() {
-        assert!(!is_rejected_codex_agent_filename("probe-maker.toml"));
-        assert!(is_rejected_codex_agent_filename("probe-maker.md"));
-        assert!(is_rejected_codex_agent_filename("README"));
     }
 
     #[test]

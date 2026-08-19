@@ -16,7 +16,7 @@ use std::sync::OnceLock;
 use regex::Regex;
 use serde_norway::Value;
 
-use super::field_policy::{FieldAction, FieldPolicy};
+use super::field_policy::{FieldAction, FieldPolicy, walk_frontmatter_fields};
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
 
 /// Relative path of the `OpenCode` agent directory (plural `agents/`).
@@ -275,35 +275,25 @@ pub fn convert_agent(
     };
 
     let agent_name = agent_name_from_path(input_path);
-    let mut warnings: Vec<ConversionWarning> = Vec::new();
     let mut out = OpenCodeAgent::default();
 
-    let policy_map = claude_agent_field_policy();
-
-    for (k, v) in mapping {
-        let Some(s) = k.as_str() else { continue };
-        let key = s.to_string();
-        let Some(policy) = policy_map.get(key.as_str()) else {
-            warnings.push(ConversionWarning {
-                agent_name: agent_name.clone(),
-                field: key.clone(),
-                reason: "unknown claude code field".to_string(),
-            });
-            continue;
-        };
-        match policy.action {
-            FieldAction::Drop => {}
-            FieldAction::DropWarn => {
-                warnings.push(ConversionWarning {
-                    agent_name: agent_name.clone(),
-                    field: key.clone(),
-                    reason: policy.reason.to_string(),
-                });
-            }
-            FieldAction::Preserve => apply_preserve(&mut out, &key, &v),
-            FieldAction::Translate => apply_translate(&mut out, &key, &v),
-        }
-    }
+    let dropped = walk_frontmatter_fields(
+        &mapping,
+        claude_agent_field_policy(),
+        |action, key, v| match action {
+            FieldAction::Preserve => apply_preserve(&mut out, key, v),
+            FieldAction::Translate => apply_translate(&mut out, key, v),
+            FieldAction::Drop | FieldAction::DropWarn => {}
+        },
+    );
+    let warnings: Vec<ConversionWarning> = dropped
+        .into_iter()
+        .map(|d| ConversionWarning {
+            agent_name: agent_name.clone(),
+            field: d.field,
+            reason: d.reason,
+        })
+        .collect();
 
     let new_frontmatter = encode_opencode_agent(&out);
     let mirror_dir = output_path.parent().unwrap_or(output_path);

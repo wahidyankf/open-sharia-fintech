@@ -8,6 +8,7 @@ Features in this domain:
 - `agents-detect-duplication.feature` — detect duplicate agent definitions
 - `agents-sync.feature` — sync agent definitions across platform bindings
 - `agents-validate-claude.feature` — validate Claude Code agent files
+- `codex-binding.feature` — generate the Codex agent binding: standalone TOML files plus the delimited `.codex/config.toml` region
 - `governance-word-budget-agents-md.feature` — AGENTS.md word-budget audit (`governance word-budget validate`)
 - `governance-word-budget-pre-push.feature` — word-budget pre-push gate (`governance word-budget validate`)
 - `governance-word-budget-rule.feature` — word-budget governance rule (`governance word-budget validate`)

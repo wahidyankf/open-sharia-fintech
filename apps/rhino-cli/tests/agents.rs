@@ -36,6 +36,11 @@ use rhino_cli::application::agents::bindings::{KNOWN_BINDING_DIRS, expected_bind
 use serde_json::Value;
 use tempfile::TempDir;
 
+/// Feature-level tag marking the Codex binding scenarios, which
+/// `tests/codex_binding.rs` owns. Declared identically in both runners so the
+/// shared `gherkin/harness/` directory splits cleanly between them.
+const CODEX_BINDING_TAG: &str = "codex-binding";
+
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace
 /// so the binary's `findGitRoot` resolves inside the fixture.
 #[derive(cucumber::World)]
@@ -1435,7 +1440,14 @@ fn then_exit_usage_error(w: &mut AgentsWorld) {
 async fn main() {
     AgentsWorld::cucumber()
         .fail_on_skipped()
-        .run_and_exit(feature_dir())
+        // The Codex binding scenarios live in the same `gherkin/harness/`
+        // directory but are owned by `tests/codex_binding.rs`. Skipping them
+        // here (and taking only them there) keeps one step-definition set per
+        // runner; without the split each runner meets the other's undefined
+        // steps and `fail_on_skipped` turns those into failures.
+        .filter_run_and_exit(feature_dir(), |feature, _rule, _scenario| {
+            !feature.tags.iter().any(|t| t == CODEX_BINDING_TAG)
+        })
         .await;
 }
 

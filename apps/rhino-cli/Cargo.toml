@@ -47,6 +47,10 @@ name = "agents"
 harness = false
 
 [[test]]
+name = "codex_binding"
+harness = false
+
+[[test]]
 name = "governance"
 harness = false
 

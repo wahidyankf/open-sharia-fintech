@@ -1,8 +1,9 @@
 //! `harness bindings generate` — regenerates every generated-tier harness binding.
 //!
 //! Walks the `harness:` registry in `repo-config.yml` and runs each
-//! generated-tier harness's emitter. Today that is the `OpenCode` sync
-//! (`.claude/` → `.opencode/`); Phase 5 adds the Codex emitter beside it.
+//! generated-tier harness's emitter: the `OpenCode` sync (`.claude/agents/` →
+//! `.opencode/agents/`) and the Codex emitter (`.claude/agents/` →
+//! `.codex/agents/`).
 //! Pass `--harness <NAME>` to regenerate a single binding; the accepted names
 //! are exactly the registry entries, so adding a harness is a config change
 //! rather than a source edit (DD-2).
@@ -12,6 +13,7 @@ use std::path::Path;
 use anyhow::{Error, anyhow};
 use clap::Args;
 
+use crate::application::agents::codex::emit_codex_bindings;
 use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::agents::reporter::{format_sync_json, format_sync_markdown, format_sync_text};
@@ -20,6 +22,9 @@ use crate::internal::git;
 
 /// Registry name the `OpenCode` sync step answers to.
 const OPENCODE_HARNESS: &str = "opencode";
+
+/// Registry name the Codex emitter answers to.
+const CODEX_HARNESS: &str = "codex";
 
 /// CLI arguments for `harness bindings generate`.
 #[derive(Args, Debug)]
@@ -80,7 +85,29 @@ pub fn run(
     if selected.is_none_or(|name| name == OPENCODE_HARNESS) {
         run_opencode_sync(args, &repo_root, output_format)?;
     }
+    if selected.is_none_or(|name| name == CODEX_HARNESS) {
+        run_codex_emit(args, &repo_root)?;
+    }
 
+    Ok(())
+}
+
+/// Run the Codex emit sub-step: one `.codex/agents/<name>.toml` per Claude
+/// agent, plus the generated region of `.codex/config.toml`.
+fn run_codex_emit(args: &GenerateBindingsArgs, repo_root: &Path) -> std::result::Result<(), Error> {
+    let emitted = emit_codex_bindings(repo_root, args.dry_run)
+        .map_err(|e| anyhow!("codex emit failed: {e}"))?;
+
+    if !args.quiet {
+        println!("codex: {} agent(s) emitted", emitted.result.converted);
+    }
+    if !emitted.result.failed_files.is_empty() {
+        return Err(anyhow!(
+            "codex emit completed with {} failures: {}",
+            emitted.result.failed_files.len(),
+            emitted.result.failed_files.join(", ")
+        ));
+    }
     Ok(())
 }
 
@@ -152,6 +179,12 @@ mod tests {
     fn harness_opencode_runs_without_panic() {
         let _ = run(&args(Some(OPENCODE_HARNESS)), OutputFormat::Text);
     }
+
+    // No `run(Some(CODEX_HARNESS))` smoke test here: the existing `run()`-calling
+    // tests resolve the git root from the process CWD, so they are only as
+    // isolated as the whole test binary's CWD. The Codex emit path is covered by
+    // `application::agents::codex`'s unit tests and by `tests/codex_binding.rs`,
+    // neither of which depends on process-global state.
 
     #[test]
     fn verbose_flag_set_correctly() {
