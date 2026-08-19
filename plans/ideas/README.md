@@ -18,6 +18,7 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
+- [audit-e2e-reuse-existing-server-config](./q1-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`, and can run a suite green against a build that is not the code under test.
 - [markdownlint-ci-gate-lints-zero-files](./q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md) — the `markdownlint` gate declares `all-file-type` with no glob, so CI runs it with empty argv, lints `0 file(s)`, and has always passed vacuously.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [plan-checker-forward-reference-detection](./q1-urgent-important/plan-checker-forward-reference-detection.md) — a step can name an artifact only a later phase creates; two instances hard-errored in one plan after five clean checker passes.
@@ -29,7 +30,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 No active plan waits on these and no live defect is running, but each carries a real stake. This is the plan-from-here quadrant.
 
 - [actions-cache-eviction-policy](./q2-not-urgent-important/actions-cache-eviction-policy.md) — the Actions cache sits at 99.29 % of its 10 GiB ceiling because nothing ever deletes an entry; only GitHub's LRU relieves pressure.
-- [audit-e2e-reuse-existing-server-config](./q2-not-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`.
 - [ayokoding-content-checker-coverage](./q2-not-urgent-important/ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
 - [ayokoding-course-root-overview-parity](./q2-not-urgent-important/ayokoding-course-root-overview-parity.md) — 23 of 181 AyoKoding courses lack a root `overview.md`; two layouts coexist and cross-course links already guessed wrong once.
 - [ayokoding-database-internals-ruff-config](./q2-not-urgent-important/ayokoding-database-internals-ruff-config.md) — 22 sibling courses carry a scoped `ruff.toml` and this one does not, though `ruff format --check` currently passes clean.
@@ -43,20 +43,24 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [class-sweep-completeness](./q2-not-urgent-important/class-sweep-completeness.md) — class sweeps miss producer surfaces, root instruction files, and the block around a cited substring.
 - [coverage-artifact-relative-paths](./q2-not-urgent-important/coverage-artifact-relative-paths.md) — generated coverage files bake in the last runner's absolute path; most instances are gitignored, but a 2026-08-18 re-check found one finding overstated.
 - [cross-repo-governance-link-parity](./q2-not-urgent-important/cross-repo-governance-link-parity.md) — governance docs copied to a sibling repo carry anchors that break there; check link parity before the copy, not at the destination's push gate.
-- [cross-repo-port-registry](./q2-not-urgent-important/cross-repo-port-registry.md) — port allocation across the four sibling repos lives in four separate prose tables, so a collision is caught only when two apps fail to bind at once.
 - [deploy-targets-registry](./q2-not-urgent-important/deploy-targets-registry.md) — declare `prod-*`/`stag-*` deploy branches in `repo-config.yml` instead of deriving their existence from `git branch -r`.
 - [doc-command-existence-validation](./q2-not-urgent-important/doc-command-existence-validation.md) — a rhino-cli validator catching doc-cited commands that don't exist.
 - [doctor-fix-polyglot-restore](./q2-not-urgent-important/doctor-fix-polyglot-restore.md) — `doctor --fix` verifies toolchain presence but not per-project restore state (NuGet, npm-workspace hoisting), leaving idle checkouts pre-push-red until manually diagnosed.
+- [fsharp-env-loader-covers-markers-are-inert](./q2-not-urgent-important/fsharp-env-loader-covers-markers-are-inert.md) — 11 `@covers` markers with no step harness and no coverage target; adding the target alone fails, because the validator matches step text.
+- [extend-byte-identity-to-claude-hooks](./q2-not-urgent-important/extend-byte-identity-to-claude-hooks.md) — `.claude/hooks/block-env-file-access.sh` drifted between the parity repos with nothing to catch it but a plan's manual hash check.
 - [gate-exclusions-need-a-named-owner](./q2-not-urgent-important/gate-exclusions-need-a-named-owner.md) — a gate's `exclude:` list records that a tree is skipped but never who checks it instead, so an exclusion outlives the tool that justified it.
 - [governance-command-name-reconciliation](./q2-not-urgent-important/governance-command-name-reconciliation.md) — governance tables cite Nx targets and npm scripts that do not exist, and three `sync:*` scripts invoke a removed `rhino-cli` subcommand.
 - [governance-path-ownership-registry](./q2-not-urgent-important/governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
 - [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
 - [harness-converter-preserve-agent-mode](./q2-not-urgent-important/harness-converter-preserve-agent-mode.md) — the agent converter emits a fixed field set, so OpenCode-only frontmatter like `mode: subagent` is dropped once an agent gains a `.claude/` source.
+- [harness-level-env-file-enforcement-gap](./q2-not-urgent-important/harness-level-env-file-enforcement-gap.md) — Cursor, Amazon Q Developer, and Codex have no equivalent of the Claude Code env-file hook, so three of four supported harnesses have no technical block.
 - [iam-service-module](./q2-not-urgent-important/iam-service-module.md) — a shared IAM (authn/authz) capability; early placeholder, mostly open questions.
 - [merge-queue-adoption](./q2-not-urgent-important/merge-queue-adoption.md) — merge-precondition (c) cannot hold under concurrent merges, but GitHub's native queue is gated on organization ownership both parity repos lack.
 - [mermaid-state-label-render-clipping-warn](./q2-not-urgent-important/mermaid-state-label-render-clipping-warn.md) — a WARN rule for `stateDiagram-v2` edge labels that clip in GitHub's renderer.
 - [nx-affected-cross-worktree-contamination](./q2-not-urgent-important/nx-affected-cross-worktree-contamination.md) — `nx affected` includes uncommitted working-directory changes, so a concurrent plan's stray WIP blocked an unrelated docs-only push.
 - [ose-private-opencode-ci-monitor-orphan](./q2-not-urgent-important/ose-private-opencode-ci-monitor-orphan.md) — an unsourced `.opencode/agents/ci-monitor-subagent.md` mirror survives only via a hardcoded filename skip both parity repos inherit.
+- [port-registry-lacks-a-validator](./q2-not-urgent-important/port-registry-lacks-a-validator.md) — the cross-repo port registry now exists but is prose no tool reads, so a stale or colliding row still surfaces only when a service fails to bind.
+- [propagate-env-tier-to-ose-primer](./q2-not-urgent-important/propagate-env-tier-to-ose-primer.md) — port the `APP_ENV` tiered-env-file convention to `ose-primer`, which has received none of it.
 - [plan-archival-in-pr-multi-repo-gap](./q2-not-urgent-important/plan-archival-in-pr-multi-repo-gap.md) — `plan-execution.md` §8's Archival-in-PR rule has no provision for a plan whose delivery spans multiple repositories.
 - [plan-quality-gate-convergence](./q2-not-urgent-important/plan-quality-gate-convergence.md) — make the plan-quality-gate loop converge in a bounded number of iterations without relaxing checks.
 - [post-cutoff-dependency-migrations](./q2-not-urgent-important/post-cutoff-dependency-migrations.md) — track and promote the deferred dependency bumps as their soak windows clear.
@@ -77,7 +81,6 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [shared-cargo-target-lock-contention](./q2-not-urgent-important/shared-cargo-target-lock-contention.md) — one shared cargo target directory reclaims disk but serializes concurrent worktree builds; a 65 s pure-lock-wait stall was measured.
 - [sibling-main-ci-never-runs-on-merge](./q2-not-urgent-important/sibling-main-ci-never-runs-on-merge.md) — `main-ci` is schedule-triggered in `ose-private`, so a merge to its `main` gets no post-merge CI signal.
 - [source-code-credential-scanning](./q2-not-urgent-important/source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
-- [specs-checker-phantom-nx-targets](./q2-not-urgent-important/specs-checker-phantom-nx-targets.md) — `specs-checker.md`'s Drift Detection section names Nx targets that don't exist.
 - [stale-checkout-ref-advance-drift](./q2-not-urgent-important/stale-checkout-ref-advance-drift.md) — a ref-advancing `fetch` moved a checked-out branch 9 commits without its index, and git reported the drift as 265 staged files two agent sessions deferred to.
 - [standardize-cis](./q2-not-urgent-important/standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
 - [syllabus-conformance-validator](./q2-not-urgent-important/syllabus-conformance-validator.md) — a deterministic `rhino-cli md syllabus validate` for course-file section conformance, deferred until the format settles.
@@ -90,6 +93,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 Something active references these, but they carry none of the importance signals. Delegate or timebox.
 
 - [beavernest-database-config-test-flake](./q3-urgent-not-important/beavernest-database-config-test-flake.md) — seven cases share one bare `Assert.True`, so three `.NET quality gate` flakes have produced no evidence about which case is nondeterministic.
+- [next-image-builds-cannot-resolve-ts-env-loader](./q3-urgent-not-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build on `main`; no CI job builds them, so nothing has ever reported it.
 - [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
 
 ### Q4 — Neither Urgent nor Important
@@ -105,6 +109,7 @@ Parked deliberately. Kept because the need may become real, not because it is re
 - [dependency-library-updates](./q4-not-urgent-not-important/dependency-library-updates.md) — a standing, policy-compliant sweep to advance pinned library dependencies as their soak windows clear.
 - [fsl-standards](./q4-not-urgent-not-important/fsl-standards.md) — clarify the intent behind "FSL standards" and, if warranted, codify a licensing standard around the Functional Source License.
 - [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./q4-not-urgent-not-important/harden-ayokoding-www-fe-e2e-bulk-link-concurrency.md) — two step files check every page link via unbounded `Promise.all`, flaking a required gate 4 runs in 7; bound the concurrency.
+- [next-standalone-output-parity](./q4-not-urgent-not-important/next-standalone-output-parity.md) — two of six Next.js apps omit `output: "standalone"`, so their images run a second resident Node process and ship a full `node_modules`.
 - [vercel-cost-steady-state-verification](./q4-not-urgent-not-important/vercel-cost-steady-state-verification.md) — grade the shipped cost fix against the $30 invoice ceiling once the first clean billing cycle closes on 2026-09-26.
 
 ## What a Two-Pager Is
@@ -173,3 +178,58 @@ Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beav
   and left for that folder's own author to commit, since this run does not stage their files.
 
 > Last groomed: 2026-08-06
+
+### 2026-08-19 — plan-ideas-grooming (`ose-public` + `ose-private`)
+
+Swept 78 two-pagers here and 14 in `ose-private`; 80 survive here and 8 there. The run's repo set is
+the two repositories under active coordination — `ose-primer` and `beaver-nest` carry no sync
+obligation and were not swept.
+
+- **Filed new** (3): `next-image-builds-cannot-resolve-ts-env-loader.md` (Q3),
+  `fsharp-env-loader-covers-markers-are-inert.md` (Q2), `next-standalone-output-parity.md` (Q4) —
+  all three surfaced by the runtime-port-override delivery (PR #230) and deliberately left out of
+  its scope.
+- **Merged** (1): `specs-checker-phantom-nx-targets.md` → `governance-command-name-reconciliation.md`
+  — same underlying defect (a documented command that does not exist), and the absorbed brief's open
+  "isolated or systemic?" question is answered by the survivor.
+- **Renamed** (1): `cross-repo-port-registry.md` → `port-registry-lacks-a-validator.md` — the
+  registry shipped on 2026-08-19, answering the "where does it live" half; the brief was rewritten
+  down to the validator question that remains, and its "four sibling repos" framing corrected to the
+  two-repo parity set.
+- **Relocated in** (3), all rule R3 — generalizable, no secret required, present in both repos:
+  - `extend-byte-identity-to-claude-hooks.md` from `ose-private`
+  - `harness-level-env-file-enforcement-gap.md` from `ose-private`
+  - `propagate-env-tier-to-ose-primer.md` from `ose-private`
+- **Deduplicated in** (3) — cross-repo pairs resolved to this repo under rule R3; the `ose-private`
+  copy is deleted in its own commit after this one lands, and each survivor's unique content was
+  folded in first:
+  `governance-command-name-reconciliation.md`, `harness-converter-preserve-agent-mode.md`,
+  `markdownlint-ci-gate-lints-zero-files.md`.
+- **Reclassified** (1): `audit-e2e-reuse-existing-server-config.md` Q2 → Q1 — its Why now records an
+  already-observed defect and it can run a suite green against a build that is not the code under
+  test, which is a CI-gate stake.
+- **Reshaped** (3): provenance blockquotes added to
+  `plan-checker-forward-reference-detection.md`, `actions-cache-eviction-policy.md`, and
+  `shared-cargo-target-lock-contention.md`, which carried none; dates taken from each file's own body
+  evidence. All 80 files now pass the eight-section and provenance checks.
+- **Residency verdicts**: recorded for every surviving idea. `ose-private-opencode-ci-monitor-orphan.md`
+  was the one genuinely ambiguous case — the orphan file it names exists only in `ose-private` (R2),
+  but the `rhino-cli` hardcoded skip that keeps it alive is byte-identical across both repos, and the
+  fix lands in `rhino-cli`. Resolved as R3, resident here.
+
+**Unresolved follow-ups**:
+
+- Two references to `audit-e2e-reuse-existing-server-config.md`'s old Q2 path sit outside this
+  workflow's `plans/ideas/**` write scope and were left untouched: a real relative link in
+  `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/learnings.md` (harmless to CI — the
+  `md-links` gate excludes `plans/done`), and a bare path in a table cell in
+  `plans/in-progress/repository-onboarding-readme-refresh/artifacts/reader-doc-disposition-ose-public.md`
+  (not a link, so not gate-visible). Both are stale and want fixing by whoever owns those trees.
+- A mechanical re-classification of the whole corpus against the Step 8 rubrics disagreed with the
+  filed quadrant on 28 of 80 files, but contradicted itself across repos on identical text and put
+  every one of the seven existing Q1 briefs elsewhere. The heuristic, not the corpus, is wrong:
+  "names or blocks an active plan" cannot be decided by pattern-matching. Classification was
+  therefore adjudicated by hand for this run's touched files plus every flagged
+  under-classification. A rubric-faithful classifier remains unbuilt.
+
+> Last groomed: 2026-08-19
