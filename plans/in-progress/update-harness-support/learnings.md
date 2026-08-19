@@ -54,7 +54,8 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
 - `ose-public` — [#232](https://github.com/wahidyankf/ose-public/pull/232), opened as a draft after
   the Phase 0 gate. Every later phase pushes to this same PR; a second number appearing means the
   one-PR-per-repository override was violated.
-- `ose-private` — opened during the Cross-Repo Parity Ritual, after Phase 11.
+- `ose-private` — [#56](https://github.com/wahidyankf/ose-private/pull/56), opened during the
+  Cross-Repo Parity Ritual, after Phase 11.
 
 ## Phase 1 notes
 
@@ -269,6 +270,20 @@ compared against values `isDisallowedDirectory` recomputes the same way. The lis
 which element failed, so the log cannot narrow it further — that missing detail is itself the defect
 worth fixing. Routed to Knowledge Capture as a follow-up rather than fixed inline: fixing an
 unrelated app's test inside this plan would violate the "do NOT bundle unrelated fixes" rule.
+
+**Root cause found (2026-08-19), and it is a race, not a flake.** `isDisallowedDirectory` reads
+`Directory.GetCurrentDirectory()` — process-global state — and the test computes its fifth invalid
+case from the same call. `EnvTierLoaderTests` in the _same assembly_ calls
+`Directory.SetCurrentDirectory(tempDir)` in three tests and restores it afterwards. xUnit runs test
+classes in parallel by default, so when the swap lands between the test's read and the validator's
+read, the case-5 input is the old repository path while `repository` is the temp directory: the
+guard sees no containment, `create` returns `Ok`, and `Assert.True` fails. That is exactly the
+observed signature — same binary, two results, passes locally where the interleaving differs.
+
+The fix is to stop the two classes racing (put both in one xUnit collection, or stop mutating
+process-global cwd in the loader tests), not to retry the job. It stays a follow-up for the same
+reason as above; what changes is that the follow-up now carries a diagnosis instead of the word
+"flake".
 
 ## Phase 5 notes
 
