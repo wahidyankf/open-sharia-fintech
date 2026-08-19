@@ -5,11 +5,16 @@ open System.Globalization
 
 type ListenerConfiguration = { Address: string; Port: int }
 
+/// Mirrors FsharpEnvLoader.PortResolver's `presentValue`: trim first, then treat an
+/// empty result as absent. The trim is load-bearing now that the port tier parses under
+/// NumberStyles.None — a value read from a mounted secret usually carries a trailing
+/// newline, and the shared resolver accepts that, so this must too.
 let private environmentValue (readEnvironment: string -> string) key =
     match readEnvironment key with
-    | null
-    | "" -> None
-    | value -> Some value
+    | null -> None
+    | value ->
+        let trimmed = value.Trim()
+        if trimmed = "" then None else Some trimmed
 
 let private validPort value = value > 0 && value <= 65535
 

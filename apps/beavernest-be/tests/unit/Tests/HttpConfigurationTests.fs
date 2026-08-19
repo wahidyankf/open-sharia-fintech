@@ -104,6 +104,17 @@ let ``applyPortFlag falls through to the env var when --port carries no value`` 
     )
 
 [<Theory>]
+[<InlineData("4000\n")>]
+[<InlineData(" 4000")>]
+[<InlineData("4000 ")>]
+let ``parse tolerates surrounding whitespace, as the shared resolver does`` (value: string) =
+    // A port read from a mounted secret file routinely carries a trailing newline. The shared
+    // resolver trims before parsing, so parse must too, or the two grammars diverge again.
+    match parse (environment (Map.ofList [ "BEAVERNEST_BE_HTTP_LISTEN_PORT", value ])) with
+    | Ok configuration -> Assert.Equal(4000, configuration.Port)
+    | Error message -> Assert.Fail($"expected %s{value} to be accepted, but got: %s{message}")
+
+[<Theory>]
 [<InlineData("+4000")>]
 [<InlineData("0x1F4")>]
 [<InlineData("1e3")>]
