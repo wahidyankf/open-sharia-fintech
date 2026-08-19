@@ -465,9 +465,18 @@ pub fn should_skip_link(link: &str) -> bool {
     false
 }
 
+/// Path fragments identifying a skill tree, whose files are exempt from link
+/// validation.
+///
+/// The exemption is a property of skill files as a class, not of one directory:
+/// `.agents/skills/` holds a byte-for-byte mirror of `.claude/skills/`, so a rule
+/// keyed on the canonical path alone would validate the copy while exempting the
+/// original and report the same bytes as both broken and fine.
+const SKILL_TREE_MARKERS: &[&str] = &[".claude/skills/", ".agents/skills/"];
+
 /// Validates each link in `links` against the filesystem, relative to `file_path`.
 ///
-/// Skill files (paths containing `.claude/skills/`) are unconditionally skipped.
+/// Skill files (see [`SKILL_TREE_MARKERS`]) are unconditionally skipped.
 /// After checking file existence, anchor fragments are validated against the
 /// headings of the target file (or the source file for pure `#fragment` links).
 ///
@@ -480,9 +489,12 @@ fn validate_file(
     opts: &ScanOptions,
     links: &[LinkInfo],
 ) -> std::result::Result<Vec<BrokenLink>, Error> {
-    // Skill files: skip validation
+    // Skill files: skip validation, in whichever skill tree they live.
     let p_str = file_path.to_string_lossy();
-    if p_str.contains(".claude/skills/") {
+    if SKILL_TREE_MARKERS
+        .iter()
+        .any(|marker| p_str.contains(marker))
+    {
         return Ok(Vec::new());
     }
     let mut broken = Vec::new();
@@ -762,6 +774,46 @@ mod tests {
     use super::*;
     use std::fs;
     use tempfile::TempDir;
+
+    /// Both skill trees are exempt from link validation, and a non-skill path is
+    /// not. `.agents/skills/` holds a byte-for-byte mirror of `.claude/skills/`,
+    /// so exempting one but not the other would report identical bytes as both
+    /// broken and fine.
+    #[test]
+    fn every_skill_tree_is_exempt_and_nothing_else_is() {
+        let dir = TempDir::new().unwrap();
+        let root = dir.path();
+        let opts = ScanOptions {
+            repo_root: root.to_path_buf(),
+            staged_only: false,
+            skip_paths: Vec::new(),
+        };
+        let dangling = vec![LinkInfo {
+            line_number: 1,
+            url: "./definitely-not-here.md".to_string(),
+        }];
+
+        for marker in SKILL_TREE_MARKERS {
+            let file = root.join(marker).join("some-skill/reference/page.md");
+            fs::create_dir_all(file.parent().unwrap()).unwrap();
+            fs::write(&file, "body\n").unwrap();
+            assert!(
+                validate_file(&file, &opts, &dangling).unwrap().is_empty(),
+                "{marker} must be exempt from link validation"
+            );
+        }
+
+        // Falsifiable the other way: the SAME dangling link outside a skill tree
+        // is still reported, so the exemption did not disable the check itself.
+        let ordinary = root.join("docs/reference/page.md");
+        fs::create_dir_all(ordinary.parent().unwrap()).unwrap();
+        fs::write(&ordinary, "body\n").unwrap();
+        assert_eq!(
+            validate_file(&ordinary, &opts, &dangling).unwrap().len(),
+            1,
+            "a dangling link outside a skill tree must still be reported"
+        );
+    }
 
     /// Verifies that [`should_skip_link`] correctly identifies placeholder and
     /// example links that should not be validated.
