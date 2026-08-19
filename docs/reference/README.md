@@ -43,7 +43,9 @@ platform, the Nx workspace, and the engineering systems that support an early pr
 - [Security Waivers and Functional Holds](./security-waivers.md) — consult the persistent register of
   approved dependency-security exceptions and functional holds.
 - [Platform Bindings](./platform-bindings.md) — locate the AI coding-agent bindings, root
-  instructions, and generated translation artifacts.
+  instructions, and generated translation artifacts. Its Platform Binding Directories table and
+  verification stamp are generated from `repo-config.yml` — edit the registry, then run
+  `rhino-cli harness catalog generate`, never the table.
 - [AI Model Benchmarks](./ai-model-benchmarks.md) — review the sourced benchmark and pricing data
   behind agent model-tier decisions.
 

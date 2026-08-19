@@ -23,6 +23,8 @@ in `repo-config.yml` `harness:`. Columns record every surface each harness expos
 know which files to create or extend. Harnesses absent from the registry are not supported; adding
 one starts with a registry entry, not a row here.
 
+<!-- >>> rhino-cli generated: harness catalog - do not edit inside this region -->
+
 **Verified 2026-05-24.**
 
 | Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface              | Status                     |
@@ -30,6 +32,8 @@ one starts with a registry entry, not a row here.
 | Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                                | `.claude/agents/*.md`                                                                                   | `.claude/skills/*/SKILL.md` | Active                     |
 | OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                            | `.opencode/agents/*.md`                                                                                 | reads `.claude/skills/`     | Active                     |
 | OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`              | `.codex/config.toml` `[mcp_servers]`[^mcp] | `.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents] | `.agents/skills/`[^skills]  | Partial (`.codex/` exists) |
+
+<!-- <<< rhino-cli generated: harness catalog -->
 
 [^mcp]:
     The MCP key is `mcp_servers` in **snake_case**. The camelCase `mcpServers` form other harnesses
