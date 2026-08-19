@@ -57,7 +57,11 @@ pub enum Outcome {
     /// Exactly one side moved. The [`Side`] says which.
     OneSided(Side),
     /// Both sides were hand-edited. There is no correct automatic answer, so
-    /// this is a hard stop: no promotion is offered and nothing is resolved.
+    /// this is a hard stop for `harness sync triage`, which enforces it with a
+    /// non-zero exit. `promote()` still produces a proposal in this case
+    /// deliberately (see `PromoteProposal::both_diverged`'s doc comment) — no
+    /// *automatic* resolution is offered, but the opt-in, reviewed escape
+    /// hatch is not withdrawn.
     BothDiverged,
 }
 
@@ -246,7 +250,7 @@ impl ScratchTree {
             copy_file(&registry, &dir.path().join(SCRATCH_REGISTRY))?;
         }
         for root in scratch_roots(config) {
-            copy_tree(&repo_root.join(&root), &dir.path().join(&root))?;
+            copy_path(&repo_root.join(&root), &dir.path().join(&root))?;
         }
         Ok(Self { dir })
     }
@@ -257,8 +261,15 @@ impl ScratchTree {
     }
 }
 
-/// Every directory the emitters read from or write to, derived from the
-/// registry rather than listed here, so a fourth harness needs no edit.
+/// Every path the emitters read from or write to, derived from the registry
+/// rather than listed here, so a fourth harness needs no edit.
+///
+/// Returns the declared paths themselves — not their first component. Copying
+/// the truncated top-level directory (e.g. `.opencode` for a declared
+/// `.opencode/agents`) pulled in siblings the emitters never read, including
+/// untracked directories like `node_modules`; copying exactly what is
+/// declared is both the intent the doc comments on this module already state
+/// and materially cheaper (cycle-2 Finding 9).
 fn scratch_roots(config: &RepoConfig) -> BTreeSet<String> {
     let mut roots = BTreeSet::new();
     for entry in &config.harness {
@@ -272,19 +283,10 @@ fn scratch_roots(config: &RepoConfig) -> BTreeSet<String> {
         .into_iter()
         .flatten()
         {
-            roots.insert(top_component(candidate));
+            roots.insert(candidate.clone());
         }
     }
     roots
-}
-
-/// The first path component of `rel` — the binding root a declared path sits
-/// under, e.g. `.codex` for `.codex/config.toml`.
-fn top_component(rel: &str) -> String {
-    Path::new(rel).components().next().map_or_else(
-        || rel.to_string(),
-        |c| c.as_os_str().to_string_lossy().into(),
-    )
 }
 
 /// Copy one file, creating the destination's parent directories.
@@ -296,13 +298,36 @@ fn copy_file(src: &Path, dst: &Path) -> Result<(), String> {
     Ok(())
 }
 
+/// Copy one declared binding root — a file (e.g. `.codex/config.toml`) or a
+/// directory — from `src` to `dst`, whichever `src` turns out to be.
+///
+/// Uses `symlink_metadata` rather than `is_dir`, so a root that is itself a
+/// symlink is neither followed nor copied through: the scratch tree must
+/// reproduce what the emitters would see, not what a link points at (cycle-2
+/// Finding 2, second site).
+fn copy_path(src: &Path, dst: &Path) -> Result<(), String> {
+    let Ok(meta) = std::fs::symlink_metadata(src) else {
+        return Ok(());
+    };
+    if meta.file_type().is_dir() {
+        copy_tree(src, dst)
+    } else if meta.file_type().is_file() {
+        copy_file(src, dst)
+    } else {
+        Ok(())
+    }
+}
+
 /// Copy every regular file under `src` into `dst`.
 ///
 /// Uses `symlink_metadata` so a symlinked directory is never followed: the
 /// scratch tree must reproduce what the emitters would see, not what a link
 /// points at.
 fn copy_tree(src: &Path, dst: &Path) -> Result<(), String> {
-    if !src.is_dir() {
+    let Ok(meta) = std::fs::symlink_metadata(src) else {
+        return Ok(());
+    };
+    if !meta.file_type().is_dir() {
         return Ok(());
     }
     let entries = std::fs::read_dir(src).map_err(|e| format!("read dir {}: {e}", src.display()))?;

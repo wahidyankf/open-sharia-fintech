@@ -233,8 +233,12 @@ fn vendored_ownership_cross_check(i: usize, entry: &HarnessEntry) -> Vec<String>
     let Some(skills_dir) = entry.skills_dir.as_deref() else {
         return findings;
     };
-    let skills_dir_prefix = format!("{}/", skills_dir.trim_end_matches('/'));
-    let under_skills_dir = |p: &str| p == skills_dir || p.starts_with(skills_dir_prefix.as_str());
+    // Component-wise, not string-prefix: `repo_config::path_is_under` is the
+    // single shared implementation this cross-check and the skills-mirror
+    // emitter's vendored-skip test both use, so a hand-typed double slash
+    // cannot make the two disagree on which paths sit under `skills-dir`
+    // (cycle-2 Finding 10).
+    let under_skills_dir = |p: &str| repo_config::path_is_under(p, skills_dir);
 
     for owned in &entry.ownership {
         if owned.class == OwnershipClass::Vendored

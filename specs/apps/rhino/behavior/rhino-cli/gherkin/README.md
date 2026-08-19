@@ -73,16 +73,25 @@ behavior/rhino-cli/gherkin/
 
 ### harness
 
-| File                                        | Command(s)                             | Scenarios |
-| ------------------------------------------- | -------------------------------------- | --------- |
-| `agents-bindings.feature`                   | `harness bindings validate`/`generate` | 8         |
-| `agents-detect-duplication.feature`         | `harness duplication validate`         | 4         |
-| `agents-sync.feature`                       | `harness sync validate`                | 7         |
-| `agents-validate-claude.feature`            | `harness claude validate`              | 5         |
-| `governance-word-budget-agents-md.feature`  | `governance word-budget validate`      | 3         |
-| `governance-word-budget-pre-push.feature`   | `governance word-budget validate`      | 3         |
-| `governance-word-budget-rule.feature`       | `governance word-budget validate`      | 5         |
-| `governance-word-budget-thresholds.feature` | `governance word-budget validate`      | 6         |
+| File                                        | Command(s)                                                     | Scenarios |
+| ------------------------------------------- | -------------------------------------------------------------- | --------- |
+| `agents-bindings.feature`                   | `harness bindings validate`/`generate`                         | 10        |
+| `agents-detect-duplication.feature`         | `harness duplication validate`                                 | 4         |
+| `agents-skills-mirror.feature`              | `harness bindings generate`/`validate` (skills mirror)         | 5         |
+| `agents-sync.feature`                       | `harness sync validate`                                        | 8         |
+| `agents-validate-claude.feature`            | `harness claude validate`                                      | 5         |
+| `codex-binding.feature`                     | `harness bindings generate` (Codex)                            | 3         |
+| `governance-word-budget-agents-md.feature`  | `governance word-budget validate`                              | 3         |
+| `governance-word-budget-pre-push.feature`   | `governance word-budget validate`                              | 3         |
+| `governance-word-budget-rule.feature`       | `governance word-budget validate`                              | 5         |
+| `governance-word-budget-thresholds.feature` | `governance word-budget validate`                              | 6         |
+| `harness-audit.feature`                     | `harness audit`                                                | 1         |
+| `harness-catalog.feature`                   | `harness catalog generate`/`validate`                          | 2         |
+| `harness-ownership.feature`                 | `harness ownership validate`                                   | 5         |
+| `harness-sync-triage.feature`               | `harness sync triage`/`promote`                                | 12        |
+| `opencode-conformance.feature`              | n/a (catalog-content and ideas-tree invariant)                 | 2         |
+| `opencode-skills-removal.feature`           | `governance word-budget validate` (content-deletion invariant) | 2         |
+| `vendored-skill-preservation.feature`       | `harness bindings generate`/`validate`, `repo-config validate` | 2         |
 
 ### md
 

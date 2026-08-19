@@ -27,6 +27,10 @@ struct RepoConfigValidateWorld {
     codex_entry: Option<String>,
     /// The canonical config text, captured when ownership is inspected.
     canonical: Option<String>,
+    /// A canonical config mutated to break the C2 vendored/ownership
+    /// cross-check in one specific direction, captured by a `When` step and
+    /// validated by the following `Then` step.
+    mutated_config: Option<String>,
 }
 
 impl std::fmt::Debug for RepoConfigValidateWorld {
@@ -43,6 +47,7 @@ impl RepoConfigValidateWorld {
             valid_output: None,
             codex_entry: None,
             canonical: None,
+            mutated_config: None,
         }
     }
 }
@@ -544,6 +549,162 @@ fn then_canonical_vendored_reasons_pass(_w: &mut RepoConfigValidateWorld) {
     assert!(
         out.status.success(),
         "the canonical config must validate; stdout={} stderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+/// Repository-relative path this scenario pair's synthetic fixture declares
+/// both vendored and class: vendored under.
+const CROSS_CHECK_PROBE_PATH: &str = ".agents/skills/probe";
+
+/// A minimal, self-contained registry declaring one generated harness entry
+/// whose `vendored:` list and `ownership: class: vendored` declaration agree
+/// on `CROSS_CHECK_PROBE_PATH`.
+///
+/// Deliberately synthetic rather than derived from either repo's real
+/// `repo-config.yml`: which paths are vendored is repository-local — ose-public
+/// carries a caveman/cavecrew plugin payload under `.agents/skills/`, ose-private
+/// carries none (see `vendored-skill-preservation.feature`) — so a scenario
+/// probing the C2 cross-check must not depend on either repo's actual vendored
+/// set to stay byte-identical source and green in both.
+fn synthetic_config_with_vendored_probe() -> String {
+    format!(
+        "harness:\n  \
+         - name: codex\n    tier: generated\n    agent-dir: .codex/agents\n    \
+         mirrors: .claude/agents\n    skills-dir: .agents/skills\n    \
+         skills-mirrors: .claude/skills\n    vendored:\n      - {CROSS_CHECK_PROBE_PATH}\n    \
+         ownership:\n      - {{ path: {CROSS_CHECK_PROBE_PATH}, class: vendored, reason: synthetic probe for the C2 cross-check }}\n\
+         coverage:\n  projects:\n    - {{ name: probe, levels: [unit], specs: \"specs/apps/probe/**\" }}\n"
+    )
+}
+
+#[given(
+    "a synthetic registry entry whose skills-dir vendored path is declared in both hand-maintained lists"
+)]
+fn given_synthetic_vendored_probe(w: &mut RepoConfigValidateWorld) {
+    let base = synthetic_config_with_vendored_probe();
+    let out = validate_config(&base);
+    assert!(
+        out.status.success(),
+        "the synthetic baseline fixture must validate cleanly before it is mutated; \
+         stdout={} stderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    w.mutated_config = Some(base);
+}
+
+#[when("the vendored: entry for that path is removed")]
+fn when_vendored_entry_removed(w: &mut RepoConfigValidateWorld) {
+    let base = w
+        .mutated_config
+        .take()
+        .expect("the Given step seeded the synthetic baseline");
+    let removed_line = format!("      - {CROSS_CHECK_PROBE_PATH}\n");
+    assert!(
+        base.contains(&removed_line),
+        "the synthetic fixture must declare the probe vendored: entry"
+    );
+    let mutated = base.replacen(&removed_line, "", 1);
+    assert_ne!(
+        mutated, base,
+        "removing the vendored: entry must actually change the config"
+    );
+    w.mutated_config = Some(mutated);
+}
+
+#[then(
+    "rhino-cli repo-config validate fails naming the ownership path with no matching vendored entry"
+)]
+fn then_ownership_without_vendored_entry_rejected(w: &mut RepoConfigValidateWorld) {
+    let mutated = w
+        .mutated_config
+        .as_ref()
+        .expect("the When step captured a mutated config");
+    let out = validate_config(mutated);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        !out.status.success(),
+        "an ownership entry declared class: vendored under skills-dir with no matching \
+         vendored: entry must fail (the skills mirror would delete it on the next \
+         regeneration); stdout={stdout}"
+    );
+    assert!(
+        stdout.contains(CROSS_CHECK_PROBE_PATH) && stdout.contains("no matching"),
+        "the failure must name the offending ownership path; stdout={stdout}"
+    );
+}
+
+#[then(
+    "it exits 0 once the vendored entry is restored, proving the check is falsifiable in both directions"
+)]
+fn then_ownership_vendored_entry_restored_passes(_w: &mut RepoConfigValidateWorld) {
+    let out = validate_config(&synthetic_config_with_vendored_probe());
+    assert!(
+        out.status.success(),
+        "the synthetic fixture, with the vendored: entry restored, must validate; \
+         stdout={} stderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
+#[when(
+    "the matching \"class: vendored\" ownership declaration for that path is changed to another class"
+)]
+fn when_vendored_entrys_ownership_class_changed(w: &mut RepoConfigValidateWorld) {
+    let base = w
+        .mutated_config
+        .take()
+        .expect("the Given step seeded the synthetic baseline");
+    let target = format!(
+        "{{ path: {CROSS_CHECK_PROBE_PATH}, class: vendored, reason: synthetic probe for the \
+         C2 cross-check }}"
+    );
+    assert!(
+        base.contains(&target),
+        "the synthetic fixture must declare the probe ownership entry verbatim: {target}"
+    );
+    let replaced = target.replacen("class: vendored", "class: generated", 1);
+    let mutated = base.replacen(&target, &replaced, 1);
+    assert_ne!(
+        mutated, base,
+        "changing the ownership class must actually change the config"
+    );
+    w.mutated_config = Some(mutated);
+}
+
+#[then(
+    "rhino-cli repo-config validate fails naming the vendored entry with no matching ownership declaration"
+)]
+fn then_vendored_entry_without_ownership_rejected(w: &mut RepoConfigValidateWorld) {
+    let mutated = w
+        .mutated_config
+        .as_ref()
+        .expect("the When step captured a mutated config");
+    let out = validate_config(mutated);
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        !out.status.success(),
+        "a vendored: entry with no matching ownership declaration carrying class: vendored \
+         must fail (the two hand-maintained lists disagree on the same fact); stdout={stdout}"
+    );
+    assert!(
+        stdout.contains(CROSS_CHECK_PROBE_PATH) && stdout.contains("no matching"),
+        "the failure must name the offending vendored: entry; stdout={stdout}"
+    );
+}
+
+#[then(
+    "it exits 0 once the ownership declaration is restored to \"class: vendored\", proving the check is falsifiable in both directions"
+)]
+fn then_vendored_entrys_ownership_restored_passes(_w: &mut RepoConfigValidateWorld) {
+    let out = validate_config(&synthetic_config_with_vendored_probe());
+    assert!(
+        out.status.success(),
+        "the synthetic fixture, with the ownership declaration restored, must validate; \
+         stdout={} stderr={}",
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );

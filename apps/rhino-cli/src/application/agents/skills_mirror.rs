@@ -49,10 +49,21 @@ struct MirrorJob {
 /// the other is not an implicit mirror — that would resurrect the inference this
 /// design exists to remove.
 fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
-    // `load_or_default`, not `load`: a tree with no `repo-config.yml` declares no
-    // mirrors, which means there is nothing to do — not that mirroring failed.
-    // Erroring here would turn every registry-less fixture into a false failure.
-    let config = repo_config::load_or_default(repo_root);
+    // Strict `load`, with an explicit file-absent branch — not
+    // `load_or_default`. A tree with no `repo-config.yml` declares no mirrors,
+    // which means there is nothing to do; but a *present, schema-invalid*
+    // registry must fail loudly rather than collapse into
+    // `RepoConfig::default()`'s empty `harness` list, which would make every
+    // downstream reader (the drift audit, and the pre-push validate gate that
+    // calls it) report zero mirrors and exit success over a registry that
+    // never actually parsed. This mirrors the same strict-load-plus-absent-
+    // branch pattern `ownership.rs::guard_emitter_targets` already uses for
+    // the write path (C3).
+    let config = match repo_config::load(repo_root) {
+        Ok(config) => config,
+        Err(_) if !repo_root.join("repo-config.yml").exists() => repo_config::RepoConfig::default(),
+        Err(error) => return Err(format!("{error:#}")),
+    };
     config
         .harness
         .iter()
@@ -66,23 +77,28 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
             // is itself absolute, so an absolute or `../`-escaping `skills-dir`
             // / `skills-mirrors` would otherwise make this job read from and
             // write/delete outside the repository entirely, with
-            // `repo-config validate` exiting 0 (C4). Refuse before building the
-            // job rather than after the first write.
-            repo_config::validate_repo_relative_path(target_rel).map_err(|error| {
-                format!(
-                    "harness {:?} skills-dir {target_rel:?}: {error}",
-                    entry.name
-                )
-            })?;
-            repo_config::validate_repo_relative_path(source_rel).map_err(|error| {
-                format!(
-                    "harness {:?} skills-mirrors {source_rel:?}: {error}",
-                    entry.name
-                )
-            })?;
+            // `repo-config validate` exiting 0 (C4). `confined_repo_path` goes
+            // further than a lexical check: it canonicalizes the nearest
+            // existing ancestor, so a path that is lexically repo-relative but
+            // resolves outside `repo_root` through a committed symlink is also
+            // refused here, before the job is built (cycle-2 Finding 2).
+            let source =
+                repo_config::confined_repo_path(repo_root, source_rel).map_err(|error| {
+                    format!(
+                        "harness {:?} skills-mirrors {source_rel:?}: {error:#}",
+                        entry.name
+                    )
+                })?;
+            let target =
+                repo_config::confined_repo_path(repo_root, target_rel).map_err(|error| {
+                    format!(
+                        "harness {:?} skills-dir {target_rel:?}: {error:#}",
+                        entry.name
+                    )
+                })?;
             Ok(MirrorJob {
-                source: repo_root.join(source_rel),
-                target: repo_root.join(target_rel),
+                source,
+                target,
                 target_rel: PathBuf::from(target_rel),
                 vendored: entry.vendored.clone(),
             })
@@ -123,7 +139,7 @@ fn relative_files(root: &Path) -> Vec<String> {
 /// Compares path components rather than string prefixes, so a vendored
 /// `.agents/skills/compress` never also claims `.agents/skills/compress-extra`.
 fn is_vendored(rel: &Path, vendored: &[String]) -> bool {
-    vendored.iter().any(|v| rel.starts_with(Path::new(v)))
+    vendored.iter().any(|v| repo_config::path_is_under(rel, v))
 }
 
 /// What one mirror job would change, computed without touching the filesystem.

@@ -28,3 +28,15 @@ Feature: Schema-parity gate for repo-config.yml
     And a registry entry declaring a fourth class value fails to deserialize
     And a vendored declaration carrying an empty reason fails validation
     And the canonical config carrying a non-empty reason on every vendored declaration exits 0
+
+  Scenario: A vendored ownership declaration under skills-dir requires a matching vendored entry
+    Given a synthetic registry entry whose skills-dir vendored path is declared in both hand-maintained lists
+    When the vendored: entry for that path is removed
+    Then rhino-cli repo-config validate fails naming the ownership path with no matching vendored entry
+    And it exits 0 once the vendored entry is restored, proving the check is falsifiable in both directions
+
+  Scenario: A vendored entry under skills-dir requires a matching ownership declaration
+    Given a synthetic registry entry whose skills-dir vendored path is declared in both hand-maintained lists
+    When the matching "class: vendored" ownership declaration for that path is changed to another class
+    Then rhino-cli repo-config validate fails naming the vendored entry with no matching ownership declaration
+    And it exits 0 once the ownership declaration is restored to "class: vendored", proving the check is falsifiable in both directions

@@ -105,7 +105,7 @@
       "options": {
         "commands": [
           "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib -- --test-threads=1",
-          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch --test docs --test stdio_blocking_wiring"
+          "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_governance --test env_contract --test repo_config_data_driven --test fsharp_tool_invocation --test gate_specs --test gate_dispatch --test docs --test stdio_blocking_wiring --test agents --test cargo_target_share --test cli_smoke --test codex_binding --test contracts --test convention --test ddd --test doctor --test env --test env_validate_integration --test gate_format_verify_wrappers --test git_hooks --test golden_master --test governance --test harness_catalog --test harness_ownership --test harness_sync_triage --test mermaid_golden_corpus --test opencode_conformance --test repo_config_validate --test skills_mirror --test spec_coverage --test specs_tree --test test_coverage"
         ],
         "cwd": "{workspaceRoot}",
         "parallel": false
@@ -114,20 +114,9 @@
       "inputs": [
         "{projectRoot}/Cargo.toml",
         "{projectRoot}/src/**/*.rs",
-        "{projectRoot}/tests/repo_governance.rs",
-        "{projectRoot}/tests/env_contract.rs",
-        "{projectRoot}/tests/repo_config_data_driven.rs",
-        "{projectRoot}/tests/fsharp_tool_invocation.rs",
-        "{projectRoot}/tests/gate_specs.rs",
-        "{projectRoot}/tests/gate_dispatch.rs",
-        "{projectRoot}/tests/docs.rs",
-        "{projectRoot}/tests/stdio_blocking_wiring.rs",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/**/*.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/env-contract/**/*.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/**/*.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/system/fsharp-tool-invocation.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/gate/**/*.feature",
-        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/md/**/*.feature"
+        "{projectRoot}/tests/**/*.rs",
+        "{projectRoot}/tests/golden-master/**/*",
+        "{workspaceRoot}/specs/apps/rhino/behavior/rhino-cli/gherkin/**/*.feature"
       ]
     },
     "typecheck": {

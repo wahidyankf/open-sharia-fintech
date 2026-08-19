@@ -91,13 +91,14 @@ pub struct HarnessEntry {
     /// delete any genuinely stale mirror directory it could not explain (DD-7).
     #[serde(default)]
     pub vendored: Vec<String>,
-    /// Config file path (source-config tier).
+    /// Config file path this entry declares, e.g. `.codex/config.toml`.
     #[serde(default)]
     pub config: Option<String>,
-    /// Directory that must NOT exist (source-config tier).
+    /// Directory that must NOT exist, for a harness whose absence is itself
+    /// the invariant being validated.
     #[serde(rename = "forbid-dir", default)]
     pub forbid_dir: Option<String>,
-    /// Thin-pointer file to check for no-shadowing (native tier).
+    /// Thin-pointer file to check for no-shadowing.
     #[serde(default)]
     pub shadow: Option<String>,
     /// Instruction surfaces this harness reads (for instruction-size budgeting).
@@ -480,6 +481,23 @@ pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
         return Err("must not contain an absolute or parent-directory component".to_string());
     }
     Ok(())
+}
+
+/// `true` when `path` lies at or under `dir`, compared component-wise via
+/// [`Path::starts_with`] rather than by string prefix.
+///
+/// A string-prefix test disagrees with this on a doubled separator: Rust's
+/// `Path::components()` collapses `a//b` to the same components as `a/b`, but
+/// `"a//b".starts_with("a/")` is `false`. Two call sites used to compute this
+/// independently — the C2 ownership cross-check in `repo_config_validate.rs`
+/// (a string-prefix test) and the skills-mirror emitter's vendored-skip test
+/// in `skills_mirror.rs` (already component-wise) — and could disagree on
+/// exactly that input, which let a declared-vendored path silently escape the
+/// cross-check that is supposed to keep it from being deleted (cycle-2
+/// Finding 10). This is the one shared implementation both now use.
+#[must_use]
+pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
+    path.as_ref().starts_with(dir.as_ref())
 }
 
 /// Resolve a configured repository-relative path while proving that existing
