@@ -491,3 +491,91 @@ before its frontmatter block was added and 505 after — over the 500-word FAIL 
 never changed. A new governance file that looks comfortably inside the budget by body length can
 still fail once the required `title`/`description`/`when_to_use`/`tags` block is prepended. Measure
 with `governance word-budget validate`, not `wc -w`, and measure after the frontmatter exists.
+
+## Phase 8 notes
+
+**Splitting one feature directory across N cucumber runners needs ONE shared exclusion list.** Phase
+7 added `tests/harness_ownership.rs` as the fifth runner over the same `harness/` directory but never
+added `binding-ownership` to the exclusion list in `tests/agents.rs`, so `agents.rs` picked the
+feature up with none of its steps defined and `.fail_on_skipped()` turned that into five failures.
+The defect is structural, not a typo: with one `const` per foreign runner, adding a runner means
+editing every sibling, and forgetting one is invisible because the new runner itself passes. Fixed by
+collapsing every per-runner constant in `agents.rs` into a single `FOREIGN_TAGS` list with a
+tag-to-runner table in the doc comment, so the next runner is one line in one place.
+
+**Timestamps were never an option, and the guard says so in code.** Divergence is decided by content:
+`git show HEAD:<path>` against the working bytes, with `HEAD` as the shared reference both sides are
+measured from. A path absent from `HEAD` counts as differing. The prohibition is executable —
+`git grep -nE "\.modified\(\)|SystemTime|mtime"` over `triage.rs` must exit 1 — because a comment
+saying "do not use mtime" is not falsifiable and a fresh clone would otherwise report all 732
+generated files as diverged.
+
+**Verbatim body promotion corrupts relative links.** The emitter flattens `.claude/agents/<role>/x.md`
+into `.opencode/agents/x.md` and rewrites `../../../` to `../../` on the way. Promoting a mirror body
+back verbatim therefore writes the shallower depth into a deeper canonical file, and every link in
+the promoted agent silently points one directory too high. `rebase_links_to_canonical` inverts both
+shapes — bare-filename agent links resolved through a unique `name` lookup, every other link through
+a pure depth change — and the resulting diff was exactly the hand edit and nothing else. Any
+mirror→source promotion across a path-shape change needs the emitter's transform run backwards, not
+skipped.
+
+**The both-diverged HARD STOP, verbatim** (P8 Gate item 4). Captured by appending a comment to
+both `.claude/agents/general/agent-maker.md` and `.opencode/agents/agent-maker.md`, then running
+`harness sync triage`, which exited 1. The failure marker each finding opens with is U+2718,
+transcribed here as `[x]` because no tracked markdown in this repository carries that codepoint and
+`convention emoji validate` scans every file type in CI:
+
+```text
+harness sync triage: 732 generated file(s) compared, 2 divergence(s)
+[x] .codex/agents/agent-maker.toml — the canonical source is ahead of this mirror
+    canonical source: .claude/agents/general/agent-maker.md
+    regenerate:       rhino-cli harness bindings generate
+[x] .opencode/agents/agent-maker.md — HARD STOP: both sides were hand-edited
+    canonical source: .claude/agents/general/agent-maker.md
+    Both files carry edits this tool cannot reconcile. No automatic
+    resolution exists and none is offered. Reconcile them by hand,
+    then re-run.
+Error: 2 divergence(s), at least one with edits on BOTH sides — reconcile by hand
+```
+
+The single canonical edit shows up twice because two mirrors derive from it: `.codex` is
+canonical-ahead, `.opencode` is both-diverged. The one-sided formatters each offer exactly one route
+(mirror-side offers promote, canonical-side offers generate and never promote); the both-diverged
+formatter offers neither, which is the point.
+
+**The failure marker cannot be a literal glyph in Rust source.** `convention emoji validate` scans
+`*.rs` at pre-commit and killed the first attempt at this commit over five U+2718 codepoints. The
+repository's existing convention is the escape form — `reporter.rs` writes `\u{274C}` — which keeps
+the source bytes ASCII while the rendered output is unchanged. A prose comment that merely mentions
+the character trips it too; reword the comment rather than escaping it.
+
+**Promotion cannot silently overwrite, by construction** (Gate item 5). `harness sync promote` prints
+a unified diff and ends with `Nothing was written.`; `git diff --quiet .claude/` exits 0 immediately
+afterwards. The at-risk list is not a safety net bolted on top — the canonical file's own frontmatter
+is the base being edited, with only `description` and body substituted, so a field the editing
+harness never carried (`permissionMode`, `isolation`) is never in a position to be dropped. The list
+tells the reviewer which fields the mirror could not have represented.
+
+**Vendored versus generated, observed** (Gate item 6). Editing vendored
+`.agents/skills/caveman/SKILL.md` yields 0 divergences; editing generated `.agents/skills/README.md`
+yields 1. Triage is scoped to the `generated` class only (DD-12) by filtering `classify()`, so the
+Phase 7 ownership declarations are what makes Phase 8 correct — a vendored payload reported as
+diverged would be a false alarm on a file with no source to regenerate from.
+
+**Deviation from 8.3 as written.** The task asked that triage and `harness bindings validate` share
+one generation path. Implemented instead as: `harness bindings generate` and triage both call
+`application::agents::emit::emit()`. Routing `bindings validate` through scratch regeneration would
+replace a fast byte comparison against committed content with a full tree copy plus a full emitter
+run on every validation, including in the pre-push hook. The anti-drift property the task wanted —
+no second, separately-maintained emitter path — is delivered by both writers invoking identical
+emitters; `validate` remains a reader.
+
+**The branch carries a deliberate pre-existing RED.** `cargo test --release` fails two
+`governance-word-budget.feature` Examples rows (`.codex/agents/example.md`,
+`.agents/skills/example/SKILL.md`), landed in Phase 3 commit `95a131551` as the standing RED that
+Phase 11 turns green. The phase gate is `nx run rhino-cli:test:quick`, which exits 0. Reading the
+full suite as the gate would read a planned RED as a regression.
+
+**Two golden-master fixtures track the subcommand list.** Adding `triage` and `promote` changed
+`harness-help.stderr` and `harness-sync.stderr`; regeneration is driven from `manifest.json`, whose
+keys are `file` and `args`. A new subcommand is never a code-only change.

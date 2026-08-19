@@ -1037,25 +1037,25 @@ is the worst outcome, so each states the class plainly.
 
 ### 8a — Content-hash divergence detection
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that divergence
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that divergence
       detection regenerates mirrors into a scratch directory and compares generated output against
       committed bytes, reading **no file modification times at all**
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because no triage module exists; the test additionally asserts that no
       `metadata()`/`modified()` call appears on the detection path.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Implement `harness sync triage` in
+- [x] [AI] **GREEN**: Implement `harness sync triage` in
       `apps/rhino-cli/src/application/agents/triage.rs` with its adapter at
       `apps/rhino-cli/src/commands/harness_sync_triage.rs`, wired into `apps/rhino-cli/src/cli.rs`.
       It regenerates every GENERATED mirror into a scratch directory and compares content hashes
       against the committed files
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync triage`
       — acceptance: exits 0 on a clean tree, reporting zero divergences.
-- [ ] [AI] **REFACTOR**: Extract the scratch-regeneration helper so triage and
+- [x] [AI] **REFACTOR**: Extract the scratch-regeneration helper so triage and
       `harness bindings validate` share one generation path rather than drifting apart
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and both commands call the same helper.
-- [ ] [AI] Record the timestamp prohibition as an executable guard, not just prose: add a test
+- [x] [AI] Record the timestamp prohibition as an executable guard, not just prose: add a test
       asserting that a fresh `git clone` of a fixture repository — where every file carries checkout
       time and every mtime is therefore identical and meaningless — still reports zero divergences
       — command: `npx nx run rhino-cli:test:integration`
@@ -1064,29 +1064,29 @@ is the worst outcome, so each states the class plainly.
 
 ### 8b — The three outcomes, exhaustively
 
-- [ ] [AI] **RED**: Add failing tests covering all three outcomes — nothing diverged, exactly one side
+- [x] [AI] **RED**: Add failing tests covering all three outcomes — nothing diverged, exactly one side
       diverged, both sides diverged
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: all three fail; the outcome enum does not exist.
-- [ ] [AI] **GREEN**: Implement the three-outcome classification. In-sync exits 0. One-sided
+- [x] [AI] **GREEN**: Implement the three-outcome classification. In-sync exits 0. One-sided
       divergence reports which side was hand-edited and offers promotion. Both-sides divergence is a
       **HARD STOP** — exit non-zero naming both files, never guessing and never picking a winner
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: all three tests pass; the enum has exactly three variants so a fourth outcome is
       a compile error rather than a runtime fallthrough.
-- [ ] [AI] **REFACTOR**: Give each outcome a single formatter so the both-diverged message cannot
+- [x] [AI] **REFACTOR**: Give each outcome a single formatter so the both-diverged message cannot
       drift into sounding recoverable
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass.
-- [ ] [AI] Prove the in-sync path exits 0 on the real tree:
+- [x] [AI] Prove the in-sync path exits 0 on the real tree:
       `npm run generate:bindings && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync triage`
       — acceptance: exits 0 reporting zero divergences, where a non-zero here would mean the
       comparison is over-matching on formatting rather than content.
-- [ ] [AI] Prove the one-sided case in both directions: hand-edit one `.opencode/agents/` mirror, run
+- [x] [AI] Prove the one-sided case in both directions: hand-edit one `.opencode/agents/` mirror, run
       triage, then `git checkout -- .opencode/` and re-run
       — acceptance: exits non-zero naming that mirror as the diverged side and naming the promote
       command while the edit exists; exits 0 after the checkout.
-- [ ] [AI] Prove the both-diverged HARD STOP: hand-edit one `.claude/agents/` source AND its
+- [x] [AI] Prove the both-diverged HARD STOP: hand-edit one `.claude/agents/` source AND its
       corresponding `.opencode/agents/` mirror, run triage, then restore both
       — acceptance: exits non-zero naming **both** files, and the output offers **no** promotion and
       **no** automatic resolution. Exits 0 after both are restored. Record the exact output in
@@ -1103,22 +1103,22 @@ is the worst outcome, so each states the class plainly.
 > carried. **A promote that silently drops fields is a data-loss event and must be impossible by
 > construction.**
 
-- [ ] [AI] **RED**: Add a failing test asserting `harness sync promote` writes a proposed diff to
+- [x] [AI] **RED**: Add a failing test asserting `harness sync promote` writes a proposed diff to
       stdout (or a named file) and **does not modify** the canonical source
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails; no promote path exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Implement `harness sync promote` so it emits a proposed unified diff against
+- [x] [AI] **GREEN**: Implement `harness sync promote` so it emits a proposed unified diff against
       the canonical `.claude/` source and exits without writing to it
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync promote --from .opencode/agents/<name>.md`
       — acceptance: a diff is printed and `git diff --quiet .claude/` exits 0 afterwards, proving the
       canonical source is untouched.
-- [ ] [AI] **RED**: Add a failing test asserting the promote output **lists the canonical fields at
+- [x] [AI] **RED**: Add a failing test asserting the promote output **lists the canonical fields at
       risk of loss** — those present in the canonical file but unrepresentable in the editing
       harness's schema
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails; the at-risk field list is not computed.
-- [ ] [AI] **GREEN**: Compute the at-risk set by intersecting the canonical file's frontmatter keys
+- [x] [AI] **GREEN**: Compute the at-risk set by intersecting the canonical file's frontmatter keys
       with the editing harness's `DropWarn` field-policy entries, and render it as a labelled section
       of the promote output
       — command: `npx nx run rhino-cli:test:integration`
@@ -1126,11 +1126,11 @@ is the worst outcome, so each states the class plainly.
       `permissionMode` and `isolation` lists both fields under the at-risk heading; promoting an
       agent whose canonical source carries neither lists nothing, proving the list is computed rather
       than hardcoded.
-- [ ] [AI] **REFACTOR**: Reuse the existing `FieldPolicy` table as the single source for what each
+- [x] [AI] **REFACTOR**: Reuse the existing `FieldPolicy` table as the single source for what each
       harness can represent, so a future field addition updates the at-risk computation automatically
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass; no second field list exists in the codebase.
-- [ ] [AI] Prove promotion cannot silently overwrite: run promote against a real diverged mirror and
+- [x] [AI] Prove promotion cannot silently overwrite: run promote against a real diverged mirror and
       confirm the canonical file is unchanged, then confirm applying the emitted diff by hand
       produces the intended edit
       — acceptance: `git diff --quiet .claude/` exits 0 immediately after promote, and non-zero only
@@ -1138,32 +1138,32 @@ is the worst outcome, so each states the class plainly.
 
 ### 8d — Scope, default behaviour, and discoverability
 
-- [ ] [AI] **RED**: Add a failing test asserting a VENDORED file is excluded from triage entirely —
+- [x] [AI] **RED**: Add a failing test asserting a VENDORED file is excluded from triage entirely —
       neither compared for divergence nor offered for promotion
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails while triage still walks every file under the binding directories.
-- [ ] [AI] **GREEN**: Scope triage to the GENERATED class from the DD-12 registry declarations
+- [x] [AI] **GREEN**: Scope triage to the GENERATED class from the DD-12 registry declarations
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the test passes; hand-editing a vendored `.agents/skills/caveman/SKILL.md`
       produces **no** triage finding, while hand-editing a generated
       `.agents/skills/<mirrored>/SKILL.md` produces one. Restore both afterwards.
-- [ ] [AI] Confirm the default failure behaviour is unchanged: hand-edit a mirror and run
+- [x] [AI] Confirm the default failure behaviour is unchanged: hand-edit a mirror and run
       `harness bindings validate` **without** triage
       — acceptance: exits non-zero exactly as it did before this phase. Promotion is opt-in; nothing
       about this phase makes a hand edit pass by default.
-- [ ] [AI] Improve the `harness bindings validate` failure message so it names **both** the canonical
+- [x] [AI] Improve the `harness bindings validate` failure message so it names **both** the canonical
       file to edit **and** the promote command as an alternative
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       (after a deliberate mirror edit)
       — acceptance: the message contains the canonical `.claude/` path and the literal
       `harness sync promote` invocation. This message is where a developer actually learns the
       capability exists, so an assertion on its content is part of the test suite, not a nicety.
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-sync-triage.feature`
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-sync-triage.feature`
       carrying the US-9 scenarios from `prd.md`, and index it in `harness/README.md`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 and `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Document triage and promotion in
+- [x] [AI] Document triage and promotion in
       `repo-governance/conventions/structure/multi-harness-binding.md`, stating that generation is
       one-way by default, that promotion is human-reviewed, and that detection is by content and
       never by timestamp
@@ -1175,18 +1175,18 @@ is the worst outcome, so each states the class plainly.
 
 > All checks below must pass before starting Phase 9.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `npm run generate:bindings && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync triage`
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `npm run generate:bindings && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync triage`
       — exits 0 on the clean tree, and exits non-zero under both the one-sided and both-diverged
       probes above.
-- [ ] [AI] `git grep -nE "\.modified\(\)|SystemTime|mtime" apps/rhino-cli/src/application/agents/triage.rs`
+- [x] [AI] `git grep -nE "\.modified\(\)|SystemTime|mtime" apps/rhino-cli/src/application/agents/triage.rs`
       — returns no match, proving detection is content-based. A match here means the timestamp
       approach was reintroduced.
-- [ ] [AI] The both-diverged HARD STOP output is recorded in `learnings.md` and offers no automatic
+- [x] [AI] The both-diverged HARD STOP output is recorded in `learnings.md` and offers no automatic
       resolution.
-- [ ] [AI] `git diff --quiet .claude/` — exits 0 immediately after a promote run, proving promotion
+- [x] [AI] `git diff --quiet .claude/` — exits 0 immediately after a promote run, proving promotion
       never writes to canonical source.
-- [ ] [AI] A vendored file edit produces no triage finding while a generated file edit does — both
+- [x] [AI] A vendored file edit produces no triage finding while a generated file edit does — both
       observations recorded.
 
 > **Pause Safety**: one-way generation still behaves exactly as before and a hand-edited mirror still
