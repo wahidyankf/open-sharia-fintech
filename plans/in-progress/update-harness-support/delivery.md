@@ -256,14 +256,14 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 > `restages: true`, so deleting `.cursor/` without removing the Cursor emitter causes the next commit
 > to silently recreate and restage it.
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting
       `expected_bindings` returns only Codex binding files and that `KNOWN_BINDING_DIRS` contains
       exactly `.claude`, `.opencode`, `.codex`, `.agents`, `.github`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails reporting the current 10-element `KNOWN_BINDING_DIRS` including
       `.amazonq`, `.cursor`, `.windsurf`, `.junie`, `GEMINI.md`, `CONVENTIONS.md`.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: In `apps/rhino-cli/src/application/agents/bindings.rs`, shrink
+- [x] [AI] **GREEN**: In `apps/rhino-cli/src/application/agents/bindings.rs`, shrink
       `KNOWN_BINDING_DIRS` to the five survivors, then delete every construct this shrink leaves
       as Amazon-Q-only dead code — the whole symlink-protected two-file bridge emitter, which exists
       only to write the Amazon Q rules pointer and agent definition and has no successor (Phase 5
@@ -323,11 +323,11 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       seven tests retargeted above; scoped as originally written, the "no match" target was
       unreachable.
 
-- [ ] [AI] **REFACTOR**: Leave `expected_bindings` returning an empty vector only if Codex bindings
+- [x] [AI] **REFACTOR**: Leave `expected_bindings` returning an empty vector only if Codex bindings
       are not yet wired (Phase 5 fills it); document that transient state in a doc comment
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and the doc comment names Phase 5 as the filler.
-- [ ] [AI] Delete `apps/rhino-cli/src/application/agents/cursor.rs`,
+- [x] [AI] Delete `apps/rhino-cli/src/application/agents/cursor.rs`,
       `apps/rhino-cli/src/commands/harness_emit_bindings.rs`, and
       `apps/rhino-cli/tests/cursor_binding.rs`; remove their `mod` declarations from
       `apps/rhino-cli/src/application/agents/mod.rs` and the `commands` module, and remove the
@@ -335,10 +335,10 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — command: `npx nx run rhino-cli:build`
       — acceptance: builds clean with zero warnings; `git grep -l "convert_cursor_model" apps/rhino-cli/src`
       returns nothing, where it returned 1 file before.
-- [ ] [AI] Delete the binding trees: `git rm -r .cursor .amazonq .pi`
+- [x] [AI] Delete the binding trees: `git rm -r .cursor .amazonq .pi`
       — acceptance: `git ls-files .cursor .amazonq .pi | grep -c .` returns 0, where it returned 96
       at baseline (93 + 2 + 1).
-- [ ] [AI] Remove `.amazonq/` from `.prettierignore` and remove `.cursor/`, `.pi/`, `.amazonq/` from
+- [x] [AI] Remove `.amazonq/` from `.prettierignore` and remove `.cursor/`, `.pi/`, `.amazonq/` from
       every `trigger:` list and `paths:` list in the `gates:` section of `repo-config.yml` —
       specifically the `harness-bindings` trigger list, the `governance-word-budget` trigger anchor,
       and the `governance-readme-completeness` `paths` plus trigger lists. This step is scoped to the
@@ -350,7 +350,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       returns no match (comment lines excluded), where the `gates:` section returned 9 total matches
       before — 7 in `trigger:`/`paths:` entries this step edits, plus 2 explanatory comment lines it
       does not.
-- [ ] [AI] Remove the surviving `--opencode` / `--cursor` / `--amazonq` boolean flags from
+- [x] [AI] Remove the surviving `--opencode` / `--cursor` / `--amazonq` boolean flags from
       `GenerateBindingsArgs` in `apps/rhino-cli/src/commands/harness_generate_bindings.rs`, leaving
       only `--harness <NAME>`. Removing the fields breaks compilation of the two tests still
       constructing them — `harness_amazonq_overrides_opencode_flag` and
@@ -363,7 +363,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: the help output lists `--harness` and does not list `--cursor` or `--amazonq`,
       which it did list before; `git grep -c '"amazonq"' apps/rhino-cli/src/commands/harness_generate_bindings.rs`
       returns no match, where it returned 2 before (the two rewritten test fixtures).
-- [ ] [AI] **2.6 — KEEP the vendor-audit tokens (user-resolved, DD-3)**: do NOT delete any entry from
+- [x] [AI] **2.6 — KEEP the vendor-audit tokens (user-resolved, DD-3)**: do NOT delete any entry from
       the forbidden-token table in
       `apps/rhino-cli/src/application/repo_governance/vendor_audit.rs`. All eight dropped-harness
       names and their path tokens (`Cursor`, `Windsurf`, `Junie`, `Amazon Q`, `Antigravity`, `Aider`,
@@ -376,17 +376,17 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `git diff --stat apps/rhino-cli/src/application/repo_governance/vendor_audit.rs` shows lines
       added and **zero lines deleted** from the token table, where a purge would have shown
       deletions.
-- [ ] [AI] Update `package.json` scripts: remove any script whose command targets a dropped harness
+- [x] [AI] Update `package.json` scripts: remove any script whose command targets a dropped harness
       and confirm `sync:agents`, `sync:skills`, `sync:dry-run`, `validate:opencode` still resolve
       — command: `npm run validate:sync`
       — acceptance: exits 0; every `harness`-invoking script in `package.json` runs without an
       unknown-subcommand error.
-- [ ] [AI] Delete `specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/` (feature plus README)
+- [x] [AI] Delete `specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/` (feature plus README)
       and update `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md` to drop its annotated index
       entry
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 with no `orphan` or `ghost` finding.
-- [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`,
+- [x] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature`,
       `agents-sync.feature`, `harness-audit.feature`, and `governance-word-budget-thresholds.feature`
       to the three-harness reality, carrying the US-2 scenarios from `prd.md`
       — acceptance: `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0 and no
@@ -397,15 +397,15 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `npm run generate:bindings && git diff --quiet` — exits 0, proving the generator does not
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `npm run generate:bindings && git diff --quiet` — exits 0, proving the generator does not
       recreate any deleted directory.
-- [ ] [AI] `git ls-files .cursor .amazonq .pi | grep -c .` — returns 0 (96 at baseline).
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
+- [x] [AI] `git ls-files .cursor .amazonq .pi | grep -c .` — returns 0 (96 at baseline).
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — exits 0.
-- [ ] [AI] `npx nx run rhino-cli:lint` — exits 0 with no dead-code warnings from the deleted modules.
+- [x] [AI] `npx nx run rhino-cli:lint` — exits 0 with no dead-code warnings from the deleted modules.
 
 > **Pause Safety**: the three dropped binding trees and their emitters are gone together, so nothing
 > regenerates them. Governance prose still mentions them, which is stale but not broken. Safe to

@@ -75,3 +75,37 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
   `--harness` resolves through the registry, a config-less repo is not a valid fixture. They were
   given the same three-entry registry production carries rather than having the guard weakened to
   tolerate a missing file.
+
+## Phase 2 notes
+
+- **Two Phase 2 acceptance clauses are internally unsatisfiable as written; the substantive half
+  won.** P2.7 instructs retargeting two tests to assert the `unknown harness name 'amazonq'`
+  rejection, then asserts `git grep -c '"amazonq"' apps/rhino-cli/src/commands/harness_generate_bindings.rs`
+  returns no match — but a test that asserts the rejection must spell the rejected name. Same shape
+  in P2.11: it instructs carrying the US-2 scenarios from `prd.md`, which name `.cursor/`,
+  `.amazonq/`, `.pi/` and `--harness cursor` by design, then asserts no surviving scenario names a
+  dropped harness. In both cases the test/scenario proving the *absence* of support is the more
+  valuable artifact, so it was kept and the grep-count clause recorded as not met. The general
+  lesson: a "no match" grep clause and an instruction to write a regression test naming the removed
+  thing cannot both hold — the plan-authoring pass should catch that pairing.
+- **US-2's "Historical records keep their dropped-harness references" scenario was deferred to
+  Phase 3.** Its second `Then` asserts no live governance document presents a dropped harness as
+  supported — that is precisely what the Phase 3 prose sweep produces. Landing it at Phase 2 would
+  have created a knowingly-red test, so it moves to Phase 3 beside P3.13's carve-out check.
+- **The mutated/missing generated-file Gherkin scenarios were removed rather than retargeted.**
+  Between the Amazon Q emitter's deletion here and Phase 5's Codex emitter, `expected_bindings`
+  returns an empty vector, so there is no generated binding file for a CLI-level scenario to mutate
+  or delete. The plan already relocated that coverage to unit tests in `bindings.rs` that construct
+  a `BindingFile` fixture directly; the CLI-level scenarios return in Phase 5 pointed at Codex.
+- **The gate trigger sweep was widened past the three names the step listed.** P2.6 names only
+  `.cursor/`, `.pi/`, `.amazonq/`, but the `harness-bindings` pre-push trigger also listed
+  `.windsurf/`, `.junie/`, `GEMINI.md`, and `CONVENTIONS.md` — every one a dropped harness whose
+  surface `KNOWN_BINDING_DIRS` no longer knows. Removing only the three named would have left the
+  same defect class behind, so all seven went.
+- **One stale comment survives on purpose.** The explanatory comment above the
+  `governance-readme-completeness` gate still names `.pi/` in its scoped-trees sentence. P2.6
+  explicitly excludes those comment lines from its scope; the Phase 3 prose sweep owns them.
+- **`emit_bindings` had three callers outside `bindings.rs`.** `tests/repo_config_data_driven.rs`
+  and `tests/specs_tree.rs` both drove it to build fixtures, and the data-driven feature carried an
+  Amazon-Q-definition-name scenario. Deleting an emitter is never a single-file edit — grep the test
+  tree and the feature tree for the symbol before calling the deletion scoped.
