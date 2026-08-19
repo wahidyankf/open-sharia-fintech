@@ -888,6 +888,9 @@ subject matter. Nothing infra-private was produced, so nothing was cross-routed.
 | A narrow observation hardened into a broad rule (`forbid-dir`)    | `plans/ideas/q2-not-urgent-important/harness-binding-catalog-drift.md`                                                                            |
 | The Codex `Status` cell may understate what loads                 | same brief                                                                                                                                        |
 | A declared count is a liability without an expiry                 | same brief                                                                                                                                        |
+| A baseline read from `HEAD` expires when the change lands         | `repo-governance/development/practice/trustworthy-measurement/rule-6-an-assertion-must-outlive-its-moment.md` (new)                               |
+| A parity-boundary assertion must hold in every repository         | same file                                                                                                                                         |
+| `None Update` matches nothing and copies nothing                  | `repo-governance/development/practice/trustworthy-measurement/rule-5-probes-and-scans-must-assert-their-reach.md` (new section)                   |
 
 ### Filed as backlog
 
@@ -903,6 +906,17 @@ subject matter. Nothing infra-private was produced, so nothing was cross-routed.
 
 Each is a change to `apps/`, `.github/`, or content, so the code-routing rule forbids landing it in
 this plan's commits. None was.
+
+### Carve-out taken once: the beavernest race
+
+`DatabaseConfigurationTests` failed twice on the runner while passing locally, blocking this PR's
+`.NET quality gate` both times. Diagnosed as a race, not a flake: `isDisallowedDirectory` reads the
+process-wide current directory, `EnvTierLoaderTests` in the same assembly mutates it, and xUnit runs
+the two classes in parallel. Fixed inline — `apps/beavernest-be/tests/unit/xunit.runner.json` with
+`parallelizeTestCollections: false`, wired with `None Include` after the `Update` form was found to
+copy nothing — under the code-routing rule's sole carve-out: a test failure blocking this plan's own
+scope. WS-C3 in `plans/backlog/ci-workflow-scope-and-build-resilience/` stays open for the separate
+defect that the assertion still cannot name which of its seven cases failed.
 
 ### Discarded, with reason
 

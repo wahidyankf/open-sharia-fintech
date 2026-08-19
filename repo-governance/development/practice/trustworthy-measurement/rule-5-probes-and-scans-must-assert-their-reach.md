@@ -40,3 +40,12 @@ separator + N rows — rather than trusting the walk.
 
 `clap` exits **2** on an unrecognized subcommand, which reads exactly like a validator reporting
 failure. Confirm the subcommand exists before treating its exit code as a verdict.
+
+## A build declaration that matches nothing copies nothing
+
+MSBuild's `<None Update="file">` only modifies an item that already exists. Where the SDK's default
+item globs do not create one, the declaration matches nothing and the file never reaches the output
+directory — silently, with the build green. One such declaration had sat inert in an F# test project
+for as long as it existed.
+
+**Do**: assert the artifact appears where it was supposed to land, not that the build succeeded.
