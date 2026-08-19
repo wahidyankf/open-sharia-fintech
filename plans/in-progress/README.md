@@ -18,6 +18,11 @@ execution checklist.
   living reader-facing READMEs, onboarding journeys, related docs, and GitHub About metadata across
   `ose-public` and `ose-private`, with product-first paths, fresh-checkout proof, and
   strict secret-safety (`ose-primer` units descoped 2026-08-16).
+- [update-harness-support](./update-harness-support/README.md) — Reduces supported coding-agent
+  harnesses from eleven to three (Claude Code, OpenCode, OpenAI Codex CLI), raises Codex to
+  generated parity, adopts `.agents/skills/` as a cross-vendor surface, generates the
+  platform-bindings catalog from `repo-config.yml`, and arms a 60-day CI freshness gate so a stale
+  compatibility claim can no longer pass silently.
 
   Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
   work begins.
