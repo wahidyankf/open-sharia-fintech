@@ -26,6 +26,20 @@ Feature: Amazon Q Developer Binding Bridge
       Then the command exits successfully
       And the bridge files are byte-for-byte identical to the previous emission
 
+  @harness-name-registry-derived
+  Rule: --harness accepts exactly the names the registry declares
+
+    Scenario: A registry-declared harness name is accepted
+      Given the repo-config.yml harness registry declares codex
+      When the developer runs harness bindings generate for codex
+      Then the harness name is not rejected as unknown
+
+    Scenario: A harness name absent from the registry is rejected
+      Given the repo-config.yml harness registry does not declare cursor
+      When the developer runs harness bindings generate for cursor
+      Then the command exits with a failure code
+      And the error names the registry-derived accepted set
+
   @agents-validate-bindings
   Rule: agents validate-bindings enforces parity and catalog coverage
 

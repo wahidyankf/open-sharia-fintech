@@ -204,6 +204,9 @@ fn init_git_repo(dir: &std::path::Path) {
 #[given("a .claude/ directory with agents and skills to convert")]
 #[given("a .claude/ directory with both agents and skills")]
 fn given_claude_agents_and_skills(w: &mut AgentsWorld) {
+    // `--harness <name>` is validated against the registry, so a fixture repo
+    // needs the same repo-config.yml a real repository has.
+    write_three_harness_registry(w);
     w.write_claude_skill("my-skill");
     w.write_claude_agent("foo-maker", "sonnet", &["my-skill"]);
     w.write_claude_agent("bar-checker", "haiku", &[]);
@@ -211,6 +214,7 @@ fn given_claude_agents_and_skills(w: &mut AgentsWorld) {
 
 #[given(regex = r#"^a \.claude/ agent configured with the "([a-z]+)" model$"#)]
 fn given_claude_model_agent(w: &mut AgentsWorld, model: String) {
+    write_three_harness_registry(w);
     w.write_claude_agent("foo-maker", &model, &[]);
 }
 
@@ -1347,6 +1351,72 @@ fn then_harness_audit_names_failure(w: &mut AgentsWorld, member: String) {
 // ===========================================================================
 // Shared Then steps (exit codes)
 // ===========================================================================
+
+// ===========================================================================
+// harness bindings generate — registry-derived --harness name set
+// ===========================================================================
+
+/// Writes a three-entry registry matching the repository's own, so the fixture
+/// exercises the same lookup production uses rather than a bespoke shape.
+fn write_three_harness_registry(w: &AgentsWorld) {
+    w.write(
+        "repo-config.yml",
+        concat!(
+            "harness:\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills }\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "coverage:\n  projects: []\n",
+        ),
+    );
+}
+
+#[given("the repo-config.yml harness registry declares codex")]
+#[given("the repo-config.yml harness registry does not declare cursor")]
+fn given_three_harness_registry(w: &mut AgentsWorld) {
+    write_three_harness_registry(w);
+}
+
+#[when("the developer runs harness bindings generate for codex")]
+fn when_generate_for_codex(w: &mut AgentsWorld) {
+    w.exec(&["harness", "bindings", "generate", "--harness", "codex"]);
+}
+
+#[when("the developer runs harness bindings generate for cursor")]
+fn when_generate_for_cursor(w: &mut AgentsWorld) {
+    w.exec(&["harness", "bindings", "generate", "--harness", "cursor"]);
+}
+
+#[then("the harness name is not rejected as unknown")]
+fn then_harness_name_accepted(w: &mut AgentsWorld) {
+    let out = w.combined_output();
+    assert!(
+        !out.contains("unknown harness name"),
+        "a registry-declared harness name must not be rejected; got: {out}"
+    );
+}
+
+#[then("the error names the registry-derived accepted set")]
+fn then_error_names_registry_set(w: &mut AgentsWorld) {
+    let out = w.combined_output();
+    assert!(
+        out.contains("unknown harness name"),
+        "an unregistered harness name must be rejected; got: {out}"
+    );
+    for expected in ["claude-code", "opencode", "codex"] {
+        assert!(
+            out.contains(expected),
+            "the error must list the registry-derived accepted set; \
+             missing {expected} in: {out}"
+        );
+    }
+}
 
 #[then("the command exits successfully")]
 fn then_exit_ok(w: &mut AgentsWorld) {

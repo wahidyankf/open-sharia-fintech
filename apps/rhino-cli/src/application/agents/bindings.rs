@@ -48,7 +48,8 @@ const RULES_POINTER_CONTENT: &str = "# Project Instructions Pointer\n\nThe canon
 ///   - Claude Code (.claude) — source of truth
 ///   - `OpenCode` (.opencode) — generated mirror
 ///   - Amazon Q (.amazonq) — generated bridge
-///   - Codex (.codex) — native reads AGENTS.md directly
+///   - Codex (.codex) — generated mirror of `.claude/agents/`, plus its own config
+///   - Agent Skills (.agents) — the vendor-neutral skills surface Codex reads
 ///   - Copilot (.github) — native reads AGENTS.md directly
 ///   - Cursor (.cursor) — generated mirror of `.claude/agents/`
 ///   - Windsurf (.windsurf) — native-tier, no-shadowing rule
@@ -60,6 +61,7 @@ pub const KNOWN_BINDING_DIRS: &[&str] = &[
     ".claude",
     ".opencode",
     ".codex",
+    ".agents",
     ".github",
     ".amazonq",
     ".cursor",

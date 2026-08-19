@@ -48,3 +48,30 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
 - **`npm doctor` warning left standing.** `npm` is v11.16.0 against a required v11.11.0. `doctor
 --fix` exits 0 and reports "Nothing to fix"; the pin is a global Volta concern outside this plan's
   scope, so it is recorded rather than changed.
+
+## PR
+
+- `ose-public` — [#232](https://github.com/wahidyankf/ose-public/pull/232), opened as a draft after
+  the Phase 0 gate. Every later phase pushes to this same PR; a second number appearing means the
+  one-PR-per-repository override was violated.
+- `ose-private` — opened during the Cross-Repo Parity Ritual, after Phase 11.
+
+## Phase 1 notes
+
+- **Four Amazon Q unit tests were removed a phase early.** `amazonq_dry_run_{text,json,markdown}_output_runs_without_panic`
+  and `harness_amazonq_dry_run_via_run_reaches_dry_run_branch` read `harness.amazonq.agent-name`
+  from the real `repo-config.yml`. The moment the registry contracted, that entry was gone and the
+  path they exercise became unreachable — so they went red at Phase 1 rather than at the Phase 2
+  flag-removal step the plan scheduled them for. Deleting a test for a deliberately-removed
+  capability is honest; marking it `#[ignore]` would have been test-integrity gaming, so the removal
+  moved forward instead.
+- **`KNOWN_BINDING_DIRS` had to learn `.agents` at Phase 1, not Phase 6.** The Codex registry entry
+  declares `skills-dir: .agents/skills`, and `harness-bindings.feature`'s data-driven scenario
+  asserts every registry-declared path appears in that constant. Declaring the surface in the
+  registry is what forced the constant to follow — which is the direction the plan wants, and worth
+  noting as evidence the registry really is authoritative.
+- **Fixture repos now need a `repo-config.yml`.** Five `agents-sync` scenarios drove
+  `harness bindings generate --harness opencode` against a temp repo with no config at all. Once
+  `--harness` resolves through the registry, a config-less repo is not a valid fixture. They were
+  given the same three-entry registry production carries rather than having the guard weakened to
+  tolerate a missing file.

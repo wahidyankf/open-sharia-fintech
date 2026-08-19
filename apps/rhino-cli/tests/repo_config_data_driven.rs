@@ -34,8 +34,10 @@ struct RepoConfigDataWorld {
     ran_ok: bool,
     /// Captured stdout of the run.
     output: String,
-    /// Cursor harness entry loaded from the real repository config.
-    cursor_entry: Option<HarnessEntry>,
+    /// Codex harness entry loaded from the real repository config.
+    codex_entry: Option<HarnessEntry>,
+    /// Every harness entry loaded from the real repository config.
+    all_entries: Vec<HarnessEntry>,
     /// Whether a configured website exclusion was honoured by the audit.
     website_exclusions_respected: bool,
     /// Whether the configured Amazon Q name drove generated output.
@@ -57,7 +59,8 @@ impl RepoConfigDataWorld {
             repo: TempDir::new().expect("temp repo"),
             ran_ok: false,
             output: String::new(),
-            cursor_entry: None,
+            codex_entry: None,
+            all_entries: Vec::new(),
             website_exclusions_respected: false,
             amazonq_definition_name_respected: false,
             dotnet_global_json_respected: false,
@@ -171,6 +174,25 @@ fn dotnet_global_json_is_runtime_config() {
     );
 }
 
+/// Regression for the harness-registry contraction: the repository supports
+/// exactly three coding-agent harnesses, and the registry is the single place
+/// that says so. Fixture-backed against the real `repo-config.yml` rather than
+/// a synthetic one, because the point is what THIS repository declares.
+fn harness_registry_declares_exactly_three_harnesses() {
+    let root = find_root_from(None).expect("repo root");
+    let config = repo_config::load(&root).expect("load repo-config.yml");
+
+    let mut names: Vec<&str> = config.harness.iter().map(|h| h.name.as_str()).collect();
+    names.sort_unstable();
+
+    assert_eq!(
+        names,
+        vec!["claude-code", "codex", "opencode"],
+        "{} harness entries found, 3 expected",
+        names.len()
+    );
+}
+
 /// Runs the named regression selected by Cargo's test-filter argument.
 ///
 /// This Cucumber target uses `harness = false`, so Cargo forwards a filter to
@@ -189,6 +211,10 @@ fn run_selected_extraction_regression() -> bool {
         }
         Some("dotnet_global_json_is_runtime_config") => {
             dotnet_global_json_is_runtime_config();
+            true
+        }
+        Some("harness_registry_declares_exactly_three_harnesses") => {
+            harness_registry_declares_exactly_three_harnesses();
             true
         }
         _ => false,
@@ -246,33 +272,60 @@ fn then_reads_from_repo_config(w: &mut RepoConfigDataWorld) {
 fn given_harness_registry_section(w: &mut RepoConfigDataWorld) {
     let root = find_root_from(None).expect("repo root");
     let config = repo_config::load(&root).expect("load repo-config.yml");
-    w.cursor_entry = config.harness.iter().find(|h| h.name == "cursor").cloned();
+    w.codex_entry = config.harness.iter().find(|h| h.name == "codex").cloned();
+    w.all_entries = config.harness;
 }
 
-#[when("the cursor entry is read")]
-fn when_cursor_entry_is_read(w: &mut RepoConfigDataWorld) {
+#[when("the codex entry is read")]
+fn when_codex_entry_is_read(w: &mut RepoConfigDataWorld) {
     assert!(
-        w.cursor_entry.is_some(),
-        "cursor harness entry must exist in repo-config.yml"
+        w.codex_entry.is_some(),
+        "codex harness entry must exist in repo-config.yml"
+    );
+}
+
+#[when("the full registry is read")]
+fn when_full_registry_is_read(w: &mut RepoConfigDataWorld) {
+    assert!(
+        !w.all_entries.is_empty(),
+        "the harness registry must not be empty"
     );
 }
 
 #[then("the entry declares the generated tier")]
-fn then_cursor_entry_generated_tier(w: &mut RepoConfigDataWorld) {
-    let entry = w.cursor_entry.as_ref().expect("cursor entry loaded");
+fn then_codex_entry_generated_tier(w: &mut RepoConfigDataWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry loaded");
     assert_eq!(entry.tier, "generated");
 }
 
-#[then("the entry declares .cursor/agents as its agent directory")]
-fn then_cursor_entry_agent_dir(w: &mut RepoConfigDataWorld) {
-    let entry = w.cursor_entry.as_ref().expect("cursor entry loaded");
-    assert_eq!(entry.agent_dir.as_deref(), Some(".cursor/agents"));
+#[then("the entry declares .codex/agents as its agent directory")]
+fn then_codex_entry_agent_dir(w: &mut RepoConfigDataWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry loaded");
+    assert_eq!(entry.agent_dir.as_deref(), Some(".codex/agents"));
 }
 
 #[then("the entry declares .claude/agents as the source it mirrors")]
-fn then_cursor_entry_mirror_source(w: &mut RepoConfigDataWorld) {
-    let entry = w.cursor_entry.as_ref().expect("cursor entry loaded");
+fn then_codex_entry_mirror_source(w: &mut RepoConfigDataWorld) {
+    let entry = w.codex_entry.as_ref().expect("codex entry loaded");
     assert_eq!(entry.mirrors.as_deref(), Some(".claude/agents"));
+}
+
+#[then("the entry declares no forbidden directory")]
+fn then_codex_entry_no_forbid_dir(w: &mut RepoConfigDataWorld) {
+    // `.codex/agents/*.toml` IS the official Codex subagent surface, so a
+    // `forbid-dir` here would block the correct layout outright.
+    let entry = w.codex_entry.as_ref().expect("codex entry loaded");
+    assert_eq!(
+        entry.forbid_dir, None,
+        "codex must not forbid its own official subagent directory"
+    );
+}
+
+#[then("it names exactly claude-code, opencode, and codex")]
+fn then_registry_names_exactly_three(w: &mut RepoConfigDataWorld) {
+    let mut names: Vec<&str> = w.all_entries.iter().map(|h| h.name.as_str()).collect();
+    names.sort_unstable();
+    assert_eq!(names, vec!["claude-code", "codex", "opencode"]);
 }
 
 #[given("the frontmatter-date gate declares website exclusions")]

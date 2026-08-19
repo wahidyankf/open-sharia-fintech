@@ -192,6 +192,10 @@ struct SpecsTreeWorld {
     // --- harness-registry-driven.feature (subprocess, synthetic repo-config.yml) ---
     hrd_work: Option<TempDir>,
     hrd_dup_output: Option<Output>,
+    /// `harness bindings generate` run with a registry-declared harness name.
+    hrd_gen_declared: Option<Output>,
+    /// `harness bindings generate` run with a name the registry omits.
+    hrd_gen_undeclared: Option<Output>,
 
     // --- worktree-agnostic.feature (in-process) ---
     wt_main: Option<TempDir>,
@@ -234,6 +238,8 @@ impl SpecsTreeWorld {
             hb_result: None,
             hrd_work: None,
             hrd_dup_output: None,
+            hrd_gen_declared: None,
+            hrd_gen_undeclared: None,
             wt_main: None,
             wt_worktree_dir: None,
             wt_path: None,
@@ -946,25 +952,11 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     w.hb_result = Some(validate_bindings(root));
 }
 
-#[then(
-    "all 11 supported harnesses are listed (Claude Code, OpenCode, Amazon Q, Codex, Copilot, Cursor, Windsurf, Junie, Antigravity, Pi, Aider)"
-)]
-fn then_hb_all_11_listed(w: &mut SpecsTreeWorld) {
+#[then("all 3 supported harnesses are listed (Claude Code, OpenCode, Codex)")]
+fn then_hb_all_three_listed(w: &mut SpecsTreeWorld) {
     let names: HashSet<&str> = w.hb_harness.iter().map(|h| h.name.as_str()).collect();
-    assert_eq!(w.hb_harness.len(), 11, "harness list: {names:?}");
-    for expected in [
-        "claude-code",
-        "opencode",
-        "amazonq",
-        "codex",
-        "copilot",
-        "cursor",
-        "windsurf",
-        "junie",
-        "antigravity",
-        "pi",
-        "aider",
-    ] {
+    assert_eq!(w.hb_harness.len(), 3, "harness list: {names:?}");
+    for expected in ["claude-code", "opencode", "codex"] {
         assert!(
             names.contains(expected),
             "missing harness {expected:?} in {names:?}"
@@ -972,7 +964,33 @@ fn then_hb_all_11_listed(w: &mut SpecsTreeWorld) {
     }
 }
 
-#[then("the generated tier (OpenCode, Amazon Q, Cursor) is regenerated and byte-parity-validated")]
+#[then(
+    "the source tier (Claude Code) is the single hand-authored origin every mirror derives from"
+)]
+fn then_hb_source_tier(w: &mut SpecsTreeWorld) {
+    let source: Vec<&HarnessEntry> = w.hb_harness.iter().filter(|h| h.tier == "source").collect();
+    let source_names: Vec<&str> = source.iter().map(|h| h.name.as_str()).collect();
+    assert_eq!(source.len(), 1, "source tier: {source_names:?}");
+    let origin = source[0];
+    assert_eq!(origin.name, "claude-code");
+    let origin_dir = origin
+        .agent_dir
+        .as_deref()
+        .expect("the source tier must declare an agent directory");
+
+    // Every generated entry names this one directory as what it mirrors, so
+    // there is exactly one hand-authored origin rather than several.
+    for entry in w.hb_harness.iter().filter(|h| h.tier == "generated") {
+        assert_eq!(
+            entry.mirrors.as_deref(),
+            Some(origin_dir),
+            "generated harness {:?} must mirror the single source agent-dir",
+            entry.name
+        );
+    }
+}
+
+#[then("the generated tier (OpenCode, Codex) is regenerated and byte-parity-validated")]
 fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
     let generated: Vec<&str> = w
         .hb_harness
@@ -980,10 +998,9 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
         .filter(|h| h.tier == "generated")
         .map(|h| h.name.as_str())
         .collect();
-    assert_eq!(generated.len(), 3, "generated tier: {generated:?}");
+    assert_eq!(generated.len(), 2, "generated tier: {generated:?}");
     assert!(generated.contains(&"opencode"));
-    assert!(generated.contains(&"amazonq"));
-    assert!(generated.contains(&"cursor"));
+    assert!(generated.contains(&"codex"));
 
     let result = w.hb_result.as_ref().expect("validate_bindings ran");
     assert_eq!(result.failed_checks, 0, "result: {result:#?}");
@@ -998,39 +1015,14 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
     );
 }
 
-#[then(
-    "the native tier (Copilot, Windsurf, Junie, Antigravity, Pi, Aider) is validated by the no-shadowing rule plus the AGENTS.md word budget"
-)]
-fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
-    let native: Vec<&HarnessEntry> = w.hb_harness.iter().filter(|h| h.tier == "native").collect();
-    let native_names: Vec<&str> = native.iter().map(|h| h.name.as_str()).collect();
-    assert_eq!(native.len(), 6, "native tier: {native_names:?}");
-    for expected in ["copilot", "windsurf", "junie", "antigravity", "pi", "aider"] {
+#[then("no entry declares the retired source-config or native tier")]
+fn then_hb_no_retired_tier(w: &mut SpecsTreeWorld) {
+    for entry in &w.hb_harness {
         assert!(
-            native_names.contains(&expected),
-            "missing native harness {expected:?} in {native_names:?}"
-        );
-    }
-
-    // No-shadowing rule: every shadow-bearing native entry's surface is a known binding dir/file.
-    for h in &native {
-        if let Some(shadow) = &h.shadow {
-            let base = shadow.split('/').next().unwrap_or(shadow);
-            assert!(
-                KNOWN_BINDING_DIRS.contains(&base) || KNOWN_BINDING_DIRS.contains(&shadow.as_str()),
-                "shadow surface {shadow:?} for harness {:?} not in KNOWN_BINDING_DIRS",
-                h.name
-            );
-        }
-    }
-
-    // AGENTS.md word budget: every native entry reads AGENTS.md.
-    for h in &native {
-        assert!(
-            h.instruction.iter().any(|i| i == "AGENTS.md"),
-            "native harness {:?} must read AGENTS.md; instruction: {:?}",
-            h.name,
-            h.instruction
+            entry.tier == "source" || entry.tier == "generated",
+            "harness {:?} declares the retired tier {:?}",
+            entry.name,
+            entry.tier
         );
     }
 }
@@ -1039,10 +1031,10 @@ fn then_hb_native_tier(w: &mut SpecsTreeWorld) {
     "the harness set is data in repo-config.yml, identical across both parity repos, not a hard-coded directory list"
 )]
 fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
-    // Cross-check: every KNOWN_BINDING_DIRS entry (the constant `harness bindings validate`
-    // itself uses) corresponds to some repo-config.yml harness declaration — proving the
-    // authoritative, repo-identical source of the harness set is the YAML data, not a
-    // source-hard-coded list maintained independently of it.
+    // Cross-check: every repo-config.yml harness declaration corresponds to a
+    // `KNOWN_BINDING_DIRS` entry that `harness bindings validate` itself uses —
+    // proving the authoritative, repo-identical source of the harness set is the
+    // YAML data, not a source-hard-coded list maintained independently of it.
     let declared_paths: Vec<&str> = w
         .hb_harness
         .iter()
@@ -1050,22 +1042,23 @@ fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
             [
                 h.agent_dir.as_deref(),
                 h.rules_dir.as_deref(),
-                h.shadow.as_deref(),
+                h.skills_dir.as_deref(),
                 h.config.as_deref(),
-                h.forbid_dir.as_deref(),
             ]
             .into_iter()
             .flatten()
         })
         .collect();
-    for known in KNOWN_BINDING_DIRS.iter().copied() {
-        let matches = declared_paths
-            .iter()
-            .any(|p| *p == known || p.starts_with(known));
+    assert!(
+        !declared_paths.is_empty(),
+        "the registry must declare at least one binding path"
+    );
+    for declared in &declared_paths {
+        let base = declared.split('/').next().unwrap_or(declared);
         assert!(
-            matches,
-            "KNOWN_BINDING_DIRS entry {known:?} has no corresponding repo-config.yml harness \
-             declaration: {declared_paths:?}"
+            KNOWN_BINDING_DIRS.contains(&base) || KNOWN_BINDING_DIRS.contains(declared),
+            "declared binding path {declared:?} is absent from KNOWN_BINDING_DIRS: \
+             {KNOWN_BINDING_DIRS:?}"
         );
     }
 }
@@ -1141,6 +1134,77 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     run_git(root, &["commit", "-q", "-m", "seed"]);
 
     w.hrd_work = Some(tmp);
+}
+
+#[given("a repo-config.yml whose harness registry names a harness the source code never mentions")]
+fn given_hrd_generator_registry(w: &mut SpecsTreeWorld) {
+    let tmp = TempDir::new().expect("temp workspace");
+    let root = tmp.path();
+    run_git(root, &["init", "-q"]);
+    // `codex` is declared here but is not one of the generator's emit steps, so
+    // acceptance can only come from the registry, never from a source literal.
+    std::fs::write(
+        root.join("repo-config.yml"),
+        concat!(
+            "harness:\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n",
+            "  - name: opencode\n",
+            "    tier: generated\n",
+            "    agent-dir: .opencode/agents\n",
+            "    mirrors: .claude/agents\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "coverage:\n  projects: []\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        ),
+    )
+    .expect("write repo-config.yml");
+    std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
+    w.hrd_work = Some(tmp);
+}
+
+#[when("harness bindings generate is asked for that registry-declared name")]
+fn when_hrd_generate_declared_name(w: &mut SpecsTreeWorld) {
+    let root = w
+        .hrd_work
+        .as_ref()
+        .expect("fixture built by Given step")
+        .path()
+        .to_path_buf();
+    w.hrd_gen_declared = Some(run_rhino(
+        &root,
+        &["harness", "bindings", "generate", "--harness", "codex"],
+    ));
+    w.hrd_gen_undeclared = Some(run_rhino(
+        &root,
+        &["harness", "bindings", "generate", "--harness", "cursor"],
+    ));
+}
+
+#[then("the name is not rejected as unknown")]
+fn then_hrd_declared_name_accepted(w: &mut SpecsTreeWorld) {
+    let out = w.hrd_gen_declared.as_ref().expect("generate ran");
+    let text = combined_output(out);
+    assert!(
+        !text.contains("unknown harness name"),
+        "a registry-declared name must not be rejected; got: {text}"
+    );
+}
+
+#[then("asking for a name the registry omits is rejected, listing the registry-derived set")]
+fn then_hrd_undeclared_name_rejected(w: &mut SpecsTreeWorld) {
+    let out = w.hrd_gen_undeclared.as_ref().expect("generate ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "got: {text}");
+    assert!(text.contains("unknown harness name"), "got: {text}");
+    for expected in ["claude-code", "opencode", "codex"] {
+        assert!(
+            text.contains(expected),
+            "the error must list the registry-derived set; missing {expected} in: {text}"
+        );
+    }
 }
 
 #[when("harness duplication validate runs")]

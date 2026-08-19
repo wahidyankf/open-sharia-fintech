@@ -25,7 +25,7 @@ use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
 
 /// Accepted values for `harness[].tier`.
-const VALID_TIERS: &[&str] = &["source", "generated", "source-config", "native"];
+const VALID_TIERS: &[&str] = &["source", "generated"];
 
 /// Accepted values for `coverage.projects[].levels[]`.
 const VALID_LEVELS: &[&str] = &["unit", "integration", "e2e"];
@@ -114,6 +114,14 @@ pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
                 "harness[{i}].tier: invalid value {:?} (expected one of {})",
                 entry.tier,
                 VALID_TIERS.join(" | ")
+            ));
+        }
+        // A generated tier exists to mirror a source tree; without `mirrors`
+        // there is nothing to regenerate from and nothing to byte-compare against.
+        if entry.tier == "generated" && entry.mirrors.is_none() {
+            findings.push(format!(
+                "harness[{i}].mirrors: required key is missing \
+                 (every generated-tier entry must declare the source agent-dir it mirrors)"
             ));
         }
     }
@@ -388,6 +396,34 @@ mod tests {
         assert!(
             out.contains("harness"),
             "finding must name harness; got: {out}"
+        );
+    }
+
+    #[test]
+    fn source_config_tier_is_no_longer_accepted() {
+        // `source-config` described a harness whose binding was a config file
+        // rather than a mirrored agent tree. With the registry contracted to
+        // three harnesses the tier has no members, so it must stop validating.
+        let bad = VALID.replace("tier: source", "tier: source-config");
+        let (ok, out) = write_and_run(&bad);
+        assert!(!ok, "the retired source-config tier must be rejected");
+        assert!(
+            out.contains("tier") && out.contains("source-config"),
+            "finding must name the retired tier value; got: {out}"
+        );
+    }
+
+    #[test]
+    fn generated_tier_without_mirrors_is_rejected() {
+        let bad = VALID.replace(
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n",
+            "  - { name: claude-code, tier: source, agent-dir: .claude/agents }\n  - { name: opencode, tier: generated, agent-dir: .opencode/agents }\n",
+        );
+        let (ok, out) = write_and_run(&bad);
+        assert!(!ok, "a generated entry without mirrors must be rejected");
+        assert!(
+            out.contains("mirrors"),
+            "finding must name the missing mirrors key; got: {out}"
         );
     }
 

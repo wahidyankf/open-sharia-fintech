@@ -58,12 +58,12 @@ Consequences that bind every phase below:
 
 ## Single Delivery Boundary — the one PR per repository
 
-- [ ] [AI] After the Phase 0 gate passes, push the existing branch and open ONE draft PR against
+- [x] [AI] After the Phase 0 gate passes, push the existing branch and open ONE draft PR against
       `main` titled `refactor(harness): reduce supported harnesses to three and arm anti-drift`
       — command: `git push -u origin worktree/update-harness-support && gh pr create --draft --base main --title "refactor(harness): reduce supported harnesses to three and arm anti-drift"`
       — acceptance: `gh pr list --head worktree/update-harness-support` returns exactly one PR, where
       it returned none before.
-- [ ] [AI] Record the PR number in `learnings.md` under `## PR` — acceptance: the number is present
+- [x] [AI] Record the PR number in `learnings.md` under `## PR` — acceptance: the number is present
       and every later push references it.
 - [ ] [AI] After **each** phase gate below passes, commit thematically and push to that same branch
       — acceptance: `gh pr list --head worktree/update-harness-support` still returns exactly one PR
@@ -163,13 +163,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ## Phase 1: Contract the Harness Registry to Three
 
-- [ ] [AI] **RED**: Add a fixture-backed failing test in `apps/rhino-cli/tests/repo_config_data_driven.rs`
+- [x] [AI] **RED**: Add a fixture-backed failing test in `apps/rhino-cli/tests/repo_config_data_driven.rs`
       asserting the loaded `harness:` registry contains exactly three entries named `claude-code`,
       `opencode`, `codex`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the new test fails reporting 11 entries found, 3 expected.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Rewrite the `harness:` section of `repo-config.yml` to exactly three entries.
+- [x] [AI] **GREEN**: Rewrite the `harness:` section of `repo-config.yml` to exactly three entries.
       `claude-code` stays `tier: source` with `agent-dir: .claude/agents`,
       `skills-dir: .claude/skills`, `instruction: [CLAUDE.md]`. `opencode` stays `tier: generated`
       with `agent-dir: .opencode/agents`, `mirrors: .claude/agents`, and gains
@@ -183,18 +183,18 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: the Phase 1 RED test passes; `git grep -c "forbid-dir" repo-config.yml` returns
       no match, where it returned 2 before the change (the real key plus the schema legend
       comment describing it).
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting
       `harness bindings generate --harness <name>` derives its accepted set from the registry rather
       than from string literals
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because `--harness codex` is rejected with `unknown harness name 'codex'`.
-- [ ] [AI] **GREEN**: Replace the three `match` arms on `"opencode"`, `"cursor"`, `"amazonq"` in
+- [x] [AI] **GREEN**: Replace the three `match` arms on `"opencode"`, `"cursor"`, `"amazonq"` in
       `apps/rhino-cli/src/commands/harness_generate_bindings.rs` (lines 63-86) with a registry lookup
       via `crate::application::repo_config::load`, per `tech-docs.md` DD-2
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: `--harness codex` is accepted and `--harness cursor` exits non-zero naming the
       registry-derived accepted set.
-- [ ] [AI] **REFACTOR**: Extract the registry-derived harness lookup into a single helper on
+- [x] [AI] **REFACTOR**: Extract the registry-derived harness lookup into a single helper on
       `HarnessEntry` in `apps/rhino-cli/src/application/repo_config/mod.rs` alongside the existing
       `is_source_with_agents` / `is_generated_with_agents` predicates
       — command: `npx nx run rhino-cli:test:quick`
@@ -208,22 +208,22 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `harness_amazonq_dry_run_via_run_reaches_dry_run_branch`) that this REFACTOR step does not
       touch; they are removed later, at the `--opencode`/`--cursor`/`--amazonq` flag-removal step
       below, which now names them explicitly.
-- [ ] [AI] Update `apps/rhino-cli/src/commands/repo_config_validate.rs` so a `generated`-tier entry
+- [x] [AI] Update `apps/rhino-cli/src/commands/repo_config_validate.rs` so a `generated`-tier entry
       is required to declare `mirrors`, and `source-config` is no longer an accepted tier value
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: a fixture declaring `tier: source-config` exits non-zero; the real
       `repo-config.yml` exits 0.
-- [ ] [AI] Rewrite `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature` from
+- [x] [AI] Rewrite `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature` from
       the "all 11 harnesses" framing to the three survivors at their tiers, carrying the US-1
       scenarios from `prd.md`
       — acceptance: `git grep -c "11 harnesses" specs/` returns no match, where it returned 1 before;
       `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature`
+- [x] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature`
       to cover the generator (DD-2), not only the duplication validator
       — acceptance: the feature names `harness bindings generate` in at least one scenario, where it
       named only `harness duplication validate` before.
-- [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature` for
+- [x] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature` for
       the three-entry registry
       — acceptance: `npx nx run rhino-cli:specs:structure-validation` exits 0.
 
@@ -231,17 +231,17 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
       — exits 0.
-- [ ] [AI] `git grep -c "forbid-dir" repo-config.yml` — no match (returned 2 at baseline: the real
+- [x] [AI] `git grep -c "forbid-dir" repo-config.yml` — no match (returned 2 at baseline: the real
       key plus the schema legend comment).
-- [ ] [AI] `awk '/^harness:/,/^doctor:/' repo-config.yml | grep "name:" | grep -vc "agent-name:"` —
+- [x] [AI] `awk '/^harness:/,/^doctor:/' repo-config.yml | grep "name:" | grep -vc "agent-name:"` —
       returns 3 (returned 11 at baseline). A plain `grep -c "name:"` on this block returns 12, not
       11, because the `amazonq` entry's `agent-name: ose-default` field contains `name:` as a
       substring; the `grep -vc "agent-name:"` filter excludes that collision so the count measures
       harness entries (11), not `name:` substring occurrences (12).
-- [ ] [AI] `npx nx run rhino-cli:specs:gherkin-cardinality-validation` — exits 0.
+- [x] [AI] `npx nx run rhino-cli:specs:gherkin-cardinality-validation` — exits 0.
 
 > **Pause Safety**: the registry declares three harnesses and every validator agrees with it, but the
 > dropped binding directories still exist on disk and are simply no longer regenerated. The tree

@@ -99,6 +99,15 @@ impl HarnessEntry {
     pub fn is_generated_with_agents(&self) -> bool {
         self.tier == "generated" && self.agent_dir.is_some()
     }
+
+    /// `true` when this entry is the harness the caller named.
+    ///
+    /// The single place a `--harness <name>` argument is matched against the
+    /// registry, so the accepted set is always exactly what `repo-config.yml`
+    /// declares rather than a source-hard-coded literal list.
+    pub fn matches_name(&self, name: &str) -> bool {
+        self.name == name
+    }
 }
 
 /// Whether a gate validates or mutates repository content.

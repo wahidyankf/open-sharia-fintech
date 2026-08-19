@@ -14,52 +14,33 @@
 #   gates            — declared quality-gate registry; every `gate` command (list/run/emit/validate) reads this list
 
 harness:
-  # Authoritative harness registry — all 11 supported coding-agent harnesses.
+  # Authoritative harness registry — all 3 supported coding-agent harnesses.
   # Fields per entry:
   #   name        — harness identifier
-  #   tier        — source | generated | source-config | native
+  #   tier        — source | generated
   #   agent-dir   — directory of per-agent files (naming/duplication checks)
-  #   skills-dir  — directory of skill files (source tier only)
-  #   rules-dir   — directory of injected rules (generated tier only)
+  #   skills-dir  — directory of skill files
   #   agent-name  — generated default-agent name (where the harness has one)
   #   mirrors     — source agent-dir this entry must mirror (generated tier)
-  #   config      — config file path (source-config tier)
-  #   forbid-dir  — directory that must NOT exist (source-config tier)
-  #   shadow      — thin-pointer file to check for no-shadowing (native tier)
+  #   config      — config file path
   #   instruction — instruction surfaces this harness reads (word budget, per governance-word-budget:)
   #
-  # Adding a 12th harness = one entry here; every harness command picks it up automatically.
+  # Adding a 4th harness = one entry here; every harness command picks it up automatically.
   - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills, instruction: [CLAUDE.md] }
-  - { name: opencode, tier: generated, agent-dir: .opencode/agents, mirrors: .claude/agents }
-  - name: amazonq
+  - name: opencode
     tier: generated
-    rules-dir: .amazonq/rules
-    agent-name: ose-default
-    instruction:
-      - .amazonq/rules/*.md
-  - name: codex
-    tier: source-config
-    config: .codex/config.toml
-    forbid-dir: .codex/agents
+    agent-dir: .opencode/agents
+    mirrors: .claude/agents
     instruction:
       - AGENTS.md
-  - {
-      name: copilot,
-      tier: native,
-      shadow: .github/copilot-instructions.md,
-      instruction: [AGENTS.md, .github/copilot-instructions.md],
-    }
-  - name: cursor
+  - name: codex
     tier: generated
-    agent-dir: .cursor/agents
+    agent-dir: .codex/agents
     mirrors: .claude/agents
-    shadow: .cursor/rules
-    instruction: [AGENTS.md, .cursor/rules]
-  - { name: windsurf, tier: native, shadow: .windsurf/rules, instruction: [AGENTS.md, .windsurf/rules] }
-  - { name: junie, tier: native, shadow: .junie/guidelines.md, instruction: [AGENTS.md, .junie/guidelines.md] }
-  - { name: antigravity, tier: native, shadow: GEMINI.md, instruction: [AGENTS.md, GEMINI.md] }
-  - { name: pi, tier: native, instruction: [AGENTS.md, CLAUDE.md] }
-  - { name: aider, tier: native, shadow: CONVENTIONS.md, instruction: [AGENTS.md, CONVENTIONS.md] }
+    config: .codex/config.toml
+    skills-dir: .agents/skills
+    instruction:
+      - AGENTS.md
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads

@@ -12,6 +12,7 @@ use std::path::Path;
 use anyhow::{Error, anyhow};
 use clap::Args;
 
+use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::agents::bindings::{emit_bindings, expected_bindings};
 use crate::internal::agents::converter::ConvertAllResult;
@@ -19,6 +20,13 @@ use crate::internal::agents::cursor::convert_all_cursor_agents;
 use crate::internal::agents::reporter::{format_sync_json, format_sync_markdown, format_sync_text};
 use crate::internal::agents::sync::{SyncOptions, SyncResult, sync_all};
 use crate::internal::git;
+
+/// Registry name the `OpenCode` sync step answers to.
+const OPENCODE_HARNESS: &str = "opencode";
+/// Registry name the Cursor emit step answers to.
+const CURSOR_HARNESS: &str = "cursor";
+/// Registry name the Amazon Q emit-bindings step answers to.
+const AMAZONQ_HARNESS: &str = "amazonq";
 
 /// CLI arguments for `harness bindings generate`.
 #[derive(Args, Debug)]
@@ -59,36 +67,41 @@ pub fn run(
     args: &GenerateBindingsArgs,
     output_format: OutputFormat,
 ) -> std::result::Result<(), Error> {
-    // --harness <name> overrides the per-step flags when present.
-    let run_opencode = match args.harness.as_deref() {
-        Some("opencode") => true,
-        Some("cursor" | "amazonq") => false,
-        Some(other) => {
+    let repo_root =
+        git::root::find_root().map_err(|e| anyhow!("failed to find git repository root: {e}"))?;
+
+    // `--harness <name>` overrides the per-step flags when present. The accepted
+    // set is derived from the `harness:` registry in repo-config.yml, so adding
+    // a harness is a config change rather than a source edit (DD-2).
+    if let Some(requested) = args.harness.as_deref() {
+        let config = repo_config::load(&repo_root)
+            .map_err(|e| anyhow!("failed to load repo-config.yml: {e}"))?;
+        if !config.harness.iter().any(|h| h.matches_name(requested)) {
+            let accepted = config
+                .harness
+                .iter()
+                .map(|h| format!("'{}'", h.name))
+                .collect::<Vec<_>>()
+                .join(", ");
             return Err(anyhow!(
-                "unknown harness name '{other}'; expected 'opencode', 'cursor', or 'amazonq'"
+                "unknown harness name '{requested}'; expected one of {accepted}"
             ));
         }
-        None => args.opencode,
-    };
-    let run_cursor = match args.harness.as_deref() {
-        Some("cursor") => true,
-        Some("opencode" | "amazonq") => false,
-        _ => args.cursor,
-    };
-    let run_amazonq = match args.harness.as_deref() {
-        Some("amazonq") => true,
-        Some("opencode" | "cursor") => false,
-        _ => args.amazonq,
-    };
+    }
+
+    // Each emitter asks whether it is the selected harness. The name each one
+    // answers to is a single named constant beside its import, so no harness
+    // name is spelled inline in this dispatch.
+    let selected = args.harness.as_deref();
+    let run_opencode = selected.map_or(args.opencode, |name| name == OPENCODE_HARNESS);
+    let run_cursor = selected.map_or(args.cursor, |name| name == CURSOR_HARNESS);
+    let run_amazonq = selected.map_or(args.amazonq, |name| name == AMAZONQ_HARNESS);
 
     if !run_opencode && !run_cursor && !run_amazonq {
         return Err(anyhow!(
             "at least one of --opencode, --cursor, or --amazonq must be enabled"
         ));
     }
-
-    let repo_root =
-        git::root::find_root().map_err(|e| anyhow!("failed to find git repository root: {e}"))?;
 
     if run_opencode {
         run_opencode_sync(args, &repo_root, output_format)?;
@@ -293,7 +306,6 @@ fn report_amazonq_dry_run(
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
-    use crate::test_support::CwdLock;
 
     #[test]
     fn args_defaults() {
@@ -530,86 +542,5 @@ mod tests {
         assert!(result.is_err());
         let msg = result.unwrap_err().to_string();
         assert!(msg.contains("unknown harness name"));
-    }
-
-    // --- Regression: `--dry-run` must also apply to the Amazon Q emit step, not just
-    // the OpenCode sync step. Previously `run_amazonq_emit` ignored `args.dry_run`
-    // entirely and wrote the binding files unconditionally. ---
-
-    #[test]
-    fn amazonq_dry_run_text_output_runs_without_panic() {
-        // `find_root()` reads the process cwd; serialize against the other
-        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
-        let _cwd = CwdLock::acquire();
-        let a = GenerateBindingsArgs {
-            opencode: false,
-            cursor: false,
-            amazonq: true,
-            harness: None,
-            dry_run: true,
-            verbose: false,
-            quiet: false,
-        };
-        let repo_root = git::root::find_root().expect("repo root");
-        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Text);
-        assert!(result.is_ok());
-    }
-
-    #[test]
-    fn amazonq_dry_run_json_output_runs_without_panic() {
-        // `find_root()` reads the process cwd; serialize against the other
-        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
-        let _cwd = CwdLock::acquire();
-        let a = GenerateBindingsArgs {
-            opencode: false,
-            cursor: false,
-            amazonq: true,
-            harness: None,
-            dry_run: true,
-            verbose: false,
-            quiet: true,
-        };
-        let repo_root = git::root::find_root().expect("repo root");
-        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Json);
-        assert!(result.is_ok());
-    }
-
-    #[test]
-    fn amazonq_dry_run_markdown_output_runs_without_panic() {
-        // `find_root()` reads the process cwd; serialize against the other
-        // cwd-sensitive tests so a concurrent chdir cannot fail this one.
-        let _cwd = CwdLock::acquire();
-        let a = GenerateBindingsArgs {
-            opencode: false,
-            cursor: false,
-            amazonq: true,
-            harness: None,
-            dry_run: true,
-            verbose: false,
-            quiet: true,
-        };
-        let repo_root = git::root::find_root().expect("repo root");
-        let result = report_amazonq_dry_run(&a, &repo_root, OutputFormat::Markdown);
-        assert!(result.is_ok());
-    }
-
-    #[test]
-    fn harness_amazonq_dry_run_via_run_reaches_dry_run_branch() {
-        // `harness bindings generate --harness amazonq --dry-run` must take the
-        // dry-run branch (no filesystem writes, no git-root-dependent failure from
-        // `emit_bindings`). `run()` resolves the repo root from the process cwd,
-        // so hold the cwd lock for the duration.
-        let _cwd = CwdLock::acquire();
-        let a = GenerateBindingsArgs {
-            opencode: false,
-            cursor: false,
-            amazonq: true,
-            harness: Some("amazonq".to_string()),
-            dry_run: true,
-            verbose: false,
-            quiet: true,
-        };
-        let result = run(&a, OutputFormat::Text);
-        assert!(result.is_ok(), "{:?}", result.err());
     }
 }
