@@ -32,7 +32,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3101
+ENV AYOKODING_WWW_PORT=3101
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -50,11 +50,13 @@ COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ayokoding-www/content 
 # the build context (not the `builder` stage) since it is never part of the Next.js build itself.
 COPY --chown=nextjs:nodejs apps/ayokoding-www-fe-e2e/fixtures/manifests ./apps/ayokoding-www-fe-e2e/fixtures/manifests
 
+COPY --chown=nextjs:nodejs scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=nextjs:nodejs libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER nextjs
 EXPOSE 3101
 
 # server.js is at apps/ayokoding-www/server.js in standalone output
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3101/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${AYOKODING_WWW_PORT}/ || exit 1
 
-CMD ["node", "apps/ayokoding-www/server.js"]
+CMD ["node", "scripts/next-with-port.mjs", "--env", "AYOKODING_WWW_PORT", "--default", "3101", "--server", "apps/ayokoding-www/server.js"]

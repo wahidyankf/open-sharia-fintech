@@ -37,10 +37,12 @@ COPY --from=build --chown=app:app /app/.next ./.next
 COPY --from=build --chown=app:app /app/public ./public
 COPY --from=build --chown=app:app /app/node_modules ./node_modules
 COPY --from=build --chown=app:app /app/package.json ./package.json
+COPY --chown=app:app scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=app:app libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER app
 EXPOSE 3201
-ENV PORT=3201 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+ENV WAHIDYANKF_WWW_PORT=3201 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3201/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${WAHIDYANKF_WWW_PORT}/ || exit 1
 
-CMD ["node_modules/.bin/next", "start", "-p", "3201", "-H", "0.0.0.0"]
+CMD ["node", "scripts/next-with-port.mjs", "start", "--env", "WAHIDYANKF_WWW_PORT", "--default", "3201", "-H", "0.0.0.0"]

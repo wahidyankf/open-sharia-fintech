@@ -45,10 +45,12 @@ RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
 COPY --from=build --chown=app:app /app/.next/standalone ./
 COPY --from=build --chown=app:app /app/.next/static ./.next/static
+COPY --chown=app:app scripts/next-with-port.mjs scripts/next-with-port.mjs
+COPY --chown=app:app libs/ts-env-loader/src/port-resolver.ts libs/ts-env-loader/src/port-resolver.ts
 USER app
 EXPOSE 3202
-ENV PORT=3202 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+ENV ORGANICLEVER_APP_WEB_PORT=3202 HOSTNAME="0.0.0.0" NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3202/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${ORGANICLEVER_APP_WEB_PORT}/ || exit 1
 
-CMD ["node", "server.js"]
+CMD ["node", "scripts/next-with-port.mjs", "--env", "ORGANICLEVER_APP_WEB_PORT", "--default", "3202", "--server", "server.js"]

@@ -17,7 +17,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev --port 3300",
+        "command": "node ../../scripts/next-with-port.mjs dev --env OSE_APP_WEB_PORT --default 3300",
         "cwd": "{projectRoot}"
       }
     },
@@ -32,7 +32,7 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start --port 3300",
+        "command": "node ../../scripts/next-with-port.mjs start --env OSE_APP_WEB_PORT --default 3300",
         "cwd": "{projectRoot}"
       }
     },

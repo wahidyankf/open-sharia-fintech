@@ -28,7 +28,8 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-# Default port — override at runtime via OSE_BE_PORT.
+# Default port — override at runtime with `-e OSE_BE_PORT=<port>`, or with a `--port <port>`
+# argument appended to the entrypoint. Until this change the variable was read by nothing.
 ENV OSE_BE_PORT=8302
 EXPOSE 8302
 

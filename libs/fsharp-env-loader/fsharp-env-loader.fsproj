@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="src/EnvTier.fs" />
+    <Compile Include="src/PortResolver.fs" />
   </ItemGroup>
 
   <ItemGroup>

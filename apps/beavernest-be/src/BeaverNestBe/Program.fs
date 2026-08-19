@@ -55,6 +55,30 @@ let prepareApplication readEnvironment =
         | Ok() -> Ok listener
         | Error error -> Error(safeMessage error)
 
+/// True when argv carries nothing but a `--port` override, in either spelling. Without this the
+/// catch-all below would classify `--port 4000` as an unrecognised SUBCOMMAND and refuse to boot —
+/// the reason a port flag was previously impossible here.
+let private isOnlyPortFlags (args: string[]) : bool =
+    match args with
+    | [||] -> true
+    | [| "--port"; _ |] -> true
+    | [| single |] -> single.StartsWith("--port=", System.StringComparison.Ordinal)
+    | _ -> false
+
+/// Applies the repo-wide `--port` flag on top of an already-parsed listener.
+///
+/// `parse` has resolved the env-var and default tiers already, so passing its port through as the
+/// fallback yields exactly the shared precedence — flag, then BEAVERNEST_BE_HTTP_LISTEN_PORT, then
+/// the 19300 default — without changing `parse`'s signature or weakening its loopback/wildcard
+/// guard, which still owns the address half of the decision.
+let private applyPortFlag
+    (argv: string[])
+    (readEnvironment: string -> string)
+    (listener: ListenerConfiguration)
+    : Result<ListenerConfiguration, string> =
+    FsharpEnvLoader.PortResolver.resolvePort argv readEnvironment "BEAVERNEST_BE_HTTP_LISTEN_PORT" listener.Port
+    |> Result.map (fun port -> { listener with Port = port })
+
 let private commandMode args databaseConfiguration =
     match args with
     | [| "backup"; "--name"; name |] ->
@@ -69,7 +93,7 @@ let private commandMode args databaseConfiguration =
         match restore databaseConfiguration name with
         | Ok() -> Some 0
         | Error error -> Some(fail error)
-    | [||] -> None
+    | _ when isOnlyPortFlags args -> None
     | _ -> Some(fail "invalid command")
 
 [<EntryPoint>]
@@ -84,7 +108,10 @@ let main args =
         match commandMode args databaseConfiguration with
         | Some exitCode -> exitCode
         | None ->
-            match prepareApplication System.Environment.GetEnvironmentVariable with
+            match
+                prepareApplication System.Environment.GetEnvironmentVariable
+                |> Result.bind (applyPortFlag args System.Environment.GetEnvironmentVariable)
+            with
             | Error error -> fail error
             | Ok listener ->
                 match acquireDataDirectoryServiceLock databaseConfiguration with

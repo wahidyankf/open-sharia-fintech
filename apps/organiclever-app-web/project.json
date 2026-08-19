@@ -17,7 +17,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node scripts/gen-migrations.mjs && next dev --port 3202",
+        "command": "node scripts/gen-migrations.mjs && node ../../scripts/next-with-port.mjs dev --env ORGANICLEVER_APP_WEB_PORT --default 3202",
         "cwd": "{projectRoot}"
       }
     },
@@ -33,7 +33,7 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start --port 3202",
+        "command": "node ../../scripts/next-with-port.mjs start --env ORGANICLEVER_APP_WEB_PORT --default 3202",
         "cwd": "{projectRoot}"
       }
     },
