@@ -45,6 +45,28 @@ the summary flagged JetBrains Junie as HIGH, but the report records it `FALSE_PO
 > its dropped-harness tokens deliberately — the scanner's job is catching vendor names in
 > vendor-neutral prose, which is unrelated to which harnesses the repository binds.
 
+### Folded in from `update-harness-support` Knowledge Capture (2026-08-19)
+
+Each is catalog-shaped and none justifies its own brief.
+
+**A narrow observation became a broad rule.** The defect Phase 4 fixed was not an omission but an
+inversion: `validate_no_codex_agents_dir` actively failed when `.codex/agents/` existed. Its true
+origin was a correct observation about a **file extension** — Codex reads `.toml` there — hardened
+into a false rule about the **directory**. The general shape is worth watching for whenever a
+harness observation is turned into a validator: state the rule at the width of the evidence, and
+no wider.
+
+**The Codex `Status` cell may understate what loads.** It reads `Partial`, while that plan proved
+non-interactively that the project `.codex/config.toml`, root `AGENTS.md`, and the
+`.agents/skills/` root all load. Only subagent discovery is unverified, for want of a
+non-interactive listing in codex-cli 0.146.0. Re-rate the cell when a listing exists, or restate
+what `Partial` is measuring.
+
+**A declared count is a maintenance liability without an expiry.** Catalog and convention prose
+that says "the seven surfaces" or "183 hits" is correct on the day it is written and silently
+wrong afterwards — that plan found both a stale "seven" and a stale hit count. Prefer a claim the
+reader can re-derive, or carry a dated re-verification note.
+
 ## Why now
 
 Harness conventions move continuously and each stale row is a latent mis-emit. The audit is already
