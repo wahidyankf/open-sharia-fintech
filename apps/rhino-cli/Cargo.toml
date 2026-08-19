@@ -65,6 +65,10 @@ name = "harness_sync_triage"
 harness = false
 
 [[test]]
+name = "opencode_conformance"
+harness = false
+
+[[test]]
 name = "governance"
 harness = false
 
