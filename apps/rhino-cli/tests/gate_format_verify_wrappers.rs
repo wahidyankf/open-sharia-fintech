@@ -45,7 +45,15 @@ fn run_elixir_check(sources: &[&Path]) -> Output {
 }
 
 fn elixir_formatter_is_configured() -> bool {
+    // The wrapper script is only half the precondition: it shells out to `mix`,
+    // so a runner without the Elixir toolchain makes both assertions below
+    // meaningless — the accept case fails on `mix: command not found`, and the
+    // reject case passes for that same wrong reason.
     script("format-elixir.sh").is_file()
+        && Command::new("mix")
+            .arg("--version")
+            .output()
+            .is_ok_and(|out| out.status.success())
 }
 
 #[test]
