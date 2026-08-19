@@ -358,7 +358,12 @@ fn validate_color_tier_maps(repo_root: &Path) -> Vec<ValidationCheck> {
 /// that keeps a mirror edit instead of discarding it. This message is where a
 /// developer actually learns promotion exists, so it names the canonical path
 /// resolved from the registry rather than telling them to go and find it.
-fn drift_remediation(repo_root: &Path, mirror_rel: &str) -> String {
+///
+/// `pub(crate)`, not private: [`super::sync_validator::validate_skills_mirror`]
+/// reuses it too (H1) — a hand-edited skills mirror is exactly as promotable
+/// as a hand-edited agent mirror, and naming only the destructive remedy for
+/// one of the two generated-mirror classes was the defect.
+pub(crate) fn drift_remediation(repo_root: &Path, mirror_rel: &str) -> String {
     let config = repo_config::load_or_default(repo_root);
     let canonical = resolve_canonical(repo_root, &config, mirror_rel);
     let source = canonical.map_or_else(

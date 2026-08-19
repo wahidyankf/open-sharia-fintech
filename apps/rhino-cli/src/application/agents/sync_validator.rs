@@ -8,11 +8,12 @@ use std::time::Instant;
 
 use serde_norway::Value;
 
+use super::bindings::drift_remediation;
 use super::converter::{
     OPENCODE_AGENT_DIR, convert_model, convert_permission, is_mirrorable_agent_filename,
 };
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
-use super::skills_mirror::audit_skills_mirrors;
+use super::skills_mirror::{MirrorDrift, audit_skills_mirrors};
 use super::types::{ValidationCheck, ValidationResult};
 
 /// Run all sync-parity checks between `.claude/agents/` and `.opencode/agents/`.
@@ -54,13 +55,30 @@ fn validate_skills_mirror(repo_root: &Path) -> ValidationCheck {
                 .map(ToString::to_string)
                 .collect::<Vec<_>>()
                 .join("; ");
+            // A skills mirror is `generated`-class exactly like an agent
+            // mirror, so a hand-edited one is exactly as promotable — the
+            // remedy must name `harness sync promote` too, not only the
+            // regenerate command that discards the edit (H1). Only
+            // `Missing` drifts (a hand-edited or stale mirror file with a
+            // real canonical source) route through `drift_remediation`; an
+            // `Undeclared` drift (an orphan with no source counterpart and
+            // no vendored declaration) has nothing to promote into.
+            let remediation = drifts
+                .iter()
+                .map(|drift| match drift {
+                    MirrorDrift::Missing(mirror_rel) => drift_remediation(repo_root, mirror_rel),
+                    MirrorDrift::Undeclared(mirror_rel) => format!(
+                        "{mirror_rel} has no source counterpart and is not declared vendored; \
+                         run `rhino-cli harness bindings generate` to remove it."
+                    ),
+                })
+                .collect::<Vec<_>>()
+                .join(" ");
             ValidationCheck::failed(
                 check_name,
                 "mirror byte-equal to its canonical source tree",
-                detail.clone(),
-                format!(
-                    "skills mirror drifted ({detail}); run `rhino-cli harness bindings generate`"
-                ),
+                detail,
+                remediation,
             )
         }
     }
@@ -495,6 +513,44 @@ mod tests {
             "---\ndescription: desc\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n  write: allow\nskills:\n  - my-skill\n---\nBody\n",
         );
         dir
+    }
+
+    // Regression for H1: a hand-edited skills mirror's remediation must name
+    // `harness sync promote` alongside the destructive `bindings generate`,
+    // exactly as an agent mirror's does — not only the remedy that discards
+    // the edit.
+    #[test]
+    fn validate_skills_mirror_names_promote_for_a_drifted_mirror_with_a_canonical_source() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write(
+            &root.join("repo-config.yml"),
+            concat!(
+                "harness:\n",
+                "  - name: codex\n",
+                "    tier: generated\n",
+                "    agent-dir: .codex/agents\n",
+                "    mirrors: .claude/agents\n",
+                "    skills-dir: .agents/skills\n",
+                "    skills-mirrors: .claude/skills\n",
+            ),
+        );
+        write(&root.join(".claude/skills/demo/SKILL.md"), "canonical\n");
+        write(&root.join(".agents/skills/demo/SKILL.md"), "hand-edited\n");
+
+        let check = validate_skills_mirror(root);
+
+        assert_eq!(check.status, "failed");
+        assert!(
+            check.message.contains("harness sync promote"),
+            "message must name the preserving remedy too; got: {}",
+            check.message
+        );
+        assert!(
+            check.message.contains(".claude/skills/demo/SKILL.md"),
+            "message must resolve the canonical source path; got: {}",
+            check.message
+        );
     }
 
     #[test]
