@@ -79,7 +79,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: prints `generated apps/rhino-cli/parity-manifest.sha256`, and
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`
       exits 0.
-- [ ] [AI] Re-check the boundary set before assuming it: the parity boundary drifts and is
+- [x] [AI] Re-check the boundary set before assuming it: the parity boundary drifts and is
       bidirectional. Read `apps/rhino-cli/parity-manifest.sha256` in both repositories rather than
       converging one onto the other — acceptance: the boundary file list is recorded in
       `learnings.md`.
@@ -508,10 +508,10 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 > No PR opens here. The one PR is already open from the
 > [Single Delivery Boundary](#single-delivery-boundary--the-one-pr-per-repository) section.
 
-- [ ] [AI] Commit thematically: one commit for the registry contraction, one for the purge, one for
+- [x] [AI] Commit thematically: one commit for the registry contraction, one for the purge, one for
       the prose sweep — acceptance: `git log --oneline` shows three Conventional Commits with
       imperative subjects and no trailing period.
-- [ ] [AI] Push to the existing branch: `git push` — acceptance:
+- [x] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
 - [ ] [AI] Poll CI every 2 minutes (never `gh run watch`) until the PR's checks are green —
       acceptance: `gh pr checks` reports all checks passing. Fix any failure at the root cause before
@@ -521,22 +521,22 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ## Phase 4: Correct the Codex Defect
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that a
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting that a
       `.codex/agents/` directory containing `<name>.toml` passes validation and one containing
       `<name>.md` fails it
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because no validator distinguishes the two extensions today.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Implement the extension rule in
+- [x] [AI] **GREEN**: Implement the extension rule in
       `apps/rhino-cli/src/application/agents/bindings.rs`: files under `.codex/agents/` must have a
       `.toml` extension; any `.md` file there is a finding naming the officially-correct extension
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes.
-- [ ] [AI] **REFACTOR**: Move the extension rule next to the Codex constants that Phase 5 will add,
+- [x] [AI] **REFACTOR**: Move the extension rule next to the Codex constants that Phase 5 will add,
       so both live in one module boundary
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass; the rule is referenced from exactly one place.
-- [ ] [AI] Correct the factual claims in `docs/reference/platform-bindings.md` §Provenance: the
+- [x] [AI] Correct the factual claims in `docs/reference/platform-bindings.md` §Provenance: the
       former `.codex/agents/` removal note asserts the directory "was never an official Codex CLI
       convention". Replace it with the verified position — standalone `.toml` files in
       `.codex/agents/` ARE official; `.codex/agents/*.md` never was; and note that project-level
@@ -544,27 +544,27 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: `git grep -c "never an official" docs/reference/platform-bindings.md` returns no
       match, where it returned 1 before.
   - _Suggested executor: `docs-maker`_
-- [ ] [AI] Correct the Codex row's custom-agent surface cell from
+- [x] [AI] Correct the Codex row's custom-agent surface cell from
       `[agents.<name>] in config.toml` to name both mechanisms — standalone `.codex/agents/*.toml`
       files AND `[agents.<name>]` tables carrying `description` plus `config_file` — and record that
       `[profiles.<name>]` tables were removed as of 0.134.0 in favour of standalone
       `$CODEX_HOME/<name>.config.toml` files
       — acceptance: the row names both mechanisms and the profiles note is present.
-- [ ] [AI] Correct the Codex MCP cell to state the key is `mcp_servers` in snake_case and that the
+- [x] [AI] Correct the Codex MCP cell to state the key is `mcp_servers` in snake_case and that the
       camelCase `mcpServers` form is **silently ignored**
       — acceptance: the phrase "silently ignored" appears in the Codex MCP cell or its footnote.
-- [ ] [AI] Correct the Codex skills cell to `.agents/skills/` and state explicitly that Codex does
+- [x] [AI] Correct the Codex skills cell to `.agents/skills/` and state explicitly that Codex does
       NOT read `.claude/skills/`, and that `~/.codex/prompts/` custom prompts are officially
       deprecated in favour of Skills
       — acceptance: both statements are present and the cell does not claim `.codex/skills/`.
-- [ ] [AI] Record `AGENTS.override.md` correctly in the §No-shadowing note: it is an **official**
+- [x] [AI] Record `AGENTS.override.md` correctly in the §No-shadowing note: it is an **official**
       convention (global `~/.codex/` and per-directory in project scope), Codex concatenates
       `AGENTS.md` root-down with nearer files overriding, and this repository's standing decision is
       to ship no such file
       — acceptance: the note keeps `AGENTS.override.md` in its trigger list and no longer implies the
       convention is unofficial; `GEMINI.md` and `.junie/AGENTS.md` are removed from that list since
       their harnesses are gone.
-- [ ] [AI] Add the Codex `[agents]` global keys to the catalog's Codex row footnote: `enabled`,
+- [x] [AI] Add the Codex `[agents]` global keys to the catalog's Codex row footnote: `enabled`,
       `max_concurrent_threads_per_session`, `default_subagent_model`,
       `default_subagent_reasoning_effort`, `interrupt_message`, and the built-in agents `default`,
       `worker`, `explorer`
@@ -574,12 +574,12 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `git grep -c "never an official" docs/reference/platform-bindings.md` — no match (1 at
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `git grep -c "never an official" docs/reference/platform-bindings.md` — no match (1 at
       baseline).
-- [ ] [AI] `mkdir -p .codex/agents && touch .codex/agents/probe.md && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate; echo "exit=$?"; rm .codex/agents/probe.md`
+- [x] [AI] `mkdir -p .codex/agents && touch .codex/agents/probe.md && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate; echo "exit=$?"; rm .codex/agents/probe.md`
       — prints a non-zero exit, proving the `.md` rule is armed; re-running after the `rm` exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       — exits 0.
 
 > **Pause Safety**: the Codex factual defect is corrected in both the validator and the catalog. The

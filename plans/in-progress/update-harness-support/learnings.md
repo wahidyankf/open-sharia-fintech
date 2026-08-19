@@ -211,3 +211,61 @@ Both counts match the plan's predictions exactly, so Phase 3's sweep is sized co
   `repo-governance/conventions/structure/post-mortems/` still match, because their worked examples
   quote a real `.amazonq/` incident. They do not present a dropped harness as supported, which is
   the clause's stated intent; the verdict vocabulary in the clause is narrower than the table's.
+
+## Parity boundary set
+
+Re-checked 2026-08-19 by reading `apps/rhino-cli/parity-manifest.sha256` in **both** repositories
+rather than converging one onto the other.
+
+- `ose-private` on `main` at `6949b4040`, clean, no worktree, identical to `origin/main`.
+- Boundary size: 579 paths in `ose-private`, 574 in this branch.
+- The difference is exactly the five paths this plan deleted, all present only in `ose-private`:
+  - `apps/rhino-cli/src/application/agents/cursor.rs`
+  - `apps/rhino-cli/src/commands/harness_emit_bindings.rs`
+  - `apps/rhino-cli/tests/cursor_binding.rs`
+  - `specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/cursor-binding.feature`
+  - `specs/apps/rhino/behavior/rhino-cli/gherkin/cursor-binding/README.md`
+- No path exists only in `ose-public`. The boundary is otherwise byte-for-byte the same set, so the
+  cross-repo obligation is a straight replay of this branch's `apps/rhino-cli/**` and
+  `specs/apps/rhino/**` changes, with no `ose-private`-only file to reconcile in the other direction.
+
+## Phase 4 notes
+
+- The Codex defect was a **validator inversion, not an omission**. `validate_no_codex_agents_dir`
+  actively failed when `.codex/agents/` existed, on the false premise that the directory was never a
+  Codex convention. It is now `validate_codex_agents_dir`: the directory is permitted, and only a
+  file whose extension is not `.toml` is a finding — reported by name. Falsifiability proved both
+  ways on the real tree: `.codex/agents/probe.md` → exit 1, `.codex/agents/probe.toml` → exit 0,
+  directory removed → exit 0.
+- Two constants (`CODEX_AGENT_DIR`, `CODEX_AGENT_EXTENSION`) and one predicate
+  (`is_rejected_codex_agent_filename`) now carry the rule, all in `bindings.rs`. No other source
+  file in `apps/rhino-cli/src/` hard-codes `.codex/agents`, so Phase 5's emitter has one place to
+  import from.
+- A pre-existing test named the old belief in its own name
+  (`validate_fails_when_codex_agents_dir_exists`). Renaming it to
+  `validate_permits_an_empty_codex_agents_dir` was part of the fix, not a cosmetic follow-up — a
+  test whose name asserts the wrong rule outlives the code that implemented it.
+
+## CI flake — beavernest-be DatabaseConfigurationTests
+
+`.NET quality gate` failed on PR #232 at `beavernest-be:test:coverage` with
+`DatabaseConfigurationTests.database configuration refuses empty, root, home, repository, and
+nonpositive timeout values` — `Assert.True() Failure, Expected: True, Actual: False`
+(`apps/beavernest-be/tests/unit/Tests/DatabaseConfigurationTests.fs:30`).
+
+Evidence it is not caused by this branch:
+
+- This branch touches **no** file under `apps/beavernest-be/`. It is pulled into `nx affected` only
+  because `repo-config.yml` and `AGENTS.md` are global Nx inputs.
+- `beavernest-be:test:unit` passed **104/104** seconds earlier **in the same job**, on the same
+  binary; `test:coverage` then failed 1/104. Same code, two results.
+- The identical job passed on the previous CI run of this branch.
+- `npx nx run beavernest-be:test:coverage --skip-nx-cache` passes locally.
+
+The failing assertion iterates seven invalid inputs, three of which are computed from the
+environment (`Path.GetPathRoot(Path.GetTempPath())`,
+`Environment.GetFolderPath(SpecialFolder.UserProfile)`, `Directory.GetCurrentDirectory()`) and
+compared against values `isDisallowedDirectory` recomputes the same way. The list does not report
+which element failed, so the log cannot narrow it further — that missing detail is itself the defect
+worth fixing. Routed to Knowledge Capture as a follow-up rather than fixed inline: fixing an
+unrelated app's test inside this plan would violate the "do NOT bundle unrelated fixes" rule.
