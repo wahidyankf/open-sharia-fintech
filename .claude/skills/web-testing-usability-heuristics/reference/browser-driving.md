@@ -1,12 +1,12 @@
 # How to Drive the Browser
 
 Before browser-facing verification, discover the real-browser integrations installed on the machine
-and confirm which are healthy and callable in the current harness. Prefer Chrome/Chromium through
-Chrome DevTools MCP or Playwright MCP; if neither is available, use an equivalent installed
-browser-driving tool. Record the selected tool, any fallback, browser/version when available, and
-capability gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl
-inspection are useful baselines, but do not count as live-browser verification when a working browser
-integration exists.
+and confirm which are healthy and callable in the current harness. Prefer Playwright MCP first, then
+Chrome DevTools MCP; if neither is available, use an equivalent installed browser-driving
+integration. Record the selected tool, any fallback, browser/version when available, and capability
+gaps in the verification evidence. Static source, fetched HTML, WebFetch, and curl inspection are
+useful baselines, but do not count as live-browser verification when a working browser integration
+exists.
 
 1. **Baseline** — `WebFetch` the target(s) for rendered text, headings, nav labels, and link
    discovery; `Bash curl -sS -D - -o /dev/null` to read the redirect/locale-prefix/trailing-slash
