@@ -169,19 +169,97 @@ fn then_identical_key_set_equivalence(_w: &mut RepoConfigValidateWorld) {
     );
 }
 
-/// The eight vendored `.agents/skills/` subdirectories: plugin payload shipped
-/// with the repository, with no `.claude/skills/` counterpart to regenerate them
-/// from. The mirror emitter must leave every one of them untouched (DD-7).
-const VENDORED_SKILL_DIRS: &[&str] = &[
-    ".agents/skills/cavecrew",
-    ".agents/skills/caveman",
-    ".agents/skills/caveman-commit",
-    ".agents/skills/caveman-compress",
-    ".agents/skills/caveman-help",
-    ".agents/skills/caveman-review",
-    ".agents/skills/caveman-stats",
-    ".agents/skills/compress",
-];
+/// This crate is byte-identical across sibling repositories whose plugin payload
+/// differs, so the vendored set is *derived* rather than listed. A hard-coded
+/// list would encode one repository's tree into an assertion the other cannot
+/// satisfy — and a repository that ships no plugin skills at all is a legitimate
+/// state, not a failure.
+fn real_repo_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
+}
+
+/// Every `.agents/skills/<dir>` with no `.claude/skills/<dir>` counterpart:
+/// plugin payload shipped with the repository, with no canonical source to
+/// regenerate it from. The mirror emitter must leave every one untouched (DD-7).
+/// Returns repo-relative paths, sorted; empty when the repository vendors none.
+fn vendored_skill_dirs() -> Vec<String> {
+    let root = real_repo_root();
+    let mirror = root.join(".agents/skills");
+    let Ok(entries) = std::fs::read_dir(&mirror) else {
+        return Vec::new();
+    };
+    let mut out: Vec<String> = entries
+        .filter_map(Result::ok)
+        .filter(|e| e.path().is_dir())
+        .map(|e| e.file_name().to_string_lossy().into_owned())
+        .filter(|name| !root.join(".claude/skills").join(name).is_dir())
+        .map(|name| format!(".agents/skills/{name}"))
+        .collect();
+    out.sort();
+    out
+}
+
+/// The paths declared inside the codex entry's `vendored:` block, in declaration
+/// order. Empty when the entry carries no such block.
+fn declared_vendored_paths(entry: &str) -> Vec<String> {
+    let Some(start) = entry.find("\n    vendored:") else {
+        return Vec::new();
+    };
+    entry[start + 1..]
+        .lines()
+        .skip(1)
+        .take_while(|l| l.starts_with("      - "))
+        .map(|l| {
+            l.trim_start()
+                .trim_start_matches("- ")
+                .split('#')
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .to_string()
+        })
+        .collect()
+}
+
+/// The canonical config with a `vendored:` block guaranteed present on the codex
+/// entry: returned unchanged when one is already declared, and otherwise given a
+/// single-entry block inserted after `skills-mirrors:`. Lets a schema assertion
+/// about that key run in a repository that vendors nothing.
+///
+/// The injected path is declared in BOTH hand-maintained lists, because the
+/// validator cross-checks them — injecting only the `vendored:` half would make
+/// this helper fail for a reason that has nothing to do with the key it is
+/// probing.
+fn with_vendored_block(config: &str) -> String {
+    /// Path used only by the injected probe block; never touches the real tree.
+    const PROBE: &str = ".agents/skills/probe";
+
+    if config.contains("\n    vendored:") {
+        return config.to_string();
+    }
+    let anchor = "    skills-mirrors: .claude/skills\n";
+    let at = config
+        .find(anchor)
+        .expect("codex entry declares skills-mirrors")
+        + anchor.len();
+    let mut out = String::with_capacity(config.len() + 192);
+    out.push_str(&config[..at]);
+    out.push_str("    vendored:\n      - ");
+    out.push_str(PROBE);
+    out.push_str(" # plugin payload, no source\n");
+    let rest = &config[at..];
+    let ownership = "    ownership:\n";
+    let own_at = rest
+        .find(ownership)
+        .expect("codex entry declares ownership")
+        + ownership.len();
+    out.push_str(&rest[..own_at]);
+    out.push_str("      - { path: ");
+    out.push_str(PROBE);
+    out.push_str(", class: vendored, reason: injected probe }\n");
+    out.push_str(&rest[own_at..]);
+    out
+}
 
 /// Slice the `- name: codex` list item out of the canonical `harness:` block.
 ///
@@ -238,27 +316,35 @@ fn then_declares_skills_mirror(w: &mut RepoConfigValidateWorld) {
     );
 }
 
-#[then("it declares the eight vendored skill subdirectories")]
+#[then("it declares every vendored skill subdirectory")]
 fn then_declares_vendored_dirs(w: &mut RepoConfigValidateWorld) {
     let entry = w.codex_entry.as_ref().expect("codex entry sliced");
-    assert!(
-        entry.contains("vendored:"),
-        "codex entry must carry a vendored: block; entry was:\n{entry}"
-    );
-    let missing: Vec<&str> = VENDORED_SKILL_DIRS
-        .iter()
-        .copied()
-        .filter(|dir| !entry.contains(dir))
-        .collect();
+    let expected = vendored_skill_dirs();
+    let declared = declared_vendored_paths(entry);
+    // Both directions. Missing catches a plugin the emitter would delete;
+    // extra catches a declaration protecting a directory that no longer exists,
+    // which is how a stale exemption outlives the thing it exempted.
+    let missing: Vec<&String> = expected.iter().filter(|d| !declared.contains(d)).collect();
     assert!(
         missing.is_empty(),
-        "codex entry must declare every vendored directory; missing {missing:?}; entry was:\n{entry}"
+        "every .agents/skills directory without a .claude/skills counterpart must be declared \
+         vendored; missing {missing:?}; entry was:\n{entry}"
     );
-    assert_eq!(
-        VENDORED_SKILL_DIRS.len(),
-        8,
-        "the vendored set is exactly the eight plugin directories recorded in the Phase 6a baseline"
+    let extra: Vec<&String> = declared.iter().filter(|d| !expected.contains(d)).collect();
+    assert!(
+        extra.is_empty(),
+        "a vendored declaration must name a directory that exists and has no canonical source; \
+         stale {extra:?}; entry was:\n{entry}"
     );
+    // A repository vendoring nothing is legitimate — but then the block must be
+    // absent rather than present-and-empty, so the two states cannot be confused.
+    if expected.is_empty() {
+        assert!(
+            !entry.contains("\n    vendored:"),
+            "this repository vendors no plugin skills, so the codex entry must carry no \
+             vendored: block at all; entry was:\n{entry}"
+        );
+    }
 }
 
 #[then("each vendored entry names the plugin it came from")]
@@ -266,7 +352,7 @@ fn then_vendored_entries_name_their_origin(w: &mut RepoConfigValidateWorld) {
     let entry = w.codex_entry.as_ref().expect("codex entry sliced");
     // A bare path list says WHICH directories are exempt but not WHY, so a later
     // reader cannot tell a genuine plugin payload from a mistake someone silenced.
-    for dir in VENDORED_SKILL_DIRS {
+    for dir in vendored_skill_dirs() {
         let line = entry
             .lines()
             .find(|l| l.trim_start().starts_with(&format!("- {dir}")))
@@ -275,7 +361,7 @@ fn then_vendored_entries_name_their_origin(w: &mut RepoConfigValidateWorld) {
             .split_once('#')
             .unwrap_or_else(|| panic!("vendored entry {dir} carries no inline origin comment"));
         assert!(
-            path.trim().ends_with(dir),
+            path.trim().ends_with(&dir),
             "vendored entry {dir} must be one path per line; got: {line}"
         );
         assert!(
@@ -289,7 +375,10 @@ fn then_vendored_entries_name_their_origin(w: &mut RepoConfigValidateWorld) {
 fn then_rejects_typod_vendored_key(_w: &mut RepoConfigValidateWorld) {
     // Falsifiable the other way: the same config without the typo must pass, so
     // the rejection is attributable to the typo and not to the block as a whole.
-    let canonical = canonical_repo_config();
+    // A repository that vendors nothing carries no block to typo, so one is
+    // injected first — which also proves the schema accepts the key rather than
+    // merely tolerating its absence.
+    let canonical = with_vendored_block(&canonical_repo_config());
     assert!(
         validate_config(&canonical).status.success(),
         "baseline canonical config must validate before the typo is injected"

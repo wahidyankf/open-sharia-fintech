@@ -503,7 +503,7 @@ b06bbeeff7d8f2c65d0068103864a6adc2b53076dd8392b528aca0fdb78c4619  apps/rhino-cli
 952ccdb10513792efc3ea90c4404ba7130ed210989452cdd0eed28ff11be81ea  apps/rhino-cli/tests/mermaid_golden_corpus.rs
 c8c99aec0055c6522f1db5465ed6648d80dde68da60015ac80fff4ec6351e429  apps/rhino-cli/tests/opencode_conformance.rs
 d31563e21cfea6bd008e2abd0ffa9ba5b2f69f56013febf9f1f9e3fb945840a1  apps/rhino-cli/tests/repo_config_data_driven.rs
-c265c9e93ffb8e0622e13a60a770e1b2bd0e32e0fe0feb0d86b7251beb83052c  apps/rhino-cli/tests/repo_config_validate.rs
+340c9c2d8442a6622f6a94d6ee708461de8d5ae2178c9f6508d606d904ec1db8  apps/rhino-cli/tests/repo_config_validate.rs
 97f66d71265c3062512eba571f1c004cd6ae90e3f310105d608a72b66fba2114  apps/rhino-cli/tests/repo_governance.rs
 6139f1f9c4efa5fed7cf07f7d76ffb7679764a53df4ef0c31b61a57abcb69b51  apps/rhino-cli/tests/skills_mirror.rs
 3fd10208abb5a9af807b425cde017b9615f0b5abd13ba4243c93ebb6d2fb78c3  apps/rhino-cli/tests/spec_coverage.rs
@@ -566,7 +566,7 @@ ccfae4c4722cd26eceaad44bef85538c58c91addb7f2d160ce4e293ed208ff6a  specs/apps/rhi
 7a757ccaa90159a644289ff55e45462df9056a623a5661124054678daa85eb7b  specs/apps/rhino/behavior/rhino-cli/gherkin/md/docs-validate-naming.feature
 9e0bc2ed6ee4b4c7cc44e6fa8d97de3394e5f8cf3fc7cdc8f0d3bb7193e19a9c  specs/apps/rhino/behavior/rhino-cli/gherkin/md/md-audit.feature
 3b33a64fb581cc63c0728c67fbb664add562d79b39f1c3a4dd22b34aeb40943f  specs/apps/rhino/behavior/rhino-cli/gherkin/md/repo-governance-frontmatter-audit.feature
-0d340089bc33fe8666ca20ec0c00b3a9df2cf0f1f630f9f2d746d0c4bac5ac80  specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature
+b063a29e123bf18287395fc6f96de3a6488b67f94d0c5ee642ff9939a9171086  specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config-validate/repo-config-validate.feature
 51be3e925cc029d61e2fbff875047abd41824ad8827b9f34f0061400a70747d9  specs/apps/rhino/behavior/rhino-cli/gherkin/repo-config/data-driven.feature
 8087afa93f99ab1079f9a68da9fdae602b4384537ac5a740dcc9d3b24f75332e  specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/README.md
 59d7af092efd26e6afa15c2519a2063f4085be66f3b4960a4130b0fea2a23504  specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/repo-governance-audit.feature

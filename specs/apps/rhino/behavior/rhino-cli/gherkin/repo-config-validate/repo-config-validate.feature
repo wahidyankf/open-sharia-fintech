@@ -17,7 +17,7 @@ Feature: Schema-parity gate for repo-config.yml
     Given the canonical repo-config.yml
     When the codex harness entry is inspected
     Then it declares ".agents/skills" as a mirror of ".claude/skills"
-    And it declares the eight vendored skill subdirectories
+    And it declares every vendored skill subdirectory
     And each vendored entry names the plugin it came from
     And the schema rejects a typo'd key inside the vendored declaration
 
