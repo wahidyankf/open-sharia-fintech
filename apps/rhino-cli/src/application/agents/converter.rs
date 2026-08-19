@@ -61,7 +61,11 @@ pub struct OpenCodeAgent {
 }
 
 /// Static (field, action, reason) table powering `claude_agent_field_policy()`.
-const FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
+///
+/// Public because divergence promotion computes which canonical fields the
+/// `OpenCode` schema cannot carry by intersecting this table's `DropWarn`
+/// entries with a canonical file's actual keys. One table, two readers.
+pub const OPENCODE_FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
     ("name", FieldAction::Drop, "filename carries name"),
     ("description", FieldAction::Preserve, ""),
     ("tools", FieldAction::Translate, ""),
@@ -92,11 +96,11 @@ const FIELD_POLICY_TABLE: &[(&str, FieldAction, &str)] = &[
     ("hooks", FieldAction::DropWarn, "no opencode equivalent"),
 ];
 
-/// Return the lazily-initialized field policy map built from `FIELD_POLICY_TABLE`.
+/// Return the lazily-initialized field policy map built from `OPENCODE_FIELD_POLICY_TABLE`.
 fn claude_agent_field_policy() -> &'static HashMap<&'static str, FieldPolicy> {
     static M: OnceLock<HashMap<&'static str, FieldPolicy>> = OnceLock::new();
     M.get_or_init(|| {
-        FIELD_POLICY_TABLE
+        OPENCODE_FIELD_POLICY_TABLE
             .iter()
             .map(|(k, action, reason)| {
                 (
@@ -150,13 +154,13 @@ fn agent_name_from_path(p: &Path) -> String {
 }
 
 /// Lazily-compiled regex matching Markdown link targets `](...)`.
-fn agent_link_re() -> &'static Regex {
+pub(crate) fn agent_link_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"\]\(([^)]*)\)").expect("valid hardcoded regex"))
 }
 
 /// Lexically normalize `..`/`.` components without touching the filesystem.
-fn normalize_lexical(path: &Path) -> PathBuf {
+pub(crate) fn normalize_lexical(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for component in path.components() {
         match component {
@@ -172,7 +176,7 @@ fn normalize_lexical(path: &Path) -> PathBuf {
 
 /// Compute `target`'s path relative to `base_dir`, given both are already
 /// lexically normalized and share a common root.
-fn relative_from(target: &Path, base_dir: &Path) -> PathBuf {
+pub(crate) fn relative_from(target: &Path, base_dir: &Path) -> PathBuf {
     let target_components: Vec<_> = target.components().collect();
     let base_components: Vec<_> = base_dir.components().collect();
     let mut common = 0;

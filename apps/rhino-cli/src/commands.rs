@@ -21,6 +21,8 @@ pub mod governance_vendor_audit;
 pub mod harness_audit;
 pub mod harness_generate_bindings;
 pub mod harness_sync;
+pub mod harness_sync_promote;
+pub mod harness_sync_triage;
 pub mod harness_validate_bindings;
 pub mod harness_validate_claude;
 pub mod harness_validate_duplication;

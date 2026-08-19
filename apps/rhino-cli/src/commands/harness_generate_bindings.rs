@@ -8,25 +8,15 @@
 //! are exactly the registry entries, so adding a harness is a config change
 //! rather than a source edit (DD-2).
 
-use std::path::Path;
-
 use anyhow::{Error, anyhow};
 use clap::Args;
 
-use crate::application::agents::codex::emit_codex_bindings;
+use crate::application::agents::emit::{EmitOutcome, emit};
 use crate::application::agents::ownership::guard_emitter_targets;
-use crate::application::agents::skills_mirror::emit_skills_mirrors;
 use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
 use crate::internal::agents::reporter::{format_sync_json, format_sync_markdown, format_sync_text};
-use crate::internal::agents::sync::{SyncOptions, sync_all};
 use crate::internal::git;
-
-/// Registry name the `OpenCode` sync step answers to.
-const OPENCODE_HARNESS: &str = "opencode";
-
-/// Registry name the Codex emitter answers to.
-const CODEX_HARNESS: &str = "codex";
 
 /// CLI arguments for `harness bindings generate`.
 #[derive(Args, Debug)]
@@ -86,43 +76,55 @@ pub fn run(
     // up front rather than reporting the damage afterwards (US-8).
     guard_emitter_targets(&repo_root).map_err(|e| anyhow!("{e}"))?;
 
-    // Each emitter asks whether it is the selected harness. The name it answers
-    // to is a single named constant beside its import, so no harness name is
-    // spelled inline in this dispatch.
-    let selected = args.harness.as_deref();
-    if selected.is_none_or(|name| name == OPENCODE_HARNESS) {
-        run_opencode_sync(args, &repo_root, output_format)?;
-    }
-    if selected.is_none_or(|name| name == CODEX_HARNESS) {
-        run_codex_emit(args, &repo_root)?;
-    }
+    // Generation itself lives in `application::agents::emit`, which divergence
+    // triage also calls. Selecting the emitters here instead would give the two
+    // callers two definitions of "what the generator produces", and drift
+    // between them is exactly the failure this command exists to prevent.
+    let outcome = emit(
+        &repo_root,
+        args.harness.as_deref(),
+        args.dry_run,
+        args.verbose,
+        args.quiet,
+    )
+    .map_err(|e| anyhow!("{e}"))?;
 
+    report(args, &outcome, output_format)?;
+
+    let failed = outcome.failed_files();
+    if !failed.is_empty() {
+        return Err(anyhow!(
+            "generation completed with {} failure(s): {}",
+            failed.len(),
+            failed.join(", ")
+        ));
+    }
     Ok(())
 }
 
-/// Run the Codex emit sub-step: one `.codex/agents/<name>.toml` per Claude
-/// agent, plus the generated region of `.codex/config.toml`.
-fn run_codex_emit(args: &GenerateBindingsArgs, repo_root: &Path) -> std::result::Result<(), Error> {
-    let emitted = emit_codex_bindings(repo_root, args.dry_run)
-        .map_err(|e| anyhow!("codex emit failed: {e}"))?;
-
-    if !args.quiet {
-        println!("codex: {} agent(s) emitted", emitted.result.converted);
+/// Print whatever ran. Each emitter reports only when it was selected, so a
+/// `--harness` run never prints a zero that reads like "nothing to do".
+fn report(
+    args: &GenerateBindingsArgs,
+    outcome: &EmitOutcome,
+    output_format: OutputFormat,
+) -> std::result::Result<(), Error> {
+    if args.quiet {
+        return Ok(());
     }
-    if !emitted.result.failed_files.is_empty() {
-        return Err(anyhow!(
-            "codex emit completed with {} failures: {}",
-            emitted.result.failed_files.len(),
-            emitted.result.failed_files.join(", ")
-        ));
+    if let Some(sync) = outcome.sync.as_ref() {
+        match output_format {
+            OutputFormat::Text => {
+                print!("{}", format_sync_text(sync, args.verbose, args.quiet));
+            }
+            OutputFormat::Json => println!("{}", format_sync_json(sync)?),
+            OutputFormat::Markdown => print!("{}", format_sync_markdown(sync)),
+        }
     }
-
-    // The skills mirror is registry-driven: it runs for whichever harness
-    // entries declare both `skills-dir` and `skills-mirrors`, so it needs no
-    // flag of its own and no harness name spelled here.
-    let mirror = emit_skills_mirrors(repo_root, args.dry_run)
-        .map_err(|e| anyhow!("skills mirror failed: {e}"))?;
-    if !args.quiet {
+    if let Some(codex) = outcome.codex.as_ref() {
+        println!("codex: {} agent(s) emitted", codex.result.converted);
+    }
+    if let Some(mirror) = outcome.mirror.as_ref() {
         println!(
             "codex: {} skill file(s) mirrored, {} stale removed",
             mirror.copied, mirror.removed
@@ -131,45 +133,11 @@ fn run_codex_emit(args: &GenerateBindingsArgs, repo_root: &Path) -> std::result:
     Ok(())
 }
 
-/// Run the `OpenCode` sync sub-step.
-fn run_opencode_sync(
-    args: &GenerateBindingsArgs,
-    repo_root: &Path,
-    output_format: OutputFormat,
-) -> std::result::Result<(), Error> {
-    let opts = SyncOptions {
-        repo_root: repo_root.to_path_buf(),
-        dry_run: args.dry_run,
-        agents_only: false,
-        skills_only: false,
-        verbose: args.verbose,
-        quiet: args.quiet,
-    };
-    let result = sync_all(&opts).map_err(|e| anyhow!("opencode sync failed: {e}"))?;
-
-    if !args.quiet {
-        match output_format {
-            OutputFormat::Text => {
-                print!("{}", format_sync_text(&result, args.verbose, args.quiet));
-            }
-            OutputFormat::Json => println!("{}", format_sync_json(&result)?),
-            OutputFormat::Markdown => print!("{}", format_sync_markdown(&result)),
-        }
-    }
-
-    if !result.failed_files.is_empty() {
-        return Err(anyhow!(
-            "opencode sync completed with {} failures",
-            result.failed_files.len()
-        ));
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
+    use crate::application::agents::emit::OPENCODE_HARNESS;
 
     /// Build args with every flag at its default.
     fn args(harness: Option<&str>) -> GenerateBindingsArgs {
