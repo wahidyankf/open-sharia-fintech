@@ -266,6 +266,13 @@ specs:
 # is the raw whole-file split_whitespace() count (tech-docs.md §1.2); see also
 # FR-1.5: no exempt/allow/ignore/waiver/override key is ever permitted in this
 # block, enforced by BudgetConfig's deny_unknown_fields schema.
+#
+# The seven instruction surfaces repeat the same 400/500/500 triple. That
+# repetition is deliberate, not an oversight: YAML merge keys (`<<: *anchor`)
+# are NOT an option here — serde_norway does not expand them, so
+# `- <<: *instruction-budget` deserializes as `surfaces[N]: missing field
+# `target``. Verified at Phase 11 of plans/in-progress/update-harness-support by
+# applying exactly that shape and running `rhino-cli repo-config validate`.
 governance-word-budget:
   surfaces:
     - glob: "repo-governance/**/*.md"
@@ -281,6 +288,15 @@ governance-word-budget:
       warn: 500
       fail: 500
     - glob: ".opencode/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    # Added at Phase 11 of plans/in-progress/update-harness-support: the Codex
+    # skills mirror is a live instruction surface Codex reads, so it is measured
+    # at the same ceiling as its `.claude/skills/` source. The eight vendored
+    # third-party skill directories under it are excluded by name on the gate
+    # entry below — this repository can neither shorten nor regenerate them.
+    - glob: ".agents/**/*.md"
       target: 400
       warn: 500
       fail: 500
@@ -1214,6 +1230,24 @@ gates:
         - specs/
         - .fvm/
         - .fvm-cache/
+        # Vendored third-party skills mirrored into .agents/skills/, which
+        # Phase 11 of plans/in-progress/update-harness-support brought under the
+        # .agents/**/*.md surface. This repository neither authors nor
+        # regenerates them, so an over-budget vendored SKILL.md cannot be
+        # shortened at any source we own. Excluded as a whole set for
+        # uniformity — four exceed the 500-word fail ceiling and four do not.
+        # Counts are the validator's own split_whitespace measure (which differs
+        # slightly from `wc -w`), verified at Phase 11 by removing each of the
+        # four over-ceiling prefixes in turn and confirming a [FAIL] finding
+        # naming that file, then restoring it and confirming exit 0.
+        - .agents/skills/cavecrew/ # caveman plugin — 566 words, over the ceiling
+        - .agents/skills/caveman/ # caveman plugin — 534 words, over the ceiling
+        - .agents/skills/caveman-commit/ # caveman plugin — 368 words, under the ceiling
+        - .agents/skills/caveman-compress/ # caveman plugin — 668 words, over the ceiling
+        - .agents/skills/caveman-help/ # caveman plugin — 298 words, under the ceiling
+        - .agents/skills/caveman-review/ # caveman plugin — 432 words, under the ceiling
+        - .agents/skills/caveman-stats/ # caveman plugin — 89 words, under the ceiling
+        - .agents/skills/compress/ # caveman plugin — 660 words, over the ceiling
     surfaces:
       pre-push: &word-budget-triggers
         scope: path-gated
@@ -1222,6 +1256,7 @@ gates:
           - .claude/
           - .codex/
           - .opencode/
+          - .agents/
           - AGENTS.md
           - CLAUDE.md
           - repo-config.yml
