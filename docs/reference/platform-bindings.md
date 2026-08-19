@@ -25,11 +25,31 @@ one starts with a registry entry, not a row here.
 
 **Verified 2026-05-24.**
 
-| Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                   | Custom-agent surface                                                                                                | Skills surface              | Status                     |
-| ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------- | -------------------------- |
-| Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                          | `.claude/agents/*.md`                                                                                               | `.claude/skills/*/SKILL.md` | Active                     |
-| OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                      | `.opencode/agents/*.md`                                                                                             | reads `.claude/skills/`     | Active                     |
-| OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`              | `.codex/config.toml` `[mcp_servers]` | `[agents.<name>]` in `config.toml` (with optional `config_file` pointer to a TOML layer, e.g. `.codex/<name>.toml`) | `.agents/skills/`           | Partial (`.codex/` exists) |
+| Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface              | Status                     |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------- | -------------------------- |
+| Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                                | `.claude/agents/*.md`                                                                                   | `.claude/skills/*/SKILL.md` | Active                     |
+| OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                            | `.opencode/agents/*.md`                                                                                 | reads `.claude/skills/`     | Active                     |
+| OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`              | `.codex/config.toml` `[mcp_servers]`[^mcp] | `.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents] | `.agents/skills/`[^skills]  | Partial (`.codex/` exists) |
+
+[^mcp]:
+    The MCP key is `mcp_servers` in **snake_case**. The camelCase `mcpServers` form other harnesses
+    use is **silently ignored** by Codex — no warning, no error, the servers simply never load.
+
+[^agents]:
+    Both mechanisms are official. An `[agents.<name>]` table carries `description` plus an optional
+    `config_file` pointing at a TOML layer (e.g. `.codex/<name>.toml`); a standalone
+    `.codex/agents/<name>.toml` file needs no entry in `config.toml`. `.codex/agents/<name>.md` is
+    not a convention and `rhino-cli harness bindings validate` rejects it.
+    The `[profiles.<name>]` tables that once served this purpose were **removed as of 0.134.0**, in
+    favour of standalone `$CODEX_HOME/<name>.config.toml` files.
+    The global `[agents]` table accepts `enabled`, `max_concurrent_threads_per_session`,
+    `default_subagent_model`, `default_subagent_reasoning_effort`, and `interrupt_message`. Codex
+    ships three built-in agents: `default`, `worker`, and `explorer`.
+
+[^skills]:
+    Codex reads the vendor-neutral `.agents/skills/` tree. It does **not** read `.claude/skills/`.
+    The older `~/.codex/prompts/` custom-prompt mechanism is officially deprecated in favour of
+    Skills.
 
 ### Root instruction file hierarchy
 
@@ -49,13 +69,24 @@ sync`**:
 
 - **`.codex/config.toml`** — Provided by the OpenAI Codex CLI tooling. It configures the
   `nx-mcp` MCP server for Codex and declares the `ci-monitor-subagent` agent entry as an
-  `[agents.<name>]` sub-table whose `config_file` points to `.codex/ci-monitor-subagent.toml`.
-  The former `.codex/agents/` directory was removed (2026-06-06): it was never an official
-  Codex CLI convention — the official per-agent mechanism is `config.toml` `agents.<name>`
-  sub-tables — and `rhino-cli harness bindings validate` now fails if `.codex/agents/`
-  reappears. These files are Codex/Nx infrastructure — not
-  hand-authored custom agents produced by this repo's pipeline. `rhino-cli harness bindings generate` does
-  not write to `.codex/` and will not clobber these files.
+  `[agents.<name>]` table whose `config_file` points to `.codex/ci-monitor-subagent.toml`.
+  These files are Codex/Nx infrastructure — not hand-authored custom agents produced by this
+  repo's pipeline.
+
+  **Correction (2026-08-19).** The `.codex/agents/` directory was removed on 2026-06-06 under the
+  belief that it was not a Codex CLI convention. That was wrong, and the removal note has been
+  retracted. Codex CLI recognises **two** per-agent mechanisms, both official:
+  1. standalone `.codex/agents/<name>.toml` files, and
+  2. `[agents.<name>]` tables in `.codex/config.toml`.
+
+  What never was a convention is `.codex/agents/<name>.md` — Codex reads instruction prose from
+  `AGENTS.md`, not from a per-agent Markdown file. `rhino-cli harness bindings validate` therefore
+  permits the directory and fails only on a file whose extension is not `.toml`, naming the
+  offending file.
+
+  Note also that a project-level `.codex/` layer is honoured **only for projects the user has
+  marked trusted**. On an untrusted project Codex ignores the layer, so nothing in `.codex/` can be
+  assumed to load for a fresh clone until that trust decision is made.
 
 `.github/` holds only the in-repo CI surface — GitHub Actions `workflows/` and composite `actions/`,
 hand-authored in this repo. The Nx MCP tooling's editor-assistant artifacts that previously lived
@@ -63,8 +94,8 @@ there (the `nx-*` agent skills under `.github/skills/`, plus `.github/agents/ci-
 and `.github/prompts/monitor-ci.prompt.md`) were removed; the repo reads Nx skills via the `nx-mcp`
 plugin and monitors CI via the `gh` CLI.
 
-The `.codex` files are safe to leave in place; they serve the Nx CI-monitoring capability and do not
-affect the canonical `AGENTS.md` instruction surface.
+The hand-maintained `.codex` files are safe to leave in place; they serve the Nx CI-monitoring
+capability and do not affect the canonical `AGENTS.md` instruction surface.
 
 ### Generated bindings
 
@@ -89,13 +120,17 @@ tool only, producing divergent behavior invisible to contributors using any othe
 
 The following files trigger this rule:
 
-- `AGENTS.override.md` — OpenAI Codex CLI ranks this above `AGENTS.md` when present.
+- `AGENTS.override.md` — an **official** OpenAI Codex CLI convention, honoured both globally in
+  `~/.codex/` and per-directory in project scope. Codex concatenates `AGENTS.md` files root-down,
+  with nearer files overriding farther ones; an `AGENTS.override.md` outranks the `AGENTS.md`
+  beside it. Being official is precisely why it is a shadowing hazard rather than a curiosity.
 
 Shadow files belonging to harnesses this repository does not support are out of scope: the rule
-applies to the supported set only.
+applies to the supported set only. `GEMINI.md` and `.junie/AGENTS.md` were previously listed here
+and have been removed along with their harnesses.
 
-**The repo's default is not to create any of these files.** If a future operational need forces one
-to exist, it must be implemented as a pure pointer or import directive referencing `AGENTS.md` —
+**This repository's standing decision is to ship no `AGENTS.override.md`.** If a future operational
+need forces one to exist, it must be implemented as a pure pointer or import directive referencing `AGENTS.md` —
 never as a file with independent prose. Any exception must be recorded in this catalog with an
 explicit justification.
 

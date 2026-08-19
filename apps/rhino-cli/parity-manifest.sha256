@@ -3,7 +3,7 @@ aac4b7740be14601ed1e7326292a3d59cc68c9c2e1c203224a27964af5e265eb  apps/rhino-cli
 51f04bc4a3f84b9b73386a760312757e62af4fa5ed4a6d357b6d9b0a266cf48e  apps/rhino-cli/LICENSE
 8ecbb36f23e75e40d14c011886b59e104043bb5b89af69d369d353cb61ee57f6  apps/rhino-cli/project.json
 998712745702e44ab27c25f5baecef0f90e4fe9e02aa016032a0f68b15137b3b  apps/rhino-cli/src/application/agents/agent_validator.rs
-fd662acd0b5b0b3fab2d994c2d0a9826adb020d71618a863c5930484431651ba  apps/rhino-cli/src/application/agents/bindings.rs
+03facd34a40cbfc360769ce60c4a3025ada598830646fa5d425691eae06e616f  apps/rhino-cli/src/application/agents/bindings.rs
 07dd2ceb069411b1d60ca01701aa4d2e49d421dd0826b399f34c1f9e9316524e  apps/rhino-cli/src/application/agents/claude_validator.rs
 15d528f46b13c755249edf78bb643f22961025e3e8c355d75eee7f4cf8e6570b  apps/rhino-cli/src/application/agents/converter.rs
 89a0d6e3c7351367196014ed6f480cee8c1d2fec3f3b0e1226b5f5b98a78e74e  apps/rhino-cli/src/application/agents/detect_duplication.rs
@@ -181,7 +181,7 @@ f1026443fbcd7f1c673c9fa7ce2cc1aadb881aad012e5d034f6757f3d85b4c82  apps/rhino-cli
 066e20bf5b87e97ac5e791c5ef67457fea69dc50a48507bb0239c6fb0375f29f  apps/rhino-cli/src/lib.rs
 8f2ec6518c512f90fa14e7d628de233696907d999570885f1e273dba6145a7ef  apps/rhino-cli/src/main.rs
 af6651b2adb5ee6d5becf743af675eab72210e35cb5e3c510c08d78dbb07f838  apps/rhino-cli/src/test_support.rs
-3d97def2843c5a1937de7ba3bccca13cef497e31d910b867e962def20bc2645e  apps/rhino-cli/tests/agents.rs
+d5f8a7c3f112be14c5f6b40f2253ef19b23bc6ff0dc235145b5c236315dae1ff  apps/rhino-cli/tests/agents.rs
 712ee51442e42c10e0746d588147d17802b85ce1b56f975219164cf3a0643bc7  apps/rhino-cli/tests/cargo_target_share.rs
 d6b8c614e58d37f36e0b6a6813e2b8e89138cc5a2053a90e14c2a71f1d6e3462  apps/rhino-cli/tests/cli_smoke.rs
 99c7a02e2e4c15a49b5dd28a9cec875a613636ed8db94c604a6e4339cf7f350f  apps/rhino-cli/tests/contracts.rs
@@ -524,7 +524,7 @@ bd0f7aca7a725965121c8876c4a3f37c0db8515b1ebeb0270551fc34f067f055  specs/apps/rhi
 dce68d3970fd02ab3e1bbd5eb2b20fd5523ed6f5030c8c145f51c2cd503adecd  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature
 d22a103f12c43de6c7af852b87a3566313a3576776c154543a28d608ad32606f  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature
 be927e9f754012c6a106ea3aa079d088a0a284f2424b1f1376953f5e1f8318be  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
-abb07ae566299298c592501a8c48986edd0c965b03b1aa5f152498611d3a557e  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
+653a6b6c6d69a01763a8adb8238255548f9f6c3913b211781ed051b8bebba197  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
 de8c721980d1577c2a2eb4e8c0dcd41e857137b41cef5b60392d7955bd41c5da  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature
 254c5559129fbfa48e81e676d21ba2720356ee74fbf5298a7a79c7e699f4d71c  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature
 994addeae1c9fcc4aa71ef1f1ec6c40cc00f952145ebdee11d8570f41906467d  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-validate-claude.feature

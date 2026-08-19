@@ -62,3 +62,17 @@ Feature: Generated Harness Binding Files
       When the developer runs harness bindings validate
       Then the command exits successfully
       And no catalog row is required for the absent binding directories
+
+  @codex-agents-extension
+  Rule: .codex/agents/ accepts standalone .toml agent files and rejects .md ones
+
+    Scenario: A .codex/agents directory holding only .toml files passes validation
+      Given a repository whose .codex/agents directory holds a standalone .toml agent file
+      When the developer runs harness bindings validate
+      Then the command exits successfully
+
+    Scenario: A .md file under .codex/agents fails validation
+      Given a repository whose .codex/agents directory holds a .md agent file
+      When the developer runs harness bindings validate
+      Then the command exits with a failure code
+      And the output names .toml as the officially-correct extension

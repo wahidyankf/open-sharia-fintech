@@ -64,7 +64,7 @@ pub fn expected_bindings(_repo_root: &Path) -> Result<Vec<BindingFile>, String> 
 /// - Static binding files: byte-for-byte parity with `expected_bindings(repo_root)`
 /// - `OpenCode` mirror: `.opencode/agents/` mirrors `.claude/agents/` (via `validate_sync`)
 /// - Catalog coverage: every present binding dir referenced in the platform-bindings doc
-/// - No-Codex-agents-dir: `.codex/agents/` must not exist (Codex reads AGENTS.md natively)
+/// - Codex agent files: every file under `.codex/agents/` uses the official `.toml` extension
 /// - Color/tier translation maps: every `color:` and `model:` value in `.claude/agents/*.md`
 ///   resolves in the governance docs (ported from `validate-cross-vendor-parity.sh` §5a/5b)
 #[must_use]
@@ -96,7 +96,7 @@ pub fn validate_bindings(repo_root: &Path) -> ValidationResult {
         result.tally(validate_catalog_coverage(repo_root, dir));
     }
 
-    result.tally(validate_no_codex_agents_dir(repo_root));
+    result.tally(validate_codex_agents_dir(repo_root));
 
     // Color/tier translation-map coverage (absorbed from validate-cross-vendor-parity.sh §5a/5b)
     for check in validate_color_tier_maps(repo_root) {
@@ -334,27 +334,78 @@ fn validate_catalog_coverage(repo_root: &Path, dir: &str) -> ValidationCheck {
     }
 }
 
-/// Check that the non-standard `.codex/agents/` directory does not exist.
-/// Codex CLI configures agents via `agents.<name>` sub-tables in
-/// `.codex/config.toml`, not via a directory of agent files.
-fn validate_no_codex_agents_dir(repo_root: &Path) -> ValidationCheck {
-    let check_name = "No Codex Agents Dir: .codex/agents".to_string();
-    let dir_path = join_rel(repo_root, ".codex/agents");
+/// Relative path (from repo root) of the Codex per-agent directory.
+pub const CODEX_AGENT_DIR: &str = ".codex/agents";
 
-    if dir_path.exists() {
-        ValidationCheck::failed(
+/// The only file extension Codex CLI recognises for a standalone agent file
+/// under [`CODEX_AGENT_DIR`].
+///
+/// Standalone `<name>.toml` files there **are** an official Codex CLI
+/// convention, alongside `[agents.<name>]` tables in `.codex/config.toml`.
+/// `<name>.md` never was: Codex reads instruction prose from `AGENTS.md`, not
+/// from a per-agent Markdown file.
+pub const CODEX_AGENT_EXTENSION: &str = "toml";
+
+/// Returns true when `file_name` is a file Codex CLI would reject in
+/// [`CODEX_AGENT_DIR`] — anything that is not a `.toml` agent file.
+#[must_use]
+pub fn is_rejected_codex_agent_filename(file_name: &str) -> bool {
+    !file_name.ends_with(&format!(".{CODEX_AGENT_EXTENSION}"))
+}
+
+/// Check that every file under `.codex/agents/` uses the officially-recognised
+/// `.toml` extension.
+///
+/// The directory itself is permitted: standalone `<name>.toml` agent files are
+/// an official Codex CLI convention. A `<name>.md` file there is not, and is
+/// reported by name so the fix is unambiguous.
+fn validate_codex_agents_dir(repo_root: &Path) -> ValidationCheck {
+    let check_name = format!("Codex Agent Files: {CODEX_AGENT_DIR}");
+    let dir_path = join_rel(repo_root, CODEX_AGENT_DIR);
+
+    if !dir_path.is_dir() {
+        return ValidationCheck::passed(
             check_name,
-            ".codex/agents absent",
-            ".codex/agents present on disk",
-            ".codex/agents/ is not an official Codex CLI convention; define agents as \
-             `agents.<name>` sub-tables in .codex/config.toml and delete the directory"
-                .to_string(),
-        )
-    } else {
+            format!("{CODEX_AGENT_DIR} absent; nothing to check"),
+        );
+    }
+
+    let Ok(entries) = fs::read_dir(&dir_path) else {
+        return ValidationCheck::failed_msg(
+            check_name,
+            format!("failed to read {CODEX_AGENT_DIR}"),
+        );
+    };
+
+    let mut offenders: Vec<String> = entries
+        .flatten()
+        .filter(|e| e.path().is_file())
+        .filter_map(|e| e.file_name().into_string().ok())
+        .filter(|name| is_rejected_codex_agent_filename(name))
+        .collect();
+    offenders.sort();
+
+    if offenders.is_empty() {
         ValidationCheck::passed(
             check_name,
-            ".codex/agents absent; Codex CLI agents configured via config.toml sub-tables"
-                .to_string(),
+            format!(
+                "every file under {CODEX_AGENT_DIR} uses the .{CODEX_AGENT_EXTENSION} extension"
+            ),
+        )
+    } else {
+        ValidationCheck::failed(
+            check_name,
+            format!("every file under {CODEX_AGENT_DIR} ends in .{CODEX_AGENT_EXTENSION}"),
+            format!(
+                "non-.{CODEX_AGENT_EXTENSION} file(s): {}",
+                offenders.join(", ")
+            ),
+            format!(
+                "{CODEX_AGENT_DIR}/{} uses an extension Codex CLI does not recognise; \
+                 a standalone Codex agent file must be <name>.{CODEX_AGENT_EXTENSION} \
+                 (the alternative is an [agents.<name>] table in .codex/config.toml)",
+                offenders.join(", ")
+            ),
         )
     }
 }
@@ -475,31 +526,74 @@ mod tests {
     }
 
     #[test]
-    fn validate_fails_when_codex_agents_dir_exists() {
+    fn validate_passes_when_codex_agents_holds_only_toml_files() {
         let dir = tempdir().unwrap();
         let root = dir.path();
         write_three_harness_config(root);
         write_empty_mirror_pair(root);
         std::fs::create_dir_all(root.join(".github")).unwrap();
-        std::fs::create_dir_all(root.join(".codex")).unwrap();
         write(&root.join(PLATFORM_BINDINGS_CATALOG), &full_catalog());
 
-        // `.codex/agents/` is NOT an official Codex CLI convention (the
-        // official mechanism is `agents.<name>` sub-tables in config.toml);
-        // its presence must fail validation as a regression guard.
+        // Standalone `<name>.toml` files in `.codex/agents/` ARE an official
+        // Codex CLI convention; the directory must be permitted.
+        write(
+            &root.join(".codex/agents/probe-maker.toml"),
+            "description = \"probe\"\n",
+        );
+
+        let result = validate_bindings(root);
+        assert_eq!(result.failed_checks, 0, "result: {result:#?}");
+    }
+
+    #[test]
+    fn validate_fails_when_codex_agents_holds_a_markdown_file() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write_three_harness_config(root);
+        write_empty_mirror_pair(root);
+        std::fs::create_dir_all(root.join(".github")).unwrap();
+        write(&root.join(PLATFORM_BINDINGS_CATALOG), &full_catalog());
+
+        // `.codex/agents/*.md` never was a Codex CLI convention.
+        write(&root.join(".codex/agents/probe-maker.md"), "# probe\n");
+
+        let result = validate_bindings(root);
+        let failed = result
+            .checks
+            .iter()
+            .find(|c| c.status == "failed" && c.message.contains("probe-maker.md"));
+        assert!(
+            failed.is_some(),
+            "expected a failed check naming the offending .md file; result: {result:#?}"
+        );
+        assert!(
+            failed.is_some_and(|c| c.message.contains(".toml")),
+            "the finding must name .toml as the correct extension; result: {result:#?}"
+        );
+    }
+
+    #[test]
+    fn validate_permits_an_empty_codex_agents_dir() {
+        let dir = tempdir().unwrap();
+        let root = dir.path();
+        write_three_harness_config(root);
+        write_empty_mirror_pair(root);
+        std::fs::create_dir_all(root.join(".github")).unwrap();
+        write(&root.join(PLATFORM_BINDINGS_CATALOG), &full_catalog());
+
+        // The directory itself is legitimate; only its file extensions are
+        // constrained. Phase 5 fills it with generated `.toml` mirrors.
         std::fs::create_dir_all(root.join(".codex/agents")).unwrap();
 
         let result = validate_bindings(root);
-        let failed_codex_agents_check = result.checks.iter().find(|c| {
-            c.status == "failed"
-                && c.message.contains("config.toml")
-                && (c.message.contains("sub-table") || c.message.contains("agents.<name>"))
-        });
-        assert!(
-            failed_codex_agents_check.is_some(),
-            "expected a failed check whose advice points to config.toml \
-             `agents.<name>` sub-tables when .codex/agents exists; result: {result:#?}"
-        );
+        assert_eq!(result.failed_checks, 0, "result: {result:#?}");
+    }
+
+    #[test]
+    fn rejected_codex_agent_filename_discriminates_on_extension() {
+        assert!(!is_rejected_codex_agent_filename("probe-maker.toml"));
+        assert!(is_rejected_codex_agent_filename("probe-maker.md"));
+        assert!(is_rejected_codex_agent_filename("README"));
     }
 
     #[test]

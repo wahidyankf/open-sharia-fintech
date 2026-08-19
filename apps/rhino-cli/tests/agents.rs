@@ -665,6 +665,32 @@ fn given_some_binding_dirs_absent(w: &mut AgentsWorld) {
     );
 }
 
+#[given("a repository whose .codex/agents directory holds a standalone .toml agent file")]
+fn given_codex_agents_holds_toml(w: &mut AgentsWorld) {
+    write_three_harness_registry(w);
+    w.make_sync_dirs();
+    w.write_full_catalog();
+    w.write(
+        ".codex/agents/probe-maker.toml",
+        "description = \"probe\"\n",
+    );
+}
+
+#[given("a repository whose .codex/agents directory holds a .md agent file")]
+fn given_codex_agents_holds_md(w: &mut AgentsWorld) {
+    write_three_harness_registry(w);
+    w.make_sync_dirs();
+    w.write_full_catalog();
+    w.write(".codex/agents/probe-maker.md", "# probe\n");
+}
+
+#[then("the output names .toml as the officially-correct extension")]
+fn then_output_names_toml_extension(w: &mut AgentsWorld) {
+    let out = w.stdout();
+    assert!(out.contains(".toml"), "got: {out}");
+    assert!(out.contains("probe-maker.md"), "got: {out}");
+}
+
 #[when("the developer runs harness bindings validate")]
 fn when_validate_bindings(w: &mut AgentsWorld) {
     // `--verbose` so absent-directory "no catalog row required" pass-checks
