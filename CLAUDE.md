@@ -42,7 +42,10 @@ Repo supports exactly three harnesses — Claude Code, OpenCode, and OpenAI Code
 - **`.claude/`**: source of truth (PRIMARY)
 - **`.opencode/`**, **`.codex/`**, **`.agents/`**: auto-generated (SECONDARY) via
   `npm run generate:bindings`, landing in the **same commit** as the `.claude/` source. Verify with
-  `npm run validate:sync`; never hand-edit a mirror.
+  `npm run validate:sync`; never hand-edit a mirror — except a path a harness entry's
+  `ownership:` list declares `vendored` (e.g. `.codex/config.toml`'s hand-authored tables outside
+  its delimited region), which is hand-maintained by design; `repo-config.yml` is authoritative on
+  which paths those are.
 
 Claude Code uses tool arrays and named colors; OpenCode uses a `permission` object and theme tokens
 (translated by `rhino-cli harness bindings generate`). Model tiers map to concrete vendor IDs — see
