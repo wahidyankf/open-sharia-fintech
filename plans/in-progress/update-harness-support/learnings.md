@@ -485,3 +485,9 @@ observed. A `path-gated` declaration that is never exercised is indistinguishabl
 validate` does not exist — the command is `governance word-budget validate` — and clap's
 unrecognized-subcommand error exits **2**, which reads exactly like a validator failure. Confirm the
 subcommand exists before treating its exit code as a verdict.
+
+**The word budget counts YAML frontmatter.** `ownership-classes.md` measured 414 words with `wc -w`
+before its frontmatter block was added and 505 after — over the 500-word FAIL limit — while the body
+never changed. A new governance file that looks comfortably inside the budget by body length can
+still fail once the required `title`/`description`/`when_to_use`/`tags` block is prepended. Measure
+with `governance word-budget validate`, not `wc -w`, and measure after the frontmatter exists.
