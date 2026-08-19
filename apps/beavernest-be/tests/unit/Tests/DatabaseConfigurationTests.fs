@@ -1,3 +1,10 @@
+/// `isDisallowedDirectory` compares its argument against `Directory.GetCurrentDirectory()`,
+/// which is process-wide state. `EnvTierLoaderTests` in this same assembly calls
+/// `Directory.SetCurrentDirectory` to exercise tier-file discovery, so with xUnit's default
+/// collection parallelism the swap can land between this module computing a case from the
+/// current directory and the validator re-reading it — the guard then sees no containment and
+/// the input is wrongly accepted. `xunit.runner.json` disables that parallelism for this
+/// assembly; do not re-enable it without first removing the shared mutable directory.
 module BeaverNestBe.Tests.Unit.Tests.DatabaseConfigurationTests
 
 open System

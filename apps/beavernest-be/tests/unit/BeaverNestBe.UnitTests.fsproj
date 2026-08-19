@@ -70,4 +70,13 @@
     <ProjectReference Include="../../src/BeaverNestBe/BeaverNestBe.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Disables collection parallelism: EnvTierLoaderTests mutates the process-wide
+         current directory, which DatabaseConfigurationTests reads. See the comment at
+         the top of Tests/DatabaseConfigurationTests.fs. -->
+    <None Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
