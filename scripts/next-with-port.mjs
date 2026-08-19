@@ -19,6 +19,14 @@
  * The `--server` form is the standalone-image path: it sets `process.env.PORT` and then imports the
  * generated server, which is the only knob that server exposes.
  *
+ * PROCESS SHAPE: the `--server` form stays single-process — it imports the standalone server into
+ * this very process. The `dev`/`start` form must spawn, because Next's CLI is a separate binary and
+ * Node has no `execve`, so the wrapper stays resident as the child's parent for the process's whole
+ * life. Only `organiclever-www` and `wahidyankf-www` take that path in a container image (they are
+ * the two apps without `output: "standalone"`), so only those two images carry a second resident
+ * Node process. Signals are forwarded and re-raised so an orchestrator still sees the conventional
+ * 128+N status rather than a synthesised exit code.
+ *
  * CONTAINER REQUIREMENT: the resolver is imported by a path relative to THIS file, so any image
  * using this wrapper must COPY both `scripts/next-with-port.mjs` and
  * `libs/ts-env-loader/src/port-resolver.ts`, preserving their relative layout. `port-resolver.ts`
@@ -122,6 +130,14 @@ if (serverPath !== undefined) {
   }
 
   child.on("exit", (code, signal) => {
-    process.exit(signal !== null ? 1 : (code ?? 0));
+    if (signal !== null) {
+      // Re-raise the same signal against this process rather than exiting 1, so the wrapper reports
+      // the conventional 128+N status. Collapsing every signal to 1 would make a normal `docker
+      // stop` (SIGTERM) look like a crash to any orchestrator reading the container's exit code.
+      process.removeAllListeners(signal);
+      process.kill(process.pid, signal);
+      return;
+    }
+    process.exit(code ?? 0);
   });
 }

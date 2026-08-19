@@ -1,6 +1,7 @@
 module BeaverNestBe.Domain.HttpConfiguration
 
 open System
+open System.Globalization
 
 type ListenerConfiguration = { Address: string; Port: int }
 
@@ -26,7 +27,10 @@ let parse (readEnvironment: string -> string) : Result<ListenerConfiguration, st
         environmentValue readEnvironment "BEAVERNEST_BE_HTTP_LISTEN_PORT"
         |> Option.defaultValue "19300"
 
-    match Int32.TryParse port with
+    // NumberStyles.None matches FsharpEnvLoader.PortResolver.parsePort exactly: plain digits only,
+    // so `+4000` and `0x1F4` are rejected here rather than passing this tier and then failing
+    // applyPortFlag's stricter re-parse of the same raw string. One variable, one grammar.
+    match Int32.TryParse(port, NumberStyles.None, CultureInfo.InvariantCulture) with
     | true, parsedPort when validPort parsedPort ->
         match address, runningInContainer with
         | "127.0.0.1", _ -> Ok { Address = address; Port = parsedPort }
@@ -38,7 +42,9 @@ let parse (readEnvironment: string -> string) : Result<ListenerConfiguration, st
 let url configuration =
     $"http://%s{configuration.Address}:%d{configuration.Port}"
 
-/// True when argv carries nothing but a `--port` override, in either spelling.
+/// True when argv carries nothing but a `--port` override, in either spelling — including a
+/// trailing bare `--port` with no value, which the shared resolver treats as "no flag supplied"
+/// and falls through to the env var rather than erroring.
 ///
 /// `Program.commandMode` classifies argv as a subcommand (`backup`, `integrity`, `restore`) and
 /// rejects anything it does not recognise. Without this predicate it treated `--port 4000` as an
@@ -48,7 +54,7 @@ let isOnlyPortFlags (args: string[]) : bool =
     match args with
     | [||] -> true
     | [| "--port"; _ |] -> true
-    | [| single |] -> single.StartsWith("--port=", StringComparison.Ordinal)
+    | [| single |] -> single = "--port" || single.StartsWith("--port=", StringComparison.Ordinal)
     | _ -> false
 
 /// Applies the repo-wide `--port` flag on top of an already-parsed listener.

@@ -54,9 +54,19 @@ Feature: Runtime listener port resolution
       | 3100abc   |
       | 31.5      |
       | -1        |
+      | 0x10      |
+      | 0b1010    |
+      | 1e3       |
+      | +3100     |
 
   Scenario: A malformed prefixed variable names that variable in the error
     Given the app declares the prefixed variable "OSE_WWW_PORT" with fallback 3100
     And the environment sets "OSE_WWW_PORT" to "not-a-port"
+    When the port resolves with no "--port" flag
+    Then resolution throws, naming "OSE_WWW_PORT" and the valid range
+
+  Scenario: An out-of-range compiled-in fallback is caught at startup
+    Given the app declares the prefixed variable "OSE_WWW_PORT" with fallback 70000
+    And the environment does not set "OSE_WWW_PORT"
     When the port resolves with no "--port" flag
     Then resolution throws, naming "OSE_WWW_PORT" and the valid range

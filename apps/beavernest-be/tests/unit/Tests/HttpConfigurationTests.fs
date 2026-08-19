@@ -88,6 +88,33 @@ let ``isOnlyPortFlags recognises a bare port override and nothing else``
 let ``isOnlyPortFlags treats empty argv as a plain server start`` () = Assert.True(isOnlyPortFlags [||])
 
 [<Fact>]
+let ``isOnlyPortFlags accepts a trailing bare --port with no value`` () =
+    // The shared resolver deliberately reads a valueless trailing `--port` as "no flag supplied" and
+    // falls through to the env var. Rejecting it here as an unknown subcommand would make that
+    // documented fallback unreachable for this service alone.
+    Assert.True(isOnlyPortFlags [| "--port" |])
+
+[<Fact>]
+let ``applyPortFlag falls through to the env var when --port carries no value`` () =
+    let listener = { Address = "127.0.0.1"; Port = 19300 }
+
+    Assert.Equal(
+        Ok { Address = "127.0.0.1"; Port = 4100 },
+        applyPortFlag [| "--port" |] (envWith [ "BEAVERNEST_BE_HTTP_LISTEN_PORT", "4100" ]) listener
+    )
+
+[<Theory>]
+[<InlineData("+4000")>]
+[<InlineData("0x1F4")>]
+[<InlineData("1e3")>]
+let ``parse admits plain digits only, matching the shared resolver's grammar`` (value: string) =
+    // parse and applyPortFlag both read BEAVERNEST_BE_HTTP_LISTEN_PORT. If parse admitted a wider
+    // grammar, a value could clear parse and then fail applyPortFlag's re-parse of the same string.
+    match parse (environment (Map.ofList [ "BEAVERNEST_BE_HTTP_LISTEN_PORT", value ])) with
+    | Ok configuration -> Assert.Fail($"expected %s{value} to be rejected, but resolved to %d{configuration.Port}")
+    | Error message -> Assert.Contains("between 1 and 65535", message)
+
+[<Fact>]
 let ``applyPortFlag lets an explicit --port outrank the parsed listener`` () =
     let listener = { Address = "127.0.0.1"; Port = 19300 }
 

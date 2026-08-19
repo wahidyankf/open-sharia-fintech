@@ -117,16 +117,25 @@ an explicitly-blessed unprefixed shared name, not an oversight.
 
 **Deviation**: None.
 
-### 6. Next.js `PORT` exempt vs backend `PORT` prefixed
+### 6. Next.js `PORT` exempt vs backend `PORT` prefixed — SUPERSEDED
 
-**Decision**: In Next.js webs (`ose-www`, `ayokoding-www`, etc.), `PORT` stays unprefixed — it is a
-framework-reserved name the Next.js dev server reads natively. In F# backends (`organiclever-be`,
-`ose-be`), the port var takes the full prefix (`ORGANICLEVER_BE_PORT`, `OSE_BE_PORT`).
+> **Superseded.** The asymmetry recorded below no longer holds. Every port-binding app, web tier
+> included, now takes the app prefix and resolves its port through one shared contract — `--port`
+> flag, then the prefixed variable, then the compiled-in default. The premise that renaming `PORT`
+> "would break `nx dev ose-www`" was retired by `scripts/next-with-port.mjs`, which resolves the port
+> before Next.js starts and assigns `process.env.PORT` itself. See the
+> [Environment Variable Naming Standard](../../repo-governance/conventions/security/secrets-and-env-standards/environment-variable-naming-standard.md)
+> for the rule now in force. The text below is kept as the historical record of what was decided.
 
-**Why**: This asymmetry follows from who owns the binding. The Next.js dev server reads `PORT` from
-the platform (PaaS or OS) with no indirection through app code — renaming it to `OSE_WWW_PORT` would
-break `nx dev ose-www`. ASP.NET/Giraffe backends bind whatever value _our own code_ reads from the
-environment, so the backend port is app-defined and takes the prefix.
+**Decision (historical)**: In Next.js webs (`ose-www`, `ayokoding-www`, etc.), `PORT` stays
+unprefixed — it is a framework-reserved name the Next.js dev server reads natively. In F# backends
+(`organiclever-be`, `ose-be`), the port var takes the full prefix (`ORGANICLEVER_BE_PORT`,
+`OSE_BE_PORT`).
+
+**Why (historical)**: This asymmetry follows from who owns the binding. The Next.js dev server reads
+`PORT` from the platform (PaaS or OS) with no indirection through app code. ASP.NET/Giraffe backends
+bind whatever value _our own code_ reads from the environment, so the backend port is app-defined and
+takes the prefix.
 
 **Deviation from ose-private**: `ose-private` has no Next.js applications, so the web exemption is
 structural rather than a policy divergence — the underlying rule (framework-reserved names stay

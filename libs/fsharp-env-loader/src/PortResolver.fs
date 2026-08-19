@@ -5,9 +5,16 @@ open System.Globalization
 
 /// The repo-wide runtime port contract for this repo's F# backends (`ose-be`,
 /// `organiclever-be`, `beavernest-be`). Mirrors the sibling TypeScript
-/// resolver at `libs/ts-env-loader/src/index.ts` (`resolvePort`) case for
-/// case, so a TypeScript service and an F# service resolve their listener
-/// port by identical rules rather than by two lookalike implementations.
+/// resolver at `libs/ts-env-loader/src/port-resolver.ts` (`resolvePort`), so a
+/// TypeScript service and an F# service accept and reject exactly the same
+/// port values.
+///
+/// Mirrored: the three-tier precedence below, the grammar of a valid port
+/// (plain decimal digits, 1-65535), blank-falls-through, and
+/// fail-loudly-on-malformed. Not mirrored: the exact error wording, and
+/// `beavernest-be`, which owns the env-var and default tiers in its own
+/// `HttpConfiguration.parse` (under the same grammar) and uses this module for
+/// the flag tier alone.
 ///
 /// Precedence, highest first:
 ///   1. CLI flag  — an explicit `--port` passed at start time, in either
@@ -15,7 +22,7 @@ open System.Globalization
 ///   2. Env var   — the app's own prefixed variable (e.g. `OSE_BE_PORT`),
 ///                  never a bare `PORT`. A prefixed name is what lets one
 ///                  shell hold every app's port at once; see
-///                  `repo-governance/conventions/security/secrets-and-env-standards/naming-standard.md`.
+///                  `repo-governance/conventions/security/secrets-and-env-standards/environment-variable-naming-standard.md`.
 ///   3. Fallback  — the app's compiled-in default, which is also the value
 ///                  documented in `docs/reference/web-sites.md`.
 ///

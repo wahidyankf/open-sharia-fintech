@@ -298,7 +298,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT # framework-reserved Next.js dev-server port
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - OSE_WWW_PORT
@@ -308,7 +308,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - AYOKODING_WWW_PORT
@@ -319,7 +319,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT # framework-reserved Next.js dev-server port
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - ORGANICLEVER_WWW_PORT
@@ -329,7 +329,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - ORGANICLEVER_APP_WEB_PORT
@@ -339,7 +339,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - OSE_APP_WEB_PORT
@@ -349,7 +349,7 @@ env-contract:
       kind: app
       lang: typescript
       allowlist:
-        - PORT
+        - PORT # set by scripts/next-with-port.mjs after resolution; not an override source
         # Resolved by scripts/next-with-port.mjs before the app process starts, so it
         # is read by the launcher rather than by this app's own source.
         - WAHIDYANKF_WWW_PORT

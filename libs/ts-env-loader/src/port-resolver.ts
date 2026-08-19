@@ -1,13 +1,20 @@
 /**
  * The repo-wide runtime port contract, shared by every port-binding app in this repository and
- * mirrored one-for-one by `libs/fsharp-env-loader`'s `PortResolver` module so the TypeScript and
- * F# services resolve their listener port by identical rules.
+ * mirrored by `libs/fsharp-env-loader`'s `PortResolver` module, so a TypeScript service and an F#
+ * service accept and reject exactly the same port values.
+ *
+ * What is mirrored: the three-tier precedence below, the grammar of a valid port (plain decimal
+ * digits, 1-65535 — see `parsePort`), blank-falls-through, and fail-loudly-on-malformed. What is
+ * NOT mirrored: the exact error wording, and `beavernest-be`, which composes the contract
+ * differently — its own `HttpConfiguration.parse` owns the env-var and default tiers (under the
+ * same grammar) and layers `PortResolver` on top for the flag tier alone, because its listener
+ * address carries a loopback-versus-wildcard guard the shared resolver knows nothing about.
  *
  * Precedence, highest first:
  *   1. CLI flag  — an explicit `--port` passed at start time.
  *   2. Env var   — the app's own prefixed variable (e.g. `OSE_WWW_PORT`), never a bare `PORT`.
  *                  A prefixed name is what lets one shell hold every app's port at once; see
- *                  `repo-governance/conventions/security/secrets-and-env-standards/naming-standard.md`.
+ *                  `repo-governance/conventions/security/secrets-and-env-standards/environment-variable-naming-standard.md`.
  *   3. Fallback  — the app's compiled-in default, which is also the value documented in
  *                  `docs/reference/web-sites.md`.
  *
@@ -52,11 +59,17 @@ function presentValue(value: string | number | undefined): string | undefined {
   return text.length > 0 ? text : undefined;
 }
 
+/** Matches plain decimal digits only — the same grammar F#'s `NumberStyles.None` admits. */
+const DECIMAL_ONLY = /^[0-9]+$/;
+
 /** Parses one tier's value, throwing with the tier's name so the error says which knob was wrong. */
 function parsePort(text: string, source: string): number {
-  // Number() is deliberate over parseInt(): parseInt("3100abc") returns 3100, silently accepting a
-  // typo'd value, whereas Number("3100abc") is NaN and gets rejected below.
-  const parsed = Number(text);
+  // The digits-only gate comes first because Number() alone is too permissive for a port: it accepts
+  // "0x10" (16), "0b1010" (10), "1e3" (1000) and "+3100", none of which is a port designation anyone
+  // means to write. F#'s twin rejects all four via NumberStyles.None, so admitting them here would
+  // give the two resolvers different notions of a valid port. Number() is still preferred over
+  // parseInt() for the conversion itself: parseInt("3100abc") silently returns 3100.
+  const parsed = DECIMAL_ONLY.test(text) ? Number(text) : Number.NaN;
 
   if (!Number.isInteger(parsed) || parsed < MIN_PORT || parsed > MAX_PORT) {
     throw new Error(

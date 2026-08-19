@@ -23,4 +23,9 @@ specs/libs/ts-env-loader/behavior/
 
 The port-resolver scenarios are mirrored one-for-one by
 `libs/fsharp-env-loader/tests/unit/Tests/PortResolverTests.fs`, so the TypeScript and F# services
-provably share one port contract rather than two lookalikes.
+provably accept and reject the same port values. That F# suite carries `@covers` markers pointing at
+the feature file in **this** directory on purpose: the port contract is one contract, so it gets one
+feature file, and duplicating it under `specs/libs/fsharp-env-loader/` would create exactly the
+second source of truth the pairing exists to prevent. The F# suite adds a few argv-spelling cases
+(`--port=N`, a trailing bare `--port`) that have no Gherkin counterpart because they concern F#'s
+own `argv` array rather than the shared resolution rule.

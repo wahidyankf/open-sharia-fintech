@@ -271,7 +271,7 @@ Per-project:
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev --port 3100",
+        "command": "node ../../scripts/next-with-port.mjs dev --env OSE_WWW_PORT --default 3100",
         "cwd": "apps/ose-www"
       }
     },

@@ -193,6 +193,38 @@ describeFeature(feature, ({ Scenario, ScenarioOutline }) => {
     },
   );
 
+  Scenario("An out-of-range compiled-in fallback is caught at startup", ({ Given, And, When, Then }) => {
+    let env: EnvRecord = {};
+    let envVar = "";
+    let fallback = 0;
+    let thrown: unknown;
+
+    Given('the app declares the prefixed variable "OSE_WWW_PORT" with fallback 70000', () => {
+      envVar = "OSE_WWW_PORT";
+      fallback = 70000;
+    });
+
+    And('the environment does not set "OSE_WWW_PORT"', () => {
+      env = {};
+    });
+
+    When('the port resolves with no "--port" flag', () => {
+      thrown = undefined;
+      try {
+        resolvePort({ envVar, fallback, env });
+      } catch (error) {
+        thrown = error;
+      }
+    });
+
+    // @covers specs/libs/ts-env-loader/behavior/gherkin/port-resolver/port-resolver.feature:An out-of-range compiled-in fallback is caught at startup
+    Then('resolution throws, naming "OSE_WWW_PORT" and the valid range', () => {
+      expect(thrown).toBeInstanceOf(Error);
+      expect((thrown as Error).message).toContain("OSE_WWW_PORT");
+      expect((thrown as Error).message).toContain("65535");
+    });
+  });
+
   Scenario("A malformed prefixed variable names that variable in the error", ({ Given, And, When, Then }) => {
     let env: EnvRecord = {};
     let envVar = "";
