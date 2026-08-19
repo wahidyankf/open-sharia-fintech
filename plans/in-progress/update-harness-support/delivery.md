@@ -1307,28 +1307,28 @@ is the worst outcome, so each states the class plainly.
 
 ## Phase 10: Generate the Catalog From Registry Data
 
-- [ ] [AI] **RED**: Add a failing test in a new `apps/rhino-cli/tests/harness_catalog.rs` asserting
+- [x] [AI] **RED**: Add a failing test in a new `apps/rhino-cli/tests/harness_catalog.rs` asserting
       that `catalog` fields on a fixture registry render one markdown table row per entry between
       the generated-region markers
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails; no `catalog` module exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Extend `HarnessEntry` in `apps/rhino-cli/src/application/repo_config/mod.rs`
+- [x] [AI] **GREEN**: Extend `HarnessEntry` in `apps/rhino-cli/src/application/repo_config/mod.rs`
       with a `catalog` sub-struct (display name, reads-AGENTS.md, instruction surface, MCP config,
       agent surface, skills surface, status), and create
       `apps/rhino-cli/src/application/agents/catalog.rs` rendering the table
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes. `deny_unknown_fields` stays on the struct, so a typo in a
       catalog key is a hard error rather than a silently-dropped field.
-- [ ] [AI] **REFACTOR**: Give the renderer one function per column so a future column addition is a
+- [x] [AI] **REFACTOR**: Give the renderer one function per column so a future column addition is a
       local change
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass.
-- [ ] [AI] Populate the three harness entries' `catalog:` blocks in `repo-config.yml` with the
+- [x] [AI] Populate the three harness entries' `catalog:` blocks in `repo-config.yml` with the
       verified facts established in Phase 4 and Phase 6
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
       — acceptance: exits 0.
-- [ ] [AI] Insert the generated-region markers into `docs/reference/platform-bindings.md` around the
+- [x] [AI] Insert the generated-region markers into `docs/reference/platform-bindings.md` around the
       Platform Binding Directories table and the verification stamp, then create
       `apps/rhino-cli/src/commands/harness_catalog.rs` exposing
       `harness catalog generate` and `harness catalog validate`, wired into
@@ -1336,26 +1336,26 @@ is the worst outcome, so each states the class plainly.
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog generate`
       — acceptance: the table region contains exactly three rows and the prose outside the markers
       is byte-identical, verified by `git diff` showing changes only between the marker lines.
-- [ ] [AI] **Measure the Prettier round trip before wiring the guard** (DD-9):
+- [x] [AI] **Measure the Prettier round trip before wiring the guard** (DD-9):
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog generate && npx --no -- prettier --write docs/reference/platform-bindings.md && git diff --quiet docs/reference/platform-bindings.md`
       — acceptance: record the exit code in `learnings.md`. If 0, the emitter is already
       Prettier-stable and nothing more is needed. If non-zero, take exactly one of two remedies —
       adjust the emitter to match Prettier's table formatting, or add the catalog path to
       `.prettierignore` next to the existing generated-file entries — and re-run until the command
       exits 0.
-- [ ] [AI] Wire `harness catalog validate` into `apps/rhino-cli/src/commands/harness_audit.rs` so the
+- [x] [AI] Wire `harness catalog validate` into `apps/rhino-cli/src/commands/harness_audit.rs` so the
       aggregate audit covers it
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness audit`
       — acceptance: the output names the catalog check.
-- [ ] [AI] Prove the drift guard is falsifiable: edit one cell inside the generated region by hand,
+- [x] [AI] Prove the drift guard is falsifiable: edit one cell inside the generated region by hand,
       run `harness catalog validate`, then re-run `harness catalog generate`
       — acceptance: exits non-zero naming the drifted region while the hand edit is present, and
       exits 0 after regeneration.
-- [ ] [AI] Update `docs/reference/README.md` so the catalog's annotated index entry states the table
+- [x] [AI] Update `docs/reference/README.md` so the catalog's annotated index entry states the table
       region is generated from `repo-config.yml`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0.
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature` with
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-catalog.feature` with
       the US-5 scenarios and index it in `harness/README.md`
       — acceptance: `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
@@ -1364,13 +1364,13 @@ is the worst outcome, so each states the class plainly.
 
 > All checks below must pass before starting Phase 11.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog generate && git diff --quiet docs/reference/platform-bindings.md`
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog generate && git diff --quiet docs/reference/platform-bindings.md`
       — exits 0.
-- [ ] [AI] `npx --no -- prettier --check docs/reference/platform-bindings.md` — exits 0, or the path
+- [x] [AI] `npx --no -- prettier --check docs/reference/platform-bindings.md` — exits 0, or the path
       is listed in `.prettierignore` with the DD-9 rationale inline.
-- [ ] [AI] `npx --no -- markdownlint-cli2 docs/reference/platform-bindings.md` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog validate`
+- [x] [AI] `npx --no -- markdownlint-cli2 docs/reference/platform-bindings.md` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness catalog validate`
       — exits 0, and exits non-zero under the deliberate hand-edit probe above.
 
 > **Pause Safety**: the catalog table is generated and guarded, but nothing yet fails when a

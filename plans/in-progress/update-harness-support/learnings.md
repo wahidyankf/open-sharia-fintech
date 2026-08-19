@@ -634,3 +634,69 @@ describes for commands.
 rewriting an ideas brief was blocked because the _text being written_ contained the restricted-tier
 filenames. The file under edit was a markdown brief, not an env file. Use the Edit tool for prose
 that quotes those names; the guard reads the command string.
+
+## Phase 10 notes
+
+**The emitter is Prettier-stable; DD-9 needed no remedy.** The measurement: generate, hash, run
+`prettier --write`, hash again — both `aaf28c31...`. Prettier's markdown table rule is per-column
+padding to the widest cell measured in **characters**, and the emitter reproduces it. This was
+verifiable in advance, because `prettier --check docs/reference/platform-bindings.md` already
+exited 0 before the phase started: whatever padding the file carried was Prettier-canonical, so
+matching the existing table byte-for-byte was the same thing as matching Prettier. That also ruled
+out the plan's second remedy — the document is ~300 lines of hand-authored prose Prettier keeps
+formatted, and a `.prettierignore` entry to accommodate one generated region would unformat all
+of it.
+
+**The plan's DD-9 command cannot answer the DD-9 question in this phase.** The stated form is
+`generate && prettier --write && git diff --quiet <file>`, but `git diff --quiet` compares against
+HEAD, and HEAD does not yet carry the region markers this phase introduces. It exits 1 for a
+reason that has nothing to do with Prettier. Recorded as a deviation: the question "does Prettier
+alter what the emitter produced" is a before/after hash of the same working file, which is what
+was measured.
+
+**Transcribe cells verbatim before changing any of them.** The registry was populated with the
+existing table's exact cell text — footnote references (`[^mcp]`, `[^agents]`, `[^skills]`), inline
+code spans, `**and**` — so the first generated output diffs to nothing but the two marker lines.
+Had a content correction been folded into the same step, a non-empty diff would not have
+distinguished "the emitter is wrong" from "the content changed". Content changes are now
+individually visible.
+
+**A "last table row" scan found a table 230 lines away.** The first marker-insertion script walked
+forward from the verification stamp to the last line starting with `|` — which is in a different
+table near the end of the document, so the end marker landed at line 262 and would have swallowed
+half the file. The fix is to stop at the end of the **contiguous** block, and to assert its size
+(`header + separator + 3 rows`) rather than trust the walk. Same class as the wrapped-checklist and
+repeated-heading defects already recorded: a scan that does not assert its own extent.
+
+**Footnote definitions must stay outside the region, references inside.** Cells carry `[^mcp]`;
+the `[^mcp]:` definition block is hand-authored prose below the end marker. The cucumber fixture
+encodes this — its `PROSE_AFTER` holds a footnote definition, and the byte-identity step asserts
+that specific line survives, so a whole-file rewrite fails on a named assertion rather than only
+on an aggregate comparison.
+
+**The verification stamp has no per-harness home.** The plan lists seven `catalog:` fields, all
+per-harness, but puts the stamp inside the generated region. Three harness entries cannot own one
+document-level date without being able to disagree. Recorded as a deviation: a sibling top-level
+`harness-catalog:` block declares `document:` and `verified:`. The date is declared, never stamped
+at generation time — a generated timestamp would change on every run and make the drift guard fire
+on its own output, which is the Phase 8 timestamp prohibition applied to a second emitter.
+
+**`harness audit` named no member on the passing path.** P10.7's acceptance is that the audit
+output names the catalog check, but the per-validator reporters print only failures at the audit's
+verbosity, so a passing audit listed nothing it had run. Added a `harness audit: <name>` line per
+member. This was a pre-existing gap for all five prior members, not a catalog-specific one.
+
+**The aggregate audit is not the enforcement path.** Gates invoke `harness bindings validate` and
+`harness ownership validate` as their own `command:` entries; nothing invokes `harness audit`. So
+wiring `validate-catalog` into the audit gives it aggregate coverage but **no CI enforcement** —
+see the open question below.
+
+**Addition beyond the Phase 10 checklist: a `harness-catalog` gate.** The checklist stops at
+wiring `validate-catalog` into `harness audit`, but nothing invokes `harness audit` — the gate
+registry calls validators directly by `command:`. Without a gate entry the drift guard would run
+only when someone typed it, which does not deliver US-5's claim that the document and the registry
+"cannot disagree". Declared path-gated on `repo-config.yml` and
+`docs/reference/platform-bindings.md` — the only two inputs its verdict depends on — mirroring the
+P7.17 precedent exactly. `gate validate` and `repo-config validate` both exit 0, the gate lists on
+both `ci` and `pre-push`, and the command exits 1 under the hand-edit probe and 0 after
+regeneration. Flag for review: this is a governance-surface change the checklist did not ask for.
