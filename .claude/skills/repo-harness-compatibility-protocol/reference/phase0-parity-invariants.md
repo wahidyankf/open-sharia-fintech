@@ -25,7 +25,7 @@ fixer clears deterministic drift before spending time on web research.
 
 ## Invariant 3 — Binding sync no-op
 
-- **Tool**: `npm run generate:bindings && git diff --quiet .opencode/ .amazonq/`
+- **Tool**: `npm run generate:bindings && git diff --quiet .opencode/ .codex/ .agents/`
 - **Pass**: sync exits 0 AND `git diff --quiet` exits 0 (no changes produced)
 - **Fail**: sync produced drift in `.opencode/` — report the changed files
 - **Default criticality**: MEDIUM (drift means upstream `.claude/` edits were not synced).

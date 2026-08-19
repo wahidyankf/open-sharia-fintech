@@ -3,9 +3,9 @@
 ## Harness Catalog Source
 
 Read `docs/reference/platform-bindings.md` to obtain the canonical list of supported harnesses.
-For each row, extract: harness name (e.g., Claude Code, OpenCode, Aider, OpenAI Codex CLI),
+For each row, extract: harness name (Claude Code, OpenCode, or OpenAI Codex CLI),
 binding directory (e.g., `.claude/`, `.opencode/`), root instruction file name (e.g., `CLAUDE.md`,
-`AGENTS.md`, `CONVENTIONS.md`), MCP config path (if documented), custom-agent surface (directory
+`AGENTS.md`), MCP config path (if documented), custom-agent surface (directory
 path or `n/a`), skills surface (directory path or `n/a`).
 
 ## D1 — Root instruction file name

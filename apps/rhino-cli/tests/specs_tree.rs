@@ -1060,7 +1060,7 @@ fn then_hb_data_driven(w: &mut SpecsTreeWorld) {
 // ===========================================================================
 
 #[given(
-    "the repo-config.yml harness section lists an agent-bearing tier (Amazon Q) and a native instruction surface"
+    "the repo-config.yml harness section lists an agent-bearing generated tier and a source tier"
 )]
 fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     let tmp = TempDir::new().expect("temp workspace");

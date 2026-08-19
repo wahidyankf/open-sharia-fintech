@@ -4,7 +4,7 @@ Gherkin scenarios for rhino-cli agent-harness management commands.
 
 Features in this domain:
 
-- `agents-bindings.feature` — emit and validate the Amazon Q Developer binding bridge
+- `agents-bindings.feature` — generate and validate every generated-tier harness binding
 - `agents-detect-duplication.feature` — detect duplicate agent definitions
 - `agents-sync.feature` — sync agent definitions across platform bindings
 - `agents-validate-claude.feature` — validate Claude Code agent files

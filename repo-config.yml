@@ -193,23 +193,11 @@ governance-word-budget:
       target: 400
       warn: 500
       fail: 500
-    - glob: ".cursor/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
     - glob: ".codex/**/*.md"
       target: 400
       warn: 500
       fail: 500
     - glob: ".opencode/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
-    - glob: ".pi/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
-    - glob: ".amazonq/**/*.md"
       target: 400
       warn: 500
       fail: 500
@@ -937,7 +925,7 @@ gates:
   # content restructure. Those two trees therefore get structural enforcement
   # only; annotation stays scoped to the conforming trees below.
   #
-  # The generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) are
+  # The generated harness mirrors (`.opencode/`, `.codex/`) are
   # absent by design: they are emitted by `harness bindings generate` from
   # `.claude/`, are never hand-edited, and an index written into them would be
   # regenerated away. `.claude/` — their source of truth — is covered instead.
@@ -1117,7 +1105,7 @@ gates:
   # New gate id (FR-3.20) — shares the governance readme-index binary with
   # governance-readme-index above via --paths/--fail-kinds (FR-5.8). Scoped to just the
   # trees Phases 1-8 of plans/done/2026-08-15__optimize-governance-md actually brought to
-  # compliance — repo-governance/, .claude/, .codex/, .pi/ — narrower than FR-1.11's
+  # compliance — repo-governance/, .claude/, .codex/ — narrower than FR-1.11's
   # originally-declared 6-entry list (which also named docs/, specs/): those two trees
   # were never remediated by any phase of this plan and carry ~880 pre-existing
   # missing/unannotated findings; a follow-up plan tracks bringing them to the same bar.

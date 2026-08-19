@@ -25,13 +25,13 @@ is a raw whole-file `split_whitespace()` word count, not bytes, with no in-file 
 Configured in the `governance-word-budget:` section of `repo-config.yml`; enforced by
 `rhino-cli governance word-budget validate`.
 
-| Surface                                                                       | Target (✅) | Warn (⚠️)  | Fail (❌)  |
-| ----------------------------------------------------------------------------- | ----------- | ---------- | ---------- |
-| `repo-governance/**/*.md`                                                     | 400 words   | 500 words  | 500 words  |
-| `AGENTS.md` / `CLAUDE.md`                                                     | 400 words   | 500 words  | 500 words  |
-| `.claude/`, `.cursor/`, `.codex/`, `.opencode/`, `.pi/`, `.amazonq/` (`*.md`) | 400         | 500        | 500        |
-| `**/README.md`                                                                | 700 words   | 900 words  | 900 words  |
-| Resolved tree (`CLAUDE.md` + imports)                                         | 1200 words  | 1500 words | 1500 words |
+| Surface                                                             | Target (✅) | Warn (⚠️)  | Fail (❌)  |
+| ------------------------------------------------------------------- | ----------- | ---------- | ---------- |
+| `repo-governance/**/*.md`                                           | 400 words   | 500 words  | 500 words  |
+| `AGENTS.md` / `CLAUDE.md`                                           | 400 words   | 500 words  | 500 words  |
+| Every harness binding directory in the `harness:` registry (`*.md`) | 400         | 500        | 500        |
+| `**/README.md`                                                      | 700 words   | 900 words  | 900 words  |
+| Resolved tree (`CLAUDE.md` + imports)                               | 1200 words  | 1500 words | 1500 words |
 
 `repo-governance/**/*.md` is the largest surface by file count.
 

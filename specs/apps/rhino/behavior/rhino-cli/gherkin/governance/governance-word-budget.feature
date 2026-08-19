@@ -41,8 +41,8 @@ Feature: Governance word budget
       | .claude/agents/example.md                |
       | .claude/skills/example/SKILL.md          |
       | .opencode/agents/example.md              |
-      | .cursor/agents/example.md                |
-      | .amazonq/rules/example.md                |
+      | .codex/agents/example.md                 |
+      | .agents/skills/example/SKILL.md          |
       | AGENTS.md                                |
       | CLAUDE.md                                |
 

@@ -18,7 +18,7 @@ when_to_use: Use whenever you edit a file under the primary binding directory, o
 
 ## Standard 9 — Generated Mirrors Belong on the Ledger and in the Same Commit
 
-`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.cursor/`, and `.amazonq/`
+`.claude/` is the **only** hand-authored harness surface. `.opencode/`, `.codex/`, and `.agents/`
 are generated from it mechanically. Editing one agent definition therefore modifies **four** files,
 three of which you never opened — and all four are yours.
 
@@ -47,7 +47,7 @@ automation does _not_ protect you:
    [No Destructive Git Operations Convention](../../workflow/no-destructive-git-operations.md).
 4. **Verify rather than assume.** `npm run validate:sync` is the check — run it after any `.claude/`
    edit not committed through the standard hook path.
-5. **Never hand-edit a mirror.** An edit to `.opencode/`, `.cursor/`, or `.amazonq/` is silently
+5. **Never hand-edit a mirror.** An edit to `.opencode/`, `.codex/`, or `.agents/` is silently
    overwritten by the next generate. Fix the `.claude/` source and regenerate.
 
 The same reasoning covers every other generated artifact — lockfiles, coverage manifests, emitted

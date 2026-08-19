@@ -16,7 +16,7 @@ when_to_use: "Use when a large diff needs shared-context handling."
 # Shared-context extract-once + large-diff handling (D13)
 
 **D13 chose NO generated-file exclusion.** Reviewers see the **full diff**, including regenerated
-output such as `.opencode/agents/**`, `.amazonq/**`, `generated/**`, lock files, and minified/source-map
+output such as `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**`, lock files, and minified/source-map
 assets — nothing is silently filtered out before a specialist reviews it, and **CI still runs over
 everything regardless** of what any reviewer chooses to skim. This is a deliberate reversal of the
 alternative (auto-detecting and excluding generated files): the rationale is explicitness — a

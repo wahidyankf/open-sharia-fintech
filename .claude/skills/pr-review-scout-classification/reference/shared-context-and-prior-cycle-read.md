@@ -9,7 +9,7 @@ same context (which would otherwise multiply token cost by the number of special
 ## No-Exclusion Posture (Full Diff, No Generated-File Filtering)
 
 This brief carries the **full diff with NO generated-file exclusion** — reviewers see everything,
-including `.opencode/agents/**`, `.amazonq/**`, `generated/**` (e.g. `search-data.json`),
+including `.opencode/agents/**`, `.codex/agents/**`, `.agents/skills/**`, `generated/**` (e.g. `search-data.json`),
 `package-lock.json` and other lock files, minified assets, source maps, and any file carrying an
 `@generated` / "DO NOT EDIT" marker. Nothing is silently filtered out before a specialist reviews
 it — the rationale is explicitness: a hand-edited "generated" file is never silently missed

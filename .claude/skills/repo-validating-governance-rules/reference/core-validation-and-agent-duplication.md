@@ -12,7 +12,7 @@ caught mechanically.
 `docs/**/*.md`, root instruction surfaces (`AGENTS.md`, `CLAUDE.md`, `README.md`), active plans
 (`plans/in-progress/**/*.md`, `plans/backlog/**/*.md`). **Exempt**: website content
 (`apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-www/`, `apps/wahidyankf-www/`),
-`plans/done/` (immutable archive), generated mirrors (`.opencode/`, `.cursor/`, `.amazonq/`),
+`plans/done/` (immutable archive), generated mirrors (`.opencode/`, `.codex/`, `.agents/`),
 `generated-reports/`, `local-tmp/`, `worktrees/`.
 
 Validates: file naming (**including ordinal prefixes** — AI-only; no gate decides whether an `NN-`

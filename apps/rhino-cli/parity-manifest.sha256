@@ -491,7 +491,7 @@ a3823b936d9dcfd27905238f155b09f0d1b1b044c6599c77fab930d052ca3f70  apps/rhino-cli
 7b0ef8698434abe1343d9619edd59fe5e682c216d09263b4b6b09f3ffaae0279  apps/rhino-cli/tests/repo_config_validate.rs
 97f66d71265c3062512eba571f1c004cd6ae90e3f310105d608a72b66fba2114  apps/rhino-cli/tests/repo_governance.rs
 3fd10208abb5a9af807b425cde017b9615f0b5abd13ba4243c93ebb6d2fb78c3  apps/rhino-cli/tests/spec_coverage.rs
-f4d19af549ccba7b398611a084312b98878a583efeea040509679fa35b91105c  apps/rhino-cli/tests/specs_tree.rs
+0fbe08ab6799ba8747f1890c4b9c7286275b451c67d1892649e89efbe0dbd424  apps/rhino-cli/tests/specs_tree.rs
 799c35a7e647e4ac59c81ebb9dd2ef600692d5c041a942ababe4ee8c20ebb797  apps/rhino-cli/tests/stdio_blocking_wiring.rs
 471afb2c45384e1a61f2a5c4b7dc6659c9edfd320bcd2fcdaccb137277f3d90a  apps/rhino-cli/tests/test_coverage.rs
 24508cdc24400c94ce301bff66da626298956e37087e440ded360aa5f091cf73  specs/apps/rhino/behavior/rhino-cli/gherkin/README.md
@@ -522,8 +522,8 @@ ea0050aee27166f3a3f74a3a225c0c391e48b681abcd063a26f5931f0d840925  specs/apps/rhi
 6a8b12b64ebed5103ff323480894a0ae79e0af57584b9eb65a92e20d9a05fcba  specs/apps/rhino/behavior/rhino-cli/gherkin/git/git-pre-commit.feature
 bd0f7aca7a725965121c8876c4a3f37c0db8515b1ebeb0270551fc34f067f055  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/README.md
 dce68d3970fd02ab3e1bbd5eb2b20fd5523ed6f5030c8c145f51c2cd503adecd  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-readme-index.feature
-2f6d0a7e1cecea01d51807c80bcbdd7e471aa1cfd4f548b3eb7664878c0588c9  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature
-4b3558fca3ff6bb85702045da894abcda93eb6452141b60f7f55d93ee3c98a5b  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
+d22a103f12c43de6c7af852b87a3566313a3576776c154543a28d608ad32606f  specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature
+be927e9f754012c6a106ea3aa079d088a0a284f2424b1f1376953f5e1f8318be  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md
 abb07ae566299298c592501a8c48986edd0c965b03b1aa5f152498611d3a557e  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-bindings.feature
 de8c721980d1577c2a2eb4e8c0dcd41e857137b41cef5b60392d7955bd41c5da  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-detect-duplication.feature
 254c5559129fbfa48e81e676d21ba2720356ee74fbf5298a7a79c7e699f4d71c  specs/apps/rhino/behavior/rhino-cli/gherkin/harness/agents-sync.feature
@@ -557,7 +557,7 @@ bd42aba4e9496160242ed178f2b33719494a2f7c050a83e4b52be17095ed714d  specs/apps/rhi
 7036dbbbb84d8f616721fea5aceac09cfb90362f2e0fe1c67b6d7af7f0470f75  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/env-staged-guard.feature
 c2a50b3eed5b6bcca94febc88e5d3f81ffbc2359bf28558714110d6e3286102c  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/gherkin-cardinality.feature
 f1f4804383ead4d55a815d3bf2663f23be40852d4d2cb136c90da956053b1365  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature
-90d0dfb8428cd2c18236a69aa06d063d3f122e8a23e411904e8430c3b3ff87fa  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature
+3824922ee10a335ae77539c5f463f5bb604edb751634123dd97fdcd75cbe9e14  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature
 3f99403bb03e236d1df08af2ec6a998a25498acfb9d038ed133c0c2939e2ae12  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/specs-audit.feature
 dc0533b835b12c0ffad47be531eb98063e46ad4356646ee457182fa4bdaf1245  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-adoption.feature
 4b7bb6a12662c140be4624fae8cd71942b22ec1e43ccf38e6c3db2f2c4e05ac2  specs/apps/rhino/behavior/rhino-cli/gherkin/specs/validate-counts.feature

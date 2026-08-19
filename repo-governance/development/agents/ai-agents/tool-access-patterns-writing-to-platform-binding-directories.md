@@ -22,4 +22,4 @@ Use the normal `Write` / `Edit` tools for files in `.claude/` and `.opencode/`. 
 - Creating or updating skill files in `.claude/skills/*/SKILL.md` or `.claude/skills/*/SKILL.md`
 - Updating the corresponding `README.md` index files
 
-**Sync requirement**: After editing `.claude/` sources, run `npm run generate:bindings` to regenerate all secondary binding artifacts (`.opencode/agents/`, `.amazonq/`). The pre-commit hook validates both formats.
+**Sync requirement**: After editing `.claude/` sources, run `npm run generate:bindings` to regenerate all secondary binding artifacts (`.opencode/agents/`, `.codex/agents/`, `.agents/skills/`). The pre-commit hook validates both formats.

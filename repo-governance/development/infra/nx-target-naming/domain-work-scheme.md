@@ -43,6 +43,6 @@ All defined on `rhino-cli`. Other projects expose `specs:coverage` only.
 | `env:validation`                       | `.env.example` files      | Validate against `env-contract:` section in `repo-config.yml` |
 | `governance:vendor-audit-validation`   | `repo-governance/` docs   | Validate no vendor-specific content leakage                   |
 | `cross-vendor:parity-validation`       | All binding trees         | Validate cross-vendor behavioral parity                       |
-| `harness:bindings-validation`          | Binding artifacts         | Validate `.claude/` ↔ `.opencode/` ↔ `.amazonq/` parity       |
+| `harness:bindings-validation`          | Binding artifacts         | Validate `.claude/` ↔ `.opencode/` ↔ `.codex/` parity         |
 | `format:check`                         | Rust source               | `rustfmt --check`                                             |
 | `compat:min-version`                   | Rust toolchain            | Minimum Supported Rust Version compatibility                  |

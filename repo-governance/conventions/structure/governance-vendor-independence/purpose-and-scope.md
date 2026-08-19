@@ -19,7 +19,7 @@ created: 2026-05-02
 
 `repo-governance/` contains the rules every contributor follows regardless of toolchain. When vendor-specific product names, model names, or path references appear in governance prose, they:
 
-- Exclude contributors using other AI coding agents (Cursor, Codex CLI, Gemini CLI, Copilot, Aider).
+- Exclude contributors using any coding agent other than the one a rule's author happened to have open.
 - Couple governance correctness to a specific vendor's product lifecycle.
 - Create maintenance debt when vendor names or APIs change.
 
@@ -36,7 +36,8 @@ This convention separates **vendor-neutral governance** (the rules) from **platf
 
 **Out of scope** (vendor terms are intentionally present here):
 
-- `.claude/` — Claude Code platform binding directory.
-- `.opencode/` — OpenCode platform binding directory.
+- `.claude/` — Claude Code platform binding directory (the source tier).
+- `.opencode/` — OpenCode platform binding directory (generated).
+- `.codex/`, `.agents/` — OpenAI Codex CLI platform binding directories (generated).
 - `docs/reference/platform-bindings.md` — catalog of all platform bindings; references them by necessity.
 - `plans/` — planning documents; may reference vendor specifics when discussing implementation details.

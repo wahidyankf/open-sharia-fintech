@@ -40,12 +40,11 @@ This plan standardizes **two distinct surfaces** with **two distinct conventions
    naming standard]
 
    **Agent + binding machinery + harness-loaded instruction surfaces all live under the `harness`
-   domain.** Every command that touches agent/skill files, the `.claude` ↔ `.opencode` ↔ `.amazonq`
+   domain.** Every command that touches agent/skill files, the `.claude` ↔ `.opencode` ↔ `.codex`
    bindings, cross-vendor binding parity, or the auto-loaded instruction surfaces a harness ingests
    (`AGENTS.md` / `CLAUDE.md` / rules byte budgets) is a `harness` sub-command:
    `harness duplication validate`, `harness claude validate`,
-   `harness sync validate`, `harness bindings validate`, `harness bindings generate`,
-   `harness opencode sync`, `harness amazonq emit`
+   `harness sync validate`, `harness bindings validate`, `harness bindings generate`
    (the former `cross-vendor parity` gate is **merged into `harness bindings validate`** — one
    command validates the whole all-harness on-par state; see [§3.3](#merge-and-drop-recommendations)),
    and `harness audit`. **Note**: instruction-file word budgets moved out of the `harness` domain
@@ -105,6 +104,12 @@ Proposed targets and Status now reflect those ratified decisions.
 
 ## Command Triage Table
 
+> **Historical ledger.** The "Current name" / "Prior name" columns below record the 2026-07-01
+> verb-last rename and the merges it ratified. Rows marked **— (removed)** or **— (merged → …)**
+> name commands that no longer exist; they are kept so a reader tracing an old invocation finds
+> where it went. Only the left-hand names without such a marker are live commands — check
+> `rhino-cli harness --help` for the current surface.
+
 | #   | Command (leaf) — target                              | Command (leaf) — current                                                                   | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Status                             | Decided | Invocation site (if wired)                                                                                                                                                                        |
 | --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | **— (removed)**                                      | `coverage validate` (removed)                                                              | Check coverage output against a line-based threshold                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | **wired** → **drop**               |   ✅    | replaced by each project's **native** coverage gate at `test:coverage` (≥ 90%); Nx coverage target deleted in all 3 repos                                                                         |
@@ -132,7 +137,7 @@ Proposed targets and Status now reflect those ratified decisions.
 | 21  | `harness duplication validate`                       | `harness validate duplication`                                                             | Detect verbatim duplication across **source-tier** (`.claude/`) agent + skill files — registry-driven; generated mirrors excluded by design. Δ **WIRE (pre-push, repo-wide)** — cross-file (compares against unchanged files), so a repo-wide pre-push gate like `md links validate` (row 9), not lint-staged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | not wired → **wire (pre-push)**    |   ✅    | Δ **repo-wide pre-push gate** (cross-file dup scan over `.claude/`); was manual `harness audit`-only                                                                                              |
 | 22  | **— (merged → `harness bindings validate`, row 24)** | `harness validate claude`                                                                  | Validate Claude Code agent/skill format in `.claude/`. Δ **MERGE → row 24**: leaf removed, **check preserved** — `.claude/` format validation folds into the all-harness `harness bindings validate`; retires the npm `validate:claude` script. Check moves from **not-wired (manual script)** to **wired** (row 24 runs pre-push).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | **not wired** → **merge → 24**     |   ✅    | check folded into `harness bindings validate` (row 24), **newly wired** (pre-push); npm `validate:claude` script retired                                                                          |
 | 23  | **— (merged → `harness bindings validate`, row 24)** | `harness validate sync`                                                                    | Validate `.claude/` and `.opencode/` are in sync. Δ **MERGE → row 24**: leaf removed, **check preserved** — sync validation folds into the all-harness `harness bindings validate`; retires the npm `validate:sync` script. Check moves from **not-wired (manual script)** to **wired** (row 24 runs pre-push).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | **not wired** → **merge → 24**     |   ✅    | check folded into `harness bindings validate` (row 24), **newly wired** (pre-push); npm `validate:sync` script retired                                                                            |
-| 24  | `harness bindings validate`                          | `harness validate bindings`                                                                | Validate **all 11 harnesses** on-par: generated-tier byte-parity (OpenCode + Amazon Q), native-tier no-shadowing, and color/tier translation-map coverage; absorbs the former `cross-vendor parity` gate (folds in rows 22, 23) and now also carries the name-set/count parity that `harness naming validate` (row 20, since removed) used to provide                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | **wired**                          |   ✅    | npm `harness:bindings-validation` → pre-push (scoped)                                                                                                                                             |
+| 24  | `harness bindings validate`                          | `harness validate bindings`                                                                | Validate **all supported harnesses** on-par: generated-tier byte-parity (OpenCode + Amazon Q), native-tier no-shadowing, and color/tier translation-map coverage; absorbs the former `cross-vendor parity` gate (folds in rows 22, 23) and now also carries the name-set/count parity that `harness naming validate` (row 20, since removed) used to provide                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | **wired**                          |   ✅    | npm `harness:bindings-validation` → pre-push (scoped)                                                                                                                                             |
 | 25  | **— (merged → `harness bindings generate`, row 27)** | `harness sync opencode`                                                                    | Sync Claude Code agents → OpenCode format Δ **merged into `harness bindings generate` (row 27)** — per-harness leaf dropped; single-binding regen via `harness bindings generate --harness opencode`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | **wired** → **merge → 27**         |   ✅    | pre-commit `git pre-commit` step1_config → `sync_all` (`pre_commit.rs:105`); fires only when `.claude`/`.opencode` files staged [Phase 1 verified]                                                |
 | 26  | **— (merged → `harness bindings generate`, row 27)** | `harness emit amazonq`                                                                     | Emit Amazon Q Developer binding bridge files (idempotent) Δ **merged into `harness bindings generate` (row 27)** — per-harness leaf dropped; single-binding regen via `harness bindings generate --harness amazonq`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | **not wired** → **merge → 27**     |   ✅    | NOT wired — `emit_bindings` absent from `pre_commit.rs`; no hook calls Amazon Q emit [Phase 1 verified]                                                                                           |
 | 27  | `harness bindings generate`                          | `harness generate bindings`                                                                | Generate all platform bindings (sync OpenCode + emit Amazon Q) Δ **sole registry-driven generator** — rows 25, 26 merged in; regenerates every generated-tier artifact from the `repo-config.yml` `harness:` registry; `--harness <name>` filter regenerates a single binding.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | not wired (manual)                 |   ✅    | npm `generate:bindings` (manual only); OpenCode sync wired independently via monolith step1 (row 25); Amazon Q emit NOT wired [Phase 1 verified]                                                  |
@@ -189,68 +194,46 @@ Rows 38 and 41, the Java post-processors, were later removed outright in the 202
 hard-codes a `.claude`/`.opencode` pair.** The `repo-config.yml` `harness:` section
 ([§5.1](../../plans/done/2026-07-01__standardize-rhino-cli-sdlc-parity/tech-docs.md#51-unified-repo-configuration-repo-configyml))
 is the **single authoritative list** of the harnesses this repo binds plus each one's tier, agent
-directory (if any), instruction surface(s), and shadow-file glob. **Every** harness command —
+directory (if any) and instruction surface(s). It declares exactly three. **Every** harness command —
 `bindings generate`, `bindings validate`,
 `duplication validate`, and the `audit` aggregate — derives its target set from that registry, so a
-harness is covered by **all** applicable commands the moment it is listed (adding a twelfth harness
-is one config edit, identical across the 3 repos). Several commands are **hard-coded to Claude +
-OpenCode** (`bindings validate` byte-parity-checks only Amazon Q) — this plan converts them all to
-consume the registry. `naming validate` (row 20) was removed after this plan's ratification; the
+harness is covered by **all** applicable commands the moment it is listed (adding a fourth harness
+is one config edit, identical across the 3 repos). The hard-coded harness match arms this document
+originally described were replaced by registry-derived lookups. `naming validate` (row 20) was removed after this plan's ratification; the
 name-set/count parity check it performed now lives in `bindings validate` (row 24). The
 per-command coverage matrix below is the contract.
 
-**The `harness` commands MUST cover every coding-agent harness this repo supports, not just the two
-with generated directories.** `harness opencode sync`, `harness amazonq emit`, and
-`harness bindings generate` handle **only OpenCode + Amazon Q**, and `harness bindings validate`
-asserts byte-parity for the **Amazon Q bridge only** (it also checks the binding-dir set
-`[.claude, .opencode, .codex, .github, .amazonq]` and that no `.codex/agents/` dir exists). The repo
-actually binds **eleven** harnesses across three tiers; the plan's standard is that the harness
-command surface accounts for **all eleven**, each at its tier. [Repo-grounded —
-`docs/reference/platform-bindings.md`; `apps/rhino-cli/src/application/agents/bindings.rs`]
+**The `harness` commands MUST cover every coding-agent harness this repo supports.** As of
+2026-08-19 that is exactly three: Claude Code at the source tier, OpenCode and OpenAI Codex CLI at
+the generated tier. The eight other harnesses this document previously enumerated were dropped —
+their binding directories, emitters, and validator arms are gone. [Repo-grounded —
+`repo-config.yml` `harness:`; `apps/rhino-cli/src/application/agents/bindings.rs`]
 
-| Harness                | Tier                | Artifact this repo ships                                   | Covering command (target)                                                                       |
-| ---------------------- | ------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Claude Code            | **source**          | `.claude/` (agents, skills, hooks) — source of truth       | read by `harness bindings generate`; format checked by `harness claude validate` (merged)       |
-| OpenCode               | **generated**       | `.opencode/agents/` (synced from `.claude/`)               | `harness bindings generate --harness opencode` writes · `harness bindings validate` byte-parity |
-| Amazon Q Developer     | **generated**       | `.amazonq/rules/`, `.amazonq/cli-agents/` (emitted bridge) | `harness bindings generate --harness amazonq` writes · `harness bindings validate` byte-parity  |
-| OpenAI Codex CLI       | **source + config** | `.codex/config.toml` (+ subagent toml); reads `AGENTS.md`  | `harness bindings validate` — config present, **no** `.codex/agents/` dir                       |
-| GitHub Copilot         | **native**          | none (reads `AGENTS.md`); `.vscode/mcp.json` only          | `harness bindings validate` — **no-shadowing** + `AGENTS.md` budget                             |
-| Cursor                 | **generated**       | `.cursor/agents/` (synced from `.claude/`)                 | `harness bindings validate` — byte-parity + naming mirror                                       |
-| Windsurf               | **native**          | none (reads `AGENTS.md`)                                   | `harness bindings validate` — **no-shadowing** (`.windsurf/rules`) + budget                     |
-| JetBrains Junie        | **native**          | none (reads `AGENTS.md`; `.junie/AGENTS.md` ranks above)   | `harness bindings validate` — **no-shadowing** (`.junie/guidelines.md`) + budget                |
-| Google Antigravity CLI | **native**          | none (reads `AGENTS.md`; `GEMINI.md` ranks above)          | `harness bindings validate` — **no-shadowing** (`GEMINI.md`) + budget                           |
-| Pi                     | **native**          | none (reads `AGENTS.md` + `CLAUDE.md`)                     | `harness bindings validate` — **no-shadowing** + budget                                         |
-| Aider                  | **native**          | none (reads `AGENTS.md`; `CONVENTIONS.md` optional)        | `harness bindings validate` — `CONVENTIONS.md`, if present, points to `AGENTS.md`               |
+| Harness          | Tier          | Artifact this repo ships                                  | Covering command (target)                                                                       |
+| ---------------- | ------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Claude Code      | **source**    | `.claude/` (agents, skills, hooks) — source of truth      | read by `harness bindings generate`; format checked by `harness claude validate`                |
+| OpenCode         | **generated** | `.opencode/agents/` (synced from `.claude/`)              | `harness bindings generate --harness opencode` writes · `harness bindings validate` byte-parity |
+| OpenAI Codex CLI | **generated** | `.codex/agents/`, `.agents/skills/`, `.codex/config.toml` | `harness bindings generate --harness codex` writes · `harness bindings validate` byte-parity    |
 
 **Per-command coverage matrix** — which harnesses each `harness` command must operate over, all
 driven by the `harness:` registry (not hard-coded):
 
-| Command                | Harnesses it must cover                                                                     | Per-harness target (from registry)                                                            | Gap today                                                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `bindings generate`    | generated tier (OpenCode, Amazon Q)                                                         | regenerate each generated artifact from `.claude/`                                            | correct (only the generated tier is written)                                                           |
-| `bindings validate`    | **all 11**                                                                                  | byte-parity (generated) · structural (source/config) · no-shadowing (native) · color/tier-map | OpenCode byte-parity + native no-shadowing beyond `.codex`/`.github` missing                           |
-| ~~`naming validate`~~  | **— (removed)** — role-suffix + name-set/count parity folded into `bindings validate` above | n/a                                                                                           | n/a                                                                                                    |
-| `duplication validate` | source tier only (`.claude/` agents + skills)                                               | no verbatim dup among source files                                                            | source-only **by design** (generated mirrors are intended copies); make the source dir registry-driven |
-| `audit`                | aggregate                                                                                   | runs every harness validator above                                                            | inherits each leaf's coverage                                                                          |
+| Command                | Harnesses it must cover                       | Per-harness target (from registry)                               |
+| ---------------------- | --------------------------------------------- | ---------------------------------------------------------------- |
+| `bindings generate`    | generated tier (OpenCode, Codex)              | regenerate each generated artifact from `.claude/`               |
+| `bindings validate`    | all three                                     | byte-parity (generated) · structural (source) · catalog coverage |
+| `duplication validate` | source tier only (`.claude/` agents + skills) | no verbatim dup among source files                               |
+| `audit`                | aggregate                                     | runs every harness validator above                               |
 
 **Coverage rule (the standard):**
 
-1. **Generated tier** (OpenCode, Amazon Q) — `harness bindings generate` regenerates **both**
-   artifacts from `.claude/`; `harness bindings validate` asserts **byte-parity** for **both** (today
-   it only re-checks Amazon Q — **gap: add OpenCode parity** to the validator).
-2. **Source/config tier** (Claude Code, Codex) — `harness bindings validate` asserts the structural
-   invariants already coded (`.codex/config.toml` present, no `.codex/agents/` directory) plus
-   `.claude/` format via the **merged** `harness claude validate`
-   ([§3.3](#merge-and-drop-recommendations)).
-3. **Native tier** (Copilot, Windsurf, Junie, Antigravity, Pi, Aider) —
-   `harness bindings validate` asserts the **no-shadowing rule** (no per-tool instruction file masks
-   `AGENTS.md`: `.github/copilot-instructions.md`, `.cursor/rules`, `.windsurf/rules`,
-   `.junie/guidelines.md`, `GEMINI.md`, `CONVENTIONS.md` either **absent** or a thin pointer) **and**
-   that `AGENTS.md` is within each native reader's word budget (the `governance word-budget validate`
-   surface set — moved out of the `harness` domain by a later plan; see item 7 below). **Gap: the
-   native-tier no-shadowing checks beyond `.codex`/`.github` are not in the validator today** — this
-   plan adds them.
-4. **The harness set is data, not code** — the eleven harnesses live in `repo-config.yml` under a new
+1. **Generated tier** (OpenCode, Codex) — `harness bindings generate` regenerates both artifact
+   sets from `.claude/`; `harness bindings validate` asserts byte-parity for both.
+2. **Source tier** (Claude Code) — `harness bindings validate` asserts the structural invariants
+   plus `.claude/` format via `harness claude validate`.
+3. **No native tier exists.** A harness is either the source of truth or a mechanically
+   regenerated mirror of it; there is no third state.
+4. **The harness set is data, not code** — the supported harnesses live in `repo-config.yml` under a
    `harness:` section, **one entry per harness carrying every field the harness commands consume**:
    `tier`, `agent-dir` (if agent-bearing — feeds `naming`/`duplication`), `mirrors` (the source dir a
    generated tier's agent set must match — feeds `naming`; the `naming` validator named in both
@@ -258,7 +241,7 @@ driven by the `harness:` registry (not hard-coded):
    `bindings` today — see item 6), the `instruction` surface list (fed, at
    the time this doc was written, the now-superseded registry-merged word-budget check — see item 7
    below), and the `shadow` glob (feeds `bindings` no-shadowing). **Every** harness
-   command reads this one list, so adding a twelfth harness is a config edit, identical across all 3
+   command reads this one list, so adding a fourth harness is a config edit, identical across all 3
    repos. The binding-dir constant `KNOWN_BINDING_DIRS` in `bindings.rs` is replaced by this config
    list.
 5. **Cross-vendor translation-map coverage** — every `color:` and `model:` token used in any agent
@@ -288,7 +271,7 @@ driven by the `harness:` registry (not hard-coded):
    source-tier addition.
 
 **Action**: extend `harness bindings generate` / `harness bindings validate` to the full
-eleven-harness matrix above (driven by `repo-config.yml` `harness:`); add OpenCode byte-parity to
+three-harness matrix above (driven by `repo-config.yml` `harness:`); add OpenCode byte-parity to
 the validator; add the native-tier no-shadowing assertions; fold `harness claude validate` +
 `harness sync validate` into `harness bindings validate`, and **absorb the `cross-vendor parity`
 gate** — its color/tier translation-map coverage moves into `harness bindings validate` and the
@@ -301,6 +284,12 @@ coverage is out of scope for this action — see item 7's superseded note above;
 named here was since deleted — see item 6). [Judgment call — coverage standard; current gaps Repo-grounded]
 
 ## Merge and Drop Recommendations
+
+> **Historical ledger.** The "Current name" / "Prior name" columns below record the 2026-07-01
+> verb-last rename and the merges it ratified. Rows marked **— (removed)** or **— (merged → …)**
+> name commands that no longer exist; they are kept so a reader tracing an old invocation finds
+> where it went. Only the left-hand names without such a marker are live commands — check
+> `rhino-cli harness --help` for the current surface.
 
 Thinking hard about the ~47-command surface, the recommendation per row (or row group) below
 collapses redundancy and prunes dead weight while preserving the

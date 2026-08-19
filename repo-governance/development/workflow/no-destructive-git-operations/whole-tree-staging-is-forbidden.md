@@ -40,8 +40,8 @@ per-instance approval:
    **"Account for" is not a judgement call** — it means the path appears on the touched-file ledger
    the [File-Touch Discipline](../../practice/file-touch-discipline.md) requires you to keep. Without
    that ledger this step degrades into guessing from the diff, which is the failure it exists to
-   prevent. Note that a `.claude/` edit legitimately brings generated `.opencode/`, `.cursor/`, and
-   `.amazonq/` mirrors into the same commit; those are yours, and they belong on the ledger too.
+   prevent. Note that a `.claude/` edit legitimately brings generated `.opencode/`, `.codex/`, and
+   `.agents/` mirrors into the same commit; those are yours, and they belong on the ledger too.
 
 3. In a sibling repo or another worktree, use the `-C <worktree>` form —
    `git -C <worktree> add <path>` — so the operation cannot leak into the wrong tree.

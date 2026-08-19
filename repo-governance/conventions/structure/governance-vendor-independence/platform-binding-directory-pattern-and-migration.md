@@ -19,13 +19,15 @@ created: 2026-05-02
 
 Each AI coding platform that integrates with this repository has a dedicated binding directory at the repo root:
 
-| Platform       | Binding directory                                          | Root instruction file            | Status   |
-| -------------- | ---------------------------------------------------------- | -------------------------------- | -------- |
-| Claude Code    | `.claude/`                                                 | `CLAUDE.md` (shim → `AGENTS.md`) | Active   |
-| OpenCode       | `.opencode/agents/`                                        | `AGENTS.md` (read natively)      | Active   |
-| Cursor         | `.cursor/agents/` (generated), `.cursor/rules/` (optional) | `AGENTS.md` (read natively)      | Active   |
-| GitHub Copilot | `.github/copilot-instructions.md`                          | `AGENTS.md` (coding-agent mode)  | Reserved |
-| Others         | see `docs/reference/platform-bindings.md`                  | `AGENTS.md`                      | Varies   |
+| Platform         | Binding directory                   | Root instruction file            | Tier      |
+| ---------------- | ----------------------------------- | -------------------------------- | --------- |
+| Claude Code      | `.claude/`                          | `CLAUDE.md` (shim → `AGENTS.md`) | source    |
+| OpenCode         | `.opencode/agents/`                 | `AGENTS.md` (read natively)      | generated |
+| OpenAI Codex CLI | `.codex/agents/`, `.agents/skills/` | `AGENTS.md` (read natively)      | generated |
+
+The `harness:` registry in `repo-config.yml` is authoritative for this table's membership; a
+platform absent from that registry is not supported, whatever a binding directory's presence on
+some other machine might suggest.
 
 The governance layer refers to these binding directories collectively as "the platform binding" rather than naming specific directories in load-bearing prose.
 

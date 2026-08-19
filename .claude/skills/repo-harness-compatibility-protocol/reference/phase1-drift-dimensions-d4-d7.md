@@ -26,12 +26,10 @@ MEDIUM (runtime behaviour may silently degrade). **Fix**: remove or rename depre
 not add undocumented fields. **Confidence**: HIGH only when the deprecated field is explicitly
 documented in a `[Verified]` source; MEDIUM otherwise (skip for safety).
 
-## D7 — Cursor model-pin conformance (Cursor only)
+## D7 — Codex agent-file extension conformance (Codex only)
 
-**Check**: every `.cursor/agents/*.md` file's `model:` field must match the pinned literal
-(`composer-2.5` per `apps/rhino-cli/src/application/agents/cursor.rs`). **Tool**:
-`grep -h "^model:" .cursor/agents/*.md | sort -u` and
-`grep -rE '^model: composer-2\.5-fast' .cursor/agents/` (the prohibited fast-variant pin). **Pass**:
-exactly one distinct value equal to the pin, fast-variant absent. **Fail**: any other value or a
-fast-variant line. **Default criticality**: HIGH (wrong pin may bill at 6× fast rates).
+**Check**: every file under `.codex/agents/` must use the extension Codex actually parses
+(`.toml`), never `.md`. **Tool**: `git ls-files .codex/agents | grep -c '\.md$'`. **Pass**: no
+match. **Fail**: any `.md` file under that directory. **Default criticality**: HIGH (a `.md`
+agent file is silently ignored, so the agent simply does not exist for that harness).
 **Confidence**: HIGH (mechanical comparison).

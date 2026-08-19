@@ -15,6 +15,9 @@ created: 2026-05-02
 
 # Forbidden Vendor Terms — Product Names and Paths
 
+> **A listed name is not a support claim.** Dropped harnesses stay here on purpose — their names
+> must not leak into governance prose either. `repo-config.yml` `harness:` decides support.
+
 The following patterns are forbidden in `repo-governance/` prose except inside the allowlisted regions defined in the next section.
 
 ## Coding-agent / harness product names

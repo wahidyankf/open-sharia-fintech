@@ -47,7 +47,6 @@ All `rhino-cli` subcommands follow a verb-last grammar introduced in §2a of the
 | `harness validate naming`                      | Removed (agent role-suffix rule withdrawn)       |
 | `workflows validate naming`                    | Removed (workflow type-suffix rule withdrawn)    |
 | `harness sync opencode`                        | `harness bindings generate --harness opencode`   |
-| `harness emit amazonq`                         | `harness bindings generate --harness amazonq`    |
 | `convention validate agents-md-size`           | Removed (superseded by `governance-word-budget`) |
 | `md validate readme-index`                     | `governance readme-index validate`               |
 | `git pre-commit`                               | Removed (pre-commit steps call tools directly)   |
