@@ -12,14 +12,15 @@ The `baseerah-repo-reset` plan (Phase 3 Gate, task #163) deleted ~20 apps
 (`ayokoding-www`, `organiclever-*`, `ose-www`, `ose-app-web`, `wahidyankf-www`, etc.) and swept the
 repo for stale references, fixing genuine leftover bugs (broken links, stale CI badges, a mis-scoped
 backlog plan). One category it deliberately did **not** touch: `.claude/agents/{specs-checker,
-specs-maker,specs-fixer,swe-golang-dev}.md` and their synced `.opencode/`/`.cursor/` mirrors
-(~183 hits total across all three) use `organiclever`/`ose`/`wahidyankf` as illustrative example
+specs-maker,specs-fixer,swe-golang-dev}.md` and their synced mirrors (~183 hits at the time of
+writing, across `.claude/` and the mirrors then in existence) use `organiclever`/`ose`/`wahidyankf` as illustrative example
 target paths in their instructions (e.g. `folders: [specs/apps/organiclever/components/web]`). No
 links are broken — these are prose examples, not references to files that must exist — but since
 those apps no longer exist in _this_ repo, a reader could reasonably think such a path is real here.
 
-**Data point:** ~183 hits across `.claude/agents/` + its two auto-synced mirrors (`.opencode/`,
-`.cursor/`), concentrated in 4 source files.
+**Data point:** ~183 hits across `.claude/agents/` plus its auto-synced mirrors, concentrated in 4
+source files. The hit count is stale: `update-harness-support` deleted `.cursor/` and added `.codex/`
+and `.agents/`, so recount before acting rather than trusting this figure.
 
 ## Why now
 
@@ -41,8 +42,8 @@ that was only ever illustrative.
 - Replace the illustrative example paths in the 4 source `.claude/agents/*.md` files with either
   (a) the repo's own surviving app (`rhino-cli`) where the example's shape allows it, or (b) a clearly
   fictional placeholder (e.g. `example-app`) that can't be mistaken for a real path.
-- Regenerate bindings (`npm run generate:bindings`) so `.opencode/`/`.cursor/` mirrors stay in sync
-  rather than hand-editing them separately.
+- Regenerate bindings (`npm run generate:bindings`) so the `.opencode/`, `.codex/`, and `.agents/`
+  mirrors stay in sync rather than hand-editing them separately.
 
 ## Rough scope & non-goals
 

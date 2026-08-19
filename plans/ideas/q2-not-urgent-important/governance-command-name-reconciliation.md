@@ -82,8 +82,12 @@ are a dead end rather than a data-loss risk.
 
 In scope: `repo-governance/**`, `docs/**`, and `.claude/agents/**` in ose-public and ose-private;
 the broken `sync:*` scripts; the triage table's own accuracy. Agent-file corrections regenerate their
-`.opencode/`/`.cursor/` mirrors via `npm run generate:bindings` in the same commit — the mirrors are
+`.opencode/`/`.codex/` mirrors via `npm run generate:bindings` in the same commit — the mirrors are
 never hand-edited.
+
+> Narrowed by `update-harness-support`: `.cursor/` is gone; the surviving generated mirrors are
+> `.opencode/`, `.codex/`, and `.agents/`. The command-name reconciliation this brief proposes is
+> unaffected.
 
 **Out of scope (for now)**: adding a gate that enforces command existence (worth doing, but it needs
 the inventory to exist first); `plans/done/**`, which records what was true at the time; the

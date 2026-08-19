@@ -78,9 +78,12 @@ close this orphan without reading why it is open.
 In scope: the converter's field handling, the sync validator's equivalence check, and the naming
 vocabulary's treatment of harness-native agents.
 
-**Out of scope (for now)**: broader Claude↔OpenCode schema translation; the Amazon Q and Cursor
-tiers, which have no observed native-only keys; changing Invariant 4 itself, which behaved correctly
-throughout.
+**Out of scope (for now)**: broader Claude↔OpenCode schema translation; changing Invariant 4
+itself, which behaved correctly throughout.
+
+> Narrowed by `update-harness-support`: the Amazon Q and Cursor tiers this brief set aside no longer
+> exist. The Codex tier added in their place shares the same field-policy walk, so the dropped-field
+> risk this brief describes now spans OpenCode **and** Codex rather than OpenCode alone.
 
 ## Risks & open questions
 

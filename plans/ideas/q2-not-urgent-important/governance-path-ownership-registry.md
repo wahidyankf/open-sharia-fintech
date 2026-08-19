@@ -39,13 +39,21 @@ The audit found four undocumented overlaps and five zero-owner paths:
 **Zero-owner paths**:
 
 1. `.claude/hooks/**` — referenced by no checker in the repo
-2. `.cursor/**` — exists on disk, absent from the harness parity invariant and every catalog check
-3. `.claude/settings.json` internals — only read as a catalog row to diff, never validated
-4. links inside `.claude/skills/**` — **explicitly skipped** by the link validator
+2. `.claude/settings.json` internals — only read as a catalog row to diff, never validated
+3. links inside `.claude/skills/**` — **explicitly skipped** by the link validator
    (`application/docs/links.rs:483-486`), and covered by nothing else
-5. README-index integrity for `docs/` generally, `specs/`, and `plans/` — the validator's default
+4. README-index integrity for `docs/` generally, `specs/`, and `plans/` — the validator's default
    paths cover only `repo-governance/`, `.claude/agents/`, `.claude/skills/`, and the
    software-engineering docs subtree
+
+> Narrowed by `update-harness-support`. One of the original five zero-owner paths is gone outright:
+> `.cursor/**` no longer exists. More substantively, that plan's Rule 8 delivers a
+> declared ownership registry (`generated`/`vendored`/`source`) covering every tracked file under
+> every binding directory, enforced by `harness ownership validate`. That is this brief's proposal,
+> scoped to binding trees only. What survives is the harder, wider half: ownership of
+> `.claude/hooks/**`, `.claude/settings.json` internals, links inside `.claude/skills/**`, and
+> README-index integrity outside the validator's default paths — plus the checker-overlap table
+> above, which Rule 8 does not touch at all.
 
 ## Why now
 
