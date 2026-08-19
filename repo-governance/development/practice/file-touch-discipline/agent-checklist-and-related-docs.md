@@ -30,7 +30,9 @@ when_to_use: Use as a quick-reference checklist before and during any session th
 8. **Without a ledger, assume nothing is yours** — reconstruct from the transcript, or ask.
 9. **Count generated mirrors as yours** — a `.claude/` edit produces `.opencode/`, `.codex/`, and
    `.agents/` changes that belong on your ledger and in the same commit; regenerate with
-   `npm run generate:bindings`, verify with `npm run validate:sync`, and never hand-edit a mirror.
+   `npm run generate:bindings`, verify with `npm run harness:bindings-validation` (all-harness;
+   `validate:sync` does not cover `.codex/`), and never hand-edit a `class: generated` mirror — a
+   `class: vendored` path is the hand-maintained exception.
 
 ## Related Documentation
 

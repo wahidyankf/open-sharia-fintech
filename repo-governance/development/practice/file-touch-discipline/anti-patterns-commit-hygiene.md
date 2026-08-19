@@ -48,5 +48,7 @@ together; do not defeat it by committing narrowly and reconciling later.
 **Why it fails**: The next `harness bindings generate` — which pre-commit runs automatically —
 overwrites it silently. The change disappears with no error, and the time is spent twice.
 
-**Fix**: Standard 9 — `.claude/` is the only hand-authored harness surface. Edit the source,
-regenerate, and let the mirrors follow.
+**Fix**: Standard 9 — `.claude/` is the only hand-authored _canonical source_ surface for generated
+mirrors. Edit the source, regenerate, and let `class: generated` mirrors follow. A `class: vendored`
+path (declared in the `harness:` registry's `ownership:` list) is the one exception: it is
+hand-maintained by design and has no `.claude/` source to regenerate from.
