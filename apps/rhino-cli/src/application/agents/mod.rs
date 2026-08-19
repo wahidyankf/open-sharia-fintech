@@ -10,6 +10,7 @@ pub mod converter;
 pub mod detect_duplication;
 pub mod field_policy;
 pub mod frontmatter;
+pub mod ownership;
 pub mod reporter;
 pub mod skill_validator;
 pub mod skills_mirror;

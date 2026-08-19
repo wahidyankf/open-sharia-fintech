@@ -14,6 +14,7 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::agents::codex::emit_codex_bindings;
+use crate::application::agents::ownership::guard_emitter_targets;
 use crate::application::agents::skills_mirror::emit_skills_mirrors;
 use crate::application::repo_config;
 use crate::domain::cliout::OutputFormat;
@@ -78,6 +79,12 @@ pub fn run(
             ));
         }
     }
+
+    // Refuse before the first write when any emitter's output directory is
+    // declared `source`. A generator that overwrites hand-authored canonical
+    // input destroys the thing every mirror is generated from, so this fails
+    // up front rather than reporting the damage afterwards (US-8).
+    guard_emitter_targets(&repo_root).map_err(|e| anyhow!("{e}"))?;
 
     // Each emitter asks whether it is the selected harness. The name it answers
     // to is a single named constant beside its import, so no harness name is

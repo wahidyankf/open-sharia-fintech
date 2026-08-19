@@ -18,8 +18,8 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::repo_config::{
-    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, RepoConfig, ScopeKind,
-    SurfaceScope, validate_repo_relative_path,
+    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, OwnershipClass,
+    RepoConfig, ScopeKind, SurfaceScope, validate_repo_relative_path,
 };
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
@@ -123,6 +123,25 @@ pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
                 "harness[{i}].mirrors: required key is missing \
                  (every generated-tier entry must declare the source agent-dir it mirrors)"
             ));
+        }
+        for (j, owned) in entry.ownership.iter().enumerate() {
+            // A vendored path is exempt from regeneration. An exemption whose
+            // justification is blank reads exactly like one nobody justified.
+            if owned.class == OwnershipClass::Vendored
+                && owned.reason.as_ref().is_none_or(|r| r.trim().is_empty())
+            {
+                findings.push(format!(
+                    "harness[{i}].ownership[{j}].reason: required non-empty value for path {:?} \
+                     (a vendored path must record why it cannot be regenerated)",
+                    owned.path
+                ));
+            }
+            if let Err(error) = validate_repo_relative_path(&owned.path) {
+                findings.push(format!(
+                    "harness[{i}].ownership[{j}].path: invalid value {:?} ({error:#})",
+                    owned.path
+                ));
+            }
         }
     }
 

@@ -13,6 +13,7 @@ use std::process::Output;
 
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
+use rhino_cli::application::repo_config::{self, HarnessEntry, OwnershipClass, RepoConfig};
 use tempfile::TempDir;
 
 #[derive(cucumber::World)]
@@ -24,6 +25,8 @@ struct RepoConfigValidateWorld {
     valid_output: Option<Output>,
     /// The `codex` harness registry entry, sliced out of the canonical config.
     codex_entry: Option<String>,
+    /// The canonical config text, captured when ownership is inspected.
+    canonical: Option<String>,
 }
 
 impl std::fmt::Debug for RepoConfigValidateWorld {
@@ -39,6 +42,7 @@ impl RepoConfigValidateWorld {
             repo: TempDir::new().expect("temp repo"),
             valid_output: None,
             codex_entry: None,
+            canonical: None,
         }
     }
 }
@@ -300,6 +304,159 @@ fn then_rejects_typod_vendored_key(_w: &mut RepoConfigValidateWorld) {
         !out.status.success(),
         "deny_unknown_fields must reject a typo'd key in the vendored block; stdout={}",
         String::from_utf8_lossy(&out.stdout)
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Ownership classification (US-8) — the schema half. The behavioural half lives
+// in `harness/harness-ownership.feature`, driven by `tests/harness_ownership.rs`.
+// ---------------------------------------------------------------------------
+
+/// Paths a harness entry claims, and therefore must classify. Instruction
+/// surfaces count: `AGENTS.md` is a file a harness reads, so leaving it
+/// unclassified is exactly the residue this phase exists to eliminate.
+fn claimed_paths(entry: &HarnessEntry) -> Vec<String> {
+    let mut paths = Vec::new();
+    for opt in [
+        entry.agent_dir.as_ref(),
+        entry.skills_dir.as_ref(),
+        entry.rules_dir.as_ref(),
+        entry.config.as_ref(),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        paths.push(opt.clone());
+    }
+    paths.extend(entry.vendored.iter().cloned());
+    paths.extend(entry.instruction.iter().cloned());
+    paths
+}
+
+/// Load the canonical config through the real loader, so the assertions below
+/// exercise the deserializer the command uses rather than a parallel parser.
+fn load_canonical() -> RepoConfig {
+    let dir = TempDir::new().expect("temp repo");
+    init_git_repo(dir.path());
+    std::fs::write(dir.path().join("repo-config.yml"), canonical_repo_config()).unwrap();
+    repo_config::load(dir.path()).expect("canonical config loads")
+}
+
+#[when("the harness ownership declarations are inspected")]
+fn when_ownership_inspected(w: &mut RepoConfigValidateWorld) {
+    w.canonical = Some(canonical_repo_config());
+}
+
+#[then(
+    "every binding path a harness entry claims carries exactly one of the classes \"generated\", \"vendored\", or \"source\""
+)]
+fn then_every_claimed_path_is_classified(_w: &mut RepoConfigValidateWorld) {
+    let config = load_canonical();
+    let mut unclassified: Vec<String> = Vec::new();
+    let mut duplicated: Vec<String> = Vec::new();
+    for entry in &config.harness {
+        for path in claimed_paths(entry) {
+            let declarations = entry
+                .ownership
+                .iter()
+                .filter(|o| o.path == path)
+                .collect::<Vec<_>>();
+            match declarations.len() {
+                0 => unclassified.push(format!("{}: {path}", entry.name)),
+                1 => {
+                    // Exhaustive match: a fourth class cannot be added to the
+                    // enum without this failing to compile.
+                    match declarations[0].class {
+                        OwnershipClass::Generated
+                        | OwnershipClass::Vendored
+                        | OwnershipClass::Source => {}
+                    }
+                }
+                _ => duplicated.push(format!("{}: {path}", entry.name)),
+            }
+        }
+    }
+    assert!(
+        unclassified.is_empty(),
+        "every path a harness entry claims must carry a declared ownership class; \
+         unclassified: {unclassified:?}"
+    );
+    assert!(
+        duplicated.is_empty(),
+        "a path must carry exactly one class, never two; duplicated: {duplicated:?}"
+    );
+}
+
+#[then("a registry entry declaring a fourth class value fails to deserialize")]
+fn then_fourth_class_rejected(_w: &mut RepoConfigValidateWorld) {
+    let canonical = canonical_repo_config();
+    assert!(
+        validate_config(&canonical).status.success(),
+        "baseline canonical config must validate before a fourth class is injected"
+    );
+    let mutated = canonical.replacen("class: source", "class: bespoke", 1);
+    assert_ne!(
+        mutated, canonical,
+        "the fourth-class injection must actually change the config"
+    );
+    let out = validate_config(&mutated);
+    assert!(
+        !out.status.success(),
+        "a class value outside generated/vendored/source must be a hard deserialization \
+         error rather than a silently-ignored value; stdout={}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+}
+
+#[then("a vendored declaration carrying an empty reason fails validation")]
+fn then_vendored_without_reason_rejected(_w: &mut RepoConfigValidateWorld) {
+    let canonical = canonical_repo_config();
+    let line = canonical
+        .lines()
+        .find(|l| l.contains("class: vendored"))
+        .expect("at least one vendored ownership declaration")
+        .to_string();
+    let (before_reason, _) = line
+        .split_once("reason:")
+        .expect("a vendored declaration carries a reason on the same line");
+    let blanked = format!("{before_reason}reason: \"\" }}");
+    let mutated = canonical.replacen(&line, &blanked, 1);
+    assert_ne!(
+        mutated, canonical,
+        "the empty-reason injection must actually change the config"
+    );
+    let out = validate_config(&mutated);
+    assert!(
+        !out.status.success(),
+        "a vendored declaration with an empty reason must fail; an exempt path whose \
+         justification is blank is indistinguishable from one nobody justified; stdout={}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+}
+
+#[then("the canonical config carrying a non-empty reason on every vendored declaration exits 0")]
+fn then_canonical_vendored_reasons_pass(_w: &mut RepoConfigValidateWorld) {
+    let config = load_canonical();
+    let mut reasonless: Vec<String> = Vec::new();
+    for entry in &config.harness {
+        for owned in &entry.ownership {
+            if owned.class == OwnershipClass::Vendored
+                && owned.reason.as_ref().is_none_or(|r| r.trim().is_empty())
+            {
+                reasonless.push(format!("{}: {}", entry.name, owned.path));
+            }
+        }
+    }
+    assert!(
+        reasonless.is_empty(),
+        "every vendored declaration must carry a non-empty reason; missing: {reasonless:?}"
+    );
+    let out = validate_config(&canonical_repo_config());
+    assert!(
+        out.status.success(),
+        "the canonical config must validate; stdout={} stderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
     );
 }
 

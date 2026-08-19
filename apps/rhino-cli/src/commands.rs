@@ -24,6 +24,7 @@ pub mod harness_sync;
 pub mod harness_validate_bindings;
 pub mod harness_validate_claude;
 pub mod harness_validate_duplication;
+pub mod harness_validate_ownership;
 pub mod harness_validate_sync;
 pub mod md_audit;
 pub mod md_validate_frontmatter;

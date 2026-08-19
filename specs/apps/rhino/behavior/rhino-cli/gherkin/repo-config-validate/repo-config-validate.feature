@@ -20,3 +20,11 @@ Feature: Schema-parity gate for repo-config.yml
     And it declares the eight vendored skill subdirectories
     And each vendored entry names the plugin it came from
     And the schema rejects a typo'd key inside the vendored declaration
+
+  Scenario: There is no fourth ownership class and no undeclared reason
+    Given the canonical repo-config.yml
+    When the harness ownership declarations are inspected
+    Then every binding path a harness entry claims carries exactly one of the classes "generated", "vendored", or "source"
+    And a registry entry declaring a fourth class value fails to deserialize
+    And a vendored declaration carrying an empty reason fails validation
+    And the canonical config carrying a non-empty reason on every vendored declaration exits 0

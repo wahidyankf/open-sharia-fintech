@@ -26,15 +26,33 @@ harness:
   #   vendored    — directories inside the mirrored trees the emitter must never touch
   #   config      — config file path
   #   instruction — instruction surfaces this harness reads (word budget, per governance-word-budget:)
+  #   ownership   — one declared class (generated | vendored | source) per binding path
   #
   # Adding a 4th harness = one entry here; every harness command picks it up automatically.
-  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills, instruction: [CLAUDE.md] }
+  - name: claude-code
+    tier: source
+    agent-dir: .claude/agents
+    skills-dir: .claude/skills
+    instruction:
+      - CLAUDE.md
+    # Every path below carries exactly one of generated | vendored | source.
+    # There is no fourth class and no unclassified residue: a tracked binding
+    # file matching no declaration fails `harness ownership validate`.
+    ownership:
+      - { path: .claude/, class: source, reason: hand-authored tree every mirror is generated from }
+      - { path: .claude/agents, class: source, reason: canonical agent definitions }
+      - { path: .claude/skills, class: source, reason: canonical skill definitions }
+      - { path: CLAUDE.md, class: source, reason: hand-authored Claude Code instruction surface }
   - name: opencode
     tier: generated
     agent-dir: .opencode/agents
     mirrors: .claude/agents
     instruction:
       - AGENTS.md
+    ownership:
+      - { path: .opencode/agents, class: generated, reason: emitted from .claude/agents }
+      - { path: .opencode/opencode.json, class: vendored, reason: OpenCode tooling config; no in-repo source }
+      - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
   - name: codex
     tier: generated
     agent-dir: .codex/agents
@@ -57,6 +75,20 @@ harness:
       - .agents/skills/compress # caveman plugin — legacy unnamespaced alias of caveman-compress
     instruction:
       - AGENTS.md
+    ownership:
+      - { path: .codex/agents, class: generated, reason: emitted from .claude/agents }
+      - { path: .agents/skills, class: generated, reason: mirrored from .claude/skills }
+      - { path: .codex/config.toml, class: vendored, reason: Nx tooling config; emitter owns the delimited region only }
+      - { path: .codex/ci-monitor-subagent.toml, class: vendored, reason: Nx tooling file config.toml points at }
+      - { path: AGENTS.md, class: source, reason: hand-authored vendor-neutral instruction surface }
+      - { path: .agents/skills/cavecrew, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-commit, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-compress, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-help, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-review, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/caveman-stats, class: vendored, reason: third-party plugin skill; no in-repo source }
+      - { path: .agents/skills/compress, class: vendored, reason: third-party plugin skill; no in-repo source }
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
@@ -1068,6 +1100,38 @@ gates:
           - docs/reference/platform-bindings.md
           - repo-governance/
       ci: { scope: other }
+
+  # Path-gating is correct here, unlike a time-based check: this gate reads the
+  # git index for the declared binding trees, so a commit touching none of them
+  # cannot change its verdict. Every trigger below is a path whose contents the
+  # classification depends on — the trees themselves, the instruction files, and
+  # the registry that declares the classes.
+  - id: harness-ownership
+    type: check
+    command: harness ownership validate
+    kind: rhino-cli
+    ci-group: governance
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .agents/
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+      ci:
+        scope: path-gated
+        trigger:
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .agents/
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
 
   # Armed at Phase 9 of plans/done/2026-08-15__optimize-governance-md, dark-launched at Phase 1
   # (config-only, see governance-word-budget: above). No pre-commit surface (FR-1.14): a

@@ -55,6 +55,10 @@ name = "skills_mirror"
 harness = false
 
 [[test]]
+name = "harness_ownership"
+harness = false
+
+[[test]]
 name = "governance"
 harness = false
 
