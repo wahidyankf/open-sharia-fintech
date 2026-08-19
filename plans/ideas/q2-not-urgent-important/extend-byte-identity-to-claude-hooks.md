@@ -34,10 +34,10 @@ relies on a human or agent remembering to check it manually — exactly the fail
 
 ## Prior art / precedents
 
-- **`apps/rhino-cli` byte-identity gate** — the existing enforced mechanism (spans all three OSE
-  repos, zero carve-outs per `AGENTS.md §Related Repositories`) this idea would extend the pattern
+- **`apps/rhino-cli` byte-identity gate** — the existing enforced mechanism (zero carve-outs per
+  [`AGENTS.md §Related Repositories`](../../../AGENTS.md#related-repositories)) this idea would extend the pattern
   from, not invent fresh.
-- **`parity-manifest.sha256`** (`apps/rhino-cli/parity-manifest.sha256`) — the manifest format
+- **[`parity-manifest.sha256`](../../../apps/rhino-cli/parity-manifest.sha256)** — the manifest format
   `rhino-cli`'s own gate already uses; a similar manifest could cover `.claude/hooks/`.
 - **This plan's Phase 9** — proved the check works when run manually; the ask here is to make it run
   automatically instead of depending on a plan remembering to include it.

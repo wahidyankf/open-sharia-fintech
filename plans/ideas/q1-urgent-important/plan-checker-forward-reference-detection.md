@@ -4,7 +4,7 @@ One-line summary: a delivery step can name an artifact that a **later** phase is
 and nothing catches it — `plan-checker` validates structure and completeness, not whether a step's
 own command text is satisfiable given what earlier phases have actually built by that point.
 
-> Surfaced 2026-08-10 during `optimize-cis` execution.
+> Surfaced 2026-08-09 during `optimize-cis` execution.
 
 ## Problem / context
 

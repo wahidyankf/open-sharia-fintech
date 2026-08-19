@@ -19,9 +19,11 @@ Error: Cannot find module '@open-sharia-enterprise/ts-env-loader'
 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
 ```
 
-The chain is the same in all six apps:
-`next.config.ts` line 1 is `import "./src/env-loader.ts"`, and that file's only job is
-`import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader"`. All 6 of 6 app
+The chain is the same in all six apps: `next.config.ts`'s first line imports the app's own
+`env-loader` module, whose only job is
+`import { loadTierEnv } from "@open-sharia-enterprise/ts-env-loader"`. Five apps spell that import
+`./src/env-loader.ts`; `organiclever-app-web` spells it
+`./src/contexts/env-loader/infrastructure/env-loader.ts`. Different path, same import beneath it. All 6 of 6 app
 `package.json` files declare the dependency, and the root `package.json` declares
 `"workspaces": ["apps/*", "libs/*"]` — so the package is real and correctly wired for local
 development. It is only the container builds that cannot see it.
@@ -33,9 +35,11 @@ third. All 6 carry 4 `node_modules/@open-sharia-enterprise` graft lines apiece �
 `npm ci` variants (`ose-www`, `ayokoding-www`) never copy `libs/ts-env-loader/package.json` into the
 `deps` stage, so the workspace link is never created. The four `npm install` variants
 (`organiclever-www`, `wahidyankf-www`, `organiclever-app-web`, `ose-app-web`) run a `node -e` snippet
-that deletes `@open-sharia-enterprise/web-ui` and `@open-sharia-enterprise/web-ui-token` from
-`dependencies` before installing — but not `ts-env-loader`, leaving a private, unpublished package
-name in the manifest handed to `npm install`.
+that deletes the workspace packages from `dependencies` before installing. Each strips exactly what
+it declares — `organiclever-www` and `ose-app-web` drop both `web-ui` and `web-ui-token`;
+`wahidyankf-www` and `organiclever-app-web` drop only `web-ui`, because their manifests never declare
+`web-ui-token`. None of the four strips `ts-env-loader`, leaving a private, unpublished package name
+in the manifest handed to `npm install`.
 
 The six `COPY libs/ts-env-loader/src/port-resolver.ts` lines added by PR #230 do not address this:
 they land in the **runner** stage for the port wrapper's type-stripped import, long after the
@@ -48,8 +52,8 @@ reusable workflow `_reusable-www-test-local-deploy.yml` runs
 `docker compose -f infra/dev/<app>/docker-compose.yml up --build -d`, and each of those compose files
 names the app's own `Dockerfile` as its build target. Four callers pass an app name into it —
 `ose-www`, `ayokoding-www`, `organiclever-www`, and `wahidyankf-www` — each on two `schedule` crons a
-day. All four have been red on every recent run (checked 2026-08-17 through 2026-08-18, eight runs,
-zero passes).
+day. All four have been red on every recent run: two crons a day, across 2026-08-17 and 2026-08-18, is
+16 runs, and none passed.
 
 So this is not an unwatched corner: it is a signal being emitted twice daily by four workflows and
 read by nobody. They are `schedule` + `workflow_dispatch` only — there is no `pull_request` trigger —
@@ -57,8 +61,13 @@ so nothing about the failure blocks a merge, and the red runs sit outside the PR
 actually looks at. Each of those workflows also force-pushes a `prod-*` branch on success, so the
 production deploy path for four sites has been dead for the whole period.
 
-The remaining two images (`organiclever-app-web`, `ose-app-web`) have no such workflow, so for those
-the breakage really is unobserved.
+The remaining two are worse, not better. `organiclever-app-test-local-deploy-stag.yml` and
+`ose-app-test-local-deploy-stag.yml` call `_reusable-app-test-local-deploy-stag.yml`, whose e2e job
+builds `infra/dev/organiclever-app/` and `infra/dev/ose-app/` — and those compose files name
+`apps/organiclever-app-web/Dockerfile` and `apps/ose-app-web/Dockerfile`. So all six images are built
+by CI. The reason nobody has seen these two fail is that the e2e job is **skipped on every run**: an
+upstream backend-integration job fails or is cancelled first, for reasons unrelated to this bug. Fix
+that upstream blocker and these two images start failing the same way the other four already do.
 
 ## Prior art / precedents
 
@@ -98,9 +107,8 @@ Dockerfiles, which do no workspace grafting and are unaffected.
   (open — needs five more builds before the fix is designed)
 - Is `npm ci` at the workspace root silently tolerating the missing workspace directory rather than
   erroring, and if so does the fix need a lockfile change too? (open)
-- Four of the six are consumed by a scheduled deploy workflow, so "delete them" is not available for
-  those. It may still be right for `organiclever-app-web` and `ose-app-web`, which no workflow builds.
-  (open, but now narrowed to two apps)
+- All six are consumed by a scheduled workflow, so "delete them" is not available for any of them.
+  That question is closed. (resolved during this brief's own PR review)
 - Why did four workflows fail twice daily for days without anyone noticing? That is a monitoring gap
   independent of this bug, and arguably the more valuable thing to fix. (open — and it may deserve
   its own brief)
@@ -109,7 +117,7 @@ Dockerfiles, which do no workspace grafting and are unaffected.
 ## What success looks like + promotion signal
 
 Success: `docker build` succeeds for all six Next.js apps from a clean checkout, the four scheduled
-workflows go green, and the failure is visible on a surface someone reads — a `pull_request` trigger
-on the paths involved, or an alert on scheduled-workflow failure. Ready to promote now: the defect is
-confirmed in CI logs, the fix pattern already exists four lines up in each affected file, and only
-the two unbuilt apps carry an open fix-or-delete question.
+`*-www` workflows go green, and the failure is visible on a surface someone reads — a `pull_request`
+trigger on the paths involved, or an alert on scheduled-workflow failure. Ready to promote now: the
+defect is confirmed in CI logs, and the fix pattern already exists a few lines up in each affected
+file.

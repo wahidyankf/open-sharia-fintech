@@ -18,7 +18,6 @@ Blocks an active plan or documents a live defect, and carries a cross-repo, secu
 
 - [acceptance-clause-vacuity](./q1-urgent-important/acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./q1-urgent-important/agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
-- [audit-e2e-reuse-existing-server-config](./q1-urgent-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`, and can run a suite green against a build that is not the code under test.
 - [markdownlint-ci-gate-lints-zero-files](./q1-urgent-important/markdownlint-ci-gate-lints-zero-files.md) — the `markdownlint` gate declares `all-file-type` with no glob, so CI runs it with empty argv, lints `0 file(s)`, and has always passed vacuously.
 - [mermaid-validator-does-not-check-syntax](./q1-urgent-important/mermaid-validator-does-not-check-syntax.md) — `md mermaid validate` is cited as the Mermaid-correctness gate but never parses syntax; broken diagrams pass clean.
 - [next-image-builds-cannot-resolve-ts-env-loader](./q1-urgent-important/next-image-builds-cannot-resolve-ts-env-loader.md) — all six Next.js images fail to build; four scheduled workflows have reported it twice daily for days, and the `prod-*` deploy path for four sites is dead.
@@ -50,7 +49,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 - [extend-byte-identity-to-claude-hooks](./q2-not-urgent-important/extend-byte-identity-to-claude-hooks.md) — `.claude/hooks/block-env-file-access.sh` drifted between the parity repos with nothing to catch it but a plan's manual hash check.
 - [fsharp-env-loader-covers-markers-are-inert](./q2-not-urgent-important/fsharp-env-loader-covers-markers-are-inert.md) — 11 `@covers` markers with no step harness and no coverage target; adding the target alone fails, because the validator matches step text.
 - [gate-exclusions-need-a-named-owner](./q2-not-urgent-important/gate-exclusions-need-a-named-owner.md) — a gate's `exclude:` list records that a tree is skipped but never who checks it instead, so an exclusion outlives the tool that justified it.
-- [governance-command-name-reconciliation](./q2-not-urgent-important/governance-command-name-reconciliation.md) — governance tables cite Nx targets and npm scripts that do not exist, and three `sync:*` scripts invoke a removed `rhino-cli` subcommand.
+- [governance-command-name-reconciliation](./q2-not-urgent-important/governance-command-name-reconciliation.md) — governance tables, agent files, and npm scripts all name commands that do not exist, including a removed `rhino-cli` subcommand three `sync:*` scripts still invoke.
 - [governance-path-ownership-registry](./q2-not-urgent-important/governance-path-ownership-registry.md) — declare glob→agent→dimension ownership in `repo-config.yml` with a validator, and close the five zero-owner governance paths.
 - [harness-binding-catalog-drift](./q2-not-urgent-important/harness-binding-catalog-drift.md) — triage the 2026-07-20 harness-compatibility external-drift findings.
 - [harness-converter-preserve-agent-mode](./q2-not-urgent-important/harness-converter-preserve-agent-mode.md) — the agent converter emits a fixed field set, so OpenCode-only frontmatter like `mode: subagent` is dropped once an agent gains a `.claude/` source.
@@ -94,6 +93,7 @@ No active plan waits on these and no live defect is running, but each carries a 
 Something active references these, but they carry none of the importance signals. Delegate or timebox.
 
 - [ayokoding-www-e2e-coverage-gaps](./q3-urgent-not-important/ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
+- [audit-e2e-reuse-existing-server-config](./q3-urgent-not-important/audit-e2e-reuse-existing-server-config.md) — a stale dev server on the target port silently absorbs e2e runs via unconditional `reuseExistingServer: true`, and can run a suite green against a build that is not the code under test.
 - [beavernest-database-config-test-flake](./q3-urgent-not-important/beavernest-database-config-test-flake.md) — seven cases share one bare `Assert.True`, so three `.NET quality gate` flakes have produced no evidence about which case is nondeterministic.
 
 ### Q4 — Neither Urgent nor Important
@@ -181,65 +181,87 @@ Swept 120 two-pagers across `ose-public`, `ose-primer`, `ose-private`, and `beav
 
 ### 2026-08-19 — plan-ideas-grooming (`ose-public` + `ose-private`)
 
-Swept 78 two-pagers here and 14 in `ose-private`; 80 survive here and 8 there. The run's repo set is
-the two repositories under active coordination — `ose-primer` and `beaver-nest` carry no sync
-obligation and were not swept.
+Swept the 75 two-pagers resident here plus 14 in `ose-private`; **80 survive here and 8 there**. The
+run's repo set is the two repositories under active coordination — `ose-primer` and `beaver-nest`
+carry no sync obligation and were not swept.
 
-- **Filed new** (3): `next-image-builds-cannot-resolve-ts-env-loader.md` (Q1),
-  `fsharp-env-loader-covers-markers-are-inert.md` (Q2), `next-standalone-output-parity.md` (Q4) —
-  all three surfaced by the runtime-port-override delivery (PR #230) and deliberately left out of
-  its scope. The first was filed at Q3 on a wrong premise ("no CI job builds these images") and
-  corrected to Q1 during its own PR review: four `*-www-test-local-deploy-prod` workflows do build
-  four of the six, on two crons a day, and have failed on every recent run with the exact
-  `Cannot find module` error. An already-observed defect whose failing gate also gates four `prod-*`
-  deploys.
+- **Pre-grooming additions** (3), filed directly per the
+  [Ideas Folder convention](../../repo-governance/conventions/structure/plans/ideas-folder-overview-rationale-and-file-layout.md#ideas-folder-two-pagers)
+  and then swept by this run: `next-image-builds-cannot-resolve-ts-env-loader.md` (Q1),
+  `fsharp-env-loader-covers-markers-are-inert.md` (Q2), `next-standalone-output-parity.md` (Q4). All
+  three surfaced during the runtime-port-override delivery (PR #230) and were deliberately excluded
+  from its scope. Recorded here for the audit trail, **not** as a grooming action — this workflow's
+  Purpose explicitly excludes filing brand-new ideas, and these were authored under the convention
+  before the sweep began.
 - **Merged** (1): `specs-checker-phantom-nx-targets.md` → `governance-command-name-reconciliation.md`
   — same underlying defect (a documented command that does not exist), and the absorbed brief's open
-  "isolated or systemic?" question is answered by the survivor.
-- **Renamed** (1): `cross-repo-port-registry.md` → `port-registry-lacks-a-validator.md` — the
-  registry shipped on 2026-08-19, answering the "where does it live" half; the brief was rewritten
-  down to the validator question that remains, and its "four sibling repos" framing corrected to the
-  two-repo parity set.
+  "isolated or systemic?" question is answered by the survivor. The survivor's scope widens to
+  `.claude/agents/**`; its index hook was updated to match.
+- **Renamed** (1): `cross-repo-port-registry.md` → `port-registry-lacks-a-validator.md`. The registry
+  shipped on 2026-08-19, answering the "where does it live" half; the brief was rewritten down to the
+  validator question that remains, and its "four sibling repos" framing corrected to the two-repo
+  parity set.
 - **Relocated in** (3), all rule R3 — generalizable, no secret required, present in both repos:
-  - `extend-byte-identity-to-claude-hooks.md` from `ose-private`
-  - `harness-level-env-file-enforcement-gap.md` from `ose-private`
-  - `propagate-env-tier-to-ose-primer.md` from `ose-private`
-- **Deduplicated in** (3) — cross-repo pairs resolved to this repo under rule R3. Each `ose-private`
-  copy is deleted in its own commit after this one lands. The two copies were compared line by line
-  before the verdict, and only one carried anything this repo lacked:
+  `extend-byte-identity-to-claude-hooks.md`, `harness-level-env-file-enforcement-gap.md`,
+  `propagate-env-tier-to-ose-primer.md`.
+- **Deduplicated in** (3) — cross-repo pairs resolved here under R3. Each `ose-private` copy is
+  deleted in its own commit after this one lands. Compared line by line; only one carried anything
+  this repo lacked:
   - `markdownlint-ci-gate-lints-zero-files.md` — **content folded in**: that `ose-private`'s own
     `0 file(s)` behaviour is inferred from a byte-identical `rhino-cli`, not observed, because its
-    logs were unreadable during the 2026-08-17 GitHub incident. Recorded as a numbered step.
-  - `governance-command-name-reconciliation.md` — nothing to fold; the copy here was already the
-    superset. (It also appears under **Merged** above, for the unrelated `specs-checker` absorption.)
-  - `harness-converter-preserve-agent-mode.md` — nothing to fold, and therefore **unchanged in this
-    commit**; the `ose-private` copy's only unique line was a cross-reference that the dedup makes
-    moot.
-- **Reclassified** (1): `audit-e2e-reuse-existing-server-config.md` Q2 → Q1 — its Why now records an
-  already-observed defect and it can run a suite green against a build that is not the code under
-  test, which is a CI-gate stake.
-- **Reshaped** (3): provenance blockquotes added to
-  `plan-checker-forward-reference-detection.md`, `actions-cache-eviction-policy.md`, and
-  `shared-cargo-target-lock-contention.md`, which carried none; dates taken from each file's own body
-  evidence. All 80 files now pass the eight-section and provenance checks.
-- **Residency verdicts**: recorded for every surviving idea. `ose-private-opencode-ci-monitor-orphan.md`
-  was the one genuinely ambiguous case — the orphan file it names exists only in `ose-private` (R2),
-  but the `rhino-cli` hardcoded skip that keeps it alive is byte-identical across both repos, and the
-  fix lands in `rhino-cli`. Resolved as R3, resident here.
+    logs were unreadable during the 2026-08-17 GitHub incident.
+  - `governance-command-name-reconciliation.md` — nothing to fold; already the superset. (Also
+    appears under **Merged**, for the unrelated `specs-checker` absorption.)
+  - `harness-converter-preserve-agent-mode.md` — nothing to fold, therefore **unchanged in this
+    commit**.
+- **Reclassified** (1): `audit-e2e-reuse-existing-server-config.md` Q2 → **Q3**. Urgent (its *Why
+  now* records an already-observed defect), but **not** important: the Step 8 importance rubric
+  admits exactly five signals, and a gate that silently *passes* against the wrong build is not "a
+  currently-blocking CI gate". It was first moved to Q1 in this run on that misreading, corrected in
+  review.
+- **Reshaped** (3): provenance blockquotes added to `plan-checker-forward-reference-detection.md`,
+  `actions-cache-eviction-policy.md`, and `shared-cargo-target-lock-contention.md`, which carried
+  none. Two dates are quoted from the file's own body ("Measured on 2026-08-09", "Measured
+  2026-08-06"). The third file's body carries **no date at all**, so its line uses `2026-08-09` —
+  the date of the `plans/done/2026-08-09__optimize-cis/` folder it names. All 80 files now pass the
+  eight-section and provenance checks.
+- **Residency**: rule numbers are recorded above for the **7 ideas whose residency was contested**
+  this run (3 relocated in, 3 deduplicated, 1 ambiguous). Step 4 asks for a logged verdict on every
+  surviving idea including the no-move cases; the remaining 73 were not individually re-adjudicated,
+  and this log does not claim they were. Closing that gap needs a per-idea R# record the corpus does
+  not yet carry — recorded as a follow-up below.
+  The one ambiguous case was `ose-private-opencode-ci-monitor-orphan.md`: the orphan file it names
+  exists only in `ose-private` (R2), but the `rhino-cli` hardcoded skip keeping it alive is
+  byte-identical across both repos and is where a fix would land. Resolved R3, resident here.
 
 **Unresolved follow-ups**:
 
-- Two references to `audit-e2e-reuse-existing-server-config.md`'s old Q2 path sit outside this
-  workflow's `plans/ideas/**` write scope and were left untouched: a real relative link in
-  `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/learnings.md` (harmless to CI — the
-  `md-links` gate excludes `plans/done`), and a bare path in a table cell in
+- **Three** stale references to paths this run changed sit outside the `plans/ideas/**` write scope
+  and were left untouched, per the scope boundary's log-don't-write rule. All three are in
   `plans/in-progress/repository-onboarding-readme-refresh/artifacts/reader-doc-disposition-ose-public.md`
-  (not a link, so not gate-visible). Both are stale and want fixing by whoever owns those trees.
-- A mechanical re-classification of the whole corpus against the Step 8 rubrics disagreed with the
-  filed quadrant on 28 of 80 files, but contradicted itself across repos on identical text and put
-  every one of the seven existing Q1 briefs elsewhere. The heuristic, not the corpus, is wrong:
-  "names or blocks an active plan" cannot be decided by pattern-matching. Classification was
-  therefore adjudicated by hand for this run's touched files plus every flagged
-  under-classification. A rubric-faithful classifier remains unbuilt.
+  as bare table-cell paths (not links, so not gate-visible): `audit-e2e-reuse-existing-server-config.md`
+  (moved quadrant), `cross-repo-port-registry.md` (renamed — old path gone), and
+  `specs-checker-phantom-nx-targets.md` (merged away — old path gone). A fourth, a real relative link
+  in `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/learnings.md`, is harmless to CI because
+  the `md-links` gate excludes `plans/done`.
+- **`md links validate` appears to have a blind spot.** The merge above left a genuinely broken link
+  in `rhino-cli-test-binaries-run-by-no-gate.md` pointing at the deleted
+  `specs-checker-phantom-nx-targets.md`. It was caught in review, not by the gate — and a reviewer
+  reproduced the miss from scratch, finding the validator flags other missing filenames in a
+  byte-identical file but not that one. The link is fixed here; the validator behaviour is not, and
+  is worth its own investigation.
+- **Step 9's cross-repo link rule was deliberately not applied literally.** It says convert *every*
+  `./`-relative link in a relocated file to an absolute URL. Two links were left relative —
+  `../../../CLAUDE.md` and `../../../docs/reference/related-repositories.md` — because both resolve
+  correctly here and now point at *this* repo's own copies, which is the right target for a reader of
+  this repo; converting them would have produced links into a private repo that 404 for most readers.
+  Note the two repos' `related-repositories.md` differ in wording, so the citation's meaning did shift
+  slightly with the move; the claim it supports (`ose-primer` is outside the parity set) holds in both.
+- **The Step 8 rubrics resisted mechanisation.** A scripted classifier disagreed with the filed
+  quadrant on 28 of 80 files, contradicted itself across repos on identical text, and moved every one
+  of the then-seven Q1 briefs elsewhere. The heuristic is wrong, not the corpus: "names or blocks an
+  active plan" is not pattern-matchable. Classification was adjudicated by hand for this run's touched
+  files plus every flagged under-classification. A rubric-faithful classifier remains unbuilt, and
+  building one is outside this workflow's write scope.
 
 > Last groomed: 2026-08-19

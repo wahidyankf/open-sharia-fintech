@@ -31,7 +31,7 @@ a gap worth closing before one of them sees real usage on this repo.
 
 ## Prior art / precedents
 
-- **`block-env-file-access.sh` / `.claude/settings.json`** — the existing Claude Code mechanism this
+- **[`block-env-file-access.sh`](../../../.claude/hooks/block-env-file-access.sh) / `.claude/settings.json`** — the existing Claude Code mechanism this
   idea would need an equivalent of, or an alternative enforcement layer for.
 - **Multi-harness configuration** —
   [`CLAUDE.md §Multi-harness configuration`](../../../CLAUDE.md) — the existing parity model
