@@ -6,7 +6,6 @@ pub mod agent_validator;
 pub mod bindings;
 pub mod claude_validator;
 pub mod converter;
-pub mod cursor;
 pub mod detect_duplication;
 pub mod field_policy;
 pub mod frontmatter;

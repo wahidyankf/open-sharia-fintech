@@ -1,5 +1,0 @@
-{
-  "defaultProvider": "opencode-go",
-  "defaultModel": "glm-5-2",
-  "enabledModels": ["opencode-go/glm-5-2", "opencode-go/minimax-m3"]
-}

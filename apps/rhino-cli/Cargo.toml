@@ -111,10 +111,6 @@ name = "ddd"
 harness = false
 
 [[test]]
-name = "cursor_binding"
-harness = false
-
-[[test]]
 name = "specs_tree"
 harness = false
 

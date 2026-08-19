@@ -16,12 +16,19 @@ use std::sync::OnceLock;
 use regex::Regex;
 use serde_norway::Value;
 
-use super::cursor::is_mirrorable_agent_filename;
 use super::field_policy::{FieldAction, FieldPolicy};
 use super::frontmatter::{extract_frontmatter, parse_claude_tools};
 
 /// Relative path of the `OpenCode` agent directory (plural `agents/`).
 pub const OPENCODE_AGENT_DIR: &str = ".opencode/agents";
+
+/// Return true when `name` is a Claude agent markdown file that should be mirrored.
+///
+/// Shared by every mirror emitter and by the sync validators, so one rule
+/// decides what counts as a mirrorable agent file.
+pub fn is_mirrorable_agent_filename(name: &str, is_dir: bool) -> bool {
+    !is_dir && name.ends_with(".md") && name != "README.md"
+}
 
 /// A field that was dropped or translated during agent conversion.
 #[derive(Debug, Clone)]

@@ -420,8 +420,8 @@ pub enum ConventionLicenseCommands {
 
 // ---------------------------------------------------------------------------
 // harness (verb-last: harness {noun} validate / harness {noun} generate)
-// Note: harness sync opencode and harness emit amazonq are merged into
-//       harness bindings generate (use --harness opencode / --harness amazonq).
+// Note: harness sync opencode is merged into harness bindings generate
+//       (use --harness opencode).
 //       convention validate instruction-size is cross-domain moved here.
 // ---------------------------------------------------------------------------
 
@@ -472,11 +472,12 @@ pub enum HarnessSyncCommands {
 /// `harness bindings` subcommands.
 #[derive(Subcommand, Debug)]
 pub enum HarnessBindingsCommands {
-    /// Validate the Amazon Q binding bridge files and catalog coverage.
+    /// Validate the generated binding files and catalog coverage.
     #[command(name = "validate")]
     Validate(harness_validate_bindings::ValidateBindingsArgs),
-    /// Generate all platform bindings (`OpenCode` sync + Amazon Q emit).
-    /// Use --harness opencode or --harness amazonq to regenerate one binding only.
+    /// Generate every generated-tier platform binding.
+    /// Use --harness <NAME> to regenerate one binding only; accepted names are
+    /// the `harness:` registry entries in `repo-config.yml`.
     #[command(name = "generate")]
     Generate(harness_generate_bindings::GenerateBindingsArgs),
 }

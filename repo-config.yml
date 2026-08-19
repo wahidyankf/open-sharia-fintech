@@ -1054,18 +1054,12 @@ gates:
       pre-push:
         scope: path-gated
         trigger:
-          - .amazonq/
           - .claude/
           - .opencode/
           - .codex/
-          - .cursor/
-          - .windsurf/
-          - .junie/
           - .github/
           - AGENTS.md
           - CLAUDE.md
-          - GEMINI.md
-          - CONVENTIONS.md
           - docs/reference/platform-bindings.md
           - repo-governance/
       ci: { scope: other }
@@ -1113,11 +1107,8 @@ gates:
         trigger:
           - repo-governance/
           - .claude/
-          - .cursor/
           - .codex/
           - .opencode/
-          - .pi/
-          - .amazonq/
           - AGENTS.md
           - CLAUDE.md
           - repo-config.yml
@@ -1141,7 +1132,6 @@ gates:
         - repo-governance/
         - .claude/
         - .codex/
-        - .pi/
       fail-kinds:
         - missing
         - unannotated
@@ -1152,6 +1142,5 @@ gates:
           - repo-governance/
           - .claude/
           - .codex/
-          - .pi/
           - repo-config.yml
       ci: *readme-completeness-triggers

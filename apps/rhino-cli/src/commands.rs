@@ -19,7 +19,6 @@ pub mod governance_validate_readme_index;
 pub mod governance_validate_word_budget;
 pub mod governance_vendor_audit;
 pub mod harness_audit;
-pub mod harness_emit_bindings;
 pub mod harness_generate_bindings;
 pub mod harness_sync;
 pub mod harness_validate_bindings;

@@ -28,11 +28,6 @@ Feature: Repo-specific behaviour is data-driven from repo-config.yml
     When the configured frontmatter-date audit runs
     Then configured excluded website content is skipped
 
-  Scenario: Amazon Q definition name moves to harness configuration
-    Given the Amazon Q harness declares an agent name
-    When Amazon Q bindings generate
-    Then the configured name controls the definition filename and JSON name
-
   Scenario: Doctor .NET SDK path moves to repository configuration
     Given the Doctor configuration declares a .NET SDK path
     When Doctor resolves its required .NET SDK version

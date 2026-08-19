@@ -151,7 +151,6 @@ for the canonical purpose of this folder.
 
 - [Contracts Domain](./contracts/README.md)
 - [rhino — behavior/rhino-cli/gherkin/convention](./convention/README.md)
-- [rhino — behavior/rhino-cli/gherkin/cursor-binding](./cursor-binding/README.md)
 - [rhino — behavior/rhino-cli/gherkin/ddd](./ddd/README.md)
 - [rhino — behavior/rhino-cli/gherkin/env](./env/README.md)
 - [Gate Gherkin Specs](./gate/README.md)

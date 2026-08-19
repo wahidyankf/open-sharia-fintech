@@ -1,30 +1,31 @@
-Feature: Amazon Q Developer Binding Bridge
+Feature: Generated Harness Binding Files
 
   As a repository maintainer
-  I want to generate and guard the Amazon Q Developer binding bridge
-  So that Amazon Q follows the canonical AGENTS.md instructions without the bridge drifting
+  I want to generate and guard the binding files of every generated-tier harness
+  So that each supported harness follows the canonical AGENTS.md instructions without drifting
 
-  @agents-emit-bindings
-  Rule: agents emit-bindings writes the Amazon Q bridge files deterministically
+  @harness-purge
+  Rule: dropped-harness binding directories leave nothing behind
 
-    Scenario: Emitting writes the rules pointer and the agent definition
-      Given a repository without an existing .amazonq/ directory
-      When the developer runs agents emit-bindings
-      Then the command exits successfully
-      And the file .amazonq/rules/00-agents-md.md is written as a pointer to AGENTS.md
-      And the configured Amazon Q agent definition is written as valid JSON
+    Scenario: Generated binding directories for dropped harnesses no longer exist
+      Given .cursor/ tracked 93 files, .amazonq/ tracked 2 files, and .pi/ tracked 1 file before the purge
+      When git ls-files is run against those three paths after the purge
+      Then each returns zero tracked files
+      And harness bindings validate exits successfully, where before the purge it required .amazonq/ byte-parity
 
-    Scenario: The agent definition loads AGENTS.md and the rules directory as resources
-      Given a repository without an existing .amazonq/ directory
-      When the developer runs agents emit-bindings
-      Then the command exits successfully
-      And the agent definition resources reference file://AGENTS.md and file://.amazonq/rules/**/*.md
+  @binding-surface-set
+  Rule: the known binding surfaces are exactly the three supported harnesses need
 
-    Scenario: Emitting twice is idempotent
-      Given a repository where the bridge files already exist
-      When the developer runs agents emit-bindings
-      Then the command exits successfully
-      And the bridge files are byte-for-byte identical to the previous emission
+    Scenario: Only surviving harness surfaces are known
+      Given the compiled set of known binding directories
+      When the set is inspected
+      Then it contains exactly .claude, .opencode, .codex, .agents, and .github
+      And it names no dropped harness surface
+
+    Scenario: No dropped-harness binding file is expected any more
+      Given the compiled set of known binding directories
+      When the expected binding files are computed
+      Then no expected file lives under a dropped harness surface
 
   @harness-name-registry-derived
   Rule: --harness accepts exactly the names the registry declares
@@ -41,35 +42,23 @@ Feature: Amazon Q Developer Binding Bridge
       And the error names the registry-derived accepted set
 
   @agents-validate-bindings
-  Rule: agents validate-bindings enforces parity and catalog coverage
+  Rule: harness bindings validate enforces mirror parity and catalog coverage
 
-    Scenario: Bridge files that match the generator pass validation
-      Given a repository whose bridge files match the generated content
+    Scenario: A repository matching the generator passes validation
+      Given a repository whose generated binding files match the generated content
       And the platform-bindings catalog references every present binding directory
-      When the developer runs agents validate-bindings
+      When the developer runs harness bindings validate
       Then the command exits successfully
       And the output reports all binding checks as passing
 
-    Scenario: A mutated bridge file fails validation
-      Given a repository where a bridge file has been hand-edited away from the generated content
-      When the developer runs agents validate-bindings
-      Then the command exits with a failure code
-      And the output identifies the drifted bridge file
-
-    Scenario: A missing bridge file fails validation
-      Given a repository where a bridge file has been deleted
-      When the developer runs agents validate-bindings
-      Then the command exits with a failure code
-      And the output reports the missing bridge file
-
     Scenario: A present binding directory absent from the catalog fails validation
       Given a repository with a known binding directory that the platform-bindings catalog does not reference
-      When the developer runs agents validate-bindings
+      When the developer runs harness bindings validate
       Then the command exits with a failure code
       And the output identifies the binding directory missing a catalog row
 
     Scenario: Absent binding directories require no catalog row
       Given a repository where some known binding directories do not exist on disk
-      When the developer runs agents validate-bindings
+      When the developer runs harness bindings validate
       Then the command exits successfully
       And no catalog row is required for the absent binding directories

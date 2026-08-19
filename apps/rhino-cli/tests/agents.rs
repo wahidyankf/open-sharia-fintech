@@ -32,13 +32,9 @@ use std::process::Output;
 
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
+use rhino_cli::application::agents::bindings::{KNOWN_BINDING_DIRS, expected_bindings};
 use serde_json::Value;
 use tempfile::TempDir;
-
-/// Synthetic Amazon Q definition identity declared by the behavior fixture.
-/// This keeps the byte-identical Rhino CLI test boundary independent of any
-/// particular repository's configured agent name.
-const AMAZONQ_FIXTURE_AGENT_NAME: &str = "fixture-amazonq-agent";
 
 /// Shared scenario state. Each scenario gets a fresh git-rooted temp workspace
 /// so the binary's `findGitRoot` resolves inside the fixture.
@@ -49,9 +45,10 @@ struct AgentsWorld {
     /// Extra CLI args (flags) for the next exec.
     extra_args: Vec<String>,
     output: Option<Output>,
-    /// Snapshot of Amazon Q bridge-file bytes captured before a re-emission,
-    /// consumed by the "emitting twice is idempotent" scenario.
-    bindings_snapshot: Vec<(String, Vec<u8>)>,
+    /// Dropped-harness binding paths the purge scenario checks.
+    purge_paths: Vec<String>,
+    /// `(path, tracked-file-count)` pairs the purge scenario collected.
+    purge_tracked: Vec<(String, usize)>,
     /// Simulated `git diff --name-only` push range for pre-push-hook scenarios.
     push_range_files: Vec<String>,
     /// Whether the simulated pre-push instruction-size gate triggered.
@@ -79,7 +76,8 @@ impl AgentsWorld {
             work,
             extra_args: Vec::new(),
             output: None,
-            bindings_snapshot: Vec::new(),
+            purge_paths: Vec::new(),
+            purge_tracked: Vec::new(),
             push_range_files: Vec::new(),
             hook_invoked: false,
             lookup_dir: String::new(),
@@ -116,25 +114,6 @@ impl AgentsWorld {
             &format!(".claude/skills/{name}/SKILL.md"),
             &format!("---\nname: {name}\ndescription: Skill {name}.\n---\n# Skill body\n"),
         );
-    }
-
-    /// Writes the smallest repository configuration needed by the Amazon Q
-    /// bindings command. The generated definition name is fixture data, just
-    /// as it is repository data in production.
-    fn write_amazonq_config(&self) {
-        self.write(
-            "repo-config.yml",
-            &format!(
-                "harness:\n  - name: amazonq\n    tier: generated\n    agent-name: {AMAZONQ_FIXTURE_AGENT_NAME}\ncoverage:\n  projects: []\n"
-            ),
-        );
-    }
-
-    fn amazonq_definition_path(&self) -> PathBuf {
-        self.work
-            .path()
-            .join(".amazonq/cli-agents")
-            .join(format!("{AMAZONQ_FIXTURE_AGENT_NAME}.json"))
     }
 
     fn bin() -> PathBuf {
@@ -562,29 +541,17 @@ fn then_identifies_cluster_across_agent_and_skill(w: &mut AgentsWorld) {
 }
 
 // ===========================================================================
-// agents emit-bindings / validate-bindings
+// harness bindings generate / validate
 // ===========================================================================
 
 impl AgentsWorld {
-    /// Writes both expected Amazon Q bridge files with their canonical
-    /// content, so a fresh regenerate matches byte-for-byte. Drives the
-    /// actual `harness bindings generate --harness amazonq` command rather
-    /// than a hand-maintained literal, so this fixture can never drift out of
-    /// sync with the canonical content in `application::agents::bindings`.
-    /// Note: the bridge content is static (a pointer to `AGENTS.md` by path,
-    /// not its bytes) — no `AGENTS.md` fixture file is needed for this.
-    fn write_matching_bindings(&mut self) {
-        self.exec(&["harness", "bindings", "generate", "--harness", "amazonq"]);
-    }
-
     /// Writes a platform-bindings catalog naming every known binding
     /// directory (a safe superset — referencing an absent directory is
     /// harmless; only an undocumented *present* directory fails validation).
     fn write_full_catalog(&self) {
         self.write(
             "docs/reference/platform-bindings.md",
-            "# Platform Bindings\n\nDirectories: .claude, .opencode, .codex, .github, .amazonq, \
-             .cursor, .windsurf, .junie, GEMINI.md, CONVENTIONS.md\n",
+            "# Platform Bindings\n\nDirectories: .claude, .opencode, .codex, .agents, .github\n",
         );
     }
 
@@ -595,43 +562,76 @@ impl AgentsWorld {
         std::fs::create_dir_all(self.work.path().join(".claude/agents")).expect("mk agents dir");
         std::fs::create_dir_all(self.work.path().join(".opencode/agents")).expect("mk agents dir");
     }
+}
 
-    /// A fully valid bindings setup: matching bridge files, the sync dirs,
-    /// and a catalog covering everything present. Scenarios that need to
-    /// introduce exactly one corruption build on top of this.
-    fn given_full_valid_bindings_setup(&mut self) {
-        self.write_matching_bindings();
-        self.make_sync_dirs();
-        self.write_full_catalog();
+/// Absolute path of the repository this test binary was built from, used by
+/// the purge scenario to assert against real tracked files rather than a
+/// synthetic fixture (the claim under test is about this repository).
+fn built_from_repo_root() -> PathBuf {
+    let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    manifest
+        .ancestors()
+        .find(|dir| dir.join(".git").exists())
+        .expect("test binary must be built inside a git repository")
+        .to_path_buf()
+}
+
+#[given(
+    ".cursor/ tracked 93 files, .amazonq/ tracked 2 files, and .pi/ tracked 1 file before the purge"
+)]
+fn given_dropped_binding_dirs_were_tracked(w: &mut AgentsWorld) {
+    w.purge_paths = vec![
+        ".cursor".to_string(),
+        ".amazonq".to_string(),
+        ".pi".to_string(),
+    ];
+}
+
+#[when("git ls-files is run against those three paths after the purge")]
+fn when_git_ls_files_dropped_paths(w: &mut AgentsWorld) {
+    let root = built_from_repo_root();
+    w.purge_tracked.clear();
+    for path in w.purge_paths.clone() {
+        let out = std::process::Command::new("git")
+            .arg("-C")
+            .arg(&root)
+            .args(["ls-files", "--", &path])
+            .output()
+            .expect("run git ls-files");
+        let listed = String::from_utf8_lossy(&out.stdout)
+            .lines()
+            .filter(|l| !l.trim().is_empty())
+            .count();
+        w.purge_tracked.push((path, listed));
     }
 }
 
-#[given("a repository without an existing .amazonq/ directory")]
-fn given_no_amazonq_dir(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
+#[then("each returns zero tracked files")]
+fn then_each_returns_zero_tracked_files(w: &mut AgentsWorld) {
+    for (path, count) in &w.purge_tracked {
+        assert_eq!(*count, 0, "{path} still has {count} tracked file(s)");
+    }
+    assert_eq!(w.purge_tracked.len(), 3, "all three paths must be checked");
+}
+
+#[then(
+    "harness bindings validate exits successfully, where before the purge it required .amazonq/ byte-parity"
+)]
+fn then_bindings_validate_passes_without_amazonq(w: &mut AgentsWorld) {
+    write_three_harness_registry(w);
+    w.make_sync_dirs();
+    w.write_full_catalog();
+    w.exec(&["harness", "bindings", "validate"]);
     assert!(
-        !w.work.path().join(".amazonq").exists(),
-        "fresh fixture workspace must not already have .amazonq/"
+        w.output.as_ref().expect("ran").status.success(),
+        "got: {}",
+        w.stdout()
     );
 }
 
-#[given("a repository where the bridge files already exist")]
-fn given_bridge_files_exist(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.write_matching_bindings();
-    for rel in [
-        ".amazonq/rules/00-agents-md.md".to_string(),
-        format!(".amazonq/cli-agents/{AMAZONQ_FIXTURE_AGENT_NAME}.json"),
-    ] {
-        let bytes = std::fs::read(w.work.path().join(&rel)).expect("read prior emission");
-        w.bindings_snapshot.push((rel, bytes));
-    }
-}
-
-#[given("a repository whose bridge files match the generated content")]
-fn given_bridge_files_match(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.write_matching_bindings();
+#[given("a repository whose generated binding files match the generated content")]
+fn given_generated_files_match(w: &mut AgentsWorld) {
+    write_three_harness_registry(w);
     w.make_sync_dirs();
 }
 
@@ -640,57 +640,32 @@ fn given_catalog_references_everything_present(w: &mut AgentsWorld) {
     w.write_full_catalog();
 }
 
-#[given("a repository where a bridge file has been hand-edited away from the generated content")]
-fn given_bridge_file_mutated(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.given_full_valid_bindings_setup();
-    w.write(
-        ".amazonq/rules/00-agents-md.md",
-        "# Hand-edited — no longer canonical\n",
-    );
-}
-
-#[given("a repository where a bridge file has been deleted")]
-fn given_bridge_file_deleted(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.given_full_valid_bindings_setup();
-    std::fs::remove_file(w.amazonq_definition_path()).expect("remove bridge file");
-}
-
 #[given(
     "a repository with a known binding directory that the platform-bindings catalog does not reference"
 )]
 fn given_catalog_missing_dir_row(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.write_matching_bindings();
+    write_three_harness_registry(w);
     w.make_sync_dirs();
     // `.codex` is present on disk but the catalog below omits it.
     std::fs::create_dir_all(w.work.path().join(".codex")).expect("mk .codex");
     w.write(
         "docs/reference/platform-bindings.md",
-        "# Platform Bindings\n\nDirectories: .claude, .opencode, .amazonq\n",
+        "# Platform Bindings\n\nDirectories: .claude, .opencode\n",
     );
 }
 
 #[given("a repository where some known binding directories do not exist on disk")]
 fn given_some_binding_dirs_absent(w: &mut AgentsWorld) {
-    w.write_amazonq_config();
-    w.write_matching_bindings();
+    write_three_harness_registry(w);
     w.make_sync_dirs();
-    // .codex, .github, .cursor, .windsurf, .junie, GEMINI.md, CONVENTIONS.md
-    // are intentionally never created.
+    // .codex, .agents and .github are intentionally never created.
     w.write(
         "docs/reference/platform-bindings.md",
-        "# Platform Bindings\n\nDirectories: .claude, .opencode, .amazonq\n",
+        "# Platform Bindings\n\nDirectories: .claude, .opencode\n",
     );
 }
 
-#[when("the developer runs agents emit-bindings")]
-fn when_emit_bindings(w: &mut AgentsWorld) {
-    w.exec(&["harness", "bindings", "generate", "--harness", "amazonq"]);
-}
-
-#[when("the developer runs agents validate-bindings")]
+#[when("the developer runs harness bindings validate")]
 fn when_validate_bindings(w: &mut AgentsWorld) {
     // `--verbose` so absent-directory "no catalog row required" pass-checks
     // are visible in the output for the last scenario's assertion; harmless
@@ -698,77 +673,11 @@ fn when_validate_bindings(w: &mut AgentsWorld) {
     w.exec(&["harness", "bindings", "validate", "--verbose"]);
 }
 
-#[then("the file .amazonq/rules/00-agents-md.md is written as a pointer to AGENTS.md")]
-fn then_rules_pointer_written(w: &mut AgentsWorld) {
-    let p = w.work.path().join(".amazonq/rules/00-agents-md.md");
-    assert!(p.exists(), "stdout: {}", w.stdout());
-    let content = std::fs::read_to_string(&p).expect("read rules pointer");
-    assert!(content.contains("AGENTS.md"), "got: {content}");
-}
-
-#[then("the configured Amazon Q agent definition is written as valid JSON")]
-fn then_agent_definition_written(w: &mut AgentsWorld) {
-    let content = std::fs::read_to_string(w.amazonq_definition_path())
-        .expect("read configured agent definition");
-    let json: Value = serde_json::from_str(&content).expect("valid json");
-    assert_eq!(json["name"], AMAZONQ_FIXTURE_AGENT_NAME);
-}
-
-#[then(
-    "the agent definition resources reference file://AGENTS.md and file://.amazonq/rules/**/*.md"
-)]
-fn then_agent_definition_resources(w: &mut AgentsWorld) {
-    let content = std::fs::read_to_string(w.amazonq_definition_path())
-        .expect("read configured agent definition");
-    let json: Value = serde_json::from_str(&content).expect("valid json");
-    let resources = json["resources"].as_array().expect("resources array");
-    let strs: Vec<&str> = resources.iter().filter_map(Value::as_str).collect();
-    assert!(strs.contains(&"file://AGENTS.md"), "got: {strs:?}");
-    assert!(
-        strs.contains(&"file://.amazonq/rules/**/*.md"),
-        "got: {strs:?}"
-    );
-}
-
-#[then("the bridge files are byte-for-byte identical to the previous emission")]
-fn then_bindings_identical_to_previous(w: &mut AgentsWorld) {
-    let snapshot = w.bindings_snapshot.clone();
-    for (rel, expected) in &snapshot {
-        let actual = std::fs::read(w.work.path().join(rel)).expect("read current emission");
-        assert_eq!(&actual, expected, "{rel} changed between emissions");
-    }
-}
-
 #[then("the output reports all binding checks as passing")]
 fn then_all_binding_checks_passing(w: &mut AgentsWorld) {
     let out = w.stdout();
     assert!(out.contains("Failed: 0"), "got: {out}");
     assert!(out.contains("VALIDATION PASSED"), "got: {out}");
-}
-
-#[then("the output identifies the drifted bridge file")]
-fn then_identifies_drifted_bridge_file(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(
-        out.contains("Binding: .amazonq/rules/00-agents-md.md"),
-        "got: {out}"
-    );
-    assert!(out.contains("drifted from canonical content"), "got: {out}");
-}
-
-#[then("the output reports the missing bridge file")]
-fn then_reports_missing_bridge_file(w: &mut AgentsWorld) {
-    let out = w.stdout();
-    assert!(
-        out.contains(&format!(
-            "Binding: .amazonq/cli-agents/{AMAZONQ_FIXTURE_AGENT_NAME}.json"
-        )),
-        "got: {out}"
-    );
-    assert!(
-        out.contains("is missing; run `rhino-cli agents emit-bindings`"),
-        "got: {out}"
-    );
 }
 
 #[then("the output identifies the binding directory missing a catalog row")]
@@ -1351,6 +1260,66 @@ fn then_harness_audit_names_failure(w: &mut AgentsWorld, member: String) {
 // ===========================================================================
 // Shared Then steps (exit codes)
 // ===========================================================================
+
+// ===========================================================================
+// binding surface set — KNOWN_BINDING_DIRS and expected_bindings
+// ===========================================================================
+
+/// Surfaces belonging to harnesses this repository no longer supports. Any one
+/// of them surviving in the compiled set is dead weight the purge missed.
+const DROPPED_SURFACES: &[&str] = &[
+    ".amazonq",
+    ".cursor",
+    ".pi",
+    ".windsurf",
+    ".junie",
+    "GEMINI.md",
+    "CONVENTIONS.md",
+];
+
+#[given("the compiled set of known binding directories")]
+fn given_known_binding_dirs(_w: &mut AgentsWorld) {}
+
+#[when("the set is inspected")]
+#[when("the expected binding files are computed")]
+fn when_binding_surface_inspected(_w: &mut AgentsWorld) {}
+
+#[then("it contains exactly .claude, .opencode, .codex, .agents, and .github")]
+fn then_known_dirs_are_the_five_survivors(_w: &mut AgentsWorld) {
+    let mut actual: Vec<&str> = KNOWN_BINDING_DIRS.to_vec();
+    actual.sort_unstable();
+    let mut expected = vec![".agents", ".claude", ".codex", ".github", ".opencode"];
+    expected.sort_unstable();
+    assert_eq!(
+        actual, expected,
+        "KNOWN_BINDING_DIRS: {KNOWN_BINDING_DIRS:?}"
+    );
+}
+
+#[then("it names no dropped harness surface")]
+fn then_known_dirs_name_no_dropped_surface(_w: &mut AgentsWorld) {
+    for dropped in DROPPED_SURFACES {
+        assert!(
+            !KNOWN_BINDING_DIRS.contains(dropped),
+            "dropped surface {dropped:?} survives in KNOWN_BINDING_DIRS"
+        );
+    }
+}
+
+#[then("no expected file lives under a dropped harness surface")]
+fn then_no_expected_file_under_dropped_surface(w: &mut AgentsWorld) {
+    let root = w.work.path();
+    let files = expected_bindings(root).expect("expected_bindings resolves");
+    for file in &files {
+        for dropped in DROPPED_SURFACES {
+            assert!(
+                !file.rel_path.starts_with(dropped),
+                "expected binding {:?} lives under dropped surface {dropped:?}",
+                file.rel_path
+            );
+        }
+    }
+}
 
 // ===========================================================================
 // harness bindings generate — registry-derived --harness name set

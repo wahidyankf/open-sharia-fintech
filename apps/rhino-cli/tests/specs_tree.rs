@@ -92,7 +92,7 @@ use std::process::{Command, Output};
 use assert_cmd::cargo::cargo_bin;
 use cucumber::{World as _, given, then, when};
 use rhino_cli::application::agents::bindings::{
-    KNOWN_BINDING_DIRS, PLATFORM_BINDINGS_CATALOG, emit_bindings, validate_bindings,
+    KNOWN_BINDING_DIRS, PLATFORM_BINDINGS_CATALOG, validate_bindings,
 };
 use rhino_cli::application::agents::types::ValidationResult;
 use rhino_cli::application::behavior_coverage::types::{
@@ -909,13 +909,10 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
     let root = tmp.path();
     std::fs::create_dir_all(root.join(".claude/agents")).expect("mkdir .claude/agents");
     std::fs::create_dir_all(root.join(".opencode/agents")).expect("mkdir .opencode/agents");
-    // `emit_bindings` requires `harness.amazonq.agent-name` from repo-config.yml
-    // (no sensible default exists for a generated agent identifier), and
     // `validate_bindings` walks the source (claude-code) and generated
-    // (opencode/cursor/amazonq) tiers together for mirror-parity checks — this
-    // synthetic fixture root needs its own complete registry declaration
-    // rather than relying on a real repo-config.yml being present at this
-    // temp path.
+    // (opencode/codex) tiers together for mirror-parity checks — this synthetic
+    // fixture root needs its own complete registry declaration rather than
+    // relying on a real repo-config.yml being present at this temp path.
     std::fs::write(
         root.join("repo-config.yml"),
         concat!(
@@ -923,30 +920,25 @@ fn when_hb_inspected(w: &mut SpecsTreeWorld) {
             "  - name: claude-code\n",
             "    tier: source\n",
             "    agent-dir: .claude/agents\n",
-            "  - name: cursor\n",
-            "    tier: generated\n",
-            "    agent-dir: .cursor/agents\n",
-            "    mirrors: .claude/agents\n",
             "  - name: opencode\n",
             "    tier: generated\n",
             "    agent-dir: .opencode/agents\n",
             "    mirrors: .claude/agents\n",
-            "  - name: amazonq\n",
+            "  - name: codex\n",
             "    tier: generated\n",
-            "    rules-dir: .amazonq/rules\n",
-            "    agent-name: ose-default\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
             "coverage:\n  projects: []\n",
             "specs:\n  ddd-areas: []\n  domain-areas: []\n",
         ),
     )
     .expect("write repo-config.yml");
-    emit_bindings(root).expect("emit bindings");
     let catalog = root.join(PLATFORM_BINDINGS_CATALOG);
     std::fs::create_dir_all(catalog.parent().expect("catalog has parent"))
         .expect("mkdir catalog parent");
     std::fs::write(
         &catalog,
-        "# Platform Bindings\n\n- `.amazonq` row\n- `.claude` row\n- `.opencode` row\n",
+        "# Platform Bindings\n\n- `.claude` row\n- `.opencode` row\n- `.codex` row\n",
     )
     .expect("write catalog");
     w.hb_result = Some(validate_bindings(root));

@@ -14,7 +14,6 @@
 use std::path::{Path, PathBuf};
 
 use cucumber::{World as _, given, then, when};
-use rhino_cli::application::agents::bindings::emit_bindings;
 use rhino_cli::application::doctor::build_tool_defs;
 use rhino_cli::application::repo_config::{self, HarnessEntry};
 use rhino_cli::application::repo_governance::frontmatter_audit::audit_frontmatter;
@@ -40,8 +39,6 @@ struct RepoConfigDataWorld {
     all_entries: Vec<HarnessEntry>,
     /// Whether a configured website exclusion was honoured by the audit.
     website_exclusions_respected: bool,
-    /// Whether the configured Amazon Q name drove generated output.
-    amazonq_definition_name_respected: bool,
     /// Whether the configured .NET SDK path drove Doctor's version reader.
     dotnet_global_json_respected: bool,
 }
@@ -62,7 +59,6 @@ impl RepoConfigDataWorld {
             codex_entry: None,
             all_entries: Vec::new(),
             website_exclusions_respected: false,
-            amazonq_definition_name_respected: false,
             dotnet_global_json_respected: false,
         }
     }
@@ -116,34 +112,6 @@ fn website_prefix_exclusions_are_runtime_config() {
         findings.is_empty(),
         "a configured website path must be skipped; findings: {findings:#?}"
     );
-}
-
-/// Regression for P1B-AMAZON: Amazon Q's generated definition derives both
-/// filename and JSON name from `harness.amazonq.agent-name`.
-fn amazon_q_definition_name_comes_from_harness_config() {
-    let repo = TempDir::new().expect("temp repo");
-    let root = repo.path();
-    write(
-        root,
-        "repo-config.yml",
-        concat!(
-            "harness:\n",
-            "  - name: amazonq\n",
-            "    tier: generated\n",
-            "    agent-name: custom-repository\n",
-            "coverage:\n  projects: []\n",
-        ),
-    );
-
-    emit_bindings(root).expect("emit bindings");
-    let definition = root.join(".amazonq/cli-agents/custom-repository.json");
-    assert!(
-        definition.is_file(),
-        "the configured agent name must select the generated filename"
-    );
-    let raw = std::fs::read_to_string(definition).expect("read generated definition");
-    let parsed: serde_json::Value = serde_json::from_str(&raw).expect("valid generated JSON");
-    assert_eq!(parsed["name"], "custom-repository");
 }
 
 /// Regression for P1B-DOC-COMMENT: Doctor's .NET SDK source path is
@@ -203,10 +171,6 @@ fn run_selected_extraction_regression() -> bool {
     match std::env::args().nth(1).as_deref() {
         Some("website_prefix_exclusions_are_runtime_config") => {
             website_prefix_exclusions_are_runtime_config();
-            true
-        }
-        Some("amazon_q_definition_name_comes_from_harness_config") => {
-            amazon_q_definition_name_comes_from_harness_config();
             true
         }
         Some("dotnet_global_json_is_runtime_config") => {
@@ -340,20 +304,6 @@ fn when_configured_frontmatter_date_audit_runs(w: &mut RepoConfigDataWorld) {
 #[then("configured excluded website content is skipped")]
 fn then_configured_excluded_website_content_is_skipped(w: &mut RepoConfigDataWorld) {
     assert!(w.website_exclusions_respected);
-}
-
-#[given("the Amazon Q harness declares an agent name")]
-fn given_amazonq_harness_declares_agent_name(_w: &mut RepoConfigDataWorld) {}
-
-#[when("Amazon Q bindings generate")]
-fn when_amazonq_bindings_generate(w: &mut RepoConfigDataWorld) {
-    amazon_q_definition_name_comes_from_harness_config();
-    w.amazonq_definition_name_respected = true;
-}
-
-#[then("the configured name controls the definition filename and JSON name")]
-fn then_configured_name_controls_definition_output(w: &mut RepoConfigDataWorld) {
-    assert!(w.amazonq_definition_name_respected);
 }
 
 #[given("the Doctor configuration declares a .NET SDK path")]
@@ -797,7 +747,6 @@ async fn main() {
         return;
     }
     website_prefix_exclusions_are_runtime_config();
-    amazon_q_definition_name_comes_from_harness_config();
     gates_section_deserializes_gate_entries();
     invalid_gate_enum_values_are_rejected();
     mutation_gate_wiring_is_rejected();

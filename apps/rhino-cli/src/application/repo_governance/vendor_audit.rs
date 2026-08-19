@@ -48,6 +48,14 @@ struct ForbiddenTerm {
 ///
 /// Kept as a module-level `const` slice (not a function body) so the table can
 /// grow without tripping Clippy's `too_many_lines` ceiling.
+///
+/// This table detects vendor leakage into vendor-neutral prose. It is NOT a
+/// supported-harness declaration — `repo-config.yml` `harness:` is the sole
+/// authority on which harnesses this repository supports. Names of harnesses
+/// the repository has dropped therefore STAY here on purpose: prose must not
+/// name them either, and a dropped name is exactly the leakage this audit
+/// exists to catch. Do not tidy an entry away because its harness is no longer
+/// supported (`plans/.../update-harness-support/tech-docs.md` DD-3).
 const FORBIDDEN: &[(&str, &str, &str)] = &[
     (r"Claude Code", "Claude Code", "\"the coding agent\""),
     (
