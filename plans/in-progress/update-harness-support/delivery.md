@@ -590,13 +590,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ## Phase 5: Codex Generated Emitter
 
-- [ ] [AI] **RED**: Create `apps/rhino-cli/tests/codex_binding.rs` with a failing test asserting a
+- [x] [AI] **RED**: Create `apps/rhino-cli/tests/codex_binding.rs` with a failing test asserting a
       single fixture `.claude/agents/<role>/<name>.md` produces `.codex/agents/<name>.toml`
       containing `name`, `description`, and `developer_instructions` and NOT containing `model`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because no `codex` module exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Create `apps/rhino-cli/src/application/agents/codex.rs` modelled on the sibling
+- [x] [AI] **GREEN**: Create `apps/rhino-cli/src/application/agents/codex.rs` modelled on the sibling
       `cursor.rs` structure that Phase 2 deleted (recover its shape from
       `git show HEAD~N:apps/rhino-cli/src/application/agents/cursor.rs`): a
       `CODEX_FIELD_POLICY_TABLE`, a `CODEX_EMITTED_FIELDS` fixed order, and a TOML encoder. Per
@@ -604,48 +604,48 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `DropWarn`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes.
-- [ ] [AI] **REFACTOR**: Hoist the frontmatter-to-policy walk shared by the OpenCode converter and
+- [x] [AI] **REFACTOR**: Hoist the frontmatter-to-policy walk shared by the OpenCode converter and
       the Codex emitter into `apps/rhino-cli/src/application/agents/field_policy.rs`
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and the walk exists in one place.
-- [ ] [AI] **RED**: Add a failing test asserting agent identity comes from the `name` frontmatter key
+- [x] [AI] **RED**: Add a failing test asserting agent identity comes from the `name` frontmatter key
       rather than the source subfolder, using two fixture agents in different role subfolders
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails while the emitter still derives the filename from the source path.
-- [ ] [AI] **GREEN**: Key the emitted filename on the `name` frontmatter value, flattening role
+- [x] [AI] **GREEN**: Key the emitted filename on the `name` frontmatter value, flattening role
       subfolders exactly as the OpenCode mirror does
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: both fixture agents land as flat `.codex/agents/<name>.toml` files.
-- [ ] [AI] **RED**: Add a failing test asserting that rewriting the generated region of a fixture
+- [x] [AI] **RED**: Add a failing test asserting that rewriting the generated region of a fixture
       `config.toml` twice produces identical bytes and preserves a hand-maintained
       `[agents.ci-monitor-subagent]` table plus `[mcp_servers.nx-mcp]` and `[features]`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because no region rewriter exists.
-- [ ] [AI] **GREEN**: Implement the delimited-region rewriter per `tech-docs.md` DD-5. The
+- [x] [AI] **GREEN**: Implement the delimited-region rewriter per `tech-docs.md` DD-5. The
       implementation MUST check for the already-present end marker **before** searching for an
       insertion anchor — an anchor-first implementation appends a duplicate region on every run
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes, including the second-run byte-identity assertion.
-- [ ] [AI] **REFACTOR**: Extract the marker constants and the marker-first guard into named
+- [x] [AI] **REFACTOR**: Extract the marker constants and the marker-first guard into named
       constants with a doc comment naming the duplication hazard
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and the hazard is documented in source.
-- [ ] [AI] Wire the Codex emitter into `harness_generate_bindings.rs` behind the registry-driven
+- [x] [AI] Wire the Codex emitter into `harness_generate_bindings.rs` behind the registry-driven
       selection from Phase 1, and populate `expected_bindings` in `bindings.rs` with the Codex files
       so `harness bindings validate` guards them byte-for-byte
       — command: `npm run generate:bindings`
       — acceptance: `git status --porcelain .codex/ | grep -c .` reports 94 new paths (93 agent
       TOML files plus the modified `config.toml`), where it reported 0 before.
-- [ ] [AI] Run the generator twice and assert idempotence:
+- [x] [AI] Run the generator twice and assert idempotence:
       `npm run generate:bindings && git add -A .codex && npm run generate:bindings && git diff --quiet .codex/`
       — acceptance: the final `git diff --quiet` exits 0.
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature` carrying
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/codex-binding.feature` carrying
       the US-3 scenarios from `prd.md`, and add its annotated entry to
       `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 with no `missing` or `unannotated` finding.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Check whether the 93-file `.codex/agents/` tree trips any gate the plan did not
+- [x] [AI] Check whether the 93-file `.codex/agents/` tree trips any gate the plan did not
       anticipate: run the full pre-push suite
       — command: `npx nx affected -t typecheck,lint,test:quick && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — acceptance: all exit 0. TOML files are outside the markdown word-budget surface; if a gate
@@ -655,13 +655,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `git ls-files .codex | grep -c .` — returns 95 (2 at baseline: 93 generated agents plus
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `git ls-files .codex | grep -c .` — returns 95 (2 at baseline: 93 generated agents plus
       `config.toml` plus `ci-monitor-subagent.toml`).
-- [ ] [AI] `git grep -c "ci-monitor-subagent" .codex/config.toml` — returns a non-zero count,
+- [x] [AI] `git grep -c "ci-monitor-subagent" .codex/config.toml` — returns a non-zero count,
       proving the hand-maintained table survived regeneration.
-- [ ] [AI] `npm run generate:bindings && git diff --quiet` — exits 0 (idempotence).
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
+- [x] [AI] `npm run generate:bindings && git diff --quiet` — exits 0 (idempotence).
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate`
       — exits 0; after `printf 'x' >> .codex/agents/<any>.toml` it exits non-zero, and exits 0 again
       after `git checkout -- .codex/`.
 

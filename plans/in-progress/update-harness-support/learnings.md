@@ -269,3 +269,47 @@ compared against values `isDisallowedDirectory` recomputes the same way. The lis
 which element failed, so the log cannot narrow it further — that missing detail is itself the defect
 worth fixing. Routed to Knowledge Capture as a follow-up rather than fixed inline: fixing an
 unrelated app's test inside this plan would violate the "do NOT bundle unrelated fixes" rule.
+
+## Phase 5 notes
+
+- The `gherkin/harness/` directory is run wholesale by `tests/agents.rs`, so a second cucumber
+  runner over the same directory would meet the other's undefined steps and fail under
+  `fail_on_skipped`. Both runners now filter on the feature-level `@codex-binding` tag via
+  `filter_run_and_exit` — `codex_binding.rs` takes the tagged features, `agents.rs` takes the rest.
+  The deleted Cursor binding avoided this by owning its own spec folder; the plan's checklist places
+  the Codex feature in `gherkin/harness/`, so the tag split is what makes both hold.
+- The P5.4 RED step could not be made to fail. Agent identity already comes from the `name`
+  frontmatter key because `converter::discover_agent_sources` — shared with the OpenCode mirror —
+  resolves it there. The scenario was written with `name:` deliberately disagreeing with both the
+  filename stem and the role subfolder, and it passed on its first run with no production change.
+  Recorded rather than manufactured: writing a deliberately path-keyed emitter first, only to
+  replace it, would have been scaffolding, not a test.
+- `.codex/config.toml` is deliberately absent from `expected_bindings`. Only its delimited region is
+  emitter-owned, so whole-file byte parity would fail on the hand-maintained
+  `[mcp_servers.nx-mcp]`, `[features]`, and `[agents.ci-monitor-subagent]` tables. A separate
+  `validate_codex_config_region` check compares just the region, and was proved falsifiable both
+  ways (renaming one generated table exits 1; `git checkout -- .codex/` exits 0).
+- The validator resolves each agent's description through `plan_codex_agents`, which shares
+  `convert_codex_agent_inner` with the emit path. A first draft hand-rolled a second frontmatter
+  reader in `bindings.rs`; that would have drifted the moment a description was quoted or carried a
+  colon.
+- `harness_generate_bindings.rs`'s existing `run(...)` smoke tests resolve the git root from the
+  process CWD, so they are only as isolated as the whole test binary. Adding two more of them made
+  `harness_unknown_name_is_error` fail once under parallel execution and pass in isolation; the two
+  new tests were removed rather than left as a flake source. Filed as a candidate learning for
+  Knowledge Capture.
+- `specs behavior-coverage validate` treats a second `#[then]` alias with no matching Gherkin step
+  as an orphan step implementation. Convenience aliases on a step definition are a gate failure
+  here, not dead code.
+
+## Phase 5 gate evidence
+
+- `npx nx run rhino-cli:test:quick` — exits 0.
+- `git ls-files .codex | grep -c .` — 95 (2 at baseline).
+- `git grep -c "ci-monitor-subagent" .codex/config.toml` — 2.
+- `npm run generate:bindings && git diff --quiet .codex/` — exits 0 (idempotent).
+- `harness bindings validate` — 198 checks, 0 failed; exits 1 after
+  `printf 'x' >> .codex/agents/agent-maker.toml`, exits 0 again after `git checkout -- .codex/`.
+- `npx nx affected -t typecheck,lint,test:quick` — exits 0 across 28 projects.
+- `governance word-budget validate` — exits 0 (TOML is outside the markdown surface, as planned).
+- `governance readme-index validate` at both gate scopings — exits 0.
