@@ -37,3 +37,30 @@ let parse (readEnvironment: string -> string) : Result<ListenerConfiguration, st
 
 let url configuration =
     $"http://%s{configuration.Address}:%d{configuration.Port}"
+
+/// True when argv carries nothing but a `--port` override, in either spelling.
+///
+/// `Program.commandMode` classifies argv as a subcommand (`backup`, `integrity`, `restore`) and
+/// rejects anything it does not recognise. Without this predicate it treated `--port 4000` as an
+/// unrecognised subcommand and refused to boot — the reason a port flag was previously impossible
+/// for this service.
+let isOnlyPortFlags (args: string[]) : bool =
+    match args with
+    | [||] -> true
+    | [| "--port"; _ |] -> true
+    | [| single |] -> single.StartsWith("--port=", StringComparison.Ordinal)
+    | _ -> false
+
+/// Applies the repo-wide `--port` flag on top of an already-parsed listener.
+///
+/// `parse` has resolved the env-var and default tiers already, so passing its port through as the
+/// fallback yields exactly the shared precedence — flag, then BEAVERNEST_BE_HTTP_LISTEN_PORT, then
+/// the 19300 default — without changing `parse`'s signature or weakening its loopback/wildcard
+/// guard, which still owns the address half of the decision.
+let applyPortFlag
+    (argv: string[])
+    (readEnvironment: string -> string)
+    (listener: ListenerConfiguration)
+    : Result<ListenerConfiguration, string> =
+    FsharpEnvLoader.PortResolver.resolvePort argv readEnvironment "BEAVERNEST_BE_HTTP_LISTEN_PORT" listener.Port
+    |> Result.map (fun port -> { listener with Port = port })
