@@ -25,7 +25,7 @@ one starts with a registry entry, not a row here.
 
 <!-- >>> rhino-cli generated: harness catalog - do not edit inside this region -->
 
-**Verified 2026-05-24.**
+**Verified 2026-08-19.**
 
 | Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface                                    | Status                     |
 | ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------- |
@@ -294,7 +294,7 @@ wins**, which makes declaration order significant. This repository's generated m
 To add a new generated binding:
 
 1. Add a `harness:` entry to `repo-config.yml` (tier, agent-dir, mirrors, instruction surfaces, shadow globs).
-2. Add a row to the Platform Binding Directories table above.
+2. Add a `catalog:` block to that registry entry, then run `rhino-cli harness catalog generate` — never hand-edit the table above, which is machine-owned inside its generated region.
 3. Implement the converter in `apps/rhino-cli/src/application/agents/` and wire it into `harness bindings generate`.
 4. Add Rust integration tests and Gherkin scenarios under `specs/apps/rhino/behavior/rhino-cli/gherkin/`.
 5. Update this document's Translation Artifacts section.

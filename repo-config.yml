@@ -123,7 +123,7 @@ harness-catalog:
   # a generated timestamp would change on every run and make the drift guard
   # fire on its own output.
   document: docs/reference/platform-bindings.md
-  verified: 2026-05-24
+  verified: 2026-08-19
 
 doctor:
   # Repository-relative .NET SDK version source. The shared Rust source reads
