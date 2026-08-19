@@ -1266,6 +1266,7 @@ is the worst outcome, so each states the class plainly.
       — acceptance: the feature file exists carrying both US-7 scenarios where it did not exist
       before this step, the command exits 0 with no `missing` or `unannotated` finding, and
       `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
+  - _Suggested executor: `specs-maker`_
 
 ### Phase 9 Gate
 
