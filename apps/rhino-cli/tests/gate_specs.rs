@@ -31,6 +31,9 @@ struct GateWorld {
     json_output: Option<serde_json::Value>,
     first_emitted_package: Option<Vec<u8>>,
     first_parity_manifest: Option<Vec<u8>>,
+    /// A copy of the manifest as the twin parity repository holds it, taken
+    /// before this repository's boundary is edited (US-10).
+    twin_parity_manifest: Option<Vec<u8>>,
     pending_gate_type: Option<String>,
     pending_ci_group: Option<String>,
     path: Option<OsString>,
@@ -67,6 +70,7 @@ impl GateWorld {
             json_output: None,
             first_emitted_package: None,
             first_parity_manifest: None,
+            twin_parity_manifest: None,
             pending_gate_type: None,
             pending_ci_group: None,
             path: None,
@@ -3090,6 +3094,34 @@ fn when_untracked_parity_fixture_is_created(w: &mut GateWorld) {
     w.write(
         "apps/rhino-cli/tests/fixtures/local.env",
         "SECRET=not-read\n",
+    );
+}
+
+#[given("a twin parity repository holds a copy of that manifest")]
+fn given_twin_parity_repository(w: &mut GateWorld) {
+    // The twin is modelled as a snapshot of the manifest rather than a second
+    // checkout: what a one-sided landing actually produces is two repositories
+    // whose manifest FILES disagree, and the snapshot captures exactly that
+    // without a second git fixture to keep in step.
+    w.twin_parity_manifest = Some(w.parity_manifest());
+}
+
+#[then("the twin repository's copy no longer matches this repository's manifest")]
+fn then_twin_parity_manifest_diverges(w: &mut GateWorld) {
+    let twin = w
+        .twin_parity_manifest
+        .clone()
+        .expect("the twin snapshot was taken");
+    // `parity manifest generate` hashes the git INDEX, so the edit must be
+    // staged before regenerating or the manifest comes back unchanged and this
+    // assertion passes for the wrong reason.
+    w.stage(&["apps/rhino-cli/src/main.rs"]);
+    w.run_parity("generate");
+    assert!(w.is_success(), "parity regeneration failed: {}", w.output);
+    assert_ne!(
+        w.parity_manifest(),
+        twin,
+        "a one-sided boundary edit must leave the two repositories' manifests disagreeing"
     );
 }
 

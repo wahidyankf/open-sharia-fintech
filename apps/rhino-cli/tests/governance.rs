@@ -272,15 +272,15 @@ const WORD_BUDGET_CONFIG: &str = r#"governance-word-budget:
       target: 400
       warn: 500
       fail: 500
-    - glob: ".cursor/**/*.md"
-      target: 400
-      warn: 500
-      fail: 500
     - glob: ".opencode/**/*.md"
       target: 400
       warn: 500
       fail: 500
-    - glob: ".amazonq/**/*.md"
+    - glob: ".codex/**/*.md"
+      target: 400
+      warn: 500
+      fail: 500
+    - glob: ".agents/**/*.md"
       target: 400
       warn: 500
       fail: 500
@@ -509,6 +509,62 @@ fn then_contains_no_instruction_size_section(w: &mut GovWorld) {
     assert!(
         !w.last_dir.contains("\ninstruction-size:\n"),
         "got config content"
+    );
+}
+
+/// Every covered-surface glob the live `repo-config.yml` must declare, as a
+/// set. Ordering is asserted separately (see
+/// [`then_readme_glob_is_declared_last`]) because only ONE ordering constraint
+/// is load-bearing — the `**/README.md` glob overlaps every other surface, and
+/// the select-then-classify overlap rule picks the LAST matching surface. The
+/// relative order of the seven instruction surfaces carries no meaning, so
+/// pinning it here would fail a harmless reordering.
+const EXPECTED_SURFACE_GLOBS: &[&str] = &[
+    "repo-governance/**/*.md",
+    ".claude/**/*.md",
+    ".opencode/**/*.md",
+    ".codex/**/*.md",
+    ".agents/**/*.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "**/README.md",
+];
+
+/// The live budget config, loaded from the real repository root.
+fn live_budget() -> rhino_cli::application::governance::word_budget::BudgetConfig {
+    rhino_cli::application::repo_config::load(&real_repo_root())
+        .expect("live repo-config.yml parses")
+        .governance_word_budget
+        .expect("repo-config.yml declares a governance-word-budget: section")
+}
+
+#[then("the covered surface globs are exactly the harness entry points and the README glob")]
+fn then_covered_surface_globs_are_exact(_w: &mut GovWorld) {
+    let mut actual: Vec<String> = live_budget()
+        .surfaces
+        .iter()
+        .map(|surface| surface.glob.clone())
+        .collect();
+    actual.sort();
+    let mut expected: Vec<String> = EXPECTED_SURFACE_GLOBS
+        .iter()
+        .map(|glob| (*glob).to_owned())
+        .collect();
+    expected.sort();
+    // Compared as sorted sets so the assertion fails on BOTH a missing surface
+    // (an entry point silently ungoverned) and a surplus one (a retired
+    // harness's tree still measured).
+    assert_eq!(actual, expected);
+}
+
+#[then("the README glob is declared last")]
+fn then_readme_glob_is_declared_last(_w: &mut GovWorld) {
+    let surfaces = live_budget().surfaces;
+    let last = surfaces.last().expect("at least one surface").glob.clone();
+    assert_eq!(
+        last, "**/README.md",
+        "the README surface must be declared last or the select-then-classify \
+         overlap rule picks a narrower surface for every README.md"
     );
 }
 

@@ -755,7 +755,7 @@ fn then_no_catalog_row_required_for_absent_dirs(w: &mut AgentsWorld) {
 
 /// Writes a `repo-config.yml` with an `instruction-size:` section covering
 /// `AGENTS.md` (with the given `target`/`fail`, `warn` interpolated between
-/// them) and, unless `single_surface` is set, `.github/copilot-instructions.md`
+/// them) and, unless `single_surface` is set, `.codex/**/*.md`
 /// too, plus a `resolved_tree` rooted at `CLAUDE.md` matching the real
 /// convention doc's thresholds
 /// (`repo-governance/conventions/structure/governance-word-budget.md`).
@@ -778,7 +778,7 @@ fn write_word_budget_config_scoped(w: &AgentsWorld, target: u64, fail: u64, sing
     );
     if !single_surface {
         yaml.push_str(
-            "\x20   - glob: \".github/copilot-instructions.md\"\n\
+            "\x20   - glob: \".codex/**/*.md\"\n\
              \x20     target: 400\n\
              \x20     warn: 450\n\
              \x20     fail: 500\n",
@@ -795,7 +795,7 @@ fn write_word_budget_config_scoped(w: &AgentsWorld, target: u64, fail: u64, sing
 }
 
 /// Convenience wrapper for [`write_word_budget_config_scoped`] covering
-/// both `AGENTS.md` and `.github/copilot-instructions.md` — the shape every
+/// both `AGENTS.md` and `.codex/**/*.md` — the shape every
 /// scenario except the "legacy registry-merge alias" (single-surface) one needs.
 fn write_word_budget_config(w: &AgentsWorld, target: u64, fail: u64) {
     write_word_budget_config_scoped(w, target, fail, false);
@@ -893,8 +893,8 @@ fn given_fail_ceiling(w: &mut AgentsWorld, fail: String) {
     write_word_budget_config(w, 400, fail.parse().expect("fail"));
 }
 
-#[given(r#"no file exists at ".github/copilot-instructions.md""#)]
-fn given_no_copilot_instructions_file(_w: &mut AgentsWorld) {
+#[given(r#"no file exists at ".codex/agents/example.md""#)]
+fn given_no_codex_agent_file(_w: &mut AgentsWorld) {
     // Intentionally a no-op: `write_word_budget_config` already configures
     // this glob as a surface, but the file itself is never written — the
     // glob simply matches nothing.
@@ -935,10 +935,10 @@ fn then_file_reported_with_severity(w: &mut AgentsWorld, severity: String) {
     }
 }
 
-#[then(r#"no finding is emitted for ".github/copilot-instructions.md""#)]
-fn then_no_finding_for_copilot_instructions(w: &mut AgentsWorld) {
+#[then(r#"no finding is emitted for ".codex/agents/example.md""#)]
+fn then_no_finding_for_codex_agent(w: &mut AgentsWorld) {
     let out = w.stdout();
-    assert!(!out.contains("copilot-instructions"), "got: {out}");
+    assert!(!out.contains(".codex/agents/example.md"), "got: {out}");
 }
 
 #[then(r#"a finding with key "resolved-tree" is reported with severity "fail""#)]
@@ -1190,24 +1190,36 @@ fn then_does_not_rederive_word_counts(w: &mut AgentsWorld) {
 
 // ===========================================================================
 // Pre-push enforcement of the word-budget gate
-// (governance-word-budget-pre-push.feature) — dark-launched as of
-// Phase 1 (not yet registered in `gates:`); these scenarios describe the
-// Phase-9 armed end state, so `matches_word_budget_trigger` mirrors the
-// trigger the OLD `instruction-size` gate used (the shape Phase 9 will reuse
-// when it registers `governance-word-budget`), not a live `.husky/pre-push`
-// assertion — there is nothing live to assert against yet.
+// (governance-word-budget-pre-push.feature). The gate is an armed `gates:`
+// entry as of Phase 9 of plans/done/2026-08-15__optimize-governance-md, so the
+// trigger set is read from the LIVE registry rather than restated here. The
+// earlier hand-written list mirrored the retired `instruction-size` gate and
+// still named `.cursor/rules/`, `.amazonq/rules/`, `.windsurf/rules/`,
+// `.junie/guidelines.md`, and `.github/copilot-instructions.md` — harnesses
+// this repository dropped. A restated list drifts silently: it keeps passing
+// while asserting a trigger set that no longer exists.
 // ===========================================================================
 
+/// The `governance-word-budget` gate's live pre-push trigger prefixes.
+fn word_budget_trigger_prefixes() -> Vec<String> {
+    let config = rhino_cli::application::repo_config::load(&real_repo_root())
+        .expect("live repo-config.yml parses");
+    let gate = config
+        .gates
+        .iter()
+        .find(|gate| gate.id == "governance-word-budget")
+        .expect("repo-config.yml registers a governance-word-budget gate");
+    gate.surfaces
+        .get(&rhino_cli::application::repo_config::GateSurface::PrePush)
+        .expect("the gate declares a pre-push surface")
+        .trigger
+        .clone()
+}
+
 fn matches_word_budget_trigger(path: &str) -> bool {
-    path == "AGENTS.md"
-        || path == "CLAUDE.md"
-        || path == "repo-config.yml"
-        || path.starts_with(".amazonq/rules/")
-        || path.starts_with(".windsurf/rules/")
-        || path.starts_with(".cursor/rules/")
-        || path == ".junie/guidelines.md"
-        || path == ".github/copilot-instructions.md"
-        || path == "CONVENTIONS.md"
+    word_budget_trigger_prefixes()
+        .iter()
+        .any(|trigger| path == trigger || path.starts_with(trigger.as_str()))
 }
 
 #[given(r#"my push range modifies "AGENTS.md""#)]
