@@ -21,7 +21,7 @@ use std::time::Instant;
 
 use crate::application::agents::bindings::validate_bindings;
 use crate::application::agents::types::{ValidationCheck, ValidationResult};
-use crate::application::repo_config::{self, OwnershipClass, RepoConfig};
+use crate::application::repo_config::{self, OwnershipClass, RepoConfig, Tier};
 
 /// Name of the classification check, so the gate output is greppable.
 const CLASSIFICATION_CHECK: &str = "Ownership: every tracked binding file is classified";
@@ -200,12 +200,19 @@ pub fn classify(repo_root: &Path) -> Result<OwnershipReport, String> {
 /// # Errors
 ///
 /// Returns an error naming the offending path when a generated-tier entry's
-/// output directory is declared `source`.
+/// output directory is declared `source`, or when `repo-config.yml` itself
+/// fails to parse.
+///
+/// Deliberately `load`, not `load_or_default`: this guard is the last thing
+/// standing between `harness bindings generate` and a destructive write, so a
+/// registry that fails to parse must stop generation rather than fall back to
+/// an empty config whose empty `harness` list would make every entry's guard
+/// vacuously pass (C3 — a malformed `tier` used to do exactly this).
 pub fn guard_emitter_targets(repo_root: &Path) -> Result<(), String> {
-    let config = repo_config::load_or_default(repo_root);
+    let config = repo_config::load(repo_root).map_err(|e| format!("{e:#}"))?;
     let decls = declarations(&config);
     for entry in &config.harness {
-        if entry.tier != "generated" {
+        if entry.tier != Tier::Generated {
             continue;
         }
         for target in [entry.agent_dir.as_ref(), entry.skills_dir.as_ref()]
@@ -374,5 +381,32 @@ mod tests {
         )
         .expect("write");
         guard_emitter_targets(dir.path()).expect("a generated target is permitted");
+    }
+
+    // Regression for C3: a one-character `tier:` typo used to deserialize as a
+    // plain `String` that simply failed the `!= "generated"` comparison,
+    // silently skipping the guard instead of failing to parse. `Tier` is now
+    // an enum, so this fixture — identical to `the_guard_refuses_an_emitter_
+    // target_declared_source` except for the typo — must fail generation
+    // rather than let it through unguarded.
+    #[test]
+    fn a_mistyped_tier_fails_generation_instead_of_silently_bypassing_the_guard() {
+        let dir = tempfile::TempDir::new().expect("temp");
+        std::fs::write(
+            dir.path().join("repo-config.yml"),
+            concat!(
+                "harness:\n",
+                "  - name: h\n",
+                "    tier: generatd\n", // one character short of "generated"
+                "    agent-dir: .out/agents\n",
+                "    mirrors: .claude/agents\n",
+                "    ownership:\n",
+                "      - { path: .out/agents, class: source, reason: deliberately wrong }\n",
+            ),
+        )
+        .expect("write");
+        let error =
+            guard_emitter_targets(dir.path()).expect_err("a mistyped tier must fail, not pass");
+        assert!(error.contains("tier"), "error was: {error}");
     }
 }

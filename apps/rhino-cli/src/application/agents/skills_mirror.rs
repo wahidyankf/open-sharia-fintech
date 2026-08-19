@@ -53,20 +53,41 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
     // mirrors, which means there is nothing to do — not that mirroring failed.
     // Erroring here would turn every registry-less fixture into a false failure.
     let config = repo_config::load_or_default(repo_root);
-    Ok(config
+    config
         .harness
         .iter()
         .filter_map(|entry| {
             let target_rel = entry.skills_dir.as_ref()?;
             let source_rel = entry.skills_mirrors.as_ref()?;
-            Some(MirrorJob {
+            Some((entry, target_rel, source_rel))
+        })
+        .map(|(entry, target_rel, source_rel)| {
+            // `Path::join` silently discards `repo_root` when the joined value
+            // is itself absolute, so an absolute or `../`-escaping `skills-dir`
+            // / `skills-mirrors` would otherwise make this job read from and
+            // write/delete outside the repository entirely, with
+            // `repo-config validate` exiting 0 (C4). Refuse before building the
+            // job rather than after the first write.
+            repo_config::validate_repo_relative_path(target_rel).map_err(|error| {
+                format!(
+                    "harness {:?} skills-dir {target_rel:?}: {error}",
+                    entry.name
+                )
+            })?;
+            repo_config::validate_repo_relative_path(source_rel).map_err(|error| {
+                format!(
+                    "harness {:?} skills-mirrors {source_rel:?}: {error}",
+                    entry.name
+                )
+            })?;
+            Ok(MirrorJob {
                 source: repo_root.join(source_rel),
                 target: repo_root.join(target_rel),
                 target_rel: PathBuf::from(target_rel),
                 vendored: entry.vendored.clone(),
             })
         })
-        .collect())
+        .collect()
 }
 
 /// Relative paths of every regular file under `root`, sorted.
@@ -204,6 +225,14 @@ pub fn audit_skills_mirrors(repo_root: &Path) -> Result<Vec<MirrorDrift>, String
 pub fn emit_skills_mirrors(repo_root: &Path, dry_run: bool) -> Result<MirrorResult, String> {
     let mut result = MirrorResult::default();
     for job in mirror_jobs(repo_root)? {
+        // Defense in depth alongside `mirror_jobs`' lexical validation: every
+        // write and delete below stays inside `repo_root`, full stop.
+        if !job.target.starts_with(repo_root) {
+            return Err(format!(
+                "refusing to write outside the repository: {}",
+                job.target.display()
+            ));
+        }
         if !job.source.is_dir() {
             continue;
         }
@@ -387,6 +416,32 @@ mod tests {
                 expect_removed == 0
             );
         }
+    }
+
+    #[test]
+    fn an_absolute_skills_dir_is_refused_rather_than_written_outside_the_repository() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let outside = tempfile::TempDir::new().unwrap();
+        write(dir.path(), ".claude/skills/a/SKILL.md", "skill\n");
+        write(outside.path(), "victim.md", "must survive regeneration\n");
+        write(
+            dir.path(),
+            "repo-config.yml",
+            &format!(
+                "harness:\n  - {{ name: claude-code, tier: source, agent-dir: .claude/agents }}\n  \
+                 - name: codex\n    tier: generated\n    agent-dir: .codex/agents\n    \
+                 skills-dir: {}\n    skills-mirrors: .claude/skills\ncoverage:\n  projects: []\n",
+                outside.path().display()
+            ),
+        );
+
+        let error = emit_skills_mirrors(dir.path(), false)
+            .expect_err("an absolute skills-dir must be refused");
+        assert!(error.contains("skills-dir"), "error was: {error}");
+        assert!(
+            outside.path().join("victim.md").exists(),
+            "the file outside the repository must survive"
+        );
     }
 
     #[test]

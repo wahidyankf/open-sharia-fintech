@@ -259,7 +259,7 @@ fn when_full_registry_is_read(w: &mut RepoConfigDataWorld) {
 #[then("the entry declares the generated tier")]
 fn then_codex_entry_generated_tier(w: &mut RepoConfigDataWorld) {
     let entry = w.codex_entry.as_ref().expect("codex entry loaded");
-    assert_eq!(entry.tier, "generated");
+    assert_eq!(entry.tier, repo_config::Tier::Generated);
 }
 
 #[then("the entry declares .codex/agents as its agent directory")]

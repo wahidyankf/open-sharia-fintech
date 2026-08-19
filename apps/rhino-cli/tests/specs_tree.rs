@@ -109,6 +109,9 @@ use rhino_cli::commands::specs_validate_counts::{self, ValidateCountsArgs};
 use rhino_cli::infrastructure::git::root::find_root_from;
 use tempfile::TempDir;
 
+#[path = "support/git_fixture.rs"]
+mod git_fixture;
+
 /// Repo-relative feature-file path shared by every synthetic `@covers`
 /// scenario/marker built in the behavior-coverage/domain-coverage steps.
 const BC_FEATURE_PATH: &str = "specs/apps/example/foo.feature";
@@ -404,89 +407,14 @@ impl SpecsTreeWorld {
     }
 }
 
-/// Runs `git` with `args` inside `dir`, using a fixed synthetic identity.
+/// Runs `git` with `args` inside `dir`, under full Git Fixture Isolation.
 ///
-/// Checks the subprocess's exit status (not just that it spawned) — see
-/// `apps/rhino-cli/src/infrastructure/git/root.rs`'s `build_worktree_fixture`
-/// doc comment for the isolation hazard this guards against: cucumber-rs runs
-/// scenarios concurrently (up to 64 by default), so a silently-failed `git
-/// init` here could otherwise let a later "isolated" git command fall back to
-/// whichever repository is `dir`'s nearest ancestor via git's own upward
-/// repository-discovery walk.
-/// Pre-write escape guard (Git Fixture Isolation convention, Standard 4). Panics
-/// unless git, under the same isolation env as [`run_git`], resolves its
-/// top-level to `dir` (canonicalized). Called before every write once `dir/.git`
-/// exists, so a would-be escape — a missed isolation env on a future write, or a
-/// discovery path not otherwise closed — fails loud instead of silently
-/// corrupting the real repository. GIT_WORK_TREE is deliberately NOT set: it
-/// would make `--show-toplevel` merely echo the variable, defeating the guard.
-fn assert_no_escape(dir: &Path) {
-    let out = Command::new("git")
-        .args(["rev-parse", "--show-toplevel"])
-        .current_dir(dir)
-        .env("GIT_DIR", dir.join(".git"))
-        .env("GIT_CEILING_DIRECTORIES", dir)
-        .env("GIT_CONFIG_GLOBAL", "/dev/null")
-        .env("GIT_CONFIG_SYSTEM", "/dev/null")
-        .output()
-        .expect("escape-guard: git rev-parse must spawn");
-    assert!(
-        out.status.success(),
-        "escape-guard: `git rev-parse --show-toplevel` failed in {} (git could not confirm an \
-         isolated repository here): {}",
-        dir.display(),
-        String::from_utf8_lossy(&out.stderr)
-    );
-    let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
-    let want = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_path_buf());
-    let got = std::fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
-    assert_eq!(
-        got,
-        want,
-        "escape-guard: fixture git resolves to {}, not the intended tempdir {} — \
-         refusing to proceed to avoid corrupting the real repository",
-        got.display(),
-        want.display()
-    );
-}
-
-fn run_git(dir: &Path, args: &[&str]) {
-    // Every caller passes a repository root as `dir`, so `dir/.git` is the repo's
-    // git directory (created by `git init` when args == ["init", …]). Pinning
-    // GIT_DIR explicitly makes git perform NO upward repository-discovery walk:
-    // even if this process's CWD races to the real worktree under cucumber-rs's
-    // concurrency, git operates on exactly `dir/.git` and can never fall back to
-    // an ancestor repository. GIT_CEILING_DIRECTORIES caps any residual walk, and
-    // nulling global/system config keeps identity deterministic and prevents dev
-    // identity from bleeding in. See root.rs `iso_git` for the shared rationale.
-    //
-    // Standard 4 (pre-write escape guard): before every write, once `dir/.git`
-    // exists, prove git still resolves to `dir`. `git init` is the sole pre-repo
-    // command (no `.git` yet) and is exempt — its own failure is caught by the
-    // exit-status assert below.
-    if dir.join(".git").is_dir() {
-        assert_no_escape(dir);
-    }
-    let output = Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env("GIT_DIR", dir.join(".git"))
-        .env("GIT_CEILING_DIRECTORIES", dir)
-        .env("GIT_CONFIG_GLOBAL", "/dev/null")
-        .env("GIT_CONFIG_SYSTEM", "/dev/null")
-        .env("GIT_AUTHOR_NAME", "t")
-        .env("GIT_AUTHOR_EMAIL", "t@t")
-        .env("GIT_COMMITTER_NAME", "t")
-        .env("GIT_COMMITTER_EMAIL", "t@t")
-        .output()
-        .expect("git command must spawn");
-    assert!(
-        output.status.success(),
-        "git {args:?} in {} must exit zero, got: {}",
-        dir.display(),
-        String::from_utf8_lossy(&output.stderr)
-    );
-}
+/// This suite is the reference implementation `tests/support/git_fixture.rs`
+/// was lifted from (C1) — every other cucumber-rs suite that shells out to
+/// `git` against a synthetic fixture routes through that shared module too,
+/// so this is now a thin re-export rather than a second copy of the six
+/// mandatory layers.
+use git_fixture::{assert_no_escape, run_git};
 
 /// Runs the compiled `rhino-cli` binary with `args` inside `dir` and returns
 /// its captured `Output`.
@@ -960,7 +888,11 @@ fn then_hb_all_three_listed(w: &mut SpecsTreeWorld) {
     "the source tier (Claude Code) is the single hand-authored origin every mirror derives from"
 )]
 fn then_hb_source_tier(w: &mut SpecsTreeWorld) {
-    let source: Vec<&HarnessEntry> = w.hb_harness.iter().filter(|h| h.tier == "source").collect();
+    let source: Vec<&HarnessEntry> = w
+        .hb_harness
+        .iter()
+        .filter(|h| h.tier == repo_config::Tier::Source)
+        .collect();
     let source_names: Vec<&str> = source.iter().map(|h| h.name.as_str()).collect();
     assert_eq!(source.len(), 1, "source tier: {source_names:?}");
     let origin = source[0];
@@ -972,7 +904,11 @@ fn then_hb_source_tier(w: &mut SpecsTreeWorld) {
 
     // Every generated entry names this one directory as what it mirrors, so
     // there is exactly one hand-authored origin rather than several.
-    for entry in w.hb_harness.iter().filter(|h| h.tier == "generated") {
+    for entry in w
+        .hb_harness
+        .iter()
+        .filter(|h| h.tier == repo_config::Tier::Generated)
+    {
         assert_eq!(
             entry.mirrors.as_deref(),
             Some(origin_dir),
@@ -987,7 +923,7 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
     let generated: Vec<&str> = w
         .hb_harness
         .iter()
-        .filter(|h| h.tier == "generated")
+        .filter(|h| h.tier == repo_config::Tier::Generated)
         .map(|h| h.name.as_str())
         .collect();
     assert_eq!(generated.len(), 2, "generated tier: {generated:?}");
@@ -1009,9 +945,17 @@ fn then_hb_generated_tier(w: &mut SpecsTreeWorld) {
 
 #[then("no entry declares the retired source-config or native tier")]
 fn then_hb_no_retired_tier(w: &mut SpecsTreeWorld) {
+    // `Tier` is now a two-variant enum (C3): a registry entry naming
+    // `source-config` or `native` fails to parse before this scenario's `w`
+    // could even be populated, so every entry here is trivially `source` or
+    // `generated` by construction. The assertion stays as a readable
+    // statement of the invariant rather than dead weight.
     for entry in &w.hb_harness {
         assert!(
-            entry.tier == "source" || entry.tier == "generated",
+            matches!(
+                entry.tier,
+                repo_config::Tier::Source | repo_config::Tier::Generated
+            ),
             "harness {:?} declares the retired tier {:?}",
             entry.name,
             entry.tier
@@ -1079,10 +1023,6 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
         "    tier: generated\n",
         "    agent-dir: .custom-gen/amazonq\n",
         "    mirrors: .custom-src/agents\n",
-        "  - name: custom-native\n",
-        "    tier: native\n",
-        "    instruction:\n",
-        "      - .custom-native/SURFACE.md\n",
         "coverage:\n  projects: []\n",
         "specs:\n  ddd-areas: []\n  domain-areas: []\n",
     );
@@ -1117,10 +1057,6 @@ fn given_hrd_registry(w: &mut SpecsTreeWorld) {
     // Generated tier 2 (amazonq): missing the widget-checker mirror -> mirror-drift.
     std::fs::create_dir_all(root.join(".custom-gen/amazonq")).expect("mkdir");
     std::fs::write(root.join(".custom-gen/amazonq/foo-maker.md"), "---\n---\n").expect("write");
-
-    // Native tier: oversized custom instruction surface (registry default fail budget = 16,000 B).
-    std::fs::create_dir_all(root.join(".custom-native")).expect("mkdir");
-    std::fs::write(root.join(".custom-native/SURFACE.md"), "x".repeat(50_000)).expect("write");
 
     run_git(root, &["add", "-A"]);
     run_git(root, &["commit", "-q", "-m", "seed"]);

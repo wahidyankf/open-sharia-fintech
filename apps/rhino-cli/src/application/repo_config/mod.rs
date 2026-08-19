@@ -57,8 +57,8 @@ pub struct SpecsConfig {
 pub struct HarnessEntry {
     /// Harness identifier (e.g. `"claude-code"`, `"opencode"`, `"amazonq"`).
     pub name: String,
-    /// Binding tier: `"source"`, `"generated"`, `"source-config"`, or `"native"`.
-    pub tier: String,
+    /// Binding tier: `"source"` or `"generated"`.
+    pub tier: Tier,
     /// Directory of per-agent files (present for `source` and `generated` tiers).
     #[serde(rename = "agent-dir", default)]
     pub agent_dir: Option<String>,
@@ -120,6 +120,42 @@ pub struct HarnessEntry {
     /// word budget by a comment. There are exactly three classes and no fourth.
     #[serde(default)]
     pub ownership: Vec<OwnershipEntry>,
+}
+
+/// The two — and only two — binding tiers a harness entry may declare.
+///
+/// Represented as an enum rather than a string — the same pattern
+/// [`OwnershipClass`] already uses, and the more safety-critical of the two:
+/// `guard_emitter_targets` treats any tier value that is not exactly
+/// `Tier::Generated` as "no guard needed", so with a bare `String` field a
+/// single-character typo (`"generatd"`) silently disabled the guard instead of
+/// failing to parse. A fourth — well, third — value is now a hard
+/// deserialization error at the schema boundary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[serde(rename_all = "lowercase")]
+pub enum Tier {
+    /// Hand-authored canonical input; the emitter must never write to it.
+    Source,
+    /// Emitted by `harness bindings generate`; must reproduce byte-for-byte.
+    ///
+    /// The struct-level `Default` derive on [`HarnessEntry`] needs some
+    /// variant to fall back to even though `tier` is a required YAML key with
+    /// no `#[serde(default)]` of its own; `Generated` is picked because it is
+    /// the guarded variant — a struct built via `Default::default()` in a test
+    /// still trips `guard_emitter_targets` rather than silently bypassing it.
+    #[default]
+    Generated,
+}
+
+impl Tier {
+    /// Registry spelling of this tier, for findings and reports.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Source => "source",
+            Self::Generated => "generated",
+        }
+    }
 }
 
 /// The three — and only three — ownership classes a binding path may carry.
@@ -203,12 +239,12 @@ pub struct OwnershipEntry {
 impl HarnessEntry {
     /// `true` when this is a source tier entry with an agent directory.
     pub fn is_source_with_agents(&self) -> bool {
-        self.tier == "source" && self.agent_dir.is_some()
+        self.tier == Tier::Source && self.agent_dir.is_some()
     }
 
     /// `true` when this is a generated tier entry with an agent directory.
     pub fn is_generated_with_agents(&self) -> bool {
-        self.tier == "generated" && self.agent_dir.is_some()
+        self.tier == Tier::Generated && self.agent_dir.is_some()
     }
 
     /// `true` when this entry is the harness the caller named.

@@ -18,14 +18,11 @@ use anyhow::{Error, anyhow};
 use clap::Args;
 
 use crate::application::repo_config::{
-    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, OwnershipClass,
-    RepoConfig, ScopeKind, SurfaceScope, validate_repo_relative_path,
+    self, DOCTOR_TOOL_INVENTORY, GateEntry, GateKind, GateSurface, GateType, HarnessEntry,
+    OwnershipClass, RepoConfig, ScopeKind, SurfaceScope, Tier, validate_repo_relative_path,
 };
 use crate::domain::cliout::OutputFormat;
 use crate::internal::git;
-
-/// Accepted values for `harness[].tier`.
-const VALID_TIERS: &[&str] = &["source", "generated"];
 
 /// Accepted values for `coverage.projects[].levels[]`.
 const VALID_LEVELS: &[&str] = &["unit", "integration", "e2e"];
@@ -109,40 +106,7 @@ pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
     }
 
     for (i, entry) in config.harness.iter().enumerate() {
-        if !VALID_TIERS.contains(&entry.tier.as_str()) {
-            findings.push(format!(
-                "harness[{i}].tier: invalid value {:?} (expected one of {})",
-                entry.tier,
-                VALID_TIERS.join(" | ")
-            ));
-        }
-        // A generated tier exists to mirror a source tree; without `mirrors`
-        // there is nothing to regenerate from and nothing to byte-compare against.
-        if entry.tier == "generated" && entry.mirrors.is_none() {
-            findings.push(format!(
-                "harness[{i}].mirrors: required key is missing \
-                 (every generated-tier entry must declare the source agent-dir it mirrors)"
-            ));
-        }
-        for (j, owned) in entry.ownership.iter().enumerate() {
-            // A vendored path is exempt from regeneration. An exemption whose
-            // justification is blank reads exactly like one nobody justified.
-            if owned.class == OwnershipClass::Vendored
-                && owned.reason.as_ref().is_none_or(|r| r.trim().is_empty())
-            {
-                findings.push(format!(
-                    "harness[{i}].ownership[{j}].reason: required non-empty value for path {:?} \
-                     (a vendored path must record why it cannot be regenerated)",
-                    owned.path
-                ));
-            }
-            if let Err(error) = validate_repo_relative_path(&owned.path) {
-                findings.push(format!(
-                    "harness[{i}].ownership[{j}].path: invalid value {:?} ({error:#})",
-                    owned.path
-                ));
-            }
-        }
+        findings.extend(harness_entry_semantic_findings(i, entry));
     }
 
     for (i, project) in config.coverage.projects.iter().enumerate() {
@@ -167,6 +131,137 @@ pub(crate) fn semantic_findings(config: &RepoConfig) -> Vec<String> {
 
     findings.extend(gate_semantic_findings(config));
 
+    findings
+}
+
+/// Collect semantic findings for one `harness:` entry: the C2/C3/C4 hardening
+/// this function exists for. Split out of [`semantic_findings`] to stay under
+/// the line-count ceiling, not because the checks are independent of one
+/// another — they are all part of the same "does this entry's declarations
+/// hold together" question.
+fn harness_entry_semantic_findings(i: usize, entry: &HarnessEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+
+    // `tier` itself can no longer carry an invalid value: it is a
+    // `#[derive(Deserialize)]` enum, so `repo_config::load` above already
+    // rejected anything but `source`/`generated` as a strict schema failure
+    // before `semantic_findings` ever runs.
+    //
+    // A generated tier exists to mirror a source tree; without `mirrors`
+    // there is nothing to regenerate from and nothing to byte-compare against.
+    if entry.tier == Tier::Generated && entry.mirrors.is_none() {
+        findings.push(format!(
+            "harness[{i}].mirrors: required key is missing \
+             (every generated-tier entry must declare the source agent-dir it mirrors)"
+        ));
+    }
+
+    // Every path-valued registry field is routed through the same
+    // repo-relative check the ownership/doctor paths already used —
+    // otherwise an absolute or `../`-escaping `skills-dir` (etc.) passes
+    // `repo-config validate` with exit 0 while `harness bindings generate`
+    // writes to and deletes files outside the repository (C4).
+    for (field, value) in [
+        ("agent-dir", entry.agent_dir.as_deref()),
+        ("skills-dir", entry.skills_dir.as_deref()),
+        ("rules-dir", entry.rules_dir.as_deref()),
+        ("mirrors", entry.mirrors.as_deref()),
+        ("skills-mirrors", entry.skills_mirrors.as_deref()),
+        ("config", entry.config.as_deref()),
+        ("forbid-dir", entry.forbid_dir.as_deref()),
+        ("shadow", entry.shadow.as_deref()),
+    ] {
+        if let Some(value) = value
+            && let Err(error) = validate_repo_relative_path(value)
+        {
+            findings.push(format!(
+                "harness[{i}].{field}: invalid value {value:?} ({error:#})"
+            ));
+        }
+    }
+    for (k, path) in entry.instruction.iter().enumerate() {
+        if let Err(error) = validate_repo_relative_path(path) {
+            findings.push(format!(
+                "harness[{i}].instruction[{k}]: invalid value {path:?} ({error:#})"
+            ));
+        }
+    }
+    for (k, path) in entry.vendored.iter().enumerate() {
+        if let Err(error) = validate_repo_relative_path(path) {
+            findings.push(format!(
+                "harness[{i}].vendored[{k}]: invalid value {path:?} ({error:#})"
+            ));
+        }
+    }
+    for (j, owned) in entry.ownership.iter().enumerate() {
+        // A vendored path is exempt from regeneration. An exemption whose
+        // justification is blank reads exactly like one nobody justified.
+        if owned.class == OwnershipClass::Vendored
+            && owned.reason.as_ref().is_none_or(|r| r.trim().is_empty())
+        {
+            findings.push(format!(
+                "harness[{i}].ownership[{j}].reason: required non-empty value for path {:?} \
+                 (a vendored path must record why it cannot be regenerated)",
+                owned.path
+            ));
+        }
+        if let Err(error) = validate_repo_relative_path(&owned.path) {
+            findings.push(format!(
+                "harness[{i}].ownership[{j}].path: invalid value {:?} ({error:#})",
+                owned.path
+            ));
+        }
+    }
+
+    findings.extend(vendored_ownership_cross_check(i, entry));
+    findings
+}
+
+/// C2: `vendored:` (the skills-mirror emitter's deletion-skip list) and
+/// `ownership: class: vendored` under this entry's `skills-dir` are two
+/// hand-maintained declarations of the same fact, read by two different
+/// modules that never cross-check each other. An ownership entry declaring
+/// `class: vendored` with no matching `vendored:` entry is silently deleted
+/// by the next `harness bindings generate`, which
+/// `harness-bindings-generate`'s `pre-commit: { scope: other }` wiring runs
+/// on every commit. Scoped to paths under `skills-dir`: a `vendored`-class
+/// file elsewhere (e.g. `.codex/config.toml`, guarded by the Codex emitter's
+/// own delimited-region logic rather than the skills mirror) legitimately has
+/// no `vendored:` counterpart.
+fn vendored_ownership_cross_check(i: usize, entry: &HarnessEntry) -> Vec<String> {
+    let mut findings = Vec::new();
+    let Some(skills_dir) = entry.skills_dir.as_deref() else {
+        return findings;
+    };
+    let skills_dir_prefix = format!("{}/", skills_dir.trim_end_matches('/'));
+    let under_skills_dir = |p: &str| p == skills_dir || p.starts_with(skills_dir_prefix.as_str());
+
+    for owned in &entry.ownership {
+        if owned.class == OwnershipClass::Vendored
+            && under_skills_dir(&owned.path)
+            && !entry.vendored.iter().any(|v| v == &owned.path)
+        {
+            findings.push(format!(
+                "harness[{i}].ownership: {:?} is declared class: vendored under \
+                 skills-dir {skills_dir:?} but has no matching harness[{i}].vendored \
+                 entry (the skills mirror will delete it on the next regeneration)",
+                owned.path
+            ));
+        }
+    }
+    for (k, vendored_path) in entry.vendored.iter().enumerate() {
+        let declared = entry
+            .ownership
+            .iter()
+            .any(|owned| owned.class == OwnershipClass::Vendored && &owned.path == vendored_path);
+        if !declared {
+            findings.push(format!(
+                "harness[{i}].vendored[{k}]: {vendored_path:?} has no matching \
+                 harness[{i}].ownership entry with class: vendored (the two \
+                 hand-maintained lists must declare the same fact)"
+            ));
+        }
+    }
     findings
 }
 
@@ -345,6 +440,7 @@ fn lint_staged_shell_findings(
 #[allow(clippy::unwrap_used, clippy::panic)]
 mod tests {
     use super::*;
+    use std::fmt::Write as _;
     use std::fs;
     use tempfile::TempDir;
 
@@ -365,13 +461,118 @@ mod tests {
         fs::write(tmp.path().join("repo-config.yml"), content).unwrap();
         let mut buf: Vec<u8> = Vec::new();
         let result = run_at_root(tmp.path(), &mut buf);
-        (result.is_ok(), String::from_utf8_lossy(&buf).into_owned())
+        let mut out = String::from_utf8_lossy(&buf).into_owned();
+        // A strict-schema failure (e.g. an invalid `tier` enum value) returns
+        // `Err` before any finding is written to `buf`, so the error text is
+        // folded in here too — tests assert on "what the user would see",
+        // which for a schema-level rejection is the error, not the findings
+        // list.
+        if let Err(error) = &result {
+            let _ = write!(out, "{error:#}");
+        }
+        (result.is_ok(), out)
     }
 
     #[test]
     fn valid_config_passes() {
         let (ok, out) = write_and_run(VALID);
         assert!(ok, "valid config must pass; got: {out}");
+    }
+
+    // Regression for C2: a `class: vendored` ownership entry under `skills-dir`
+    // with no matching `vendored:` entry used to pass `repo-config validate`
+    // with exit 0, then get silently deleted by the next `harness bindings
+    // generate` (wired to pre-commit on every commit).
+    #[test]
+    fn a_vendored_ownership_entry_under_skills_dir_with_no_matching_vendored_list_entry_is_rejected()
+     {
+        let bad = concat!(
+            "harness:\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: .agents/skills\n",
+            "    skills-mirrors: .claude/skills\n",
+            "    ownership:\n",
+            "      - { path: .agents/skills/newplugin, class: vendored, reason: third-party plugin skill; no in-repo source }\n",
+            "coverage:\n",
+            "  projects:\n",
+            "    - name: rhino-cli\n",
+            "      levels: [unit]\n",
+            "      specs: \"x\"\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        );
+        let (ok, out) = write_and_run(bad);
+        assert!(
+            !ok,
+            "a vendored ownership entry missing from the vendored: list must be rejected"
+        );
+        assert!(
+            out.contains(".agents/skills/newplugin") && out.contains("vendored"),
+            "finding must name the undeclared vendored path; got: {out}"
+        );
+    }
+
+    // The inverse direction: a `vendored:` entry with no ownership declaration
+    // backing it is equally a defect — the two lists must agree either way.
+    #[test]
+    fn a_vendored_list_entry_with_no_matching_ownership_declaration_is_rejected() {
+        let bad = concat!(
+            "harness:\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: .agents/skills\n",
+            "    skills-mirrors: .claude/skills\n",
+            "    vendored:\n",
+            "      - .agents/skills/orphan\n",
+            "coverage:\n",
+            "  projects:\n",
+            "    - name: rhino-cli\n",
+            "      levels: [unit]\n",
+            "      specs: \"x\"\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        );
+        let (ok, out) = write_and_run(bad);
+        assert!(
+            !ok,
+            "a vendored: entry missing its ownership declaration must be rejected"
+        );
+        assert!(
+            out.contains(".agents/skills/orphan"),
+            "finding must name the undeclared vendored path; got: {out}"
+        );
+    }
+
+    // A `vendored`-class file that legitimately sits outside `skills-dir`
+    // (e.g. a tooling config guarded by its own emitter, not the skills
+    // mirror) must not be forced to carry a matching `vendored:` entry.
+    #[test]
+    fn a_vendored_ownership_entry_outside_skills_dir_needs_no_vendored_list_entry() {
+        let ok_config = concat!(
+            "harness:\n",
+            "  - name: codex\n",
+            "    tier: generated\n",
+            "    agent-dir: .codex/agents\n",
+            "    mirrors: .claude/agents\n",
+            "    skills-dir: .agents/skills\n",
+            "    skills-mirrors: .claude/skills\n",
+            "    ownership:\n",
+            "      - { path: .codex/config.toml, class: vendored, reason: tooling config; emitter owns only the delimited region }\n",
+            "coverage:\n",
+            "  projects:\n",
+            "    - name: rhino-cli\n",
+            "      levels: [unit]\n",
+            "      specs: \"x\"\n",
+            "specs:\n  ddd-areas: []\n  domain-areas: []\n",
+        );
+        let (ok, out) = write_and_run(ok_config);
+        assert!(
+            ok,
+            "a vendored file outside skills-dir needs no vendored: entry; got: {out}"
+        );
     }
 
     #[test]

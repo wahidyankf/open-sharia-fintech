@@ -193,7 +193,9 @@ fn source_dirs_from_registry(repo_root: &Path) -> (Vec<PathBuf>, Vec<PathBuf>) {
     let skills_dirs: Vec<PathBuf> = config
         .harness
         .iter()
-        .filter(|e| e.tier == "source" && e.skills_dir.is_some())
+        .filter(|e| {
+            e.tier == crate::application::repo_config::Tier::Source && e.skills_dir.is_some()
+        })
         .filter_map(|e| e.skills_dir.as_deref())
         .map(|d| repo_root.join(d))
         .collect();
