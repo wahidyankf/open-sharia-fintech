@@ -1,14 +1,16 @@
 # Reconcile the command names governance docs cite against the ones that exist
 
-One-line summary: governance tables name Nx targets and npm scripts as live that no longer exist, and
-at least three npm scripts in `package.json` invoke a `rhino-cli` subcommand that was removed — so a
-reader following the docs runs a command that exits non-zero.
+One-line summary: governance tables, agent files, and npm scripts all name commands that do not
+exist — Nx targets that were never implemented, a `rhino-cli` subcommand that was removed — so a
+reader following any of them runs something that exits non-zero.
 
 > Surfaced 2026-08-17 during `optimize-gov` PR review.
+> Merged specs-checker-phantom-nx-targets.md into this brief on 2026-08-19 by plan-ideas-grooming:
+> same underlying defect, and that brief's open "isolated or systemic?" question is answered here.
 
 ## Problem / context
 
-Two separate drifts, found while fixing something else:
+Three drifts of one shape, each found while fixing something else:
 
 **Docs citing absent commands.** Four names appear in the naming-scheme tables of both repos as
 though they were live gates:
@@ -25,6 +27,14 @@ longer exists — `harness sync` offers only `validate` — and all three exit 2
 `error: unrecognized subcommand 'opencode'`. **In ose-public the same three script names invoke
 `harness bindings generate --harness opencode` and exit 0.** Identical names, different bodies, one
 repo broken.
+
+**Agent files citing phantom Nx targets.** `.claude/agents/specs-checker.md`'s "Drift Detection"
+section instructs the reader to run `validate:specs-adoption`, `validate:specs-tree`,
+`validate:specs-counts`, and `validate:specs-links`. None of the four appears in
+`apps/rhino-cli/project.json` or any other project's target list. Found 2026-07-31 during the
+`baseerah-repo-reset` plan's Phase 3 Gate deleted-app-name sweep and deliberately left unfixed there
+as out of that sweep's scope. This is the drift that makes the whole set systemic rather than a
+governance-table quirk: the same class of defect reaches `.claude/agents/**` too.
 
 Two counter-examples matter as much as the failures, because both were initially reported as stale
 and neither is. `harness:bindings-validation` exists as a real npm script — in ose-public; ose-private
@@ -53,6 +63,8 @@ are a dead end rather than a data-loss risk.
   review deliberately fixed only the in-scope site and reported the rest rather than half-doing it.
 - **[`doc-command-existence-validation`](../../backlog/README.md)** — the naming precedent cited in
   the backlog README for exactly this class: validating that a documented command exists.
+- **`baseerah-repo-reset` Phase 3 Gate** — where the `specs-checker.md` phantom targets surfaced,
+  recorded rather than fixed because it was orthogonal to that sweep's scope.
 - **`rhino-cli-command-triage`** (`docs/reference/rhino-cli-command-triage.md`) — the existing
   migration table mapping old command names to new; the authority a reconciliation would check
   against, and itself a candidate for correction.
@@ -68,8 +80,10 @@ are a dead end rather than a data-loss risk.
 
 ## Rough scope & non-goals
 
-In scope: `repo-governance/**` and `docs/**` in ose-public and ose-private; the broken `sync:*`
-scripts; the triage table's own accuracy.
+In scope: `repo-governance/**`, `docs/**`, and `.claude/agents/**` in ose-public and ose-private;
+the broken `sync:*` scripts; the triage table's own accuracy. Agent-file corrections regenerate their
+`.opencode/`/`.cursor/` mirrors via `npm run generate:bindings` in the same commit — the mirrors are
+never hand-edited.
 
 **Out of scope (for now)**: adding a gate that enforces command existence (worth doing, but it needs
 the inventory to exist first); `plans/done/**`, which records what was true at the time; the
@@ -82,6 +96,9 @@ the inventory to exist first); `plans/done/**`, which records what was true at t
 - Should ose-private's `sync:agents` be repaired, deleted, or aligned with ose-public's working
   version? Unknown whether a write-path sync is still wanted now that `generate:bindings` emits the
   mirrors.
+- How many other agent files carry the same phantom-command problem? Only `specs-checker.md` has
+  been checked, and one instance is what turned this from a table-accuracy issue into an inventory
+  job. A scan of the sibling checker agents is the cheapest way to size it. (open)
 - Is the triage table's "name-set/count parity" attribution to `harness naming validate` accurate?
   Reading that command suggests it is a pure name-set check with no count logic.
 

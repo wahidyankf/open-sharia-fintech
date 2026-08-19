@@ -4,6 +4,8 @@ One-line summary: `doctor --fix` points every worktree's `apps/<crate>/target` a
 directory, which reclaims real disk but serializes concurrent builds behind cargo's exclusive
 build-directory lock — a 65 s stall was observed, and both effects scale with the same parameter.
 
+> Surfaced 2026-08-06 during `optimize-cis` execution.
+
 ## Problem / context
 
 `doctor --fix` symlinks each worktree's per-crate `target/` into a single shared

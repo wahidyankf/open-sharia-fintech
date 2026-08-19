@@ -4,6 +4,8 @@ One-line summary: `ose-public`'s Actions cache sits at 99.29 % of its 10 GiB cei
 in the repo ever deletes a cache entry — the only pressure relief is GitHub's own LRU eviction, which
 silently discards entries a later run then has to rebuild.
 
+> Surfaced 2026-08-09 during `optimize-cis` Phase 11 execution.
+
 ## Problem / context
 
 Measured on **2026-08-09** during the `optimize-cis` Phase 11 rollup, via

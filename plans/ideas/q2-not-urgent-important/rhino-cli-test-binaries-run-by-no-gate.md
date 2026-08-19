@@ -41,7 +41,7 @@ near-identical names, one gated and one not.
 
 ## Prior art / precedents
 
-- **`specs-checker-phantom-nx-targets`** — [specs-checker-phantom-nx-targets](./specs-checker-phantom-nx-targets.md)
+- **`governance-command-name-reconciliation`** — [governance-command-name-reconciliation](./governance-command-name-reconciliation.md)
   is the same failure shape one layer up: a declared target that does not do what its name implies.
 - **`behavior-coverage-json-report-wiring`** — [behavior-coverage-json-report-wiring](./behavior-coverage-json-report-wiring.md)
   covers the adjacent question of what the coverage reporting actually measures.

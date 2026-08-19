@@ -6,6 +6,8 @@ needs a positive pattern, so it receives none, lints `0 file(s)`, and reports PA
 
 > Surfaced 2026-08-17 during `optimize-gov` PR review, after twelve real violations reached a green
 > PR.
+> Absorbed ose-private's parallel copy of this brief on 2026-08-19 by plan-ideas-grooming; the gate
+> is identical in both repos, so one brief now covers both.
 
 ## Problem / context
 
@@ -96,7 +98,11 @@ just did.
 2. Give the `markdownlint` gate's `ci` surface `glob: "*.md"`, matching its own `pre-commit`
    surface. Land in both repos — the config is identical today.
 3. Align `format-verify-prettier`'s `ci` scope with `ose-private`'s `all-file-type`.
-4. Then the general question: a gate that runs and checks nothing is indistinguishable from a gate
+4. Capture `ose-private`'s own CI log for the gate to confirm the `0 file(s)` line there directly.
+   Its behaviour is currently **inferred** from a byte-identical `rhino-cli` and an identical gate
+   entry, not observed — its logs were unreadable during the 2026-08-17 GitHub incident, so that
+   capture is still outstanding.
+5. Then the general question: a gate that runs and checks nothing is indistinguishable from a gate
    that runs and finds nothing. Emitting the candidate-file count per gate, and failing any `check`
    whose count is zero unless it declares `may-be-empty: true`, would have caught this on day one
    and would catch the next one.
