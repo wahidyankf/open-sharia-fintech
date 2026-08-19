@@ -579,3 +579,58 @@ full suite as the gate would read a planned RED as a regression.
 **Two golden-master fixtures track the subcommand list.** Adding `triage` and `promote` changed
 `harness-help.stderr` and `harness-sync.stderr`; regeneration is driven from `manifest.json`, whose
 keys are `file` and `args`. A new subcommand is never a code-only change.
+
+## Ideas-tree verdicts
+
+Sweep command and set: `git grep -ilE "\.cursor/|\.amazonq/|\.pi/|\.kiro/|Amazon Q|Antigravity|Windsurf|Junie|Aider" -- plans/ideas`
+→ `local-tmp/harness-ideas-sweep.txt`, **10 paths**. One verdict per path, no exceptions.
+
+| Path                                             | Verdict        | What changed                                                                                                                                                               |
+| ------------------------------------------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `plans/ideas/README.md`                          | NARROWED       | four one-liners rewritten to match their briefs' new scope; two new briefs inserted alphabetically                                                                         |
+| `q2/extend-byte-identity-to-claude-hooks.md`     | NARROWED       | out-of-scope list named `.amazonq/`/`.cursor/` mirrors; retargeted to the surviving three. Hook byte-identity premise untouched                                            |
+| `q2/governance-command-name-reconciliation.md`   | NARROWED       | same shape — `.cursor/` in the regenerate-in-same-commit sentence. Command-name premise untouched                                                                          |
+| `q2/governance-path-ownership-registry.md`       | NARROWED       | zero-owner path 2 (`.cursor/**`) deleted; Rule 8 delivers this brief's proposal for binding trees. Four wider zero-owner paths survive                                     |
+| `q2/harness-binding-catalog-drift.md`            | NARROWED       | Windsurf/Devin and Copilot moot; Codex finding fixed in Phase 4; OpenCode prose fixed in Phase 9. Only the read-the-body-not-the-summary lesson survives                   |
+| `q2/harness-converter-preserve-agent-mode.md`    | NARROWED       | Amazon Q and Cursor tiers gone; the dropped-field risk now spans OpenCode **and** Codex, so the brief widened rather than shrank                                           |
+| `q2/harness-level-env-file-enforcement-gap.md`   | NARROWED       | retitled; Cursor/Amazon Q halves moot, Codex half survives, OpenCode joins it — the original excused OpenCode on an unrelated ground                                       |
+| `q2/ose-private-opencode-ci-monitor-orphan.md`   | NARROWED       | dropped mirrors and the deleted `.opencode/commands                                                                                                                        | skills` counter-examples corrected; ose-public solved the Codex sibling by declaring it vendored |
+| `q2/refresh-agent-illustrative-example-paths.md` | NARROWED       | the ~183-hit count is stale across a changed mirror set — recount before acting                                                                                            |
+| `q2/vendor-audit-kiro-term.md`                   | FALSE-POSITIVE | matched on the very terms it exists to catch. DD-3 keeps dropped-harness tokens in the scanner deliberately — the scanner guards vendor-neutral prose, not the binding set |
+
+**A term-based sweep matches the brief that exists to catch those terms.** `vendor-audit-kiro-term`
+is a false positive by construction: any pattern broad enough to find briefs _about_ dropped
+harnesses also finds the brief about _detecting mentions of_ dropped harnesses. Worth expecting
+rather than re-deriving — the sweep is a candidate list, and the verdict column is where the
+judgement lives.
+
+## Phase 9 notes
+
+**P9.1 was already satisfied before Phase 9 started.** The `sst/opencode` → `anomalyco/opencode`
+citation was corrected during the Phase 3 prose sweep, so the acceptance criterion "returns nothing
+after the edit, where it returned at least one match before" had no before-state left to observe.
+Falsifiability was proven instead by injecting a probe file, confirming the search returns a match,
+removing it, and confirming exit 1. Class fix, no per-site edit needed.
+
+**The acceptance clause as written can never pass.** `git grep -c "sst/opencode" -- . ':!worktrees'
+':!node_modules' ':!plans/done'` includes this plan's own `delivery.md`, which contains the search
+string twice as literal command text, and `README.md`, which narrates the move. Any plan whose
+acceptance criterion greps for a token it also documents needs `':!<its own folder>'` in the
+pathspec, or the gate is unsatisfiable by construction. Recorded as a deviation: the verified form
+excludes `plans/in-progress/update-harness-support`.
+
+**Writing a narrowing note reintroduces the token you swept for.** The first draft of the
+catalog-drift narrowing spelled the old organization path to explain the correction, which put the
+match straight back. Re-run the sweep command **after** writing the note, not only before.
+
+**Three stale converter paths, found while editing the neighbouring line.** The catalog cited
+`apps/rhino-cli/src/internal/agents/converter.rs` for `convert_color`, `convert_model`, and
+`convert_permission`; that directory does not exist and the file lives under `application/`. No
+validator covers a prose file path, which is exactly the gap
+[doc-command-existence-validation](../../ideas/q2-not-urgent-important/doc-command-existence-validation.md)
+describes for commands.
+
+**Bash tool edits trip `guard-env-file-access` on content, not just targets.** A `python3` heredoc
+rewriting an ideas brief was blocked because the _text being written_ contained the restricted-tier
+filenames. The file under edit was a markdown brief, not an env file. Use the Edit tool for prose
+that quotes those names; the guard reads the command string.

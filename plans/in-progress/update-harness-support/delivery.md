@@ -1196,27 +1196,27 @@ is the worst outcome, so each states the class plainly.
 
 ## Phase 9: OpenCode v1 Conformance and the Deferred Idea Briefs
 
-- [ ] [AI] Correct every citation of the OpenCode upstream repository from the former organization
+- [x] [AI] Correct every citation of the OpenCode upstream repository from the former organization
       path to `anomalyco/opencode`
       — command: `git grep -n "sst/opencode" -- . ':!worktrees' ':!node_modules' ':!plans/done'`
       — acceptance: returns nothing after the edit, where it returned at least one match before (the
       catalog's `opencode#6635` citation is one known site).
-- [ ] [AI] Confirm the plural `.opencode/agents/` directory name is correct and record why in the
+- [x] [AI] Confirm the plural `.opencode/agents/` directory name is correct and record why in the
       catalog's OpenCode row footnote — the singular form was a CLI bug since fixed. Note that
       `.opencode/commands/` was the correct path for commands but that this repository ships none
       after Phase 6e
       — acceptance: `test -d .opencode/agents` exits 0, `test -d .opencode/commands` exits non-zero
       (deleted in Phase 6e), and the footnote states both facts.
-- [ ] [AI] Record the v1 deprecation in the OpenCode row footnote: the `theme`, `keybinds`, and `tui`
+- [x] [AI] Record the v1 deprecation in the OpenCode row footnote: the `theme`, `keybinds`, and `tui`
       keys moved out of `opencode.json` into `tui.json`
       — command: `jq -r 'keys[]' .opencode/opencode.json`
       — acceptance: the output contains none of `theme`, `keybinds`, `tui`; if it does, remove them
       in this step and re-run `npm run validate:sync`.
-- [ ] [AI] Record in the catalog that OpenCode's `permission` model (allow/ask/deny per action, with
+- [x] [AI] Record in the catalog that OpenCode's `permission` model (allow/ask/deny per action, with
       bash sub-patterns, last matching rule wins) is SEPARATE from `tools` (capability on/off), and
       that this repository's generated mirrors emit `permission`
       — acceptance: the distinction appears in the Tool Translation section of the catalog.
-- [ ] [AI] Create `plans/ideas/q2-not-urgent-important/opencode-v2-migration.md` as a two-pager
+- [x] [AI] Create `plans/ideas/q2-not-urgent-important/opencode-v2-migration.md` as a two-pager
       following the shape of its sibling briefs in that folder. It MUST record the full v2 rename
       set: `agent`→`agents`, `prompt`→`system`, `disable`→`disabled`, permission `bash`→`shell`,
       `task`→`subagent`, `mcp`→`mcp.servers`, `command`→`commands`, `snapshot`→`snapshots`,
@@ -1226,12 +1226,12 @@ is the worst outcome, so each states the class plainly.
       — acceptance: the file exists, contains all eleven renames, and
       `test -d plans/backlog/opencode-v2-migration` exits non-zero — this is an idea, NOT a backlog
       plan.
-- [ ] [AI] Before creating either file, scan `plans/ideas/README.md` and the existing Q2 briefs for an
+- [x] [AI] Before creating either file, scan `plans/ideas/README.md` and the existing Q2 briefs for an
       overlapping brief per the Integrate-Before-You-Add rule
       — acceptance: the scan result is recorded in `learnings.md`; the two known harness-adjacent
       briefs (`harness-binding-catalog-drift`, `harness-converter-preserve-agent-mode`) are each
       assessed and found non-overlapping, or the v2 content is folded into one of them instead.
-- [ ] [AI] Create `plans/ideas/q2-not-urgent-important/vendor-neutral-canonical-source.md` as a
+- [x] [AI] Create `plans/ideas/q2-not-urgent-important/vendor-neutral-canonical-source.md` as a
       two-pager following the same shape. It captures the user's deferred decision to move the
       canonical source out of `.claude/` into a vendor-neutral location so that **no harness is
       privileged and every harness — Claude Code included — becomes a generated mirror**. It MUST
@@ -1247,18 +1247,18 @@ is the worst outcome, so each states the class plainly.
       — acceptance: the file exists, contains all four items, and
       `test -d plans/backlog/vendor-neutral-canonical-source` exits non-zero — this is an idea, NOT a
       backlog plan and NOT part of this plan's scope.
-- [ ] [AI] Add **both** new briefs to the Q2 section of `plans/ideas/README.md` in the same one-line
+- [x] [AI] Add **both** new briefs to the Q2 section of `plans/ideas/README.md` in the same one-line
       annotated form the other entries use, each in alphabetical position
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       — acceptance: exits 0 and the Q2 list contains both `opencode-v2-migration` and
       `vendor-neutral-canonical-source`.
-- [ ] [AI] Narrow `plans/ideas/q2-not-urgent-important/harness-binding-catalog-drift.md`: its
+- [x] [AI] Narrow `plans/ideas/q2-not-urgent-important/harness-binding-catalog-drift.md`: its
       Windsurf/Devin and Copilot findings are moot with those harnesses dropped, and its Codex
       finding is resolved by Phase 4. Keep its durable cautionary note about the audit summary
       disagreeing with its report body
       — acceptance: the brief states which findings this plan closed and which remain, and its
       `plans/ideas/README.md` one-liner is updated to match.
-- [ ] [AI] Enumerate **every** remaining `plans/ideas/**` brief whose premise names a harness this
+- [x] [AI] Enumerate **every** remaining `plans/ideas/**` brief whose premise names a harness this
       plan drops and narrow each one the same way — `origin/main` adds ideas continuously, so fix the
       class, not only the briefs this plan happens to name
       — command: `git grep -ilE "\\.cursor/|\\.amazonq/|\\.pi/|\\.kiro/|Amazon Q|Antigravity|Windsurf|Junie|Aider" -- plans/ideas | tee local-tmp/harness-ideas-sweep.txt`
@@ -1274,7 +1274,7 @@ is the worst outcome, so each states the class plainly.
       `q2-not-urgent-important/governance-command-name-reconciliation.md` — treat that list as a floor,
       never as the whole set.
 
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-conformance.feature`
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-conformance.feature`
       carrying the US-7 `@opencode-conformance` scenarios from `prd.md`; index it in
       `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
@@ -1287,17 +1287,17 @@ is the worst outcome, so each states the class plainly.
 
 > All checks below must pass before starting Phase 10.
 
-- [ ] [AI] `git grep -c "sst/opencode" -- . ':!worktrees' ':!node_modules' ':!plans/done'` — no match.
-- [ ] [AI] `test -f plans/ideas/q2-not-urgent-important/opencode-v2-migration.md` — exits 0.
-- [ ] [AI] `test -f plans/ideas/q2-not-urgent-important/vendor-neutral-canonical-source.md` — exits 0.
-- [ ] [AI] `test -d plans/backlog/opencode-v2-migration` — exits non-zero.
-- [ ] [AI] `test -d plans/backlog/vendor-neutral-canonical-source` — exits non-zero.
-- [ ] [AI] `wc -l < local-tmp/harness-ideas-sweep.txt` reports a non-zero count, and every path it
+- [x] [AI] `git grep -c "sst/opencode" -- . ':!worktrees' ':!node_modules' ':!plans/done'` — no match.
+- [x] [AI] `test -f plans/ideas/q2-not-urgent-important/opencode-v2-migration.md` — exits 0.
+- [x] [AI] `test -f plans/ideas/q2-not-urgent-important/vendor-neutral-canonical-source.md` — exits 0.
+- [x] [AI] `test -d plans/backlog/opencode-v2-migration` — exits non-zero.
+- [x] [AI] `test -d plans/backlog/vendor-neutral-canonical-source` — exits non-zero.
+- [x] [AI] `wc -l < local-tmp/harness-ideas-sweep.txt` reports a non-zero count, and every path it
       lists has exactly one verdict row under `## Ideas-tree verdicts` in `learnings.md` — proving the
       ideas-tree sweep ran rather than silently matching nothing.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       — exits 0.
-- [ ] [AI] `npm run validate:sync` — exits 0.
+- [x] [AI] `npm run validate:sync` — exits 0.
 
 > **Pause Safety**: OpenCode's claims describe v1 stable accurately, and both deferred moves — the
 > OpenCode v2 migration and the vendor-neutral canonical source — are captured as promotable briefs
