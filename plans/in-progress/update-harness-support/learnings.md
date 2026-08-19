@@ -428,3 +428,60 @@ generating.
 6.20 re-confirmed after the commit: `git status --porcelain -uall .opencode` returns 0 lines, and
 `git ls-files .opencode/skills .opencode/commands` returns 0 — the pre-commit binding regeneration
 did not resurrect either tree.
+
+## Phase 7 notes
+
+**7.14 — the check that would have caught `.opencode/skills/` the day it appeared.**
+Run against the real repository with the release binary:
+
+| Step                                                      | Command                      | Exit                                        |
+| --------------------------------------------------------- | ---------------------------- | ------------------------------------------- |
+| baseline                                                  | `harness ownership validate` | 0                                           |
+| probe present (`git add .opencode/skills/probe/SKILL.md`) | `harness ownership validate` | 1, naming `.opencode/skills/probe/SKILL.md` |
+| probe removed (`git rm -f`)                               | `harness ownership validate` | 0                                           |
+
+`git status --porcelain -uall .opencode` returns 0 afterwards, so the probe left nothing behind.
+
+**7.15 — each class is enforced independently.**
+
+| Probe                                                                | Command                      | Exit                                                                                                                      | Why                                                                              |
+| -------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| (a) GENERATED edit — `.opencode/agents/agent-maker.md`               | `harness ownership validate` | 1, `❌ Agent: agent-maker`                                                                                                | a generated file must reproduce byte-for-byte                                    |
+| (b) VENDORED edit — `.agents/skills/caveman/SKILL.md`                | `harness ownership validate` | 0, file still present                                                                                                     | a vendored path has no in-repo source to compare against, and nothing deletes it |
+| (c) SOURCE target — `.opencode/agents` temporarily declared `source` | `harness bindings generate`  | 1, `refusing to generate: harness "opencode" would write to ".opencode/agents", which ".opencode/agents" declares source` | the emitter refuses before the first write                                       |
+
+Each probe was restored (`git checkout --` / config restored from a backup) and the validator
+re-run at exit 0 before the next probe.
+
+**A generated-class probe must target an emitted file, not any file in the mirror.** The first
+attempt at (a) edited `.opencode/agents/README.md` and the validator exited **0** — correctly, since
+the README is not one of the byte-guarded agent mirrors. A probe that picks `git ls-files <dir> |
+head -1` can therefore certify nothing while looking like a pass. Same false-zero class as the
+benchmark-harness case: assert the probe changed the thing the check actually guards.
+
+**US-8's Gherkin splits across two feature files.** Four scenarios exercise
+`harness ownership validate` and live in `harness/harness-ownership.feature`; the fifth asserts that
+there is no fourth class and no reason-less vendored declaration, which is a `repo-config validate`
+claim, so it lives in `repo-config-validate/repo-config-validate.feature` beside the other schema
+scenarios. Each runner then keeps exactly one step-definition set.
+
+**The per-class count line prints only under `--verbose`.** The default text reporter emits the
+pass/fail tally alone, so an acceptance clause that greps for the class counts must pass
+`--verbose` or it reads as a missing line rather than a passing check.
+
+**7.18 — the path-gated declaration was observed firing, in both directions.** Run in an isolated
+no-origin git fixture whose gate registry contains only `harness-ownership`, triggered on `.codex/`:
+
+| Staged change        | Output                             | Exit                                        |
+| -------------------- | ---------------------------------- | ------------------------------------------- |
+| `.codex/config.toml` | `Running gate harness-ownership`   | 1 (the fixture has no bindings to validate) |
+| `README.md` only     | no `harness-ownership` line at all | 0                                           |
+
+The full-registry fixture aborts at the first failing gate (`test-quick`, which cannot run outside
+an Nx workspace), so the registry has to be reduced to the gate under test before the line can be
+observed. A `path-gated` declaration that is never exercised is indistinguishable from a passing one.
+
+**A `--help`-shaped exit code is not the command's exit code.** `repo-governance word-budget
+validate` does not exist — the command is `governance word-budget validate` — and clap's
+unrecognized-subcommand error exits **2**, which reads exactly like a validator failure. Confirm the
+subcommand exists before treating its exit code as a verdict.

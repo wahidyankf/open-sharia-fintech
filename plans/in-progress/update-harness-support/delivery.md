@@ -854,9 +854,9 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 - [x] [AI] Commit thematically: Codex defect correction, Codex emitter, skills surface — acceptance:
       three Conventional Commits.
-- [ ] [AI] Push to the existing branch: `git push` — acceptance:
+- [x] [AI] Push to the existing branch: `git push` — acceptance:
       `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
-- [ ] [AI] Poll CI every 2 minutes until the PR's checks are green — acceptance: `gh pr checks`
+- [x] [AI] Poll CI every 2 minutes until the PR's checks are green — acceptance: `gh pr checks`
       reports all checks passing. Fix any failure at the root cause before starting Phase 7.
 
 ---
@@ -880,13 +880,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 
 ### 7a — Declare the classification in the registry
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/repo_config_validate.rs` asserting
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/repo_config_validate.rs` asserting
       every harness entry declares an ownership class for each path it claims, and that the three
       legal classes are exactly `generated`, `vendored`, `source`
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails because no ownership field exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Extend `HarnessEntry` in
+- [x] [AI] **GREEN**: Extend `HarnessEntry` in
       `apps/rhino-cli/src/application/repo_config/mod.rs` with an ownership declaration, and populate
       it in `repo-config.yml` for every binding path. A `vendored` entry additionally requires a
       non-empty `reason` string; `deny_unknown_fields` stays on, so a fourth class value is a hard
@@ -894,7 +894,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes; a fixture declaring `tier: vendored` without a `reason`
       exits non-zero, and a fixture declaring a fourth class name fails to deserialize.
-- [ ] [AI] **REFACTOR**: Express each declaration as one line per path with the reason inline, so a
+- [x] [AI] **REFACTOR**: Express each declaration as one line per path with the reason inline, so a
       reader can tell why a path is exempt from generation without leaving the file
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass and every `vendored` declaration carries a reason.
@@ -904,23 +904,23 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 Each item below closes a specific gap this plan's own design opened or inherited. A half-owned file
 is the worst outcome, so each states the class plainly.
 
-- [ ] [AI] Declare `.claude/**` and the root instruction files `AGENTS.md` and `CLAUDE.md` as
+- [x] [AI] Declare `.claude/**` and the root instruction files `AGENTS.md` and `CLAUDE.md` as
       **SOURCE** — hand-authored and canonical, the thing everything else is generated from
       — acceptance: `repo-config.yml` declares all three paths as `source`; the emitter treats a
       `source` path as read-only and a test asserts `harness bindings generate` writes to none of
       them.
-- [ ] [AI] Declare `.opencode/agents/**`, `.codex/agents/**`, and the emitter-owned subdirectories of
+- [x] [AI] Declare `.opencode/agents/**`, `.codex/agents/**`, and the emitter-owned subdirectories of
       `.agents/skills/**` as **GENERATED**
       — acceptance: for each, regenerating reproduces the file byte-for-byte and a hand edit fails
       `harness bindings validate` — already proven by the Phase 5 and Phase 6 probes, now expressed
       as a declared class rather than three separate guards.
-- [ ] [AI] Declare the eight vendored `.agents/skills/<name>/` directories as **VENDORED** with the
+- [x] [AI] Declare the eight vendored `.agents/skills/<name>/` directories as **VENDORED** with the
       reason `third-party plugin skills; no in-repo source; cannot be regenerated`. This declaration
       **replaces** the special-case treatment they had — the word-budget exclusion list stops being
       the place their status is recorded and becomes a consequence of the class
       — acceptance: `repo-config.yml` declares all eight as `vendored` with a reason, and the Phase 6
       byte-identity check now reads as a class invariant rather than a one-off assertion.
-- [ ] [AI] **Resolve `.codex/config.toml` ownership explicitly — no half-ownership.** Phase 5 gave it
+- [x] [AI] **Resolve `.codex/config.toml` ownership explicitly — no half-ownership.** Phase 5 gave it
       a delimited generated region (DD-5) while `[mcp_servers.nx-mcp]`, `[features]`, and
       `[agents.ci-monitor-subagent]` stay hand/tooling-maintained. Declare the file **VENDORED with a
       generated region**, meaning: the emitter owns the delimited region only and the validator checks
@@ -929,14 +929,14 @@ is the worst outcome, so each states the class plainly.
       Nx-tooling provenance and the delimited-region carve-out; `harness bindings validate` exits
       non-zero after an edit **inside** the markers and exits 0 after an equivalent edit **outside**
       them, proving the ownership boundary is real in both directions.
-- [ ] [AI] Declare `.codex/ci-monitor-subagent.toml` as **VENDORED** with the reason naming its
+- [x] [AI] Declare `.codex/ci-monitor-subagent.toml` as **VENDORED** with the reason naming its
       tooling provenance and the fact that `.codex/config.toml` points at it by `config_file`
       — acceptance: declared with a reason; `npm run generate:bindings` followed by
       `git diff --quiet .codex/ci-monitor-subagent.toml` exits 0.
-- [ ] [AI] Declare `.opencode/opencode.json` as **VENDORED** with the reason naming its provenance
+- [x] [AI] Declare `.opencode/opencode.json` as **VENDORED** with the reason naming its provenance
       — acceptance: declared with a reason; `npm run generate:bindings` followed by
       `git diff --quiet .opencode/opencode.json` exits 0.
-- [ ] [AI] Confirm `.opencode/commands/` needs no class because Phase 6e deleted it, and record that
+- [x] [AI] Confirm `.opencode/commands/` needs no class because Phase 6e deleted it, and record that
       outcome as the class decision rather than an omission: the tree was **unowned**, which is
       precisely why it was deleted rather than declared
       — acceptance: `git ls-files .opencode/commands | grep -c .` returns 0, and no ownership
@@ -944,12 +944,12 @@ is the worst outcome, so each states the class plainly.
 
 ### 7c — Build the validator
 
-- [ ] [AI] **RED**: Add a failing test asserting the validator enumerates every tracked file under
+- [x] [AI] **RED**: Add a failing test asserting the validator enumerates every tracked file under
       every declared binding directory and fails naming a file it cannot classify
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails; no classification validator exists.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Implement `harness ownership validate` in
+- [x] [AI] **GREEN**: Implement `harness ownership validate` in
       `apps/rhino-cli/src/application/agents/ownership.rs` with its command adapter at
       `apps/rhino-cli/src/commands/harness_validate_ownership.rs`, wired into
       `apps/rhino-cli/src/cli.rs`. It enumerates via the git index (tracked files only, so a local
@@ -957,21 +957,21 @@ is the worst outcome, so each states the class plainly.
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness ownership validate`
       — acceptance: exits 0 against the classified tree, listing a per-class count that sums to the
       total tracked binding-file count.
-- [ ] [AI] **REFACTOR**: Reuse the existing finding formatter rather than adding a new report shape
+- [x] [AI] **REFACTOR**: Reuse the existing finding formatter rather than adding a new report shape
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass; the output renders through the shared reporter.
-- [ ] [AI] **Prove falsifiability in both directions — the check that would have caught
+- [x] [AI] **Prove falsifiability in both directions — the check that would have caught
       `.opencode/skills/` the day it appeared**: create `.opencode/skills/probe/SKILL.md`, run the
       validator, then `rm -rf .opencode/skills`
       — acceptance: exits **non-zero naming `.opencode/skills/probe/SKILL.md` as unclassified** while
       it exists, and exits **0** after the `rm`. A validator that only ever exits 0 certifies nothing.
-- [ ] [AI] Prove each class is independently enforced, restoring the tree after each probe: (a) hand-edit
+- [x] [AI] Prove each class is independently enforced, restoring the tree after each probe: (a) hand-edit
       a GENERATED file — validate fails; (b) hand-edit a VENDORED file — validate still passes, because
       vendored files are not byte-guarded, and `git checkout` restores it; (c) attempt to have the
       emitter write to a SOURCE path — the write is refused
       — acceptance: all three observations recorded in `learnings.md` with the exact commands and exit
       codes.
-- [ ] [AI] Run the full regeneration and confirm VENDORED byte-identity, folding in the Phase 6a
+- [x] [AI] Run the full regeneration and confirm VENDORED byte-identity, folding in the Phase 6a
       baseline: `npm run generate:bindings && git ls-files .agents .codex .opencode | xargs shasum -a 256`
       — acceptance: all 24 vendored `.agents/` hashes plus `.codex/ci-monitor-subagent.toml` and
       `.opencode/opencode.json` match their recorded baselines byte-for-byte. This single check
@@ -980,24 +980,24 @@ is the worst outcome, so each states the class plainly.
 
 ### 7d — Wire it into the gates
 
-- [ ] [AI] Declare the gate in the `gates:` section of `repo-config.yml`: `type: check`,
+- [x] [AI] Declare the gate in the `gates:` section of `repo-config.yml`: `type: check`,
       `command: harness ownership validate`, `kind: rhino-cli`, `ci-group: governance`, with
       `pre-push` and `ci` both `path-gated` on `.claude/`, `.opencode/`, `.codex/`, `.agents/`,
       `AGENTS.md`, `CLAUDE.md`, `repo-config.yml`. Path-gating is correct here — unlike a time-based
       check, this one genuinely depends on which paths changed
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — acceptance: exits 0 and the new gate appears in the emitted CI wiring.
-- [ ] [AI] Verify the path-gated declaration actually fires rather than reading as green while never
+- [x] [AI] Verify the path-gated declaration actually fires rather than reading as green while never
       running: stage a change under `.codex/` in an isolated no-origin git fixture and confirm
       `Running gate harness-ownership` appears in the output
       — acceptance: the line appears; a never-exercised `path-gated` declaration is indistinguishable
       from a passing one and must not be trusted unproven.
-- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`
+- [x] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/harness-ownership.feature`
       carrying the US-8 scenarios from `prd.md`, and index it in `harness/README.md`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 and `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Document the three classes in
+- [x] [AI] Document the three classes in
       `repo-governance/conventions/structure/multi-harness-binding.md` as a binding rule, and in
       `docs/reference/platform-bindings.md` as the reason every path in the catalog carries a class
       — acceptance: both documents name all three classes and state that there is no fourth class and
@@ -1008,14 +1008,14 @@ is the worst outcome, so each states the class plainly.
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness ownership validate`
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness ownership validate`
       — exits 0, and exits non-zero naming the file under the unclassified-probe above.
-- [ ] [AI] Every path named in 7b has a declared class in `repo-config.yml`, and every `vendored`
+- [x] [AI] Every path named in 7b has a declared class in `repo-config.yml`, and every `vendored`
       declaration carries a non-empty reason — verified by reading the block, not by a count.
-- [ ] [AI] `npm run generate:bindings && git diff --quiet` — exits 0, proving classification did not
+- [x] [AI] `npm run generate:bindings && git diff --quiet` — exits 0, proving classification did not
       disturb generation.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — exits 0, and the path-gated trigger was observed firing.
 
 > **Pause Safety**: every tracked file under every surviving binding directory carries exactly one
