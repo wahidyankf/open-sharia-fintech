@@ -66,4 +66,4 @@ a threshold to paper over a bloated file.
 ## Children
 
 - [Vision and Principles](./governance-word-budget/vision-and-principles.md) — vision alignment, principles implemented, and related conventions.
-- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The seven path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.
+- [Excluded Prefixes](./governance-word-budget/excluded-prefixes.md) — The thirteen path prefixes the word-budget gate excludes, and why. Use when checking whether a file is actually measured.

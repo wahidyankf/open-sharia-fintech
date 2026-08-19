@@ -1,6 +1,6 @@
 ---
 title: "Excluded Prefixes"
-description: The seven path prefixes the word-budget gate excludes, and why.
+description: The thirteen path prefixes the word-budget gate excludes, and why.
 when_to_use: Use when checking whether a file is actually measured.
 category: explanation
 subcategory: conventions
