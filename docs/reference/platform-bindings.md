@@ -202,6 +202,17 @@ the subdirectory feature request as _not planned_
 `.claude/agents/` into subfolders is safe only because `rhino-cli harness bindings generate` flattens
 every generated mirror; a mirror consumer that assumed the source shape would break silently.
 
+**Why the directory is `.opencode/agents/` and not `.opencode/agent/`:** the plural form is correct.
+The singular name was an OpenCode CLI bug, since fixed. `.opencode/commands/` — also plural — was
+likewise the correct path for commands, but this repository ships none: the command tree was deleted
+as accepted capability loss (see above), so `.opencode/agents/` exists here and `.opencode/commands/`
+does not.
+
+**OpenCode v1 moved presentation keys out of `opencode.json`:** `theme`, `keybinds`, and `tui` now
+live in `tui.json`. This repository's `opencode.json` declares `$schema`, `mcp`, `model`,
+`permission`, `provider`, `small_model`, and `tools` — none of the three deprecated keys — so no
+migration is outstanding.
+
 ## Translation Artifacts
 
 Mechanical translations that platform bindings apply when generating output from upstream sources.
@@ -213,7 +224,7 @@ The Claude Code binding uses named color strings (`blue`, `green`, `yellow`, `pu
 agent frontmatter. OpenCode uses theme tokens (`primary`, `success`, `warning`, `secondary`, etc.).
 
 - **Source**: `.claude/agents/<name>.md` frontmatter `color:` field
-- **Transform**: `convert_color` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_color` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `color:` field
 - **Policy**: [Platform Binding Color Translation](../../repo-governance/development/agents/ai-agents/agent-color-categorization.md#platform-binding-color-translation)
   ("Platform Binding Color Translation" subsection)
@@ -236,7 +247,7 @@ Claude Code agent frontmatter uses short aliases (`sonnet`, `haiku`) or omits `m
 planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
 
 - **Source**: `.claude/agents/<name>.md` frontmatter `model:` field
-- **Transform**: `convert_model` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_model` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `model:` field
 - **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
   ("Platform Binding Examples" section)
@@ -253,8 +264,15 @@ Claude Code agent frontmatter lists tools as an array of string names. OpenCode 
 `permission` object mapping each tool to `allow`/`ask`/`deny` (the older boolean flag form
 `tools: { read: true, … }` is deprecated/legacy and no longer emitted).
 
+`permission` and `tools` are **separate models in OpenCode, not two spellings of one setting**.
+`tools` is a capability switch — whether an action exists for the agent at all. `permission` is a
+per-action verdict of `allow`, `ask`, or `deny`, it supports sub-patterns for bash (so
+`git push *` can be denied while the rest of bash stays allowed), and **the last matching rule
+wins**, which makes declaration order significant. This repository's generated mirrors emit
+`permission`; `tools` appears only in the vendored `opencode.json`, never in an emitted agent file.
+
 - **Source**: `.claude/agents/<name>.md` frontmatter `tools:` array
-- **Transform**: `convert_permission` in `apps/rhino-cli/src/internal/agents/converter.rs`
+- **Transform**: `convert_permission` in `apps/rhino-cli/src/application/agents/converter.rs`
 - **Sink**: `.opencode/agents/<name>.md` frontmatter `permission:` map (`read: allow`, `write: allow`, etc.)
 
 ## Adding a New Platform Binding
