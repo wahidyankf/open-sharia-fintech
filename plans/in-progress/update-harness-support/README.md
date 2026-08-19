@@ -145,7 +145,7 @@ edges are pushes to the already-open PR, not new PRs.
 | [prd.md](./prd.md)             | WHAT — personas, user stories, Gherkin acceptance criteria, scope    |
 | [tech-docs.md](./tech-docs.md) | HOW — architecture, design decisions, file-impact tree, rollback     |
 | [delivery.md](./delivery.md)   | DO — the phased checklist with gates, executor tags, and TDD cycles  |
-| [learnings.md](./learnings.md) | Running Knowledge-Capture log, triaged in Phase 11 before archival   |
+| [learnings.md](./learnings.md) | Running Knowledge-Capture log, triaged in Phase 12 before archival   |
 
 ## Related
 

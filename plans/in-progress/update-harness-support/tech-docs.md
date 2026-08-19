@@ -259,7 +259,7 @@ failure rather than a discovery.
 - _Symlink `.agents/skills/<name>` → `../../.claude/skills/<name>`_ — rests on unverified Codex
   behaviour; would have required a manual behavioural assertion and a fallback plan.
 - _The officially-documented direction (`.agents/` canonical, `.claude/skills/<name>` symlinked)_ —
-  relocates 60 skill directories and 545 tracked files out of `.claude/`, and every `.claude/`-walking
+  relocates 59 skill directories and 545 tracked files out of `.claude/`, and every `.claude/`-walking
   gate then sees an empty skills tree because Rust walkers do not follow symlinks by default.
 
 **Accepted cost**: roughly 545 additional tracked files. This is the same order as the
@@ -357,7 +357,7 @@ data. The prose is genuine explanation with no data source. Generating it would 
 templating layer for content that changes rarely and deliberately.
 
 **Prettier hazard**: a generated markdown region inside a Prettier-formatted file is the exact class
-of failure recorded in the 2026-05-03 Amazon Q post-mortem. Phase 8 measures the round trip
+of failure recorded in the 2026-05-03 Amazon Q post-mortem. Phase 10 measures the round trip
 (`generate` → `prettier --write` → `git diff --quiet`) before wiring the guard, and takes one of two
 outcomes: make the emitter produce Prettier-stable output, or add the catalog to `.prettierignore`
 alongside the existing `.amazonq/` entry. The measurement decides; neither is pre-committed.
@@ -580,9 +580,9 @@ Amazon Q's JSON today [Repo-grounded].
   against `ose-public` `main` with a hard `exit 1`. An unpaired merge turns it red.
 
 **Ordering**: Phase 1 → 2 → 3 must be sequential (registry, then removal, then prose). Phases 4-6 must
-follow Phase 1 (the Codex entry must exist at the generated tier before the emitter is wired). Phase 8
-must follow Phases 1-7 (the catalog generator renders whatever the registry finally declares). Phases
-9 and 10 are independent of each other.
+follow Phase 1 (the Codex entry must exist at the generated tier before the emitter is wired). Phase 10
+must follow Phases 1-9 (the catalog generator renders whatever the registry finally declares). Phases
+11 and 12 are independent of each other.
 
 ## File-Impact Analysis
 
@@ -613,7 +613,7 @@ repo-config.yml                                                          [E] har
 
 .opencode/
 ├── agents/                                                              [G] regenerated; agents unchanged in count
-├── opencode.json                                                        [E] confirm no deprecated theme/keybinds/tui keys (Phase 7)
+├── opencode.json                                                        [E] confirm no deprecated theme/keybinds/tui keys (Phase 9)
 ├── skills/                                                              [D] entire tree, 7 dirs / 16 files (DD-8, accepted capability loss)
 └── commands/                                                            [D] monitor-ci.md, same provenance commit (DD-8)
 
@@ -632,7 +632,7 @@ repo-config.yml                                                          [E] har
 .pi/                                                                     [D] entire tree (1 tracked file)
 
 .prettierignore                                                          [E] drop .amazonq/; add .agents/ if Phase 6 measurement shows drift;
-                                                                             possibly add the catalog (Phase 8 measurement)
+                                                                             possibly add the catalog (Phase 10 measurement)
 
 apps/rhino-cli/
 ├── parity-manifest.sha256                                               [E] regenerated once, before the terminal paired merge
@@ -690,7 +690,7 @@ specs/apps/rhino/behavior/rhino-cli/gherkin/
 ├── harness/harness-sync-triage.feature                                  [N] content-hash triage + reviewed promotion (US-9)
 ├── harness/README.md                                                    [E] annotated index for the two new features
 ├── cursor-binding/                                                      [D] entire folder incl. README.md
-├── gate/parity-manifest.feature                                         [E] paired cross-repo landing (US-9)
+├── gate/parity-manifest.feature                                         [E] paired cross-repo landing (US-10)
 ├── governance/governance-word-budget.feature                            [E] surface list
 ├── repo-config/data-driven.feature                                      [E] three-entry registry
 ├── repo-governance/repo-governance-vendor-audit.feature                 [E] DD-3 rationale recorded
@@ -800,7 +800,7 @@ variations without mutating the real `repo-config.yml`.
 
 **Feature-change completeness**: the Gherkin files listed in the impact tree land in the **same PR**
 as the Rust changes they describe. `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature`
-is explicitly included because US-9 changes the cross-repo landing expectation it documents.
+is explicitly included because US-10 changes the cross-repo landing expectation it documents.
 
 **Vendored preservation is an integration-level assertion**, not a unit one: US-4b's byte-identity
 scenario runs a real double regeneration against a fixture tree and compares SHA-256 digests, because
@@ -822,11 +822,11 @@ Every phase is a separate commit inside a PR branch; no phase writes outside the
 | 3     | Revert the prose commit; no code depends on it                                                                                                                                                                             |
 | 4-5   | Revert; `.codex/` returns to two hand-maintained files and `forbid-dir` is restored. Note this restores a known-false assertion — prefer forward fix                                                                       |
 | 6     | Revert the commit; `git` restores the 16 deleted `.opencode/` files and removes the ~545 emitted `.agents/skills/` mirror files together. The 24 vendored `.agents/` files were never touched, so they need no restoration |
-| 7     | Revert; the idea brief is additive and can simply be deleted                                                                                                                                                               |
 | 7     | Remove the ownership gate entry and the class declarations; binding files return to being undeclared                                                                                                                       |
 | 8     | Remove the triage and promote commands; generation was already one-way, so nothing else changes — no data can have been lost, since promote never wrote to canonical source                                                |
-| 8     | Revert; the catalog returns to hand-written prose with its stale stamp                                                                                                                                                     |
-| 9     | Revert the surface list; the word budget returns to its previous surface set at the same threshold                                                                                                                         |
+| 9     | Revert; the idea brief is additive and can simply be deleted                                                                                                                                                               |
+| 10    | Revert; the catalog returns to hand-written prose with its stale stamp                                                                                                                                                     |
+| 11    | Revert the surface list; the word budget returns to its previous surface set at the same threshold                                                                                                                         |
 
 **Cross-repo rollback**: the whole plan lands as one PR per repository, so a post-merge revert is a
 single revert of that PR — performed in **both** repositories in the same session. A one-sided revert

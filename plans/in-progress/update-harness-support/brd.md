@@ -32,7 +32,9 @@ nothing unclassified.
   re-verification, and every parity sweep pays a tax proportional to the declared harness count, not
   the used harness count.
 - **Codex contributors work with a second-class binding.** Claude Code and OpenCode contributors get
-  107 generated agent definitions [Repo-grounded — `git ls-files .claude/agents` = 107]. Codex
+  93 generated agent definitions [Repo-grounded — `git ls-files .claude/agents | grep '\.md$' | grep
+  -v 'README\.md$'` = 93; the raw `git ls-files .claude/agents` count of 107 includes 14 `README.md`
+  index files with no `name:` frontmatter, which a name-keyed emitter cannot emit]. Codex
   contributors get two hand-maintained TOML files [Repo-grounded — `git ls-files .codex` = 2]. The
   same repository knowledge is available to one harness and not another.
 - **Silent decay.** The catalog is the decision surface for which binding files this repository
@@ -47,7 +49,7 @@ nothing unclassified.
 - Three harnesses at genuine parity, each generated from one source of truth.
 - 113 tracked binding files retired (`.cursor/` 93, `.amazonq/` 2, `.pi/` 1, `.opencode/skills/` 16,
   `.opencode/commands/` 1), plus their governance prose [Repo-grounded — `git ls-files` counts].
-- Roughly 652 generated files added in their place (`.codex/agents/` 107, the `.agents/skills/`
+- Roughly 638 generated files added in their place (`.codex/agents/` 93, the `.agents/skills/`
   mirror ~545) — a deliberate trade of hand-maintained surface for generated, byte-parity-guarded
   surface.
 - A binding tree in which every file has exactly one declared owner, so nothing can sit unnoticed the
@@ -65,7 +67,7 @@ nothing unclassified.
 | Repository maintainer (solo)     | Tracks three upstream conventions instead of eleven; owns vendor re-verification manually and cheaply, and is told by CI the moment any binding file becomes unowned                                                            |
 | Contributor driving Claude Code  | No change to daily workflow; `.claude/` remains the hand-authored source of truth                                                                                                                                               |
 | Contributor driving OpenCode     | Generated agent mirrors unchanged and upstream citation corrected; **loses** the seven Nx skill directories and the `/monitor-ci` command, with no fallback; gains a reviewed path to promote a mirror-side edit back to source |
-| Contributor driving Codex CLI    | Gains 107 generated agent definitions and a full real-file skills mirror; stops being blocked from creating the officially-correct `.codex/agents/` dir                                                                         |
+| Contributor driving Codex CLI    | Gains 93 generated agent definitions and a full real-file skills mirror; stops being blocked from creating the officially-correct `.codex/agents/` dir                                                                          |
 | Agents executing governance work | Read a catalog that is generated from declared data, so a claim and its machine-readable source can no longer disagree                                                                                                          |
 | `ose-private` maintainer         | Receives exactly one paired twin branch and PR for the whole plan; `apps/rhino-cli/**` byte-identity never breaks mid-plan                                                                                                      |
 
@@ -116,7 +118,7 @@ These are observable checks, not measured KPIs.
 | No automated check tells anyone a vendor moved, so an upstream change goes unnoticed           | Medium     | Medium | Accepted by decision. Mitigated structurally — eleven tracked upstream conventions become three — and the compatibility workflow remains runnable on demand for a manual check |
 | Dropping a harness someone silently depended on                                                | Low        | Medium | Solo-maintainer repository; the three survivors are user-confirmed. Re-adding a native-tier harness is a one-line registry entry                                               |
 | `ose-private` twin drifts and the nightly parity audit goes red after a one-sided merge        | Medium     | High   | Exactly two PRs exist and they merge in the same session; the parity ritual is a checklist block before the merge, not a follow-up                                             |
-| Generated catalog fights Prettier and breaks byte-equality (the `.amazonq/` post-mortem class) | Medium     | Medium | Design the generator to emit Prettier-stable output OR add the catalog to `.prettierignore`, decided by measurement in Phase 8                                                 |
+| Generated catalog fights Prettier and breaks byte-equality (the `.amazonq/` post-mortem class) | Medium     | Medium | Design the generator to emit Prettier-stable output OR add the catalog to `.prettierignore`, decided by measurement in Phase 10                                                |
 
 ## Related
 

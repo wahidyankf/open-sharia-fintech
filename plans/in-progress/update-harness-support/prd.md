@@ -20,15 +20,18 @@ place (see `delivery.md` §Manual Behavioural Assertions).
 ## Personas
 
 **P1 — Solo maintainer (`wahidyankf`).** Owns every harness claim in the repository. Needs the
-maintenance cost of a claim to be proportional to its value, and needs to be told when a claim
-expires rather than discovering staleness by accident.
+maintenance cost of a claim to be proportional to its value: a single generated source of truth
+instead of eleven hand-maintained surfaces, total binding-file ownership with no unclassified
+residue, and a documented manual re-verification procedure to run on demand — not an automated
+freshness or expiry notification, which was designed and deliberately withdrawn because it times out
+this repository's own claims without ever inspecting a vendor (`tech-docs.md` DD-10, DD-11).
 
 **P2 — Delegated execution agent (execution-grade).** Reads `AGENTS.md` or `CLAUDE.md`, then whatever
 binding surface its harness exposes. Needs the surfaces it reads to exist, to be current, and to be
 identical in content across harnesses.
 
 **P3 — Contributor driving OpenAI Codex CLI.** Today gets two hand-maintained TOML files and a gate
-that forbids the officially-correct subagent directory. Needs the same 107 agent definitions the
+that forbids the officially-correct subagent directory. Needs the same 93 agent definitions the
 other two harnesses get, and a skills surface Codex can actually read.
 
 **P4 — Future maintainer re-verifying a harness row.** Needs to know when a claim was last checked
@@ -115,7 +118,7 @@ Feature: Codex agent definitions are generated from .claude/agents/
 
   @unit
   Scenario: Every Claude agent gets a Codex TOML counterpart
-    Given 107 tracked agent files under .claude/agents/ and 0 tracked files under .codex/agents/
+    Given 93 tracked agent files under .claude/agents/ (excluding README.md index files) and 0 tracked files under .codex/agents/
     When rhino-cli harness bindings generate runs
     Then .codex/agents/ contains one .toml file per .claude/agents/ agent, keyed on the agent name frontmatter rather than the source subfolder
     And each emitted file declares name, description, and developer_instructions
@@ -156,7 +159,7 @@ Feature: .agents/skills/ is a generated real-file mirror
 
   @unit
   Scenario: Every repository skill is mirrored as real files, not links
-    Given 60 skill directories and 545 tracked files under .claude/skills/ and 0 mirrored skill directories under .agents/skills/
+    Given 59 skill directories and 545 tracked files under .claude/skills/ and 0 mirrored skill directories under .agents/skills/
     When rhino-cli harness bindings generate runs
     Then .agents/skills/ contains one real directory per .claude/skills/ skill
     And find .agents/skills -type l returns zero results, proving no symlink was created in either direction
@@ -488,16 +491,16 @@ validate`, `sync validate`, `claude validate`, `audit`, plus new `catalog` and `
 
 ## Product Risks
 
-| Risk                                                                                                             | Mitigation                                                                                                                                                                                                                          |
-| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The `.agents/skills/` emitter clobbers the 24 vendored plugin files it did not create and cannot regenerate      | DD-7 declares the 8 vendored directories in the registry rather than inferring ownership; US-4b requires a byte-identical SHA-256 comparison across a double regeneration run                                                       |
-| OpenCode users lose Nx skill access when `.opencode/skills/` is deleted                                          | Accepted, not mitigated. DD-8 records it as a deliberate capability loss with the caveat stated plainly; remedy is deliberate restoration or `.claude/`-sourced equivalents                                                         |
-| Prettier reformats the ~545 emitted mirror files and breaks the byte-equality guard                              | Phase 6 measures the generate → format → validate round trip before wiring the guard, and adds `.agents/` to `.prettierignore` only if measurement shows drift                                                                      |
-| A generated 107-file `.codex/agents/` tree trips a gate nobody anticipated (README index, word budget, Prettier) | Phase 5's gate runs the full pre-push suite, not just the harness gates; the `.cursor/agents/` 93-file precedent is the sizing reference                                                                                            |
-| The catalog generator's output is not Prettier-stable, breaking byte-equality on the next commit                 | Phase 8 measures the round trip explicitly before wiring the guard; `.amazonq/` in `.prettierignore` is the documented precedent                                                                                                    |
-| No automated external-drift detection ships, so a vendor change goes unnoticed until someone looks               | Accepted by decision (`tech-docs.md` DD-11). Mitigated structurally: eleven declared harnesses become three, cutting the tracked upstream surface by roughly two thirds, and the compatibility workflow remains available on demand |
-| A promote silently drops canonical fields the editing harness cannot represent, losing data                      | Impossible by construction (`tech-docs.md` DD-13): promote never writes canonical source, emits a reviewable diff, and lists the at-risk fields computed from the field policy                                                      |
-| Detection scripts return false zeros and a sweep reads as complete when it is not                                | Every sweep clause states its pre-change count as well as its post-change count; ugrep, wrapped-checklist, and marker-first traps are named in `tech-docs.md` §Detection Traps                                                      |
+| Risk                                                                                                            | Mitigation                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The `.agents/skills/` emitter clobbers the 24 vendored plugin files it did not create and cannot regenerate     | DD-7 declares the 8 vendored directories in the registry rather than inferring ownership; US-4b requires a byte-identical SHA-256 comparison across a double regeneration run                                                       |
+| OpenCode users lose Nx skill access when `.opencode/skills/` is deleted                                         | Accepted, not mitigated. DD-8 records it as a deliberate capability loss with the caveat stated plainly; remedy is deliberate restoration or `.claude/`-sourced equivalents                                                         |
+| Prettier reformats the ~545 emitted mirror files and breaks the byte-equality guard                             | Phase 6 measures the generate → format → validate round trip before wiring the guard, and adds `.agents/` to `.prettierignore` only if measurement shows drift                                                                      |
+| A generated 93-file `.codex/agents/` tree trips a gate nobody anticipated (README index, word budget, Prettier) | Phase 5's gate runs the full pre-push suite, not just the harness gates; the `.cursor/agents/` 93-file precedent is the sizing reference                                                                                            |
+| The catalog generator's output is not Prettier-stable, breaking byte-equality on the next commit                | Phase 10 measures the round trip explicitly before wiring the guard; `.amazonq/` in `.prettierignore` is the documented precedent                                                                                                   |
+| No automated external-drift detection ships, so a vendor change goes unnoticed until someone looks              | Accepted by decision (`tech-docs.md` DD-11). Mitigated structurally: eleven declared harnesses become three, cutting the tracked upstream surface by roughly two thirds, and the compatibility workflow remains available on demand |
+| A promote silently drops canonical fields the editing harness cannot represent, losing data                     | Impossible by construction (`tech-docs.md` DD-13): promote never writes canonical source, emits a reviewable diff, and lists the at-risk fields computed from the field policy                                                      |
+| Detection scripts return false zeros and a sweep reads as complete when it is not                               | Every sweep clause states its pre-change count as well as its post-change count; ugrep, wrapped-checklist, and marker-first traps are named in `tech-docs.md` §Detection Traps                                                      |
 
 ## Related
 

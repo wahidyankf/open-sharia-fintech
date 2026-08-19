@@ -53,7 +53,7 @@ Consequences that bind every phase below:
 | 1-3      | Harness set contracts from eleven to three                   | no — pushes to the one PR |
 | 4-6      | Codex reaches generated parity; skills surface bridged       | no — pushes to the one PR |
 | 7-11     | Ownership + triage armed, catalog generated, budget extended | no — pushes to the one PR |
-| 11       | Knowledge Capture                                            | no — pushes to the one PR |
+| 12       | Knowledge Capture                                            | no — pushes to the one PR |
 | Archival | Review cycle, paired merge, archival                         | the single merge          |
 
 ## Single Delivery Boundary — the one PR per repository
@@ -175,10 +175,14 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       with `agent-dir: .opencode/agents`, `mirrors: .claude/agents`, and gains
       `instruction: [AGENTS.md]`. `codex` moves to `tier: generated` with
       `agent-dir: .codex/agents`, `mirrors: .claude/agents`, `config: .codex/config.toml`,
-      `skills-dir: .agents/skills`, `instruction: [AGENTS.md]`, and **no** `forbid-dir` key
+      `skills-dir: .agents/skills`, `instruction: [AGENTS.md]`, and **no** `forbid-dir` key. Also
+      delete the now-stale `#   forbid-dir  — directory that must NOT exist (source-config tier)`
+      line from the schema legend comment above the registry, since the `source-config` tier this
+      field belonged to no longer exists
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the Phase 1 RED test passes; `git grep -c "forbid-dir" repo-config.yml` returns
-      no match, where it returned 1 before the change.
+      no match, where it returned 2 before the change (the real key plus the schema legend
+      comment describing it).
 - [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/agents.rs` asserting
       `harness bindings generate --harness <name>` derives its accepted set from the registry rather
       than from string literals
@@ -195,7 +199,15 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `is_source_with_agents` / `is_generated_with_agents` predicates
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: all tests still pass and the string literals `"cursor"` and `"amazonq"` appear
-      zero times in `harness_generate_bindings.rs`, where they appeared 6 times before.
+      zero times in the match arms this GREEN step rewrote, lines 63-86 of
+      `harness_generate_bindings.rs` — `sed -n '63,86p' apps/rhino-cli/src/commands/harness_generate_bindings.rs | grep -ocE '"cursor"|"amazonq"'`
+      returns no match, where it returned 6 before (`-oc` counts each literal occurrence rather than
+      each matching line, since line 65 carries both `"cursor"` and `"amazonq"`). Scoped to the whole file rather than this line
+      range, the count is 8, not 6 — two more `"amazonq"` literals live in `#[test]` fixtures further
+      down the same file (`harness_amazonq_overrides_opencode_flag`,
+      `harness_amazonq_dry_run_via_run_reaches_dry_run_branch`) that this REFACTOR step does not
+      touch; they are removed later, at the `--opencode`/`--cursor`/`--amazonq` flag-removal step
+      below, which now names them explicitly.
 - [ ] [AI] Update `apps/rhino-cli/src/commands/repo_config_validate.rs` so a `generated`-tier entry
       is required to declare `mirrors`, and `source-config` is no longer an accepted tier value
       — command: `npx nx run rhino-cli:test:integration`
@@ -204,7 +216,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 - [ ] [AI] Rewrite `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-bindings.feature` from
       the "all 11 harnesses" framing to the three survivors at their tiers, carrying the US-1
       scenarios from `prd.md`
-      — acceptance: `git grep -c "11 harnesses" specs/` returns no match, where it returned 2 before;
+      — acceptance: `git grep -c "11 harnesses" specs/` returns no match, where it returned 1 before;
       `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
 - [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/harness-registry-driven.feature`
@@ -222,9 +234,13 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 - [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
       — exits 0.
-- [ ] [AI] `git grep -c "forbid-dir" repo-config.yml` — no match (returned 1 at baseline).
-- [ ] [AI] `awk '/^harness:/,/^doctor:/' repo-config.yml | grep -c "name:"` — returns 3 (returned 11
-      at baseline).
+- [ ] [AI] `git grep -c "forbid-dir" repo-config.yml` — no match (returned 2 at baseline: the real
+      key plus the schema legend comment).
+- [ ] [AI] `awk '/^harness:/,/^doctor:/' repo-config.yml | grep "name:" | grep -vc "agent-name:"` —
+      returns 3 (returned 11 at baseline). A plain `grep -c "name:"` on this block returns 12, not
+      11, because the `amazonq` entry's `agent-name: ose-default` field contains `name:` as a
+      substring; the `grep -vc "agent-name:"` filter excludes that collision so the count measures
+      harness entries (11), not `name:` substring occurrences (12).
 - [ ] [AI] `npx nx run rhino-cli:specs:gherkin-cardinality-validation` — exits 0.
 
 > **Pause Safety**: the registry declares three harnesses and every validator agrees with it, but the
@@ -248,11 +264,65 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       `.amazonq`, `.cursor`, `.windsurf`, `.junie`, `GEMINI.md`, `CONVENTIONS.md`.
   - _Suggested executor: `swe-rust-dev`_
 - [ ] [AI] **GREEN**: In `apps/rhino-cli/src/application/agents/bindings.rs`, shrink
-      `KNOWN_BINDING_DIRS` to the five survivors and delete `amazonq_agent_name`,
-      `agent_definition_content`, and the Amazon Q entries in `expected_bindings`
+      `KNOWN_BINDING_DIRS` to the five survivors, then delete every construct this shrink leaves
+      as Amazon-Q-only dead code — the whole symlink-protected two-file bridge emitter, which exists
+      only to write the Amazon Q rules pointer and agent definition and has no successor (Phase 5
+      builds Codex's emitter separately, as new code in `codex.rs`). Delete the constants
+      `AMAZONQ_RULES_POINTER`, `AMAZONQ_AGENT_DEFINITION_DIR`, and `RULES_POINTER_CONTENT`; the
+      functions `amazonq_agent_name`, `agent_definition_content`, `is_kebab_case_identifier`,
+      `emit_bindings`, `emit_bindings_no_follow`, `emit_bindings_with_metadata_checks`,
+      `open_repository_directory`, `open_or_create_directory`, `write_no_follow_file`,
+      `remove_stale_amazonq_definitions_no_follow`, `remove_stale_amazonq_definitions`,
+      `reject_symlinked_binding_path`, `is_emitter_managed_definition_at`, and
+      `is_emitter_managed_definition`; and the `EmitResult` struct. Delete the nine `#[test]`
+      functions that exercise only this dead subsystem, with no surviving equivalent:
+      `emit_writes_both_files_with_exact_bytes`, `emit_agent_definition_is_valid_json`,
+      `emit_is_idempotent`,
+      `emit_refuses_a_symlinked_amazonq_directory_without_writing_outside_repo`,
+      `emit_refuses_a_symlinked_definitions_directory_without_deleting_outside_repo`,
+      `emit_removes_stale_definition_after_configured_agent_rename`,
+      `emit_preserves_custom_definition_after_configured_agent_rename`,
+      `expected_bindings_is_single_source`, and
+      `expected_bindings_rejects_an_unsafe_configured_agent_name`. Also sweep every doc comment
+      naming Amazon Q: the module header's harness list, the `KNOWN_BINDING_DIRS` doc list, and the
+      `BindingFile` field's example path.
+
+      **Keep** `expected_bindings`, the `BindingFile` struct, and `validate_binding_file` — the
+      REFACTOR step below repurposes `expected_bindings` into the general function Phase 5 populates
+      with Codex files, so only its Amazon-Q-specific body (not its signature or its two callers) is
+      replaced by an empty-vector placeholder; retitle the `// Amazon Q bridge files` comment in
+      `validate_bindings` to name the transient empty state instead.
+
+      **Retarget, do not delete, seven tests that exercise genuine surviving behaviour** and would
+      otherwise be a silent coverage loss. `validate_fails_when_a_bridge_file_is_mutated` and
+      `validate_fails_when_a_bridge_file_is_missing` prove `validate_binding_file` detects a mutated
+      or missing generated file — a capability Phase 5 needs again for Codex files but adds no new
+      test for — so rewrite each to construct a `BindingFile` fixture directly and call
+      `validate_binding_file` on it, rather than routing through the deleted
+      `emit_bindings`/`expected_bindings` pipeline. `validate_passes_when_files_match`,
+      `validate_fails_when_present_dir_absent_from_catalog`,
+      `validate_passes_when_catalog_references_all_present_dirs`,
+      `validate_skips_catalog_check_for_absent_dirs`, and
+      `validate_fails_when_codex_agents_dir_exists` exercise the generic `KNOWN_BINDING_DIRS`
+      catalog-coverage loop, not Amazon Q, so rename the shared `write_amazonq_config` fixture
+      helper, replace its `amazonq`/`agent-name:` registry stanza with a plain three-entry
+      `claude-code`/`opencode`/`codex` registry, drop each test's now-deleted `emit_bindings(...)`
+      setup call, and swap any `.amazonq` catalog-row fixture text for one of the five surviving
+      `KNOWN_BINDING_DIRS` entries.
+
+      **Rename and rewrite** `harness_bindings_validate_covers_all_11_harnesses` to assert coverage
+      of the three surviving harnesses: its current body asserts `KNOWN_BINDING_DIRS` contains
+      `.cursor`, `.windsurf`, `.junie`, `GEMINI.md`, and `CONVENTIONS.md` — every one of which this
+      same step's `KNOWN_BINDING_DIRS` shrink removes, so leaving the test unedited fails the build,
+      not merely the intent
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes; `git grep -c "amazonq" apps/rhino-cli/src/application/agents/bindings.rs`
-      returns no match, where it returned 6 before.
+      returns no match, where it returned 53 before — not 6. The earlier "6" counted only the two
+      functions this step originally named in isolation and missed the further ~47 occurrences
+      spanning the dead emitter subsystem, its nine exclusive tests, stray doc comments, and the
+      seven tests retargeted above; scoped as originally written, the "no match" target was
+      unreachable.
+
 - [ ] [AI] **REFACTOR**: Leave `expected_bindings` returning an empty vector only if Codex bindings
       are not yet wired (Phase 5 fills it); document that transient state in a doc comment
       — command: `npx nx run rhino-cli:test:quick`
@@ -271,16 +341,28 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 - [ ] [AI] Remove `.amazonq/` from `.prettierignore` and remove `.cursor/`, `.pi/`, `.amazonq/` from
       every `trigger:` list and `paths:` list in the `gates:` section of `repo-config.yml` —
       specifically the `harness-bindings` trigger list, the `governance-word-budget` trigger anchor,
-      and the `governance-readme-completeness` `paths` plus trigger lists
+      and the `governance-readme-completeness` `paths` plus trigger lists. This step is scoped to the
+      `gates:` section only; the top-level `governance-word-budget:` surfaces glob list is Phase 11's
+      job, and two explanatory comment lines above the `governance-readme-index` and
+      `governance-readme-completeness` gate declarations are left untouched by this step
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
-      — acceptance: exits 0; `git grep -cE "\.cursor/|\.pi/|\.amazonq/" repo-config.yml` returns no
-      match, where it returned 9 before.
+      — acceptance: exits 0; `awk '/^gates:/,0' repo-config.yml | grep -vE '^[[:space:]]*#' | grep -cE "\.cursor/|\.pi/|\.amazonq/"`
+      returns no match (comment lines excluded), where the `gates:` section returned 9 total matches
+      before — 7 in `trigger:`/`paths:` entries this step edits, plus 2 explanatory comment lines it
+      does not.
 - [ ] [AI] Remove the surviving `--opencode` / `--cursor` / `--amazonq` boolean flags from
       `GenerateBindingsArgs` in `apps/rhino-cli/src/commands/harness_generate_bindings.rs`, leaving
-      only `--harness <NAME>`
-      — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --help`
+      only `--harness <NAME>`. Removing the fields breaks compilation of the two tests still
+      constructing them — `harness_amazonq_overrides_opencode_flag` and
+      `harness_amazonq_dry_run_via_run_reaches_dry_run_branch` — so rewrite both in the same commit:
+      drop the removed-field struct literals, and since `amazonq` is no longer an accepted `--harness`
+      value after Phase 1's registry contraction, retarget each to assert the now-correct
+      "unknown harness name 'amazonq'" rejection instead of exercising the deleted flag-override
+      behaviour
+      — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --help && npx nx run rhino-cli:test:quick`
       — acceptance: the help output lists `--harness` and does not list `--cursor` or `--amazonq`,
-      which it did list before.
+      which it did list before; `git grep -c '"amazonq"' apps/rhino-cli/src/commands/harness_generate_bindings.rs`
+      returns no match, where it returned 2 before (the two rewritten test fixtures).
 - [ ] [AI] **2.6 — KEEP the vendor-audit tokens (user-resolved, DD-3)**: do NOT delete any entry from
       the forbidden-token table in
       `apps/rhino-cli/src/application/repo_governance/vendor_audit.rs`. All eight dropped-harness
@@ -374,7 +456,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — acceptance: every one is ticked in the verdict table with its diff summarized in one line.
 - [ ] [AI] Edit `repo-governance/workflows/repo/repo-harness-compatibility-quality-gate.md` and its
       `step-1-initial-validation.md` reference so the drift dimensions cover three harnesses, and
-      record that the workflow is now **complemented** by the Phase 9 CI gate rather than being the
+      record that the workflow is now **complemented** by the Phase 7 CI gate rather than being the
       only anti-drift mechanism
       — acceptance: the workflow's `scope` input description names the three survivors and the
       document cross-references the new gate id.
@@ -552,7 +634,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       selection from Phase 1, and populate `expected_bindings` in `bindings.rs` with the Codex files
       so `harness bindings validate` guards them byte-for-byte
       — command: `npm run generate:bindings`
-      — acceptance: `git status --porcelain .codex/ | grep -c .` reports 108 new paths (107 agent
+      — acceptance: `git status --porcelain .codex/ | grep -c .` reports 94 new paths (93 agent
       TOML files plus the modified `config.toml`), where it reported 0 before.
 - [ ] [AI] Run the generator twice and assert idempotence:
       `npm run generate:bindings && git add -A .codex && npm run generate:bindings && git diff --quiet .codex/`
@@ -563,7 +645,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 with no `missing` or `unannotated` finding.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Check whether the 107-file `.codex/agents/` tree trips any gate the plan did not
+- [ ] [AI] Check whether the 93-file `.codex/agents/` tree trips any gate the plan did not
       anticipate: run the full pre-push suite
       — command: `npx nx affected -t typecheck,lint,test:quick && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — acceptance: all exit 0. TOML files are outside the markdown word-budget surface; if a gate
@@ -574,7 +656,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
 > All checks below must pass before starting Phase 6.
 
 - [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
-- [ ] [AI] `git ls-files .codex | grep -c .` — returns 109 (2 at baseline: 107 generated agents plus
+- [ ] [AI] `git ls-files .codex | grep -c .` — returns 95 (2 at baseline: 93 generated agents plus
       `config.toml` plus `ci-monitor-subagent.toml`).
 - [ ] [AI] `git grep -c "ci-monitor-subagent" .codex/config.toml` — returns a non-zero count,
       proving the hand-maintained table survived regeneration.
@@ -583,7 +665,7 @@ Run this **once**, after Phase 11 and before the terminal merge. `apps/rhino-cli
       — exits 0; after `printf 'x' >> .codex/agents/<any>.toml` it exits non-zero, and exits 0 again
       after `git checkout -- .codex/`.
 
-> **Pause Safety**: Codex now receives the same 107 agent definitions Claude Code and OpenCode do,
+> **Pause Safety**: Codex now receives the same 93 agent definitions Claude Code and OpenCode do,
 > guarded byte-for-byte. Skills are not yet bridged. Safe to stop. To resume:
 > `npm run generate:bindings && git diff --quiet`.
 
@@ -924,7 +1006,7 @@ is the worst outcome, so each states the class plainly.
 
 ### Phase 7 Gate
 
-> All checks below must pass before starting Phase 9.
+> All checks below must pass before starting Phase 8.
 
 - [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0.
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness ownership validate`
@@ -1154,7 +1236,7 @@ is the worst outcome, so each states the class plainly.
       canonical source out of `.claude/` into a vendor-neutral location so that **no harness is
       privileged and every harness — Claude Code included — becomes a generated mirror**. It MUST
       record: (a) the motivation, that `.claude/` is canonical by history rather than by design;
-      (b) the scale, 60 skill directories and 659 tracked files under `.claude/` plus every gate that
+      (b) the scale, 59 skill directories and 659 tracked files under `.claude/` plus every gate that
       walks `.claude/` today — `governance word-budget validate`,
       `governance readme-index validate`, `harness duplication validate`, and
       `harness ownership validate`; (c) that **this plan is explicitly the point zero** that makes the
@@ -1176,6 +1258,14 @@ is the worst outcome, so each states the class plainly.
       disagreeing with its report body
       — acceptance: the brief states which findings this plan closed and which remain, and its
       `plans/ideas/README.md` one-liner is updated to match.
+
+- [ ] [AI] Create `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/opencode-conformance.feature`
+      carrying the US-7 `@opencode-conformance` scenarios from `prd.md`; index it in
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/harness/README.md`
+      — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
+      — acceptance: the feature file exists carrying both US-7 scenarios where it did not exist
+      before this step, the command exits 0 with no `missing` or `unannotated` finding, and
+      `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
 
 ### Phase 9 Gate
 
@@ -1216,7 +1306,7 @@ is the worst outcome, so each states the class plainly.
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass.
 - [ ] [AI] Populate the three harness entries' `catalog:` blocks in `repo-config.yml` with the
-      verified facts established in Phase 4 and Phase 8
+      verified facts established in Phase 4 and Phase 6
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
       — acceptance: exits 0.
 - [ ] [AI] Insert the generated-region markers into `docs/reference/platform-bindings.md` around the
@@ -1300,14 +1390,19 @@ is the worst outcome, so each states the class plainly.
 - [ ] [AI] Declare the eight vendored `.agents/skills/<name>/` directories as named `exclude:`
       prefixes on the `governance-word-budget` gate in `repo-config.yml`, each on its own line with an
       inline comment naming the plugin origin. This is required because `.agents/**/*.md` becomes a
-      governed surface in this phase and five of those eight `SKILL.md` files measure 432-668 words
+      governed surface in this phase and four of those eight `SKILL.md` files measure 537-668 words
       against the 500 fail threshold — third-party content this repository can neither shorten nor
-      regenerate
+      regenerate. The other four (`caveman-commit` 368, `caveman-help` 298, `caveman-review` 432,
+      `caveman-stats` 89) are already under the fail threshold; they are excluded anyway for
+      uniformity of the whole vendored set, not because each is individually load-bearing
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
-      — acceptance: exits 0 and exactly eight `.agents/skills/` prefixes are declared. Prove each is
-      load-bearing for at least one prefix: remove it, confirm
-      `governance word-budget validate` exits non-zero naming that file, then restore it and confirm
-      it exits 0.
+      — acceptance: exits 0 and exactly eight `.agents/skills/` prefixes are declared. Prove the
+      exclusion is load-bearing for the four files that actually exceed the 500-word fail threshold
+      (`cavecrew` 566, `caveman` 537, `caveman-compress` 668, `compress` 660): for each, remove its
+      prefix, confirm `governance word-budget validate` exits non-zero naming that file, then restore
+      the prefix and confirm it exits 0. Do not attempt this remove/restore proof against the other
+      four prefixes — they are under the fail threshold and would not reproduce a non-zero exit if
+      excluded.
 - [ ] [AI] Confirm the ~545 mirrored files need **no** exclusion — they are byte-copies of
       `.claude/skills/` files that already pass the same 500-word threshold under the
       `.claude/**/*.md` surface
@@ -1345,7 +1440,8 @@ is the worst outcome, so each states the class plainly.
       — exits 0, and exits non-zero under the AGENTS.md padding probe.
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — exits 0.
-- [ ] [AI] `git grep -cE "\.cursor/|\.pi/|\.amazonq/" repo-config.yml` — no match.
+- [ ] [AI] `git grep -E "\.cursor/|\.pi/|\.amazonq/" repo-config.yml | grep -vcE '^[^:]+:[[:space:]]*#'`
+      — no match, excluding explanatory comment lines that mention a dropped harness only in prose.
 - [ ] [AI] `awk '/governance-word-budget:/,/env-contract:/' repo-config.yml | grep -c "fail: 500"`
       — returns a non-zero count, proving the fail threshold is unchanged at 500.
 
@@ -1385,7 +1481,7 @@ is the worst outcome, so each states the class plainly.
       — paste output; acceptance: exits 0 and the per-class counts (GENERATED / VENDORED / SOURCE)
       sum to the total tracked binding-file count, with zero unclassified.
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness audit`
-      — save output to `evidence/phase-9-harness-audit.txt`; acceptance: every validator reports
+      — save output to `evidence/harness-audit.txt`; acceptance: every validator reports
       PASS and the file is committed.
 
 ### Part 2 — End-to-end harness load (the assertions that actually prove support)
