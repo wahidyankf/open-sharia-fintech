@@ -104,13 +104,38 @@ Every generated-tier harness in `repo-config.yml` receives its binding mechanica
 
 - **`.opencode/agents/*.md`** — mirrors of `.claude/agents/**/*.md`, flattened to one level, with
   color, model, and tool frontmatter translated (see Translation Artifacts below).
-- **`.codex/`** — declared at the generated tier in the registry; its emitter is not wired yet, so
-  no file under `.codex/` is generator-owned today beyond the vendored Nx entries described above.
+- **`.codex/agents/*.toml`** — one flat TOML file per Claude agent, keyed on the agent's `name`
+  frontmatter rather than its filename or role subfolder, carrying `name`, `description`, and
+  `developer_instructions`.
+- **`.codex/config.toml`** — only the region between the `rhino-cli generated` markers is
+  generator-owned. The hand-maintained `mcp_servers`, `features`, and vendored agent tables outside
+  that region are preserved across regeneration.
+- **`.agents/skills/`** — a real-file mirror of the whole `.claude/skills/` tree, never symlinks, because the
+  mirror is committed and a symlink would not survive `git archive`, a Windows checkout, or a
+  container `COPY`. Codex discovers skills only under `.agents/skills/`, whereas Claude Code and
+  OpenCode read `.claude/skills/<name>/SKILL.md` natively and need no copy. The registry's
+  `vendored:` list names the directories the emitter must never write, delete, or regenerate;
+  ownership there is declared, never inferred from "this directory has no source counterpart".
 
 These files are deterministic and idempotent — never hand-edit them. The companion guard
 `rhino-cli harness bindings validate` enforces byte-for-byte parity against the generator and runs in
 the pre-push pipeline. The same guard asserts that every present binding directory under `.claude`,
 `.opencode`, `.codex`, `.agents`, and `.github` is referenced in this catalog.
+
+### Accepted capability loss: `.opencode/skills/` and `.opencode/commands/`
+
+Both trees were deleted. This was a deliberate, accepted **capability loss**, decided with the
+repository owner — not a cleanup, and not a no-op.
+
+What was removed: seven skill directories under `.opencode/skills/` and the `/monitor-ci` command at
+`.opencode/commands/monitor-ci.md` — 17 tracked files, all added wholesale by a single commit
+(`4239f3d79`, "Nx-generated AI agent configs") with no `.claude/` source of truth this repository
+produces or can regenerate.
+
+What the cost is: **OpenCode does not read Claude Code plugins.** Unlike the earlier `.github/skills/`
+removal — where the `nx-mcp` plugin covered the gap for Copilot — there is **no equivalent fallback
+for OpenCode**. OpenCode users may genuinely lose Nx skill access and the `/monitor-ci` command.
+That consequence was stated before the decision and accepted.
 
 ### No-shadowing note
 
