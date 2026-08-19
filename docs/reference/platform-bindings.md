@@ -27,11 +27,11 @@ one starts with a registry entry, not a row here.
 
 **Verified 2026-05-24.**
 
-| Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface              | Status                     |
-| ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------- | -------------------------- |
-| Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                                | `.claude/agents/*.md`                                                                                   | `.claude/skills/*/SKILL.md` | Active                     |
-| OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                            | `.opencode/agents/*.md`                                                                                 | reads `.claude/skills/`     | Active                     |
-| OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`              | `.codex/config.toml` `[mcp_servers]`[^mcp] | `.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents] | `.agents/skills/`[^skills]  | Partial (`.codex/` exists) |
+| Platform         | Reads root `AGENTS.md` natively?           | Tool-specific instruction surface                                   | Project MCP config                         | Custom-agent surface                                                                                    | Skills surface                                    | Status                     |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------- |
+| Claude Code      | No — reads `CLAUDE.md` (shim `@AGENTS.md`) | `CLAUDE.md`, `.claude/`                                             | `.mcp.json`                                | `.claude/agents/*.md`                                                                                   | `.claude/skills/*/SKILL.md`                       | Active                     |
+| OpenCode         | Yes                                        | `.opencode/agents/` (auto-synced); reads `.claude/skills/` natively | `opencode.json`                            | `.opencode/agents/*.md`                                                                                 | reads `.claude/skills/` **and** `.agents/skills/` | Active                     |
+| OpenAI Codex CLI | Yes (since Apr 2025)                       | `AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]      | `.codex/config.toml` `[mcp_servers]`[^mcp] | `.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents] | `.agents/skills/`[^skills]                        | Partial (`.codex/` exists) |
 
 <!-- <<< rhino-cli generated: harness catalog -->
 
@@ -49,6 +49,16 @@ one starts with a registry entry, not a row here.
     The global `[agents]` table accepts `enabled`, `max_concurrent_threads_per_session`,
     `default_subagent_model`, `default_subagent_reasoning_effort`, and `interrupt_message`. Codex
     ships three built-in agents: `default`, `worker`, and `explorer`.
+
+[^trust]:
+    Project-level `.codex/` layers are read only for a **trusted** project, and trust is granted
+    **per developer on their own machine** — it cannot be shipped in the repository. Codex records
+    it in the user's global `~/.codex/config.toml` as
+    `[projects."<absolute path>"] trust_level = "trusted"`, keyed by absolute path. A second,
+    finer mechanism covers hooks: `[hooks.state."<absolute path>:<event>:<i>:<j>"] trusted_hash =
+"sha256:…"`, keyed by path **and** content, so editing `.codex/hooks.json` re-prompts. Until a
+    teammate trusts this repository on their own machine, everything under `.codex/` does nothing
+    for them. Verified 2026-08-19 against codex-cli 0.146.0.
 
 [^skills]:
     Codex reads the vendor-neutral `.agents/skills/` tree. It does **not** read `.claude/skills/`.

@@ -66,7 +66,7 @@ harness:
       instruction-surface: "`.opencode/agents/` (auto-synced); reads `.claude/skills/` natively"
       mcp-config: "`opencode.json`"
       agent-surface: "`.opencode/agents/*.md`"
-      skills-surface: "reads `.claude/skills/`"
+      skills-surface: "reads `.claude/skills/` **and** `.agents/skills/`"
       status: Active
     ownership:
       - { path: .opencode/agents, class: generated, reason: emitted from .claude/agents }
@@ -97,7 +97,7 @@ harness:
     catalog:
       platform: OpenAI Codex CLI
       reads-agents-md: "Yes (since Apr 2025)"
-      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`"
+      instruction-surface: "`AGENTS.override.md` (overrides), `.codex/config.toml`[^trust]"
       mcp-config: "`.codex/config.toml` `[mcp_servers]`[^mcp]"
       agent-surface: "`.codex/agents/<name>.toml` standalone files **and** `[agents.<name>]` tables in `config.toml`[^agents]"
       skills-surface: "`.agents/skills/`[^skills]"
