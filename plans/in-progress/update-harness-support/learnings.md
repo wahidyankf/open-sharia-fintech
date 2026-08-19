@@ -700,3 +700,72 @@ only when someone typed it, which does not deliver US-5's claim that the documen
 P7.17 precedent exactly. `gate validate` and `repo-config validate` both exit 0, the gate lists on
 both `ci` and `pre-push`, and the command exits 1 under the hand-edit probe and 0 after
 regeneration. Flag for review: this is a governance-surface change the checklist did not ask for.
+
+## Phase 11 notes
+
+**P11.1's stated RED reason was stale before the phase began.** The checklist expects the RED to
+fail "reporting the `.cursor/`, `.pi/`, `.amazonq/` globs still present". None of the three was in
+the `surfaces:` list — Phase 2 (P2.6) had already removed them. The RED did fail, correctly, but for
+a different reason: `.agents/**/*.md` was missing. The general lesson is the one already recorded at
+Phase 9 — read the live before-state at the moment the phase starts rather than trusting a
+checklist written before eight phases of edits landed.
+
+**A pre-existing red in `cargo test --test governance`, found by running it.** The suite's
+`WORD_BUDGET_CONFIG` fixture still declared `.cursor/**/*.md` and `.amazonq/**/*.md` and did not
+declare `.codex/**/*.md` or `.agents/**/*.md`, while the feature file's `Examples:` table had
+already been updated to the new surfaces. Two Scenario Outline rows therefore failed. Confirmed
+present at `HEAD` before any Phase 11 edit. Root cause: Phase 3's sweep set
+(`local-tmp/harness-sweep-current.txt`) contains zero `.rs` files, so no Rust fixture was ever
+swept. Fixed by rewriting the fixture to the same eight globs as the live config.
+
+**Two further dropped-harness residues in the same file, from the same cause.**
+`.github/copilot-instructions.md` was the fixture's second surface and the subject of a whole
+scenario ("A configured glob matching no file is a no-op") — a GitHub Copilot surface this
+repository never supported under the three-harness registry. Replaced with `.codex/**/*.md`, which
+is genuinely configured and genuinely matches zero files, so the scenario is now true of the live
+config as well as the fixture. Separately, `matches_word_budget_trigger` hardcoded
+`.cursor/rules/`, `.amazonq/rules/`, `.windsurf/rules/`, `.junie/guidelines.md`, and
+`.github/copilot-instructions.md`; its own doc comment admitted it mirrored the retired
+`instruction-size` gate because "there is nothing live to assert against yet". Phase 9 armed the
+gate, so there is. Rewritten to read the trigger list out of the live `gates:` registry, which
+removes the residue and cannot drift again.
+
+**`serde_norway` does not expand YAML merge keys.** P11.3 asks whether the repeated 400/500/500
+triple can collapse into an anchor. It cannot: applying `- <<: *instruction-budget` to a surface
+entry and running `rhino-cli repo-config validate` fails with
+`governance-word-budget.surfaces[1]: missing field 'target'`. The thresholds stay explicit and the
+reason is now a comment in `repo-config.yml` so the question is not re-opened.
+
+**`excluded-prefixes.md` was two phases stale.** It still documented `.opencode/skills/` and
+`.opencode/commands/` as registered excludes and stated "seven `args.exclude` entries"; P6.18
+removed both prefixes from the config without updating the convention that publishes them. Rewritten
+to the live thirteen. The parent `governance-word-budget.md` carried the same "seven" figure.
+
+**The bare CLI and the gate cannot disagree about excludes.** `governance word-budget validate`
+calls `word_budget::registered_excludes`, which reads `args.exclude` off the gate entry and merges
+it with any `--exclude` flags. So the eight vendored prefixes take effect for a bare CLI run too —
+worth knowing before concluding from a clean bare run that nothing is excluded.
+
+**The validator's word count is not `wc -w`.** `.agents/skills/caveman/SKILL.md` measures 537 by
+`wc -w` and 534 by the validator's `split_whitespace()`. The delivery checklist quotes the `wc -w`
+figures; the inline comments in `repo-config.yml` now quote the validator's, because that is the
+number the ceiling is compared against.
+
+**AGENTS.md is 495 words, not the 487 the prd records.** Phase 3 edited it. The padding probe still
+proves the point — 495 + 20 = 515 fails, and `git checkout` restores exit 0 — but the arithmetic in
+US-6's Gherkin was written against a pre-Phase-3 measurement.
+
+**A `$BIN`-in-a-loop probe returned exit 127 and read as a clean pass.** The first attempt at
+P11.6's remove/restore proof stored the cargo invocation in a shell variable. zsh does not
+word-split an unquoted `$var`, so the whole string became one command name: every iteration exited
+127, and the "FAIL lines naming it" count was 0 for all four probes — indistinguishable from
+"the exclusion was not load-bearing". Rerun with the command written out, all four probes exit 1
+and name their file. Same false-zero class as the `grep -L` and benchmark-harness traps: assert the
+exit code you expect, not merely the absence of a match.
+
+**US-10's Gherkin is half workflow, half gate.** The scenario claims two PRs merged in one session
+_and_ that a one-sided merge turns the parity audit red. Only the second half is executable, so
+`parity-manifest.feature` carries that half as a real scenario and the PR-count half stays in the
+delivery checklist where it can be ticked. The new step stages the edit before regenerating —
+without that, `parity manifest generate` refuses outright (it hashes the git index), which the
+falsifiability probe confirmed.

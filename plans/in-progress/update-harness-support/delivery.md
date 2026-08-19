@@ -1381,32 +1381,32 @@ is the worst outcome, so each states the class plainly.
 
 ## Phase 11: Extend Word-Budget Coverage to Live Entry Points
 
-- [ ] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/governance.rs` asserting the
+- [x] [AI] **RED**: Add a failing test in `apps/rhino-cli/tests/governance.rs` asserting the
       configured word-budget surface globs are exactly `repo-governance/**/*.md`, `.claude/**/*.md`,
       `.opencode/**/*.md`, `.codex/**/*.md`, `.agents/**/*.md`, `AGENTS.md`, `CLAUDE.md`, and the
       README glob
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: fails, reporting the `.cursor/`, `.pi/`, `.amazonq/` globs still present.
   - _Suggested executor: `swe-rust-dev`_
-- [ ] [AI] **GREEN**: Rewrite the `governance-word-budget:` `surfaces:` list in `repo-config.yml`
+- [x] [AI] **GREEN**: Rewrite the `governance-word-budget:` `surfaces:` list in `repo-config.yml`
       accordingly, keeping every threshold unchanged (target 400 / warn 500 / fail 500 for the
       instruction surfaces; 700/900/900 for the README glob) and keeping the README glob declared
       LAST so the select-then-classify overlap rule still picks it
       — command: `npx nx run rhino-cli:test:integration`
       — acceptance: the RED test passes.
-- [ ] [AI] **REFACTOR**: Collapse any now-duplicated threshold literals into a YAML anchor if the
+- [x] [AI] **REFACTOR**: Collapse any now-duplicated threshold literals into a YAML anchor if the
       loader supports it, otherwise leave them explicit and note why
       — command: `npx nx run rhino-cli:test:quick`
       — acceptance: tests pass; `rhino-cli repo-config validate` exits 0.
-- [ ] [AI] Rewrite the `governance-word-budget` gate `trigger:` anchor to `repo-governance/`,
+- [x] [AI] Rewrite the `governance-word-budget` gate `trigger:` anchor to `repo-governance/`,
       `.claude/`, `.opencode/`, `.codex/`, `.agents/`, `AGENTS.md`, `CLAUDE.md`, `repo-config.yml`
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — acceptance: exits 0 and the trigger list names none of the three retired directories.
-- [ ] [AI] Rewrite the `governance-readme-completeness` gate `paths:` and trigger lists to
+- [x] [AI] Rewrite the `governance-readme-completeness` gate `paths:` and trigger lists to
       `repo-governance/`, `.claude/`, `.codex/`, `repo-config.yml` — `.pi/` is gone
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance readme-index validate`
       — acceptance: exits 0 with no `missing` or `unannotated` finding.
-- [ ] [AI] Declare the eight vendored `.agents/skills/<name>/` directories as named `exclude:`
+- [x] [AI] Declare the eight vendored `.agents/skills/<name>/` directories as named `exclude:`
       prefixes on the `governance-word-budget` gate in `repo-config.yml`, each on its own line with an
       inline comment naming the plugin origin. This is required because `.agents/**/*.md` becomes a
       governed surface in this phase and four of those eight `SKILL.md` files measure 537-668 words
@@ -1422,30 +1422,30 @@ is the worst outcome, so each states the class plainly.
       the prefix and confirm it exits 0. Do not attempt this remove/restore proof against the other
       four prefixes — they are under the fail threshold and would not reproduce a non-zero exit if
       excluded.
-- [ ] [AI] Confirm the ~545 mirrored files need **no** exclusion — they are byte-copies of
+- [x] [AI] Confirm the ~545 mirrored files need **no** exclusion — they are byte-copies of
       `.claude/skills/` files that already pass the same 500-word threshold under the
       `.claude/**/*.md` surface
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — acceptance: exits 0 with no `.agents/skills/` mirrored file reported, where a genuinely
       oversized source skill would be reported twice (once per surface) and must be shortened at the
       `.claude/` source, never excluded at the mirror.
-- [ ] [AI] Run the extended budget across the whole tree and fix every new failure at the root cause
+- [x] [AI] Run the extended budget across the whole tree and fix every new failure at the root cause
       — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — acceptance: exits 0. Newly-covered `.codex/` and `.agents/` markdown files that exceed 500
       words are shortened at their `.claude/` source, not excluded — the only permitted exclusions are
       the eight vendored `.agents/skills/` prefixes declared in the step above. The two `.opencode/`
       prefixes are gone, removed in Phase 6e along with the trees they excluded.
-- [ ] [AI] Prove the threshold is still armed: append 20 words to `AGENTS.md`, run the validator,
+- [x] [AI] Prove the threshold is still armed: append 20 words to `AGENTS.md`, run the validator,
       then `git checkout -- AGENTS.md` and re-run
       — acceptance: exits non-zero naming `AGENTS.md` while the words are present (487 + 20 = 507,
       over the 500 fail threshold), and exits 0 after the checkout.
-- [ ] [AI] Update `repo-governance/conventions/structure/governance-word-budget.md` and
+- [x] [AI] Update `repo-governance/conventions/structure/governance-word-budget.md` and
       `specs/apps/rhino/behavior/rhino-cli/gherkin/governance/governance-word-budget.feature` plus
       `harness/governance-word-budget-thresholds.feature` to the new surface list, carrying the US-6
       scenarios
       — acceptance: `npx nx run rhino-cli:specs:gherkin-cardinality-validation` exits 0.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature` with the
+- [x] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/gate/parity-manifest.feature` with the
       US-10 paired-landing scenario
       — acceptance: the feature names the paired cross-repo landing expectation, which it did not
       before.
@@ -1454,14 +1454,14 @@ is the worst outcome, so each states the class plainly.
 
 > All checks below must pass before pushing Phase 7-11 to the single PR and starting Phase 12.
 
-- [ ] [AI] `npx nx affected -t typecheck,lint,test:quick` — exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
+- [x] [AI] `npx nx affected -t typecheck,lint,test:quick` — exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- governance word-budget validate`
       — exits 0, and exits non-zero under the AGENTS.md padding probe.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- gate validate`
       — exits 0.
-- [ ] [AI] `git grep -E "\.cursor/|\.pi/|\.amazonq/" repo-config.yml | grep -vcE '^[^:]+:[[:space:]]*#'`
+- [x] [AI] `git grep -E "\.cursor/|\.pi/|\.amazonq/" repo-config.yml | grep -vcE '^[^:]+:[[:space:]]*#'`
       — no match, excluding explanatory comment lines that mention a dropped harness only in prose.
-- [ ] [AI] `awk '/governance-word-budget:/,/env-contract:/' repo-config.yml | grep -c "fail: 500"`
+- [x] [AI] `awk '/governance-word-budget:/,/env-contract:/' repo-config.yml | grep -c "fail: 500"`
       — returns a non-zero count, proving the fail threshold is unchanged at 500.
 
 > **Pause Safety**: every instruction entry point the three survivors read is measured at the
