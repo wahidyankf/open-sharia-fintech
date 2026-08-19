@@ -170,6 +170,13 @@ everything the two local hooks run.
 The gate-check standard is synthesized by picking the strongest wiring per surface, even where that
 means changing `ose-public`. The named winner per surface:
 
+> **An aggregate audit is not an enforcement path.** Gates invoke validators directly by `command:`;
+> nothing invokes an umbrella command such as `rhino-cli harness audit`. Wiring a new validator into
+> an aggregate therefore gives it coverage when someone types the aggregate, and **no CI
+> enforcement**. A validator is enforced only once it is a `gates:` entry with a declared surface —
+> observed during `update-harness-support` Phase 10, where the catalog drift guard needed its own
+> path-gated entry to deliver the claim its plan made.
+
 | Surface                                                                                                 | Standard (winner)                                                                                                                                                                                                | Rationale                                                                                                                                                                                                                                                                                                              |
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **commit-msg**                                                                                          | `npx --no -- commitlint --edit "$1"` + `@commitlint/config-conventional`                                                                                                                                         | Already identical in both — lock it.                                                                                                                                                                                                                                                                                   |

@@ -32,6 +32,22 @@ dropped past a harness limit.
 - **[Reproducibility First](../../../principles/software-engineering/reproducibility.md)**: the word
   count is deterministic.
 
+## How the Count Is Taken
+
+Two properties of the measure surprise authors, and both were observed while extending the covered
+surfaces:
+
+- **YAML frontmatter counts.** One governance file measured 414 words before its required
+  `title`/`description`/`when_to_use`/`tags` block was prepended and 505 after, with the body
+  unchanged — over the fail ceiling without a word of prose being added. Measure after the
+  frontmatter exists, not before.
+- **The validator's count is not `wc -w`.** It splits on ASCII whitespace, so a file can measure 537
+  by `wc -w` and 534 by the gate. Only the validator's number is compared against the ceiling, so
+  quote that one when a margin is tight.
+
+Run `rhino-cli governance word-budget validate` rather than `wc -w` whenever the answer decides
+whether a file lands.
+
 ## Related Conventions
 
 - [Governance Word-Budget Remediation](../governance-word-budget-remediation.md) — enforcement
