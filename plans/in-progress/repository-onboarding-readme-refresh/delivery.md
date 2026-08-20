@@ -1045,10 +1045,16 @@ comprehensive coverage` distinction, one is a link label tracking the real filen
     wording and changing them would corrupt a verbatim conversion. One drift was introduced and
     repaired inside this task: de-intensifying six `.claude/skills/*/README.md` index lines left them
     disagreeing with their `SKILL.md` frontmatter, so each source was corrected too and all six pairs
-    now match byte for byte. A second stale-name class, `ayokoding-web` (16 in-scope files) and
-    `ose-web` (14), was found and deliberately left alone: unlike `wahidyankf-web` it reaches
-    directory names such as `repo-governance/workflows/ayokoding-web/` and workflow filenames, which
-    is a rename plan rather than a documentation defect. Recorded for Phase 8 routing. Across the 78
+    now match byte for byte. A second stale-name class was found and deliberately left
+    alone. Its size was re-measured rather than estimated, because the first figure recorded here
+    was narrower than the class it named: outside `plans/done/`, `ayokoding-web` appears in 231
+    tracked files and `ose-web` in 83. For `ayokoding-web` those are 67 under `.claude/`, 54 under
+    `repo-governance/`, 87 across the generated `.agents/`, `.codex/`, and `.opencode/` mirrors, 13
+    under `apps/`, 6 under `social-media-posts/`, and 2 under `docs/`. Unlike `wahidyankf-web` the
+    class reaches directory names such as `repo-governance/workflows/ayokoding-web/` and the
+    workflow filenames inside them, so it is a rename plan rather than a documentation defect, and
+    the mirror counts are not independent work because they regenerate from their `.claude/`
+    sources. Recorded for Phase 8 routing. Across the 78
     changed Markdown files `markdownlint-cli2` reports 0 errors, Prettier is clean, and the link
     report is empty.
 - [x] [AI] [P3-009] Regenerate harness mirrors only from canonical `.claude/` changes and run
@@ -1199,10 +1205,39 @@ public repo` passed it. The message states each defect class and what proved it,
     replaced with an absolute URL before this item was ticked. The body states each defect class the
     unit corrects, names the deferred `ayokoding-web`/`ose-web` rename class so a reviewer does not
     read its absence as an oversight, and records that the byte-identity boundary is untouched.
-- [ ] [AI] [P3-016] Run the canonical behavior-routed review cycles — acceptance: all accepted
+- [x] [AI] [P3-016] Run the canonical behavior-routed review cycles — acceptance: all accepted
       findings are fixed and each cycle's CI is green.
-- [ ] [AI] [P3-017] Forward-update from `origin/main` without destructive history edits — acceptance:
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: `delivery.md`, `learnings.md`, and
+    the PR #238 body · **Notes**: the canonical route is chosen by the five-rule applicability
+    classifier, not by branch name or file count, so the whole 96-path diff was read first. It is 93
+    Markdown files plus three `.codex/` files, and those three are generated: `config.toml` and two
+    agent files whose entire change is an agent description mirrored from its `.claude/` source.
+    Nothing in the diff can build, test, deploy, provision, or change CI behaviour, so the PR is
+    noneligible and the specialist fan-out does not apply — the same classification the contract PR
+    received in P2-012. The noneligible route then requires the current head to have passed
+    `pr-quality-gate.yml`: `gh run view 32384716308` reports the run completed with 17 jobs, 13
+    success and 4 skipped, including the roll-up `Quality gate`, and `gh pr view` reports
+    `mergeStateStatus=CLEAN`, `mergeable=MERGEABLE`, and zero review threads. Note that
+    `gh pr checks` lagged the run by several minutes and still showed `formatting-verify` as
+    pending after that job had completed successfully, so the run's own job list is the evidence
+    here, not the checks summary. Reading the diff for classification also caught a defect in this
+    unit's records rather than in the repository: the deferred `ayokoding-web`/`ose-web` stale-name
+    class had been written down as 16 and 14 files, and re-measuring gives 231 and 83 tracked files
+    outside `plans/done/`. Both the delivery note and the PR body now carry the corrected,
+    explicitly scoped figures, and L-014 records why the deferred side of a plan needs the same
+    measurement rigour as the side that gets fixed.
+- [x] [AI] [P3-017] Forward-update from `origin/main` without destructive history edits — acceptance:
       the branch contains current `origin/main`.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: after
+    `git fetch origin main`, `git rev-list --left-right --count origin/main...HEAD` returns `0 3` —
+    zero commits behind, three ahead — and `git merge-base --is-ancestor origin/main HEAD` exits 0,
+    so the branch already contains current `origin/main` and no forward-update was required. The
+    acceptance is about the branch's content, not about performing a merge, so doing nothing is the
+    correct action here rather than a skipped step. The no-destructive-history half was checked
+    separately instead of assumed: `git reflog` shows three ordinary commits and a branch rename,
+    with no rebase, amend, or force operation since the branch was created from `origin/main`. The
+    earlier attempt to amend the unit commit in P3-013A was refused before it ran, so no history
+    edit exists to inspect.
 - [ ] [AI] [P3-018] Rerun full unit gates and verify final PR CI — acceptance: every gate is green.
 - [ ] [AI] [P3-019] Merge the refresh PR as AI — acceptance: `main` contains the refresh.
 

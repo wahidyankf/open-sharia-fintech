@@ -284,3 +284,24 @@ after the last edit of any kind, including edits produced by a quality cycle tha
 passing verdict. When a checklist places a gate step before a content step, run the gate again
 before commit rather than trusting the earlier green. See
 [[feedback_word_budget_trips_on_small_governance_edits]].
+
+## L-014 — A deferral needs the same measurement rigor as the work you did
+
+**Phase**: 3 (P3-016) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+deferral recorded in Phases 6 through 9, no repository change required
+
+This unit fixed one stale-name class (`wahidyankf-web`, 31 occurrences in 11 files, each verified)
+and deferred a second one (`ayokoding-web`, `ose-web`). The fixed class was counted exactly. The
+deferred class was written down as "16 in-scope files" and "14" — a figure narrow enough that a
+reader would size the follow-up at roughly the same effort as the work already done. Re-measuring it
+gives 231 and 83 tracked files outside `plans/done/`, reaching directory names and workflow
+filenames. The deferral was still the right call, and the corrected number is what makes that
+obvious rather than debatable.
+
+The asymmetry is the trap: what you fix gets counted because the count is the acceptance evidence,
+while what you defer gets estimated because nothing forces a number.
+
+**How to apply**: measure a deferral before recording it, with the same command you would use to
+accept the fix, and state the scope the number covers — a bare count invites the reader to assume
+the widest scope. When a later step re-derives the figure and it disagrees, correct the original
+record rather than carrying two numbers. See [[feedback_acceptance_clauses_falsifiable_both_directions]].
