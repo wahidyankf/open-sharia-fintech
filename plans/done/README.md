@@ -9,6 +9,21 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-20: update-harness-support](./2026-08-20__update-harness-support/README.md) — Reduced
+  supported coding-agent harnesses from eleven to three (Claude Code, OpenCode, OpenAI Codex CLI),
+  raised Codex to generated parity, adopted `.agents/skills/` as a cross-vendor skill surface, and
+  generated the platform-bindings catalog from `repo-config.yml` so the published table can no
+  longer drift from the registry. Gave every binding file a declared ownership class — `source`,
+  `generated`, or `vendored` — enforced by the new `harness-ownership` and `harness-catalog` gates,
+  and added `harness sync triage` so a hand-edited mirror is classified by content rather than
+  guessed at. Automated external-drift detection (a freshness gate) was considered and deliberately
+  not shipped; re-verification against upstream stays manual and on-demand. One assertion is
+  recorded BLOCKED rather than passed: codex-cli 0.146.0 exposes no non-interactive way to
+  enumerate `[agents]` entries, and running `codex exec` unattended under
+  `filesystem unrestricted · network enabled · approval Never` was judged an unsafe way to satisfy
+  a checklist. Delivery Mode: `worktree-to-pr`, one worktree and one PR per repository
+  (`ose-public#232`, `ose-private#56`).
+
 - [2026-08-18: repo-rules-sweep](./2026-08-18__repo-rules-sweep/README.md) — Settled what a leading
   `NN-` ordinal means in a governed filename: it survives only when the file is a real step in an
   ordered sequence and the ordinal is that step's own number. Stripped the rest — 2092 files across

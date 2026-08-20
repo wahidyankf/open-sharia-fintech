@@ -1681,27 +1681,27 @@ is the worst outcome, so each states the class plainly.
 > This is the **only** merge in the plan. Two PRs exist in total — one in `ose-public`, one in
 > `ose-private` — and they merge together.
 
-- [ ] [AI] Commit and push the Knowledge-Capture changes to the single branch: `git push`
+- [x] [AI] Commit and push the Knowledge-Capture changes to the single branch: `git push`
       — acceptance: `gh pr list --head worktree/update-harness-support` still returns exactly one PR.
 - [x] [AI] Mark the PR ready for review: `gh pr ready` — acceptance: `gh pr view --json isDraft`
       reports `false`, where it reported `true` from Phase 0 onward.
 - [x] [AI] Run the [Cross-Repo Parity Ritual](#cross-repo-parity-ritual) once, in full — acceptance:
       every item in that section is ticked and exactly one `ose-private` PR exists.
-- [ ] [AI] Run the [PR-Review Maker→Fixer Cycle](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
+- [x] [AI] Run the [PR-Review Maker→Fixer Cycle](../../../repo-governance/workflows/pr/pr-review-quality-gate.md)
       as a **single block covering the whole PR** — drive to the earliest clean code M/H/C result
       within the seven-cycle maximum — acceptance: a cycle completes with zero MEDIUM-or-above code
       findings across the full diff, not per phase.
-- [ ] [AI] Poll CI every 2 minutes (never `gh run watch`) on both PRs until all required checks are
+- [x] [AI] Poll CI every 2 minutes (never `gh run watch`) on both PRs until all required checks are
       green — acceptance: `gh pr checks` reports all checks passing in each repository.
-- [ ] [AI] Confirm no unresolved review thread is blocking: query `reviewThreads` via GraphQL rather
+- [x] [AI] Confirm no unresolved review thread is blocking: query `reviewThreads` via GraphQL rather
       than trusting the protection API, which 503s on both repositories — acceptance: every thread
       reports `isResolved: true`. A PR showing BLOCKED with green checks is an unresolved thread.
-- [ ] [AI] **Merge authority (stated once)**: `[AI]` merges both PRs in the same session once the
+- [x] [AI] **Merge authority (stated once)**: `[AI]` merges both PRs in the same session once the
       hardened preconditions hold and the review cycle above has completed. No `[HUMAN]` merge gate
       applies to this plan — acceptance: both PRs show `MERGED`, and
       `.github/workflows/rhino-cli-parity-audit.yml` dispatched on demand in `ose-private` exits 0,
       where merging only `ose-public` would make its `diff -u` step exit 1.
-- [ ] [AI] Fast-forward local `main` in both repositories after the merge — acceptance:
+- [x] [AI] Fast-forward local `main` in both repositories after the merge — acceptance:
       `git status` reports `Your branch is up to date with 'origin/main'` in each. A side-worktree
       push advances `origin`, not local `main`; skipping this leaves a silent divergence.
 
@@ -1713,18 +1713,18 @@ is the worst outcome, so each states the class plainly.
 
 ### Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked
-- [ ] [AI] Verify ALL quality gates pass (local + CI)
-- [ ] [AI] Verify the manual CLI behavioural assertions pass with committed evidence in `evidence/`
-- [ ] [AI] Locale coverage is **not applicable** — this plan touches no multi-locale UI
-- [ ] [AI] Rule-15 EWT/UWT/DWT retest is **not applicable** — no web UI is touched
-- [ ] [AI] Rule-16 AET retest is **not applicable** — no REST or GraphQL endpoint is touched
-- [ ] [AI] Remove the worktree now that this repository's work is done:
+- [x] [AI] Verify ALL delivery checklist items are ticked
+- [x] [AI] Verify ALL quality gates pass (local + CI)
+- [x] [AI] Verify the manual CLI behavioural assertions pass with committed evidence in `evidence/`
+- [x] [AI] Locale coverage is **not applicable** — this plan touches no multi-locale UI
+- [x] [AI] Rule-15 EWT/UWT/DWT retest is **not applicable** — no web UI is touched
+- [x] [AI] Rule-16 AET retest is **not applicable** — no REST or GraphQL endpoint is touched
+- [x] [AI] Remove the worktree now that this repository's work is done:
       `git worktree remove worktrees/update-harness-support` — acceptance: `git worktree list` no
       longer names it
-- [ ] [AI] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`, prefixing the
+- [x] [AI] Move plan folder from `plans/in-progress/` to `plans/done/` via `git mv`, prefixing the
       completion date (the `evidence/` subfolder moves with it)
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Update any other READMEs that reference this plan
-- [ ] [AI] Commit: `chore(plans): move update-harness-support to done`
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date
+- [x] [AI] Update any other READMEs that reference this plan
+- [x] [AI] Commit: `chore(plans): move update-harness-support to done`
