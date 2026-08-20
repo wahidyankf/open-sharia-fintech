@@ -1187,7 +1187,7 @@ public repo` passed it. The message states each defect class and what proved it,
     closing paragraph because the same link already appears at the top of that section, and three
     other paragraphs are tightened. Every reader-facing correction survives — the qualified port
     sentence, the `OSE_WWW_PORT` override example, the WSL2 posture, the closed-intake note, and the
-    prerequisite list. README.md is now 892 words; re-running the validator gives exit 0 with zero
+    prerequisite list. README.md was 892 words at `5910653bf`; re-running the validator there gives exit 0 with zero
     Fail findings, and Prettier reports the file unchanged while markdownlint reports
     `Linting: 1 file(s)` with `Summary: 0 error(s)`, so the zero is measured over a real file. The
     fix landed as commit `5910653bf` because amending the unit commit was not available; the
@@ -2419,7 +2419,11 @@ record.
     footprint; they are recorded in the fixes record so a later plan can pick them
     up rather than being quietly dropped.
   - Budget respected throughout: the README additions were funded by an offsetting
-    cut and it now sits at **894** of 900 words, with the budget gate green.
+    cut. It stood at **894** of 900 words at `cb489b874`, the commit this item
+    describes; later rows in this iteration moved it to **896** at `3d23ad1f9`,
+    still under the 900-word fail limit with the budget gate green. The figure is
+    pinned to a revision because `C-30` and `C-35` are both this same claim going
+    stale, and an unpinned one goes stale the moment a later row edits the file.
 - [x] [AI] [P7-005] Cross-read contribution, platform support, content parity, `rhino-cli` byte
       identity, repository purpose, package description, and About metadata — acceptance: all current
       claims agree; documentation findings return to Phase 6 and metadata mismatches return to

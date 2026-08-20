@@ -165,9 +165,10 @@ Every gate re-run in this iteration reported `md links validate` as "0 failures"
 `Error: found N broken links` and exits non-zero. The grep therefore returned a meaningless zero on
 every run, and the non-zero exit code was never read — a green that measured nothing.
 
-Reading it properly: 312 broken links across 116 files. All 116 are under `plans/done/`, none is a
-file this branch touches, and each is byte-identical to `origin/main` (116 identical, 0 modified, 0
-absent) — so they are a pre-existing archived-plan baseline, matching how the 58 `format:md:check`
+Reading it properly: 312 broken links across 110 files, listed as 116 report entries because a file
+that breaks links in more than one category is reported once per category. All 110 are under
+`plans/done/`, none is a file this branch touches, and each is byte-identical to `origin/main` (110
+identical, 0 modified, 0 absent) — so they are a pre-existing archived-plan baseline, matching how the 58 `format:md:check`
 failures were classified. The conclusion this iteration reached was right. The method that reached
 it was not, and would have reported green just as confidently had the links been broken by this
 branch.
@@ -615,13 +616,29 @@ was to run `git ls-tree` rather than to pick one. Recorded as `C-76` rather than
 because a review finding is a claim to verify, not a fact to copy — and this record has now made
 that mistake in both directions.
 
-| Row  | Discipline | Defect                                                                                                                                                                                             | Severity | Fix                                                                                                                                                                                   |
-| ---- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C-73 | Docs       | `delivery.md`'s `P7-001` amendment and the same sentence in `reader-doc-disposition-ose-public.md` say `@01` added "eight files under `evidence/`". Twelve exist, all added by `@01`               | HIGH     | Both corrected to twelve, split by the two commits that added them. `C-26` left standing — it describes one commit, which did add eight                                               |
-| C-74 | Docs       | `P6-002`'s amendment and this record's Cycle 15 paragraph both claim `@01` "changed Markdown only". It also added nine PNGs and three transcripts under `evidence/`                                | HIGH     | Both reworded to name the twelve evidence artifacts. `P6-002B` still needs no amendment, now for the reason that actually holds: none of the twelve is source or a test               |
-| C-75 | Integrity  | `P6-003A`'s amendment named six checks as "unit gates" run "before every one of its commits". One is not a repository gate and three are `pre-push`/`ci` surfaces rather than pre-commit ones      | HIGH     | Rewritten to separate the two real pre-commit gates from the three hand-run ones and the one ad-hoc script                                                                            |
-| C-77 | Integrity  | `C-75`'s own fix then claimed `md-links` "exits 1 on a repository-wide baseline of 312 broken links", implying the gate is red. Its registry entry excludes `plans/done`, and so scoped it exits 0 | HIGH     | Corrected at both sites. The 312 come from a hand-run invocation that dropped the registry's `--exclude`; all sit in `plans/done/`, as P3-012 established before this iteration began |
-| C-76 | Docs       | The first fix for `C-74` said "eight PNG screenshots and four transcripts", taken from a review agent's split without counting. It is nine and three                                               | HIGH     | Counted directly — `git ls-tree` over `evidence/` returns 9 `.png` and 3 `.txt` — and corrected at both sites before the commit landed                                                |
+Cycle 17 then returned integrity clean and docs with one MEDIUM, and both pointed at counts rather
+than claims. The README figure in `P7-004` was written unpinned and present-tense — "it now sits at
+894 of 900 words" — and had drifted to 896 across two commits without anyone reading it again. That
+is precisely what `C-30` and `C-35` are: the same sentence, going stale twice, with the fix for it
+going stale in turn. The treatment those two rows prescribed was to pin the figure to a named
+revision, and the one place that most needed it never received it. A second unpinned count turned up
+in the same sweep, in the `P3-013A` item.
+
+The last one is a category error rather than a stale number. The broken-links report groups by
+failure kind, so a file that breaks links in two categories appears twice; this record read its 116
+section entries as 116 files. There are 110. Re-running the byte-identity check over the correct 110
+returns 110 identical, 0 modified, 0 absent — the conclusion it supported was right, which is the
+third time in this iteration a sound conclusion has rested on a figure nobody counted.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                         | Severity | Fix                                                                                                                                                                                   |
+| ---- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-73 | Docs       | `delivery.md`'s `P7-001` amendment and the same sentence in `reader-doc-disposition-ose-public.md` say `@01` added "eight files under `evidence/`". Twelve exist, all added by `@01`                           | HIGH     | Both corrected to twelve, split by the two commits that added them. `C-26` left standing — it describes one commit, which did add eight                                               |
+| C-74 | Docs       | `P6-002`'s amendment and this record's Cycle 15 paragraph both claim `@01` "changed Markdown only". It also added nine PNGs and three transcripts under `evidence/`                                            | HIGH     | Both reworded to name the twelve evidence artifacts. `P6-002B` still needs no amendment, now for the reason that actually holds: none of the twelve is source or a test               |
+| C-75 | Integrity  | `P6-003A`'s amendment named six checks as "unit gates" run "before every one of its commits". One is not a repository gate and three are `pre-push`/`ci` surfaces rather than pre-commit ones                  | HIGH     | Rewritten to separate the two real pre-commit gates from the three hand-run ones and the one ad-hoc script                                                                            |
+| C-77 | Integrity  | `C-75`'s own fix then claimed `md-links` "exits 1 on a repository-wide baseline of 312 broken links", implying the gate is red. Its registry entry excludes `plans/done`, and so scoped it exits 0             | HIGH     | Corrected at both sites. The 312 come from a hand-run invocation that dropped the registry's `--exclude`; all sit in `plans/done/`, as P3-012 established before this iteration began |
+| C-78 | Docs       | `delivery.md`'s P7-004 item said the README "now sits at **894** of 900 words" — unpinned and present-tense. It was 894 at `cb489b874` and 896 at `3d23ad1f9`. A second unpinned count sat in the P3-013A item | MEDIUM   | Both pinned to the revision they describe, the treatment `C-30` and `C-35` already prescribed for exactly this claim. The drift never crossed the 900-word fail limit                 |
+| C-79 | Docs       | This record read the broken-links report's 116 section entries as 116 files. A file that breaks links in more than one category is reported once per category; the report covers 110 unique files              | MEDIUM   | Corrected to 110 files across 116 entries. Re-verified byte-identity against `origin/main` over the 110: 110 identical, 0 modified, 0 absent                                          |
+| C-76 | Docs       | The first fix for `C-74` said "eight PNG screenshots and four transcripts", taken from a review agent's split without counting. It is nine and three                                                           | HIGH     | Counted directly — `git ls-tree` over `evidence/` returns 9 `.png` and 3 `.txt` — and corrected at both sites before the commit landed                                                |
 
 ## Scope Discipline
 
