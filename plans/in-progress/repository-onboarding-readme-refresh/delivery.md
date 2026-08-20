@@ -2062,10 +2062,13 @@ record.
     so would never have fired for this branch's diff at all. The sixth, a
     remark-gfm table parse, is **not a repository gate**: it is an ad-hoc script
     run from the worktree because a blank line inside a Markdown table splits it
-    silently past both Prettier and markdownlint. And they did not all exit 0:
-    `md-links` exits 1 on a repository-wide baseline of 312 broken links that
-    predates this branch. What was actually checked each cycle is that the
-    failing set contains no file this plan owns, which it does not.
+    silently past both Prettier and markdownlint. On exit codes, the
+    registered gates all do exit 0, `md-links` included: its registry entry
+    carries `args.exclude: [plans/done]`, and so scoped it reports
+    `All links valid!`. The 312 broken links this record elsewhere describes
+    come from running `md links validate` **without** that exclude, which is not
+    how the gate runs; all 312 sit inside `plans/done/`, exactly as P3-012's
+    round-1 finding already established.
 
 - [x] [AI] [P6-003B] Run an independent AI docs/sensitivity review — acceptance: zero CRITICAL, HIGH,
       or MEDIUM findings.
