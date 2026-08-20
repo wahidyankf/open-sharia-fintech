@@ -26,9 +26,8 @@ tests relevant to the project you are changing.
 The monorepo contains projects in TypeScript, Rust, and F#. Each language has its own runtime,
 but they all share the same Nx build system and git hooks.
 
-**Three setup paths**. These name what _you_ install by hand. They are unrelated to
-`doctor --scope minimal`, which selects which already-installed tools the checker inspects — Rust is
-absent from that flag's set precisely because Cargo had to build the checker before it could run.
+**Three setup paths**. These name what _you_ install by hand, and are unrelated to the checker's own
+`--scope minimal` flag, which selects which already-installed tools it inspects.
 
 - **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
   basic end-to-end (E2E) tests. Rust is here rather than in Full because the tool checker is a Rust

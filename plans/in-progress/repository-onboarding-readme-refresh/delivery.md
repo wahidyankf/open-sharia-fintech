@@ -1451,6 +1451,12 @@ after processes stop and evidence is safely recorded.
     the whole session rather than only the last navigation — reports 2 total messages with 0 errors
     and 0 warnings. `ose-www` serves a single locale, so the per-locale repetition the plan excuses
     does not apply.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
 - [x] [AI] [P5A-006A] Capture evidence into the plan's `evidence/` folder: one screenshot per
       breakpoint named `phase-5a-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5a-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
@@ -1466,6 +1472,12 @@ after processes stop and evidence is safely recorded.
     file states that explicitly, and the images show only the public landing page with no browser
     profile, account, or private host name visible. The dev server's LAN address appears nowhere in
     any of the four files.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
 - [x] [AI] [P5A-006B] In this same macOS clone, before removing it, start at the root `README.md` and
       follow the documented **Understand the product** path hop by hop to the roadmap or product
       specification it names — acceptance: every hop resolves to an existing, non-404 target, the
@@ -1662,9 +1674,10 @@ creates survives it.
     **Open Sharia Enterprise Platform**, and the description beginning
     "Open-source (MIT) platform for Sharia-compliant enterprise solutions."
   - The browser then inspected the **published host loopback**
-    `http://127.0.0.1:3100/` at all three mandated viewports — mobile 390x844,
-    tablet 768x1024, desktop 1440x900 — through Playwright MCP, the repository's
-    first-ranked browser-verification tool.
+    `http://127.0.0.1:3100/` at three viewports — mobile 390x844, tablet
+    768x1024, desktop 1440x900 — through Playwright MCP, the repository's
+    first-ranked browser-verification tool. Those widths are not the mandated
+    set; see the amendment below.
   - Console state is clean, and was read for the whole session rather than a
     single navigation: `Total messages: 2 (Errors: 0, Warnings: 0)`. Both entries
     sit below warning level, so no viewport produced a console error.
@@ -1682,6 +1695,12 @@ creates survives it.
     at P5A-007, so it cannot be the responder.
   - No console error and no missing product context, so this item opens no
     Phase 6 correction row.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
 - [x] [AI] [P5B-005A] Capture evidence into the plan's `evidence/` folder: one screenshot per
       breakpoint named `phase-5b-ose-www-landing-en-<width>px.png`, plus the curl response saved as
       `phase-5b-ose-www-curl.txt` — acceptance: every file is referenced from this checklist's
@@ -1689,7 +1708,7 @@ creates survives it.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: evidence/phase-5b-ose-www-curl.txt, evidence/phase-5b-ose-www-landing-en-{390,768,1440}px.png ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
   - Four files landed in the plan's `evidence/` folder, one screenshot per
-    mandated breakpoint plus the curl response:
+    captured breakpoint plus the curl response:
     `phase-5b-ose-www-landing-en-390px.png`,
     `phase-5b-ose-www-landing-en-768px.png`,
     `phase-5b-ose-www-landing-en-1440px.png`, and
@@ -1711,6 +1730,12 @@ creates survives it.
     platform-specific proof for this journey is the in-container `curl` and the
     kernel-level bind reading in P5B-004, both of which can only have come from
     inside the container.
+  - **Amended 2026-08-21 — breakpoint coverage.** The widths recorded here are 390/768/1440, not
+    the 375/768/1280 that `screenshot-conventions.md` and `ui-verification-checklist.md` require
+    as the minimum set, so the narrowest required breakpoint went unexercised at this point.
+    `evidence/phase-6-breakpoint-coverage.txt` and the three `phase-6-*` captures supply the
+    conforming measurement. The filenames keep the widths actually captured, because renaming
+    them to 375/1280 would misdescribe the images' own bytes.
 - [x] [AI] [P5B-005B] Via `docker exec ose-onboarding-ubuntu-check <command>` against this same
       container clone, before stopping the process, start at the root `README.md` and follow the
       documented **Understand the product** path hop by hop to the roadmap or product specification it

@@ -31,11 +31,11 @@ Response body: 38399 bytes, matching the byte count both Phase 5 journeys record
 
 ## Result — all three documented breakpoints
 
-| Viewport      | innerWidth | scrollWidth | clientWidth | Horizontal overflow | <h1> present |
-| ------------- | ---------- | ----------- | ----------- | ------------------- | ------------ |
-| Mobile 375px  | 375        | 375         | 375         | No                  | Yes          |
-| Tablet 768px  | 768        | 768         | 768         | No                  | Yes          |
-| Desktop 1280px| 1280       | 1280        | 1280        | No                  | Yes          |
+| Viewport       | innerWidth | scrollWidth | clientWidth | Horizontal overflow | <h1> present |
+| -------------- | ---------- | ----------- | ----------- | ------------------- | ------------ |
+| Mobile 375px   | 375        | 375         | 375         | No                  | Yes          |
+| Tablet 768px   | 768        | 768         | 768         | No                  | Yes          |
+| Desktop 1280px | 1280       | 1280        | 1280        | No                  | Yes          |
 
 `<h1>` reads "Open Sharia Enterprise Platform" at every width.
 

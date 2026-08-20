@@ -48,7 +48,7 @@ Install both toolchains before you bootstrap:
   from that file rather than from a list here, so the two can never drift apart.
 - **Rust and Cargo**. The repository's tool checker is a Rust command-line application that
   `npm install` runs as a postinstall step. That step discards the checker's exit code, so without
-  Cargo the check runs, prints `command not found: cargo`, and fails — while `npm install` still
+  Cargo the check runs, prints `cargo: command not found`, and fails — while `npm install` still
   reports success and your toolchain goes unverified. The Git hooks are not so forgiving: they build
   the same binary and keep its exit code, so your first `git commit` stops outright. Install Rust
   with rustup as described in
@@ -104,7 +104,7 @@ After installation, restart your terminal and Volta will automatically manage No
 **Solution**: Run `volta install node@$(node -p "require('./package.json').volta.node")` so Volta
 installs the version this checkout pins, rather than a version copied from these instructions.
 
-**Issue**: `npm install` prints `command not found: cargo` but reports success
+**Issue**: `npm install` prints `cargo: command not found` but reports success
 **Solution**: Install Rust. The postinstall step runs the Rust-built tool checker but discards its
 exit code, so a missing Cargo does not stop the install — it prints that one line and continues,
 and your toolchain goes unchecked. It stops being ignorable at your first `npm run doctor`, and at
