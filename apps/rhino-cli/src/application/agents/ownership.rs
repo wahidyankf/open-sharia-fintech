@@ -108,11 +108,14 @@ fn binding_roots(config: &RepoConfig) -> Vec<String> {
 /// True when `declaration` claims `file`.
 ///
 /// A declaration claims a path when it names it exactly or is a directory
-/// prefix of it. Comparison is component-wise, so `.claude/skills` never claims
-/// `.claude/skills-archive/x.md`.
+/// prefix of it. Routes through [`repo_config::path_is_under`] — the crate's
+/// one shared component-wise containment predicate — rather than a
+/// string-prefix test, which used to be a third, independent implementation
+/// of the same check and could disagree with it on a doubled separator
+/// (`.claude//skills` claiming `.claude/skills/x.md`).
 fn claims(declaration: &str, file: &str) -> bool {
     let decl = declaration.trim_end_matches('/');
-    file == decl || file.starts_with(&format!("{decl}/"))
+    file == decl || repo_config::path_is_under(file, decl)
 }
 
 /// Every ownership declaration in the registry, flattened across harnesses.
@@ -307,6 +310,17 @@ mod tests {
         // Component-wise, so a sibling with a shared textual prefix is not claimed.
         assert!(!claims(".claude/skills", ".claude/skills-archive/a.md"));
         assert!(!claims(".claude/skills", ".claude"));
+    }
+
+    // Regression for the thread-12 fix: `claims()` used to be a third,
+    // independent string-prefix implementation of the same containment check
+    // `path_is_under` provides, and could disagree with it on a doubled
+    // separator — `.claude//skills` would fail to claim `.claude/skills/x.md`
+    // even though `path_is_under` (used elsewhere for the identical question)
+    // matched correctly. Now unified onto `repo_config::path_is_under`.
+    #[test]
+    fn a_doubled_separator_declaration_still_claims_its_children() {
+        assert!(claims(".claude//skills", ".claude/skills/x.md"));
     }
 
     #[test]

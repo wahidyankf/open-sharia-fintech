@@ -20,6 +20,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
+use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -305,9 +306,19 @@ fn copy_file(src: &Path, dst: &Path) -> Result<(), String> {
 /// symlink is neither followed nor copied through: the scratch tree must
 /// reproduce what the emitters would see, not what a link points at (cycle-2
 /// Finding 2, second site).
+///
+/// Only `io::ErrorKind::NotFound` is treated as "this root has not been
+/// created yet" and silently produces an empty scratch tree. Every other stat
+/// failure (permission-denied being the reproduced case) propagates as `Err`
+/// instead: silently returning `Ok(())` there let `ScratchTree::build` omit a
+/// real root without a diagnostic, which downstream made `triage()` report a
+/// confident, specific, wrong verdict (`Outcome::OneSided`) instead of a loud
+/// failure.
 fn copy_path(src: &Path, dst: &Path) -> Result<(), String> {
-    let Ok(meta) = std::fs::symlink_metadata(src) else {
-        return Ok(());
+    let meta = match std::fs::symlink_metadata(src) {
+        Ok(meta) => meta,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(format!("stat {}: {error}", src.display())),
     };
     if meta.file_type().is_dir() {
         copy_tree(src, dst)
@@ -323,9 +334,16 @@ fn copy_path(src: &Path, dst: &Path) -> Result<(), String> {
 /// Uses `symlink_metadata` so a symlinked directory is never followed: the
 /// scratch tree must reproduce what the emitters would see, not what a link
 /// points at.
+///
+/// Same `io::ErrorKind::NotFound`-only carve-out as [`copy_path`], applied
+/// both to `src` itself and to each entry the inner loop stats — a
+/// permission-denied entry one level down must fail loudly rather than being
+/// silently dropped from the scratch tree.
 fn copy_tree(src: &Path, dst: &Path) -> Result<(), String> {
-    let Ok(meta) = std::fs::symlink_metadata(src) else {
-        return Ok(());
+    let meta = match std::fs::symlink_metadata(src) {
+        Ok(meta) => meta,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(format!("stat {}: {error}", src.display())),
     };
     if !meta.file_type().is_dir() {
         return Ok(());
@@ -334,8 +352,10 @@ fn copy_tree(src: &Path, dst: &Path) -> Result<(), String> {
     for entry in entries.flatten() {
         let from = entry.path();
         let to = dst.join(entry.file_name());
-        let Ok(meta) = std::fs::symlink_metadata(&from) else {
-            continue;
+        let meta = match std::fs::symlink_metadata(&from) {
+            Ok(meta) => meta,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => continue,
+            Err(error) => return Err(format!("stat {}: {error}", from.display())),
         };
         if meta.file_type().is_dir() {
             copy_tree(&from, &to)?;
@@ -845,4 +865,74 @@ fn render_hunks(path: &str, ops: &[(char, &str)]) -> String {
         cursor = next;
     }
     out
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used, clippy::panic)]
+mod copy_error_discrimination_tests {
+    use super::{copy_path, copy_tree};
+
+    // Regression for the thread-5 fix: `copy_path`/`copy_tree` used to treat
+    // EVERY `symlink_metadata` failure as "this root has not been created
+    // yet", including `PermissionDenied`. A permission-denied root silently
+    // produced an empty scratch tree, which downstream made `triage()` report
+    // a confident, specific, wrong verdict instead of a loud failure. Only
+    // `NotFound` may still return `Ok(())`; every other stat failure must
+    // propagate as `Err`.
+
+    #[test]
+    fn copy_path_of_a_genuinely_absent_root_is_ok_and_copies_nothing() {
+        let src_parent = tempfile::TempDir::new().unwrap();
+        let dst_parent = tempfile::TempDir::new().unwrap();
+        let src = src_parent.path().join("does-not-exist");
+        let dst = dst_parent.path().join("does-not-exist");
+
+        copy_path(&src, &dst).expect("an absent root is not an error");
+        assert!(!dst.exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn copy_path_of_an_unreadable_root_is_an_error_not_a_silent_empty_copy() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let src_parent = tempfile::TempDir::new().unwrap();
+        let dst_parent = tempfile::TempDir::new().unwrap();
+        let locked = src_parent.path().join("locked");
+        std::fs::create_dir(&locked).unwrap();
+        std::fs::write(locked.join("leaf"), b"payload").unwrap();
+        std::fs::set_permissions(&locked, std::fs::Permissions::from_mode(0o000)).unwrap();
+        let src = locked.join("leaf");
+        let dst = dst_parent.path().join("leaf");
+
+        let result = copy_path(&src, &dst);
+
+        // Restore permissions before any assertion can panic and leak an
+        // unremovable fixture directory.
+        std::fs::set_permissions(&locked, std::fs::Permissions::from_mode(0o755)).unwrap();
+
+        result.expect_err(
+            "a permission-denied root must propagate as Err, not silently report zero files",
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn copy_tree_inner_loop_errors_on_a_permission_denied_entry_instead_of_skipping_it() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let src_root = tempfile::TempDir::new().unwrap();
+        let dst_root = tempfile::TempDir::new().unwrap();
+        let locked = src_root.path().join("locked-child");
+        std::fs::create_dir(&locked).unwrap();
+        std::fs::write(locked.join("leaf"), b"payload").unwrap();
+        std::fs::set_permissions(&locked, std::fs::Permissions::from_mode(0o000)).unwrap();
+
+        let result = copy_tree(src_root.path(), dst_root.path());
+
+        std::fs::set_permissions(&locked, std::fs::Permissions::from_mode(0o755)).unwrap();
+
+        result
+            .expect_err("a permission-denied entry one level down must fail the whole copy loudly");
+    }
 }

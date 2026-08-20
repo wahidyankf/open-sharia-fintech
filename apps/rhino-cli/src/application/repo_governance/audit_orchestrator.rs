@@ -247,7 +247,7 @@ fn run_category(
                 })
                 .collect())
         }
-        "governance-word-budget" => Ok(audit_word_budget(&opts.repo_root)),
+        "governance-word-budget" => audit_word_budget(&opts.repo_root),
         _ => Err(anyhow::anyhow!("unknown category {name}")),
     }
 }
@@ -260,20 +260,27 @@ fn run_category(
 ///
 /// Returns an empty vector when no `governance-word-budget:` section is
 /// configured.
-fn audit_word_budget(repo_root: &Path) -> Vec<AuditFinding> {
-    let Some(config) = word_budget::merged_budget_config(repo_root) else {
-        return Vec::new();
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` exists but cannot be read or
+/// parsed — the same registry-fail-open class `merged_budget_config` guards
+/// against for the `governance word-budget validate` gate; this preflight
+/// path shares the root cause and is fixed by the same change.
+fn audit_word_budget(repo_root: &Path) -> std::result::Result<Vec<AuditFinding>, Error> {
+    let Some(config) = word_budget::merged_budget_config(repo_root)? else {
+        return Ok(Vec::new());
     };
-    let excludes = word_budget::registered_excludes(repo_root);
+    let excludes = word_budget::registered_excludes(repo_root)?;
     let mut findings = word_budget::check_instruction_sizes(&RealFs, repo_root, &config, &excludes);
     if let Some(tree_finding) = word_budget::check_resolved_tree(&RealFs, repo_root, &config) {
         findings.push(tree_finding);
     }
-    findings
+    Ok(findings
         .into_iter()
         .filter(|f| f.severity == WordBudgetSeverity::Fail)
         .map(|f| new_audit_finding("governance-word-budget", &f.path, 0, &f.message))
-        .collect()
+        .collect())
 }
 
 /// Resolves a search-path list against `repo_root`.

@@ -194,7 +194,13 @@ fn apply_excludes(repo_root: &Path, files: Vec<PathBuf>, exclude: &[String]) -> 
                 .replace('\\', "/");
             !exclude.iter().any(|e| {
                 let prefix = e.trim_end_matches('/');
-                rel == prefix || rel.starts_with(&format!("{prefix}/"))
+                // Component-wise via `path_is_under`, not a string-prefix
+                // test: a doubled separator in `prefix` or `rel` (e.g. a
+                // trailing `//` typo in `--exclude`) must not silently defeat
+                // this check the way it did before the crate's other
+                // path-containment predicates were unified onto
+                // `path_is_under` (cycle-3 thread 12).
+                rel == prefix || crate::application::repo_config::path_is_under(&rel, prefix)
             })
         })
         .collect()

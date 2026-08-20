@@ -181,11 +181,23 @@ pub fn load_budget_config(fs: &dyn Fs, path: &Path) -> Result<BudgetConfig, Erro
 /// FR-1.15: this no longer merges the harness-registry `instruction:` glob
 /// lists — FR-1.3's explicit glob list already supersedes every
 /// registry-declared `.md`-extension surface that resolves to an existing
-/// file. Returns `None` when the section is absent.
-#[must_use]
-pub fn merged_budget_config(repo_root: &Path) -> Option<BudgetConfig> {
-    let repo_config = crate::application::repo_config::load_or_default(repo_root);
-    repo_config.governance_word_budget
+/// file. Returns `Ok(None)` when the section is genuinely absent from a
+/// registry that parsed successfully (or the registry is genuinely absent).
+///
+/// Deliberately `load_optional`, not `load_or_default`: a present-but-broken
+/// `repo-config.yml` must surface as `Err` here, not collapse into
+/// `RepoConfig::default()`'s empty `harness`/`governance_word_budget: None`,
+/// which would make this indistinguishable from "no section declared" and
+/// let `governance word-budget validate` print `SKIPPED` and exit 0 over a
+/// registry that never parsed.
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` exists but cannot be read or
+/// parsed.
+pub fn merged_budget_config(repo_root: &Path) -> Result<Option<BudgetConfig>, Error> {
+    let repo_config = crate::application::repo_config::load_optional(repo_root)?;
+    Ok(repo_config.and_then(|config| config.governance_word_budget))
 }
 
 /// Returns the `args.exclude` list registered against the `governance-word-budget`
@@ -201,16 +213,26 @@ pub fn merged_budget_config(repo_root: &Path) -> Option<BudgetConfig> {
 /// `repo-governance audit --include-category governance-word-budget` path both
 /// read `repo-config.yml` directly through this function instead of silently
 /// defaulting to no exclusions.
-#[must_use]
-pub fn registered_excludes(repo_root: &Path) -> Vec<String> {
-    let repo_config = crate::application::repo_config::load_or_default(repo_root);
-    repo_config
-        .gates
-        .iter()
-        .find(|gate| gate.id == "governance-word-budget")
-        .and_then(|gate| gate.args.get("exclude"))
-        .cloned()
-        .unwrap_or_default()
+///
+/// Deliberately `load_optional`, not `load_or_default` — see
+/// [`merged_budget_config`]'s doc comment for why a broken registry must not
+/// collapse into an empty exclude list.
+///
+/// # Errors
+///
+/// Returns an error when `repo-config.yml` exists but cannot be read or
+/// parsed.
+pub fn registered_excludes(repo_root: &Path) -> Result<Vec<String>, Error> {
+    let repo_config = crate::application::repo_config::load_optional(repo_root)?;
+    Ok(repo_config
+        .and_then(|config| {
+            config
+                .gates
+                .iter()
+                .find(|gate| gate.id == "governance-word-budget")
+                .and_then(|gate| gate.args.get("exclude").cloned())
+        })
+        .unwrap_or_default())
 }
 
 // ---------------------------------------------------------------------------
@@ -752,7 +774,25 @@ resolved_tree:
     #[test]
     fn merged_budget_config_none_when_no_sources() {
         let tmp = TempDir::new().unwrap();
-        assert!(merged_budget_config(tmp.path()).is_none());
+        assert!(merged_budget_config(tmp.path()).unwrap().is_none());
+    }
+
+    #[test]
+    fn merged_budget_config_errs_on_a_broken_registry_instead_of_reporting_none() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("repo-config.yml"), "harness: [\n").unwrap();
+        let error = merged_budget_config(tmp.path())
+            .expect_err("an unparseable repo-config.yml must not be reported as \"no section\"");
+        assert!(!error.to_string().is_empty());
+    }
+
+    #[test]
+    fn registered_excludes_errs_on_a_broken_registry_instead_of_reporting_empty() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("repo-config.yml"), "harness: [\n").unwrap();
+        let error = registered_excludes(tmp.path())
+            .expect_err("an unparseable repo-config.yml must not be reported as \"no excludes\"");
+        assert!(!error.to_string().is_empty());
     }
 
     #[test]
@@ -775,7 +815,7 @@ resolved_tree:
             "    fail: 1500\n",
         );
         fs::write(tmp.path().join("repo-config.yml"), repo_cfg).unwrap();
-        let config = merged_budget_config(tmp.path()).unwrap();
+        let config = merged_budget_config(tmp.path()).unwrap().unwrap();
         assert_eq!(config.surfaces.len(), 1);
         assert_eq!(config.surfaces[0].glob, "AGENTS.md");
         assert_eq!(config.resolved_tree.root, "CLAUDE.md");
@@ -1170,6 +1210,7 @@ resolved_tree:
     fn surfaces_declares_readme_glob_last() {
         let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
         let config = merged_budget_config(&repo_root)
+            .expect("repo-config.yml must load")
             .expect("repo-config.yml must declare a governance-word-budget: section");
         let last = config
             .surfaces

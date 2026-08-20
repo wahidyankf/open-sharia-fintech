@@ -7,6 +7,7 @@
 
 use std::collections::BTreeMap;
 use std::fs;
+use std::io;
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Error};
@@ -463,10 +464,22 @@ pub struct DoctorConfig {
 /// a repository root. This is intentionally lexical so schema validation can
 /// report unsafe configuration even when the configured file does not exist.
 ///
+/// Also rejects a leading `Component::CurDir` (`./`). Not for lexical safety —
+/// `./a/b` cannot escape the repository — but because `Path::starts_with`
+/// disagrees with `Path::components()` equality on it: `Path::new("./a/b")`
+/// and `Path::new("a/b")` denote the same location, yet
+/// `Path::new("./a/b").starts_with("a")` and `Path::new("a/b").starts_with("./a")`
+/// are both `false`. A `./`-prefixed registry value therefore silently defeats
+/// every [`path_is_under`] cross-check that compares it against an
+/// un-prefixed path, passing `repo-config validate` while disabling the
+/// ownership cross-check it should have participated in. Rejecting is
+/// preferable to normalizing: the registry is hand-authored, and this repo's
+/// stated preference is explicit configuration over implicit convention.
+///
 /// # Errors
 ///
-/// Returns an error when the path is empty, absolute, or contains a parent
-/// directory component.
+/// Returns an error when the path is empty, absolute, contains a parent
+/// directory component, or contains a `./` current-directory component.
 pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
     let path = Path::new(value);
     if value.is_empty() || path.is_absolute() {
@@ -475,10 +488,13 @@ pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
     if path.components().any(|component| {
         matches!(
             component,
-            Component::ParentDir | Component::RootDir | Component::Prefix(_)
+            Component::ParentDir | Component::RootDir | Component::Prefix(_) | Component::CurDir
         )
     }) {
-        return Err("must not contain an absolute or parent-directory component".to_string());
+        return Err(
+            "must not contain an absolute, parent-directory, or ./ current-directory component"
+                .to_string(),
+        );
     }
     Ok(())
 }
@@ -488,13 +504,17 @@ pub fn validate_repo_relative_path(value: &str) -> Result<(), String> {
 ///
 /// A string-prefix test disagrees with this on a doubled separator: Rust's
 /// `Path::components()` collapses `a//b` to the same components as `a/b`, but
-/// `"a//b".starts_with("a/")` is `false`. Two call sites used to compute this
-/// independently — the C2 ownership cross-check in `repo_config_validate.rs`
-/// (a string-prefix test) and the skills-mirror emitter's vendored-skip test
-/// in `skills_mirror.rs` (already component-wise) — and could disagree on
-/// exactly that input, which let a declared-vendored path silently escape the
-/// cross-check that is supposed to keep it from being deleted (cycle-2
-/// Finding 10). This is the one shared implementation both now use.
+/// `"a//b".starts_with("a/")` is `false`. Three call sites used to compute
+/// this independently and could disagree on exactly that input, which let a
+/// declared-vendored path silently escape a cross-check that is supposed to
+/// keep it from being deleted (cycle-2 Finding 10): the C2 ownership
+/// cross-check in `repo_config_validate.rs`, the skills-mirror emitter's
+/// vendored-skip test in `skills_mirror.rs`, and `ownership.rs::claims()`
+/// (a third, string-prefix implementation, unified onto this one in cycle 3).
+/// This is now the crate's one shared implementation; `validate_repo_relative_path`
+/// additionally rejects a `./`-prefixed registry value outright, because
+/// normalizing it here would not help a caller that never routes through this
+/// function.
 #[must_use]
 pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
     path.as_ref().starts_with(dir.as_ref())
@@ -507,6 +527,15 @@ pub fn path_is_under<P: AsRef<Path>, D: AsRef<Path>>(path: P, dir: D) -> bool {
 /// to report an absent optional configuration file. The nearest existing
 /// ancestor is still canonicalized, which catches a symlinked intermediate
 /// directory that points outside the repository.
+///
+/// Returns the **canonicalized** destination — `canonical_ancestor` joined
+/// with the unresolved (necessarily nonexistent, so nothing left to resolve)
+/// remaining suffix — not the lexical `repo_root.join(value)`. A caller that
+/// re-checks `result.starts_with(repo_root)` as defense in depth is checking
+/// something real: the un-canonicalized `repo_root.join(value)` would always
+/// start with `repo_root` by construction, which made an earlier version of
+/// that re-check a tautology that could never fail, documented as a live
+/// safety net it did not provide.
 ///
 /// # Errors
 ///
@@ -534,7 +563,10 @@ pub fn confined_repo_path(repo_root: &Path, value: &str) -> Result<PathBuf, Erro
             "configured path {value:?} escapes the repository root through a symlink"
         )));
     }
-    Ok(candidate)
+    let remaining = candidate
+        .strip_prefix(&existing_ancestor)
+        .expect("existing_ancestor was found by walking candidate's own ancestors");
+    Ok(canonical_ancestor.join(remaining))
 }
 
 /// Parsed `repo-config.yml` — the canonical schema, byte-identical across all
@@ -603,10 +635,49 @@ pub fn load(repo_root: &Path) -> Result<RepoConfig, Error> {
     let path = repo_root.join("repo-config.yml");
     let data = fs::read_to_string(&path)
         .with_context(|| format!("cannot read repo-config.yml at {}", path.display()))?;
-    serde_norway::from_str(&data)
+    parse_repo_config(&data, &path)
+}
+
+/// Load `repo-config.yml` at `repo_root`, discriminating "no entry exists at
+/// this path at all" from every other failure to stat, read, or parse it.
+///
+/// Returns `Ok(None)` **only** when [`fs::symlink_metadata`] itself reports
+/// [`io::ErrorKind::NotFound`] — the one case that legitimately means "no
+/// registry declared". Deliberately `symlink_metadata`, not `Path::exists()`
+/// or a `read_to_string`-only check: both of those follow a symlink and
+/// therefore report a **dangling** symlink identically to a genuinely absent
+/// path (a `read_to_string` on a dangling symlink fails with the same
+/// `NotFound` a missing path would). `symlink_metadata` stats the link entry
+/// itself, so a dangling symlink is correctly seen as "something is declared
+/// here" and its subsequent read failure propagates as `Err` instead of
+/// silently taking the default branch. A permission-denied ancestor directory
+/// and a present-but-unparseable file also return `Err`, for the same reason:
+/// only a confirmed-absent path may fall back to `RepoConfig::default()`.
+///
+/// # Errors
+///
+/// Returns an error when an entry exists at the path but cannot be statted,
+/// cannot be read, or is not valid YAML.
+pub fn load_optional(repo_root: &Path) -> Result<Option<RepoConfig>, Error> {
+    let path = repo_root.join("repo-config.yml");
+    match fs::symlink_metadata(&path) {
+        Ok(_) => {}
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => {
+            return Err(Error::new(error)
+                .context(format!("cannot stat repo-config.yml at {}", path.display())));
+        }
+    }
+    let data = fs::read_to_string(&path)
+        .with_context(|| format!("cannot read repo-config.yml at {}", path.display()))?;
+    parse_repo_config(&data, &path).map(Some)
+}
+
+fn parse_repo_config(data: &str, path: &Path) -> Result<RepoConfig, Error> {
+    serde_norway::from_str(data)
         .map_err(|error| {
             let parse_error = error.to_string();
-            if let Some(gate_id) = gate_id_from_parse_error(&data, &parse_error) {
+            if let Some(gate_id) = gate_id_from_parse_error(data, &parse_error) {
                 Error::msg(format!("{parse_error} (gate id {gate_id:?})"))
             } else {
                 Error::msg(parse_error)
@@ -757,6 +828,38 @@ mod tests {
         assert!(validate_repo_relative_path("tooling/sdk/global.json").is_ok());
     }
 
+    // Regression for the thread-12 fix: a `./`-prefixed registry value used to
+    // pass validation and then silently defeat `path_is_under` (`Path::new("./a/b")
+    // .starts_with("a")` is `false`), which let a declared-vendored path
+    // silently escape the C2 ownership cross-check — the same failure mode as
+    // cycle-2 Finding 10, reopened through normalization instead of doubled
+    // separators.
+    #[test]
+    fn validate_repo_relative_path_rejects_a_current_dir_prefixed_value() {
+        // `Path::components()` only ever preserves `CurDir` for a LEADING
+        // `./` — an interior or trailing `.` (e.g. `agents/./skills`) is
+        // silently normalized away by Rust's own parser before this function
+        // ever sees a component to reject, so only the leading form is a real
+        // input to guard against.
+        for path in ["./agents/skills", "./a"] {
+            assert!(
+                validate_repo_relative_path(path).is_err(),
+                "./-prefixed configured path {path:?} must be rejected, not silently accepted \
+                 and left to defeat path_is_under downstream"
+            );
+        }
+    }
+
+    #[test]
+    fn path_is_under_disagrees_with_a_naive_prefix_test_on_a_current_dir_component() {
+        // Documents exactly why validate_repo_relative_path must reject `./`
+        // outright rather than relying on path_is_under to handle it: the two
+        // spellings of the identical location do not satisfy Path::starts_with
+        // against each other in either direction.
+        assert!(!path_is_under(Path::new("./a/b"), Path::new("a")));
+        assert!(!path_is_under(Path::new("a/b"), Path::new("./a")));
+    }
+
     #[cfg(unix)]
     #[test]
     fn confined_repository_path_rejects_a_symlink_escape() {
@@ -769,5 +872,39 @@ mod tests {
         let error = confined_repo_path(root.path(), "tooling/sdk/global.json")
             .expect_err("symlinked configured path must fail");
         assert!(format!("{error:#}").contains("escapes the repository root"));
+    }
+
+    // Regression for the thread-11 fix: `confined_repo_path` used to prove the
+    // destination was safe via `canonical_ancestor`, then discard that proof
+    // and return the un-canonicalized lexical join instead. Every caller's
+    // `result.starts_with(repo_root)` "defense in depth" re-check therefore
+    // compared `repo_root.join(rel)` against `repo_root` — which can never be
+    // false — a tautology presented as a live safety net. The returned path
+    // must now be the canonicalized one actually proven safe.
+    #[cfg(unix)]
+    #[test]
+    fn confined_repository_path_returns_the_canonicalized_destination_not_the_lexical_join() {
+        use std::os::unix::fs::symlink;
+
+        let outer = tempfile::tempdir().expect("create outer directory");
+        std::fs::create_dir(outer.path().join("sub")).expect("create sub directory");
+        let parent = tempfile::tempdir().expect("create symlink parent");
+        let root_link = parent.path().join("root-link");
+        symlink(outer.path(), &root_link).expect("create root symlink");
+
+        let resolved = confined_repo_path(&root_link, "sub/missing-file.txt")
+            .expect("a symlinked root resolving inside itself must succeed");
+
+        let canonical_outer = outer.path().canonicalize().expect("canonicalize outer");
+        assert_eq!(
+            resolved,
+            canonical_outer.join("sub/missing-file.txt"),
+            "must return the canonicalized destination, not repo_root.join(value)"
+        );
+        assert!(
+            !resolved.starts_with(&root_link),
+            "the canonicalized result must not retain the symlinked root component, or a \
+             caller's starts_with(repo_root) re-check against the raw root stays a tautology"
+        );
     }
 }

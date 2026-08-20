@@ -49,21 +49,24 @@ struct MirrorJob {
 /// the other is not an implicit mirror — that would resurrect the inference this
 /// design exists to remove.
 fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
-    // Strict `load`, with an explicit file-absent branch — not
-    // `load_or_default`. A tree with no `repo-config.yml` declares no mirrors,
-    // which means there is nothing to do; but a *present, schema-invalid*
-    // registry must fail loudly rather than collapse into
+    // `load_optional`, not `load_or_default` and not a `Path::exists()` guard.
+    // A tree with no `repo-config.yml` declares no mirrors, which means there
+    // is nothing to do; but a *present, schema-invalid* registry — or one that
+    // exists but cannot be read, e.g. a dangling symlink or a permission-denied
+    // ancestor — must fail loudly rather than collapse into
     // `RepoConfig::default()`'s empty `harness` list, which would make every
     // downstream reader (the drift audit, and the pre-push validate gate that
     // calls it) report zero mirrors and exit success over a registry that
-    // never actually parsed. This mirrors the same strict-load-plus-absent-
-    // branch pattern `ownership.rs::guard_emitter_targets` already uses for
-    // the write path (C3).
-    let config = match repo_config::load(repo_root) {
-        Ok(config) => config,
-        Err(_) if !repo_root.join("repo-config.yml").exists() => repo_config::RepoConfig::default(),
-        Err(error) => return Err(format!("{error:#}")),
-    };
+    // never actually parsed. `load_optional` discriminates on the read's own
+    // `io::ErrorKind::NotFound`, so only a genuinely-absent file takes the
+    // default branch — unlike `ownership.rs::guard_emitter_targets`, which
+    // uses an unconditional strict `load` with no absent-file branch at all
+    // (deliberately: the write path has no legitimate "no registry" case).
+    let config =
+        match repo_config::load_optional(repo_root).map_err(|error| format!("{error:#}"))? {
+            Some(config) => config,
+            None => repo_config::RepoConfig::default(),
+        };
     config
         .harness
         .iter()
@@ -240,10 +243,24 @@ pub fn audit_skills_mirrors(repo_root: &Path) -> Result<Vec<MirrorDrift>, String
 /// file cannot be created, read, written, or removed.
 pub fn emit_skills_mirrors(repo_root: &Path, dry_run: bool) -> Result<MirrorResult, String> {
     let mut result = MirrorResult::default();
+    // `job.target` is `confined_repo_path`'s **canonicalized** return value, so
+    // this defense-in-depth re-check must compare against a canonicalized
+    // `repo_root` too — comparing against the raw, possibly-symlinked
+    // `repo_root` parameter would make the check spuriously fail (or, before
+    // this fix, spuriously always pass: the un-canonicalized lexical join
+    // used to make `job.target.starts_with(repo_root)` a tautology that could
+    // never be false, documented as a live safety net it did not provide).
+    let canonical_repo_root = repo_root
+        .canonicalize()
+        .map_err(|e| format!("canonicalize repository root {}: {e}", repo_root.display()))?;
     for job in mirror_jobs(repo_root)? {
-        // Defense in depth alongside `mirror_jobs`' lexical validation: every
-        // write and delete below stays inside `repo_root`, full stop.
-        if !job.target.starts_with(repo_root) {
+        // Defense in depth alongside `mirror_jobs`' `confined_repo_path`
+        // proof: every write and delete below stays inside `repo_root`, full
+        // stop. Real protection now, not a tautology: `confined_repo_path`
+        // returns the canonicalized destination, so a future maintainer who
+        // weakens it or adds a `MirrorJob` construction path that bypasses it
+        // is still caught here.
+        if !job.target.starts_with(&canonical_repo_root) {
             return Err(format!(
                 "refusing to write outside the repository: {}",
                 job.target.display()
@@ -470,5 +487,39 @@ mod tests {
             Path::new(".agents/skills/compress-extra/SKILL.md"),
             &[".agents/skills/compress".to_string()]
         ));
+    }
+
+    // Regression for the thread-1 fix: a `repo-config.yml` that is present but
+    // unreadable (here, a dangling symlink) must NOT be treated as "no
+    // registry declared". `Path::exists()` returns `false` for both a
+    // genuinely-absent file and a dangling symlink, which is exactly the
+    // ambiguity `load_optional` was introduced to remove.
+    #[cfg(unix)]
+    #[test]
+    fn a_dangling_repo_config_symlink_fails_loudly_instead_of_defaulting() {
+        use std::os::unix::fs::symlink;
+
+        let dir = tempfile::TempDir::new().unwrap();
+        symlink(
+            dir.path().join("nonexistent-target"),
+            dir.path().join("repo-config.yml"),
+        )
+        .unwrap();
+
+        let error = emit_skills_mirrors(dir.path(), false)
+            .expect_err("a dangling symlink must not silently default to zero mirrors");
+        assert!(
+            !error.is_empty(),
+            "the error must name the underlying read failure"
+        );
+    }
+
+    #[test]
+    fn a_genuinely_absent_repo_config_yields_zero_mirrors_not_an_error() {
+        let dir = tempfile::TempDir::new().unwrap();
+        let out = emit_skills_mirrors(dir.path(), false)
+            .expect("a tree with no repo-config.yml at all declares no mirrors");
+        assert_eq!(out.copied, 0);
+        assert_eq!(out.removed, 0);
     }
 }
