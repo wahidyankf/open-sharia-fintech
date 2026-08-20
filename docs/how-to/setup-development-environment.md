@@ -31,8 +31,8 @@ but they all share the same Nx build system and git hooks.
 - **Minimal** — Node.js + Rust + Docker + jq. Covers git hooks, TypeScript projects, and
   basic end-to-end (E2E) tests. Rust is here rather than in Full because the tool checker is a Rust
   program: `npm install` runs it but discards its exit code, so without Cargo the check fails while
-  the install still reports success. Step 6 below keeps that exit code, and so do the Git hooks the
-  install sets up — the first `git commit` stops outright.
+  the install still reports success. The Quick Start's final `npm run doctor` keeps that exit code,
+  and so do the Git hooks the install sets up — the first `git commit` stops outright.
 - **Full** — All tools checked by doctor. Required for working on F# backend apps
   (`organiclever-be`, `ose-be`) and for building the Rust CLI tools themselves.
 - **Automated** — Run `npm run doctor -- --fix` to auto-install missing tools. Use
@@ -48,7 +48,8 @@ but they all share the same Nx build system and git hooks.
 ## Quick Start (Minimal Setup)
 
 If you only work on TypeScript projects, this is all you need. Rust still appears below because the
-repository's tool checker is a Rust program, and step 6 will not pass without it:
+repository's tool checker is a Rust program, and the verify step at the end of this block will not
+pass without it:
 
 ```bash
 # 1. Install Homebrew (macOS — skip if already installed)
@@ -62,7 +63,7 @@ brew install jq
 curl https://get.volta.sh | bash
 source ~/.zshrc   # or source ~/.bashrc on Ubuntu
 
-# 4. Install Rust (tool checker is a Rust program; without Cargo, step 6 and the Git hooks fail)
+# 4. Install Rust (tool checker is a Rust program; without Cargo, the verify step and the hooks fail)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
 rustc --version   # Expected: a version line, not "command not found"

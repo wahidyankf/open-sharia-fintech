@@ -496,9 +496,10 @@ of this section, made while adjudicating a finding about unverified claims.
 Docs made the call the loop needed. The record has crossed from hard to read into functionally
 non-narrative: growth per cycle over the last four cycles ran +734, +776, +699, +848 words —
 accelerating, not settling — while the five reader-facing documents have been byte-identical since
-`afb850f43`, eight cycles back. Every row from `C-41` on audits this record's own prose rather than
-anything a reader of the repository will see. Three consecutive cycles have now found that the fix
-for a false narrative claim contained a fresh one.
+`afb850f43`. Every row from `C-41` on audits this record's own prose rather than anything a reader
+of the repository will see. Three consecutive cycles have now found that the fix for a false
+narrative claim contained a fresh one. **Superseded in part by C-71**: this sentence added "eight
+cycles back" to the commit anchor, and cycles 5 through 13 is nine.
 
 So the narration closes. Not because it is finally correct — `C-66` and `C-67` are proof it is not —
 but because it has become a surface that generates defects faster than it retires them, at no
@@ -510,6 +511,37 @@ heading is historical and will not be rewritten again.
 | C-66 | Integrity  | `C-62`'s replacement preamble marker named `C-49` as a summary that lived in the preamble. It lived in the Cycle 6 closing paragraph, which said the preamble named "all five supersession chains"          | HIGH     | The preamble marker names only `C-50` and `C-51`. The Cycle 6 closing paragraph carries `C-49`                                                                                                                                                       |
 | C-67 | Integrity  | `C-63` recorded the Scope Discipline finding as half-standing on the grounds that "three reader-facing documents" was right at `cb489b874`. All five were already referenced there; both figures were wrong | HIGH     | `C-63` is marked and the Scope Discipline marker corrected. The bad adjudication came from grepping for `.md` filenames against a table that uses short names, and it was asserted as fact in the next brief — recorded rather than quietly reversed |
 | C-68 | Docs       | The record has crossed into functionally non-narrative: per-cycle growth accelerating across the last four cycles while the reader-facing set has not changed in eight                                      | MEDIUM   | The narration is closed as historical. Rows and markers carry the record from here; no further cycle rewrites the prose above this heading                                                                                                           |
+
+### Cycle 14 Rows (P6-007N@01)
+
+The first cycle scoped to what ships rather than to this record, and it found three things in one
+pass — two of them on the shipping surface, which is where nine cycles of apparatus work had not
+been looking.
+
+Docs read the five reader-facing documents as the deliverable instead of re-confirming them
+unchanged, verifying each command, flag, and target against the live repository, and cleared them.
+Then it read `delivery.md` as a reader would and found seven Phase 6 rows still asserting that
+nothing was committed, pushed, opened, reviewed, or merged under Phase 6 — while this branch is
+that very correction unit, with a PR and thirteen completed review cycles behind it. `P6-007`'s own
+acceptance clause, "findings are resolved", is what this loop has been discharging, and its row said
+no cycle ran.
+
+Integrity found a live ambiguity in the setup guide's Overview, in prose this PR introduced: "Step 6
+below keeps that exit code". The document has two Step 6s — the Quick Start's `# 6. Verify`, which
+is the one meant and does keep the exit code, and `### Step 6: Keep local environment data out of
+onboarding`, which is what a reader scanning headings finds. Every step-number reference to the
+verify step was replaced with a description of it, rather than only the site the finding named.
+
+And it found the Cycle 13 closure paragraph miscounting its own evidence: byte-identical "since
+`afb850f43`, eight cycles back" — cycles 5 through 13 is nine. The count is gone and the commit
+anchor kept, which is what `C-55` established the first time this record pinned a streak from the
+wrong end.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                         | Severity | Fix                                                                                                                                                                                                                    |
+| ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-69 | Docs       | Seven Phase 6 rows in `delivery.md` (`P6-004`…`P6-010`) each assert "Nothing was committed, pushed, opened, reviewed, or merged under Phase 6". Iteration `@01` did all of it. Only the `P6-G01` gate row carried an amendment | HIGH     | Each of the seven carries an amendment naming what `@01` actually did and pointing here. The original disposition stands as an accurate record of Phase 6 as first executed                                            |
+| C-70 | Integrity  | The setup guide's Overview says "Step 6 below keeps that exit code". Two Step 6s exist in that document; the heading-level one is about `.env` hygiene and says nothing about exit codes                                       | HIGH     | All three step-number references to the verify step now describe it instead of numbering it. The exit-code claim itself was re-verified: `npm run doctor` exits 127 without Cargo, `postinstall`'s `\|\| true` exits 0 |
+| C-71 | Integrity  | The Cycle 13 closure paragraph and `5e0533953`'s message say the reader-facing documents have been unchanged since `afb850f43`, "eight cycles back". Cycles 5 through 13 is nine                                               | MEDIUM   | The count is removed and the commit anchor kept. The message stays as pushed, disclosed rather than force-pushed                                                                                                       |
 
 ## Scope Discipline
 

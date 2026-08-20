@@ -2022,6 +2022,14 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did commit. Its correction unit landed as a
+    series of Conventional Commits on `docs/repository-onboarding-corrections`,
+    beginning at `cb489b874`.
+
 - [x] [AI] [P6-005] Push the correction branch — acceptance: `origin` contains the head.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2029,6 +2037,13 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did push. `origin` carries
+    `docs/repository-onboarding-corrections`.
+
 - [x] [AI] [P6-006] Open the correction draft PR — acceptance: its scope matches the defect rows.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2036,6 +2051,13 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did open a draft PR — #239, scoped to the
+    `C-01`…`C-08` rows and everything the review cycles added to them.
+
 - [x] [AI] [P6-007] Run the canonical behavior-routed review cycles — acceptance: findings are
       resolved.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
@@ -2044,6 +2066,15 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did run review cycles, and this row's
+    acceptance — findings are resolved — is discharged by them rather than by the
+    not-applicable disposition above. Each cycle's findings, and the rows they
+    produced, are in `artifacts/execution-record-fixes.md`.
+
 - [x] [AI] [P6-008] Forward-update from `origin/main` — acceptance: the head is current.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2051,6 +2082,13 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. Carried out under `P6-008@01` against the `origin/main` this
+    branch was cut from.
+
 - [x] [AI] [P6-009] Rerun gates, the failed journey, and PR CI — acceptance: all are green.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2058,6 +2096,14 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration did rerun its gates and PR CI, per commit,
+    with the results recorded against each cycle in
+    `artifacts/execution-record-fixes.md`.
+
 - [x] [AI] [P6-010] Merge the correction PR as AI — acceptance: fixes are on `main`.
   - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
     **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
@@ -2065,6 +2111,12 @@ record.
     perform. Nothing was committed, pushed, opened, reviewed, or merged under
     Phase 6, which is exactly what the phase preamble requires when there are zero
     defects.
+
+  - **Amended 2026-08-21 — superseded by iteration `@01`.** The disposition above
+    was accurate for Phase 6 as first executed and stands as that record. It is
+    not true of iteration `@01`, which reopened this phase after Phase 7 surfaced
+    cross-document defects. The `@01` iteration's merge is tracked as `P6-010@01` and is
+    the terminal step of that iteration rather than of this row.
 
 ### Phase 6 Gate
 
