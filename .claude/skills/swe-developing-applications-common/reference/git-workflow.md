@@ -37,8 +37,8 @@
 - **refactor**: Code restructuring (no feature change, no bug fix)
 - **perf**: Performance improvements
 - **test**: Adding or updating tests
-- **build**: Build system or external dependency changes
-- **chore**: Other tooling and housekeeping changes
+- **build**: Build, packaging, or compiler configuration
+- **chore**: Dependency updates and repository housekeeping
 - **ci**: CI/CD pipeline changes
 - **revert**: Reverting previous commit
 

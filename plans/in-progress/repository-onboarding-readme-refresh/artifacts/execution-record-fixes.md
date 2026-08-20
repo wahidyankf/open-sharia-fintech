@@ -694,6 +694,29 @@ after the edit; the one WARN on `valid-commit-types.md` predates it (428 words a
 already over the 400-word target). `npm run generate:bindings` then `npm run validate:sync` both
 exit 0.
 
+### Cycle 2 of the `@02` review — the class fix invented a convention
+
+Both specialists converged on one defect in `C-86`, and the docs reviewer was right to escalate it.
+
+| Row  | Severity | Defect                                                                                                                                                                                                                                                                        | Correction                                                                                                                          |
+| ---- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| C-87 | HIGH     | `C-86` gave `build` the bullet "Dependency manifests and lockfiles" and narrowed `chore` to match. The repository does the opposite: dependency work is filed `chore(deps)`. The same table then still carried `chore: update dependencies`, so the file contradicted itself. | `build` redefined as build, packaging, and compiler configuration; `chore` restored as the home of dependency and lockfile updates. |
+
+Counted against the merged history at `400712aa9`: **17** `chore(deps)` commits, all dependency or
+lockfile work, and **4** `build` commits — Nx cache inputs, F# analyzer settings, and two
+Dockerfiles. None of the four is a dependency change. The definitions now describe what each type is
+actually used for, and both table examples are drawn from real commits rather than invented.
+
+The cycle also closed a second, smaller overlap: `build`'s "Build tool configuration" sat beside
+`chore`'s "Tooling changes", which are near-synonyms a contributor could not choose between. The
+`chore` bullet is gone; the two types no longer share a category.
+
+**Method note.** The first attempt to count these commits returned `0` for both `build` and
+`chore(deps)` — a false zero from the filtered `git log` wrapper, and the third instance of that
+hazard class in this iteration. Re-run through `rtk proxy` against 5,605 raw subjects, the real
+counts are 4 and 17. Had the zero been believed, this row would have "confirmed" that neither
+convention existed and left the invented one in place.
+
 ### Rejected findings
 
 The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
