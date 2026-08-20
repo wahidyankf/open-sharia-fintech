@@ -569,7 +569,17 @@ pub fn confined_repo_path(repo_root: &Path, value: &str) -> Result<PathBuf, Erro
     let remaining = candidate
         .strip_prefix(existing_ancestor)
         .map_err(|_| Error::msg("configured path ancestor is not a prefix of itself"))?;
-    Ok(canonical_ancestor.join(remaining))
+    // The common case is `remaining` being empty — `candidate` itself is the
+    // existing ancestor, e.g. a configured file that already exists.
+    // `PathBuf::join` on an empty `Path` still pushes a component separator,
+    // producing a spurious trailing slash (`.../file.txt/`) that turns a
+    // regular-file read into an `ENOTDIR` on Unix. Skip the join entirely in
+    // that case rather than joining nothing.
+    if remaining.as_os_str().is_empty() {
+        Ok(canonical_ancestor)
+    } else {
+        Ok(canonical_ancestor.join(remaining))
+    }
 }
 
 /// Parsed `repo-config.yml` — the canonical schema, byte-identical across all
@@ -864,6 +874,34 @@ mod tests {
         // against each other in either direction.
         assert!(!path_is_under(Path::new("./a/b"), Path::new("a")));
         assert!(!path_is_under(Path::new("a/b"), Path::new("./a")));
+    }
+
+    // Regression: `confined_repo_path` used to join `remaining` onto
+    // `canonical_ancestor` unconditionally, and `PathBuf::join` on an empty
+    // `Path` still pushes a separator, producing `.../file.txt/` for the
+    // (common) case where the configured value itself already exists.
+    // `std::fs::read` on a trailing-slash regular-file path fails with
+    // `ENOTDIR` on Unix, so every caller reading the returned path saw a
+    // silent read failure — this broke `doctor`'s configured
+    // `dotnet-global-json` reader outright.
+    #[test]
+    fn confined_repository_path_of_an_existing_file_has_no_trailing_separator() {
+        let root = tempfile::tempdir().expect("create repository root");
+        std::fs::create_dir_all(root.path().join("tooling/sdk")).expect("create sdk dir");
+        let target = root.path().join("tooling/sdk/global.json");
+        std::fs::write(&target, r#"{"sdk":{"version":"9.0.100"}}"#).expect("write global.json");
+
+        let resolved = confined_repo_path(root.path(), "tooling/sdk/global.json")
+            .expect("an existing configured file must resolve");
+        assert!(
+            !resolved.to_string_lossy().ends_with('/'),
+            "resolved path {resolved:?} must not carry a trailing separator"
+        );
+        assert_eq!(
+            std::fs::read_to_string(&resolved).expect("read the resolved path"),
+            r#"{"sdk":{"version":"9.0.100"}}"#,
+            "the resolved path must be readable as the same regular file"
+        );
     }
 
     #[cfg(unix)]
