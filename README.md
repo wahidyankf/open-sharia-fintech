@@ -81,8 +81,8 @@ Before installing dependencies, have these tools available:
 - Git to clone the repository.
 - [Volta](https://volta.sh/) to install the Node.js and npm versions pinned in
   [`package.json`](./package.json).
-- Rust and Cargo. The repository’s tool checker is a Rust command-line application. Without Cargo it
-  is silently skipped, leaving your toolchain unverified.
+- Rust and Cargo. The repository’s tool checker is a Rust command-line application. Without Cargo
+  the check fails, but the install still reports success.
 - Docker and `jq` only for container-based or broader local-tooling work. Neither is needed for the
   first `ose-www` website run.
 

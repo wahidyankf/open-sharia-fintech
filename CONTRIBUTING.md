@@ -47,9 +47,11 @@ Install both toolchains before you bootstrap:
 - **Volta**, which selects the Node.js and npm versions pinned in `package.json`. Read the versions
   from that file rather than from a list here, so the two can never drift apart.
 - **Rust and Cargo**. The repository's tool checker is a Rust command-line application that
-  `npm install` runs as a postinstall step. That step ignores its own failure, so without Cargo the
-  install still succeeds and the check is simply skipped — leaving your toolchain unverified until
-  something later fails. Install it with rustup as described in
+  `npm install` runs as a postinstall step. That step discards the checker's exit code, so without
+  Cargo the check runs, prints `command not found: cargo`, and fails — while `npm install` still
+  reports success and your toolchain goes unverified. The Git hooks are not so forgiving: they build
+  the same binary and keep its exit code, so your first `git commit` stops outright. Install Rust
+  with rustup as described in
   [Set up your development environment](./docs/how-to/setup-development-environment.md).
 
 **Important**: You don't need to install Node.js or npm manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
@@ -105,8 +107,9 @@ installs the version this checkout pins, rather than a version copied from these
 **Issue**: `npm install` prints `command not found: cargo` but reports success
 **Solution**: Install Rust. The postinstall step runs the Rust-built tool checker but discards its
 exit code, so a missing Cargo does not stop the install — it prints that one line and continues,
-and your toolchain goes unchecked. The failure only becomes visible when you run `npm run doctor`
-yourself. Follow
+and your toolchain goes unchecked. It stops being ignorable at your first `npm run doctor`, and at
+your first `git commit` or `git push`, because the hooks build the same binary and keep its exit
+code. Follow
 [Set up your development environment](./docs/how-to/setup-development-environment.md), reopen the
 terminal, then rerun `npm install`.
 

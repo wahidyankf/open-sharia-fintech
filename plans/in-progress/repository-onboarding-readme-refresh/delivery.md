@@ -1521,7 +1521,18 @@ after processes stop and evidence is safely recorded.
     from P5A-007: no `next-with-port` process exists, nothing listens on the port, and the temporary
     directory is gone. The sanitized outcome carries no host name, address, or credential; the
     clone path lives only in the gitignored verification record.
+
     > **Pause Safety**: the macOS clone and child process are gone; resume from its sanitized row.
+
+  - **Amended 2026-08-21 — breakpoint coverage.** The viewport evidence this gate rests on was
+    captured at 390x844, 768x1024, and 1440x900. The repository's own
+    `screenshot-conventions.md` and `ui-verification-checklist.md` require mobile 375 px, tablet
+    768 px, and desktop 1280 px as the minimum set. Two of the three widths used here therefore do
+    not conform, and 390 px is _wider_ than 375 px, so the narrowest documented breakpoint — the one
+    that catches horizontal overflow — was never exercised by this journey. The PASS above stands
+    for what it measured; it does not discharge the documented breakpoint requirement. That gap was
+    closed separately by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at all
+    three documented widths, which is not a re-run of this journey.
 
 ### Phase 5B: Ubuntu
 
@@ -1822,8 +1833,19 @@ creates survives it.
     dangling images and zero anonymous volumes.
   - No mutable Ubuntu journey state remains, and Phase 5B opens no Phase 6
     correction row.
+
     > **Pause Safety**: the Ubuntu container, its clone, and any image this phase pulled are gone; resume
     > from its sanitized row and re-establish the Docker baseline first.
+
+  - **Amended 2026-08-21 — breakpoint coverage.** The viewport evidence this gate rests on was
+    captured at 390x844, 768x1024, and 1440x900. The repository's own
+    `screenshot-conventions.md` and `ui-verification-checklist.md` require mobile 375 px, tablet
+    768 px, and desktop 1280 px as the minimum set. Two of the three widths used here therefore do
+    not conform, and 390 px is _wider_ than 375 px, so the narrowest documented breakpoint — the one
+    that catches horizontal overflow — was never exercised by this journey. The PASS above stands
+    for what it measured; it does not discharge the documented breakpoint requirement. That gap was
+    closed separately by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at all
+    three documented widths, which is not a re-run of this journey.
 
 ### Phase 5 Gate
 
@@ -1892,8 +1914,8 @@ record.
     task IDs, exactly as the phase preamble requires.
 - [x] [AI] [P6-001A] Create `artifacts/execution-record-fixes.md` when applicable — acceptance: every
       Phase 6 task ID has a row.
-  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: artifacts/execution-record-fixes.md ·
-    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Not applicable at this point; the file was created later, by iteration `@01`.
   - **Not applicable.** The clause is conditional ("when applicable"), and with
     zero defects there is no correction unit, so `artifacts/execution-record-fixes.md`
     was deliberately **not** created. Creating an empty record would assert a unit
@@ -1904,8 +1926,8 @@ record.
     unaccounted for.
 - [x] [AI] [P6-002] Execute each exact correction row separately and rerun its failed journey —
       acceptance: every defect is fixed and no product behavior change is smuggled into docs.
-  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: CONTRIBUTING.md, README.md, docs/how-to/setup-development-environment.md ·
-    **Notes**: Evidence and reasoning for this item are recorded in the bullets below.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None inside the repository ·
+    **Notes**: Not applicable at this point; the documents were corrected later, by iteration `@01`.
   - **Not applicable.** There are zero correction rows to execute and no failed
     journey to rerun — both Phase 5 journeys passed on their first run.
   - The second half of the acceptance ("no product behavior change is smuggled
