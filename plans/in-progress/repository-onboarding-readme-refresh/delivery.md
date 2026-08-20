@@ -1155,11 +1155,50 @@ current`. The byte-identity boundary is untouched, so this unit opens no cross-r
     re-confirmed every generated mirror byte-identical to its `.claude/` source with
     `.codex/config.toml` changed only inside its generated region. Final verdict: zero CRITICAL, HIGH,
     or MEDIUM on both the sensitivity and the voice axis.
-- [ ] [AI] [P3-013] Commit the refresh unit with a Conventional Commit — acceptance: the commit
+- [x] [AI] [P3-013] Commit the refresh unit with a Conventional Commit — acceptance: the commit
       contains only the cohesive documentation refresh.
-- [ ] [AI] [P3-014] Push the exact refresh branch — acceptance: `origin` contains the unit head.
-- [ ] [AI] [P3-015] Open the draft PR against `main` — acceptance: its declared file set and plan link
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: commit `93b2fa0db`
+    on `docs/repository-onboarding-public`, 96 files changed with 1,641 insertions and 1,098
+    deletions and one file created — the same 96 paths the file-touch ledger carries and the same 96
+    that were staged, so the commit contents equal the reconciled set rather than merely matching its
+    size. The whole pre-commit surface ran as part of the commit, including `commitlint`, and the
+    Conventional Commit subject `docs(onboarding): refresh reader-facing documentation across the
+public repo` passed it. The message states each defect class and what proved it, rather than
+    summarising the diff. The working tree is clean afterwards. Git emitted its standing `gc.log`
+    warning about unreachable loose objects during the commit; that is a pre-existing repository
+    housekeeping condition unrelated to this change and it did not affect the commit, which exited 0.
+- [x] [AI] [P3-014] Push the exact refresh branch — acceptance: `origin` contains the unit head.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: `README.md` · **Notes**: the first
+    push attempt was rejected, and the rejection was a real defect in this unit rather than
+    unrelated noise: the `governance-word-budget` pre-push gate reported
+    `[FAIL] README.md — README.md is 934 words (over 900-word fail limit)`. The branch started from
+    a README of 838 words, so the reader work in this unit is what crossed the limit. The gate
+    surface run in P3-011 predates the README rewrite the maker-checker-fixer cycle produced in
+    P3-012, which is why the regression reached the push rather than that gate. The fix applies
+    progressive disclosure instead of reverting a correction: the sibling-repository block now gives
+    each repository one sentence and defers the rest to the repository-comparison document it
+    already links, the duplicated pointer to the getting-started tutorial is dropped from the
+    closing paragraph because the same link already appears at the top of that section, and three
+    other paragraphs are tightened. Every reader-facing correction survives — the qualified port
+    sentence, the `OSE_WWW_PORT` override example, the WSL2 posture, the closed-intake note, and the
+    prerequisite list. README.md is now 892 words; re-running the validator gives exit 0 with zero
+    Fail findings, and Prettier reports the file unchanged while markdownlint reports
+    `Linting: 1 file(s)` with `Summary: 0 error(s)`, so the zero is measured over a real file. The
+    fix landed as commit `5910653bf` because amending the unit commit was not available; the
+    branch's file set is still the same 96 reconciled paths. The second push exited 0 and created
+    `docs/repository-onboarding-public` on `origin`.
+- [x] [AI] [P3-015] Open the draft PR against `main` — acceptance: its declared file set and plan link
       are correct.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: draft PR
+    [#238](https://github.com/wahidyankf/ose-public/pull/238) against `main` from
+    `docs/repository-onboarding-public`. The acceptance has two halves and both were checked against
+    the API rather than against the body I wrote: `gh pr view 238 --json files` returns 96 files,
+    the same count as the reconciled ledger and the same count the commit carries, and the plan link
+    resolves because `git ls-tree origin/main` lists the plan folder on `main`. The link was
+    initially written relative (`../tree/main/...`), which does not resolve from a PR body, and was
+    replaced with an absolute URL before this item was ticked. The body states each defect class the
+    unit corrects, names the deferred `ayokoding-web`/`ose-web` rename class so a reviewer does not
+    read its absence as an oversight, and records that the byte-identity boundary is untouched.
 - [ ] [AI] [P3-016] Run the canonical behavior-routed review cycles — acceptance: all accepted
       findings are fixed and each cycle's CI is green.
 - [ ] [AI] [P3-017] Forward-update from `origin/main` without destructive history edits — acceptance:

@@ -261,3 +261,26 @@ tool processed N files before believing its verdict. Prefer writing the paths li
 command over expanding a variable — and when a list must be a variable, print the processed count
 and compare it against the expected one. See [[feedback_zsh_no_word_split_in_bash_tool]] and
 [[feedback_benchmark_harness_false_zeros]].
+
+## L-013 — A gate run before the last edit proves nothing about the commit
+
+**Phase**: 3 (P3-014) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+remaining unit in Phases 6, 8, and 9, no repository change required
+
+This unit ran its full gate surface in P3-011 and then, in P3-012, ran a README maker-checker-fixer
+cycle that rewrote reader-facing prose. Both steps passed on their own terms, so the unit was
+committed. The push was then rejected: `README.md` had grown to 934 words against the 900-word fail
+limit that the `governance-word-budget` gate enforces. The branch had started at 838 words, so the
+overrun was created entirely by the P3-012 rewrite — the exact window the P3-011 gate run could not
+see. The checklist ordering made this look correct at every individual step, which is what let it
+through.
+
+Content-quality cycles and mechanical gates measure different things, and a content cycle that
+improves prose can move a file across a mechanical threshold the cycle knows nothing about.
+Ordering gates before content work leaves that class of regression undetectable until push.
+
+**How to apply**: treat the gate surface as a terminal step, not a phase-ordered one — re-run it
+after the last edit of any kind, including edits produced by a quality cycle that has its own
+passing verdict. When a checklist places a gate step before a content step, run the gate again
+before commit rather than trusting the earlier green. See
+[[feedback_word_budget_trips_on_small_governance_edits]].
