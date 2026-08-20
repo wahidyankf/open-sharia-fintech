@@ -25,7 +25,8 @@ The project uses the following types based on [Angular's commit convention](http
 | `refactor` | Code refactoring (no behavior change)       | `refactor(parser): extract common logic`               |
 | `perf`     | Performance improvement                     | `perf: optimize database query`                        |
 | `test`     | Test changes                                | `test: add unit tests for auth module`                 |
-| `chore`    | Build/tooling/dependency changes            | `chore: update dependencies`                           |
+| `build`    | Build system or external dependency changes | `build(nx): wire namedInputs for cache invalidation`   |
+| `chore`    | Other changes to tooling or housekeeping    | `chore: update dependencies`                           |
 | `ci`       | CI/CD configuration changes                 | `ci: add GitHub Actions workflow`                      |
 | `revert`   | Revert a previous commit                    | `revert: feat(auth): remove two-factor authentication` |
 
@@ -78,12 +79,17 @@ The project uses the following types based on [Angular's commit convention](http
 - Improving test coverage
 - Test refactoring
 
+**`build`** - Build system or external dependency changes
+
+- Build tool configuration
+- Dependency manifests and lockfiles
+- Compilation and packaging setup
+
 **`chore`** - Maintenance tasks
 
-- Dependency updates
-- Build configuration
 - Release preparation
 - Tooling changes
+- Housekeeping that touches neither source nor tests
 
 **`ci`** - Continuous Integration changes
 

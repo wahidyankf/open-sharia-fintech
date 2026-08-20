@@ -102,7 +102,7 @@ graph LR
 
 **Format**: `<type>(<scope>): <description>`
 
-**Valid Types**: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
+**Valid Types**: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
 
 **Impact**: Ensures consistent commit message format
 

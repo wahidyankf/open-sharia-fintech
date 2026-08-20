@@ -671,6 +671,29 @@ survive verification are recorded as rejected rather than silently dropped.
 | C-84 | voice reviewer | HIGH     | `CONTRIBUTING.md` asserted the project "adheres to a Code of Conduct". No `CODE_OF_CONDUCT.md` exists at any path; the sole match is the convention for authoring one.                             | Section now states the conduct standard directly and says plainly that no root file exists yet. See the follow-up note below. |
 | C-85 | voice reviewer | HIGH     | `related-repositories.md` carried an instruction addressed to an execution agent — "preserve active goals during runner contention…" — on a reader-facing reference path.                          | Sentence removed; the surrounding parity paragraph is unchanged.                                                              |
 
+### Cycle 1 of the `@02` review — one finding, fixed as a class
+
+| Row  | Source              | Severity | Defect                                                                                                                                                                                         | Correction                                                                              |
+| ---- | ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| C-86 | governance reviewer | MEDIUM   | `C-82` corrected `CONTRIBUTING.md`'s commit-type list but left every other surface stating the same enforced fact untouched, breaking a three-way consistency the repo maintains deliberately. | `build` added to every surface that states the set, and the harness mirror regenerated. |
+
+The reviewer named two stale surfaces. A sweep for every tracked Markdown file stating the full type
+set found **four**, so the fix was applied to the class rather than to the cited sites:
+
+| Surface                                                                                            | Was                                             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | 10-row table plus a prose description section   |
+| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | 10-type inline list                             |
+| `docs/reference/system-architecture/ci-cd.md`                                                      | 10-type inline list — not named by the reviewer |
+| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | 10-bullet list — not named by the reviewer      |
+
+`.agents/skills/caveman-commit/SKILL.md` already carried all eleven and was left alone. Because
+`chore` had been documented as covering build configuration, its description was narrowed where
+`build` now covers that case, so the two do not overlap. `governance word-budget validate` exits 0
+after the edit; the one WARN on `valid-commit-types.md` predates it (428 words at `400712aa9`,
+already over the 400-word target). `npm run generate:bindings` then `npm run validate:sync` both
+exit 0.
+
 ### Rejected findings
 
 The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
@@ -706,14 +729,19 @@ count.
 
 ## File-Touch Ledger
 
-| Path                                                | Change                                                                                          | Owning Row             |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------- |
-| `CONTRIBUTING.md`                                   | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct | C-01…C-05, C-82, C-84  |
-| `docs/how-to/setup-development-environment.md`      | Quick Start Rust step and renumbering; integration port; cargo tool attribution                 | C-06, C-07, C-81, C-83 |
-| `README.md`                                         | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                     | C-08, C-21, C-24       |
-| `docs/tutorials/getting-started-with-ose-public.md` | Lead paragraph, spelling, platform wording, Cargo reason                                        | C-21, C-25             |
-| `docs/reference/related-repositories.md`            | Retired-sandbox row corrected to infrastructure work; executor instruction removed              | voice rows, C-85       |
-| `plans/in-progress/…/evidence/phase-6-*`            | Documented-breakpoint capture and its transcript                                                | C-23                   |
-| `plans/in-progress/…/delivery.md`                   | Phase 5–7 ticks and notes                                                                       | plan records           |
-| `plans/in-progress/…/artifacts/*.md`                | Ledger re-run, public record, this record                                                       | plan records           |
-| `plans/in-progress/…/evidence/*`                    | Phase 5A and 5B journey evidence                                                                | plan records           |
+| Path                                                                                               | Change                                                                                          | Owning Row             |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------- |
+| `CONTRIBUTING.md`                                                                                  | Platform statement, prerequisites, intake caveat, Diátaxis gloss; commit types; Code of Conduct | C-01…C-05, C-82, C-84  |
+| `docs/how-to/setup-development-environment.md`                                                     | Quick Start Rust step and renumbering; integration port; cargo tool attribution                 | C-06, C-07, C-81, C-83 |
+| `README.md`                                                                                        | WSL2 expansion; Rust bullet accuracy; changed-port guidance                                     | C-08, C-21, C-24       |
+| `docs/tutorials/getting-started-with-ose-public.md`                                                | Lead paragraph, spelling, platform wording, Cargo reason                                        | C-21, C-25             |
+| `docs/reference/related-repositories.md`                                                           | Retired-sandbox row corrected to infrastructure work; executor instruction removed              | voice rows, C-85       |
+| `plans/in-progress/…/evidence/phase-6-*`                                                           | Documented-breakpoint capture and its transcript                                                | C-23                   |
+| `plans/in-progress/…/delivery.md`                                                                  | Phase 5–7 ticks and notes                                                                       | plan records           |
+| `plans/in-progress/…/artifacts/*.md`                                                               | Ledger re-run, public record, this record                                                       | plan records           |
+| `plans/in-progress/…/evidence/*`                                                                   | Phase 5A and 5B journey evidence                                                                | plan records           |
+| `repo-governance/development/workflow/commit-messages/valid-commit-types.md`                       | commit-type consistency sweep                                                                   | C-86                   |
+| `repo-governance/development/infra/ci-conventions/git-hooks-standard-pre-commit-and-commit-msg.md` | commit-type consistency sweep                                                                   | C-86                   |
+| `docs/reference/system-architecture/ci-cd.md`                                                      | commit-type consistency sweep                                                                   | C-86                   |
+| `.claude/skills/swe-developing-applications-common/reference/git-workflow.md`                      | commit-type consistency sweep                                                                   | C-86                   |
+| `.agents/skills/swe-developing-applications-common/reference/git-workflow.md`                      | generated mirror of the above                                                                   | C-86                   |
