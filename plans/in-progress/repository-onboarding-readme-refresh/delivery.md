@@ -754,15 +754,55 @@ no PR.
     seven, both additions declared `[E]` in the File-Impact Analysis and recorded in the file-touch
     ledger. 18 of 20 factual claims reproduced on first read; the two that did not were the two the
     findings named.
-- [ ] [AI] [P2-010] Commit the contract unit with a Conventional Commit — acceptance: the commit
+- [x] [AI] [P2-010] Commit the contract unit with a Conventional Commit — acceptance: the commit
       contains one cohesive plan/control-plane change and no unrelated file.
-- [ ] [AI] [P2-011] Push the exact contract branch and open its draft PR against `main` — acceptance:
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None beyond the commit itself ·
+    **Notes**: committed as `688693983`, 7 files changed, 2,019 insertions. Used
+    `git commit --only -F <file> -- <paths>` so the pre-commit hook could not sweep in an unstaged
+    path and so the message body survived intact — `--only ... -m` fails because git reads `-m` as a
+    pathspec. The commit contains exactly the seven file-touch-ledger paths, every one inside
+    `plans/in-progress/repository-onboarding-readme-refresh/`, and no unrelated file. All pre-commit
+    gates ran and passed, including commitlint. The working tree is clean afterwards: the binding
+    regeneration inside the hook produced no change, so nothing was left behind unstaged. Git emitted
+    its standing `gc.log` warning about unreachable loose objects — a preexisting repository
+    housekeeping condition, unrelated to this commit and not introduced by it.
+- [x] [AI] [P2-011] Push the exact contract branch and open its draft PR against `main` — acceptance:
       the PR links this plan and declares its file set.
-- [ ] [AI] [P2-012] Classify the PR with the canonical behavior classifier, then run only its
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: ran
+    `gate run --surface=pre-push` before pushing — exit 0 across eight gates, with
+    `parity-manifest validate` reporting the manifest current and the README-index audit printing
+    `FAILED: 425 finding(s)` while exiting 0, the same count Phase 0 baselined, so this unit adds
+    none. Pushed `docs/repository-onboarding-contract` to origin and opened draft PR #237 against
+    `main`. The body links the plan directory, states that no reader-facing document changes in this
+    PR, and declares the seven-path file set as matching the file-touch ledger exactly. It also
+    records the four defects found while building the unit and the eight independent review passes
+    behind the two gates, so a reviewer can see what was already challenged.
+- [x] [AI] [P2-012] Classify the PR with the canonical behavior classifier, then run only its
       applicable route — acceptance: eligible work reaches the earliest clean code M/H/C cycle within
       seven; noneligible work has a green `pr-quality-gate.yml` run.
-- [ ] [AI] [P2-013] Forward-update from current `origin/main`, rerun all unit gates, and verify PR CI
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: classified PR #237
+    **noneligible** against the five-rule classifier in
+    `repo-governance/workflows/pr/pr-review-quality-gate/purpose-execution-mode-and-classifier.md`.
+    Rule 1: inspected the complete changed-file list rather than the branch name — seven paths, every
+    one Markdown under `plans/in-progress/`, with zero matching `apps/`, `libs/`, `scripts/`,
+    `infra/`, or `.github/` and zero non-Markdown files. Rule 2 does not fire: nothing in the diff can
+    build, test, deploy, provision, run, or otherwise change reachable runtime or CI behavior. Rule 3
+    applies: the full diff is non-executing static plan material. Rule 4's fail-safe does not apply
+    because the diff is uniformly non-executing, not mixed or ambiguous. Rule 5's secret check was
+    discharged by three independent sensitivity sweeps at P2-009, all clean. The noneligible route is
+    therefore a green `pr-quality-gate.yml` run and no specialist fan-out. CI is green: 13 checks
+    pass, 4 language gates correctly skipping, and the `Quality gate` roll-up — the single required
+    context — passes.
+- [x] [AI] [P2-013] Forward-update from current `origin/main`, rerun all unit gates, and verify PR CI
       — acceptance: the head is current and green without destructive history edits.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: `delivery.md` · **Notes**: fetched
+    and compared: `git rev-list --left-right --count origin/main...HEAD` returns `0 1`, so the branch
+    is zero commits behind and one ahead, and `git merge-base HEAD origin/main` equals `origin/main`
+    at `028e8eed9`. The head is already current, so no forward-update was needed and none was
+    performed — no rebase, no reset, no force push, no history edit of any kind. Reran
+    `gate run --surface=pre-push` locally, exit 0. PR CI is green on the pushed head. The remaining
+    Phase 2 ticks were committed and pushed to the branch so the durable record lands inside the PR
+    rather than after it.
 - [ ] [AI] [P2-014] Merge the contract PR as AI after all hardened preconditions hold — acceptance:
       `main` contains the contract and task registers.
 
