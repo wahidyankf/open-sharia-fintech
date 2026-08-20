@@ -1,6 +1,6 @@
 ---
 title: Software Development Practices
-description: Comprehensive documentation on test-driven and behavior-driven development practices
+description: Documentation on test-driven and behavior-driven development practices
 category: explanation
 subcategory: development
 tags:
@@ -166,7 +166,7 @@ graph TD
 
 **Legend**: 🟢 Teal = Passing tests (GREEN) | 🟠 Orange = Failing tests (RED) | 🟤 Brown = Refactoring
 
-See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md) for comprehensive integration patterns and OSE Platform examples.
+See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md) for integration patterns and OSE Platform examples.
 
 ## Applying Standards by Role
 

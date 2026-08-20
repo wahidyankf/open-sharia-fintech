@@ -207,7 +207,9 @@ C4 diagrams MUST pass the following validation checks:
 
 **Validation Tools**:
 
-- `npm run validate:diagrams` - Automated accessibility and syntax checking
+- `npm run validate:diagrams` - Planned automated accessibility and syntax checking; the script is
+  not implemented yet, and
+  [tooling-standards.md](./tooling-standards.md) holds its specification
 - Manual review by architecture team
 
 ## Example: Zakat Management System

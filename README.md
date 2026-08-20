@@ -11,6 +11,17 @@ change as product, research, assurance, and platform work develops.
 This is the active OSE product monorepo, not a generic project starter. It holds OSE product work,
 its supporting research, and the governance and automation that carry them.
 
+Two other repositories sit nearby, and neither is a copy of this one.
+
+`ose-private` holds authorized product operations and is closed to the public.
+
+[`ose-primer`](https://github.com/wahidyankf/ose-primer) is a separate starter project, openly
+licensed like this one and covering several programming languages. It grew out of earlier OSE
+practice and is free to diverge from it.
+
+The [repository comparison](./docs/reference/related-repositories.md) spells out which one answers
+which question.
+
 External contributions are currently closed while the project stabilizes its product and engineering
 patterns.
 
@@ -115,9 +126,19 @@ Start the OSE Platform website:
 npm exec nx -- dev ose-www
 ```
 
-Open <http://localhost:3100> when the development server reports that it is ready. If the port is
-already in use or the server cannot start, stop the process using that port and try again; the
-[Nx command guide](./docs/how-to/run-nx-commands.md) explains project discovery and other targets.
+Open <http://localhost:3100> when the development server reports that it is ready, or whichever
+address it prints if you changed the port.
+
+Already using port 3100? Point the site somewhere else instead of guessing which process to stop:
+
+```bash
+OSE_WWW_PORT=4000 npm exec nx -- dev ose-www
+```
+
+Two guides go further. The [Nx command guide](./docs/how-to/run-nx-commands.md) explains project
+discovery and other targets, and
+[Getting started with OSE Public](./docs/tutorials/getting-started-with-ose-public.md) walks this
+same first run with recovery steps.
 
 From there, read [how OSE applications fit together](./docs/reference/system-architecture/applications.md)
 or explore the [OSE Platform app](./apps/ose-www/) itself.

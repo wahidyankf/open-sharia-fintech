@@ -37,7 +37,7 @@ principles:
 - [TypeScript](#typescript-integration) - Type safety
 - [Performance](#performance-optimization) - Optimization strategies
 - [Security](#security-practices) - Security best practices
-- [Testing](#testing-strategies) - Comprehensive testing
+- [Testing](#testing-strategies) - Testing strategies
 - [Accessibility](#accessibility-standards) - WCAG compliance
 
 ## Overview

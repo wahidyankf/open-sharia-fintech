@@ -137,7 +137,7 @@ description = "Deploys ose-web to production environment branch (prod-ose-www) a
 config_file = "agents/apps-ose-www-deployer.toml"
 
 [agents.apps-wahidyankf-www-deployer]
-description = "Deploys wahidyankf-web to production environment branch (prod-wahidyankf-www) after validation. Vercel listens to production branch for automatic builds."
+description = "Deploys wahidyankf-www to production environment branch (prod-wahidyankf-www) after validation. Vercel listens to production branch for automatic builds."
 config_file = "agents/apps-wahidyankf-www-deployer.toml"
 
 [agents.apps-web-ui-storybook-deployer]
@@ -217,7 +217,7 @@ description = "Applies validated fixes from plan-checker audit reports. Re-valid
 config_file = "agents/plan-fixer.toml"
 
 [agents.plan-maker]
-description = "Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Returns unresolved pre-write and post-write decisions to the calling root orchestrator for grilling, then resumes with resolved answers. Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context)."
+description = "Creates project plans with requirements, technical documentation, and delivery checklists. Returns unresolved pre-write and post-write decisions to the calling root orchestrator for grilling, then resumes with resolved answers. Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context)."
 config_file = "agents/plan-maker.toml"
 
 [agents.pr-review-architecture-maker]

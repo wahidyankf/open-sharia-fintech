@@ -1,6 +1,6 @@
 ---
 name: apps-organiclever-www-developing-content
-description: Comprehensive guide for developing organiclever-www, the OrganicLever life journal at www.organiclever.com. Covers DDD bounded-context architecture, PGlite local-first storage, Effect TS, XState, Next.js 16 App Router, and Vercel deployment. Essential for development tasks on organiclever-www.
+description: Guide for developing organiclever-www, the OrganicLever life journal at www.organiclever.com. Covers DDD bounded-context architecture, PGlite local-first storage, Effect TS, XState, Next.js 16 App Router, and Vercel deployment. Essential for development tasks on organiclever-www.
 ---
 
 # organiclever-www Development Skill

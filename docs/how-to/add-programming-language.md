@@ -297,7 +297,7 @@ Before starting, ensure you have:
 
 ### Step 3.3: Create Beginner Tutorial (0-60%)
 
-**Why:** Build comprehensive foundation for learners.
+**Why:** Build the foundation for learners.
 
 **Actions:**
 
@@ -324,7 +324,7 @@ Before starting, ensure you have:
    Spawn ayokoding-web-general-maker agent:
    "Create Beginner tutorial for [Language] at apps/ayokoding-www/content/en/learn/swe/programming-languages/[language]/tutorials/beginner.md
 
-   Coverage: 0-60% (Comprehensive fundamentals)
+   Coverage: 0-60% (Fundamentals)
    Topics: [Your 10-15 major sections]
    Include: 4 difficulty levels for exercises, working code examples, cross-references to how-to guides
    Reference: [Link to reference language beginner.md]"

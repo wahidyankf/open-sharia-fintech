@@ -328,8 +328,8 @@ conflicts. A single source of truth (the parity plan) prevents duplicate effort
 and conflicting resolutions.
 
 **Rejected alternative**: run the overhaul plan to completion before the parity
-plan. Rejected because the overhaul was already superseded in scope by the more
-comprehensive parity effort.
+plan. Rejected because the overhaul was already superseded in scope by the broader
+parity effort.
 
 ### Row 24 — Rationale Doc Location
 

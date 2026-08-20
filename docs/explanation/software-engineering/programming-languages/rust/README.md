@@ -259,7 +259,7 @@ graph LR
 
 - MUST use `rustfmt` for formatting (enforced via pre-commit hooks)
 - MUST use `cargo clippy -- -D warnings` in CI (deny all warnings)
-- MUST enable `clippy::pedantic` lint group for comprehensive analysis
+- MUST enable `clippy::pedantic` lint group for stricter analysis
 - MUST use `cargo test` for all automated testing
 - SHOULD use `cargo-nextest` for faster parallel test execution
 - MUST achieve >=95% line coverage for domain logic (measured with `cargo-llvm-cov`)

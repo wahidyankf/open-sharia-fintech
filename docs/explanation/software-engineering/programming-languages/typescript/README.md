@@ -1,6 +1,6 @@
 ---
 title: "TypeScript Documentation Index"
-description: Comprehensive TypeScript guide for OSE Platform
+description: TypeScript guide for OSE Platform
 category: explanation
 subcategory: prog-lang
 tags:

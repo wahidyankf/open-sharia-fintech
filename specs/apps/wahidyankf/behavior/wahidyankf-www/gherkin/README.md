@@ -1,8 +1,8 @@
-# wahidyankf-web — Gherkin Features
+# wahidyankf-www — Gherkin Features
 
 Audience: Engineers, Technical Product/Project Managers
 
-UI-semantic Gherkin feature files for `wahidyankf-web`, organized by bounded context. Each
+UI-semantic Gherkin feature files for `wahidyankf-www`, organized by bounded context. Each
 subfolder maps to one bounded context from the
 bounded-context registry.
 
@@ -42,7 +42,7 @@ specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/
 
 | App                     | Level | Tool             |
 | ----------------------- | ----- | ---------------- |
-| `wahidyankf-web-fe-e2e` | E2E   | `playwright-bdd` |
+| `wahidyankf-www-fe-e2e` | E2E   | `playwright-bdd` |
 
 ## Related
 

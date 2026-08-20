@@ -1,6 +1,6 @@
 ---
 title: "Next.js Middleware"
-description: Comprehensive guide to Next.js Edge middleware for request modification, authentication, redirects, rewrites, and A/B testing
+description: Guide to Next.js Edge middleware for request modification, authentication, redirects, rewrites, and A/B testing
 category: explanation
 subcategory: platform-web
 tags:

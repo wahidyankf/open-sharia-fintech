@@ -1,8 +1,8 @@
-# wahidyankf-web — Containers (C4 L2)
+# wahidyankf-www — Containers (C4 L2)
 
 Audience: Engineers, Technical Product/Project Managers
 
-Container-level specifications for wahidyankf-web — the single deployable unit (`web`, a
+Container-level specifications for wahidyankf-www — the single deployable unit (`web`, a
 Next.js 16 app on Vercel) and its runtime characteristics. This is C4 Level 2.
 
 ## Containers
@@ -23,4 +23,4 @@ static TypeScript modules bundled at build time.
 
 - [`../system-context/`](../system-context/README.md) — C4 L1
 - [`../components/`](../components/README.md) — C4 L3 zoom into the `web` container's internals
-- [wahidyankf-web — Container Diagram (C4 L2)](./container.md)
+- [wahidyankf-www — Container Diagram (C4 L2)](./container.md)

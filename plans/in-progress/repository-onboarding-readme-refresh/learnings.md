@@ -193,3 +193,71 @@ them `identity-bound`.
 vocabulary appears across every file in the delivery unit, and give each site a verdict. Check the
 definitional sites first — a wrong definition re-injects the error into every downstream use of the
 term, including the ones you just fixed. See [[feedback_fix_the_class_not_the_named_sites]].
+
+## L-011 — A declared exemption can be inert, and only a negative control shows it
+
+**Phase**: 3 (P3-005) · **Date**: 2026-08-20 · **Routing**: repository configuration — route to the
+existing [`plans/backlog/file-naming-convention-rework/`](../../backlog/file-naming-convention-rework/README.md)
+plan, which already owns the hard-coded exempt-basename list; do not fix inline and do not open a new
+backlog item
+
+`CONTRIBUTING.md` is declared exempt from `md naming validate` in two places that agree exactly: the
+`lint-staged` `*.md` command in `package.json` and the `md-naming` gate entry in `repo-config.yml`.
+The exemption does nothing, and it is inert for **two independent reasons**, either of which alone
+would suffice. First, the gate invocation passes no paths, so the validator falls back to its
+built-in default scan roots — `docs/` and `repo-governance/`, never the repository root where
+`CONTRIBUTING.md` lives (`md_validate_naming.rs`, `DEFAULT_PATHS`); its own success line says
+`DOCS NAMING VALIDATION PASSED`. Second, even on the `lint-staged` path, which _does_ hand the
+staged file to the validator as a positional argument and therefore does reach the root,
+`CONTRIBUTING.md` is one of nine basenames hard-coded exempt inside the validator itself
+(`docs/naming.rs`, `is_naming_exempt`), guarded by its own regression test. Running
+`md naming validate CONTRIBUTING.md` with no `--exempt` flag at all exits 0.
+
+Finding only the first reason would have been worse than finding neither, because it suggests a fix
+— widen the scan scope — that would not change the outcome.
+
+Three negative controls settled it. A `BAD-NAME.md` in `docs/` is flagged with the expected rule
+(`violates lowercase-kebab-case rule (^[a-z0-9-]+\.md$)`) and exits 1. The identical file at the
+repository root is not flagged. The identical file under gitignored `local-tmp/` is not flagged
+either.
+
+That last one matters twice over, because this plan's own acceptance clause told the executor to put
+the control in `local-tmp/`. Following it literally produces an unflagged control, which reads as
+either a broken validator or nothing at all — a clause that cannot fail is not a control.
+
+Deleting the exemption is not this plan's call. Under the validator as it stands today it is pure
+redundancy, but it is redundancy against a hard-coded list that
+`plans/backlog/file-naming-convention-rework/` proposes to make configurable — and the moment that
+list moves into configuration, the `repo-config.yml` declaration stops being redundant and starts
+being the thing that carries the exemption. Removing it now would arm a failure for whoever lands
+that plan. What matters here is _knowing_ it is currently inert, so nobody cites it as evidence the
+repository root is protected.
+
+**How to apply**: an exemption is a claim that something would otherwise fail. Test that claim by
+removing the exemption, not by observing the gate pass with it. Place the negative control where the
+validator actually looks — confirm its scan scope first, or the control proves nothing. And once one
+reason for inertness is found, keep going: a second, independent reason changes what the fix is, and
+stopping at the first one hands the next reader a repair that repairs nothing.
+
+## L-012 — A linter's "0 errors" is only trustworthy next to its file count
+
+**Phase**: 3 (P3-007) · **Date**: 2026-08-20 · **Routing**: execution technique — applies to every
+remaining sweep in Phases 7 and 8, no repository change required
+
+Verifying three edited documents, `markdownlint-cli2` printed `Summary: 0 error(s)` and Prettier
+printed `All matched files use Prettier code style!`. Both were false. The file list had been held in
+a shell variable and passed unquoted, and this shell does not word-split an unquoted variable, so
+both tools received one argument that was the three paths joined by spaces. No such file exists.
+`markdownlint-cli2` said so in the line directly above its summary — `Linting: 0 file(s)` — and
+Prettier said so in a line its own success message contradicts: `[error] No files matching the
+pattern were found`. Re-run with the paths written out, the same commands report `Linting: 3 file(s)`
+and a genuine clean result.
+
+A tool that lints nothing and a tool that lints everything successfully print the same summary. The
+summary is not the evidence; the count is.
+
+**How to apply**: when a check is meant to prove something about N specific files, assert that the
+tool processed N files before believing its verdict. Prefer writing the paths literally into the
+command over expanding a variable — and when a list must be a variable, print the processed count
+and compare it against the expected one. See [[feedback_zsh_no_word_split_in_bash_tool]] and
+[[feedback_benchmark_harness_false_zeros]].

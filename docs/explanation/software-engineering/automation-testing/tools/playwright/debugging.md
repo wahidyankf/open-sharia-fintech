@@ -40,7 +40,7 @@ This document defines **debugging strategies** for Playwright tests in the OSE P
 
 ### 1. Trace Viewer
 
-**View test execution** with comprehensive debugging information.
+**View test execution** with debugging information.
 
 ```bash
 # Run with trace

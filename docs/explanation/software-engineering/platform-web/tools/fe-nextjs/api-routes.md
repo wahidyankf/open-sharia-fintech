@@ -1,6 +1,6 @@
 ---
 title: "Next.js API Routes"
-description: Comprehensive guide to Next.js API routes including route handlers, HTTP methods, request/response handling, authentication, and REST API design
+description: Guide to Next.js API routes including route handlers, HTTP methods, request/response handling, authentication, and REST API design
 category: explanation
 subcategory: platform-web
 tags:

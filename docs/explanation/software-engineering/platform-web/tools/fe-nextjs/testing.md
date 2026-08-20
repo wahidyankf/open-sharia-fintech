@@ -1,6 +1,6 @@
 ---
 title: "Next.js Testing"
-description: Comprehensive guide to testing Next.js applications including component testing with React Testing Library, Server Component testing, Server Action testing, E2E with Playwright, and integration testing
+description: Guide to testing Next.js applications including component testing with React Testing Library, Server Component testing, Server Action testing, E2E with Playwright, and integration testing
 category: explanation
 subcategory: platform-web
 tags:

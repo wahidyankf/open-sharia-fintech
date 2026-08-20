@@ -1,6 +1,6 @@
 ---
 title: "Next.js Deployment"
-description: Comprehensive guide to Next.js deployment including Vercel, self-hosting with Node.js, Docker containerization, environment variables, CI/CD pipelines, and production monitoring
+description: Guide to Next.js deployment including Vercel, self-hosting with Node.js, Docker containerization, environment variables, CI/CD pipelines, and production monitoring
 category: explanation
 subcategory: platform-web
 tags:

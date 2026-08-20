@@ -98,7 +98,7 @@ Update the frontmatter with accurate information:
 ```yaml
 ---
 name: domain__your-skill-name
-description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills. Example - "Provides comprehensive guide for creating maker-checker-fixer workflows. Auto-loads when task mentions content quality validation, audit reports, three-stage workflows, or implementing checker/fixer agents."
+description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills. Example - "Provides a guide for creating maker-checker-fixer workflows. Auto-loads when task mentions content quality validation, audit reports, three-stage workflows, or implementing checker/fixer agents."
 context: inline # Optional - this is the default
 allowed-tools: [Read, Grep] # Optional - specify if Skill needs specific tools
 model: sonnet # Optional - specify if Skill requires specific model
@@ -119,7 +119,7 @@ agent: Explore # Required - specifies which agent type to spawn
 **Frontmatter Guidelines**:
 
 - **name**: Must use domain prefix pattern `[domain]__[skill-name]` (e.g., `docs__`, `repo__`, `plan__`), descriptive, unique
-- **description**: Action-oriented, specific triggers, comprehensive (150-250 words recommended)
+- **description**: Action-oriented, with the specific triggers that should load it (150-250 words recommended)
 - **context**: Optional for inline (default), required `fork` for delegation mode
 - **agent**: Required when `context: fork` - specifies agent type (Explore, custom agents, etc.)
 - **allowed-tools**: Only if Skill examples require specific tools (inline mode only)
@@ -162,7 +162,7 @@ Verify your description triggers auto-loading:
 
 - Include specific terminology users will mention in tasks
 - List concrete triggers ("when task mentions X, Y, or Z")
-- Be comprehensive but specific (150-250 words)
+- Name the tasks that should trigger it, and stay specific (150-250 words)
 - Avoid generic language ("helps with development")
 - Use action-oriented phrasing ("provides guide for", "auto-loads when")
 
@@ -195,7 +195,7 @@ Edit `your-skill-name/SKILL.md`:
 Edit `your-skill-name/reference.md`:
 
 1. **Detailed specifications** - Complete rules with all edge cases
-2. **Comprehensive tables** - Matrices, reference data
+2. **Tables** - Matrices, reference data
 3. **Deep-dive explanations** - Complex topics fully explained
 4. **Validation criteria** - Checklists for correct application
 5. **Decision trees** - When to use pattern A vs B
@@ -269,10 +269,9 @@ skills: [domain__your-skill-name] # Add your Skill here
 ### Description Writing
 
 1. **Be specific**: Include exact terminology users will mention
-2. **List triggers**: Explicitly state "when task mentions X, Y, Z"
-3. **Be comprehensive**: 150-250 words, cover all use cases
-4. **Avoid generic**: Don't say "helps with documentation" - say "provides Mermaid diagram accessibility standards with color-blind friendly palette"
-5. **Test thoroughly**: Iterate based on actual auto-loading behavior
+2. **List triggers**: Explicitly state "when task mentions X, Y, Z", in 150-250 words
+3. **Avoid generic**: Don't say "helps with documentation" - say "provides Mermaid diagram accessibility standards with color-blind friendly palette"
+4. **Test thoroughly**: Iterate based on actual auto-loading behavior
 
 ### Content Organization
 
@@ -304,7 +303,7 @@ skills: [domain__your-skill-name] # Add your Skill here
 
 **Wrong**: `description: "Helps with documentation tasks"`
 
-**Right**: `description: "Provides comprehensive guide for creating content on ayokoding-www, a Next.js 16 fullstack content platform. Auto-loads when task mentions bilingual content, by-example tutorials, programming language tutorials, or ayokoding-www site development."`
+**Right**: `description: "Provides a guide for creating content on ayokoding-www, a Next.js 16 fullstack content platform. Auto-loads when task mentions bilingual content, by-example tutorials, programming language tutorials, or ayokoding-www site development."`
 
 **Why**: Generic descriptions won't trigger auto-loading reliably. Be specific about terminology and use cases.
 
@@ -373,7 +372,7 @@ docs__creating-accessible-diagrams/
 
 **Why Multi-File**: Extensive code examples warrant separate file, but no complex specification tables needed (so no reference.md)
 
-### Example 3: Comprehensive Architecture Skill (Multi-File)
+### Example 3: Multi-File Architecture Skill
 
 **Skill**: `wow__understanding-repository-architecture`
 

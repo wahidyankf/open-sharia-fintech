@@ -1,8 +1,8 @@
-# wahidyankf-web — Behavior
+# wahidyankf-www — Behavior
 
 Audience: Engineers, Technical Product/Project Managers
 
-Behavior specifications for wahidyankf-web — Gherkin scenarios that exercise the product
+Behavior specifications for wahidyankf-www — Gherkin scenarios that exercise the product
 through the frontend UI surface. There is no backend API perspective today; if a server-side
 rendering layer or API is added later, a `behavior/wahidyankf-be/gherkin/` folder would be added here.
 
@@ -15,7 +15,7 @@ rendering layer or API is added later, a `behavior/wahidyankf-be/gherkin/` folde
 
 | Container | Perspective                       | Background                 | Consumed by                        |
 | --------- | --------------------------------- | -------------------------- | ---------------------------------- |
-| `web`     | UI-semantic (clicks, types, sees) | `Given the app is running` | `apps/wahidyankf-web` (Next.js 16) |
+| `web`     | UI-semantic (clicks, types, sees) | `Given the app is running` | `apps/wahidyankf-www` (Next.js 16) |
 
 ## Gherkin coverage
 
@@ -33,5 +33,5 @@ rendering layer or API is added later, a `behavior/wahidyankf-be/gherkin/` folde
 ## Related
 
 - [`../components/`](../components/README.md) — C4 L3 components that the scenarios exercise
-- [wahidyankf-web — Web Behavior](./wahidyankf-www/README.md)
+- [wahidyankf-www — Web Behavior](./wahidyankf-www/README.md)
 - `../ddd/` — Ubiquitous language governing scenario vocabulary

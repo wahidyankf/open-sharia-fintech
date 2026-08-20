@@ -1,6 +1,6 @@
 ---
 title: "React Hooks"
-description: Comprehensive guide to React hooks including built-in and custom hooks
+description: Guide to React hooks including built-in and custom hooks
 category: explanation
 subcategory: platform-web
 tags:

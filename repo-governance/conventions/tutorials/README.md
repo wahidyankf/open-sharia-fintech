@@ -28,7 +28,7 @@ This directory contains standards for tutorial creation, structure, naming, and 
 
 ### Tutorial Types
 
-- [By-Concept Tutorial Convention](./by-concept.md) — Standards for creating comprehensive concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams. Use when authoring, reviewing, or scoping a By-Concept (narrative-driven) tutorial for any language or framework.
+- [By-Concept Tutorial Convention](./by-concept.md) — Standards for creating concept-driven tutorials with 95% coverage, heavily annotated code, and rich diagrams. Use when authoring, reviewing, or scoping a By-Concept (narrative-driven) tutorial for any language or framework.
 - [By-Example Tutorial Convention](./swe-by-example.md) — Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations. Read before creating or reviewing SWE by-example tutorial content (code-first, 75-85 annotated examples) for any programming language or framework.
 - [Security By-Example Tutorial Convention](./security-by-example.md) — Standards for security-domain by-example tutorials using tool output, lab scenarios, and annotated security artifacts — extends the SWE By-Example Convention. Use when authoring, reviewing, or scoping a security-domain by-example tutorial (Foundations, Red Team, or Blue Team) and need the security-specific adaptations of the SWE By-Example convention.
 - [Scenario By-Example Tutorial Convention](./scenario-by-example.md) — Standards for scenario-domain by-example tutorials using annotated documents, decisions, and governance artifacts — extends the SWE By-Example Convention for any non-code domain. Use when writing or reviewing a non-code, scenario-driven by-example tutorial (security governance, ADRs, legal/compliance, risk) and you need the standard this content must follow.
@@ -60,7 +60,7 @@ The Full Set Tutorial Package consists of 5 mandatory components:
 
 This set of conventions implements/respects the following core principles:
 
-- **[Documentation First](../../principles/content/documentation-first.md)**: Tutorial conventions mandate structured, comprehensive learning content as a primary deliverable. The Full Set Tutorial Package architecture ensures systematic documentation of all facets of a programming language or topic rather than ad-hoc, incomplete coverage.
+- **[Documentation First](../../principles/content/documentation-first.md)**: Tutorial conventions mandate structured learning content as a primary deliverable. The Full Set Tutorial Package architecture ensures systematic documentation of all facets of a programming language or topic rather than ad-hoc, incomplete coverage.
 
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: The five-component Full Set Tutorial Package follows a deliberate progression from foundational (Initial Setup, Quick Start) through increasing depth (By Example, By Concept, Cookbook). Learners access complexity at their own pace following a structured path.
 

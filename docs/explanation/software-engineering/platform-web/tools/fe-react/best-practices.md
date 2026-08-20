@@ -44,7 +44,7 @@ principles:
 - [Error Handling](#error-handling) - Robust error management
 - [Performance](#performance-best-practices) - Optimization strategies
 - [Accessibility](#accessibility-standards) - WCAG compliance
-- [Testing](#testing-strategies) - Comprehensive testing
+- [Testing](#testing-strategies) - Testing strategies
 
 ### Related Documentation
 

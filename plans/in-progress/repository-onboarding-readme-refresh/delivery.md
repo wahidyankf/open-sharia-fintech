@@ -803,70 +803,358 @@ no PR.
     `gate run --surface=pre-push` locally, exit 0. PR CI is green on the pushed head. The remaining
     Phase 2 ticks were committed and pushed to the branch so the durable record lands inside the PR
     rather than after it.
-- [ ] [AI] [P2-014] Merge the contract PR as AI after all hardened preconditions hold — acceptance:
+- [x] [AI] [P2-014] Merge the contract PR as AI after all hardened preconditions hold — acceptance:
       `main` contains the contract and task registers.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: checked every
+    hardened precondition before merging rather than trusting the green checks alone —
+    `mergeable: MERGEABLE`, `mergeStateStatus: CLEAN`, zero unresolved review threads queried through
+    the GraphQL `reviewThreads` API, and CI at 14 pass / 4 skipping / 0 failing. Marked the PR ready
+    for review, then squash-merged as `f268c0077e897afe4ece54a4c013309ac85dda04` under `[AI]`
+    authority, which the plan's Delivery Mode grants for this unit. Kept the branch rather than
+    deleting it, so P9-012 can still prove its merged status. `main` now carries the contract and
+    both task registers.
 
 ### Phase 2 Gate
 
-- [ ] [AI] [P2-G01] Read the merged contract from `origin/main` — acceptance: downstream work begins
+- [x] [AI] [P2-G01] Read the merged contract from `origin/main` — acceptance: downstream work begins
       from one immutable contract revision.
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: read the ledger
+    back out of `origin/main` itself with `git show`, not from the working tree, so the verification
+    is against what actually merged. It carries 814 per-document rows at a uniform 19 fields, all six
+    `### … (P2-00N)` contract subsections, and 14 PASS verdicts in the Reconciliation table. The
+    immutable contract revision downstream work begins from is
+    `f268c0077e897afe4ece54a4c013309ac85dda04`. Phase 2 gate assertion holds: 40 ticks against 40
+    completed plan tasks.
 
 > **Pause Safety**: the control contract is merged and independently useful. To resume, read the
 > merged ledger and start the refresh unit from current `origin/main`.
 
 ## Phase 3: Complete Documentation Refresh
 
-- [ ] [AI] [P3-001] Switch the plan worktree to the refresh branch, created from current
+- [x] [AI] [P3-001] Switch the plan worktree to the refresh branch, created from current
       `origin/main` — acceptance: the declared pair appears in `git worktree list` and
       `git status --short` is clean before edits.
-- [ ] [AI] [P3-001A] Create `artifacts/execution-record-public.md` with the required schema —
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: created the branch
+    from `origin/main` at `f268c0077`, the merged contract revision, with the tree clean beforehand —
+    `git status --porcelain` returned zero paths at branch creation, and the only later modification
+    is this file's own Phase 2 tick record. First attempt named the branch
+    `docs/repository-onboarding-refresh` from memory; reading the Delivery Boundaries table showed
+    the declared Phase 3 name is `docs/repository-onboarding-public`, so the branch was renamed
+    before any commit and nothing was pushed under the wrong name. `git worktree list` now shows the
+    declared pair — `worktrees/repository-onboarding-readme-refresh/` on
+    `docs/repository-onboarding-public` — and two worktrees total, so the Worktree Cap still holds.
+    `git merge-base HEAD origin/main` equals `origin/main`. Also fast-forwarded local `main` from
+    `028e8eed9` to `f268c0077`: the squash-merge advanced the remote, not the local branch, and
+    leaving it behind is how silent divergence starts.
+- [x] [AI] [P3-001A] Create `artifacts/execution-record-public.md` with the required schema —
       acceptance: all Phase 3 task IDs have rows before their checkboxes are checked.
-- [ ] [AI] [P3-002] Run `npm install`, `npm run doctor -- --fix`, and baseline gates in the refresh
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/execution-record-public.md` · **Notes**: opened the refresh unit's durable record
+    before any Phase 3 edit, so no tick can outrun its row — the ordering rule that P2-009 caught
+    being violated in the contract unit. It carries the declared six-column schema, pins the contract
+    revision this unit executes against at `f268c0077`, and states that every fact comes from the
+    authority `### Source of Truth (P2-001)` names for its class while every changed reader-facing
+    document is read against clauses V1–V12. Rows for P3-001 and P3-001A are in place. A file-touch
+    ledger section is opened empty, to be reconciled at P3-010 and staged against the
+    identity-boundary guard at P3-010B. Zero absolute local paths, `prettier --check` and
+    `markdownlint-cli2` exit 0.
+- [x] [AI] [P3-002] Run `npm install`, `npm run doctor -- --fix`, and baseline gates in the refresh
       unit — acceptance: setup and baseline checks pass before edits.
-- [ ] [AI] [P3-003] Audit and, where evidence requires, revise root `README.md` around product
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: `npm install`
+    exits 0; its `allow-scripts` notice about `fsevents` is npm's standing install-script prompt, not
+    a failure. `npm run doctor -- --fix` exits 0 at 15/16 tools OK, 0 missing, 1 warning — the same
+    package-manager version warning Phase 0 recorded as preexisting environment drift, unchanged by
+    the branch switch. Both gate surfaces are green on the refresh branch before any edit:
+    `gate run --surface=pre-commit` and `--surface=pre-push` each exit 0. The README-index audit
+    prints `FAILED: 425 finding(s)` while exiting 0 — identical to the Phase 0 and Phase 2 counts, so
+    the merged contract unit added none and Phase 3 starts from the same baseline. Nothing tracked
+    was mutated: the tree holds only this file's ticks and the new untracked execution record.
+- [x] [AI] [P3-003] Audit and, where evidence requires, revise root `README.md` around product
       purpose, repository role, maturity, sibling-repository lines, **Understand the product**, and
       **Run OSE locally** — acceptance: an early engineer or product person can select a path without
       reading build internals first, and an already-passing section is recorded `verified-unchanged`.
-- [ ] [AI] [P3-003A] Verify the root package description with `jq -r '.description' package.json`,
+  - **Date**: 2026-08-20 · **Status**: Done (targeted-fix) · **Files Changed**: `README.md` ·
+    **Notes**: audited against the five-question shared opening the contract records. Four already
+    passed and are `verified-unchanged`: the problem statement, the audience, the pre-alpha maturity
+    and closed-intake posture, and the two labelled reader paths, which appear before any build
+    detail — a reader chooses a path by line 22 without meeting Nx, npm, or a target name. Question
+    three was the single real gap: the README never said how this repository differs from its
+    siblings. Added one paragraph giving `ose-private` and `ose-primer` accurate one-line
+    descriptions and routing to the repository comparison — descriptions and links only, no reader
+    path or metadata change for either, as the contract requires. `ose-private` is named without a
+    link because it is private and public documentation does not describe its internals. Verified
+    rather than assumed: all 15 relative links resolve on disk, both section anchors match their
+    headings, the voice scan finds none of the forbidden words, and `ose-www`'s `dev` target and its
+    `3100` default port both come from the resolved Nx configuration, so the first-run instructions
+    are true. `markdownlint-cli2` exits 0 and the link report names no finding under `README.md`.
+- [x] [AI] [P3-003A] Verify the root package description with `jq -r '.description' package.json`,
       applying
       `npm pkg set description='Open source platform for researching and building trustworthy, Sharia-compliant enterprise products.'`
       only if it differs — acceptance: exact equality with the package metadata contract.
-- [ ] [AI] [P3-004] Align `CONTRIBUTING.md` with closed external intake and authorized
+  - **Date**: 2026-08-20 · **Status**: Done (verified-unchanged) · **Files Changed**: None ·
+    **Notes**: read the live value and compared it to the Package Metadata Contract byte by byte
+    rather than by eye — both are 100 characters and the differing-byte list is empty, so the
+    equality is exact rather than merely close. The item's own guard applies: `npm pkg set` runs only
+    if the values differ, they do not, so nothing was written and `package.json` stays out of this
+    unit's file-touch ledger. This matches what P2-005 predicted when it read the live GitHub
+    metadata and found the contract already satisfied.
+- [x] [AI] [P3-004] Align `CONTRIBUTING.md` with closed external intake and authorized
       `worktree-to-pr` delivery — acceptance: no public invitation, direct-`main` advice, or response
       promise remains.
-- [ ] [AI] [P3-005] Verify the narrow `CONTRIBUTING.md` staged-naming exemption in both places that
+  - **Date**: 2026-08-20 · **Status**: Done (verified-unchanged) · **Files Changed**: None ·
+    **Notes**: scanned for each prohibited move separately rather than reading for general tone. No
+    public invitation (`we welcome`, `contributions are welcome`, `feel free to open`, `PRs welcome`
+    all return nothing), no direct-`main` advice, and no response-time or turnaround promise. The
+    document states external code contributions and pull requests are closed, tells the reader not to
+    open one even from a fork, and teaches the internal `worktree-to-pr` flow in five accurate steps
+    while saying plainly that it is not an invitation. The must-side clause needed a live check
+    rather than a reading: the Reporting Bugs section routes a would-be contributor to the issue
+    tracker, so I confirmed the tracker is actually open — `hasIssuesEnabled` is true and issues are
+    in active use — meaning that route is real and not a dead end. Discussions are disabled, which
+    matches the Product Feedback section's statement that no public feature-request channel runs. All
+    12 relative links resolve and the voice scan is clean, so no edit is warranted. One item noted
+    for P3-008: `SECURITY.md` promises an initial response within 48 hours. That is a deliberate
+    vulnerability-disclosure commitment rather than a contribution-triage promise, and stripping it
+    would make the security policy worse; it will be judged on its own terms in its own row.
+- [x] [AI] [P3-005] Verify the narrow `CONTRIBUTING.md` staged-naming exemption in both places that
       already declare it — the `lint-staged` Markdown command in `package.json` and the gate registry
       entry in `repo-config.yml` — and add it only where it is missing — acceptance: `CONTRIBUTING.md`
       passes `md naming validate`, a plan-owned `local-tmp/.../BAD-NAME.md` negative control still
       produces the expected invalid-filename rule and is then removed, and the two declarations agree.
-- [ ] [AI] [P3-006] Close or supersede any live idea file that duplicates this plan's contribution or
+  - **Date**: 2026-08-20 · **Status**: Done (verified-unchanged) · **Files Changed**: `learnings.md` ·
+    **Notes**: all three acceptance clauses hold. The two declarations agree exactly — both
+    `package.json`'s `lint-staged` `*.md` command and `repo-config.yml`'s `md-naming` entry carry the
+    same pair, `*__linkedin__*.md` and `CONTRIBUTING.md` — so nothing needed adding. `md naming
+validate` passes. The negative control produced the expected rule:
+    `filename "BAD-NAME.md" violates lowercase-kebab-case rule (^[a-z0-9-]+\.md$)`, exit 1, and was
+    removed along with every other control, leaving the validator green and the tree clean. But the
+    control had to move to discover that. Placed in `local-tmp/` as this clause literally instructs,
+    it is not flagged at all, because the validator does not scan gitignored trees — a control that
+    cannot fail proves nothing, so the clause as written would have passed vacuously. Placing it in
+    `docs/` made it fire. That relocation exposed a second finding: running the validator _without_
+    the `CONTRIBUTING.md` exemption still exits 0 and still does not flag the file. Two independent
+    mechanisms cause that, either sufficient alone. The gate invocation passes no paths, so the
+    validator uses its built-in default roots — `docs/` and `repo-governance/`, never the repository
+    root (`md_validate_naming.rs`, `DEFAULT_PATHS`); its success line reads
+    `DOCS NAMING VALIDATION PASSED`. And on the `lint-staged` path, which does hand the staged file
+    in as a positional and so does reach the root, `CONTRIBUTING.md` is one of nine basenames
+    hard-coded exempt inside the validator (`docs/naming.rs`, `is_naming_exempt`) under its own
+    regression test — `md naming validate CONTRIBUTING.md` with no `--exempt` flag exits 0. The
+    exemption is therefore inert in both places that declare it, and widening the scan scope would
+    not change that. Left in place deliberately, but for the corrected reason: the hard-coded list is
+    exactly what `plans/backlog/file-naming-convention-rework/` proposes to move into configuration,
+    and once it moves, the `repo-config.yml` declaration stops being redundant and becomes the
+    carrier — deleting it now would arm a failure for whoever lands that plan. Recorded as L-011 and
+    routed to that existing backlog plan rather than fixed inline or filed as a new Phase 8 item,
+    since `repo-config.yml` is outside this plan's File-Impact footprint and the topic already has an
+    owner.
+- [x] [AI] [P3-006] Close or supersede any live idea file that duplicates this plan's contribution or
       naming-exemption work through the repository's idea lifecycle — acceptance: no duplicate live
       proposal remains.
-- [ ] [AI] [P3-007] Audit and, where evidence requires, revise
+  - **Date**: 2026-08-20 · **Status**: Done (verified-unchanged) · **Files Changed**: `learnings.md`,
+    `artifacts/execution-record-public.md` · **Notes**: no live idea file duplicates this plan's
+    contribution or naming-exemption work, so the idea lifecycle was not invoked and nothing was
+    closed or superseded. Enumerated all 84 live two-pagers across the four `plans/ideas/q*` quadrants
+    and grepped them for `contribut*`, `CONTRIBUTING.md`, naming-exemption and naming-convention
+    phrasing, `md naming validate`, `onboard*`, and README-refresh phrasing. Seventeen files matched.
+    Fifteen matched only incidentally — `contributor` used in its ordinary sense, or a
+    `Naming Convention` heading about code identifiers rather than filenames. The two substantive hits
+    both cite the `is_naming_exempt` gap as _evidence_ for a different proposal rather than proposing
+    work on it: `rhino-cli-sync-validator-wrong-model-drift.md` uses the three-times-rediscovered
+    exemption to argue that `rhino-cli` byte-identity currently rests on manual `diff` discipline, and
+    `rhino-cli-git-env-scrub-widening.md` names "the root-file naming exemption" explicitly under
+    **Out of scope**, as already upstreamed. That second file independently corroborates P3-005: the
+    exemption was upstreamed _into the validator_, which is why the `repo-config.yml` declaration is
+    redundant. The one genuine topical overlap,
+    [`plans/backlog/file-naming-convention-rework/`](../../backlog/file-naming-convention-rework/README.md),
+    is a promoted backlog plan rather than a live idea; it already documents the nine hard-coded
+    exempt basenames and calls the `repo-config.yml` entry "a redundant second statement of
+    `CONTRIBUTING.md`". It is the correct existing owner, not a duplicate to close, so L-011 was
+    re-routed to it. Correcting that routing also corrected L-011 itself, which had named only one of
+    the two independent reasons the exemption is inert.
+- [x] [AI] [P3-007] Audit and, where evidence requires, revise
       `docs/tutorials/getting-started-with-ose-public.md` and the root/docs/tutorial navigation —
       acceptance: the macOS/Ubuntu journey reaches the verified `ose-www` dev target, expected page,
       recovery guidance, and next step, with every command resolved from live configuration.
-- [ ] [AI] [P3-008] Execute every exact document task row one at a time, including root, `apps/`,
+  - **Date**: 2026-08-20 · **Status**: Done (targeted-fix) · **Files Changed**:
+    `docs/tutorials/getting-started-with-ose-public.md`, `README.md`, `apps/ose-www/README.md`,
+    `learnings.md` · **Notes**: every command in the tutorial resolves from live configuration.
+    `ose-www` exposes `dev` and `build`; `doctor` accepts `--fix` and `--tools`, and all five tool
+    names the tutorial passes (`git`, `volta`, `node`, `npm`, `docker`) resolve, with `node` and
+    `npm` reporting `required: 24.16.0` and `required: 11.11.0` — byte-equal to this checkout's
+    `volta` pins, which is exactly the claim the tutorial makes about where those numbers come from.
+    The stale-artifact recovery is correct: `build` carries `dependsOn: ["generate-search-data"]`
+    while `dev` carries `dependsOn: []`, so routing through `build` is the only thing that
+    regenerates search data. Both success strings live in
+    `apps/ose-www/src/features/landing/shell/hero.tsx` — the `<h1>` and the description. All four
+    links and the one in-page anchor resolve, and the navigation chain is coherent: root README →
+    tutorial, `docs/README.md` → tutorial and tutorials index, tutorials index → tutorial with an
+    accurate one-line summary. One real defect, and it was a class rather than a site. The `dev`
+    target is `next-with-port.mjs dev --env OSE_WWW_PORT --default 3100`, so 3100 is a fallback, not
+    an address; three live reader surfaces stated it as fixed. Worse, the recovery advice
+    contradicted itself across documents — the tutorial said "Do not stop an unfamiliar process just
+    to free the port" and then offered no alternative, while the root README told the reader to
+    "stop the process using that port and try again". Fixed all three: the tutorial now qualifies the
+    port, names the `Local:` line, and gives the override a worked command linked to
+    [Overriding a port](../../../docs/reference/web-sites.md#overriding-a-port); the root README
+    replaces the kill-it advice with the override; `apps/ose-www/README.md` qualifies its flat "uses
+    port 3100" and points at the `OSE_WWW_PORT` entry already present in its `.env.example`. Verified
+    live rather than inferred: `OSE_WWW_PORT=4100 npm exec nx -- run ose-www:dev` bound 4100, curl
+    returned HTTP 200 carrying the **Open Sharia Enterprise Platform** heading, and 3100 refused —
+    the override moves the listener rather than adding one. The server was stopped and no
+    `next-with-port` or `ose-www:dev` process survived. Every other `localhost:3100` mention sits
+    under `plans/done/**` and is `historical-exempt` by Classification Rule 3. `markdownlint-cli2`
+    and Prettier are clean on all three edited files, and the link report names none of them —
+    though the first run of that check was a false zero, recorded as L-012.
+- [x] [AI] [P3-008] Execute every exact document task row one at a time, including root, `apps/`,
       `libs/`, `specs/`, `infra/`, governance indexes, setup, architecture, relationship, security,
       plans, social-media, and other catch-all living surfaces — acceptance: every row has its own
       result and no cosmetic edit is manufactured.
-- [ ] [AI] [P3-009] Regenerate harness mirrors only from canonical `.claude/` changes and run
+  - **Date**: 2026-08-20 · **Status**: Done (targeted-fix) · **Files Changed**: 66 of the 814 row
+    documents, plus 8 `.claude/` agent and skill source files whose frontmatter feeds an edited index
+    row · **Notes**: all 814 rows are terminal — 66 `targeted-fix`, 748 `verified-unchanged`, zero
+    interim labels, `Status` `Done` on every row, and the table still measures a uniform 19 awk-fields
+    after Prettier realigned it. No cosmetic edit was manufactured: a row changed only where a check
+    failed. The mechanical evidence was gathered once and attributed per row. `markdownlint-cli2`
+    linted 813 of the 814 and reported 0 errors; the 814th is
+    `docs/reference/security/frameworks/nist-sp-800-53-rev5.md`, which `.markdownlint-cli2.jsonc`
+    names in `ignores` because it is a 23,854-line verbatim PDF conversion whose indentation would
+    trip MD046 — its lint clause is inert by configuration, so its acceptance was amended to pass on
+    that declaration rather than on an exit code the tool never produces for it. `md links validate
+--exclude plans/done --exclude archived` found no broken link anywhere, so no row carries a
+    `### <path>` heading. 484 Nx and npm mentions were resolved against 33 projects, 550 project-target
+    pairs, and 30 npm scripts; the first scanner over-matched `nx run --…` and was tightened before
+    triage. Four defect classes surfaced. `docs/how-to/run-nx-commands.md` illustrated every example
+    with `ts-utils` and `customer-portal`, neither of which is a project here, so a reader copying the
+    repository's own Nx how-to got "Cannot find project" — substituted `fsharp-env-loader` and
+    `ose-app-web`, both carrying the targets each example names, and corrected `npm run
+affected:test:quick` to the real `affected:test`. `specs/apps/crane/README.md` named
+    `crane-cli:specs:coverage`; the real target is `specs:behavior:coverage`. The C4 model README
+    listed `npm run validate:diagrams` as a current validation tool while its own sibling
+    `tooling-standards.md` labels that script planned and it does not exist. And the pre-2026-06-14
+    project name `wahidyankf-web` survived in 31 places across 11 files including a `nx dev
+wahidyankf-web` that resolves to nothing — fixed as a class, with the agent-catalog occurrence
+    corrected in its `.claude/` frontmatter source rather than only in the generated index. On voice,
+    130 empty-intensifier uses of `comprehensive` were removed across 54 documents, the great majority
+    being `Comprehensive guide to X` where `guide to X` already carried the claim. Eleven were kept
+    and their rows' acceptance amended to say why, because a clause demanding a literal zero is wrong
+    when the word is doing work: two are the contrast pole of the Primer agents' `just-enough vs.
+comprehensive coverage` distinction, one is a link label tracking the real filename
+    `stage-1-maker-comprehensive-content-management.md`, and one sits inside a fenced Playwright test
+    title. Editing the NIST conversion's 31 occurrences was declined outright — they are NIST's own
+    wording and changing them would corrupt a verbatim conversion. One drift was introduced and
+    repaired inside this task: de-intensifying six `.claude/skills/*/README.md` index lines left them
+    disagreeing with their `SKILL.md` frontmatter, so each source was corrected too and all six pairs
+    now match byte for byte. A second stale-name class, `ayokoding-web` (16 in-scope files) and
+    `ose-web` (14), was found and deliberately left alone: unlike `wahidyankf-web` it reaches
+    directory names such as `repo-governance/workflows/ayokoding-web/` and workflow filenames, which
+    is a rename plan rather than a documentation defect. Recorded for Phase 8 routing. Across the 78
+    changed Markdown files `markdownlint-cli2` reports 0 errors, Prettier is clean, and the link
+    report is empty.
+- [x] [AI] [P3-009] Regenerate harness mirrors only from canonical `.claude/` changes and run
       `npm run generate:bindings` followed by `npm run validate:sync` — acceptance: no generated
       mirror is hand-edited and mirrors land in the same commit as their source.
-- [ ] [AI] [P3-010] Reconcile the task register and append-only file-touch ledger — acceptance: every
+  - **Date**: 2026-08-20 · **Status**: Done (generated) · **Files Changed**: 17 mirror files across
+    `.opencode/agents/`, `.codex/agents/`, `.codex/config.toml`, and `.agents/skills/` · **Notes**:
+    `npm run generate:bindings` converted 93 agents and mirrored 12 skill files with 0 stale removals,
+    then `npm run validate:sync` passed 97 of 97 checks and `npm run harness:bindings-validation`
+    passed 199 of 199. Nothing was hand-edited in a mirror. Every regenerated file traces to a
+    `.claude/` source this unit changed — the two agents (`apps-wahidyankf-www-deployer`, `plan-maker`)
+    and the six skills whose `SKILL.md` frontmatter was de-intensified. `.codex/config.toml` is the one
+    file carrying hand-authored vendored tables, so its diff was read rather than assumed: both changed
+    lines sit inside the delimited generated region and are the two agent descriptions, with every
+    vendored table byte-identical. The mirrors land in the same commit as their source.
+- [x] [AI] [P3-010] Reconcile the task register and append-only file-touch ledger — acceptance: every
       task is terminal and every touched path belongs to this unit.
-- [ ] [AI] [P3-010A] Compare the ledger with sorted
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/execution-record-public.md` · **Notes**: the append-only ledger was populated from
+    `git status --short --untracked-files=all` and then diffed against that same listing in both
+    directions — 96 ledger rows against 96 dirty paths, with zero paths in the ledger that git does not
+    show and zero paths git shows that the ledger does not carry. Every path is classified and
+    attributed to the task that touched it: 43 docs reader docs, 17 generated harness mirrors, 16
+    canonical `.claude/` sources, 9 spec-tree docs, 5 governance docs, 4 plan-owned records, and one
+    each at the repository root and under `apps/`. The 16 canonical-source count is a check in its own
+    right — it equals exactly the `.claude/` files this unit edited (2 agent definitions, 2 agent
+    indexes, 6 `SKILL.md` files, 6 skill indexes), so nothing was swept in by the generator. Every task
+    ID from P3-001 through P3-009 holds a terminal row. The first reconciliation attempt reported a
+    false zero because the extracting `awk` pattern no longer matched after Prettier realigned the
+    table's number column; it was re-extracted and the count asserted before the result was believed,
+    which is L-012 applied to this task.
+- [x] [AI] [P3-010A] Compare the ledger with sorted
       `git ls-files --cached --others --exclude-standard -- '*.md'`, adding one exact row for every
       generated or newly created Markdown path — acceptance: zero unexplained missing or extra paths.
-- [ ] [AI] [P3-010B] Stage only ledger-owned paths, inspect `git diff --cached --name-only`, and run
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**:
+    `artifacts/execution-record-public.md` · **Notes**: the comparison against the sorted working-tree
+    listing added an exact row for each of the 17 paths that only exist because a generator or this
+    plan created them — 12 `.agents/skills/` mirrors, 2 `.opencode/agents/` mirrors, 2 `.codex/agents/`
+    files, and `.codex/config.toml` — plus the one newly created path,
+    `artifacts/execution-record-public.md` itself. None was folded into a class row. Zero unexplained
+    missing or extra paths.
+- [x] [AI] [P3-010B] Stage only ledger-owned paths, inspect `git diff --cached --name-only`, and run
       the identity-boundary guard — acceptance: the staged set equals the file-touch ledger and the
       guard returns empty.
-- [ ] [AI] [P3-011] Run `git diff --check`, formatting, Markdown lint, all Rhino Markdown validators,
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: staged exactly the
+    96 paths the ledger carries, by feeding the reconciled path list to `git add` rather than by
+    pattern. The staged list then measured 96 with 0 unstaged and 0 untracked remaining, so the staged
+    set and the ledger are the same set rather than merely the same size. Grepping the staged list
+    against the seven `BOUNDARY_PATHS` pathspecs — `apps/rhino-cli/{src,tests,Cargo.toml,Cargo.lock,project.json,LICENSE}`
+    and `specs/apps/rhino/behavior/rhino-cli/gherkin` — returns nothing, and
+    `rhino-cli parity manifest validate` exits 0 with `apps/rhino-cli/parity-manifest.sha256 is
+current`. The byte-identity boundary is untouched, so this unit opens no cross-repository parity
+    obligation.
+- [x] [AI] [P3-011] Run `git diff --check`, formatting, Markdown lint, all Rhino Markdown validators,
       README-index validation, sync validation, affected gates, and the staged environment-file gate —
       acceptance: every applicable command exits 0.
-- [ ] [AI] [P3-012] Run the README maker→checker→fixer cycle and an independent AI sensitivity/voice
+  - **Date**: 2026-08-20 · **Status**: Done · **Files Changed**: None · **Notes**: both gate surfaces
+    exit 0 with the full 96-path change set staged. The pre-push surface reports 425 README-index
+    findings, which is the same total P3-002 recorded as the baseline before any edit, so this unit
+    added none. That equality was not taken on its own: 45 of the changed documents do appear among
+    the 425, so the finding text was read to confirm each concerns a document-index link line of the
+    form `- [<title>](<path>) — <description>`, not any line this unit touched — the one place a bullet
+    was reshaped, the C4 model README, was a Validation Tools list rather than a child-document index.
+    The pre-commit surface re-ran `harness bindings generate` and produced no new drift. Two files
+    showed as unstaged immediately afterwards; both were this task's own record edits made after
+    staging, not gate output, and were formatted and re-staged, returning the tree to 96 staged, 0
+    unstaged, 0 untracked.
+- [x] [AI] [P3-012] Run the README maker→checker→fixer cycle and an independent AI sensitivity/voice
       review over every changed living reader-facing file — acceptance: zero CRITICAL, HIGH, or MEDIUM
       findings and no secret or robotic passage.
+  - **Date**: 2026-08-20 · **Status**: Done (targeted-fix) · **Files Changed**: `README.md`,
+    `docs/how-to/run-nx-commands.md`, `docs/how-to/create-new-skill.md`,
+    `docs/tutorials/getting-started-with-ose-public.md`,
+    `repo-governance/conventions/tutorials/README.md`, `.claude/agents/plan/plan-maker.md`, the
+    Playwright tools README, and the regenerated mirrors · **Notes**: the acceptance held only after
+    two separate maker-checker-fixer cycles, and the second one is the reason this task was worth
+    running. The README cycle took three rounds. Round 1 raised two MEDIUM findings: the dev-server
+    paragraph carried three concerns in one dense block, and the sibling-repository paragraph stacked
+    "MIT", "polyglot", and "Nx" as unexplained jargon roughly 36 lines before Nx is defined, in a
+    section aimed at product people. Round 2 confirmed both fixed but caught a regression the jargon
+    fix itself introduced — the paragraph had grown to seven lines, past the 4-5 line rule, and was
+    then the only paragraph in the file over it. Round 3 confirmed zero CRITICAL, HIGH, or MEDIUM with
+    no paragraph over the ceiling and no anchor damage.
+    The independent sensitivity and voice review over the whole staged diff was the more valuable
+    pass, because it found four MEDIUM defects **this unit had introduced** and that the plan's own
+    per-row checks had missed. All four came from the same root cause and it is the one this plan has
+    already recorded twice: P3-008 substituted real project names into
+    `docs/how-to/run-nx-commands.md` but did not re-verify the claims wrapped around them. One
+    substitution was simply missed, leaving `nx run-many -t build -p fsharp-env-loader ts-components`
+    naming a project that does not exist — the exact defect the edit set out to remove. A comment
+    reading `(Automatically builds fsharp-env-loader first)` was carried over from the old example and
+    was false: `ose-app-web` does not depend on `fsharp-env-loader`. A verification step told the
+    reader to `ls libs/fsharp-env-loader/dist` when that project builds with `dotnet build` to `bin`
+    and `obj`, so the directory never exists. And P3-007's tutorial claimed "Every app in this
+    repository takes the same override" while the reference it cites scopes itself to the apps in one
+    table, omitting `beavernest-app` and every CLI project. All four were fixed against live
+    configuration rather than by inspection — the replacement dependency comment was checked by
+    dumping the Nx graph and confirming `ose-app-web`'s `build` carries `dependsOn: ["^build"]` while
+    none of its four dependencies exposes a `build` target, so exactly one build runs. Eight LOW items
+    were also taken, several of which were intensifiers the P3-008 sweep had merely traded for
+    unfalsifiable absolutes such as "cover every use case" sitting two bullets from "Avoid generic".
+    The verification round confirmed all four MEDIUM resolved with no regression, re-scanned all 1,697
+    added lines and found zero emails, IP addresses, credentials, or absolute local paths, and
+    re-confirmed every generated mirror byte-identical to its `.claude/` source with
+    `.codex/config.toml` changed only inside its generated region. Final verdict: zero CRITICAL, HIGH,
+    or MEDIUM on both the sensitivity and the voice axis.
 - [ ] [AI] [P3-013] Commit the refresh unit with a Conventional Commit — acceptance: the commit
       contains only the cohesive documentation refresh.
 - [ ] [AI] [P3-014] Push the exact refresh branch — acceptance: `origin` contains the unit head.

@@ -1,6 +1,6 @@
 ---
 title: Next.js Styling
-description: Comprehensive guide to styling Next.js applications with CSS Modules, Tailwind CSS, CSS-in-JS, and next/font optimization
+description: Guide to styling Next.js applications with CSS Modules, Tailwind CSS, CSS-in-JS, and next/font optimization
 category: explanation
 subcategory: platform-web
 tags:

@@ -1,6 +1,6 @@
 ---
 title: Next.js Domain-Driven Design
-description: Comprehensive guide to implementing Domain-Driven Design (DDD) in Next.js applications with bounded contexts, aggregates, entities, value objects, and layered architecture
+description: Guide to implementing Domain-Driven Design (DDD) in Next.js applications with bounded contexts, aggregates, entities, value objects, and layered architecture
 category: explanation
 subcategory: platform-web
 tags:

@@ -1,6 +1,6 @@
 ---
 title: "Next.js Performance"
-description: Comprehensive guide to Next.js performance optimization including image/font optimization, code splitting, lazy loading, caching strategies, bundle analysis, and Web Vitals monitoring
+description: Guide to Next.js performance optimization including image/font optimization, code splitting, lazy loading, caching strategies, bundle analysis, and Web Vitals monitoring
 category: explanation
 subcategory: platform-web
 tags:

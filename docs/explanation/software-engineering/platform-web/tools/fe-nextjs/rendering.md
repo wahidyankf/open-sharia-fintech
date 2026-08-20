@@ -1,6 +1,6 @@
 ---
 title: "Next.js Rendering"
-description: Comprehensive guide to Next.js rendering strategies including SSR, SSG, ISR, streaming, and Partial Prerendering
+description: Guide to Next.js rendering strategies including SSR, SSG, ISR, streaming, and Partial Prerendering
 category: explanation
 subcategory: platform-web
 tags:

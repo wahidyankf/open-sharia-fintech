@@ -176,7 +176,7 @@ single enforced gate definition on PRs and pushes to `main`.
 
 **Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 
-### wahidyankf-web Test + Deploy Workflow
+### wahidyankf-www Test + Deploy Workflow
 
 **File**: `.github/workflows/wahidyankf-www-test-local-deploy-prod.yml`
 

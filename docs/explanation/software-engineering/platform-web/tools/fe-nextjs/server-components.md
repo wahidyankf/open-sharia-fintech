@@ -1,6 +1,6 @@
 ---
 title: "Next.js Server Components"
-description: Comprehensive guide to React Server Components in Next.js including patterns, composition strategies, and integration with Client Components
+description: Guide to React Server Components in Next.js including patterns, composition strategies, and integration with Client Components
 category: explanation
 subcategory: platform-web
 tags:

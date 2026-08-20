@@ -20,7 +20,7 @@ Use this area to understand why a language is used here and which standards appl
 
 Each language has its own ideas about structure, errors, state, and testing. A useful pattern in TypeScript can be awkward or unsafe in Rust or F#. These guides explain the local conventions so a reader can make choices that fit both the language and this repository.
 
-This directory contains comprehensive documentation on programming languages used throughout the platform. Active languages use one of two documentation patterns:
+This directory contains documentation on programming languages used throughout the platform. Active languages use one of two documentation patterns:
 
 **Three-Document Pattern** (TypeScript):
 

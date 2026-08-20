@@ -625,7 +625,7 @@ export const SecureComponent = () => <StyledDiv>Content</StyledDiv>;
 
 ## Input Validation & Sanitization
 
-### Comprehensive Input Validation
+### Input Validation
 
 ```typescript
 interface ValidationRule {

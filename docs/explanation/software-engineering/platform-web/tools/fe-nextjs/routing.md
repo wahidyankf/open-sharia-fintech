@@ -1,6 +1,6 @@
 ---
 title: "Next.js Routing"
-description: Comprehensive guide to Next.js routing patterns including dynamic routes, route groups, parallel routes, intercepting routes, and navigation
+description: Guide to Next.js routing patterns including dynamic routes, route groups, parallel routes, intercepting routes, and navigation
 category: explanation
 subcategory: platform-web
 tags:
