@@ -122,10 +122,14 @@ text was corrected in place before the rule was written down. Its marker records
 say.
 
 The authoritative list is the markers themselves, not any prose summary: `grep '\*\*Superseded'`
-over this file returns every superseded row. That is deliberate. Three successive hand-written
-summaries of this same fact — a row range, a chain count, and a chain list — were each found
-wrong by a later cycle, so the record now points at something greppable instead of something
-remembered. The prose below is a reading aid and makes no completeness claim.
+over this file returns every superseded row. That is deliberate. Successive hand-written summaries
+of this same fact — a row range, a chain count, a chain list, and then a duplicate-row count — were
+each found wrong by a later cycle, so the record now points at something greppable instead of
+something remembered. The prose here is a reading aid and makes no completeness claim.
+
+The narrative paragraphs between the tables carry the same marker where a later cycle overtook one,
+so the same `grep` surfaces those too. C-57 is why: the rows had been made self-checking and the
+prose around them had not, and two defects were sitting in it.
 
 The multi-step chains, where a fix was found wrong more than once: C-21 → C-31 → C-32 → C-36
 (the Cargo prerequisite wording); C-27 → C-39 → C-44 (the `doctor --scope minimal`
@@ -191,8 +195,9 @@ contained two more.
 | C-35 | Integrity  | The C-30 "corrected" word count was itself stale: it cited 894, the figure at `cb489b874`, but C-24 had since added a word, making the committed figure 895 — the same unmeasured-claim class, inside the fix for it                                                                                                                 | MEDIUM   | The figure is now pinned to a named revision rather than left floating, and the durable claim is the invariant that matters: under the 900-word threshold at every commit in this iteration                                                                                                                                                                                                                                                                              |
 
 Cycle 2 also confirmed the C-20 remediation is complete for the reader-path file set — no version
-literal remains in any of the four documents — and that the `volta install` commands work at the
-point in the sequence where they now appear.
+literal remains in any of the four documents C-20 covered — and that the `volta install` commands
+work at the point in the sequence where they now appear. The fifth reader-facing document,
+`docs/reference/related-repositories.md`, carries no version literal and was never in that scope.
 
 ### Cycle 3 Rows (P6-007C@01)
 
@@ -213,7 +218,10 @@ each checked out. What it did find is a wrong quotation and two rendering or rec
 Cycle 3 also confirmed, by direct reproduction rather than reading, that the Git-hook exit code is
 genuinely preserved end to end: Husky's dispatcher runs the hook as a child process, captures its
 exit status, and re-exits with it; each shim runs under `set -e` with no `|| true`; and
-`rhino-bin.sh` runs under `set -euo pipefail` and `exec`s the binary. It
+`rhino-bin.sh` runs under `set -euo pipefail` and `exec`s the binary.
+**Superseded in part by C-41**: this sentence originally said the dispatcher `exec`s the hook, which
+it does not — only `rhino-bin.sh` ends in a real `exec`. The conclusion about the exit code survives
+the correction, but the mechanism named here was wrong when written. It
 found one nuance that does not change any shipped claim: `rhino-bin.sh` skips the Cargo build when
 a fresh gate binary already exists, so a contributor who has built before would not see the block —
 but every document making the claim is describing a first-time clone, where no such binary can
@@ -237,16 +245,22 @@ One imprecision survives in a place that cannot be corrected: the pushed commit 
 `ab0dc7b4c` says the false "mandated" claim sat "150 lines before the caveat". The real distances
 at the parent commit are 175 lines for `P5B-005` and 148 for `P5B-005A`, so the figure describes
 neither. Amending a pushed message is not worth a force-push. The `C-37` row above carried the
-same wrong figure and _was_ correctable, so it now states both distances — a first pass at this
-disclosure named only the commit message, which implied the error was confined to somewhere
-unreachable when half of it was sitting in editable document text.
+same wrong figure and _was_ correctable, so it now states both distances.
+**Superseded in part by C-45**: a first pass at this disclosure named only the commit message, which
+implied the error was confined to somewhere unreachable when half of it was sitting in editable
+document text.
 
 ### Cycle 5 Rows (P6-007E@01)
 
 Two findings, one from each specialist, and both are about the same thing: a claim that sounded
-better than the fact underneath it. The reader-facing documents themselves came back clean — after
-five rounds of patching, the docs specialist read all four end to end and found no accumulated
-incoherence, no contradiction between them, and no ordering defect.
+better than the fact underneath it. Four of the five reader-facing documents came back clean — after
+five rounds of patching, the docs specialist read `README.md`, `CONTRIBUTING.md`, the setup guide,
+and the tutorial end to end and found no accumulated incoherence, no contradiction between them, and
+no ordering defect. `docs/reference/related-repositories.md` was not named in that brief and was not
+part of that pass; the first end-to-end read covering all five was the Cycle 8 coherence pass.
+**Superseded in part by C-58**: this paragraph originally said "the reader-facing documents
+themselves came back clean", generalizing a four-document read to the whole set. The commit message
+for `9810e71bd` carries the same unqualified claim and cannot be amended.
 
 | Row  | Discipline | Defect                                                                                                                                                                                                                                                                                                                                | Severity | Fix                                                                                                                                                                                                          |
 | ---- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -269,8 +283,12 @@ untouched by that commit and re-confirmed unchanged.
 The docs specialist also observed that six cycles of rows had left the section usable as a log but
 not as a current-state reference, since several rows were superseded rather than rewritten. That is
 the right trade — rewriting them would erase the record this file exists to keep — so the fix is a
-`How to read this section` preamble, plus the in-row markers `C-47` added. Claim and markers were made to agree in both directions: the preamble says every
-superseded row names its successor, so every one of them now does.
+`How to read this section` preamble, plus the in-row markers `C-47` added. Claim and markers were
+made to agree in both directions: the preamble says every superseded row names its successor, so
+every one of them now does. **Superseded in part by C-51, C-52, C-53 and C-54**: that agreement held
+only for the rows checked at the time. Cycle 8 found an unmarked chain and cycle 9 found three more
+unmarked rows, which is what eventually moved the completeness claim out of the prose and onto the
+markers.
 
 One process note, raised twice by specialists and worth recording. Review cycles ran against pushed
 commits while this worktree already carried the next cycle's uncommitted fixes. Every specialist
@@ -316,7 +334,8 @@ That is three separate completeness claims about this record — a row range, a 
 chain list — each found wrong by a later cycle. The pattern is specific enough to name: a summary
 figure written from what the author remembered adding, rather than counted from the file. The
 durable fix in each case turned out to be the same, which is to stop asserting the figure rather
-than to keep correcting it.
+than to keep correcting it. **Superseded in part by C-51 and C-57**: the count of three was itself
+one of these figures, and it went to four the next cycle and five the cycle after.
 
 ### Cycle 9 Rows (P6-007I@01)
 
@@ -335,12 +354,42 @@ this cycle swept the full row set instead. That is what turned up all five.
 
 The three failed summary claims named last cycle are now four, and the fourth failed the same way as
 the first three — so the fix stopped being "state it correctly" and became "stop stating it". A
-`grep` over the markers answers the question the prose kept getting wrong.
+`grep` over the markers answers the question the prose kept getting wrong. **Superseded in part by
+C-57**: the fix was applied to the rows and not to the prose, and the paragraph that closed this
+section carried a fifth invented count out of this very commit.
 
-Worth being plain about the shape of this: nine review cycles have produced 56 numbered rows — four
-of them listed twice, in the original table and in the follow-up sweep that re-examined them — and
-every cycle after the fourth changed only plan records, never a reader-facing document. Those five
-documents have not needed a change since `afb850f43` and were cleared to ship twice.
+### Cycle 10 Rows (P6-007J@01)
+
+Two findings, one from each specialist, and neither is in a row — both are in the narration around
+the rows, which is the part of this file no sweep had been pointed at.
+
+Integrity found the fifth failed summary count, and it was written into the same commit that
+announced the file had stopped making them. The paragraph closing the Cycle 9 section said "56
+numbered rows — four of them listed twice"; no mechanical reading of the file produces four. Three
+IDs recur as a row-start (`C-03`, `C-05`, `C-06`) and five of the Follow-Up Sweep's cells name an
+earlier row (`C-03`, `C-04`, `C-05`, `C-06`, `C-08`). The row-total itself was right and the
+duplicate count was invented the same way the four before it were: written from memory of what had
+been added rather than counted from the file. The narration no longer carries a maintained count.
+
+Docs found that the Cycle 5 paragraph generalized a four-document read into a verdict on all five.
+The cycle-5 brief named `README.md`, `CONTRIBUTING.md`, the setup guide, and the tutorial;
+`docs/reference/related-repositories.md` was not in it. The document was covered later — the Cycle 8
+pass named all five and cleared them — so nothing shipped unread, but the Cycle 5 sentence claimed a
+coverage it did not have, and so does the pushed commit message for `9810e71bd`.
+
+| Row  | Discipline | Defect                                                                                                                                                                                                                                                         | Severity | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C-57 | Integrity  | "56 numbered rows — four of them listed twice" is wrong under every mechanical reading: three IDs recur as a row-start, five sweep cells name an earlier row. The fifth failed summary count, written into the commit announcing the fix for the previous four | MEDIUM   | The narration states no maintained count. The row range is left to speak for itself, since the last row number is visible in the table and needs no separate figure to stay true                                                                                                                                                                                                                                                          |
+| C-58 | Docs       | The Cycle 5 paragraph said "the reader-facing documents themselves came back clean" on the strength of a brief that named four of the five. `docs/reference/related-repositories.md` was not in that pass                                                      | MEDIUM   | The paragraph now names the four that were read, says which document was not, and points at the Cycle 8 pass that first covered all five. The identical claim in `9810e71bd`'s commit message is disclosed as unamendable. The Cycle 2 paragraph's unqualified "the four documents" was scoped in the same edit — it was ambiguous rather than wrong, since the fifth document carries no version literal and was never in `C-20`'s scope |
+
+Both findings landed in narration, not in a row, and that is the point worth keeping. The marker
+scheme made the rows self-checking; nothing had been pointed at the prose between them, and both
+defects had been sitting there for cycles.
+
+Worth being plain about the shape of this: ten review cycles have produced the rows numbered above,
+and every cycle after the fourth changed only plan records, never a reader-facing document. Those
+five documents have not needed a change since `afb850f43`, and this cycle's docs pass cleared them
+to ship again.
 
 ## Scope Discipline
 
