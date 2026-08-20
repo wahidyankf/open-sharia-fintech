@@ -563,9 +563,12 @@ pub fn confined_repo_path(repo_root: &Path, value: &str) -> Result<PathBuf, Erro
             "configured path {value:?} escapes the repository root through a symlink"
         )));
     }
+    // `existing_ancestor` came from `candidate.ancestors()`, so this can never
+    // fail — but a fallible path is cheaper to keep correct than a documented
+    // panic, and it needs no `# Panics` section.
     let remaining = candidate
-        .strip_prefix(&existing_ancestor)
-        .expect("existing_ancestor was found by walking candidate's own ancestors");
+        .strip_prefix(existing_ancestor)
+        .map_err(|_| Error::msg("configured path ancestor is not a prefix of itself"))?;
     Ok(canonical_ancestor.join(remaining))
 }
 
@@ -673,6 +676,9 @@ pub fn load_optional(repo_root: &Path) -> Result<Option<RepoConfig>, Error> {
     parse_repo_config(&data, &path).map(Some)
 }
 
+/// Parses `data` (the contents of `repo-config.yml` at `path`, used only for
+/// error context) into a [`RepoConfig`], enriching a `gates[index]` schema
+/// error with the offending gate's `id` when one can be recovered.
 fn parse_repo_config(data: &str, path: &Path) -> Result<RepoConfig, Error> {
     serde_norway::from_str(data)
         .map_err(|error| {

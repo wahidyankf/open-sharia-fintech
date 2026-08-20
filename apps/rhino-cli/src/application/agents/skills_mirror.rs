@@ -62,11 +62,9 @@ fn mirror_jobs(repo_root: &Path) -> Result<Vec<MirrorJob>, String> {
     // default branch — unlike `ownership.rs::guard_emitter_targets`, which
     // uses an unconditional strict `load` with no absent-file branch at all
     // (deliberately: the write path has no legitimate "no registry" case).
-    let config =
-        match repo_config::load_optional(repo_root).map_err(|error| format!("{error:#}"))? {
-            Some(config) => config,
-            None => repo_config::RepoConfig::default(),
-        };
+    let config = repo_config::load_optional(repo_root)
+        .map_err(|error| format!("{error:#}"))?
+        .unwrap_or_default();
     config
         .harness
         .iter()
