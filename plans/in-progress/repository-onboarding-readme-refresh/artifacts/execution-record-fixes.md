@@ -717,6 +717,28 @@ hazard class in this iteration. Re-run through `rtk proxy` against 5,605 raw sub
 counts are 4 and 17. Had the zero been believed, this row would have "confirmed" that neither
 convention existed and left the invented one in place.
 
+### Cycle 3 of the `@02` review — terminal
+
+Both specialists returned **zero findings** against `7053b0beb`. The docs reviewer independently
+hit the same false-zero this iteration hit twice — an anchored `--grep` returned 0 — recognised it,
+re-ran through `rtk proxy`, and reached the same 17 and 4. That is the counts corroborated from a
+second direction by a reader who did not take them on trust.
+
+The governance reviewer cleared all five checks: `build` and `chore` are compatible on every surface
+that describes them, the split leaves no change type homeless, the `.agents/` mirror is
+byte-identical to its source, the eleven-type list is identical across all four bare-list surfaces,
+and the word budget is green at 482 of a 500 fail threshold.
+
+That last number is worth carrying forward: `valid-commit-types.md` entered this plan at 428 words,
+already over its 400-word target, and leaves at 482. It is green, but the next edit to that file has
+18 words of headroom.
+
+**Cycle count.** Three cycles, terminating on a genuine zero. Iteration `@01` ran nineteen. The
+difference is not that the reviewers were weaker — they found a `CRITICAL` here that `@01`'s
+reviewers never had cause to look for — but that the review scope named the shipping surface and
+excluded the plan's own records, which is exactly the change
+`plans/ideas/q2-not-urgent-important/review-loop-reviews-its-own-record.md` proposed.
+
 ### Rejected findings
 
 The voice reviewer returned a FAIL verdict on all five documents with roughly forty findings. Three
