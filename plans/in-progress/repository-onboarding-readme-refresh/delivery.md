@@ -1914,10 +1914,11 @@ creates survives it.
     instruction that was wrong. But neither journey met the documented breakpoint requirement
     either. Both captured 390x844, 768x1024, and 1440x900, where `screenshot-conventions.md`
     and `ui-verification-checklist.md` set the minimum at 375, 768, and 1280 px — so the
-    narrowest required width went unexercised on macOS and on Ubuntu alike. That is a coverage
-    gap in this plan's own execution, not a defect in the product documentation, which is why
-    it does not change either verdict or the Phase 6 disposition below. It was closed
-    separately by `evidence/phase-6-breakpoint-coverage.txt`. The per-item amendments on
+    narrowest required width went unexercised on macOS and on Ubuntu alike. That gap was closed
+    by `evidence/phase-6-breakpoint-coverage.txt`, a supplementary capture at 375, 768, and
+    1280 px which found no horizontal overflow and a correct `<h1>` at every one of them.
+    That measured result — not the label "execution gap rather than documentation defect" —
+    is what leaves both verdicts and the Phase 6 disposition below unchanged. The per-item amendments on
     `P5A-006`, `P5A-006A`, `P5A-G01`, `P5B-005`, `P5B-005A`, and `P5B-G01` carry the detail;
     this note exists so a reader who stops at the rollup still learns of it.
 
